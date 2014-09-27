@@ -76,6 +76,15 @@ void ds_sds_session_free(struct ds_sds_session *sds_session)
 	}
 }
 
+void ds_sds_session_reset(struct ds_sds_session *session)
+{
+	session->checklist_id = NULL;
+	session->datastream_id = NULL;
+	session->target_dir = NULL;
+	oscap_htable_free(session->component_sources, (oscap_destruct_func) oscap_source_free);
+	session->component_sources = oscap_htable_new();
+}
+
 struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session)
 {
 	if (session->index == NULL) {

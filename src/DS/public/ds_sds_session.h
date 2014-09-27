@@ -155,4 +155,16 @@ int ds_sds_session_dump_component_files(struct ds_sds_session *session);
  */
 int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *target_dir);
 
+/**
+ * Reset session for further use.
+ * Rationale: The ds_sds_session is not versatile structure that would allow
+ * to work with all the DataStream content at once. The ds_sds_session structure
+ * remembers certain selections like: selected datastream within collection,
+ * selected checklist, and cached catalogue files. If caller wants to open different
+ * checklist with different catalogue, they need to reset the session.
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session to reset
+ */
+void ds_sds_session_reset(struct ds_sds_session *session);
+
 #endif
