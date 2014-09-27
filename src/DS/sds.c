@@ -191,7 +191,7 @@ static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component
 	}
 }
 
-static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char* filename)
+static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char* filename, const char *relative_filepath)
 {
 	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
@@ -224,10 +224,8 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 		if (new_doc == NULL) {
 			return -1;
 		}
-		char *realpath = oscap_acquire_guess_realpath(filename);
-		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, realpath);
-		oscap_free(realpath);
-		ds_sds_session_register_component_source(session, oscap_source_readable_origin(source), source);
+		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, filename);
+		ds_sds_session_register_component_source(session, relative_filepath, source);
 	}
 
 	return 0;
@@ -263,7 +261,7 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
 	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
-	ds_sds_dump_component(component_id, session, target_filename);
+	ds_sds_dump_component(component_id, session, target_filename, relative_filepath);
 	oscap_free(target_filename);
 	oscap_free(filename_cpy);
 

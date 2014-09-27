@@ -189,12 +189,10 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not extract %s with all dependencies from datastream.", session->checklist_id);
 		return NULL;
 	}
-	char *xccdf_path = oscap_sprintf("%s/xccdf.xml", ds_sds_session_get_target_dir(session));
-	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, xccdf_path);
+	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, "xccdf.xml");
 	if (xccdf == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to %s source.\n", xccdf_path);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.\n");
 	}
-	oscap_free(xccdf_path);
 	return xccdf;
 }
 
@@ -204,12 +202,10 @@ struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *sess
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not extract %s with all dependencies from datastream.", component_id);
 		return NULL;
 	}
-	char *tailoring_path = oscap_sprintf("%s/tailoring.xml", ds_sds_session_get_target_dir(session));
-	struct oscap_source *tailoring = oscap_htable_get(session->component_sources, tailoring_path);
+	struct oscap_source *tailoring = oscap_htable_get(session->component_sources, "tailoring.xml");
 	if (tailoring == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to %s source.\n", tailoring_path);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to tailoring.xml source.\n");
 	}
-	oscap_free(tailoring_path);
 	return tailoring;
 }
 
@@ -232,11 +228,11 @@ xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session)
 	return oscap_source_get_xmlDoc(session->source);
 }
 
-int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *filename, struct oscap_source *component)
+int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *relative_filepath, struct oscap_source *component)
 {
-	if (!oscap_htable_add(session->component_sources, filename, component)) {
+	if (!oscap_htable_add(session->component_sources, relative_filepath, component)) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "File %s has already been register with Source DataStream session: %s",
-			filename, oscap_source_readable_origin(session->source));
+			relative_filepath, oscap_source_readable_origin(session->source));
 		return -1;
 	}
 	return 0;
@@ -244,12 +240,7 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 
 struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session *session, const char *href)
 {
-	// href is relative path from XCCDF file (= relative to target_dir)
-	char *path = oscap_sprintf("%s/%s", ds_sds_session_get_target_dir(session), href);
-	char *realpath = oscap_acquire_guess_realpath(path);
-	oscap_free(path);
-	struct oscap_source *component = oscap_htable_get(session->component_sources, realpath);
-	oscap_free(realpath);
+	struct oscap_source *component = oscap_htable_get(session->component_sources, href);
 	return component;
 }
 

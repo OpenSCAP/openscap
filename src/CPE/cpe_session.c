@@ -27,7 +27,6 @@
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/list.h"
-#include "common/oscap_acquire.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "cpe_session_priv.h"
@@ -84,9 +83,7 @@ static inline struct oscap_source *_lookup_source_in_cache(struct cpe_session *s
 	if (session->sources_cache == NULL) {
 		return NULL;
 	}
-	const char *realpath = oscap_acquire_guess_realpath(prefixed_href);
-	struct oscap_source *source = oscap_htable_get(session->sources_cache, realpath);
-	oscap_free(realpath);
+	struct oscap_source *source = oscap_htable_get(session->sources_cache, prefixed_href);
 	return source;
 }
 

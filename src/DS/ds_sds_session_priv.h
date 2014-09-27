@@ -35,7 +35,7 @@ OSCAP_HIDDEN_START;
 
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session);
 xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session);
-int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *filename, struct oscap_source *component);
+int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *relative_filepath, struct oscap_source *component);
 const char *ds_sds_session_get_target_dir(struct ds_sds_session *session);
 struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session *session);
 
