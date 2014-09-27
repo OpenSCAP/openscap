@@ -924,8 +924,10 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
  * @param file filename
  * @return new dictionary
  * @retval NULL on failure
+ * @deprecated This function has been deprecated by @ref cpe_dict_model_import_source.
+ * This function may be dropped from later versions of the library.
  */
-struct cpe_dict_model *cpe_dict_model_import(const char *file);
+OSCAP_DEPRECATED(struct cpe_dict_model *cpe_dict_model_import(const char *file));
 
 /**
  * Load new CPE dictionary from an oscap_source
