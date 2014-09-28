@@ -1,4 +1,4 @@
-openscap-1.1.1                                                  26-09-201Variable 4
+openscap-1.1.1                                                  26-09-2014
  - Hint towards `oscap info` when profile is not found in oscap tool
  - HTML report changes:
    - Source OVAL results from ARF if available
