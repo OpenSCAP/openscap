@@ -8,16 +8,16 @@ set -e -o pipefail
 . $srcdir/../test_common.sh
 
 function test_illicit_function_use {
-	codebase=$top_srcdir/src
-	if grep -r xmlReaderForFile $codebase; then
+	codebase=$(find $top_srcdir/src/ -regex '.*\.[ch]x*')
+	if grep xmlReaderForFile $codebase; then
 		echo "xmlReaderForFile is not allowed within OpenSCAP project. Please make a use of oscap_source facility."
 		return 1;
 	fi
-	if grep -r xmlTextReaderSetErrorHandler $codebase; then
+	if grep xmlTextReaderSetErrorHandler $codebase; then
 		echo "xmlTextReaderSetErrorHandler is not allowed within OpenSCAP project. Please make a use of oscap_source facility."
 		return 1;
 	fi
-	if grep -r xmlTextReaderReadString $codebase; then
+	if grep xmlTextReaderReadString $codebase; then
 		echo "xmlTextReaderReadString is not allowed within OpenSCAP project. Its implementation in libxml does not play well with xmlWalkerReader."
 		return 1;
 	fi
