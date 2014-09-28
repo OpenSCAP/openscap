@@ -49,9 +49,7 @@
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML supplied by user
 	OSCAP_SRC_FROM_EXPORT_XML_DOM,                  ///< The source originated from our exporter
-	// TODO: node originated from DataStream
 	// TODO: originated from bzip2ed file
-	// TODO: originated from internal temp file (and this shall be later removed)
 	// TODO: downloaded from an http address (XCCDF can refer to remote sources)
 } oscap_source_type_t;
 
