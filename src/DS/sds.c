@@ -493,10 +493,12 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		// extended components always go at the end
 		xmlAddChild(doc_root, component);
 	} else {
-		xmlDoc *component_doc = xmlReadFile(filepath, NULL, 0);
+		struct oscap_source *component_source = oscap_source_new_from_file(filepath);
+		xmlDoc *component_doc = oscap_source_get_xmlDoc(component_source);
 		if (!component_doc) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
 			xmlFreeNode(component);
+			oscap_source_free(component_source);
 			return -1;
 		}
 
@@ -512,7 +514,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 					"creating source datastream.", filepath, comp_id);
 
 			xmlDOMWrapFreeCtxt(wrap_ctxt);
-			xmlFreeDoc(component_doc);
+			oscap_source_free(component_source);
 			xmlFreeNode(component);
 
 			return -1;
@@ -524,7 +526,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 					"creating source datastream.", filepath, comp_id);
 
 			xmlDOMWrapFreeCtxt(wrap_ctxt);
-			xmlFreeDoc(component_doc);
+			oscap_source_free(component_source);
 			xmlFreeNode(component);
 
 			return -1;
@@ -548,7 +550,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		{
 			xmlAddPrevSibling(first_extended_component, component);
 		}
-		xmlFreeDoc(component_doc);
+		oscap_source_free(component_source);
 	}
 
 	return 0;
