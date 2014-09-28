@@ -798,12 +798,6 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_sources) != 0) {
 		return NULL;
 	}
-	if (xmlSaveFileEnc(target_file, rds_doc, "utf-8") == -1)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.", target_file);
-		xmlFreeDoc(rds_doc);
-		return NULL;
-	}
 	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
 }
 
@@ -833,6 +827,9 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	if (result == 0) {
 		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, target_file);
 		result = target_rds == NULL;
+		if (result == 0) {
+			result = oscap_source_save_as(target_rds, NULL);
+		}
 		oscap_source_free(target_rds);
 	}
 	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
