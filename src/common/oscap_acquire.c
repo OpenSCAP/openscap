@@ -237,7 +237,7 @@ char *oscap_acquire_guess_realpath(const char *filepath)
 		char *copy = strdup(filepath);
 		char *real_dir = realpath(dirname(copy), NULL);
 		if (real_dir == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot export to %s, directory: %s does not exists!", filepath, real_dir);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: %s does not exists!", filepath, real_dir);
 			free(copy);
 			return NULL;
 		}
