@@ -483,14 +483,17 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 	xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
 	xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST file_timestamp);
 
-	xmlDoc *component_doc = NULL;
+	xmlNodePtr doc_root = xmlDocGetRootElement(doc);
+
 	if (extended) {
 		if (ds_sds_compose_component_add_script_content(component, filepath) == -1) {
 			xmlFreeNode(component);
 			return -1;
 		}
+		// extended components always go at the end
+		xmlAddChild(doc_root, component);
 	} else {
-		component_doc = xmlReadFile(filepath, NULL, 0);
+		xmlDoc *component_doc = xmlReadFile(filepath, NULL, 0);
 		if (!component_doc) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
 			xmlFreeNode(component);
@@ -530,17 +533,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		xmlAddChild(component, res_component_root);
 
 		xmlDOMWrapFreeCtxt(wrap_ctxt);
-	}
 
-	xmlNodePtr doc_root = xmlDocGetRootElement(doc);
-
-	if (extended)
-	{
-		// extended components always go at the end
-		xmlAddChild(doc_root, component);
-	}
-	else
-	{
 		// this component is not extended, we have to figure out if there
 		// already is an extended-component and if so, add it right before
 		// that component
@@ -555,9 +548,8 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		{
 			xmlAddPrevSibling(first_extended_component, component);
 		}
+		xmlFreeDoc(component_doc);
 	}
-
-	xmlFreeDoc(component_doc);
 
 	return 0;
 }
