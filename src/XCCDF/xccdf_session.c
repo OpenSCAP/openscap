@@ -904,19 +904,9 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 	if (session->xccdf.result_source != NULL) {
 		return 0;
 	}
-	if (session->export.xccdf_file == NULL && (session->export.report_file != NULL || session->export.arf_file != NULL))
-	{
-		if (!session->temp_dir)
-			session->temp_dir = oscap_acquire_temp_dir();
-		if (session->temp_dir == NULL)
-			return 1;
 
-		session->export.xccdf_file = malloc(PATH_MAX * sizeof(char));
-		snprintf(session->export.xccdf_file, PATH_MAX, "%s/xccdf-result.xml", session->temp_dir);
-	}
-
-	/* Export results */
-	if (session->export.xccdf_file != NULL) {
+	/* Build oscap_source of XCCDF TestResult only when needed */
+	if (session->export.xccdf_file != NULL || session->export.report_file != NULL || session->export.arf_file != NULL) {
 		if (session->xccdf.result == NULL) {
 			// Attempt to export session before evaluation
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "No XCCDF results to export.");
@@ -926,10 +916,14 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 				xccdf_result_clone(session->xccdf.result));
 		session->xccdf.result_source = xccdf_benchmark_export_source(
 				xccdf_policy_model_get_benchmark(session->xccdf.policy_model), session->export.xccdf_file);
-		if (oscap_source_save_as(session->xccdf.result_source, NULL) != 0) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
-					oscap_source_readable_origin(session->xccdf.result_source));
-			return -1;
+
+		if (session->export.xccdf_file != NULL) {
+			// Export XCCDF result file only when explicitly requested
+			if (oscap_source_save_as(session->xccdf.result_source, NULL) != 0) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
+						oscap_source_readable_origin(session->xccdf.result_source));
+				return -1;
+			}
 		}
 
 		/* validate XCCDF Results */
