@@ -388,7 +388,7 @@ static int app_info(const struct oscap_action *action)
 		// Currently, we do not have any SCE result file parsing capabilities.
 	break;
 	default:
-		printf("Could not dermine document type\n");
+		printf("Could not determine document type\n");
 		goto cleanup;
 		break;
 	}
