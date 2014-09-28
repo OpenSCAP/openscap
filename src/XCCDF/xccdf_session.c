@@ -44,6 +44,7 @@
 #include "DS/public/ds_sds_session.h"
 #include "DS/ds_common.h"
 #include "DS/ds_sds_session_priv.h"
+#include "DS/rds_priv.h"
 #include "OVAL/results/oval_results_impl.h"
 #include "source/xslt_priv.h"
 #include "XCCDF/xccdf_impl.h"
@@ -1246,10 +1247,10 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 int xccdf_session_export_arf(struct xccdf_session *session)
 {
 	if (session->export.arf_file != NULL) {
-		char* sds_path = 0;
+		struct oscap_source *sds_source = NULL;
 
 		if (xccdf_session_is_sds(session)) {
-			sds_path = strdup(oscap_source_readable_origin(session->source));
+			sds_source = session->source;
 		}
 		else {
 			if (!session->temp_dir)
@@ -1257,25 +1258,32 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 			if (session->temp_dir == NULL)
 				return 1;
 
-			sds_path = malloc(PATH_MAX * sizeof(char));
+			char *sds_path = malloc(PATH_MAX * sizeof(char));
 			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
 			ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
+			sds_source = oscap_source_new_from_file(sds_path);
+			free(sds_path);
 		}
 
-		int res = ds_rds_create(sds_path, session->export.xccdf_file, (const char**)(session->oval.result_files), session->export.arf_file);
-		free(sds_path);
-		if (res != 0) {
-			return res;
+		struct oscap_source *arf_source = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
+		if (!xccdf_session_is_sds(session)) {
+			oscap_source_free(sds_source);
+		}
+		if (arf_source == NULL) {
+			return 1;
 		}
 
+		if (oscap_source_save_as(arf_source, NULL) != 0) {
+			oscap_source_free(arf_source);
+			return 1;
+		}
 		if (session->full_validation) {
-			struct oscap_source *source = oscap_source_new_from_file(session->export.arf_file);
-			if (oscap_source_validate(source, _reporter, NULL) != 0) {
-				oscap_source_free(source);
+			if (oscap_source_validate(arf_source, _reporter, NULL) != 0) {
+				oscap_source_free(arf_source);
 				return 1;
 			}
-			oscap_source_free(source);
 		}
+		oscap_source_free(arf_source);
 	}
 	return 0;
 }
