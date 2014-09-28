@@ -645,13 +645,11 @@ static inline const char *_get_dep_xpath_for_type(int document_type)
 	return xccdf_xpath;
 }
 
-static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog, int component_type)
+static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr datastream, struct oscap_source *component_source, xmlNodePtr catalog, int component_type)
 {
-	struct oscap_source *component_source = oscap_source_new_from_file(filepath);
 	xmlDocPtr component_doc = oscap_source_get_xmlDoc(component_source);
 	if (component_doc == NULL)
 	{
-		oscap_source_free(component_source);
 		return -1;
 	}
 
@@ -659,7 +657,6 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	if (xpathCtx == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to create new XPath context.");
-		oscap_source_free(component_source);
 		return -1;
 	}
 
@@ -675,7 +672,6 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
-		oscap_source_free(component_source);
 
 		return -1;
 	}
@@ -686,7 +682,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	if (nodeset != NULL)
 	{
 		struct oscap_htable *exported = oscap_htable_new();
-		char* filepath_cpy = oscap_strdup(filepath);
+		char* filepath_cpy = oscap_strdup(oscap_source_readable_origin(component_source));
 		const char* dir = dirname(filepath_cpy);
 
 		for (int i = 0; i < nodeset->nodeNr; i++)
@@ -755,7 +751,6 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 
 				if (ret < 0) {
 					// oscap_seterr has already been called
-					oscap_source_free(component_source);
 					oscap_htable_free0(exported);
 					return -1;
 				}
@@ -769,8 +764,6 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 
 	xmlXPathFreeObject(xpathObj);
 	xmlXPathFreeContext(xpathCtx);
-
-	oscap_source_free(component_source);
 
 	return 0;
 }
@@ -848,13 +841,13 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 
 	struct oscap_source *component_source = oscap_source_new_from_file(filepath);
 	oscap_document_type_t doc_type = oscap_source_get_scap_type(component_source);
-	oscap_source_free(component_source);
 	if (doc_type == OSCAP_DOCUMENT_XCCDF)
 	{
 		cref_parent = node_get_child_element(datastream, "checklists");
-		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0)
+		if (ds_sds_compose_add_component_dependencies(doc, datastream, component_source, cref_catalog, doc_type) != 0)
 		{
 			// oscap_seterr has already been called
+			oscap_source_free(component_source);
 			return -1;
 		}
 	}
@@ -873,7 +866,8 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 				cref_parent = NULL;
 			}
 		}
-		if (ds_sds_compose_add_component_dependencies(doc, datastream, filepath, cref_catalog, doc_type) != 0) {
+		if (ds_sds_compose_add_component_dependencies(doc, datastream, component_source, cref_catalog, doc_type) != 0) {
+			oscap_source_free(component_source);
 			return -1;
 		}
 	}
@@ -887,6 +881,7 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		extended_component = true;
 		cref_parent = node_get_child_element(datastream, "extended-components");
 	}
+	oscap_source_free(component_source);
 
 	char* mangled_filepath = ds_sds_mangle_filepath(filepath);
 	// extended components (sadly :-/) use a different ID scheme and have
