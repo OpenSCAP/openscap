@@ -647,10 +647,11 @@ static inline const char *_get_dep_xpath_for_type(int document_type)
 
 static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, xmlNodePtr catalog, int component_type)
 {
-	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
+	struct oscap_source *component_source = oscap_source_new_from_file(filepath);
+	xmlDocPtr component_doc = oscap_source_get_xmlDoc(component_source);
 	if (component_doc == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to read XCCDF from file '%s' while creating source datastream.", filepath);
+		oscap_source_free(component_source);
 		return -1;
 	}
 
@@ -658,7 +659,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	if (xpathCtx == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: unable to create new XPath context.");
-		xmlFreeDoc(component_doc);
+		oscap_source_free(component_source);
 		return -1;
 	}
 
@@ -674,7 +675,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
-		xmlFreeDoc(component_doc);
+		oscap_source_free(component_source);
 
 		return -1;
 	}
@@ -754,7 +755,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 
 				if (ret < 0) {
 					// oscap_seterr has already been called
-					xmlFreeDoc(component_doc);
+					oscap_source_free(component_source);
 					oscap_htable_free0(exported);
 					return -1;
 				}
@@ -769,7 +770,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	xmlXPathFreeObject(xpathObj);
 	xmlXPathFreeContext(xpathCtx);
 
-	xmlFreeDoc(component_doc);
+	oscap_source_free(component_source);
 
 	return 0;
 }
