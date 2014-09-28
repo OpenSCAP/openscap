@@ -47,8 +47,8 @@
 #include "XCCDF/public/xccdf_benchmark.h"
 
 typedef enum oscap_source_type {
-	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML supplied by user
-	OSCAP_SRC_FROM_EXPORT_XML_DOM,                  ///< The source originated from our exporter
+	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML file supplied by user
+	OSCAP_SRC_FROM_XML_DOM,                         ///< The source originated from XML DOM (most often from DataStream).
 	// TODO: originated from bzip2ed file
 	// TODO: downloaded from an http address (XCCDF can refer to remote sources)
 } oscap_source_type_t;
@@ -79,7 +79,7 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath)
 {
 	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
-	source->origin.type = OSCAP_SRC_FROM_EXPORT_XML_DOM;
+	source->origin.type = OSCAP_SRC_FROM_XML_DOM;
 	source->origin.filepath = oscap_strdup(filepath ? filepath : "NONEXISTENT");
 	source->xml.doc = doc;
 	return source;
