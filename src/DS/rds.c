@@ -34,6 +34,7 @@
 #include "common/list.h"
 
 #include "ds_common.h"
+#include "rds_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
 
@@ -782,25 +783,34 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	return 0;
 }
 
+struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, const char *target_file)
+{
+	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
+	if (sds_doc == NULL) {
+		return NULL;
+	}
+	xmlDoc *result_file_doc = oscap_source_get_xmlDoc(xccdf_result_source);
+	if (result_file_doc == NULL) {
+		return NULL;
+	}
+
+	xmlDocPtr rds_doc = NULL;
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_sources) != 0) {
+		return NULL;
+	}
+	if (xmlSaveFileEnc(target_file, rds_doc, "utf-8") == -1)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.", target_file);
+		xmlFreeDoc(rds_doc);
+		return NULL;
+	}
+	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
+}
+
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
 {
 	struct oscap_source *sds_source = oscap_source_new_from_file(sds_file);
-	xmlDocPtr sds_doc = oscap_source_get_xmlDoc(sds_source);
-	if (!sds_doc)
-	{
-		oscap_source_free(sds_source);
-		return -1;
-	}
-
 	struct oscap_source *xccdf_result_source = oscap_source_new_from_file(xccdf_result_file);
-	xmlDocPtr result_file_doc = oscap_source_get_xmlDoc(xccdf_result_source);
-	if (!result_file_doc)
-	{
-		oscap_source_free(xccdf_result_source);
-		oscap_source_free(sds_source);
-		return -1;
-	}
-
 	struct oscap_htable *oval_result_sources = oscap_htable_new();
 
 	int result = 0;
@@ -820,20 +830,11 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 			oval_result_files++;
 		}
 	}
-
-	xmlDocPtr rds_doc = NULL;
-	// if reading OVAL docs failed at any point we won't create the RDS DOM
-	if (result == 0)
-		result = ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_sources);
-
-	// we won't even try to save the file if error happened when creating the DOM
-	if (result == 0 && xmlSaveFileEnc(target_file, rds_doc, "utf-8") == -1)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.", target_file);
-		result = -1;
+	if (result == 0) {
+		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, target_file);
+		result = target_rds == NULL;
+		oscap_source_free(target_rds);
 	}
-	xmlFreeDoc(rds_doc);
-
 	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
 	oscap_source_free(sds_source);
 	oscap_source_free(xccdf_result_source);
