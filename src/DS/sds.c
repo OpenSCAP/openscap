@@ -420,6 +420,38 @@ int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_i
 	return ds_sds_decompose_custom(input_file, id, target_dir, "checklists", xccdf_id, xccdf_filename);
 }
 
+static inline int ds_sds_compose_component_add_script_content(xmlNode *component, const char *filepath)
+{
+	FILE* f = fopen(filepath, "r");
+	if (!f) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't read plain text from file '%s'.", filepath);
+		return -1;
+	}
+
+	fseek(f, 0, SEEK_END);
+	long int length = ftell(f);
+	fseek(f, 0, SEEK_SET);
+	if (length >= 0) {
+		char* buffer = oscap_alloc((length + 1) * sizeof(char));
+		if (fread(buffer, length, 1, f) != 1) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error while reading from file '%s'.", filepath);
+			fclose(f);
+			oscap_free(buffer);
+			return -1;
+		}
+		fclose(f);
+		buffer[length] = '\0';
+		xmlNsPtr local_ns = xmlNewNs(component, BAD_CAST sce_xccdf_ns_uri, BAD_CAST "oscap-sce-xccdf-stream");
+		xmlNewTextChild(component, local_ns, BAD_CAST "script", BAD_CAST buffer);
+		oscap_free(buffer);
+		return 0;
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "No data read from file '%s'.", filepath);
+		fclose(f);
+		return -1;
+	}
+}
+
 static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id, bool extended)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
@@ -460,33 +492,8 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 			xmlFreeNode(component);
 			return -1;
 		}
-
-		FILE* f = fopen(filepath, "r");
-		if (!f) {
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't read plain text from file '%s'.", filepath);
-			return -1;
-		}
-
-		fseek(f, 0, SEEK_END);
-		long int length = ftell(f);
-		fseek(f, 0, SEEK_SET);
-		if (length >= 0) {
-			char* buffer = oscap_alloc((length + 1) * sizeof(char));
-			if (fread(buffer, length, 1, f) != 1) {
-				oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error while reading from file '%s'.", filepath);
-				fclose(f);
-				oscap_free(buffer);
-				return -1;
-			}
-			fclose(f);
-			buffer[length] = '\0';
-			xmlNsPtr local_ns = xmlNewNs(component, BAD_CAST sce_xccdf_ns_uri, BAD_CAST "oscap-sce-xccdf-stream");
-			xmlNewTextChild(component, local_ns, BAD_CAST "script", BAD_CAST buffer);
-			oscap_free(buffer);
-		}
-		else {
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "No data read from file '%s'.", filepath);
-			fclose(f);
+		if (ds_sds_compose_component_add_script_content(component, filepath) == -1) {
+			xmlFreeNode(component);
 			return -1;
 		}
 	}
