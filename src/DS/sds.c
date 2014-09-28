@@ -483,21 +483,20 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 	xmlSetProp(component, BAD_CAST "id", BAD_CAST comp_id);
 	xmlSetProp(component, BAD_CAST "timestamp", BAD_CAST file_timestamp);
 
-	xmlDocPtr component_doc = xmlReadFile(filepath, NULL, 0);
-
-	if (!component_doc)
-	{
-		if (!extended) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
-			xmlFreeNode(component);
-			return -1;
-		}
+	xmlDoc *component_doc = NULL;
+	if (extended) {
 		if (ds_sds_compose_component_add_script_content(component, filepath) == -1) {
 			xmlFreeNode(component);
 			return -1;
 		}
-	}
-	else {
+	} else {
+		component_doc = xmlReadFile(filepath, NULL, 0);
+		if (!component_doc) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
+			xmlFreeNode(component);
+			return -1;
+		}
+
 		xmlNodePtr component_root = xmlDocGetRootElement(component_doc);
 
 		xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
