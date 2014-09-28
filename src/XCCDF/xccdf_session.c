@@ -117,7 +117,6 @@ static const char *oval_sysname = "http://oval.mitre.org/XMLSchema/oval-definiti
 struct xccdf_session *xccdf_session_new(const char *filename)
 {
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
-	session->filename = strdup(filename);
 
 	session->source = oscap_source_new_from_file(filename);
 	if (oscap_source_get_scap_type(session->source) == 0) {
@@ -166,7 +165,6 @@ void xccdf_session_free(struct xccdf_session *session)
 	if (session->temp_dir != NULL)
 		oscap_acquire_cleanup_dir((char **) &(session->temp_dir));
 	oscap_source_free(session->source);
-	oscap_free(session->filename);
 	oscap_free(session->user_tailoring_file);
 	oscap_free(session->user_tailoring_cid);
 	oscap_free(session);
@@ -174,7 +172,7 @@ void xccdf_session_free(struct xccdf_session *session)
 
 const char *xccdf_session_get_filename(const struct xccdf_session *session)
 {
-	return session->filename;
+	return oscap_source_readable_origin(session->source);
 }
 
 bool xccdf_session_is_sds(const struct xccdf_session *session)
@@ -458,7 +456,8 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 			if (ds_sds_session_register_component_with_dependencies(xccdf_session_get_ds_sds_session(session),
 					"dictionaries", NULL, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't decompose CPE dictionaries from datastream '%s' "
-						"from file '%s'!\n", xccdf_session_get_datastream_id(session), session->filename);
+						"from file '%s'!\n", xccdf_session_get_datastream_id(session),
+						oscap_source_readable_origin(session->source));
 				oscap_string_iterator_free(cpe_it);
 				return 1;
 			}
@@ -837,7 +836,7 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 		return 1;
 
 	/* Write results into XCCDF Test Result model */
-	xccdf_result_set_benchmark_uri(session->xccdf.result, session->filename);
+	xccdf_result_set_benchmark_uri(session->xccdf.result, oscap_source_readable_origin(session->source));
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(session->xccdf.result, title);
@@ -1250,7 +1249,7 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 		char* sds_path = 0;
 
 		if (xccdf_session_is_sds(session)) {
-			sds_path = strdup(session->filename);
+			sds_path = strdup(oscap_source_readable_origin(session->source));
 		}
 		else {
 			if (!session->temp_dir)
@@ -1260,7 +1259,7 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 
 			sds_path = malloc(PATH_MAX * sizeof(char));
 			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
-			ds_sds_compose_from_xccdf(session->filename, sds_path);
+			ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
 		}
 
 		int res = ds_rds_create(sds_path, session->export.xccdf_file, (const char**)(session->oval.result_files), session->export.arf_file);
