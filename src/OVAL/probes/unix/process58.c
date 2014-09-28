@@ -207,19 +207,11 @@ static int get_uids(int pid, struct result_info *r)
 	snprintf(buf, sizeof(buf), "/proc/%d/loginuid", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
-		fscanf(sf, "%u", &r->loginuid);
+		if (fscanf(sf, "%u", &r->loginuid) < 1) {
+			dW("fscanf failed from %s\n", buf);
+		}
 		fclose(sf);
 	}
-
-	/* we get session id from /pros/id/stat (same as ps) */
-	/*
-	snprintf(buf, sizeof(buf), "/proc/%d/sessionid", pid);
-	sf = fopen(buf, "rt");
-	if (sf) {
-		fscanf(sf, "%d", &r->session_id);
-		fclose(sf);
-	}
-	*/
 
 	return 0;
 }
