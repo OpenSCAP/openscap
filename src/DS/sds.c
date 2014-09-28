@@ -939,9 +939,10 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended)
 {
-	xmlDocPtr doc = xmlReadFile(target_datastream, NULL, 0);
+	struct oscap_source *sds_source = oscap_source_new_from_file(target_datastream);
+	xmlDoc *doc = oscap_source_get_xmlDoc(sds_source);
 	if (doc == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", target_datastream);
+		oscap_source_free(sds_source);
 		return 1;
 	}
 	xmlNodePtr datastream = ds_sds_lookup_datastream_in_collection(doc, datastream_id);
@@ -952,7 +953,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		xmlFreeDoc(doc);
+		oscap_source_free(sds_source);
 		return 1;
 	}
 
@@ -962,6 +963,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	oscap_free(mangled_path);
 	if (ds_sds_compose_add_component_with_ref(doc, datastream, new_component, cref_id) != 0) {
 		oscap_free(cref_id);
+		oscap_source_free(sds_source);
 		return 1;
 	}
 	oscap_free(cref_id);
@@ -969,10 +971,10 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	if (xmlSaveFileEnc(target_datastream, doc, "utf-8") == -1)
 	{
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error saving source datastream to '%s'.", target_datastream);
-		xmlFreeDoc(doc);
+		oscap_source_free(sds_source);
 		return 1;
 	}
-	xmlFreeDoc(doc);
+	oscap_source_free(sds_source);
 	return 0;
 }
 
