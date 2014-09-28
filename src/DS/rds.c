@@ -783,18 +783,20 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
 {
-	xmlDocPtr sds_doc = xmlReadFile(sds_file, NULL, 0);
+	struct oscap_source *sds_source = oscap_source_new_from_file(sds_file);
+	xmlDocPtr sds_doc = oscap_source_get_xmlDoc(sds_source);
 	if (!sds_doc)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read source datastream from '%s'.", sds_file);
+		oscap_source_free(sds_source);
 		return -1;
 	}
 
-	xmlDocPtr result_file_doc = xmlReadFile(xccdf_result_file, NULL, 0);
+	struct oscap_source *xccdf_result_source = oscap_source_new_from_file(xccdf_result_file);
+	xmlDocPtr result_file_doc = oscap_source_get_xmlDoc(xccdf_result_source);
 	if (!result_file_doc)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read XCCDF result file document from '%s'.", xccdf_result_file);
-		xmlFreeDoc(sds_doc);
+		oscap_source_free(xccdf_result_source);
+		oscap_source_free(sds_source);
 		return -1;
 	}
 
@@ -845,8 +847,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 
 	oscap_free(oval_result_docs);
 
-	xmlFreeDoc(sds_doc);
-	xmlFreeDoc(result_file_doc);
+	oscap_source_free(sds_source);
+	oscap_source_free(xccdf_result_source);
 
 	return result;
 }
