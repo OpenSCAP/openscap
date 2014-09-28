@@ -33,10 +33,15 @@
 /**
  * The ds_sds_session is structure tight closely to oscap_source.
  *
- * The ds_sds_session represents resource for further processing representing
- * Source DataStream (file). The ds_sds_session can be decomposed into multiple
- * oscap_source structures.
+ * The ds_sds_session represents opened DataStream collection file.
+ * It caches certain data to facilitate common queries and use cases
+ * of DataStream consumers. The ds_sds_session caches DataStream
+ * components in a form of oscap_source structure.
  *
+ * The cache relates to selected XCCDF component and selected CPE
+ * dictionaries. When another XCCDF is selected, the cache needs to
+ * be invalidated. All cached oscap_sources are owned by ds_sds_session.
+ * The reset function will invalidate user pointers to them.
  */
 struct ds_sds_session;
 

@@ -34,19 +34,20 @@
  * OpenSCAP library.
  *
  * The oscap_source may refer to a DataStream, a component of datastream,
- * an XCCDF or OVAL file, or any other SCAP or SCE file.
+ * an XCCDF or OVAL file, or any other SCAP file.
  *
  * The oscap_source is primarily focused to solve problems regarding parsing
  * and serialization of SCAP files. The structure shall not know much about
- * relation to other sources. The relations between sources should be
- * delegated to oscap_source_set.
+ * relation to other sources.
+ *
+ * For handling relations between oscap_sources users are adviced to use
+ * ds_sds_session. For example, if the oscap_source originated from DataStream
+ * file there may be other oscap_sources that represent the components of
+ * DataStream. These oscap_sources would be managed by ds_sds_session.
  *
  * The oscap_source keeps track of its origin (i.e. XCCDF file may originate
  * by openning an XCCDF file, extracting XCCDF section from DataStream or
  * by evaluation.
- *
- * If oscap_source originated from DataStream there wil be other oscap_sources
- * which will keep track of the datastream descendants.
  *
  * The oscap_source is lazy structure, it only does its job when it has to.
  * The structure caches data whenever it is feasible.
