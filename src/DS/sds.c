@@ -957,8 +957,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	}
 	oscap_free(cref_id);
 
-	if (xmlSaveFileEnc(target_datastream, doc, "utf-8") == -1)
-	{
+	if (oscap_source_save_as(sds_source, NULL) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error saving source datastream to '%s'.", target_datastream);
 		oscap_source_free(sds_source);
 		return 1;
