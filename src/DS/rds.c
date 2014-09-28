@@ -1,5 +1,5 @@
 /*
- * Copyright 2012--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -33,6 +33,8 @@
 #include "common/util.h"
 
 #include "ds_common.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #include <sys/stat.h>
 #include <time.h>
@@ -188,10 +190,11 @@ static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const 
 
 int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
 {
-	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
+	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
+	xmlDocPtr doc = oscap_source_get_xmlDoc(rds_source);
 
 	if (!doc) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", input_file);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -203,7 +206,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		xmlFreeDoc(doc);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -212,7 +215,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	if (ds_common_mkdir_p(target_dir) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't decompose RDS '%s' to target directory '%s'. "
 			"Failed to create given directory!", input_file, target_dir);
-		xmlFreeDoc(doc);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -228,7 +231,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		xmlFreeDoc(doc);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -236,7 +239,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	ds_rds_dump_arf_content(doc, request_node, target_request_file);
 	oscap_free(target_request_file);
 
-	xmlFreeDoc(doc);
+	oscap_source_free(rds_source);
 	return 0;
 }
 
