@@ -157,9 +157,6 @@ void xccdf_session_free(struct xccdf_session *session)
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
 	oscap_source_free(session->xccdf.result_source);
-	if (session->ds.session == NULL) {
-		oscap_source_free(session->xccdf.source);
-	}
 	if (session->xccdf.policy_model != NULL)
 		xccdf_policy_model_free(session->xccdf.policy_model);
 	oscap_free(session->ds.user_datastream_id);
@@ -377,10 +374,7 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		xccdf_policy_model_free(session->xccdf.policy_model);
 		session->xccdf.policy_model = NULL;
 	}
-	if (session->ds.session == NULL) {
-		oscap_source_free(session->xccdf.source);
-		session->xccdf.source = NULL;
-	}
+	session->xccdf.source = NULL;
 
 	if (xccdf_session_is_sds(session)) {
 		if (session->validate) {
@@ -399,7 +393,7 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		}
 	}
 	else {
-		session->xccdf.source = oscap_source_new_from_file(session->filename);
+		session->xccdf.source = session->source;
 	}
 
 
