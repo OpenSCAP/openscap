@@ -875,7 +875,7 @@ static size_t _paramlist_cpy(const char **to, const char **p) {
 	return s;
 }
 
-static int _app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params)
+static int _app_xslt(struct oscap_source *infile, const char *xsltfile, const char *outfile, const char **params)
 {
 	char pwd[PATH_MAX];
 
@@ -890,13 +890,10 @@ static int _app_xslt(const char *infile, const char *xsltfile, const char *outfi
 	size_t s = _paramlist_cpy(par, params);
 	s += _paramlist_cpy(par + s, stdparams);
 
-	struct oscap_source *source = oscap_source_new_from_file(infile);
-	int ret = oscap_source_apply_xslt_path(source, xsltfile, outfile, par, oscap_path_to_xslt())
-	oscap_source_free(source);
-	return ret == -1;
+	return oscap_source_apply_xslt_path(infile, xsltfile, outfile, par, oscap_path_to_xslt()) == -1;
 }
 
-static inline int _xccdf_gen_report(const char *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile)
+static inline int _xccdf_gen_report(struct oscap_source *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile)
 {
 	const char *params[] = {
 		"result-id",		id,
@@ -964,7 +961,7 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 
 	/* generate report */
 	if (session->export.report_file != NULL)
-		_xccdf_gen_report(session->export.xccdf_file,
+		_xccdf_gen_report(session->xccdf.result_source,
 				xccdf_result_get_id(session->xccdf.result),
 				session->export.report_file,
 				"",
