@@ -402,6 +402,15 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
 ],[
 	AC_MSG_NOTICE([!!! librpm not found. The rpmvercmp function will be emulated. !!!])
 ])
+echo
+echo '* Checking for bz2 library (optional dependency of libopenscap)'
+AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
+	[
+	        AC_DEFINE([HAVE_BZ2], [1], [Define to 1 if there is libbz2 available.])
+	        LIBS="$LIBS -lbz2"
+	],[
+	        AC_MSG_NOTICE([!!! libbz2 not found. Bzip2 support will be disabled !!!])
+	])
 
 
 SAVE_CPPFLAGS="$CPPFLAGS"
