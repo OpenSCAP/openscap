@@ -41,6 +41,7 @@
 #include "oscap_source_priv.h"
 #include "OVAL/oval_parser_impl.h"
 #include "OVAL/public/oval_definitions.h"
+#include "source/bz2_priv.h"
 #include "source/schematron_priv.h"
 #include "source/validate_priv.h"
 #include "XCCDF/elements.h"
@@ -49,7 +50,6 @@
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML file supplied by user
 	OSCAP_SRC_FROM_XML_DOM,                         ///< The source originated from XML DOM (most often from DataStream).
-	// TODO: originated from bzip2ed file
 	// TODO: downloaded from an http address (XCCDF can refer to remote sources)
 } oscap_source_type_t;
 
@@ -138,10 +138,17 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 {
 	if (source->xml.doc == NULL) {
-		source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
-		if (source->xml.doc == NULL) {
-			oscap_setxmlerr(xmlGetLastError());
-			oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+#ifdef HAVE_BZ2
+		if (bz2_is_file_bzip(source->origin.filepath)) {
+			source->xml.doc = bz2_read_doc(source->origin.filepath);
+		} else
+#endif
+		{
+			source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
+			if (source->xml.doc == NULL) {
+				oscap_setxmlerr(xmlGetLastError());
+				oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+			}
 		}
 	}
 	return source->xml.doc;
