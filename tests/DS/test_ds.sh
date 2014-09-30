@@ -42,7 +42,7 @@ sds_add_multiple_twice(){
 	diff $stderr /dev/null
 	popd
 
-	# Add the very same XXCDF file again with two OVAL files
+	# Add the very same XCCDF file again with two OVAL files
 	local ADD_DIR="$(mktemp -d)"
 	cp ${DIR}/*.xml ${ADD_DIR}
 	chmod u+w ${ADD_DIR}/* # distcheck shall be able to unlink these files (without --force)
