@@ -63,22 +63,22 @@ static struct bz2_file *bz2_open(const char *filename)
 }
 
 //xmlInputReadCallback
-static int bz2_read(void *bzfile, char *buffer, int len)
+static int bz2_read(struct bz2_file *bzfile, char *buffer, int len)
 {
 	int bzerror;
-	if (((struct bz2_file *)bzfile)->eof) {
+	if (bzfile->eof) {
 		// If we run bzRead on closed file we will get SEQUENCE_ERROR
 		return 0;
 	}
-	int size = BZ2_bzRead(&bzerror, ((struct bz2_file *)bzfile)->file, buffer, len);
+	int size = BZ2_bzRead(&bzerror, (bzfile)->file, buffer, len);
 	if (bzerror == BZ_STREAM_END) {
-		((struct bz2_file*)bzfile)->eof = true;
+		bzfile->eof = true;
 	}
 	if (bzerror == BZ_OK || bzerror == BZ_STREAM_END)
 		return size;
 	else {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not read from bZ2FILE: %s",
-				BZ2_bzerror(((struct bz2_file *)bzfile)->file, &bzerror));
+				BZ2_bzerror(bzfile->file, &bzerror));
 		return -1;
 	}
 }
@@ -98,7 +98,7 @@ xmlDoc *bz2_read_doc(const char *filepath)
 	if (bzfile == NULL) {
 		return NULL;
 	}
-	return xmlReadIO(bz2_read, bz2_close, bzfile, "url", NULL, XML_PARSE_PEDANTIC);
+	return xmlReadIO((xmlInputReadCallback) bz2_read, bz2_close, bzfile, "url", NULL, XML_PARSE_PEDANTIC);
 }
 
 bool bz2_is_file_bzip(const char *filepath)
