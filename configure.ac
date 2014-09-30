@@ -1449,6 +1449,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/variable_instance/Makefile
 
                  tests/schemas/Makefile
+		tests/bz2/Makefile
 		tests/codestyle/Makefile
 
                  src/SCE/Makefile
