@@ -1,6 +1,5 @@
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-	     $(top_srcdir)/tests/assume.h
 
 DISTCLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)
 CLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)
