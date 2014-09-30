@@ -37,6 +37,7 @@
 
 struct bz2_file {
 	BZFILE *file;
+	bool eof;
 };
 
 static struct bz2_file *bz2_open(const char *filename)
@@ -57,6 +58,7 @@ static struct bz2_file *bz2_open(const char *filename)
 			b = NULL;
 		}
 	}
+	b->eof = false;
 	return b;
 }
 
@@ -64,7 +66,14 @@ static struct bz2_file *bz2_open(const char *filename)
 static int bz2_read(void *bzfile, char *buffer, int len)
 {
 	int bzerror;
+	if (((struct bz2_file *)bzfile)->eof) {
+		// If we run bzRead on closed file we will get SEQUENCE_ERROR
+		return 0;
+	}
 	int size = BZ2_bzRead(&bzerror, ((struct bz2_file *)bzfile)->file, buffer, len);
+	if (bzerror == BZ_STREAM_END) {
+		((struct bz2_file*)bzfile)->eof = true;
+	}
 	if (bzerror == BZ_OK || bzerror == BZ_STREAM_END)
 		return size;
 	else {
