@@ -12,7 +12,9 @@ TESTS_ENVIRONMENT= \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
+if HAVE_BZIP2
 TESTS = all.sh
+endif
 
 EXTRA_DIST += \
 	all.sh \
