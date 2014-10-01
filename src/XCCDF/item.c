@@ -345,11 +345,14 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 {
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(item);
 
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 	xmlNode *item_node = NULL;
-	if (parent == NULL)
-		item_node = xmlNewNode(NULL, BAD_CAST "Item");
+	if (parent == NULL) {
+		item_node = xmlNewNode(ns_xccdf, BAD_CAST "Item");
+		if (item_node->nsDef == NULL) {
+			item_node->nsDef = ns_xccdf;
+		}
+	}
 	else
 		item_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
 
@@ -447,7 +450,8 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		while (oscap_string_iterator_has_more(metadata))
 		{
 			const char* meta = oscap_string_iterator_next(metadata);
-			oscap_xmlstr_to_dom(item_node, "metadata", meta);
+			xmlNode *m = oscap_xmlstr_to_dom(item_node, "metadata", meta);
+			xmlSetNs(m, ns_xccdf);
 		}
 		oscap_string_iterator_free(metadata);
     }
@@ -512,8 +516,7 @@ xmlNode *xccdf_warning_to_dom(struct xccdf_warning *warning, xmlDoc *doc, xmlNod
 
 xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *status_node = NULL;
 	xccdf_status_type_t type = xccdf_status_get_status(status);
@@ -558,9 +561,11 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	return fixtext_node;
 }
 
-xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
 	xmlNode *fix_node = oscap_xmlstr_to_dom(parent, "fix", xccdf_fix_get_content(fix));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
+	xmlSetNs(fix_node, ns_xccdf);
 
 	const char *id = xccdf_fix_get_id(fix);
 	if (id != NULL) xmlNewProp(fix_node, BAD_CAST "id", BAD_CAST id);
@@ -598,8 +603,7 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 
 xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	const char *id = xccdf_ident_get_id(ident);
 	xmlNode *ident_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "ident", BAD_CAST id);
@@ -612,8 +616,7 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 
 xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *check_node = NULL;
 	if (xccdf_check_get_complex(check))

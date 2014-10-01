@@ -46,6 +46,7 @@
 
 #include "oscap-tool.h"
 #include "oscap.h"
+#include "oscap_source.h"
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
@@ -652,7 +653,6 @@ cleanup:
 
 int app_xccdf_resolve(const struct oscap_action *action)
 {
-	char *doc_version = NULL;
 	int ret = OSCAP_ERROR;
 	struct xccdf_benchmark *bench = NULL;
 
@@ -665,20 +665,17 @@ int app_xccdf_resolve(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 	/* validate input */
 	if (action->validate) {
-		doc_version = xccdf_detect_version(action->f_xccdf);
-		if (!doc_version) {
-			return OSCAP_ERROR;
-		}
-
-		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action) != 0) {
-			validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
+			oscap_source_free(source);
 			goto cleanup;
 		}
 	}
 
-	bench = xccdf_benchmark_import(action->f_xccdf);
+	bench = xccdf_benchmark_import_source(source);
+	oscap_source_free(source);
 	if (!bench)
 		goto cleanup;
 
@@ -692,20 +689,19 @@ int app_xccdf_resolve(const struct oscap_action *action)
 			fprintf(stderr, "Benchmark resolving failure (probably a dependency loop)!\n");
 		else
 		{
-			if (xccdf_benchmark_export(bench, action->f_results)) {
+			if (xccdf_benchmark_export(bench, action->f_results) == 0) {
 				ret = OSCAP_OK;
 
 				/* validate exported results */
 				const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 				if (action->validate && full_validation) {
-					/* reuse doc_version from unresolved document
-					   it should be same in resolved one */
-					if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action)) {
-						validation_failed(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version);
+					struct oscap_source *result_source = oscap_source_new_from_file(action->f_results);
+					if (oscap_source_validate(result_source, reporter, (void *) action) != 0) {
 						ret = OSCAP_ERROR;
 					}
 					else
 						fprintf(stdout, "Resolved XCCDF has been exported correctly.\n");
+					oscap_source_free(result_source);
 				}
 			}
 		}
@@ -715,13 +711,11 @@ cleanup:
 	oscap_print_error();
 	if (bench)
 		xccdf_benchmark_free(bench);
-	if (doc_version)
-		free(doc_version);
 
 	return ret;
 }
 
-static bool _some_oval_result_exists(const char *filename)
+static bool _some_oval_result_exists(struct oscap_source *xccdf_source)
 {
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
@@ -730,7 +724,7 @@ static bool _some_oval_result_exists(const char *filename)
 	char *oval_result = NULL;
 	bool result = false;
 
-	benchmark = xccdf_benchmark_import(filename);
+	benchmark = xccdf_benchmark_import_source(xccdf_source);
 	if (benchmark == NULL)
 		return false;
 
@@ -837,12 +831,14 @@ int app_xccdf_xslt(const struct oscap_action *action)
 
 	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL) {
 		/* If generating the report and the option is missing -> use defaults */
-		if (_some_oval_result_exists(action->f_xccdf))
+		struct oscap_source *xccdf_source = oscap_source_new_from_file(action->f_xccdf);
+		if (_some_oval_result_exists(xccdf_source))
 			/* We want to define default template because we strive to serve user the
 			 * best. However, we must not offer a template, if there is a risk it might
 			 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
 			 * to stderr. */
 			oval_template = "%.result.xml";
+		oscap_source_free(xccdf_source);
 	}
 
 	if (action->module == &XCCDF_GEN_CUSTOM) {
@@ -1024,17 +1020,11 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 
 int app_xccdf_validate(const struct oscap_action *action) {
 	int ret;
-	char *doc_version;
 	int result;
 
 
-	doc_version = xccdf_detect_version(action->f_xccdf);
-        if (!doc_version) {
-                result = OSCAP_ERROR;
-                goto cleanup;
-        }
-
-        ret=oscap_validate_document(action->f_xccdf, action->doctype, doc_version, reporter, (void*)action);
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+	ret = oscap_source_validate(source, reporter, (void *) action);
         if (ret==-1) {
                 result=OSCAP_ERROR;
                 goto cleanup;
@@ -1046,22 +1036,17 @@ int app_xccdf_validate(const struct oscap_action *action) {
                 result=OSCAP_OK;
 
 	if (action->schematron) {
-		ret = oscap_schematron_validate_document(action->f_xccdf, action->doctype, doc_version, NULL);
+		ret = oscap_source_validate_schematron(source, NULL);
 		if (ret == -1) {
 			result = OSCAP_ERROR;
 		} else if (ret > 0) {
 			result = OSCAP_FAIL;
 		}
 	}
-
-        if (result==OSCAP_FAIL)
-		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+	oscap_source_free(source);
 
 cleanup:
 	oscap_print_error();
-
-        if (doc_version)
-		free(doc_version);
 
         return result;
 

@@ -40,6 +40,7 @@
 #include "oval_agent_api_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_state {
 	struct oval_definition_model *model;
@@ -273,7 +274,7 @@ static void _oval_note_consumer(char *text, void *state)
 static int _oval_state_parse_notes(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_state *state = (struct oval_state *)user;
-	return oval_parser_text_value(reader, context, _oval_note_consumer, state);
+	return oscap_parser_text_value(reader, _oval_note_consumer, state);
 }
 
 static void _oval_state_content_consumer(struct oval_state_content *content, struct oval_state *state) {

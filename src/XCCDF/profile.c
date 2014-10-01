@@ -57,8 +57,7 @@ struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader)
 
 xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *setvalue_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "set-value",  BAD_CAST setvalue->value);
 
@@ -303,8 +302,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 {
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(profile));
 
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	/* Handle attributes */
 	if (xccdf_profile_get_abstract(profile))

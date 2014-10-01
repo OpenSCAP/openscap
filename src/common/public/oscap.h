@@ -126,8 +126,10 @@ typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *a
  * @param reporter A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
  * @param arg Argument for the reporter.
  * @return 0 on pass; -1 error; 1 fail
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oscap_source_validate instead.
  */
-int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg);
+OSCAP_DEPRECATED(int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg));
 
 /**
  * Validate a SCAP document file against schematron rules.
@@ -140,8 +142,10 @@ int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, 
  * @param version Version of the document, use NULL for library's default.
  * @param outfile Report from schematron validation is written into the outfile. If NULL, stdou will be used.
  * @return 0 on pass; <0 error; >0 fail
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oscap_source_validate_schematron instead.
  */
-int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile);
+OSCAP_DEPRECATED(int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile));
 
 /**
  * Apply a XSLT stylesheet to a XML file.
@@ -177,8 +181,10 @@ const char * oscap_path_to_cpe(void);
 
 /**
  * Determine document type
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oscap_source_get_scap_type instead.
  */
-int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type);
+OSCAP_DEPRECATED(int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type));
 
 /************************************************************/
 /** @} validation group end */

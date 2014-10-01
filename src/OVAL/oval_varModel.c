@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -43,6 +43,8 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 typedef struct _oval_variable_model_frame {
 	char *id;
@@ -282,7 +284,6 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	context.variable_model = model;
 	context.reader = reader;
 	context.user_data = user_param;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	bool is_variables = (strcmp(NAMESPACE_VARIABLES, namespace) == 0) && (strcmp(OVAL_ROOT_ELM_VARIABLES, tagname) == 0);
@@ -298,26 +299,32 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	return return_code;
 }
 
-struct oval_variable_model * oval_variable_model_import(const char *file)
+struct oval_variable_model *oval_variable_model_import_source(struct oscap_source *source)
 {
 	int ret;
-	struct oval_variable_model * model;
-
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
+		oscap_source_free(source);
                 return NULL;
 	}
 
 	xmlTextReaderRead(reader);
-	model = oval_variable_model_new();
+	struct oval_variable_model *model = oval_variable_model_new();
 	ret = _oval_variable_model_parse(model, reader, NULL);
 	if (ret != 1) {
 		oval_variable_model_free(model);
 		model = NULL;
 	}
 	xmlFreeTextReader(reader);
+	return model;
 
+}
+
+struct oval_variable_model * oval_variable_model_import(const char *file)
+{
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct oval_variable_model *model = oval_variable_model_import_source(source);
+	oscap_source_free(source);
 	return model;
 }
 
@@ -335,14 +342,12 @@ static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable
 		xmlDocSetRootElement(doc, root_node);
 	}
 
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST OVAL_VAR_SCHEMA_LOCATION);
+	xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST OVAL_VAR_SCHEMA_LOCATION);
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_variables = xmlNewNs(root_node, OVAL_VARIABLES_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
-	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_variables);
 
 	oval_generator_to_dom(variable_model->generator, doc, root_node);
@@ -391,7 +396,7 @@ int oval_variable_model_export(struct oval_variable_model *model, const char *fi
 	}
 
 	oval_variable_model_to_dom(model, doc, NULL, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 bool oval_variable_model_has_variable(struct oval_variable_model *model, const char * id)

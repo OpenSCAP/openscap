@@ -32,6 +32,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <libxml/tree.h>
 
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024
@@ -68,4 +69,30 @@ int ds_common_mkdir_p(const char* path)
 
 		return 0;
 	}
+}
+
+xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent)
+{
+	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
+	xmlNodePtr res_node = NULL;
+	if (xmlDOMWrapCloneNode(wrap_ctxt, parent, node, &res_node, new_doc, NULL, 1, 0) != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node '%s' while dumping component "
+				"from DataStream", node->name);
+			xmlFreeDoc(new_doc);
+			xmlDOMWrapFreeCtxt(wrap_ctxt);
+			return NULL;
+	}
+	xmlDocSetRootElement(new_doc, res_node);
+	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces "
+				"for node '%s' while dumping component.", node->name);
+		xmlFreeDoc(new_doc);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+		return NULL;
+	}
+	xmlDOMWrapFreeCtxt(wrap_ctxt);
+	return new_doc;
 }

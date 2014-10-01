@@ -190,8 +190,7 @@ static void xccdf_unit_node(struct oscap_list *list, xccdf_value_type_t type, co
 void xccdf_value_to_dom(struct xccdf_value *value, xmlNode *value_node, xmlDoc *doc, xmlNode *parent)
 {
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(value));
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	/* Handle Attributes */
 	const char *extends = xccdf_value_get_extends(value);

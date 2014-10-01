@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #include "oval_system_characteristics_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_message {
 	void *model;
@@ -140,7 +141,7 @@ int oval_message_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	/* message->level */
 	oval_message_set_level(message, oval_message_level_parse(reader, "level", OVAL_MESSAGE_LEVEL_INFO));
 	/* message->text */
-	return_code = oval_parser_text_value(reader, context, &oval_message_parse_tag_consumer, message);
+	return_code = oscap_parser_text_value(reader, &oval_message_parse_tag_consumer, message);
 
         if (return_code == 0)
 		(*consumer) (message, client);

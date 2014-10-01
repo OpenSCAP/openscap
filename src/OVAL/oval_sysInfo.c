@@ -40,6 +40,7 @@
 #include "oval_agent_api_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_sysinfo {
 	struct oval_syschar_model *model;
@@ -252,13 +253,13 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_c
 
 	int is_ovalsys = strcmp((const char *)OVAL_SYSCHAR_NAMESPACE, namespace) == 0;
 	if (is_ovalsys && (strcmp(tagname, "os_name") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
+		return_code = oscap_parser_text_value(reader, &_oval_sysinfo_parse_tag_consume_os_name, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "os_version") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
+		return_code = oscap_parser_text_value(reader, &_oval_sysinfo_parse_tag_consume_os_version, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "architecture") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
+		return_code = oscap_parser_text_value(reader, &_oval_sysinfo_parse_tag_consume_os_architecture, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "primary_host_name") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_sysinfo_parse_tag_consume_primary_host_name, sysinfo);
+		return_code = oscap_parser_text_value(reader,  &_oval_sysinfo_parse_tag_consume_primary_host_name, sysinfo);
 	} else if (is_ovalsys && (strcmp(tagname, "interfaces") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysinfo_parse_tag_parse_tag, sysinfo);
 	} else {

@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/OVAL/public \
 	-I$(top_srcdir)/src/XCCDF/public \
 	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/source/public \
 	-I$(top_srcdir)/tests/include \
 	@xml2_CFLAGS@
 

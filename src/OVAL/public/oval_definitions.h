@@ -14,7 +14,7 @@
  */
 
 /*
- * Copyright 2009-2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009-2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -39,6 +39,8 @@
 #ifndef OVAL_DEFINITIONS
 #define OVAL_DEFINITIONS
 
+#include "oscap.h"
+#include "oscap_source.h"
 #include "oval_adt.h"
 #include "oval_types.h"
 #include "oval_version.h"
@@ -591,13 +593,24 @@ void oval_generator_set_timestamp(struct oval_generator *generator, char *timest
  * @memberof oval_definition_model
  */
 struct oval_definition_model *oval_definition_model_new(void);
+
+/**
+ * Import the content of the oscap_source into the oval_definition_model
+ * @memberof oval_definition_model
+ * @param source The oscap_source to import from
+ * @returns newly build oval_definition_model, or NULL if something went wrong
+ */
+struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source);
+
 /**
  * Import the content from the file into an oval_definition_model.
  * @param file filename
  * @return new oval_definition_model, or NULL if an error occurred
  * @memberof oval_definition_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_definition_model_import_source instead.
  */
-struct oval_definition_model * oval_definition_model_import(const char *file);
+OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(const char *file));
 
 /**
  * Merge the content from the file with specified oval_definition_model.
@@ -606,8 +619,10 @@ struct oval_definition_model * oval_definition_model_import(const char *file);
  * @param file filename 
  * @return -1 if an error occurred
  * @memberof oval_definition_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases.
  */
-int oval_definition_model_merge(struct oval_definition_model *model, const char *file);
+OSCAP_DEPRECATED(int oval_definition_model_merge(struct oval_definition_model *model, const char *file));
 
 /**
  * Copy an oval_definition_model.
@@ -3147,8 +3162,10 @@ int oval_component_iterator_remaining(struct oval_component_iterator *);
  * Returns the version of the schema this document should be validated against
  *
  * Deallocate the result after use with "free(..)".
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char *oval_determine_document_schema_version(const char *, oscap_document_type_t);
+OSCAP_DEPRECATED(char *oval_determine_document_schema_version(const char *, oscap_document_type_t));
 
 /**
  * @} END OVAL

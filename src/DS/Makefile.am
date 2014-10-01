@@ -3,9 +3,14 @@ noinst_LTLIBRARIES = libds.la
 
 libds_la_SOURCES = ds_common.c \
 		   ds_common.h \
+		   ds_sds_session.c \
+		   ds_sds_session_priv.h \
 		   sds.c \
+		   sds_priv.h \
 		   sds_index.c \
+		   sds_index_priv.h \
 		   rds.c \
+		   rds_priv.h \
 		   rds_index.c
 
 libds_la_CPPFLAGS  = @xml2_CFLAGS@ \
@@ -17,9 +22,12 @@ libds_la_CPPFLAGS  = @xml2_CFLAGS@ \
 		     -I$(top_srcdir)/src/CPE/public \
 		     -I$(top_srcdir)/src/common \
 		     -I$(top_srcdir)/src/common/public \
+		     -I$(top_srcdir)/src/source/public \
 		     -I$(top_srcdir)/lib
 
 libds_la_LDFLAGS = @xml2_LIBS@
 
-pkginclude_HEADERS  = public/scap_ds.h
+pkginclude_HEADERS = \
+	public/ds_sds_session.h \
+	public/scap_ds.h
 

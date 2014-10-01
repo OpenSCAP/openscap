@@ -13,7 +13,7 @@
  */
 
 /*
- * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,8 @@
 #ifndef OVAL_DIRECTIVES_H_
 #define OVAL_DIRECTIVES_H_
 
+#include "oscap.h"
+#include "oscap_source.h"
 #include "oval_types.h"
 
 /**
@@ -64,10 +66,20 @@ struct oval_directives_model *oval_directives_model_new(void);
  * @memberof oval_directives_model
  */
 void oval_directives_model_free(struct oval_directives_model *);
+
 /**
+ * Import the data from oscap_source to the directives model.
  * @memberof oval_directives_model
  */
-int oval_directives_model_import(struct oval_directives_model *, char *);
+int oval_directives_model_import_source(struct oval_directives_model *model, struct oscap_source *source);
+
+/**
+ * @memberof oval_directives_model
+ * @deprecated This function has been deprecated and it may be dropped from later
+ * OpenSCAP releases. Please use oval_directives_model_import_source instead.
+ */
+OSCAP_DEPRECATED(int oval_directives_model_import(struct oval_directives_model *, char *));
+
 /**
  * @memberof oval_directives_model
  */

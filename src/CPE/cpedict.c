@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,24 +40,40 @@
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 #include "common/elements.h"
+#include "common/xmltext_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 #include <string.h>
 
 #define CPE_DICT_SUPPORTED "2.3"
+
+struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source)
+{
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+	if (reader == NULL) {
+		return NULL;
+	}
+	struct cpe_dict_model *dict = NULL;
+	struct cpe_parser_ctx *ctx = cpe_parser_ctx_from_reader(reader);
+	if (ctx) {
+		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
+		dict = cpe_dict_model_parse(ctx);
+		if (dict != NULL) {
+			dict->origin_file = oscap_strdup(oscap_source_readable_origin(source));
+		}
+	}
+	cpe_parser_ctx_free(ctx);
+	xmlFreeTextReader(reader);
+	return dict;
+}
 
 struct cpe_dict_model *cpe_dict_model_import(const char *file)
 {
 	__attribute__nonnull__(file);
 
-	if (file == NULL)
-		return NULL;
-
-	struct cpe_dict_model *dict;
-
-	if ((dict = cpe_dict_model_parse_xml(file)) == NULL)
-		return NULL;
-
-	dict->origin_file = oscap_strdup(file);
-
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
+	oscap_source_free(source);
 	return dict;
 }
 
@@ -195,18 +211,9 @@ const char * cpe_dict_model_supported(void)
         return CPE_DICT_SUPPORTED;
 }
 
-char * cpe_dict_detect_version(const char* file)
+char *cpe_dict_detect_version_priv(xmlTextReader *reader)
 {
-	xmlTextReaderPtr reader;
 	char *version = NULL;
-
-	reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
-		return NULL;
-	}
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1
 	       && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
@@ -234,9 +241,7 @@ char * cpe_dict_detect_version(const char* file)
 
 			elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 			if (!strcmp(elm_name, "schema_version")) {
-				xmlChar* inner = xmlTextReaderReadString(reader);
-				version = oscap_strdup((const char *)inner);
-				xmlFree(inner);
+				version = oscap_element_string_copy(reader);
 				break;
 			}
 		}
@@ -247,8 +252,18 @@ char * cpe_dict_detect_version(const char* file)
 			version = oscap_strdup("2.3");
 		}
 	}
+	return version;
+}
 
+char * cpe_dict_detect_version(const char* file)
+{
+	char *version = NULL;
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
+	if (reader != NULL) {
+		version = cpe_dict_detect_version_priv(reader);
+	}
 	xmlFreeTextReader(reader);
-
+	oscap_source_free(source);
 	return version;
 }

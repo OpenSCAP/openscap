@@ -11,7 +11,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #include "oscap.h"
 #include "cpe_name.h"
 #include "oscap_text.h"
+#include "oscap_source.h"
 
 /**
  * @struct cpe_dict_model
@@ -868,8 +869,10 @@ const char * cpe_dict_model_supported(void);
  * Detects which version the given CPE file is
  *
  * Deallocate the result after use with "free(..)".
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char * cpe_dict_detect_version(const char* file);
+OSCAP_DEPRECATED(char *cpe_dict_detect_version(const char* file));
 
 /** 
  * Verify wether given CPE is known according to specified dictionary
@@ -921,8 +924,19 @@ void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
  * @param file filename
  * @return new dictionary
  * @retval NULL on failure
+ * @deprecated This function has been deprecated by @ref cpe_dict_model_import_source.
+ * This function may be dropped from later versions of the library.
  */
-struct cpe_dict_model *cpe_dict_model_import(const char *file);
+OSCAP_DEPRECATED(struct cpe_dict_model *cpe_dict_model_import(const char *file));
+
+/**
+ * Load new CPE dictionary from an oscap_source
+ * @memberof cpe_dict_model
+ * @param source The oscap_source to parse content from
+ * @returns new dictionary or NULL
+ */
+struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source);
+
 
 /**
  * Sets the origin file hint

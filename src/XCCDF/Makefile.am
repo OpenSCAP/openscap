@@ -24,6 +24,8 @@ libxccdf_la_CPPFLAGS  = @xml2_CFLAGS@ \
 			-I$(top_srcdir)/src/XCCDF_POLICY/public \
 			-I$(top_srcdir)/src/SCE/public \
 			-I$(top_srcdir)/src/common/public \
+			-I$(top_srcdir)/src/source/public \
+			-I$(top_srcdir)/src/OVAL/public \
 			-I$(top_srcdir)/src/CPE/public \
 			-I$(top_srcdir)/lib
 

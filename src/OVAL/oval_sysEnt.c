@@ -43,6 +43,7 @@
 
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_sysent {
 	struct oval_syschar_model *model;
@@ -263,7 +264,7 @@ int oval_sysent_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	if (datatype == OVAL_DATATYPE_RECORD)
 		ret = oval_parser_parse_tag(reader, context, &_oval_sysent_parse_record_field, sysent);
 	else
-		ret = oval_parser_text_value(reader, context, &oval_sysent_value_consumer_, sysent);
+		ret = oscap_parser_text_value(reader, &oval_sysent_value_consumer_, sysent);
 
 	if (ret == 0)
 		(*consumer) (sysent, user);

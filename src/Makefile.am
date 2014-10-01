@@ -14,6 +14,10 @@ SUBDIRS += common
 libopenscap_la_LIBADD += common/liboscapcommon.la
 libopenscap_testing_la_LIBADD += common/liboscapcommon.la
 
+SUBDIRS += source
+libopenscap_la_LIBADD += source/liboscapsource.la
+libopenscap_testing_la_LIBADD += source/liboscapsource.la
+
 SUBDIRS += DS
 libopenscap_la_LIBADD += DS/libds.la
 libopenscap_testing_la_LIBADD += DS/libds.la

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 #include "unit_helper.h"
 #include <xccdf_benchmark.h>
 #include <oval_agent_xccdf_api.h>
+#include <oscap_source.h>
 
 static xccdf_test_result_type_t _always_pass_eval_rule(struct xccdf_policy *, const char *, const char *, const char *, struct xccdf_value_binding_iterator *, struct xccdf_check_import_iterator *, void *);
 static xccdf_test_result_type_t _always_fail_eval_rule(struct xccdf_policy *, const char *, const char *, const char *, struct xccdf_value_binding_iterator *, struct xccdf_check_import_iterator *, void *);
@@ -40,8 +41,10 @@ struct xccdf_policy_model *
 uh_load_xccdf(const char *filename)
 {
 	struct xccdf_benchmark *bench = NULL;
-	if ((bench = xccdf_benchmark_import(filename))== NULL)
+	struct oscap_source *source = oscap_source_new_from_file(filename);
+	if ((bench = xccdf_benchmark_import_source(source))== NULL)
 		fprintf(stderr, "Failed to import the XCCDF content from (%s).\n", filename);
+	oscap_source_free(source);
 	return xccdf_policy_model_new(bench);
 }
 

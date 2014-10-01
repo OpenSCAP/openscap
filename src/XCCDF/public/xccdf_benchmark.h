@@ -8,7 +8,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
@@ -37,6 +37,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <oscap_reference.h>
+#include <oscap_source.h>
 #include <oscap.h>
 #include "cpe_dict.h"
 
@@ -636,8 +637,10 @@ const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* 
  * stops as soon as the version is found. Returned string should be
  * freed by caller. Return NULL if error occur.
  * @memberof xccdf_benchmark
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char * xccdf_detect_version(const char* file);
+OSCAP_DEPRECATED(char * xccdf_detect_version(const char* file));
 
 /************************************************************/
 
@@ -701,8 +704,18 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
  * @param file filename.
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
+ * @deprecated This function has been deprecated by @ref xccdf_benchmark_import_source.
+ * This function may be dropped from later versions of the library.
  */
-struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
+OSCAP_DEPRECATED(struct xccdf_benchmark* xccdf_benchmark_import(const char *file));
+
+/**
+ * Import the content from oscap_source into a benchmark
+ * @memberof xccdf_benchmark
+ * @param source The oscap_source to import from
+ * @returns newly created benchmark element or NULL
+ */
+struct xccdf_benchmark* xccdf_benchmark_import_source(struct oscap_source *source);
 
 /**
  * Export a benchmark to an XML stream
@@ -2633,7 +2646,14 @@ const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item)
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
 /// @memberof xccdf_tailoring
-struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark);
+struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark);
+/*
+ * @memberof xccdf_tailoring
+ * @deprecated This function has been deprecated by @ref xccdf_tailoring_import_source.
+ * This function may be dropped from later versions of the library.
+ */
+OSCAP_DEPRECATED(struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark));
+
 /// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring

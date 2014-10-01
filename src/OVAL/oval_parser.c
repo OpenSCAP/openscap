@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -44,6 +44,8 @@
 #include "common/_error.h"
 #include "common/elements.h"
 #include "common/public/oscap.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 /**
  * -1 error; 0 OK; 1 warning
@@ -66,22 +68,12 @@ int oval_parser_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	return ret;
 }
 
-
-char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
+char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_document_type_t doc_type)
 {
-	xmlTextReaderPtr reader;
 	const char *root_name;
 	const char* elm_name;
 	int depth;
-	xmlChar *version = NULL;
-
-	reader = xmlReaderForFile(document, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", document);
-		return NULL;
-	}
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+	char *version = NULL;
 
 	/* find root element */
 	while (xmlTextReaderRead(reader) == 1
@@ -105,19 +97,16 @@ char *oval_determine_document_schema_version(const char *document, oscap_documen
 		break;
 	default:
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown document type: %d.", doc_type);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* verify root element's name */
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name) {
 		oscap_setxmlerr(xmlGetLastError());
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	if (strcmp(root_name, elm_name)) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Document type doesn't match root element's name: '%s'.", elm_name);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* find generator */
@@ -126,7 +115,6 @@ char *oval_determine_document_schema_version(const char *document, oscap_documen
 	elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp(elm_name, "generator")) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element: '%s'.", elm_name);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	/* find schema_version */
@@ -137,15 +125,25 @@ char *oval_determine_document_schema_version(const char *document, oscap_documen
 
 		elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 		if (!strcmp(elm_name, "schema_version")) {
-			version = xmlTextReaderReadString(reader);
+			oscap_parser_text_value(reader, oscap_text_consumer, &version);
 			break;
 		}
 	}
 
-	xmlFreeTextReader(reader);
-	char* ret = oscap_strdup((const char*)version);
-	xmlFree(version);
+	return version;
+}
 
+
+char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
+{
+	char *ret = NULL;
+	struct oscap_source *source = oscap_source_new_from_file(document);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
+	if (reader != NULL) {
+		ret = oval_determine_document_schema_version_priv(reader, doc_type);
+		xmlFreeTextReader(reader);
+	}
+	oscap_source_free(source);
 	return ret;
 }
 
@@ -220,38 +218,6 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 	return ret;
 }
 
-/* -1 error; 0 OK */
-int oval_parser_text_value(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_xml_value_consumer consumer, void *user)
-{
-	int depth = xmlTextReaderDepth(reader);
-	bool has_value = false;
-	int ret = 0;
-
-	if (xmlTextReaderIsEmptyElement(reader)) {
-		return ret;
-	}
-
-	xmlTextReaderRead(reader);
-	while (xmlTextReaderDepth(reader) > depth) {
-		int nodetype = xmlTextReaderNodeType(reader);
-		if (nodetype == XML_READER_TYPE_CDATA || nodetype == XML_READER_TYPE_TEXT) {
-			char *value = (char *)xmlTextReaderValue(reader);
-			(*consumer) (value, user);
-			oscap_free(value);
-			has_value = true;
-		}
-		if (xmlTextReaderRead(reader) != 1) {
-			ret = -1;
-			break;
-		}
-	}
-
-	if (!has_value)
-		(*consumer) ("", user);
-
-	return ret;
-}
-
 
 int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int defval)
 {
@@ -280,21 +246,4 @@ int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval
 		oscap_free(string);
 	}
 	return value;
-}
-
-void oval_text_consumer(char *text, void *user)
-{
-	char *platform = *(char **)user;
-	if (platform == NULL)
-		platform = oscap_strdup(text);
-	else {
-		int size = strlen(platform) + strlen(text) + 1;
-		char *newtext = (char *) oscap_alloc(size * sizeof(char));
-		*newtext = 0;
-		strcat(newtext, platform);
-		strcat(newtext, text);
-		oscap_free(platform);
-		platform = newtext;
-	}
-	*(char **)user = platform;
 }

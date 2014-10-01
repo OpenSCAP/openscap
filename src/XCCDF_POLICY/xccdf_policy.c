@@ -40,7 +40,9 @@
 #include "public/oscap_text.h"
 
 #include "cpe_lang.h"
+#include "CPE/cpe_session_priv.h"
 
+#include "oscap_source.h"
 #include "oval_agent_api.h"
 
 #include "item.h"
@@ -63,10 +65,7 @@ struct xccdf_policy_model {
 	struct oscap_list       * callbacks;    ///< Callbacks for output callbacks (see callback_out_t)
 	struct oscap_list       * engines;      ///< Callbacks for checking engines (see xccdf_policy_engine)
 
-	struct oscap_list       * cpe_dicts; ///< All CPE dictionaries except the one embedded in XCCDF
-	struct oscap_list       * cpe_lang_models; ///< All CPE lang models except the one embedded in XCCDF
-	struct oscap_htable     * cpe_oval_sessions; ///< Caches CPE OVAL check results
-	struct oscap_htable     * cpe_applicable_platforms;
+	struct cpe_session *cpe;
 };
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)
@@ -813,28 +812,11 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 		prefixed_href = oscap_sprintf("%s/%s", prefix_dirname, href);
 		oscap_free(origin_file);
 	}
-
-	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(model->cpe_oval_sessions, prefixed_href);
-
-	if (session == NULL)
-	{
-		struct oval_definition_model* oval_model = oval_definition_model_import(prefixed_href);
-		if (oval_model == NULL)
-		{
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't import OVAL definition model '%s' for CPE applicability checking", prefixed_href);
-			oscap_free(prefixed_href);
-			return false;
-		}
-
-		session = oval_agent_new_session(oval_model, prefixed_href);
-		if (session == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot create OVAL session for '%s' for CPE applicability checking", prefixed_href);
-			oscap_free(prefixed_href);
-			return false;
-		}
-		oscap_htable_add(model->cpe_oval_sessions, prefixed_href, session);
-	}
+	struct oval_agent_session *session = cpe_session_lookup_oval_session(model->cpe, prefixed_href);
 	oscap_free(prefixed_href);
+	if (session == NULL) {
+		return false;
+	}
 
 	oval_agent_eval_definition(session, name);
 	oval_result_t result = OVAL_RESULT_NOT_EVALUATED;
@@ -865,7 +847,7 @@ static bool _xccdf_policy_cpe_dict_cb(struct cpe_name* name, void* usr)
 	if (ret)
 		return true;
 
-	struct oscap_iterator* dicts = oscap_iterator_new(model->cpe_dicts);
+	struct oscap_iterator* dicts = oscap_iterator_new(model->cpe->dicts);
 	while (!ret && oscap_iterator_has_more(dicts)) {
 		struct cpe_dict_model *dict = (struct cpe_dict_model*)oscap_iterator_next(dicts);
 		ret = cpe_name_applicable_dict(name, dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, usr);
@@ -902,8 +884,8 @@ static bool xccdf_policy_model_platforms_are_applicable_dict(struct xccdf_policy
 		{
 			ret = true;
 
-			if (oscap_htable_get(model->cpe_applicable_platforms, platform) == NULL) {
-				oscap_htable_add(model->cpe_applicable_platforms, platform, 0);
+			if (oscap_htable_get(model->cpe->applicable_platforms, platform) == NULL) {
+				oscap_htable_add(model->cpe->applicable_platforms, platform, 0);
 			}
 		}
 	}
@@ -943,8 +925,8 @@ static bool xccdf_policy_model_platforms_are_applicable_lang_model(struct xccdf_
 		{
 			ret = true;
 
-			if (oscap_htable_get(model->cpe_applicable_platforms, platform) == NULL) {
-				oscap_htable_add(model->cpe_applicable_platforms, platform, 0);
+			if (oscap_htable_get(model->cpe->applicable_platforms, platform) == NULL) {
+				oscap_htable_add(model->cpe->applicable_platforms, platform, 0);
 			}
 		}
 	}
@@ -973,7 +955,7 @@ bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *mode
 			ret = true;
 	}
 
-	struct oscap_iterator *lang_models = oscap_iterator_new(model->cpe_lang_models);
+	struct oscap_iterator *lang_models = oscap_iterator_new(model->cpe->lang_models);
 	while (oscap_iterator_has_more(lang_models)) {
 		struct cpe_lang_model *lang_model = (struct cpe_lang_model *) oscap_iterator_next(lang_models);
 		if (xccdf_policy_model_platforms_are_applicable_lang_model(model, lang_model, platforms))
@@ -987,7 +969,7 @@ bool xccdf_policy_model_platforms_are_applicable(struct xccdf_policy_model *mode
 			ret = true;
 	}
 
-	struct oscap_iterator *dicts = oscap_iterator_new(model->cpe_dicts);
+	struct oscap_iterator *dicts = oscap_iterator_new(model->cpe->dicts);
 	while (oscap_iterator_has_more(dicts)) {
 		struct cpe_dict_model *dict = (struct cpe_dict_model *) oscap_iterator_next(dicts);
 		if (xccdf_policy_model_platforms_are_applicable_dict(model, dict, platforms))
@@ -1709,8 +1691,10 @@ bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model *model, const cha
 		__attribute__nonnull__(model);
 		__attribute__nonnull__(cpe_dict);
 
-		struct cpe_dict_model* dict = cpe_dict_model_import(cpe_dict);
-		return oscap_list_add(model->cpe_dicts, dict);
+	struct oscap_source *source = oscap_source_new_from_file(cpe_dict);
+	bool ret = cpe_session_add_cpe_dict_source(model->cpe, source);
+	oscap_source_free(source);
+	return ret;
 }
 
 bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, const char * cpe_lang)
@@ -1718,34 +1702,28 @@ bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, con
 		__attribute__nonnull__(model);
 		__attribute__nonnull__(cpe_lang);
 
-		struct cpe_lang_model* lang_model = cpe_lang_model_import(cpe_lang);
-		return oscap_list_add(model->cpe_lang_models, lang_model);
+	struct oscap_source *source = oscap_source_new_from_file(cpe_lang);
+	bool ret = cpe_session_add_cpe_lang_model_source(model->cpe, source);
+	oscap_source_free(source);
+	return ret;
 }
 
 bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath)
 {
-	oscap_document_type_t doc_type = 0;
-	if (oscap_determine_document_type(filepath, &doc_type) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Encountered issues when detecting document "
-		                                  "type of '%s'.", filepath);
-		return false;
-	}
-
-	if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
-		return xccdf_policy_model_add_cpe_dict(model, filepath);
-	}
-	else if (doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
-		return xccdf_policy_model_add_cpe_lang_model(model, filepath);
-	}
-
-	oscap_seterr(OSCAP_EFAMILY_XCCDF, "File '%s' wasn't detected as either CPE dictionary or "
-	                                  "CPE lang model. Can't register it to the XCCDF policy model.", filepath);
-	return false;
+	struct oscap_source *source = oscap_source_new_from_file(filepath);
+	bool ret = cpe_session_add_cpe_autodetect_source(model->cpe, source);
+	oscap_source_free(source);
+	return ret;
 }
 
 struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model)
 {
-	return oscap_htable_iterator_new(model->cpe_oval_sessions);
+	return oscap_htable_iterator_new(model->cpe->oval_sessions);
+}
+
+struct cpe_session *xccdf_policy_model_get_cpe_session(struct xccdf_policy_model *model)
+{
+	return model->cpe;
 }
 
 /**
@@ -1837,8 +1815,6 @@ struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy
  * returns the type of <structure>
  */
 
-static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model);
-
 /**
  * New XCCDF Policy model. Create new structure and fill the policies list with 
  * policy entries that are inherited from XCCDF benchmark Profile elements. For each 
@@ -1861,28 +1837,11 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
         model->callbacks = oscap_list_new();
 	model->engines = oscap_list_new();
 
-	model->cpe_dicts = oscap_list_new();
-	model->cpe_lang_models = oscap_list_new();
-	model->cpe_oval_sessions = oscap_htable_new();
-	model->cpe_applicable_platforms = oscap_htable_new();
-
-	if (!xccdf_policy_model_add_default_cpe(model))
-	{
-		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Failed to add default CPE to newly created XCCDF policy model.");
-	}
+	model->cpe = cpe_session_new();
 
         /* Resolve document */
         xccdf_benchmark_resolve(benchmark);
 	return model;
-}
-
-static bool xccdf_policy_model_add_default_cpe(struct xccdf_policy_model* model)
-{
-	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
-	const bool ret = xccdf_policy_model_add_cpe_dict(model, cpe_dict_path);
-	oscap_free(cpe_dict_path);
-
-	return ret;
 }
 
 static inline bool
@@ -2317,7 +2276,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 
 	xccdf_policy_add_final_setvalues(policy, xccdf_benchmark_to_item(benchmark), result);
 
-	struct oscap_htable_iterator *it = oscap_htable_iterator_new(policy->model->cpe_applicable_platforms);
+	struct oscap_htable_iterator *it = oscap_htable_iterator_new(policy->model->cpe->applicable_platforms);
 	while (oscap_htable_iterator_has_more(it)) {
 		const char *key = oscap_htable_iterator_next_key(it);
 		xccdf_result_add_applicable_platform(result, key);
@@ -2538,14 +2497,6 @@ struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *po
         return xccdf_policy_model_get_benchmark(model);
 }
 
-static void _xccdf_policy_destroy_cpe_oval_session(void* ptr)
-{
-	struct oval_agent_session* session = (struct oval_agent_session*)ptr;
-	struct oval_definition_model* model = oval_agent_get_definition_model(session);
-	oval_agent_destroy_session(session);
-	oval_definition_model_free(model);
-}
-
 void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
@@ -2553,11 +2504,7 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
 	xccdf_tailoring_free(model->tailoring);
         xccdf_benchmark_free(model->benchmark);
-
-	oscap_list_free(model->cpe_dicts, (oscap_destruct_func) cpe_dict_model_free);
-	oscap_list_free(model->cpe_lang_models, (oscap_destruct_func) cpe_lang_model_free);
-	oscap_htable_free(model->cpe_oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
-	oscap_htable_free(model->cpe_applicable_platforms, NULL);
+	cpe_session_free(model->cpe);
         oscap_free(model);
 }
 

@@ -41,6 +41,7 @@
 #include "oval_agent_api_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 #include "common/_error.h"
 
 typedef struct oval_test {
@@ -316,7 +317,7 @@ static void _oval_test_parse_notes_consumer(char *text, void *test)
 static int _oval_test_parse_notes(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
 {
 	struct oval_test *test = (struct oval_test *)user;
-	return oval_parser_text_value(reader, context, &_oval_test_parse_notes_consumer, test);
+	return oscap_parser_text_value(reader, &_oval_test_parse_notes_consumer, test);
 }
 
 static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)

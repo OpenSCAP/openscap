@@ -53,6 +53,8 @@
 #include "common/_error.h"
 #include "common/xmlns_priv.h"
 #include "common/xmltext_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -287,7 +289,6 @@ static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr wri
 static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterPtr writer);
 static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr writer);
 
-static bool cpe_validate_xml(const char *filename);
 struct cpe_notes *cpe_notes_new(void);
 void cpe_notes_free(struct cpe_notes *notes);
 /***************************************************************************/
@@ -306,38 +307,6 @@ static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item
 
 	oscap_list_add(dict->items, item);
 	return true;
-}
-
-static bool cpe_validate_xml(const char *filename)
-{
-
-	__attribute__nonnull__(filename);
-
-	xmlParserCtxtPtr ctxt;	/* the parser context */
-	xmlDocPtr doc;		/* the resulting document tree */
-	bool ret = false;
-
-	/* create a parser context */
-	ctxt = xmlNewParserCtxt();
-	if (ctxt == NULL)
-		return false;
-	/* parse the file, activating the DTD validation option */
-	doc = xmlCtxtReadFile(ctxt, filename, NULL, XML_PARSE_DTDATTR);
-	/* check if parsing suceeded */
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-		xmlFreeParserCtxt(ctxt);
-		return false;
-	}
-	/* check if validation suceeded */
-	if (ctxt->valid)
-		ret = true;
-	else			/* set xml error */
-		oscap_setxmlerr(xmlCtxtGetLastError(ctxt));
-	xmlFreeDoc(doc);
-	/* free up the parser context */
-	xmlFreeParserCtxt(ctxt);
-	return ret;
 }
 
 /***************************************************************************/
@@ -564,25 +533,6 @@ struct cpe_language *cpe_language_new()
  * More info in representive header file.
  * returns the type of <structure>
  */
-struct cpe_dict_model *cpe_dict_model_parse_xml(const char *file)
-{
-
-	__attribute__nonnull__(file);
-
-	struct cpe_dict_model *dict = NULL;
-
-	if (!cpe_validate_xml(file))
-		return NULL;
-
-	struct cpe_parser_ctx *ctx = cpe_parser_ctx_new(file);
-	if (ctx) {
-		xmlTextReaderNextNode(cpe_parser_ctx_get_reader(ctx));
-		dict = cpe_dict_model_parse(ctx);
-	}
-	cpe_parser_ctx_free(ctx);
-	return dict;
-}
-
 struct cpe_dict_model *cpe_dict_model_parse(struct cpe_parser_ctx *ctx)
 {
 
@@ -696,23 +646,23 @@ struct cpe_generator *cpe_generator_parse(struct cpe_parser_ctx *ctx)
 			if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 				       TAG_PRODUCT_NAME_STR) == 0) &&
 			    (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->product_name = (char *)xmlTextReaderReadString(reader);
+				ret->product_name = oscap_element_string_copy(reader);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_PRODUCT_VERSION_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->product_version = (char *)xmlTextReaderReadString(reader);
+				ret->product_version = oscap_element_string_copy(reader);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_SCHEMA_VERSION_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->schema_version = (char *)xmlTextReaderReadString(reader);
+				ret->schema_version = oscap_element_string_copy(reader);
 				cpe_parser_ctx_set_schema_version(ctx, ret->schema_version);
 			} else
 			    if ((xmlStrcmp(xmlTextReaderConstLocalName(reader),
 					   TAG_TIMESTAMP_STR) == 0) &&
 				(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT)) {
-				ret->timestamp = (char *)xmlTextReaderReadString(reader);
+				ret->timestamp = oscap_element_string_copy(reader);
 			} else if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP,
 						"Unknown XML element in CPE dictionary generator, local name is '%s'.",
@@ -867,7 +817,7 @@ static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader)
 
 	ret->system = (char *)xmlTextReaderGetAttribute(reader, ATTR_SYSTEM_STR);
 	ret->href = (char *)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
-	ret->identifier = oscap_trim((char *)xmlTextReaderReadString(reader));
+	ret->identifier = oscap_trim(oscap_element_string_copy(reader));
 
 	return ret;
 }
@@ -887,7 +837,7 @@ static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader)
 	memset(ret, 0, sizeof(struct cpe_reference));
 
 	ret->href = (char *)xmlTextReaderGetAttribute(reader, ATTR_HREF_STR);
-	ret->content = oscap_trim((char *)xmlTextReaderReadString(reader));
+	ret->content = oscap_trim(oscap_element_string_copy(reader));
 
 	return ret;
 }
@@ -912,7 +862,7 @@ static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader)
 			}
 
 			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTE_STR) == 0) {
-				char *note_text = (char *) xmlTextReaderReadString(reader);
+				char *note_text = oscap_element_string_copy(reader);
 				oscap_list_add(notes->notes, note_text);
 			} else {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element within notes element: '%s'",

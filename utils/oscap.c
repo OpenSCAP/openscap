@@ -35,6 +35,7 @@
 
 #include "oscap-tool.h"
 #include "check_engine_plugin.h"
+#include "oscap_source.h"
 
 static bool getopt_root(int argc, char **argv, struct oscap_action *action);
 static int print_versions(const struct oscap_action*);
@@ -152,7 +153,9 @@ static int print_versions(const struct oscap_action *action)
 	printf("==== Inbuilt CPE names ====\n");
 	char default_cpe_path[PATH_MAX];
 	snprintf(default_cpe_path, PATH_MAX, "%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
-	struct cpe_dict_model* cpe_dict = cpe_dict_model_import(default_cpe_path);
+	struct oscap_source *source = oscap_source_new_from_file(default_cpe_path);
+	struct cpe_dict_model* cpe_dict = cpe_dict_model_import_source(source);
+	oscap_source_free(source);
 	if (cpe_dict != NULL) {
 
 		struct cpe_item_iterator* cpe_items = cpe_dict_model_get_items(cpe_dict);
@@ -181,15 +184,6 @@ static int print_versions(const struct oscap_action *action)
 	oval_probe_meta_list(stdout, OVAL_PROBEMETA_LIST_DYNAMIC);
 
 	return OSCAP_OK;
-}
-
-void validation_failed(const char *xmlfile, oscap_document_type_t doc_type, const char *version) {
-
-	const char *doc_name = oscap_document_type_to_string(doc_type);
-	if (doc_name == NULL)
-		fprintf(stderr, "Unrecognized document type.\n");
-	else
-		fprintf(stderr, "Invalid %s content(%s) in %s.\n", doc_name, version, xmlfile);
 }
 
 int reporter(const char *file, int line, const char *msg, void *arg) {

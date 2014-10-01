@@ -1,5 +1,5 @@
 /*
- * Copyright 2012--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -31,8 +31,12 @@
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
+#include "common/list.h"
 
 #include "ds_common.h"
+#include "rds_priv.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #include <sys/stat.h>
 #include <time.h>
@@ -174,45 +178,25 @@ static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const 
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
 
-	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
-
-	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
-	xmlNodePtr res_node = NULL;
-	if (xmlDOMWrapCloneNode(wrap_ctxt, doc, inner_root, &res_node, new_doc, NULL, 1, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error when cloning node while dumping arf content.");
-		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
-	xmlDocSetRootElement(new_doc, res_node);
-	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, res_node, 0) != 0)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Internal libxml error when reconciling namespaces while dumping arf content.");
-		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
-		return -1;
-	}
+	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
 	if (xmlSaveFileEnc(target_file, new_doc, "utf-8") == -1)
 	{
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping arf content.", target_file);
 		xmlFreeDoc(new_doc);
-		xmlDOMWrapFreeCtxt(wrap_ctxt);
 		return -1;
 	}
 	xmlFreeDoc(new_doc);
-
-	xmlDOMWrapFreeCtxt(wrap_ctxt);
 
 	return 0;
 }
 
 int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
 {
-	xmlDocPtr doc = xmlReadFile(input_file, NULL, 0);
+	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
+	xmlDocPtr doc = oscap_source_get_xmlDoc(rds_source);
 
 	if (!doc) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", input_file);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -224,7 +208,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		xmlFreeDoc(doc);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -233,7 +217,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	if (ds_common_mkdir_p(target_dir) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't decompose RDS '%s' to target directory '%s'. "
 			"Failed to create given directory!", input_file, target_dir);
-		xmlFreeDoc(doc);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -249,7 +233,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		xmlFreeDoc(doc);
+		oscap_source_free(rds_source);
 		return -1;
 	}
 
@@ -257,7 +241,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	ds_rds_dump_arf_content(doc, request_node, target_request_file);
 	oscap_free(target_request_file);
 
-	xmlFreeDoc(doc);
+	oscap_source_free(rds_source);
 	return 0;
 }
 
@@ -734,7 +718,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, xmlDocPtr* oval_result_docs)
+static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources)
 {
 	*ret = NULL;
 
@@ -782,16 +766,16 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 			relationships, assets, "collection1");
 
 	unsigned int oval_report_suffix = 2;
-	while (*oval_result_docs != NULL)
-	{
-		xmlDocPtr oval_result_doc = *oval_result_docs;
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(oval_result_sources);
+	while (oscap_htable_iterator_has_more(hit)) {
+		struct oscap_source *oval_source = oscap_htable_iterator_next_value(hit);
+		xmlDoc *oval_result_doc = oscap_source_get_xmlDoc(oval_source);
 
 		char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
 		ds_rds_create_report(doc, reports, oval_result_doc, report_id);
 		oscap_free(report_id);
-
-		oval_result_docs++;
 	}
+	oscap_htable_iterator_free(hit);
 
 	xmlAddChild(root, reports);
 
@@ -799,26 +783,29 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	return 0;
 }
 
+struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, const char *target_file)
+{
+	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
+	if (sds_doc == NULL) {
+		return NULL;
+	}
+	xmlDoc *result_file_doc = oscap_source_get_xmlDoc(xccdf_result_source);
+	if (result_file_doc == NULL) {
+		return NULL;
+	}
+
+	xmlDocPtr rds_doc = NULL;
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_sources) != 0) {
+		return NULL;
+	}
+	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
+}
+
 int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const char** oval_result_files, const char* target_file)
 {
-	xmlDocPtr sds_doc = xmlReadFile(sds_file, NULL, 0);
-	if (!sds_doc)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read source datastream from '%s'.", sds_file);
-		return -1;
-	}
-
-	xmlDocPtr result_file_doc = xmlReadFile(xccdf_result_file, NULL, 0);
-	if (!result_file_doc)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read XCCDF result file document from '%s'.", xccdf_result_file);
-		xmlFreeDoc(sds_doc);
-		return -1;
-	}
-
-	xmlDocPtr* oval_result_docs = oscap_alloc(1 * sizeof(xmlDocPtr));
-	size_t oval_result_docs_count = 0;
-	oval_result_docs[0] = NULL;
+	struct oscap_source *sds_source = oscap_source_new_from_file(sds_file);
+	struct oscap_source *xccdf_result_source = oscap_source_new_from_file(xccdf_result_file);
+	struct oscap_htable *oval_result_sources = oscap_htable_new();
 
 	int result = 0;
 	// this check is there to allow passing NULL instead of having to allocate
@@ -827,44 +814,27 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	{
 		while (*oval_result_files != NULL)
 		{
-			oval_result_docs[oval_result_docs_count] = xmlReadFile(*oval_result_files, NULL, 0);
-			if (!oval_result_docs[oval_result_docs_count])
-			{
-				oscap_seterr(OSCAP_EFAMILY_XML, "Failed to read OVAL result file document from '%s'.", *oval_result_files);
+			struct oscap_source *oval_source = oscap_source_new_from_file(*oval_result_files);
+			if (oscap_source_get_xmlDoc(oval_source) == NULL) {
 				result = -1;
-				continue;
+				oscap_source_free(oval_source);
+			} else {
+				oscap_htable_add(oval_result_sources, *oval_result_files, oval_source);
 			}
-
-			oval_result_docs = oscap_realloc(oval_result_docs, (++oval_result_docs_count + 1) * sizeof(xmlDocPtr));
-			oval_result_docs[oval_result_docs_count] = 0;
 			oval_result_files++;
 		}
 	}
-
-	xmlDocPtr rds_doc = NULL;
-	// if reading OVAL docs failed at any point we won't create the RDS DOM
-	if (result == 0)
-		result = ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_docs);
-
-	// we won't even try to save the file if error happened when creating the DOM
-	if (result == 0 && xmlSaveFileEnc(target_file, rds_doc, "utf-8") == -1)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to save the result datastream to '%s'.", target_file);
-		result = -1;
+	if (result == 0) {
+		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, target_file);
+		result = target_rds == NULL;
+		if (result == 0) {
+			result = oscap_source_save_as(target_rds, NULL);
+		}
+		oscap_source_free(target_rds);
 	}
-	xmlFreeDoc(rds_doc);
-
-	xmlDocPtr* oval_result_docs_ptr = oval_result_docs;
-	while (*oval_result_docs_ptr != NULL)
-	{
-		xmlFreeDoc(*oval_result_docs_ptr);
-		oval_result_docs_ptr++;
-	}
-
-	oscap_free(oval_result_docs);
-
-	xmlFreeDoc(sds_doc);
-	xmlFreeDoc(result_file_doc);
+	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
+	oscap_source_free(sds_source);
+	oscap_source_free(xccdf_result_source);
 
 	return result;
 }

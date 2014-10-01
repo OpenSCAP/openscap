@@ -75,6 +75,14 @@ bool oscap_acquire_url_is_supported(const char *url);
  */
 char *oscap_acquire_url_to_filename(const char *url);
 
+/**
+ * Guess how the realpath of given file may look like. Do your best!
+ * Unlike realpath() this works for non-existent files.
+ * @param filepath
+ * @returns the normalized filepath
+ */
+char *oscap_acquire_guess_realpath(const char *filepath);
+
 // FIXME: SCE engine uses this particular function
 OSCAP_HIDDEN_END;
 

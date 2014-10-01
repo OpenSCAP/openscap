@@ -1,5 +1,5 @@
 /*
- * Copyright 2011--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2011--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -34,6 +34,7 @@
 
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_record_field {
 	oval_record_field_type_t record_field_type;
@@ -377,8 +378,7 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 
 		var_ref = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 		if (var_ref == NULL) {
-			ret = oval_parser_text_value(reader, context,
-				&_oval_record_field_value_consumer, rf);
+			ret = oscap_parser_text_value(reader, &_oval_record_field_value_consumer, rf);
 		} else {
 			struct oval_definition_model *model;
 			struct oval_variable *var;
@@ -396,8 +396,7 @@ int oval_record_field_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 
 		status = oval_syschar_status_parse(reader, "status", SYSCHAR_STATUS_EXISTS);
 		oval_record_field_set_status(rf, status);
-		ret = oval_parser_text_value(reader, context,
-			&_oval_record_field_value_consumer, rf);
+		ret = oscap_parser_text_value(reader, &_oval_record_field_value_consumer, rf);
 		break;
 	}
 	default:

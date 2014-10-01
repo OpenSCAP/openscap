@@ -34,6 +34,8 @@
 #include "common/debug_priv.h"
 #include "common/assume.h"
 #include "common/elements.h"
+#include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #include "CPE/cpedict_priv.h"
 #include "CPE/cpelang_priv.h"
@@ -52,13 +54,15 @@ struct xccdf_backref {
 
 struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
-	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
-		return NULL;
-	}
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct xccdf_benchmark *benchmark = xccdf_benchmark_import_source(source);
+	oscap_source_free(source);
+	return benchmark;
+}
 
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
+struct xccdf_benchmark *xccdf_benchmark_import_source(struct oscap_source *source)
+{
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_benchmark *benchmark = xccdf_benchmark_new();
@@ -66,7 +70,7 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 	xmlFreeTextReader(reader);
 
 	if (!parse_result) { // parsing fatal error
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to import XCCDF content from '%s'.", oscap_source_readable_origin(source));
 		xccdf_benchmark_free(benchmark);
 		return NULL;
 	}
@@ -78,16 +82,15 @@ struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
 	// FIXME: Refactor and move this somewhere else
 	struct cpe_dict_model* embedded_dict = xccdf_benchmark_get_cpe_list(benchmark);
 	if (embedded_dict != NULL) {
-		cpe_dict_model_set_origin_file(embedded_dict, file);
+		cpe_dict_model_set_origin_file(embedded_dict, oscap_source_readable_origin(source));
 	}
 
 	// same situation with embedded CPE2 lang model
 	// FIXME: Refactor and move this somewhere else
 	struct cpe_lang_model* embedded_lang_model = xccdf_benchmark_get_cpe_lang_model(benchmark);
 	if (embedded_lang_model != NULL) {
-		cpe_lang_model_set_origin_file(embedded_lang_model, file);
+		cpe_lang_model_set_origin_file(embedded_lang_model, oscap_source_readable_origin(source));
 	}
-
 	return benchmark;
 }
 
@@ -181,11 +184,12 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 			break;
 		case XCCDFE_PLAIN_TEXT:{
 				const char *id = xccdf_attribute_get(reader, XCCDFA_ID);
-				const char *data = oscap_element_string_get(reader);
+				char *data = (char *)xmlTextReaderReadInnerXml(reader);
 				if (id)
 					oscap_list_add(benchmark->sub.benchmark.plain_texts,
 							xccdf_plain_text_new_fill(id,
 							data == NULL ? "" : data));
+				xmlFree(data);
 				break;
 			}
 		case XCCDFE_CPE_LIST:{
@@ -221,46 +225,46 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	return true;
 }
 
+struct oscap_source *xccdf_benchmark_export_source(struct xccdf_benchmark *benchmark, const char *filename)
+{
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
+	return oscap_source_new_from_xmlDoc(doc, filename);
+}
+
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 {
 	__attribute__nonnull__(file);
 
 	LIBXML_TEST_VERSION;
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
+	struct oscap_source *source = xccdf_benchmark_export_source(benchmark, file);
+	if (source == NULL) {
 		return -1;
 	}
-
-	xccdf_benchmark_to_dom(benchmark, doc, NULL, NULL);
-
-	return oscap_xml_save_filename(file, doc);
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);;
+	return ret;
 }
 
+#define OSCAP_XML_XSI BAD_CAST "http://www.w3.org/XML/1998/namespace"
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args)
 {
-	xmlNodePtr root_node = NULL;
-
-	if (parent) {
-		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
-	} else {
-		root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
+	xmlNodePtr root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
+	if (parent == NULL) {
 		xmlDocSetRootElement(doc, root_node);
 	}
 
 	// FIXME!
 	//xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST XCCDF_SCHEMA_LOCATION);
 
-	xmlNs *ns_xccdf = xmlNewNs(root_node,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(xccdf_benchmark_get_schema_version(benchmark)),
-			NULL);
-
-	xmlNs *ns_xsi = xmlNewNs(root_node, XCCDF_XSI_NAMESPACE, BAD_CAST "xsi");
-
-	xmlSetNs(root_node, ns_xsi);
-	xmlSetNs(root_node, ns_xccdf);
+	lookup_xsi_ns(doc);
 
 	/* Handle attributes */
 	if (xccdf_benchmark_get_resolved(benchmark))
@@ -269,8 +273,13 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlNewProp(root_node, BAD_CAST "resolved", BAD_CAST "0");
 
     const char *xmllang = xccdf_benchmark_get_lang(benchmark);
-	if (xmllang)
-		xmlNewProp(root_node, BAD_CAST "xml:lang", BAD_CAST xmllang);
+	if (xmllang) {
+		xmlNs *ns_xml = xmlSearchNsByHref(doc, root_node, OSCAP_XML_XSI);
+		if (ns_xml == NULL) {
+			ns_xml = xmlNewNs(root_node, OSCAP_XML_XSI, BAD_CAST "xml");
+		}
+		xmlNewNsProp(root_node, ns_xml, BAD_CAST "lang", BAD_CAST xmllang);
+	}
 
 	const char *style = xccdf_benchmark_get_style(benchmark);
 	if (style)
@@ -304,6 +313,8 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlFreeTextWriter(writer);
 	}
 
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, root_node, xccdf_benchmark_get_schema_version(benchmark));
+
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
 		xmlNode *platform_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "platform", NULL);
@@ -322,7 +333,8 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	while (oscap_string_iterator_has_more(metadata))
 	{
 		const char* meta = oscap_string_iterator_next(metadata);
-		oscap_xmlstr_to_dom(root_node, "metadata", meta);
+		xmlNode *m = oscap_xmlstr_to_dom(root_node, "metadata", meta);
+		xmlSetNs(m, ns_xccdf);
 	}
 	oscap_string_iterator_free(metadata);
 
@@ -846,8 +858,7 @@ struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *t
 
 static xmlNode *xccdf_plain_text_to_dom(const struct xccdf_plain_text *ptext, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 	xmlNode *ptext_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "plain-text",
 			BAD_CAST (ptext->text == NULL ? "" : ptext->text));
 	if (ptext->id != NULL)
