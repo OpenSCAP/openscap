@@ -98,8 +98,10 @@ struct xccdf_session {
 		bool check_engine_plugins_results; ///< Shall the check engine plugins results be exported?
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
-	char *user_tailoring_file;      ///< Path to Tailoring file requested by the user
-	char *user_tailoring_cid;       ///< Component ID of the Tailoring file requested by the user
+	struct {
+		struct oscap_source *user_file; ///< Tailoring file requested by the user
+		char *user_component_id;    ///< Component ID of the Tailoring requested by the user
+	} tailoring;
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 
@@ -163,8 +165,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	if (session->temp_dir != NULL)
 		oscap_acquire_cleanup_dir((char **) &(session->temp_dir));
 	oscap_source_free(session->source);
-	oscap_free(session->user_tailoring_file);
-	oscap_free(session->user_tailoring_cid);
+	oscap_source_free(session->tailoring.user_file);
+	oscap_free(session->tailoring.user_component_id);
 	oscap_free(session);
 }
 
@@ -234,14 +236,15 @@ void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_
 
 void xccdf_session_set_user_tailoring_file(struct xccdf_session *session, const char *user_tailoring_file)
 {
-	oscap_free(session->user_tailoring_file);
-	session->user_tailoring_file = oscap_strdup(user_tailoring_file);
+	oscap_source_free(session->tailoring.user_file);
+	session->tailoring.user_file = user_tailoring_file != NULL ?
+		oscap_source_new_from_file(user_tailoring_file) : NULL;
 }
 
 void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const char *user_tailoring_cid)
 {
-	oscap_free(session->user_tailoring_cid);
-	session->user_tailoring_cid = oscap_strdup(user_tailoring_cid);
+	oscap_free(session->tailoring.user_component_id);
+	session->tailoring.user_component_id = oscap_strdup(user_tailoring_cid);
 }
 
 void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
@@ -775,16 +778,16 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 	bool from_sds = false;
 	struct oscap_source *tailoring_source = NULL;
 
-	if (session->user_tailoring_file != NULL) {
-		tailoring_source = oscap_source_new_from_file(session->user_tailoring_file);
+	if (session->tailoring.user_file != NULL) {
+		tailoring_source = session->tailoring.user_file;
 	}
-	else if (session->user_tailoring_cid != NULL) {
+	else if (session->tailoring.user_component_id != NULL) {
 		if (!xccdf_session_is_sds(session)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Can't use given tailoring component ID because file isn't a source datastream.");
 			return 1;
 		}
 
-		tailoring_source = ds_sds_session_select_tailoring(xccdf_session_get_ds_sds_session(session), session->user_tailoring_cid);
+		tailoring_source = ds_sds_session_select_tailoring(xccdf_session_get_ds_sds_session(session), session->tailoring.user_component_id);
 		if (tailoring_source == NULL) {
 			return 1;
 		}
@@ -811,9 +814,6 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 
 	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(tailoring_source, benchmark);
-	if (session->user_tailoring_file != NULL) {
-		oscap_source_free(tailoring_source);
-	}
 
 	if (tailoring == NULL)
 		return 1;
