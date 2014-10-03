@@ -467,7 +467,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
+	// The tailoring_file may be NULL but the tailoring file may have been
+	// autonegotiated from the input file, we don't want to lose that.
+	if (action->tailoring_file != NULL)
+		xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);

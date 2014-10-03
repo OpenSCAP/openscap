@@ -138,6 +138,7 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
+		case XCCDFE_RESULT_BENCHMARK:
 		case XCCDFE_BENCHMARK_REF: {
 			oscap_free(tailoring->benchmark_ref);
 			tailoring->benchmark_ref = 0;
@@ -186,9 +187,11 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 			break;
 		}
 		case XCCDFE_PROFILE: {
-			struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
-			if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
-				dW("Failed to add profile to tailoring while parsing!");
+			if (benchmark != NULL) {
+				struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
+				if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
+					dW("Failed to add profile to tailoring while parsing!");
+				}
 			}
 			break;
 		}

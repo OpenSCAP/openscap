@@ -87,6 +87,27 @@ function test_api_xccdf_tailoring_oscap_info {
     fi
 }
 
+function test_api_xccdf_tailoring_autonegotiation {
+    local TAILORING=$srcdir/$1
+    local PROFILE=$2
+    local EXPECTED_PASS=$3
+
+    local TMP_RESULTS=`mktemp`
+    $OSCAP xccdf eval --profile $PROFILE --results $TMP_RESULTS $TAILORING
+    if [ "$?" != "0" ]; then
+        return 1
+    fi
+
+    local PASS_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="pass"])')
+    rm -f $TMP_RESULTS
+
+    if [ "$PASS_COUNT" == "$EXPECTED_PASS" ]; then
+        return 0
+    fi
+
+    return 1
+}
+
 # Testing.
 
 test_init "test_api_xccdf_tailoring.log"
@@ -103,5 +124,6 @@ test_run "test_api_xccdf_tailoring_ds_hybrid_unselecting" test_api_xccdf_tailori
 test_run "test_api_xccdf_tailoring_ds_hybrid_override" test_api_xccdf_tailoring_ds_hybrid simple-ds.xml simple-tailoring.xml xccdf_org.open-scap_profile_override 1
 test_run "test_api_xccdf_tailoring_oscap_info_11" test_api_xccdf_tailoring_oscap_info simple-tailoring11.xml 1
 test_run "test_api_xccdf_tailoring_oscap_info_12" test_api_xccdf_tailoring_oscap_info simple-tailoring.xml 1
+test_run "test_api_xccdf_tailoring_autonegotiation" test_api_xccdf_tailoring_autonegotiation simple-tailoring-autonegotiation.xml xccdf_org.open-scap_profile_default 1
 
 test_exit

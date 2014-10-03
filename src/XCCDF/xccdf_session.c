@@ -108,6 +108,7 @@ struct xccdf_session {
 	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
 };
 
+static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *session, const char *original_path);
 static void _oval_content_resources_free(struct oval_content_resource **resources);
 static void _xccdf_session_free_oval_agents(struct xccdf_session *session);
 static void _xccdf_session_free_oval_result_sources(struct xccdf_session *session);
@@ -125,9 +126,11 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		return NULL;
 	}
 	if (oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_XCCDF
-			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_SDS) {
+			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_SDS
+			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_XCCDF_TAILORING) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
-			"Session input file was determined but it isn't an XCCDF file or a source datastream.");
+			"Session input file was determined but it isn't an XCCDF file, "
+			"a source datastream or an XCCDF tailoring file.");
 		xccdf_session_free(session);
 		return NULL;
 	}
@@ -135,7 +138,59 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	session->xccdf.base_score = 0;
 	session->check_engine_plugins = oscap_list_new();
 
+	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
+
+	if (oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+		if (_xccdf_session_autonegotiate_tailoring_file(session, filename) != 0) {
+			xccdf_session_free(session);
+			return NULL;
+		}
+	}
+
 	return session;
+}
+
+static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *session, const char *original_path)
+{
+	struct xccdf_tailoring* tailoring = xccdf_tailoring_import_source(session->source, NULL);
+
+	if (tailoring == NULL) {
+		return -1;
+	}
+
+	char *source_path = oscap_strdup(xccdf_tailoring_get_benchmark_ref(tailoring));
+	xccdf_tailoring_free(tailoring);
+
+	if (source_path == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Session input file was determined to be XCCDF tailoring file, "
+			"but it contained no benchmark reference!");
+		return -1;
+	}
+
+	char *original_path_cpy = oscap_strdup(original_path);
+	char *base_dir = dirname(original_path_cpy);
+
+	char *real_source_path = source_path[0] == '/' ?
+		oscap_strdup(source_path) : oscap_sprintf("%s/%s", base_dir, source_path);
+
+	oscap_free(base_dir);
+	oscap_free(source_path);
+
+	struct oscap_source *real_source = oscap_source_new_from_file(real_source_path);
+	oscap_free(real_source_path);
+
+	if (real_source == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Session input file was determined to be XCCDF tailoring file, "
+			"but the real source file could not be loaded.");
+		return -1;
+	}
+
+	session->tailoring.user_file = session->source;
+	session->source = real_source;
+
+	return 0;
 }
 
 static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session);

@@ -13,4 +13,5 @@ EXTRA_DIST = \
 	simple-oval.xml \
 	simple-tailoring.xml \
 	simple-tailoring11.xml \
+	simple-tailoring-autonegotiation.xml \
 	simple-ds.xml
