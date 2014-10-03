@@ -16,7 +16,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
+EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
 	     $(top_srcdir)/tests/assume.h
 
 check_DATA = not_executable
