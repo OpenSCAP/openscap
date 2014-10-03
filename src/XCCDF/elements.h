@@ -122,7 +122,8 @@ typedef enum {
 	XCCDFE_VALUE_VAL,
 	XCCDFE_VERSION,
 	XCCDFE_WARNING,
-	XCCDFE_BENCHMARK_REF,
+	/// benchmark ref and result benchmark have the same element name and namespace
+	XCCDFE_BENCHMARK_REF = XCCDFE_RESULT_BENCHMARK,
 
 	XCCDFE_END_
 } xccdf_element_t;
