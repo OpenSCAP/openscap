@@ -138,7 +138,6 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
-		case XCCDFE_RESULT_BENCHMARK:
 		case XCCDFE_BENCHMARK_REF: {
 			oscap_free(tailoring->benchmark_ref);
 			tailoring->benchmark_ref = 0;
