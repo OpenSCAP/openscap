@@ -19,6 +19,7 @@ endif
 
 SUBDIRS = \
 	API \
+	bz2 \
 	codestyle \
 	DS \
 	schemas \

@@ -1,6 +1,8 @@
 noinst_LTLIBRARIES = liboscapsource.la
 
 liboscapsource_la_SOURCES = \
+	bz2.c \
+	bz2_priv.h \
 	doc_type.c \
 	doc_type_priv.h \
 	oscap_source.c \
@@ -22,6 +24,7 @@ liboscapsource_la_CPPFLAGS  = \
 	-I$(top_srcdir)/src/common/public
 
 liboscapsource_la_LIBADD = \
+	@bz2_LIBS@ \
 	@curl_LIBS@ \
 	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 

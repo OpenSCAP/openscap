@@ -402,6 +402,17 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
 ],[
 	AC_MSG_NOTICE([!!! librpm not found. The rpmvercmp function will be emulated. !!!])
 ])
+echo
+echo '* Checking for bz2 library (optional dependency of libopenscap)'
+AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
+	[
+	        AC_DEFINE([HAVE_BZ2], [1], [Define to 1 if there is libbz2 available.])
+	        LIBS="$LIBS -lbz2"
+		AC_CHECK_PROG([HAVE_BZIP2],[bzip2],[yes],,,)
+	],[
+	        AC_MSG_NOTICE([!!! libbz2 not found. Bzip2 support will be disabled !!!])
+	])
+AM_CONDITIONAL([HAVE_BZIP2], [test "x${HAVE_BZIP2}" = xyes])
 
 
 SAVE_CPPFLAGS="$CPPFLAGS"
@@ -1440,6 +1451,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/variable_instance/Makefile
 
                  tests/schemas/Makefile
+		tests/bz2/Makefile
 		tests/codestyle/Makefile
 
                  src/SCE/Makefile
