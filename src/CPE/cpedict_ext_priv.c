@@ -134,6 +134,7 @@ static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_parse(xmlTextReaderPtr 
 		return NULL;
 	}
 	deprecatedby->type = oscap_string_to_enum(CPE_EXT_DEPRECATION_MAP, type);
+	oscap_free(type);
 	return deprecatedby;
 }
 
