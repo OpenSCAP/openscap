@@ -310,6 +310,7 @@ void cpe23_item_free(struct cpe23_item *item)
 {
 	if (item != NULL) {
 		oscap_list_free(item->deprecations, (oscap_destruct_func) cpe_ext_deprecation_free);
+		oscap_free(item->name);
 		oscap_free(item);
 	}
 }
