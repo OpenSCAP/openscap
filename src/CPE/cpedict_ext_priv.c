@@ -293,6 +293,7 @@ int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer)
 
 static void cpe_ext_deprecatedby_free(struct cpe_ext_deprecatedby *deprecatedby)
 {
+	oscap_free(deprecatedby->name);
 	oscap_free(deprecatedby);
 }
 
