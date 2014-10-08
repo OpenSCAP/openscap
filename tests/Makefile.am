@@ -2,6 +2,10 @@
 LC_ALL = C
 export LC_ALL
 
+if ENABLE_VALGRIND_TESTS
+  export ENABLE_VALGRIND_TESTS=1
+endif
+
 PROBE_SUBDIRS = probes mitre
 
 if WANT_SCE
