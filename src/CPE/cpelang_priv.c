@@ -568,7 +568,9 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 
 	if (expr->oper == CPE_LANG_OPER_MATCH) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_FACT_REF_STR, NULL);
-		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_get_as_str(expr->meta.cpe));
+		char *cpe_name_str = cpe_name_get_as_str(expr->meta.cpe);
+		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_str);
+		oscap_free(cpe_name_str);
 		xmlTextWriterEndElement(writer);
 	}
 	else if (expr->oper == CPE_LANG_OPER_CHECK) {
