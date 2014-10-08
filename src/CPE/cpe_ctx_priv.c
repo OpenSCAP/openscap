@@ -70,6 +70,7 @@ void cpe_parser_ctx_free(struct cpe_parser_ctx *ctx)
 	if (ctx) {
 		if (ctx->reader != NULL && ctx->owns_reader)
 			xmlFreeTextReader(ctx->reader);
+		oscap_free(ctx->schema_version);
 		oscap_free(ctx);
 	}
 }
