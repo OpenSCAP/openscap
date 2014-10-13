@@ -246,3 +246,4 @@ selinux/oscap.pp
 /tests/sce/sce_xccdf.xml.results
 /tests/sce/test_sce.log
 /tests/schemas/test_schemas.log
+/tests/test_common.sh
