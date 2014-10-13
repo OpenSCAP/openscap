@@ -201,6 +201,7 @@ void xccdf_session_free(struct xccdf_session *session)
 		return;
 	oscap_free(session->xccdf.profile_id);
 	oscap_free(session->export.xccdf_file);
+	oscap_free(session->export.report_file);
 	oscap_free(session->export.arf_file);
 	_xccdf_session_free_oval_result_sources(session);
 	xccdf_session_unload_check_engine_plugins(session);
