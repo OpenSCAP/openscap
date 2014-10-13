@@ -35,32 +35,51 @@ fi
 # Check that we are root ... so non-root users stop here
 test $EUID = 0  ||  exit 4
 
-# Check config
-test -f /etc/sysconfig/oscap-scan && . /etc/sysconfig/oscap-scan
-
 RETVAL=0
 
 start() {
 	test -x /usr/bin/oscap  || exit 5
 	# Now check that the sysconfig is found and has important things
 	# configured
-	test -f /etc/sysconfig/oscap-scan || exit 6
-	test x"$OPTIONS" != "x" || exit 6
-	echo  -n $"Starting $prog: "
-	$prog $OPTIONS
-	ERR=$?
-	if [ $ERR -eq 0 ] ; then
-		sleep 1
-		logger "OpenSCAP security scan: PASS"
-	elif [ $ERR -eq 1 ] ; then
-		sleep 1
-		logger "OpenSCAP security scan: ERROR. Run oscap scan from command line."
-	else
-		sleep 1
-		logger "OpenSCAP security scan: FAILED. See results in /var/log/oscap-scan.xml.log"
-	fi
-	[ "$ERR" -eq 0 ] && success $"$prog startup" || failure $"$prog startup"
-	echo
+	for SCAN_FILE in `find /etc/sysconfig -name oscap-scan\*`; do
+		SCAN_OPTIONS="" && FIX_OPTIONS=""
+		test -f ${SCAN_FILE} && . ${SCAN_FILE} && test x"$SCAN_OPTIONS" != "x" || continue
+		echo  -n $"Starting $prog (${SCAN_FILE}): "
+		$prog $SCAN_OPTIONS
+		ERR=$?
+		if [ $ERR -eq 0 ] ; then
+			sleep 1
+			logger "OpenSCAP security scan (${SCAN_FILE}): PASS"
+		elif [ $ERR -eq 1 ] ; then
+			sleep 1
+			logger "OpenSCAP security scan (${SCAN_FILE}): ERROR. Run oscap scan from command line."
+		else
+			sleep 1
+			logger "OpenSCAP security scan (${SCAN_FILE}): FAILED. See results in /var/log/oscap-scan.xml.log"
+		fi
+		[ "$ERR" -eq 0 ] && success $"$prog startup" || failure $"$prog startup"
+		echo
+		if [ $ERR -ne 0 ] && [ $ERR -ne 1 ]; then
+			test x"$FIX_OPTIONS" != "x" || continue
+			echo  -n $"Starting $prog remediations (${SCAN_FILE}): "
+			temp_file=`mktemp`
+			$prog $FIX_OPTIONS > ${temp_file} 2>/dev/null
+			sh ${temp_file}
+			FIX_ERR=$?
+			if [ $FIX_ERR -eq 0 ] ; then
+				sleep 1
+				logger "OpenSCAP remediations (${SCAN_FILE}): PASS"
+			elif [ $vERR -eq 1 ] ; then
+				sleep 1
+				logger "OpenSCAP remediations (${SCAN_FILE}): ERROR. Run oscap scan from command line."
+			else
+				sleep 1
+				logger "OpenSCAP remediations (${SCAN_FILE}): FAILED."
+			fi
+			rm -f ${temp_file}
+			echo
+		fi
+	done
 }
 
 
