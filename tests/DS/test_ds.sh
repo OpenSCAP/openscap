@@ -126,11 +126,8 @@ function test_sds {
     popd
 
     if [ "$SKIP_DIFF" != "1" ]; then
-        DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR")
-
-        if [ $? -ne 0 ]; then
-            echo "The files are different after going through source data stream! diff follows:"
-            echo "$DIFFERENCE"
+        if ! diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR"; then
+            echo "The files are different after going through source data stream!"
             echo
 
             ret_val=1
@@ -324,11 +321,8 @@ function test_rds_split {
     popd
 
     if [ "$SKIP_DIFF" != "1" ]; then
-        DIFFERENCE=$(diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR")
-
-        if [ $? -ne 0 ]; then
-            echo "The files are different after going through result data stream! diff follows:"
-            echo "$DIFFERENCE"
+        if ! diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR"; then
+            echo "The files are different after going through result data stream!"
             echo
 
             ret_val=1
