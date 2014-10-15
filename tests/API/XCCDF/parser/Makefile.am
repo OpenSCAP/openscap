@@ -15,8 +15,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
@@ -27,5 +25,5 @@ check_PROGRAMS = test_api_xccdf
 
 test_api_xccdf_SOURCES = test_api_xccdf.c
 
-EXTRA_DIST += test_api_xccdf.sh xccdf11.xml xccdf12.xml xccdf11-results.xml
+EXTRA_DIST = test_api_xccdf.sh xccdf11.xml xccdf12.xml xccdf11-results.xml
 

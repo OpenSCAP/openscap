@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.results oscap_debug.log.*
 CLEANFILES = *.log *.results oscap_debug.log.*
 
@@ -10,7 +8,7 @@ TESTS_ENVIRONMENT= \
 
 TESTS = test_mitre.sh
 
-EXTRA_DIST +=	test_mitre.sh \
+EXTRA_DIST =	test_mitre.sh \
 		support.tgz \
 		ind-def_environmentvariable58_test.xml \
 		ind-def_environmentvariable_test.xml \

@@ -13,8 +13,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh  
-
 DISTCLEANFILES = *.log
 CLEANFILES = *.log
 
@@ -31,6 +29,6 @@ test_crapi_mdigest_SOURCES= test_crapi_mdigest.c
 test_crapi_mdigest_CFLAGS= -I$(top_srcdir)/src/OVAL/probes/
 test_crapi_mdigest_LDFLAGS= $(top_builddir)/src/OVAL/probes/crapi/libcrapi.la
 
-EXTRA_DIST += test_api_crypt.sh    \
+EXTRA_DIST = test_api_crypt.sh    \
 	      test_crapi_digest.c  \
 	      test_crapi_mdigest.c

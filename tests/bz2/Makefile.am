@@ -1,7 +1,6 @@
 
 EXTRA_DIST = \
 	$(top_srcdir)/tests/assume.h \
-	$(top_srcdir)/tests/test_common.sh \
 	$(top_srcdir)/tests/DS/sds_multiple_oval/multiple-oval-xccdf.xml
 
 DISTCLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)

@@ -14,8 +14,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out* oscap_debug.log.*
 CLEANFILES = *.log *.out* oscap_debug.log.*
 
@@ -24,7 +22,7 @@ check_PROGRAMS = test_api_cpe_lang
 
 test_api_cpe_lang_SOURCES = test_api_cpe_lang.c
 
-EXTRA_DIST += test_api_cpe_lang.sh \
+EXTRA_DIST = test_api_cpe_lang.sh \
               test_api_cpe_lang.c \
 	      lang-copy.xml       \
               lang-corrupted.xml  \

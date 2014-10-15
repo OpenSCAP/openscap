@@ -14,8 +14,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
@@ -25,7 +23,7 @@ check_PROGRAMS = test_api_cvss
 test_api_cvss_SOURCES = test_api_cvss.c
 test_api_cvss_CFLAGS  = -ffloat-store
 
-EXTRA_DIST += test_api_cvss.sh \
+EXTRA_DIST = test_api_cvss.sh \
               test_api_cvss.c \
 			  vectors.txt
 
