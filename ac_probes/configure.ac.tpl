@@ -469,6 +469,7 @@ if test "$vgdebug" = "yes"; then
 else
    vgcheck="no"
 fi
+AC_SUBST([vgcheck])
 
 if test "x${perl_bind}" = xyes; then
 	AC_PATH_PROG(PERL, perl)
@@ -606,7 +607,6 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/iflisteners/Makefile
 		 tests/probes/maskattr/Makefile
 
-                 tests/probes/vgtest/Makefile
 
                  src/CVSS/Makefile
                  tests/API/CVSS/Makefile
@@ -656,6 +656,8 @@ AC_CONFIG_FILES([Makefile
 
 AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
+AC_CONFIG_FILES([tests/test_common.sh],
+                [chmod +x,-w tests/test_common.sh])
 
 AC_OUTPUT
 

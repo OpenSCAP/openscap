@@ -29,6 +29,9 @@ SUBDIRS = \
 	schemas \
 	$(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS)
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
-	     $(top_srcdir)/tests/xmldiff.pl
+EXTRA_DIST = \
+	suppressions.supp \
+	valgrind_test.sh \
+	xmldiff.pl
 
+CONFIG_CLEAN_FILES = test_common.sh

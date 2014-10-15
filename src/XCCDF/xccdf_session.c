@@ -1163,6 +1163,7 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 			_xccdf_session_free_oval_result_sources(session);
 			return 1;
 		}
+		oscap_free(filename);
 	}
 
 	struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
@@ -1177,6 +1178,7 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 			oscap_htable_iterator_free(cpe_it);
 			return 1;
 		}
+		oscap_free(filename);
 	}
 	oscap_htable_iterator_free(cpe_it);
 	return 0;
