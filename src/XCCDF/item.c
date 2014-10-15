@@ -345,16 +345,27 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 {
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(item);
 
-	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
+	/*
+	We have 2 special cases here, either we have a parent node or we don't.
+	In case we have a parent node we can look for XCCDF namespace or create
+	it there. But if we don't we have no node to create the namespace in!
+	In this case we create a node with no namespace, then create the namespace
+	in it and only then we set the node to the new namespace. This avoids
+	undefined / undocumented behavior that we relied on previously.
+	*/
+
+	xmlNs *ns_xccdf = NULL;
 	xmlNode *item_node = NULL;
 	if (parent == NULL) {
-		item_node = xmlNewNode(ns_xccdf, BAD_CAST "Item");
-		if (item_node->nsDef == NULL) {
-			item_node->nsDef = ns_xccdf;
-		}
+		item_node = xmlNewNode(NULL, BAD_CAST "Item");
+		// this creates the namespace and item_node carries it
+		ns_xccdf = lookup_xccdf_ns(doc, item_node, version_info);
+		xmlSetNs(item_node, ns_xccdf);
 	}
-	else
+	else {
+		ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 		item_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
+	}
 
 	/* Handle generic item attributes */
 	const char *id = xccdf_item_get_id(item);

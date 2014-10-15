@@ -232,11 +232,9 @@ struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_be
 
 xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info)
 {
-	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
-
 	xmlNs *ns_tailoring = NULL;
 
-	xmlNode *tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
+	xmlNode *tailoring_node = xmlNewNode(NULL, BAD_CAST "Tailoring");
 
 	const char *xccdf_version = xccdf_version_info_get_version(version_info);
 #ifdef __USE_GNU
@@ -273,6 +271,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 		return NULL;
 	}
 
+	xmlNs *ns_xccdf = parent != NULL ? lookup_xccdf_ns(doc, parent, version_info) : NULL;
 	if (!ns_xccdf) {
 		// In cases where tailoring ends up being the root node we have to create
 		// a namespace at the node itself.
