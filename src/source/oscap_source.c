@@ -121,14 +121,16 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source)
 
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 {
-	if (source->scap_type == 0) {
+	if (source->scap_type == OSCAP_DOCUMENT_UNKNOWN) {
 		xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 		if (reader == NULL) {
 			// the oscap error is already set
-			return 0;
+			return OSCAP_DOCUMENT_UNKNOWN;
 		}
 		if (oscap_determine_document_type_reader(reader, &(source->scap_type)) == -1) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Unknown document type: '%s'", oscap_source_readable_origin(source));
+			// in case of error scap_type must remain UNKNOWN
+			assert(source->scap_type == OSCAP_DOCUMENT_UNKNOWN);
 		}
 		xmlFreeTextReader(reader);
 	}

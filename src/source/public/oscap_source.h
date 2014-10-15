@@ -74,6 +74,10 @@ void oscap_source_free(struct oscap_source *source);
  * @memberof oscap_source
  * @param source
  * @returns determined document type
+ *
+ * @note
+ * This function returns OSCAP_DOCUMENT_UNKNOWN to signal an error. Not being
+ * able to determine a valid documnent type is treated as an error.
  */
 oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
 
