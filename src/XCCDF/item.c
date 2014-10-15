@@ -341,10 +341,8 @@ void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, cons
 		oscap_text_to_dom(text, parent, elname);
 }
 
-xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info)
 {
-	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(item);
-
 	/*
 	We have 2 special cases here, either we have a parent node or we don't.
 	In case we have a parent node we can look for XCCDF namespace or create
@@ -478,7 +476,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_PROFILE:
 			xmlNodeSetName(item_node,BAD_CAST "Profile");
-			xccdf_profile_to_dom(XPROFILE(item), item_node, doc, parent);
+			xccdf_profile_to_dom(XPROFILE(item), item_node, doc, parent, version_info);
 			break;
 		case XCCDF_RESULT:
 			xmlNodeSetName(item_node,BAD_CAST "TestResult");

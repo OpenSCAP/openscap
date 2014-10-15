@@ -1085,7 +1085,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	while (xccdf_value_iterator_has_more(values)) {
 		struct xccdf_value *value = xccdf_value_iterator_next(values);
 		if (XGROUP(xccdf_value_get_parent(value)) == group) {
-			xccdf_item_to_dom((struct xccdf_item *)value, doc, group_node);
+			xccdf_item_to_dom((struct xccdf_item *)value, doc, group_node, version_info);
 		}
 	}
 	xccdf_value_iterator_free(values);
@@ -1094,7 +1094,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	while (xccdf_item_iterator_has_more(items)) {
 		struct xccdf_item *item = xccdf_item_iterator_next(items);
 		if (XGROUP(xccdf_item_get_parent(item)) == group) {
-			xccdf_item_to_dom(item, doc, group_node);
+			xccdf_item_to_dom(item, doc, group_node, version_info);
 		}
 	}
 	xccdf_item_iterator_free(items);

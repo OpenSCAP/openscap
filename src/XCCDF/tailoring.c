@@ -347,7 +347,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	struct xccdf_profile_iterator *profiles = xccdf_tailoring_get_profiles(tailoring);
 	while (xccdf_profile_iterator_has_more(profiles)) {
 		struct xccdf_profile *profile = xccdf_profile_iterator_next(profiles);
-		xccdf_item_to_dom(XITEM(profile), doc, tailoring_node);
+		xccdf_item_to_dom(XITEM(profile), doc, tailoring_node, version_info);
 	}
 	xccdf_profile_iterator_free(profiles);
 

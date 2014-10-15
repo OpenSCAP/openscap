@@ -298,10 +298,8 @@ struct xccdf_item *xccdf_profile_parse(xmlTextReaderPtr reader, struct xccdf_ite
 	return prof;
 }
 
-void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, xmlDoc *doc, xmlNode *parent)
+void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info)
 {
-	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(profile));
-
 	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	/* Handle attributes */

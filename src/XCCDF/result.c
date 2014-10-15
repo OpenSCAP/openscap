@@ -707,7 +707,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	if (parent) {
 	        ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 	} else {
-		if (!result_node) result_node = xccdf_item_to_dom(XITEM(result), doc, NULL);
+		if (!result_node) result_node = xccdf_item_to_dom(XITEM(result), doc, NULL, version_info);
                 ns_xccdf = xmlNewNs(result_node,
                 		(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info), NULL);
 		xmlDocSetRootElement(doc, result_node);

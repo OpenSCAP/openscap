@@ -256,7 +256,9 @@ int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file)
 xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc,
 				xmlNode *parent, void *user_args)
 {
-	xmlNodePtr root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent);
+	const struct xccdf_version_info *version_info = xccdf_benchmark_get_schema_version(benchmark);
+
+	xmlNodePtr root_node = xccdf_item_to_dom(XITEM(benchmark), doc, parent, version_info);
 	if (parent == NULL) {
 		xmlDocSetRootElement(doc, root_node);
 	}
@@ -293,7 +295,7 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	struct xccdf_plain_text_iterator *plain_text_it = xccdf_benchmark_get_plain_texts(benchmark);
 	while (xccdf_plain_text_iterator_has_more(plain_text_it)) {
 		struct xccdf_plain_text *plain_text = xccdf_plain_text_iterator_next(plain_text_it);
-		xccdf_plain_text_to_dom(plain_text, doc, root_node, xccdf_benchmark_get_schema_version(benchmark));
+		xccdf_plain_text_to_dom(plain_text, doc, root_node, version_info);
 	}
 	xccdf_plain_text_iterator_free(plain_text_it);
 
@@ -313,7 +315,7 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 		xmlFreeTextWriter(writer);
 	}
 
-	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, root_node, xccdf_benchmark_get_schema_version(benchmark));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, root_node, version_info);
 
 	struct oscap_string_iterator *platforms = xccdf_benchmark_get_platforms(benchmark);
 	while (oscap_string_iterator_has_more(platforms)) {
@@ -346,14 +348,14 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	struct xccdf_profile_iterator *profiles = xccdf_benchmark_get_profiles(benchmark);
 	while (xccdf_profile_iterator_has_more(profiles)) {
 		struct xccdf_profile *profile = xccdf_profile_iterator_next(profiles);
-		xccdf_item_to_dom(XITEM(profile), doc, root_node);
+		xccdf_item_to_dom(XITEM(profile), doc, root_node, version_info);
 	}
 	xccdf_profile_iterator_free(profiles);
 
 	struct xccdf_value_iterator *values = xccdf_benchmark_get_values(benchmark);
 	while (xccdf_value_iterator_has_more(values)) {
 		struct xccdf_value *value = xccdf_value_iterator_next(values);
-		xccdf_item_to_dom(XITEM(value), doc, root_node);
+		xccdf_item_to_dom(XITEM(value), doc, root_node, version_info);
 	}
 	xccdf_value_iterator_free(values);
 
@@ -361,14 +363,14 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	while (xccdf_item_iterator_has_more(items)) {
 		struct xccdf_item *item = xccdf_item_iterator_next(items);
 		if (XBENCHMARK(xccdf_item_get_parent(item)) == benchmark)
-			xccdf_item_to_dom(item, doc, root_node);
+			xccdf_item_to_dom(item, doc, root_node, version_info);
 	}
 	xccdf_item_iterator_free(items);
 
 	struct xccdf_result_iterator *results = xccdf_benchmark_get_results(benchmark);
 	while (xccdf_result_iterator_has_more(results)) {
 		struct xccdf_result *result = xccdf_result_iterator_next(results);
-		xccdf_item_to_dom(XITEM(result), doc, root_node);
+		xccdf_item_to_dom(XITEM(result), doc, root_node, version_info);
 	}
 	xccdf_result_iterator_free(results);
 
