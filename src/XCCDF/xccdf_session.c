@@ -985,7 +985,7 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
 			if (oscap_source_validate(session->xccdf.result_source, _reporter, NULL)) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export OVAL Results correctly to %s",
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not export XCCDF Results correctly to %s",
 					oscap_source_readable_origin(session->xccdf.result_source));
 				return 1;
 			}
