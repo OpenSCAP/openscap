@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../../test_common.sh
+. ../../test_common.sh
 
 function test_validation {
     local TYPE=$1

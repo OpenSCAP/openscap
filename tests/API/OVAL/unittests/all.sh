@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $srcdir/../../../test_common.sh
+. ../../../test_common.sh
 
 test_init test_api_oval_unittests.log
 test_run "empty filename(pattern match)" $srcdir/test_empty_filename.sh

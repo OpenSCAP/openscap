@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../test_common.sh
+. ../test_common.sh
 
 test_init "test_bz2.log"
 

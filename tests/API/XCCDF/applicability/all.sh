@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../../../test_common.sh
+. ../../../test_common.sh
 
 function test_api_xccdf_cpe_eval {
     local INPUT=$srcdir/$1
