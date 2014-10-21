@@ -19,7 +19,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../../../test_common.sh
+. ../../../test_common.sh
 
 #
 # Export two values from XCCDF to a single OVAL variable as a part

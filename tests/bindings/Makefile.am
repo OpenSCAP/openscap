@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.results oscap_debug.log.*
 CLEANFILES = *.log *.results oscap_debug.log.*
 
@@ -14,5 +12,5 @@ if WANT_PERL
 TESTS += test_perl.sh
 endif
 
-EXTRA_DIST +=	test_python.sh \
+EXTRA_DIST =	test_python.sh \
 		test_perl.sh

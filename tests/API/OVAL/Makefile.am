@@ -15,8 +15,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out* oscap_debug.log* exported*
 CLEANFILES = *.log *.out* oscap_debug.log* exported*
 
@@ -29,7 +27,7 @@ test_api_syschar_SOURCES = test_api_syschar.c
 test_api_results_SOURCES = test_api_results.c
 test_api_directives_SOURCES = test_api_directives.c
 
-EXTRA_DIST += test_api_oval.sh \
+EXTRA_DIST = test_api_oval.sh \
 	      scap-rhel5-oval.xml \
 	      composed-oval.xml \
 	      system-characteristics.xml \

@@ -9,7 +9,7 @@
 #      Maros Barabas <mbarabas@redhat.com>
 #      Ondrej Moris <omoris@redhat.com>
 
-. $srcdir/../../test_common.sh
+. ../../test_common.sh
 
 function test_api_cve_cvss {
      ./test_api_cve --test-cvss $srcdir/nvdcve-2.0-recent.xml

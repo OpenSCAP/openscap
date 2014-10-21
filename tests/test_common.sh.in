@@ -21,7 +21,7 @@ else
   [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
 fi
 
-export XMLDIFF=$(cd $(dirname $BASH_SOURCE); pwd)/xmldiff.pl
+export XMLDIFF="@abs_top_srcdir@/tests/xmldiff.pl"
 
 if ! XPATH=`command -v xpath 2>&1`; then
   echo "I require xpath tool but it's not installed. Aborting." >&2

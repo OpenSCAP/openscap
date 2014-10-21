@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../test_common.sh
+. ../test_common.sh
 
 function test_illicit_function_use {
 	codebase=$(find $top_srcdir/src/ -regex '.*\.[ch]x*')

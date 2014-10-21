@@ -14,8 +14,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
@@ -26,4 +24,4 @@ test_ds_sds_index_SOURCES = test_ds_sds_index.c
 test_ds_sds_index_multiple_SOURCES = test_ds_sds_index_multiple.c
 test_ds_sds_index_invalid_SOURCES = test_ds_sds_index_invalid.c
 
-EXTRA_DIST += all.sh test_ds_sds_index.c test_ds_sds_index_multiple.c test_ds_sds_index_invalid.c sds.xml sds_multiple.xml sds_invalid.xml
+EXTRA_DIST = all.sh test_ds_sds_index.c test_ds_sds_index_multiple.c test_ds_sds_index_invalid.c sds.xml sds_multiple.xml sds_invalid.xml

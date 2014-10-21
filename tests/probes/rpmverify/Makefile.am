@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = \
 	*.log \
 	oscap_debug.log.* \
@@ -19,7 +17,7 @@ endif
 
 check_SCRIPTS = test_not_equals_operation.sh
 
-EXTRA_DIST += \
+EXTRA_DIST = \
 	all.sh \
 	test_not_equals_operation.sh \
 	test_not_equals_operation.xml

@@ -11,7 +11,7 @@
 #      Peter Vrabec, <pvrabec@redhat.com>
 #      Ondrej Moris, <omoris@redhat.com>
 
-. ${srcdir}/../../test_common.sh
+. ../../test_common.sh
 
 
 # Test Cases.

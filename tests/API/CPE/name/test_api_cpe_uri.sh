@@ -8,7 +8,7 @@
 # Authors:
 #      Ondrej Moris <omoris@redhat.com>
 
-. $srcdir/../../../test_common.sh
+. ../../../test_common.sh
 
 CPE_URIS=(`grep "cpe:" $srcdir/dict.xml | \
     sed 's/^.*cpe:/cpe:/g' | sed 's/".*$//g' | tr '\n' ' '`)

@@ -3,7 +3,7 @@
 # Author:
 #	Martin Preisler <mpreisle@redhat.com>
 
-. ${srcdir}/../test_common.sh
+. ../test_common.sh
 
 # Test Cases.
 

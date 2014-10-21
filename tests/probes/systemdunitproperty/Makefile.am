@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = \
 	*.log \
 	oscap_debug.log.* \
@@ -16,7 +14,7 @@ TESTS_ENVIRONMENT = \
 
 TESTS = all.sh
 
-EXTRA_DIST += \
+EXTRA_DIST = \
 	all.sh \
 	test_probes_systemdunitproperty.sh \
 	test_probes_systemdunitproperty.xml

@@ -14,8 +14,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out* oscap_debug.log.*
 CLEANFILES = *.log *.out* oscap_debug.log.*
 
@@ -28,7 +26,7 @@ TESTS_ENVIRONMENT= \
 	builddir=$(top_builddir) \
 	$(top_builddir)/run
 
-EXTRA_DIST += test_api_cpe_dict.sh \
+EXTRA_DIST = test_api_cpe_dict.sh \
               test_api_cpe_dict.c  \
 	      dict-cp1250-dos.xml  \
               dict-damaged.xml     \

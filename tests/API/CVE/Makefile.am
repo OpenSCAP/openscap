@@ -13,8 +13,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
 
@@ -23,6 +21,6 @@ check_PROGRAMS = test_api_cve
 
 test_api_cve_SOURCES = test_api_cve.c
 
-EXTRA_DIST += test_api_cve.sh        \
+EXTRA_DIST = test_api_cve.sh        \
               test_api_cve.c         \
 	      nvdcve-2.0-recent.xml

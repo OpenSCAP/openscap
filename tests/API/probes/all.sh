@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ${srcdir}/../../test_common.sh
+. ../../test_common.sh
 
 test_init "test_api_probes.log"
 test_run "fts test" $srcdir/fts.sh
