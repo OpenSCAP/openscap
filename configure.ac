@@ -1181,7 +1181,7 @@ if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
  else
-   vgcheck="valgrind not installed"
+   AC_MSG_ERROR([valgrind not installed])
  fi
 else
    vgcheck="no"
