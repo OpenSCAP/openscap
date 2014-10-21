@@ -11,6 +11,9 @@
 # Normalized path.
 PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
+# Some of the tests rely on the "C" locale and would fail with some locales.
+LC_ALL=C
+export LC_ALL
 
 enable_valgrind=@vgcheck@
 if [ $enable_valgrind = "yes" ] ; then
