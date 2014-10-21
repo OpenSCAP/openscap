@@ -1,7 +1,3 @@
-# Some of the tests rely on the "C" locale and would fail with some locales.
-LC_ALL = C
-export LC_ALL
-
 if ENABLE_VALGRIND_TESTS
   export ENABLE_VALGRIND_TESTS=1
 endif
