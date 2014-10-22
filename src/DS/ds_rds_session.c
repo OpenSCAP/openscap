@@ -27,11 +27,13 @@
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/list.h"
+#include "common/oscapxml.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_rds_session.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
+#include "source/xslt_priv.h"
 
 struct ds_rds_session {
 	struct oscap_source *source;            ///< Result DataStream raw representation
@@ -54,4 +56,17 @@ void ds_rds_session_free(struct ds_rds_session *rds_session)
 	if (rds_session != NULL) {
 		oscap_free(rds_session);
 	}
+}
+
+char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)
+{
+	const char *params[] = {
+		"show",              "",
+		"verbosity",         "",
+		"hide-profile-info", NULL,
+		"oscap-version",     oscap_get_version(),
+		"pwd",               NULL,
+		NULL
+        };
+	return oscap_source_apply_xslt_path_mem(rds_session->source, "xccdf-report.xsl", params, oscap_path_to_xslt());
 }

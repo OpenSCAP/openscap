@@ -56,4 +56,12 @@ struct ds_rds_session *ds_rds_session_new_from_source(struct oscap_source *sourc
  */
 void ds_rds_session_free(struct ds_rds_session *rds_session);
 
+/**
+ * Returns HTML representation of the given result datastream
+ * @memberof ds_rds_session
+ * @param rds_session The ds_rds_session to build HTML from
+ * @returns a buffer of HTML content that should be freed by the caller
+ */
+char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session);
+
 #endif
