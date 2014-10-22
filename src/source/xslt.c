@@ -97,11 +97,12 @@ static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStyl
 	return ret;
 }
 
-int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfile, const char *outfile, const char **params, const char *path_to_xslt)
+static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char *xsltfile, const char **params, const char *path_to_xslt, xsltStylesheet **stylesheet)
 {
-	xsltStylesheetPtr cur = NULL;
-	xmlDocPtr doc = NULL, res = NULL;
-	int ret = -1;
+	xmlDoc *doc = oscap_source_get_xmlDoc(source);
+	if (doc == NULL || stylesheet == NULL) {
+		return NULL;
+	}
 
 	size_t argc = 0;
 	while(params[argc]) argc += 2;
@@ -121,7 +122,8 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 		if (access(xsltpath, R_OK)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found when trying to transform '%s'",
 				xsltfile, oscap_source_readable_origin(source));
-			goto cleanup;
+			oscap_free(xsltpath);
+			return NULL;
 		}
 	}
 	else {
@@ -129,7 +131,8 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 		if (access(xsltpath, R_OK)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found in path '%s' when trying to transform '%s'",
 				xsltfile, path_to_xslt, oscap_source_readable_origin(source));
-			goto cleanup;
+			oscap_free(xsltpath);
+			return NULL;
 		}
 
 		if (strcmp(xsltfile, "xccdf-report.xsl") == 0 ||
@@ -138,22 +141,21 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 			ns_workaround = true;
 	}
 
-	cur = xsltParseStylesheetFile(BAD_CAST xsltpath);
-	if (cur == NULL) {
+	*stylesheet = xsltParseStylesheetFile(BAD_CAST xsltpath);
+	if (*stylesheet == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse XSLT file '%s'", xsltpath);
-		goto cleanup;
-	}
-
-	doc = oscap_source_get_xmlDoc(source);
-	if (doc == NULL) {
-		goto cleanup;
+		oscap_free(xsltpath);
+		return NULL;
 	}
 
 	if (ns_workaround) {
 		if (xccdf_ns_xslt_workaround(doc, xmlDocGetRootElement(doc)) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Had problems employing XCCDF XSLT namespace workaround for XML document '%s'",
 				oscap_source_readable_origin(source));
-			goto cleanup;
+			oscap_free(xsltpath);
+			xsltFreeStylesheet(*stylesheet);
+			*stylesheet = NULL;
+			return NULL;
 		}
 	}
 
@@ -162,22 +164,32 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 		if (params[i+1]) args[i+1] = oscap_sprintf("'%s'", params[i+1]);
 	}
 
-	res = xsltApplyStylesheet(cur, doc, (const char **) args);
+	xmlDoc *transformed = xsltApplyStylesheet(*stylesheet, doc, (const char **) args);
 	for (size_t i = 0; args[i]; i += 2) {
 		oscap_free(args[i+1]);
 	}
-	if (res == NULL) {
+	if (transformed == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT %s to XML file: %s", xsltpath,
 			oscap_source_readable_origin(source));
-		goto cleanup;
+		oscap_free(xsltpath);
+		xsltFreeStylesheet(*stylesheet);
+		*stylesheet = NULL;
+		return NULL;
 	}
-
-	ret = save_stylesheet_result_to_file(res, cur, outfile);
-
-cleanup:
-	if (cur) xsltFreeStylesheet(cur);
-	if (res) xmlFreeDoc(res);
 	oscap_free(xsltpath);
+	return transformed;
 
+}
+
+int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfile, const char *outfile, const char **params, const char *path_to_xslt)
+{
+	xsltStylesheet *stylesheet = NULL;
+	xmlDocPtr transformed = apply_xslt_path_internal(source, xsltfile, params, path_to_xslt, &stylesheet);
+	if (transformed == NULL) {
+		return -1;
+	}
+	int ret = save_stylesheet_result_to_file(transformed, stylesheet, outfile);
+	xsltFreeStylesheet(stylesheet);
+	xmlFreeDoc(transformed);
 	return ret;
 }
