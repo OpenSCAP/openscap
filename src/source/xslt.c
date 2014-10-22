@@ -163,6 +163,9 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 	}
 
 	res = xsltApplyStylesheet(cur, doc, (const char **) args);
+	for (size_t i = 0; args[i]; i += 2) {
+		oscap_free(args[i+1]);
+	}
 	if (res == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT %s to XML file: %s", xsltpath,
 			oscap_source_readable_origin(source));
@@ -172,7 +175,6 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 	ret = save_stylesheet_result_to_file(res, cur, outfile);
 
 cleanup:
-	for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
 	if (cur) xsltFreeStylesheet(cur);
 	if (res) xmlFreeDoc(res);
 	oscap_free(xsltpath);
