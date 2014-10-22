@@ -36,6 +36,7 @@
 #include "common/_error.h"
 
 struct bz2_file {
+	FILE *f;
 	BZFILE *file;
 	bool eof;
 };
@@ -49,6 +50,7 @@ static struct bz2_file *bz2_open(const char *filename)
 	f = fopen (filename, "r" );
 	if (f) {
 		b = malloc(sizeof(struct bz2_file));
+		b->f = f;
 		b->file = BZ2_bzReadOpen(&bzerror, f, 0, 0, NULL, 0);
 		if (bzerror != BZ_OK) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not build BZ2FILE from %s: %s",
@@ -88,6 +90,7 @@ static int bz2_close(void *bzfile)
 {
 	int bzerror;
 	BZ2_bzReadClose(&bzerror, ((struct bz2_file *)bzfile)->file);
+	fclose(((struct bz2_file *)bzfile)->f);
 	oscap_free(bzfile);
 	return bzerror == BZ_OK ? 0 : -1;
 }
