@@ -75,11 +75,32 @@ static int xccdf_ns_xslt_workaround(xmlDocPtr doc, xmlNodePtr node)
 	return 0;
 }
 
+static inline int save_stylesheet_result_to_file(xmlDoc *resulting_doc, xsltStylesheet *stylesheet, const char *outfile)
+{
+	FILE *f = NULL;
+	if (outfile)
+		f = fopen(outfile, "w");
+	else
+		f = stdout;
+
+	if (f == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file '%s'", outfile ? outfile : "stdout");
+		return -1;
+	}
+
+	int ret = xsltSaveResultToFile(f, resulting_doc, stylesheet);
+	if (ret < 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save result document");
+	}
+	if (outfile && f)
+		fclose(f);
+	return ret;
+}
+
 int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfile, const char *outfile, const char **params, const char *path_to_xslt)
 {
 	xsltStylesheetPtr cur = NULL;
 	xmlDocPtr doc = NULL, res = NULL;
-	FILE *f = NULL;
 	int ret = -1;
 
 	size_t argc = 0;
@@ -148,25 +169,10 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 		goto cleanup;
 	}
 
-	if (outfile)
-		f = fopen(outfile, "w");
-	else
-		f = stdout;
-
-	if (f == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not open output file '%s'", outfile ? outfile : "stdout");
-		goto cleanup;
-	}
-
-	/* "calculate" return code */
-	if ((ret = xsltSaveResultToFile(f, res, cur)) < 0) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save result document");
-		goto cleanup;
-	}
+	ret = save_stylesheet_result_to_file(res, cur, outfile);
 
 cleanup:
 	for (size_t i = 0; args[i]; i += 2) oscap_free(args[i+1]);
-	if (outfile && f) fclose(f);
 	if (cur) xsltFreeStylesheet(cur);
 	if (res) xmlFreeDoc(res);
 	oscap_free(xsltpath);
