@@ -193,3 +193,21 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
 	xmlFreeDoc(transformed);
 	return ret;
 }
+
+char *oscap_source_apply_xslt_path_mem(struct oscap_source *source, const char *xsltfile, const char **params, const char *path_to_xslt)
+{
+	xsltStylesheet *stylesheet = NULL;
+	xmlDocPtr transformed = apply_xslt_path_internal(source, xsltfile, params, path_to_xslt, &stylesheet);
+	if (transformed == NULL) {
+		return NULL;
+	}
+	xmlChar *result = NULL;
+	int len;
+	if (xsltSaveResultToString(&result, &len, transformed, stylesheet) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not save transformend content to buffer, after applying XSLT %s",
+				xsltfile);
+		oscap_free(result);
+		result = NULL;
+	}
+	return (char *)result;
+}

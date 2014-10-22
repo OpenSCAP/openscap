@@ -44,5 +44,17 @@ OSCAP_HIDDEN_START;
  */
 int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfile, const char *outfile, const char **params, const char *path_to_xslt);
 
+/**
+ * Apply stylesheet on XML file (represented by oscap_source structure). If xsltfile
+ * is an absolute path to the stylesheet, path_to_xslt will not be used.
+ * @memberof oscap_source
+ * @param source oscap_surce structure representing file to transform
+ * @param xsltfile absolute path to the stylesheet document or relative given the path_to_xslt
+ * @param params external params for xsl transformation
+ * @param path_to_xslt optional path to xsl transformations
+ * @returns newly allocated buffer containing result of XSLT application. NULL is returned on error
+ */
+char *oscap_source_apply_xslt_path_mem(struct oscap_source *source, const char *xsltfile, const char **params, const char *path_to_xslt);
+
 OSCAP_HIDDEN_END;
 #endif
