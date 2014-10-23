@@ -496,7 +496,10 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 			return 1;
 		}
 		oscap_source_free(source);
-		xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, session->user_cpe);
+		if (!xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, session->user_cpe)) {
+			oscap_source_free(source);
+			return 1;
+		}
 	}
 
 	if (xccdf_session_is_sds(session)) {
@@ -522,9 +525,6 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 			while (oscap_string_iterator_has_more(cpe_it)) {
 				const char* cpe_filename = oscap_string_iterator_next(cpe_it);
 
-				char* full_cpe_filename = malloc(PATH_MAX * sizeof(char));
-				snprintf(full_cpe_filename, PATH_MAX, "%s/%s",
-						ds_sds_session_get_target_dir(xccdf_session_get_ds_sds_session(session)), cpe_filename);
 				struct oscap_source *source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), cpe_filename);
 
 				if (session->full_validation) {
@@ -537,8 +537,10 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 						return 1;
 					}
 				}
-				xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, full_cpe_filename);
-				free(full_cpe_filename);
+				if (!xccdf_policy_model_add_cpe_autodetect_source(session->xccdf.policy_model, source)) {
+					oscap_string_iterator_free(cpe_it);
+					return 1;
+				}
 			}
 		}
 		oscap_string_iterator_free(cpe_it);
