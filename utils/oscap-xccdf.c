@@ -76,7 +76,7 @@ static struct oscap_module XCCDF_RESOLVE = {
     .usage = "[options] -o output-xccdf.xml input-xccdf.xml",
     .help =
         "Options:\n"
-        "   --force or -f\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.",
+        "   --force\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_resolve
 };
