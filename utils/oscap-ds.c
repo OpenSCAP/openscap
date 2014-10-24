@@ -399,7 +399,7 @@ int app_ds_rds_split(const struct oscap_action *action) {
 		}
 	}
 
-	rds_idx = rds_index_import(action->ds_action->file);
+	rds_idx = rds_index_import_source(source);
 
 	const char* f_report_id = action->f_report_id;
 	if (rds_index_select_report(rds_idx, &f_report_id) != 0) {

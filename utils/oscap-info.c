@@ -346,7 +346,7 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_ARF: {
 		printf("Document type: Result Data Stream\n");
-		struct rds_index *rds = rds_index_import(action->file);
+		struct rds_index *rds = rds_index_import_source(source);
 		if (!rds)
 			goto cleanup;
 
