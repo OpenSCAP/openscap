@@ -33,7 +33,6 @@
 #define OPENSCAP_DS_H
 
 #include "oscap.h"
-#include "oscap_source.h"
 
 /**
  * @brief takes given source data stream and decomposes it into separate files
@@ -415,16 +414,8 @@ struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *i
 struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
 
 /**
- * Parse Result DataStream Index from oscap_source.
  * @memberof rds_index
- * @param source The oscap_source representing Result DataStream
- * @returns parsed rds_index or NULL to indicate error
- */
-struct rds_index *rds_index_import_source(struct oscap_source *source);
-
-/**
- * @memberof rds_index
- * @deprecated This function has been deprecated. Make a use of rds_index_import_source
+ * @deprecated This function has been deprecated. Make a use of ds_rds_session
  * instread. This function may be dropped from later versions of the library.
  */
 OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
