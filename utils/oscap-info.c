@@ -44,6 +44,7 @@
 #include <oval_system_characteristics.h>
 #include <oval_directives.h>
 #include <scap_ds.h>
+#include <ds_rds_session.h>
 #include <ds_sds_session.h>
 
 #include "oscap-tool.h"
@@ -346,9 +347,15 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_ARF: {
 		printf("Document type: Result Data Stream\n");
-		struct rds_index *rds = rds_index_import_source(source);
-		if (!rds)
+		struct ds_rds_session *session = ds_rds_session_new_from_source(source);
+		if (session == NULL) {
 			goto cleanup;
+		}
+		struct rds_index *rds = ds_rds_session_get_rds_idx(session);
+		if (!rds) {
+			ds_rds_session_free(session);
+			goto cleanup;
+		}
 
 		struct rds_asset_index_iterator* asset_it = rds_index_get_assets(rds);
 		while (rds_asset_index_iterator_has_more(asset_it)) {
@@ -367,7 +374,7 @@ static int app_info(const struct oscap_action *action)
 			rds_report_index_iterator_free(report_it);
 		}
 		rds_asset_index_iterator_free(asset_it);
-		rds_index_free(rds);
+		ds_rds_session_free(session);
 	}
 	break;
 	case OSCAP_DOCUMENT_XCCDF_TAILORING:
