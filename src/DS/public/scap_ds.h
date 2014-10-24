@@ -33,6 +33,7 @@
 #define OPENSCAP_DS_H
 
 #include "oscap.h"
+#include "oscap_source.h"
 
 /**
  * @brief takes given source data stream and decomposes it into separate files
@@ -412,6 +413,14 @@ struct rds_report_request_index *rds_index_get_report_request(struct rds_index *
 struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *id);
 /// @memberof rds_index
 struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
+
+/**
+ * Parse Result DataStream Index from oscap_source.
+ * @memberof rds_index
+ * @param source The oscap_source representing Result DataStream
+ * @returns parsed rds_index or NULL to indicate error
+ */
+struct rds_index *rds_index_import_source(struct oscap_source *source);
 
 /// @memberof rds_index
 struct rds_index *rds_index_import(const char *file);
