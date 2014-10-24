@@ -12,7 +12,8 @@ libds_la_SOURCES = ds_common.c \
 		   sds_index_priv.h \
 		   rds.c \
 		   rds_priv.h \
-		   rds_index.c
+		   rds_index.c \
+		   rds_index_priv.h
 
 libds_la_CPPFLAGS  = @xml2_CFLAGS@ \
 		     -I$(top_srcdir)/src \
