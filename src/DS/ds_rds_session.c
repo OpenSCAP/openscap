@@ -31,12 +31,14 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_rds_session.h"
+#include "rds_index_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/xslt_priv.h"
 
 struct ds_rds_session {
 	struct oscap_source *source;            ///< Result DataStream raw representation
+	struct rds_index *index;                ///< Result DataStream index
 };
 
 struct ds_rds_session *ds_rds_session_new_from_source(struct oscap_source *source)
@@ -54,8 +56,22 @@ struct ds_rds_session *ds_rds_session_new_from_source(struct oscap_source *sourc
 void ds_rds_session_free(struct ds_rds_session *rds_session)
 {
 	if (rds_session != NULL) {
+		rds_index_free(rds_session->index);
 		oscap_free(rds_session);
 	}
+}
+
+struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session)
+{
+	if (session->index == NULL) {
+		xmlTextReader *reader = oscap_source_get_xmlTextReader(session->source);
+		if (reader == NULL) {
+			return NULL;
+		}
+		session->index = rds_index_parse(reader);
+		xmlFreeTextReader(reader);
+	}
+	return session->index;
 }
 
 char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)
