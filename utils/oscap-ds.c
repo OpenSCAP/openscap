@@ -34,6 +34,7 @@
 /* DS */
 #include <scap_ds.h>
 #include <oscap_source.h>
+#include <ds_rds_session.h>
 #include <ds_sds_session.h>
 
 #include "oscap-tool.h"
@@ -390,6 +391,7 @@ cleanup:
 int app_ds_rds_split(const struct oscap_action *action) {
 	int ret = OSCAP_ERROR;
 	struct rds_index *rds_idx = NULL;
+	struct ds_rds_session *session = NULL;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
 	if (action->validate)
@@ -398,8 +400,14 @@ int app_ds_rds_split(const struct oscap_action *action) {
 			goto cleanup;
 		}
 	}
-
-	rds_idx = rds_index_import_source(source);
+	session = ds_rds_session_new_from_source(source);
+	if (session == NULL) {
+		goto cleanup;
+	}
+	rds_idx = ds_rds_session_get_rds_idx(session);
+	if (rds_idx == NULL) {
+		goto cleanup;
+	}
 
 	const char* f_report_id = action->f_report_id;
 	if (rds_index_select_report(rds_idx, &f_report_id) != 0) {
@@ -425,7 +433,7 @@ int app_ds_rds_split(const struct oscap_action *action) {
 cleanup:
 	oscap_print_error();
 
-	rds_index_free(rds_idx);
+	ds_rds_session_free(session);
 	free(action->ds_action);
 	oscap_source_free(source);
 
