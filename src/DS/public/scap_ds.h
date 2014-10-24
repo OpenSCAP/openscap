@@ -422,8 +422,12 @@ struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char 
  */
 struct rds_index *rds_index_import_source(struct oscap_source *source);
 
-/// @memberof rds_index
-struct rds_index *rds_index_import(const char *file);
+/**
+ * @memberof rds_index
+ * @deprecated This function has been deprecated. Make a use of rds_index_import_source
+ * instread. This function may be dropped from later versions of the library.
+ */
+OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
 
 /// @memberof rds_index
 int rds_index_select_report(struct rds_index *s, const char **report_id);
