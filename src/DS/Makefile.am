@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libds.la
 libds_la_SOURCES = ds_common.c \
 		   ds_common.h \
 		   ds_rds_session.c \
+		   ds_rds_session_priv.h \
 		   ds_sds_session.c \
 		   ds_sds_session_priv.h \
 		   sds.c \
