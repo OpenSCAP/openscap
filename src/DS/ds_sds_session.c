@@ -31,7 +31,6 @@
 #include "common/list.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
-#include "ds_common.h"
 #include "ds_sds_session.h"
 #include "ds_sds_session_priv.h"
 #include "sds_index_priv.h"
@@ -278,7 +277,7 @@ static inline int _ensure_dir(const char *filepath)
 {
 	char *filepath_cpy = oscap_strdup(filepath);
 	char *dirpath = dirname(filepath_cpy);
-	int ret = ds_common_mkdir_p(dirpath);
+	int ret = oscap_acquire_mkdir_p(dirpath);
 	if (ret != 0) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' while dumping component to file '%s'.", dirpath, filepath);
 	}

@@ -30,6 +30,7 @@
 
 #include "common/alloc.h"
 #include "common/_error.h"
+#include "common/oscap_acquire.h"
 #include "common/util.h"
 #include "common/list.h"
 
@@ -185,7 +186,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 	// make absolutely sure that the target dir exists
 	// NOTE: if target dir already exists, this function returns 0
-	if (ds_common_mkdir_p(target_dir) != 0) {
+	if (oscap_acquire_mkdir_p(target_dir) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't decompose RDS '%s' to target directory '%s'. "
 			"Failed to create given directory!", input_file, target_dir);
 		oscap_source_free(rds_source);

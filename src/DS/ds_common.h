@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2013--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@
 
 OSCAP_HIDDEN_START;
 
-int ds_common_mkdir_p(const char* path);
 xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent);
 
 OSCAP_HIDDEN_END;

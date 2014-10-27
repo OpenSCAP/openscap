@@ -27,49 +27,7 @@
 #include "ds_common.h"
 #include "common/_error.h"
 
-#include <string.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <libxml/tree.h>
-
-#ifndef MAXPATHLEN
-#   define MAXPATHLEN 1024
-#endif
-
-int ds_common_mkdir_p(const char* path)
-{
-	// NOTE: This assumes a UNIX VFS path, C:\\folder\\folder would break it!
-
-	if (strlen(path) > MAXPATHLEN) {
-		return -1;
-	}
-	else {
-		char temp[MAXPATHLEN + 1]; // +1 for \0
-		unsigned int i;
-
-		for (i = 0; i <= strlen(path); i++) {
-			if (path[i] == '/' || path[i] == '\0') {
-				strncpy(temp, path, i);
-				temp[i] = '\0';
-
-				// skip leading '/', we will never be creating the root anyway
-				if (strlen(temp) == 0)
-					continue;
-
-				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
-					oscap_seterr(OSCAP_EFAMILY_GLIBC,
-						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
-						temp, path, strerror(errno));
-					return -1;
-				}
-			}
-		}
-
-		return 0;
-	}
-}
 
 xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent)
 {
