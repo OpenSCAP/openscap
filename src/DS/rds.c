@@ -181,12 +181,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 	xmlNodePtr report_node = _lookup_report_in_arf(doc, report_id);
 	if (!report_node) {
-		const char* error = report_id ?
-			oscap_sprintf("Could not find any report of id '%s'", report_id) :
-			oscap_sprintf("Could not find any report inside the file");
-
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
-		oscap_free(error);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find any report of id '%s'", report_id);
 		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
