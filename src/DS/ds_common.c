@@ -26,6 +26,10 @@
 
 #include "ds_common.h"
 #include "common/_error.h"
+#include "common/list.h"
+#include "common/oscap_acquire.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 #include <libxml/tree.h>
 
@@ -53,4 +57,24 @@ xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent)
 	}
 	xmlDOMWrapFreeCtxt(wrap_ctxt);
 	return new_doc;
+}
+
+int ds_dump_component_sources(struct oscap_htable *component_sources)
+{
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(component_sources);
+	while (oscap_htable_iterator_has_more(hit)) {
+		struct oscap_source *s = oscap_htable_iterator_next_value(hit);
+		int ret = oscap_acquire_ensure_parent_dir(oscap_source_readable_origin(s));
+		if (ret != 0) {
+			oscap_htable_iterator_free(hit);
+			return ret;
+		}
+		ret = oscap_source_save_as(s, NULL);
+		if (ret != 0) {
+			oscap_htable_iterator_free(hit);
+			return ret;
+		}
+	}
+	oscap_htable_iterator_free(hit);
+	return 0;
 }

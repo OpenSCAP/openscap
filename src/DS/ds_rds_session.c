@@ -30,6 +30,7 @@
 #include "common/oscapxml.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "ds_common.h"
 #include "ds_rds_session.h"
 #include "ds_rds_session_priv.h"
 #include "rds_index_priv.h"
@@ -86,6 +87,11 @@ int ds_rds_session_register_component_source(struct ds_rds_session *session, con
 		return -1;
 	}
 	return 0;
+}
+
+int ds_rds_session_dump_component_files(struct ds_rds_session *session)
+{
+	return ds_dump_component_sources(session->component_sources);
 }
 
 char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)

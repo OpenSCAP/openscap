@@ -31,6 +31,7 @@
 #include "common/list.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "ds_common.h"
 #include "ds_sds_session.h"
 #include "ds_sds_session_priv.h"
 #include "sds_index_priv.h"
@@ -275,20 +276,5 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
 {
-	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->component_sources);
-	while (oscap_htable_iterator_has_more(hit)) {
-		struct oscap_source *s = oscap_htable_iterator_next_value(hit);
-		int ret = oscap_acquire_ensure_parent_dir(oscap_source_readable_origin(s));
-		if (ret != 0) {
-			oscap_htable_iterator_free(hit);
-			return ret;
-		}
-		ret = oscap_source_save_as(s, NULL);
-		if (ret != 0) {
-			oscap_htable_iterator_free(hit);
-			return ret;
-		}
-	}
-	oscap_htable_iterator_free(hit);
-	return 0;
+	return ds_dump_component_sources(session->component_sources);
 }

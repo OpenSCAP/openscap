@@ -65,6 +65,14 @@ void ds_rds_session_free(struct ds_rds_session *rds_session);
 struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session);
 
 /**
+ * Store cached component files to the hard drive
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @returns zero on success
+ */
+int ds_rds_session_dump_component_files(struct ds_rds_session *session);
+
+/**
  * Returns HTML representation of the given result datastream
  * @memberof ds_rds_session
  * @param rds_session The ds_rds_session to build HTML from

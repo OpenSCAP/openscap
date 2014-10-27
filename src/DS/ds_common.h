@@ -23,11 +23,13 @@
 #ifndef OPENSCAP_DS_COMMON_H
 #define OPENSCAP_DS_COMMON_H
 
+#include "common/list.h"
 #include "common/util.h"
 #include <libxml/tree.h>
 
 OSCAP_HIDDEN_START;
 
+int ds_dump_component_sources(struct oscap_htable *component_sources);
 xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent);
 
 OSCAP_HIDDEN_END;
