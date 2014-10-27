@@ -74,58 +74,38 @@ static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_
 	return ret;
 }
 
-static xmlNodePtr _lookup_report_in_arf(xmlDocPtr doc, const char *report_id)
+static inline xmlNode *_lookup_in_arf(xmlDocPtr doc, const char *id, const char *component_name, const char *container_name)
 {
-	xmlNodePtr container = _lookup_container_in_arf(doc, "reports");
+	xmlNodePtr container = _lookup_container_in_arf(doc, container_name);
 	xmlNodePtr component = NULL;
-	xmlNodePtr candidate = container->children;
 
-	for (; candidate != NULL; candidate = candidate->next)
-	{
+	for (xmlNode *candidate = container->children; candidate != NULL; candidate = candidate->next) {
 		if (candidate->type != XML_ELEMENT_NODE)
 			continue;
 
-		if (strcmp((const char*)(candidate->name), "report") != 0)
+		if (!oscap_streq((const char*)(candidate->name), component_name))
 			continue;
 
 		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-		if (strcmp(candidate_id, report_id) == 0)
-		{
+		if (oscap_streq(candidate_id, id)) {
 			component = candidate;
 			xmlFree(candidate_id);
 			break;
 		}
 		xmlFree(candidate_id);
 	}
-
 	return component;
+}
+
+
+static xmlNodePtr _lookup_report_in_arf(xmlDocPtr doc, const char *report_id)
+{
+	return _lookup_in_arf(doc, report_id, "report", "reports");
 }
 
 static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
 {
-	xmlNodePtr container = _lookup_container_in_arf(doc, "report-requests");
-	xmlNodePtr component = NULL;
-	xmlNodePtr candidate = container->children;
-
-	for (; candidate != NULL; candidate = candidate->next)
-	{
-		if (candidate->type != XML_ELEMENT_NODE)
-			continue;
-
-		if (strcmp((const char*)(candidate->name), "report-request") != 0)
-			continue;
-
-		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-		if (strcmp(candidate_id, request_id) == 0)
-		{
-			component = candidate;
-			xmlFree(candidate_id);
-			break;
-		}
-		xmlFree(candidate_id);
-	}
-
-	return component;
+	return _lookup_in_arf(doc, request_id, "report-request", "report-requests");
 }
 
 static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node)
