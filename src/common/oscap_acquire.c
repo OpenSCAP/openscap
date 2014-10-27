@@ -280,3 +280,15 @@ int oscap_acquire_mkdir_p(const char *path)
 		return 0;
 	}
 }
+
+int oscap_acquire_ensure_parent_dir(const char *filepath)
+{
+	char *filepath_cpy = oscap_strdup(filepath);
+	char *dirpath = dirname(filepath_cpy);
+	int ret = oscap_acquire_mkdir_p(dirpath);
+	if (ret != 0) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' to ensure correct path of '%s'.", dirpath, filepath);
+	}
+	free(filepath_cpy);
+	return ret;
+}

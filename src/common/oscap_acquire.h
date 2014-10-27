@@ -91,6 +91,14 @@ char *oscap_acquire_guess_realpath(const char *filepath);
  */
 int oscap_acquire_mkdir_p(const char* path);
 
+/**
+ * Ensures the parent directory of the filepath, if it does not already exists.
+ * Further it makes parent directories as needed.
+ * @param filepath filepath to the descendant file or dir
+ * @returns the zero on success
+ */
+int oscap_acquire_ensure_parent_dir(const char *filepath);
+
 // FIXME: SCE engine uses this particular function
 OSCAP_HIDDEN_END;
 
