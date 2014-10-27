@@ -177,17 +177,11 @@ static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const 
 
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
-
 	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
-	if (xmlSaveFileEnc(target_file, new_doc, "utf-8") == -1)
-	{
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping arf content.", target_file);
-		xmlFreeDoc(new_doc);
-		return -1;
-	}
-	xmlFreeDoc(new_doc);
-
-	return 0;
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, target_file);
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);
+	return ret;
 }
 
 int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
