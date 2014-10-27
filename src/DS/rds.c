@@ -30,11 +30,12 @@
 
 #include "common/alloc.h"
 #include "common/_error.h"
-#include "common/oscap_acquire.h"
 #include "common/util.h"
 #include "common/list.h"
 
 #include "ds_common.h"
+#include "ds_rds_session.h"
+#include "ds_rds_session_priv.h"
 #include "rds_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
@@ -165,9 +166,11 @@ static struct oscap_source *ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr pa
 int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
 {
 	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
+	struct ds_rds_session *session = ds_rds_session_new_from_source(rds_source);
 	xmlDocPtr doc = oscap_source_get_xmlDoc(rds_source);
 
-	if (!doc) {
+	if (doc == NULL || session == NULL) {
+		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
@@ -180,15 +183,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
 		oscap_free(error);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-
-	// make absolutely sure that the target dir exists
-	// NOTE: if target dir already exists, this function returns 0
-	if (oscap_acquire_mkdir_p(target_dir) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't decompose RDS '%s' to target directory '%s'. "
-			"Failed to create given directory!", input_file, target_dir);
+		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
@@ -197,42 +192,46 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	struct oscap_source *report_source = ds_rds_dump_arf_content(doc, report_node, target_report_file);
 	oscap_free(target_report_file);
 	if (report_source == NULL) {
+		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
-	if (oscap_source_save_as(report_source, NULL) != 0) {
+	if (ds_rds_session_register_component_source(session, report_id, report_source) != 0) {
 		oscap_source_free(report_source);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-	oscap_source_free(report_source);
-
-	if (request_id == NULL) {
-		oscap_source_free(rds_source);
-		return 0;
-	}
-	xmlNodePtr request_node = _lookup_request_in_arf(doc, request_id);
-	if (!request_node) {
-		oscap_seterr(OSCAP_EFAMILY_XML, "Could not find any request of id '%s'", request_id);
+		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
 
-	char *target_request_file = oscap_sprintf("%s/%s", target_dir, "report-request.xml");
-	struct oscap_source *request_source = ds_rds_dump_arf_content(doc, request_node, target_request_file);
-	oscap_free(target_request_file);
-	if (request_source == NULL) {
-		oscap_source_free(rds_source);
-		return -1;
+	if (request_id != NULL) {
+		xmlNodePtr request_node = _lookup_request_in_arf(doc, request_id);
+		if (!request_node) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Could not find any request of id '%s'", request_id);
+			ds_rds_session_free(session);
+			oscap_source_free(rds_source);
+			return -1;
+		}
+
+		char *target_request_file = oscap_sprintf("%s/%s", target_dir, "report-request.xml");
+		struct oscap_source *request_source = ds_rds_dump_arf_content(doc, request_node, target_request_file);
+		oscap_free(target_request_file);
+		if (request_source == NULL) {
+			ds_rds_session_free(session);
+			oscap_source_free(rds_source);
+			return -1;
+		}
+		if (ds_rds_session_register_component_source(session, request_id, request_source) != 0) {
+			oscap_source_free(request_source);
+			ds_rds_session_free(session);
+			oscap_source_free(rds_source);
+			return -1;
+		}
 	}
-	if (oscap_source_save_as(request_source, NULL) != 0) {
-		oscap_source_free(request_source);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-	oscap_source_free(request_source);
+
+	int ret = ds_rds_session_dump_component_files(session);
+	ds_rds_session_free(session);
 	oscap_source_free(rds_source);
-	return 0;
+	return ret;
 }
 
 static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
