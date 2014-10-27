@@ -122,7 +122,7 @@ int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *ta
 	if (oscap_streq(session->target_dir, target_dir)) {
 		return 0;
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal Error: Not implemented: Could reset DataStream target_session in session.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal Error: Not implemented: Could not reset DataStream target_session in session.");
 		return 1;
 	}
 }
