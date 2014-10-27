@@ -132,12 +132,12 @@ static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node
 	return content_node;
 }
 
-static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const char* target_file)
+static struct oscap_source *ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const char* target_file)
 {
 	xmlNodePtr content_node = ds_rds_get_inner_content(doc, parent_node);
 
 	if (!content_node)
-		return -1;
+		return NULL;
 
 	xmlNodePtr candidate = content_node->children;
 	xmlNodePtr inner_root = NULL;
@@ -158,10 +158,7 @@ static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const 
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
 	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
-	struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, target_file);
-	int ret = oscap_source_save_as(source, NULL);
-	oscap_source_free(source);
-	return ret;
+	return oscap_source_new_from_xmlDoc(new_doc, target_file);
 }
 
 int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
@@ -196,8 +193,18 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	}
 
 	char *target_report_file = oscap_sprintf("%s/%s", target_dir, "report.xml");
-	ds_rds_dump_arf_content(doc, report_node, target_report_file);
+	struct oscap_source *report_source = ds_rds_dump_arf_content(doc, report_node, target_report_file);
 	oscap_free(target_report_file);
+	if (report_source == NULL) {
+		oscap_source_free(rds_source);
+		return -1;
+	}
+	if (oscap_source_save_as(report_source, NULL) != 0) {
+		oscap_source_free(report_source);
+		oscap_source_free(rds_source);
+		return -1;
+	}
+	oscap_source_free(report_source);
 
 	if (request_id == NULL) {
 		oscap_source_free(rds_source);
@@ -211,9 +218,18 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	}
 
 	char *target_request_file = oscap_sprintf("%s/%s", target_dir, "report-request.xml");
-	ds_rds_dump_arf_content(doc, request_node, target_request_file);
+	struct oscap_source *request_source = ds_rds_dump_arf_content(doc, request_node, target_request_file);
 	oscap_free(target_request_file);
-
+	if (request_source == NULL) {
+		oscap_source_free(rds_source);
+		return -1;
+	}
+	if (oscap_source_save_as(request_source, NULL) != 0) {
+		oscap_source_free(request_source);
+		oscap_source_free(rds_source);
+		return -1;
+	}
+	oscap_source_free(request_source);
 	oscap_source_free(rds_source);
 	return 0;
 }
