@@ -99,17 +99,6 @@ static inline xmlNode *_lookup_in_arf(xmlDocPtr doc, const char *id, const char 
 	return component;
 }
 
-
-static xmlNodePtr _lookup_report_in_arf(xmlDocPtr doc, const char *report_id)
-{
-	return _lookup_in_arf(doc, report_id, "report", "reports");
-}
-
-static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
-{
-	return _lookup_in_arf(doc, request_id, "report-request", "report-requests");
-}
-
 static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node)
 {
 	xmlNodePtr candidate = parent_node->children;
@@ -134,8 +123,15 @@ static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node
 	return content_node;
 }
 
-static int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *content_id, const char *container_name, xmlNodePtr parent_node)
+static int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id)
 {
+	xmlDoc *doc = ds_rds_session_get_xmlDoc(session);
+	xmlNodePtr parent_node = _lookup_in_arf(doc, content_id, component_name, container_name);
+	if (!parent_node) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find any %s of id '%s'", component_name, content_id);
+		return -1;
+	}
+
 	xmlNodePtr content_node = ds_rds_get_inner_content(NULL, parent_node);
 
 	if (!content_node)
@@ -160,7 +156,7 @@ static int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *c
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
 	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, ds_rds_session_get_xmlDoc(session));
-	char *target_file = oscap_sprintf("%s/%s.xml", ds_rds_session_get_target_dir(session), container_name);
+	char *target_file = oscap_sprintf("%s/%s.xml", ds_rds_session_get_target_dir(session), component_name);
 	struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, target_file);
 	oscap_free(target_file);
 	return ds_rds_session_register_component_source(session, content_id, source);
@@ -171,38 +167,21 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
 	struct ds_rds_session *session = ds_rds_session_new_from_source(rds_source);
 	ds_rds_session_set_target_dir(session, target_dir);
-	xmlDocPtr doc = oscap_source_get_xmlDoc(rds_source);
 
-	if (doc == NULL || session == NULL) {
+	if (session == NULL) {
 		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
 
-	xmlNodePtr report_node = _lookup_report_in_arf(doc, report_id);
-	if (!report_node) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find any report of id '%s'", report_id);
-		ds_rds_session_free(session);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-
-	if (ds_rds_dump_arf_content(session, report_id, "report", report_node) != 0) {
+	if (ds_rds_dump_arf_content(session, "reports", "report", report_id) != 0) {
 		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
 
 	if (request_id != NULL) {
-		xmlNodePtr request_node = _lookup_request_in_arf(doc, request_id);
-		if (!request_node) {
-			oscap_seterr(OSCAP_EFAMILY_XML, "Could not find any request of id '%s'", request_id);
-			ds_rds_session_free(session);
-			oscap_source_free(rds_source);
-			return -1;
-		}
-
-		if (ds_rds_dump_arf_content(session, request_id, "report-request", request_node) != 0) {
+		if (ds_rds_dump_arf_content(session, "report-requests", "report-request", request_id) != 0) {
 			ds_rds_session_free(session);
 			oscap_source_free(rds_source);
 			return -1;
