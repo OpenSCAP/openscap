@@ -79,6 +79,11 @@ struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session)
 	return session->index;
 }
 
+xmlDoc *ds_rds_session_get_xmlDoc(struct ds_rds_session *session)
+{
+	return oscap_source_get_xmlDoc(session->source);
+}
+
 int ds_rds_session_register_component_source(struct ds_rds_session *session, const char *content_id, struct oscap_source *component)
 {
 	if (!oscap_htable_add(session->component_sources, content_id, component)) {

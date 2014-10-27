@@ -34,6 +34,7 @@
 
 OSCAP_HIDDEN_START;
 
+xmlDoc *ds_rds_session_get_xmlDoc(struct ds_rds_session *session);
 int ds_rds_session_register_component_source(struct ds_rds_session *session, const char *content_id, struct oscap_source *component);
 
 OSCAP_HIDDEN_END;
