@@ -41,6 +41,7 @@
 struct ds_rds_session {
 	struct oscap_source *source;            ///< Result DataStream raw representation
 	struct rds_index *index;                ///< Result DataStream index
+	const char *target_dir;			///< Target directory for current split
 	struct oscap_htable *component_sources; ///< oscap_sources for parsed contents (arf:content)
 };
 
@@ -82,6 +83,24 @@ struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session)
 xmlDoc *ds_rds_session_get_xmlDoc(struct ds_rds_session *session)
 {
 	return oscap_source_get_xmlDoc(session->source);
+}
+
+const char *ds_rds_session_get_target_dir(struct ds_rds_session *session)
+{
+	return session->target_dir;
+}
+
+int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *target_dir)
+{
+	if (session->target_dir == NULL) {
+		session->target_dir = target_dir;
+	}
+	if (oscap_streq(session->target_dir, target_dir)) {
+		return 0;
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal Error: Not implemented: Could not reset DataStream target_session in session.");
+		return 1;
+	}
 }
 
 int ds_rds_session_register_component_source(struct ds_rds_session *session, const char *content_id, struct oscap_source *component)

@@ -65,6 +65,15 @@ void ds_rds_session_free(struct ds_rds_session *rds_session);
 struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session);
 
 /**
+ * Set target directory for the component files
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param target_dir PAth to the target storage dir
+ * @returns 0 on success
+ */
+int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *target_dir);
+
+/**
  * Store cached component files to the hard drive
  * @memberof ds_rds_session
  * @param session The Result DataStream session
