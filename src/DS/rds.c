@@ -116,7 +116,7 @@ static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
 			continue;
 
 		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-		if (request_id == NULL || strcmp(candidate_id, request_id) == 0)
+		if (strcmp(candidate_id, request_id) == 0)
 		{
 			component = candidate;
 			xmlFree(candidate_id);
@@ -219,14 +219,13 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	ds_rds_dump_arf_content(doc, report_node, target_report_file);
 	oscap_free(target_report_file);
 
+	if (request_id == NULL) {
+		oscap_source_free(rds_source);
+		return 0;
+	}
 	xmlNodePtr request_node = _lookup_request_in_arf(doc, request_id);
 	if (!request_node) {
-		const char* error = request_id ?
-			oscap_sprintf("Could not find any request of id '%s'", request_id) :
-			oscap_sprintf("Could not find any request inside the file");
-
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
-		oscap_free(error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not find any request of id '%s'", request_id);
 		oscap_source_free(rds_source);
 		return -1;
 	}
