@@ -607,7 +607,6 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/iflisteners/Makefile
 		 tests/probes/maskattr/Makefile
 
-
                  src/CVSS/Makefile
                  tests/API/CVSS/Makefile
 
