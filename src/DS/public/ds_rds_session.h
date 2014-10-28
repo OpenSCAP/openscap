@@ -92,6 +92,17 @@ int ds_rds_session_dump_component_files(struct ds_rds_session *session);
 struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id);
 
 /**
+ * Select arf:report-request from result DataStream and return it in form of oscap_source.
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param report_request_id The id of arf:report-request. Session will find the report_request
+ * related (see arf:relationship) to the last selected report. If there was no report selected
+ * session will error out.
+ * @returns oscap_source owned by the ds_rds_session or NULL on error
+ */
+struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session *session, const char *report_request_id);
+
+/**
  * Returns HTML representation of the given result datastream
  * @memberof ds_rds_session
  * @param rds_session The ds_rds_session to build HTML from

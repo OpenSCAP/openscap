@@ -134,6 +134,27 @@ struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session
 	return oscap_htable_get(session->component_sources, session->report_id);
 }
 
+struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session *session, const char *report_request_id)
+{
+	if (report_request_id == NULL) {
+		if (session->report_id == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal Error: Not implemented: "
+					"Could not select report-request: '<any>': No report selected.");
+			return NULL;
+		}
+		struct rds_report_index *report = rds_index_get_report(ds_rds_session_get_rds_idx(session), session->report_id);
+		struct rds_report_request_index *request = rds_report_index_get_request(report);
+		if (request == NULL) {
+			return NULL;
+		}
+		report_request_id = rds_report_request_index_get_id(request);
+	}
+	if (ds_rds_dump_arf_content(session, "report-requests", "report-request", report_request_id) != 0) {
+		return NULL;
+	}
+	return oscap_htable_get(session->component_sources, report_request_id);
+}
+
 char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)
 {
 	const char *params[] = {
