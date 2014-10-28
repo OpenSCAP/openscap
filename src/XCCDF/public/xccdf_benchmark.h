@@ -726,6 +726,14 @@ struct xccdf_benchmark* xccdf_benchmark_import_source(struct oscap_source *sourc
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file);
 
 /**
+ * Import the content of oscap_source into a xccdf_result
+ * @memberof xccdf_result
+ * @param source The oscap_source to import from
+ * @returns newly created test-result element or NULL on error
+ */
+struct xccdf_result *xccdf_result_import_source(struct oscap_source *source);
+
+/**
  * Collect system info and store it in the TestResult.
  * @memberof xccdf_result
  */

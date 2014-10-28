@@ -44,6 +44,7 @@
 #include "common/_error.h"
 #include "oscap_text.h"
 #include "common/debug_priv.h"
+#include "source/oscap_source_priv.h"
 
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
@@ -595,6 +596,19 @@ static struct xccdf_rule_result *xccdf_rule_result_new_parse(xmlTextReaderPtr re
 static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader);
 static struct xccdf_message *xccdf_message_new_parse(xmlTextReaderPtr reader);
 static struct xccdf_instance *xccdf_instance_new_parse(xmlTextReaderPtr reader);
+
+struct xccdf_result *xccdf_result_import_source(struct oscap_source *source)
+{
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
+	if (reader == NULL) {
+		return NULL;
+	}
+	while (xmlTextReaderRead(reader) == 1
+			&& xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	struct xccdf_result *result = xccdf_result_new_parse(reader);
+	xmlFreeTextReader(reader);
+	return result;
+}
 
 struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 {
