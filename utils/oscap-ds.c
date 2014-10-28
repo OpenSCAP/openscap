@@ -390,7 +390,6 @@ cleanup:
 
 int app_ds_rds_split(const struct oscap_action *action) {
 	int ret = OSCAP_ERROR;
-	struct rds_index *rds_idx = NULL;
 	struct ds_rds_session *session = NULL;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
@@ -401,30 +400,12 @@ int app_ds_rds_split(const struct oscap_action *action) {
 		}
 	}
 	session = ds_rds_session_new_from_source(source);
-	if (session == NULL) {
-		goto cleanup;
-	}
-	rds_idx = ds_rds_session_get_rds_idx(session);
-	if (rds_idx == NULL) {
-		goto cleanup;
-	}
-
-	const char* f_report_id = action->f_report_id;
-	if (rds_index_select_report(rds_idx, &f_report_id) != 0) {
-		fprintf(stdout, "Failed to locate a report with ID matching '%s' ID.",
-				action->f_report_id == NULL ? "<any>" : action->f_report_id);
-		ret = OSCAP_ERROR;
-		goto cleanup;
-	}
-
-	struct rds_report_index *report = rds_index_get_report(rds_idx, f_report_id);
-	struct rds_report_request_index *request = rds_report_index_get_request(report);
-	const char *request_id = request ? rds_report_request_index_get_id(request) : NULL;
-
-	if (ds_rds_decompose(action->ds_action->file, f_report_id, request_id, action->ds_action->target) != 0)
-	{
+	if (session == NULL
+			|| ds_rds_session_set_target_dir(session, action->ds_action->target) != 0
+			|| ds_rds_session_select_report(session, action->f_report_id) == NULL
+			|| ds_rds_session_select_report_request(session, NULL) == NULL
+			|| ds_rds_session_dump_component_files(session) != 0) {
 		fprintf(stdout, "Failed to split given result datastream '%s'.\n", action->ds_action->file);
-		ret = OSCAP_ERROR;
 		goto cleanup;
 	}
 
