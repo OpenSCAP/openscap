@@ -34,6 +34,7 @@
 #include "ds_rds_session.h"
 #include "ds_rds_session_priv.h"
 #include "rds_index_priv.h"
+#include "rds_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/xslt_priv.h"
@@ -42,6 +43,7 @@ struct ds_rds_session {
 	struct oscap_source *source;            ///< Result DataStream raw representation
 	struct rds_index *index;                ///< Result DataStream index
 	const char *target_dir;			///< Target directory for current split
+	const char *report_id;			///< Last selected report ID
 	struct oscap_htable *component_sources; ///< oscap_sources for parsed contents (arf:content)
 };
 
@@ -116,6 +118,20 @@ int ds_rds_session_register_component_source(struct ds_rds_session *session, con
 int ds_rds_session_dump_component_files(struct ds_rds_session *session)
 {
 	return ds_dump_component_sources(session->component_sources);
+}
+
+struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id)
+{
+	session->report_id = report_id;
+	if (rds_index_select_report(ds_rds_session_get_rds_idx(session), &(session->report_id)) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a report with ID matching '%s' ID.",
+				session->report_id == NULL ? "<any>" : session->report_id);
+		return NULL;
+	}
+	if (ds_rds_dump_arf_content(session, "reports", "report", session->report_id) != 0) {
+		return NULL;
+	}
+	return oscap_htable_get(session->component_sources, session->report_id);
 }
 
 char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)

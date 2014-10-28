@@ -82,6 +82,16 @@ int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *ta
 int ds_rds_session_dump_component_files(struct ds_rds_session *session);
 
 /**
+ * Select arf:report from result DataStream and return it in form of oscap_source.
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param report_id The ID of arf:report. Session will find the first, if this argument is NULL.
+ * this arguement is NULL.
+ * @returns oscap_source owned by the ds_rds_session or NULL on error
+ */
+struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id);
+
+/**
  * Returns HTML representation of the given result datastream
  * @memberof ds_rds_session
  * @param rds_session The ds_rds_session to build HTML from
