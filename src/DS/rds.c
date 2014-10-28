@@ -123,7 +123,7 @@ static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node
 	return content_node;
 }
 
-static int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id)
+int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id)
 {
 	xmlDoc *doc = ds_rds_session_get_xmlDoc(session);
 	xmlNodePtr parent_node = _lookup_in_arf(doc, content_id, component_name, container_name);

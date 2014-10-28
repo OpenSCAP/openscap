@@ -27,10 +27,12 @@
 
 #include "common/public/oscap.h"
 #include "common/util.h"
+#include "ds_rds_session.h"
 #include "source/public/oscap_source.h"
 
 OSCAP_HIDDEN_START;
 
+int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id);
 struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, const char *target_file);
 
 OSCAP_HIDDEN_END;
