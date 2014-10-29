@@ -599,7 +599,11 @@ static struct xccdf_instance *xccdf_instance_new_parse(xmlTextReaderPtr reader);
 struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 {
 	assert(reader != NULL);
-	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_TESTRESULT);
+	if (xccdf_element_get(reader) != XCCDFE_TESTRESULT) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Expected 'TestResult' element while found '%s'.",
+				xmlTextReaderConstLocalName(reader));
+		return NULL;
+	}
 
 	struct xccdf_item *res = XITEM(xccdf_result_new());
 
