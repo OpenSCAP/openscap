@@ -633,7 +633,7 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 			break;
 		case XCCDFE_RESULT_PROFILE:
 			if (res->sub.result.profile == NULL)
-				res->sub.result.profile = oscap_element_string_copy(reader);
+				res->sub.result.profile = xccdf_attribute_copy(reader, XCCDFA_IDREF);
 			break;
 		case XCCDFE_TARGET:
 			oscap_list_add(res->sub.result.targets, oscap_element_string_copy(reader));
