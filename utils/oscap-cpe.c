@@ -155,6 +155,7 @@ int app_cpe_match(const struct oscap_action *action) {
 	struct cpe_name *candidate_cpe = NULL;
         struct cpe_dict_model *dict = NULL;
 
+	struct oscap_source *source = NULL;
 
         /* is CPE well formated? */
         if( ! cpe_name_check(action->cpe_action->name) ) {
@@ -165,7 +166,7 @@ int app_cpe_match(const struct oscap_action *action) {
         candidate_cpe = cpe_name_new(action->cpe_action->name);
 
         /* load dictionary */
-	struct oscap_source *source = oscap_source_new_from_file(action->cpe_action->dict);
+	source = oscap_source_new_from_file(action->cpe_action->dict);
 	if( (dict = cpe_dict_model_import_source(source)) == NULL ) {
                 fprintf(stdout, "can't load CPE dictionary from: %s.\n", action->cpe_action->dict);
 		ret = OSCAP_ERROR;
