@@ -194,7 +194,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 #define GEN_OPTS \
         "Generate options:\n" \
         "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n" \
-        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html.\n"
+        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html or docbook.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",

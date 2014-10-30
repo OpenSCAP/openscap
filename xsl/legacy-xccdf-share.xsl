@@ -23,6 +23,7 @@ Authors:
 
 <xsl:stylesheet version="1.1"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:db="http://docbook.org/ns/docbook"
     xmlns:htm="http://www.w3.org/1999/xhtml"
     xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://www.w3.org/1999/xhtml"

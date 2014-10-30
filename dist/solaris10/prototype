@@ -83,7 +83,10 @@ f none share/openscap/xsl/xccdf-report.xsl 0644 root root
 f none share/openscap/xsl/oval-results-report.xsl 0644 root root
 f none share/openscap/xsl/oval-report.xsl 0644 root root
 f none share/openscap/xsl/oscap-share.xsl 0644 root root
+f none share/openscap/xsl/dc2docbook.xsl 0644 root root
+f none share/openscap/xsl/html2docbook.xsl 0644 root root
 f none share/openscap/xsl/dbout-html.xsl 0644 root root
+f none share/openscap/xsl/docbook-share.xsl 0644 root root
 f none share/openscap/xsl/fix.xsl 0644 root root
 f none share/openscap/xsl/fixtpl-bash.xml 0644 root root
 f none share/openscap/xsl/xccdf-tailor.xsl 0644 root root
