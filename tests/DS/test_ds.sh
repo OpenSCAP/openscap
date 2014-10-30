@@ -96,8 +96,6 @@ sds_add_multiple_twice(){
 
 function test_sds {
 
-    local ret_val=0;
-
     local DIR="${srcdir}/$1"
     local XCCDF_FILE="$2"
     local SKIP_DIFF="$3"
@@ -129,14 +127,12 @@ function test_sds {
         if ! diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR"; then
             echo "The files are different after going through source data stream!"
             echo
-
-            ret_val=1
+            return 1
         fi
     fi
 
     rm -r "$DS_TARGET_DIR"
-
-    return "$ret_val"
+    return 0
 }
 
 function test_eval {
@@ -302,8 +298,6 @@ function test_rds_index
 
 function test_rds_split {
 
-    local ret_val=0;
-
     local DIR="${srcdir}/$1"
     local SDS_FILE="$2"
     local REPORT_FILE="$3"
@@ -329,14 +323,12 @@ function test_rds_split {
         if ! diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR"; then
             echo "The files are different after going through result data stream!"
             echo
-
-            ret_val=1
+            return 1
         fi
     fi
 
     rm -r "$DS_TARGET_DIR"
-
-    return "$ret_val"
+    return 0
 }
 
 # Testing.

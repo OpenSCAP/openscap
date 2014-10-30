@@ -613,7 +613,11 @@ struct xccdf_result *xccdf_result_import_source(struct oscap_source *source)
 struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 {
 	assert(reader != NULL);
-	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_TESTRESULT);
+	if (xccdf_element_get(reader) != XCCDFE_TESTRESULT) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Expected 'TestResult' element while found '%s'.",
+				xmlTextReaderConstLocalName(reader));
+		return NULL;
+	}
 
 	struct xccdf_item *res = XITEM(xccdf_result_new());
 
@@ -643,7 +647,7 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 			break;
 		case XCCDFE_RESULT_PROFILE:
 			if (res->sub.result.profile == NULL)
-				res->sub.result.profile = oscap_element_string_copy(reader);
+				res->sub.result.profile = xccdf_attribute_copy(reader, XCCDFA_IDREF);
 			break;
 		case XCCDFE_TARGET:
 			oscap_list_add(res->sub.result.targets, oscap_element_string_copy(reader));

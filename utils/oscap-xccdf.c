@@ -76,7 +76,7 @@ static struct oscap_module XCCDF_RESOLVE = {
     .usage = "[options] -o output-xccdf.xml input-xccdf.xml",
     .help =
         "Options:\n"
-        "   --force or -f\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.",
+        "   --force\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_resolve
 };
@@ -194,7 +194,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 #define GEN_OPTS \
         "Generate options:\n" \
         "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n" \
-        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html or docbook.\n"
+        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",

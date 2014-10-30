@@ -75,7 +75,7 @@ function _oscap {
 				COMPREPLY=( $(compgen -W "`$prog cvss $cmd -h | sed -r -n -e "s:^\s+$prev=\[(.+)\].+$:\1:gp" | tr '|' ' '`" -- ${cur}) ) ;;
 			--results|-o|--output|--template|--oval-template) _filedir 'xml' ;;
             --report) _filedir 'html' ;;
-            --format) COMPREPLY=( $(compgen -W "docbook html" -- ${cur}) ) ;;
+            --format) COMPREPLY=( $(compgen -W "html" -- ${cur}) ) ;;
 		esac
 
 	elif [ "x${cur:0:1}" == "x-" ] || [ "${modpath:0:11}" == 'oscap:cvss:' ]; then
