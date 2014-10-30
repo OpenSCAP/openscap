@@ -34,6 +34,8 @@
 #include "common/list.h"
 
 #include "ds_common.h"
+#include "ds_rds_session.h"
+#include "ds_rds_session_priv.h"
 #include "rds_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
@@ -74,57 +76,26 @@ static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_
 	return ret;
 }
 
-static xmlNodePtr _lookup_report_in_arf(xmlDocPtr doc, const char *report_id)
+static inline xmlNode *_lookup_in_arf(xmlDocPtr doc, const char *id, const char *component_name, const char *container_name)
 {
-	xmlNodePtr container = _lookup_container_in_arf(doc, "reports");
+	xmlNodePtr container = _lookup_container_in_arf(doc, container_name);
 	xmlNodePtr component = NULL;
-	xmlNodePtr candidate = container->children;
 
-	for (; candidate != NULL; candidate = candidate->next)
-	{
+	for (xmlNode *candidate = container->children; candidate != NULL; candidate = candidate->next) {
 		if (candidate->type != XML_ELEMENT_NODE)
 			continue;
 
-		if (strcmp((const char*)(candidate->name), "report") != 0)
+		if (!oscap_streq((const char*)(candidate->name), component_name))
 			continue;
 
 		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-		if (strcmp(candidate_id, report_id) == 0)
-		{
+		if (oscap_streq(candidate_id, id)) {
 			component = candidate;
 			xmlFree(candidate_id);
 			break;
 		}
 		xmlFree(candidate_id);
 	}
-
-	return component;
-}
-
-static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
-{
-	xmlNodePtr container = _lookup_container_in_arf(doc, "report-requests");
-	xmlNodePtr component = NULL;
-	xmlNodePtr candidate = container->children;
-
-	for (; candidate != NULL; candidate = candidate->next)
-	{
-		if (candidate->type != XML_ELEMENT_NODE)
-			continue;
-
-		if (strcmp((const char*)(candidate->name), "report-request") != 0)
-			continue;
-
-		char* candidate_id = (char*)xmlGetProp(candidate, BAD_CAST "id");
-		if (request_id == NULL || strcmp(candidate_id, request_id) == 0)
-		{
-			component = candidate;
-			xmlFree(candidate_id);
-			break;
-		}
-		xmlFree(candidate_id);
-	}
-
 	return component;
 }
 
@@ -152,9 +123,16 @@ static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node
 	return content_node;
 }
 
-static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const char* target_file)
+int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id)
 {
-	xmlNodePtr content_node = ds_rds_get_inner_content(doc, parent_node);
+	xmlDoc *doc = ds_rds_session_get_xmlDoc(session);
+	xmlNodePtr parent_node = _lookup_in_arf(doc, content_id, component_name, container_name);
+	if (!parent_node) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find any %s of id '%s'", component_name, content_id);
+		return -1;
+	}
+
+	xmlNodePtr content_node = ds_rds_get_inner_content(NULL, parent_node);
 
 	if (!content_node)
 		return -1;
@@ -177,72 +155,43 @@ static int ds_rds_dump_arf_content(xmlDocPtr doc, xmlNodePtr parent_node, const 
 
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
-
-	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
-	if (xmlSaveFileEnc(target_file, new_doc, "utf-8") == -1)
-	{
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error when saving resulting DOM to file '%s' while dumping arf content.", target_file);
-		xmlFreeDoc(new_doc);
-		return -1;
-	}
-	xmlFreeDoc(new_doc);
-
-	return 0;
+	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, ds_rds_session_get_xmlDoc(session));
+	char *target_file = oscap_sprintf("%s/%s.xml", ds_rds_session_get_target_dir(session), component_name);
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, target_file);
+	oscap_free(target_file);
+	return ds_rds_session_register_component_source(session, content_id, source);
 }
 
 int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
 {
 	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
-	xmlDocPtr doc = oscap_source_get_xmlDoc(rds_source);
+	struct ds_rds_session *session = ds_rds_session_new_from_source(rds_source);
+	ds_rds_session_set_target_dir(session, target_dir);
 
-	if (!doc) {
+	if (session == NULL) {
+		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
 
-	xmlNodePtr report_node = _lookup_report_in_arf(doc, report_id);
-	if (!report_node) {
-		const char* error = report_id ?
-			oscap_sprintf("Could not find any report of id '%s'", report_id) :
-			oscap_sprintf("Could not find any report inside the file");
-
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
-		oscap_free(error);
+	if (ds_rds_dump_arf_content(session, "reports", "report", report_id) != 0) {
+		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
 
-	// make absolutely sure that the target dir exists
-	// NOTE: if target dir already exists, this function returns 0
-	if (ds_common_mkdir_p(target_dir) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Can't decompose RDS '%s' to target directory '%s'. "
-			"Failed to create given directory!", input_file, target_dir);
-		oscap_source_free(rds_source);
-		return -1;
+	if (request_id != NULL) {
+		if (ds_rds_dump_arf_content(session, "report-requests", "report-request", request_id) != 0) {
+			ds_rds_session_free(session);
+			oscap_source_free(rds_source);
+			return -1;
+		}
 	}
 
-	char *target_report_file = oscap_sprintf("%s/%s", target_dir, "report.xml");
-	ds_rds_dump_arf_content(doc, report_node, target_report_file);
-	oscap_free(target_report_file);
-
-	xmlNodePtr request_node = _lookup_request_in_arf(doc, request_id);
-	if (!request_node) {
-		const char* error = request_id ?
-			oscap_sprintf("Could not find any request of id '%s'", request_id) :
-			oscap_sprintf("Could not find any request inside the file");
-
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
-		oscap_free(error);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-
-	char *target_request_file = oscap_sprintf("%s/%s", target_dir, "report-request.xml");
-	ds_rds_dump_arf_content(doc, request_node, target_request_file);
-	oscap_free(target_request_file);
-
+	int ret = ds_rds_session_dump_component_files(session);
+	ds_rds_session_free(session);
 	oscap_source_free(rds_source);
-	return 0;
+	return ret;
 }
 
 static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)

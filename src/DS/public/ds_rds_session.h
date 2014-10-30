@@ -57,6 +57,52 @@ struct ds_rds_session *ds_rds_session_new_from_source(struct oscap_source *sourc
 void ds_rds_session_free(struct ds_rds_session *rds_session);
 
 /**
+ * Get Result DataStream index
+ * @memberof ds_rds_session
+ * @param session Session to query RDS index from
+ * @returns Result DataStream index owned by session
+ */
+struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session);
+
+/**
+ * Set target directory for the component files
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param target_dir PAth to the target storage dir
+ * @returns 0 on success
+ */
+int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *target_dir);
+
+/**
+ * Store cached component files to the hard drive
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @returns zero on success
+ */
+int ds_rds_session_dump_component_files(struct ds_rds_session *session);
+
+/**
+ * Select arf:report from result DataStream and return it in form of oscap_source.
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param report_id The ID of arf:report. Session will find the first, if this argument is NULL.
+ * this arguement is NULL.
+ * @returns oscap_source owned by the ds_rds_session or NULL on error
+ */
+struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id);
+
+/**
+ * Select arf:report-request from result DataStream and return it in form of oscap_source.
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param report_request_id The id of arf:report-request. Session will find the report_request
+ * related (see arf:relationship) to the last selected report. If there was no report selected
+ * session will error out.
+ * @returns oscap_source owned by the ds_rds_session or NULL on error
+ */
+struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session *session, const char *report_request_id);
+
+/**
  * Returns HTML representation of the given result datastream
  * @memberof ds_rds_session
  * @param rds_session The ds_rds_session to build HTML from

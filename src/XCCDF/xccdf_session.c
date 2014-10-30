@@ -42,7 +42,6 @@
 #include "CPE/cpe_session_priv.h"
 #include "DS/public/scap_ds.h"
 #include "DS/public/ds_sds_session.h"
-#include "DS/ds_common.h"
 #include "DS/ds_sds_session_priv.h"
 #include "DS/rds_priv.h"
 #include "OVAL/results/oval_results_impl.h"
@@ -1045,15 +1044,11 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 		// We need recursive mkdir_p if:
 		// - filename is not a basename and we are exporting to a temp dir (ARF)
 		// (we are assuming that the dir structure exists if we are exporting to '.')
-
 		char *filename_cpy = oscap_sprintf("%s/%s", oval_results_directory, filename);
-		const char *dirname_ = dirname(filename_cpy);
-		if (ds_common_mkdir_p(dirname_) == -1) {
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Failed to create directory '%s' for OVAL result '%s'!.", dirname_, filename);
+		if (oscap_acquire_ensure_parent_dir(filename_cpy) != 0) {
 			oscap_free(filename_cpy);
 			return NULL;
 		}
-
 		oscap_free(filename_cpy);
 	}
 

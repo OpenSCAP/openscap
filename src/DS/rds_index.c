@@ -29,6 +29,7 @@
 #include "common/_error.h"
 #include "common/alloc.h"
 #include "common/elements.h"
+#include "rds_index_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 
@@ -330,7 +331,7 @@ static xmlChar *relationship_get_inner_ref(xmlNodePtr node)
 	return ret;
 }
 
-static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
+struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 {
 	if (!oscap_to_start_element(reader, 0)) {
 		oscap_seterr(OSCAP_EFAMILY_XML,

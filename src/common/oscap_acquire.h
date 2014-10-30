@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -82,6 +82,22 @@ char *oscap_acquire_url_to_filename(const char *url);
  * @returns the normalized filepath
  */
 char *oscap_acquire_guess_realpath(const char *filepath);
+
+/**
+ * Creates the directory, if it does not already exist. Further it makes parent
+ * directories as needed.
+ * @param path filepath to the target directory
+ * @returns the zero on success
+ */
+int oscap_acquire_mkdir_p(const char* path);
+
+/**
+ * Ensures the parent directory of the filepath, if it does not already exists.
+ * Further it makes parent directories as needed.
+ * @param filepath filepath to the descendant file or dir
+ * @returns the zero on success
+ */
+int oscap_acquire_ensure_parent_dir(const char *filepath);
 
 // FIXME: SCE engine uses this particular function
 OSCAP_HIDDEN_END;

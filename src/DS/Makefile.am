@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libds.la
 libds_la_SOURCES = ds_common.c \
 		   ds_common.h \
 		   ds_rds_session.c \
+		   ds_rds_session_priv.h \
 		   ds_sds_session.c \
 		   ds_sds_session_priv.h \
 		   sds.c \
@@ -12,7 +13,8 @@ libds_la_SOURCES = ds_common.c \
 		   sds_index_priv.h \
 		   rds.c \
 		   rds_priv.h \
-		   rds_index.c
+		   rds_index.c \
+		   rds_index_priv.h
 
 libds_la_CPPFLAGS  = @xml2_CFLAGS@ \
 		     -I$(top_srcdir)/src \

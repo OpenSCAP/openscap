@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -246,4 +246,49 @@ char *oscap_acquire_guess_realpath(const char *filepath)
 		free(copy);
 	}
 	return rpath;
+}
+
+int oscap_acquire_mkdir_p(const char *path)
+{
+	// NOTE: This assumes a UNIX VFS path, C:\\folder\\folder would break it!
+
+	if (strlen(path) > PATH_MAX) {
+		return -1;
+	}
+	else {
+		char temp[PATH_MAX + 1]; // +1 for \0
+		unsigned int i;
+
+		for (i = 0; i <= strlen(path); i++) {
+			if (path[i] == '/' || path[i] == '\0') {
+				strncpy(temp, path, i);
+				temp[i] = '\0';
+
+				// skip leading '/', we will never be creating the root anyway
+				if (strlen(temp) == 0)
+					continue;
+
+				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
+					oscap_seterr(OSCAP_EFAMILY_GLIBC,
+						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
+						temp, path, strerror(errno));
+					return -1;
+				}
+			}
+		}
+
+		return 0;
+	}
+}
+
+int oscap_acquire_ensure_parent_dir(const char *filepath)
+{
+	char *filepath_cpy = oscap_strdup(filepath);
+	char *dirpath = dirname(filepath_cpy);
+	int ret = oscap_acquire_mkdir_p(dirpath);
+	if (ret != 0) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' to ensure correct path of '%s'.", dirpath, filepath);
+	}
+	free(filepath_cpy);
+	return ret;
 }

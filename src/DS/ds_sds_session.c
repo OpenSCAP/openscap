@@ -274,34 +274,7 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 	return res;
 }
 
-static inline int _ensure_dir(const char *filepath)
-{
-	char *filepath_cpy = oscap_strdup(filepath);
-	char *dirpath = dirname(filepath_cpy);
-	int ret = ds_common_mkdir_p(dirpath);
-	if (ret != 0) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' while dumping component to file '%s'.", dirpath, filepath);
-	}
-	oscap_free(filepath_cpy);
-	return ret;
-}
-
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
 {
-	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->component_sources);
-	while (oscap_htable_iterator_has_more(hit)) {
-		struct oscap_source *s = oscap_htable_iterator_next_value(hit);
-		int ret = _ensure_dir(oscap_source_readable_origin(s));
-		if (ret != 0) {
-			oscap_htable_iterator_free(hit);
-			return ret;
-		}
-		ret = oscap_source_save_as(s, NULL);
-		if (ret != 0) {
-			oscap_htable_iterator_free(hit);
-			return ret;
-		}
-	}
-	oscap_htable_iterator_free(hit);
-	return 0;
+	return ds_dump_component_sources(session->component_sources);
 }
