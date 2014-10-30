@@ -19764,13 +19764,6 @@
                 <meta:version value="8" />
                 <meta:version value="8.0" />
             </meta:product>
-            <meta:product value="docbook_stylesheets" part="a">
-                <meta:version value="1.54.13" />
-            </meta:product>
-            <meta:product value="docbook_utils" part="a">
-                <meta:version value="0.6.13" />
-                <meta:version value="0.6.9-2" />
-            </meta:product>
             <meta:product value="enterprise_linux" part="o">
                 <meta:version value="2.1">
                     <meta:update value="">
