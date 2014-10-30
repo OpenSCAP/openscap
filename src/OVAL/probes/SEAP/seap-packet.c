@@ -730,6 +730,7 @@ eloop_exit:
                         } else {
                                 SEXP_list_free (sexp_buffer);
                                 SEXP_psetup_free (psetup);
+				SEXP_free(sexp_buffer);
                                 dI("eloop_restart\n");
                                 goto eloop_start;
                         }
@@ -763,6 +764,7 @@ eloop_exit:
                                         SEXP_psetup_free (psetup);
                                         SEXP_pstate_free (pstate);
                                 }
+                                SEXP_free(sexp_buffer);
                                 return (-1);
                         }
                 }
@@ -777,6 +779,7 @@ eloop_exit:
 			dI("Invalid SEAP packet received: %s.\n", "not a list");
 
 			SEXP_free (sexp_packet);
+			SEXP_free (sexp_buffer);
 
 			errno = EINVAL;
 			return (-1);
@@ -784,6 +787,7 @@ eloop_exit:
 			dI("Invalid SEAP packet received: %s.\n", "list length < 2");
 
 			SEXP_free (sexp_packet);
+			SEXP_free (sexp_buffer);
 
 			errno = EINVAL;
 			return (-1);
@@ -796,6 +800,7 @@ eloop_exit:
 
 			SEXP_free (psym_sexp);
 			SEXP_free (sexp_packet);
+			SEXP_free (sexp_buffer);
 
 			errno = EINVAL;
 			return (-1);
@@ -804,6 +809,7 @@ eloop_exit:
 
 			SEXP_free (psym_sexp);
 			SEXP_free (sexp_packet);
+			SEXP_free (sexp_buffer);
 
 			errno = EINVAL;
 			return (-1);
@@ -812,6 +818,7 @@ eloop_exit:
 
 			SEXP_free (psym_sexp);
 			SEXP_free (sexp_packet);
+			SEXP_free (sexp_buffer);
 
 			errno = EINVAL;
 			return (-1);
@@ -835,6 +842,7 @@ eloop_exit:
 
 					SEXP_free (sexp_packet);
 					SEAP_packet_free(_packet);
+					SEXP_free (sexp_buffer);
 
 					errno = EINVAL;
 					return (-1);
@@ -854,6 +862,7 @@ eloop_exit:
 					dI("Invalid SEAP packet received: %s.\n", "can't translate to cmd struct");
 					SEXP_free (sexp_packet);
 					SEAP_packet_free(_packet);
+					SEXP_free (sexp_buffer);
 
 					errno = EINVAL;
 					return (-1);
@@ -873,6 +882,7 @@ eloop_exit:
 					dI("Invalid SEAP packet received: %s.\n", "can't translate to err struct");
 					SEXP_free (sexp_packet);
 					SEAP_packet_free(_packet);
+					SEXP_free (sexp_buffer);
 
 					errno = EINVAL;
 					return (-1);
@@ -884,6 +894,7 @@ eloop_exit:
 		invalid:
 			dI("Invalid SEAP packet received: %s.\n", "invalid packet type symbol");
 			SEXP_free (sexp_packet);
+			SEXP_free (sexp_buffer);
 			errno = EINVAL;
 			return (-1);
 		}
