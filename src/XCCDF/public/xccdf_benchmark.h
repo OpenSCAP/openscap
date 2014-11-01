@@ -748,6 +748,13 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result);
 int xccdf_result_export(struct xccdf_result *result, const char *file);
 
 /**
+ * Export TestResult to oscap_source structure
+ * @memberof xccdf_result
+ * @returns newly created oscap_source or NULL on error
+ */
+struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
+
+/**
  * Resolve an benchmark.
  * @returns whether the resolving process has been successful
  * @retval true on success

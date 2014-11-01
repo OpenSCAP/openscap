@@ -700,20 +700,28 @@ fail:
 	return NULL;
 }
 
+struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath)
+{
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	xccdf_result_to_dom(result, NULL, doc, NULL);
+	return oscap_source_new_from_xmlDoc(doc, filepath);
+}
+
 int xccdf_result_export(struct xccdf_result *result, const char *file)
 {
 	__attribute__nonnull__(file);
 
 	LIBXML_TEST_VERSION;
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
+	struct oscap_source *result_source = xccdf_result_export_source(result, file);
+	if (result_source == NULL) {
 		return -1;
 	}
-
-	xccdf_result_to_dom(result, NULL, doc, NULL);
-	struct oscap_source *result_source = oscap_source_new_from_xmlDoc(doc, file);
 	int ret = oscap_source_save_as(result_source, NULL);
 	oscap_source_free(result_source);
 	return ret;
