@@ -744,8 +744,10 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result);
  * @memberof xccdf_result
  * @return Integer
  * @retval -1 if error occurred
+ * @deprecated This function has been deprecated by @ref xccdf_benchmark_export_source.
+ * This function may be dropped from later versions of the library.
  */
-int xccdf_result_export(struct xccdf_result *result, const char *file);
+OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char *file));
 
 /**
  * Export TestResult to oscap_source structure
