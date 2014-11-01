@@ -713,8 +713,10 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 	}
 
 	xccdf_result_to_dom(result, NULL, doc, NULL);
-
-	return oscap_xml_save_filename_free(file, doc);
+	struct oscap_source *result_source = oscap_source_new_from_xmlDoc(doc, file);
+	int ret = oscap_source_save_as(result_source, NULL);
+	oscap_source_free(result_source);
+	return ret;
 }
 
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
