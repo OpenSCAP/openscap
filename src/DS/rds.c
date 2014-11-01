@@ -56,7 +56,7 @@ static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vo
 static const char* arfrel_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
 
-static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_name)
+xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr ret = NULL;
@@ -78,7 +78,7 @@ static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_
 
 static inline xmlNode *_lookup_in_arf(xmlDocPtr doc, const char *id, const char *component_name, const char *container_name)
 {
-	xmlNodePtr container = _lookup_container_in_arf(doc, container_name);
+	xmlNodePtr container = ds_rds_lookup_container(doc, container_name);
 	xmlNodePtr component = NULL;
 
 	for (xmlNode *candidate = container->children; candidate != NULL; candidate = candidate->next) {
