@@ -76,7 +76,7 @@ xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
 	return ret;
 }
 
-static inline xmlNode *_lookup_in_arf(xmlDocPtr doc, const char *id, const char *component_name, const char *container_name)
+xmlNode *ds_rds_lookup_component(xmlDocPtr doc, const char *container_name, const char *component_name, const char *id)
 {
 	xmlNodePtr container = ds_rds_lookup_container(doc, container_name);
 	xmlNodePtr component = NULL;
@@ -126,7 +126,7 @@ static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node
 int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id)
 {
 	xmlDoc *doc = ds_rds_session_get_xmlDoc(session);
-	xmlNodePtr parent_node = _lookup_in_arf(doc, content_id, component_name, container_name);
+	xmlNodePtr parent_node = ds_rds_lookup_component(doc, container_name, component_name, content_id);
 	if (!parent_node) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find any %s of id '%s'", component_name, content_id);
 		return -1;
