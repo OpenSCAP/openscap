@@ -122,14 +122,16 @@ int ds_rds_session_dump_component_files(struct ds_rds_session *session)
 
 struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id)
 {
-	session->report_id = report_id;
-	if (rds_index_select_report(ds_rds_session_get_rds_idx(session), &(session->report_id)) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a report with ID matching '%s' ID.",
-				session->report_id == NULL ? "<any>" : session->report_id);
-		return NULL;
-	}
-	if (ds_rds_dump_arf_content(session, "reports", "report", session->report_id) != 0) {
-		return NULL;
+	if (report_id == NULL || !oscap_streq(session->report_id, report_id)) {
+		session->report_id = report_id;
+		if (rds_index_select_report(ds_rds_session_get_rds_idx(session), &(session->report_id)) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a report with ID matching '%s' ID.",
+					session->report_id == NULL ? "<any>" : session->report_id);
+			return NULL;
+		}
+		if (ds_rds_dump_arf_content(session, "reports", "report", session->report_id) != 0) {
+			return NULL;
+		}
 	}
 	return oscap_htable_get(session->component_sources, session->report_id);
 }
