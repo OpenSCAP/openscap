@@ -2590,6 +2590,18 @@ const char * xccdf_result_get_end_time(const struct xccdf_result *item);
 /// @memberof xccdf_result
 struct oscap_string_iterator *xccdf_result_get_metadata(const struct xccdf_result *result);
 
+/**
+ * Override the result of rule-result.
+ * @memberof xccdf_rule_result
+ * @param rule_result The rule-result element to override
+ * @param new_result to set
+ * @param time The time of override
+ * @param authority identifier of person overriding the result
+ * @param remark Rationale of the override
+ * @returns true on success
+ */
+bool xccdf_rule_result_override(struct xccdf_rule_result *rule_result, xccdf_test_result_type_t new_result, const char *time, const char *authority, struct oscap_text *remark);
+
 /// @memberof xccdf_rule_result
 const char * xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
 /// @memberof xccdf_rule_result

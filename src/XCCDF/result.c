@@ -1149,6 +1149,21 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	return result_node;
 }
 
+bool xccdf_rule_result_override(struct xccdf_rule_result *rule_result, xccdf_test_result_type_t new_result, const char *time, const char *authority, struct oscap_text *remark)
+{
+	struct xccdf_override *o= xccdf_override_new();
+	xccdf_override_set_old_result(o, xccdf_rule_result_get_result(rule_result));
+	xccdf_override_set_new_result(o, new_result);
+	xccdf_override_set_time(o, time);
+	xccdf_override_set_authority(o, authority);
+	xccdf_override_set_remark(o, remark);
+	if (!xccdf_rule_result_add_override(rule_result, o)) {
+		xccdf_override_free(o);
+		return false;
+	}
+	return xccdf_rule_result_set_result(rule_result, new_result);
+}
+
 static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_OVERRIDE);
