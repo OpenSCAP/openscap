@@ -12,6 +12,7 @@ test_run "xccdf:complex-check -- NAND is working properly" ./test_xccdf_shall_pa
 test_run "xccdf:complex-check -- single negation" ./test_xccdf_shall_pass $srcdir/test_xccdf_complex_check_single_negate.xccdf.xml
 test_run "Certain id's of xccdf_items may overlap" ./test_xccdf_shall_pass $srcdir/test_xccdf_overlaping_IDs.xccdf.xml
 test_run "Test Abstract data types." ./test_oscap_common
+test_run "xccdf_rule_result_override" ./test_xccdf_overrides $srcdir/test_xccdf_overrides.arf.xml
 
 test_run "Assert for environment" [ ! -x $srcdir/not_executable ]
 test_run "Assert for environment better" $OSCAP oval eval --id oval:moc.elpmaxe.www:def:1 $srcdir/test_xccdf_check_content_ref_without_name_attr.oval.xml

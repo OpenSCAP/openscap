@@ -4,6 +4,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVSS/public \
 		-I$(top_srcdir)/src/CPE/public \
 		-I$(top_srcdir)/src/CCE/public \
+		-I$(top_srcdir)/src/DS/public \
 		-I$(top_srcdir)/src/OVAL/public \
 		-I$(top_srcdir)/src/XCCDF/public \
 		-I$(top_srcdir)/src/common/public \
@@ -34,12 +35,14 @@ TESTS_ENVIRONMENT= \
 TESTS = all.sh
 check_PROGRAMS = \
 	test_oscap_common \
+	test_xccdf_overrides \
 	test_xccdf_shall_pass
 
 test_oscap_common_SOURCES = test_oscap_common.c
 test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c $(top_srcdir)/src/common/alloc.c # This needs love (See trac#198)
 test_oscap_common_CPPFLAGS = $(AM_CPPFLAGS) -DNDEBUG
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
+test_xccdf_overrides_SOURCES = test_xccdf_overrides.c
 
 EXTRA_DIST += \
 	all.sh \
@@ -146,6 +149,7 @@ EXTRA_DIST += \
 	test_xccdf_notchecked_has_check.sh \
 	test_xccdf_notchecked_has_check.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
+	test_xccdf_overrides.arf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \
