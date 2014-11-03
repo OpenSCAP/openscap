@@ -150,6 +150,7 @@ EXTRA_DIST += \
 	test_xccdf_notchecked_has_check.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_overrides.arf.xml \
+	test_xccdf_overrides.sh \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \
