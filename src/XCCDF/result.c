@@ -621,6 +621,7 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 	}
 
 	struct xccdf_item *res = XITEM(xccdf_result_new());
+	xccdf_result_set_schema_version(XRESULT(res), xccdf_detect_version_parser(reader));
 
 	if (!xccdf_item_process_attributes(res, reader))
 		goto fail;
