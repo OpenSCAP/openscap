@@ -191,7 +191,7 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 	}
 	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, "xccdf.xml");
 	if (xccdf == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.\n");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.");
 	}
 	return xccdf;
 }
@@ -204,7 +204,7 @@ struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *sess
 	}
 	struct oscap_source *tailoring = oscap_htable_get(session->component_sources, "tailoring.xml");
 	if (tailoring == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to tailoring.xml source.\n");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to tailoring.xml source.");
 	}
 	return tailoring;
 }

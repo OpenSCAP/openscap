@@ -165,7 +165,7 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 		if (type_name == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unrecognized document type for: ", oscap_source_readable_origin(source));
 		} else {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.\n", type_name,
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.", type_name,
 				oscap_source_get_schema_version(source), oscap_source_readable_origin(source));
 		}
 	}
