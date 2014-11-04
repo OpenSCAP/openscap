@@ -103,6 +103,17 @@ struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session
 struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session *session, const char *report_request_id);
 
 /**
+ * Replace currently selected report with the content of the source. The previously
+ * returned oscap_source assiciated with the selected report will be disposed.
+ * The source will become owned by the session.
+ * @memberof ds_rds_session
+ * @param session The Result DataStream session
+ * @param source The oscap_source to replase selected report with.
+ * @returns 0 on success
+ */
+int ds_rds_session_replace_report_with_source(struct ds_rds_session *session, struct oscap_source *source);
+
+/**
  * Returns HTML representation of the given result datastream
  * @memberof ds_rds_session
  * @param rds_session The ds_rds_session to build HTML from

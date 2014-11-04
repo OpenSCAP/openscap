@@ -825,9 +825,12 @@ XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value)   XCCDF_BENCHGETTER(result)
 const struct xccdf_version_info* xccdf_item_get_schema_version(struct xccdf_item* item)
 {
 	struct xccdf_benchmark* top_benchmark = xccdf_item_get_benchmark(item);
-	if (top_benchmark == NULL)
-		return NULL;
-
+	if (top_benchmark == NULL) {
+		if (xccdf_item_get_type(item) == XCCDF_RESULT) {
+			// TestResult is special item, it may not have parent benchmark
+			return xccdf_result_get_schema_version(XRESULT(item));
+		}
+	}
 	return xccdf_benchmark_get_schema_version(top_benchmark);
 }
 

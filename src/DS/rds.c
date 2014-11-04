@@ -56,7 +56,7 @@ static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vo
 static const char* arfrel_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
 
-static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_name)
+xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr ret = NULL;
@@ -76,9 +76,9 @@ static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_
 	return ret;
 }
 
-static inline xmlNode *_lookup_in_arf(xmlDocPtr doc, const char *id, const char *component_name, const char *container_name)
+xmlNode *ds_rds_lookup_component(xmlDocPtr doc, const char *container_name, const char *component_name, const char *id)
 {
-	xmlNodePtr container = _lookup_container_in_arf(doc, container_name);
+	xmlNodePtr container = ds_rds_lookup_container(doc, container_name);
 	xmlNodePtr component = NULL;
 
 	for (xmlNode *candidate = container->children; candidate != NULL; candidate = candidate->next) {
@@ -126,7 +126,7 @@ static xmlNodePtr ds_rds_get_inner_content(xmlDocPtr doc, xmlNodePtr parent_node
 int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *container_name, const char *component_name, const char *content_id)
 {
 	xmlDoc *doc = ds_rds_session_get_xmlDoc(session);
-	xmlNodePtr parent_node = _lookup_in_arf(doc, content_id, component_name, container_name);
+	xmlNodePtr parent_node = ds_rds_lookup_component(doc, container_name, component_name, content_id);
 	if (!parent_node) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find any %s of id '%s'", component_name, content_id);
 		return -1;
@@ -194,7 +194,7 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 	return ret;
 }
 
-static xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
+xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {
 	xmlNsPtr arf_ns = xmlSearchNsByHref(target_doc, xmlDocGetRootElement(target_doc), BAD_CAST arf_ns_uri);
 

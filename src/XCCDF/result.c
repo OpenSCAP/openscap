@@ -109,6 +109,7 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 
 XCCDF_FREE_GEN(result)
 
+XCCDF_ACCESSOR_SIMPLE(result, const struct xccdf_version_info*, schema_version);
 XCCDF_ACCESSOR_STRING(result, start_time)
 XCCDF_ACCESSOR_STRING(result, end_time)
 XCCDF_ACCESSOR_STRING(result, test_system)
@@ -620,6 +621,7 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader)
 	}
 
 	struct xccdf_item *res = XITEM(xccdf_result_new());
+	xccdf_result_set_schema_version(XRESULT(res), xccdf_detect_version_parser(reader));
 
 	if (!xccdf_item_process_attributes(res, reader))
 		goto fail;
@@ -700,21 +702,31 @@ fail:
 	return NULL;
 }
 
+struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath)
+{
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	xccdf_result_to_dom(result, NULL, doc, NULL);
+	return oscap_source_new_from_xmlDoc(doc, filepath);
+}
+
 int xccdf_result_export(struct xccdf_result *result, const char *file)
 {
 	__attribute__nonnull__(file);
 
 	LIBXML_TEST_VERSION;
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
+	struct oscap_source *result_source = xccdf_result_export_source(result, file);
+	if (result_source == NULL) {
 		return -1;
 	}
-
-	xccdf_result_to_dom(result, NULL, doc, NULL);
-
-	return oscap_xml_save_filename_free(file, doc);
+	int ret = oscap_source_save_as(result_source, NULL);
+	oscap_source_free(result_source);
+	return ret;
 }
 
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
@@ -1137,6 +1149,21 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	xccdf_check_iterator_free(checks);
 
 	return result_node;
+}
+
+bool xccdf_rule_result_override(struct xccdf_rule_result *rule_result, xccdf_test_result_type_t new_result, const char *time, const char *authority, struct oscap_text *remark)
+{
+	struct xccdf_override *o= xccdf_override_new();
+	xccdf_override_set_old_result(o, xccdf_rule_result_get_result(rule_result));
+	xccdf_override_set_new_result(o, new_result);
+	xccdf_override_set_time(o, time);
+	xccdf_override_set_authority(o, authority);
+	xccdf_override_set_remark(o, remark);
+	if (!xccdf_rule_result_add_override(rule_result, o)) {
+		xccdf_override_free(o);
+		return false;
+	}
+	return xccdf_rule_result_set_result(rule_result, new_result);
 }
 
 static struct xccdf_override *xccdf_override_new_parse(xmlTextReaderPtr reader)

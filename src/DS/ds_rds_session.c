@@ -122,14 +122,16 @@ int ds_rds_session_dump_component_files(struct ds_rds_session *session)
 
 struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id)
 {
-	session->report_id = report_id;
-	if (rds_index_select_report(ds_rds_session_get_rds_idx(session), &(session->report_id)) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a report with ID matching '%s' ID.",
-				session->report_id == NULL ? "<any>" : session->report_id);
-		return NULL;
-	}
-	if (ds_rds_dump_arf_content(session, "reports", "report", session->report_id) != 0) {
-		return NULL;
+	if (report_id == NULL || !oscap_streq(session->report_id, report_id)) {
+		session->report_id = report_id;
+		if (rds_index_select_report(ds_rds_session_get_rds_idx(session), &(session->report_id)) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a report with ID matching '%s' ID.",
+					session->report_id == NULL ? "<any>" : session->report_id);
+			return NULL;
+		}
+		if (ds_rds_dump_arf_content(session, "reports", "report", session->report_id) != 0) {
+			return NULL;
+		}
 	}
 	return oscap_htable_get(session->component_sources, session->report_id);
 }
@@ -153,6 +155,24 @@ struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session 
 		return NULL;
 	}
 	return oscap_htable_get(session->component_sources, report_request_id);
+}
+
+int ds_rds_session_replace_report_with_source(struct ds_rds_session *session, struct oscap_source *source)
+{
+	xmlDoc *doc = oscap_source_get_xmlDoc(session->source);
+	xmlNode *reports_node = ds_rds_lookup_container(doc, "reports");
+	xmlNode *report_node = ds_rds_lookup_component(doc, "reports", "report", session->report_id);
+	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+	if (xmlDOMWrapRemoveNode(wrap_ctxt, doc, report_node, 0) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not remove arf:report[@id='%s'] from result DataStream", session->report_id);
+		return 1;
+	}
+	struct oscap_source *prev_source = oscap_htable_detach(session->component_sources, session->report_id);
+	oscap_source_free(prev_source);
+	if (ds_rds_session_register_component_source(session, session->report_id, source) != 0) {
+		return 1;
+	}
+	return ds_rds_create_report(doc, reports_node, oscap_source_get_xmlDoc(source), session->report_id) == NULL;
 }
 
 char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session)

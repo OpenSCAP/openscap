@@ -63,16 +63,6 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
  */
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
 
-/**
- * Store the resource represented by oscap_source to the file.
- * @memberof oscap_source
- * @param source The oscap_source to save
- * @param filename The filename or NULL, the previously supplied name will
- * be used if filename is NULL.
- * @returns 0 on success, 1 or -1 to indicate error
- */
-int oscap_source_save_as(struct oscap_source *source, const char *filename);
-
 OSCAP_HIDDEN_END;
 
 #endif

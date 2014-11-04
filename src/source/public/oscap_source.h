@@ -114,4 +114,15 @@ int oscap_source_validate_schematron(struct oscap_source *source, const char *ou
  */
 const char *oscap_source_readable_origin(const struct oscap_source *source);
 
+/**
+ * Store the resource represented by oscap_source to the file.
+ * @memberof oscap_source
+ * @param source The oscap_source to save
+ * @param filename The filename or NULL, the previously supplied name will
+ * be used if filename is NULL.
+ * @returns 0 on success, 1 or -1 to indicate error
+ */
+int oscap_source_save_as(struct oscap_source *source, const char *filename);
+
+
 #endif

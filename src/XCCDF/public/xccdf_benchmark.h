@@ -744,8 +744,17 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result);
  * @memberof xccdf_result
  * @return Integer
  * @retval -1 if error occurred
+ * @deprecated This function has been deprecated by @ref xccdf_benchmark_export_source.
+ * This function may be dropped from later versions of the library.
  */
-int xccdf_result_export(struct xccdf_result *result, const char *file);
+OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char *file));
+
+/**
+ * Export TestResult to oscap_source structure
+ * @memberof xccdf_result
+ * @returns newly created oscap_source or NULL on error
+ */
+struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
 
 /**
  * Resolve an benchmark.
@@ -2580,6 +2589,18 @@ const char * xccdf_result_get_start_time(const struct xccdf_result *item);
 const char * xccdf_result_get_end_time(const struct xccdf_result *item);
 /// @memberof xccdf_result
 struct oscap_string_iterator *xccdf_result_get_metadata(const struct xccdf_result *result);
+
+/**
+ * Override the result of rule-result.
+ * @memberof xccdf_rule_result
+ * @param rule_result The rule-result element to override
+ * @param new_result to set
+ * @param time The time of override
+ * @param authority identifier of person overriding the result
+ * @param remark Rationale of the override
+ * @returns true on success
+ */
+bool xccdf_rule_result_override(struct xccdf_rule_result *rule_result, xccdf_test_result_type_t new_result, const char *time, const char *authority, struct oscap_text *remark);
 
 /// @memberof xccdf_rule_result
 const char * xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
