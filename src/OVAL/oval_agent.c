@@ -89,6 +89,7 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
 	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
+	struct oval_generator *generator;
 	int ret;
 
         /* Optimalization */
@@ -116,6 +117,9 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	ag_sess->sys_models[0] = ag_sess->sys_model;
 	ag_sess->sys_models[1] = NULL;
 	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
+	generator = oval_results_model_get_generator(ag_sess->res_model);
+	oval_generator_set_product_version(generator, oscap_get_version());
+
 
 	ag_sess->product_name = NULL;
 
