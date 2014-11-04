@@ -10,8 +10,14 @@ name=$(basename $0 .sh)
 result="${name}.xml.out"
 echo "Result file = $result"
 [ -f "$result" ]
+stderr=$(mktemp -t ${name}.out.XXXXXX)
+echo "Stderr file = $stderr"
 
-$OSCAP ds rds-validate $result
+$OSCAP info $result 2> $stderr
+[ ! -s $stderr ]
+
+$OSCAP ds rds-validate $result 2> $stderr
+[ ! -s $stderr ]; rm $stderr
 
 assert_exists 1 '//TestResult'
 assert_exists 1 '//TestResult/rule-result[@idref="xccdf_org.ssgproject.content_rule_disable_prelink"]'
