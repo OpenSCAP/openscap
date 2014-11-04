@@ -139,6 +139,8 @@ struct xccdf_value_item {
 };
 
 struct xccdf_result_item {
+	const struct xccdf_version_info *schema_version;
+
 	char *start_time;
 	char *end_time;
 	char *test_system;
@@ -483,6 +485,8 @@ struct xccdf_result *xccdf_result_new_parse(xmlTextReaderPtr reader);
 int xccdf_rule_result_set_time_current(struct xccdf_rule_result *item);
 int xccdf_result_set_start_time_current(struct xccdf_result *item);
 int xccdf_result_set_end_time_current(struct xccdf_result *item);
+const struct xccdf_version_info* xccdf_result_get_schema_version(const struct xccdf_result *item);
+bool xccdf_result_set_schema_version(struct xccdf_result *item, const struct xccdf_version_info* newval);
 
 
 struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader);

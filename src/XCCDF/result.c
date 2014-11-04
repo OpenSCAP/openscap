@@ -109,6 +109,7 @@ static inline void xccdf_result_free_impl(struct xccdf_item *result)
 
 XCCDF_FREE_GEN(result)
 
+XCCDF_ACCESSOR_SIMPLE(result, const struct xccdf_version_info*, schema_version);
 XCCDF_ACCESSOR_STRING(result, start_time)
 XCCDF_ACCESSOR_STRING(result, end_time)
 XCCDF_ACCESSOR_STRING(result, test_system)
