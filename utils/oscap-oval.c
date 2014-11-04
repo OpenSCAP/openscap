@@ -538,6 +538,7 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	/* set product name */
         generator = oval_results_model_get_generator(res_model);
         oval_generator_set_product_name(generator, OSCAP_PRODUCTNAME);
+	oval_generator_set_product_version(generator, oscap_get_version());
 
 	oval_results_model_eval(res_model);
 
