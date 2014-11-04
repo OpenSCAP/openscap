@@ -156,7 +156,7 @@ function verify_results {
 }
 
 assert_exists() {
-        real_cnt="$($XPATH $result 'count('"$2"')')"
+        real_cnt="$($XPATH $result 'count('"$2"')' 2>/dev/null)"
         if [ "$real_cnt" != "$1" ]; then
                 echo "Failed: expected count: $1, real count: $real_cnt, xpath: '$2'"
                 return 1
