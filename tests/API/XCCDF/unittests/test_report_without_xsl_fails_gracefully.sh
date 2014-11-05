@@ -12,7 +12,7 @@ stdout=$(mktemp -t ${name}.stdout.XXXXXX)
 # We cannot simply unset, because there still might be a non empty system wide location.
 # We can set some nonsence instead.
 OSCAP_XSLT_PATH=/blah
-$OSCAP xccdf generate --format html report --output $result $srcdir/test_report_check_with_empty_selector.xccdf.xml.result.xml 2> $stderr > $stdout || [ $? == 1 ]
+$OSCAP xccdf generate report --output $result $srcdir/test_report_check_with_empty_selector.xccdf.xml.result.xml 2> $stderr > $stdout || [ $? == 1 ]
 
 echo "Stdout file = $stdout"
 echo "Stderr file = $stderr"

@@ -15,7 +15,7 @@ stderr=$(mktemp -t ${name}.out.XXXXXX)
 	fi
 	# Workaround end
 
-$OSCAP xccdf generate --format html report --output $result $srcdir/${name}.xccdf.xml.result.xml 2> $stderr
+$OSCAP xccdf generate report --output $result $srcdir/${name}.xccdf.xml.result.xml 2> $stderr
 
 	# Workaround
 	if [ -L "$oval" ]; then
