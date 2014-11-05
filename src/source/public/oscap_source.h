@@ -142,5 +142,18 @@ const char *oscap_source_readable_origin(const struct oscap_source *source);
  */
 int oscap_source_save_as(struct oscap_source *source, const char *filename);
 
+/**
+ * Retrieve contents refered to by oscap_source as raw memory.
+ * The memory is always copied. If the origin of oscap_source is raw memory,
+ * this function will simply duplicate it and the operation is relatively cheap.
+ * If however the origin is xmlDoc or an XML file this function has to serialize
+ * it and then copy the results to given buffer. Keep in mind that this may be
+ * performance intensive.
+ * You are responsible for freeing the buffer.
+ * @param buffer Will be filled with a pointer to a newly allocated buffer
+ * @param size Will be filled with size of the buffer
+ * @returns 0 on success, 1 otherwise
+ */
+int oscap_source_get_raw_memory(struct oscap_source *source, char **buffer, size_t *size);
 
 #endif

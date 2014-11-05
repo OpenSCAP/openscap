@@ -267,3 +267,33 @@ int oscap_source_save_as(struct oscap_source *source, const char *filename)
 	}
 	return oscap_xml_save_filename(target, doc) == 1 ? 0 : -1;
 }
+
+int oscap_source_get_raw_memory(struct oscap_source *source, char **buffer, size_t *size)
+{
+	if (source->origin.memory != NULL) {
+		char *ret = (char*)malloc(source->origin.memory_size);
+		memcpy(ret, source->origin.memory, source->origin.memory_size);
+		*buffer = ret;
+		*size = source->origin.memory_size;
+		return 0;
+	}
+	else {
+		xmlDoc *doc = oscap_source_get_xmlDoc(source);
+
+		if (doc == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP,
+				"Can't retrieve raw memory. Given oscap_source doesn't originate from "
+				"raw memory and xmlDoc isn't available.");
+			return 1;
+		}
+
+		// libxml2 asks us to use xmlFree on the returned buffer,
+		// free works fine however. Instead of doing a memory copy dance
+		// here we just let libxml2 fill the buffer.
+		// However int and size_t can be different so we do the safe thing.
+		int isize = 0;
+		xmlDocDumpMemory(doc, (xmlChar**)buffer, &isize);
+		*size = isize;
+		return 0;
+	}
+}
