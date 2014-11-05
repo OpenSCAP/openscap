@@ -193,8 +193,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 
 #define GEN_OPTS \
         "Generate options:\n" \
-        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n" \
-        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html.\n"
+        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",
@@ -853,7 +852,6 @@ int app_xccdf_xslt(const struct oscap_action *action)
 		"show",              action->show,
 		"profile_id",        action->profile,
 		"template",          action->tmpl,
-		"format",            action->format,
 		"oval-template",     oval_template,
 		"sce-template",      action->sce_template,
 		"verbosity",         "",
@@ -869,7 +867,6 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 {
 	static const struct option long_options[] = {
 		{"profile", 1, 0, 3},
-		{"format", 1, 0, 4},
 		{0, 0, 0, 0}
 	};
 
@@ -877,7 +874,6 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "+", long_options, NULL)) != -1) {
 		switch (c) {
 		case 3: action->profile = optarg; break;
-		case 4: action->format = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
@@ -927,7 +923,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
 		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
-		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
 		{"tailoring-file", required_argument, NULL, XCCDF_OPT_TAILORING_FILE},
@@ -966,7 +961,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
 		case XCCDF_OPT_SHOW:		action->show = optarg;		break;
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
-		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		   into /usr/share/openscap/xsl instead of CWD */

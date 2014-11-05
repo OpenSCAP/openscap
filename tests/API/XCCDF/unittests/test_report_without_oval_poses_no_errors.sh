@@ -9,7 +9,7 @@ result=$(mktemp -t ${name}.output.XXXXXX)
 stderr=$(mktemp -t ${name}.stderr.XXXXXX)
 stdout=$(mktemp -t ${name}.stdout.XXXXXX)
 
-$OSCAP xccdf generate --format html report --output $result $srcdir/${name}.xccdf.xml.result.xml 2> $stderr > $stdout
+$OSCAP xccdf generate report --output $result $srcdir/${name}.xccdf.xml.result.xml 2> $stderr > $stdout
 
 echo "Stdout file = $stdout"
 echo "Stderr file = $stderr"

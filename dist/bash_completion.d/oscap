@@ -36,9 +36,9 @@ function _oscap {
     opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile --skip-valid --fetch-remote-resources --cpe"
     opts[oscap:xccdf:remediate]="--result-id --skip-valid --fetch-remote-resources --results --results-arf --report --oval-results --export-variables --cpe"
     opts[oscap:xccdf:resolve]="-o --output -f --force"
-    opts[oscap:xccdf:generate]="--profile --format"
-    opts[oscap:xccdf:generate:report]="-o --output -i --result-id --show --profile --format --oval-template"
-    opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile --format"
+    opts[oscap:xccdf:generate]="--profile"
+    opts[oscap:xccdf:generate:report]="-o --output -i --result-id --show --profile --oval-template"
+    opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile"
     opts[oscap:xccdf:generate:fix]="-o --output --template --profile --result-id --profile"
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
     opts[oscap:ds:sds-add]="--datastream-id"
@@ -75,7 +75,6 @@ function _oscap {
 				COMPREPLY=( $(compgen -W "`$prog cvss $cmd -h | sed -r -n -e "s:^\s+$prev=\[(.+)\].+$:\1:gp" | tr '|' ' '`" -- ${cur}) ) ;;
 			--results|-o|--output|--template|--oval-template) _filedir 'xml' ;;
             --report) _filedir 'html' ;;
-            --format) COMPREPLY=( $(compgen -W "html" -- ${cur}) ) ;;
 		esac
 
 	elif [ "x${cur:0:1}" == "x-" ] || [ "${modpath:0:11}" == 'oscap:cvss:' ]; then
