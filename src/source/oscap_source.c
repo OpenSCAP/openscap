@@ -56,10 +56,10 @@ typedef enum oscap_source_type {
 
 struct oscap_source {
 	oscap_document_type_t scap_type;                ///< Type of SCAP document (XCCDF, OVAL, ...)
-        struct {
+	struct {
 		oscap_source_type_t type;               ///< Internal type of the oscap_source
 		char *version;                          ///< Version of the particular document type
-		const char *filepath;                   ///< Filepath (if originated from file)
+		char *filepath;                         ///< Filepath (if originated from file)
 		char *memory;                           ///< Memory buffer (if originated from memory)
 		size_t memory_size;                     ///< Size of the memory buffer (if originated from memory)
 	} origin;                                       ///
