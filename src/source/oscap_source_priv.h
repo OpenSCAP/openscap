@@ -40,7 +40,7 @@ OSCAP_HIDDEN_START;
  * by oscap_source.
  * @memberof oscap_source
  * @param doc XML DOM to build from
- * @param filepath Suggested filename for the file
+ * @param filepath Suggested filename for the file or NULL
  * @returns newly created oscap_source
  */
 struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath);

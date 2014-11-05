@@ -49,6 +49,7 @@
 
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML file supplied by user
+	OSCAP_SRC_FROM_USER_MEMORY,                     ///< The source originated from memory supplied by user
 	OSCAP_SRC_FROM_XML_DOM,                         ///< The source originated from XML DOM (most often from DataStream).
 	// TODO: downloaded from an http address (XCCDF can refer to remote sources)
 } oscap_source_type_t;
@@ -59,6 +60,8 @@ struct oscap_source {
 		oscap_source_type_t type;               ///< Internal type of the oscap_source
 		char *version;                          ///< Version of the particular document type
 		const char *filepath;                   ///< Filepath (if originated from file)
+		char *memory;                           ///< Memory buffer (if originated from memory)
+		size_t memory_size;                     ///< Size of the memory buffer (if originated from memory)
 	} origin;                                       ///
 	struct {
 		xmlDoc *doc;                            /// DOM
@@ -76,6 +79,17 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 	return source;
 }
 
+struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath)
+{
+	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	source->origin.memory = oscap_calloc(1, size);
+	source->origin.memory_size = size;
+	memcpy(source->origin.memory, buffer, size);
+	source->origin.type = OSCAP_SRC_FROM_USER_MEMORY;
+	source->origin.filepath = oscap_strdup(filepath ? filepath : "NONEXISTENT");
+	return source;
+}
+
 struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath)
 {
 	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
@@ -89,6 +103,7 @@ void oscap_source_free(struct oscap_source *source)
 {
 	if (source != NULL) {
 		oscap_free(source->origin.filepath);
+		oscap_free(source->origin.memory);
 		if (source->xml.doc != NULL) {
 			xmlFreeDoc(source->xml.doc);
 		}
@@ -102,6 +117,8 @@ void oscap_source_free(struct oscap_source *source)
  */
 const char *oscap_source_readable_origin(const struct oscap_source *source)
 {
+	// TODO: This may just return NONEXISTANT for sources from raw memory or xmlDoc
+	//       and that's not very useful.
 	return source->origin.filepath;
 }
 
@@ -139,17 +156,29 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 {
+	// We check origin.memory first because even with it being non-NULL
+	// filepath will be non-NULL, it will contain the filepath hint.
+
 	if (source->xml.doc == NULL) {
-#ifdef HAVE_BZ2
-		if (bz2_is_file_bzip(source->origin.filepath)) {
-			source->xml.doc = bz2_read_doc(source->origin.filepath);
-		} else
-#endif
-		{
-			source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
+		if (source->origin.memory) {
+			source->xml.doc = xmlReadMemory(source->origin.memory, source->origin.memory_size, NULL, NULL, 0);
 			if (source->xml.doc == NULL) {
 				oscap_setxmlerr(xmlGetLastError());
-				oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+				oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML from user memory buffer");
+			}
+		}
+		else {
+#ifdef HAVE_BZ2
+			if (bz2_is_file_bzip(source->origin.filepath)) {
+				source->xml.doc = bz2_read_doc(source->origin.filepath);
+			} else
+#endif
+			{
+				source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
+				if (source->xml.doc == NULL) {
+					oscap_setxmlerr(xmlGetLastError());
+					oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+				}
 			}
 		}
 	}
@@ -229,6 +258,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 
 int oscap_source_save_as(struct oscap_source *source, const char *filename)
 {
+	// TODO: This assumes XML and xmlDoc being available
 	const char *target = filename != NULL ? filename : oscap_source_readable_origin(source);
 	xmlDoc *doc = oscap_source_get_xmlDoc(source);
 	if (doc == NULL) {
