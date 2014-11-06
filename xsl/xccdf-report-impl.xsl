@@ -285,13 +285,18 @@ Authors:
             <xsl:attribute name="class">rule-overview-leaf rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
 
-        <td style="padding-left: {$indent * 19}px"><a href="#rule-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
-            <xsl:call-template name="item-title">
-                <xsl:with-param name="item" select="$item"/>
-                <xsl:with-param name="testresult" select="$testresult"/>
-                <xsl:with-param name="profile" select="$profile"/>
-            </xsl:call-template>
-        </a></td>
+        <td style="padding-left: {$indent * 19}px">
+            <a href="#rule-detail-{generate-id($ruleresult)}" onclick="return openRuleDetailsDialog('{generate-id($ruleresult)}')">
+                <xsl:call-template name="item-title">
+                    <xsl:with-param name="item" select="$item"/>
+                    <xsl:with-param name="testresult" select="$testresult"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:call-template>
+            </a>
+            <xsl:if test="$ruleresult/cdf:override">
+                &#160;<span class="label label-warning">waived</span>
+            </xsl:if>
+        </td>
         <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
             <xsl:variable name="result_tooltip">
@@ -623,6 +628,23 @@ Authors:
                             <xsl:with-param name="item" select="$item"/>
                         </xsl:call-template>
                     </td></tr>
+                    <xsl:if test="$ruleresult/cdf:override">
+                        <tr><td colspan="2">
+                            <xsl:for-each select="$ruleresult/cdf:override">
+                                <xsl:variable name="old-result" select="cdf:old-result/text()"/>
+
+                                <div class="alert alert-warning waiver">
+                                    This rule has been waived by <strong><xsl:value-of select="@authority"/></strong> at <strong><xsl:value-of select="@date"/></strong>.
+                                    <blockquote>
+                                        <xsl:value-of select="cdf:remark/text()"/>
+                                    </blockquote>
+                                    <small>
+                                        The previous result was <span class="rule-result rule-result-{$old-result}">&#160;<xsl:value-of select="$old-result"/>&#160;</span>.
+                                    </small>
+                                </div>
+                            </xsl:for-each>
+                        </td></tr>
+                    </xsl:if>
                     <tr><td colspan="2"><div class="description">
                         <p>
                             <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">

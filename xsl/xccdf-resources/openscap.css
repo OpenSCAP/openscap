@@ -1,11 +1,11 @@
 tr.rule-overview-needs-attention td a { color: #d9534f }
 
-td.rule-result div { text-align: center; font-weight: bold; color: #fff; background: #808080 }
-td.rule-result-fail div { background: #d9534f }
-td.rule-result-error div { background: #d9534f }
-td.rule-result-unknown div { background: #f0ad4e }
-td.rule-result-pass div { background: #5cb85c }
-td.rule-result-fixed div { background: #5cb85c }
+td.rule-result div, span.rule-result { text-align: center; font-weight: bold; color: #fff; background: #808080 }
+td.rule-result-fail div, span.rule-result-fail { background: #d9534f }
+td.rule-result-error div, span.rule-result-error { background: #d9534f }
+td.rule-result-unknown div, span.rule-result-unknown { background: #f0ad4e }
+td.rule-result-pass div, span.rule-result-pass { background: #5cb85c }
+td.rule-result-fixed div, span.rule-result-fixed { background: #5cb85c }
 
 .js-only { display: none }
 
