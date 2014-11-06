@@ -913,6 +913,9 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 	struct oscap_text *title = oscap_text_new();
 	oscap_text_set_text(title, "OSCAP Scan Result");
 	xccdf_result_add_title(session->xccdf.result, title);
+	struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
+	xccdf_result_set_version(session->xccdf.result,
+			benchmark != NULL ? xccdf_benchmark_get_version(benchmark) : NULL);
 
 	xccdf_result_fill_sysinfo(session->xccdf.result);
 
@@ -1408,6 +1411,9 @@ int xccdf_session_remediate(struct xccdf_session *session)
 	xccdf_policy_model_unregister_engines(session->xccdf.policy_model, oval_sysname);
 	if ((res = xccdf_session_load_oval(session)) != 0)
 		return res;
+	struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(xccdf_session_get_xccdf_policy(session));
+	xccdf_result_set_version(session->xccdf.result,
+			benchmark != NULL ? xccdf_benchmark_get_version(benchmark) : NULL);
 	xccdf_result_fill_sysinfo(session->xccdf.result);
 	return xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }

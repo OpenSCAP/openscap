@@ -390,7 +390,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 
 	/* version and attributes */
 	const char *version = xccdf_item_get_version(item);
-	if ((xccdf_item_get_type(item) != XCCDF_BENCHMARK) && version) {
+	if ((xccdf_item_get_type(item) != XCCDF_BENCHMARK && xccdf_item_get_type(item) != XCCDF_RESULT) && version) {
 		xmlNode* version_node = xmlNewTextChild(item_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
 
 		const char *version_update = xccdf_item_get_version_update(item);

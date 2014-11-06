@@ -29,6 +29,7 @@ assert_exists 0 '//message'
 
 assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:default"][text()="100.000000"]'
 assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:flat"][text()="2.000000"]'
+assert_exists 1 '//TestResult[@version="1.0"]'
 
 rm $result
 
