@@ -81,8 +81,8 @@ function ruleSearch()
     var matches = 0;
 
     $(".rule-detail").each(function(){
-        // result-result-rrid, that's offset 14
-        var rrid = $(this).attr("id").substring(14);
+        // rule-detail-rrid, that's offset 12
+        var rrid = $(this).attr("id").substring(12);
 
         var overview_leaf = $("#rule-overview-leaf-" + rrid);
         var detail_leaf = $(this);
@@ -93,7 +93,7 @@ function ruleSearch()
             detail_leaf.removeClass("search-no-match");
             ++matches;
         }
-            else
+        else
         {
             overview_leaf.addClass("search-no-match");
             detail_leaf.addClass("search-no-match");
