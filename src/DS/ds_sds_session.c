@@ -29,6 +29,7 @@
 #include "common/elements.h"
 #include "common/_error.h"
 #include "common/list.h"
+#include "common/oscapxml.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_common.h"
@@ -38,6 +39,7 @@
 #include "sds_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
+#include "source/xslt_priv.h"
 #include <libgen.h>
 #include <libxml/tree.h>
 
@@ -277,4 +279,22 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
 {
 	return ds_dump_component_sources(session->component_sources);
+}
+
+char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id)
+{
+	const char *params[] = {
+		"show", "",
+		"verbosity", "",
+		"hide-profile-info", NULL,
+		"oscap-version", oscap_get_version(),
+		"pwd", NULL,
+		"profile_id", profile_id,
+		NULL
+	};
+	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, "xccdf.xml");
+	if (xccdf == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.");
+	}
+	return oscap_source_apply_xslt_path_mem(xccdf, "xccdf-guide.xsl", params, oscap_path_to_xslt());
 }

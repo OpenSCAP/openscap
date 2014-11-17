@@ -172,4 +172,14 @@ int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *ta
  */
 void ds_sds_session_reset(struct ds_sds_session *session);
 
+/**
+ * Returns HTML representation of selected checklist in form of OpenSCAP guide.
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session to generate guide from
+ * @param profile_id ID of XCCDF profile within selected checklist to
+ * generate guide for
+ * @returns a buffer of HTML content that should be freed by the caller
+ */
+char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id);
+
 #endif
