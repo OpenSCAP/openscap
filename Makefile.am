@@ -89,7 +89,8 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		dist/fedora/sectool-xccdf/12_cron.sh \
 		dist/fedora/sectool-xccdf/14_nfs.sh \
 		dist/fedora/sectool-xccdf/15_tcp_wrappers.sh \
-		dist/fedora/sectool-xccdf/sectool-xccdf.xml
+		dist/fedora/sectool-xccdf/sectool-xccdf.xml \
+		README.md
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
