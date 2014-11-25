@@ -1160,7 +1160,8 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
 static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_item * item, struct xccdf_result * test_result)
 {
-
+	// Implements algorithm as described in NISTIR-7275-r4
+	// Table 40: Default Model Algorithm Sub-Steps
 	struct xccdf_default_score  * score;
 	struct xccdf_default_score  * ch_score;
 	struct xccdf_rule_result    * rule_result;
@@ -1257,6 +1258,8 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
 
 static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * item, struct xccdf_result * test_result, bool unweighted)
 {
+	// Implements algorithm as described in NISTIR-7275-r4
+	// Table 41: Flat Model Algorithm Sub-Steps
 	struct xccdf_flat_score     * score;
 	struct xccdf_flat_score     * ch_score;
 	struct xccdf_rule_result    * rule_result;
