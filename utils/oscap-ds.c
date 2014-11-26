@@ -252,7 +252,6 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	const char* f_datastream_id = action->f_datastream_id;
 	const char* f_component_id = action->f_xccdf_id;
 	struct ds_sds_session *session = NULL;
-	char *cwd = NULL;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->ds_action->file);
 	/* Validate */
@@ -276,10 +275,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	}
 	ds_sds_session_set_datastream_id(session, f_datastream_id);
 
-	if ((cwd = _gcwd()) == NULL) {
-		goto cleanup;
-	}
-	ds_sds_session_set_target_dir(session, cwd);
+	ds_sds_session_set_target_dir(session, action->ds_action->target);
 	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
 		goto cleanup;
 	}
@@ -294,7 +290,6 @@ cleanup:
 
 	ds_sds_session_free(session);
 	oscap_source_free(source);
-	free(cwd);
 	free(action->ds_action);
 
 	return ret;
