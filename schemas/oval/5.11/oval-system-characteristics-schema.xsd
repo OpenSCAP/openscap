@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:sch="http://purl.oclc.org/dsdl/schematron" xmlns:tns="http://scap.nist.gov/schema/asset-identification/1.1" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" elementFormDefault="qualified" version="5.11">
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
-    <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+    <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix" schemaLocation="aix-system-characteristics-schema.xsd"/>
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache" schemaLocation="apache-system-characteristics-schema.xsd"/>
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos" schemaLocation="catos-system-characteristics-schema.xsd"/>
