@@ -9,6 +9,8 @@ libxccdf_la_SOURCES = \
 	value.c \
 	resolve.c \
 	result.c \
+	result_scoring.c \
+	result_scoring_priv.h \
 	rule.c \
 	tailoring.c \
 	item.h \
