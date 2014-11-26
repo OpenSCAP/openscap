@@ -274,3 +274,24 @@ struct xccdf_score *xccdf_result_calculate_score(struct xccdf_result *test_resul
 	}
 	return score;
 }
+
+int xccdf_result_recalculate_scores(struct xccdf_result *result, struct xccdf_item *benchmark)
+{
+	struct oscap_list *new_scores = oscap_list_new();
+	struct xccdf_score_iterator *score_it = xccdf_result_get_scores(result);
+	while (xccdf_score_iterator_has_more(score_it)) {
+		struct xccdf_score *old = xccdf_score_iterator_next(score_it);
+		struct xccdf_score *new = xccdf_result_calculate_score(result, benchmark,
+			xccdf_score_get_system(old));
+		if (new == NULL) {
+			oscap_list_free(new_scores, (oscap_destruct_func) xccdf_score_free);
+			xccdf_score_iterator_free(score_it);
+			return 1;
+		}
+		oscap_list_add(new_scores, new);
+	}
+	xccdf_score_iterator_free(score_it);
+	oscap_list_free(((struct xccdf_item *)result)->sub.result.scores, (oscap_destruct_func) xccdf_score_free);
+        ((struct xccdf_item *)result)->sub.result.scores = new_scores;
+	return 0;
+}

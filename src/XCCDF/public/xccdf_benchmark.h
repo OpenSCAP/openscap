@@ -3297,6 +3297,8 @@ bool xccdf_result_add_title(struct xccdf_result *item, struct oscap_text *newval
 bool xccdf_result_add_target_address(struct xccdf_result *item, const char *newval);
 /// @memberof xccdf_result
 bool xccdf_result_add_applicable_platform(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+int xccdf_result_recalculate_scores(struct xccdf_result *result, struct xccdf_item *benchmark);
 /// @memberof xccdf_rule_result
 bool xccdf_rule_result_add_ident(struct xccdf_rule_result *obj, struct xccdf_ident *item);
 /// @memberof xccdf_rule_result
