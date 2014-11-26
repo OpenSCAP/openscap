@@ -796,7 +796,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 		xmlNewProp(result_node, BAD_CAST "start-time", BAD_CAST start);
 	}
 	xmlNewProp(result_node, BAD_CAST "end-time", BAD_CAST xccdf_result_get_end_time(result));
-	char *version = xccdf_result_get_version(result);
+	const char *version = xccdf_result_get_version(result);
         if (version != NULL)
 		xmlNewProp(result_node, BAD_CAST "version", BAD_CAST version);
 
