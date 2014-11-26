@@ -16,8 +16,7 @@ function test_probes_systemdunitproperty {
 
     [ -f $RF ] && rm -f $RF
 
-    # TODO: skip-valid is used because we don't have the XSD schema
-    $OSCAP oval eval --skip-valid --results $RF $DF
+    $OSCAP oval eval --results $RF $DF
 
     if [ -f $RF ]; then
         verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 16

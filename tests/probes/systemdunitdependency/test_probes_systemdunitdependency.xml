@@ -35,16 +35,16 @@
 
   <tests>
 
-    <systemdunitdependency_test check_existence="at_least_one_exist" version="1" id="oval:0:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <systemdunitdependency_test check_existence="at_least_one_exists" version="1" id="oval:0:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:0:obj:1"/>
     </systemdunitdependency_test>
 
-    <systemdunitdependency_test id="oval:0:tst:2" check_existence="at_least_one_exist" check="all" comment="true" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <systemdunitdependency_test id="oval:0:tst:2" check_existence="at_least_one_exists" check="all" comment="true" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:0:obj:2"/>
       <state state_ref="oval:0:ste:1"/>
     </systemdunitdependency_test>
 
-    <systemdunitproperty_test id="oval:0:tst:3" check_existence="at_least_one_exist" check="all" comment="true" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <systemdunitproperty_test id="oval:0:tst:3" check_existence="at_least_one_exists" check="all" comment="true" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:0:obj:3"/>
       <state state_ref="oval:0:ste:3"/>
     </systemdunitproperty_test>
@@ -65,7 +65,7 @@
       <unit var_ref="oval:0:var:2" var_check="at least one"/>
       <property>Conflicts</property>
       <!-- Exclude those objects not containing 'shutdown.target' within their Conflicts property value -->
-      <filter action="include">oval:0:ste:3</filter>
+      <filter action="include" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:0:ste:3</filter>
     </systemdunitproperty_object>
 
     <systemdunitdependency_object id="oval:0:obj:4" comment="list of dependencies for rescue.target" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -92,7 +92,7 @@
 
   <variables>
 
-    <local_variable id="oval:0:var:2" datatype="string" comment="list of rescue.target dependencies as local variable" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <local_variable id="oval:0:var:2" datatype="string" comment="list of rescue.target dependencies as local variable" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <object_component object_ref="oval:0:obj:4" item_field="dependency"/>
     </local_variable>
 
