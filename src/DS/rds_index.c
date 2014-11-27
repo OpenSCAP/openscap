@@ -40,7 +40,7 @@ struct rds_report_request_index
 
 struct rds_report_request_index *rds_report_request_index_new(void)
 {
-	struct rds_report_request_index *ret = oscap_alloc(sizeof(struct rds_report_request_index));
+	struct rds_report_request_index *ret = oscap_calloc(1, sizeof(struct rds_report_request_index));
 	ret->id = NULL;
 
 	return ret;
@@ -86,7 +86,7 @@ struct rds_asset_index
 
 struct rds_asset_index *rds_asset_index_new(void)
 {
-	struct rds_asset_index *ret = oscap_alloc(sizeof(struct rds_asset_index));
+	struct rds_asset_index *ret = oscap_calloc(1, sizeof(struct rds_asset_index));
 	ret->id = NULL;
 	ret->reports = oscap_list_new();
 
@@ -144,7 +144,7 @@ struct rds_report_index
 
 struct rds_report_index* rds_report_index_new(void)
 {
-	struct rds_report_index *ret = oscap_alloc(sizeof(struct rds_report_index));
+	struct rds_report_index *ret = oscap_calloc(1, sizeof(struct rds_report_index));
 	ret->id = NULL;
 
 	return ret;
@@ -201,7 +201,7 @@ struct rds_index
 
 struct rds_index *rds_index_new(void)
 {
-	struct rds_index *ret = oscap_alloc(sizeof(struct rds_index));
+	struct rds_index *ret = oscap_calloc(1, sizeof(struct rds_index));
 	ret->report_requests = oscap_list_new();
 	ret->assets = oscap_list_new();
 	ret->reports = oscap_list_new();
