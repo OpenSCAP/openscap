@@ -7,7 +7,7 @@
 
 #OPTIONS="oval eval --report /var/log/oscap-scan.html.log --results /var/log/oscap-scan.xml.log /usr/share/openscap/scap-fedora14-oval.xml"
 PROG="/usr/bin/oscap"
-if [ x"$OPTIONS" == "x" ]
+if [ -z "$OPTIONS" ]
 then
 	logger "OpenSCAP security scan: NOT CONFIGURED. (Cron job)"
 	exit 0
