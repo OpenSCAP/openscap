@@ -1,3 +1,26 @@
+openscap-1.2.0                                                  02-12-2014
+ - new features
+   - native support of bzip2ed SCAP files (file extension needs to be '.xml.bz2')
+   - improved performance on huge XML documents, especially DataStreams
+   - minimized use of temp files to absolute minimum
+   - added OVAL-5.11 release candidate schemas
+ - API changes
+   - overall 50 new symbols added to public API
+   - introduced oscap_source abstraction for input files
+     - all the parsers converted to use oscap_source abstraction
+   - introduced ds_sds_session, high level API for playing with Source DataStreams
+   - introduced cpe_session, abstraction to approach multiple CPE resources
+   - introduced ds_rds_session, high level API for playing with Result DataStreams
+     (ARF files)
+   - deprecated dozens of API calls dependent on filepath
+   - introduced API for waivers (xccdf:override) and modification of ARF
+     - initial support for waivers in HTML Report
+   - dozens of small improvements
+ - maintenance
+   - dozens of small fixes
+   - dozens of memory leaks (whole test suite is now leak free)
+   - updated gnulib
+
 openscap-1.1.1                                                  26-09-2014
  - Hint towards `oscap info` when profile is not found in oscap tool
  - HTML report changes:
