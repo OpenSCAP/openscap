@@ -5184,13 +5184,13 @@ VASNPRINTF (DCHAR_T *resultbuf, size_t *lengthp,
                           free (result);
                         if (buf_malloced != NULL)
                           free (buf_malloced);
-                        CLEANUP ();
                         errno =
                           (saved_errno != 0
                            ? saved_errno
                            : (dp->conversion == 'c' || dp->conversion == 's'
                               ? EILSEQ
                               : EINVAL));
+                        CLEANUP ();
                         return NULL;
                       }
 
