@@ -47,7 +47,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="introduction"><a name="introduction"></a>
+    <div id="introduction">
         <div class="row">
             <div class="col-md-8 well well-lg">
                 <h2>
@@ -415,7 +415,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="guide-tree"><a name="guide-tree"></a>
+    <div id="guide-tree">
         <h2>Checklist</h2>
 
         <table class="treetable table table-bordered">
@@ -434,7 +434,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="rear-matter"><a name="rear-matter"></a>
+    <div id="rear-matter">
         <div class="row">
             <div class="col-md-12 well well-lg">
                 <xsl:if test="$benchmark/cdf:rear-matter">

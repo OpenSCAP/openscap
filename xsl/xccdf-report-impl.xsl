@@ -49,7 +49,7 @@ Authors:
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
 
-    <div id="characteristics"><a name="characteristics"></a>
+    <div id="characteristics">
         <h2>Evaluation Characteristics</h2>
         <div class="row">
             <div class="col-md-5 well well-lg">
@@ -172,7 +172,7 @@ Authors:
 <xsl:template name="compliance-and-scoring">
     <xsl:param name="testresult"/>
 
-    <div id="compliance-and-scoring"><a name="compliance-and-scoring"></a>
+    <div id="compliance-and-scoring">
         <h2>Compliance and Scoring</h2>
 
         <xsl:variable name="total_rules_count" select="count($testresult/cdf:rule-result[cdf:result])"/>
@@ -376,7 +376,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="rule-overview"><a name="rule-overview"></a>
+    <div id="rule-overview">
         <h2>Rule Overview</h2>
 
         <div class="form-group js-only">
@@ -589,7 +589,6 @@ Authors:
             </xsl:for-each>
         </div>
         <div class="panel-heading">
-            <a name="rule-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title">
                 <xsl:call-template name="item-title">
                     <xsl:with-param name="item" select="$item"/>
@@ -695,7 +694,7 @@ Authors:
     <div class="js-only">
         <button type="button" class="btn btn-info" onclick="return toggleResultDetails(this)">Show all result details</button>
     </div>
-    <div id="result-details"><a name="result-details"></a>
+    <div id="result-details">
         <h2>Result Details</h2>
 
         <xsl:call-template name="result-details-inner-node">
