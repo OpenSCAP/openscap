@@ -333,8 +333,12 @@ static struct oscap_htable *_binding_iterator_to_dict(struct xccdf_value_binding
 		struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
 		const char *var_name = xccdf_value_binding_get_name(binding);
 		const char *var_val = xccdf_value_binding_get_setvalue(binding);
-		if (var_val == NULL)
+		if (var_val == NULL) {
 			var_val = xccdf_value_binding_get_value(binding);
+			if (var_val == NULL) {
+				var_val = "";
+			}
+		}
 		struct oscap_stringlist *list = (struct oscap_stringlist *) oscap_htable_get(dict, var_name);
 		if (list == NULL) {
 			list = oscap_stringlist_new();
@@ -482,7 +486,12 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
         struct xccdf_value_binding *binding = xccdf_value_binding_iterator_next(it);
         char *name = xccdf_value_binding_get_name(binding);
         char * value = xccdf_value_binding_get_setvalue(binding);
-        if (value == NULL) value = xccdf_value_binding_get_value(binding);
+        if (value == NULL) {
+		value = xccdf_value_binding_get_value(binding);
+		if (value == NULL) {
+			value = "";
+		}
+	}
         struct oval_variable *variable = oval_definition_model_get_variable(def_model, name);
         if (variable != NULL) {
                 oval_datatype_t o_type = oval_variable_get_datatype(variable);
