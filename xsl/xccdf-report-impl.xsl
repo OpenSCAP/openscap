@@ -246,7 +246,7 @@ Authors:
                     <th>Scoring system</th>
                     <th class="text-center">Score</th>
                     <th class="text-center">Maximum</th>
-                    <th class="text-center" style="width: 40%">%</th>
+                    <th class="text-center" style="width: 40%">Percent</th>
                 </tr>
             </thead>
             <tbody>
