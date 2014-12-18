@@ -184,7 +184,7 @@ Authors:
         <xsl:choose>
             <xsl:when test="$failed_rules_count > 0">
                 <div class="alert alert-danger">
-                    <strong>The target system did not satisfy conditions of <xsl:value-of select="$failed_rules_count"/> rules!</strong>
+                    <strong>The target system did not satisfy the conditions of <xsl:value-of select="$failed_rules_count"/> rules!</strong>
                     <xsl:if test="$uncertain_rules_count > 0">
                         Furthermore, the results of <xsl:value-of select="$uncertain_rules_count"/> rules were inconclusive.
                     </xsl:if>
@@ -204,7 +204,7 @@ Authors:
             </xsl:otherwise>
         </xsl:choose>
 
-        <h3>Rule result breakdown</h3>
+        <h3>Rule results</h3>
         <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were {$total_rules_count - $ignored_rules_count} rules taken into account.">
             <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
                 <xsl:value-of select="$passed_rules_count"/> passed
@@ -223,7 +223,7 @@ Authors:
 
         <xsl:variable name="failed_rules_other_severity" select="$failed_rules_count - $failed_rules_high_severity - $failed_rules_medium_severity - $failed_rules_low_severity"/>
 
-        <h3>Failed rules by severity breakdown</h3>
+        <h3>Severity of failed rules</h3>
         <div class="progress" title="Displays proportion of high, medium, low, and other severity failed rules (in that order). There were {$failed_rules_count} total failed rules.">
             <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
                 <xsl:value-of select="$failed_rules_other_severity"/> other
