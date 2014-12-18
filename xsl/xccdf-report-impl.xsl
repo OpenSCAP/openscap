@@ -258,8 +258,8 @@ Authors:
                         <td class="text-center"><xsl:value-of select="@maximum"/></td>
                         <td>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:value-of select="round($percent * 100) div 100"/>%</div>
-                                <div class="progress-bar progress-bar-danger" style="width: {100 - $percent}%"></div>
+                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:if test="$percent &gt;= 50"><xsl:value-of select="round($percent * 100) div 100"/>%</xsl:if></div>
+                                <div class="progress-bar progress-bar-danger" style="width: {100 - $percent}%"><xsl:if test="$percent &lt; 50"><xsl:value-of select="round($percent * 100) div 100"/>%</xsl:if></div>
                             </div>
                         </td>
                     </tr>
