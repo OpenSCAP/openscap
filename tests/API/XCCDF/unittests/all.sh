@@ -19,6 +19,7 @@ test_run "Assert for environment better" $OSCAP oval eval --id oval:moc.elpmaxe.
 #
 # General XCCDF Tests. (Mostly, oscap xccdf eval)
 #
+test_run "Empty XCCDF variable element" $srcdir/test_empty_variable.sh
 test_run "Escaping of xml &amp within xccdf:value" $srcdir/test_xccdf_xml_escaping_value.sh
 test_run "check/@negate" $srcdir/test_xccdf_check_negate.sh
 test_run "check/@multi-check import/export" $srcdir/test_xccdf_check_multi_check.sh
