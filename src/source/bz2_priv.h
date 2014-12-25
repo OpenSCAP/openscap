@@ -41,6 +41,14 @@ OSCAP_HIDDEN_START;
 xmlDoc *bz2_read_doc(const char *filepath);
 
 /**
+ * Parse bzip2ed memory to XML DOM.
+ * @param buffer data in memory to process (contains bzip2ed XML)
+ * @param size length of data
+ * @returns DOM representation of the data
+ */
+xmlDoc *bz2_mem_read_doc(const char *buffer, size_t size);
+
+/**
  * Recognize whether the file can be parsed by this
  * bz2 parser.
  * @param filepath The path to *.xml.bz2 file
