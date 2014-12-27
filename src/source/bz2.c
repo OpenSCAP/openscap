@@ -41,7 +41,7 @@ struct bz2_file {
 	bool eof;
 };
 
-static struct bz2_file *bz2_open(const char *filename)
+static struct bz2_file *bz2_file_open(const char *filename)
 {
 	struct bz2_file *b = NULL;
 	FILE* f;
@@ -65,7 +65,7 @@ static struct bz2_file *bz2_open(const char *filename)
 }
 
 //xmlInputReadCallback
-static int bz2_read(struct bz2_file *bzfile, char *buffer, int len)
+static int bz2_file_read(struct bz2_file *bzfile, char *buffer, int len)
 {
 	int bzerror;
 	if (bzfile->eof) {
@@ -86,7 +86,7 @@ static int bz2_read(struct bz2_file *bzfile, char *buffer, int len)
 }
 
 // xmlInputCloseCallback
-static int bz2_close(void *bzfile)
+static int bz2_file_close(void *bzfile)
 {
 	int bzerror;
 	BZ2_bzReadClose(&bzerror, ((struct bz2_file *)bzfile)->file);
@@ -95,13 +95,13 @@ static int bz2_close(void *bzfile)
 	return bzerror == BZ_OK ? 0 : -1;
 }
 
-xmlDoc *bz2_read_doc(const char *filepath)
+xmlDoc *bz2_file_read_doc(const char *filepath)
 {
-	struct bz2_file *bzfile = bz2_open(filepath);
+	struct bz2_file *bzfile = bz2_file_open(filepath);
 	if (bzfile == NULL) {
 		return NULL;
 	}
-	return xmlReadIO((xmlInputReadCallback) bz2_read, bz2_close, bzfile, "url", NULL, XML_PARSE_PEDANTIC);
+	return xmlReadIO((xmlInputReadCallback) bz2_file_read, bz2_file_close, bzfile, "url", NULL, XML_PARSE_PEDANTIC);
 }
 
 struct bz2_mem {
@@ -178,7 +178,7 @@ xmlDoc *bz2_mem_read_doc(const char *buffer, size_t size)
 	return xmlReadIO((xmlInputReadCallback) bz2_mem_read, bz2_mem_close, bzmem, "url", NULL, XML_PARSE_PEDANTIC);
 }
 
-bool bz2_is_file_bzip(const char *filepath)
+bool bz2_file_is_bzip(const char *filepath)
 {
 	int offset = strlen(filepath) - strlen(".xml.bz2");
 	if (offset >= 0) {

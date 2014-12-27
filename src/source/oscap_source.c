@@ -162,7 +162,7 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 	if (source->xml.doc == NULL) {
 		if (source->origin.memory) {
 #ifdef HAVE_BZ2
-			if (bz2_is_file_bzip(source->origin.filepath)) {
+			if (bz2_file_is_bzip(source->origin.filepath)) {
 				source->xml.doc = bz2_mem_read_doc(source->origin.memory, source->origin.memory_size);
 			} else
 #endif
@@ -176,8 +176,8 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 		}
 		else {
 #ifdef HAVE_BZ2
-			if (bz2_is_file_bzip(source->origin.filepath)) {
-				source->xml.doc = bz2_read_doc(source->origin.filepath);
+			if (bz2_file_is_bzip(source->origin.filepath)) {
+				source->xml.doc = bz2_file_read_doc(source->origin.filepath);
 			} else
 #endif
 			{
