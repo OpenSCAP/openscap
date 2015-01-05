@@ -6,8 +6,8 @@
           <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
           <xsd:appinfo>
                <schema>Windows System Characteristics</schema>
-               <version>5.11:5.11 Release Candidate 1</version>
-               <date>11/18/2014 2:20:00 PM</date>
+               <version>5.11:5.11</version>
+               <date>12/18/2014 09:00:00 AM</date>
                 <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
                <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
                <sch:ns prefix="win-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows"/>
@@ -450,280 +450,307 @@
                               <!-- Account Logon Audit Policy Subcategories -->
                               <xsd:element name="credential_validation" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced during the validation of a user's logon credentials.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced during the validation of a user's logon credentials. This state corresponds with the following GUID specified in ntsecapi.h: 0cce923f-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Logon: Audit Credential Validation</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="kerberos_authentication_service" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by Kerberos authentication ticket-granting requests.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by Kerberos authentication ticket-granting requests. This state corresponds with the following GUID specified in ntsecapi.h: 0CCE9242-69AE-11D9-BED3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Logon: Audit Kerboros Authentication Service</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="kerberos_service_ticket_operations" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by Kerberos service ticket requests.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by Kerberos service ticket requests. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9240-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Logon: Audit Kerberos Service Ticket Operations</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="kerberos_ticket_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
                                         <xsd:documentation>Audit the events produced during the validation of Kerberos tickets provided for a user account logon request.</xsd:documentation>
+                                        <xsd:appinfo>
+                                             <oval:deprecated_info>
+                                                  <oval:version>5.11</oval:version>
+                                                  <oval:reason>This entity does not map to any known audit event policy subcategory.</oval:reason>
+                                                  <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                             </oval:deprecated_info>
+                                             <sch:pattern id="win-sc_auditeventpolicysubcategoriesitemkerberos_ticket_events">
+                                                  <sch:rule context="win-sc:auditeventpolicysubcategories_item/win-sc:kerberos_ticket_events">
+                                                       <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_account_logon_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to user accounts that are not covered by other events in the Account Logon category.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to user accounts that are not covered by other events in the Account Logon category. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9241-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Logon: Audit Other Account Logon Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- Account Management Audit Policy Subcategories -->
                               <xsd:element name="application_group_management" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to application groups.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to application groups. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9239-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Management: Audit Application Group Management</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="computer_account_management" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to computer accounts.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to computer accounts. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9236-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Management: Audit Computer Account Management</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="distribution_group_management" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to distribution groups.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to distribution groups. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9238-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Management: Audit Distribution Account Management</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_account_management_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by other user account changes that are not covered by other events in the Account Management category.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by other user account changes that are not covered by other events in the Account Management category. This state corresponds with the following GUID specified in ntsecapi.h: 0cce923a-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Management: Audit Other Account Management Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="security_group_management" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to security groups.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to security groups. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9237-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Management: Audit Security Group Management</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="user_account_management" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to user accounts.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to user accounts. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9235-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Account Management: Audit User Account Management</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- Detailed Tracking Audit Policy Subcategories -->
                               <xsd:element name="dpapi_activity" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when requests are made to the Data Protection application interface.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when requests are made to the Data Protection application interface. This state corresponds with the following GUID specified in ntsecapi.h: 0cce922d-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Detailed Tracking: Audit DPAPI Activity</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="process_creation" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when a process is created or starts.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when a process is created or starts. This state corresponds with the following GUID specified in ntsecapi.h: 0cce922b-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Detailed Tracking: Audit Process Creation</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="process_termination" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when a process ends.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when a process ends. This state corresponds with the following GUID specified in ntsecapi.h: 0cce922c-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Detailed Tracking: Audit Process Termination</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="rpc_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by inbound remote procedure call connections.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by inbound remote procedure call connections. This state corresponds with the following GUID specified in ntsecapi.h: 0cce922e-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Detailed Tracking: Audit RPC Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- DS Access Audit Policy Subcategories -->
                               <xsd:element name="directory_service_access" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when a Active Directory Domain Services object is accessed.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when a Active Directory Domain Services object is accessed. This state corresponds with the following GUID specified in ntsecapi.h: 0cce923b-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  DS Access: Audit Directory Service Access</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="directory_service_changes" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when changes are made to Active Directory Domain Services objects.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when changes are made to Active Directory Domain Services objects. This state corresponds with the following GUID specified in ntsecapi.h: 0cce923c-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  DS Access: Audit Directory Service Changes</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="directory_service_replication" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when two Active Directory Domain Services domain controllers are replicated.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when two Active Directory Domain Services domain controllers are replicated. This state corresponds with the following GUID specified in ntsecapi.h: 0cce923d-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  DS Access: Audit Directory Service Access</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="detailed_directory_service_replication" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by detailed Active Directory Domain Services replication between domain controllers.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by detailed Active Directory Domain Services replication between domain controllers. This state corresponds with the following GUID specified in ntsecapi.h: 0cce923e-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  DS Access: Audit Detailed Directory Service Replication</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- Logon/Logoff Audit Policy Subcategories -->
                               <xsd:element name="account_lockout" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by a failed attempt to log onto a locked out account.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by a failed attempt to log onto a locked out account. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9217-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit Account Lockout</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="ipsec_extended_mode" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by Internet Key Exchange and Authenticated Internet protocol during Extended Mode negotiations.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by Internet Key Exchange and Authenticated Internet protocol during Extended Mode negotiations. This state corresponds with the following GUID specified in ntsecapi.h: 0cce921a-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit IPsec Extended Mode</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="ipsec_main_mode" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by Internet Key Exchange and Authenticated Internet protocol during Main Mode negotiations.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by Internet Key Exchange and Authenticated Internet protocol during Main Mode negotiations. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9218-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logof/Logoff: Audit IPsec Main Mode</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="ipsec_quick_mode" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by Internet Key Exchange and Authenticated Internet protocol during Quick Mode negotiations.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by Internet Key Exchange and Authenticated Internet protocol during Quick Mode negotiations. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9219-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit IPsec Quick Mode</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="logoff" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by closing a logon session.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by closing a logon session. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9216-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit Logoff</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="logon" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by attempts to log onto a user account.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by attempts to log onto a user account. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9215-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit Logon</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="network_policy_server" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by RADIUS and Network Access Protection user access requests.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by RADIUS and Network Access Protection user access requests. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9243-69ae-11d9-bed3-505054503030.This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit Network Policy Server</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_logon_logoff_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by other logon/logoff based events that are not covered in the Logon/Logoff category.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by other logon/logoff based events that are not covered in the Logon/Logoff category. This state corresponds with the following GUID specified in ntsecapi.h: 0cce921c-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit Other Logon/Logoff Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="special_logon" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by special logons.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by special logons. This state corresponds with the following GUID specified in ntsecapi.h: 0cce921b-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit Special Logon</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="logon_claims" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Audit user and device claims information in the user's logon token. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9247-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Logon/Logoff: Audit User / Device Claims</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- Object Access Audit Policy Subcategories -->
                               <xsd:element name="application_generated" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by applications that use the Windows Auditing API.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by applications that use the Windows Auditing API. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9222-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Application Generated</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="certification_services" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by operations on Active Directory Certificate Services.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by operations on Active Directory Certificate Services. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9221-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Certification Services</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="detailed_file_share" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by attempts to access files and folders on a shared folder.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by attempts to access files and folders on a shared folder. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9244-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Detailed File Share</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="file_share" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by attempts to access a shared folder.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by attempts to access a shared folder. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9224-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit File Share</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="file_system" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced user attempts to access file system objects.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced user attempts to access file system objects. This state corresponds with the following GUID specified in ntsecapi.h: 0cce921d-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit File System</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="filtering_platform_connection" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by connections that are allowed or blocked by Windows Filtering Platform.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by connections that are allowed or blocked by Windows Filtering Platform. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9226-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Filtering Platform Connection</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="filtering_platform_packet_drop" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by packets that are dropped by Windows Filtering Platform.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by packets that are dropped by Windows Filtering Platform. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9225-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Filtering Platform Packet Drop</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="handle_manipulation" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced when a handle is opened or closed.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced when a handle is opened or closed. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9223-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Handle Manipulation</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="kernel_object" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by attempts to access the system kernel.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by attempts to access the system kernel. This state corresponds with the following GUID specified in ntsecapi.h: 0cce921f-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Kernel Object</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_object_access_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by the management of Task Scheduler jobs or COM+ objects.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by the management of Task Scheduler jobs or COM+ objects. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9227-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Other Object Access Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="registry" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by attempts to access registry objects.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by attempts to access registry objects. This state corresponds with the following GUID specified in ntsecapi.h: 0cce921e-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Registry</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="sam" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by attempts to access Security Accounts Manager objects.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by attempts to access Security Accounts Manager objects. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9220-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit SAM</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="removable_storage" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Audit events that indicate file object access attemps to removable storage. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9245-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Audit Removable Storage</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="central_access_policy_staging" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>Audit events that indicate permission granted or denied by a proposed policy differs from the current central access policy on an object. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9246-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Object Access: Central Access Policy Staging</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- Policy Change Audit Policy Subcategories -->
                               <xsd:element name="audit_policy_change" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes in security audit policy settings.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes in security audit policy settings. This state corresponds with the following GUID specified in ntsecapi.h: 0cce922f-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Policy Change: Audit Audit Policy Change</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="authentication_policy_change" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to the authentication policy.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to the authentication policy. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9230-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Policy Change: Audit Authentication Policy Change</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="authorization_policy_change" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to the authorization policy.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to the authorization policy. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9231-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Policy Change: Audit Authorization Policy Change</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="filtering_platform_policy_change" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to the Windows Filtering Platform.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to the Windows Filtering Platform. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9233-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Policy Change: Audit Filtering Platform Policy Change</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="mpssvc_rule_level_policy_change" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes to policy rules used by the Windows Firewall.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes to policy rules used by the Windows Firewall. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9232-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Policy Change: Audit MPSSVC Rule-Level Policy Change</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_policy_change_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by other security policy changes that are not covered other events in the Policy Change category.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by other security policy changes that are not covered other events in the Policy Change category. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9234-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Policy Change: Audit Other Policy Change Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <!-- Privilege Use Audit Policy Subcategories -->
                               <xsd:element name="non_sensitive_privilege_use" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by the use of non-sensitive privileges.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by the use of non-sensitive privileges. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9229-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Privilege Use: Audit Non Sensitive Privilege Use</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_privilege_use_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>This is currently not used and has been reserved by Microsoft for use in the future.</xsd:documentation>
+                                        <xsd:documentation>This is currently not used and has been reserved by Microsoft for use in the future. This state corresponds with the following GUID specified in ntsecapi.h: 0cce922a-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Privilege Use: Audit Other Privilege Use Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="sensitive_privilege_use" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by the use of sensitive privileges.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by the use of sensitive privileges. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9228-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  Privilege Use: Audit Sensitive Privilege Use</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
-                              <!-- System Audit Policy Subcategories --> 
+                              <!-- System Audit Policy Subcategories -->
                               <xsd:element name="ipsec_driver" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by the IPsec filter driver.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by the IPsec filter driver. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9213-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  System: Audit IPsec Driver</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="other_system_events" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by the startup and shutdown, security policy processing, and cryptography key file and migration operations of the Windows Firewall.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by the startup and shutdown, security policy processing, and cryptography key file and migration operations of the Windows Firewall. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9214-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  System: Audit Other System Events</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="security_state_change" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by changes in the security state.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by changes in the security state. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9210-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  System: Audit Security State Change</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="security_system_extension" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events produced by the security system extensions or services.</xsd:documentation>
+                                        <xsd:documentation>Audit the events produced by the security system extensions or services. This state corresponds with the following GUID specified in ntsecapi.h: cce9211-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy:  System: Audit Security System Extension</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="system_integrity" type="win-sc:EntityItemAuditType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Audit the events that indicate that the integrity security subsystem has been violated.</xsd:documentation>
+                                        <xsd:documentation>Audit the events that indicate that the integrity security subsystem has been violated. This state corresponds with the following GUID specified in ntsecapi.h: 0cce9212-69ae-11d9-bed3-505054503030. This state corresponds with the following Advanced Audit Policy: System: Audit System Integrity</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                          </xsd:sequence>
