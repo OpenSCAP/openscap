@@ -2,7 +2,7 @@ function openRuleDetailsDialog(rule_result_id)
 {
     $("#detail-modal").remove();
 
-    var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" title="Close">×</button>');
+    var closebutton = $('<button type="button" class="close" data-dismiss="modal" aria-hidden="true" title="Close">&#x274c;</button>');
     var modal = $('<div id="detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"><div id="detail-modal-body" class="modal-body"></div></div>');
 
     $("body").prepend(modal);
