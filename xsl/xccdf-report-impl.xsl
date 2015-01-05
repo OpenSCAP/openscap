@@ -456,14 +456,14 @@ Authors:
     <xsl:param name="check"/>
     <xsl:param name="oval-tmpl"/>
 
-    <!-- TODO: Look into ARF OVAL results as well -->
-
     <xsl:variable name="filename">
         <xsl:choose>
             <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), $check/cdf:check-content-ref/@href, substring-after($oval-tmpl, "%"))'/></xsl:when>
             <xsl:otherwise><xsl:value-of select='$oval-tmpl'/></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+
+    <xsl:variable name="arf_results" select="(/arf:asset-report-collection/arf:reports/arf:report/arf:content/ovalres:oval_results)[1]"/>
 
     <xsl:variable name="details">
         <xsl:if test="$filename != ''">
@@ -494,13 +494,19 @@ Authors:
              small group of users. Still, this needs to be fixed in future
              versions!
         -->
-        <xsl:apply-templates select="(/arf:asset-report-collection/arf:reports/arf:report/arf:content/ovalres:oval_results)[1]" mode="brief">
+        <xsl:apply-templates select="$arf_results" mode="brief">
             <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
         </xsl:apply-templates>
     </xsl:variable>
 
     <xsl:if test="normalize-space($details)">
-        <span class="label label-default"><abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr></span>
+        <xsl:variable name="details_origin">
+            <xsl:choose>
+                <xsl:when test="$filename != ''">file '<xsl:value-of select="$filename"/>'</xsl:when>
+                <xsl:otherwise>arf:report with id='<xsl:value-of select="$arf_results/parent::arf:content/parent::arf:report/@id"/>'</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <span class="label label-default"><abbr title="OVAL details taken from {$details_origin}">OVAL details</abbr></span>
         <div class="panel panel-default">
             <div class="panel-body">
                 <xsl:copy-of select="$details"/>
