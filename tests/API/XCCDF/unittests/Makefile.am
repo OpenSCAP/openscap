@@ -57,6 +57,9 @@ EXTRA_DIST += \
 	test_deriving_xccdf_result_from_oval_multicheck.sh \
 	test_deriving_xccdf_result_from_oval_multicheck.xccdf.xml \
 	test_deriving_xccdf_result_from_oval_pass.oval.xml \
+	test_empty_variable.oval.xml \
+	test_empty_variable.sh \
+	test_empty_variable.xccdf.xml \
 	test_fix_filtering.xccdf.xml \
 	test_fix_filtering.sh \
 	test_inherit_selector.oval.xml \

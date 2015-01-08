@@ -49,7 +49,7 @@ Authors:
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
 
-    <div id="characteristics"><a name="characteristics"></a>
+    <div id="characteristics">
         <h2>Evaluation Characteristics</h2>
         <div class="row">
             <div class="col-md-5 well well-lg">
@@ -172,7 +172,7 @@ Authors:
 <xsl:template name="compliance-and-scoring">
     <xsl:param name="testresult"/>
 
-    <div id="compliance-and-scoring"><a name="compliance-and-scoring"></a>
+    <div id="compliance-and-scoring">
         <h2>Compliance and Scoring</h2>
 
         <xsl:variable name="total_rules_count" select="count($testresult/cdf:rule-result[cdf:result])"/>
@@ -184,7 +184,7 @@ Authors:
         <xsl:choose>
             <xsl:when test="$failed_rules_count > 0">
                 <div class="alert alert-danger">
-                    <strong>The target system did not satisfy conditions of <xsl:value-of select="$failed_rules_count"/> rules!</strong>
+                    <strong>The target system did not satisfy the conditions of <xsl:value-of select="$failed_rules_count"/> rules!</strong>
                     <xsl:if test="$uncertain_rules_count > 0">
                         Furthermore, the results of <xsl:value-of select="$uncertain_rules_count"/> rules were inconclusive.
                     </xsl:if>
@@ -204,7 +204,7 @@ Authors:
             </xsl:otherwise>
         </xsl:choose>
 
-        <h3>Rule result breakdown</h3>
+        <h3>Rule results</h3>
         <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were {$total_rules_count - $ignored_rules_count} rules taken into account.">
             <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
                 <xsl:value-of select="$passed_rules_count"/> passed
@@ -217,24 +217,25 @@ Authors:
             </div>
         </div>
 
-        <xsl:variable name="failed_rules_high_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'high')])"/>
-        <xsl:variable name="failed_rules_medium_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'medium')])"/>
         <xsl:variable name="failed_rules_low_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'low')])"/>
+        <xsl:variable name="failed_rules_medium_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'medium')])"/>
+        <xsl:variable name="failed_rules_high_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'high')])"/>
+
         <xsl:variable name="failed_rules_other_severity" select="$failed_rules_count - $failed_rules_high_severity - $failed_rules_medium_severity - $failed_rules_low_severity"/>
 
-        <h3>Failed rules by severity breakdown</h3>
+        <h3>Severity of failed rules</h3>
         <div class="progress" title="Displays proportion of high, medium, low, and other severity failed rules (in that order). There were {$failed_rules_count} total failed rules.">
-            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_high_severity"/> high
-            </div>
-            <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_medium_severity"/> medium
+            <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_other_severity"/> other
             </div>
             <div class="progress-bar progress-bar-info" style="width: {$failed_rules_low_severity div $failed_rules_count * 100}%">
                 <xsl:value-of select="$failed_rules_low_severity"/> low
             </div>
-            <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_other_severity"/> other
+            <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_medium_severity"/> medium
+            </div>
+            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
+                <xsl:value-of select="$failed_rules_high_severity"/> high
             </div>
         </div>
 
@@ -245,7 +246,7 @@ Authors:
                     <th>Scoring system</th>
                     <th class="text-center">Score</th>
                     <th class="text-center">Maximum</th>
-                    <th class="text-center" style="width: 40%">%</th>
+                    <th class="text-center" style="width: 40%">Percent</th>
                 </tr>
             </thead>
             <tbody>
@@ -257,8 +258,8 @@ Authors:
                         <td class="text-center"><xsl:value-of select="@maximum"/></td>
                         <td>
                             <div class="progress">
-                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:value-of select="round($percent * 100) div 100"/>%</div>
-                                <div class="progress-bar progress-bar-danger" style="width: {100 - $percent}%"></div>
+                                <div class="progress-bar progress-bar-success" style="width: {$percent}%"><xsl:if test="$percent &gt;= 50"><xsl:value-of select="round($percent * 100) div 100"/>%</xsl:if></div>
+                                <div class="progress-bar progress-bar-danger" style="width: {100 - $percent}%"><xsl:if test="$percent &lt; 50"><xsl:value-of select="round($percent * 100) div 100"/>%</xsl:if></div>
                             </div>
                         </td>
                     </tr>
@@ -381,7 +382,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="rule-overview"><a name="rule-overview"></a>
+    <div id="rule-overview">
         <h2>Rule Overview</h2>
 
         <div class="form-group js-only">
@@ -460,14 +461,14 @@ Authors:
     <xsl:param name="check"/>
     <xsl:param name="oval-tmpl"/>
 
-    <!-- TODO: Look into ARF OVAL results as well -->
-
     <xsl:variable name="filename">
         <xsl:choose>
             <xsl:when test='contains($oval-tmpl, "%")'><xsl:value-of select='concat(substring-before($oval-tmpl, "%"), $check/cdf:check-content-ref/@href, substring-after($oval-tmpl, "%"))'/></xsl:when>
             <xsl:otherwise><xsl:value-of select='$oval-tmpl'/></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
+
+    <xsl:variable name="arf_results" select="(/arf:asset-report-collection/arf:reports/arf:report/arf:content/ovalres:oval_results)[1]"/>
 
     <xsl:variable name="details">
         <xsl:if test="$filename != ''">
@@ -498,13 +499,19 @@ Authors:
              small group of users. Still, this needs to be fixed in future
              versions!
         -->
-        <xsl:apply-templates select="(/arf:asset-report-collection/arf:reports/arf:report/arf:content/ovalres:oval_results)[1]" mode="brief">
+        <xsl:apply-templates select="$arf_results" mode="brief">
             <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
         </xsl:apply-templates>
     </xsl:variable>
 
     <xsl:if test="normalize-space($details)">
-        <span class="label label-default"><abbr title="OVAL details taken from '{$filename}'">OVAL details</abbr></span>
+        <xsl:variable name="details_origin">
+            <xsl:choose>
+                <xsl:when test="$filename != ''">file '<xsl:value-of select="$filename"/>'</xsl:when>
+                <xsl:otherwise>arf:report with id='<xsl:value-of select="$arf_results/parent::arf:content/parent::arf:report/@id"/>'</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        <span class="label label-default"><abbr title="OVAL details taken from {$details_origin}">OVAL details</abbr></span>
         <div class="panel panel-default">
             <div class="panel-body">
                 <xsl:copy-of select="$details"/>
@@ -594,7 +601,6 @@ Authors:
             </xsl:for-each>
         </div>
         <div class="panel-heading">
-            <a name="rule-detail-{generate-id($ruleresult)}"></a>
             <h3 class="panel-title">
                 <xsl:call-template name="item-title">
                     <xsl:with-param name="item" select="$item"/>
@@ -717,7 +723,7 @@ Authors:
     <div class="js-only">
         <button type="button" class="btn btn-info" onclick="return toggleResultDetails(this)">Show all result details</button>
     </div>
-    <div id="result-details"><a name="result-details"></a>
+    <div id="result-details">
         <h2>Result Details</h2>
 
         <xsl:call-template name="result-details-inner-node">
