@@ -345,6 +345,7 @@ test_run "sds_extended_component_plain_text_entities" test_sds sds_extended_comp
 test_run "sds_extended_component_plain_text_whitespace" test_sds sds_extended_component_plain_text_whitespace fake-check-xccdf.xml 0
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
+test_run "cpe_in_ds" test_eval cpe_in_ds/sds.xml
 test_run "generate_fix_simple" test_generate_fix eval_simple/sds.xml
 test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
 test_run "eval_invalid_oval" test_invalid_oval_eval eval_invalid/sds-oval.xml

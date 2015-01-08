@@ -20,6 +20,7 @@ EXTRA_DIST = test_ds.sh \
 		eval_benchmark_id_conflict/sds.xml \
 		eval_oval_id/sds.xml \
 		eval_cpe/sds.xml \
+		cpe_in_ds/sds.xml \
 		rds_simple/results-oval.xml \
 		rds_simple/results-xccdf.xml \
 		rds_simple/sds.xml \
