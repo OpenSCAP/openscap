@@ -136,8 +136,9 @@ function test_sds {
 }
 
 function test_eval {
-
-    $OSCAP xccdf eval "${srcdir}/$1"
+    local stderr=$(mktemp -t ${name}.out.XXXXXX)
+    $OSCAP xccdf eval "${srcdir}/$1" 2> $stderr
+    diff /dev/null $stderr; rm $stderr
 }
 
 function test_generate_fix {
