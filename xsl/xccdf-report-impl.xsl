@@ -278,7 +278,7 @@ Authors:
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result}" id="rule-overview-leaf-{generate-id($ruleresult)}">
+    <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result} rule-overview-leaf-id-{$item/@id}" id="rule-overview-leaf-{generate-id($ruleresult)}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
@@ -324,7 +324,7 @@ Authors:
     <xsl:variable name="contained_rules_notchecked" select="count($item/descendant::cdf:Rule[@id = $testresult/cdf:rule-result[cdf:result/text() = 'notchecked']/@idref])"/>
     <xsl:variable name="contained_rules_need_attention" select="$contained_rules_fail + $contained_rules_error + $contained_rules_unknown + $contained_rules_notchecked"/>
 
-    <tr data-tt-id="{$item/@id}">
+    <tr data-tt-id="{$item/@id}" class="rule-overview-inner-node rule-overview-inner-node-id-{$item/@id}">
         <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
             <xsl:attribute name="data-tt-parent-id">
                 <xsl:value-of select="$item/parent::cdf:*/@id"/>
@@ -585,7 +585,7 @@ Authors:
     <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
-    <div class="panel panel-default rule-detail rule-detail-{$result}" id="rule-detail-{generate-id($ruleresult)}">
+    <div class="panel panel-default rule-detail rule-detail-{$result} rule-detail-id-{$item/@id}" id="rule-detail-{generate-id($ruleresult)}">
         <div class="keywords sr-only">
             <xsl:call-template name="item-title">
                 <xsl:with-param name="item" select="$item"/>

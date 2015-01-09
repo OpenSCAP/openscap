@@ -206,7 +206,7 @@ Authors:
     </xsl:variable>
 
     <xsl:if test="$selected_final = 'true'">
-        <tr data-tt-id="{$item/@id}" class="guide-tree-leaf" id="guide-tree-leaf-{generate-id($item)}">
+        <tr data-tt-id="{$item/@id}" class="guide-tree-leaf guide-tree-leaf-id-{$item/@id}" id="guide-tree-leaf-{generate-id($item)}">
             <xsl:attribute name="data-tt-parent-id">
                 <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
             </xsl:attribute>
@@ -342,7 +342,7 @@ Authors:
         </xsl:variable>
 
         <xsl:if test="not($item/self::cdf:Benchmark)">
-            <tr data-tt-id="{$item/@id}">
+            <tr data-tt-id="{$item/@id}" class="guide-tree-inner-node guide-tree-inner-node-id-{$item/@id}">
                 <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
                     <xsl:attribute name="data-tt-parent-id">
                         <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
