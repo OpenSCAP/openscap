@@ -1,3 +1,13 @@
+openscap-1.2.1                                                  01-10-2015
+ - API changes
+   - 5.11 schemas updated (from RC1 to gold)
+   - oscap_source_new_from_memory can take bzip2ed content
+ - HTML report changes
+   - severity bar is now reversed (left-to-right)
+ - maintenance
+   - rhbz#1165139 - fix probe cancelation
+   - dozen of bugfixes
+
 openscap-1.2.0                                                  02-12-2014
  - new features
    - native support of bzip2ed SCAP files (file extension needs to be '.xml.bz2')
