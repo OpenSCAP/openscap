@@ -47,7 +47,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="introduction"><a name="introduction"></a>
+    <div id="introduction">
         <div class="row">
             <div class="col-md-8 well well-lg">
                 <h2>
@@ -206,7 +206,7 @@ Authors:
     </xsl:variable>
 
     <xsl:if test="$selected_final = 'true'">
-        <tr data-tt-id="{$item/@id}" class="guide-tree-leaf" id="guide-tree-leaf-{generate-id($item)}">
+        <tr data-tt-id="{$item/@id}" class="guide-tree-leaf guide-tree-leaf-id-{$item/@id}" id="guide-tree-leaf-{generate-id($item)}">
             <xsl:attribute name="data-tt-parent-id">
                 <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
             </xsl:attribute>
@@ -342,7 +342,7 @@ Authors:
         </xsl:variable>
 
         <xsl:if test="not($item/self::cdf:Benchmark)">
-            <tr data-tt-id="{$item/@id}">
+            <tr data-tt-id="{$item/@id}" class="guide-tree-inner-node guide-tree-inner-node-id-{$item/@id}">
                 <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
                     <xsl:attribute name="data-tt-parent-id">
                         <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
@@ -415,7 +415,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="guide-tree"><a name="guide-tree"></a>
+    <div id="guide-tree">
         <h2>Checklist</h2>
 
         <table class="treetable table table-bordered">
@@ -434,7 +434,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div id="rear-matter"><a name="rear-matter"></a>
+    <div id="rear-matter">
         <div class="row">
             <div class="col-md-12 well well-lg">
                 <xsl:if test="$benchmark/cdf:rear-matter">

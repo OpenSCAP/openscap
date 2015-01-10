@@ -939,10 +939,16 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			
                         pctx.probe_in  = probe_in;
                         pctx.probe_out = probe_out;
+
                         /*
-                         * Run the main function of the probe implementation
+                         * Run the main function of the probe implementation. Set thread
+			 * cancelation type to ASYNC to prevent the code in probe_main to
+			 * defer the cancelation for too long.
                          */
+			int __unused_oldstate;
+			pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &__unused_oldstate);
 			*ret = probe_main(&pctx, probe->probe_arg);
+			pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &__unused_oldstate);
 
                         /*
                          * Synchronize

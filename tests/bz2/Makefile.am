@@ -6,6 +6,12 @@ EXTRA_DIST = \
 DISTCLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)
 CLEANFILES = *.log *.out* oscap_debug.log.* $(check_DATA)
 
+AM_CPPFLAGS = \
+	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/source/public \
+	-I$(top_srcdir)/tests/include
+LDADD = $(top_builddir)/src/libopenscap_testing.la
+
 TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \
 		OSCAP_FULL_VALIDATION=1 \
@@ -13,7 +19,11 @@ TESTS_ENVIRONMENT= \
 
 if HAVE_BZIP2
 TESTS = all.sh
+check_PROGRAMS = \
+	test_bz2_memory_source
 endif
+
+test_bz2_memory_source_SOURCES = test_bz2_memory_source.c
 
 EXTRA_DIST += \
 	all.sh \

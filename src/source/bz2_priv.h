@@ -38,7 +38,15 @@ OSCAP_HIDDEN_START;
  * @param filepath The path to *.xml.bz2 file
  * @returns DOM representation of the file
  */
-xmlDoc *bz2_read_doc(const char *filepath);
+xmlDoc *bz2_file_read_doc(const char *filepath);
+
+/**
+ * Parse bzip2ed memory to XML DOM.
+ * @param buffer data in memory to process (contains bzip2ed XML)
+ * @param size length of data
+ * @returns DOM representation of the data
+ */
+xmlDoc *bz2_mem_read_doc(const char *buffer, size_t size);
 
 /**
  * Recognize whether the file can be parsed by this
@@ -46,7 +54,7 @@ xmlDoc *bz2_read_doc(const char *filepath);
  * @param filepath The path to *.xml.bz2 file
  * @returns true if can be parsed.
  */
-bool bz2_is_file_bzip(const char *filepath);
+bool bz2_file_is_bzip(const char *filepath);
 
 OSCAP_HIDDEN_END;
 
