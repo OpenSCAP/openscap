@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:schema_version>5.10.1</oval:schema_version>
+    <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition class="compliance" version="1" id="oval:x:def:1">
+      <metadata>
+        <title>x</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <textfilecontent_test id="oval:x:tst:1" version="1" comment="The version of the rpm package must be 666666666" check_existence="all_exist" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:org.mitre.oval.test:obj:1"/>
+      <state state_ref="oval:org.mitre.oval.test:ste:1"/>
+    </textfilecontent_test>
+  </tests>
+
+  <objects>
+    <rpminfo_object id="oval:org.mitre.oval.test:obj:1" version="1" comment="Retrieve an rpminfo_item with a name equal to 'rpm'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name>rpm</name>
+    </rpminfo_object>
+  </objects>
+  
+  <states>
+    <rpminfo_state id="oval:org.mitre.oval.test:ste:1" version="2" comment="This state represents an rpminfo_item that has a name equal to 'rpm', version 666666666, and an arch, epoch, release, evr, and signature_keyid that match the regular expression '.*'." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <name>rpm</name>
+      <arch operation="pattern match">.*</arch>
+      <epoch operation="pattern match">.*</epoch>
+      <release operation="pattern match">.*</release>
+      <version operation="pattern match">666666666</version>
+      <evr datatype="evr_string" operation="greater than or equal">0:0-0</evr>
+      <signature_keyid operation="pattern match">.*</signature_keyid>
+    </rpminfo_state>
+  </states>
+
+</oval_definitions>
