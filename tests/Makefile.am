@@ -17,7 +17,7 @@ if WANT_PERL
 endif
 endif
 
-SUBDIRS = API DS $(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS) schemas
+SUBDIRS = API DS $(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS) schemas oval_details
 
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
 	     $(top_srcdir)/tests/xmldiff.pl
