@@ -186,7 +186,14 @@ Authors:
 <!-- generic item visualisation -->
 
 <xsl:template mode='item-head' match='*'>
-    <tr><xsl:for-each select='*'><th><xsl:value-of select='translate(local-name(), "_", " ")'/></th></xsl:for-each></tr>
+    <tr>
+        <xsl:for-each select='*'>
+            <xsl:variable name='label' select='translate(local-name(), "_", " ")'/>
+            <xsl:variable name='first_letter' select='translate(substring($label,1,1), "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")'/>
+            <xsl:variable name='rest' select='substring($label,2)'/>
+            <th><xsl:value-of select='concat($first_letter, $rest)'/></th>
+        </xsl:for-each>
+    </tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='*'>
@@ -203,7 +210,7 @@ Authors:
 <!-- UNIX file item visualisation -->
 
 <xsl:template mode='item-head' match='ovalunixsc:file_item'>
-    <tr><th>path</th><th>type</th><th>UID</th><th>GID</th><th>size</th><th>permissions</th></tr>
+    <tr><th>Path</th><th>Type</th><th>UID</th><th>GID</th><th>Size (B)</th><th>Permissions</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalunixsc:file_item'>
@@ -251,7 +258,7 @@ Authors:
 <!-- textfilecontent visualisation -->
 
 <xsl:template mode='item-head' match='ovalindsc:textfilecontent_item'>
-    <tr><th>path</th><th>content</th></tr>
+    <tr><th>Path</th><th>Content</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalindsc:textfilecontent_item'>
