@@ -29,7 +29,7 @@ if ! [ -f foo.txt ] ; then
 fi
 
 test_run "test_oval_details_file_object" test_oval_details file "path.*UID.*permissions" "/dev/null"
-test_run "test_oval_details_partition_object" test_oval_details partition "mount point.*device.*uuid" "/tmp"
+test_run "test_oval_details_partition_object" test_oval_details partition "mount point.*device.*uuid" "/"
 test_run "test_oval_details_rpminfo_object" test_oval_details rpminfo "name.*release.*version" "rpm"
 if ! pidof systemd > /dev/null ; then
   test_run "test_oval_details_runlevel_object" test_oval_details runlevel "service name.*runlevel" "smartd"

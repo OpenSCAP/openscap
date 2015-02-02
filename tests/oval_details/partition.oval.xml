@@ -16,19 +16,19 @@
     </definition>
   </definitions>
   <tests>
-    <partition_test id="oval:org.mitre.oval.test:tst:1" version="1" comment="Used space on /tmp partition must be 0 bytes." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+    <partition_test id="oval:org.mitre.oval.test:tst:1" version="1" comment="Used space on / partition must be 0 bytes." check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <object object_ref="oval:org.mitre.oval.test:obj:1"/>
       <state state_ref="oval:org.mitre.oval.test:ste:1"/>
     </partition_test>
   </tests>
   <objects>
     <partition_object id="oval:org.mitre.oval.test:obj:1" version="1" comment="foo" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <mount_point>/tmp</mount_point>
+      <mount_point>/</mount_point>
     </partition_object>
   </objects>
   <states>
     <partition_state id="oval:org.mitre.oval.test:ste:1" version="1" comment="foo" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-      <mount_point>/tmp</mount_point>
+      <mount_point>/</mount_point>
       <space_used datatype="int">0</space_used>
     </partition_state>
 
