@@ -97,33 +97,40 @@ Authors:
                                          contains($disp.status, concat(":", key("oval-items", @item_id)/@status, ":"))
                                      ]'/>
 
-    <!-- if there are items to display, go ahead -->
-    <xsl:if test='$items'>
-        <h4>
-            Items violating <span class="label label-primary">
-                <xsl:choose>
-                    <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
-                    <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
-                </xsl:choose>
-            </span>:
-        </h4>
+    <xsl:choose>
+        <!-- if there are items to display, go ahead -->
+        <xsl:when test='$items'>
+            <h4>
+                Items violating <span class="label label-primary">
+                    <xsl:choose>
+                        <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
+                        <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
+                    </xsl:choose>
+                </span>:
+            </h4>
 
-        <table class="table table-striped table-bordered">
-            <!-- table head (possibly item-type-specific) -->
-            <thead>
-                <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
-            </thead>
+            <table class="table table-striped table-bordered">
+                <!-- table head (possibly item-type-specific) -->
+                <thead>
+                    <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
+                </thead>
 
-            <!-- table body (possibly item-type-specific) -->
-            <tbody>
-                <xsl:for-each select='$items'>
-                    <xsl:for-each select='key("oval-items", @item_id)'>
-                        <xsl:apply-templates select='.' mode='item-body'/>
+                <!-- table body (possibly item-type-specific) -->
+                <tbody>
+                    <xsl:for-each select='$items'>
+                        <xsl:for-each select='key("oval-items", @item_id)'>
+                            <xsl:apply-templates select='.' mode='item-body'/>
+                        </xsl:for-each>
                     </xsl:for-each>
-                </xsl:for-each>
-            </tbody>
-        </table>
-    </xsl:if>
+                </tbody>
+            </table>
+        </xsl:when>
+        <xsl:otherwise>
+            <!-- Applies when tested object doesn't exist or an error occured
+                 while acessing object (permission denied etc.) -->
+            The tested object could not be found.
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <!--
