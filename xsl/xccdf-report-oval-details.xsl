@@ -99,7 +99,7 @@ Authors:
     <xsl:variable name='items' select='ovalres:tested_item[
                                          contains($disp.result, concat(":", @result, ":")) or
                                          contains($disp.status, concat(":", key("oval-items", @item_id)/@status, ":"))
-                                         ]'/>
+                                             ]'/>
 
     <xsl:choose>
         <!-- if there are items to display, go ahead -->
@@ -140,7 +140,9 @@ Authors:
             <xsl:if test="$object_info">
                 <p>The tested object <strong>
                 <xsl:if test='$comment'>
-                    <xsl:attribute name='title'><xsl:value-of select='$object_info[1]/@comment'/></xsl:attribute>
+                    <xsl:attribute name='title'>
+                        <xsl:value-of select='$object_info[1]/@comment'/>
+                    </xsl:attribute>
                 </xsl:if>
                 <xsl:value-of select='$object_id'/></strong> of type
                 <strong><xsl:value-of select='local-name($object_info)'/></strong>
@@ -152,23 +154,23 @@ Authors:
                     </thead>
                     <tbody>
                         <tr>
-                        <xsl:variable name='variable_id' select='$object_info/*/@var_ref'/>
-                        <xsl:if test='$variable_id'>
-                            <td>
-                            <xsl:choose>
-                            <xsl:when test='count(ovalres:tested_variable)>1'>
-                                <table>
-                                    <xsl:apply-templates mode='tableintable' select='ovalres:tested_variable'/>
-                                </table>
-                            </xsl:when>
-                            <xsl:when test='count(ovalres:tested_variable)=1'>
-                                    <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
-                            </xsl:when>
-                            </xsl:choose>
-                            <xsl:apply-templates select='key("ovalsys-object",$object_id)'/>
-                            </td>
-                        </xsl:if>
-                        <xsl:apply-templates select='$object_info[1]'/>
+                            <xsl:variable name='variable_id' select='$object_info/*/@var_ref'/>
+                            <xsl:if test='$variable_id'>
+                                <td>
+                                    <xsl:choose>
+                                        <xsl:when test='count(ovalres:tested_variable)>1'>
+                                            <table>
+                                                <xsl:apply-templates mode='tableintable' select='ovalres:tested_variable'/>
+                                            </table>
+                                        </xsl:when>
+                                        <xsl:when test='count(ovalres:tested_variable)=1'>
+                                            <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                    <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
+                                </td>
+                            </xsl:if>
+                            <xsl:apply-templates mode='object' select='$object_info[1]'/>
                         </tr>
                     </tbody>
                 </table>
@@ -180,15 +182,15 @@ Authors:
                         </thead>
                         <tbody>
                             <tr>
-                        <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
-                        <xsl:if test='$variable_id'>
-                            <td>
-                            <xsl:apply-templates select='ovalres:tested_variable'/>
-                            <xsl:apply-templates select='key("ovalsys-object",$object_id)'/>
-                            </td>
-                        </xsl:if>
-                            <xsl:apply-templates select='$state_info[1]'/>
-                        </tr>
+                                <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
+                                <xsl:if test='$variable_id'>
+                                    <td>
+                                        <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
+                                        <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
+                                    </td>
+                                </xsl:if>
+                                <xsl:apply-templates mode='state' select='$state_info[1]'/>
+                            </tr>
                        </tbody>
                     </table>
                 </xsl:if>
@@ -205,11 +207,15 @@ Authors:
 
 <xsl:template mode='tableintable' match='ovalres:tested_variable'>
     <xsl:if test='* or normalize-space()'>
-        <tr><td><xsl:value-of select='.'/></td></tr>
+        <tr>
+            <td>
+                <xsl:value-of select='.'/>
+            </td>
+        </tr>
     </xsl:if>
 </xsl:template>
 
-<xsl:template match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_object")]'>
+<xsl:template mode='object' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_object")]'>
     <xsl:for-each select='*'>
         <xsl:if test='not(*) and not(normalize-space()) and not(@var_ref)'><td>no value</td></xsl:if>
         <xsl:if test='* or normalize-space()'>
@@ -220,7 +226,7 @@ Authors:
     </xsl:for-each>
 </xsl:template>
 
-<xsl:template match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_state")]'>
+<xsl:template mode='state' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_state")]'>
     <xsl:for-each select='*'>
         <xsl:if test='* or normalize-space()'>
             <td>
@@ -230,7 +236,7 @@ Authors:
     </xsl:for-each>
 </xsl:template>
 
-<xsl:template match='ovalsys:object'>
+<xsl:template mode='message' match='ovalsys:object'>
     <xsl:if test='ovalsys:message'>
         <xsl:value-of select='ovalsys:message'/>
     </xsl:if>
