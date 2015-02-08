@@ -10,7 +10,7 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([foreign tar-pax subdir-objects])
+AM_INIT_AUTOMAKE([foreign tar-pax])
 
 # If automake supports "silent rules", enable them by default
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
