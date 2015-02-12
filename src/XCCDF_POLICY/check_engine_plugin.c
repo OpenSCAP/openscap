@@ -28,7 +28,9 @@
 #include "common/util.h"
 #include "common/_error.h"
 
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 
 #define STRINGIZE_NX(A) #A
 #define STRINGIZE(A) STRINGIZE_NX(A)
@@ -49,6 +51,7 @@ static void check_engine_plugin_def_free(struct check_engine_plugin_def *plugin)
 
 struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 {
+#ifndef _WIN32
 	struct check_engine_plugin_def *ret = check_engine_plugin_def_new();
 
 	const char *path_prefix = getenv("OSCAP_CHECK_ENGINE_PLUGIN_DIR");
@@ -92,10 +95,15 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 	}
 
 	return ret;
+#else
+	// TODO
+	return NULL;
+#endif
 }
 
 void check_engine_plugin_unload(struct check_engine_plugin_def *plugin)
 {
+#ifndef _WIN32
 	if (!plugin->module_handle) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Failed to unload this check engine plugin. It seems the plugin hasn't been loaded!");
@@ -104,6 +112,9 @@ void check_engine_plugin_unload(struct check_engine_plugin_def *plugin)
 		dlclose(plugin->module_handle);
 		plugin->module_handle = NULL;
 	}
+#else
+	// TODO
+#endif
 
 	check_engine_plugin_def_free(plugin);
 }
