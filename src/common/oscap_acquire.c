@@ -269,7 +269,11 @@ int oscap_acquire_mkdir_p(const char *path)
 				if (strlen(temp) == 0)
 					continue;
 
+#ifndef _WIN32
 				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
+#else
+				if (mkdir(temp) != 0 && errno != EEXIST) {
+#endif
 					oscap_seterr(OSCAP_EFAMILY_GLIBC,
 						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
 						temp, path, strerror(errno));
