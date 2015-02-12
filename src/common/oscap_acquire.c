@@ -30,7 +30,9 @@
 #include <curl/easy.h>
 #include <libgen.h>
 
+#ifndef _WIN32
 #include <ftw.h>
+#endif
 
 #include "oscap_acquire.h"
 #include "common/_error.h"
@@ -54,6 +56,7 @@ oscap_acquire_temp_dir()
 	return temp_dir;
 }
 
+#ifndef _WIN32
 static int
 __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
@@ -64,16 +67,21 @@ __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *
 
 	return rv;
 }
+#endif
 
 void
 oscap_acquire_cleanup_dir(char **dir_path)
 {
+#ifndef _WIN32
 	if (*dir_path != NULL)
 	{
 		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 		free(*dir_path);
 		*dir_path = NULL;
 	}
+#else
+	// TODO
+#endif
 }
 
 int
