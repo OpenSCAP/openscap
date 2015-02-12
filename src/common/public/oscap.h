@@ -33,7 +33,6 @@
 #ifndef OSCAP_H_
 #define OSCAP_H_
 #include <stdbool.h>
-#include <wchar.h>
 
 #include "oscap_text.h"
 #include "oscap_reference.h"

@@ -26,6 +26,8 @@
 #include <config.h>
 #endif
 
+#include <stddef.h>
+
 #include "oscap.h"
 
 /**
