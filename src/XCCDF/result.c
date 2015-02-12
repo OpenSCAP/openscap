@@ -160,14 +160,12 @@ static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 	xccdf_identity_set_authenticated(id, 0);
 	xccdf_identity_set_privileged(id, 0);
 #if defined(unix) || defined(__unix__) || defined(__unix)
-# if (___POSIX_VERSION >= 200112L)
 	xccdf_identity_set_name(id, getlogin());
-# endif
 #elif defined(_WIN32)
 	GetUserName((TCHAR *) w32_username, &w32_usernamesize); /* XXX: Check the return value? */
 	xccdf_identity_set_name(id, w32_username);
 #else
-# error "_xccdf_result_fill_identity: can't compile on this OS"
+# warning "_xccdf_result_fill_identity: no support for identity on this OS"
 #endif
 	xccdf_result_add_identity(result, id);
 }
