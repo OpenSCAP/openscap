@@ -34,13 +34,18 @@
 
 static struct rbt_node *rbt_str_node_alloc(void)
 {
-        struct rbt_node *n;
+        struct rbt_node *n = NULL;
 
+#ifndef _WIN32
         if (posix_memalign((void **)(void *)(&n), sizeof(void *),
                            sizeof (struct rbt_node) + sizeof (struct rbt_str_node)) != 0)
         {
                 abort ();
         }
+#else
+        // https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+        n = _aligned_malloc(sizeof (struct rbt_node) + sizeof (struct rbt_str_node), sizeof(void *));
+#endif
 
         n->_chld[0] = NULL;
         n->_chld[1] = NULL;
