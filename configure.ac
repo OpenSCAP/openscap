@@ -482,8 +482,6 @@ AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
 	])
 AM_CONDITIONAL([HAVE_BZIP2], [test "x${HAVE_BZIP2}" = xyes])
 
-if test "$probes" = "yes"; then
-
 SAVE_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config dbus-1 --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config libprocps --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
@@ -1032,6 +1030,8 @@ probe_xmlfilecontent_req_deps_ok=no;
 probe_xmlfilecontent_req_deps_missing+=", $ac_func func";
 ])
 LIBS=$SAVE_LIBS
+
+if test "$probes" = "yes"; then
 echo
 
 

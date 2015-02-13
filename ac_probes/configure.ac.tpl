@@ -310,11 +310,11 @@ AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
 	])
 AM_CONDITIONAL([HAVE_BZIP2], [test "x${HAVE_BZIP2}" = xyes])
 
-if test "$probes" = "yes"; then
-
 @@@@PROBE_HEADERS@@@@
 
 @@@@PROBE_LIBRARIES@@@@
+
+if test "$probes" = "yes"; then
 echo
 
 
