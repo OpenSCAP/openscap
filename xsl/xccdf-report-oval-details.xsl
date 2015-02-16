@@ -37,6 +37,10 @@ Authors:
 <xsl:key name='oval-items'      match='ovalsys:system_data/*' use='@id'            />
 
 <xsl:key name='oval-testdef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_test")]' use='@id' />
+<xsl:key name='oval-objectdef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_object")]' use='@id' />
+<xsl:key name='oval-statedef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_state")]' use='@id' />
+<xsl:key name='oval-variable' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-results-5") and contains(local-name(), "tested_variable")]' use='@variable_id' />
+<xsl:key name='ovalsys-object' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5") and contains(local-name(), "object")]' use='@id' />
 
 <xsl:template mode='brief' match='ovalres:oval_results'>
     <xsl:param name='definition-id' />
@@ -95,34 +99,146 @@ Authors:
     <xsl:variable name='items' select='ovalres:tested_item[
                                          contains($disp.result, concat(":", @result, ":")) or
                                          contains($disp.status, concat(":", key("oval-items", @item_id)/@status, ":"))
-                                     ]'/>
+                                             ]'/>
 
-    <!-- if there are items to display, go ahead -->
-    <xsl:if test='$items'>
-        <h4>
-            Items violating <span class="label label-primary">
-                <xsl:choose>
-                    <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
-                    <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
-                </xsl:choose>
-            </span>:
-        </h4>
+    <xsl:choose>
+        <!-- if there are items to display, go ahead -->
+        <xsl:when test='$items'>
+            <h4>
+                Items violating <span class="label label-primary">
+                    <xsl:choose>
+                        <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
+                        <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
+                    </xsl:choose>
+                </span>:
+            </h4>
 
-        <table class="table table-striped table-bordered">
-            <!-- table head (possibly item-type-specific) -->
-            <thead>
-                <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
-            </thead>
+            <table class="table table-striped table-bordered">
+                <!-- table head (possibly item-type-specific) -->
+                <thead>
+                    <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
+                </thead>
 
-            <!-- table body (possibly item-type-specific) -->
-            <tbody>
-                <xsl:for-each select='$items'>
-                    <xsl:for-each select='key("oval-items", @item_id)'>
-                        <xsl:apply-templates select='.' mode='item-body'/>
+                <!-- table body (possibly item-type-specific) -->
+                <tbody>
+                    <xsl:for-each select='$items'>
+                        <xsl:for-each select='key("oval-items", @item_id)'>
+                            <xsl:apply-templates select='.' mode='item-body'/>
+                        </xsl:for-each>
                     </xsl:for-each>
-                </xsl:for-each>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </xsl:when>
+        <xsl:otherwise>
+            <!-- Applies when tested object doesn't exist or an error occured
+                 while acessing object (permission denied etc.) -->
+            <xsl:variable name='object_id' select='key("oval-testdef", @test_id)/*[local-name()="object"]/@object_ref'/>
+            <xsl:variable name='object_info' select='key("oval-objectdef",$object_id)'/>
+            <xsl:variable name='state_id' select='key("oval-testdef", @test_id)/*[local-name()="state"]/@state_ref'/>
+            <xsl:variable name='state_info' select='key("oval-statedef",$state_id)'/>
+            <xsl:variable name='comment' select='$object_info[1]/@comment'/>
+            <xsl:if test="$object_info">
+                <p>The tested object <strong>
+                <xsl:if test='$comment'>
+                    <xsl:attribute name='title'>
+                        <xsl:value-of select='$object_info[1]/@comment'/>
+                    </xsl:attribute>
+                </xsl:if>
+                <xsl:value-of select='$object_id'/></strong> of type
+                <strong><xsl:value-of select='local-name($object_info)'/></strong>
+                could not be found.</p>
+                <p>Object details:</p>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <xsl:apply-templates mode='item-head' select='$object_info[1]'/>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <xsl:variable name='variable_id' select='$object_info/*/@var_ref'/>
+                            <xsl:if test='$variable_id'>
+                                <td>
+                                    <xsl:choose>
+                                        <xsl:when test='count(ovalres:tested_variable)>1'>
+                                            <table>
+                                                <xsl:apply-templates mode='tableintable' select='ovalres:tested_variable'/>
+                                            </table>
+                                        </xsl:when>
+                                        <xsl:when test='count(ovalres:tested_variable)=1'>
+                                            <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
+                                        </xsl:when>
+                                    </xsl:choose>
+                                    <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
+                                </td>
+                            </xsl:if>
+                            <xsl:apply-templates mode='object' select='$object_info[1]'/>
+                        </tr>
+                    </tbody>
+                </table>
+                <xsl:if test="$state_info">
+                    <p>State details:</p>
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <xsl:apply-templates mode='item-head' select='$state_info[1]'/>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
+                                <xsl:if test='$variable_id'>
+                                    <td>
+                                        <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
+                                        <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
+                                    </td>
+                                </xsl:if>
+                                <xsl:apply-templates mode='state' select='$state_info[1]'/>
+                            </tr>
+                       </tbody>
+                    </table>
+                </xsl:if>
+            </xsl:if>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
+<xsl:template mode='normal' match='ovalres:tested_variable'>
+    <xsl:if test='* or normalize-space()'>
+        <xsl:value-of select='.'/>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template mode='tableintable' match='ovalres:tested_variable'>
+    <xsl:if test='* or normalize-space()'>
+        <tr>
+            <td>
+                <xsl:value-of select='.'/>
+            </td>
+        </tr>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template mode='object' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_object")]'>
+    <xsl:for-each select='*'>
+        <xsl:if test='not(*) and not(normalize-space()) and not(@var_ref)'><td>no value</td></xsl:if>
+        <xsl:if test='* or normalize-space()'>
+            <td>
+                <xsl:value-of select='.'/>
+            </td>
+        </xsl:if>
+    </xsl:for-each>
+</xsl:template>
+
+<xsl:template mode='state' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_state")]'>
+    <xsl:for-each select='*'>
+        <xsl:if test='* or normalize-space()'>
+            <td>
+                <xsl:value-of select='.'/>
+            </td>
+        </xsl:if>
+    </xsl:for-each>
+</xsl:template>
+
+<xsl:template mode='message' match='ovalsys:object'>
+    <xsl:if test='ovalsys:message'>
+        <xsl:value-of select='ovalsys:message'/>
     </xsl:if>
 </xsl:template>
 
@@ -179,7 +295,14 @@ Authors:
 <!-- generic item visualisation -->
 
 <xsl:template mode='item-head' match='*'>
-    <tr><xsl:for-each select='*'><th><xsl:value-of select='translate(local-name(), "_", " ")'/></th></xsl:for-each></tr>
+    <tr>
+        <xsl:for-each select='*'>
+            <xsl:variable name='label' select='translate(local-name(), "_", " ")'/>
+            <xsl:variable name='first_letter' select='translate(substring($label,1,1), "abcdefghijklmnopqrstuvwxyz", "ABCDEFGHIJKLMNOPQRSTUVWXYZ")'/>
+            <xsl:variable name='rest' select='substring($label,2)'/>
+            <th><xsl:value-of select='concat($first_letter, $rest)'/></th>
+        </xsl:for-each>
+    </tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='*'>
@@ -196,7 +319,7 @@ Authors:
 <!-- UNIX file item visualisation -->
 
 <xsl:template mode='item-head' match='ovalunixsc:file_item'>
-    <tr><th>path</th><th>type</th><th>UID</th><th>GID</th><th>size</th><th>permissions</th></tr>
+    <tr><th>Path</th><th>Type</th><th>UID</th><th>GID</th><th>Size (B)</th><th>Permissions</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalunixsc:file_item'>
@@ -244,7 +367,7 @@ Authors:
 <!-- textfilecontent visualisation -->
 
 <xsl:template mode='item-head' match='ovalindsc:textfilecontent_item'>
-    <tr><th>path</th><th>content</th></tr>
+    <tr><th>Path</th><th>Content</th></tr>
 </xsl:template>
 
 <xsl:template mode='item-body' match='ovalindsc:textfilecontent_item'>

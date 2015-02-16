@@ -27,6 +27,7 @@ SUBDIRS = \
 	codestyle \
 	DS \
 	schemas \
+	oval_details \
 	$(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS)
 
 EXTRA_DIST = \
