@@ -27,7 +27,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=config --lgpl --no-conditional-dependencies --libtool --macro-prefix=gl arpa_inet canonicalize-lgpl close closedir errno fchdir getline getlogin inet_pton lstat mkdtemp mkstemp net_if netdb open opendir pthread_sigmask random readdir stpcpy strerror_r-posix strptime strsep sys_uio sys_utsname sys_wait uname vasprintf
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=config --avoid=netinet_in --lgpl --no-conditional-dependencies --libtool --macro-prefix=gl arpa_inet canonicalize-lgpl close closedir errno fchdir getline getlogin inet_pton lstat mkdtemp mkstemp net_if netdb open opendir pthread_sigmask random readdir stpcpy strerror_r-posix strptime strsep sys_uio sys_utsname sys_wait uname vasprintf
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -61,7 +61,7 @@ gl_MODULES([
   uname
   vasprintf
 ])
-gl_AVOID([])
+gl_AVOID([ netinet_in])
 gl_SOURCE_BASE([lib])
 gl_M4_BASE([m4])
 gl_PO_BASE([])

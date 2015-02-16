@@ -89,7 +89,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module multiarch:
   # Code from module net_if:
   # Code from module netdb:
-  # Code from module netinet_in:
   # Code from module nocrash:
   # Code from module open:
   # Code from module opendir:
@@ -315,8 +314,6 @@ AC_DEFUN([gl_INIT],
   gl_HEADER_NET_IF
   AC_PROG_MKDIR_P
   gl_HEADER_NETDB
-  gl_HEADER_NETINET_IN
-  AC_PROG_MKDIR_P
   gl_FUNC_OPEN
   if test $REPLACE_OPEN = 1; then
     AC_LIBOBJ([open])
@@ -682,7 +679,6 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/msvc-nothrow.h
   lib/net_if.in.h
   lib/netdb.in.h
-  lib/netinet_in.in.h
   lib/open.c
   lib/opendir.c
   lib/pathmax.h
@@ -801,7 +797,6 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/multiarch.m4
   m4/net_if_h.m4
   m4/netdb_h.m4
-  m4/netinet_in_h.m4
   m4/nocrash.m4
   m4/off_t.m4
   m4/onceonly.m4
