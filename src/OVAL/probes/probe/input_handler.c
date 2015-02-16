@@ -119,6 +119,8 @@ void *probe_input_handler(void *arg)
 				probe_ret = 0;
 				SEXP_free(oid);
 				SEXP_free(probe_in);
+				oid = NULL;
+				probe_in = NULL;
 			}
 			else {
 				probe_out = probe_rcache_sexp_get(probe->rcache, oid);

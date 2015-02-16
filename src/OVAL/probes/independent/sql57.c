@@ -350,8 +350,8 @@ static int dbSQL_eval(const char *engine, const char *version,
                         item    = probe_item_create(OVAL_INDEPENDENT_SQL57, NULL,
                                                     "engine",            OVAL_DATATYPE_STRING, engine,
                                                     "version",           OVAL_DATATYPE_STRING, version,
-                                                    "sql",               OVAL_DATATYPE_STRING, sql,
                                                     "connection_string", OVAL_DATATYPE_STRING, conn,
+                                                    "sql",               OVAL_DATATYPE_STRING, sql,
                                                     NULL);
 
 			while ((sql_err = odbx_result (sql_dbh, &sql_dbr, NULL, 0)) == ODBX_RES_ROWS) {
