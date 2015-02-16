@@ -299,19 +299,19 @@ SAVE_LIBS=$LIBS
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(c_r, pthread_attr_init, [
                      pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
-                     pthread_LIBS="-pthread -lrt" ])
+                     pthread_LIBS="-pthread" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(pthread, pthread_attr_init, [
                          pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
-                         pthread_LIBS="-lpthread -lrt" ])
+                         pthread_LIBS="-lpthread" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(pthreads, pthread_attr_init, [
                           pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
-                          pthread_LIBS="-lpthreads -lrt" ])
+                          pthread_LIBS="-lpthreads" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
