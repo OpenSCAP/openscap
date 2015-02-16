@@ -1,3 +1,17 @@
+openscap-1.0.10                                                 16-02-2015
+ - added CPE name for Fedora 22
+ - fixes
+   - improved parser robustness
+   - segfaults while parsing invalid content
+   - memory leaks, coverity fixes, typo fixes
+   - test improvements
+   - do not remove results when error occurred
+   - export TestResult[@version] every time the TestResult is created
+   - var_check/var_ref fixes (rhbz#1182242, rhbz#1159289)
+   - removed bashism from cron snippet
+   - fixed async thread cancelation (rhbz#1165139)
+   - sql57_item export (trac#352)
+
 openscap-1.0.9                                                  25-06-2014
  - xccdf_session_export_arf must not return 0 if the export failed
  - expose xccdf_policy_get_value_of_item as public API
