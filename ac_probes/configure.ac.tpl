@@ -168,6 +168,8 @@ PKG_CHECK_MODULES([xslt], [libxslt >= 1.1],[],
 PKG_CHECK_MODULES([exslt], [libexslt >= 0.8],[],
 			  AC_MSG_FAILURE([libexslt devel support is missing]))
 
+AC_CHECK_HEADER(pcre.h, , [AC_MSG_ERROR([pcre.h is missing] )])
+
 crapi_CFLAGS=""
 crapi_LIBS=""
 
@@ -649,6 +651,7 @@ AC_CONFIG_FILES([Makefile
                  tests/schemas/Makefile
 		tests/bz2/Makefile
 		tests/codestyle/Makefile
+		tests/oval_details/Makefile
 
                  src/SCE/Makefile
                  tests/sce/Makefile])
