@@ -257,14 +257,16 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
 	char* file_reldir = dirname(filename_cpy);
 
-	// the cast is safe to do because we are using the GNU basename, it doesn't
-	// modify the string
-	const char* file_basename = basename((char*)relative_filepath);
+	// Not all implementations of basename guarantee that the string won't be
+	// changed. Copy it to ensure correctness.
+	char* relative_filepath_cpy = oscap_strdup(relative_filepath);
+	const char* file_basename = basename(relative_filepath_cpy);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
 	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
 	ds_sds_dump_component(component_id, session, target_filename, relative_filepath);
 	oscap_free(target_filename);
+	oscap_free(relative_filepath_cpy);
 	oscap_free(filename_cpy);
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
