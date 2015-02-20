@@ -353,7 +353,7 @@ Authors:
                     <h3>
                         <xsl:if test="$indent=1 or $indent=2">
                             <xsl:attribute name="id">
-                                <xsl:value-of select="translate($item/cdf:title, ' ', '-')"/>
+                                <xsl:value-of select="$item/@id"/>
                             </xsl:attribute>
                         </xsl:if>
                         <xsl:call-template name="item-title">
@@ -418,24 +418,29 @@ Authors:
 
 <xsl:template name="table-of-contents-items">
     <xsl:param name="item"/>
-    <xsl:param name="level"/>
+    <xsl:param name="levels"/>
     <ol>
         <xsl:for-each select="$item/cdf:Group">
-            <xsl:if test="cdf:title">
-                <li>
-                    <a>
-                        <xsl:attribute name="href">
-                            <xsl:text>#</xsl:text>
-                            <xsl:value-of select="translate(cdf:title, ' ', '-')"/>
-                        </xsl:attribute>
-                        <xsl:value-of select="cdf:title"/>
-                    </a>
-                </li>
-            </xsl:if>
-            <xsl:if test="cdf:Group and $level=1">
+            <li>
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:text>#</xsl:text>
+                        <xsl:value-of select="@id"/>
+                    </xsl:attribute>
+                    <xsl:choose>
+                        <xsl:when test="cdf:title">
+                            <xsl:value-of select="cdf:title"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@id"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </a>
+            </li>
+            <xsl:if test="cdf:Group and $levels&gt;1">
                 <xsl:call-template name="table-of-contents-items">
                     <xsl:with-param name="item" select="."/>
-                    <xsl:with-param name="level" select="$level+1"/>
+                    <xsl:with-param name="levels" select="$levels - 1"/>
                 </xsl:call-template>
             </xsl:if>
         </xsl:for-each>
@@ -448,7 +453,7 @@ Authors:
     <h2>Table of Contents</h2>
     <xsl:call-template name="table-of-contents-items">
         <xsl:with-param name="item" select="$benchmark"/>
-        <xsl:with-param name="level" select="1"/>
+        <xsl:with-param name="levels" select="2"/>
     </xsl:call-template>
 </xsl:template>
 
