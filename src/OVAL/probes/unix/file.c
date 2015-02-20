@@ -261,7 +261,7 @@ static SEXP_t *has_extended_acl(const char *path)
 	}
 	return (has_acl == 1) ? gr_true : gr_false;
 #elif defined(OS_SOLARIS)
-	return acl_trivial(st_path) ? gr_true : gr_false;
+	return acl_trivial(path) ? gr_true : gr_false;
 #else
 	return NULL;
 #endif
