@@ -543,6 +543,10 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		dI("Generating fixes for policy(profile/@id=%s)\n", xccdf_policy_get_id(policy));
 		int ret = 0;
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
+		if (benchmark == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
+			return 1;
+		}
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
 			struct xccdf_item *item = xccdf_item_iterator_next(item_it);
