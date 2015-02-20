@@ -351,6 +351,11 @@ Authors:
 
                 <td style="padding-left: {$indent * 19}px">
                     <h3>
+                        <xsl:if test="$indent=1 or $indent=2">
+                            <xsl:attribute name="id">
+                                <xsl:value-of select="$item/@id"/>
+                            </xsl:attribute>
+                        </xsl:if>
                         <xsl:call-template name="item-title">
                             <xsl:with-param name="item" select="$item"/>
                             <xsl:with-param name="profile" select="$profile"/>
@@ -409,6 +414,47 @@ Authors:
             </xsl:call-template>
         </xsl:for-each>
     </xsl:if>
+</xsl:template>
+
+<xsl:template name="table-of-contents-items">
+    <xsl:param name="item"/>
+    <xsl:param name="levels"/>
+    <ol>
+        <xsl:for-each select="$item/cdf:Group">
+            <li>
+                <a>
+                    <xsl:attribute name="href">
+                        <xsl:text>#</xsl:text>
+                        <xsl:value-of select="@id"/>
+                    </xsl:attribute>
+                    <xsl:choose>
+                        <xsl:when test="cdf:title">
+                            <xsl:value-of select="cdf:title"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@id"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </a>
+            </li>
+            <xsl:if test="cdf:Group and $levels&gt;1">
+                <xsl:call-template name="table-of-contents-items">
+                    <xsl:with-param name="item" select="."/>
+                    <xsl:with-param name="levels" select="$levels - 1"/>
+                </xsl:call-template>
+            </xsl:if>
+        </xsl:for-each>
+    </ol>
+</xsl:template>
+
+<xsl:template name="table-of-contents">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+    <h2>Table of Contents</h2>
+    <xsl:call-template name="table-of-contents-items">
+        <xsl:with-param name="item" select="$benchmark"/>
+        <xsl:with-param name="levels" select="2"/>
+    </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="guide-tree">
@@ -479,6 +525,10 @@ Authors:
     <div class="container"><div id="content">
 
     <xsl:call-template name="introduction">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:call-template>
+    <xsl:call-template name="table-of-contents">
         <xsl:with-param name="benchmark" select="$benchmark"/>
         <xsl:with-param name="profile" select="$profile"/>
     </xsl:call-template>
