@@ -23,6 +23,10 @@ EXTRA_DIST = \
 	cpe2-applicable-rule-embedded-xccdf-combined.xml \
 	cpe2-notapplicable-rule-embedded-xccdf-combined.xml \
 	nonexistant-platforms-rule-xccdf.xml \
+	openscap-cpe-oval.xml \
+	test_platform_element.cpe.xml \
+	test_platform_element.sh \
+	test_platform_element.xccdf.xml \
 	test_remediate_fix_notapplicable.sh \
 	test_remediate_fix_notapplicable.xccdf.xml \
 	test_remediate_fix_processing.sh \
