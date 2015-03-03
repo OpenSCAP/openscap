@@ -384,7 +384,7 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 
 	/* Initialize the fix. */
 	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
-	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, test_result);
+	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, rr, test_result);
 	xccdf_rule_result_add_fix(rr, cfix);
 	if (res != 0) {
 		_rule_add_info_message(rr, "Fix execution was aborted: Text substitution failed.");
@@ -485,7 +485,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 
 	// Process Text Substitute within the fix
 	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
-	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, NULL);
+	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, NULL, NULL);
 	if (res != 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "A fix for Rule/@id=\"%s\" was skipped: Text substitution failed.",
 				xccdf_rule_get_id(rule));
