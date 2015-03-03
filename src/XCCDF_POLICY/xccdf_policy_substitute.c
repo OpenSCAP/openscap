@@ -36,6 +36,7 @@
 
 struct _xccdf_text_substitution_data {
 	struct xccdf_policy *policy;
+	struct xccdf_rule_result *rule_result;
 	enum {
 		_TAILORING_TYPE = 1,
 		_DOCUMENT_GENERATION_TYPE = 2,
@@ -163,17 +164,38 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		xmlFreeNode(*node);
 		*node = new_node;
 		return 0;
+	} else if (oscap_streq((const char *) (*node)->name, "instance") && xccdf_is_supported_namespace((*node)->ns)) {
+		const char *result;
+		// <instance> elements
+		if ((*node)->children != NULL)
+			dW("The xccdf:instance element SHALL NOT have any content.\n");
+		if (data->rule_result == NULL)
+			return 1;
+		struct xccdf_instance_iterator *instances = xccdf_rule_result_get_instances(data->rule_result);
+		if (xccdf_instance_iterator_has_more(instances)) {
+			struct xccdf_instance *instance = xccdf_instance_iterator_next(instances);
+			result = xccdf_instance_get_content(instance);
+		}
+		else {
+			dW("The xccdf:rule-result/xccdf:instance element was not found.\n");
+			return 1;
+		}
+		xmlNode *new_node = xmlNewText(BAD_CAST result);
+		xmlReplaceNode(*node, new_node);
+		xmlFreeNode(*node);
+		*node = new_node;
+		return 0;
 	} else {
-		// TODO: <instance> elements
 		return 0;
 	}
 }
 
-int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_result *test_result)
+int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_rule_result *rule_result, struct xccdf_result *test_result)
 {
 	struct _xccdf_text_substitution_data data;
 	data.policy = policy;
 	data.processing_type = _DOCUMENT_GENERATION_TYPE | _ASSESSMENT_TYPE;
+	data.rule_result = rule_result;
 
 	char *result = NULL;
 	int res = xml_iterate_dfs(xccdf_fix_get_content(fix), &result, _xccdf_text_substitution_cb, &data);
@@ -186,6 +208,7 @@ int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xc
 char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy) {
 	struct _xccdf_text_substitution_data data;
 	data.policy = policy;
+	data.rule_result = NULL;
 	/* We cannot anticipate processing type. But <title>'s are least probable. */
 	data.processing_type = _DOCUMENT_GENERATION_TYPE | _ASSESSMENT_TYPE;
 
