@@ -81,6 +81,8 @@ EXTRA_DIST += \
 	test_remediate_python_subs.xccdf.xml \
 	test_remediate_simple.sh \
 	test_remediate_simple.xccdf.xml \
+	test_remediate_unresolved.sh \
+	test_remediate_unresolved.xccdf.xml \
 	test_remediation_amp_escaping.sh \
 	test_remediation_amp_escaping.xccdf.xml \
 	test_remediation_bad_fix.sh \
