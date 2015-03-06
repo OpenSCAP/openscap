@@ -57,6 +57,9 @@ EXTRA_DIST += \
 	test_empty_variable.oval.xml \
 	test_empty_variable.sh \
 	test_empty_variable.xccdf.xml \
+	test_fix_instance.oval.xml \
+	test_fix_instance.sh \
+	test_fix_instance.xccdf.xml \
 	test_fix_filtering.xccdf.xml \
 	test_fix_filtering.sh \
 	test_inherit_selector.oval.xml \
