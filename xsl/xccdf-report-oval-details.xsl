@@ -114,16 +114,17 @@ Authors:
             <xsl:variable name='state_info' select='key("oval-statedef",$state_id)'/>
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
-                <p>The tested object <strong>
+                <h4>Items not found 
+                    <span class="label label-primary"><xsl:value-of select="$title"/></span>:
+                </h4>
+                <h5>Object <strong><abbr>
                 <xsl:if test='$comment'>
                     <xsl:attribute name='title'>
                         <xsl:value-of select='$object_info[1]/@comment'/>
                     </xsl:attribute>
                 </xsl:if>
-                <xsl:value-of select='$object_id'/></strong> of type
-                <strong><xsl:value-of select='local-name($object_info)'/></strong>
-                could not be found.</p>
-                <p>Object details:</p>
+                <xsl:value-of select='$object_id'/></abbr></strong> of type
+                <strong><xsl:value-of select='local-name($object_info)'/></strong></h5>
                 <table class="table table-striped table-bordered">
                     <thead>
                         <xsl:apply-templates mode='item-head' select='$object_info[1]'/>
@@ -151,7 +152,8 @@ Authors:
                     </tbody>
                 </table>
                 <xsl:if test="$state_info">
-                    <p>State details:</p>
+                    <h5>State <strong><xsl:value-of select='$state_id'/></strong> of type
+                    <strong><xsl:value-of select='local-name($state_info)'/></strong></h5>
                     <table class="table table-striped table-bordered">
                         <thead>
                             <xsl:apply-templates mode='item-head' select='$state_info[1]'/>
