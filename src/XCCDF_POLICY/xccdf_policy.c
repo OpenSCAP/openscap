@@ -2423,7 +2423,13 @@ const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct 
 	}
 
 	struct xccdf_value_instance *instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) item, selector);
-	return xccdf_value_instance_get_value(instance);
+	if (instance == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Invalid selector '%s' for xccdf:value/@id='%s'. Using null value instead.",
+				selector, xccdf_value_get_id((struct xccdf_value *) item));
+		return NULL;
+	} else {
+		return xccdf_value_instance_get_value(instance);
+	}
 }
 
 static int xccdf_policy_get_refine_value_oper(struct xccdf_policy * policy, struct xccdf_item * item)
