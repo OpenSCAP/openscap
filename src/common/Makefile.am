@@ -4,6 +4,7 @@ liboscapcommon_la_SOURCES = \
 	alloc.c alloc.h \
 	assume.h \
 	bfind.c bfind.h \
+	compat_pthread_barrier.h compat_pthread_barrier.c \
 	debug.c debug_priv.h \
 	elements.c elements.h \
 	err_queue.c err_queue.h \

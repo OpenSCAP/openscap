@@ -38,6 +38,7 @@
 #include "worker.h"
 #include "common/debug_priv.h"
 #include "signal_handler.h"
+#include "common/compat_pthread_barrier.h"
 
 typedef struct {
 	probe_worker_t **thr;
