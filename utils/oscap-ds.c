@@ -156,6 +156,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	/* Command-options */
 	const struct option long_options[] = {
 	// options
+		{"skip-valid",      no_argument, &action->validate, 0},
 		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
@@ -184,8 +185,17 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if ((action->module == &DS_SDS_COMPOSE_MODULE) || action->module == &DS_SDS_ADD_MODULE) {
-		if(  argc != 5 ) {
+	else if (action->module == &DS_SDS_COMPOSE_MODULE) {
+		if(optind + 2 != argc) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[optind];
+		action->ds_action->target = argv[optind + 1];
+	}
+	else if (action->module == &DS_SDS_ADD_MODULE) {
+		if(argc != 5) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
