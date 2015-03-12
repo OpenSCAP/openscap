@@ -72,8 +72,8 @@ Authors:
         <xsl:when test='$items'>
             <h4>
                 <xsl:choose>
-                    <xsl:when test='$result="pass"'>Items satisfying </xsl:when>
-                    <xsl:otherwise>Items violating </xsl:otherwise>
+                    <xsl:when test='$result="pass"'>Items found satisfying </xsl:when>
+                    <xsl:otherwise>Items found violating </xsl:otherwise>
                 </xsl:choose>
                 <span class="label label-primary">
                     <xsl:choose>
@@ -114,7 +114,11 @@ Authors:
             <xsl:variable name='state_info' select='key("oval-statedef",$state_id)'/>
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
-                <h4>Items not found 
+                <h4>
+                    <xsl:choose>
+                        <xsl:when test='$result="pass"'>Items not found satisfying </xsl:when>
+                        <xsl:otherwise>Items not found violating </xsl:otherwise>
+                    </xsl:choose>
                     <span class="label label-primary"><xsl:value-of select="$title"/></span>:
                 </h4>
                 <h5>Object <strong><abbr>
