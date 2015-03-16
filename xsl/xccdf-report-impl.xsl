@@ -455,6 +455,7 @@ Authors:
 <xsl:template name="check-system-details-oval5">
     <xsl:param name="check"/>
     <xsl:param name="oval-tmpl"/>
+    <xsl:param name="result"/>
 
     <xsl:variable name="filename">
         <xsl:choose>
@@ -469,6 +470,7 @@ Authors:
         <xsl:if test="$filename != ''">
             <xsl:apply-templates select="document($filename)/ovalres:oval_results" mode="brief">
                 <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
+                <xsl:with-param name='result' select='$result'/>
             </xsl:apply-templates>
         </xsl:if>
 
@@ -496,6 +498,7 @@ Authors:
         -->
         <xsl:apply-templates select="$arf_results" mode="brief">
             <xsl:with-param name='definition-id' select='$check/cdf:check-content-ref/@name'/>
+            <xsl:with-param name='result' select='$result'/>
         </xsl:apply-templates>
     </xsl:variable>
 
@@ -552,12 +555,14 @@ Authors:
     <xsl:param name="check"/>
     <xsl:param name="oval-tmpl"/>
     <xsl:param name="sce-tmpl"/>
+    <xsl:param name="result"/>
 
     <xsl:choose>
         <xsl:when test="$check/@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5'">
             <xsl:call-template name="check-system-details-oval5">
                 <xsl:with-param name="check" select="$check"/>
                 <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+                <xsl:with-param name="result" select="$result"/>
             </xsl:call-template>
         </xsl:when>
         <xsl:when test="$check/@system = 'http://open-scap.org/page/SCE'">
@@ -638,20 +643,21 @@ Authors:
                             </xsl:apply-templates>
                         </p>
                     </div></td></tr>
-                    <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
-                        <xsl:variable name="check_system_details_ret">
-                            <xsl:call-template name="check-system-details">
-                                <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
-                                <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
-                                <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
-                            </xsl:call-template>
-                        </xsl:variable>
+                    <xsl:variable name="check_system_details_ret">
+                        <xsl:call-template name="check-system-details">
+                            <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
+                            <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+                            <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
+                            <xsl:with-param name="result" select="$result"/>
+                        </xsl:call-template>
+                    </xsl:variable>
 
-                        <xsl:if test="normalize-space($check_system_details_ret)">
-                            <tr><td colspan="2"><div class="check-system-details">
-                                <xsl:copy-of select="$check_system_details_ret"/>
-                            </div></td></tr>
-                        </xsl:if>
+                    <xsl:if test="normalize-space($check_system_details_ret)">
+                        <tr><td colspan="2"><div class="check-system-details">
+                            <xsl:copy-of select="$check_system_details_ret"/>
+                        </div></td></tr>
+                    </xsl:if>
+                    <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
                         <xsl:if test="$item/cdf:fix">
                             <tr><td colspan="2"><div class="remediation">
                                 <span class="label label-success">Remediation script:</span>
