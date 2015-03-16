@@ -90,10 +90,10 @@ Authors:
                 </thead>
 
                 <!-- table body (possibly item-type-specific) -->
-                <!-- limited to 50 lines -->
+                <!-- limited to 100 lines -->
                 <tbody>
                     <xsl:for-each select='$items'>
-                        <xsl:if test="not(position() > 50)">
+                        <xsl:if test="not(position() > 100)">
                             <xsl:for-each select='key("oval-items", @item_id)'>
                                 <xsl:apply-templates select='.' mode='item-body'/>
                             </xsl:for-each>
@@ -101,8 +101,8 @@ Authors:
                     </xsl:for-each>
                 </tbody>
             </table>
-            <xsl:if test="count($items) > 50">
-                ... and <xsl:value-of select="count($items)-50"/> more items.
+            <xsl:if test="count($items) > 100">
+                ... and <xsl:value-of select="count($items)-100"/> more items.
             </xsl:if>
         </xsl:when>
         <xsl:otherwise>
