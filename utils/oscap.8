@@ -497,9 +497,12 @@ AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, Hi
 
 .SH DS OPERATIONS
 .TP
-.B \fBsds-compose\fR SOURCE_XCCDF TARGET_SDS
+.B \fBsds-compose\fR [\fIoptions\fR] SOURCE_XCCDF TARGET_SDS
 .RS
 Creates a source datastream from the XCCDF file given in SOURCE_XCCDF and stores the result in TARGET_SDS. Dependencies like OVAL files are automatically detected and bundled in target source datastream.
+.TP
+\fB\-\-skip-valid
+Do not validate input/output files.
 .RE
 .TP
 .B \fBsds-add\fR [\fIoptions\fR] NEW_COMPONENT EXISTING_SDS
