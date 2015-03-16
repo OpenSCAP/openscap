@@ -47,6 +47,7 @@ test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_s
 test_run "Multiple xccdf:TestResult elements" $srcdir/test_xccdf_multiple_testresults.sh
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
+test_run "incorrect selector for xccdf value" $srcdir/test_xccdf_refine_value_bad.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh

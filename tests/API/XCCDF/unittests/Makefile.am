@@ -151,6 +151,8 @@ EXTRA_DIST += \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
+	test_xccdf_refine_value_bad.sh \
+	test_xccdf_refine_value_bad.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \
 	test_xccdf_selectors_cluster1.xccdf.xml \
 	test_xccdf_selectors_cluster2.sh \
