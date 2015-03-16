@@ -73,8 +73,9 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.name = "sds-compose",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Compose SourceDataStream from given XCCDF",
-	.usage = "xccdf-file.xml target_datastream.xml",
-	.help = NULL,
+	.usage = "[options] xccdf-file.xml target_datastream.xml",
+	.help = "Options:\n"
+        "   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
 };
