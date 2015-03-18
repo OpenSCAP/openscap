@@ -148,7 +148,8 @@
           <xsd:annotation>
                <xsd:documentation>The NotesType complex type is a container for one or more note child elements. Each note contains some information about the definition or tests that it references. A note may record an unresolved question about the definition or test or present the reason as to why a particular approach was taken.</xsd:documentation>
           </xsd:annotation>
-          <xsd:sequence>
+          <!-- openscap specific schema change: minOccurs="0" -->
+          <xsd:sequence minOccurs="0" maxOccurs="1">
                <xsd:element name="note" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
           </xsd:sequence>
      </xsd:complexType>
