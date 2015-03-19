@@ -214,7 +214,7 @@
                     <xsd:field xpath="@family"/>
                 </xsd:unique>            
             </xsd:element>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="oval-def:NotesType" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="criteria" type="oval-def:CriteriaType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:DefinitionIDPattern" use="required"/>
@@ -277,6 +277,18 @@
         <xsd:attribute name="source" type="xsd:string" use="required"/>
         <xsd:attribute name="ref_id" type="xsd:string" use="required"/>
         <xsd:attribute name="ref_url" type="xsd:anyURI" use="optional"/>
+    </xsd:complexType>
+    <!-- openscap specific change, necessary to allow both oval:note and oval-def:note
+         as child elements of the <notes> element. This restores backwards compatibility
+         with OVAL 5.10, see https://github.com/OVALProject/Language/issues/237 -->
+    <xsd:complexType name="NotesType">
+        <xsd:complexContent>
+            <xsd:extension base="oval:NotesType">
+                <xsd:sequence minOccurs="0" maxOccurs="1">
+                    <xsd:element name="note" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
     </xsd:complexType>
     <xsd:complexType name="CriteriaType">
         <xsd:annotation>
@@ -350,7 +362,7 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="oval-def:NotesType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:TestIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
@@ -397,7 +409,7 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="oval-def:NotesType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:ObjectIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
@@ -474,7 +486,7 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="oval-def:NotesType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:StateIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
@@ -519,7 +531,7 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="oval-def:NotesType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:VariableIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>

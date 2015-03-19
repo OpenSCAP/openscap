@@ -68,7 +68,8 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 		"\n"
 		"Options:\n"
 		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n",
+		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
+		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
 };
@@ -77,8 +78,9 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.name = "sds-compose",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Compose SourceDataStream from given XCCDF",
-	.usage = "xccdf-file.xml target_datastream.xml",
-	.help = NULL,
+	.usage = "[options] xccdf-file.xml target_datastream.xml",
+	.help = "Options:\n"
+		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
 };
@@ -90,7 +92,7 @@ static struct oscap_module DS_SDS_ADD_MODULE = {
 	.usage = "[options] new-component.xml existing_datastream.xml",
 	.help =	"Options:\n"
 		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection for adding to.\n"
-		,
+		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_add
 };
@@ -112,7 +114,7 @@ static struct oscap_module DS_RDS_SPLIT_MODULE = {
 	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
 	.help =	"Options:\n"
 		"   --report-id <id> \r\t\t\t\t - ID of report inside ARF that should be split.\n"
-		,
+		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_split
 };
@@ -121,8 +123,9 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.name = "rds-create",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Create a ResultDataStream from given SourceDataStream, XCCDF results and one or more OVAL results",
-	.usage = "sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
-	.help = NULL,
+	.usage = "[options] sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
+	.help =	"Options:\n"
+		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_create
 };
@@ -160,6 +163,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	/* Command-options */
 	const struct option long_options[] = {
 	// options
+		{"skip-valid",      no_argument, &action->validate, 0},
 		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
@@ -188,14 +192,23 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if ((action->module == &DS_SDS_COMPOSE_MODULE) || action->module == &DS_SDS_ADD_MODULE) {
-		if(  argc != 5 ) {
+	else if (action->module == &DS_SDS_COMPOSE_MODULE) {
+		if(optind + 2 != argc) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
-		action->ds_action->file = argv[3];
-		action->ds_action->target = argv[4];
+		action->ds_action->file = argv[optind];
+		action->ds_action->target = argv[optind + 1];
+	}
+	else if (action->module == &DS_SDS_ADD_MODULE) {
+		if (optind + 2 != argc) {
+			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
+			return false;
+		}
+		action->ds_action = malloc(sizeof(struct ds_action));
+		action->ds_action->file = argv[optind];
+		action->ds_action->target = argv[optind + 1];
 	}
 	else if( (action->module == &DS_SDS_VALIDATE_MODULE) ) {
 		if(  argc != 4 ) {
@@ -215,16 +228,16 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->target = argv[optind + 1];
 	}
 	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
-		if(  argc < 6 ) {
+		if(argc - optind < 3 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
 		}
 		action->ds_action = malloc(sizeof(struct ds_action));
-		action->ds_action->file = argv[3];
-		action->ds_action->target = argv[4];
-		action->ds_action->xccdf_result = argv[5];
-		action->ds_action->oval_results = &argv[6];
-		action->ds_action->oval_result_count = argc - 6;
+		action->ds_action->file = argv[optind];
+		action->ds_action->target = argv[optind + 1];
+		action->ds_action->xccdf_result = argv[optind + 2];
+		action->ds_action->oval_results = &argv[optind + 3];
+		action->ds_action->oval_result_count = argc - optind - 3;
 	}
 	else if( (action->module == &DS_RDS_VALIDATE_MODULE) ) {
 		if(  argc != 4 ) {

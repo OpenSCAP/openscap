@@ -3,6 +3,7 @@
 . ../../../test_common.sh
 
 test_init test_api_oval_unittests.log
+test_run "comment before root element" $srcdir/test_comment.sh
 test_run "empty filename(pattern match)" $srcdir/test_empty_filename.sh
 test_run "deprecated definition" $srcdir/test_deprecated_def.sh
 test_run "applicability_check element" $srcdir/test_applicability_check.sh

@@ -9,7 +9,8 @@
     </xs:appinfo>
   </xs:annotation>
   <xs:import namespace="http://checklists.nist.gov/xccdf/1.2" schemaLocation="../../xccdf/1.2/xccdf_1.2.xsd"/>
-  <xs:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="../../oval/5.10/oval-definitions-schema.xsd"/>
+  <!-- This changes the original schema. Original schema imports OVAL 5.10. -->
+  <xs:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="../../oval/5.11/oval-definitions-schema.xsd"/>
   <xs:import namespace="http://cpe.mitre.org/dictionary/2.0" schemaLocation="cpe-dictionary_2.3.xsd"/>
   <xs:import namespace="http://scap.nist.gov/schema/ocil/2.0" schemaLocation="../../ocil/2.0/ocil-2.0.xsd"/>
   <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
