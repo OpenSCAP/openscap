@@ -57,6 +57,9 @@ EXTRA_DIST += \
 	test_empty_variable.oval.xml \
 	test_empty_variable.sh \
 	test_empty_variable.xccdf.xml \
+	test_fix_instance.oval.xml \
+	test_fix_instance.sh \
+	test_fix_instance.xccdf.xml \
 	test_fix_filtering.xccdf.xml \
 	test_fix_filtering.sh \
 	test_inherit_selector.oval.xml \
@@ -78,6 +81,8 @@ EXTRA_DIST += \
 	test_remediate_python_subs.xccdf.xml \
 	test_remediate_simple.sh \
 	test_remediate_simple.xccdf.xml \
+	test_remediate_unresolved.sh \
+	test_remediate_unresolved.xccdf.xml \
 	test_remediation_amp_escaping.sh \
 	test_remediation_amp_escaping.xccdf.xml \
 	test_remediation_bad_fix.sh \
