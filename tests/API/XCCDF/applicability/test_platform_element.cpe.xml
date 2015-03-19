@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <cpe-item name="cpe:/o:xxx:yyy">
+            <title xml:lang="en-us">Any platform</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:x:def:1</check>
+      </cpe-item>
+</cpe-list>
+

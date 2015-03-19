@@ -36,10 +36,11 @@ OSCAP_HIDDEN_START;
  * @memberof xccdf_policy
  * @param policy XCCDF policy used for substitution
  * @param fix a fix element to modify
+ * @param rule_result the rule-result for substitution instnace in fix
  * @param test_result the TestResult for xccdf:fact resolution
  * @returns 0 on success, 1 on failure, other value indicate warning
  */
-int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_result *test_result);
+int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xccdf_fix *fix, struct xccdf_rule_result *rule_result, struct xccdf_result *test_result);
 
 /**
  * Execute fix element for a given rule-result. Or find suitable (most appropriate) fix

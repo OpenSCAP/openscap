@@ -133,8 +133,16 @@ static int probe_opthandler_offlinemode(int option, int op, va_list args)
 			 * If the probe doesn't support offline mode, then probe_main()
 			 * won't be called in offline modee and a collected object with
 			 * the following flag will be generated for all queries.
+			 *
+			 * We have hardcoded not_collected here as the best fit for majority
+			 * of offline use cases. The test result will get the unknown result
+			 * which is pretty descriptive of the state.
+			 *
+			 * Other option would be to return not applicable. That would, however,
+			 * make the test result not_applicable as well. Which in turn may hide
+			 * underlying problems.
 			 */
-			o_cobjflag = va_arg(args, int);
+			o_cobjflag = SYSCHAR_FLAG_NOT_COLLECTED;
 		}
 		OSCAP_GSYM(offline_mode_supported) = o_offline_mode;
 		OSCAP_GSYM(offline_mode_cobjflag) = o_cobjflag;

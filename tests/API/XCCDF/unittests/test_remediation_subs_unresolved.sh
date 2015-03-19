@@ -2,6 +2,7 @@
 
 set -e
 set -o pipefail
+set -x
 
 name=$(basename $0 .sh)
 result=$(mktemp -t ${name}.out.XXXXXX)
@@ -48,10 +49,9 @@ assert_exists 1 '//rule-result/result[text()="fail"]'
 assert_exists 1 '//rule-result/fix'
 assert_exists 1 '//rule-result/fix[@system="urn:xccdf:fix:script:sh"]'
 assert_exists 1 '//rule-result/fix/instance'
-assert_exists 2 '//rule-result/message'
-assert_exists 2 '//rule-result/message[@severity="info"]'
-assert_exists 1 '//rule-result/message[text()="Fix element contains unresolved child elements."]'
-assert_exists 1 '//rule-result/message[text()="Fix was not executed. Execution was aborted."]'
+assert_exists 1 '//rule-result/message'
+assert_exists 1 '//rule-result/message[@severity="info"]'
+assert_exists 1 '//rule-result/message[text()="Fix execution was aborted: Text substitution failed."]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 
