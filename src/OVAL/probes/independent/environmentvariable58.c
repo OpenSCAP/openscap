@@ -63,7 +63,7 @@ extern char **environ;
 
 static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 {
-	int err = 0, pid, empty, fd;
+	int err = 1, pid, empty, fd;
 	size_t env_name_size;
 	SEXP_t *env_name, *env_value, *item, *pid_sexp;
 	DIR *d;
@@ -180,6 +180,13 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	}
 	closedir(d);
 	oscap_free(buffer);
+	if (err) {
+		SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"Can't find process with requested PID.");
+		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+		SEXP_free(msg);
+		err = 0;
+	}
 
 	return err;
 }
