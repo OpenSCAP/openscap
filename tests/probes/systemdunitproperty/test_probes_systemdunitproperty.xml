@@ -12,7 +12,6 @@
 
     <definition class="compliance" version="1" id="oval:0:def:1"> <!-- comment="true" -->
       <metadata><title></title><description></description></metadata>
-      <notes><note>asdasd</note></notes>
       <criteria operator="AND">
         <criterion test_ref="oval:0:tst:1"/>
         <criterion test_ref="oval:0:tst:2"/>
@@ -21,7 +20,6 @@
 
     <definition class="compliance" version="1" id="oval:0:def:2"> <!-- comment="true" -->
       <metadata><title></title><description></description></metadata>
-      <notes><oval:note>asdasd</oval:note></notes>
       <criteria>
         <criterion test_ref="oval:0:tst:3"/>
       </criteria>
