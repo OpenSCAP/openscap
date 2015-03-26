@@ -167,6 +167,34 @@
             <xsd:field xpath="."/>
         </xsd:keyref>
     </xsd:element>
+    <!-- JovalCM created a deprecated notes element for backwards-compatibility purposes -->
+    <xsd:element name="notes" substitutionGroup="oval:notes">
+        <xsd:annotation>
+            <xsd:documentation>The notes element is a container for one or more note child elements. It exists for backwards-compatibility purposes, for the pre-5.11 oval-def:NotesType, which has been replaced by the oval:notes element in 5.11.1.</xsd:documentation>
+            <xsd:appinfo>
+                <oval:deprecated_info>
+                    <oval:version>5.11.1</oval:version>
+                    <oval:reason>Replaced by the oval:notes element.</oval:reason>
+                    <oval:comment>This object has been deprecated and may be removed in a future version of the language.</oval:comment>
+                </oval:deprecated_info>
+                <sch:pattern id="oval_def_notes_dep">
+                    <sch:rule context="oval-def:notes">
+                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> parent ID: <sch:value-of select="../@id"/></sch:report>
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval:NotesType">
+                    <xsd:sequence>
+                        <!-- mpreisle changed minOccurs to 0 to be compatible with OVAL 5.11 -->
+                        <xsd:element name="note" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
     <!-- =============================================================================== -->
     <!-- =================================  GENERATOR  ================================= -->
     <!-- =============================================================================== -->
@@ -214,7 +242,8 @@
                     <xsd:field xpath="@family"/>
                 </xsd:unique>            
             </xsd:element>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <!-- JovalCM changed to ref oval:notes -->
+            <xsd:element ref="oval:notes" minOccurs="0" maxOccurs="1"/>
             <xsd:element name="criteria" type="oval-def:CriteriaType" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:DefinitionIDPattern" use="required"/>
@@ -350,7 +379,8 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <!-- JovalCM changed to ref oval:notes -->
+            <xsd:element ref="oval:notes" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:TestIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
@@ -397,7 +427,8 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <!-- JovalCM changed to ref oval:notes -->
+            <xsd:element ref="oval:notes" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:ObjectIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
@@ -474,7 +505,8 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <!-- JovalCM changed to ref oval:notes -->
+            <xsd:element ref="oval:notes" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:StateIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
@@ -519,7 +551,8 @@
         </xsd:annotation>
         <xsd:sequence>
             <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1"/>
-            <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+            <!-- JovalCM changed to ref oval:notes -->
+            <xsd:element ref="oval:notes" minOccurs="0" maxOccurs="1"/>
         </xsd:sequence>
         <xsd:attribute name="id" type="oval:VariableIDPattern" use="required"/>
         <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
