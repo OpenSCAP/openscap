@@ -1395,6 +1395,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
+                 tests/probes/rpmverifypackage/Makefile
 		 tests/probes/rpmverify/Makefile
                  tests/probes/systemdunitproperty/Makefile
                  tests/probes/systemdunitdependency/Makefile
