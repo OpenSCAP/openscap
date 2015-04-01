@@ -321,10 +321,16 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		} else {
 			struct oval_definition_model *model = context->definition_model;
 			variable = oval_definition_model_get_variable(model, varref);
-			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
-			oscap_free(varref);
-			varref = NULL;
-			value = NULL;
+			if (variable == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL,
+						"Could not found variable '%s' referenced by var_ref element.", varref);
+				return_code = 1;
+			} else {
+				varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
+				oscap_free(varref);
+				varref = NULL;
+				value = NULL;
+			}
 		}
 	} else if (varref == NULL) {
 		variable = NULL;
