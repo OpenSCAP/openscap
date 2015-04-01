@@ -259,10 +259,7 @@ oval_version_t oval_state_get_schema_version(const struct oval_state *state)
 
 	if (state->model == NULL)
 		return OVAL_VERSION_INVALID;
-
-	struct oval_generator *gen = oval_definition_model_get_generator(state->model);
-	const char *ver_str = oval_generator_get_schema_version(gen);
-	return oval_version_from_cstr(ver_str);
+	return oval_definition_model_get_schema_version(state->model);
 }
 
 static void _oval_note_consumer(char *text, void *state)

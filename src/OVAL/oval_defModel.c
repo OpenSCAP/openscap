@@ -167,6 +167,15 @@ const char * oval_definition_model_get_schema(struct oval_definition_model * mod
         return model->schema;
 }
 
+oval_version_t oval_definition_model_get_schema_version(struct oval_definition_model *model)
+{
+	if (model == NULL || model->generator == NULL) {
+		return OVAL_VERSION_INVALID;
+	}
+	const char *ver_str = oval_generator_get_schema_version(model->generator);
+	return oval_version_from_cstr(ver_str);
+}
+
 void oval_definition_model_add_definition(struct oval_definition_model *model, struct oval_definition *definition)
 {
 	__attribute__nonnull__(model);
