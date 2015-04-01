@@ -148,6 +148,9 @@ static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_ta
 	if (ent) {
 		ent_op = probe_ent_getoperation(ent, OVAL_OPERATION_EQUALS);
 		PROBE_ENT_STRVAL(ent, ent_str, sizeof ent_str, /* void */, strcpy(ent_str, ""););
+		if (rpm_tag == RPMTAG_EPOCH && strcmp(ent_str, "(none)") == 0) {
+			return ret;
+		}
 
 		switch (ent_op) {
 		case OVAL_OPERATION_EQUALS:
