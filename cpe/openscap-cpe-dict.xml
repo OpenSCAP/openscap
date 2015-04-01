@@ -57,6 +57,10 @@
             <title xml:lang="en-us">Fedora 22</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:22</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:23">
+            <title xml:lang="en-us">Fedora 23</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:23</check>
+      </cpe-item>
 
       <!-- Add-ons -->
       <cpe-item name="cpe:/a:redhat:rhel_productivity">

@@ -9,12 +9,12 @@ TESTS = all.sh
 
 EXTRA_DIST = \
 	all.sh \
-	fedora16-xccdf.xml \
 	fedora17-xccdf.xml \
 	fedora18-xccdf.xml \
 	fedora19-xccdf.xml \
 	fedora20-xccdf.xml \
 	fedora21-xccdf.xml \
+	fedora23-xccdf.xml \
 	rhel5-xccdf.xml \
 	rhel6-xccdf.xml \
 	rhel7-xccdf.xml \
