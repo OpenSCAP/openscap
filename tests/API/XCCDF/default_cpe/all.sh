@@ -94,12 +94,12 @@ function test_rhel {
 
 test_init "test_api_xccdf_default_cpe.log"
 
-test_run "test_api_xccdf_default_cpe_fedora16" test_fedora 16
 test_run "test_api_xccdf_default_cpe_fedora17" test_fedora 17
 test_run "test_api_xccdf_default_cpe_fedora18" test_fedora 18
 test_run "test_api_xccdf_default_cpe_fedora19" test_fedora 19
 test_run "test_api_xccdf_default_cpe_fedora20" test_fedora 20
 test_run "test_api_xccdf_default_cpe_fedora21" test_fedora 21
+test_run "test_api_xccdf_default_cpe_fedora23" test_fedora 23
 test_run "test_api_xccdf_default_cpe_rhel5" test_rhel 5
 test_run "test_api_xccdf_default_cpe_rhel6" test_rhel 6
 test_run "test_api_xccdf_default_cpe_rhel7" test_rhel 7
