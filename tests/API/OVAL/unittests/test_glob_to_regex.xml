@@ -1,0 +1,351 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+
+  <generator>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition id="oval:x:def:167" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the glob_to_regex function is properly supported.</title>
+        <description>This definition is intended to evaluate to true if the interpreter properly supports the glob_to_regex function.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:1"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:2"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:3"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:4"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:5"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:6"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:7"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:8"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:9"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:10"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:11"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:12"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:13"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:14"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:15"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:16"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:17"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:18"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:19"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:20"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <variable_test id="oval:x:tst:1" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:1"/>
+      <state state_ref="oval:x:ste:1"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:2" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:2"/>
+      <state state_ref="oval:x:ste:2"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:3" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:3"/>
+      <state state_ref="oval:x:ste:3"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:4" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:4"/>
+      <state state_ref="oval:x:ste:4"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:5" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:5"/>
+      <state state_ref="oval:x:ste:5"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:6" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:6"/>
+      <state state_ref="oval:x:ste:6"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:7" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:7"/>
+      <state state_ref="oval:x:ste:7"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:8" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:8"/>
+      <state state_ref="oval:x:ste:8"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:9" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:9"/>
+      <state state_ref="oval:x:ste:9"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:10" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:10"/>
+      <state state_ref="oval:x:ste:10"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:11" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:11"/>
+      <state state_ref="oval:x:ste:11"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:12" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:12"/>
+      <state state_ref="oval:x:ste:12"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:13" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:13"/>
+      <state state_ref="oval:x:ste:13"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:14" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:14"/>
+      <state state_ref="oval:x:ste:14"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:15" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:15"/>
+      <state state_ref="oval:x:ste:15"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:16" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:16"/>
+      <state state_ref="oval:x:ste:16"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:17" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:17"/>
+      <state state_ref="oval:x:ste:17"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:18" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:18"/>
+      <state state_ref="oval:x:ste:18"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:19" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:19"/>
+      <state state_ref="oval:x:ste:19"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:20" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:20"/>
+      <state state_ref="oval:x:ste:20"/>
+    </variable_test>
+  </tests>
+
+  <objects>
+    <variable_object id="oval:x:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:1</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:2</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:3</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:4</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:5</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:6</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:7</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:8</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:9" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:9</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:10" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:10</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:11" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:11</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:12" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:12</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:13" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:13</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:14" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:14</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:15" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:15</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:16</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:17" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:17</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:18" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:18</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:19" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:19</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:20" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:20</var_ref>
+    </variable_object>
+  </objects>
+
+  <states>
+    <variable_state id="oval:x:ste:1" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^abcd$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:2" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\\.*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:3" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:4" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^.*\.txt$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:5" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^x.$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:6" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^list\..$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:7" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^project\..*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:8" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^.*old$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:9" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^type.*\.[ch]$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:10" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^.*\..*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:11" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^.*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:12" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^.$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:13" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:14" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\?$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:15" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\[hello\]$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:16" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^x[[:digit:]]\*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:17" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:18" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^~/files/.*\.txt$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:19" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\\.*$</value>
+    </variable_state>
+    <variable_state id="oval:x:ste:20" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>^\\.$</value>
+    </variable_state>
+  </states>
+
+  <variables>
+    <local_variable id="oval:x:var:1" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex>
+        <literal_component datatype="string">abcd</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:2" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="true">
+        <literal_component datatype="string">\*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:3" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">\*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:4" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">*.txt</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:5" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">x?</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:6" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">list.?</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:7" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">project.*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:8" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">*old</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:9" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">type*.[ch]</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:10" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">*.*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:11" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:12" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">?</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:13" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">\*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:14" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">\?</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:15" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">\[hello\]</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:16" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">x[[:digit:]]\*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:17" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string"></literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:18" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="false">
+        <literal_component datatype="string">~/files/*.txt</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:19" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="true">
+        <literal_component datatype="string">\*</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:20" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex glob_noescape="true">
+        <literal_component datatype="string">\?</literal_component>
+      </glob_to_regex>
+    </local_variable>
+  </variables>
+</oval_definitions>
