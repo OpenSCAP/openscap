@@ -1,0 +1,135 @@
+#!/bin/bash
+
+# Copyright 2015 Martin Preisler <martin@preisler.me> 
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+function die()
+{
+    echo "$*" >&2
+    exit 1
+}
+
+function usage()
+{
+    echo "oscap-ssh user@host 22 xccdf eval INPUT_CONTENT"
+    echo
+    echo "Only source datastreams are supported as INPUT_CONTENT!"
+    echo
+    echo "supported oscap options are:"
+    echo "  --profile"
+    echo "  --results"
+    echo "  --results-arf"
+    echo "  --report"
+    echo "  --tailoring-file"
+}
+
+if [ $# -lt 2 ]; then
+    echo "Missing ssh host and ssh port."
+    usage
+    die
+fi
+
+SSH_HOST="$1"
+SSH_PORT="$2"
+
+if [ "$3" != "xccdf" ]; then
+    die "This script only support xccdf eval. Patches welcome to support oval eval."
+fi
+
+if [ "$4" != "eval" ]; then
+    die "This script only support xccdf eval. Patches welcome to support oval eval."
+fi
+
+shift 2
+
+MASTER_SOCKET_DIR=$(mktemp -d)
+MASTER_SOCKET="$MASTER_SOCKET_DIR/ssh_socket"
+
+echo "Connecting to '$SSH_HOST' on port '$SSH_PORT'..."
+ssh -M -f -N -o ServerAliveInterval=60 -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" || die "Failed to connect!"
+echo "Connected!"
+
+REMOTE_TEMP_DIR=$(ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" mktemp -d) || die "Failed to create remote temporary directory!"
+
+args=("$@")
+
+LOCAL_CONTENT_PATH=""
+LOCAL_TAILORING_PATH=""
+TARGET_RESULTS_XCCDF=""
+TARGET_RESULTS_ARF=""
+TARGET_REPORT=""
+
+# We have to rewrite various paths to a remote temp dir
+for i in $(seq 0 `expr $# - 1`); do
+    let j=i+1
+
+    case "${args[i]}" in
+    ("--tailoring-file")
+        LOCAL_TAILORING_PATH=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
+      ;;
+    ("--results")
+        TARGET_RESULTS_XCCDF=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/results-xccdf.xml"
+      ;;
+    ("--results-arf")
+        TARGET_RESULTS_ARF=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/results-arf.xml"
+      ;;
+    ("--report")
+        TARGET_REPORT=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/report.html"
+      ;;
+    *)
+      ;;
+    esac
+done
+
+# Last argument should be the content path
+LOCAL_CONTENT_PATH="${args[`expr $# - 1`]}"
+args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
+
+echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
+
+if [ "$LOCAL_TAILORING_PATH" != "" ]; then
+    echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
+fi
+
+echo "Starting the evaluation..."
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "oscap ${args[@]}"
+OSCAP_EXIT_CODE=$?
+echo "oscap exit code: $OSCAP_EXIT_CODE"
+
+echo "Copying back requested files..."
+if [ "$TARGET_RESULTS_XCCDF" != "" ]; then
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-xccdf.xml" "$TARGET_RESULTS_XCCDF" || die "Failed to copy the results XCCDF back to local machine!"
+fi
+if [ "$TARGET_RESULTS_ARF" != "" ]; then
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-arf.xml" "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF back to local machine!"
+fi
+if [ "$TARGET_REPORT" != "" ]; then
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/report.html" "$TARGET_REPORT" || die "Failed to copy the HTML report back to local machine!"
+fi
+
+echo "Removing remote temporary directory..."
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
+echo "Disconnecting ssh and removing master ssh socket directory..."
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "exit" || die "Failed to disconnect!"
+rm -r "$MASTER_SOCKET_DIR" || die "Failed to remove local master SSH socket directory!"
+
+exit $OSCAP_EXIT_CODE
