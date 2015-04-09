@@ -58,7 +58,7 @@ function usage()
     echo
     echo "supported oscap oval eval options are:"
     echo "  --id"
-    #echo "  --variables" # TODO
+    echo "  --variables"
     #echo "  --directives" # TODO
     echo "  --results"
     echo "  --report"
@@ -72,7 +72,7 @@ function usage()
     echo "supported oscap oval collect options are:"
     echo "  --id"
     echo "  --syschar"
-    #echo "  --variables" # TODO
+    echo "  --variables"
     echo "  --skip-valid"
 }
 
@@ -113,6 +113,7 @@ args=("$@")
 LOCAL_CONTENT_PATH=""
 LOCAL_TAILORING_PATH=""
 LOCAL_CPE_PATH=""
+LOCAL_VARIABLES_PATH=""
 TARGET_RESULTS=""
 TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
@@ -130,6 +131,10 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--cpe")
         LOCAL_CPE_PATH=${args[j]}
         args[j]="$REMOTE_TEMP_DIR/cpe.xml"
+      ;;
+    ("--variables")
+        LOCAL_VARIABLES_PATH=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/variables.xml"
       ;;
     ("--results")
         TARGET_RESULTS=${args[j]}
@@ -163,10 +168,13 @@ if [ "$LOCAL_TAILORING_PATH" != "" ]; then
     echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
 fi
-
 if [ "$LOCAL_CPE_PATH" != "" ]; then
     echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CPE_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/cpe.xml" || die "Failed to copy CPE file to remote temporary directory!"
+fi
+if [ "$LOCAL_VARIABLES_PATH" != "" ]; then
+    echo "Copying OVAL variables file '$LOCAL_VARIABLES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_VARIABLES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/variables.xml" || die "Failed to copy OVAL variables file to remote temporary directory!"
 fi
 
 echo "Starting the evaluation..."
