@@ -22,6 +22,10 @@ function die()
     exit 1
 }
 
+which ssh > /dev/null || die "Cannot find ssh, please install the OpenSSH client."
+which scp > /dev/null || die "Cannot find scp, please install the OpenSSH client."
+which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
+
 function usage()
 {
     echo "oscap-ssh user@host 22 xccdf eval INPUT_CONTENT"
