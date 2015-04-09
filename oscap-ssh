@@ -28,16 +28,42 @@ which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
 {
-    echo "oscap-ssh user@host 22 xccdf eval INPUT_CONTENT"
+    echo "oscap-ssh"
+    echo
+    echo "$ oscap-ssh user@host 22 xccdf eval INPUT_CONTENT"
     echo
     echo "Only source datastreams are supported as INPUT_CONTENT!"
     echo
-    echo "supported oscap options are:"
+    echo "supported oscap xccdf eval options are:"
     echo "  --profile"
+    echo "  --tailoring-file"
+    echo "  --tailoring-id"
+    #echo "  --cpe" # TODO
+    # --oval-results, --sce-results and --check-engine-results are not supported
+    # use --results-arf instead
     echo "  --results"
     echo "  --results-arf"
     echo "  --report"
-    echo "  --tailoring-file"
+    echo "  --skip-valid"
+    echo "  --fetch-remote-resources"
+    echo "  --progress"
+    echo "  --datastream-id"
+    echo "  --xccdf-id"
+    echo "  --benchmark-id"
+    echo "  --remediate"
+    echo
+    echo "$ oscap-ssh user@host 22 oval eval INPUT_CONTENT"
+    echo
+    echo "supported oscap oval eval options are:"
+    echo "  --id"
+    #echo "  --variables" # TODO
+    #echo "  --directives" # TODO
+    echo "  --results"
+    echo "  --report"
+    echo "  --skip-valid"
+    echo "  --datastream-id"
+    echo "  --oval-id"
+    echo "  --probe-root (has to be remote probe root!)"
 }
 
 if [ $# -lt 2 ]; then
@@ -52,6 +78,8 @@ SSH_PORT="$2"
 if [ "$3" == "info" ]; then
     true
 elif [ "$3 $4" == "xccdf eval" ]; then
+    true
+elif [ "$3 $4" == "oval eval" ]; then
     true
 else
     die "This script only support xccdf eval. Patches welcome to support oval eval."
