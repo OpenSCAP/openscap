@@ -188,37 +188,37 @@
       <value>^abcd$</value>
     </variable_state>
     <variable_state id="oval:x:ste:2" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^\\.*$</value>
+      <value>^\\[^/]*$</value>
     </variable_state>
     <variable_state id="oval:x:ste:3" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <value>^\*$</value>
     </variable_state>
     <variable_state id="oval:x:ste:4" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^.*\.txt$</value>
+      <value>^(?=[^.])[^/]*\.txt$</value>
     </variable_state>
     <variable_state id="oval:x:ste:5" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^x.$</value>
+      <value>^x[^/]$</value>
     </variable_state>
     <variable_state id="oval:x:ste:6" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^list\..$</value>
+      <value>^list\.[^/]$</value>
     </variable_state>
     <variable_state id="oval:x:ste:7" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^project\..*$</value>
+      <value>^project\.[^/]*$</value>
     </variable_state>
     <variable_state id="oval:x:ste:8" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^.*old$</value>
+      <value>^(?=[^.])[^/]*old$</value>
     </variable_state>
     <variable_state id="oval:x:ste:9" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^type.*\.[ch]$</value>
+      <value>^type[^/]*\.[ch]$</value>
     </variable_state>
     <variable_state id="oval:x:ste:10" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^.*\..*$</value>
+      <value>^(?=[^.])[^/]*\.[^/]*$</value>
     </variable_state>
     <variable_state id="oval:x:ste:11" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^.*$</value>
+      <value>^(?=[^.])[^/]*$</value>
     </variable_state>
     <variable_state id="oval:x:ste:12" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^.$</value>
+      <value>^[^./]$</value>
     </variable_state>
     <variable_state id="oval:x:ste:13" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <value>^\*$</value>
@@ -236,13 +236,13 @@
       <value>^$</value>
     </variable_state>
     <variable_state id="oval:x:ste:18" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^~/files/.*\.txt$</value>
+      <value>^~/files/(?=[^.])[^/]*\.txt$</value>
     </variable_state>
     <variable_state id="oval:x:ste:19" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^\\.*$</value>
+      <value>^\\[^/]*$</value>
     </variable_state>
     <variable_state id="oval:x:ste:20" version="1" comment="The result regular expression" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-      <value>^\\.$</value>
+      <value>^\\[^/]$</value>
     </variable_state>
   </states>
 
