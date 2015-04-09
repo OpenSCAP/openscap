@@ -40,7 +40,7 @@ function usage()
     echo "  --profile"
     echo "  --tailoring-file"
     echo "  --tailoring-id"
-    #echo "  --cpe" # TODO
+    echo "  --cpe (external OVAL dependencies are not supported yet!)"
     # --oval-results, --sce-results and --check-engine-results are not supported
     # use --results-arf instead
     echo "  --results"
@@ -112,6 +112,7 @@ args=("$@")
 
 LOCAL_CONTENT_PATH=""
 LOCAL_TAILORING_PATH=""
+LOCAL_CPE_PATH=""
 TARGET_RESULTS=""
 TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
@@ -124,6 +125,10 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--tailoring-file")
         LOCAL_TAILORING_PATH=${args[j]}
         args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
+      ;;
+    ("--cpe")
+        LOCAL_CPE_PATH=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/cpe.xml"
       ;;
     ("--results")
         TARGET_RESULTS=${args[j]}
@@ -152,6 +157,11 @@ scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOS
 if [ "$LOCAL_TAILORING_PATH" != "" ]; then
     echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
+fi
+
+if [ "$LOCAL_CPE_PATH" != "" ]; then
+    echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CPE_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/cpe.xml" || die "Failed to copy CPE file to remote temporary directory!"
 fi
 
 echo "Starting the evaluation..."
