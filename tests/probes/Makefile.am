@@ -59,6 +59,9 @@ if WANT_PROBES_LINUX
 if probe_rpminfo_enabled
 LINUX_SUBDIRS += rpminfo
 endif
+if probe_rpmverifypackage_enabled
+LINUX_SUBDIRS += rpmverifypackage
+endif
 if probe_iflisteners_enabled
 LINUX_SUBDIRS += iflisteners
 endif

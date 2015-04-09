@@ -61,7 +61,8 @@
           </xsd:annotation>
           <xsd:sequence>
                <xsd:element name="value" type="xsd:anySimpleType" minOccurs="1" maxOccurs="unbounded"/>
-               <xsd:element name="notes" type="oval:NotesType" minOccurs="0" maxOccurs="1"/>
+               <!-- JovalCM changed to ref oval:notes -->
+               <xsd:element ref="oval:notes" minOccurs="0" maxOccurs="1"/>
           </xsd:sequence>
           <xsd:attribute name="id" type="oval:VariableIDPattern" use="required"/>
           <xsd:attribute name="datatype" use="required" type="oval:SimpleDatatypeEnumeration">

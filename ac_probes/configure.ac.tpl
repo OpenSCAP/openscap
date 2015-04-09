@@ -42,7 +42,7 @@ AC_PROG_SWIG([])
 LT_CURRENT=12
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=1
+LT_REVISION=2
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
@@ -664,6 +664,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
+                 tests/probes/rpmverifypackage/Makefile
 		 tests/probes/rpmverify/Makefile
                  tests/probes/systemdunitproperty/Makefile
                  tests/probes/systemdunitdependency/Makefile

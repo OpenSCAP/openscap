@@ -133,18 +133,11 @@ int oval_object_get_version(struct oval_object *object)
 
 oval_version_t oval_object_get_schema_version(struct oval_object *object)
 {
-	struct oval_generator *gen;
-	const char *ver_str;
-
 	__attribute__nonnull__(object);
 
 	if (object->model == NULL)
 		return OVAL_VERSION_INVALID;
-
-	gen = oval_definition_model_get_generator(object->model);
-	ver_str = oval_generator_get_schema_version(gen);
-
-	return oval_version_from_cstr(ver_str);
+	return oval_definition_model_get_schema_version(object->model);
 }
 
 struct oval_object_content_iterator *oval_object_get_object_contents(struct

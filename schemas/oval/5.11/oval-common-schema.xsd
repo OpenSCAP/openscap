@@ -25,6 +25,12 @@
                <xsd:documentation>The element_mapping element is used in documenting which tests, objects, states, and system characteristic items are associated with each other. It provides a way to explicitly and programatically associate the test, object, state, and item definitions.</xsd:documentation>
           </xsd:annotation>
      </xsd:element>
+     <!-- JovalCM added notes element -->
+     <xsd:element name="notes" type="oval:NotesType">
+         <xsd:annotation>
+             <xsd:documentation>Element for containing notes; can be replaced using a substitution group.</xsd:documentation>
+         </xsd:annotation>
+     </xsd:element>
      <!-- =============================================================================== -->
      <!-- ===============================  GLOBAL TYPES  ================================ -->
      <!-- =============================================================================== -->
@@ -148,9 +154,9 @@
           <xsd:annotation>
                <xsd:documentation>The NotesType complex type is a container for one or more note child elements. Each note contains some information about the definition or tests that it references. A note may record an unresolved question about the definition or test or present the reason as to why a particular approach was taken.</xsd:documentation>
           </xsd:annotation>
-          <!-- openscap specific schema change: minOccurs="0" -->
-          <xsd:sequence minOccurs="0" maxOccurs="1">
-               <xsd:element name="note" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+          <xsd:sequence>
+               <!-- JovalCM changed minOccurs to 0 -->
+               <xsd:element name="note" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
           </xsd:sequence>
      </xsd:complexType>
      <!-- =============================================================================== -->

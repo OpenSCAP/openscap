@@ -1,3 +1,21 @@
+openscap-1.2.2                                                  02-04-2015
+ - new features
+   - OVAL 5.11 support turned on by default
+   - included OVAL 5.11 schematron rules
+   - DataStream can now contain OVAL 5.11
+   - `oscap ds sds-compose` now supports --skip-valid parameter
+ - HTML report changes
+   - Notably increased level of OVAL details
+   - Table of contents is now generated for HTML guides
+ - maitenance
+   - rhbz#1182242, rhbz#1159289 - @var_check & @var_ref exporting
+   - solaris build fixes
+   - xccdf:fix/instance processing fixes
+   - improved (none) epoch processing in rpm probe
+   - environmentvariable58 now emits warning messages when appropriate
+   - offline mode improvements
+   - other bugfixes
+
 openscap-1.2.1                                                  01-10-2015
  - API changes
    - 5.11 schemas updated (from RC1 to gold)

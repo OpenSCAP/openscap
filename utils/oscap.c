@@ -1,5 +1,5 @@
 /*
- * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2015 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -108,7 +108,7 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	printf("OpenSCAP command line tool (oscap) %s\n" "Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.\n\n",
+	printf("OpenSCAP command line tool (oscap) %s\n" "Copyright 2009--2015 Red Hat Inc., Durham, North Carolina.\n\n",
 		oscap_get_version());
 
 	printf("==== Supported specifications ====\n");

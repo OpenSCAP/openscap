@@ -14,17 +14,27 @@ Documenation is on http://www.open-scap.org/page/Documentation
 
 ##Compilation
 
-1) Get fresh sources from repository:
+Choose *1a* or *1b* depending on whether you want sources from a release tarball or the git repository.
+
+1a) Get a release tarball
+```
+# replace ${version} with the desired version
+wget https://fedorahosted.org/releases/o/p/openscap/openscap-${version}.tar.gz
+tar -xzpf openscap-${version}.tar.gz
+cd openscap-${version}.tar.gz
+```
+
+**OR**
+
+1b) Get fresh sources from git repository and run ./autogen.sh
 ```
 git clone https://github.com/OpenSCAP/openscap.git
-```
-2) Run the folllowing script:
-```
+cd openscap
 ./autogen.sh
 ```
 The autoconf, automake, and libtool tools are required to be installed on your system.
 
-3) Run the following commands to build the library:
+2) Run the following commands to build the library:
 ```
 ./configure
 make
@@ -48,12 +58,12 @@ Build dependencies:
  * rpm-devel
  * swig
 
-4) Run library self-checks by executing the following command:
+3) Run library self-checks by executing the following command:
 ```
 make check
 ```
 
-5) Run the installation procedure by executing the following command:
+4) Run the installation procedure by executing the following command:
 ```
 make install
 ```
@@ -112,4 +122,3 @@ oscap xccdf generate guide --profile PROFILE XCCDF-FILE > XCCDF-GUIDE-FILE
 ```
 oscap xccdf generate report XCCDF-RESULT-FILE > XCCDF-REPORT-FILE
 ```
-
