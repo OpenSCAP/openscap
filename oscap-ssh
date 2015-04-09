@@ -32,7 +32,7 @@ function usage()
     echo
     echo "$ oscap-ssh user@host 22 info INPUT_CONTENT"
     echo
-    echo "$ oscap-ssh user@host 22 xccdf eval INPUT_CONTENT"
+    echo "$ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT"
     echo
     echo "Only source datastreams are supported as INPUT_CONTENT!"
     echo
@@ -54,7 +54,7 @@ function usage()
     echo "  --benchmark-id"
     echo "  --remediate"
     echo
-    echo "$ oscap-ssh user@host 22 oval eval INPUT_CONTENT"
+    echo "$ oscap-ssh user@host 22 oval eval [options] INPUT_CONTENT"
     echo
     echo "supported oscap oval eval options are:"
     echo "  --id"
@@ -66,6 +66,14 @@ function usage()
     echo "  --datastream-id"
     echo "  --oval-id"
     echo "  --probe-root (has to be remote probe root!)"
+    echo
+    echo "$ oscap-ssh user@host 22 oval collect [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval collect options are:"
+    echo "  --id"
+    #echo "  --syschar" # TODO
+    #echo "  --variables" # TODO
+    echo "  --skip-valid"
 }
 
 if [ $# -lt 2 ]; then
@@ -83,8 +91,10 @@ elif [ "$3 $4" == "xccdf eval" ]; then
     true
 elif [ "$3 $4" == "oval eval" ]; then
     true
+elif [ "$3 $4" == "oval collect" ]; then
+    true
 else
-    die "This script only support xccdf eval. Patches welcome to support oval eval."
+    die "This script only support 'info', 'xccdf eval', 'oval eval', 'oval collect'."
 fi
 
 shift 2
