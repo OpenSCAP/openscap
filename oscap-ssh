@@ -59,7 +59,7 @@ function usage()
     echo "supported oscap oval eval options are:"
     echo "  --id"
     echo "  --variables"
-    #echo "  --directives" # TODO
+    echo "  --directives"
     echo "  --results"
     echo "  --report"
     echo "  --skip-valid"
@@ -116,6 +116,7 @@ LOCAL_CONTENT_PATH=""
 LOCAL_TAILORING_PATH=""
 LOCAL_CPE_PATH=""
 LOCAL_VARIABLES_PATH=""
+LOCAL_DIRECTIVES_PATH=""
 TARGET_RESULTS=""
 TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
@@ -137,6 +138,10 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--variables")
         LOCAL_VARIABLES_PATH=${args[j]}
         args[j]="$REMOTE_TEMP_DIR/variables.xml"
+      ;;
+    ("--directives")
+        LOCAL_DIRECTIVES_PATH=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/directives.xml"
       ;;
     ("--results")
         TARGET_RESULTS=${args[j]}
@@ -180,6 +185,10 @@ fi
 if [ "$LOCAL_VARIABLES_PATH" != "" ]; then
     echo "Copying OVAL variables file '$LOCAL_VARIABLES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_VARIABLES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/variables.xml" || die "Failed to copy OVAL variables file to remote temporary directory!"
+fi
+if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
+    echo "Copying OVAL directives file '$LOCAL_DIRECTIVES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_DIRECTIVES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/directives.xml" || die "Failed to copy OVAL directives file to remote temporary directory!"
 fi
 
 echo "Starting the evaluation..."
