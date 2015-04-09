@@ -49,7 +49,11 @@ fi
 SSH_HOST="$1"
 SSH_PORT="$2"
 
-if [ "$3 $4" != "xccdf eval" ]; then
+if [ "$3" == "info" ]; then
+    true
+elif [ "$3 $4" == "xccdf eval" ]; then
+    true
+else
     die "This script only support xccdf eval. Patches welcome to support oval eval."
 fi
 
