@@ -71,7 +71,7 @@ function usage()
     echo
     echo "supported oscap oval collect options are:"
     echo "  --id"
-    #echo "  --syschar" # TODO
+    echo "  --syschar"
     #echo "  --variables" # TODO
     echo "  --skip-valid"
 }
@@ -116,6 +116,7 @@ LOCAL_CPE_PATH=""
 TARGET_RESULTS=""
 TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
+TARGET_SYSCHAR=""
 
 # We have to rewrite various paths to a remote temp dir
 for i in $(seq 0 `expr $# - 1`); do
@@ -141,6 +142,10 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--report")
         TARGET_REPORT=${args[j]}
         args[j]="$REMOTE_TEMP_DIR/report.html"
+      ;;
+    ("--syschar")
+        TARGET_SYSCHAR=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/syschar.xml"
       ;;
     *)
       ;;
@@ -178,6 +183,9 @@ if [ "$TARGET_RESULTS_ARF" != "" ]; then
 fi
 if [ "$TARGET_REPORT" != "" ]; then
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/report.html" "$TARGET_REPORT" || die "Failed to copy the HTML report back to local machine!"
+fi
+if [ "$TARGET_SYSCHAR" != "" ]; then
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/syschar.xml" "$TARGET_SYSCHAR" || die "Failed to copy the OVAL syschar file back to local machine!"
 fi
 
 echo "Removing remote temporary directory..."
