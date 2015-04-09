@@ -72,7 +72,7 @@ args=("$@")
 
 LOCAL_CONTENT_PATH=""
 LOCAL_TAILORING_PATH=""
-TARGET_RESULTS_XCCDF=""
+TARGET_RESULTS=""
 TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
 
@@ -86,8 +86,8 @@ for i in $(seq 0 `expr $# - 1`); do
         args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
       ;;
     ("--results")
-        TARGET_RESULTS_XCCDF=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/results-xccdf.xml"
+        TARGET_RESULTS=${args[j]}
+        args[j]="$REMOTE_TEMP_DIR/results.xml"
       ;;
     ("--results-arf")
         TARGET_RESULTS_ARF=${args[j]}
@@ -120,11 +120,11 @@ OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
 echo "Copying back requested files..."
-if [ "$TARGET_RESULTS_XCCDF" != "" ]; then
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-xccdf.xml" "$TARGET_RESULTS_XCCDF" || die "Failed to copy the results XCCDF back to local machine!"
+if [ "$TARGET_RESULTS" != "" ]; then
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results.xml" "$TARGET_RESULTS" || die "Failed to copy the results file back to local machine!"
 fi
 if [ "$TARGET_RESULTS_ARF" != "" ]; then
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-arf.xml" "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF back to local machine!"
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-arf.xml" "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF file back to local machine!"
 fi
 if [ "$TARGET_REPORT" != "" ]; then
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/report.html" "$TARGET_REPORT" || die "Failed to copy the HTML report back to local machine!"
