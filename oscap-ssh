@@ -85,7 +85,9 @@ fi
 SSH_HOST="$1"
 SSH_PORT="$2"
 
-if [ "$3" == "info" ]; then
+if [ "$3" == "--v" ]; then
+    true
+elif [ "$3" == "info" ]; then
     true
 elif [ "$3 $4" == "xccdf eval" ]; then
     true
@@ -157,13 +159,16 @@ for i in $(seq 0 `expr $# - 1`); do
     esac
 done
 
-# Last argument should be the content path
-LOCAL_CONTENT_PATH="${args[`expr $# - 1`]}"
-args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
+if [ "$1" != "--v" ]; then
+    # Last argument should be the content path
+    LOCAL_CONTENT_PATH="${args[`expr $# - 1`]}"
+    args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
+fi
 
-echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
-
+if [ "$LOCAL_CONTENT_PATH" != "" ]; then
+    echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
+fi
 if [ "$LOCAL_TAILORING_PATH" != "" ]; then
     echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
