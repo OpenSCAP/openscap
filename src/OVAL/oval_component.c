@@ -2222,6 +2222,8 @@ static char *_glob_to_regex (const char *glob, int noescape)
 			_string_append_char(regex, c);
 			break;
 		case ESCAPE:
+			// Only ?, *, [ and ] are escaped by a backslash
+			// Meaning of other characters is not affected by a backslash
 			if (c == '?' || c == '*' || c == '[' || c == ']') {
 				_string_append_char(regex, '\\');
 				_string_append_char(regex, c);
