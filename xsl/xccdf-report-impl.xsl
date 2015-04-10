@@ -656,6 +656,21 @@ Authors:
                             </p>
                         </div></td></tr>
                     </xsl:if>
+                    <xsl:if test="$item/cdf:warning">
+                        <tr><td>Warnings</td><td>
+                            <xsl:for-each select="$item/cdf:warning">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <span class="label label-warning">warning</span>&#160;
+                                        <xsl:apply-templates mode="sub-testresult" select=".">
+                                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                            <xsl:with-param name="profile" select="$profile"/>
+                                        </xsl:apply-templates>
+                                    </div>
+                                </div>
+                            </xsl:for-each>
+                        </td></tr>
+                    </xsl:if>
                     <xsl:variable name="check_system_details_ret">
                         <xsl:call-template name="check-system-details">
                             <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
