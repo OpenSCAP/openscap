@@ -220,12 +220,25 @@ Authors:
                     <span class="label label-default pull-right">rule</span>
                 </h4>
 
-                <p>
-                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
-                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                        <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:apply-templates>
-                </p>
+                <xsl:if test="$item/cdf:description">
+                    <span class="label label-primary">Description:</span>
+                    <p>
+                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </p>
+                </xsl:if>
+
+                <xsl:if test="$item/cdf:rationale">
+                    <span class="label label-primary">Rationale:</span>
+                    <p>
+                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
+                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </p>
+                </xsl:if>
 
                 <xsl:call-template name="item-idents-refs">
                     <xsl:with-param name="item" select="$item"/>
