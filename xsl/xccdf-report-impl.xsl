@@ -634,15 +634,28 @@ Authors:
                             <xsl:with-param name="item" select="$item"/>
                         </xsl:call-template>
                     </td></tr>
-                    <tr><td colspan="2"><div class="description">
-                        <p>
-                            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
-                                <xsl:with-param name="testresult" select="$testresult"/>
-                                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                <xsl:with-param name="profile" select="$profile"/>
-                            </xsl:apply-templates>
-                        </p>
-                    </div></td></tr>
+                    <xsl:if test="$item/cdf:description">
+                        <tr><td>Description</td><td><div class="description">
+                            <p>
+                                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </p>
+                        </div></td></tr>
+                    </xsl:if>
+                    <xsl:if test="$item/cdf:rationale">
+                        <tr><td>Rationale</td><td><div class="rationale">
+                            <p>
+                                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </p>
+                        </div></td></tr>
+                    </xsl:if>
                     <xsl:variable name="check_system_details_ret">
                         <xsl:call-template name="check-system-details">
                             <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
