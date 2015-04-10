@@ -152,6 +152,11 @@ int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *containe
 
 		inner_root = candidate;
 	}
+	if (inner_root == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Could not found any child inside 'arf:content' node when looking for %s.",
+				content_id);
+		return -1;
+	}
 
 	// We assume that arf:content is XML. This is reasonable because both
 	// reports and report requests are XML documents.
