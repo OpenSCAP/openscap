@@ -35,6 +35,16 @@
         <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:20"/>
       </criteria>
     </definition>
+    <definition id="oval:x:def:100" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to false if the glob_to_regex function is properly supported.</title>
+        <description>This tests some invalid glob patterns</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:101"/>
+        <criterion comment="Test glob_to_regex" test_ref="oval:x:tst:102"/>
+      </criteria>
+    </definition>
   </definitions>
 
   <tests>
@@ -118,6 +128,12 @@
       <object object_ref="oval:x:obj:20"/>
       <state state_ref="oval:x:ste:20"/>
     </variable_test>
+    <variable_test id="oval:x:tst:101" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:101"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:102" version="1" comment="Test that the glob_to_regex function is supported with a single component that returns a single string value that contains regular expression characters." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:102"/>
+    </variable_test>
   </tests>
 
   <objects>
@@ -180,6 +196,12 @@
     </variable_object>
     <variable_object id="oval:x:obj:20" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
       <var_ref>oval:x:var:20</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:101" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:101</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:102" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:102</var_ref>
     </variable_object>
   </objects>
 
@@ -345,6 +367,16 @@
     <local_variable id="oval:x:var:20" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
       <glob_to_regex glob_noescape="true">
         <literal_component datatype="string">\?</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:101" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex>
+        <literal_component datatype="string">abcd\</literal_component>
+      </glob_to_regex>
+    </local_variable>
+    <local_variable id="oval:x:var:102" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
+      <glob_to_regex>
+        <literal_component datatype="string">[ab</literal_component>
       </glob_to_regex>
     </local_variable>
   </variables>
