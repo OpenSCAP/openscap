@@ -173,7 +173,7 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
-<xsl:template mode="sub-testresult" match="*">
+<xsl:template mode="sub-testresult" match="*[namespace-uri()='http://www.w3.org/1999/xhtml']">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
