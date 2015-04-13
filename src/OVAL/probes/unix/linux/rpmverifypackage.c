@@ -142,7 +142,7 @@ static struct poptOption optionsTable[] = {
 /* modify passed-in iterator to test also given entity */
 static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_tag) {
 	oval_operation_t ent_op;
-	char ent_str[1024];
+	char ent_str[1024] = "";
 	int ret = 0;
 
 	if (ent) {
