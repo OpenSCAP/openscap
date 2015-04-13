@@ -2222,8 +2222,11 @@ static char *_glob_to_regex (const char *glob, int noescape)
 			_string_append_char(regex, c);
 			break;
 		case ESCAPE:
-			// Only ?, *, [ and ] are escaped by a backslash
-			// Meaning of other characters is not affected by a backslash
+			// ?, *, [ and ] are special characters, they must be escaped in glob.
+			// A backslash is treated as an escape character only for these characters.
+			// For all other characters the backslash is just an ordinary character.
+			// Other characters, that are special in perl's regex,
+			// are not special in a glob.
 			if (c == '?' || c == '*' || c == '[' || c == ']') {
 				_string_append_char(regex, '\\');
 				_string_append_char(regex, c);
