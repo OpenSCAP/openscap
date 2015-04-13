@@ -371,7 +371,7 @@
     </local_variable>
     <local_variable id="oval:x:var:101" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
       <glob_to_regex>
-        <literal_component datatype="string">abcd\</literal_component>
+        <literal_component datatype="string">abc[</literal_component>
       </glob_to_regex>
     </local_variable>
     <local_variable id="oval:x:var:102" version="1" comment="Applying the glob_to_regex function to the glob string." datatype="string">
