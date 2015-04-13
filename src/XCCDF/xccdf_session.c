@@ -494,11 +494,11 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 			oscap_source_free(source);
 			return 1;
 		}
-		oscap_source_free(source);
-		if (!xccdf_policy_model_add_cpe_autodetect(session->xccdf.policy_model, session->user_cpe)) {
+		if (!xccdf_policy_model_add_cpe_autodetect_source(session->xccdf.policy_model, source)) {
 			oscap_source_free(source);
 			return 1;
 		}
+		oscap_source_free(source);
 	}
 
 	if (xccdf_session_is_sds(session)) {
