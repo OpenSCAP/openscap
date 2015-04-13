@@ -2301,8 +2301,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_GLOB_TO_REGEX(ova
 			char *text = oval_value_get_text(value);
 			char *string = _glob_to_regex(text, glob_noescape != NULL && strcmp(glob_noescape, "true") == 0);
 			if (string == NULL) {
-				/* to do */
-				return flag;
+				oscap_dlprintf(DBG_E, "Can't convert glob %s to regular expression.", text);
+				flag = SYSCHAR_FLAG_ERROR;
+				break;
 			}
 			value = oval_value_new(OVAL_DATATYPE_STRING, string);
 			oscap_free(string);
