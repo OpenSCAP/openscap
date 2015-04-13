@@ -255,15 +255,15 @@ Authors:
                     <xsl:with-param name="item" select="$item"/>
                 </xsl:call-template>
 
-                <xsl:if test="$item/cdf:fix">
+                <xsl:for-each select="$item/cdf:fix">
                     <span class="label label-success">Remediation script:</span>
                     <pre><code>
-                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
+                        <xsl:apply-templates mode="sub-testresult" select=".">
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
                     </code></pre>
-                </xsl:if>
+                </xsl:for-each>
             </td>
         </tr>
     </xsl:if>
