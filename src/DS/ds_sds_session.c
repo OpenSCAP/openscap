@@ -295,6 +295,7 @@ char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *
 	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, "xccdf.xml");
 	if (xccdf == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.");
+		return NULL;
 	}
 	return oscap_source_apply_xslt_path_mem(xccdf, "xccdf-guide.xsl", params, oscap_path_to_xslt());
 }
