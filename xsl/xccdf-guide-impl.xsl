@@ -255,6 +255,16 @@ Authors:
                     <xsl:with-param name="item" select="$item"/>
                 </xsl:call-template>
 
+                <xsl:for-each select="$item/cdf:fixtext">
+                    <span class="label label-success">Remediation description:</span>
+                    <div class="panel panel-default"><div class="panel-body">
+                        <xsl:apply-templates mode="sub-testresult" select=".">
+                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div></div>
+                </xsl:for-each>
+
                 <xsl:for-each select="$item/cdf:fix">
                     <span class="label label-success">Remediation script:</span>
                     <pre><code>
