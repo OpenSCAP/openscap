@@ -2228,9 +2228,9 @@ static char *_glob_to_regex (const char *glob, int noescape)
 				_string_append_char(regex, '\\');
 				_string_append_char(regex, c);
 			} else if (c == '\0') {
-				free(regex->str);
-				free(regex);
-				return NULL;
+				_string_append_char(regex, '\\');
+				_string_append_char(regex, '\\');
+				goto finish;
 			} else {
 				_string_append_char(regex, '\\');
 				_string_append_char(regex, '\\');
