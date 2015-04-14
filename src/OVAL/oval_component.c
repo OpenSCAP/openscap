@@ -48,6 +48,8 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "common/oscap_string.h"
+#include "_oval_glob_to_regex.h"
 #if defined USE_REGEX_PCRE
 #include <pcre.h>
 #elif defined USE_REGEX_POSIX
@@ -2051,241 +2053,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 	return flag;
 }
 
-#define INITIAL_CAPACITY 64
 
-typedef enum {
-	START,
-	NORMAL,
-	LEFT_BRACKET,
-	CLASS,
-	ESCAPE,
-	SLASH
-} states;
 
-typedef struct string {
-	char *str;
-	unsigned int length;
-	unsigned int capacity;
-} t_string;
 
-static t_string *_string_new() {
-	t_string *s;
-	s = malloc(sizeof(t_string));
-	if (s == NULL)
-		return NULL;
-	s->str = malloc(INITIAL_CAPACITY);
-	if (s->str == NULL) {
-		free(s);
-		return NULL;
-	}
-	s->str[0] = '\0';
-	s->length = 0;
-	s->capacity = INITIAL_CAPACITY;
-	return s;
-}
-
-static void _string_append_char(t_string *s, char c)
-{
-	if (s->length + 1 >= s->capacity) {
-		if(realloc(s->str, s->capacity + INITIAL_CAPACITY) == NULL)
-			return;
-		s->capacity += INITIAL_CAPACITY;
-	}
-	s->str[s->length++] = c;
-	s->str[s->length] = '\0';
-}
-
-static void _string_append_string(t_string *s, const char *t)
-{
-	int append_length = strlen(t);
-	if (s->length + append_length >= s->capacity)  {
-		if(realloc(s->str, s->capacity + append_length) == NULL)
-			return;
-		s->capacity += append_length;
-	}
-	for (int i = 0; t[i] != '\0'; i++) {
-		s->str[s->length++] = t[i];
-	}
-	s->str[s->length] = '\0';
-}
-
-static char *_glob_to_regex (const char *glob, int noescape)
-{
-	t_string *regex;
-	char * result;
-	char c;
-	int i = 0;
-	int state = START;
-	regex = _string_new();
-	if (regex == NULL) {
-		return NULL;
-	}
-	_string_append_char(regex, '^'); // regex must match whole string
-	while(1) {
-		c = glob[i++];
-		switch (state) {
-		case START:
-			if (c == '\0') {
-				goto finish;
-			} else if (c== '/') {
-				_string_append_char(regex, c);
-				state = SLASH;
-			} else if (c == '?') {
-				// a ? matches any single character, but
-				// a ? at the begining of glob pattern can't match a .
-				// a ? never matches a / (see man 7 glob - Pathnames)
-				_string_append_string(regex, "[^./]");
-				state = NORMAL;
-			} else if (c == '*') {
-				// a * matches any string, but
-				// a * at the begining of glob pattern can't match a .
-				// a * never matches a / (see man 7 glob - Pathnames)
-				_string_append_string(regex, "(?=[^.])[^/]*");
-				state = NORMAL;
-			} else if (c == '.' || c == '|' || c == '^' || c == '(' || c == ')'
-					|| c == '{' || c == '}' || c == '+' || c == '$') {
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, c);
-				state = NORMAL;
-			} else if (c == '[') {
-				_string_append_char(regex,'[');
-				state = LEFT_BRACKET;
-			} else if (c == '\\') {
-				if (noescape) {
-					_string_append_char(regex, '\\');
-					_string_append_char(regex, '\\');
-					state = NORMAL;
-				} else {
-					state = ESCAPE;
-				}
-			} else {
-				_string_append_char(regex, c);
-				state = NORMAL;
-			}
-			break;
-		case NORMAL:
-			if (c == '\0') {
-				goto finish;
-			} else if (c== '/') {
-				_string_append_char(regex, c);
-				state = SLASH;
-			} else if (c == '?') {
-				// a ? matches any single character, but
-				// it can never match a /
-				_string_append_string(regex, "[^/]");
-			} else if (c == '*') {
-				// a * matches any string, but
-				// it can never match a /
-				_string_append_string(regex, "[^/]*");
-			} else if (c == '.' || c == '|' || c == '^' || c == '(' || c == ')'
-					|| c == '{' || c == '}' || c == '+' || c == '$' ) {
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, c);
-			} else if (c == '[') {
-				_string_append_char(regex,'[');
-				state = LEFT_BRACKET;
-			} else if (c == '\\') {
-				if (noescape) {
-					_string_append_char(regex, '\\');
-					_string_append_char(regex, '\\');
-				} else {
-					state = ESCAPE;
-				}
-			} else {
-				_string_append_char(regex, c);
-			}
-			break;
-		case LEFT_BRACKET:
-			if (c == '!') {
-				_string_append_char(regex, '^');
-			} else if (c == '\0') {
-				free(regex->str);
-				free(regex);
-				return NULL;
-			} else {
-				_string_append_char(regex, c);
-			}
-			state = CLASS;
-			break;
-		case CLASS:
-			if (c == '\\') {
-				if (noescape) {
-					_string_append_char(regex, '\\');
-				}
-			} else if (c == ']') {
-				state = NORMAL;
-			} else if (c == '\0') {
-				free(regex->str);
-				free(regex);
-				return NULL;
-			}
-			_string_append_char(regex, c);
-			break;
-		case ESCAPE:
-			// ?, *, [ and ] are special characters, they must be escaped in glob.
-			// A backslash is treated as an escape character only for these characters.
-			// For all other characters the backslash is just an ordinary character.
-			// Other characters, that are special in perl's regex,
-			// are not special in a glob.
-			if (c == '?' || c == '*' || c == '[' || c == ']') {
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, c);
-			} else if (c == '\0') {
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, '\\');
-				goto finish;
-			} else {
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, c);
-			}
-			state = NORMAL;
-			break;
-		case SLASH:
-			if (c == '\0') {
-				goto finish;
-			} else if (c == '?') {
-				// a ? matches any single character, but
-				// a ? at the begining of glob pattern can't match a .
-				// a ? never matches a / (see man 7 glob - Pathnames)
-				_string_append_string(regex, "[^./]");
-				state = NORMAL;
-			} else if (c == '*') {
-				// a * matches any string, but
-				// a * at the begining of glob pattern can't match a .
-				// a * never matches a / (see man 7 glob - Pathnames)
-				_string_append_string(regex, "(?=[^.])[^/]*");
-				state = NORMAL;
-			} else if (c == '.' || c == '|' || c == '^' || c == '(' || c == ')'
-					|| c == '{' || c == '}' || c == '+' || c == '$' ) {
-				_string_append_char(regex, '\\');
-				_string_append_char(regex, c);
-				state = NORMAL;
-			} else if (c == '[') {
-				state = LEFT_BRACKET;
-			} else if (c == '\\') {
-				if (noescape) {
-					_string_append_char(regex, '\\');
-					_string_append_char(regex, '\\');
-					state = NORMAL;
-				} else {
-					state = ESCAPE;
-				}
-			} else {
-				_string_append_char(regex, c);
-				state = NORMAL;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-finish:
-	_string_append_char(regex, '$'); // regex must match only whole string
-	result = regex->str;
-	free(regex);
-	return result;
-}
 
 static oval_syschar_collection_flag_t _oval_component_evaluate_GLOB_TO_REGEX(oval_argu_t *argu,
 										struct oval_component *component,
@@ -2302,7 +2072,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_GLOB_TO_REGEX(ova
 		while (oval_value_iterator_has_more(values)) {
 			struct oval_value *value = oval_value_iterator_next(values);
 			char *text = oval_value_get_text(value);
-			char *string = _glob_to_regex(text, glob_noescape != NULL && strcmp(glob_noescape, "true") == 0);
+			char *string = oval_glob_to_regex(text, glob_noescape != NULL && strcmp(glob_noescape, "true") == 0);
 			if (string == NULL) {
 				oscap_dlprintf(DBG_E, "Can't convert glob %s to regular expression.", text);
 				flag = SYSCHAR_FLAG_ERROR;
