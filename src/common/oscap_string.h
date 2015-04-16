@@ -48,6 +48,12 @@ typedef struct {
 oscap_string *oscap_string_new(void);
 
 /**
+ * Free the string from memory.
+ * @param s string
+ */
+void oscap_string_free(oscap_string *s);
+
+/**
  * Append a single char at the end of a string.
  * @param s string
  * @param c to append
