@@ -43,6 +43,12 @@ oscap_string *oscap_string_new() {
 	return s;
 }
 
+void oscap_string_free(oscap_string *s)
+{
+	free(s->str);
+	free(s);
+}
+
 bool oscap_string_append_char(oscap_string *s, char c)
 {
 	if (s == NULL)
