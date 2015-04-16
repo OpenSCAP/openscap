@@ -23,12 +23,18 @@
 #ifndef _OVAL_GLOB_TO_REGEX
 #define _OVAL_GLOB_TO_REGEX
 
+#include "common/util.h"
+
+OSCAP_HIDDEN_START;
+
 /**
  * Converts unix shell glob to Perl 5 regular expression
  * @param glob input glob
  * @param noescape Tells if backslash is treated as an escape character.
  * @return regular expression
  */
-char *oval_glob_to_regex (const char *glob, int noescape);
+char *oval_glob_to_regex(const char *glob, int noescape);
+
+OSCAP_HIDDEN_END;
 
 #endif
