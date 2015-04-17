@@ -112,7 +112,7 @@ Authors:
                     </tr>
                 </table>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 horizontal-scroll">
                 <h4>CPE Platforms</h4>
                 <ul class="list-group">
                     <!-- all the applicable platforms first -->
@@ -135,7 +135,7 @@ Authors:
                     </xsl:for-each>
                 </ul>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 horizontal-scroll">
                 <h4>Addresses</h4>
                 <ul class="list-group">
                     <!-- the second predicate ensures that we don't print duplicates -->
