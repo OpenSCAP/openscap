@@ -257,7 +257,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
         if (lstat (st_path, &st) == -1) {
                 dI("lstat failed when processing %s: errno=%u, %s.\n", st_path, errno, strerror (errno));
-                return (-1);
+		return strncmp(st_path, "/proc", 4) == 0 ? 0 : -1;
         } else {
                 SEXP_t *se_usr_id, *se_grp_id;
                 SEXP_t  se_atime_mem, se_ctime_mem, se_mtime_mem, se_size_mem;
