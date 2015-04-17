@@ -52,7 +52,7 @@ Authors:
     <div id="characteristics">
         <h2>Evaluation Characteristics</h2>
         <div class="row">
-            <div class="col-md-5 well well-lg">
+            <div class="col-md-5 well well-lg horizontal-scroll">
                 <table class="table table-bordered">
                     <tr>
                         <th>Target machine</th>
@@ -112,7 +112,7 @@ Authors:
                     </tr>
                 </table>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 horizontal-scroll">
                 <h4>CPE Platforms</h4>
                 <ul class="list-group">
                     <!-- all the applicable platforms first -->
@@ -135,7 +135,7 @@ Authors:
                     </xsl:for-each>
                 </ul>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 horizontal-scroll">
                 <h4>Addresses</h4>
                 <ul class="list-group">
                     <!-- the second predicate ensures that we don't print duplicates -->
@@ -656,15 +656,43 @@ Authors:
                             </xsl:for-each>
                         </td></tr>
                     </xsl:if>
-                    <tr><td colspan="2"><div class="description">
-                        <p>
-                            <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
-                                <xsl:with-param name="testresult" select="$testresult"/>
-                                <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                <xsl:with-param name="profile" select="$profile"/>
-                            </xsl:apply-templates>
-                        </p>
-                    </div></td></tr>
+                    <xsl:if test="$item/cdf:description">
+                        <tr><td>Description</td><td><div class="description">
+                            <p>
+                                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </p>
+                        </div></td></tr>
+                    </xsl:if>
+                    <xsl:if test="$item/cdf:rationale">
+                        <tr><td>Rationale</td><td><div class="rationale">
+                            <p>
+                                <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </p>
+                        </div></td></tr>
+                    </xsl:if>
+                    <xsl:if test="$item/cdf:warning">
+                        <tr><td>Warnings</td><td>
+                            <xsl:for-each select="$item/cdf:warning">
+                                <div class="panel panel-warning">
+                                    <div class="panel-heading">
+                                        <span class="label label-warning">warning</span>&#160;
+                                        <xsl:apply-templates mode="sub-testresult" select=".">
+                                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                            <xsl:with-param name="profile" select="$profile"/>
+                                        </xsl:apply-templates>
+                                    </div>
+                                </div>
+                            </xsl:for-each>
+                        </td></tr>
+                    </xsl:if>
                     <xsl:variable name="check_system_details_ret">
                         <xsl:call-template name="check-system-details">
                             <xsl:with-param name="check" select="$ruleresult/cdf:check"/>
@@ -680,18 +708,30 @@ Authors:
                         </div></td></tr>
                     </xsl:if>
                     <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
-                        <xsl:if test="$item/cdf:fix">
+                        <xsl:for-each select="$item/cdf:fixtext">
+                            <tr><td colspan="2"><div class="remediation-description">
+                                <span class="label label-success">Remediation description:</span>
+                                <div class="panel panel-default"><div class="panel-body">
+                                    <xsl:apply-templates mode="sub-testresult" select=".">
+                                        <xsl:with-param name="testresult" select="$testresult"/>
+                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                        <xsl:with-param name="profile" select="$profile"/>
+                                    </xsl:apply-templates>
+                                </div></div>
+                            </div></td></tr>
+                        </xsl:for-each>
+                        <xsl:for-each select="$item/cdf:fix">
                             <tr><td colspan="2"><div class="remediation">
                                 <span class="label label-success">Remediation script:</span>
                                 <pre><code>
-                                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:fix">
+                                    <xsl:apply-templates mode="sub-testresult" select=".">
                                         <xsl:with-param name="testresult" select="$testresult"/>
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
                                     </xsl:apply-templates>
                                 </code></pre>
                             </div></td></tr>
-                        </xsl:if>
+                        </xsl:for-each>
                     </xsl:if>
                 </tbody>
             </table>

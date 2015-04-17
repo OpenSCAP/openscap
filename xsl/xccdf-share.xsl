@@ -173,19 +173,27 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
-<xsl:template mode="sub-testresult" match="*">
+<xsl:template mode="sub-testresult" match="*[namespace-uri()='http://www.w3.org/1999/xhtml']">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <xsl:element name="{local-name()}">
-        <xsl:copy-of select="@*"/>
-        <xsl:apply-templates select="./text() | ./*" mode="sub-testresult">
-            <xsl:with-param name="testresult" select="$testresult"/>
-            <xsl:with-param name="benchmark" select="$benchmark"/>
-            <xsl:with-param name="profile" select="$profile"/>
-        </xsl:apply-templates>
-    </xsl:element>
+    <xsl:choose>
+        <xsl:when test="local-name() = 'br'">
+            <!-- <br></br> shows up as 2 <br> elements in HTML5, this horrible hack prevents that -->
+            <xsl:text disable-output-escaping="yes">&#60;br&#62;</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:element name="{local-name()}">
+                <xsl:copy-of select="@*"/>
+                <xsl:apply-templates select="./text() | ./*" mode="sub-testresult">
+                    <xsl:with-param name="testresult" select="$testresult"/>
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </xsl:element>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <xsl:template mode="sub-testresult" match="node() | @*">
