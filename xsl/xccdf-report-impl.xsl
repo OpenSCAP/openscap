@@ -52,7 +52,7 @@ Authors:
     <div id="characteristics">
         <h2>Evaluation Characteristics</h2>
         <div class="row">
-            <div class="col-md-5 well well-lg">
+            <div class="col-md-5 well well-lg horizontal-scroll">
                 <table class="table table-bordered">
                     <tr>
                         <th>Target machine</th>

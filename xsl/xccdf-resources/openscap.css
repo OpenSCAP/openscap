@@ -30,3 +30,8 @@ div.modal-body
     margin: 50px;
     padding: 0;
 }
+
+div.horizontal-scroll
+{
+    overflow-x: auto;
+}
