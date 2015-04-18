@@ -171,6 +171,7 @@ if [ "$1" != "--v" ]; then
 fi
 
 if [ "$LOCAL_CONTENT_PATH" != "" ]; then
+    [ -f "$LOCAL_CONTENT_PATH" ] || die "Expected the last argument to be an input file, '$LOCAL_CONTENT_PATH' isn't a valid file path or the file doesn't exist!"
     echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
 fi
