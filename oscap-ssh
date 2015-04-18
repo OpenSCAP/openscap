@@ -76,7 +76,14 @@ function usage()
     echo "  --skip-valid"
 }
 
-if [ $# -lt 2 ]; then
+if [ $# -lt 1 ]; then
+    echo "No arguments provided."
+    usage
+    die
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    usage
+    die
+elif [ $# -lt 2 ]; then
     echo "Missing ssh host and ssh port."
     usage
     die
@@ -96,7 +103,7 @@ elif [ "$3 $4" == "oval eval" ]; then
 elif [ "$3 $4" == "oval collect" ]; then
     true
 else
-    die "This script only support 'info', 'xccdf eval', 'oval eval', 'oval collect'."
+    die "This script only supports '-h', '--help', '--v', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
 fi
 
 shift 2
