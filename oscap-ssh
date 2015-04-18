@@ -170,8 +170,13 @@ if [ "$1" != "--v" ]; then
     args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
 fi
 
+[ "$LOCAL_CONTENT_PATH" == "" ] || [ -f "$LOCAL_CONTENT_PATH" ] || die "Expected the last argument to be an input file, '$LOCAL_CONTENT_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_TAILORING_PATH" == "" ] || [ -f "$LOCAL_TAILORING_PATH" ] || die "Tailoring file path '$LOCAL_TAILORING_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_CPE_PATH" == "" ] || [ -f "$LOCAL_CPE_PATH" ] || die "CPE file path '$LOCAL_CPE_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_VARIABLES_PATH" == "" ] || [ -f "$LOCAL_VARIABLES_PATH" ] || die "OVAL variables file path '$LOCAL_VARIABLES_PATH' isn't a valid file path or the file doesn't exist!"
+[ "$LOCAL_DIRECTIVES_PATH" == "" ] || [ -f "$LOCAL_DIRECTIVES_PATH" ] || die "OVAL directives file path '$LOCAL_DIRECTIVES_PATH' isn't a valid file path or the file doesn't exist!"
+
 if [ "$LOCAL_CONTENT_PATH" != "" ]; then
-    [ -f "$LOCAL_CONTENT_PATH" ] || die "Expected the last argument to be an input file, '$LOCAL_CONTENT_PATH' isn't a valid file path or the file doesn't exist!"
     echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
 fi
