@@ -462,6 +462,14 @@ AC_ARG_ENABLE([util-scap-as-rpm],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-scap-as-rpm]) ;;
      esac],[util_scap_as_rpm=yes])
 
+AC_ARG_ENABLE([util-oscap-ssh],
+     [AC_HELP_STRING([--enable-util-oscap-ssh], [enable compilation of the oscap-ssh utility (default=yes)])],
+     [case "${enableval}" in
+       yes) util_oscap_ssh=yes ;;
+       no)  util_oscap_ssh=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-ssh]) ;;
+     esac],[util_oscap_ssh=yes])
+
 if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
@@ -535,6 +543,7 @@ AM_CONDITIONAL([WANT_PROBES_SOLARIS], test "$probes_solaris" = yes)
 AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
+AM_CONDITIONAL([WANT_UTIL_OSCAP_SSH], test "$util_oscap_ssh" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PYTHON3], test "$python3_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
@@ -669,6 +678,7 @@ echo "OpenSCAP will be compiled with the following settings:"
 echo
 echo "oscap tool:                    $util_oscap"
 echo "scap-as-rpm tool:              $util_scap_as_rpm"
+echo "oscap-ssh tool:                $util_oscap_ssh"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
