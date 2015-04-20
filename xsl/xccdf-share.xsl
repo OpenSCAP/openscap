@@ -224,6 +224,34 @@ Authors:
     </xsl:apply-templates>
 </xsl:template>
 
+<xsl:template name="show-fixtext">
+    <xsl:param name="fixtext"/>
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <xsl:apply-templates mode="sub-testresult" select="$fixtext">
+        <xsl:with-param name="testresult" select="$testresult"/>
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:apply-templates>
+</xsl:template>
+
+<xsl:template name="show-fix">
+    <xsl:param name="fix"/>
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <pre><code>
+        <xsl:apply-templates mode="sub-testresult" select="$fix">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:apply-templates>
+    </code></pre>
+</xsl:template>
+
 <xsl:template name="warn-unresolved">
     <xsl:param name="benchmark"/>
 

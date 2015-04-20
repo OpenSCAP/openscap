@@ -258,21 +258,21 @@ Authors:
                 <xsl:for-each select="$item/cdf:fixtext">
                     <span class="label label-success">Remediation description:</span>
                     <div class="panel panel-default"><div class="panel-body">
-                        <xsl:apply-templates mode="sub-testresult" select=".">
+                        <xsl:call-template name="show-fixtext">
+                            <xsl:with-param name="fixtext" select="."/>
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
+                        </xsl:call-template>
                     </div></div>
                 </xsl:for-each>
 
                 <xsl:for-each select="$item/cdf:fix">
                     <span class="label label-success">Remediation script:</span>
-                    <pre><code>
-                        <xsl:apply-templates mode="sub-testresult" select=".">
-                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </code></pre>
+                    <xsl:call-template name="show-fix">
+                        <xsl:with-param name="fix" select="."/>
+                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:call-template>
                 </xsl:for-each>
             </td>
         </tr>
