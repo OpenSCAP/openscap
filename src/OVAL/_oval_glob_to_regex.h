@@ -25,7 +25,6 @@
 
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Converts unix shell glob to Perl 5 regular expression
@@ -35,6 +34,5 @@ OSCAP_HIDDEN_START;
  */
 char *oval_glob_to_regex(const char *glob, int noescape);
 
-OSCAP_HIDDEN_END;
 
 #endif
