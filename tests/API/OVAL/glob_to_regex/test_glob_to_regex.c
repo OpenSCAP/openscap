@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "OVAL/_oval_glob_to_regex.h"
+#include "OVAL/oval_glob_to_regex.h"
 #define COUNT 18
 
 int test_glob_to_regex(const char *glob, const char *regex, int noescape);

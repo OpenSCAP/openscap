@@ -49,7 +49,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/oscap_string.h"
-#include "_oval_glob_to_regex.h"
+#include "oval_glob_to_regex.h"
 #if defined USE_REGEX_PCRE
 #include <pcre.h>
 #elif defined USE_REGEX_POSIX
