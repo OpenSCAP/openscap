@@ -1061,9 +1061,9 @@ static int _oval_component_parse_GLOB_TO_REGEX_tag(xmlTextReaderPtr reader,
 
 	oval_component_GLOB_t *glob_to_regex = (oval_component_GLOB_t *) component;
 	glob_to_regex->glob_noescape = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "glob_noescape");
-    if (glob_to_regex->glob_noescape == NULL) {
-        glob_to_regex->glob_noescape = oscap_strdup("false");
-    }
+	if (glob_to_regex->glob_noescape == NULL) {
+		glob_to_regex->glob_noescape = oscap_strdup("false");
+	}
 
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
