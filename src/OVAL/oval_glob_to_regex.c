@@ -51,6 +51,7 @@ char *oval_glob_to_regex (const char *glob, int noescape)
 	char * result;
 	char c;
 	int i = 0;
+	int left_bracket = -1;
 	int state = START;
 	regex = oscap_string_new();
 	if (regex == NULL) {
@@ -85,6 +86,7 @@ char *oval_glob_to_regex (const char *glob, int noescape)
 				state = NORMAL;
 			} else if (c == '[') {
 				oscap_string_append_char(regex,'[');
+				left_bracket = i;
 				state = LEFT_BRACKET;
 			} else if (c == '\\') {
 				if (noescape) {
@@ -119,6 +121,7 @@ char *oval_glob_to_regex (const char *glob, int noescape)
 				oscap_string_append_char(regex, c);
 			} else if (c == '[') {
 				oscap_string_append_char(regex,'[');
+				left_bracket = i;
 				state = LEFT_BRACKET;
 			} else if (c == '\\') {
 				if (noescape) {
@@ -135,6 +138,7 @@ char *oval_glob_to_regex (const char *glob, int noescape)
 			if (c == '!') {
 				oscap_string_append_char(regex, '^');
 			} else if (c == '\0') {
+				oscap_dlprintf(DBG_E, "Can't convert glob '%s' to regular expression. '[' at position %d has no closing brace - ']'.\n", glob, left_bracket - 1);
 				free(regex->str);
 				free(regex);
 				return NULL;
@@ -151,6 +155,7 @@ char *oval_glob_to_regex (const char *glob, int noescape)
 			} else if (c == ']') {
 				state = NORMAL;
 			} else if (c == '\0') {
+				oscap_dlprintf(DBG_E, "Can't convert glob '%s' to regular expression. '[' at position %d has no closing brace - ']'.\n", glob, left_bracket - 1);
 				free(regex->str);
 				free(regex);
 				return NULL;
