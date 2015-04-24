@@ -2980,7 +2980,7 @@ void oval_component_set_split_delimiter(struct oval_component *, char *);	//type
 /**
  * @memberof oval_component
  */
-void oval_component_set_glob_to_regex_glob_noescape(struct oval_component *, char *);	//type==OVAL_COMPONENT_GLOB
+void oval_component_set_glob_to_regex_glob_noescape(struct oval_component *, bool);	//type==OVAL_COMPONENT_GLOB
 /**
  * @memberof oval_component
  */
@@ -3086,12 +3086,11 @@ char *oval_component_get_suffix(struct oval_component *);	//type==OVAL_COMPONENT
 char *oval_component_get_split_delimiter(struct oval_component *);	//type==OVAL_COMPONENT_SPLIT
 /**
  * Returns attribute @ref Oval_function_GLOB_TO_REGEX->glob_noescape.
- * IF component->type <> @ref OVAL_FUNCTION_GLOB_TO_REGEX, this method shall return NULL
- * @return A pointer to the attribute of the specified @ref oval_component.
- * @note applications should not free the char* returned by this method
+ * IF component->type <> @ref OVAL_FUNCTION_GLOB_TO_REGEX, this method shall return false
+ * @return An attribute of the specified @ref oval_component.
  * @memberof oval_component
  */
-char *oval_component_get_glob_to_regex_glob_noescape(struct oval_component *);	//type==OVAL_COMPONENT_GLOB
+bool oval_component_get_glob_to_regex_glob_noescape(struct oval_component *);	//type==OVAL_COMPONENT_GLOB
 /**
  * Returns attribute @ref Oval_function_SUBSTRING->start.
  * IF component->type <> @ref OVAL_FUNCTION_SUBSTRING, this method shall return 0
