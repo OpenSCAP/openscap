@@ -338,6 +338,7 @@ static const struct oscap_string_map OVAL_COMPONENT_TYPE_MAP[] = {
 	{OVAL_FUNCTION_REGEX_CAPTURE, "regex_capture"},
 	{OVAL_FUNCTION_ARITHMETIC, "arithmetic"},
 	{OVAL_FUNCTION_COUNT, "count"},
+	{OVAL_FUNCTION_GLOB_TO_REGEX, "glob_to_regex"},
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
