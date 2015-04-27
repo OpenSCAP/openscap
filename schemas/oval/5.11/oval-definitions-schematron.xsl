@@ -4840,17 +4840,23 @@
             <axsl:text/><axsl:value-of select="../@id"/><axsl:text/> - the object child element of a symlink_test must reference a symlink_object<axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M405"/></axsl:template>
 
 	<!--RULE -->
-<axsl:template match="x-macos-def:authorizationdb_test/x-macos-def:state" priority="1000" mode="M405">
+    <!-- OpenSCAP change of official OVAL 5.11 schema.
+         It is a known issue, see https://github.com/OVALProject/Language/issues/235
+         It will be fixed in OVAL 5.11.1 -->
+<axsl:template match="unix-def:symlink_test/unix-def:state" priority="1000" mode="M405">
 
 		<!--ASSERT -->
 <axsl:choose><axsl:when test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/unix-def:symlink_state/@id"/><axsl:otherwise>
             <axsl:text/><axsl:value-of select="../@id"/><axsl:text/> - the state child element of a symlink_test must reference a symlink_state<axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M405"/></axsl:template><axsl:template match="text()" priority="-1" mode="M405"/><axsl:template match="@*|node()" priority="-2" mode="M405"><axsl:apply-templates select="@*|*" mode="M405"/></axsl:template>
 
-<!--PATTERN unix-def_unix_object_verify_filter_state-->
+<!--PATTERN unix-def_symlink_object_verify_filter_state-->
 
 
 	<!--RULE -->
-<axsl:template match="unix-def:unix_object//oval-def:filter" priority="1000" mode="M406"><axsl:variable name="parent_object" select="ancestor::unix-def:symlink_object"/><axsl:variable name="parent_object_id" select="$parent_object/@id"/><axsl:variable name="state_ref" select="."/><axsl:variable name="reffed_state" select="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/><axsl:variable name="state_name" select="local-name($reffed_state)"/><axsl:variable name="state_namespace" select="namespace-uri($reffed_state)"/>
+    <!-- OpenSCAP change of OVAL 5.11 schema.
+         It is a known issue, see https://github.com/OVALProject/Language/issues/235
+         It will be fixed in OVAL 5.11.1 -->
+<axsl:template match="unix-def:symlink_object//oval-def:filter" priority="1000" mode="M406"><axsl:variable name="parent_object" select="ancestor::unix-def:symlink_object"/><axsl:variable name="parent_object_id" select="$parent_object/@id"/><axsl:variable name="state_ref" select="."/><axsl:variable name="reffed_state" select="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/><axsl:variable name="state_name" select="local-name($reffed_state)"/><axsl:variable name="state_namespace" select="namespace-uri($reffed_state)"/>
 
 		<!--ASSERT -->
 <axsl:choose><axsl:when test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#unix') and ($state_name='symlink_state'))"/><axsl:otherwise>State referenced in filter for <axsl:text/><axsl:value-of select="name($parent_object)"/><axsl:text/> '<axsl:text/><axsl:value-of select="$parent_object_id"/><axsl:text/>' is of the wrong type. <axsl:value-of select="string('&#10;')"/></axsl:otherwise></axsl:choose><axsl:apply-templates select="@*|*" mode="M406"/></axsl:template><axsl:template match="text()" priority="-1" mode="M406"/><axsl:template match="@*|node()" priority="-2" mode="M406"><axsl:apply-templates select="@*|*" mode="M406"/></axsl:template>
