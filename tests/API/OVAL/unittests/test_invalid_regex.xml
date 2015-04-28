@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+  <generator>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2015-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:x:def:1" version="1" class="miscellaneous">
+      <metadata>
+        <title>Tests handling evaluating invalid regular expressions properly</title>
+        <description>Evaluate to error caused by invalid regular expression</description>
+      </metadata>
+      <criteria>
+        <criterion comment="Test that all files are from /etc directory." test_ref="oval:x:tst:1"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+      <file_test id="oval:x:tst:1" version="1" comment="Test /etc/passwd" check_existence="at_least_one_exists" check="all" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:x:obj:1"/>
+      <state state_ref="oval:x:ste:1"/>
+    </file_test>
+  </tests>
+
+  <objects>
+      <file_object id="oval:x:obj:1" version="1" comment="/etc/passwd" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/etc</path>
+      <filename>passwd</filename>
+    </file_object>
+  </objects>
+
+  <states>
+    <file_state id="oval:x:ste:1" version="1" comment="invalid regular expression in pattern match opereration" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path>/etc</path>
+      <filename operation="pattern match">abcd\</filename>
+    </file_state>
+  </states>
+
+</oval_definitions>
