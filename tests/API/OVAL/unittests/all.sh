@@ -25,4 +25,5 @@ test_run "ipv4_address: comparison" $srcdir/test_ipv4_comparison.sh
 test_run "textfilecontent: 'line' comparison" $srcdir/test_filecontent_line.sh
 test_run "anyxml element" $srcdir/test_anyxml.sh
 test_run "glob to regex" $srcdir/test_glob_to_regex.sh
+test_run "invalid regular expression" $srcdir/test_invalid_regex.sh
 test_exit
