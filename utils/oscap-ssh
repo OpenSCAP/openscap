@@ -226,7 +226,7 @@ fi
 echo "Removing remote temporary directory..."
 ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
 echo "Disconnecting ssh and removing master ssh socket directory..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "exit" || die "Failed to disconnect!"
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" -O exit || die "Failed to disconnect!"
 rm -r "$MASTER_SOCKET_DIR" || die "Failed to remove local master SSH socket directory!"
 
 exit $OSCAP_EXIT_CODE
