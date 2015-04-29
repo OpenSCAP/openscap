@@ -94,6 +94,8 @@ SSH_PORT="$2"
 
 if [ "$3" == "--v" ] || [ "$3" == "--version" ]; then
     true
+elif [ "$3" == "-h" ] || [ "$3" == "--help" ]; then
+    true
 elif [ "$3" == "info" ]; then
     true
 elif [ "$3 $4" == "xccdf eval" ]; then
@@ -171,7 +173,7 @@ for i in $(seq 0 `expr $# - 1`); do
     esac
 done
 
-if [ "$1" != "--v" ] && [ "$1" != "--version" ]; then
+if [ "$1" != "--v" ] && [ "$1" != "--version" ] && [ "$1" != "-h" ] && [ "$1" != "--help" ]; then
     # Last argument should be the content path
     LOCAL_CONTENT_PATH="${args[`expr $# - 1`]}"
     args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
