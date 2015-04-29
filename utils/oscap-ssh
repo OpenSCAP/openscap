@@ -92,7 +92,7 @@ fi
 SSH_HOST="$1"
 SSH_PORT="$2"
 
-if [ "$3" == "--v" ]; then
+if [ "$3" == "--v" ] || [ "$3" == "--version" ]; then
     true
 elif [ "$3" == "info" ]; then
     true
@@ -103,7 +103,7 @@ elif [ "$3 $4" == "oval eval" ]; then
 elif [ "$3 $4" == "oval collect" ]; then
     true
 else
-    die "This script only supports '-h', '--help', '--v', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
+    die "This script only supports '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
 fi
 
 shift 2
@@ -171,7 +171,7 @@ for i in $(seq 0 `expr $# - 1`); do
     esac
 done
 
-if [ "$1" != "--v" ]; then
+if [ "$1" != "--v" ] && [ "$1" != "--version" ]; then
     # Last argument should be the content path
     LOCAL_CONTENT_PATH="${args[`expr $# - 1`]}"
     args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
