@@ -161,12 +161,6 @@ Authors:
                 </xsl:choose>
             </div>
         </div>
-        <xsl:if test="$benchmark/cdf:notice">
-            <div class="row">
-                <div class="col-md-12 well well-lg">
-                </div>
-            </div>
-        </xsl:if>
     </div>
 </xsl:template>
 
