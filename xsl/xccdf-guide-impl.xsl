@@ -73,7 +73,6 @@ Authors:
                     </div>
                 </xsl:if>
                 <xsl:if test="$benchmark/cdf:description">
-                    <h2>Description</h2>
                     <div class="description">
                         <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
                             <xsl:with-param name="benchmark" select="$benchmark"/>
@@ -82,22 +81,22 @@ Authors:
                     </div>
                 </xsl:if>
                 <xsl:if test="$benchmark/cdf:notice">
-                    <h2>Notices</h2>
-                    <xsl:for-each select="$benchmark/cdf:notice">
-                        <div class="alert alert-info">
-                            <xsl:apply-templates mode="sub-testresult" select=".">
-                                <xsl:with-param name="benchmark" select="$benchmark"/>
-                                <xsl:with-param name="profile" select="$profile"/>
-                            </xsl:apply-templates>
-                        </div>
-                    </xsl:for-each>
+                    <div class="top-spacer-10">
+                        <xsl:for-each select="$benchmark/cdf:notice">
+                            <div class="alert alert-info">
+                                <xsl:apply-templates mode="sub-testresult" select=".">
+                                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </div>
+                        </xsl:for-each>
+                    </div>
                 </xsl:if>
 
-                <h2>Selected profile</h2>
                 <table class="table table-bordered">
                     <xsl:if test="$profile/cdf:title">
                         <tr>
-                            <th>Title</th>
+                            <th>Profile Title</th>
                             <td>
                                 <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
                                     <xsl:with-param name="benchmark" select="$benchmark"/>
@@ -108,7 +107,7 @@ Authors:
                     </xsl:if>
 
                     <tr>
-                        <th>ID</th>
+                        <th>Profile ID</th>
                         <td>
                             <xsl:choose>
                                 <xsl:when test="$profile/@id">
