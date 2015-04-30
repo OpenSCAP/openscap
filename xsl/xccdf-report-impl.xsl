@@ -833,6 +833,10 @@ Authors:
             <xsl:with-param name="benchmark" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
+        <xsl:call-template name="rear-matter">
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
     </div></div>
 
     <xsl:call-template name="xccdf-report-footer"/>

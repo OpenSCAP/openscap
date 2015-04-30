@@ -252,6 +252,26 @@ Authors:
     </code></pre>
 </xsl:template>
 
+<xsl:template name="rear-matter">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <div id="rear-matter">
+        <div class="row top-spacer-10">
+            <div class="col-md-12 well well-lg">
+                <xsl:if test="$benchmark/cdf:rear-matter">
+                    <div class="rear-matter">
+                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:rear-matter[1]">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:if>
+            </div>
+        </div>
+    </div>
+</xsl:template>
+
 <xsl:template name="warn-unresolved">
     <xsl:param name="benchmark"/>
 
