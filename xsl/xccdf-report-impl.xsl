@@ -48,8 +48,41 @@ Authors:
 <xsl:template name="characteristics">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div id="characteristics">
+        <div class="row">
+            <div class="col-md-12 well well-lg horizontal-scroll">
+                <xsl:if test="$benchmark/cdf:front-matter">
+                    <div class="front-matter">
+                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:if>
+                <xsl:if test="$benchmark/cdf:description">
+                    <div class="description">
+                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:if>
+                <xsl:if test="$benchmark/cdf:notice">
+                    <div class="top-spacer-10">
+                        <xsl:for-each select="$benchmark/cdf:notice">
+                            <div class="alert alert-info">
+                                <xsl:apply-templates mode="sub-testresult" select=".">
+                                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </div>
+                        </xsl:for-each>
+                    </div>
+                </xsl:if>
+            </div>
+        </div>
         <h2>Evaluation Characteristics</h2>
         <div class="row">
             <div class="col-md-5 well well-lg horizontal-scroll">
