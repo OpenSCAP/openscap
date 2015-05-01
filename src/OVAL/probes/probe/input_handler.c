@@ -133,6 +133,7 @@ void *probe_input_handler(void *arg)
 					skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
 	                                obj_mask  = probe_obj_getmask(probe_in);
 					SEXP_free(probe_in);
+					probe_in = NULL;
 
 					if (skip_flag != NULL) {
 						oval_syschar_collection_flag_t cobj_flag;

@@ -225,7 +225,6 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 				S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 		if (fd < 0) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
-			xmlFreeDoc(doc);
 			return -1;
 		}
 
@@ -234,7 +233,6 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 			close(fd);
 			oscap_setxmlerr(xmlGetLastError());
 			oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
-			xmlFreeDoc(doc);
 			return -1;
 		}
 

@@ -2053,7 +2053,10 @@
                               <sch:rule context="unix-def:symlink_test/unix-def:object">
                                     <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/unix-def:symlink_object/@id"><sch:value-of select="../@id"/> - the object child element of a symlink_test must reference a symlink_object</sch:assert>
                               </sch:rule>
-                              <sch:rule context="x-macos-def:authorizationdb_test/x-macos-def:state">
+    <!-- OpenSCAP change of official OVAL 5.11 schema.
+         It is a known issue, see https://github.com/OVALProject/Language/issues/235
+         It will be fixed in OVAL 5.11.1 -->
+                              <sch:rule context="unix-def:symlink_test/unix-def:state">
                                     <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/unix-def:symlink_state/@id"><sch:value-of select="../@id"/> - the state child element of a symlink_test must reference a symlink_state</sch:assert>
                               </sch:rule>
                         </sch:pattern>
@@ -2075,8 +2078,11 @@
                   <xsd:documentation>The symlink_object element is used by a symlink_test to define the object to be evaluated. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
                   <xsd:documentation>A symlink_object consists of a filepath entity that contains the path to a symbolic link file.  The resulting item identifies the canonical path of the link target (followed to its final destination, if there are intermediate links), an error if the link target does not exist or is a circular link (e.g., a link to itself).  If the file located at filepath is not a symlink, or if there is no file located at the filepath, then any resulting item would itself have a status of does not exist.</xsd:documentation>
                   <xsd:appinfo>
-                        <sch:pattern id="unix-def_unix_object_verify_filter_state">
-                              <sch:rule context="unix-def:unix_object//oval-def:filter">
+    <!-- OpenSCAP change of official OVAL 5.11 schema.
+         It is a known issue, see https://github.com/OVALProject/Language/issues/235
+         It will be fixed in OVAL 5.11.1 -->
+                        <sch:pattern id="unix-def_symlink_object_verify_filter_state">
+                              <sch:rule context="unix-def:symlink_object//oval-def:filter">
                                     <sch:let name="parent_object" value="ancestor::unix-def:symlink_object"/>
                                     <sch:let name="parent_object_id" value="$parent_object/@id"/>
                                     <sch:let name="state_ref" value="."/>

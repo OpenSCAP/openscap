@@ -1045,9 +1045,9 @@ int app_xccdf_validate(const struct oscap_action *action) {
 			result = OSCAP_FAIL;
 		}
 	}
-	oscap_source_free(source);
 
 cleanup:
+	oscap_source_free(source);
 	oscap_print_error();
 
         return result;

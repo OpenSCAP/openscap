@@ -52,6 +52,7 @@ static struct bz2_file *bz2_file_open(const char *filename)
 		b = malloc(sizeof(struct bz2_file));
 		b->f = f;
 		b->file = BZ2_bzReadOpen(&bzerror, f, 0, 0, NULL, 0);
+		b->eof = false;
 		if (bzerror != BZ_OK) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not build BZ2FILE from %s: %s",
 					BZ2_bzerror(b->file, &bzerror));
@@ -60,7 +61,6 @@ static struct bz2_file *bz2_file_open(const char *filename)
 			b = NULL;
 		}
 	}
-	b->eof = false;
 	return b;
 }
 

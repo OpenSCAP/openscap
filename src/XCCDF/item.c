@@ -829,6 +829,8 @@ const struct xccdf_version_info* xccdf_item_get_schema_version(struct xccdf_item
 		if (xccdf_item_get_type(item) == XCCDF_RESULT) {
 			// TestResult is special item, it may not have parent benchmark
 			return xccdf_result_get_schema_version(XRESULT(item));
+		} else {
+			return NULL;
 		}
 	}
 	return xccdf_benchmark_get_schema_version(top_benchmark);

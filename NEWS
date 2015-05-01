@@ -1,3 +1,19 @@
+openscap-1.2.3                                                  01-05-2015
+ - new features
+   - oscap-ssh -- handy utility to run remote scan over ssh
+   - glob_to_regexp OVAL function added
+ - HTML changes
+   - show rationale elements
+   - show fixtext elements
+   - show Benchmark's front-matter, description and notices
+   - show warnings for Groups and Rules
+   - improved handling of multiple fixes within a single Rule
+   - scroll evaluation characteristic if they overflow
+ - maintenance
+   - OVAL 5.11 schema fixes
+   - coverity and mem leak fixes
+   - skip transient files when traversing /proc (trac#457)
+
 openscap-1.2.2                                                  02-04-2015
  - new features
    - OVAL 5.11 support turned on by default
@@ -7,7 +23,7 @@ openscap-1.2.2                                                  02-04-2015
  - HTML report changes
    - Notably increased level of OVAL details
    - Table of contents is now generated for HTML guides
- - maitenance
+ - maintenance
    - rhbz#1182242, rhbz#1159289 - @var_check & @var_ref exporting
    - solaris build fixes
    - xccdf:fix/instance processing fixes

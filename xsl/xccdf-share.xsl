@@ -173,19 +173,27 @@ Authors:
     </xsl:choose>
 </xsl:template>
 
-<xsl:template mode="sub-testresult" match="*">
+<xsl:template mode="sub-testresult" match="*[namespace-uri()='http://www.w3.org/1999/xhtml']">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <xsl:element name="{local-name()}">
-        <xsl:copy-of select="@*"/>
-        <xsl:apply-templates select="./text() | ./*" mode="sub-testresult">
-            <xsl:with-param name="testresult" select="$testresult"/>
-            <xsl:with-param name="benchmark" select="$benchmark"/>
-            <xsl:with-param name="profile" select="$profile"/>
-        </xsl:apply-templates>
-    </xsl:element>
+    <xsl:choose>
+        <xsl:when test="local-name() = 'br'">
+            <!-- <br></br> shows up as 2 <br> elements in HTML5, this horrible hack prevents that -->
+            <xsl:text disable-output-escaping="yes">&#60;br&#62;</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:element name="{local-name()}">
+                <xsl:copy-of select="@*"/>
+                <xsl:apply-templates select="./text() | ./*" mode="sub-testresult">
+                    <xsl:with-param name="testresult" select="$testresult"/>
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </xsl:element>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <xsl:template mode="sub-testresult" match="node() | @*">
@@ -214,6 +222,106 @@ Authors:
         <xsl:with-param name="benchmark" select="$benchmark"/>
         <xsl:with-param name="profile" select="$profile"/>
     </xsl:apply-templates>
+</xsl:template>
+
+<xsl:template name="show-fixtext">
+    <xsl:param name="fixtext"/>
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <xsl:apply-templates mode="sub-testresult" select="$fixtext">
+        <xsl:with-param name="testresult" select="$testresult"/>
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:apply-templates>
+</xsl:template>
+
+<xsl:template name="show-fix">
+    <xsl:param name="fix"/>
+    <xsl:param name="testresult"/>
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <pre><code>
+        <xsl:apply-templates mode="sub-testresult" select="$fix">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:apply-templates>
+    </code></pre>
+</xsl:template>
+
+<xsl:template name="show-title-front-matter-description-notices">
+    <!-- TODO: please invent a better name for this template -->
+
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <h2>
+        <xsl:choose>
+            <xsl:when test="$benchmark/cdf:title">
+                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$benchmark/@id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </h2>
+
+    <div class="col-md-12 well well-lg horizontal-scroll">
+        <xsl:if test="$benchmark/cdf:front-matter">
+            <div class="front-matter">
+                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </div>
+        </xsl:if>
+        <xsl:if test="$benchmark/cdf:description">
+            <div class="description">
+                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </div>
+        </xsl:if>
+        <xsl:if test="$benchmark/cdf:notice">
+            <div class="top-spacer-10">
+                <xsl:for-each select="$benchmark/cdf:notice">
+                    <div class="alert alert-info">
+                        <xsl:apply-templates mode="sub-testresult" select=".">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:for-each>
+            </div>
+        </xsl:if>
+    </div>
+</xsl:template>
+
+<xsl:template name="rear-matter">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <div id="rear-matter">
+        <div class="row top-spacer-10">
+            <div class="col-md-12 well well-lg">
+                <xsl:if test="$benchmark/cdf:rear-matter">
+                    <div class="rear-matter">
+                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:rear-matter[1]">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:if>
+            </div>
+        </div>
+    </div>
 </xsl:template>
 
 <xsl:template name="warn-unresolved">

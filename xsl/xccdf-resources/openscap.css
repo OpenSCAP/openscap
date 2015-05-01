@@ -30,3 +30,13 @@ div.modal-body
     margin: 50px;
     padding: 0;
 }
+
+div.horizontal-scroll
+{
+    overflow-x: auto;
+}
+
+div.top-spacer-10
+{
+    margin-top: 10px;
+}

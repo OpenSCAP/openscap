@@ -208,7 +208,6 @@ struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *sourc
 {
 	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_source_free(source);
 		return NULL;
 	}
 

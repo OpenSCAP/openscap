@@ -54,6 +54,8 @@ EXTRA_DIST = \
 	test_float_comparison.oval.xml \
 	test_float_comparison.sh \
 	test_float_comparison.syschar.xml \
+	test_glob_to_regex.sh \
+	test_glob_to_regex.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
 	test_xmlns_missing.oval.xml \

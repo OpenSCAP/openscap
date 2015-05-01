@@ -410,6 +410,7 @@ struct cve_model *cve_model_parse_xml(const char *file)
 	rc = xmlTextReaderNextNode(reader);
 	if (rc == -1) {
 		xmlFreeTextReader(reader);
+		oscap_source_free(source);
 		return NULL;
 	}
 
