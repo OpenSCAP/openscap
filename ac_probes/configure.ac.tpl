@@ -42,7 +42,7 @@ AC_PROG_SWIG([])
 LT_CURRENT=12
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=2
+LT_REVISION=3
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
