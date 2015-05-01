@@ -39,6 +39,8 @@ EXTRA_DIST = \
 	test_ipv6_super_set_of.oval.xml \
 	test_ipv6_super_set_of.sh \
 	test_ipv6_super_set_of.syschar.xml \
+	test_invalid_regex.sh \
+	test_invalid_regex.xml \
 	test_envvar_insensitive_equals.oval.xml \
 	test_envvar_insensitive_equals.sh \
 	test_envvar_insensitive_equals.syschar.xml \
