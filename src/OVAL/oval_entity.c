@@ -319,6 +319,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			struct oval_consume_varref_context ctx = {.model = model, .variable = &variable, .value = &value};
 			return_code = oval_parser_text_value(reader, context, &oval_consume_varref, &ctx);
 		} else {
+			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			struct oval_definition_model *model = context->definition_model;
 			if (oval_version_cmp(oval_definition_model_get_schema_version(model), OVAL_VERSION(5.6)) > 0) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL, "The var_ref attribute for the var_ref entity "
@@ -331,7 +332,6 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 						"Could not found variable '%s' referenced by var_ref element.", varref);
 				return_code = 1;
 			} else {
-				varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 				oscap_free(varref);
 				varref = NULL;
 				value = NULL;
