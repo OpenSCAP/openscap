@@ -45,9 +45,24 @@ Authors:
     indent="no"
     omit-xml-declaration="yes"/>
 
+<xsl:template name="introduction">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <div id="introduction">
+        <div class="row">
+            <xsl:call-template name="show-title-front-matter-description-notices">
+                <xsl:with-param name="benchmark" select="$benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </div>
+    </div>
+</xsl:template>
+
 <xsl:template name="characteristics">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
 
     <div id="characteristics">
         <h2>Evaluation Characteristics</h2>
@@ -712,24 +727,24 @@ Authors:
                             <tr><td colspan="2"><div class="remediation-description">
                                 <span class="label label-success">Remediation description:</span>
                                 <div class="panel panel-default"><div class="panel-body">
-                                    <xsl:apply-templates mode="sub-testresult" select=".">
+                                    <xsl:call-template name="show-fixtext">
+                                        <xsl:with-param name="fixtext" select="."/>
                                         <xsl:with-param name="testresult" select="$testresult"/>
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
-                                    </xsl:apply-templates>
+                                    </xsl:call-template>
                                 </div></div>
                             </div></td></tr>
                         </xsl:for-each>
                         <xsl:for-each select="$item/cdf:fix">
                             <tr><td colspan="2"><div class="remediation">
                                 <span class="label label-success">Remediation script:</span>
-                                <pre><code>
-                                    <xsl:apply-templates mode="sub-testresult" select=".">
-                                        <xsl:with-param name="testresult" select="$testresult"/>
-                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                        <xsl:with-param name="profile" select="$profile"/>
-                                    </xsl:apply-templates>
-                                </code></pre>
+                                <xsl:call-template name="show-fix">
+                                    <xsl:with-param name="fix" select="."/>
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:call-template>
                             </div></td></tr>
                         </xsl:for-each>
                     </xsl:if>
@@ -802,6 +817,10 @@ Authors:
     <xsl:call-template name="xccdf-report-header"/>
 
     <div class="container"><div id="content">
+        <xsl:call-template name="introduction">
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
         <xsl:call-template name="characteristics">
             <xsl:with-param name="testresult" select="$testresult"/>
             <xsl:with-param name="benchmark" select="$benchmark"/>
@@ -819,6 +838,10 @@ Authors:
         </xsl:call-template>
         <xsl:call-template name="result-details">
             <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
+        <xsl:call-template name="rear-matter">
             <xsl:with-param name="benchmark" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>

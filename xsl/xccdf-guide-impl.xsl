@@ -50,54 +50,15 @@ Authors:
     <div id="introduction">
         <div class="row">
             <div class="col-md-8 well well-lg">
-                <h2>
-                    <xsl:choose>
-                        <xsl:when test="$benchmark/cdf:title">
-                            <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title[1]">
-                                <xsl:with-param name="benchmark" select="$benchmark"/>
-                                <xsl:with-param name="profile" select="$profile"/>
-                            </xsl:apply-templates>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="$benchmark/@id"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </h2>
+                <xsl:call-template name="show-title-front-matter-description-notices">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:call-template>
 
-                <xsl:if test="$benchmark/cdf:front-matter">
-                    <div class="front-matter">
-                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
-                            <xsl:with-param name="benchmark" select="$benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </div>
-                </xsl:if>
-                <xsl:if test="$benchmark/cdf:description">
-                    <h2>Description</h2>
-                    <div class="description">
-                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
-                            <xsl:with-param name="benchmark" select="$benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </div>
-                </xsl:if>
-                <xsl:if test="$benchmark/cdf:notice">
-                    <h2>Notices</h2>
-                    <xsl:for-each select="$benchmark/cdf:notice">
-                        <div class="alert alert-info">
-                            <xsl:apply-templates mode="sub-testresult" select=".">
-                                <xsl:with-param name="benchmark" select="$benchmark"/>
-                                <xsl:with-param name="profile" select="$profile"/>
-                            </xsl:apply-templates>
-                        </div>
-                    </xsl:for-each>
-                </xsl:if>
-
-                <h2>Selected profile</h2>
                 <table class="table table-bordered">
                     <xsl:if test="$profile/cdf:title">
                         <tr>
-                            <th>Title</th>
+                            <th>Profile Title</th>
                             <td>
                                 <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
                                     <xsl:with-param name="benchmark" select="$benchmark"/>
@@ -108,7 +69,7 @@ Authors:
                     </xsl:if>
 
                     <tr>
-                        <th>ID</th>
+                        <th>Profile ID</th>
                         <td>
                             <xsl:choose>
                                 <xsl:when test="$profile/@id">
@@ -161,12 +122,6 @@ Authors:
                 </xsl:choose>
             </div>
         </div>
-        <xsl:if test="$benchmark/cdf:notice">
-            <div class="row">
-                <div class="col-md-12 well well-lg">
-                </div>
-            </div>
-        </xsl:if>
     </div>
 </xsl:template>
 
@@ -258,21 +213,21 @@ Authors:
                 <xsl:for-each select="$item/cdf:fixtext">
                     <span class="label label-success">Remediation description:</span>
                     <div class="panel panel-default"><div class="panel-body">
-                        <xsl:apply-templates mode="sub-testresult" select=".">
+                        <xsl:call-template name="show-fixtext">
+                            <xsl:with-param name="fixtext" select="."/>
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
+                        </xsl:call-template>
                     </div></div>
                 </xsl:for-each>
 
                 <xsl:for-each select="$item/cdf:fix">
                     <span class="label label-success">Remediation script:</span>
-                    <pre><code>
-                        <xsl:apply-templates mode="sub-testresult" select=".">
-                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </code></pre>
+                    <xsl:call-template name="show-fix">
+                        <xsl:with-param name="fix" select="."/>
+                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:call-template>
                 </xsl:for-each>
             </td>
         </tr>
@@ -519,26 +474,6 @@ Authors:
                 </xsl:call-template>
             </tbody>
         </table>
-    </div>
-</xsl:template>
-
-<xsl:template name="rear-matter">
-    <xsl:param name="benchmark"/>
-    <xsl:param name="profile"/>
-
-    <div id="rear-matter">
-        <div class="row">
-            <div class="col-md-12 well well-lg">
-                <xsl:if test="$benchmark/cdf:rear-matter">
-                    <div class="rear-matter">
-                        <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:rear-matter[1]">
-                            <xsl:with-param name="benchmark" select="$benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </div>
-                </xsl:if>
-            </div>
-        </div>
     </div>
 </xsl:template>
 
