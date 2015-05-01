@@ -1,5 +1,12 @@
 # A horrible little script that builds and minifies CSS and JS we bundle with HTML report and guide
 
+for cmd in csstidy slimit; do
+	if ! type $cmd > /dev/null; then
+		echo "Please install '$cmd' utility"
+		exit 1
+	fi
+done
+
 ALL_CSS=`mktemp`
 ALL_CSS_MIN=`mktemp`
 ALL_JS=`mktemp`
