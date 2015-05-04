@@ -47,7 +47,7 @@ typedef enum {
 
 char *oval_glob_to_regex (const char *glob, int noescape)
 {
-	oscap_string *regex;
+	struct oscap_string *regex;
 	char * result;
 	char c;
 	int i = 0;
