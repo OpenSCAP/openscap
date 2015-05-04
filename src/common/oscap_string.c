@@ -27,9 +27,23 @@
 
 #define INITIAL_CAPACITY 64
 
-oscap_string *oscap_string_new() {
-	oscap_string *s;
-	s = malloc(sizeof(oscap_string));
+/**
+ * String with unlimited length
+ * contains:
+ * - pointer to data,
+ * - actual length of string,
+ * - capacity of allocated memory
+ */
+struct oscap_string {
+	char *str;
+	unsigned int length;
+	unsigned int capacity;
+};
+
+struct oscap_string *oscap_string_new()
+{
+	struct oscap_string *s;
+	s = malloc(sizeof(struct oscap_string));
 	if (s == NULL)
 		return NULL;
 	s->str = malloc(INITIAL_CAPACITY);
@@ -43,13 +57,13 @@ oscap_string *oscap_string_new() {
 	return s;
 }
 
-void oscap_string_free(oscap_string *s)
+void oscap_string_free(struct oscap_string *s)
 {
 	free(s->str);
 	free(s);
 }
 
-bool oscap_string_append_char(oscap_string *s, char c)
+bool oscap_string_append_char(struct oscap_string *s, char c)
 {
 	if (s == NULL)
 		return false;
@@ -63,7 +77,7 @@ bool oscap_string_append_char(oscap_string *s, char c)
 	return true;
 }
 
-bool oscap_string_append_string(oscap_string *s, const char *t)
+bool oscap_string_append_string(struct oscap_string *s, const char *t)
 {
 	if (s == NULL || t == NULL)
 		return false;
@@ -78,4 +92,9 @@ bool oscap_string_append_string(oscap_string *s, const char *t)
 	}
 	s->str[s->length] = '\0';
 	return true;
+}
+
+const char *oscap_string_get_cstr(const struct oscap_string *s)
+{
+	return s->str;
 }
