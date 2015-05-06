@@ -23,7 +23,6 @@
 #ifndef OSCAP_STRING_
 #define OSCAP_STRING_
 #include <stdlib.h>
-#include <stdbool.h>
 #include "util.h"
 
 OSCAP_HIDDEN_START;
@@ -44,17 +43,15 @@ void oscap_string_free(struct oscap_string *s);
  * Append a single char at the end of a string.
  * @param s string
  * @param c to append
- * @return true on succes, false on failure
  */
-bool oscap_string_append_char(struct oscap_string *s, char c);
+void oscap_string_append_char(struct oscap_string *s, char c);
 
 /**
  * Append multiple characters at the end of string.
  * @param s string
  * @param t to append
- * @return true on succes, false on failure
  */
-bool oscap_string_append_string(struct oscap_string *s, const char *t);
+void oscap_string_append_string(struct oscap_string *s, const char *t);
 
 /**
  * Get string data as constant pointer to char

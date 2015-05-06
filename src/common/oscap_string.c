@@ -22,7 +22,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include "oscap_string.h"
 
 #define INITIAL_CAPACITY 64
@@ -43,14 +42,8 @@ struct oscap_string {
 struct oscap_string *oscap_string_new()
 {
 	struct oscap_string *s;
-	s = malloc(sizeof(struct oscap_string));
-	if (s == NULL)
-		return NULL;
-	s->str = malloc(INITIAL_CAPACITY);
-	if (s->str == NULL) {
-		free(s);
-		return NULL;
-	}
+	s = oscap_alloc(sizeof(struct oscap_string));
+	s->str = oscap_alloc(INITIAL_CAPACITY);
 	s->str[0] = '\0';
 	s->length = 0;
 	s->capacity = INITIAL_CAPACITY;
@@ -59,39 +52,33 @@ struct oscap_string *oscap_string_new()
 
 void oscap_string_free(struct oscap_string *s)
 {
-	free(s->str);
-	free(s);
+	oscap_free(s->str);
+	oscap_free(s);
 }
 
-bool oscap_string_append_char(struct oscap_string *s, char c)
+void oscap_string_append_char(struct oscap_string *s, char c)
 {
 	if (s == NULL)
-		return false;
-	if (s->length + 1 >= s->capacity) {
-		if ((s->str = realloc(s->str, s->capacity + INITIAL_CAPACITY)) == NULL)
-			return false;
+		return;
+	if ((s->length + 1) + 1 > s->capacity) {
 		s->capacity += INITIAL_CAPACITY;
+		s->str = oscap_realloc(s->str, s->capacity);
 	}
 	s->str[s->length++] = c;
 	s->str[s->length] = '\0';
-	return true;
 }
 
-bool oscap_string_append_string(struct oscap_string *s, const char *t)
+void oscap_string_append_string(struct oscap_string *s, const char *t)
 {
 	if (s == NULL || t == NULL)
-		return false;
+		return;
 	int append_length = strlen(t);
-	if (s->length + append_length >= s->capacity)  {
-		if ((s->str = realloc(s->str, s->capacity + append_length)) == NULL)
-			return false;
+	if (s->length + append_length + 1 > s->capacity)  {
 		s->capacity += append_length;
+		s->str = oscap_realloc(s->str, s->capacity);
 	}
-	for (int i = 0; t[i] != '\0'; i++) {
-		s->str[s->length++] = t[i];
-	}
-	s->str[s->length] = '\0';
-	return true;
+	strcpy(s->str + s->length, t);
+	s->length += append_length;
 }
 
 const char *oscap_string_get_cstr(const struct oscap_string *s)
