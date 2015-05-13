@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include "util.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Create a new string.
@@ -60,6 +59,5 @@ void oscap_string_append_string(struct oscap_string *s, const char *t);
  */
 const char *oscap_string_get_cstr(const struct oscap_string *s);
 
-OSCAP_HIDDEN_END;
 
 #endif
