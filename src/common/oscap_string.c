@@ -20,6 +20,10 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include "oscap_string.h"
@@ -35,8 +39,8 @@
  */
 struct oscap_string {
 	char *str;
-	unsigned int length;
-	unsigned int capacity;
+	size_t length;
+	size_t capacity;
 };
 
 struct oscap_string *oscap_string_new()
@@ -61,7 +65,12 @@ void oscap_string_append_char(struct oscap_string *s, char c)
 	if (s == NULL)
 		return;
 	if ((s->length + 1) + 1 > s->capacity) {
-		s->capacity += INITIAL_CAPACITY;
+		/* Aligning allocated memory to multiples of INITIAL_CAPACITY.
+		 * We pass to realloc the nearest greater muliple of INITIAL_CAPACITY
+		 * rather than only needed capacity in order to not fragment
+		 * the memory.
+		 */
+		s->capacity = (s->capacity / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
 		s->str = oscap_realloc(s->str, s->capacity);
 	}
 	s->str[s->length++] = c;
@@ -72,11 +81,17 @@ void oscap_string_append_string(struct oscap_string *s, const char *t)
 {
 	if (s == NULL || t == NULL)
 		return;
-	int append_length = strlen(t);
+	const size_t append_length = strlen(t);
 	if (s->length + append_length + 1 > s->capacity)  {
-		s->capacity += append_length;
+		/* Aligning allocated memory to multiples of INITIAL_CAPACITY.
+		 * We pass to realloc the nearest greater muliple of INITIAL_CAPACITY
+		 * rather than only needed capacity in order to not fragment
+		 * the memory.
+		 */
+		s->capacity = ((s->capacity + append_length - 1) / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
 		s->str = oscap_realloc(s->str, s->capacity);
 	}
+	// Terminating null byte is included by strcpy
 	strcpy(s->str + s->length, t);
 	s->length += append_length;
 }
