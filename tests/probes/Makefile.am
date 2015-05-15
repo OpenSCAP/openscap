@@ -53,6 +53,9 @@ endif
 if probe_fileextendedattribute_enabled
 UNIX_SUBDIRS += fileextendedattribute
 endif
+if probe_symlink_enabled
+UNIX_SUBDIRS += symlink
+endif
 endif
 
 if WANT_PROBES_LINUX
