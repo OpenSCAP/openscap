@@ -90,7 +90,8 @@ oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_PROCESS58, "process58"),
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"),
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable")
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYMLINK, "symlink")
 };
 
 #define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
