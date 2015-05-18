@@ -60,7 +60,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 			SEXP_free(msg);
 		} else {
 			/* error */
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
 			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
@@ -89,7 +89,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	r = readlink(pathname, linkname, sb.st_size + 1);
 	if (r == -1) {
 		/* error - readlink() failed */
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
+		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
@@ -117,7 +117,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 				"Link target '%s' is a circular link.", linkname);
 		} else {
-			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
+			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
 		}
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
