@@ -78,7 +78,15 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	}
 
 	linkname = oscap_alloc(sb.st_size + 1); // we need one byte more for a null byte
-	r = readlink(pathname, linkname, sb.st_size);
+
+	/* We pass to readlink() that buffer size is "sb.st_size + 1", even it seems
+	 * logical to put there "sb.st_size" and have a place for a null byte.
+	 * If readlink uses all the buffer, there won't rest a place for a null
+	 * byte, but we can easily detect that symlink increased in size
+	 * between calling lstat() and readlink() by checking the return value.
+	 * The return value "r" means number of bytes placed in "linkname" buffer.
+	 * If r > sb.st_size, the data race is recognized. */
+	r = readlink(pathname, linkname, sb.st_size + 1);
 	if (r == -1) {
 		/* error - readlink() failed */
 		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
