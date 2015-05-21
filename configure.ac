@@ -606,7 +606,7 @@ AC_CHECK_HEADERS([dbus/dbus.h string.h ],[],[probe_systemdunitdependency_req_dep
 
 echo
 echo ' * Checking presence of required headers for the symlink probe'
-AC_CHECK_HEADERS([errno.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_symlink_req_deps_ok=no; probe_symlink_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([errno.h limits.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_symlink_req_deps_ok=no; probe_symlink_req_deps_missing='header files'],[-])
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 

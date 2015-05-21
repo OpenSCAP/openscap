@@ -37,6 +37,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
 
 static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 {
@@ -44,11 +46,13 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	const char *pathname;
 	struct stat sb;
 	char *linkname;
-	ssize_t r;
 
 	ent_val = probe_ent_getval(ent);
 	pathname = SEXP_string_cstr(ent_val);
 	SEXP_free(ent_val);
+	if (pathname == NULL) {
+		return PROBE_EINVAL;
+	}
 
 	if (lstat(pathname, &sb) == -1) {
 		if (errno == ENOENT) {
@@ -56,17 +60,16 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 			 * Resulting item should have a status of "does not exist". */
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_INFO,
 				"File '%s' does not exist.", pathname);
-			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-			SEXP_free(msg);
 		} else {
 			/* error */
 			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
-			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 		}
+		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+		SEXP_free(msg);
 		return 0;
 	}
+
 	if (!S_ISLNK(sb.st_mode)) {
 		/* File is not a symlink.
 		 * Resulting item should have a status "does not exist". */
@@ -77,54 +80,23 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 		return 0;
 	}
 
-	linkname = oscap_alloc(sb.st_size + 1); // we need one byte more for a null byte
-
-	/* We pass to readlink() that buffer size is "sb.st_size + 1", even it seems
-	 * logical to put there "sb.st_size" and have a place for a null byte.
-	 * If readlink uses all the buffer, there won't rest a place for a null
-	 * byte, but we can easily detect that symlink increased in size
-	 * between calling lstat() and readlink() by checking the return value.
-	 * The return value "r" means number of bytes placed in "linkname" buffer.
-	 * If r > sb.st_size, the data race is recognized. */
-	r = readlink(pathname, linkname, sb.st_size + 1);
-	if (r == -1) {
-		/* error - readlink() failed */
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
-		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-		oscap_free(linkname);
-		return 0;
-	}
-	if (r > sb.st_size) {
-		/* error - data race */
-		msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR,
-			"Symlink increased in size between lstat() and readlink()");
-		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-		oscap_free(linkname);
-		return 0;
-	}
-	linkname[r] = '\0'; // readlink does not append a null byte to its output
-
-	/* we need to verify the symlink target */
-	if (stat(linkname, &sb) == -1) {
+	linkname = realpath(pathname, NULL);
+	if (linkname == NULL) {
 		if (errno == ENOENT) {
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				"Link target '%s' does not exist.", linkname);
+				"Link target of symlink '%s' does not exist.", pathname);
 		} else if (errno == ELOOP) {
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				"Link target '%s' is a circular link.", linkname);
+				"Link '%s' is a circular link.", pathname);
 		} else {
 			msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_ERROR, strerror(errno));
 		}
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-		oscap_free(linkname);
 		return 0;
 	}
+
 
 	item_sexp = probe_item_create(OVAL_UNIX_SYMLINK, NULL,
 			"filepath", OVAL_DATATYPE_STRING, pathname,
