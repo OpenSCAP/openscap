@@ -17,4 +17,4 @@ TESTS = all.sh
 EXTRA_DIST = \
 	all.sh \
 	test_probes_symlink.sh \
-	test_probes_symlink.xml
+	test_probes_symlink.xml.sh
