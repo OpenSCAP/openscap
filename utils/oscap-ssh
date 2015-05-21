@@ -91,24 +91,33 @@ fi
 
 SSH_HOST="$1"
 SSH_PORT="$2"
+shift 2
+rargs=''
 
-if [ "$3" == "--v" ] || [ "$3" == "--version" ]; then
-    true
-elif [ "$3" == "-h" ] || [ "$3" == "--help" ]; then
-    true
-elif [ "$3" == "info" ]; then
-    true
-elif [ "$3 $4" == "xccdf eval" ]; then
-    true
-elif [ "$3 $4" == "oval eval" ]; then
-    true
-elif [ "$3 $4" == "oval collect" ]; then
-    true
+IDX=1
+if [ "$1" == "--v" ] || [ "$1" == "--version" ]; then
+    rargs[0]="$1"
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    rargs[0]="$1"
+elif [ "$1" == "info" ]; then
+    rargs[0]="$1"
+elif [ "$1 $2" == "xccdf eval" ]; then
+    rargs[0]="$1"
+    rargs[1]="$2"
+    ((IDX++)) ; shift
+elif [ "$1 $2" == "oval eval" ]; then
+    rargs[0]="$1"
+    rargs[1]="$2"
+    ((IDX++)) ; shift
+elif [ "$1 $2" == "oval collect" ]; then
+    rargs[0]="$1"
+    rargs[1]="$2"
+    ((IDX++)) ; shift
 else
     die "This script only supports '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
 fi
 
-shift 2
+shift
 
 MASTER_SOCKET_DIR=$(mktemp -d)
 MASTER_SOCKET="$MASTER_SOCKET_DIR/ssh_socket"
@@ -119,11 +128,10 @@ echo "Connected!"
 
 REMOTE_TEMP_DIR=$(ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" mktemp -d) || die "Failed to create remote temporary directory!"
 
-args=("$@")
-
 LOCAL_CONTENT_PATH=""
 LOCAL_TAILORING_PATH=""
 LOCAL_CPE_PATH=""
+REMOTE_CPE_PATH=""
 LOCAL_VARIABLES_PATH=""
 LOCAL_DIRECTIVES_PATH=""
 TARGET_RESULTS=""
@@ -132,52 +140,79 @@ TARGET_REPORT=""
 TARGET_SYSCHAR=""
 
 # We have to rewrite various paths to a remote temp dir
-for i in $(seq 0 `expr $# - 1`); do
-    let j=i+1
-
-    case "${args[i]}" in
-    ("--tailoring-file")
-        LOCAL_TAILORING_PATH=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/tailoring.xml"
-      ;;
-    ("--cpe")
-        LOCAL_CPE_PATH=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/cpe.xml"
-      ;;
-    ("--variables")
-        LOCAL_VARIABLES_PATH=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/variables.xml"
-      ;;
-    ("--directives")
-        LOCAL_DIRECTIVES_PATH=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/directives.xml"
-      ;;
-    ("--results")
-        TARGET_RESULTS=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/results.xml"
-      ;;
-    ("--results-arf")
-        TARGET_RESULTS_ARF=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/results-arf.xml"
-      ;;
-    ("--report")
-        TARGET_REPORT=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/report.html"
-      ;;
-    ("--syschar")
-        TARGET_SYSCHAR=${args[j]}
-        args[j]="$REMOTE_TEMP_DIR/syschar.xml"
-      ;;
-    *)
-      ;;
+while [ -n "$1" ]; do
+    key="$1"
+    case "$key" in
+        ("--profile")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            rargs[$IDX]="$1"
+            ;;
+        ("--tailoring-file")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            LOCAL_TAILORING_PATH="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/tailoring.xml"
+            ;;
+        ("--cpe")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            LOCAL_CPE_PATH="$1"
+            REMOTE_CPE_PATH="$REMOTE_TEMP_DIR/`basename $LOCAL_CPE_PATH`"
+            rargs[$IDX]="$REMOTE_CPE_PATH"
+            ;;
+        ("--variables")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            LOCAL_VARIABLES_PATH="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/variables.xml"
+            ;;
+        ("--directives")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            LOCAL_DIRECTIVES_PATH="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/directives.xml"
+            ;;
+        ("--results")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            TARGET_RESULTS="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/results.xml"
+            ;;
+        ("--results-arf")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            TARGET_RESULTS_ARF="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/results-arf.xml"
+            ;;
+        ("--report")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            TARGET_REPORT="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/report.html"
+            ;;
+        ("--syschar")
+            rargs[$IDX]=$key
+            ((IDX++)) ; shift
+            TARGET_SYSCHAR="$1"
+            rargs[$IDX]="$REMOTE_TEMP_DIR/syschar.xml"
+            ;;
+        *)
+            # This is a major step backwards in error handling;
+            # any unknown arg is taken to be LOCAL_CONTENT_PATH
+            break
+            ;;
     esac
+    ((IDX++)) ; shift
 done
 
 if [ "$1" != "--v" ] && [ "$1" != "--version" ] && [ "$1" != "-h" ] && [ "$1" != "--help" ]; then
     # Last argument should be the content path
-    LOCAL_CONTENT_PATH="${args[`expr $# - 1`]}"
-    args[`expr $# - 1`]="$REMOTE_TEMP_DIR/input.xml"
+    LOCAL_CONTENT_PATH="$1"
+    shift
+    rargs[$IDX]="$REMOTE_TEMP_DIR/input.xml"
 fi
+echo ${rargs[@]}
 
 [ "$LOCAL_CONTENT_PATH" == "" ] || [ -f "$LOCAL_CONTENT_PATH" ] || die "Expected the last argument to be an input file, '$LOCAL_CONTENT_PATH' isn't a valid file path or the file doesn't exist!"
 [ "$LOCAL_TAILORING_PATH" == "" ] || [ -f "$LOCAL_TAILORING_PATH" ] || die "Tailoring file path '$LOCAL_TAILORING_PATH' isn't a valid file path or the file doesn't exist!"
@@ -194,8 +229,8 @@ if [ "$LOCAL_TAILORING_PATH" != "" ]; then
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
 fi
 if [ "$LOCAL_CPE_PATH" != "" ]; then
-    echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CPE_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/cpe.xml" || die "Failed to copy CPE file to remote temporary directory!"
+    echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_CPE_PATH'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CPE_PATH" "$SSH_HOST:$REMOTE_CPE_PATH" || die "Failed to copy CPE file to remote temporary directory!"
 fi
 if [ "$LOCAL_VARIABLES_PATH" != "" ]; then
     echo "Copying OVAL variables file '$LOCAL_VARIABLES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
@@ -206,8 +241,17 @@ if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_DIRECTIVES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/directives.xml" || die "Failed to copy OVAL directives file to remote temporary directory!"
 fi
 
+# extra files to be copied to remote machine added after LOCAL_CONTENT_PATH
+while [[ $# > 0 ]]; do
+    LOCAL_FILE="$1"
+    TARGET_FILE="$REMOTE_TEMP_DIR/`basename $LOCAL_FILE`"
+    echo "Copying local file '$LOCAL_FILE' to remote working directory '$TARGET_FILE'..."
+    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_FILE" "$SSH_HOST:$TARGET_FILE" || die "Failed to copy local file '$LOCAL_FILE' to remote temporary directory!"
+    shift
+done
+
 echo "Starting the evaluation..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "oscap ${args[@]}"
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "oscap ${rargs[@]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
