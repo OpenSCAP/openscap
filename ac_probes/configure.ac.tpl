@@ -599,6 +599,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/uname/Makefile
                  tests/probes/shadow/Makefile
 		tests/probes/sql57/Makefile
+		tests/probes/symlink/Makefile
                  tests/probes/family/Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile

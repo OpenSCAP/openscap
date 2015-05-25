@@ -170,6 +170,11 @@ pkglibexec_PROGRAMS += probe_routingtable
 probe_routingtable_SOURCES= unix/routingtable.c
 endif
 
+if probe_symlink_enabled
+pkglibexec_PROGRAMS += probe_symlink
+probe_symlink_SOURCES = unix/symlink.c
+endif
+
 if probe_gconf_enabled
 pkglibexec_PROGRAMS += probe_gconf
 probe_gconf_SOURCES= unix/gconf.c

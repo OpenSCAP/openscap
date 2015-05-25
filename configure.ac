@@ -257,6 +257,10 @@ probe_systemdunitdependency_req_deps_ok=yes
 probe_systemdunitdependency_req_deps_missing=
 probe_systemdunitdependency_opt_deps_ok=yes
 probe_systemdunitdependency_opt_deps_missing=
+probe_symlink_req_deps_ok=yes
+probe_symlink_req_deps_missing=
+probe_symlink_opt_deps_ok=yes
+probe_symlink_opt_deps_missing=
 
 #
 # env
@@ -599,6 +603,10 @@ AC_CHECK_HEADERS([dbus/dbus.h string.h ],[],[probe_systemdunitproperty_req_deps_
 echo
 echo ' * Checking presence of required headers for the systemdunitdependency probe'
 AC_CHECK_HEADERS([dbus/dbus.h string.h ],[],[probe_systemdunitdependency_req_deps_ok=no; probe_systemdunitdependency_req_deps_missing='header files'],[-])
+
+echo
+echo ' * Checking presence of required headers for the symlink probe'
+AC_CHECK_HEADERS([errno.h limits.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_symlink_req_deps_ok=no; probe_symlink_req_deps_missing='header files'],[-])
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 
@@ -1335,6 +1343,8 @@ AM_CONDITIONAL([probe_systemdunitproperty_enabled], test "$probe_systemdunitprop
 probe_systemdunitproperty_enabled=$probe_systemdunitproperty_req_deps_ok
 AM_CONDITIONAL([probe_systemdunitdependency_enabled], test "$probe_systemdunitdependency_req_deps_ok" = yes)
 probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
+AM_CONDITIONAL([probe_symlink_enabled], test "$probe_symlink_req_deps_ok" = yes)
+probe_symlink_enabled=$probe_symlink_req_deps_ok
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
@@ -1402,6 +1412,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/uname/Makefile
                  tests/probes/shadow/Makefile
 		tests/probes/sql57/Makefile
+		tests/probes/symlink/Makefile
                  tests/probes/family/Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
@@ -1752,6 +1763,12 @@ else
   probe_systemdunitdependency_table_result="NO (missing: $probe_systemdunitdependency_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "systemdunitdependency:" "$probe_systemdunitdependency_table_result"
+if test "$probe_symlink_req_deps_ok" = "yes"; then
+  probe_symlink_table_result="yes"
+else
+  probe_symlink_table_result="NO (missing: $probe_symlink_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "symlink:" "$probe_symlink_table_result"
 echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
