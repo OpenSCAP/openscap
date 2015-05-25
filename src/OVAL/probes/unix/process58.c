@@ -371,7 +371,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 
 	oval_version = probe_obj_get_schema_version(probe_ctx_getobject(ctx));
 	if (oval_version_cmp(oval_version, OVAL_VERSION(5.11)) < 0) {
-		max_cap_id = OVAL_5_10_MAX_CAP_ID;
+		max_cap_id = OVAL_5_8_MAX_CAP_ID;
 	} else {
 		max_cap_id = OVAL_5_11_MAX_CAP_ID;
 	}

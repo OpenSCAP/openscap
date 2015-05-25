@@ -1,6 +1,6 @@
 /* map based on OVAL and /usr/include/linux/capability.h
  * not all capabilities from capability.h are allowed in OVAL */
-#define OVAL_5_10_MAX_CAP_ID 33
+#define OVAL_5_8_MAX_CAP_ID 33
 #define OVAL_5_11_MAX_CAP_ID 38
 static const struct oscap_string_map CapabilityType[] = {
 {0, "CAP_CHOWN"},
