@@ -36,6 +36,7 @@ static const struct oscap_string_map CapabilityType[] = {
 {31, "CAP_SETFCAP"},
 {32, "CAP_MAC_OVERRIDE"},
 {33, "CAP_MAC_ADMIN"},
+/* New capabilities in OVAL 5.11 */
 {34, "CAP_SYS_PACCT"},
 {35, "CAP_SYSLOG"},
 {36, "CAP_WAKE_ALARM"},
