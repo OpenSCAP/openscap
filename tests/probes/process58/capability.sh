@@ -10,11 +10,11 @@ echo "stderr file: $stderr"
 
 echo "Eval:"
 $OSCAP oval eval --results $result $srcdir/$name.oval.xml 2> $stderr
-[ -f $stderr ];
+[ ! -s $stderr ]
 
 rm $stderr
 
-[ -f $result ]
+[ -s $result ]
 assert_exists 1 '/oval_results/results/system/definitions/definition[@result="true"]'
 assert_exists 1 '/oval_results/results/system/oval_system_characteristics/collected_objects/object[@flag="complete"]'
 assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:process58_item'
