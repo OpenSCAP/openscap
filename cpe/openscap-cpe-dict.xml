@@ -29,6 +29,18 @@
             <title xml:lang="en-us">Community Enterprise Operating System 7</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1007</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:5">
+            <title xml:lang="en-us">Scientific Linux 5</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1008</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:6">
+            <title xml:lang="en-us">Scientific Linux 6</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1009</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:7">
+            <title xml:lang="en-us">Scientific Linux 7</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1010</check>
+      </cpe-item>
       <cpe-item name="cpe:/o:fedoraproject:fedora:16">
             <title xml:lang="en-us">Fedora 16</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:16</check>
