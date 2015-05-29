@@ -31,7 +31,29 @@ function test_probes_file {
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 204
 	ret_val=$?
-    else 
+    else
+	ret_val=1
+    fi
+
+    return $ret_val
+}
+
+function test_recurse {
+
+    probecheck "file" || return 255
+
+    local ret_val=0
+    local DF="$srcdir/test_recurse.xml"
+    local RF="results.xml"
+
+    [ -f $RF ] && rm -f $RF
+
+    $OSCAP oval eval --results $RF $DF
+
+    if [ -f $RF ]; then
+	verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF 1
+	ret_val=$?
+    else
 	ret_val=1
     fi
 
@@ -43,5 +65,6 @@ function test_probes_file {
 test_init "test_probes_file.log"
 
 test_run "test_probes_file" test_probes_file
+test_run "test recurse_file_system=defined" test_recurse
 
 test_exit
