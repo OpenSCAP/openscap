@@ -109,6 +109,15 @@ struct oval_variable_possible_value *oval_variable_possible_value_new(const char
 	return pv;
 }
 
+void oval_variable_possible_value_free(struct oval_variable_possible_value *pv)
+{
+	if (pv != NULL) {
+		oscap_free(pv->hint);
+		oscap_free(pv->value);
+		oscap_free(pv);
+	}
+}
+
 struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t operator, const char *hint)
 {
 	struct oval_variable_possible_restriction *pr;
@@ -119,6 +128,17 @@ struct oval_variable_possible_restriction *oval_variable_possible_restriction_ne
 	return pr;
 }
 
+void oval_variable_possible_restriction_free(struct oval_variable_possible_restriction *pr)
+{
+	if (pr != NULL) {
+		oscap_free(pr->hint);
+		if (pr->restrictions != NULL) {
+			oval_collection_free_items(pr->restrictions, (oscap_destruct_func) oval_variable_restriction_free);
+		}
+		oscap_free(pr);
+	}
+}
+
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
 {
 	struct oval_variable_restriction *r;
@@ -126,6 +146,14 @@ struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t
 	r->operation = operation;
 	r->value = oscap_strdup(value);
 	return r;
+}
+
+void oval_variable_restriction_free(struct oval_variable_restriction *r)
+{
+	if (r != NULL) {
+		oscap_free(r->value);
+		oscap_free(r);
+	}
 }
 
 void oval_variable_possible_restriction_add_restriction(struct oval_variable_possible_restriction *pr, struct oval_variable_restriction *r)
@@ -589,37 +617,6 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 	}
 	return new_variable;
 }
-
-void oval_variable_possible_value_free(struct oval_variable_possible_value *pv)
-{
-	if (pv != NULL) {
-		oscap_free(pv->hint);
-		oscap_free(pv->value);
-		oscap_free(pv);
-	}
-}
-
-
-void oval_variable_restriction_free(struct oval_variable_restriction *r)
-{
-	if (r != NULL) {
-		oscap_free(r->value);
-		oscap_free(r);
-	}
-}
-
-void oval_variable_possible_restriction_free(struct oval_variable_possible_restriction *pr)
-{
-	if (pr != NULL) {
-		oscap_free(pr->hint);
-		if (pr->restrictions != NULL) {
-			oval_collection_free_items(pr->restrictions, (oscap_destruct_func) oval_variable_restriction_free);
-		}
-		oscap_free(pr);
-	}
-}
-
-
 
 void oval_variable_free(struct oval_variable *variable)
 {
