@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+  <generator>
+    <oval:product_name>human</oval:product_name>
+    <oval:product_version>0.99</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2015-05-29T00:00:00-00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+
+    <definition class="compliance" version="1" id="oval:1:def:1"> <!-- comment="true" -->
+      <metadata>
+        <title>Verify recurse_file_system="defined"</title>
+        <description>This will scan the "/" filesystem, but it should not
+            traverse into any other filesystems that are mounted
+            to the '/' file system (e.g. /proc, etc.).</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:1:tst:1"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+      <file_test version="1" id="oval:1:tst:1" check="none satisfy" comment="check all files in root filesystem" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"> <!-- comment="true" -->
+        <object object_ref="oval:1:obj:1"/>
+        <state state_ref="oval:1:ste:1"/>
+    </file_test>
+  </tests>
+
+  <objects>
+    <file_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <behaviors max_depth="2" recurse="directories" recurse_direction="down" recurse_file_system="defined"/>
+      <path>/</path>
+      <filename xsi:nil="true"/>
+    </file_object>
+  </objects>
+
+  <states>
+      <file_state version="1" id="oval:1:ste:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+          <path>/proc/</path>
+          <filename operation="pattern match">.*</filename>
+      </file_state>
+  </states>
+
+</oval_definitions>
+
