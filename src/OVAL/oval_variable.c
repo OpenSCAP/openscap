@@ -263,16 +263,9 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 
 struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable)
 {
-	struct oval_collection *possible_values;
-	__attribute__nonnull__(variable);
 	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
 		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
-		possible_values = var->possible_values;
-	} else {
-		possible_values = NULL;
-	}
-	if (possible_values != NULL) {
-		return oval_collection_iterator(possible_values);
+		return oval_collection_iterator(var->possible_values);
 	} else {
 		return oval_collection_iterator_new();
 	}
@@ -280,16 +273,9 @@ struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *va
 
 struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable)
 {
-	struct oval_collection *possible_restrictions;
-	__attribute__nonnull__(variable);
 	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
 		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
-		possible_restrictions = var->possible_restrictions;
-	} else {
-		possible_restrictions = NULL;
-	}
-	if (possible_restrictions != NULL) {
-		return oval_collection_iterator(possible_restrictions);
+		return oval_collection_iterator(var->possible_restrictions);
 	} else {
 		return oval_collection_iterator_new();
 	}
@@ -297,14 +283,7 @@ struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variab
 
 struct oval_iterator *oval_variable_get_restrictions(struct oval_variable_possible_restriction *possible_restriction)
 {
-	struct oval_collection *restrictions;
-	__attribute__nonnull__(possible_restriction);
-	restrictions = possible_restriction->restrictions;
-	if (restrictions != NULL) {
-		return oval_collection_iterator(restrictions);
-	} else {
-		return oval_collection_iterator_new();
-	}
+	return oval_collection_iterator(possible_restriction->restrictions);
 }
 
 bool oval_variable_contains_value(struct oval_variable *variable, const char* o_value_text)
