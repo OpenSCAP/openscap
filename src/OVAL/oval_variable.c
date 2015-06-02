@@ -991,19 +991,23 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	struct oval_iterator *possible_restrictions = oval_variable_get_possible_restrictions(variable);
 	while (oval_collection_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_collection_iterator_next(possible_restrictions);
-		xmlNode *possible_restriction_node = xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "possible_restriction", NULL);
-
-		/* Attribute "operator" is new in OVAL 5.11, we don't serialize it in older OVAL versions */
-		if (oval_version_cmp(oval_definition_model_get_schema_version(variable->model), OVAL_VERSION(5.11)) >= 0) {
-			xmlNewProp(possible_restriction_node, BAD_CAST "operator", BAD_CAST oval_operator_get_text(pr->operator));
-		}
-
-		xmlNewProp(possible_restriction_node, BAD_CAST "hint", BAD_CAST pr->hint);
 		struct oval_iterator *restrictions = oval_variable_get_restrictions(pr);
-		while (oval_collection_iterator_has_more(restrictions)) {
-			struct oval_variable_restriction *r = oval_collection_iterator_next(restrictions);
-			xmlNode *restriction_node = xmlNewTextChild(possible_restriction_node, ns_definitions, BAD_CAST "restriction", BAD_CAST r->value);
-			xmlNewProp(restriction_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(r->operation));
+		/* Create "possible_restriction" node only if there will be some
+		 * "restriction" children, because each "possible_restriction"
+		 * node must have at least one "restriction" child.
+		 */
+		if (oval_collection_iterator_has_more(restrictions)) {
+			xmlNode *possible_restriction_node = xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "possible_restriction", NULL);
+			/* Attribute "operator" is new in OVAL 5.11, we don't serialize it in older OVAL versions */
+			if (oval_version_cmp(oval_definition_model_get_schema_version(variable->model), OVAL_VERSION(5.11)) >= 0) {
+				xmlNewProp(possible_restriction_node, BAD_CAST "operator", BAD_CAST oval_operator_get_text(pr->operator));
+			}
+			xmlNewProp(possible_restriction_node, BAD_CAST "hint", BAD_CAST pr->hint);
+			while (oval_collection_iterator_has_more(restrictions)) {
+				struct oval_variable_restriction *r = oval_collection_iterator_next(restrictions);
+				xmlNode *restriction_node = xmlNewTextChild(possible_restriction_node, ns_definitions, BAD_CAST "restriction", BAD_CAST r->value);
+				xmlNewProp(restriction_node, BAD_CAST "operation", BAD_CAST oval_operation_get_text(r->operation));
+			}
 		}
 		oval_collection_iterator_free(restrictions);
 	}
