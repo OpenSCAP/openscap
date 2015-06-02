@@ -132,9 +132,7 @@ void oval_variable_possible_restriction_free(struct oval_variable_possible_restr
 {
 	if (pr != NULL) {
 		oscap_free(pr->hint);
-		if (pr->restrictions != NULL) {
-			oval_collection_free_items(pr->restrictions, (oscap_destruct_func) oval_variable_restriction_free);
-		}
+		oval_collection_free_items(pr->restrictions, (oscap_destruct_func) oval_variable_restriction_free);
 		oscap_free(pr);
 	}
 }
