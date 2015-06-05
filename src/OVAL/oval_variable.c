@@ -137,6 +137,13 @@ void oval_variable_possible_restriction_free(struct oval_variable_possible_restr
 	}
 }
 
+void oval_variable_possible_restriction_add_restriction(struct oval_variable_possible_restriction *pr, struct oval_variable_restriction *r)
+{
+	__attribute__nonnull__(pr);
+	__attribute__nonnull__(r);
+	oval_collection_add(pr->restrictions, r);
+}
+
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
 {
 	struct oval_variable_restriction *r;
@@ -152,13 +159,6 @@ void oval_variable_restriction_free(struct oval_variable_restriction *r)
 		oscap_free(r->value);
 		oscap_free(r);
 	}
-}
-
-void oval_variable_possible_restriction_add_restriction(struct oval_variable_possible_restriction *pr, struct oval_variable_restriction *r)
-{
-	__attribute__nonnull__(pr);
-	__attribute__nonnull__(r);
-	oval_collection_add(pr->restrictions, r);
 }
 
 bool oval_variable_iterator_has_more(struct oval_variable_iterator
