@@ -542,9 +542,6 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 				new_pr = oval_variable_possible_restriction_new(old_pr->operator, old_pr->hint);
 				struct oval_iterator *old_r_itr;
 				old_r_itr = oval_variable_possible_restriction_get_restrictions(old_pr);
-				if (oval_collection_iterator_has_more(old_r_itr)) {
-					new_pr->restrictions = oval_collection_new();
-				}
 				while (oval_collection_iterator_has_more(old_r_itr)) {
 					struct oval_variable_restriction *old_r, *new_r;
 					old_r = oval_collection_iterator_next(old_r_itr);
