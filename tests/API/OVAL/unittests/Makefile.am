@@ -48,6 +48,9 @@ EXTRA_DIST = \
 	test_evr_string_comparison.oval.xml \
 	test_evr_string_comparison.sh \
 	test_evr_string_comparison.syschar.xml \
+	test_external_variable.oval.xml \
+	test_external_variable.sh \
+	linux-external-variables.xml \
 	test_filecontent_line.oval.xml \
 	test_filecontent_line.sh \
 	test_filecontent_line.syschar.xml \
