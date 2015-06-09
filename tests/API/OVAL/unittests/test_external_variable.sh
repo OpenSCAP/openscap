@@ -9,8 +9,8 @@ stderr=$(mktemp ${name}.err.XXXXXX)
 echo "stderr file: $stderr"
 
 $OSCAP oval eval --results $result $srcdir/$name.oval.xml 2> $stderr
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-[ -f $result ]
+[ ! -s $stderr ] && rm $stderr
+[ -s $result ]
 
 assert_exists 4 '/oval_results/oval_definitions/variables/external_variable'
 assert_exists 1 '/oval_results/oval_definitions/variables/external_variable[@id="oval:x:var:1"]'
