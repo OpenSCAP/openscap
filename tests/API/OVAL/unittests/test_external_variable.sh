@@ -8,7 +8,7 @@ echo "result file: $result"
 stderr=$(mktemp ${name}.err.XXXXXX)
 echo "stderr file: $stderr"
 
-$OSCAP oval eval --results $result $srcdir/$name.oval.xml --variables $srcdir/linux-external-variables.xml 2> $stderr
+$OSCAP oval eval --results $result $srcdir/$name.oval.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f $result ]
 
