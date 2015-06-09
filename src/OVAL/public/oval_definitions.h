@@ -1718,6 +1718,22 @@ void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//typ
 void oval_variable_clear_values(struct oval_variable *);
 
 /**
+ * Add a new possible value to an external variable.
+ * @param variable Variable to add.
+ * @param pv The new possible_value.
+ * @memberof oval_variable
+ */
+void oval_variable_add_possible_value(struct oval_variable *variable, struct oval_variable_possible_value *pv);
+
+/**
+ * Add a new possible restriction to an external variable.
+ * @param variable Variable to add.
+ * @param pr The new possible_restriction.
+ * @memberof oval_variable
+ */
+void oval_variable_add_possible_restriction(struct oval_variable *variable, struct oval_variable_possible_restriction *pr);
+
+/**
  * Add a restriction to the list of possible restrictions.
  * @param pr A possible_restriction type
  * @param r Restriction which will be added
