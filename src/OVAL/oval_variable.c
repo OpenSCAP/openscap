@@ -144,6 +144,11 @@ void oval_variable_possible_restriction_add_restriction(struct oval_variable_pos
 	oval_collection_add(pr->restrictions, r);
 }
 
+struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction)
+{
+	return oval_collection_iterator(possible_restriction->restrictions);
+}
+
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
 {
 	struct oval_variable_restriction *r;
@@ -277,11 +282,6 @@ struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variab
 	} else {
 		return oval_collection_iterator_new();
 	}
-}
-
-struct oval_iterator *oval_variable_get_restrictions(struct oval_variable_possible_restriction *possible_restriction)
-{
-	return oval_collection_iterator(possible_restriction->restrictions);
 }
 
 bool oval_variable_contains_value(struct oval_variable *variable, const char* o_value_text)
@@ -541,7 +541,7 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 				old_pr = oval_collection_iterator_next(old_pr_itr);
 				new_pr = oval_variable_possible_restriction_new(old_pr->operator, old_pr->hint);
 				struct oval_iterator *old_r_itr;
-				old_r_itr = oval_variable_get_restrictions(old_pr);
+				old_r_itr = oval_variable_possible_restriction_get_restrictions(old_pr);
 				if (oval_collection_iterator_has_more(old_r_itr)) {
 					new_pr->restrictions = oval_collection_new();
 				}
@@ -991,7 +991,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	struct oval_iterator *possible_restrictions = oval_variable_get_possible_restrictions(variable);
 	while (oval_collection_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_collection_iterator_next(possible_restrictions);
-		struct oval_iterator *restrictions = oval_variable_get_restrictions(pr);
+		struct oval_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
 		/* Create "possible_restriction" node only if there will be some
 		 * "restriction" children, because each "possible_restriction"
 		 * node must have at least one "restriction" child.

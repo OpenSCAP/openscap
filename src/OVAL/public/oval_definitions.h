@@ -1815,7 +1815,7 @@ struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variab
  * It should be freed after use by the calling application.
  * @memberof oval_variable_possible_restriction
  */
-struct oval_iterator *oval_variable_get_restrictions(struct oval_variable_possible_restriction *possible_restriction);
+struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
  * Returns attribute @ref Oval_component_type->text.
