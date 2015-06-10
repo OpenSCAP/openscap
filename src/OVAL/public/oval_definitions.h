@@ -597,9 +597,11 @@ char *oval_generator_get_product_name(struct oval_generator *generator);
 char *oval_generator_get_product_version(struct oval_generator *generator);
 char *oval_generator_get_schema_version(struct oval_generator *generator);
 char *oval_generator_get_timestamp(struct oval_generator *generator);
+const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform);
 void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name);
 void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version);
 void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version);
+void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version);
 void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp);
 
 /**

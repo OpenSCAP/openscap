@@ -70,10 +70,9 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	if (newmodel == NULL)
 		return NULL;
 
-	newmodel->generator = oval_generator_new();
-        struct oval_generator *generator = oval_definition_model_get_generator(definition_model);
-        char * schema_version = oval_generator_get_schema_version(generator);
-        oval_generator_set_schema_version(newmodel->generator, schema_version);
+	struct oval_generator *generator = oval_definition_model_get_generator(definition_model);
+	newmodel->generator = oval_generator_clone(generator);
+	oval_generator_set_timestamp_actual(newmodel->generator);
 
 	newmodel->sysinfo = NULL;
 	newmodel->definition_model = definition_model;
