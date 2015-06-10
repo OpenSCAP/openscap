@@ -189,6 +189,10 @@ probe_routingtable_req_deps_ok=yes
 probe_routingtable_req_deps_missing=
 probe_routingtable_opt_deps_ok=yes
 probe_routingtable_opt_deps_missing=
+probe_symlink_req_deps_ok=yes
+probe_symlink_req_deps_missing=
+probe_symlink_opt_deps_ok=yes
+probe_symlink_opt_deps_missing=
 probe_gconf_req_deps_ok=yes
 probe_gconf_req_deps_missing=
 probe_gconf_opt_deps_ok=yes
@@ -257,10 +261,6 @@ probe_systemdunitdependency_req_deps_ok=yes
 probe_systemdunitdependency_req_deps_missing=
 probe_systemdunitdependency_opt_deps_ok=yes
 probe_systemdunitdependency_opt_deps_missing=
-probe_symlink_req_deps_ok=yes
-probe_symlink_req_deps_missing=
-probe_symlink_opt_deps_ok=yes
-probe_symlink_opt_deps_missing=
 
 #
 # env
@@ -545,6 +545,10 @@ echo ' * Checking presence of required headers for the routingtable probe'
 AC_CHECK_HEADERS([arpa/inet.h byteswap.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
+echo ' * Checking presence of required headers for the symlink probe'
+AC_CHECK_HEADERS([errno.h limits.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_symlink_req_deps_ok=no; probe_symlink_req_deps_missing='header files'],[-])
+
+echo
 echo ' * Checking presence of required headers for the gconf probe'
 AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[-])
 
@@ -603,10 +607,6 @@ AC_CHECK_HEADERS([dbus/dbus.h string.h ],[],[probe_systemdunitproperty_req_deps_
 echo
 echo ' * Checking presence of required headers for the systemdunitdependency probe'
 AC_CHECK_HEADERS([dbus/dbus.h string.h ],[],[probe_systemdunitdependency_req_deps_ok=no; probe_systemdunitdependency_req_deps_missing='header files'],[-])
-
-echo
-echo ' * Checking presence of required headers for the symlink probe'
-AC_CHECK_HEADERS([errno.h limits.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_symlink_req_deps_ok=no; probe_symlink_req_deps_missing='header files'],[-])
 
 CPPFLAGS="$SAVE_CPPFLAGS"
 
@@ -1309,6 +1309,8 @@ AM_CONDITIONAL([probe_sysctl_enabled], test "$probe_sysctl_req_deps_ok" = yes)
 probe_sysctl_enabled=$probe_sysctl_req_deps_ok
 AM_CONDITIONAL([probe_routingtable_enabled], test "$probe_routingtable_req_deps_ok" = yes)
 probe_routingtable_enabled=$probe_routingtable_req_deps_ok
+AM_CONDITIONAL([probe_symlink_enabled], test "$probe_symlink_req_deps_ok" = yes)
+probe_symlink_enabled=$probe_symlink_req_deps_ok
 AM_CONDITIONAL([probe_gconf_enabled], test "$probe_gconf_req_deps_ok" = yes)
 probe_gconf_enabled=$probe_gconf_req_deps_ok
 AM_CONDITIONAL([probe_isainfo_enabled], test "$probe_isainfo_req_deps_ok" = yes)
@@ -1343,8 +1345,6 @@ AM_CONDITIONAL([probe_systemdunitproperty_enabled], test "$probe_systemdunitprop
 probe_systemdunitproperty_enabled=$probe_systemdunitproperty_req_deps_ok
 AM_CONDITIONAL([probe_systemdunitdependency_enabled], test "$probe_systemdunitdependency_req_deps_ok" = yes)
 probe_systemdunitdependency_enabled=$probe_systemdunitdependency_req_deps_ok
-AM_CONDITIONAL([probe_symlink_enabled], test "$probe_symlink_req_deps_ok" = yes)
-probe_symlink_enabled=$probe_symlink_req_deps_ok
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
 
@@ -1661,6 +1661,12 @@ else
   probe_routingtable_table_result="NO (missing: $probe_routingtable_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "routingtable:" "$probe_routingtable_table_result"
+if test "$probe_symlink_req_deps_ok" = "yes"; then
+  probe_symlink_table_result="yes"
+else
+  probe_symlink_table_result="NO (missing: $probe_symlink_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "symlink:" "$probe_symlink_table_result"
 if test "$probe_gconf_req_deps_ok" = "yes"; then
   probe_gconf_table_result="yes"
 else
@@ -1763,12 +1769,6 @@ else
   probe_systemdunitdependency_table_result="NO (missing: $probe_systemdunitdependency_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "systemdunitdependency:" "$probe_systemdunitdependency_table_result"
-if test "$probe_symlink_req_deps_ok" = "yes"; then
-  probe_symlink_table_result="yes"
-else
-  probe_symlink_table_result="NO (missing: $probe_symlink_req_deps_missing)"
-fi
-printf "  %-28s %s\n" "symlink:" "$probe_symlink_table_result"
 echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
