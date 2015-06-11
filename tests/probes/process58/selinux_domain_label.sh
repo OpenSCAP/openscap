@@ -10,10 +10,10 @@ echo "stderr file: $stderr"
 
 echo "Collecting:"
 $OSCAP oval collect --syschar $result $srcdir/$name.oval.xml 2> $stderr
-[ -f $stderr ];
+[ ! -s $stderr ]
 
 rm $stderr
-[ -f $result ]
+[ -s $result ]
 
 assert_exists 1 '/oval_system_characteristics'
 assert_exists 1 '/oval_system_characteristics/generator'

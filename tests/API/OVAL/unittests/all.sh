@@ -24,4 +24,5 @@ test_run "ipv4_address: 'subset of' operation" $srcdir/test_ipv4_subset_of.sh
 test_run "ipv4_address: comparison" $srcdir/test_ipv4_comparison.sh
 test_run "textfilecontent: 'line' comparison" $srcdir/test_filecontent_line.sh
 test_run "anyxml element" $srcdir/test_anyxml.sh
+test_run "invalid regular expression" $srcdir/test_invalid_regex.sh
 test_exit
