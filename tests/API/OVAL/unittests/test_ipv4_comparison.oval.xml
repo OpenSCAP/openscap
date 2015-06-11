@@ -24,6 +24,42 @@
           <criterion test_ref="oval:x:tst:2" comment="."/>
         </criteria>
       </definition>
+      <definition id="oval:x:def:3" version="1" class="compliance">
+        <metadata>
+          <title>test operation "greater than"</title>
+          <description>if prefix lengths are not equal, an error must be reported</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:3" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:4" version="1" class="compliance">
+        <metadata>
+          <title>test operation "greater than or equal"</title>
+          <description>if prefix lengths are not equal, an error must be reported</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:4" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:5" version="1" class="compliance">
+        <metadata>
+          <title>test operation "less than"</title>
+          <description>if prefix lengths are not equal, an error must be reported</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:5" comment="."/>
+        </criteria>
+      </definition>
+      <definition id="oval:x:def:6" version="1" class="compliance">
+        <metadata>
+          <title>test operation "less than or equal"</title>
+          <description>if prefix lengths are not equal, an error must be reported</description>
+        </metadata>
+        <criteria>
+          <criterion test_ref="oval:x:tst:6" comment="."/>
+        </criteria>
+      </definition>
     </definitions>
     <tests>
       <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
@@ -34,6 +70,22 @@
         <ind-def:object object_ref="oval:x:obj:2"/>
         <ind-def:state state_ref="oval:x:ste:2"/>
       </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:3" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:3"/>
+        <ind-def:state state_ref="oval:x:ste:3"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:4" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:3"/>
+        <ind-def:state state_ref="oval:x:ste:4"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:5" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:3"/>
+        <ind-def:state state_ref="oval:x:ste:5"/>
+      </ind-def:variable_test>
+      <ind-def:variable_test id="oval:x:tst:6" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:3"/>
+        <ind-def:state state_ref="oval:x:ste:6"/>
+      </ind-def:variable_test>
     </tests>
     <objects>
       <ind-def:variable_object id="oval:x:obj:1" version="1">
@@ -42,13 +94,28 @@
       <ind-def:variable_object id="oval:x:obj:2" version="1">
         <ind-def:var_ref>oval:x:var:2</ind-def:var_ref>
       </ind-def:variable_object>
+      <ind-def:variable_object id="oval:x:obj:3" version="1">
+        <ind-def:var_ref>oval:x:var:3</ind-def:var_ref>
+      </ind-def:variable_object>
     </objects>
     <states>
       <ind-def:variable_state id="oval:x:ste:1" version="1">
-        <ind-def:value operation="greater than" datatype="ipv4_address">1.1.192.192</ind-def:value>
+        <ind-def:value operation="greater than" datatype="ipv4_address">1.1.192.192/32</ind-def:value>
       </ind-def:variable_state>
       <ind-def:variable_state id="oval:x:ste:2" version="1">
         <ind-def:value operation="greater than" datatype="ipv4_address">1.1.1.1</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:3" version="1">
+        <ind-def:value operation="greater than" datatype="ipv4_address">192.168.120.53/16</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:4" version="1">
+        <ind-def:value operation="greater than or equal" datatype="ipv4_address">192.168.120.80/16</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:5" version="1">
+        <ind-def:value operation="less than" datatype="ipv4_address">192.168.120.221/16</ind-def:value>
+      </ind-def:variable_state>
+      <ind-def:variable_state id="oval:x:ste:6" version="1">
+        <ind-def:value operation="less than or equal" datatype="ipv4_address">192.168.120.80/16</ind-def:value>
       </ind-def:variable_state>
     </states>
     <variables>
@@ -57,6 +124,9 @@
       </constant_variable>
       <constant_variable id="oval:x:var:2" version="1" datatype="ipv4_address" comment=".">
         <value>42.42.42.42</value>
+      </constant_variable>
+      <constant_variable id="oval:x:var:3" version="1" datatype="ipv4_address" comment=".">
+        <value>192.168.120.80/24</value>
       </constant_variable>
     </variables>
 </oval_definitions>
