@@ -636,7 +636,6 @@ int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_m
 		return 1;
 
 	evar->flag = SYSCHAR_FLAG_COMPLETE;
-	/* todo: store a reference to the variable model inside evar? */
 
 	return 0;
 }
