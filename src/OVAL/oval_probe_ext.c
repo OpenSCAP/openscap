@@ -365,46 +365,41 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		oscap_dlprintf(DBG_W, "Can't receive message: %u, %s.\n", errno, strerror(errno));
 	}
 
-	switch (errno) {
-	case ECANCELED:
+	if (errno == ECANCELED) {
+		SEAP_err_t *err = NULL;
+
+		switch(SEAP_recverr_byid(ctx, pd->sd, &err,
+					 SEAP_msg_id(s_omsg)))
 		{
-			SEAP_err_t *err = NULL;
-
-			switch(SEAP_recverr_byid(ctx, pd->sd, &err,
-						 SEAP_msg_id(s_omsg)))
-			{
-			case  0:
-				break;
-			case  1: /* no error found */
-				dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
-				oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
-				return (-1);
-			case -1: /* internal error */
-				dE("Internal error: SEAP_recverr_byid returned -1\n");
-				oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error.");
-				return (-1);
-			}
-
-			/*
-			 * decide what to do based on the error code/type
-			 */
-			switch (err->type) {
-			case SEAP_ETYPE_USER:
-			{
-				oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
-						pd->sd, oval_subtype_to_str(pd->subtype), _probe_strerror(err->code));
-				break;
-			}
-			case SEAP_ETYPE_INT:
-				oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error");
-				break;
-			}
-
-			SEAP_error_free(err);
-
+		case  0:
+			break;
+		case  1: /* no error found */
+			dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
+			return (-1);
+		case -1: /* internal error */
+			dE("Internal error: SEAP_recverr_byid returned -1\n");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error.");
 			return (-1);
 		}
-		break;
+
+		/*
+		 * decide what to do based on the error code/type
+		 */
+		switch (err->type) {
+		case SEAP_ETYPE_USER:
+		{
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
+					pd->sd, oval_subtype_to_str(pd->subtype), _probe_strerror(err->code));
+			break;
+		}
+		case SEAP_ETYPE_INT:
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error");
+			break;
+		}
+
+		SEAP_error_free(err);
+		return (-1);
 	}
 
 	if (flags & OVAL_PDFLAG_SLAVE) {
