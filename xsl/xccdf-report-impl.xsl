@@ -700,6 +700,24 @@ Authors:
                             <xsl:copy-of select="$check_system_details_ret"/>
                         </div></td></tr>
                     </xsl:if>
+                    <xsl:if test="$ruleresult/cdf:message">
+                        <tr><td colspan="2"><div class="evaluation-messages">
+                            <span class="label label-default"><abbr title="Messages taken from rule-result">Evaluation messages</abbr></span>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <xsl:for-each select="$ruleresult/cdf:message">
+                                        <xsl:if test="./@severity">
+                                            <span class="label label-primary"><xsl:value-of select="./@severity"/></span>&#160;
+                                        </xsl:if>
+                                        <pre><xsl:apply-templates mode="sub-testresult" select=".">
+                                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                            <xsl:with-param name="profile" select="$profile"/>
+                                        </xsl:apply-templates></pre>
+                                    </xsl:for-each>
+                                </div>
+                            </div>
+                        </div></td></tr>
+                    </xsl:if>
                     <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
                         <xsl:for-each select="$item/cdf:fixtext">
                             <tr><td colspan="2"><div class="remediation-description">
