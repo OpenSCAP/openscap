@@ -84,6 +84,7 @@ libseap_la_SOURCES= generic/bfind.c		\
 
 libseap_la_CPPFLAGS= \
 	@pthread_CFLAGS@ \
+	@xml2_CFLAGS@ \
 	-DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 \
 	-DSEAP_THREAD_SAFE -DSEAP_MSGID_BITS=32 \
 	-I$(top_srcdir) \
