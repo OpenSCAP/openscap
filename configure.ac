@@ -1141,14 +1141,6 @@ if test "x${perl_bind}" = xyes; then
 	CPPFLAGS="$save_CPPFLAGS"
 fi
 
-AC_ARG_ENABLE([selinux_policy],
-     [AC_HELP_STRING([--enable-selinux_policy], [enable SELinux policy (default=no)])],
-     [case "${enableval}" in
-       yes) selinux_policy=yes ;;
-       no)  selinux_policy=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-selinux_policy]) ;;
-     esac],[selinux_policy=no])
-
 
 AM_CONDITIONAL([probe_system_info_enabled], test "$probe_system_info_req_deps_ok" = yes)
 probe_system_info_enabled=$probe_system_info_req_deps_ok
@@ -1247,8 +1239,6 @@ AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
 
-AM_CONDITIONAL([WANT_SELINUX_POLICY], test "$selinux_policy" = yes)
-
 #
 # Core
 #
@@ -1258,7 +1248,6 @@ AC_CONFIG_FILES([Makefile
                  xsl/Makefile
                  schemas/Makefile
                  cpe/Makefile
-		 selinux/Makefile
                  libopenscap.pc
                  src/common/Makefile
                  tests/Makefile
@@ -1372,7 +1361,6 @@ echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
-echo "SELinux policy enabled:        $selinux_policy"
 echo
 echo '  === probes ==='
 if test "$probe_system_info_req_deps_ok" = "yes"; then
