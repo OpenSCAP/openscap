@@ -574,10 +574,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 					}
 
 					char errbuf[__ERRBUF_SIZE];
-					if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-						oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
-					else
-						oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+					if (strerror_r (errno, errbuf, sizeof errbuf - 1) == 0)
+						oscap_seterr(OSCAP_EFAMILY_OVAL, errbuf);
+					oscap_seterr(OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
 
 					return ret;
 				}
