@@ -556,11 +556,12 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 		ret = SEAP_recvmsg(ctx, pd->sd, &s_imsg);
 		if (ret != 0) {
-			bool aborted = errno == ECONNABORTED;
-			ret = _handle_SEAP_receive_failure(ctx, pd, s_omsg, flags);
-			SEAP_msg_free(s_imsg);
-			SEAP_msg_free(s_omsg);
-			if (aborted) {
+			protect_errno {
+				ret = _handle_SEAP_receive_failure(ctx, pd, s_omsg, flags);
+				SEAP_msg_free(s_imsg);
+				SEAP_msg_free(s_omsg);
+			}
+			if (errno == ECONNABORTED) {
 				oscap_dlprintf(DBG_I, "Connection was aborted.\n");
 				return (-2);
 			} else {
