@@ -82,6 +82,14 @@ libseap_la_SOURCES= generic/bfind.c		\
 		    sexp-ID.c			\
 		    public/helpers.h
 
-libseap_la_CPPFLAGS= @pthread_CFLAGS@ -DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 -I$(top_srcdir) -I$(top_srcdir)/src -I. -I$(top_srcdir)/src/OVAL/probes/SEAP/public -DSEAP_THREAD_SAFE -DSEAP_MSGID_BITS=32 -I$(top_srcdir)/lib
+libseap_la_CPPFLAGS= \
+	@pthread_CFLAGS@ \
+	-DUSE_XMALLOC -DXMALLOC_EXIT -DWANT_BASE64 \
+	-DSEAP_THREAD_SAFE -DSEAP_MSGID_BITS=32 \
+	-I$(top_srcdir) \
+	-I$(top_srcdir)/lib \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/OVAL/probes/SEAP/public
+
 libseap_la_LDFLAGS= @pthread_LIBS@
 libseap_la_LIBADD= generic/rbt/librbt.la
