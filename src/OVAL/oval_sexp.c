@@ -233,13 +233,13 @@ static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_d
 	SEXP_t *val_lst;
 	struct oval_value_iterator *val_itr;
 	oval_syschar_collection_flag_t flag;
-	char msg[100];
 
 	if (oval_probe_query_variable(sess, var) != 0)
 		return -1;
 
 	flag = oval_variable_get_collection_flag(var);
 	if (flag == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+		char msg[100];
 		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).", oval_variable_get_id(var));
 		dW("%s\n", msg);
 		if (syschar != NULL)  {
