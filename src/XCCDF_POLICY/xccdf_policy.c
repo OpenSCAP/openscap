@@ -2366,6 +2366,11 @@ const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct 
 	}
 
 	struct xccdf_value_instance *instance = xccdf_value_get_instance_by_selector((struct xccdf_value *) item, selector);
+	if (instance == NULL) {
+                oscap_seterr(OSCAP_EFAMILY_XCCDF, "Attempt to get non-existent selector \"%s\" from variable \"%s\"",
+				selector, xccdf_value_get_id((struct xccdf_value *) item));
+		return NULL;
+	}
 	return xccdf_value_instance_get_value(instance);
 }
 
