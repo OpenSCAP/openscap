@@ -779,7 +779,32 @@ static int oval_variable_validate_ext_var(oval_variable_EXTERNAL_t *var, struct 
 {
 	if (oval_values == NULL)
 		return 1;
-	return 0;
+
+	int retval = 0;
+	if (!oval_collection_is_empty(var->possible_values)) {
+		/* Check that the value of variable is allowed */
+		struct oval_iterator *values = oval_collection_iterator(oval_values);
+		while (oval_collection_iterator_has_more(values) && !retval) {
+			struct oval_value *value = oval_collection_iterator_next(values);
+			const char *text = oval_value_get_text(value);
+			int found = 0;
+			struct oval_iterator *possible_values = oval_collection_iterator(var->possible_values);
+			while(oval_collection_iterator_has_more(possible_values) && !found) {
+				struct oval_variable_possible_value *pv = oval_collection_iterator_next(possible_values);
+				const char *constraint = pv->value;
+				if (strcmp(text, constraint) == 0) {
+					found = 1;
+					break;
+				}
+			}
+			oval_collection_iterator_free(possible_values);
+			if (!found) {
+				retval = 1;
+			}
+		}
+		oval_collection_iterator_free(values);
+	}
+	return retval;
 }
 
 int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_model *varmod, char *extvar_id)
