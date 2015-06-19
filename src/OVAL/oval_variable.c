@@ -149,6 +149,11 @@ struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct
 	return oval_collection_iterator(possible_restriction->restrictions);
 }
 
+oval_operator_t oval_variable_possible_restriction_get_operator(struct oval_variable_possible_restriction *possible_restriction)
+{
+	return possible_restriction->operator;
+}
+
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
 {
 	struct oval_variable_restriction *r;

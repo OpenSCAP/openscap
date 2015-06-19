@@ -1834,6 +1834,13 @@ struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variab
 struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
+ * Get operator of possible_restriction element
+ * @return operator
+ * @memberof oval_variable_possible_restriction
+ */
+oval_operator_t oval_variable_possible_restriction_get_operator(struct oval_variable_possible_restriction *possible_restriction);
+
+/**
  * Returns attribute @ref Oval_component_type->text.
  * @memberof oval_variable
  */
