@@ -411,7 +411,7 @@ CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cfla
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
-AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h ifaddrs.h netdb.h net/if.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h ifaddrs.h libdlpi.h netdb.h net/if.h net/if_types.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/sockio.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the family probe'
