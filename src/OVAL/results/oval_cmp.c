@@ -88,12 +88,9 @@ __attribute__((nonnull(1,2))) static bool cstr_to_double(const char *cstr, doubl
 	return true;
 }
 
-
-oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
+oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type, const char *sys_data, oval_operation_t operation)
 {
 	// finally, we have gotten to the point of comparing system data with a state
-
-	const char *sys_data = oval_sysent_get_value(sysent);
 
 	if (state_data_type == OVAL_DATATYPE_STRING) {
 		return oval_string_cmp(state_data, sys_data, operation);
@@ -155,4 +152,10 @@ oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type
 
 	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL data type: %d.", state_data_type);
 	return OVAL_RESULT_ERROR;
+}
+
+oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
+{
+	const char *sys_data = oval_sysent_get_value(sysent);
+	return oval_str_cmp_str(state_data, state_data_type, sys_data, operation);
 }
