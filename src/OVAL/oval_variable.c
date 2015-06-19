@@ -42,6 +42,8 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "results/oval_cmp_impl.h"
+#include "results/oval_results_impl.h"
 
 typedef struct oval_variable {
 #define VAR_BASE				\
@@ -147,6 +149,11 @@ void oval_variable_possible_restriction_add_restriction(struct oval_variable_pos
 struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction)
 {
 	return oval_collection_iterator(possible_restriction->restrictions);
+}
+
+oval_operator_t oval_variable_possible_restriction_get_operator(struct oval_variable_possible_restriction *possible_restriction)
+{
+	return possible_restriction->operator;
 }
 
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
@@ -775,11 +782,61 @@ void oval_variable_clear_values(struct oval_variable *variable)
 	}
 }
 
+static int oval_value_satisfies_possible_restriction(struct oval_value *value, struct oval_variable_possible_restriction *pr)
+{
+	oval_datatype_t datatype = oval_value_get_datatype(value);
+	char *text = oval_value_get_text(value);
+	oval_operator_t operator = pr->operator;
+	struct oresults results;
+	ores_clear(&results);
+	struct oval_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+	while (oval_collection_iterator_has_more(restrictions)) {
+		struct oval_variable_restriction *r = oval_collection_iterator_next(restrictions);
+		oval_result_t result = oval_str_cmp_str(r->value, datatype, text, r->operation);
+		ores_add_res(&results, result);
+	}
+	oval_collection_iterator_free(restrictions);
+	return (ores_get_result_byopr(&results, operator) == OVAL_RESULT_TRUE);
+}
+
 static int oval_variable_validate_ext_var(oval_variable_EXTERNAL_t *var, struct oval_collection *oval_values)
 {
 	if (oval_values == NULL)
 		return 1;
-	return 0;
+
+	int retval = 0;
+	if (!oval_collection_is_empty(var->possible_values) ||
+		!oval_collection_is_empty(var->possible_restrictions)) {
+		/* Check that the value of variable is allowed */
+		struct oval_iterator *values = oval_collection_iterator(oval_values);
+		while (!retval && oval_collection_iterator_has_more(values)) {
+			struct oval_value *value = oval_collection_iterator_next(values);
+			const char *text = oval_value_get_text(value);
+			int found = 0;
+			struct oval_iterator *possible_values = oval_collection_iterator(var->possible_values);
+			while(!found && oval_collection_iterator_has_more(possible_values)) {
+				struct oval_variable_possible_value *pv = oval_collection_iterator_next(possible_values);
+				const char *constraint = pv->value;
+				if (strcmp(text, constraint) == 0) {
+					found = 1;
+				}
+			}
+			oval_collection_iterator_free(possible_values);
+			struct oval_iterator *possible_restrictions = oval_collection_iterator(var->possible_restrictions);
+			while(!found && oval_collection_iterator_has_more(possible_restrictions)) {
+				struct oval_variable_possible_restriction *pr = oval_collection_iterator_next(possible_restrictions);
+				if (oval_value_satisfies_possible_restriction(value, pr)) {
+					found = 1;
+				}
+			}
+			oval_collection_iterator_free(possible_restrictions);
+			if (!found) {
+				retval = 1;
+			}
+		}
+		oval_collection_iterator_free(values);
+	}
+	return retval;
 }
 
 int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_model *varmod, char *extvar_id)
@@ -794,11 +851,10 @@ int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_m
 	evar = (oval_variable_EXTERNAL_t *) var;
 	struct oval_collection *values_ref = oval_variable_model_get_values_ref(varmod, extvar_id);
 	if (oval_variable_validate_ext_var(evar, values_ref)) {
-		evar->flag = SYSCHAR_FLAG_ERROR;
+		evar->flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 		return 1;
 	} else {
 		evar->values_ref = values_ref;
-
 		evar->flag = SYSCHAR_FLAG_COMPLETE;
 		return 0;
 	}
