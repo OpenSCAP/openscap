@@ -42,6 +42,8 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "results/oval_cmp_impl.h"
+#include "results/oval_results_impl.h"
 
 typedef struct oval_variable {
 #define VAR_BASE				\
@@ -780,13 +782,31 @@ void oval_variable_clear_values(struct oval_variable *variable)
 	}
 }
 
+static int oval_value_satisfies_possible_restriction(struct oval_value *value, struct oval_variable_possible_restriction *pr)
+{
+	oval_datatype_t datatype = oval_value_get_datatype(value);
+	char *text = oval_value_get_text(value);
+	oval_operator_t operator = pr->operator;
+	struct oresults results;
+	ores_clear(&results);
+	struct oval_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+	while (oval_collection_iterator_has_more(restrictions)) {
+		struct oval_variable_restriction *r = oval_collection_iterator_next(restrictions);
+		oval_result_t result = oval_str_cmp_str(r->value, datatype, text, r->operation);
+		ores_add_res(&results, result);
+	}
+	oval_collection_iterator_free(restrictions);
+	return (ores_get_result_byopr(&results, operator) == OVAL_RESULT_TRUE);
+}
+
 static int oval_variable_validate_ext_var(oval_variable_EXTERNAL_t *var, struct oval_collection *oval_values)
 {
 	if (oval_values == NULL)
 		return 1;
 
 	int retval = 0;
-	if (!oval_collection_is_empty(var->possible_values)) {
+	if (!oval_collection_is_empty(var->possible_values) ||
+		!oval_collection_is_empty(var->possible_restrictions)) {
 		/* Check that the value of variable is allowed */
 		struct oval_iterator *values = oval_collection_iterator(oval_values);
 		while (oval_collection_iterator_has_more(values) && !retval) {
@@ -803,6 +823,14 @@ static int oval_variable_validate_ext_var(oval_variable_EXTERNAL_t *var, struct 
 				}
 			}
 			oval_collection_iterator_free(possible_values);
+			struct oval_iterator *possible_restrictions = oval_collection_iterator(var->possible_restrictions);
+			while(!found && oval_collection_iterator_has_more(possible_restrictions)) {
+				struct oval_variable_possible_restriction *pr = oval_collection_iterator_next(possible_restrictions);
+				if (oval_value_satisfies_possible_restriction(value, pr)) {
+					found = 1;
+				}
+			}
+			oval_collection_iterator_free(possible_restrictions);
 			if (!found) {
 				retval = 1;
 			}
