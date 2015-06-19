@@ -32,7 +32,7 @@
 
 /* KEEP THIS ARRAY SORTED! */
 const SEAP_schemefn_t __schtbl[] = {
-        { "cons",
+        { "cons",    /* This scheme is used from within probes */
           sch_cons_connect, sch_cons_openfd,
           sch_cons_openfd2, sch_cons_recv,
           sch_cons_send, sch_cons_close,
@@ -47,7 +47,7 @@ const SEAP_schemefn_t __schtbl[] = {
           sch_generic_openfd2, sch_generic_recv,
           sch_generic_send, sch_generic_close,
           sch_generic_sendsexp, sch_generic_select },
-        { "pipe",
+        { "pipe",    /* This schem is used from libopenscap to talk to probes */
           sch_pipe_connect, sch_pipe_openfd,
           sch_pipe_openfd2, sch_pipe_recv,
           sch_pipe_send, sch_pipe_close,

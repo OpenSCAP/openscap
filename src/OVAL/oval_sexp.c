@@ -228,7 +228,7 @@ static int oval_varref_attr_to_sexp(void *sess, struct oval_entity *entity, stru
 	return 0;
 }
 
-static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_datatype_t dt, SEXP_t **out_sexp)
+static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_datatype_t dt, SEXP_t **out_sexp, struct oval_syschar *syschar)
 {
 	SEXP_t *val_lst;
 	struct oval_value_iterator *val_itr;
@@ -238,6 +238,16 @@ static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_d
 		return -1;
 
 	flag = oval_variable_get_collection_flag(var);
+	if (flag == SYSCHAR_FLAG_DOES_NOT_EXIST) {
+		char msg[100];
+		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).", oval_variable_get_id(var));
+		dW("%s\n", msg);
+		if (syschar != NULL)  {
+			oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
+			oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);
+		}
+		return 1;
+	}
 	if (flag != SYSCHAR_FLAG_COMPLETE
 	    && flag != SYSCHAR_FLAG_INCOMPLETE) {
 		*out_sexp = SEXP_list_new(NULL);
@@ -487,7 +497,7 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 
 				var = oval_entity_get_variable(entity);
 				dt = oval_entity_get_datatype(entity);
-				ret = oval_varref_elm_to_sexp(sess, var, dt, &val_lst);
+				ret = oval_varref_elm_to_sexp(sess, var, dt, &val_lst, syschar);
 
 				if (ret == 0) {
 					SEXP_list_add(elm, val_lst);
@@ -717,7 +727,7 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 			var = oval_entity_get_variable(ent);
 			dt = oval_entity_get_datatype(ent);
 
-			if (oval_varref_elm_to_sexp(sess, var, dt, &val_lst) != 0)
+			if (oval_varref_elm_to_sexp(sess, var, dt, &val_lst, NULL) != 0)
 				goto fail;
 
 			SEXP_list_add(ste_ent, val_lst);

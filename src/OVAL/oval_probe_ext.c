@@ -359,10 +359,80 @@ static inline const char *_probe_strerror(uint32_t error_code)
 	return codemsg;
 }
 
+static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, SEAP_msg_t *s_omsg, int flags)
+{
+	protect_errno {
+		oscap_dlprintf(DBG_W, "Can't receive message: %u, %s.\n", errno, strerror(errno));
+	}
+
+	if (errno == ECANCELED) {
+		SEAP_err_t *err = NULL;
+
+		switch(SEAP_recverr_byid(ctx, pd->sd, &err,
+					 SEAP_msg_id(s_omsg)))
+		{
+		case  0:
+			break;
+		case  1: /* no error found */
+			dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
+			return (-1);
+		case -1: /* internal error */
+			dE("Internal error: SEAP_recverr_byid returned -1\n");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error.");
+			return (-1);
+		}
+
+		/*
+		 * decide what to do based on the error code/type
+		 */
+		switch (err->type) {
+		case SEAP_ETYPE_USER:
+		{
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
+					pd->sd, oval_subtype_to_str(pd->subtype), _probe_strerror(err->code));
+			break;
+		}
+		case SEAP_ETYPE_INT:
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error");
+			break;
+		}
+
+		SEAP_error_free(err);
+		return (-1);
+	}
+
+	if (flags & OVAL_PDFLAG_SLAVE) {
+		char errbuf[__ERRBUF_SIZE];
+
+		if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+			oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message to probe");
+		else
+			oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+
+		return (-1);
+	}
+
+	if (SEAP_close(ctx, pd->sd) != 0) {
+		char errbuf[__ERRBUF_SIZE];
+
+		protect_errno {
+			oscap_dlprintf(DBG_E, "Can't close sd: %u, %s.\n", errno, strerror(errno));
+		}
+
+		if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+			oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to close probe sd");
+		else
+			oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+	}
+
+	pd->sd = -1;
+	return (-1);
+}
+
 static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj, int flags, SEXP_t **out_sexp)
 {
 	int retry, ret;
-	bool aborted = false;
 
 	SEAP_msg_t *s_imsg, *s_omsg;
 	SEXP_t *s_oobj;
@@ -486,118 +556,30 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 		ret = SEAP_recvmsg(ctx, pd->sd, &s_imsg);
 		if (ret != 0) {
-                        protect_errno {
-                                oscap_dlprintf(DBG_W, "Can't receive message: %u, %s.\n", errno, strerror(errno));
-                        }
-
-			switch (errno) {
-			case ECONNABORTED:
-				aborted = true;
-				break;
-			case ECANCELED:
-				{
-					SEAP_err_t *err = NULL;
-
-					switch(SEAP_recverr_byid(ctx, pd->sd, &err,
-								 SEAP_msg_id(s_omsg)))
-					{
-					case  0:
-						break;
-					case  1: /* no error found */
-						dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
-						oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
-						SEAP_msg_free(s_omsg);
-						return (-1);
-					case -1: /* internal error */
-						dE("Internal error: SEAP_recverr_byid returned -1\n");
-						oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error.");
-						SEAP_msg_free(s_omsg);
-						return (-1);
-					}
-
-					/*
-					 * decide what to do based on the error code/type
-					 */
-					switch (err->type) {
-					case SEAP_ETYPE_USER:
-					{
-						oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
-							     pd->sd, oval_subtype_to_str(pd->subtype), _probe_strerror(err->code));
-						break;
-					}
-					case SEAP_ETYPE_INT:
-						oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error");
-						break;
-					}
-
-					SEAP_error_free(err);
-					SEAP_msg_free(s_omsg);
-
-					return (-1);
-				}
-				break;
-			}
-
-			if (flags & OVAL_PDFLAG_SLAVE) {
-				char errbuf[__ERRBUF_SIZE];
-
-                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message to probe");
-                                else
-					oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
-
+			protect_errno {
+				ret = _handle_SEAP_receive_failure(ctx, pd, s_omsg, flags);
 				SEAP_msg_free(s_imsg);
 				SEAP_msg_free(s_omsg);
-
-				return (-1);
 			}
-
-			if (SEAP_close(ctx, pd->sd) != 0) {
-                                char errbuf[__ERRBUF_SIZE];
-
-                                protect_errno {
-                                        oscap_dlprintf(DBG_E, "Can't close sd: %u, %s.\n", errno, strerror(errno));
-                                        SEAP_msg_free(s_imsg);
-                                        SEAP_msg_free(s_omsg);
-                                }
-
-                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to close probe sd");
-                                else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
-
-				pd->sd = -1;
-				return (-1);
-			}
-
-			pd->sd = -1;
-
-			if (!aborted) {
+			if (errno == ECONNABORTED) {
+				oscap_dlprintf(DBG_I, "Connection was aborted.\n");
+				return (-2);
+			} else {
 				if (++retry <= OVAL_PROBE_MAXRETRY) {
 					oscap_dlprintf(DBG_I, "Recv: retry %u/%u.\n", retry, OVAL_PROBE_MAXRETRY);
 					continue;
 				} else {
-					char errbuf[__ERRBUF_SIZE];
-
 					protect_errno {
 						oscap_dlprintf(DBG_E, "Recv: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
-						SEAP_msg_free(s_imsg);
-						SEAP_msg_free(s_omsg);
 					}
 
-					if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
-						oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
-					else
-						oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+					char errbuf[__ERRBUF_SIZE];
+					if (strerror_r (errno, errbuf, sizeof errbuf - 1) == 0)
+						oscap_seterr(OSCAP_EFAMILY_OVAL, errbuf);
+					oscap_seterr(OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
 
-					return (ret);
+					return ret;
 				}
-			} else {
-				oscap_dlprintf(DBG_I, "Connection was aborted.\n");
-				SEAP_msg_free(s_imsg);
-				SEAP_msg_free(s_omsg);
-
-				return (-2);
 			}
 		}
 

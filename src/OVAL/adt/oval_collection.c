@@ -99,6 +99,12 @@ void oval_collection_free_items(struct oval_collection *collection, oscap_destru
 	}
 }
 
+int oval_collection_is_empty(struct oval_collection *collection)
+{
+	__attribute__nonnull__(collection);
+	return collection->item_collection_frame == NULL;
+}
+
 void oval_collection_add(struct oval_collection *collection, void *item)
 {
 	__attribute__nonnull__(collection);
