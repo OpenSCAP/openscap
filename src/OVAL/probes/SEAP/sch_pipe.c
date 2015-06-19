@@ -39,6 +39,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <common/assume.h>
+#include <common/_error.h>
 #include <errno.h>
 
 #include "generic/common.h"
@@ -168,11 +169,16 @@ static int check_child (pid_t pid, int waitf)
         case -1: return (-1);
         default:
                 /* child is dead */
+		if (WIFSIGNALED(status)) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe has been killed with signal %d", WTERMSIG(status));
+			errno = EINTR;
+		}
+		if (WCOREDUMP(status)) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe has core dumped.");
+			errno = EINTR;
+		}
                 if (WIFEXITED(status)) {
                         errno = WEXITSTATUS(status);
-                }
-                if (WIFSIGNALED(status)) {
-                        errno = EINTR;
                 }
         }
         return (1);

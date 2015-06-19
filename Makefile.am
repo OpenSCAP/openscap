@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = lib src src/OVAL/probes utils tests xsl schemas cpe selinux
+SUBDIRS = lib src src/OVAL/probes utils tests xsl schemas cpe
 SUBDIRS += swig
 
 dist_pkgdata_DATA = dist/fedora/scap-fedora14-oval.xml \

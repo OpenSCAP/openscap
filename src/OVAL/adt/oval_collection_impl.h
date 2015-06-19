@@ -39,6 +39,7 @@ OSCAP_HIDDEN_START;
 struct oval_collection *oval_collection_new(void);
 void oval_collection_free(struct oval_collection *);
 void oval_collection_free_items(struct oval_collection *, oscap_destruct_func);
+int oval_collection_is_empty(struct oval_collection *collection);
 void oval_collection_add(struct oval_collection *, void *);
 struct oval_iterator *oval_collection_iterator(struct oval_collection *);
 struct oval_iterator *oval_collection_iterator_new(void);

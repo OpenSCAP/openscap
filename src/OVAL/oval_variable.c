@@ -640,11 +640,10 @@ int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_m
 	evar = (oval_variable_EXTERNAL_t *) var;
 	struct oval_collection *values_ref = oval_variable_model_get_values_ref(varmod, extvar_id);
 	if (oval_variable_validate_ext_var(evar, values_ref)) {
-		evar->flag = SYSCHAR_FLAG_ERROR;
+		evar->flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 		return 1;
 	} else {
 		evar->values_ref = values_ref;
-
 		evar->flag = SYSCHAR_FLAG_COMPLETE;
 		return 0;
 	}
