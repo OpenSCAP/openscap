@@ -66,7 +66,29 @@
 #include <ctype.h>
 #include <errno.h>
 
-#if defined(__linux__)
+#undef OS_FREEBSD
+#undef OS_LINUX
+#undef OS_SOLARIS
+#undef OS_SUNOS
+#undef OS_WINDOWS
+
+#if defined(__FreeBSD__)
+# define OS_FREEBSD
+#elif defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
+# define OS_LINUX
+#elif defined(sun) || defined(__sun)
+# if defined(__SVR4) || defined(__svr4__)
+#  define OS_SOLARIS
+# else
+#  define OS_SUNOS
+# endif
+#elif defined(_WIN32)
+# define OS_WINDOWS
+#else
+# error "Sorry, your OS isn't supported."
+#endif
+
+#if defined(OS_LINUX)
 #include <sys/socket.h>
 #include <ifaddrs.h>
 #include <netdb.h>
@@ -96,7 +118,73 @@ static char *get_mac(const struct ifaddrs *ifa)
 
        return mac_buf;
 }
+#else if defined(OS_SOLARIS)
+#include <sys/socket.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+#include <sys/ioctl.h>
+#include <string.h>
+#include <net/if.h>
+#include <arpa/inet.h>
+#include <sys/sockio.h>
+#include <net/if_types.h>
+#include <libdlpi.h>
 
+static int fd=-1;
+
+static char *get_mac(const struct ifaddrs *ifa)
+{
+       struct lifreq lifr;
+	uint_t physaddrlen = DLPI_PHYSADDR_MAX;
+	uchar_t physaddr[DLPI_PHYSADDR_MAX];
+	static char mac_buf[DLPI_PHYSADDR_MAX];
+	char *str;
+	int retv;
+	dlpi_handle_t dh;
+	dlpi_info_t dlinfo;
+
+	memset(mac_buf, 0, sizeof(mac_buf));
+       memset(&lifr, 0, sizeof(struct lifreq));
+       strlcpy(lifr.lifr_name, ifa->ifa_name, sizeof (lifr.lifr_name));
+	if (ioctl(fd, SIOCGLIFFLAGS, &lifr) >= 0) {
+
+		if (lifr.lifr_flags & (IFF_VIRTUAL| IFF_IPMP))
+			return (mac_buf);
+
+		if (dlpi_open(lifr.lifr_name, &dh, 0) != DLPI_SUCCESS)
+			return (NULL);
+
+		retv = dlpi_get_physaddr(dh, DL_CURR_PHYS_ADDR, physaddr,
+			&physaddrlen);
+		if (retv != DLPI_SUCCESS) {
+			dlpi_close(dh);
+			return (NULL);
+		}
+
+		retv = dlpi_info(dh, &dlinfo, DLPI_INFO_VERSION);
+		if (retv != DLPI_SUCCESS) {
+			dlpi_close(dh);
+			return (NULL);
+		}
+		dlpi_close(dh);
+		str = _link_ntoa(physaddr, NULL, physaddrlen, IFT_OTHER);
+
+		if (str != NULL && physaddrlen != 0) {
+			switch(dlinfo.di_mactype) {
+			case DL_IB:
+				break;
+			default:
+				strlcpy(mac_buf, str, sizeof(mac_buf));
+				break;
+			}
+			free(str);
+		}
+	}
+	return mac_buf;
+}
+#endif
+
+#if defined(OS_LINUX) || (defined(OS_SOLARIS))
 static int get_ifs(SEXP_t *item)
 {
        struct ifaddrs *ifaddr, *ifa;
@@ -104,6 +192,9 @@ static int get_ifs(SEXP_t *item)
        char host[NI_MAXHOST], *mac;
        SEXP_t *attrs;
        SEXP_t *r0, *r1, *r2;
+#if defined(OS_SOLARIS)
+       int item_added = 0;
+#endif
 
        if (getifaddrs(&ifaddr) == -1)
                return rc;
@@ -123,6 +214,14 @@ static int get_ifs(SEXP_t *item)
                         continue;
 
                 mac = get_mac(ifa);
+#if defined(OS_SOLARIS)
+		if (mac == NULL) {
+			rc = 1;
+			goto leave2;
+		}
+		if (mac[0] == '\0')
+			continue;
+#endif
 		if (family == AF_INET) {
 			rc = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
 				host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
@@ -139,8 +238,6 @@ static int get_ifs(SEXP_t *item)
 				goto leave2;
 			}
 		}
-
-
 	        attrs = probe_attr_creat("name",
                                  r0 = SEXP_string_newf("%s", ifa->ifa_name),
                                  "ip_address",
@@ -149,10 +246,29 @@ static int get_ifs(SEXP_t *item)
                                  r2 = SEXP_string_newf("%s", mac),
                                  NULL);
 	        probe_item_ent_add(item, "interface", attrs, NULL);
-        	SEXP_vfree(attrs, r0, r1, r2, NULL);
+#if defined(OS_SOLARIS)
+		item_added = 1;
+#endif
+		SEXP_vfree(attrs, r0, r1, r2, NULL);
 	}
 leave2:
         close(fd);
+#if defined(OS_SOLARIS)
+	if (item_added == 0) {
+		attrs = probe_attr_creat("name",
+					 r0 = SEXP_string_newf("dummy0"),
+					 "ip_address",
+					 r1 = SEXP_string_newf("127.0.0.1"),
+					 "mac_address",
+					 r2 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
+					 NULL);
+		probe_item_ent_add(item, "interface", attrs, NULL);
+		SEXP_vfree(attrs, r0, r1, r2, NULL);
+	}
+ /* if not able to get info on interfaces, do not fail. */
+	if (rc > 0)
+		rc = 0;
+#endif
 leave1:
         freeifaddrs(ifaddr);
         return rc;
