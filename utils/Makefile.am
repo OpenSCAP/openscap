@@ -40,6 +40,9 @@ if WANT_UTIL_SCAP_AS_RPM
 bin_SCRIPTS += scap-as-rpm
 man_MANS += scap-as-rpm.8
 endif
+if WANT_UTIL_OSCAP_DOCKER
+bin_SCRIPTS += oscap-docker
+endif
 if WANT_UTIL_OSCAP_SSH
 bin_SCRIPTS += oscap-ssh
 endif
