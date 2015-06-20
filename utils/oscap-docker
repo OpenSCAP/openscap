@@ -135,6 +135,7 @@ container-cve)
 	;;
 *)
 	usage
+	exit 1
 	;;
 esac
 
