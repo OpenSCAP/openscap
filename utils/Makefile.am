@@ -46,6 +46,7 @@ man_MANS += oscap-docker.8
 endif
 if WANT_UTIL_OSCAP_SSH
 bin_SCRIPTS += oscap-ssh
+man_MANS += oscap-ssh.8
 endif
 
 EXTRA_DIST	= $(bin_SCRIPTS) $(man_MANS)

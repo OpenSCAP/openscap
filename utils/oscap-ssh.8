@@ -1,0 +1,79 @@
+.TH oscap-ssh "8" "June 2015" "Red Hat, Inc." "System Administration Utilities"
+.SH NAME
+oscap-ssh \- Tool for running oscap over SSH and collecting results.
+.SH DESCRIPTION
+oscap-ssh runs oscap tool on a remote system through SSH connection. The input files are
+transfered to the target system and after the scan finishes result files are transfered
+back. No temporary data remains on the remote machine.
+
+The tool requires bash, ssh, scp and mktemp to perform OVAL and XCCDF evaluation of remote
+machines. The remote machine also has to have oscap installed and in $PATH. This can be
+accomplished by installing openscap-scanner.
+
+Usage of the tool mimics usage and options of oscap(8) tool.
+
+.SH USAGE
+.SS Evaluation of XCCDF content
+$ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT
+
+Only source datastreams are supported as INPUT_CONTENT!
+
+Supported options are:
+  --profile
+  --tailoring-file
+  --tailoring-id
+  --cpe
+  --results
+  --results-arf
+  --report
+  --skip-valid
+  --fetch-remote-resources
+  --progress
+  --datastream-id
+  --xccdf-id
+  --benchmark-id
+  --remediate
+
+.SS Evaluation of OVAL content
+$ oscap-ssh user@host 22 oval eval [options] INPUT_CONTENT
+
+Supported options are:
+  --id
+  --variables
+  --directives
+  --results
+  --report
+  --skip-valid
+  --datastream-id
+  --oval-id
+  --probe-root (has to be remote path)
+
+.SS Collection of OVAL System Characteristic
+$ oscap-ssh user@host 22 oval collect [options] INPUT_CONTENT
+
+Supported options are:
+  --id
+  --syschar
+  --variables
+  --skip-valid
+
+.SH EXEMPLARY USAGE
+.SS Simple XCCDF evaluation
+The following command evaluates a remote Fedora machine as root. HTML report is written out as report.html on the local machine. Can be executed from any machine that has ssh, scp and bash. The local machine does not need to have openscap installed.
+
+$ oscap-ssh root@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
+
+.SS XCCDF Evaluation with tailoring file.
+The following command uses a tailoring file and also copies back ARF and XCCDF results. The tailoring file is automatically copied from local machine to remote.
+
+oscap-ssh root@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html --results results.xml --results-arf arf.xml --tailoring-file ssg-fedora-ds-tailoring.xml /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://fedorahosted.org/openscap/
+
+.SH AUTHORS
+.nf
+Martin Preisler <mpreisle@redhat.com>
+Šimon Lukašík <slukasik@redhat.com>
+.fi
