@@ -12,15 +12,20 @@
 set -e -o pipefail
 
 function usage(){
-	echo "oscap-docker image IMAGE-NAME OSCAP-ARGUMENTS"
+	echo "oscap-docker -- Tool for running oscap within docker container or image."
+	echo
+	echo "Usage:"
+	echo
+	echo "# oscap-docker image IMAGE-NAME OSCAP-ARGUMENTS"
 	echo "	Scan a docker image."
-	echo "oscap-docker image-cve IMAGE-NAME [--results oval-results-file.xml [--report report.html]]"
+	echo "# oscap-docker image-cve IMAGE-NAME [--results oval-results-file.xml [--report report.html]]"
 	echo "	Scan a docker image for known vulnerabilities."
-	echo "oscap-docker container CONTAINER-NAME OSCAP-ARGUMENTS"
+	echo "# oscap-docker container CONTAINER-NAME OSCAP-ARGUMENTS"
 	echo "	Scan a running docker container of given name."
-	echo "oscap-docker container-cve CONTAINER-NAME [--results oval-results-file.xml [--report report.html]]"
+	echo "# oscap-docker container-cve CONTAINER-NAME [--results oval-results-file.xml [--report report.html]]"
 	echo "	Scan a running container for known vulnerabilities."
-	echo "See man oscap to learn more about OSCAP-ARGUMENTS"
+	echo
+	echo "See \`man oscap\` to learn more about OSCAP-ARGUMENTS"
 }
 
 function docker_mount_image(){
