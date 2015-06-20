@@ -1,3 +1,29 @@
+openscap-1.2.4                                                  21-06-2015
+ - new features
+   - OVAL 5.11 support 99.8% completed!
+     - new symlink probe introduced
+     - new process58 test capabilities
+     - added possible_value support for external variables
+     - added possible_restriction support for external variables
+     - improved IP address comparisons
+   - Added Scientific Linux CPEs
+   - Added oscap-docker tool
+   - Created man-page for oscap-ssh
+ - HTML changes
+   - improved visibility of selected XCCDF profile in guides and reports
+   - render rule-result/message contents in reports
+ - maintenance
+   - Tests now pass on ppc64 little endian arch (rhbz#1215220)
+   - partition probe now supports remount, bind and move mount options
+   - Patched NIST OVAL-5.11 schemas to be backward compatible with
+     OVAL-5.10 (rhbz#1220262)
+   - fixed scap-as-rpm to work with vintage python (2.6)
+   - better error reporting when a probe dies (i.e. due to OOM killer)
+   - dropped selinux policy from upstream (rhbz#1209969)
+   - fix segfault on invalid selectors (rhbz#1220944)
+   - solaris support patches: file-system zones, systeminfo improvements
+   - many smaller fixes and new tests
+
 openscap-1.2.3                                                  01-05-2015
  - new features
    - oscap-ssh -- handy utility to run remote scan over ssh
