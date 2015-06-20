@@ -11,6 +11,18 @@
 
 set -e -o pipefail
 
+function usage(){
+	echo "oscap-docker image IMAGE-NAME OSCAP-ARGUMENTS"
+	echo "	Scan a docker image."
+	echo "oscap-docker image-cve IMAGE-NAME [--results oval-results-file.xml [--report report.html]]"
+	echo "	Scan a docker image for known vulnerabilities."
+	echo "oscap-docker container CONTAINER-NAME OSCAP-ARGUMENTS"
+	echo "	Scan a running docker container of given name."
+	echo "oscap-docker container-cve CONTAINER-NAME [--results oval-results-file.xml [--report report.html]]"
+	echo "	Scan a running container for known vulnerabilities."
+	echo "See man oscap to learn more about OSCAP-ARGUMENTS"
+}
+
 function docker_mount_image(){
 	local image_name=$1
 	local target_dir=$2
@@ -117,15 +129,7 @@ container-cve)
 	rm $cve_oval
 	;;
 *)
-	echo "oscap-docker image IMAGE-NAME OSCAP-ARGUMENTS"
-	echo "	Scan a docker image."
-	echo "oscap-docker image-cve IMAGE-NAME [--results oval-results-file.xml [--report report.html]]"
-	echo "	Scan a docker image for known vulnerabilities."
-	echo "oscap-docker container CONTAINER-NAME OSCAP-ARGUMENTS"
-	echo "	Scan a running docker container of given name."
-	echo "oscap-docker container-cve CONTAINER-NAME [--results oval-results-file.xml [--report report.html]]"
-	echo "	Scan a running container for known vulnerabilities."
-	echo "See man oscap to learn more about OSCAP-ARGUMENTS"
+	usage
 	;;
 esac
 
