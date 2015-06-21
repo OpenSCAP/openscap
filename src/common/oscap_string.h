@@ -23,52 +23,41 @@
 #ifndef OSCAP_STRING_
 #define OSCAP_STRING_
 #include <stdlib.h>
-#include <stdbool.h>
 #include "util.h"
 
-OSCAP_HIDDEN_START;
-
-/**
- * String with unlimited length
- * definition of data type - contains:
- * - pointer to data,
- * - actual length of string,
- * - capacity of allocated memory
- */
-typedef struct {
-	char *str;
-	unsigned int length;
-	unsigned int capacity;
-} oscap_string;
 
 /**
  * Create a new string.
  * @return pointer to a string on success, NULL on failure
  */
-oscap_string *oscap_string_new(void);
+struct oscap_string *oscap_string_new(void);
 
 /**
  * Free the string from memory.
  * @param s string
  */
-void oscap_string_free(oscap_string *s);
+void oscap_string_free(struct oscap_string *s);
 
 /**
  * Append a single char at the end of a string.
  * @param s string
  * @param c to append
- * @return true on succes, false on failure
  */
-bool oscap_string_append_char(oscap_string *s, char c);
+void oscap_string_append_char(struct oscap_string *s, char c);
 
 /**
  * Append multiple characters at the end of string.
  * @param s string
  * @param t to append
- * @return true on succes, false on failure
  */
-bool oscap_string_append_string(oscap_string *s, const char *t);
+void oscap_string_append_string(struct oscap_string *s, const char *t);
 
-OSCAP_HIDDEN_END;
+/**
+ * Get string data as constant pointer to char
+ * @param s string
+ * @return pointer to data
+ */
+const char *oscap_string_get_cstr(const struct oscap_string *s);
+
 
 #endif

@@ -1,8 +1,8 @@
-#OpenSCAP
+# OpenSCAP
 
 Open Source Security Compliance Solution
 
-##About
+## About
 
 The oscap program is a command line tool that allows users to load, scan,
 validate, edit, and export SCAP documents.
@@ -12,7 +12,7 @@ Homepage of the project is http://www.open-scap.org
 Documenation is on http://www.open-scap.org/page/Documentation
 
 
-##Compilation
+## Compilation
 
 Choose *1a* or *1b* depending on whether you want sources from a release tarball or the git repository.
 
@@ -69,9 +69,9 @@ make install
 ```
 
 
-##Use cases
+## Use cases
 
-###SCAP Content Validation
+### SCAP Content Validation
 
  * The following example shows how to validate a given source data stream; all components within the data stream are validated (XCCDF, OVAL, OCIL, CPE, and possibly other components):
 ```
@@ -79,7 +79,7 @@ oscap ds sds-validate scap-ds.xml
 ```
 
 
-###Scanning
+### Scanning
 
  * To evaluate all definitions within the given OVAL Definition file, run the following command: 
 ```
@@ -106,7 +106,7 @@ oscap xccdf eval --datastream-id ds.xml --xccdf-id xccdf.xml --results xccdf-res
 *where scap-ds.xml is a file representing the SCAP data stream collection, ds.xml is the particular data stream, xccdf.xml is ID of the component-ref pointing to the desired XCCDF document, and xccdf-results.xml is a file containing the scan results.*
 
 
-###Document generation
+### Document generation
 
  * without XCCDF rules
 ```

@@ -833,9 +833,12 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 			}
 		}
 		break;
-	default:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: %d.", oval_syschar_get_flag(syschar_object));
+	default: {
+		const char *object_id = oval_syschar_get_object(syschar_object) ? oval_object_get_id(oval_syschar_get_object(syschar_object)) : "<UNKNOWN>";
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: '%d' when evaluating object: '%s' from test: '%s' ",
+				oval_syschar_get_flag(syschar_object), object_id, oval_test_get_id(test));
 		return OVAL_RESULT_ERROR;
+		}
 	}
 
 	return result;

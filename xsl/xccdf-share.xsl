@@ -271,6 +271,21 @@ Authors:
             </xsl:otherwise>
         </xsl:choose>
     </h2>
+    <xsl:if test="$profile">
+        <blockquote>with profile <mark>
+            <xsl:choose>
+                <xsl:when test="$profile/cdf:title">
+                    <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
+                        <xsl:with-param name="benchmark" select="$benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$profile/@id"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </mark></blockquote>
+    </xsl:if>
 
     <div class="col-md-12 well well-lg horizontal-scroll">
         <xsl:if test="$benchmark/cdf:front-matter">

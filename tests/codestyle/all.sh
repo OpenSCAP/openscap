@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright 2014 Red Hat Inc., Durham, North Carolina.
+# Copyright 2014--2015 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 
 set -e -o pipefail
@@ -28,8 +28,16 @@ function test_illicit_function_use {
 	fi
 }
 
+function shell_script_syntax(){
+	for script in $@; do
+		bash -n -u $top_srcdir/$script
+	done
+}
+
 test_init "test_codebase.log"
 
 test_run "illicit use of functions" test_illicit_function_use 0
+test_run "Check syntax of distributed shell scripts" shell_script_syntax \
+	utils/oscap-ssh utils/oscap-docker
 
 test_exit

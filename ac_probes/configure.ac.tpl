@@ -39,15 +39,15 @@ AC_PROG_SWIG([])
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-LT_CURRENT=12
+LT_CURRENT=13
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=3
+LT_REVISION=0
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
 ## precedence over adding, so set to 0 if both happened.
-LT_AGE=4
+LT_AGE=5
 
 LT_CURRENT_MINUS_AGE=`expr $LT_CURRENT - $LT_AGE`
 
@@ -542,6 +542,14 @@ AC_ARG_ENABLE([util-oscap-ssh],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-ssh]) ;;
      esac],[util_oscap_ssh=yes])
 
+AC_ARG_ENABLE([util-oscap-docker],
+     [AC_HELP_STRING([--enable-util-oscap-docker], [enable compilation of the oscap-docker utility (default=yes)])],
+     [case "${enableval}" in
+       yes) util_oscap_docker=yes ;;
+       no)  util_oscap_docker=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-docker]) ;;
+     esac],[util_oscap_docker=yes])
+
 if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
@@ -595,14 +603,6 @@ if test "x${python3_bind}" = xyes; then
 	AC_SUBST(py3execdir, $PYTHON3_EXECDIR)
 fi
 
-AC_ARG_ENABLE([selinux_policy],
-     [AC_HELP_STRING([--enable-selinux_policy], [enable SELinux policy (default=no)])],
-     [case "${enableval}" in
-       yes) selinux_policy=yes ;;
-       no)  selinux_policy=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-selinux_policy]) ;;
-     esac],[selinux_policy=no])
-
 @@@@PROBE_EVAL@@@@
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
@@ -616,12 +616,11 @@ AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_SSH], test "$util_oscap_ssh" = yes)
+AM_CONDITIONAL([WANT_UTIL_OSCAP_DOCKER], test "$util_oscap_docker" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PYTHON3], test "$python3_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
-
-AM_CONDITIONAL([WANT_SELINUX_POLICY], test "$selinux_policy" = yes)
 
 #
 # Core
@@ -632,7 +631,6 @@ AC_CONFIG_FILES([Makefile
                  xsl/Makefile
                  schemas/Makefile
                  cpe/Makefile
-		 selinux/Makefile
                  libopenscap.pc
                  src/common/Makefile
 		src/source/Makefile
@@ -651,6 +649,7 @@ AC_CONFIG_FILES([Makefile
 		src/OVAL/results/Makefile
                  tests/API/OVAL/Makefile
 		tests/API/OVAL/glob_to_regex/Makefile
+		tests/oscap_string/Makefile
                  tests/API/OVAL/unittests/Makefile
 		 tests/API/OVAL/validate/Makefile
 		 tests/API/OVAL/report_variable_values/Makefile
@@ -670,6 +669,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/uname/Makefile
                  tests/probes/shadow/Makefile
 		tests/probes/sql57/Makefile
+		tests/probes/symlink/Makefile
                  tests/probes/family/Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
@@ -752,6 +752,7 @@ echo
 echo "oscap tool:                    $util_oscap"
 echo "scap-as-rpm tool:              $util_scap_as_rpm"
 echo "oscap-ssh tool:                $util_oscap_ssh"
+echo "oscap-docker tool:             $util_oscap_docker"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
@@ -759,7 +760,6 @@ echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
-echo "SELinux policy enabled:        $selinux_policy"
 echo
 
 if test "$probes" = "yes"; then

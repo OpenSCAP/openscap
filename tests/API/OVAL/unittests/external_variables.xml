@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_variables xmlns="http://oval.mitre.org/XMLSchema/oval-variables-5"
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-variables-5 oval-variables-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+      <oval:schema_version>5.11</oval:schema_version>
+      <oval:timestamp>2015-06-12T15:24:29.903-04:00</oval:timestamp>
+    </generator>
+    <variables>
+        <variable id="oval:x:var:1" datatype="string" comment="This variable represents the string value 'Hello'.">
+            <value>Hello</value>
+        </variable>
+        <variable id="oval:x:var:2" datatype="string" comment="This variable represents the string value '123-456-7890'.">
+            <value>123-456-7890</value>
+        </variable>
+        <variable id="oval:x:var:3" datatype="int" comment="This variable represents the integer value '1'.">
+            <value>1</value>
+        </variable>
+        <variable id="oval:x:var:4" datatype="int" comment="This variable represents the integer value '1'.">
+            <value>1</value>
+        </variable>
+        <variable id="oval:x:var:5" datatype="int" comment="This variable represents the integer value '13'.">
+            <value>13</value>
+        </variable>
+        <variable id="oval:x:var:6" datatype="int" comment="This variable represents the integer value '42'.">
+            <value>42</value>
+        </variable>
+        <variable id="oval:x:var:7" datatype="int" comment="This variable represents the integer value '300'.">
+            <value>300</value>
+        </variable>
+         <variable id="oval:x:var:8" datatype="int" comment="This variable represents the integer value '666'.">
+            <value>666</value>
+        </variable>
+         <variable id="oval:x:var:9" datatype="int" comment="This variable represents the integer value '0'.">
+            <value>0</value>
+        </variable>
+        <variable id="oval:x:var:10" datatype="int" comment="This variable represents the integer value '17'.">
+            <value>17</value>
+        </variable>
+    </variables>
+</oval_variables>

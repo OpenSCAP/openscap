@@ -1,3 +1,0 @@
-/usr/bin/oscap						--		gen_context(system_u:object_r:oscap_exec_t,s0)
-
-/usr/libexec/openscap/probe_.*		--		gen_context(system_u:object_r:unconfined_oscap_probe_exec_t,s0)

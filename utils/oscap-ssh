@@ -28,10 +28,11 @@ which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
 {
-    echo "oscap-ssh"
+    echo "oscap-ssh -- Tool for running oscap over SSH and collecting results."
+    echo
+    echo "Usage:"
     echo
     echo "$ oscap-ssh user@host 22 info INPUT_CONTENT"
-    echo
     echo "$ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT"
     echo
     echo "Only source datastreams are supported as INPUT_CONTENT!"
@@ -74,6 +75,8 @@ function usage()
     echo "  --syschar"
     echo "  --variables"
     echo "  --skip-valid"
+    echo
+    echo "See \`man oscap\` to learn more about semantics of these options."
 }
 
 if [ $# -lt 1 ]; then

@@ -256,12 +256,13 @@ static char *get_selinux_label(int pid) {
 #endif /* HAVE_SELINUX_SELINUX_H */
 }
 
-static char **get_posix_capability(int pid) {
+static char **get_posix_capability(int pid, int max_cap_id) {
 #ifdef HAVE_SYS_CAPABILITY_H
 	cap_t pid_caps;
 	char *cap_name, **ret = NULL;
 	unsigned cap_value, ret_index = 0;
 	cap_flag_value_t cap_flag;
+	int cap_id;
 
 #if LIBCAP_VERSION == 1
 	pid_caps = cap_init();
@@ -297,7 +298,9 @@ static char **get_posix_capability(int pid) {
 					*cap_name_p = toupper(*cap_name_p);
 					cap_name_p++;
 				}
-				if (oscap_string_to_enum(CapabilityType, cap_name) > -1) {
+
+				cap_id = oscap_string_to_enum(CapabilityType, cap_name);
+				if (cap_id > -1 && cap_id <= max_cap_id) {
 					ret = realloc(ret, (ret_index + 1) * sizeof(char *));
 					ret[ret_index] = strdup(cap_name);
 					ret_index++;
@@ -353,9 +356,10 @@ static int get_exec_shield_status(int pid) {
 
 static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 {
-	int err = 1;
+	int err = 1, max_cap_id;
 	DIR *d;
 	struct dirent *ent;
+	oval_version_t oval_version;
 
 	d = opendir("/proc");
 	if (d == NULL)
@@ -364,6 +368,13 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	// Get the time tick hertz
 	ticks = (unsigned long)sysconf(_SC_CLK_TCK);
 	get_boot_time();
+
+	oval_version = probe_obj_get_schema_version(probe_ctx_getobject(ctx));
+	if (oval_version_cmp(oval_version, OVAL_VERSION(5.11)) < 0) {
+		max_cap_id = OVAL_5_8_MAX_CAP_ID;
+	} else {
+		max_cap_id = OVAL_5_11_MAX_CAP_ID;
+	}
 
 	// Scan the directories
 	while (( ent = readdir(d) )) {
@@ -492,7 +503,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			selinux_domain_label = get_selinux_label(pid);
 			r.selinux_domain_label = selinux_domain_label;
 
-			posix_capabilities = get_posix_capability(pid);
+			posix_capabilities = get_posix_capability(pid, max_cap_id);
 			r.posix_capability = posix_capabilities;
 
 			r.session_id = session;

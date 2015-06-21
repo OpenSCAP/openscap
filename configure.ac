@@ -39,15 +39,15 @@ AC_PROG_SWIG([])
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-LT_CURRENT=12
+LT_CURRENT=13
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=3
+LT_REVISION=0
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
 ## precedence over adding, so set to 0 if both happened.
-LT_AGE=4
+LT_AGE=5
 
 LT_CURRENT_MINUS_AGE=`expr $LT_CURRENT - $LT_AGE`
 
@@ -189,6 +189,10 @@ probe_routingtable_req_deps_ok=yes
 probe_routingtable_req_deps_missing=
 probe_routingtable_opt_deps_ok=yes
 probe_routingtable_opt_deps_missing=
+probe_symlink_req_deps_ok=yes
+probe_symlink_req_deps_missing=
+probe_symlink_opt_deps_ok=yes
+probe_symlink_opt_deps_missing=
 probe_gconf_req_deps_ok=yes
 probe_gconf_req_deps_missing=
 probe_gconf_opt_deps_ok=yes
@@ -489,7 +493,7 @@ CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cfla
 
 echo
 echo ' * Checking presence of required headers for the system_info probe'
-AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h ifaddrs.h netdb.h net/if.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h ifaddrs.h libdlpi.h netdb.h net/if.h net/if_types.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/sockio.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the family probe'
@@ -608,6 +612,10 @@ echo ' * Checking presence of required headers for the routingtable probe'
 AC_CHECK_HEADERS([arpa/inet.h byteswap.h endian.h errno.h netinet/in.h netinet/ip6.h netinet/ip.h net/route.h stdio.h stdlib.h string.h ],[],[probe_routingtable_req_deps_ok=no; probe_routingtable_req_deps_missing='header files'],[-])
 
 echo
+echo ' * Checking presence of required headers for the symlink probe'
+AC_CHECK_HEADERS([errno.h limits.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_symlink_req_deps_ok=no; probe_symlink_req_deps_missing='header files'],[-])
+
+echo
 echo ' * Checking presence of required headers for the gconf probe'
 AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[-])
 
@@ -617,7 +625,7 @@ AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext
 
 echo
 echo ' * Checking presence of required headers for the partition probe'
-AC_CHECK_HEADERS([fcntl.h limits.h mntent.h pcre.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([fcntl.h limits.h linux/fs.h mntent.h pcre.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the partition probe'
@@ -1259,6 +1267,14 @@ AC_ARG_ENABLE([util-oscap-ssh],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-ssh]) ;;
      esac],[util_oscap_ssh=yes])
 
+AC_ARG_ENABLE([util-oscap-docker],
+     [AC_HELP_STRING([--enable-util-oscap-docker], [enable compilation of the oscap-docker utility (default=yes)])],
+     [case "${enableval}" in
+       yes) util_oscap_docker=yes ;;
+       no)  util_oscap_docker=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-docker]) ;;
+     esac],[util_oscap_docker=yes])
+
 if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
@@ -1311,14 +1327,6 @@ if test "x${python3_bind}" = xyes; then
 	AC_SUBST(python3dir, $PYTHON3_DIR)
 	AC_SUBST(py3execdir, $PYTHON3_EXECDIR)
 fi
-
-AC_ARG_ENABLE([selinux_policy],
-     [AC_HELP_STRING([--enable-selinux_policy], [enable SELinux policy (default=no)])],
-     [case "${enableval}" in
-       yes) selinux_policy=yes ;;
-       no)  selinux_policy=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-selinux_policy]) ;;
-     esac],[selinux_policy=no])
 
 
 AM_CONDITIONAL([probe_system_info_enabled], test "$probe_system_info_req_deps_ok" = yes)
@@ -1373,6 +1381,8 @@ AM_CONDITIONAL([probe_sysctl_enabled], test "$probe_sysctl_req_deps_ok" = yes)
 probe_sysctl_enabled=$probe_sysctl_req_deps_ok
 AM_CONDITIONAL([probe_routingtable_enabled], test "$probe_routingtable_req_deps_ok" = yes)
 probe_routingtable_enabled=$probe_routingtable_req_deps_ok
+AM_CONDITIONAL([probe_symlink_enabled], test "$probe_symlink_req_deps_ok" = yes)
+probe_symlink_enabled=$probe_symlink_req_deps_ok
 AM_CONDITIONAL([probe_gconf_enabled], test "$probe_gconf_req_deps_ok" = yes)
 probe_gconf_enabled=$probe_gconf_req_deps_ok
 AM_CONDITIONAL([probe_isainfo_enabled], test "$probe_isainfo_req_deps_ok" = yes)
@@ -1419,12 +1429,11 @@ AM_CONDITIONAL([WANT_SCE], test "$sce" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_SSH], test "$util_oscap_ssh" = yes)
+AM_CONDITIONAL([WANT_UTIL_OSCAP_DOCKER], test "$util_oscap_docker" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PYTHON3], test "$python3_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
 AM_CONDITIONAL([ENABLE_VALGRIND_TESTS], test "$vgcheck" = yes)
-
-AM_CONDITIONAL([WANT_SELINUX_POLICY], test "$selinux_policy" = yes)
 
 #
 # Core
@@ -1435,7 +1444,6 @@ AC_CONFIG_FILES([Makefile
                  xsl/Makefile
                  schemas/Makefile
                  cpe/Makefile
-		 selinux/Makefile
                  libopenscap.pc
                  src/common/Makefile
 		src/source/Makefile
@@ -1454,6 +1462,7 @@ AC_CONFIG_FILES([Makefile
 		src/OVAL/results/Makefile
                  tests/API/OVAL/Makefile
 		tests/API/OVAL/glob_to_regex/Makefile
+		tests/oscap_string/Makefile
                  tests/API/OVAL/unittests/Makefile
 		 tests/API/OVAL/validate/Makefile
 		 tests/API/OVAL/report_variable_values/Makefile
@@ -1473,6 +1482,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/uname/Makefile
                  tests/probes/shadow/Makefile
 		tests/probes/sql57/Makefile
+		tests/probes/symlink/Makefile
                  tests/probes/family/Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
@@ -1555,6 +1565,7 @@ echo
 echo "oscap tool:                    $util_oscap"
 echo "scap-as-rpm tool:              $util_scap_as_rpm"
 echo "oscap-ssh tool:                $util_oscap_ssh"
+echo "oscap-docker tool:             $util_oscap_docker"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
@@ -1562,7 +1573,6 @@ echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
-echo "SELinux policy enabled:        $selinux_policy"
 echo
 
 if test "$probes" = "yes"; then
@@ -1723,6 +1733,12 @@ else
   probe_routingtable_table_result="NO (missing: $probe_routingtable_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "routingtable:" "$probe_routingtable_table_result"
+if test "$probe_symlink_req_deps_ok" = "yes"; then
+  probe_symlink_table_result="yes"
+else
+  probe_symlink_table_result="NO (missing: $probe_symlink_req_deps_missing)"
+fi
+printf "  %-28s %s\n" "symlink:" "$probe_symlink_table_result"
 if test "$probe_gconf_req_deps_ok" = "yes"; then
   probe_gconf_table_result="yes"
 else

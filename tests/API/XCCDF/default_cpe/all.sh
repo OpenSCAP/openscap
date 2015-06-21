@@ -63,6 +63,9 @@ function test_rhel {
                 EXPECTED_NA=0
             elif echo "$RHEL_RELEASE" | grep "\.el${RHEL_VERSION}[._]"; then
                 EXPECTED_NA=0
+            elif echo "$RHEL_RELEASE" | grep "\.ael${RHEL_VERSION}b"; then
+                # Little obscure but valid rpm release
+                EXPECTED_NA=0
             elif [ "$RHEL_VERSION" == "5" ] && echo "$RHEL_RELEASE" | grep '^redhat-release-5'; then
                 # On RHEL 5 the redhat-release package does not have %{RELEASE} defined.
                 EXPECTED_NA=0

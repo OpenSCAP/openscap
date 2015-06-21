@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = lib src utils tests xsl schemas cpe selinux
+SUBDIRS = lib src utils tests xsl schemas cpe
 SUBDIRS += swig
 
 if WANT_PROBES
