@@ -118,7 +118,7 @@ static char *get_mac(const struct ifaddrs *ifa)
 
        return mac_buf;
 }
-#else if defined(OS_SOLARIS)
+#elif defined(OS_SOLARIS)
 #include <sys/socket.h>
 #include <ifaddrs.h>
 #include <netdb.h>
