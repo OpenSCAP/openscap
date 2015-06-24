@@ -73,7 +73,7 @@ function oscap_chroot(){
 	local target=$1; shift
 	local image=$1; shift
 	local path=$1; shift
-	local oscap_arguments="$@"
+	local oscap_arguments="$*"
 
 	# Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
 	export OSCAP_PROBE_ROOT="$(cd $path; pwd)"
@@ -108,7 +108,7 @@ module=$1; shift
 case $module in
 image)
 	image_name=$1; shift
-	oscap_arguments="$@"
+	oscap_arguments="$*"
 	image_root=`mktemp -d docker.XXXXXX`
 	docker_mount_image $image_name $image_root
 	oscap_chroot "image" $image_name $image_root $oscap_arguments
@@ -116,7 +116,7 @@ image)
 	;;
 image-cve)
 	image_name=$1; shift
-	oscap_oval_eval_arguments="$@"
+	oscap_oval_eval_arguments="$*"
 	image_root=`mktemp -d docker.XXXXXX`
 	cve_oval=$image_root/cve-oval.xml
 	docker_mount_image $image_name $image_root
@@ -127,13 +127,13 @@ image-cve)
 	;;
 container)
 	container_name=$1; shift
-	oscap_arguments="$@"
+	oscap_arguments="$*"
 	container_root=`docker_container_root $container_name`
 	oscap_chroot "image" $container_name $container_root $oscap_arguments
 	;;
 container-cve)
 	container_name=$1; shift
-	oscap_oval_eval_arguments="$@"
+	oscap_oval_eval_arguments="$*"
 	container_root=`docker_container_root $container_name`
 	cve_oval=`mktemp`
 	cve_definitions_uri=`cve_definitions_uri $container_name $container_root`
