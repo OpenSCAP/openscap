@@ -9,7 +9,7 @@ validate, edit, and export SCAP documents.
 
 Homepage of the project is http://www.open-scap.org
 
-Documenation is on http://www.open-scap.org/page/Documentation
+Documentation is on http://www.open-scap.org/page/Documentation
 
 
 ## Compilation
@@ -113,7 +113,7 @@ oscap xccdf eval --datastream-id ds.xml --xccdf-id xccdf.xml --results xccdf-res
 oscap xccdf generate guide XCCDF-FILE > XCCDF-GUIDE-FILE
 ```
 
- * with XCCDF rules rules
+ * with XCCDF rules
 ```
 oscap xccdf generate guide --profile PROFILE XCCDF-FILE > XCCDF-GUIDE-FILE
 ```
