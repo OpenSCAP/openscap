@@ -135,7 +135,7 @@ static int fd=-1;
 static char *get_mac(const struct ifaddrs *ifa)
 {
        struct lifreq lifr;
-	uint_t physaddrlen = DLPI_PHYSADDR_MAX;
+	size_t physaddrlen = DLPI_PHYSADDR_MAX;
 	uchar_t physaddr[DLPI_PHYSADDR_MAX];
 	static char mac_buf[DLPI_PHYSADDR_MAX];
 	char *str;
