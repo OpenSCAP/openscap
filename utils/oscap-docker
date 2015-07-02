@@ -121,7 +121,7 @@ image-cve)
 	cve_oval=$image_root/cve-oval.xml
 	docker_mount_image $image_name $image_root
 	cve_definitions_uri=`cve_definitions_uri $image_name $image_root`
-	wget --non-verbose -O "$cve_oval" $cve_definitions_uri
+	wget --no-verbose -O "$cve_oval" $cve_definitions_uri
 	oscap_chroot "image" $image_name $image_root oval eval $oscap_oval_eval_arguments $cve_oval
 	docker_umount_image $image_root
 	;;
@@ -137,7 +137,7 @@ container-cve)
 	container_root=`docker_container_root $container_name`
 	cve_oval=`mktemp`
 	cve_definitions_uri=`cve_definitions_uri $container_name $container_root`
-	wget --non-verbose -O "$cve_oval" $cve_definitions_uri
+	wget --no-verbose -O "$cve_oval" $cve_definitions_uri
 	oscap_chroot "container" $container_name $container_root oval eval $oscap_oval_eval_arguments $cve_oval
 	rm $cve_oval
 	;;
