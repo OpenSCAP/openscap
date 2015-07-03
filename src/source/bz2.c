@@ -31,6 +31,8 @@
 #include <libxml/tree.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
 
 #include "bz2_priv.h"
 #include "common/_error.h"
@@ -41,13 +43,15 @@ struct bz2_file {
 	bool eof;
 };
 
-static struct bz2_file *bz2_file_open(const char *filename)
+static const char magic_number[] = {'B','Z'};
+
+static struct bz2_file *bz2_fd_open(int fd)
 {
 	struct bz2_file *b = NULL;
 	FILE* f;
 	int bzerror;
 
-	f = fopen (filename, "r" );
+	f = fdopen (fd, "r" );
 	if (f) {
 		b = malloc(sizeof(struct bz2_file));
 		b->f = f;
@@ -95,9 +99,9 @@ static int bz2_file_close(void *bzfile)
 	return bzerror == BZ_OK ? 0 : -1;
 }
 
-xmlDoc *bz2_file_read_doc(const char *filepath)
+xmlDoc *bz2_fd_read_doc(int fd)
 {
-	struct bz2_file *bzfile = bz2_file_open(filepath);
+	struct bz2_file *bzfile = bz2_fd_open(fd);
 	if (bzfile == NULL) {
 		return NULL;
 	}
@@ -178,12 +182,30 @@ xmlDoc *bz2_mem_read_doc(const char *buffer, size_t size)
 	return xmlReadIO((xmlInputReadCallback) bz2_mem_read, bz2_mem_close, bzmem, "url", NULL, XML_PARSE_PEDANTIC);
 }
 
-bool bz2_file_is_bzip(const char *filepath)
-{
-	int offset = strlen(filepath) - strlen(".xml.bz2");
-	if (offset >= 0) {
-		return strcasecmp(filepath + offset, ".xml.bz2") == 0;
+bool bz2_memory_is_bzip(const char* memory, const size_t size){	
+	if (size < 2){
+		return false; // Cannot read magic number
 	}
-	return false;
+
+	// compare memory header with reference magic_number of bz2
+	return ((memory[0] == magic_number[0]) && (memory[1] == magic_number[1]));
+}
+
+bool bz2_fd_is_bzip(int fd)
+{
+	FILE* file = fdopen(dup(fd), "r");
+	
+	bool is_bzip;
+	if (file == NULL) {
+		is_bzip = false; // cannot open/determine file type
+	} else {
+		// Compare magic number with file header. Type casting to integer solve EOF (-1) returned by fgetc()
+		is_bzip = (fgetc(file) == (int)magic_number[0]) && (fgetc(file) == (int)magic_number[1]);
+	}
+
+	rewind(file);
+	fclose(file);
+	return is_bzip;
+
 }
 #endif
