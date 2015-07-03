@@ -25,6 +25,8 @@
 #endif
 
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 
@@ -79,14 +81,33 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 	return source;
 }
 
-struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath)
+/**
+ * Allocate oscap_source struct and fill for memory data
+ * @param size_t size Size of data
+ * @param const char* filepath Path of file
+ * @return Allocated struct
+ */
+static struct oscap_source* _create_oscap_source(size_t size, const char* filepath)
 {
 	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
-	source->origin.memory = oscap_calloc(1, size);
 	source->origin.memory_size = size;
-	memcpy(source->origin.memory, buffer, size);
 	source->origin.type = OSCAP_SRC_FROM_USER_MEMORY;
 	source->origin.filepath = oscap_strdup(filepath ? filepath : "NONEXISTENT");
+	return source;
+}
+
+struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath)
+{
+	struct oscap_source *source = _create_oscap_source(size, filepath);
+	source->origin.memory = oscap_calloc(1, size);
+	memcpy(source->origin.memory, buffer, size);
+	return source;
+}
+
+struct oscap_source *oscap_source_new_take_memory(char *buffer, size_t size, const char *filepath)
+{
+	struct oscap_source* source = _create_oscap_source(size, filepath);
+	source->origin.memory = buffer;
 	return source;
 }
 
@@ -160,9 +181,9 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 	// filepath will be non-NULL, it will contain the filepath hint.
 
 	if (source->xml.doc == NULL) {
-		if (source->origin.memory) {
+		if (source->origin.memory != NULL) {
 #ifdef HAVE_BZ2
-			if (bz2_file_is_bzip(source->origin.filepath)) {
+			if (bz2_memory_is_bzip(source->origin.memory, source->origin.memory_size)) {
 				source->xml.doc = bz2_mem_read_doc(source->origin.memory, source->origin.memory_size);
 			} else
 #endif
@@ -175,17 +196,24 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 			}
 		}
 		else {
+			int fd = open(source->origin.filepath, O_RDONLY);
+			if ( fd == -1 ){
+				source->xml.doc = NULL;
+				oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", oscap_source_readable_origin(source));
+			} else {
 #ifdef HAVE_BZ2
-			if (bz2_file_is_bzip(source->origin.filepath)) {
-				source->xml.doc = bz2_file_read_doc(source->origin.filepath);
-			} else
+				if (bz2_fd_is_bzip(fd)) {
+					source->xml.doc = bz2_fd_read_doc(fd);
+				} else
 #endif
-			{
-				source->xml.doc = xmlReadFile(source->origin.filepath, NULL, 0);
-				if (source->xml.doc == NULL) {
-					oscap_setxmlerr(xmlGetLastError());
-					oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+				{
+					source->xml.doc = xmlReadFd(fd, NULL, NULL, 0);
+					if (source->xml.doc == NULL) {
+						oscap_setxmlerr(xmlGetLastError());
+						oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+					}
 				}
+				close(fd);
 			}
 		}
 	}

@@ -75,6 +75,15 @@ oscap_acquire_cleanup_dir(char **dir_path)
 	}
 }
 
+/**
+ * Struct used for downloading to memory via CURL
+ */
+struct download_memory{
+	size_t size;
+	size_t used;
+	char* ptr;
+};
+
 int
 oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 {
@@ -96,63 +105,6 @@ oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 		*filename = NULL;
 	}
 	return fd;
-}
-
-char *
-oscap_acquire_url_download(const char *temp_dir, const char *url)
-{
-	/* SADLY, we create a tempfile which we use later.
-	 * Much greater solution would be to use unliked
-	 * file descriptors, but the library interface is
-	 * not yet prepared for that. */
-	char *output_filename = NULL;
-	int output_fd;
-	FILE *fp;
-	CURL *curl;
-	CURLcode res;
-
-	output_fd = oscap_acquire_temp_file(temp_dir, TEMP_URL_TEMPLATE, &output_filename);
-	if (output_fd == -1) {
-		return NULL;
-	}
-
-	fp = fdopen(output_fd, "w");
-	if (fp == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "fdopen failed, %s", strerror(errno));
-		if (remove(output_filename))
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "fdopen failed. Failed to remove temp file %s. %s",
-				output_filename, strerror(errno));
-		close(output_fd);
-		free(output_filename);
-		return NULL;
-	}
-
-	curl = curl_easy_init();
-	if (curl == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
-
-		if (remove(output_filename))
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Failed to initialize libcurl. Failed to remove temp file %s. %s",
-				output_filename, strerror(errno));
-		fclose(fp);
-		free(output_filename);
-		return NULL;
-	}
-
-	curl_easy_setopt(curl, CURLOPT_URL, url);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
-	res = curl_easy_perform(curl);
-	if (res != 0) {
-		oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
-		if (remove(output_filename))
-			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Download failed: %s. Failed to remove temp file %s. %s",
-				curl_easy_strerror(res), output_filename, strerror(errno));
-		free(output_filename);
-		output_filename = NULL;
-	}
-	curl_easy_cleanup(curl);
-	fclose(fp);
-	return output_filename;
 }
 
 bool
@@ -184,6 +136,63 @@ oscap_acquire_url_to_filename(const char *url)
 	curl_free(curl_filename);
 	curl_easy_cleanup(curl);
 	return filename;
+}
+
+char* oscap_acquire_url_download(const char *url, size_t* memory_size)
+{
+	CURL *curl;
+	struct download_memory data_struct = {.size=0, .used=0, .ptr = NULL };
+
+	curl = curl_easy_init();
+	if (curl == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
+		return NULL;
+	}
+
+
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data_struct);
+
+	CURLcode res = curl_easy_perform(curl);
+	curl_easy_cleanup(curl);
+
+	if (res != 0) {
+		oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
+		oscap_free(data_struct.ptr);
+		return NULL;
+	}
+
+	*memory_size = data_struct.used;
+	return data_struct.ptr;
+}
+
+size_t write_to_memory_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
+{
+	struct download_memory* const dest = (struct download_memory* ) userdata;
+
+	size_t new_received_size = size * nmemb; // total size of newly received data
+	size_t new_size = dest->used + new_received_size; // size of old + new data
+
+	if (dest->size < new_size){
+		char* new_ptr = oscap_realloc(dest->ptr, new_size);
+
+		// Failed to allocate new memory
+		if (new_ptr == NULL){
+			return 0; // cause CURLE_WRITE_ERROR
+		}
+
+		dest->size = new_size;
+		dest->ptr = new_ptr;
+
+	}
+
+	// Add newly received data
+	memcpy( &(dest->ptr[dest->used]) , ptr, new_received_size);
+	dest->used += new_received_size;
+
+	return new_received_size;
+
 }
 
 char *

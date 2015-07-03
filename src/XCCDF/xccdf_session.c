@@ -644,36 +644,26 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 				printable_path = (char *) oscap_file_entry_get_file(file_entry);
 
 				if (session->oval.fetch_remote_resources) {
-					if (session->temp_dir == NULL)
-						session->temp_dir = oscap_acquire_temp_dir();
-					if (session->temp_dir == NULL) {
-						oscap_file_entry_iterator_free(files_it);
-						oscap_file_entry_list_free(files);
-						free(tmp_path);
-						_oval_content_resources_free(resources);
-						free(xccdf_path_cpy);
-						return 1;
-					}
-
 					if (session->oval.progress != NULL)
 						session->oval.progress(false, "Downloading: %s ... ", printable_path);
-					char *file = oscap_acquire_url_download(session->temp_dir, printable_path);
-					if (file == NULL) {
+
+					size_t data_size;
+					char *data = oscap_acquire_url_download(printable_path, &data_size);
+					if (data == NULL) {
 						if (session->oval.progress != NULL)
 							session->oval.progress(false, "error\n");
-					}
-					else {
+					} else {
 						if (session->oval.progress != NULL)
 							session->oval.progress(false, "ok\n");
+
 						resources[idx] = malloc(sizeof(struct oval_content_resource));
 						resources[idx]->href = strdup(printable_path);
-						resources[idx]->source = oscap_source_new_from_file(file);
+						resources[idx]->source = oscap_source_new_take_memory(data, data_size, printable_path);
 						resources[idx]->source_owned = true;
 						idx++;
 						resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
 						resources[idx] = NULL;
 						free(tmp_path);
-						free(file);
 						continue;
 					}
 				}
@@ -704,9 +694,9 @@ static void _xccdf_session_free_oval_agents(struct xccdf_session *session)
 		for (int i=0; session->oval.agents[i]; i++) {
 			struct oval_definition_model *def_model = oval_agent_get_definition_model(session->oval.agents[i]);
 			oval_definition_model_free(def_model);
-                        oval_agent_destroy_session(session->oval.agents[i]);
+			oval_agent_destroy_session(session->oval.agents[i]);
 		}
-                free(session->oval.agents);
+		free(session->oval.agents);
 		session->oval.agents = NULL;
 	}
 }
