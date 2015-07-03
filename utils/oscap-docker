@@ -97,7 +97,7 @@ function cve_definitions_uri(){
 	if query_cpe_in_chroot $image_root oval:org.open-scap.cpe.rhel:def:7 || \
 			query_cpe_in_chroot $image_root oval:org.open-scap.cpe.rhel:def:6 ||\
 			query_cpe_in_chroot $image_root oval:org.open-scap.cpe.rhel:def:5; then
-		echo "http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml"
+		echo "http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml.bz2"
 	else
 		echo "Could not found CVE definitions for: $name" >&2
 		return 1
@@ -118,7 +118,7 @@ image-cve)
 	image_name=$1; shift
 	oscap_oval_eval_arguments="$*"
 	image_root=`mktemp -d docker.XXXXXX`
-	cve_oval=$image_root/cve-oval.xml
+	cve_oval=$image_root/cve-oval.xml.bz2
 	docker_mount_image $image_name $image_root
 	cve_definitions_uri=`cve_definitions_uri $image_name $image_root`
 	wget --no-verbose -O "$cve_oval" $cve_definitions_uri
@@ -135,7 +135,7 @@ container-cve)
 	container_name=$1; shift
 	oscap_oval_eval_arguments="$*"
 	container_root=`docker_container_root $container_name`
-	cve_oval=`mktemp`
+	cve_oval=`mktemp -t oval.XXXXX.xml.bz2`
 	cve_definitions_uri=`cve_definitions_uri $container_name $container_root`
 	wget --no-verbose -O "$cve_oval" $cve_definitions_uri
 	oscap_chroot "container" $container_name $container_root oval eval $oscap_oval_eval_arguments $cve_oval
