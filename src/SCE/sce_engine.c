@@ -50,6 +50,7 @@
 #endif
 #include <limits.h>
 #include <unistd.h>
+#include <libgen.h>
 
 struct sce_check_result
 {

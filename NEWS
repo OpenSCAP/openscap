@@ -1,3 +1,11 @@
+openscap-1.2.5                                                  06-07-2015
+ - maintenance
+   - smaller bugfixes
+   - plugged memory leaks
+   - fixed fresh static analysis (coverity) findings
+   - fixed shellcheck warnings
+   - fixes for Solaris platform
+
 openscap-1.2.4                                                  21-06-2015
  - new features
    - OVAL 5.11 support 99.8% completed!

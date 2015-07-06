@@ -40,6 +40,7 @@ assert_exists 1 '/oval_results/oval_definitions/variables/external_variable[@id=
 CO='/oval_results/results/system/oval_system_characteristics/collected_objects'
 assert_exists 10 $CO'/object'
 assert_exists 1 $CO'/object[@id="oval:x:obj:1"]'
+assert_exists 1 $CO'/object[@id="oval:x:obj:1"][@flag="does not exist"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:1"]/message'
 assert_exists 1 $CO'/object[@id="oval:x:obj:1"]/message[text()="Referenced variable has no values (oval:x:var:1)."]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:2"]'
@@ -48,6 +49,7 @@ assert_exists 1 $CO'/object[@id="oval:x:obj:2"]/variable_value[@variable_id="ova
 assert_exists 1 $CO'/object[@id="oval:x:obj:2"]/variable_value[text()="123-456-7890"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:2"]/reference'
 assert_exists 1 $CO'/object[@id="oval:x:obj:3"]'
+assert_exists 1 $CO'/object[@id="oval:x:obj:3"][@flag="does not exist"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:3"]/message'
 assert_exists 1 $CO'/object[@id="oval:x:obj:3"]/message[text()="Referenced variable has no values (oval:x:var:3)."]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:4"]'
@@ -63,6 +65,7 @@ assert_exists 1 $CO'/object[@id="oval:x:obj:5"]/variable_value[text()="13"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:5"]/reference'
 
 assert_exists 1 $CO'/object[@id="oval:x:obj:6"]'
+assert_exists 1 $CO'/object[@id="oval:x:obj:6"][@flag="does not exist"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:6"]/message'
 assert_exists 1 $CO'/object[@id="oval:x:obj:6"]/message[text()="Referenced variable has no values (oval:x:var:6)."]'
 
@@ -73,10 +76,12 @@ assert_exists 1 $CO'/object[@id="oval:x:obj:7"]/variable_value[text()="300"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:7"]/reference'
 
 assert_exists 1 $CO'/object[@id="oval:x:obj:8"]'
+assert_exists 1 $CO'/object[@id="oval:x:obj:8"][@flag="does not exist"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:8"]/message'
 assert_exists 1 $CO'/object[@id="oval:x:obj:8"]/message[text()="Referenced variable has no values (oval:x:var:8)."]'
 
 assert_exists 1 $CO'/object[@id="oval:x:obj:9"]'
+assert_exists 1 $CO'/object[@id="oval:x:obj:9"][@flag="does not exist"]'
 assert_exists 1 $CO'/object[@id="oval:x:obj:9"]/message'
 assert_exists 1 $CO'/object[@id="oval:x:obj:9"]/message[text()="Referenced variable has no values (oval:x:var:9)."]'
 

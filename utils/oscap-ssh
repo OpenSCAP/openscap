@@ -210,7 +210,7 @@ if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
 fi
 
 echo "Starting the evaluation..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "oscap ${args[@]}"
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "oscap ${args[*]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 

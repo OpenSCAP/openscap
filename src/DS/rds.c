@@ -171,13 +171,13 @@ int ds_rds_decompose(const char* input_file, const char* report_id, const char* 
 {
 	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
 	struct ds_rds_session *session = ds_rds_session_new_from_source(rds_source);
-	ds_rds_session_set_target_dir(session, target_dir);
 
 	if (session == NULL) {
 		ds_rds_session_free(session);
 		oscap_source_free(rds_source);
 		return -1;
 	}
+	ds_rds_session_set_target_dir(session, target_dir);
 
 	if (ds_rds_dump_arf_content(session, "reports", "report", report_id) != 0) {
 		ds_rds_session_free(session);
