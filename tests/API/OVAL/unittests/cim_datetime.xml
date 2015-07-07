@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+  <generator>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2015-07-07T07:07:07+02:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:x:def:1" version="1" class="miscellaneous">
+      <metadata>
+        <title>Evaluate to true if the cim_datetime format in oval-def:time_difference function is properly supported</title>
+        <description>This definition is intended to evalutate to true if the interpreter properly supports the cim_datetime format in oval-def:time_difference function.</description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="Test that the time_difference function is supported with a cim_datetime type." test_ref="oval:x:tst:1"/>
+        <criterion comment="Test that the time_difference function is supported with a cim_datetime type." test_ref="oval:x:tst:2"/>
+        <criterion comment="Test that the time_difference function is supported with a cim_datetime type." test_ref="oval:x:tst:3"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <variable_test id="oval:x:tst:1" version="1" comment="Test that the time_difference function is supported with a cim_datetime type." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:1"/>
+      <state state_ref="oval:x:ste:1"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:2" version="1" comment="Test that the time_difference function is supported with a cim_datetime type." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:2"/>
+      <state state_ref="oval:x:ste:1"/>
+    </variable_test>
+    <variable_test id="oval:x:tst:3" version="1" comment="Test that the time_difference function is supported with a cim_datetime type." check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <object object_ref="oval:x:obj:3"/>
+      <state state_ref="oval:x:ste:1"/>
+    </variable_test>
+  </tests>
+  <objects>
+    <variable_object id="oval:x:obj:1" version="1" comment="var1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:1</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:2" version="1" comment="var2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:2</var_ref>
+    </variable_object>
+    <variable_object id="oval:x:obj:3" version="1" comment="var3" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:x:var:3</var_ref>
+    </variable_object>
+  </objects>
+  <states>
+    <variable_state id="oval:x:ste:1" version="1" comment="The time difference between two timedate values is 3600 seconds." xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value>3600</value>
+    </variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:x:var:1" version="1" comment="one hour time difference" datatype="string">
+      <time_difference format_1="cim_datetime" format_2="cim_datetime">
+        <literal_component>20150702140000.123456+120</literal_component>
+        <literal_component>20150702130000.123456+120</literal_component>
+      </time_difference>
+    </local_variable>
+    <local_variable id="oval:x:var:2" version="1" comment="one hour time difference" datatype="string">
+      <time_difference format_1="cim_datetime" format_2="cim_datetime">
+        <literal_component>2015-07-02 14:00:00:123</literal_component>
+        <literal_component>2015-07-02 13:00:00:123</literal_component>
+      </time_difference>
+    </local_variable>
+    <local_variable id="oval:x:var:3" version="1" comment="one hour time difference" datatype="string">
+      <time_difference format_1="cim_datetime" format_2="cim_datetime">
+        <literal_component>07-02-2015 14:00:00:123</literal_component>
+        <literal_component>07-02-2015 13:00:00:123</literal_component>
+      </time_difference>
+    </local_variable>
+  </variables>
+</oval_definitions>
