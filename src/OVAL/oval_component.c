@@ -1901,57 +1901,48 @@ static long unsigned int _parse_fmt_sse(char *dt)
 
 	return (long unsigned int) t;
 }
+
+static bool _match(const char *pattern, const char *string)
+{
+	bool match = false;
+#if defined USE_REGEX_PCRE
+	pcre *re;
+	const char *error;
+	int erroffset = -1, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
+	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
+	match = (pcre_exec(re, NULL, string, strlen(string), 0, 0, ovector, ovector_len) >= 0);
+	pcre_free(re);
+#elif defined USE_REGEX_POSIX
+	regex_t re;
+	regcomp(&re, pattern, REG_EXTENDED);
+	match = (regexec(&re, string, 0, NULL, 0) == 0);
+	regfree(&re);
+#endif
+	return match;
+}
+
 static long unsigned int _parse_fmt_cim(char *dt)
 {
 	const char *pattern1 = "^[0-9]{14}\\.[0-9]{6}[+-][0-9]{3}$"; // yyyymmddHHMMSS.mmmmmmsUUU
+	const char *fmt_str1 = "%4u%2u%2u%2u%2u%2u.%*6u%*[+-]%*3u";
 	const char *pattern2 = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}$"; // yyyy-mm-dd HH:MM:SS:mmm
+	const char *fmt_str2 = "%4d-%2d-%2d %2d:%2d:%2d:%*3d";
 	const char *pattern3 = "^[0-9]{2}-[0-9]{2}-[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}$"; // mm-dd-yyyy hh:mm:ss:mmm
-	int year, month, day, hour, minute, second;
-	long unsigned int seconds = 0;
-#if defined USE_REGEX_PCRE
-	pcre *re1, *re2, *re3;
-	const char *error;
-	int erroffset = -1, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
-	re1 = pcre_compile(pattern1, PCRE_UTF8, &error, &erroffset, NULL);
-	re2 = pcre_compile(pattern2, PCRE_UTF8, &error, &erroffset, NULL);
-	re3 = pcre_compile(pattern3, PCRE_UTF8, &error, &erroffset, NULL);
-	if (pcre_exec(re1, NULL, dt, strlen(dt), 0, 0, ovector, ovector_len) >= 0) {
-		sscanf(dt, "%4u%2u%2u%2u%2u%2u.%*6u%*[+-]%*3u", &year, &month, &day, &hour, &minute, &second);
-		seconds = _comp_sec(year, month, day, hour, minute, second);
-	} else if (pcre_exec(re2, NULL, dt, strlen(dt), 0, 0, ovector, ovector_len) >= 0) {
-		sscanf(dt, "%4d-%2d-%2d %2d:%2d:%2d:%*3d", &year, &month, &day, &hour, &minute, &second);
-		seconds = _comp_sec(year, month, day, hour, minute, second);
-	} else if (pcre_exec(re3, NULL, dt, strlen(dt), 0, 0, ovector, ovector_len) >= 0) {
-		sscanf(dt, "%2d-%2d-%4d %2d:%2d:%2d:%*3d", &month, &day, &year, &hour, &minute, &second);
-		seconds = _comp_sec(year, month, day, hour, minute, second);
-	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unable to interpret \"%s\" as a cim_datetime string\n", dt);
+	const char *fmt_str3 = "%2d-%2d-%4d %2d:%2d:%2d:%*3d";
+	int year, month, day, hour, minute, second, r = 0;
+	const int number_of_items = 6;
+	if (_match(pattern1, dt)) {
+		r = sscanf(dt, fmt_str1, &year, &month, &day, &hour, &minute, &second);
+	} else if (_match(pattern2, dt)) {
+		r = sscanf(dt, fmt_str2, &year, &month, &day, &hour, &minute, &second);
+	} else if (_match(pattern3, dt)) {
+		r = sscanf(dt, fmt_str3, &month, &day, &year, &hour, &minute, &second);
 	}
-	pcre_free(re1);
-	pcre_free(re2);
-	pcre_free(re3);
-#elif defined USE_REGEX_POSIX
-	regex_t re1, re2, re3;
-	regcomp(&re1, pattern1, REG_EXTENDED);
-	regcomp(&re2, pattern2, REG_EXTENDED);
-	regcomp(&re3, pattern3, REG_EXTENDED);
-	if (regexec(&re1, dt, 0, NULL, 0) == 0) {
-		sscanf(dt, "%4u%2u%2u%2u%2u%2u.%*6u%*[+-]%*3u", &year, &month, &day, &hour, &minute, &second);
-		seconds = _comp_sec(year, month, day, hour, minute, second);
-	} else if (regexec(&re2, dt, 0, NULL, 0) == 0) {
-		sscanf(dt, "%4d-%2d-%2d %2d:%2d:%2d:%*3d", &year, &month, &day, &hour, &minute, &second);
-		seconds = _comp_sec(year, month, day, hour, minute, second);
-	} else if (regexec(&re3, dt, 0, NULL, 0) == 0) {
-		sscanf(dt, "%2d-%2d-%4d %2d:%2d:%2d:%*3d", &month, &day, &year, &hour, &minute, &second);
-		seconds = _comp_sec(year, month, day, hour, minute, second);
-	} else {
+	if (r != number_of_items) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unable to interpret \"%s\" as a cim_datetime string\n", dt);
+		return 0;
 	}
-	regfree(&re1);
-	regfree(&re2);
-	regfree(&re3);
-#endif
-	return seconds;
+	return _comp_sec(year, month, day, hour, minute, second);
 }
 
 static long unsigned int _parse_fmt(struct oval_value *val, oval_datetime_format_t fmt)
