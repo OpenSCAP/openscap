@@ -21,5 +21,7 @@ EXTRA_DIST = \
 	all.sh \
 	test_object_entity_mask.sh \
 	test_object_entity_mask.xml \
+	test_object_entity_mask_oval_5_9.sh \
+	test_object_entity_mask_oval_5_9.xml \
 	test_object_entity_nomask.sh \
 	test_object_entity_nomask.xml
