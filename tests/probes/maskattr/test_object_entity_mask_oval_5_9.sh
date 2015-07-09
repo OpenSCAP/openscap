@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $srcdir/../../test_common.sh
+. ../../test_common.sh
 
 set -e -o pipefail
 
@@ -16,8 +16,8 @@ $OSCAP oval eval --results $result $srcdir/${name}.xml || [ $? == 2 ]
 echo "Validating results."
 $OSCAP oval validate-xml --results $result
 
-echo "Testing that oval_definitions are not altered"
-assert_exists 1 '/oval_results/oval_definitions/objects/unix-def:file_object/unix-def:filepath[text()="/etc/passwd"]'
+echo "Testing that oval_definitions are altered"
+assert_exists 0 '/oval_results/oval_definitions/objects/unix-def:file_object/unix-def:filepath[text()="/etc/passwd"]'
 
 echo "Testing results values."
 [ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]
