@@ -419,29 +419,39 @@ Authors:
 <xsl:template name="table-of-contents-items">
     <xsl:param name="item"/>
     <xsl:param name="levels"/>
+    <xsl:param name="profile"/>
     <ol>
         <xsl:for-each select="$item/cdf:Group">
-            <li>
-                <a>
-                    <xsl:attribute name="href">
-                        <xsl:text>#</xsl:text>
-                        <xsl:value-of select="@id"/>
-                    </xsl:attribute>
-                    <xsl:choose>
-                        <xsl:when test="cdf:title">
-                            <xsl:value-of select="cdf:title"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="@id"/>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </a>
-            </li>
-            <xsl:if test="cdf:Group and $levels&gt;1">
-                <xsl:call-template name="table-of-contents-items">
+            <xsl:variable name="selected_final">
+                <xsl:call-template name="is-item-selected-final">
                     <xsl:with-param name="item" select="."/>
-                    <xsl:with-param name="levels" select="$levels - 1"/>
+                    <xsl:with-param name="profile" select="$profile"/>
                 </xsl:call-template>
+            </xsl:variable>
+            <xsl:if test="$selected_final = 'true'">
+                <li>
+                    <a>
+                        <xsl:attribute name="href">
+                            <xsl:text>#</xsl:text>
+                            <xsl:value-of select="@id"/>
+                        </xsl:attribute>
+                        <xsl:choose>
+                            <xsl:when test="cdf:title">
+                                <xsl:value-of select="cdf:title"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="@id"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </a>
+                </li>
+                <xsl:if test="cdf:Group and $levels&gt;1">
+                    <xsl:call-template name="table-of-contents-items">
+                        <xsl:with-param name="item" select="."/>
+                        <xsl:with-param name="levels" select="$levels - 1"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:call-template>
+                </xsl:if>
             </xsl:if>
         </xsl:for-each>
     </ol>
@@ -454,6 +464,7 @@ Authors:
     <xsl:call-template name="table-of-contents-items">
         <xsl:with-param name="item" select="$benchmark"/>
         <xsl:with-param name="levels" select="2"/>
+        <xsl:with-param name="profile" select="$profile"/>
     </xsl:call-template>
 </xsl:template>
 
