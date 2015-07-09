@@ -23,8 +23,7 @@ Authors:
 -->
 
 <!-- TODO
-  - do not display hidden and abstract items
-  - profile info?
+  - do not display abstract items
 -->
 
 <xsl:stylesheet version="1.1"
