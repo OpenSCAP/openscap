@@ -21,6 +21,8 @@ EXTRA_DIST = \
 	oval-def_count_function.xml \
 	comment.xml \
 	test_comment.sh \
+	test_cim_datetime.sh \
+	cim_datetime.xml \
 	test_int_comparison.oval.xml \
 	test_int_comparison.sh \
 	test_int_comparison.syschar.xml \
