@@ -495,7 +495,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	if (pfd.compiled_regex != NULL)
 		pcre_free(pfd.compiled_regex);
 #elif defined USE_REGEX_POSIX
-	regfree(re);
+	regfree(&_re);
 #endif
 	return ret;
 }

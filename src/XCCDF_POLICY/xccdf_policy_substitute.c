@@ -175,8 +175,10 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		if (xccdf_instance_iterator_has_more(instances)) {
 			struct xccdf_instance *instance = xccdf_instance_iterator_next(instances);
 			result = xccdf_instance_get_content(instance);
+			xccdf_instance_iterator_free(instances);
 		}
 		else {
+			xccdf_instance_iterator_free(instances);
 			dW("The xccdf:rule-result/xccdf:instance element was not found.\n");
 			return 1;
 		}
