@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_ssg-fedora-xccdf-1.2.xml" schematron-version="1.0">
+
+	<ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_ssg-fedora-xccdf-1.2.xml" scap-version="1.2" use-case="OTHER">
+		<ds:dictionaries>
+			<ds:component-ref id="scap_org.open-scap_cref_output--ssg-fedora-cpe-dictionary.xml"
+					xlink:href="#scap_org.open-scap_comp_output--ssg-fedora-cpe-dictionary.xml">
+				<cat:catalog>
+					<cat:uri name="ssg-fedora-cpe-oval.xml" uri="#scap_org.open-scap_cref_output--ssg-fedora-cpe-oval.xml"/>
+				</cat:catalog>
+			</ds:component-ref>
+		</ds:dictionaries>
+		<ds:checklists>
+			<ds:component-ref id="scap_org.open-scap_cref_ssg-fedora-xccdf-1.2.xml"
+					xlink:href="#scap_org.open-scap_comp_ssg-fedora-xccdf-1.2.xml">
+				<cat:catalog>
+					<cat:uri name="ssg-fedora-oval.xml" uri="#scap_org.open-scap_cref_output--ssg-fedora-oval.xml"/>
+				</cat:catalog>
+			</ds:component-ref>
+		</ds:checklists>
+		<ds:checks>
+			<ds:component-ref id="scap_org.open-scap_cref_output--ssg-fedora-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-fedora-cpe-oval.xml"/>
+			<ds:component-ref id="scap_org.open-scap_cref_output--ssg-fedora-oval.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-fedora-oval.xml"/>
+		</ds:checks>
+	</ds:data-stream>
+
+
+<ds:component id="scap_org.open-scap_comp_ssg-fedora-xccdf-1.2.xml" timestamp="2014-10-02T11:27:40"><Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_FEDORA" resolved="1" xml:lang="en-US">
+  <status date="2014-10-02">draft</status>
+  <title xml:lang="en-US">Guide to the Secure Configuration of Fedora</title>
+  <description xml:lang="en-US">This guide presents a catalog of security-relevant configuration</description>
+  <notice xml:lang="en-US" id="terms_of_use">Do not attempt to implement any of the settings in
+this guide without first testing them in a non-operational environment. The
+creators of this guidance assume no responsibility whatsoever for its use by
+other parties, and makes no guarantees, expressed or implied, about its
+quality, reliability, or any other characteristic.</notice>
+  <front-matter xml:lang="en-US">x</front-matter>
+  <rear-matter xml:lang="en-US">Red Hat and Fedora are either registered
+trademarks or trademarks of Red Hat, Inc. in the United States and other
+countries. All other names are registered trademarks or trademarks of their
+respective companies.</rear-matter>
+  <platform idref="cpe:/o:fedoraproject:fedora:1"/>
+  <version>0.0.4</version>
+  <model system="urn:xccdf:scoring:default"/>
+
+      <Rule id="xccdf_org.ssgproject.content_rule_disable_prelink" selected="true" severity="low">
+        <title xml:lang="en-US">Prelinking Disabled</title>
+        <description xml:lang="en-US">
+The prelinking feature changes binaries in an attempt to decrease their startup
+time. In order to disable it, change or add the following line inside the file
+<xhtml:code xmlns:xhtml="http://www.w3.org/1999/xhtml">/etc/sysconfig/prelink</xhtml:code>:
+<pre xmlns="http://www.w3.org/1999/xhtml">PRELINKING=no</pre>
+Next, run the following command to return binaries to a normal, non-prelinked
+state:
+<pre xmlns="http://www.w3.org/1999/xhtml"># /sbin/prelink -ua</pre>
+</description>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref name="oval:ssg:def:198" href="ssg-fedora-oval.xml"/>
+        </check>
+      </Rule>
+</Benchmark></ds:component><ds:component id="scap_org.open-scap_comp_output--ssg-fedora-cpe-oval.xml" timestamp="2014-10-02T11:27:40"><oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>python</oval:product_name>
+    <oval:product_version>2.6.6</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2011-09-21T13:44:00</oval:timestamp>
+  </generator>
+  <definitions><definition class="inventory" id="oval:ssg:def:100" version="1">
+      <metadata>
+        <title>Fedora release 1</title>
+        <affected family="unix">
+          <platform>Fedora 1</platform>
+        </affected>
+        <description>The operating system installed on the system is Fedora release 1</description>
+      </metadata>
+      <criteria>
+        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:ssg:tst:101"/>
+        <criterion comment="Fedora release 1 is installed" test_ref="oval:ssg:tst:102"/>
+      </criteria>
+    </definition>
+    <definition class="inventory" id="oval:ssg:def:103" version="1">
+      <metadata>
+        <title>Red Hat Enterprise Linux 6</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 6</platform>
+        </affected>
+        <reference ref_id="cpe:/o:redhat:enterprise_linux:6" source="CPE"/>
+        <description>The operating system installed on the system is
+      Red Hat Enterprise Linux 6</description>
+      </metadata>
+      <criteria>
+        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:ssg:tst:101"/>
+        <criteria operator="OR">
+          <criterion comment="Red Hat Enterprise Linux 6 Workstation is installed" test_ref="oval:ssg:tst:104"/>
+          <criterion comment="Red Hat Enterprise Linux 6 Server is installed" test_ref="oval:ssg:tst:105"/>
+        </criteria>
+      </criteria>
+    </definition>
+    <definition class="inventory" id="oval:ssg:def:106" version="1">
+      <metadata>
+        <title>Red Hat Enterprise Linux 7</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 7</platform>
+        </affected>
+        <reference ref_id="cpe:/o:redhat:enterprise_linux:7" source="CPE"/>
+        <description>The operating system installed on the system is
+      Red Hat Enterprise Linux 7</description>
+      </metadata>
+      <criteria>
+        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:ssg:tst:107"/>
+        <criteria operator="OR">
+          <criterion comment="Red Hat Enterprise Linux 7 Workstation is installed" test_ref="oval:ssg:tst:108"/>
+          <criterion comment="Red Hat Enterprise Linux 7 Server is installed" test_ref="oval:ssg:tst:109"/>
+        </criteria>
+      </criteria>
+    </definition>
+    </definitions><tests><ind:family_test check="all" check_existence="at_least_one_exists" comment="installed OS part of unix family" id="oval:ssg:tst:101" version="1">
+      <ind:object object_ref="oval:ssg:obj:110"/>
+      <ind:state state_ref="oval:ssg:ste:111"/>
+    </ind:family_test>
+    <linux:rpminfo_test check="all" check_existence="only_one_exists" comment="fedora-release is version 1" id="oval:ssg:tst:102" version="1">
+      <linux:object object_ref="oval:ssg:obj:112"/>
+      <linux:state state_ref="oval:ssg:ste:113"/>
+    </linux:rpminfo_test>
+    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="redhat-release-workstation is version 6" id="oval:ssg:tst:104" version="1">
+      <linux:object object_ref="oval:ssg:obj:114"/>
+      <linux:state state_ref="oval:ssg:ste:115"/>
+    </linux:rpminfo_test>
+    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="redhat-release-server is version 6" id="oval:ssg:tst:105" version="1">
+      <linux:object object_ref="oval:ssg:obj:116"/>
+      <linux:state state_ref="oval:ssg:ste:117"/>
+    </linux:rpminfo_test>
+    <ind:family_test check="all" check_existence="at_least_one_exists" comment="installed OS part of unix family" id="oval:ssg:tst:107" version="1">
+      <ind:object object_ref="oval:ssg:obj:118"/>
+      <ind:state state_ref="oval:ssg:ste:119"/>
+    </ind:family_test>
+    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="redhat-release-workstation is version 7" id="oval:ssg:tst:108" version="1">
+      <linux:object object_ref="oval:ssg:obj:120"/>
+      <linux:state state_ref="oval:ssg:ste:121"/>
+    </linux:rpminfo_test>
+    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="redhat-release-server is version 7" id="oval:ssg:tst:109" version="1">
+      <linux:object object_ref="oval:ssg:obj:122"/>
+      <linux:state state_ref="oval:ssg:ste:123"/>
+    </linux:rpminfo_test>
+    </tests><objects><ind:family_object id="oval:ssg:obj:110" version="1"/>
+    <linux:rpminfo_object id="oval:ssg:obj:112" version="1">
+      <linux:name>fedora-release</linux:name>
+    </linux:rpminfo_object>
+    <linux:rpminfo_object id="oval:ssg:obj:114" version="1">
+      <linux:name>redhat-release-workstation</linux:name>
+    </linux:rpminfo_object>
+    <linux:rpminfo_object id="oval:ssg:obj:116" version="1">
+      <linux:name>redhat-release-server</linux:name>
+    </linux:rpminfo_object>
+    <ind:family_object id="oval:ssg:obj:118" version="1"/>
+    <linux:rpminfo_object id="oval:ssg:obj:120" version="1">
+      <linux:name>redhat-release-workstation</linux:name>
+    </linux:rpminfo_object>
+    <linux:rpminfo_object id="oval:ssg:obj:122" version="1">
+      <linux:name>redhat-release-server</linux:name>
+    </linux:rpminfo_object>
+    </objects><states><ind:family_state id="oval:ssg:ste:111" version="1">
+      <ind:family>unix</ind:family>
+    </ind:family_state>
+    <linux:rpminfo_state id="oval:ssg:ste:113" version="1">
+      <linux:version operation="pattern match">^1$</linux:version>
+    </linux:rpminfo_state>
+    <linux:rpminfo_state id="oval:ssg:ste:115" version="1">
+      <linux:version operation="pattern match">^6.*$</linux:version>
+    </linux:rpminfo_state>
+    <linux:rpminfo_state id="oval:ssg:ste:117" version="1">
+      <linux:version operation="pattern match">^6.*$</linux:version>
+    </linux:rpminfo_state>
+    <ind:family_state id="oval:ssg:ste:119" version="1">
+      <ind:family>unix</ind:family>
+    </ind:family_state>
+    <linux:rpminfo_state id="oval:ssg:ste:121" version="1">
+      <linux:version operation="pattern match">^7.*$</linux:version>
+    </linux:rpminfo_state>
+    <linux:rpminfo_state id="oval:ssg:ste:123" version="1">
+      <linux:version operation="pattern match">^7.*$</linux:version>
+    </linux:rpminfo_state>
+    </states></oval_definitions></ds:component><ds:component id="scap_org.open-scap_comp_output--ssg-fedora-cpe-dictionary.xml" timestamp="2014-10-02T11:27:40"><cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:fedoraproject:fedora:1">
+            <title xml:lang="en-us">Fedora release 1 (Schrödinger's Cat)</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-fedora-cpe-oval.xml">oval:ssg:def:100</check>
+      </cpe-item>
+</cpe-list></ds:component><ds:component id="scap_org.open-scap_comp_output--ssg-fedora-oval.xml" timestamp="2014-10-02T11:27:40"><oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>python</oval:product_name>
+    <oval:product_version>2.6.6</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2011-09-21T13:44:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" id="oval:ssg:def:198" version="2">
+      <metadata>
+        <title>Disable Prelinking</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 6</platform>
+          <platform>Fedora 20</platform>
+        </affected>
+        <description>The prelinking feature can interfere with the operation of
+      checksum integrity tools (e.g. AIDE), mitigates the protection provided
+      by ASLR, and requires additional CPU cycles by software upgrades.
+      </description>
+        <reference source="JL" ref_id="20140313" ref_url="test_attestation"/>
+      <reference ref_id="disable_prelink" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Ensure prelinking is disabled" test_ref="oval:ssg:tst:199"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind:textfilecontent54_test check="all" check_existence="all_exist" comment="Tests whether prelinking is disabled" id="oval:ssg:tst:199" version="1">
+      <ind:object object_ref="oval:ssg:obj:264"/>
+    </ind:textfilecontent54_test>
+  </tests>
+  <objects>
+    <ind:textfilecontent54_object id="oval:ssg:obj:264" version="2">
+      <ind:filepath>/etc/sysconfig/prelink</ind:filepath>
+      <ind:pattern operation="pattern match">^[\s]*PRELINKING=no[\s]*</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+  </objects>
+</oval_definitions></ds:component></ds:data-stream-collection>

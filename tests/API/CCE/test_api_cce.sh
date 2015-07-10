@@ -11,7 +11,7 @@
 #      Ondrej Moris, <omoris@redhat.com>
 
 # Test helpers.
-. $srcdir/../../test_common.sh
+. ../../test_common.sh
 
 # Test cases.
 

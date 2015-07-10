@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:catos-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos" elementFormDefault="qualified" version="5.11">
+     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+     <xsd:annotation>
+          <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Cisco CatOS specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+          <xsd:documentation>This schema was originally developed by Yuzheng Zhou at Hewlett-Packard. The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+          <xsd:appinfo>
+               <schema>CatOS System Characteristics</schema>
+               <version>5.11:5.11</version>
+               <date>12/18/2014 09:00:00 AM</date>
+                <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+               <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+               <sch:ns prefix="catos-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos"/>
+              <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+          </xsd:appinfo>
+     </xsd:annotation>
+    <!-- =============================================================================== -->
+    <!-- ============================  CATOS LINE ITEM  ================================== -->
+    <!-- =============================================================================== -->
+    <xsd:element name="line_item" substitutionGroup="oval-sc:item">
+        <xsd:annotation>
+            <xsd:documentation>Stores the properties of specific lines in the catos config file.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="oval-sc:ItemType">
+                    <xsd:sequence>
+                        <xsd:element name="show_subcommand" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The name of the SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                        <xsd:element name="config_line" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>The value returned from by the specified SHOW sub-command.</xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!-- =============================================================================== -->
+     <!-- ========================  CATOS MODULE ITEM  ================================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="module_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Stores results from SHOW MODULE command.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="module_number" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="type" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="model" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="software_major_release" type="oval-sc:EntityItemVersionType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="software_individual_release" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="software_version_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="hardware_major_release" type="oval-sc:EntityItemVersionType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="hardware_individual_release" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="firmware_major_release" type="oval-sc:EntityItemVersionType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="firmware_individual_release" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation/>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+     <!-- =============================================================================== -->
+     <!-- ============================  CATOS VERSION ITEM  ============================= -->
+     <!-- =============================================================================== -->
+     <xsd:element name="version_item" substitutionGroup="oval-sc:item">
+          <xsd:annotation>
+               <xsd:documentation>Stores results from SHOW VERSION command.</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+               <xsd:complexContent>
+                    <xsd:extension base="oval-sc:ItemType">
+                         <xsd:sequence>
+                              <xsd:element name="switch_series" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                       <xsd:documentation>The switch_series entity specifies the target Catalyst switch series for the given version of CatOS.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="image_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                       <xsd:documentation>The image_name entity specifies the name of the CatOS image.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
+                             <xsd:element name="catos_release" type="oval-sc:EntityItemVersionType" minOccurs="0" maxOccurs="1">
+                                 <xsd:annotation>
+                                     <xsd:documentation>The catos_release entity specifies the release version of CatOS.</xsd:documentation>
+                                 </xsd:annotation>
+                             </xsd:element>
+                             <xsd:element name="catos_major_release" type="oval-sc:EntityItemVersionType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                       <xsd:appinfo>
+                                            <oval:deprecated_info>
+                                                 <oval:version>5.5</oval:version>
+                                                 <oval:reason>Due to the fact it's not clear on how to separate the CatOS version, it was decided that the catos_major_release, catos_individual_release, and catos_version_id entities would be combined into a new single entity catos_release. Therefore, the catos_major_release entity is no longer needed.</oval:reason>
+                                                 <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                            </oval:deprecated_info>
+                                             <sch:pattern id="catos-sc_versionitemcatos_major_release">
+                                                  <sch:rule context="catos-sc:version_item/catos-sc:catos_major_release">
+                                                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="catos_individual_release" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:appinfo>
+                                             <oval:deprecated_info>
+                                                  <oval:version>5.5</oval:version>
+                                                  <oval:reason>Due to the fact it's not clear on how to separate the CatOS version, it was decided that the catos_major_release, catos_individual_release, and catos_version_id entities would be combined into a new single entity catos_release. Therefore, the catos_individual_release entity is no longer needed.</oval:reason>
+                                                  <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                             </oval:deprecated_info>
+                                             <sch:pattern id="catos-sc_versionitemcatos_individual_release">
+                                                  <sch:rule context="catos-sc:version_item/catos-sc:catos_individual_release">
+                                                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                              <xsd:element name="catos_version_id" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                       <xsd:appinfo>
+                                            <oval:deprecated_info>
+                                                 <oval:version>5.5</oval:version>
+                                                 <oval:reason>Due to the fact it's not clear on how to separate the CatOS version, it was decided that the catos_major_release, catos_individual_release, and catos_version_id entities would be combined into a new single entity catos_release. Therefore, the catos_version_id entity is no longer needed.</oval:reason>
+                                                 <oval:comment>This entity has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                                            </oval:deprecated_info>
+                                             <sch:pattern id="catos-sc_versionitemcatos_version_id">
+                                                  <sch:rule context="catos-sc:version_item/catos-sc:catos_version_id">
+                                                        <sch:report test="true()">DEPRECATED ELEMENT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                                                  </sch:rule>
+                                             </sch:pattern>
+                                        </xsd:appinfo>
+                                   </xsd:annotation>
+                              </xsd:element>
+                         </xsd:sequence>
+                    </xsd:extension>
+               </xsd:complexContent>
+          </xsd:complexType>
+     </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+</xsd:schema>

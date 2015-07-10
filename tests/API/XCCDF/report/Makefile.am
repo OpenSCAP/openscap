@@ -10,4 +10,6 @@ TESTS = all.sh
 EXTRA_DIST = \
 	all.sh \
 	results-xccdf11.xml \
-	results-xccdf12.xml
+	results-xccdf12.xml \
+	results-idents-refs.xml \
+	results-title.xml

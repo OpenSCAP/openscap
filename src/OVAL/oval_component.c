@@ -38,16 +38,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
 #include "oval_definitions_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
+#if defined(OVAL_PROBES_ENABLED)
+#include "oval_probe.h"
 #include "oval_probe_session.h"
+#endif
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "common/oscap_string.h"
+#include "oval_glob_to_regex.h"
 #if defined USE_REGEX_PCRE
 #include <pcre.h>
 #elif defined USE_REGEX_POSIX
@@ -106,7 +112,9 @@ typedef struct {
 	} mode;
 	union {
 		struct oval_syschar_model *sysmod;
+#if defined(OVAL_PROBES_ENABLED)
 		oval_probe_session_t *sess;
+#endif
 	} u;
 } oval_argu_t;
 
@@ -162,6 +170,13 @@ typedef struct oval_component_SPLIT {
 	char *delimiter;	/*type==OVAL_COMPONENT_SPLIT */
 } oval_component_SPLIT_t;
 
+typedef struct oval_component_GLOB {
+	struct oval_definition_model *model;
+	oval_component_type_t type;
+	struct oval_collection *function_components;	/*type==OVAL_COMPONENT_FUNCTION */
+	bool glob_noescape;	/*type==OVAL_COMPONENT_GLOB */
+} oval_component_GLOB_t;
+
 typedef struct oval_component_SUBSTRING {
 	struct oval_definition_model *model;
 	oval_component_type_t type;
@@ -200,6 +215,8 @@ void oval_component_to_print(struct oval_component *component, char *indent, int
 	OVAL_FUNCTION_REGEX_CAPTURE = OVAL_FUNCTION + 8,
 	OVAL_FUNCTION_ARITHMETIC = OVAL_FUNCTION + 9
 	OVAL_FUNCTION_COUNT = OVAL_FUNCTION + 10,
+	OVAL_FUNCTION_GLOB_TO_REGEX = OVAL_FUNCTION + 12,
+
  */
 static const struct oscap_string_map _OVAL_COMPONENT_MAP[] = {
 	{OVAL_COMPONENT_LITERAL, "literal_component"},
@@ -220,6 +237,7 @@ static const struct oscap_string_map _OVAL_FUNCTION_MAP[] = {
 	{OVAL_FUNCTION_ARITHMETIC, "arithmetic"},
 	{OVAL_FUNCTION_COUNT, "count"},
 	{OVAL_FUNCTION_UNIQUE, "unique"},
+	{OVAL_FUNCTION_GLOB_TO_REGEX, "glob_to_regex"},
 	{0, NULL}
 };
 
@@ -451,6 +469,30 @@ void oval_component_set_split_delimiter(struct oval_component *component, char *
 	}
 }
 
+bool oval_component_get_glob_to_regex_glob_noescape(struct oval_component *component)
+{
+	__attribute__nonnull__(component);
+
+	/* type == OVAL_COMPONENT_GLOB */
+	bool glob_noescape;
+	if (component->type == OVAL_FUNCTION_GLOB_TO_REGEX) {
+		oval_component_GLOB_t *glob_to_regex = (oval_component_GLOB_t *) component;
+		glob_noescape = glob_to_regex->glob_noescape;
+	} else
+		glob_noescape = false;
+	return glob_noescape;
+}
+
+void oval_component_set_glob_to_regex_glob_noescape(struct oval_component *component, bool glob_noescape) {
+	__attribute__nonnull__(component);
+
+	/* type == OVAL_COMPONENT_GLOB */
+	if (component->type == OVAL_FUNCTION_GLOB_TO_REGEX) {
+		oval_component_GLOB_t *glob_to_regex = (oval_component_GLOB_t *) component;
+		glob_to_regex->glob_noescape = glob_noescape;
+	}
+}
+
 int oval_component_get_substring_start(struct oval_component *component)
 {
 	__attribute__nonnull__(component);
@@ -646,6 +688,15 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 					split->delimiter = NULL;
 				};
 				break;
+			case OVAL_FUNCTION_GLOB_TO_REGEX:{
+					oval_component_GLOB_t *glob_to_regex = (oval_component_GLOB_t *)
+					    (function = (oval_component_FUNCTION_t *)
+					     oscap_alloc(sizeof(oval_component_GLOB_t)));
+					if (glob_to_regex == NULL)
+						return NULL;
+					glob_to_regex->glob_noescape = false;
+				};
+				break;
 			case OVAL_FUNCTION_SUBSTRING:{
 					oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *)
 					    (function = (oval_component_FUNCTION_t *)
@@ -769,6 +820,11 @@ struct oval_component *oval_component_clone(struct oval_definition_model *new_mo
 				oval_component_set_split_delimiter(new_component, delimiter);
 		}
 		break;
+	case OVAL_FUNCTION_GLOB_TO_REGEX:{
+			bool glob_noescape = oval_component_get_glob_to_regex_glob_noescape(old_component);
+			oval_component_set_glob_to_regex_glob_noescape(new_component, glob_noescape);
+		}
+		break;
 	case OVAL_FUNCTION_SUBSTRING:{
 			int length = oval_component_get_substring_length(old_component);
 			oval_component_set_substring_length(new_component, length);
@@ -842,6 +898,7 @@ void oval_component_free(struct oval_component *component)
 			regex->pattern = NULL;
 		};
 		break;
+	case OVAL_FUNCTION_GLOB_TO_REGEX:
 	case OVAL_FUNCTION_CONCAT:
 	case OVAL_FUNCTION_COUNT:
 	case OVAL_FUNCTION_UNIQUE:
@@ -996,6 +1053,19 @@ static int _oval_component_parse_SPLIT_tag(xmlTextReaderPtr reader,
 	return _oval_component_parse_FUNCTION_tag(reader, context, component);
 }
 
+static int _oval_component_parse_GLOB_TO_REGEX_tag(xmlTextReaderPtr reader,
+					   struct oval_parser_context *context, struct oval_component *component)
+{
+
+	__attribute__nonnull__(component);
+
+	oval_component_GLOB_t *glob_to_regex = (oval_component_GLOB_t *) component;
+	glob_to_regex->glob_noescape = oval_parser_boolean_attribute(reader, "glob_noescape", 0);
+
+	return _oval_component_parse_FUNCTION_tag(reader, context, component);
+}
+
+
 static int _oval_component_parse_SUBSTRING_tag(xmlTextReaderPtr reader,
 					       struct oval_parser_context *context, struct oval_component *component)
 {
@@ -1089,6 +1159,9 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	} else if (strcmp(tagname, "escape_regex") == 0) {
 		component = oval_component_new(model, OVAL_FUNCTION_ESCAPE_REGEX);
 		return_code = _oval_component_parse_FUNCTION_tag(reader, context, component);
+	} else if (strcmp(tagname, "glob_to_regex") == 0) {
+		component = oval_component_new(model, OVAL_FUNCTION_GLOB_TO_REGEX);
+		return_code = _oval_component_parse_GLOB_TO_REGEX_tag(reader, context, component);
 	} else if (strcmp(tagname, "split") == 0) {
 		component = oval_component_new(model, OVAL_FUNCTION_SPLIT);
 		return_code = _oval_component_parse_SPLIT_tag(reader, context, component);
@@ -1212,6 +1285,14 @@ xmlNode *oval_component_to_dom(struct oval_component *component, xmlDoc * doc, x
 			char * delimiter = oval_component_get_split_delimiter(component);
 			xmlNewProp(component_node, BAD_CAST "delimiter", BAD_CAST delimiter);
 		} break;
+	case OVAL_FUNCTION_GLOB_TO_REGEX:{
+			bool glob_noescape = oval_component_get_glob_to_regex_glob_noescape(component);
+			if (glob_noescape) {
+				xmlNewProp(component_node, BAD_CAST "glob_noescape", BAD_CAST "true");
+			} else {
+				xmlNewProp(component_node, BAD_CAST "glob_noescape", BAD_CAST "false");
+			}
+		} break;
 	case OVAL_FUNCTION_CONCAT:
 	case OVAL_FUNCTION_ESCAPE_REGEX:
 		break;
@@ -1262,8 +1343,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		return flag;
 
 	if (argu->mode == OVAL_MODE_QUERY) {
+#if defined(OVAL_PROBES_ENABLED)
 		if (oval_probe_query_object(argu->u.sess, object, 0, &syschar) != 0)
 			return flag;
+#else
+		return SYSCHAR_FLAG_ERROR;
+#endif
 	} else {
 		char *obj_id;
 
@@ -1351,8 +1436,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_
 	}
 
 	if (argu->mode == OVAL_MODE_QUERY) {
+#if defined(OVAL_PROBES_ENABLED)
 		if (oval_probe_query_variable(argu->u.sess, variable) != 0)
 			return flag;
+#else
+		return SYSCHAR_FLAG_ERROR;
+#endif
 	} else {
 		if (oval_syschar_model_compute_variable(argu->u.sysmod, variable) != 0)
 			return flag;
@@ -1973,6 +2062,41 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 	return flag;
 }
 
+
+
+
+
+static oval_syschar_collection_flag_t _oval_component_evaluate_GLOB_TO_REGEX(oval_argu_t *argu,
+										struct oval_component *component,
+										struct oval_collection *value_collection)
+{
+	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
+	bool glob_noescape = oval_component_get_glob_to_regex_glob_noescape(component);
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
+	if (oval_component_iterator_has_more(subcomps)) {	//Only first component is considered
+		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
+		struct oval_collection *subcoll = oval_collection_new();
+		flag = oval_component_eval_common(argu, subcomp, subcoll);
+		struct oval_value_iterator *values = (struct oval_value_iterator *)oval_collection_iterator(subcoll);
+		while (oval_value_iterator_has_more(values)) {
+			struct oval_value *value = oval_value_iterator_next(values);
+			char *text = oval_value_get_text(value);
+			char *string = oval_glob_to_regex(text, glob_noescape);
+			if (string == NULL) {
+				flag = SYSCHAR_FLAG_ERROR;
+				break;
+			}
+			value = oval_value_new(OVAL_DATATYPE_STRING, string);
+			oscap_free(string);
+			oval_collection_add(value_collection, value);
+		}
+		oval_value_iterator_free(values);
+		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
+	}
+	oval_component_iterator_free(subcomps);
+	return flag;
+}
+
 static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(oval_argu_t *argu,
 									     struct oval_component *component,
 									     struct oval_collection *value_collection)
@@ -2217,7 +2341,8 @@ static _oval_component_evaluator *_component_evaluators[] = {
 	_oval_component_evaluate_ARITHMETIC,
 	_oval_component_evaluate_COUNT,
 	_oval_component_evaluate_UNIQUE,
-	NULL
+	_oval_component_evaluate_GLOB_TO_REGEX,
+	NULL,
 };
 
 static oval_syschar_collection_flag_t oval_component_eval_common(oval_argu_t *argu,
@@ -2250,7 +2375,7 @@ oval_syschar_collection_flag_t oval_component_compute(struct oval_syschar_model 
 
 	return oval_component_eval_common(&argu, component, value_collection);
 }
-
+#if defined(OVAL_PROBES_ENABLED)
 oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess,
 						    struct oval_component *component,
 						    struct oval_collection *value_collection)
@@ -2262,3 +2387,4 @@ oval_syschar_collection_flag_t oval_component_query(oval_probe_session_t *sess,
 
 	return oval_component_eval_common(&argu, component, value_collection);
 }
+#endif /* OVAL_PROBES_ENABLED */

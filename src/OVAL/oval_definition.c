@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -43,6 +43,7 @@
 #include "common/assume.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 #include "common/_error.h"
 
 
@@ -391,9 +392,9 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	int return_code;
 	if ((strcmp(tagname, "title") == 0)) {
-		return_code = oval_parser_text_value(reader, context, &_oval_definition_title_consumer, definition);
+		return_code = oscap_parser_text_value(reader, &_oval_definition_title_consumer, definition);
 	} else if (strcmp(tagname, "description") == 0) {
-		return_code = oval_parser_text_value(reader, context, &_oval_definition_description_consumer, definition);
+		return_code = oscap_parser_text_value(reader, &_oval_definition_description_consumer, definition);
 	} else if (strcmp(tagname, "affected") == 0) {
 		return_code = oval_affected_parse_tag(reader, context, &_oval_definition_affected_consumer, definition);
 	} else if (strcmp(tagname, "oval_repository") == 0) {	/* NOOP */

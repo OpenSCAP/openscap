@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,8 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/xmlns_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 struct xccdf_version_info {
 	const char* version; ///< MAJOR.MINOR, for example "1.1" or "1.2"
@@ -108,30 +110,28 @@ bool xccdf_is_supported_namespace(xmlNs *ns)
 		_namespace_get_xccdf_version_info((const char *) ns->href) != NULL;
 }
 
+char *xccdf_detect_version_priv(xmlTextReader *reader)
+{
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
+	const struct xccdf_version_info *ver_info = xccdf_detect_version_parser(reader);
+	if (ver_info == NULL) {
+		return NULL;
+	}
+	return oscap_strdup(xccdf_version_info_get_version(ver_info));
+}
+
 char * xccdf_detect_version(const char* file)
 {
-	const struct xccdf_version_info *ver_info;
-	char *doc_version;
-
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_source_free(source);
 		return NULL;
 	}
 
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
-
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-	ver_info = xccdf_detect_version_parser(reader);
-
-	if(!ver_info) {
-		xmlFreeTextReader(reader);
-		return NULL;
-	}
-	doc_version = strdup(xccdf_version_info_get_version(ver_info));
-
+	char *doc_version = xccdf_detect_version_priv(reader);
 	xmlFreeTextReader(reader);
-
+	oscap_source_free(source);
 	return doc_version;
 }
 
@@ -450,3 +450,15 @@ void xccdf_print_max(const char *str, int max, const char *ellipsis)
 		printf("%s", ellipsis);
 }
 
+xmlNs *lookup_xccdf_ns(xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info)
+{
+	assert(parent != NULL);
+
+	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
+		(const xmlChar *)xccdf_version_info_get_namespace_uri(version_info));
+	if (ns_xccdf == NULL) {
+		ns_xccdf = xmlNewNs(parent,
+			(const xmlChar *) xccdf_version_info_get_namespace_uri(version_info), NULL);
+	}
+	return ns_xccdf;
+}

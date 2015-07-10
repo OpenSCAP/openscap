@@ -37,6 +37,7 @@ oscap_debug.log.*
 /libtool
 /docs/html/
 /utils/oscap
+/utils/oscap.exe
 /libopenscap.pc
 /m4/libtool.m4
 /m4/ltoptions.m4
@@ -47,11 +48,14 @@ selinux/oscap.pp
 /src/OVAL/oval_testing_ext_probe.c
 /src/OVAL/probes/probe_*
 /schemas/build/
-/swig/openscap.pm
-/swig/openscap.py
-/swig/openscap_pm_wrap.c
-/swig/openscap_py_wrap.c
-/swig/openscap_api.pyc
+/swig/perl/openscap.pm
+/swig/perl/openscap_pm_wrap.c
+/swig/python2/openscap.py
+/swig/python2/openscap_py_wrap.c
+/swig/python2/openscap_api.pyc
+/swig/python3/openscap.py
+/swig/python3/openscap_py_wrap.c
+/swig/python3/openscap_api.pyc
 /config/py-compile
 /lib/alloca.h
 /lib/arg-nonnull.h
@@ -243,3 +247,4 @@ selinux/oscap.pp
 /tests/sce/sce_xccdf.xml.results
 /tests/sce/test_sce.log
 /tests/schemas/test_schemas.log
+/tests/test_common.sh

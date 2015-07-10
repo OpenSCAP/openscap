@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<oval_definitions
+    xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+    xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+    xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+    xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <generator>
+            <oval:product_name>vim</oval:product_name>
+            <oval:schema_version>5.10.1</oval:schema_version>
+            <oval:timestamp>2012-11-22T15:00:00+01:00</oval:timestamp>
+      </generator>
+      <definitions>
+            <definition class="inventory" id="oval:x:def:1" version="1">
+                  <metadata>
+                        <title>Always succeed</title>
+                        <reference ref_id="cpe:/o:xxx:yyy" source="CPE"/>
+                        <description>Should pass on every platform</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="x" test_ref="oval:x:tst:1"/>
+                  </criteria>
+            </definition>
+      </definitions>
+    <tests>
+      <ind-def:variable_test id="oval:x:tst:1" version="1" check="all" comment=".">
+        <ind-def:object object_ref="oval:x:obj:1"/>
+        <ind-def:state state_ref="oval:x:ste:1"/>
+      </ind-def:variable_test>
+    </tests>
+    <objects>
+      <ind-def:variable_object id="oval:x:obj:1" version="1">
+        <ind-def:var_ref>oval:x:var:1</ind-def:var_ref>
+      </ind-def:variable_object>
+    </objects>
+    <states>
+      <ind-def:variable_state id="oval:x:ste:1" version="1">
+        <ind-def:value operation="greater than" datatype="float">1.0</ind-def:value>
+      </ind-def:variable_state>
+    </states>
+    <variables>
+      <constant_variable id="oval:x:var:1" version="1" datatype="float" comment=".">
+        <value>4.0</value>
+      </constant_variable>
+    </variables>
+</oval_definitions>

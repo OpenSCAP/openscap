@@ -260,9 +260,6 @@ Generate another document form an XCCDF file such as security guide or result re
 \fB\-\-profile ID\fR
 Apply profile with given ID to the Benchmark before further processing takes place.
 .TP
-\fB\-\-format FMT\fR
-Specify output format. This option applies only on document generators (i.e. guide, report). Available formats: \fIhtml\fR (default), \fIdocbook\fR.
-.TP
 Available submodules:
 .TP
 .B \fBguide\fR  [\fIoptions\fR] xccdf-file
@@ -304,7 +301,7 @@ Write the report to this file instead of standard output.
 Fixes will be generated for failed rule-results of the specified TestResult.
 .TP
 \fB\-\-template \fIID|FILE\fR\fR
-Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/fixtpl-bash.xml\fR.
+Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/legacy-fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/legacy-fixtpl-bash.xml\fR.
 .RE
 .TP
 .B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file

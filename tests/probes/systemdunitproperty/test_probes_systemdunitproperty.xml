@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+  <generator>
+    <oval:product_name>systemdunitproperty</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2014-06-18T00:00:00-00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+
+    <definition class="compliance" version="1" id="oval:0:def:1"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <notes><note>asdasd</note></notes>
+      <criteria operator="AND">
+        <criterion test_ref="oval:0:tst:1"/>
+        <criterion test_ref="oval:0:tst:2"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:2"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <notes><oval:note>asdasd</oval:note></notes>
+      <criteria>
+        <criterion test_ref="oval:0:tst:3"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:3"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:4"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:5"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:5"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:6"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:6"> <!-- comment="false" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:7"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="false" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:8"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:8"> <!-- comment="true" -->
+      <metadata><title></title><description></description></metadata>
+      <criteria>
+        <criterion test_ref="oval:0:tst:9"/>
+      </criteria>
+    </definition>
+
+  </definitions>
+
+  <tests>
+
+    <systemdunitproperty_test check_existence="only_one_exists" version="1" id="oval:0:tst:1" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:0:obj:1"/>
+    </systemdunitproperty_test>
+    <systemdunitproperty_test check_existence="at_least_one_exists" version="1" id="oval:0:tst:2" check="all" comment="true" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <object object_ref="oval:0:obj:2"/>
+    </systemdunitproperty_test>
+
+    <!-- test if there's at least one service unit having LoadState equal to 'loaded' or 'not-found' -->
+    <systemdunitproperty_test id="oval:0:tst:3" check="at least one" check_existence="all_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
+      <object object_ref="oval:0:obj:3"/>
+      <state state_ref="oval:0:ste:1"/>
+    </systemdunitproperty_test>
+
+    <!-- test if there's at least one service unit having LoadState equal to 'loaded' excluding those with LoadState 'not-found' -->
+    <systemdunitproperty_test id="oval:0:tst:4" check="at least one" check_existence="all_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
+      <object object_ref="oval:0:obj:4"/>
+      <state state_ref="oval:0:ste:1"/>
+    </systemdunitproperty_test>
+
+    <!-- test if there's at least one service conflicting the shutdown.target -->
+    <systemdunitproperty_test id="oval:0:tst:5" check="at least one" check_existence="all_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
+      <object object_ref="oval:0:obj:5"/>
+      <state state_ref="oval:0:ste:3"/>
+    </systemdunitproperty_test>
+
+    <!-- check that there doesn't exist systemd-journald.service unit with valid Conflicts property -->
+    <systemdunitproperty_test id="oval:0:tst:6" check="all" check_existence="none_exist" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="true" version="1">
+      <object object_ref="oval:0:obj:6"/>
+    </systemdunitproperty_test>
+
+    <!-- check if there is at least one systemd-journald.service unit it has value of Conflicts property equal to empty string -->
+    <systemdunitproperty_test id="oval:0:tst:7" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="false" version="1">
+      <object object_ref="oval:0:obj:6"/>
+      <state state_ref="oval:0:ste:4"/>
+    </systemdunitproperty_test>
+
+    <!-- check if abcdefghijklmnopqrstuvwxyz.target unit has value of UnitFileState property (case-insensitively) equal to 'enabled' -->
+    <!-- made up unit name, should fail -->
+    <systemdunitproperty_test id="oval:0:tst:8" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="false" version="1">
+      <object object_ref="oval:0:obj:7"/>
+      <state state_ref="oval:0:ste:5"/>
+    </systemdunitproperty_test>
+
+    <!-- check if sockets.target unit has two or more values of Wants property -->
+    <variable_test id="oval:0:tst:9" check="all" check_existence="at_least_one_exists" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="true" version="1">
+      <object object_ref="oval:0:obj:8"/>
+      <state state_ref="oval:0:ste:6"/>
+    </variable_test>
+
+  </tests>
+
+  <objects>
+
+    <systemdunitproperty_object version="1" id="oval:0:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>-.mount</unit>
+      <property>LoadState</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object version="1" id="oval:0:obj:2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>-.mount</unit>
+      <property>Wants</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit operation="pattern match">.*\.service</unit>
+      <property>LoadState</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit operation="pattern match">.*\.service</unit>
+      <property>LoadState</property>
+      <filter action="exclude" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:0:ste:2</filter>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit operation="pattern match">.*\.service</unit>
+      <property>Conflicts</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>systemd-journald.service</unit>
+      <property>Conflicts</property>
+    </systemdunitproperty_object>
+
+    <systemdunitproperty_object id="oval:0:obj:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>abcdefghijklmnopqrstuvwxyz.target</unit>
+      <property>UnitFileState</property>
+    </systemdunitproperty_object>
+
+    <variable_object id="oval:0:obj:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <var_ref>oval:0:var:1</var_ref>
+    </variable_object>
+
+    <systemdunitproperty_object id="oval:0:obj:9" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <unit>sockets.target</unit>
+      <property>Wants</property>
+    </systemdunitproperty_object>
+
+  </objects>
+
+  <states>
+
+    <systemdunitproperty_state id="oval:0:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="pattern match">(loaded|not-found)</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="equals">not-found</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="pattern match">(?i)shutdown.target(?-i)</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="pattern match">^$</value>
+    </systemdunitproperty_state>
+
+    <systemdunitproperty_state id="oval:0:ste:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+      <value operation="equals">(?i)enabled(?-i)</value>
+    </systemdunitproperty_state>
+
+    <variable_state id="oval:0:ste:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+      <value operation="greater than or equal" datatype="int">2</value>
+    </variable_state>
+
+  </states>
+
+  <variables>
+
+    <local_variable id="oval:0:var:1" datatype="int" comment="count of items in the value of Wants property of the sockets.target unit" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <count>
+        <object_component object_ref="oval:0:obj:9" item_field="value"/>
+      </count>
+    </local_variable>
+
+  </variables>
+
+</oval_definitions>

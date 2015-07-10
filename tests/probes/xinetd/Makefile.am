@@ -6,6 +6,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/OVAL/public \
 		-I$(top_srcdir)/src/XCCDF/public \
 	 	-I$(top_srcdir)/src/common/public \
+		-I$(top_srcdir)/src/source/public \
 		-I$(top_srcdir)/src/OVAL/probes \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
@@ -14,8 +15,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la $(top_builddir)/src/common/liboscapcommon.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
-             $(top_srcdir)/tests/assume.h
+EXTRA_DIST = $(top_srcdir)/tests/assume.h
 
 DISTCLEANFILES = *.log *.out* oscap_debug.log.*
 CLEANFILES = *.log *.out* oscap_debug.log.*

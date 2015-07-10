@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.results oscap_debug.log.*
 CLEANFILES = *.log *.results oscap_debug.log.*
 
@@ -11,7 +9,7 @@ TESTS_ENVIRONMENT= \
 
 TESTS = all.sh
 
-EXTRA_DIST += \
+EXTRA_DIST = \
 	all.sh \
 	test_applicability_check.sh \
 	applicability_check.xml \
@@ -21,6 +19,8 @@ EXTRA_DIST += \
 	deprecated_def.xml \
 	test_count_function.sh \
 	oval-def_count_function.xml \
+	comment.xml \
+	test_comment.sh \
 	test_int_comparison.oval.xml \
 	test_int_comparison.sh \
 	test_int_comparison.syschar.xml \
@@ -50,12 +50,17 @@ EXTRA_DIST += \
 	test_evr_string_comparison.oval.xml \
 	test_evr_string_comparison.sh \
 	test_evr_string_comparison.syschar.xml \
+	test_external_variable.oval.xml \
+	test_external_variable.sh \
+	external_variables.xml \
 	test_filecontent_line.oval.xml \
 	test_filecontent_line.sh \
 	test_filecontent_line.syschar.xml \
 	test_float_comparison.oval.xml \
 	test_float_comparison.sh \
 	test_float_comparison.syschar.xml \
+	test_glob_to_regex.sh \
+	test_glob_to_regex.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
 	test_xmlns_missing.oval.xml \

@@ -41,7 +41,7 @@
 #include "oval_system_characteristics.h"
 #include "oval_results.h"
 #include "oval_variables.h"
-#include "oval_probe.h"
+//#include "oval_probe.h"
 
 struct oval_agent_session;
 

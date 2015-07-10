@@ -33,6 +33,8 @@
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/elements.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 struct xccdf_tailoring *xccdf_tailoring_new(void)
 {
@@ -184,9 +186,11 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 			break;
 		}
 		case XCCDFE_PROFILE: {
-			struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
-			if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
-				dW("Failed to add profile to tailoring while parsing!");
+			if (benchmark != NULL) {
+				struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
+				if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
+					dW("Failed to add profile to tailoring while parsing!");
+				}
 			}
 			break;
 		}
@@ -200,40 +204,43 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 	return tailoring;
 }
 
-struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
+struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
 		return NULL;
 	}
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_parse(reader, XITEM(benchmark));
 	xmlFreeTextReader(reader);
-
 	if (!tailoring) { // parsing fatal error
-		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse '%s'.", file);
-		xccdf_tailoring_free(tailoring);
-		return NULL;
+		oscap_seterr(OSCAP_EFAMILY_XML, "Failed to parse tailoring from '%s'.", oscap_source_readable_origin(source));
 	}
+	return tailoring;
+}
 
+struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
+{
+	struct oscap_source *source = oscap_source_new_from_file(file);
+
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, benchmark);
+	oscap_source_free(source);
 	return tailoring;
 }
 
 xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-				BAD_CAST xccdf_version_info_get_namespace_uri(version_info));
-
 	xmlNs *ns_tailoring = NULL;
 
-	xmlNode *tailoring_node = xmlNewNode(ns_xccdf, BAD_CAST "Tailoring");
+	xmlNode *tailoring_node = xmlNewNode(NULL, BAD_CAST "Tailoring");
 
 	const char *xccdf_version = xccdf_version_info_get_version(version_info);
+#ifdef __USE_GNU
 	if (strverscmp(xccdf_version, "1.1") >= 0 && strverscmp(xccdf_version, "1.2") < 0) {
+#else
+	if (strcmp(xccdf_version, "1.1") >= 0 && strcmp(xccdf_version, "1.2") < 0) {
+#endif
 		// XCCDF 1.1 does not support Tailoring!
 		// However we will allow Tailoring export if it is done to an external
 		// file. The namespace will be our custom xccdf-1.1-tailoring extension
@@ -250,7 +257,11 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 			BAD_CAST "cdf-11-tailoring"
 		);
 	}
+#ifdef __USE_GNU
 	else if (strverscmp(xccdf_version, "1.1") < 0) {
+#else
+	else if (strcmp(xccdf_version, "1.1") < 0) {
+#endif
 		oscap_seterr(OSCAP_EFAMILY_XML, "XCCDF Tailoring isn't supported in XCCDF version '%s',"
 			"nor does openscap have a custom extension for this scenario. "
 			"XCCDF Tailoring requires XCCDF 1.1 and higher, 1.2 is recommended.");
@@ -259,6 +270,7 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 		return NULL;
 	}
 
+	xmlNs *ns_xccdf = parent != NULL ? lookup_xccdf_ns(doc, parent, version_info) : NULL;
 	if (!ns_xccdf) {
 		// In cases where tailoring ends up being the root node we have to create
 		// a namespace at the node itself.
@@ -326,14 +338,15 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 	while (oscap_string_iterator_has_more(metadata))
 	{
 		const char* meta = oscap_string_iterator_next(metadata);
-		oscap_xmlstr_to_dom(tailoring_node, "metadata", meta);
+		xmlNode *m = oscap_xmlstr_to_dom(tailoring_node, "metadata", meta);
+		xmlSetNs(m, ns_xccdf);
 	}
 	oscap_string_iterator_free(metadata);
 
 	struct xccdf_profile_iterator *profiles = xccdf_tailoring_get_profiles(tailoring);
 	while (xccdf_profile_iterator_has_more(profiles)) {
 		struct xccdf_profile *profile = xccdf_profile_iterator_next(profiles);
-		xccdf_item_to_dom(XITEM(profile), doc, tailoring_node);
+		xccdf_item_to_dom(XITEM(profile), doc, tailoring_node, version_info);
 	}
 	xccdf_profile_iterator_free(profiles);
 
@@ -356,7 +369,7 @@ int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, 
 
 	xccdf_tailoring_to_dom(tailoring, doc, NULL, version_info);
 
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring)

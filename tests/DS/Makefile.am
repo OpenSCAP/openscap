@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.results \
 	oscap_debug.log.* */oscap_debug.log.* sds_subdir/subdir/oscap_debug.log.*
 CLEANFILES = *.log *.results \
@@ -12,7 +10,7 @@ TESTS_ENVIRONMENT= \
 
 TESTS = test_ds.sh
 
-EXTRA_DIST += test_ds.sh \
+EXTRA_DIST = test_ds.sh \
 		eval_invalid/sds.xml \
 		eval_invalid/sds-oval.xml \
 		eval_simple/sds.xml \
@@ -22,6 +20,7 @@ EXTRA_DIST += test_ds.sh \
 		eval_benchmark_id_conflict/sds.xml \
 		eval_oval_id/sds.xml \
 		eval_cpe/sds.xml \
+		cpe_in_ds/sds.xml \
 		rds_simple/results-oval.xml \
 		rds_simple/results-xccdf.xml \
 		rds_simple/sds.xml \

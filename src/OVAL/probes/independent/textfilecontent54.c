@@ -74,7 +74,11 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 	for (i = 0; i < ovector_len; ++i)
 		ovector[i] = -1;
 
+#if defined(__SVR4) && defined(__sun)
+	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
+#else
 	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, 0, ovector, ovector_len);
+#endif
 
 	if (rc < -1) {
 		return -1;

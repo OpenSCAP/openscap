@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../../../test_common.sh
+. ../../../test_common.sh
 
 test_init test_api_xccdf_unittests.log
 #
@@ -12,6 +12,7 @@ test_run "xccdf:complex-check -- NAND is working properly" ./test_xccdf_shall_pa
 test_run "xccdf:complex-check -- single negation" ./test_xccdf_shall_pass $srcdir/test_xccdf_complex_check_single_negate.xccdf.xml
 test_run "Certain id's of xccdf_items may overlap" ./test_xccdf_shall_pass $srcdir/test_xccdf_overlaping_IDs.xccdf.xml
 test_run "Test Abstract data types." ./test_oscap_common
+test_run "xccdf_rule_result_override" $srcdir/test_xccdf_overrides.sh
 
 test_run "Assert for environment" [ ! -x $srcdir/not_executable ]
 test_run "Assert for environment better" $OSCAP oval eval --id oval:moc.elpmaxe.www:def:1 $srcdir/test_xccdf_check_content_ref_without_name_attr.oval.xml
@@ -49,6 +50,7 @@ test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_s
 test_run "Multiple xccdf:TestResult elements" $srcdir/test_xccdf_multiple_testresults.sh
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
+test_run "incorrect selector for xccdf value" $srcdir/test_xccdf_refine_value_bad.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh

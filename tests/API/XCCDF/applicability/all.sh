@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. $srcdir/../../../test_common.sh
+. ../../../test_common.sh
 
 function test_api_xccdf_cpe_eval {
     local INPUT=$srcdir/$1
@@ -72,6 +72,7 @@ function test_api_xccdf_embedded_cpe_eval {
 
 test_init "test_api_xccdf_applicability.log"
 
+test_run "Populate TestResult/platform sub element" $srcdir/test_platform_element.sh
 test_run "test_api_xccdf_applicability_cpe_applicable_rule" test_api_xccdf_cpe_eval applicable-rule-xccdf.xml cpe-dict.xml 0
 test_run "test_api_xccdf_applicability_cpe_applicable_embedded_rule" test_api_xccdf_embedded_cpe_eval applicable-rule-embedded-xccdf.xml 0
 test_run "test_api_xccdf_applicability_cpe_applicable_benchmark" test_api_xccdf_cpe_eval applicable-benchmark-xccdf.xml cpe-dict.xml 0

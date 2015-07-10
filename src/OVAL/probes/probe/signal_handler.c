@@ -38,6 +38,7 @@
 #include "worker.h"
 #include "common/debug_priv.h"
 #include "signal_handler.h"
+#include "common/compat_pthread_barrier.h"
 
 typedef struct {
 	probe_worker_t **thr;
@@ -125,9 +126,9 @@ void *probe_signal_handler(void *arg)
 			 * cancelability), but at most 60 seconds per thread.
 			 */
 			for (; coll.cnt > 0; --coll.cnt) {
+				probe_worker_t *thr = coll.thr[coll.cnt - 1];
 #if defined(HAVE_PTHREAD_TIMEDJOIN_NP) && defined(HAVE_CLOCK_GETTIME)
 				struct timespec j_tm;
-				probe_worker_t *thr = coll.thr[coll.cnt - 1];
 
 				if (clock_gettime(CLOCK_REALTIME, &j_tm) == -1) {
 					dE("clock_gettime(CLOCK_REALTIME): %d, %s.\n", errno, strerror(errno));

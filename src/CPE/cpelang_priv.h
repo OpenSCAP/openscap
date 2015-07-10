@@ -75,12 +75,6 @@ struct cpe_lang_model;
 struct cpe_platform;
 
 /**
- * Function for parsing XML CPE language file
- * @param file filename
- */
-struct cpe_lang_model *cpe_lang_model_parse_xml(const char *file);
-
-/**
  * Parse function for CPE Lang model
  * @param reader xmlTextReaderPtr structure representing XML model
  */
@@ -127,6 +121,8 @@ void cpe_platform_export(const struct cpe_platform *platform, xmlTextWriterPtr w
  * @param expr CPE test expression structure
  */
 void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr writer);
+
+char *cpe_lang_model_detect_version_priv(xmlTextReader *reader);
 
 /** 
  * @cond INTERNAL

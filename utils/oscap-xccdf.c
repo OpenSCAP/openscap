@@ -42,10 +42,13 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#if defined(HAVE_SYSLOG_H)
 #include <syslog.h>
+#endif
 
 #include "oscap-tool.h"
 #include "oscap.h"
+#include "oscap_source.h"
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
@@ -192,8 +195,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 
 #define GEN_OPTS \
         "Generate options:\n" \
-        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n" \
-        "   --format <fmt>\r\t\t\t\t - Select output format. Can be html or docbook.\n"
+        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",
@@ -232,7 +234,7 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
         "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
     .opt_parser = getopt_xccdf,
-    .user = "security-guide.xsl",
+    .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
 };
 
@@ -247,7 +249,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
         "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
     .opt_parser = getopt_xccdf,
-    .user = "fix.xsl",
+    .user = "legacy-fix.xsl",
     .func = app_generate_fix
 };
 
@@ -433,6 +435,13 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }
 
+static void report_missing_profile(const struct oscap_action *action)
+{
+	fprintf(stderr,
+		"Profile \"%s\" was not found. Get available profiles using:\n"
+		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -443,11 +452,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 
 	int result = OSCAP_ERROR;
+#if defined(HAVE_SYSLOG_H)
 	int priority = LOG_NOTICE;
 
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
-
+#endif
 	session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
@@ -459,7 +469,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
+	// The tailoring_file may be NULL but the tailoring file may have been
+	// autonegotiated from the input file, we don't want to lose that.
+	if (action->tailoring_file != NULL)
+		xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
 	xccdf_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
@@ -471,7 +484,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
 		if (action->profile != NULL)
-			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+			report_missing_profile(action);
 		else
 			fprintf(stderr, "No Policy was found for default profile.\n");
 		goto cleanup;
@@ -523,8 +536,10 @@ cleanup:
 	oscap_print_error();
 
 	/* syslog message */
+#if defined(HAVE_SYSLOG_H)
 	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
 		session == NULL ? 0 : xccdf_session_get_base_score(session));
+#endif
 
 	if (session != NULL)
 		xccdf_session_free(session);
@@ -572,7 +587,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	policy = xccdf_policy_model_get_policy_by_id(xccdf_session_get_policy_model(session), action->profile);
 	if (policy == NULL) {
 		if (action->profile != NULL)
-			fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+			report_missing_profile(action);
 		else
 			fprintf(stderr, "No Policy was found for default profile.\n");
 		goto cleanup;
@@ -645,7 +660,6 @@ cleanup:
 
 int app_xccdf_resolve(const struct oscap_action *action)
 {
-	char *doc_version = NULL;
 	int ret = OSCAP_ERROR;
 	struct xccdf_benchmark *bench = NULL;
 
@@ -658,20 +672,17 @@ int app_xccdf_resolve(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 	/* validate input */
 	if (action->validate) {
-		doc_version = xccdf_detect_version(action->f_xccdf);
-		if (!doc_version) {
-			return OSCAP_ERROR;
-		}
-
-		if (oscap_validate_document(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*) action) != 0) {
-			validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
+		if (oscap_source_validate(source, reporter, (void *) action) != 0) {
+			oscap_source_free(source);
 			goto cleanup;
 		}
 	}
 
-	bench = xccdf_benchmark_import(action->f_xccdf);
+	bench = xccdf_benchmark_import_source(source);
+	oscap_source_free(source);
 	if (!bench)
 		goto cleanup;
 
@@ -685,20 +696,19 @@ int app_xccdf_resolve(const struct oscap_action *action)
 			fprintf(stderr, "Benchmark resolving failure (probably a dependency loop)!\n");
 		else
 		{
-			if (xccdf_benchmark_export(bench, action->f_results)) {
+			if (xccdf_benchmark_export(bench, action->f_results) == 0) {
 				ret = OSCAP_OK;
 
 				/* validate exported results */
 				const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
 				if (action->validate && full_validation) {
-					/* reuse doc_version from unresolved document
-					   it should be same in resolved one */
-					if (oscap_validate_document(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version, reporter, (void*)action)) {
-						validation_failed(action->f_results, OSCAP_DOCUMENT_XCCDF, doc_version);
+					struct oscap_source *result_source = oscap_source_new_from_file(action->f_results);
+					if (oscap_source_validate(result_source, reporter, (void *) action) != 0) {
 						ret = OSCAP_ERROR;
 					}
 					else
 						fprintf(stdout, "Resolved XCCDF has been exported correctly.\n");
+					oscap_source_free(result_source);
 				}
 			}
 		}
@@ -708,13 +718,11 @@ cleanup:
 	oscap_print_error();
 	if (bench)
 		xccdf_benchmark_free(bench);
-	if (doc_version)
-		free(doc_version);
 
 	return ret;
 }
 
-static bool _some_oval_result_exists(const char *filename)
+static bool _some_oval_result_exists(struct oscap_source *xccdf_source)
 {
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
@@ -723,7 +731,7 @@ static bool _some_oval_result_exists(const char *filename)
 	char *oval_result = NULL;
 	bool result = false;
 
-	benchmark = xccdf_benchmark_import(filename);
+	benchmark = xccdf_benchmark_import_source(xccdf_source);
 	if (benchmark == NULL)
 		return false;
 
@@ -801,7 +809,7 @@ int app_generate_fix(const struct oscap_action *action)
 		goto cleanup;
 
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
-		fprintf(stderr, "Profile \"%s\" was not found.\n", action->profile);
+		report_missing_profile(action);
 		goto cleanup;
 	}
 
@@ -830,12 +838,14 @@ int app_xccdf_xslt(const struct oscap_action *action)
 
 	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL) {
 		/* If generating the report and the option is missing -> use defaults */
-		if (_some_oval_result_exists(action->f_xccdf))
+		struct oscap_source *xccdf_source = oscap_source_new_from_file(action->f_xccdf);
+		if (_some_oval_result_exists(xccdf_source))
 			/* We want to define default template because we strive to serve user the
 			 * best. However, we must not offer a template, if there is a risk it might
 			 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
 			 * to stderr. */
 			oval_template = "%.result.xml";
+		oscap_source_free(xccdf_source);
 	}
 
 	if (action->module == &XCCDF_GEN_CUSTOM) {
@@ -845,9 +855,8 @@ int app_xccdf_xslt(const struct oscap_action *action)
 	const char *params[] = {
 		"result-id",         action->id,
 		"show",              action->show,
-		"profile",           action->profile,
+		"profile_id",        action->profile,
 		"template",          action->tmpl,
-		"format",            action->format,
 		"oval-template",     oval_template,
 		"sce-template",      action->sce_template,
 		"verbosity",         "",
@@ -863,7 +872,6 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 {
 	static const struct option long_options[] = {
 		{"profile", 1, 0, 3},
-		{"format", 1, 0, 4},
 		{0, 0, 0, 0}
 	};
 
@@ -871,7 +879,6 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 	while ((c = getopt_long(argc, argv, "+", long_options, NULL)) != -1) {
 		switch (c) {
 		case 3: action->profile = optarg; break;
-		case 4: action->format = optarg; break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
@@ -921,7 +928,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
 		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
-		{"format", 		required_argument, NULL, XCCDF_OPT_FORMAT},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
 		{"tailoring-file", required_argument, NULL, XCCDF_OPT_TAILORING_FILE},
@@ -960,7 +966,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
 		case XCCDF_OPT_SHOW:		action->show = optarg;		break;
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
-		case XCCDF_OPT_FORMAT:		action->format = optarg;	break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		   into /usr/share/openscap/xsl instead of CWD */
@@ -1017,17 +1022,11 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 
 int app_xccdf_validate(const struct oscap_action *action) {
 	int ret;
-	char *doc_version;
 	int result;
 
 
-	doc_version = xccdf_detect_version(action->f_xccdf);
-        if (!doc_version) {
-                result = OSCAP_ERROR;
-                goto cleanup;
-        }
-
-        ret=oscap_validate_document(action->f_xccdf, action->doctype, doc_version, reporter, (void*)action);
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+	ret = oscap_source_validate(source, reporter, (void *) action);
         if (ret==-1) {
                 result=OSCAP_ERROR;
                 goto cleanup;
@@ -1039,7 +1038,7 @@ int app_xccdf_validate(const struct oscap_action *action) {
                 result=OSCAP_OK;
 
 	if (action->schematron) {
-		ret = oscap_schematron_validate_document(action->f_xccdf, action->doctype, doc_version, NULL);
+		ret = oscap_source_validate_schematron(source, NULL);
 		if (ret == -1) {
 			result = OSCAP_ERROR;
 		} else if (ret > 0) {
@@ -1047,14 +1046,9 @@ int app_xccdf_validate(const struct oscap_action *action) {
 		}
 	}
 
-        if (result==OSCAP_FAIL)
-		validation_failed(action->f_xccdf, OSCAP_DOCUMENT_XCCDF, doc_version);
-
 cleanup:
+	oscap_source_free(source);
 	oscap_print_error();
-
-        if (doc_version)
-		free(doc_version);
 
         return result;
 

@@ -48,7 +48,7 @@
 # include <sys/mnttab.h>
 # include <sys/mntent.h>
 # include <sys/unistd.h>
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__APPLE__)
 # include <sys/param.h>
 # include <sys/ucred.h>
 # include <sys/mount.h>
@@ -199,7 +199,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	return (lfs);
 }
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__APPLE__)
 static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 {
 	struct statfs *mntbuf = NULL;

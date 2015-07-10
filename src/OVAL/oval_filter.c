@@ -7,7 +7,7 @@
  * @{
  */
 /*
- * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -36,6 +36,7 @@
 #include <stdlib.h>
 
 #include "common/debug_priv.h"
+#include "common/elements.h"
 #include "oval_agent_api_impl.h"
 #include "oval_definitions_impl.h"
 
@@ -147,7 +148,7 @@ int oval_filter_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	filter = oval_filter_new(context->definition_model);
 	fa = oval_filter_action_parse(reader, "action", OVAL_FILTER_ACTION_EXCLUDE);
 	oval_filter_set_filter_action(filter, fa);
-	return_code = oval_parser_text_value(reader, context, &_oval_filter_consume_ste_ref, filter);
+	return_code = oscap_parser_text_value(reader, &_oval_filter_consume_ste_ref, filter);
 
 	(*consumer) (filter, user);
 

@@ -49,8 +49,8 @@ export OSCAP_XSLT_PATH=$s/xsl
 export OSCAP_CPE_PATH=$s/cpe
 
 # For SWIG bindings.
-export PERL5LIB=$b/swig:$b/swig/.libs${PERL5LIB:+:$PERL5LIB}
-export PYTHONPATH=$s/swig:$b/swig:$b/swig/.libs${PYTHONPATH:+:$PYTHONPATH}
+export PERL5LIB=$b/swig/perl:$b/swig/perl/.libs${PERL5LIB:+:$PERL5LIB}
+export PYTHONPATH=$s/swig/python2:$b/swig/python2:$b/swig/python2/.libs${PYTHONPATH:+:$PYTHONPATH}
 
 # This is a cheap way to find some use-after-free and uninitialized
 # read problems when using glibc.

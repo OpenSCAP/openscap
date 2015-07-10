@@ -4,6 +4,7 @@ liboscapcommon_la_SOURCES = \
 	alloc.c alloc.h \
 	assume.h \
 	bfind.c bfind.h \
+	compat_pthread_barrier.h compat_pthread_barrier.c \
 	debug.c debug_priv.h \
 	elements.c elements.h \
 	err_queue.c err_queue.h \
@@ -11,7 +12,8 @@ liboscapcommon_la_SOURCES = \
 	list.c list.h \
 	memusage.c memusage.h \
 	oscap_acquire.c oscap_acquire.h \
-	oscapxml.c \
+	oscapxml.c oscapxml.h \
+	oscap_string.c oscap_string.h \
 	reference.c reference_priv.h \
 	text.c text_priv.h \
 	tsort.c tsort.h \
@@ -23,7 +25,11 @@ liboscapcommon_la_SOURCES = \
 liboscapcommon_la_CPPFLAGS  = \
 	@curl_CFLAGS@ \
 	@xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ \
-	-I$(srcdir)/public -I$(top_srcdir)/src/OVAL/probes/SEAP/public -I$(top_srcdir)/src
+	-I$(srcdir)/public \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+	-I$(top_srcdir)/src/source/public \
+	-I$(top_srcdir)/lib
 
 liboscapcommon_la_LIBADD = \
 	@curl_LIBS@ \

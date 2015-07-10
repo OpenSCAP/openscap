@@ -15,7 +15,7 @@ stderr=$(mktemp -t ${name}.out.XXXXXX)
 	fi
 	# Workaround end
 
-$OSCAP xccdf generate --format html report --output $result $srcdir/${name}.xccdf.xml.result.xml 2> $stderr
+$OSCAP xccdf generate report --output $result $srcdir/${name}.xccdf.xml.result.xml 2> $stderr
 
 	# Workaround
 	if [ -L "$oval" ]; then
@@ -28,11 +28,9 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-grep '<div class="oval-results">' $result
 grep 'Testing file permissions of /etc/shadow' $result
-grep '<code>--------- </code>' $result
+grep '<code>---------' $result
 echo $result
-if [ -f /usr/bin/perl ]; then
-  LC_ALL=C /usr/bin/perl -w -0777 -p -e 's|<a href=".*">OpenSCAP</a>\s*\([0-9\.]+\)|XXMATCHEDXX|g' $result | grep XXMATCHEDXX
-fi
+# TODO: Check for the current version, as given by autotools, instead of any version
+grep -P '<a href="http://open-scap.org">OpenSCAP</a> (([0-9]+)\.){2}[0-9]+' $result
 rm $result

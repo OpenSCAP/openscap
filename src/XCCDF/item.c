@@ -341,17 +341,29 @@ void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, cons
 		oscap_text_to_dom(text, parent, elname);
 }
 
-xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info)
 {
-	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(item);
+	/*
+	We have 2 special cases here, either we have a parent node or we don't.
+	In case we have a parent node we can look for XCCDF namespace or create
+	it there. But if we don't we have no node to create the namespace in!
+	In this case we create a node with no namespace, then create the namespace
+	in it and only then we set the node to the new namespace. This avoids
+	undefined / undocumented behavior that we relied on previously.
+	*/
 
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = NULL;
 	xmlNode *item_node = NULL;
-	if (parent == NULL)
+	if (parent == NULL) {
 		item_node = xmlNewNode(NULL, BAD_CAST "Item");
-	else
+		// this creates the namespace and item_node carries it
+		ns_xccdf = lookup_xccdf_ns(doc, item_node, version_info);
+		xmlSetNs(item_node, ns_xccdf);
+	}
+	else {
+		ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 		item_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "Item", NULL);
+	}
 
 	/* Handle generic item attributes */
 	const char *id = xccdf_item_get_id(item);
@@ -447,7 +459,8 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 		while (oscap_string_iterator_has_more(metadata))
 		{
 			const char* meta = oscap_string_iterator_next(metadata);
-			oscap_xmlstr_to_dom(item_node, "metadata", meta);
+			xmlNode *m = oscap_xmlstr_to_dom(item_node, "metadata", meta);
+			xmlSetNs(m, ns_xccdf);
 		}
 		oscap_string_iterator_free(metadata);
     }
@@ -463,7 +476,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_PROFILE:
 			xmlNodeSetName(item_node,BAD_CAST "Profile");
-			xccdf_profile_to_dom(XPROFILE(item), item_node, doc, parent);
+			xccdf_profile_to_dom(XPROFILE(item), item_node, doc, parent, version_info);
 			break;
 		case XCCDF_RESULT:
 			xmlNodeSetName(item_node,BAD_CAST "TestResult");
@@ -512,8 +525,7 @@ xmlNode *xccdf_warning_to_dom(struct xccdf_warning *warning, xmlDoc *doc, xmlNod
 
 xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-				(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *status_node = NULL;
 	xccdf_status_type_t type = xccdf_status_get_status(status);
@@ -558,9 +570,11 @@ xmlNode *xccdf_fixtext_to_dom(struct xccdf_fixtext *fixtext, xmlDoc *doc, xmlNod
 	return fixtext_node;
 }
 
-xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
+xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
 	xmlNode *fix_node = oscap_xmlstr_to_dom(parent, "fix", xccdf_fix_get_content(fix));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
+	xmlSetNs(fix_node, ns_xccdf);
 
 	const char *id = xccdf_fix_get_id(fix);
 	if (id != NULL) xmlNewProp(fix_node, BAD_CAST "id", BAD_CAST id);
@@ -598,8 +612,7 @@ xmlNode *xccdf_fix_to_dom(struct xccdf_fix *fix, xmlDoc *doc, xmlNode *parent)
 
 xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	const char *id = xccdf_ident_get_id(ident);
 	xmlNode *ident_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "ident", BAD_CAST id);
@@ -612,8 +625,7 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 
 xmlNode *xccdf_check_to_dom(struct xccdf_check *check, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
 {
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *check_node = NULL;
 	if (xccdf_check_get_complex(check))
@@ -813,9 +825,14 @@ XCCDF_BENCHGETTER(group) XCCDF_BENCHGETTER(value)   XCCDF_BENCHGETTER(result)
 const struct xccdf_version_info* xccdf_item_get_schema_version(struct xccdf_item* item)
 {
 	struct xccdf_benchmark* top_benchmark = xccdf_item_get_benchmark(item);
-	if (top_benchmark == NULL)
-		return NULL;
-
+	if (top_benchmark == NULL) {
+		if (xccdf_item_get_type(item) == XCCDF_RESULT) {
+			// TestResult is special item, it may not have parent benchmark
+			return xccdf_result_get_schema_version(XRESULT(item));
+		} else {
+			return NULL;
+		}
+	}
 	return xccdf_benchmark_get_schema_version(top_benchmark);
 }
 

@@ -8,7 +8,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * Copyright (C) 2010 Tresys Technology, LLC
  * All Rights Reserved.
  *
@@ -37,6 +37,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <oscap_reference.h>
+#include <oscap_source.h>
 #include <oscap.h>
 #include "cpe_dict.h"
 
@@ -636,8 +637,10 @@ const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* 
  * stops as soon as the version is found. Returned string should be
  * freed by caller. Return NULL if error occur.
  * @memberof xccdf_benchmark
+ * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
+ * This function may be dropped from later versions of the library.
  */
-char * xccdf_detect_version(const char* file);
+OSCAP_DEPRECATED(char * xccdf_detect_version(const char* file));
 
 /************************************************************/
 
@@ -701,8 +704,18 @@ struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
  * @param file filename.
  * @return Pointer to the new benchmark.
  * @retval NULL on failure
+ * @deprecated This function has been deprecated by @ref xccdf_benchmark_import_source.
+ * This function may be dropped from later versions of the library.
  */
-struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
+OSCAP_DEPRECATED(struct xccdf_benchmark* xccdf_benchmark_import(const char *file));
+
+/**
+ * Import the content from oscap_source into a benchmark
+ * @memberof xccdf_benchmark
+ * @param source The oscap_source to import from
+ * @returns newly created benchmark element or NULL
+ */
+struct xccdf_benchmark* xccdf_benchmark_import_source(struct oscap_source *source);
 
 /**
  * Export a benchmark to an XML stream
@@ -711,6 +724,14 @@ struct xccdf_benchmark* xccdf_benchmark_import(const char *file);
  * @retval -1 if error occurred
  */
 int xccdf_benchmark_export(struct xccdf_benchmark *benchmark, const char *file);
+
+/**
+ * Import the content of oscap_source into a xccdf_result
+ * @memberof xccdf_result
+ * @param source The oscap_source to import from
+ * @returns newly created test-result element or NULL on error
+ */
+struct xccdf_result *xccdf_result_import_source(struct oscap_source *source);
 
 /**
  * Collect system info and store it in the TestResult.
@@ -723,8 +744,17 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result);
  * @memberof xccdf_result
  * @return Integer
  * @retval -1 if error occurred
+ * @deprecated This function has been deprecated by @ref xccdf_benchmark_export_source.
+ * This function may be dropped from later versions of the library.
  */
-int xccdf_result_export(struct xccdf_result *result, const char *file);
+OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char *file));
+
+/**
+ * Export TestResult to oscap_source structure
+ * @memberof xccdf_result
+ * @returns newly created oscap_source or NULL on error
+ */
+struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
 
 /**
  * Resolve an benchmark.
@@ -2560,6 +2590,18 @@ const char * xccdf_result_get_end_time(const struct xccdf_result *item);
 /// @memberof xccdf_result
 struct oscap_string_iterator *xccdf_result_get_metadata(const struct xccdf_result *result);
 
+/**
+ * Override the result of rule-result.
+ * @memberof xccdf_rule_result
+ * @param rule_result The rule-result element to override
+ * @param new_result to set
+ * @param time The time of override
+ * @param authority identifier of person overriding the result
+ * @param remark Rationale of the override
+ * @returns true on success
+ */
+bool xccdf_rule_result_override(struct xccdf_rule_result *rule_result, xccdf_test_result_type_t new_result, const char *time, const char *authority, struct oscap_text *remark);
+
 /// @memberof xccdf_rule_result
 const char * xccdf_rule_result_get_time(const struct xccdf_rule_result *item);
 /// @memberof xccdf_rule_result
@@ -2633,7 +2675,14 @@ const char *xccdf_instance_get_parent_context(const struct xccdf_instance *item)
 /// @memberof xccdf_instance
 const char *xccdf_instance_get_content(const struct xccdf_instance *item);
 /// @memberof xccdf_tailoring
-struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark);
+struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark);
+/*
+ * @memberof xccdf_tailoring
+ * @deprecated This function has been deprecated by @ref xccdf_tailoring_import_source.
+ * This function may be dropped from later versions of the library.
+ */
+OSCAP_DEPRECATED(struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark));
+
 /// @memberof xccdf_tailoring
 const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
@@ -3248,6 +3297,8 @@ bool xccdf_result_add_title(struct xccdf_result *item, struct oscap_text *newval
 bool xccdf_result_add_target_address(struct xccdf_result *item, const char *newval);
 /// @memberof xccdf_result
 bool xccdf_result_add_applicable_platform(struct xccdf_result *item, const char *newval);
+/// @memberof xccdf_result
+int xccdf_result_recalculate_scores(struct xccdf_result *result, struct xccdf_item *benchmark);
 /// @memberof xccdf_rule_result
 bool xccdf_rule_result_add_ident(struct xccdf_rule_result *obj, struct xccdf_ident *item);
 /// @memberof xccdf_rule_result

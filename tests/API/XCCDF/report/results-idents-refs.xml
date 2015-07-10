@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_moc.elpmaxe.www_benchmark_test" resolved="1">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
+    <reference href="http://somewhere.org">referencereferencereference</reference>
+    <ident system="faux_system">identidentident</ident>
+  </Rule>
+  <TestResult id="xccdf_org.open-scap_testresult_default-profile" start-time="2012-12-10T13:47:29" end-time="2012-12-10T13:47:29">
+    <title>OSCAP Scan Result</title>
+    <target>Test Target</target>
+    <rule-result idref="xccdf_moc.elpmaxe.www_rule_1" time="2012-12-10T13:47:29" weight="1.000000">
+      <result>fail</result>
+      <ident system="faux_system">identidentident</ident>
+    </rule-result>
+    <score system="urn:xccdf:scoring:default" maximum="100.000000">0.000000</score>
+  </TestResult>
+</Benchmark>

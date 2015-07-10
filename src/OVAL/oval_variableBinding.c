@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #include "adt/oval_collection_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_variable_binding {
 	struct oval_variable *variable;
@@ -176,7 +177,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	oscap_free(variableId);
 
 	/* bound value */
-	return_code = oval_parser_text_value(reader, context, &_oval_variable_binding_value_consumer, binding);
+	return_code = oscap_parser_text_value(reader, &_oval_variable_binding_value_consumer, binding);
 
 	if (return_code == 0)
 		(*consumer) (binding, client);

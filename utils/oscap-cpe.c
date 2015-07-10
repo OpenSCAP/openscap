@@ -1,5 +1,5 @@
 /*
- * Copyright 2010--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2010--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -34,6 +34,7 @@
 #include <cpe_name.h>
 #include <cpe_dict.h>
 #include <cpe_lang.h>
+#include <oscap_source.h>
 
 #include "oscap-tool.h"
 
@@ -154,6 +155,7 @@ int app_cpe_match(const struct oscap_action *action) {
 	struct cpe_name *candidate_cpe = NULL;
         struct cpe_dict_model *dict = NULL;
 
+	struct oscap_source *source = NULL;
 
         /* is CPE well formated? */
         if( ! cpe_name_check(action->cpe_action->name) ) {
@@ -164,7 +166,8 @@ int app_cpe_match(const struct oscap_action *action) {
         candidate_cpe = cpe_name_new(action->cpe_action->name);
 
         /* load dictionary */
-        if( (dict = cpe_dict_model_import (action->cpe_action->dict)) == NULL ) {
+	source = oscap_source_new_from_file(action->cpe_action->dict);
+	if( (dict = cpe_dict_model_import_source(source)) == NULL ) {
                 fprintf(stdout, "can't load CPE dictionary from: %s.\n", action->cpe_action->dict);
 		ret = OSCAP_ERROR;
                 goto clean;
@@ -185,43 +188,18 @@ clean:
         cpe_name_free(candidate_cpe);
         cpe_dict_model_free(dict);
 	free(action->cpe_action);
+	oscap_source_free(source);
 	return ret;
 }
 
 int app_cpe_validate(const struct oscap_action *action) {
 
 	int ret;
-	oscap_document_type_t doc_type;
-	char *doc_version = NULL;
 	int result;
 
-	if (oscap_determine_document_type(action->cpe_action->dict, &doc_type) != 0) {
-		fprintf(stderr, "Unable to determine document type of '%s'.", action->cpe_action->dict);
-		result = OSCAP_ERROR;
-		goto cleanup;
-	}
-
-	if (doc_type != OSCAP_DOCUMENT_CPE_DICTIONARY &&
-	    doc_type != OSCAP_DOCUMENT_CPE_LANGUAGE)
-	{
-		fprintf(stderr, "'%s' was not detected as a CPE dictionary or CPE language.", action->cpe_action->dict);
-		result = OSCAP_ERROR;
-		goto cleanup;
-	}
-
-	if (doc_type == OSCAP_DOCUMENT_CPE_DICTIONARY) {
-		doc_version = cpe_dict_detect_version(action->cpe_action->dict);
-	}
-	else if (doc_type == OSCAP_DOCUMENT_CPE_LANGUAGE) {
-		doc_version = cpe_lang_model_detect_version(action->cpe_action->dict);
-	}
-
-	if (!doc_version) {
-		result = OSCAP_ERROR;
-		goto cleanup;
-	}
-
-	ret = oscap_validate_document(action->cpe_action->dict, doc_type, doc_version, reporter, (void*) action);
+	struct oscap_source *source = oscap_source_new_from_file(action->cpe_action->dict);
+	ret = oscap_source_validate(source, reporter, (void *) action);
+	oscap_source_free(source);
 
 	if (ret==-1) {
 		result=OSCAP_ERROR;
@@ -234,14 +212,10 @@ int app_cpe_validate(const struct oscap_action *action) {
 		result=OSCAP_OK;
 	}
 
-	if (result==OSCAP_FAIL)
-		validation_failed(action->cpe_action->dict, doc_type, doc_version);
-
 cleanup:
 	if (oscap_err())
 		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	free(doc_version);
 	free(action->cpe_action);
 	return result;
 }

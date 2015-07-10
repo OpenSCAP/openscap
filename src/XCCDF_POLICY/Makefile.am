@@ -14,8 +14,10 @@ libxccdf_policy_la_SOURCES = \
 
 libxccdf_policy_la_CFLAGS = \
 	@xml2_CFLAGS@ \
+	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/src/XCCDF/public \
 	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/source/public \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/XCCDF_POLICY \

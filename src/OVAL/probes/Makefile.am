@@ -8,6 +8,7 @@ CFLAGS +=	@xml2_CFLAGS@ @pthread_CFLAGS@ @pcre_CFLAGS@	\
 		-I$(top_srcdir)/src				\
 		-I$(top_srcdir)/src/common 			\
 		-I$(top_srcdir)/src/common/public		\
+		-I$(top_srcdir)/src/source/public		\
 		-I$(top_srcdir)/src/OVAL			\
 		-I$(top_srcdir)/src/OVAL/public			\
 		-I$(top_srcdir)/src/OVAL/probes/public		\
@@ -169,6 +170,11 @@ pkglibexec_PROGRAMS += probe_routingtable
 probe_routingtable_SOURCES= unix/routingtable.c
 endif
 
+if probe_symlink_enabled
+pkglibexec_PROGRAMS += probe_symlink
+probe_symlink_SOURCES = unix/symlink.c
+endif
+
 if probe_gconf_enabled
 pkglibexec_PROGRAMS += probe_gconf
 probe_gconf_SOURCES= unix/gconf.c
@@ -276,5 +282,24 @@ probe_dpkginfo_CFLAGS= @apt_pkg_CFLAGS@
 probe_dpkginfo_CXXFLAGS= @apt_pkg_CFLAGS@
 probe_dpkginfo_LDFLAGS= @apt_pkg_LIBS@
 endif
+
+if probe_systemdunitproperty_enabled
+pkglibexec_PROGRAMS += probe_systemdunitproperty
+probe_systemdunitproperty_SOURCES= unix/linux/systemdunitproperty.c \
+       unix/linux/systemdshared.h
+probe_systemdunitproperty_CFLAGS= @dbus1_CFLAGS@
+probe_systemdunitproperty_CXXFLAGS = @dbus1_CFLAGS@
+probe_systemdunitproperty_LDFLAGS= @dbus1_LIBS@
+endif
+
+if probe_systemdunitdependency_enabled
+pkglibexec_PROGRAMS += probe_systemdunitdependency
+probe_systemdunitdependency_SOURCES= unix/linux/systemdunitdependency.c \
+       unix/linux/systemdshared.h
+probe_systemdunitdependency_CFLAGS= @dbus1_CFLAGS@
+probe_systemdunitdependency_CXXFLAGS = @dbus1_CFLAGS@
+probe_systemdunitdependency_LDFLAGS= @dbus1_LIBS@
+endif
+
 endif
 endif

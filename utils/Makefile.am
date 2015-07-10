@@ -9,7 +9,12 @@ if WANT_UTIL_OSCAP
 bin_PROGRAMS += oscap
 man_MANS += oscap.8
 oscap_SOURCES	= oscap.c oscap-tool.h oscap-tool.c oscap-ds.c
-oscap_CPPFLAGS	= -I$(top_srcdir)/src/common/public -I$(top_srcdir)/src/DS/public
+oscap_CPPFLAGS	= \
+	-I$(top_srcdir)/lib \
+	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/DS/public \
+	-I$(top_srcdir)/src/source/public
+
 oscap_LDADD	+= $(top_builddir)/src/libopenscap.la
 
 oscap_CPPFLAGS	+= -DOVAL_PROBE_DIR='"$(probe_dir)"'
@@ -30,12 +35,19 @@ oscap_SOURCES   += oscap-cve.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 
 oscap_SOURCES   += oscap-info.c
-oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 endif
 
 if WANT_UTIL_SCAP_AS_RPM
 bin_SCRIPTS += scap-as-rpm
 man_MANS += scap-as-rpm.8
+endif
+if WANT_UTIL_OSCAP_DOCKER
+bin_SCRIPTS += oscap-docker
+man_MANS += oscap-docker.8
+endif
+if WANT_UTIL_OSCAP_SSH
+bin_SCRIPTS += oscap-ssh
+man_MANS += oscap-ssh.8
 endif
 
 EXTRA_DIST	= $(bin_SCRIPTS) $(man_MANS)

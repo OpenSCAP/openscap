@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2013--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -41,20 +41,6 @@ struct cpe_parser_ctx {
 static inline struct cpe_parser_ctx *_cpe_parser_ctx_new()
 {
 	return oscap_calloc(1, sizeof(struct cpe_parser_ctx));
-}
-
-struct cpe_parser_ctx *cpe_parser_ctx_new(const char *filename)
-{
-	struct cpe_parser_ctx *ctx = _cpe_parser_ctx_new();
-	ctx->reader = xmlReaderForFile(filename, NULL, 0);
-	if (ctx->reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", filename);
-		cpe_parser_ctx_free(ctx);
-		return NULL;
-	}
-	xmlTextReaderSetErrorHandler(ctx->reader, &libxml_error_handler, NULL);
-	ctx->owns_reader = true;
-	return ctx;
 }
 
 struct cpe_parser_ctx *cpe_parser_ctx_from_reader(xmlTextReaderPtr reader)

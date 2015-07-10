@@ -149,7 +149,11 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 	else
 		f = file;
 
+#if defined(__SVR4) && defined (__sun)
+	if (lockf(fileno(__debuglog_fp), F_LOCK, 0L) == -1) {
+#else
 	if (flock(fileno(__debuglog_fp), LOCK_EX) == -1) {
+#endif
 		__UNLOCK_FP;
 		return;
 	}
@@ -177,7 +181,11 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 #endif
 	vfprintf(__debuglog_fp, fmt, ap);
 
+#if defined(__SVR4) && defined (__sun)
+	if (lockf(fileno(__debuglog_fp), F_ULOCK, 0L) == -1) {
+#else
 	if (flock(fileno(__debuglog_fp), LOCK_UN) == -1) {
+#endif
 		/* __UNLOCK_FP; */
 		abort();
 	}
@@ -231,8 +239,11 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
                 fprintf (__debuglog_fp, "=============== LOG: %.24s ===============\n", st);
                 atexit(&__oscap_debuglog_close);
         }
-
+#if defined(__SVR4) && defined (__sun)
+        if (lockf (fileno (__debuglog_fp), F_LOCK, 0L) == -1) {
+#else
         if (flock (fileno (__debuglog_fp), LOCK_EX | LOCK_NB) == -1) {
+#endif
                 __UNLOCK_FP;
                 return;
         }
@@ -250,8 +261,11 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
         }
 
         fprintf(__debuglog_fp, "\n-----------\n");
-
+#if defined(__SVR4) && defined (__sun)
+        if (lockf (fileno (__debuglog_fp), F_ULOCK, 0L) == -1) {
+#else
         if (flock (fileno (__debuglog_fp), LOCK_UN | LOCK_NB) == -1) {
+#endif
                 /* __UNLOCK_FP; */
                 abort ();
         }

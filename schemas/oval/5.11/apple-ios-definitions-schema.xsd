@@ -1,0 +1,529 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:apple-ios-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#apple_ios" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#apple_ios" elementFormDefault="qualified" version="5.11">
+  <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+  <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+  <xsd:annotation>
+    <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Apple iOS specific tests found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core Definition Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+    <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
+    <xsd:documentation>See public documentation at https://developer.apple.com/library/ios/featuredarticles/iPhoneConfigurationProfileRef/Introduction/Introduction.html</xsd:documentation>
+    <xsd:appinfo>
+      <schema>Apple iOS Definition</schema>
+      <version>5.11:5.11</version>
+      <date>12/18/2014 09:00:00 AM</date>
+      <terms_of_use>Copyright (c) 2002-2014, The MITRE Corporation. All rights reserved. The contents of this file are subject to the terms of the OVAL License located at http://oval.mitre.org/oval/about/termsofuse.html. See the OVAL License for the specific language governing permissions and limitations for use of this schema. When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+      <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+      <sch:ns prefix="apple-ios-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#apple_ios"/>
+      <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <!-- =============================================================================== -->
+  <!--==========================  GLOBAL RESTRICTIONS TEST  ==========================-->
+  <!-- =============================================================================== -->
+  <xsd:element name="globalrestrictions_test" substitutionGroup="oval-def:test">
+    <xsd:annotation>
+      <xsd:documentation>The globalrestrictions_test is used to check the status of the global restrictions in place on the device. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a globalrestrictions_object and the optional state element specifies the data to check.</xsd:documentation>
+      <xsd:appinfo>
+        <oval:element_mapping>
+          <oval:test>globalrestrictions_test</oval:test>
+          <oval:object>globalrestrictions_object</oval:object>
+          <oval:state>globalrestrictions_state</oval:state>
+          <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apple_ios">globalrestrictions_item</oval:item>
+        </oval:element_mapping>
+      </xsd:appinfo>
+      <xsd:appinfo>
+        <sch:pattern id="apple-ios-def_globalrestrictions_test">
+          <sch:rule context="apple-ios-def:globalrestrictions_test/apple-ios-def:object">
+            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/apple-ios-def:globalrestrictions_object/@id"><sch:value-of select="../@id"/> - the object child element of a globalrestrictions_test must reference a globalrestrictions_object</sch:assert>
+          </sch:rule>
+          <sch:rule context="apple-ios-def:globalrestrictions_test/apple-ios-def:state">
+            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/apple-ios-def:globalrestrictions_state/@id"><sch:value-of select="../@id"/> - the state child element of a globalrestrictions_test must reference a globalrestrictions_state</sch:assert>
+          </sch:rule>
+        </sch:pattern>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:TestType">
+          <xsd:sequence>
+            <xsd:element name="object" type="oval-def:ObjectRefType"/>
+            <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="globalrestrictions_object" substitutionGroup="oval-def:object">
+    <xsd:annotation>
+      <xsd:documentation>The globalrestrictions_object element is used by a global restrictions test to define those objects to be evaluated based on a specified state. Any OVAL Test written to check global restrictions status will reference the same globalrestrictions_object which is basically an empty object element.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:ObjectType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="globalrestrictions_state" substitutionGroup="oval-def:state">
+    <xsd:annotation>
+      <xsd:documentation>Information on global restrictions in place on the device</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:StateType">
+          <xsd:sequence>
+            <xsd:element name="allow_account_modification" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. If set to false, account modification is disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_airdrop" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. If set to false, AirDrop is disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_app_cellular_data_modification" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. If set to false, changes to cellular data usage for apps are disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_app_installation" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, the App Store is disabled and its icon is removed from the Home screen. Users are unable to install or update their applications.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_assistant" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, disables Siri. Defaults to true.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_assistant_user_generated_content" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. When false, prevents Siri from querying user-generated content from the web. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_assistant_while_locked" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, the user is unable to use Siri when the device is locked. Defaults to true. This restriction is ignored if the device does not have a passcode set. Available only in iOS 5.1 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_bookstore" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. If set to false, iBookstore will be disabled. This will default to true. Available in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_bookstore_erotica" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only prior to iOS 6.1. If set to false, the user will not be able to download media from the iBookstore that has been tagged as erotica. This will default to true. Available in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_camera" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, the camera is completely disabled and its icon is removed from the Home screen. Users are unable to take photographs.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_cloud_backup" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, disables backing up the device to iCloud. Available in iOS 5.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_cloud_document_sync" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, disables document and key-value syncing to iCloud. Available in iOS 5.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_cloud_keychain_sync" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If false, disables keychain syncing to iCloud. Default is true. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_diagnostic_submission" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, this prevents the device from automatically submitting diagnostic reports to Apple. Defaults to true. Available only in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_explicit_content" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, explicit music or video content purchased from the iTunes Store is hidden. Explicit content is marked as such by content providers, such as record labels, when sold through the iTunes Store.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_find_my_friends_modification" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. If set to false, changes to Find My Friends are disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_fingerprint_for_unlock" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If false, prevents Touch ID from unlocking a device. Available in iOS 7 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_game_center" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. When false, Game Center is disabled and its icon is removed from the Home screen. Default is true. Available only in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_host_pairing" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Supervised only. If set to false, host pairing is disabled with the exception of the supervision host. If no supervision host certificate has been configured, all pairing is disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_lock_screen_control_center" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If false, prevents Control Center from appearing on the Lock screen. Available in iOS 7 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_lock_screen_notifications_view" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If set to false, the Notifications view in Notification Center on the lock screen is disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_lock_screen_today_view" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If set to false, the Today view in Notification Center on the lock screen is disabled. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_open_from_managed_to_unmanaged" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If false, documents in managed apps and accounts only open in other managed apps and accounts. Default is true. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_open_from_unmanaged_to_managed" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If set to false, documents in unmanaged apps and accounts will only open in other unmanaged apps and accounts. Default is true. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_ota_pki_updates" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If false, over-the-air PKI updates are disabled. Default is true. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_passbook_while_locked" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If set to false, Passbook notifications will not be shown on the lock screen. This will default to true. Available in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_photo_stream" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, disables Photo Stream. Available in iOS 5.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_safari" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, the Safari web browser application is disabled and its icon removed from the Home screen. This also prevents users from opening web clips.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_screen_shot" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, users are unable to save a screenshot of the display.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_shared_stream" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If set to false, Shared Photo Stream will be disabled. This will default to true. Available in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_ui_configuration_profile_installation" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Supervised only. If set to false, the user is prohibited from installing configuration profiles and certificates interactively. This will default to true. Available in iOS 6.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_untrusted_tls_prompt" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, automatically rejects untrusted HTTPS certificates without prompting the user. Available in iOS 5.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_voice_dialing" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, disables voice dialing.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_youtube" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, the YouTube application is disabled and its icon is removed from the Home screen. This key is ignored in iOS 6 and later because the YouTube app is not provided.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_itunes" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, the iTunes Music Store is disabled and its icon is removed from the Home screen. Users cannot preview, purchase, or download content.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="autonomous_single_app_mode_permitted_appids" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If present, allows the identified apps to autonomously enter Single App Mode. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="force_encrypted_backup" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When true, encrypts all backups.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="force_itunes_store_password_entry" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When true, forces user to enter their iTunes password for each transaction. Available in iOS 5.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="force_limit_ad_tracking" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If true, limits ad tracking. Default is false. Available only in iOS 7.0 and later.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="safari_allow_auto_fill" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When false, Safari auto-fill is disabled. Defaults to true.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ===========================  PASSCODE POLICY TEST  ============================ -->
+  <!-- =============================================================================== -->
+  <xsd:element name="passcodepolicy_test" substitutionGroup="oval-def:test">
+    <xsd:annotation>
+      <xsd:documentation>The passcodepolicy_test is used to check the status of the passcode policy in place on the device. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a passcodepolicy_object and the optional state element specifies the data to check.</xsd:documentation>
+      <xsd:appinfo>
+        <oval:element_mapping>
+          <oval:test>passcodepolicy_test</oval:test>
+          <oval:object>passcodepolicy_object</oval:object>
+          <oval:state>passcodepolicy_state</oval:state>
+          <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apple_ios">passcodepolicy_item</oval:item>
+        </oval:element_mapping>
+      </xsd:appinfo>
+      <xsd:appinfo>
+        <sch:pattern id="apple-ios-def_passcodepolicy_test">
+          <sch:rule context="apple-ios-def:passcodepolicy_test/apple-ios-def:object">
+            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/apple-ios-def:passcodepolicy_object/@id"><sch:value-of select="../@id"/> - the object child element of a passcodepolicy_test must reference a passcodepolicy_object</sch:assert>
+          </sch:rule>
+          <sch:rule context="apple-ios-def:passcodepolicy_test/apple-ios-def:state">
+            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/apple-ios-def:passcodepolicy_state/@id"><sch:value-of select="../@id"/> - the state child element of a passcodepolicy_test must reference a passcodepolicy_state</sch:assert>
+          </sch:rule>
+        </sch:pattern>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:TestType">
+          <xsd:sequence>
+            <xsd:element name="object" type="oval-def:ObjectRefType"/>
+            <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="passcodepolicy_object" substitutionGroup="oval-def:object">
+    <xsd:annotation>
+      <xsd:documentation>The passcodepolicy_object element is used by a passcode policy test to define those objects to be evaluated based on a specified state. Any OVAL Test written to check passcode policy status will reference the same passcodepolicy_object which is basically an empty object element.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:ObjectType"/>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="passcodepolicy_state" substitutionGroup="oval-def:state">
+    <xsd:annotation>
+      <xsd:documentation>Passcode Policy Items from public Apple Configuration Profile Reference</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:StateType">
+          <xsd:sequence>
+            <xsd:element name="allow_simple" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default true. Determines whether a simple passcode is allowed. A simple passcode is defined as containing repeated characters, or increasing/decreasing characters (such as 123 or CBA). Setting this value to false is synonymous to setting minComplexChars to "1".</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="force_pin" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default false. Determines whether the user is forced to set a PIN. Simply setting this value (and not others) forces the user to enter a passcode, without imposing a length or quality.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="max_failed_attempts" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default 11. Allowed range [2...11]. Specifies the number of allowed failed attempts to enter the passcode at the device's lock screen. Once this number is exceeded, the device is locked and must be connected to its designated iTunes in order to be unlocked.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="max_inactivity" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default Infinity. Specifies the number of minutes for which the device can be idle (without being unlocked by the user) before it gets locked by the system. Once this limit is reached, the device is locked and the passcode must be entered. In OS X, this will be translated to screensaver settings.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="max_pin_age_in_days" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default Infinity. Specifies the number of days for which the passcode can remain unchanged. After this number of days, the user is forced to change the passcode before the device is unlocked.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="min_complex_chars" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default 0. Specifies the minimum number of complex characters that a passcode must contain. A "complex" character is a character other than a number or a letter.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="min_length" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default 0. Specifies the minimum overall length of the passcode. This parameter is independent of the also optional minComplexChars argument.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="require_alphanumeric" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Default false. Specifies whether the user must enter alphabetic characters ("abcd"), or if numbers are sufficient.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="pin_history" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. When the user changes the passcode, it has to be unique within the last N entries in the history. Minimum value is 1, maximum value is 50.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="max_grace_period" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. The maximum grace period, in minutes, to unlock the phone without entering a passcode. Default is 0, that is no grace period, which requires a passcode immediately. In OS X, this will be translated to screensaver settings.
+                </xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ===========================  PROFILE TEST  ==================================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="profile_test" substitutionGroup="oval-def:test">
+    <xsd:annotation>
+      <xsd:documentation>The profile_test is used to check the status of the profiles in place on the device. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a profile_object and the optional state element specifies the data to check.</xsd:documentation>
+      <xsd:appinfo>
+        <oval:element_mapping>
+          <oval:test>profile_test</oval:test>
+          <oval:object>profile_object</oval:object>
+          <oval:state>profile_state</oval:state>
+          <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apple_ios">profile_item</oval:item>
+        </oval:element_mapping>
+      </xsd:appinfo>
+      <xsd:appinfo>
+        <sch:pattern id="apple-ios-def_profile_test">
+          <sch:rule context="apple-ios-def:profile_test/apple-ios-def:object">
+            <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/apple-ios-def:profile_object/@id"><sch:value-of select="../@id"/> - the object child element of a profile_test must reference a profile_object</sch:assert>
+          </sch:rule>
+          <sch:rule context="apple-ios-def:profile_test/apple-ios-def:state">
+            <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/apple-ios-def:profile_state/@id"><sch:value-of select="../@id"/> - the state child element of a profile_test must reference a profile_state</sch:assert>
+          </sch:rule>
+        </sch:pattern>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:TestType">
+          <xsd:sequence>
+            <xsd:element name="object" type="oval-def:ObjectRefType"/>
+            <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="profile_object" substitutionGroup="oval-def:object">
+    <xsd:annotation>
+      <xsd:documentation>The profile_object element is used by a profile test to define those objects to be evaluated based on a specified state. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic.</xsd:documentation>
+      <xsd:appinfo>
+        <sch:pattern id="apple-ios-def_profile_object_verify_filter_state">
+          <sch:rule context="apple-ios-def:profile_object//oval-def:filter">
+            <sch:let name="parent_object" value="ancestor::apple-ios-def:profile_object"/>
+            <sch:let name="parent_object_id" value="$parent_object/@id"/>
+            <sch:let name="state_ref" value="."/>
+            <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+            <sch:let name="state_name" value="local-name($reffed_state)"/>
+            <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+            <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#apple-ios') and ($state_name='profile_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_i d"/>' is of the wrong type. </sch:assert>
+          </sch:rule>
+        </sch:pattern>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:ObjectType">
+          <xsd:sequence>
+            <xsd:choice>
+              <xsd:element ref="oval-def:set"/>
+              <xsd:sequence>
+                <xsd:element name="identifier" type="oval-def:EntityObjectStringType">
+                  <xsd:annotation>
+                    <xsd:documentation>A reverse-DNS style identifier (com.example.myprofile, for example) that identifies the profile. This string is used to determine whether a new profile should replace an existing one or should be added.</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="uuid" type="oval-def:EntityObjectStringType">
+                  <xsd:annotation>
+                    <xsd:documentation>A globally unique identifier for the payload. The actual content is unimportant, but it must be globally unique.</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:element>
+                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+              </xsd:sequence>
+            </xsd:choice>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="profile_state" substitutionGroup="oval-def:state">
+    <xsd:annotation>
+      <xsd:documentation>Represents information about each configuration profile installed on the device.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-def:StateType">
+          <xsd:sequence>
+            <xsd:element name="has_removal_passcode" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Set to true if there is a removal passcode.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="is_encrypted" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Set to true if the profile is encrypted.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="payload" type="oval-def:EntityStateRecordType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. Contains information about each payload inside the configuration profile.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="description" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. A description of the profile, shown on the Detail screen for the profile.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="display_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. A human-readable name for the profile. This value is displayed on the Detail screen. It does not have to be unique.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="identifier" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>A reverse-DNS style identifier (com.example.myprofile, for example) that identifies the profile. This string is used to determine whether a new profile should replace an existing one or should be added.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="organization" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. A human-readable string containing the name of the organization that provided the profile.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="removal_disallowed" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Optional. If present and set to true, the user cannot delete the profile (unless the profile has a removal password and the user provides it).</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="uuid" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>A globally unique identifier for the payload. The actual content is unimportant, but it must be globally unique.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="version" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The version number of the profile format. This describes the version of the configuration profile as a whole, not of the individual profiles within it. Currently, this value should be 1.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

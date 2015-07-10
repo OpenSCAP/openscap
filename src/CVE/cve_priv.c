@@ -8,7 +8,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -49,6 +49,9 @@
 #include "CPE/cpelang_priv.h"
 #include "CVSS/cvss_priv.h"
 #include "CVSS/public/cvss_score.h"
+
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -394,26 +397,27 @@ struct cve_model *cve_model_parse_xml(const char *file)
 
 	__attribute__nonnull__(file);
 
-	xmlTextReaderPtr reader=NULL;
 	struct cve_model *ret = NULL;
 	int rc;
 
-	reader = xmlReaderForFile(file, NULL, 0);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
+		oscap_source_free(source);
 		return NULL;
 	}
 
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 	rc = xmlTextReaderNextNode(reader);
 	if (rc == -1) {
 		xmlFreeTextReader(reader);
+		oscap_source_free(source);
 		return NULL;
 	}
 
 	ret = cve_model_parse(reader);
 
 	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 	return ret;
 }
 
@@ -511,22 +515,22 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 					product = cve_product_new();
 
                                         if (product) {
-                                                product->value = (char *)xmlTextReaderReadString(reader);
+                                                product->value = oscap_element_string_copy(reader);
 						oscap_list_add(ret->products, product);
                                         }
 				}
 				xmlTextReaderNextNode(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVE_ID_STR)) {
-			ret->cve_id = (char *)xmlTextReaderReadString(reader);
+			ret->cve_id = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHED_DATETIME_STR)) {
-			ret->published = (char *)xmlTextReaderReadString(reader);
+			ret->published = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LAST_MODIFIED_DATETIME_STR)) {
-			ret->modified = (char *)xmlTextReaderReadString(reader);
+			ret->modified = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_STR)) {
 		    if (ret->cvss == NULL) ret->cvss = cvss_impact_new_from_xml(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SECURITY_PROTECTION_STR)) {
-			ret->sec_protection = (char *)xmlTextReaderReadString(reader);
+			ret->sec_protection = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CWE_STR)) {
 			ret->cwe = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES_STR)) {
@@ -540,13 +544,13 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 
 				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SOURCE_STR) &&
 				    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
-				    refer->source = (char *)xmlTextReaderReadString(reader);
+				    refer->source = oscap_element_string_copy(reader);
 				} else
 				    if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) &&
 					xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
 					refer->href =
 					    (char *)xmlTextReaderGetAttribute(reader, ATTR_REFERENCE_HREF_STR);
-					refer->value = (char *)xmlTextReaderReadString(reader);
+					refer->value = oscap_element_string_copy(reader);
 
 				    }
 				xmlTextReaderNextNode(reader);
@@ -557,7 +561,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			summary = cve_summary_new();
 
                         if (summary) {
-                                summary->summary = (char *)xmlTextReaderReadString(reader);
+                                summary->summary = oscap_element_string_copy(reader);
 				oscap_list_add(ret->summaries, summary);
                         }
 		} else {

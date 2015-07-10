@@ -1,8 +1,11 @@
 
 #oscap-scan command line options:
-#OPTIONS="-q xccdf eval
+#SCAN_OPTIONS="xccdf eval
 #         --profile F14-Desktop
 #         --report /var/log/oscap-scan-log.html
 #         --results /var/log/oscap-scan-log.xml
 #         /usr/share/openscap/scap-xccdf.xml"
 
+#FIX_OPTIONS="xccdf generate fix
+#         --result-id xccdf_org.open-scap_testresult_F14-Desktop
+#         /var/log/oscap-scan-log.xml"

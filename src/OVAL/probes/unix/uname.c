@@ -50,6 +50,9 @@
 #endif
 #include <string.h>
 #include <sys/utsname.h>
+#if defined HAVE_SYS_SYSTEMINFO_H && defined (__SVR4) && defined (__sun)
+#include <sys/systeminfo.h>
+#endif
 
 #include "seap.h"
 #include "probe-api.h"
@@ -59,17 +62,28 @@ int probe_main(probe_ctx *ctx, void *arg)
 {
 	struct utsname buf;
         SEXP_t *item;
+#if defined (__SVR4) && defined (__sun)
+	char procbuf[SYS_NMLN];
+#endif
 
 	// Collect the info
 	uname(&buf);
 
+#if defined (__SVR4) && defined (__sun)
+	if (sysinfo(SI_ARCHITECTURE, procbuf, sizeof(procbuf)) == -1)
+		return(PROBE_EFATAL);
+#endif
         item = probe_item_create(OVAL_UNIX_UNAME, NULL,
                                  "machine_class",  OVAL_DATATYPE_STRING, buf.machine,
                                  "node_name",      OVAL_DATATYPE_STRING, buf.nodename,
                                  "os_name",        OVAL_DATATYPE_STRING, buf.sysname,
                                  "os_release",     OVAL_DATATYPE_STRING, buf.release,
                                  "os_version",     OVAL_DATATYPE_STRING, buf.version,
+#if defined (__SVR4) && defined (__sun)
+                                 "processor_type", OVAL_DATATYPE_STRING, procbuf,
+#else
                                  "processor_type", OVAL_DATATYPE_STRING, buf.machine,
+#endif
                                  NULL);
 
         probe_item_collect(ctx, item);

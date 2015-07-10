@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:cdf="http://checklists.nist.gov/xccdf/1.1"
+     xmlns:cpe="http://cpe.mitre.org/dictionary/2.0"
+     xmlns:cpelang="http://cpe.mitre.org/language/2.0"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:xhtml="http://www.w3.org/1999/xhtml"
+     xmlns:dsig="http://www.w3.org/2000/09/xmldsig#"
+     id="solaris-recommended-v0.2-xccdf.xml" resolved="0" xml:lang="en-US"
+     xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 cpe-dictionary_2.0.xsd http://purl.org/dc/elements/1.1/ simpledc20021212.xsd http://cpe.mitre.org/language/2.0 cpe-language_2.0.xsd http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd http://www.w3.org/2000/09/xmldsig# xmldsig-core-schema.xsd">
+  <status date="2013-12-12">draft</status>
+  <title>Payment Card Industry Data Security Standard</title>
+  <description>
+    pass_min_len-xccdf.xml
+  </description>
+  <version>v1.0.0</version>
+  <Profile id="PASS_MIN_LEN">
+    <title>Solaris Password Min Len Profile</title>
+    <select idref="PCIX-0001" selected="false" />
+    <refine-value idref="var-passwd_min_len" selector="20" />
+  </Profile>
+    <Value id="var-passwd_min_len" type="number" operator="equals" >
+        <title xml:lang="en">Minimum password length</title>
+        <description xml:lang="en">Minimum password length</description>
+        <value>8</value>
+        <value selector="8">8</value>
+        <value selector="12">12</value>
+        <value selector="14">14</value>
+        <value selector="16">16</value>
+    </Value>
+    <Rule xmlns:xhtml="http://www.w3.org/1999/xhtml" id="PCIX-0001" weight="1.0" role="full" severity="high">
+      <title xml:lang="en-US">Passwords require at least a mininum number of characters.</title>
+      <description>
+        PASSLENGTH in the /etc/default/login file indicates
+      </description>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-export value-id="var-passwd_min_len" export-name="oval:org.open-scap.rhel6:var:1077" />
+        <check-content-ref href="test_empty_variable.oval.xml" />
+      </check>
+    </Rule>
+</Benchmark>

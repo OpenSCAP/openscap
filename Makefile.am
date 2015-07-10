@@ -1,19 +1,17 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = lib src src/OVAL/probes utils tests xsl schemas cpe
+SUBDIRS = lib src utils tests xsl schemas cpe
+SUBDIRS += swig
+
+if WANT_PROBES
+SUBDIRS += src/OVAL/probes
+endif
 
 dist_pkgdata_DATA = dist/fedora/scap-fedora14-oval.xml \
                     dist/fedora/scap-fedora14-xccdf.xml \
                     dist/rhel6/scap-rhel6-oval.xml \
                     dist/rhel6/scap-rhel6-xccdf.xml
 
-if WANT_PYTHON
-  SUBDIRS += swig
-else
-if WANT_PERL
-    SUBDIRS += swig
-endif
-endif
 
 if WANT_SCE
 SUBDIRS += src/SCE
@@ -57,15 +55,12 @@ bashcomp_DATA = dist/bash_completion.d/oscap
 
 
 EXTRA_DIST =	m4/gnulib-cache.m4 \
-		dist/rhel5/openscap.spec \
-		dist/fedora/openscap.spec \
 		dist/fedora/oscap-scan.sys \
 		dist/fedora/oscap-scan.init \
 		dist/fedora/scap-fedora14-oval.xml \
 		dist/fedora/scap-fedora14-xccdf.xml \
 		dist/rhel6/scap-rhel6-oval.xml \
 		dist/rhel6/scap-rhel6-xccdf.xml \
-		dist/rhel6/openscap.spec \
 		dist/bash_completion.d/oscap \
 		docs/Doxyfile \
 		docs/title.doc \
@@ -98,7 +93,8 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		dist/fedora/sectool-xccdf/12_cron.sh \
 		dist/fedora/sectool-xccdf/14_nfs.sh \
 		dist/fedora/sectool-xccdf/15_tcp_wrappers.sh \
-		dist/fedora/sectool-xccdf/sectool-xccdf.xml
+		dist/fedora/sectool-xccdf/sectool-xccdf.xml \
+		README.md
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile

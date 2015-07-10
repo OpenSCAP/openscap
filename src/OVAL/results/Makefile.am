@@ -25,16 +25,20 @@ libovalresults_la_SOURCES = \
 
 libovalcmp_la_CPPFLAGS = \
 	@xml2_CFLAGS@ \
+	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/source/public \
 	-I$(top_srcdir)/src/OVAL/public
 
 libovalresults_la_CPPFLAGS  = \
 	@xml2_CFLAGS@ \
+	-I$(top_srcdir)/lib \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/common \
 	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/source/public \
 	-I$(top_srcdir)/src/OVAL/public \
 	-I$(top_srcdir)/src/OVAL \
 	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \

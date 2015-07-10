@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $srcdir/../../test_common.sh
+. ../../test_common.sh
 
 function test_eval_no_verify {
 

@@ -9,14 +9,13 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/OVAL/public \
 	-I$(top_srcdir)/src/XCCDF/public \
 	-I$(top_srcdir)/src/common/public \
+	-I$(top_srcdir)/src/source/public \
 	-I$(top_srcdir)/tests/include \
 	@xml2_CFLAGS@
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = \
-	$(top_srcdir)/tests/assume.h \
-	$(top_srcdir)/tests/test_common.sh
+EXTRA_DIST = $(top_srcdir)/tests/assume.h
 
 DISTCLEANFILES = *.log *.out* oscap_debug.log.*
 CLEANFILES = *.log *.out* oscap_debug.log.*

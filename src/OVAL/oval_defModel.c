@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,11 +40,15 @@
 #include "oval_parser_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "oval_probe_impl.h"
+#if defined(OVAL_PROBES_ENABLED)
+# include "oval_probe_impl.h"
+#endif
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/elements.h"
+#include "oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 typedef struct oval_definition_model {
 	struct oval_generator *generator;
@@ -217,16 +221,41 @@ void oval_definition_model_add_variable(struct oval_definition_model *model, str
 	oval_string_map_put(model->variable_map, key, (void *)variable);
 }
 
-struct oval_definition_model * oval_definition_model_import(const char *file)
+static inline int _oval_definition_model_merge_source(struct oval_definition_model *model, struct oscap_source *source)
+{
+	/* setup context */
+	struct oval_parser_context context;
+	context.reader = oscap_source_get_xmlTextReader(source);
+	if (context.reader == NULL) {
+		return -1;
+	}
+	context.definition_model = model;
+	context.user_data = NULL;
+	/* jump into oval_definitions */
+	while (xmlTextReaderRead(context.reader) == 1
+		&& xmlTextReaderNodeType(context.reader) != XML_READER_TYPE_ELEMENT) ;
+	/* start parsing */
+	int ret = oval_definition_model_parse(context.reader, &context);
+	xmlFreeTextReader(context.reader);
+	return ret;
+}
+
+struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source)
 {
         struct oval_definition_model *model = oval_definition_model_new();
-        int ret = oval_definition_model_merge(model,file);
+	int ret = _oval_definition_model_merge_source(model, source);
         if (ret == -1 ) {
-		oscap_dlprintf(DBG_E, "Failed to merge the definition model from: %s.\n", file);
                 oval_definition_model_free(model);
                 model = NULL;
         }
+	return model;
+}
 
+struct oval_definition_model * oval_definition_model_import(const char *file)
+{
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	struct oval_definition_model *model = oval_definition_model_import_source(source);
+	oscap_source_free(source);
         return model;
 }
 
@@ -236,23 +265,10 @@ int oval_definition_model_merge(struct oval_definition_model *model, const char 
 
 	int ret;
 
-	xmlTextReader *reader = xmlNewTextReaderFilename(file);
-	if (reader == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), file);
-		return -1;
-	}
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	ret = _oval_definition_model_merge_source(model, source);
 
-	/* setup context */
-	struct oval_parser_context context;
-	context.reader = reader;
-	context.definition_model = model;
-	context.user_data = NULL;
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
-	/* jump into oval_definitions */
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) ;
-	/* start parsing */
-	ret = oval_definition_model_parse(reader, &context);
-	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 
 	return ret;
 }
@@ -467,17 +483,15 @@ xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_m
 		root_node = xmlNewNode(NULL, BAD_CAST OVAL_ROOT_ELM_DEFINITIONS);
 		xmlDocSetRootElement(doc, root_node);
 	}
-	xmlNewProp(root_node, BAD_CAST "xsi:schemaLocation", BAD_CAST definition_model->schema);
+	xmlNewNsProp(root_node, lookup_xsi_ns(doc), BAD_CAST "schemaLocation", BAD_CAST definition_model->schema);
 
 	xmlNs *ns_common = xmlNewNs(root_node, OVAL_COMMON_NAMESPACE, BAD_CAST "oval");
-	xmlNs *ns_xsi = xmlNewNs(root_node, OVAL_XMLNS_XSI, BAD_CAST "xsi");
 	xmlNs *ns_unix = xmlNewNs(root_node, OVAL_DEFINITIONS_UNIX_NS, BAD_CAST "unix-def");
 	xmlNs *ns_ind = xmlNewNs(root_node, OVAL_DEFINITIONS_IND_NS, BAD_CAST "ind-def");
 	xmlNs *ns_lin = xmlNewNs(root_node, OVAL_DEFINITIONS_LIN_NS, BAD_CAST "lin-def");
 	xmlNs *ns_defntns = xmlNewNs(root_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
-	xmlSetNs(root_node, ns_xsi);
 	xmlSetNs(root_node, ns_unix);
 	xmlSetNs(root_node, ns_ind);
 	xmlSetNs(root_node, ns_lin);
@@ -564,7 +578,7 @@ int oval_definition_model_export(struct oval_definition_model *model, const char
 	}
 
 	oval_definition_model_to_dom(model, doc, NULL);
-	return oscap_xml_save_filename(file, doc);
+	return oscap_xml_save_filename_free(file, doc);
 }
 
 static void _fp_set_recurse(struct oval_definition_model *model, struct oval_setobject *set, char *set_id)

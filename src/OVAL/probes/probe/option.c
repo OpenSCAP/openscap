@@ -1,3 +1,4 @@
+#include <config.h>
 #include <stdarg.h>
 #include "option.h"
 

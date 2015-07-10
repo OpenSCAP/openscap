@@ -75,6 +75,8 @@ oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFYPACKAGE, "rpmverifypackage"),
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXBOOLEAN, "selinuxboolean"),
         OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SYSTEMDUNITPROPERTY, "systemdunitproperty"),
+        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SYSTEMDUNITDEPENDENCY, "systemdunitdependency"),
         OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_ISAINFO, "isainfo"),
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILE, "file"),
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_INTERFACE, "interface"),
@@ -88,7 +90,8 @@ oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_PROCESS58, "process58"),
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"),
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable")
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable"),
+        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYMLINK, "symlink")
 };
 
 #define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
@@ -437,6 +440,11 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
         case OVAL_NODETYPE_EXTENDDEF:{
                         struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 			struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
+			if (node == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find extended definition: %s.",
+					oval_definition_get_id(oval_def));
+				return -1;
+			}
                         return oval_probe_query_criteria(sess, node);
                 }
                 break;

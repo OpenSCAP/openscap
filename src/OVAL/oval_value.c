@@ -6,7 +6,7 @@
  */
 
 /*
- * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -40,6 +40,7 @@
 #include "adt/oval_collection_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "common/elements.h"
 
 typedef struct oval_value {
 	oval_datatype_t datatype;
@@ -186,7 +187,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 	if (isNil) {
 		return_code = 0;
 	} else {
-		return_code = oval_parser_text_value(reader, context, &oval_value_parse_tag_consume_text, &text);
+		return_code = oscap_parser_text_value(reader, &oval_value_parse_tag_consume_text, &text);
 	}
 	struct oval_value *value = oval_value_new(datatype, text ? text : "");
 	oscap_free(text);

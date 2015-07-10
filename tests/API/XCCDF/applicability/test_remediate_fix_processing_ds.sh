@@ -44,7 +44,7 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@reboot="true"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/text()[contains(., "touch test_file_cpe_na")]'
 assert_exists 2 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution comleted and returned: 0"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution completed and returned: 0"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Failed to verify applied fix: Checking engine returns: fail"]'
 result=$arf
 assert_exists 3 '//TestResult'
@@ -80,7 +80,7 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix[@platform="cpe:/o:example:applicable:5"]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix/text()[contains(., "touch test_file")]'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
-assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution comleted and returned: 0"]'
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message[text()="Fix execution completed and returned: 0"]'
 result=$arf
 assert_exists 3 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]'

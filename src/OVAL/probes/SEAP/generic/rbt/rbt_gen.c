@@ -19,3 +19,5 @@
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
+
+#include <config.h>

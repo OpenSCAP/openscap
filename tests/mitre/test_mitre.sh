@@ -5,7 +5,7 @@
 #	   Daniel Kopecek <dkopecek@redhat.com>
 
 
-. ${srcdir}/../test_common.sh
+. ../test_common.sh
 
 # Test Cases.
 

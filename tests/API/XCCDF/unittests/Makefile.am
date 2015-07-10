@@ -4,9 +4,11 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVSS/public \
 		-I$(top_srcdir)/src/CPE/public \
 		-I$(top_srcdir)/src/CCE/public \
+		-I$(top_srcdir)/src/DS/public \
 		-I$(top_srcdir)/src/OVAL/public \
 		-I$(top_srcdir)/src/XCCDF/public \
 		-I$(top_srcdir)/src/common/public \
+		-I$(top_srcdir)/src/source/public \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 		-I$(top_srcdir)/src \
@@ -15,8 +17,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
-	     $(top_srcdir)/tests/assume.h
+EXTRA_DIST = $(top_srcdir)/tests/assume.h
 
 check_DATA = not_executable
 not_executable:
@@ -34,12 +35,14 @@ TESTS_ENVIRONMENT= \
 TESTS = all.sh
 check_PROGRAMS = \
 	test_oscap_common \
+	test_xccdf_overrides \
 	test_xccdf_shall_pass
 
 test_oscap_common_SOURCES = test_oscap_common.c
 test_oscap_common_SOURCES += $(top_srcdir)/src/common/util.c $(top_srcdir)/src/common/list.c $(top_srcdir)/src/common/alloc.c # This needs love (See trac#198)
 test_oscap_common_CPPFLAGS = $(AM_CPPFLAGS) -DNDEBUG
 test_xccdf_shall_pass_SOURCES = test_xccdf_shall_pass.c unit_helper.c
+test_xccdf_overrides_SOURCES = test_xccdf_overrides.c
 
 EXTRA_DIST += \
 	all.sh \
@@ -154,8 +157,12 @@ EXTRA_DIST += \
 	test_xccdf_notchecked_has_check.sh \
 	test_xccdf_notchecked_has_check.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
+	test_xccdf_overrides.arf.xml \
+	test_xccdf_overrides.sh \
 	test_xccdf_refine_rule.sh \
 	test_xccdf_refine_rule.xccdf.xml \
+	test_xccdf_refine_value_bad.sh \
+	test_xccdf_refine_value_bad.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \
 	test_xccdf_selectors_cluster1.xccdf.xml \
 	test_xccdf_selectors_cluster2.sh \

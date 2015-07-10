@@ -1,8 +1,12 @@
-# Some of the tests rely on the "C" locale and would fail with some locales.
-LC_ALL = C
-export LC_ALL
+if ENABLE_VALGRIND_TESTS
+  export ENABLE_VALGRIND_TESTS=1
+endif
 
+if WANT_PROBES
 PROBE_SUBDIRS = probes mitre
+else
+PROBE_SUBDIRS =
+endif
 
 if WANT_SCE
 SCE_SUBDIRS = sce
@@ -17,8 +21,19 @@ if WANT_PERL
 endif
 endif
 
-SUBDIRS = API DS $(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS) schemas
+SUBDIRS = \
+	API \
+	bz2 \
+	codestyle \
+	DS \
+	schemas \
+	oscap_string \
+	oval_details \
+	$(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS)
 
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh \
-	     $(top_srcdir)/tests/xmldiff.pl
+EXTRA_DIST = \
+	suppressions.supp \
+	valgrind_test.sh \
+	xmldiff.pl
 
+CONFIG_CLEAN_FILES = test_common.sh

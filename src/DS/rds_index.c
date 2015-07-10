@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2013--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +29,9 @@
 #include "common/_error.h"
 #include "common/alloc.h"
 #include "common/elements.h"
+#include "rds_index_priv.h"
+#include "source/oscap_source_priv.h"
+#include "source/public/oscap_source.h"
 
 #include <libxml/xmlreader.h>
 #include <string.h>
@@ -332,7 +335,7 @@ static xmlChar *relationship_get_inner_ref(xmlNodePtr node)
 	return ret;
 }
 
-static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
+struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 {
 	if (!oscap_to_start_element(reader, 0)) {
 		oscap_seterr(OSCAP_EFAMILY_XML,
@@ -494,18 +497,17 @@ static struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 
 struct rds_index *rds_index_import(const char *file)
 {
-	xmlTextReaderPtr reader = xmlReaderForFile(file, NULL, 0);
+	struct oscap_source *source = oscap_source_new_from_file(file);
+	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", file);
+		oscap_source_free(source);
 		return NULL;
 	}
-
-	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, NULL);
 
 	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
 	struct rds_index *ret = rds_index_parse(reader);
 	xmlFreeTextReader(reader);
-
+	oscap_source_free(source);
 	return ret;
 }
 

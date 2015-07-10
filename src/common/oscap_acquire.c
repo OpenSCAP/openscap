@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -18,6 +18,7 @@
  *
  */
 
+#include <config.h>
 #include <stdio.h> // for P_tmpdir macro
 #include <string.h>
 #include <stdlib.h>
@@ -27,8 +28,11 @@
 
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include <libgen.h>
 
+#ifndef _WIN32
 #include <ftw.h>
+#endif
 
 #include "oscap_acquire.h"
 #include "common/_error.h"
@@ -52,6 +56,7 @@ oscap_acquire_temp_dir()
 	return temp_dir;
 }
 
+#ifndef _WIN32
 static int
 __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
@@ -62,16 +67,21 @@ __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *
 
 	return rv;
 }
+#endif
 
 void
 oscap_acquire_cleanup_dir(char **dir_path)
 {
+#ifndef _WIN32
 	if (*dir_path != NULL)
 	{
 		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 		free(*dir_path);
 		*dir_path = NULL;
 	}
+#else
+	// TODO
+#endif
 }
 
 int
@@ -225,4 +235,73 @@ oscap_acquire_pipe_to_string(int fd)
 
 	close(fd);
 	return pipe_buffer;
+}
+
+char *oscap_acquire_guess_realpath(const char *filepath)
+{
+	char *rpath = realpath(filepath, NULL);
+	if (rpath == NULL) {
+		// file does not exists, let's try to guess realpath
+		// this is not 100% correct, but it is good enough
+		char *copy = strdup(filepath);
+		char *real_dir = realpath(dirname(copy), NULL);
+		if (real_dir == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: %s does not exists!", filepath, real_dir);
+			free(copy);
+			return NULL;
+		}
+		rpath = oscap_sprintf("%s/%s", real_dir, basename((char *)filepath));
+		free(real_dir);
+		free(copy);
+	}
+	return rpath;
+}
+
+int oscap_acquire_mkdir_p(const char *path)
+{
+	// NOTE: This assumes a UNIX VFS path, C:\\folder\\folder would break it!
+
+	if (strlen(path) > PATH_MAX) {
+		return -1;
+	}
+	else {
+		char temp[PATH_MAX + 1]; // +1 for \0
+		unsigned int i;
+
+		for (i = 0; i <= strlen(path); i++) {
+			if (path[i] == '/' || path[i] == '\0') {
+				strncpy(temp, path, i);
+				temp[i] = '\0';
+
+				// skip leading '/', we will never be creating the root anyway
+				if (strlen(temp) == 0)
+					continue;
+
+#ifndef _WIN32
+				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
+#else
+				if (mkdir(temp) != 0 && errno != EEXIST) {
+#endif
+					oscap_seterr(OSCAP_EFAMILY_GLIBC,
+						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
+						temp, path, strerror(errno));
+					return -1;
+				}
+			}
+		}
+
+		return 0;
+	}
+}
+
+int oscap_acquire_ensure_parent_dir(const char *filepath)
+{
+	char *filepath_cpy = oscap_strdup(filepath);
+	char *dirpath = dirname(filepath_cpy);
+	int ret = oscap_acquire_mkdir_p(dirpath);
+	if (ret != 0) {
+		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' to ensure correct path of '%s'.", dirpath, filepath);
+	}
+	free(filepath_cpy);
+	return ret;
 }

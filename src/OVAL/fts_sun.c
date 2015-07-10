@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#include "config.h"
+#include <config.h>
 
 #if !defined(HAVE_FTS_OPEN)
 
@@ -1022,6 +1022,10 @@ fts_alloc(sp, name, namelen)
 	p->fts_instr = FTS_NOINSTR;
 	p->fts_number = 0;
 	p->fts_pointer = NULL;
+#if	defined(__SVR4) && defined(__sun)
+	if (!ISSET(FTS_NOSTAT))
+		p->fts_statp->st_fstype[0] = '\0';
+#endif
 	return (p);
 }
 

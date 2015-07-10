@@ -68,6 +68,90 @@
                         <criterion comment="Red Hat Enterprise Linux 7 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:7"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1005" version="1">
+                  <metadata>
+                        <title>Community Enterprise Operating System 5</title>
+                        <affected family="unix">
+                              <platform>Community Enterprise Operating System 5</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:centos:centos:5" source="CPE"/>
+                        <description>The operating system installed on the system is Community Enterprise Operating System 5</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Community Enterprise Operating System 5 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:1005"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1006" version="1">
+                  <metadata>
+                        <title>Community Enterprise Operating System 6</title>
+                        <affected family="unix">
+                              <platform>Community Enterprise Operating System 6</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:centos:centos:6" source="CPE"/>
+                        <description>The operating system installed on the system is Community Enterprise Operating System 6</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Community Enterprise Operating System 6 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:1006"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1007" version="1">
+                  <metadata>
+                        <title>Community Enterprise Operating System 7</title>
+                        <affected family="unix">
+                              <platform>Community Enterprise Operating System 7</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:centos:centos:7" source="CPE"/>
+                        <description>The operating system installed on the system is Community Enterprise Operating System 7</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Community Enterprise Operating System 7 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:1007"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.scientific:def:5" version="1">
+                  <metadata>
+                        <title>Scientific Linux 5</title>
+                        <affected family="unix">
+                              <platform>Scientific Linux 5</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:scientificlinux:scientificlinux:5" source="CPE"/>
+                        <description>The operating system installed on the system is Scientific Linux 5</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Scientific Linux 5 is installed" test_ref="oval:org.open-scap.cpe.scientific:tst:5"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.scientific:def:6" version="1">
+                  <metadata>
+                        <title>Scientific Linux 6</title>
+                        <affected family="unix">
+                              <platform>Scientific Linux 6</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:scientificlinux:scientificlinux:6" source="CPE"/>
+                        <description>The operating system installed on the system is Scientific Linux 6</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Scientific Linux 6 is installed" test_ref="oval:org.open-scap.cpe.scientific:tst:6"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.scientific:def:7" version="1">
+                  <metadata>
+                        <title>Scientific Linux 7</title>
+                        <affected family="unix">
+                              <platform>Scientific Linux 7</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:scientificlinux:scientificlinux:7" source="CPE"/>
+                        <description>The operating system installed on the system is Scientific Linux 7</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Scientific Linux 7 is installed" test_ref="oval:org.open-scap.cpe.scientific:tst:7"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:16" version="1">
                   <metadata>
                         <title>Fedora 16</title>
@@ -208,6 +292,36 @@
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:7"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1005" version="1" check="at least one" comment="centos-release is version 5"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:1005"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1006" version="1" check="at least one" comment="centos-release is version 6"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:1006"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1007" version="1" check="at least one" comment="centos-release is version 7"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:1007"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.scientific:tst:5" version="1" check="at least one" comment="sl-release is version 5"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.scientific:ste:5"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.scientific:tst:6" version="1" check="at least one" comment="sl-release is version 6"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.scientific:ste:6"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.scientific:tst:7" version="1" check="at least one" comment="sl-release is version 7"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.scientific:ste:7"/>
+            </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:16" version="1" check="at least one" comment="fedora-release is version Fedora 16"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
@@ -285,6 +399,30 @@
             <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^7[^\d]</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:1005" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^centos-release</name>
+                  <version operation="pattern match">^5</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:1006" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^centos-release</name>
+                  <version operation="pattern match">^6</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:1007" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^centos-release</name>
+                  <version operation="pattern match">^7</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.scientific:ste:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^sl-release</name>
+                  <version operation="pattern match">^5</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.scientific:ste:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^sl-release</name>
+                  <version operation="pattern match">^6</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.scientific:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^sl-release</name>
+                  <version operation="pattern match">^7</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^16$</version>

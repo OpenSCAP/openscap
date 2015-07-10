@@ -35,6 +35,7 @@
 #include "probe-common.h"
 #include "option.h"
 #include "common/util.h"
+#include "common/compat_pthread_barrier.h"
 
 typedef struct {
 	pthread_rwlock_t rwlock;

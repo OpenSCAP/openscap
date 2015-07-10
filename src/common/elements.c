@@ -3,7 +3,7 @@
  */
 
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2009--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -62,6 +62,55 @@ bool oscap_to_start_element(xmlTextReaderPtr reader, int depth)
 			break;
 	}
 	return false;
+}
+
+void oscap_text_consumer(char *text, void *user)
+{
+	char *platform = *(char **)user;
+	if (platform == NULL)
+		platform = oscap_strdup(text);
+	else {
+		int size = strlen(platform) + strlen(text) + 1;
+		char *newtext = (char *) oscap_alloc(size * sizeof(char));
+		*newtext = 0;
+		strcat(newtext, platform);
+		strcat(newtext, text);
+		oscap_free(platform);
+		platform = newtext;
+	}
+	*(char **)user = platform;
+}
+
+/* -1 error; 0 OK */
+int oscap_parser_text_value(xmlTextReaderPtr reader, oscap_xml_value_consumer consumer, void *user)
+{
+	int depth = xmlTextReaderDepth(reader);
+	bool has_value = false;
+	int ret = 0;
+
+	if (xmlTextReaderIsEmptyElement(reader)) {
+		return ret;
+	}
+
+	xmlTextReaderRead(reader);
+	while (xmlTextReaderDepth(reader) > depth) {
+		int nodetype = xmlTextReaderNodeType(reader);
+		if (nodetype == XML_READER_TYPE_CDATA || nodetype == XML_READER_TYPE_TEXT) {
+			char *value = (char *)xmlTextReaderValue(reader);
+			(*consumer) (value, user);
+			oscap_free(value);
+			has_value = true;
+		}
+		if (xmlTextReaderRead(reader) != 1) {
+			ret = -1;
+			break;
+		}
+	}
+
+	if (!has_value)
+		(*consumer) ("", user);
+
+	return ret;
 }
 
 char *oscap_element_string_copy(xmlTextReaderPtr reader)
@@ -163,8 +212,7 @@ const char *oscap_strlist_find_value(char ** const kvalues, const char *key)
 	return NULL;
 }
 
-int
-oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
+int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 {
 	xmlOutputBufferPtr buff;
 	int xmlCode;
@@ -177,7 +225,6 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 				S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH|S_IWOTH);
 		if (fd < 0) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), filename);
-			xmlFreeDoc(doc);
 			return -1;
 		}
 
@@ -186,7 +233,6 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 			close(fd);
 			oscap_setxmlerr(xmlGetLastError());
 			oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
-			xmlFreeDoc(doc);
 			return -1;
 		}
 
@@ -198,11 +244,24 @@ oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
 	}
 
-	xmlFreeDoc(doc);
 	return (xmlCode >= 1) ? 1 : -1;
 }
 
-void libxml_error_handler(void *user, const char *message, xmlParserSeverities severity, xmlTextReaderLocatorPtr locator)
+int oscap_xml_save_filename_free(const char *filename, xmlDocPtr doc)
 {
-	oscap_setxmlerr(xmlGetLastError());
+	int ret = oscap_xml_save_filename(filename, doc);
+	xmlFreeDoc(doc);
+	return ret;
+}
+
+xmlNs *lookup_xsi_ns(xmlDoc *doc)
+{
+	// Look-up xsi namespace pointer. We can be pretty sure that this namespace
+	// is defined in root element, because it usually carries xsi:schemaLocation
+	// attribute.
+	xmlNsPtr ns_xsi = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OSCAP_XMLNS_XSI);
+	if (ns_xsi == NULL) {
+		ns_xsi = xmlNewNs(xmlDocGetRootElement(doc), OSCAP_XMLNS_XSI, BAD_CAST "xsi");
+	}
+	return ns_xsi;
 }

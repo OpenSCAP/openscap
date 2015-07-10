@@ -36,6 +36,7 @@
 #include "worker.h"
 #include "rcache.h"
 #include "input_handler.h"
+#include "common/compat_pthread_barrier.h"
 
 /*
  * The input handler waits for incomming eval requests and either returns

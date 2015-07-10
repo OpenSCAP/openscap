@@ -114,25 +114,25 @@ char *oval_generator_get_timestamp(struct oval_generator *generator)
 	return generator->timestamp;
 }
 
-void oval_generator_set_product_name(struct oval_generator *generator, char *product_name)
+void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name)
 {
 	oscap_free(generator->product_name);
 	generator->product_name = oscap_strdup(product_name);
 }
 
-void oval_generator_set_product_version(struct oval_generator *generator, char *product_version)
+void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version)
 {
 	oscap_free(generator->product_version);
 	generator->product_version = oscap_strdup(product_version);
 }
 
-void oval_generator_set_schema_version(struct oval_generator *generator, char *schema_version)
+void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version)
 {
 	oscap_free(generator->schema_version);
 	generator->schema_version = oscap_strdup(schema_version);
 }
 
-void oval_generator_set_timestamp(struct oval_generator *generator, char *timestamp)
+void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp)
 {
 	oscap_free(generator->timestamp);
 	generator->timestamp = oscap_strdup(timestamp);

@@ -928,8 +928,7 @@ bool xccdf_item_add_conflicts(struct xccdf_item* item, const char* conflicts)
 void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc, xmlNode *parent)
 {
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(rule));
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	/* Handle Attributes */
 	const char *extends = xccdf_rule_get_extends(rule);
@@ -1014,7 +1013,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	struct xccdf_fix_iterator *fixes = xccdf_rule_get_fixes(rule);
 	while (xccdf_fix_iterator_has_more(fixes)) {
 		struct xccdf_fix *fix = xccdf_fix_iterator_next(fixes);
-		xccdf_fix_to_dom(fix, doc, rule_node);
+		xccdf_fix_to_dom(fix, doc, rule_node, version_info);
 	}
 	xccdf_fix_iterator_free(fixes);
 
@@ -1029,8 +1028,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *doc, xmlNode *parent)
 {
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(group));
-	xmlNs *ns_xccdf = xmlSearchNsByHref(doc, parent,
-			(const xmlChar*)xccdf_version_info_get_namespace_uri(version_info));
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	/* Handle Attributes */
 	const char *extends = xccdf_group_get_extends(group);
@@ -1087,7 +1085,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	while (xccdf_value_iterator_has_more(values)) {
 		struct xccdf_value *value = xccdf_value_iterator_next(values);
 		if (XGROUP(xccdf_value_get_parent(value)) == group) {
-			xccdf_item_to_dom((struct xccdf_item *)value, doc, group_node);
+			xccdf_item_to_dom((struct xccdf_item *)value, doc, group_node, version_info);
 		}
 	}
 	xccdf_value_iterator_free(values);
@@ -1096,7 +1094,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 	while (xccdf_item_iterator_has_more(items)) {
 		struct xccdf_item *item = xccdf_item_iterator_next(items);
 		if (XGROUP(xccdf_item_get_parent(item)) == group) {
-			xccdf_item_to_dom(item, doc, group_node);
+			xccdf_item_to_dom(item, doc, group_node, version_info);
 		}
 	}
 	xccdf_item_iterator_free(items);

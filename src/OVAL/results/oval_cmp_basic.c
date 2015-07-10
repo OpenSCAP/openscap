@@ -179,6 +179,7 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 
 oval_result_t oval_string_cmp(const char *state, const char *syschar, oval_operation_t operation)
 {
+	syschar = syschar ? syschar : "";
 	switch (operation) {
 	case OVAL_OPERATION_EQUALS:
 		return oscap_strcmp(state, syschar) ? OVAL_RESULT_FALSE : OVAL_RESULT_TRUE;

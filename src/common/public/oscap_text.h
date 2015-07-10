@@ -246,6 +246,15 @@ void oscap_stringlist_iterator_reset(struct oscap_stringlist_iterator *it);
  */
 char* oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator* texts, const char* preferred_lang);
 
+/**
+ * @brief gets oscap_text representing given textlist
+ *
+ * Similar to @ref oscap_textlist_get_preferred_plaintext but returns oscap_text
+ * instead of just the plaintext.
+ */
+struct oscap_text *oscap_textlist_get_preferred_text(struct oscap_text_iterator *texts, const char *preferred_lang);
+
+
 /** @} */
 
 #endif

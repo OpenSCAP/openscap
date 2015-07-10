@@ -56,7 +56,7 @@ struct sce_check_result
 {
 	char* href;
 	char* basename;
-	char* stdout;
+	char* std_out;
 	int exit_code;
 	struct oscap_stringlist* environment_variables;
 	xccdf_test_result_type_t xccdf_result;
@@ -67,7 +67,7 @@ struct sce_check_result* sce_check_result_new(void)
 	struct sce_check_result* ret = oscap_alloc(sizeof(struct sce_check_result));
 	ret->href = NULL;
 	ret->basename = NULL;
-	ret->stdout = NULL;
+	ret->std_out = NULL;
 	ret->environment_variables = oscap_stringlist_new();
 	ret->xccdf_result = XCCDF_RESULT_UNKNOWN;
 
@@ -83,8 +83,8 @@ void sce_check_result_free(struct sce_check_result* v)
 		oscap_free(v->href);
 	if (v->basename)
 		oscap_free(v->basename);
-	if (v->stdout)
-		oscap_free(v->stdout);
+	if (v->std_out)
+		oscap_free(v->std_out);
 
 	oscap_stringlist_free(v->environment_variables);
 
@@ -119,15 +119,15 @@ const char* sce_check_result_get_basename(struct sce_check_result* v)
 
 void sce_check_result_set_stdout(struct sce_check_result* v, const char* _stdout)
 {
-	if (v->stdout)
-		oscap_free(v->stdout);
+	if (v->std_out)
+		oscap_free(v->std_out);
 
-	v->stdout = strdup(_stdout);
+	v->std_out = strdup(_stdout);
 }
 
 const char* sce_check_result_get_stdout(struct sce_check_result* v)
 {
-	return v->stdout;
+	return v->std_out;
 }
 
 void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code)
@@ -182,7 +182,7 @@ void sce_check_result_export(struct sce_check_result* v, const char* target_file
 	oscap_string_iterator_free(it);
 	fprintf(f, "\t</sceres:environment>\n");
 	fprintf(f, "\t<sceres:stdout><![CDATA[\n");
-	fwrite(v->stdout, 1, strlen(v->stdout), f);
+	fwrite(v->std_out, 1, strlen(v->std_out), f);
 	fprintf(f, "\t]]></sceres:stdout>\n");
 	fprintf(f, "\t<sceres:exit_code>%i</sceres:exit_code>\n", sce_check_result_get_exit_code(v));
 	fprintf(f, "\t<sceres:result>%s</sceres:result>\n", xccdf_test_result_type_get_text(sce_check_result_get_xccdf_result(v)));

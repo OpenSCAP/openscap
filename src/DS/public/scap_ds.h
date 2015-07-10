@@ -8,7 +8,7 @@
  */
 
 /*
- * Copyright 2012 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2012--2014 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -65,9 +65,11 @@
  * @returns
  * 	    0 if no errors were encountered
  * 	   -1 in case of errors
+ *
+ * @deprecated This function has been deprecated. Make a use of ds_sds_session
+ *     instread. This function may be dropped from later versions of the library.
  */
-int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id,
-		const char* target_dir, const char* target_filename);
+OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* target_filename));
 
 /**
  * @brief same as ds_sds_decompose but works with other components than just XCCDFs
@@ -83,9 +85,11 @@ int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_i
  *     be deduced from the contents of the datastream.
  *
  * @see ds_sds_decompose
+ *
+ * @deprecated This function has been deprecated. Make a use of ds_sds_session
+ *     instread. This function may be dropped from later versions of the library.
  */
-int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
-		const char* container_name, const char* component_id, const char* target_filename);
+OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir, const char* container_name, const char* component_id, const char* target_filename));
 
 /**
  * @brief takes given xccdf file and constructs a source datastream
@@ -122,7 +126,11 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
  */
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
 
-int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir);
+/**
+ * @deprecated This function has been deprecated. Make a use of ds_rds_session
+ * instread. This function may be dropped from later versions of the library.
+ */
+OSCAP_DEPRECATED(int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir));
 
 /**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream
@@ -257,8 +265,11 @@ struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s
  * @brief imports given source datastream and indexes it
  *
  * @memberof ds_sds_index
+ *
+ * @deprecated This function has been deprecated. Make a use of ds_sds_session
+ *     instread. This function may be dropped from later versions of the library.
  */
-struct ds_sds_index *ds_sds_index_import(const char* file);
+OSCAP_DEPRECATED(struct ds_sds_index *ds_sds_index_import(const char* file));
 
 /**
  * @brief chooses datastream and checklist id combination given the IDs
@@ -406,8 +417,12 @@ struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *i
 /// @memberof rds_index
 struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
 
-/// @memberof rds_index
-struct rds_index *rds_index_import(const char *file);
+/**
+ * @memberof rds_index
+ * @deprecated This function has been deprecated. Make a use of ds_rds_session
+ * instread. This function may be dropped from later versions of the library.
+ */
+OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
 
 /// @memberof rds_index
 int rds_index_select_report(struct rds_index *s, const char **report_id);

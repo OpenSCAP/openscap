@@ -2,7 +2,6 @@ INDEPENDENT_SUBDIRS=
 UNIX_SUBDIRS=
 LINUX_SUBDIRS=
 SOLARIS_SUBDIRS=
-VALGRIND_SUBDIRS=
 ENV_SUBDIRS=
 
 if WANT_PROBES_INDEPENDENT
@@ -54,11 +53,17 @@ endif
 if probe_fileextendedattribute_enabled
 UNIX_SUBDIRS += fileextendedattribute
 endif
+if probe_symlink_enabled
+UNIX_SUBDIRS += symlink
+endif
 endif
 
 if WANT_PROBES_LINUX
 if probe_rpminfo_enabled
 LINUX_SUBDIRS += rpminfo
+endif
+if probe_rpmverifypackage_enabled
+LINUX_SUBDIRS += rpmverifypackage
 endif
 if probe_iflisteners_enabled
 LINUX_SUBDIRS += iflisteners
@@ -66,16 +71,18 @@ endif
 if probe_selinuxboolean_enabled
 LINUX_SUBDIRS += selinuxboolean
 endif
+if probe_systemdunitproperty_enabled
+LINUX_SUBDIRS += systemdunitproperty
+endif
+if probe_systemdunitdependency_enabled
+LINUX_SUBDIRS += systemdunitdependency
+endif
 endif
 
 if WANT_PROBES_SOLARIS
 if probe_isainfo_enabled
 SOLARIS_SUBDIRS += isainfo
 endif
-endif
-
-if ENABLE_VALGRIND_TESTS
-VALGRIND_SUBDIRS += vgtest
 endif
 
 if ENV_PRESENT
@@ -87,5 +94,5 @@ ENV_SUBDIRS += environmentvariable58
 endif
 endif
 
-SUBDIRS = $(INDEPENDENT_SUBDIRS) $(UNIX_SUBDIRS) $(LINUX_SUBDIRS) $(SOLARIS_SUBDIRS) $(VALGRIND_SUBDIRS) $(ENV_SUBDIRS)
+SUBDIRS = $(INDEPENDENT_SUBDIRS) $(UNIX_SUBDIRS) $(LINUX_SUBDIRS) $(SOLARIS_SUBDIRS) $(ENV_SUBDIRS)
 SUBDIRS += rpmverify maskattr

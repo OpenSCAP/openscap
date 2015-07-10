@@ -55,24 +55,11 @@
   <TestResult id="xccdf_org.open-scap_testresult_united_states_government_configuration_baseline" start-time="2012-10-24T10:10:50" end-time="2012-10-24T10:11:02">
     <title>OSCAP Scan Result</title>
     <profile idref="united_states_government_configuration_baseline"/>
-    <target>dhcp-2-170.brq.redhat.com</target>
+    <target>localhost.localdomain</target>
     <target-address>127.0.0.1</target-address>
-    <target-address>10.34.2.170</target-address>
-    <target-address>192.168.56.1</target-address>
     <target-address>::1</target-address>
-    <target-address>2620:52:0:221d:f2de:f1ff:fed5:c12f</target-address>
-    <target-address>2620:52:0:2202:f2de:f1ff:fed5:c12f</target-address>
-    <target-address>fe80::f2de:f1ff:fed5:c12f</target-address>
-    <target-address>fe80::800:27ff:fe00:0</target-address>
     <target-facts>
       <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">0A:00:27:00:00:00</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">F0:DE:F1:D5:C1:2F</fact>
-      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">0A:00:27:00:00:00</fact>
     </target-facts>
     <rule-result idref="usgcb-rhel5desktop-rule-2.2.3.1.i" role="full" time="2012-10-24T10:11:01" severity="unknown" weight="10.000000">
       <result>fail</result>

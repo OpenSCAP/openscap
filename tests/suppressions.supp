@@ -1,0 +1,20 @@
+{
+   dlopen
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   ...
+}
+
+{
+   dlerror
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:vasprintf
+   fun:asprintf
+   fun:dlerror
+   ...
+}

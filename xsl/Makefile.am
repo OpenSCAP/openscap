@@ -1,39 +1,41 @@
-
 xsldir = $(pkgdatadir)/xsl
 
-xsl_DATA =   security-guide.xsl \
+xsl_DATA =   xccdf-share.xsl \
+             xccdf-branding.xsl \
+             xccdf-resources.xsl \
+             \
+             xccdf-guide.xsl \
+             xccdf-guide-impl.xsl \
+             \
              xccdf-report.xsl \
+             xccdf-report-impl.xsl \
+             xccdf-report-oval-details.xsl \
+             \
              oval-results-report.xsl \
-			 oval-report.xsl \
-			 sce-report.xsl \
-             oscap-share.xsl \
-             dc2docbook.xsl \
-             html2docbook.xsl \
-			 dbout-html.xsl \
-             docbook-share.xsl \
-             fix.xsl \
-             fixtpl-bash.xml \
+             \
+             legacy-fix.xsl \
+             legacy-fixtpl-bash.xml \
+             legacy-xccdf-share.xsl \
+             \
              xccdf_1.1_to_1.2.xsl \
-			xccdf_1.1_remove_dangling_sub.xsl \
-             xccdf-tailor.xsl \
-             xccdf-substitute.xsl \
-             xccdf-share.xsl
+             xccdf_1.1_remove_dangling_sub.xsl
 
-EXTRA_DIST = security-guide.xsl \
+EXTRA_DIST = xccdf-share.xsl \
+             xccdf-branding.xsl \
+             xccdf-resources.xsl \
+             \
+             xccdf-guide.xsl \
+             xccdf-guide-impl.xsl \
+             \
              xccdf-report.xsl \
+             xccdf-report-impl.xsl \
+             xccdf-report-oval-details.xsl \
+             \
              oval-results-report.xsl \
-			 oval-report.xsl \
-			 sce-report.xsl \
-             dc2docbook.xsl \
-             html2docbook.xsl \
-			 dbout-html.xsl \
-             docbook-share.xsl \
-             fix.xsl \
-             fixtpl-bash.xml \
+             \
+             legacy-fix.xsl \
+             legacy-fixtpl-bash.xml \
+             legacy-xccdf-share.xsl \
+             \
              xccdf_1.1_to_1.2.xsl \
-			xccdf_1.1_remove_dangling_sub.xsl \
-             oscap-share.xsl \
-             xccdf-tailor.xsl \
-             xccdf-substitute.xsl \
-             xccdf-share.xsl
-
+             xccdf_1.1_remove_dangling_sub.xsl
