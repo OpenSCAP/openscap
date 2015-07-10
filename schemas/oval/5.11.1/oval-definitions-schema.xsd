@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:sch="http://purl.oclc.org/dsdl/schematron" targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" elementFormDefault="qualified" version="5.11">
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
-    <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+    <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#aix" schemaLocation="aix-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#apache" schemaLocation="apache-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#catos" schemaLocation="catos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#esx" schemaLocation="esx-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#freebsd" schemaLocation="freebsd-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux" schemaLocation="hpux-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" schemaLocation="independent-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#ios" schemaLocation="ios-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" schemaLocation="linux-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#macos" schemaLocation="macos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#pixos" schemaLocation="pixos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#sharepoint" schemaLocation="sharepoint-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris" schemaLocation="solaris-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" schemaLocation="unix-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" schemaLocation="windows-definitions-schema.xsd"/>
     <xsd:annotation>
         <xsd:documentation>The following is a description of the elements, types, and attributes that compose the core schema for encoding Open Vulnerability and Assessment Language (OVAL) Definitions. Some of the objects defined here are extended and enhanced by individual component schemas, which are described in separate documents. Each of the elements, types, and attributes that make up the Core Definition Schema are described in detail and should provide the information necessary to understand what each represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between these objects is not outlined here.</xsd:documentation>
         <xsd:documentation>The OVAL Schema is maintained by The MITRE Corporation and developed by the public OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.mitre.org.</xsd:documentation>
@@ -1423,7 +1438,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="binary"/>                                                
             </xsd:restriction>
@@ -1436,7 +1451,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="boolean"/>                                                
             </xsd:restriction>
@@ -1449,7 +1464,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="float"/>                                                
             </xsd:restriction>
@@ -1462,7 +1477,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="int"/>                                
             </xsd:restriction>
@@ -1629,7 +1644,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="binary"/>                                
             </xsd:restriction>
@@ -1642,7 +1657,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="boolean"/>                                
             </xsd:restriction>
@@ -1655,7 +1670,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="float"/>                                                
             </xsd:restriction>
@@ -1668,7 +1683,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="int"/>                
             </xsd:restriction>
@@ -1676,7 +1691,7 @@
     </xsd:complexType>
     <xsd:complexType name="EntityStateEVRStringType">
         <xsd:annotation>
-            <xsd:documentation>The EntityStateEVRStringType type is extended by the entities of an individual OVAL State. This type provides uniformity to each state entity by including the attributes found in the EntityStateSimpleBaseType. This type represents the epoch, version, and release fields, for an RPM package, as a single version string. It has the form "EPOCH:VERSION-RELEASE". Note that a null epoch (or '(none)' as returned by rpm) is equivalent to '0' and would hence have the form 0:VERSION-RELEASE. Comparisons involving this datatype should follow the algorithm of librpm's rpmvercmp() function.</xsd:documentation>
+            <xsd:documentation>The EntityStateEVRStringType type is extended by the entities of an individual OVAL State. This type provides uniformity to each state entity by including the attributes found in the EntityStateSimpleBaseType. This type represents the epoch, version, and release fields as a single version string. It has the form "EPOCH:VERSION-RELEASE". Note that a null epoch (or '(none)' as returned by rpm) is equivalent to '0' and would hence have the form 0:VERSION-RELEASE. Comparisons involving this datatype should follow the algorithm of librpm's rpmvercmp() function.</xsd:documentation>
         </xsd:annotation>
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
