@@ -18,6 +18,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h> // for P_tmpdir macro
 #include <string.h>
 #include <stdlib.h>
