@@ -28,4 +28,5 @@ test_run "textfilecontent: 'line' comparison" $srcdir/test_filecontent_line.sh
 test_run "anyxml element" $srcdir/test_anyxml.sh
 test_run "invalid regular expression" $srcdir/test_invalid_regex.sh
 test_run "glob to regex" $srcdir/test_glob_to_regex.sh
+test_run "test platform schema version" $srcdir/test_platform_version.sh
 test_exit

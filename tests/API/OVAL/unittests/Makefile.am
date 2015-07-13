@@ -65,6 +65,8 @@ EXTRA_DIST = \
 	test_glob_to_regex.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
+	test_platform_version.sh \
+	test_platform_version.xml \
 	test_xmlns_missing.oval.xml \
 	test_xmlns_missing.sh \
 	test_xsinil_envv58_pid.oval.xml \
