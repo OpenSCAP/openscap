@@ -353,7 +353,6 @@ static int get_exec_shield_status(int pid) {
 
 struct dynamic_buffer{
 	char* mem;
-	size_t used;
 	size_t size;
 };
 
@@ -373,16 +372,16 @@ static inline bool get_process_cmdline(const char* filepath, struct dynamic_buff
 		return false;
 	}
 
-	buffer->used = 0;
+	size_t used = 0;
 	ssize_t remaining_size;
 	ssize_t read_size;
 
 	for(;;) {
 
 		// Read data, store to buffer
-		remaining_size = buffer->size - buffer->used;
-		read_size = read(fd, buffer->mem + buffer->used, remaining_size );
-		buffer->used += read_size;
+		remaining_size = buffer->size - used - 1; // for trailing zeros
+		read_size = read(fd, buffer->mem + used, remaining_size );
+		used += read_size;
 
 		// If reach end of file, then end the loop
 		if (remaining_size != read_size) {
@@ -399,13 +398,16 @@ static inline bool get_process_cmdline(const char* filepath, struct dynamic_buff
 		buffer->mem = new_mem;
 	}
 
-	if ( buffer->used == 0 ) { // empty file
-		close(fd);
+	close(fd);
+
+	if ( used == 0 ) { // empty file
 		return false;
 	} else {
 
+		buffer->mem[used] = '\0';
+
 		// Skip trailing zeros
-		int i = buffer->used - 1;
+		int i = used - 1;
 		while ( (i > 0) && (buffer->mem[i] == '\0') ) {
 			--i;
 		}
@@ -420,8 +422,6 @@ static inline bool get_process_cmdline(const char* filepath, struct dynamic_buff
 			--i;
 		}
 	}
-
-	close(fd);
 	return true;
 }
 
@@ -447,7 +447,6 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	const size_t DEFAULT_BUFFER_SIZE = 256;
 	struct dynamic_buffer cmdline_buffer = {
 		.mem = malloc(DEFAULT_BUFFER_SIZE),
-		.used = 0,
 		.size = DEFAULT_BUFFER_SIZE
 	};
 	if ( cmdline_buffer.mem == NULL ) {
