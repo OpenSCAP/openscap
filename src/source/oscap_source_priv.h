@@ -36,6 +36,20 @@
 OSCAP_HIDDEN_START;
 
 /**
+ * Create new oscap_source from raw memory. The memory can contain \0 bytes
+ * and they are not considered NULL-terminations! Always pass the correct
+ * size. This constructor is meant as a last resort when no other constructor
+ * will work for your use case. If at all possible you should use the more
+ * specialized constructors.
+ * oscap_source will will not allocate memory new memory buffer
+ * @param buffer Memory buffer with raw data
+ * @param size size of the memory buffer
+ * @param filepath Suggested filename for the file or NULL
+ * @returns newly created oscap_source_structure
+ */
+struct oscap_source *oscap_source_new_take_memory(char *buffer, size_t size, const char *filepath);
+
+/**
  * Build new oscap_source from existing xmlDoc. The xmlDoc becomes owned
  * by oscap_source.
  * @memberof oscap_source
