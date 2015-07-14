@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ../../test_common.sh
+. $srcdir/../../test_common.sh
 
 set -e -o pipefail
 
