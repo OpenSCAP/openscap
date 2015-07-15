@@ -1131,7 +1131,8 @@
                                                   <xsd:documentation>This is the package name to check.</xsd:documentation>
                                              </xsd:annotation>
                                         </xsd:element>
-                                        <xsd:element name="epoch">
+                                        <!-- minOccurs/maxOccurs here is OpenSCAP modification to allow older contents to pass -->
+                                        <xsd:element name="epoch" minOccurs="0" maxOccurs="1">
                                              <xsd:annotation>
                                                   <xsd:documentation>This is the epoch number of the RPM, this is used as a kludge for version-release comparisons where the vendor has done some kind of re-numbering or version forking. For a null epoch (or '(none)' as returned by rpm) the string '(none)' should be used.. This number is not revealed by a normal query of the RPM's information -- you must use a formatted rpm query command to gather this data from the command line, like so. For an already-installed RPM: rpm -q --qf '%{EPOCH}\n' installed_rpm For an RPM file that has not been installed: rpm -qp --qf '%{EPOCH}\n' rpm_file</xsd:documentation>
                                              </xsd:annotation>
@@ -1150,7 +1151,8 @@
                                                   </xsd:simpleContent>
                                              </xsd:complexType>
                                         </xsd:element>
-                                        <xsd:element name="version">
+                                        <!-- minOccurs/maxOccurs here is OpenSCAP modification to allow older contents to pass -->
+                                        <xsd:element name="version" minOccurs="0" maxOccurs="1">
                                              <xsd:annotation>
                                                   <xsd:documentation>This is the version number of the build. In the case of an apache rpm named httpd-2.0.40-21.11.4.i686.rpm, this value would be 2.0.40.</xsd:documentation>
                                              </xsd:annotation>
@@ -1169,7 +1171,8 @@
                                                   </xsd:simpleContent>
                                              </xsd:complexType>
                                         </xsd:element>
-                                        <xsd:element name="release">
+                                        <!-- minOccurs/maxOccurs here is OpenSCAP modification to allow older contents to pass -->
+                                        <xsd:element name="release" minOccurs="0" maxOccurs="1">
                                              <xsd:annotation>
                                                   <xsd:documentation>This is the release number of the build, changed by the vendor/builder.</xsd:documentation>
                                              </xsd:annotation>
@@ -1188,7 +1191,8 @@
                                                   </xsd:simpleContent>
                                              </xsd:complexType>
                                         </xsd:element>
-                                        <xsd:element name="arch" type="oval-def:EntityObjectStringType">
+                                        <!-- minOccurs/maxOccurs here is OpenSCAP modification to allow older contents to pass -->
+                                        <xsd:element name="arch" type="oval-def:EntityObjectStringType" minOccurs="0" maxOccurs="1">
                                              <xsd:annotation>
                                                   <xsd:documentation>This is the architecture for which the RPM was built, like : i386, ppc, sparc, noarch. In the case of an apache rpm named httpd-2.0.40-21.11.4.i686.rpm, this value would be i686.</xsd:documentation>
                                              </xsd:annotation>
