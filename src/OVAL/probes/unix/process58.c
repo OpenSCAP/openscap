@@ -412,11 +412,11 @@ static inline bool get_process_cmdline(const char* filepath, struct dynamic_buff
 			--i;
 		}
 
-
 		// Program and args are separated by '\0'
 		// Replace them with spaces ' '
-		while( i >= 0){
-			if ( buffer->mem[i] == '\0' ) {
+		while( i >= 0 ){
+			char chr = buffer->mem[i];
+			if ( ( chr == '\0') || ( chr == '\n' ) ) {
 				buffer->mem[i] = ' ';
 			}
 			--i;
