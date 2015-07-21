@@ -53,23 +53,14 @@ struct oval_generator {
 struct oval_generator *oval_generator_new(void)
 {
 	struct oval_generator *gen;
-	time_t et;
-	struct tm *lt;
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-
 	gen = oscap_alloc(sizeof(struct oval_generator));
 	gen->product_name = NULL;
 	gen->product_version = NULL;
 	gen->core_schema_version = oscap_strdup(OVAL_SUPPORTED);
 	gen->platform_schema_versions = oscap_htable_new();
 	gen->anyxml = NULL;
-
-	time(&et);
-	lt = localtime(&et);
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	gen->timestamp = oscap_strdup(timestamp);
-
+	gen->timestamp = NULL;
+	oval_generator_update_timestamp(gen);
 	return gen;
 }
 
@@ -151,6 +142,20 @@ void oval_generator_set_schema_version(struct oval_generator *generator, const c
 
 void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp)
 {
+	oscap_free(generator->timestamp);
+	generator->timestamp = oscap_strdup(timestamp);
+}
+
+void oval_generator_update_timestamp(struct oval_generator *generator)
+{
+	time_t et;
+	struct tm *lt;
+	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+
+	time(&et);
+	lt = localtime(&et);
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 	oscap_free(generator->timestamp);
 	generator->timestamp = oscap_strdup(timestamp);
 }

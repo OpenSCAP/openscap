@@ -603,6 +603,7 @@ void oval_generator_set_product_version(struct oval_generator *generator, const 
 void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version);
 void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version);
 void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp);
+void oval_generator_update_timestamp(struct oval_generator *generator);
 
 /**
  * Create an empty oval_definition_model.

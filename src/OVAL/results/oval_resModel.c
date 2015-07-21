@@ -67,7 +67,7 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 
 	struct oval_generator *generator = oval_definition_model_get_generator(definition_model);
 	model->generator = oval_generator_clone(generator);
-	oval_generator_set_timestamp_actual(model->generator);
+	oval_generator_update_timestamp(model->generator);
 
 	model->systems = oval_collection_new();
 	model->definition_model = definition_model;
