@@ -77,6 +77,18 @@ int oval_session_set_variables(struct oval_session *session, const char *filenam
 int oval_session_set_syschars(struct oval_session *session, const char *filename);
 
 /**
+ * Set OVAL Directives
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param filename a path to an OVAL Directives file
+ * @returns
+ * @retval 0 on success
+ * @retval 1 on an invalid \ref oval_session
+ * @retval -1 on an internal error (use \ref oscap_err_desc to get more details)
+ */
+int oval_session_set_directives(struct oval_session *session, const char *filename);
+
+/**
  * Destructor of an oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
