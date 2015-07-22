@@ -89,6 +89,16 @@ int oval_session_set_syschars(struct oval_session *session, const char *filename
 int oval_session_set_directives(struct oval_session *session, const char *filename);
 
 /**
+ * Set XSD validation level.
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param validate false value indicates to skip any XSD validation
+ * @param full_validation true value indicates that every possible step will be validated by XSD
+ */
+void oval_session_set_validation(struct oval_session *session, bool validate, bool full_validation);
+
+
+/**
  * Destructor of an oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
