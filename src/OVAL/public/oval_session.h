@@ -53,6 +53,18 @@ struct oval_session;
 struct oval_session *oval_session_new(const char *filename);
 
 /**
+ * Set OVAL Variables.
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param filename a path to an OVAL Variables file
+ * @returns
+ * @retval 0 on success
+ * @retval 1 on an invalid \ref oval_session
+ * @retval -1 on an internal error (use \ref oscap_err_desc to get more details)
+ */
+int oval_session_set_variables(struct oval_session *session, const char *filename);
+
+/**
  * Destructor of an oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
