@@ -36,6 +36,7 @@ struct oval_session {
 
 	struct {
 		struct oscap_source *variables;
+		struct oscap_source *syschars;
 	} oval;
 };
 
@@ -86,6 +87,24 @@ int oval_session_set_variables(struct oval_session *session, const char *filenam
 	return 0;
 }
 
+int oval_session_set_syschars(struct oval_session *session, const char *filename)
+{
+	if (session == NULL) {
+		return 1;
+	}
+
+	if (session->oval.syschars != NULL) {
+		oscap_free(session->oval.syschars);
+	}
+
+	session->oval.syschars = oscap_source_new_from_file(filename);
+	if (oscap_source_get_scap_type(session->oval.syschars) == 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -93,5 +112,6 @@ void oval_session_free(struct oval_session *session)
 
 	oscap_free(session->source);
 	oscap_free(session->oval.variables);
+	oscap_free(session->oval.syschars);
 	oscap_free(session);
 }
