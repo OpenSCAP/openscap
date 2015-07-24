@@ -297,9 +297,6 @@ Authors:
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
-        <xsl:attribute name="data-severity">
-            <xsl:value-of select="$ruleresult/@severity"/>
-        </xsl:attribute>
         <xsl:if test="$item/cdf:reference[@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx']">
             <xsl:attribute name="data-disa-id">
                 <xsl:for-each select="$item/cdf:reference[@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx']">
@@ -465,7 +462,8 @@ Authors:
                     Group rules by:
                     <select name="groupby">
                         <option selected="selected" onclick="Reset()">Default</option>
-                        <option onclick="GroupBy('data-severity')">Severity</option>
+                        <option onclick="GroupBy('severity')">Severity</option>
+                        <option onclick="GroupBy('result')">Result</option>
                         <option onclick="GroupBy('data-disa-id')">DISA ID</option>
                         <option onclick="GroupBy('data-nist-id')">NIST ID</option>
                     </select>
