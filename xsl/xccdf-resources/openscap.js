@@ -134,6 +134,13 @@ function Reset() {
 	}
 }
 
+function NewGroupLine(group_name)
+{
+	return "<tr class=\"rule-overview-inner-node\" data-tt-id=\"" + group_name + "\">" +
+		"<td colspan=\"3\"><strong>" + group_name + "</strong></td></tr>";
+}
+
+
 function GroupBy(group_class) {
 	/* We must process grouping upon the original table.
 	 * Otherwise, we would have unwanted duplicties in new table. */
@@ -152,9 +159,7 @@ function GroupBy(group_class) {
 			var target_group = target_groups[i];
 			if (!lines.hasOwnProperty(target_group)) {
 				/* Create a new group */
-				var new_group_line = "<tr class=\"rule-overview-inner-node\" data-tt-id=\"" + target_group + "\">" +
-					"<td colspan=\"3\"><strong>" + target_group + "</strong></td></tr>";
-				lines[target_group] = [new_group_line];
+				lines[target_group] = [NewGroupLine(target_group)];
 			}
 			var clone = $(this).clone();
 			clone.attr("data-tt-id", id + "copy" + i);
