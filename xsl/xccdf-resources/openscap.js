@@ -140,8 +140,26 @@ function NewGroupLine(group_name)
 		"<td colspan=\"3\"><strong>" + group_name + "</strong></td></tr>";
 }
 
+function GetTargetGroupsList(rule, key)
+{
+	/* This function returns an array of target groups indentifiers */
+	if (key == "severity") {
+		var severity = rule.children("td:nth-child(2)").text();
+		return [severity];
+	} else if (key == "result") {
+		var result = rule.children(".rule-result").text();
+		return [result];
+	}
+	else {
+		var ref_list = rule.attr(key);
+		if (!ref_list) {
+			ref_list = "unknown";
+		}
+		return ref_list.split(",");
+	}
+}
 
-function GroupBy(group_class) {
+function GroupBy(key) {
 	/* We must process grouping upon the original table.
 	 * Otherwise, we would have unwanted duplicties in new table. */
 	Reset();
@@ -150,11 +168,7 @@ function GroupBy(group_class) {
 	$(".rule-overview-leaf").each(function() {
 		$(this).children("td:first").css("padding-left","0px");
 		var id = $(this).attr("data-tt-id");
-		var ref_list = $(this).attr(group_class);
-		if (!ref_list) {
-			ref_list = "unknown";
-		}
-		var target_groups = ref_list.split(",");
+		var target_groups = GetTargetGroupsList($(this), key);
 		for (i = 0; i < target_groups.length; i++) {
 			var target_group = target_groups[i];
 			if (!lines.hasOwnProperty(target_group)) {
