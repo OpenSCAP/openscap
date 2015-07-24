@@ -21,6 +21,8 @@ TESTS = test_oscap_string.sh
 check_PROGRAMS = test_oscap_string
 
 test_oscap_string_SOURCES = test_oscap_string.c
+test_oscap_string_SOURCES += $(top_srcdir)/src/common/oscap_string.c $(top_srcdir)/src/common/alloc.c
+test_oscap_common_CPPFLAGS = $(AM_CPPFLAGS) -DNDEBUG
 
 TESTS_ENVIRONMENT= \
 	builddir=$(top_builddir) \
