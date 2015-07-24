@@ -297,6 +297,25 @@ Authors:
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
         </xsl:attribute>
+        <xsl:attribute name="data-severity">
+            <xsl:value-of select="$ruleresult/@severity"/>
+        </xsl:attribute>
+        <xsl:if test="$item/cdf:reference[@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx']">
+            <xsl:attribute name="data-disa-id">
+                <xsl:for-each select="$item/cdf:reference[@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx']">
+                    <xsl:apply-templates mode="reference" select="."/>
+                    <xsl:if test="position() != last()">,</xsl:if>
+                </xsl:for-each>
+            </xsl:attribute>
+        </xsl:if>
+        <xsl:if test="$item/cdf:reference[@href = 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf']">
+            <xsl:attribute name="data-nist-id">
+                <xsl:for-each select="$item/cdf:reference[@href = 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf']">
+                    <xsl:apply-templates mode="reference" select="."/>
+                    <xsl:if test="position() != last()">,</xsl:if>
+                </xsl:for-each>
+            </xsl:attribute>
+        </xsl:if>
         <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
             <xsl:attribute name="class">rule-overview-leaf rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
         </xsl:if>
