@@ -108,12 +108,69 @@ function ruleSearch()
         $("#search-matches").html("No rules match your search criteria!");
 }
 
+var is_original = true;
+var original_treetable = null;
+
 $(document).ready( function() {
     $("#result-details").hide();
     $(".js-only").show();
     $(".toggle-rule-display").each(function(){
         toggleRuleDisplay(this);
     });
-
+    original_treetable = $(".treetable").clone();
     $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
+    is_original = true;
 });
+
+function Reset() {
+	if (!is_original) {
+		$(".treetable").remove();
+		$("#rule-overview").append(original_treetable.clone());
+		$(".treetable").treetable({ column: 0, expandable: true, clickableNodeNames: true, initialState : "expanded", indent : 0 });
+		$(".toggle-rule-display").each(function(){
+			toggleRuleDisplay(this);
+		});
+		is_original = true;
+	}
+}
+
+function GroupBy(group_class) {
+	/* We must process grouping upon the original table.
+	 * Otherwise, we would have unwanted duplicties in new table. */
+	Reset();
+
+	var lines = {};
+	$(".rule-overview-leaf").each(function() {
+		$(this).children("td:first").css("padding-left","0px");
+		var id = $(this).attr("data-tt-id");
+		var ref_list = $(this).attr(group_class);
+		if (!ref_list) {
+			ref_list = "unknown";
+		}
+		var target_groups = ref_list.split(",");
+		for (i = 0; i < target_groups.length; i++) {
+			var target_group = target_groups[i];
+			if (!lines.hasOwnProperty(target_group)) {
+				/* Create a new group */
+				var new_group_line = "<tr class=\"rule-overview-inner-node\" data-tt-id=\"" + target_group + "\">" +
+					"<td colspan=\"3\"><strong>" + target_group + "</strong></td></tr>";
+				lines[target_group] = [new_group_line];
+			}
+			var clone = $(this).clone();
+			clone.attr("data-tt-id", id + "copy" + i);
+			clone.attr("data-tt-parent-id", target_group);
+			var new_line = clone.wrap("<div>").parent().html();
+			lines[target_group].push(new_line);
+		}
+	});
+	$(".treetable").remove();
+	var html_text = "";
+	for (x in lines) {
+		html_text += lines[x].join("\n");
+	}
+	new_table ="<table class=\"treetable table table-bordered\"><thead><tr><th>Title</th> <th style=\"width: 120px; text-align: center\">Severity</th><th style=\"width: 120px; text-align: center\">Result</th></tr></thead><tbody>" + html_text + "</tbody></table>";
+	$("#rule-overview").append(new_table);
+	is_original = false;
+	$(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
+
+}
