@@ -460,12 +460,12 @@ Authors:
                     </div>
                     <p id="search-matches"></p>
                     Group rules by:
-                    <select name="groupby">
-                        <option selected="selected" onclick="Reset()">Default</option>
-                        <option onclick="GroupBy('severity')">Severity</option>
-                        <option onclick="GroupBy('result')">Result</option>
-                        <option onclick="GroupBy('data-disa-id')">DISA ID</option>
-                        <option onclick="GroupBy('data-nist-id')">NIST ID</option>
+                    <select name="groupby" onchange="GroupBy(value)">
+                        <option value="default" selected="selected">Default</option>
+                        <option value="severity">Severity</option>
+                        <option value="result">Result</option>
+                        <option value="data-disa-id">DISA ID</option>
+                        <option value="data-nist-id">NIST ID</option>
                     </select>
                 </div>
             </div>
