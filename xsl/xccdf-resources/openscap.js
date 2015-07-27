@@ -159,6 +159,38 @@ function GetTargetGroupsList(rule, key)
 	}
 }
 
+function SortGroups(groups, key)
+{
+	if (key == "severity") {
+		return ["high", "medium", "low"];
+	} else if (key == "data-disa-id") {
+		return groups.sort(function(a, b){return a-b});
+	} else if (key == "data-nist-id") {
+		return groups.sort(function(a, b){
+			var regex = /(\w\w)-(\d+)(.*)/;
+			var a_parts = regex.exec(a);
+			var b_parts = regex.exec(b);
+			if (a_parts == null)
+				return 1;
+			if (b_parts == null)
+				return -1;
+			var result = a_parts[1].localeCompare(b_parts[1]);
+			if (result != 0) {
+				return result;
+			} else {
+				result = a_parts[2] - b_parts[2];
+				if (result != 0) {
+					return result;
+				} else {
+					return a_parts[3].localeCompare(b_parts[3]);
+				}
+			}
+		});
+	} else {
+		return groups;
+	}
+}
+
 function GroupBy(key) {
 	/* We must process grouping upon the original table.
 	 * Otherwise, we would have unwanted duplicties in new table. */
@@ -183,9 +215,10 @@ function GroupBy(key) {
 		}
 	});
 	$(".treetable").remove();
+	var groups = SortGroups(Object.keys(lines), key);
 	var html_text = "";
-	for (x in lines) {
-		html_text += lines[x].join("\n");
+	for (i = 0; i < groups.length; i++) {
+		html_text += lines[groups[i]].join("\n");
 	}
 	new_table ="<table class=\"treetable table table-bordered\"><thead><tr><th>Title</th> <th style=\"width: 120px; text-align: center\">Severity</th><th style=\"width: 120px; text-align: center\">Result</th></tr></thead><tbody>" + html_text + "</tbody></table>";
 	$("#rule-overview").append(new_table);
