@@ -195,6 +195,8 @@ function GroupBy(key) {
 	/* We must process grouping upon the original table.
 	 * Otherwise, we would have unwanted duplicties in new table. */
 	Reset();
+	if (key == "default")
+		return;
 
 	var lines = {};
 	$(".rule-overview-leaf").each(function() {
