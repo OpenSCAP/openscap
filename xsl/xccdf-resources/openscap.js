@@ -115,5 +115,5 @@ $(document).ready( function() {
         toggleRuleDisplay(this);
     });
 
-    $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
+    $(".treetable").treetable({ column: 0, expandable: true, clickableNodeNames: true, initialState : "expanded", indent : 0 });
 });
