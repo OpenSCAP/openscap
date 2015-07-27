@@ -220,7 +220,7 @@ function GroupBy(key) {
 	for (i = 0; i < groups.length; i++) {
 		html_text += lines[groups[i]].join("\n");
 	}
-	new_table ="<table class=\"treetable table table-bordered\"><thead><tr><th>Title</th> <th style=\"width: 120px; text-align: center\">Severity</th><th style=\"width: 120px; text-align: center\">Result</th></tr></thead><tbody>" + html_text + "</tbody></table>";
+	new_table ="<table class=\"treetable table table-bordered\"><thead><tr><th>Group</th> <th style=\"width: 120px; text-align: center\">Severity</th><th style=\"width: 120px; text-align: center\">Result</th></tr></thead><tbody>" + html_text + "</tbody></table>";
 	$("#rule-overview").append(new_table);
 	is_original = false;
 	$(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
