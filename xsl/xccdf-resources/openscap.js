@@ -140,13 +140,21 @@ function NewGroupLine(group_name)
 		"<td colspan=\"3\"><strong>" + group_name + "</strong></td></tr>";
 }
 
+var KeysEnum = {
+	DEFAULT: "default",
+	SEVERITY : "severity",
+	RESULT: "result",
+	NIST: "data-nist-id",
+	DISA: "data-disa-id"
+};
+
 function GetTargetGroupsList(rule, key)
 {
 	/* This function returns an array of target groups indentifiers */
-	if (key == "severity") {
+	if (key == KeysEnum.SEVERITY) {
 		var severity = rule.children("td:nth-child(2)").text();
 		return [severity];
-	} else if (key == "result") {
+	} else if (key == KeysEnum.RESULT) {
 		var result = rule.children(".rule-result").text();
 		return [result];
 	}
@@ -161,11 +169,11 @@ function GetTargetGroupsList(rule, key)
 
 function SortGroups(groups, key)
 {
-	if (key == "severity") {
+	if (key == KeysEnum.SEVERITY) {
 		return ["high", "medium", "low"];
-	} else if (key == "data-disa-id") {
+	} else if (key == KeysEnum.DISA) {
 		return groups.sort(function(a, b){return a-b});
-	} else if (key == "data-nist-id") {
+	} else if (key == KeysEnum.NIST) {
 		return groups.sort(function(a, b){
 			var regex = /(\w\w)-(\d+)(.*)/;
 			var a_parts = regex.exec(a);
@@ -195,7 +203,7 @@ function GroupBy(key) {
 	/* We must process grouping upon the original table.
 	 * Otherwise, we would have unwanted duplicties in new table. */
 	Reset();
-	if (key == "default")
+	if (key == KeysEnum.DEFAULT)
 		return;
 
 	var lines = {};
