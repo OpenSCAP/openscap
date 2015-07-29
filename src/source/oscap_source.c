@@ -227,7 +227,7 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 	if (ret != 0) {
 		const char *type_name = oscap_document_type_to_string(oscap_source_get_scap_type(source));
 		if (type_name == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unrecognized document type for: ", oscap_source_readable_origin(source));
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unrecognized document type for: %s", oscap_source_readable_origin(source));
 		} else {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.", type_name,
 				oscap_source_get_schema_version(source), oscap_source_readable_origin(source));
