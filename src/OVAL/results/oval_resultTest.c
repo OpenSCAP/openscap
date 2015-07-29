@@ -465,6 +465,132 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 	}
 }
 
+struct oval_item_statuses {
+	int error_cnt;
+	int exists_cnt;
+	int does_not_exist_cnt;
+	int not_collected_cnt;
+};
+
+static void oval_item_statuses_clear(struct oval_item_statuses *is)
+{
+	memset(is, 0, sizeof(*is));
+}
+
+static void oval_item_statuses_add_status(struct oval_item_statuses *is, oval_syschar_status_t status)
+{
+	switch(status) {
+	case SYSCHAR_STATUS_ERROR:
+		is->error_cnt++;
+		break;
+	case SYSCHAR_STATUS_EXISTS:
+		is->exists_cnt++;
+		break;
+	case SYSCHAR_STATUS_DOES_NOT_EXIST:
+		is->does_not_exist_cnt++;
+		break;
+	case SYSCHAR_STATUS_NOT_COLLECTED:
+		is->not_collected_cnt++;
+		break;
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid oval status type: %s.", oval_syschar_status_get_text(status));
+		break;
+	}
+}
+
+static oval_result_t oval_item_statuses_get_result(struct oval_item_statuses *is, oval_existence_t check_existence)
+{
+	oval_result_t result = OVAL_RESULT_ERROR;
+	switch (check_existence) {
+	case OVAL_ALL_EXIST:
+		if (is->exists_cnt >= 1 && is->does_not_exist_cnt == 0
+			&& is->error_cnt == 0 && is->not_collected_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt == 0
+			&& is->error_cnt == 0 && is->not_collected_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (is->exists_cnt >= 0 && is->does_not_exist_cnt >= 1
+			&& is->error_cnt >= 0 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (is->exists_cnt >= 0 && is->does_not_exist_cnt == 0
+			&& is->error_cnt >= 1 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (is->exists_cnt >= 0 && is->does_not_exist_cnt == 0
+			&& is->error_cnt == 0 && is->not_collected_cnt >= 1) {
+			result = OVAL_RESULT_UNKNOWN;
+		}
+		break;
+	case OVAL_ANY_EXIST:
+		if (is->exists_cnt >= 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt == 0 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (is->exists_cnt >= 1 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >=1 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >=1 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	case OVAL_AT_LEAST_ONE_EXISTS:
+		if (is->exists_cnt >= 1 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >= 0 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (is->exists_cnt >= 1 && is->does_not_exist_cnt == 0
+			&& is->error_cnt == 0 && is->not_collected_cnt == 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >= 1 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt == 0 && is->not_collected_cnt >= 1) {
+			result = OVAL_RESULT_UNKNOWN;
+		}
+		break;
+	case OVAL_NONE_EXIST:
+		if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt == 0 && is->not_collected_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (is->exists_cnt >= 1 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >= 0 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >= 1 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt == 0 && is->not_collected_cnt >= 1) {
+			result = OVAL_RESULT_UNKNOWN;
+		}
+		break;
+	case OVAL_ONLY_ONE_EXISTS:
+		if (is->exists_cnt == 1 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt == 0 && is->not_collected_cnt == 0) {
+			result = OVAL_RESULT_TRUE;
+		} else if (is->exists_cnt >= 2 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt >= 0 && is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_FALSE;
+		} else if (is->exists_cnt == 0 && is->does_not_exist_cnt >= 0
+			&& is->error_cnt == 0 && is->not_collected_cnt == 1) {
+			result = OVAL_RESULT_FALSE;
+		} else if ((is->exists_cnt == 0 || is->exists_cnt == 1)
+			&& is->does_not_exist_cnt >= 0 && is->error_cnt >= 1
+			&& is->not_collected_cnt >= 0) {
+			result = OVAL_RESULT_ERROR;
+		} else if ((is->exists_cnt == 0 || is->exists_cnt == 1)
+			&& is->does_not_exist_cnt >= 0 && is->error_cnt == 0
+			&& is->not_collected_cnt >= 1) {
+			result = OVAL_RESULT_ERROR;
+		}
+		break;
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid check_existence value: %s.",
+				oval_existence_get_text(check_existence));
+		result = OVAL_RESULT_ERROR;
+		break;
+	}
+	return result;
+}
+
 static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct oval_sysitem *cur_sysitem, struct oval_state *state)
 {
 	struct oval_state_content_iterator *state_contents_itr;
@@ -481,9 +607,11 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		char *state_entity_name;
 		oval_operation_t state_entity_operation;
 		oval_check_t entity_check;
+		oval_existence_t check_existence;
 		oval_result_t ste_ent_res;
 		struct oval_sysent_iterator *item_entities_itr;
 		struct oresults ent_ores;
+		struct oval_item_statuses item_statuses;
 		bool found_matching_item;
 
 		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
@@ -515,16 +643,19 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		}
 
 		entity_check = oval_state_content_get_ent_check(content);
+		check_existence = oval_state_content_get_check_existence(content);
 		state_entity_operation = oval_entity_get_operation(state_entity);
 
 		ores_clear(&ent_ores);
 		found_matching_item = false;
+		oval_item_statuses_clear(&item_statuses);
 
 		item_entities_itr = oval_sysitem_get_sysents(cur_sysitem);
 		while (oval_sysent_iterator_has_more(item_entities_itr)) {
 			struct oval_sysent *item_entity;
 			oval_result_t ent_val_res;
 			char *item_entity_name;
+			oval_syschar_status_t item_status;
 
 			item_entity = oval_sysent_iterator_next(item_entities_itr);
 			if (item_entity == NULL) {
@@ -532,6 +663,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 				oval_sysent_iterator_free(item_entities_itr);
 				goto fail;
 			}
+			item_status = oval_sysent_get_status(item_entity);
+			oval_item_statuses_add_status(&item_statuses, item_status);
 
 			item_entity_name = oval_sysent_get_name(item_entity);
 			if (strcmp(item_entity_name, state_entity_name))
@@ -560,6 +693,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
 		ores_add_res(&ste_ores, ste_ent_res);
+		oval_result_t cres = oval_item_statuses_get_result(&item_statuses, check_existence);
+		ores_add_res(&ste_ores, cres);
 	}
 	oval_state_content_iterator_free(state_contents_itr);
 
