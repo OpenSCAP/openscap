@@ -855,6 +855,7 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 					oscap_source_get_schema_version(tailoring_source),
 					oscap_source_readable_origin(tailoring_source));
 			oscap_source_free(tailoring_source);
+			session->tailoring.user_file = NULL;
 			return 1;
 		}
 	}
