@@ -1119,7 +1119,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 
 	struct xccdf_refine_rule_internal* r_rule = oscap_htable_get(policy->refine_rules_internal, rule_id);
 
-	xccdf_role_t role = _get_final_role(rule,r_rule);
+	xccdf_role_t role = _get_final_role(rule, r_rule);
 	if (role  == XCCDF_ROLE_UNCHECKED )
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
 
@@ -2660,6 +2660,11 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
         oscap_free(model);
 }
 
+static void _refine_rule_internal_free(struct xccdf_refine_rule_internal *item){
+	oscap_free(item->selector);
+	oscap_free(item);
+}
+
 void xccdf_policy_free(struct xccdf_policy * policy) {
 
         /* If ID of policy's profile is NULL then this
@@ -2674,7 +2679,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
 	oscap_htable_free0(policy->selected_internal);
 	oscap_htable_free0(policy->selected_final);
-	oscap_htable_free0(policy->refine_rules_internal);
+	oscap_htable_free(policy->refine_rules_internal, (oscap_destruct_func)_refine_rule_internal_free);
         oscap_free(policy);
 }
 
