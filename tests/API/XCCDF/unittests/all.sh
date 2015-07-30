@@ -30,6 +30,7 @@ test_run "check/@multi-check that has zero definitions" $srcdir/test_xccdf_check
 test_run "xccdf:check-content-ref without @name" $srcdir/test_xccdf_check_content_ref_without_name_attr.sh
 test_run "without xccdf:check-content-refs" $srcdir/test_xccdf_check_without_content_refs.sh
 test_run "xccdf:refine-rule/@weight shall not be exported" $srcdir/test_xccdf_refine_rule.sh
+test_run "xccdf:refine-rule shall refine rules" $srcdir/test_xccdf_refine_rule_refine.sh
 test_run "xccdf:fix/@distruption|@complexity shall not be exported" $srcdir/test_xccdf_fix_attr_export.sh
 test_run "xccdf:complex-check/@operator=AND -- notchecked" $srcdir/test_xccdf_complex_check_and_notchecked.sh
 test_run "Check Processing Algorithm -- complex-check priority" $srcdir/test_xccdf_check_processing_complex_priority.sh
