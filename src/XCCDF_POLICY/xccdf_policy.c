@@ -49,6 +49,7 @@
 #include "common/debug_priv.h"
 #include "common/assume.h"
 #include "common/text_priv.h"
+#include "math.h"
 
 /**
  * XCCDF policy model structure contains xccdf_benchmark as reference
@@ -93,6 +94,8 @@ struct xccdf_policy {
 	struct oscap_htable		*selected_internal;
 	/** A hash which for given item defines final selection */
 	struct oscap_htable		*selected_final;
+	/* The hash-table contains the latest refine-rule for specified item-id. */
+	struct oscap_htable		*refine_rules_internal;
 };
 
 /* Macros to generate iterators, getters and setters */
@@ -149,12 +152,61 @@ typedef struct xccdf_flat_score {
 
 } xccdf_flat_score_t;
 
+/*
+ * Struct contains final values defined in several xccdf_refine_rule structures.
+ * There is no "item" member. Hash-table key is used instead of this member.
+ * This structure is used only for internal rule processing.
+ */
+struct xccdf_refine_rule_internal {
+	char *selector;
+	xccdf_role_t role;
+	xccdf_level_t severity;
+	xccdf_numeric weight;
+};
+
+static void _merge_refine_rules(struct xccdf_refine_rule_internal* dst, const struct xccdf_refine_rule* src)
+{
+	bool new_weight_defined = xccdf_refine_rule_weight_defined(src);
+	if ( new_weight_defined ) {
+		xccdf_numeric new_weight = xccdf_refine_rule_get_weight(src);
+		dst->weight = new_weight;
+	}
+
+
+	const char* new_selector = xccdf_refine_rule_get_selector(src);
+	if (new_selector != NULL) {
+		oscap_free(dst->selector);
+		dst->selector = strdup( new_selector );
+	}
+
+	xccdf_role_t new_role = xccdf_refine_rule_get_role(src);
+	if ( new_role != 0 ) {
+		dst->role = new_role;
+	}
+
+	xccdf_level_t new_severity = xccdf_refine_rule_get_severity(src);
+	if ( new_severity != 0 ) {
+		dst->severity = new_severity;
+	}
+ }
+
+static struct xccdf_refine_rule_internal* xccdf_refine_rule_internal_new_from_refine_rule(const struct xccdf_refine_rule* rr)
+{
+	struct xccdf_refine_rule_internal* new_rr = oscap_calloc(1, sizeof(struct xccdf_refine_rule_internal));
+	new_rr->selector = oscap_strdup(xccdf_refine_rule_get_selector(rr));
+	new_rr->weight = rr->weight;
+	new_rr->role = rr->role;
+	new_rr->severity = rr->severity;
+	return new_rr;
+}
+
+
 /*==========================================================================*/
 /* Declaration of static (private to this file) functions
  * These function shoud not be called from outside. For exporting these 
  * elements has to call parent element's 
  */
-static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * item);
+static struct xccdf_refine_rule_internal * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * item);
 
 /**
  * Filter function returning true if the item is selected, false otherwise
@@ -171,6 +223,36 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
         }
 	return ((xccdf_item_get_type(titem) == XCCDF_RULE) &&
 		(xccdf_select_get_selected((struct xccdf_select *) item)));
+}
+
+static xccdf_role_t _get_final_role(const struct xccdf_rule *rule, const struct xccdf_refine_rule_internal* r_rule){
+	if (r_rule == NULL){
+		return xccdf_rule_get_role(rule);
+	} else {
+		return r_rule->role;
+	}
+}
+
+static inline bool _weight_defined(xccdf_numeric weight){
+	return (!isnan(weight));
+}
+
+static float _get_final_weight(const struct xccdf_rule *rule, const struct xccdf_refine_rule_internal* r_rule){
+	if (r_rule != NULL){
+		if ( _weight_defined(r_rule->weight) ) {
+			return r_rule->weight;
+		}
+	}
+	return xccdf_rule_get_weight(rule);
+
+}
+
+static xccdf_level_t _get_final_severity(const struct xccdf_rule *rule, const struct xccdf_refine_rule_internal* r_rule){
+	if (r_rule == NULL){
+		return xccdf_rule_get_severity(rule);
+	} else {
+		return r_rule->severity;
+	}
 }
 
 /**
@@ -626,8 +708,8 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 	if (result == NULL) {
 		// Check Processing Algorithm -- Check.Initialize
 		// Check Processing Algorithm -- Check.Selector
-		struct xccdf_refine_rule *r_rule = xccdf_policy_get_refine_rules_by_rule(policy, rule);
-		char *selector = (r_rule == NULL) ? NULL : (char *) xccdf_refine_rule_get_selector(r_rule);
+		struct xccdf_refine_rule_internal *r_rule = xccdf_policy_get_refine_rules_by_rule(policy, rule);
+		char *selector = (r_rule == NULL) ? NULL : r_rule->selector;
 		struct xccdf_check_iterator *candidate_it = xccdf_rule_get_checks_filtered(rule, selector);
 		if (selector != NULL && !xccdf_check_iterator_has_more(candidate_it)) {
 			xccdf_check_iterator_free(candidate_it);
@@ -693,20 +775,22 @@ int xccdf_policy_get_selected_rules_count(struct xccdf_policy *policy)
 	return ret;
 }
 
-static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct xccdf_rule *rule,
+static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct xccdf_policy *policy, const struct xccdf_rule *rule,
 								  struct xccdf_check *check,
 								  xccdf_test_result_type_t eval_result,
 								  const char *message)
 {
+	const char* rule_id = xccdf_rule_get_id(rule);
 	struct xccdf_rule_result *rule_ritem = xccdf_rule_result_new();
+	struct xccdf_refine_rule_internal* r_rule = oscap_htable_get(policy->refine_rules_internal, rule_id);
 
 	/* --Set rule-- */
-        xccdf_rule_result_set_result(rule_ritem, eval_result);
+	xccdf_rule_result_set_result(rule_ritem, eval_result);
 	xccdf_rule_result_set_idref(rule_ritem, xccdf_rule_get_id(rule));
-	xccdf_rule_result_set_weight(rule_ritem, xccdf_item_get_weight((struct xccdf_item *) rule));
+	xccdf_rule_result_set_weight(rule_ritem, _get_final_weight(rule, r_rule));
 	xccdf_rule_result_set_version(rule_ritem, xccdf_rule_get_version(rule));
-	xccdf_rule_result_set_severity(rule_ritem, xccdf_rule_get_severity(rule));
-	xccdf_rule_result_set_role(rule_ritem, xccdf_rule_get_role(rule));
+	xccdf_rule_result_set_severity(rule_ritem, _get_final_severity(rule, r_rule));
+	xccdf_rule_result_set_role(rule_ritem, _get_final_role(rule, r_rule));
 
 	xccdf_rule_result_set_time_current(rule_ritem);
 
@@ -761,7 +845,7 @@ static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
 	if (result != NULL) {
 		/* Add result to policy */
 		/* TODO: instance */
-		rule_result = _xccdf_rule_result_new_from_rule(rule, check, res, message);
+		rule_result = _xccdf_rule_result_new_from_rule(policy, rule, check, res, message);
 		xccdf_result_add_rule_result(result, rule_result);
 	} else
 		xccdf_check_free(check);
@@ -1025,12 +1109,19 @@ bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, str
 static inline int
 _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rule *rule, struct xccdf_result *result)
 {
-	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
+	const char* rule_id = xccdf_rule_get_id(rule);
+	const bool is_selected = xccdf_policy_is_item_selected(policy, rule_id);
 	const char *message = NULL;
 
 	int report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
 	if (report)
 		return report;
+
+	struct xccdf_refine_rule_internal* r_rule = oscap_htable_get(policy->refine_rules_internal, rule_id);
+
+	xccdf_role_t role = _get_final_role(rule,r_rule);
+	if (role  == XCCDF_ROLE_UNCHECKED )
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
 
 	if (!is_selected)
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
@@ -1941,6 +2032,54 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 	return result;
 }
 
+/**
+ * Add refine rule to item
+ *
+ * Add refine-rule to item ID. If item has some previous refine-rule,
+ * new refine-rule (partially) override the old one
+ * @param refine_rules_internal
+ * @param new_rr refine-rule to add
+ * @param item_id
+ */
+static void _add_refine_rule(struct oscap_htable* refine_rules_internal, const struct xccdf_refine_rule* new_rr, const char* item_id)
+{
+	struct xccdf_refine_rule_internal* old = oscap_htable_get(refine_rules_internal, item_id);
+	if ( old != NULL ) { // modify refine-rule in hash table
+		_merge_refine_rules(old, new_rr);
+	} else { // add new refine-rule
+		struct xccdf_refine_rule_internal* new_internal_rr = xccdf_refine_rule_internal_new_from_refine_rule(new_rr);
+		oscap_htable_add(refine_rules_internal, item_id, new_internal_rr);
+	}
+}
+
+static inline void _xccdf_policy_add_refine_rule_internal(struct xccdf_policy *policy, struct xccdf_benchmark *benchmark, const struct xccdf_refine_rule *refine_rule)
+{
+	const char * rr_item_id = xccdf_refine_rule_get_item(refine_rule);
+	struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_ITEM, rr_item_id);
+	if ( item != NULL ) { // get by id
+		_add_refine_rule(policy->refine_rules_internal, refine_rule, rr_item_id);
+		return;
+	}
+
+	// try to get by cluster-id
+	struct oscap_htable_iterator *hit = xccdf_benchmark_get_cluster_items(benchmark, rr_item_id);
+	if (hit == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Selector ID(%s) does not exist in Benchmark.", rr_item_id);
+		return;
+	}
+
+	while (oscap_htable_iterator_has_more(hit)) { // iterate through every item in cluster
+		const char *item_id = oscap_htable_iterator_next_key(hit);
+		if (item_id == NULL) {
+			assert(item_id != NULL);
+			continue;
+		}
+		_add_refine_rule(policy->refine_rules_internal,refine_rule, item_id);
+	}
+	oscap_htable_iterator_free(hit);
+}
+
+
 bool
 xccdf_policy_add_select(struct xccdf_policy *policy, struct xccdf_select *sel)
 {
@@ -1989,6 +2128,28 @@ static void _xccdf_policy_add_profile_selectors(struct xccdf_policy* policy, str
 }
 
 /**
+ * @brief _xccdf_policy_add_profile_refine_rules
+ * @param policy
+ * @param benchmark
+ * @param profile
+ */
+static void _xccdf_policy_add_profile_refine_rules(struct xccdf_policy* policy, struct xccdf_benchmark *benchmark, struct xccdf_profile *profile)
+{
+	struct xccdf_refine_rule_iterator *rr_it = xccdf_profile_get_refine_rules(profile);
+	/* Iterate through refine_rules in profile */
+	while (xccdf_refine_rule_iterator_has_more(rr_it)) {
+		struct xccdf_refine_rule *rr = xccdf_refine_rule_iterator_next(rr_it);
+		if (rr == NULL) {
+			assert(false);
+			continue;
+		}
+		struct xccdf_refine_rule *clone = xccdf_refine_rule_clone(rr);
+		_xccdf_policy_add_refine_rule_internal(policy, benchmark, clone);
+	}
+	xccdf_refine_rule_iterator_free(rr_it);
+}
+
+/**
  * Constructor for structure XCCDF Policy. Create the structure and resolve all rules
  * from benchmark that are not present in selectors. This step is necessary because of 
  * default values of groups / rules that can be added to Policy whether or not they have
@@ -2014,12 +2175,15 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 
 	policy->selected_internal = oscap_htable_new();
 	policy->selected_final = oscap_htable_new();
+	policy->refine_rules_internal = oscap_htable_new();
 	policy->model = model;
 
 	benchmark = xccdf_policy_model_get_benchmark(model);
 
-	if (profile)
+	if (profile) {
 		_xccdf_policy_add_profile_selectors(policy, benchmark, profile);
+		_xccdf_policy_add_profile_refine_rules(policy, benchmark, profile);
+	}
 
         /* Iterate through items in benchmark and resolve rules */
         item_it = xccdf_benchmark_get_content(benchmark);
@@ -2315,23 +2479,10 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
     return score;
 }
 
-static struct xccdf_refine_rule * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * item)
+static struct xccdf_refine_rule_internal * xccdf_policy_get_refine_rules_by_rule(struct xccdf_policy * policy, struct xccdf_item * rule)
 {
-    struct xccdf_refine_rule * r_rule = NULL;
-    struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
-    if (profile == NULL) return NULL;
-
-    /* Get refine-rule for this item */
-    struct xccdf_refine_rule_iterator * r_rule_it = xccdf_profile_get_refine_rules(profile);
-    while (xccdf_refine_rule_iterator_has_more(r_rule_it)) {
-        r_rule = xccdf_refine_rule_iterator_next(r_rule_it);
-        if (!strcmp(xccdf_refine_rule_get_item(r_rule), xccdf_rule_get_id((struct xccdf_rule *) item)))
-            break;
-        else r_rule = NULL;
-    }
-    xccdf_refine_rule_iterator_free(r_rule_it);
-
-    return r_rule;
+	const char* item_id = xccdf_item_get_id(rule);
+	return oscap_htable_get(policy->refine_rules_internal, item_id);
 }
 
 const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item)
@@ -2402,25 +2553,25 @@ struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struc
     xccdf_type_t type = xccdf_item_get_type(item);
     switch (type) {
         case XCCDF_RULE: {
-            struct xccdf_refine_rule * r_rule = xccdf_policy_get_refine_rules_by_rule(policy, item);
+            struct xccdf_refine_rule_internal * r_rule = xccdf_policy_get_refine_rules_by_rule(policy, item);
             if (r_rule == NULL) return item;
 
             new_item = (struct xccdf_item *) xccdf_rule_clone((struct xccdf_rule *) item);
-            if ((int)xccdf_refine_rule_get_role(r_rule) > 0)
-                xccdf_rule_set_role((struct xccdf_rule *) new_item, xccdf_refine_rule_get_role(r_rule));
-            if ((int)xccdf_refine_rule_get_severity(r_rule) > 0)
-                xccdf_rule_set_severity((struct xccdf_rule *) new_item, xccdf_refine_rule_get_severity(r_rule));
-            if (xccdf_refine_rule_weight_defined(r_rule))
-                xccdf_rule_set_weight((struct xccdf_rule *) new_item, xccdf_refine_rule_get_weight(r_rule));
-            break;
-        }
+            if (r_rule->role > 0)
+                xccdf_rule_set_role((struct xccdf_rule *) new_item, r_rule->role);
+            if (r_rule->severity > 0)
+                xccdf_rule_set_severity((struct xccdf_rule *) new_item, r_rule->severity);
+            if (_weight_defined(r_rule->weight))
+                xccdf_rule_set_weight((struct xccdf_rule *) new_item, r_rule->weight);
+                break;
+            }
         case XCCDF_GROUP: {
-            struct xccdf_refine_rule * r_rule = xccdf_policy_get_refine_rules_by_rule(policy, item);
+        struct xccdf_refine_rule_internal * r_rule = xccdf_policy_get_refine_rules_by_rule(policy, item);
             if (r_rule == NULL) return item;
 
             new_item = (struct xccdf_item *) xccdf_group_clone((struct xccdf_group *) item);
-            if (xccdf_refine_rule_weight_defined(r_rule))
-                xccdf_group_set_weight((struct xccdf_group *) new_item, xccdf_refine_rule_get_weight(r_rule));
+            if (_weight_defined(r_rule->weight))
+                xccdf_group_set_weight((struct xccdf_group *) new_item, r_rule->weight);
             else {
                 xccdf_group_free(new_item);
                 return item;
@@ -2523,6 +2674,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	oscap_list_free(policy->results, (oscap_destruct_func) xccdf_result_free);
 	oscap_htable_free0(policy->selected_internal);
 	oscap_htable_free0(policy->selected_final);
+	oscap_htable_free0(policy->refine_rules_internal);
         oscap_free(policy);
 }
 
