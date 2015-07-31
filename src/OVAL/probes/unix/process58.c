@@ -102,6 +102,7 @@ extern char const *_cap_names[];
 #include "probe/entcmp.h"
 #include "alloc.h"
 #include "common/debug_priv.h"
+#include <ctype.h>
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -362,7 +363,7 @@ struct dynamic_buffer{
  * @param buffer output buffer with non-zero size
  * @return ps-like command info or NULL
  */
-static inline bool get_process_cmdline(const char* filepath, struct dynamic_buffer* const  buffer){
+static inline bool get_process_cmdline(const char* filepath, struct dynamic_buffer* const buffer){
 
 	assert(buffer->size > 0);
 
@@ -415,9 +416,12 @@ static inline bool get_process_cmdline(const char* filepath, struct dynamic_buff
 		// Program and args are separated by '\0'
 		// Replace them with spaces ' '
 		while( i >= 0 ){
-			char chr = buffer->mem[i];
+			const char chr = buffer->mem[i];
 			if ( ( chr == '\0') || ( chr == '\n' ) ) {
 				buffer->mem[i] = ' ';
+			// "ps" replace non-printable characters by '.' with LC_ALL=C
+			} else if ( !isprint(chr) ) {
+				buffer->mem[i] = '.';
 			}
 			--i;
 		}
