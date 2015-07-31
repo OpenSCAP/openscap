@@ -56,8 +56,10 @@ struct oscap_string *oscap_string_new()
 
 void oscap_string_free(struct oscap_string *s)
 {
-	oscap_free(s->str);
-	oscap_free(s);
+	if (s != NULL) {
+		oscap_free(s->str);
+		oscap_free(s);
+	}
 }
 
 void oscap_string_append_char(struct oscap_string *s, char c)
