@@ -103,6 +103,7 @@ extern char const *_cap_names[];
 #include "alloc.h"
 #include "common/debug_priv.h"
 #include <ctype.h>
+#include "common/oscap_buffer.h"
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -352,20 +353,13 @@ static int get_exec_shield_status(int pid) {
 	return ret;
 }
 
-struct dynamic_buffer{
-	char* mem;
-	size_t size;
-};
-
 /**
  * Parse /proc/%d/cmdline file
  * @param filepath Path to file ~ use preallocated buffer for the path
  * @param buffer output buffer with non-zero size
  * @return ps-like command info or NULL
  */
-static inline bool get_process_cmdline(const char* filepath, struct dynamic_buffer* const buffer){
-
-	assert(buffer->size > 0);
+static inline bool get_process_cmdline(const char* filepath, struct oscap_buffer* const buffer){
 
 	int fd = open(filepath, O_RDONLY, 0);
 
@@ -373,55 +367,46 @@ static inline bool get_process_cmdline(const char* filepath, struct dynamic_buff
 		return false;
 	}
 
-	size_t used = 0;
-	ssize_t remaining_size;
-	ssize_t read_size;
+	oscap_buffer_clear(buffer);
+
+
 
 	for(;;) {
-
+		static const int chunk_size = 1024;
+		char chunk[chunk_size];
 		// Read data, store to buffer
-		remaining_size = buffer->size - used - 1; // for trailing zeros
-		read_size = read(fd, buffer->mem + used, remaining_size );
-		used += read_size;
+		ssize_t read_size = read(fd, chunk, chunk_size );
+		oscap_buffer_append_binary_data(buffer, chunk, read_size);
 
 		// If reach end of file, then end the loop
-		if (remaining_size != read_size) {
+		if (chunk_size != read_size) {
 			break;
 		}
-
-		buffer->size *= 2;
-		// Double size of buffer
-		char* new_mem = realloc(buffer->mem, sizeof(char) * buffer->size );
-		if ( new_mem == NULL ){
-			close(fd);
-			return false;
-		}
-		buffer->mem = new_mem;
 	}
 
 	close(fd);
 
-	if ( used == 0 ) { // empty file
+	int length = oscap_buffer_get_length(buffer);
+	char* buffer_mem = oscap_buffer_get_raw(buffer);
+
+	if ( length == 0 ) { // empty file
 		return false;
 	} else {
 
-		buffer->mem[used] = '\0';
-
-		// Skip trailing zeros
-		int i = used - 1;
-		while ( (i > 0) && (buffer->mem[i] == '\0') ) {
+		// Skip multiple trailing zeros
+		int i = length - 1;
+		while ( (i > 0) && (buffer_mem[i] == '\0') ) {
 			--i;
 		}
 
 		// Program and args are separated by '\0'
 		// Replace them with spaces ' '
 		while( i >= 0 ){
-			const char chr = buffer->mem[i];
+			char chr = buffer_mem[i];
 			if ( ( chr == '\0') || ( chr == '\n' ) ) {
-				buffer->mem[i] = ' ';
-			// "ps" replace non-printable characters by '.' with LC_ALL=C
-			} else if ( !isprint(chr) ) {
-				buffer->mem[i] = '.';
+				buffer_mem[i] = ' ';
+			} else if ( !isprint(chr) ) { // "ps" replace non-printable characters with '.' (LC_ALL=C)
+				buffer_mem[i] = '.';
 			}
 			--i;
 		}
@@ -448,14 +433,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	DIR *d;
 	struct dirent *ent;
 
-	const size_t DEFAULT_BUFFER_SIZE = 256;
-	struct dynamic_buffer cmdline_buffer = {
-		.mem = malloc(DEFAULT_BUFFER_SIZE),
-		.size = DEFAULT_BUFFER_SIZE
-	};
-	if ( cmdline_buffer.mem == NULL ) {
-		return err;
-	}
+	struct oscap_buffer *cmdline_buffer = oscap_buffer_new();
 
 	d = opendir("/proc");
 	if (d == NULL)
@@ -519,13 +497,13 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 		if (ppid == 2)
 			continue;
 
-		char* cmd;
+		const char* cmd;
 		if (state == 'Z') { // zombie
 			cmd = make_defunc_str(cmd_buffer);
 		} else {
 			snprintf(buf, 32, "/proc/%d/cmdline", pid);
-			if (get_process_cmdline(buf,&cmdline_buffer)) {
-				cmd = cmdline_buffer.mem; // use full cmdline
+			if (get_process_cmdline(buf, cmdline_buffer)) {
+				cmd = oscap_buffer_get_raw(cmdline_buffer); // use full cmdline
 			} else {
 				cmd = cmd_buffer + 1;
 			}
@@ -630,7 +608,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 		SEXP_free(pid_sexp);
 	}
         closedir(d);
-	free(cmdline_buffer.mem);
+	oscap_buffer_free(cmdline_buffer);
 	return err;
 }
 
