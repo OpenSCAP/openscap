@@ -65,6 +65,9 @@ selinux/oscap.pp
 /lib/wchar.h
 /openscap-*.tar.gz
 /openscap-*/
+/tests/**/*.sh.log
+/tests/**/*.sh.trs
+/tests/**/test-suite.log
 /tests/API/CPE/dict/dict.xml.out
 /tests/API/CPE/dict/test_api_cpe_dict
 /tests/API/CPE/dict/test_api_cpe_dict.log
