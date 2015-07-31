@@ -8,6 +8,7 @@ int test_append_char(void);
 int test_append_string(void);
 int test_append_binary_data(void);
 int test_null_parameters(void);
+int test_buffer_clear(void);
 
 int test_append_char()
 {
@@ -52,11 +53,10 @@ int test_append_string()
 	return retval;
 }
 
+#define ASSERT_LENGTH(STR, LENGTH) if (oscap_buffer_get_length(STR) != (LENGTH)) { fprintf(stderr, "Length of result does not match the required length.\n"); return 1;}
 
 int test_append_binary_data()
 {
-	#define ASSERT_LENGTH(STR, LENGTH) if (oscap_buffer_get_length(STR) != (LENGTH)) { fprintf(stderr, "Length of result does not match the required length.\n"); return 1;}
-
 	static const char* data[] = { 
 		"\0",
 		"\0A",
@@ -108,6 +108,25 @@ int test_null_parameters() {
 	return 0;
 }
 
+int test_buffer_clear()
+{
+	struct oscap_buffer *s = oscap_buffer_new();
+	ASSERT_LENGTH(s, 0);
+	
+	oscap_buffer_clear(s);
+	ASSERT_LENGTH(s, 0);
+	
+	char data = 'A';
+	oscap_buffer_append_binary_data(s, &data, 1);
+	ASSERT_LENGTH(s, 1);
+	
+	oscap_buffer_clear(s);
+	ASSERT_LENGTH(s, 0);
+	
+	oscap_buffer_free(s);
+	return 0;
+}
+
 int main (int argc, char *argv[])
 {
 	int retval = 0;
@@ -124,6 +143,10 @@ int main (int argc, char *argv[])
 	}
 
 	if ((retval = test_null_parameters()) != 0 ) {
+		return retval;
+	}
+
+	if ((retval = test_buffer_clear()) != 0 ) {
 		return retval;
 	}
 
