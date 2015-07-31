@@ -19,5 +19,6 @@ EXTRA_DIST += \
 	loginuid.oval.xml \
 	loginuid.sh \
 	sessionid.oval.xml \
-	sessionid.sh
-
+	sessionid.sh \
+	command_line.xml \
+	command_line.sh
