@@ -3,7 +3,9 @@ noinst_LTLIBRARIES = libxccdf_policy.la
 libxccdf_policy_la_SOURCES = \
 	reporter.c \
 	reporter_priv.h \
+	xccdf_policy_resolve.c \
 	xccdf_policy.c \
+	xccdf_policy_resolve.h \
 	xccdf_policy_engine.c \
 	xccdf_policy_engine_priv.h \
 	xccdf_policy_model_priv.h \
