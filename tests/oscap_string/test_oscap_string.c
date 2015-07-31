@@ -52,7 +52,13 @@ int test_append_string()
 int main (int argc, char *argv[])
 {
 	int retval = 0;
-	retval = test_append_char();
-	retval = test_append_string();
+	if ((retval = test_append_char()) != 0 ) {
+		return retval;
+	}
+
+	if ((retval = test_append_string()) != 0 ) {
+		return retval;
+	}
 	return retval;
 }
+
