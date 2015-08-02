@@ -37,7 +37,7 @@
 
 #include "oscap_acquire.h"
 #include "common/_error.h"
-
+#include "common/oscap_buffer.h"
 #ifndef P_tmpdir
 #define P_tmpdir "/tmp"
 #endif
@@ -78,15 +78,6 @@ oscap_acquire_cleanup_dir(char **dir_path)
 		*dir_path = NULL;
 	}
 }
-
-/**
- * Struct used for downloading to memory via CURL
- */
-struct download_memory{
-	size_t size;
-	size_t used;
-	char* ptr;
-};
 
 int
 oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
@@ -145,7 +136,7 @@ oscap_acquire_url_to_filename(const char *url)
 char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 {
 	CURL *curl;
-	struct download_memory data_struct = {.size=0, .used=0, .ptr = NULL };
+	struct oscap_buffer* buffer = oscap_buffer_new();
 
 	curl = curl_easy_init();
 	if (curl == NULL) {
@@ -156,47 +147,27 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data_struct);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 
 	CURLcode res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
 
 	if (res != 0) {
 		oscap_seterr(OSCAP_EFAMILY_NET, "Download failed: %s", curl_easy_strerror(res));
-		oscap_free(data_struct.ptr);
+		oscap_buffer_free(buffer);
 		return NULL;
 	}
 
-	*memory_size = data_struct.used;
-	return data_struct.ptr;
+	*memory_size = oscap_buffer_get_length(buffer);
+	char* data = oscap_buffer_bequeath(buffer); // get data and free buffer struct
+	return data;
 }
 
 size_t write_to_memory_callback(char *ptr, size_t size, size_t nmemb, void *userdata)
 {
-	struct download_memory* const dest = (struct download_memory* ) userdata;
-
 	size_t new_received_size = size * nmemb; // total size of newly received data
-	size_t new_size = dest->used + new_received_size; // size of old + new data
-
-	if (dest->size < new_size){
-		char* new_ptr = oscap_realloc(dest->ptr, new_size);
-
-		// Failed to allocate new memory
-		if (new_ptr == NULL){
-			return 0; // cause CURLE_WRITE_ERROR
-		}
-
-		dest->size = new_size;
-		dest->ptr = new_ptr;
-
-	}
-
-	// Add newly received data
-	memcpy( &(dest->ptr[dest->used]) , ptr, new_received_size);
-	dest->used += new_received_size;
-
+	oscap_buffer_append_binary_data((struct oscap_buffer*)userdata, ptr, new_received_size);
 	return new_received_size;
-
 }
 
 char *
