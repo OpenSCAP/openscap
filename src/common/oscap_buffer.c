@@ -55,6 +55,11 @@ struct oscap_buffer *oscap_buffer_new()
 	return s;
 }
 
+void oscap_buffer_clear(struct oscap_buffer *s)
+{
+	s->str[0] = '\0';
+	s->length = 0;
+}
 
 void oscap_buffer_free(struct oscap_buffer *s)
 {

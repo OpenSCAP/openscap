@@ -39,6 +39,12 @@ struct oscap_buffer *oscap_buffer_new(void);
 void oscap_buffer_free(struct oscap_buffer *s);
 
 /**
+ * Erases the contents of the buffer. Length of string becomes 0
+ * @param s string
+ */
+void oscap_buffer_clear(struct oscap_buffer *s);
+
+/**
  * Append a single char at the end of a buffer.
  * @param s buffer
  * @param c to append
