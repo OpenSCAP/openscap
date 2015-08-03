@@ -21,4 +21,5 @@ EXTRA_DIST += \
 	sessionid.oval.xml \
 	sessionid.sh \
 	command_line.xml \
-	command_line.sh
+	command_line.sh \
+	stopped_process.sh
