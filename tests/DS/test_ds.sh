@@ -336,6 +336,7 @@ function test_rds_split {
 test_init "test_ds.log"
 
 test_run "sds_simple" test_sds sds_simple scap-fedora14-xccdf.xml 0
+test_run "sds_simple OVAL 5.11.1" test_sds sds_simple_5_11_1 simple_xccdf.xml 0
 test_run "sds_multiple_oval" test_sds sds_multiple_oval multiple-oval-xccdf.xml 0
 test_run "sds_missing_oval-prepare" [ ! -f sds_missing_oval/second-oval.xml ]
 test_run "sds_missing_oval" test_sds sds_missing_oval multiple-oval-xccdf.xml 0
