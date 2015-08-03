@@ -63,8 +63,10 @@ void oscap_buffer_clear(struct oscap_buffer *s)
 
 void oscap_buffer_free(struct oscap_buffer *s)
 {
-	oscap_free(s->str);
-	oscap_free(s);
+	if (s != NULL) {
+		oscap_free(s->str);
+		oscap_free(s);
+	}
 }
 
 char* oscap_buffer_bequeath(struct oscap_buffer *s){
