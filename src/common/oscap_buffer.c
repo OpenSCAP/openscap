@@ -79,6 +79,7 @@ void oscap_buffer_append_char(struct oscap_buffer *s, char c)
 	s->str[s->length] = '\0';
 }
 
+
 void oscap_buffer_append_string(struct oscap_buffer *s, const char *t)
 {
 	if (s == NULL || t == NULL)
@@ -98,7 +99,7 @@ void oscap_buffer_append_string(struct oscap_buffer *s, const char *t)
 	s->length += append_length;
 }
 
-const char *oscap_buffer_get_cstr(const struct oscap_buffer *s)
+char *oscap_buffer_get_raw(const struct oscap_buffer *s)
 {
 	return s->str;
 }
