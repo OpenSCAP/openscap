@@ -73,4 +73,10 @@ void oscap_buffer_append_string(struct oscap_buffer *s, const char *t);
  */
 char *oscap_buffer_get_raw(const struct oscap_buffer *s);
 
+/**
+ * Get length of internal data
+ * @param s buffer
+ * @return count of stored bytes
+ */
+size_t oscap_buffer_get_length(const struct oscap_buffer *s);
 #endif
