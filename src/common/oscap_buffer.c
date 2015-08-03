@@ -99,5 +99,8 @@ char *oscap_buffer_get_raw(const struct oscap_buffer *s)
 	return s->str;
 }
 
+size_t oscap_buffer_get_length(const struct oscap_buffer *s){
+	return s->length;
+}
 
 
