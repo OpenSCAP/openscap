@@ -36,7 +36,7 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_ENUMERATION_INVALID (-1)
 
-#define OVAL_SUPPORTED "5.11"
+#define OVAL_SUPPORTED "5.11.1"
 
 #define OVAL_COMMON_NAMESPACE      BAD_CAST "http://oval.mitre.org/XMLSchema/oval-common-5"
 #define OVAL_DIGSIG_NAMESPACE      BAD_CAST "http://www.w3.org/2000/09/xmldsig#"
