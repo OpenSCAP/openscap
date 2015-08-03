@@ -42,7 +42,7 @@ void oscap_string_free(struct oscap_string *s)
 
 void oscap_string_append_char(struct oscap_string *s, char c)
 {
-	oscap_buffer_append_char((struct oscap_buffer*)s,c);
+	oscap_buffer_append_binary_data((struct oscap_buffer*)s, &c, 1);
 }
 
 void oscap_string_append_string(struct oscap_string *s, const char *t)

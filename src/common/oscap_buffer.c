@@ -62,24 +62,6 @@ void oscap_buffer_free(struct oscap_buffer *s)
 	oscap_free(s);
 }
 
-void oscap_buffer_append_char(struct oscap_buffer *s, char c)
-{
-	if (s == NULL)
-		return;
-	if ((s->length + 1) + 1 > s->capacity) {
-		/* Aligning allocated memory to multiples of INITIAL_CAPACITY.
-		 * We pass to realloc the nearest greater muliple of INITIAL_CAPACITY
-		 * rather than only needed capacity in order to not fragment
-		 * the memory.
-		 */
-		s->capacity = (s->capacity / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
-		s->str = oscap_realloc(s->str, s->capacity);
-	}
-	s->str[s->length++] = c;
-	s->str[s->length] = '\0';
-}
-
-
 void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, const size_t append_length)
 {
 	if (s == NULL || data == NULL)
