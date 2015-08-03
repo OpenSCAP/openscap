@@ -80,11 +80,10 @@ void oscap_buffer_append_char(struct oscap_buffer *s, char c)
 }
 
 
-void oscap_buffer_append_string(struct oscap_buffer *s, const char *t)
+void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, const size_t append_length)
 {
-	if (s == NULL || t == NULL)
+	if (s == NULL || data == NULL)
 		return;
-	const size_t append_length = strlen(t);
 	if (s->length + append_length + 1 > s->capacity)  {
 		/* Aligning allocated memory to multiples of INITIAL_CAPACITY.
 		 * We pass to realloc the nearest greater muliple of INITIAL_CAPACITY
@@ -94,9 +93,18 @@ void oscap_buffer_append_string(struct oscap_buffer *s, const char *t)
 		s->capacity = ((s->capacity + append_length - 1) / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
 		s->str = oscap_realloc(s->str, s->capacity);
 	}
-	// Terminating null byte is included by strcpy
-	strcpy(s->str + s->length, t);
+
+	memcpy(s->str + s->length, data, append_length);
 	s->length += append_length;
+	s->str[s->length] = '\0';
+}
+
+void oscap_buffer_append_string(struct oscap_buffer *s, const char *t)
+{
+	if (t == NULL)
+		return;
+	size_t append_length = strlen(t);
+	oscap_buffer_append_binary_data(s, t, append_length);
 }
 
 char *oscap_buffer_get_raw(const struct oscap_buffer *s)

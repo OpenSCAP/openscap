@@ -46,6 +46,14 @@ void oscap_buffer_free(struct oscap_buffer *s);
 void oscap_buffer_append_char(struct oscap_buffer *s, char c);
 
 /**
+ * Append multiple characters at the end of string. These characters can contains '\0'
+ * @param s string
+ * @param t binary data to append
+ * @param append_length size of data to append in bytes
+ */
+void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, const size_t append_length);
+
+/**
  * Append multiple characters at the end of buffer.
  * @param s buffer
  * @param t to append
