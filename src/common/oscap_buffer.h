@@ -39,6 +39,13 @@ struct oscap_buffer *oscap_buffer_new(void);
 void oscap_buffer_free(struct oscap_buffer *s);
 
 /**
+ * Return pointer to internal data
+ * Free oscap_buffer structure
+ * @param s buffer
+ */
+char* oscap_buffer_bequeath(struct oscap_buffer *s);
+
+/**
  * Erases the contents of the buffer. Length of string becomes 0
  * @param s string
  */

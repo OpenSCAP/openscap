@@ -67,6 +67,12 @@ void oscap_buffer_free(struct oscap_buffer *s)
 	oscap_free(s);
 }
 
+char* oscap_buffer_bequeath(struct oscap_buffer *s){
+	char* str = s->str;
+	oscap_free(s);
+	return str;
+}
+
 void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, const size_t append_length)
 {
 	if (s == NULL || data == NULL)
