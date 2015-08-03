@@ -53,10 +53,10 @@ void oscap_buffer_append_char(struct oscap_buffer *s, char c);
 void oscap_buffer_append_string(struct oscap_buffer *s, const char *t);
 
 /**
- * Get buffer data as constant pointer to char
+ * Get buffer data as pointer to char
  * @param s buffer
  * @return pointer to data
  */
-const char *oscap_buffer_get_cstr(const struct oscap_buffer *s);
+char *oscap_buffer_get_raw(const struct oscap_buffer *s);
 
 #endif

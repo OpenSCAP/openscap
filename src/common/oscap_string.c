@@ -52,5 +52,5 @@ void oscap_string_append_string(struct oscap_string *s, const char *t)
 
 const char *oscap_string_get_cstr(const struct oscap_string *s)
 {
-	return oscap_buffer_get_cstr((struct oscap_buffer*)s);
+	return oscap_buffer_get_raw((struct oscap_buffer*)s);
 }
