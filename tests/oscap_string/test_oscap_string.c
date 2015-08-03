@@ -7,6 +7,7 @@
 int test_append_char(void);
 int test_append_string(void);
 int test_append_binary_data(void);
+int test_null_parameters(void);
 
 int test_append_char()
 {
@@ -94,6 +95,19 @@ int test_append_binary_data()
 	return 0;
 }
 
+int test_null_parameters() {
+	struct oscap_buffer *s = oscap_buffer_new();
+	oscap_buffer_append_binary_data(s, NULL, 4);
+
+	if (oscap_buffer_get_length(s) != 0) {
+		fprintf(stderr, "Appended NULL changed the length of string\n");
+		return 1;
+	}
+	oscap_buffer_free(NULL);
+	oscap_buffer_free(s);
+	return 0;
+}
+
 int main (int argc, char *argv[])
 {
 	int retval = 0;
@@ -106,6 +120,10 @@ int main (int argc, char *argv[])
 	}
 
 	if ((retval = test_append_binary_data()) != 0 ) {
+		return retval;
+	}
+
+	if ((retval = test_null_parameters()) != 0 ) {
 		return retval;
 	}
 
