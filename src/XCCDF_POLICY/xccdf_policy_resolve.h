@@ -29,23 +29,24 @@
 #include <xccdf_policy_priv.h>
 #include <math.h>
 
+
 /*
  * Struct contains final values defined in several xccdf_refine_rule structures.
  * There is no "item" member. Hash-table key is used instead of this member.
  * This structure is used only for internal rule processing.
  */
-struct xccdf_refine_rule_internal {
-	char* selector;
-	xccdf_role_t role;
-	xccdf_level_t severity;
-	xccdf_numeric weight;
-};
+struct xccdf_refine_rule_internal;
+
+char* xccdf_refine_rule_internal_get_selector(const struct xccdf_refine_rule_internal*);
+xccdf_role_t xccdf_refine_rule_internal_get_role(const struct xccdf_refine_rule_internal*);
+xccdf_level_t xccdf_refine_rule_internal_get_severity(const struct xccdf_refine_rule_internal*);
+xccdf_numeric xccdf_refine_rule_internal_get_weight(const struct xccdf_refine_rule_internal*);
 
 /**
  * Return refine-rule belonging to an item (by item ID)
  * @return refine-rule or NULL
  */
-struct xccdf_refine_rule_internal*  xccdf_policy_get_refine_rule_by_item(struct xccdf_policy * policy, struct xccdf_item* item);
+struct xccdf_refine_rule_internal*  xccdf_policy_get_refine_rule_by_item(struct xccdf_policy* policy, struct xccdf_item* item);
 
 /**
  * Return true, if value of weight is valid
@@ -75,6 +76,6 @@ void xccdf_policy_add_profile_refine_rules(struct xccdf_policy* policy, struct x
 /**
  * Free function for xccdf_refine_rule_internal
  */
-void refine_rule_internal_free(struct xccdf_refine_rule_internal* item);
+void xccdf_refine_rule_internal_free(struct xccdf_refine_rule_internal* item);
 
 #endif

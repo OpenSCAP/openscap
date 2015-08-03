@@ -21,6 +21,18 @@
 #include "item.h"
 #include "common/_error.h"
 
+struct xccdf_refine_rule_internal {
+	char* selector;
+	xccdf_role_t role;
+	xccdf_level_t severity;
+	xccdf_numeric weight;
+};
+
+OSCAP_GETTER(char*, xccdf_refine_rule_internal, selector);
+OSCAP_GETTER(xccdf_role_t, xccdf_refine_rule_internal, role);
+OSCAP_GETTER(xccdf_level_t, xccdf_refine_rule_internal, severity);
+OSCAP_GETTER(xccdf_numeric, xccdf_refine_rule_internal, weight);
+
 /**
  * Merge refine rule from profile with internal refine rule
  * Defined src refine-rule will override dst values
@@ -69,7 +81,7 @@ static inline struct xccdf_refine_rule_internal* _xccdf_refine_rule_internal_new
 	return new_rr;
 }
 
-struct xccdf_refine_rule_internal * xccdf_policy_get_refine_rule_by_item(struct xccdf_policy * policy, struct xccdf_item * rule)
+struct xccdf_refine_rule_internal* xccdf_policy_get_refine_rule_by_item(struct xccdf_policy* policy, struct xccdf_item* rule)
 {
 	const char* item_id = xccdf_item_get_id(rule);
 	return oscap_htable_get(policy->refine_rules_internal, item_id);
@@ -127,13 +139,13 @@ static void _add_refine_rule(struct oscap_htable* refine_rules_internal, const s
 	}
 }
 
-void refine_rule_internal_free(struct xccdf_refine_rule_internal* item)
+void xccdf_refine_rule_internal_free(struct xccdf_refine_rule_internal* item)
 {
 	oscap_free(item->selector);
 	oscap_free(item);
 }
 
-static inline void _xccdf_policy_add_refine_rule_internal(struct xccdf_policy* policy, struct xccdf_benchmark* benchmark, const struct xccdf_refine_rule* refine_rule)
+static inline void _xccdf_policy_add_xccdf_refine_rule_internal(struct xccdf_policy* policy, struct xccdf_benchmark* benchmark, const struct xccdf_refine_rule* refine_rule)
 {
 	const char* rr_item_id = xccdf_refine_rule_get_item(refine_rule);
 	struct xccdf_item* item = xccdf_benchmark_get_member(benchmark, XCCDF_ITEM, rr_item_id);
@@ -165,13 +177,13 @@ void xccdf_policy_add_profile_refine_rules(struct xccdf_policy* policy, struct x
 	struct xccdf_refine_rule_iterator* rr_it = xccdf_profile_get_refine_rules(profile);
 	/* Iterate through refine_rules in profile */
 	while (xccdf_refine_rule_iterator_has_more(rr_it)) {
-		struct xccdf_refine_rule *rr = xccdf_refine_rule_iterator_next(rr_it);
+		struct xccdf_refine_rule* rr = xccdf_refine_rule_iterator_next(rr_it);
 		if (rr == NULL) {
 			assert(false);
 			continue;
 		}
 		struct xccdf_refine_rule* clone = xccdf_refine_rule_clone(rr);
-		_xccdf_policy_add_refine_rule_internal(policy, benchmark, clone);
+		_xccdf_policy_add_xccdf_refine_rule_internal(policy, benchmark, clone);
 	}
 	xccdf_refine_rule_iterator_free(rr_it);
 }
