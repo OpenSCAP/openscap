@@ -20,7 +20,43 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
-#ifndef OSCAP_BUFFER_H
-#define OSCAP_BUFFER_H
+#ifndef OSCAP_BUFFER_H_
+#define OSCAP_BUFFER_H_
+#include "util.h"
+
+struct oscap_buffer;
+
+/**
+ * Create a new buffer.
+ * @return pointer to a buffer on success, NULL on failure
+ */
+struct oscap_buffer *oscap_buffer_new(void);
+
+/**
+ * Free the buffer from memory.
+ * @param s buffer
+ */
+void oscap_buffer_free(struct oscap_buffer *s);
+
+/**
+ * Append a single char at the end of a buffer.
+ * @param s buffer
+ * @param c to append
+ */
+void oscap_buffer_append_char(struct oscap_buffer *s, char c);
+
+/**
+ * Append multiple characters at the end of buffer.
+ * @param s buffer
+ * @param t to append
+ */
+void oscap_buffer_append_string(struct oscap_buffer *s, const char *t);
+
+/**
+ * Get buffer data as constant pointer to char
+ * @param s buffer
+ * @return pointer to data
+ */
+const char *oscap_buffer_get_cstr(const struct oscap_buffer *s);
 
 #endif
