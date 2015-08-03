@@ -273,6 +273,12 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 			res = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), target_filename);
 		}
 	}
+	else {
+		oscap_seterr(OSCAP_EFAMILY_XML, "No '%s' component ref found in file '%s' in datastream of id '%s'.",
+				component_id, oscap_source_readable_origin(session->source), ds_sds_session_get_datastream_id(session));
+		return -1;
+	}
+
 	return res;
 }
 
