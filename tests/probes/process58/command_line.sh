@@ -2,11 +2,24 @@
 
 export LC_ALL=C
 set -e -o pipefail
+PROC="$srcdir/stopped_process.sh" # the process go to stopped state after start
 
 # Parse "ps" and return command line of process with $PID
 function get_process_cmdline() {
 	local PID="$1"
 	ps opid,cmd | grep -E "^\s*$PID\s+" | sed -E 's/^\s*'$PID'\s+(.*)$/\1/'
+}
+
+# Wait for command line of child
+function get_child_cmdline() {
+	local PID="$1"
+	for i in `seq 1 10`;
+		do
+			PROCESS_CMDLINE="`get_process_cmdline $PID`"
+			[[ "${PROCESS_CMDLINE}" == *${PROC}* ]] && break
+			sleep 0.1s
+		done
+	echo "${PROCESS_CMDLINE}"
 }
 
 # Actively wait for zombie process with specified PPID and return its PID
@@ -40,11 +53,10 @@ echo "stderr file: $stderr"
 ########################################################################
 ### Run monitored processes:
 ########################################################################
-	PROC="$srcdir/stopped_process.sh" # the process go to stopped state after start
 	# Run process with simple params
 	"${PROC}" param1 param2 param3 &
 	PID=$!
-	CMDLINE="`get_process_cmdline $PID`"
+	CMDLINE="`get_child_cmdline $PID`"
 	[ -n "$PID" ]
 	[ -n "$CMDLINE" ]
 
@@ -60,7 +72,7 @@ echo "stderr file: $stderr"
 	# Run process with special characters in parameters
 	"${PROC}" escaped "`echo -ne \"\e\n\E[1;33m\"`" "\\\n\e" &
 	ESCAPED_PID=$!
-	ESCAPED_CMDLINE="`get_process_cmdline ${ESCAPED_PID}`"
+	ESCAPED_CMDLINE="`get_child_cmdline ${ESCAPED_PID}`"
 	[ -n "${ESCAPED_PID}" ]
 	[ -n "${ESCAPED_CMDLINE}" ]
 
