@@ -49,6 +49,8 @@ EXTRA_DIST = test_ds.sh \
 		sds_multiple_oval/multiple-oval-xccdf.xml \
 		sds_simple/scap-fedora14-oval.xml \
 		sds_simple/scap-fedora14-xccdf.xml \
+		sds_simple_5_11_1/simple_oval.xml \
+		sds_simple_5_11_1/simple_xccdf.xml \
 		sds_subdir/subdir/scap-fedora14-oval.xml \
 		sds_subdir/subdir/scap-fedora14-xccdf.xml
 

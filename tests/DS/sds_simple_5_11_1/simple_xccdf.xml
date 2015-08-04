@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_xxx_benchmark_b1">
+  <xccdf:status>incomplete</xccdf:status>
+  <xccdf:title>Simple XCCDF</xccdf:title>
+  <xccdf:version>1.0</xccdf:version>
+  <xccdf:Rule selected="true" id="xccdf_xxx_rule_r1">
+    <xccdf:title>Some rule</xccdf:title>
+    <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <xccdf:check-content-ref href="simple_oval.xml" name="oval:x:def:1"/>
+    </xccdf:check>
+  </xccdf:Rule>
+</xccdf:Benchmark>
