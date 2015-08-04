@@ -397,7 +397,10 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 	bool mask = oval_entity_get_mask(entity);
 
 	/* omit the value and operation used for testing in oval_results if mask=true */
-	if (mask && !xmlStrcmp(root_node->name, BAD_CAST OVAL_ROOT_ELM_RESULTS)) {
+	/* Omit it only for older versions of OVAL than 5.10 */
+	oval_version_t oval_version = oval_definition_model_get_schema_version(entity->model);
+	if (oval_version_cmp(oval_version, OVAL_VERSION(5.10)) < 0 &&
+		mask && !xmlStrcmp(root_node->name, BAD_CAST OVAL_ROOT_ELM_RESULTS)) {
 		entity_node = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST "");
 	} else {
 		entity_node = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST content);

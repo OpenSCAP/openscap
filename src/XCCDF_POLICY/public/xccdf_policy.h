@@ -515,8 +515,9 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
  * @param policy Policy with profile
  * @param item XCCDF item to be tailored
  * @return new item that has to be freed by user
+ * @deprecated This function is deprecated and might be dropped from future releases.
  */
-struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item);
+OSCAP_DEPRECATED(struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item));
 
 /**
  * xccdf_policy_model_get_files and xccdf_item_get_files each return oscap_file_entries instead of raw strings
