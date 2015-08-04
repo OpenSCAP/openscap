@@ -20,6 +20,6 @@ EXTRA_DIST += \
 	loginuid.sh \
 	sessionid.oval.xml \
 	sessionid.sh \
-	command_line.xml \
 	command_line.sh \
+	command_line.xml \
 	stopped_process.sh
