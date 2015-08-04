@@ -1261,6 +1261,7 @@ AC_CONFIG_FILES([Makefile
 		src/OVAL/adt/Makefile
 		src/OVAL/results/Makefile
                  tests/API/OVAL/Makefile
+		tests/oscap_string/Makefile
                  tests/API/OVAL/unittests/Makefile
 		 tests/API/OVAL/validate/Makefile
 		 tests/API/OVAL/report_variable_values/Makefile
