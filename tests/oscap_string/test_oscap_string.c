@@ -57,7 +57,7 @@ int test_append_string()
 
 int test_append_binary_data()
 {
-	static const char* data[] = { 
+	static const char* data[] = {
 		"\0",
 		"\0A",
 		"ABC"
@@ -77,8 +77,8 @@ int test_append_binary_data()
 
 	oscap_buffer_append_binary_data(s, data[2], 3);
 	ASSERT_LENGTH(s, 6);
-	
-	
+
+
 	// Check output data
 	int length = oscap_buffer_get_length(s); // length is valid due to previous ASSERT_LENGTH
 	static const char expected_result[] = {'\0', '\0', 'A', 'A', 'B', 'C'};
@@ -112,17 +112,17 @@ int test_buffer_clear()
 {
 	struct oscap_buffer *s = oscap_buffer_new();
 	ASSERT_LENGTH(s, 0);
-	
+
 	oscap_buffer_clear(s);
 	ASSERT_LENGTH(s, 0);
-	
+
 	char data = 'A';
 	oscap_buffer_append_binary_data(s, &data, 1);
 	ASSERT_LENGTH(s, 1);
-	
+
 	oscap_buffer_clear(s);
 	ASSERT_LENGTH(s, 0);
-	
+
 	oscap_buffer_free(s);
 	return 0;
 }
