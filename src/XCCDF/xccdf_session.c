@@ -243,8 +243,7 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
 
 void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *datastream_id)
 {
-	if (session->ds.user_datastream_id != NULL)
-		oscap_free(session->ds.user_datastream_id);
+	oscap_free(session->ds.user_datastream_id);
 	session->ds.user_datastream_id = oscap_strdup(datastream_id);
 }
 
@@ -258,8 +257,7 @@ const char *xccdf_session_get_datastream_id(struct xccdf_session *session)
 
 void xccdf_session_set_component_id(struct xccdf_session *session, const char *component_id)
 {
-	if (session->ds.user_component_id != NULL)
-		oscap_free(session->ds.user_component_id);
+	oscap_free(session->ds.user_component_id);
 	session->ds.user_component_id = oscap_strdup(component_id);
 }
 
@@ -273,8 +271,7 @@ const char *xccdf_session_get_component_id(struct xccdf_session *session)
 
 void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *benchmark_id)
 {
-	if (session->ds.user_benchmark_id != NULL)
-		oscap_free(session->ds.user_benchmark_id);
+	oscap_free(session->ds.user_benchmark_id);
 	session->ds.user_benchmark_id = oscap_strdup(benchmark_id);
 }
 

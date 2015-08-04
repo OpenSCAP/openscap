@@ -264,6 +264,20 @@
                         <criterion comment="Fedora 23 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:23"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:24" version="1">
+                  <metadata>
+                        <title>Fedora 24</title>
+                        <affected family="unix">
+                            <platform>Fedora 24</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:24" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 24</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="Fedora 24 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:24"/>
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1" version="1" check="only one" 
@@ -362,6 +376,11 @@
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:23"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:24" version="1" check="at least one" comment="fedora-release is version Fedora 24"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:24"/>
+            </rpminfo_test>
       </tests>
       <objects>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.redhat-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -447,6 +466,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:23" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^23$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:24" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^24$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>

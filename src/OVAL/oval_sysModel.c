@@ -137,26 +137,15 @@ struct oval_syschar_model *oval_syschar_model_clone(struct oval_syschar_model *o
 
 void oval_syschar_model_free(struct oval_syschar_model *model)
 {
-	__attribute__nonnull__(model);
-
-	if (model->sysinfo)
+	if (model != NULL) {
 		oval_sysinfo_free(model->sysinfo);
-	if (model->syschar_map)
 		oval_smc_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
-	if (model->sysitem_map)
-		oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
-        if (model->schema)
-                oscap_free(model->schema);
-
-	model->sysinfo = NULL;
-	model->definition_model = NULL;
-	model->syschar_map = NULL;
-	model->sysitem_map = NULL;
-        model->schema = NULL;
-
-	oval_generator_free(model->generator);
-
-	oscap_free(model);
+		if (model->sysitem_map)
+			oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
+		oscap_free(model->schema);
+		oval_generator_free(model->generator);
+		oscap_free(model);
+	}
 }
 
 void oval_syschar_model_reset(struct oval_syschar_model *model) 

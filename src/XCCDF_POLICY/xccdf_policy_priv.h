@@ -30,6 +30,50 @@
 
 OSCAP_HIDDEN_START;
 
+
+/**
+ * XCCDF policy model structure contains xccdf_benchmark as reference
+ * to Benchmark element in XML file and list of policies that are
+ * abstract structure of Profile element from benchmark file.
+ */
+struct xccdf_policy_model {
+
+	struct xccdf_benchmark  * benchmark;    ///< Benchmark element (root element of XML file)
+	struct xccdf_tailoring * tailoring;     ///< Tailoring element
+	struct oscap_list       * policies;     ///< List of xccdf_policy structures
+	struct oscap_list       * callbacks;    ///< Callbacks for output callbacks (see callback_out_t)
+	struct oscap_list       * engines;      ///< Callbacks for checking engines (see xccdf_policy_engine)
+
+	struct cpe_session *cpe;
+};
+
+/**
+ * XCCDF policy structure is abstract (class) structure
+ * of Profile element from benchmark.
+ *
+ * Structure contains rules and bound values to abstract
+ * these lists from the benchmark file. Can be modified temporaly
+ * so changes can be discarded or saved to the existing model.
+ */
+struct xccdf_policy {
+
+	struct xccdf_policy_model   * model;    ///< XCCDF Policy model
+	struct xccdf_profile        * profile;  ///< Profile structure (from benchmark)
+	/** A list of all selects. Either from profile or later added through API. */
+	struct oscap_list           * selects;
+	struct oscap_list           * values;   ///< Bound values of profile
+	struct oscap_list           * results;  ///< List of XCCDF results
+	/** A hash which for given item points to the latest selector applicable.
+	 * There might not be one. Note that it migth be a selector for cluster-id. */
+	struct oscap_htable		*selected_internal;
+	/** A hash which for given item defines final selection */
+	struct oscap_htable		*selected_final;
+	/* The hash-table contains the latest refine-rule for specified item-id. */
+	struct oscap_htable		*refine_rules_internal;
+};
+
+
+
 /**
  * Resolve text substitution in given fix element. Use given xccdf_policy settings
  * for resolving.
