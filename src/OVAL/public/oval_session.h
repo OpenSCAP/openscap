@@ -167,6 +167,23 @@ void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn
 int oval_session_load(struct oval_session *session);
 
 /**
+ * Evaluate a specific OVAL Definition. The result of the evaluation will be
+ * written into the result argument. You can convert it into a string
+ * representation with \ref oval_result_get_text.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param probe_root FIXME:
+ * @param id id of an OVAL Definition
+ * @param result variable to write the result into
+ *
+ * @retval 0 on success
+ * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
+ * oscap_err_get_full_error to get more details)
+ */
+int oval_session_evaluate_id(struct oval_session *session, char *probe_root, const char *id, oval_result_t *result);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy

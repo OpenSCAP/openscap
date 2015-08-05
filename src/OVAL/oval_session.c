@@ -45,6 +45,7 @@ struct oval_session {
 	struct oscap_source *source;
 	struct oval_definition_model *def_model;
 	struct oval_variable_model *var_model;
+	struct oval_results_model *res_model;
 
 	oval_agent_session_t *sess;
 	struct ds_sds_session *sds_session;
@@ -311,6 +312,38 @@ static int oval_session_setup_agent(struct oval_session *session)
 	oscap_free(path_clone);
 
 	oval_agent_set_product_name(session->sess, (char *)oscap_productname);
+	return 0;
+}
+
+int oval_session_evaluate_id(struct oval_session *session, char *probe_root, const char *id, oval_result_t *result)
+{
+	__attribute__nonnull__(session);
+
+	if (probe_root) {
+		if (setenv("OSCAP_PROBE_ROOT", probe_root, 1) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to set the OSCAP_PROBE_ROOT environment variable.");
+			return 1;
+		}
+	}
+
+	if (id == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "No OVAL Definion id set.");
+		return 1;
+	}
+
+	if (oval_session_setup_agent(session) != 0) {
+		return 1;
+	}
+
+	oval_agent_eval_definition(session->sess, id);
+	*result = OVAL_RESULT_NOT_EVALUATED;
+	oval_agent_get_definition_result(session->sess, id, result);
+	if (oscap_err()) {
+		return 1;
+	}
+
+	session->res_model = oval_agent_get_results_model(session->sess);
+
 	return 0;
 }
 
