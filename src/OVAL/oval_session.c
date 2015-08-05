@@ -32,6 +32,10 @@
 struct oval_session {
 	/* Main source assigned with the main file (SDS or OVAL) */
 	struct oscap_source *source;
+
+	struct {
+		struct oscap_source *variables;
+	} oval;
 };
 
 struct oval_session *oval_session_new(const char *filename)
@@ -57,11 +61,24 @@ struct oval_session *oval_session_new(const char *filename)
 	return session;
 }
 
+void oval_session_set_variables(struct oval_session *session, const char *filename)
+{
+	__attribute__nonnull__(session);
+
+	oscap_source_free(session->oval.variables);
+
+	if (filename != NULL)
+		session->oval.variables = oscap_source_new_from_file(filename);
+	else
+		session->oval.variables = NULL;	/* reset */
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
 		return;
 
+	oscap_source_free(session->oval.variables);
 	oscap_source_free(session->source);
 	oscap_free(session);
 }
