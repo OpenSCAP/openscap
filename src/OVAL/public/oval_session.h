@@ -107,6 +107,17 @@ void oval_session_set_validation(struct oval_session *session, bool validate, bo
 void oval_session_set_datastream_id(struct oval_session *session, const char *id);
 
 /**
+ * Set ID of a particular OVAL component if there are two OVALs in one
+ * source datastream. If the ID has been already set then it will be
+ * overwritten.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param id an id of a definition
+ */
+void oval_session_set_component_id(struct oval_session *session, const char *id);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy

@@ -39,6 +39,9 @@ struct oval_session {
 	} oval;
 
 	const char *datastream_id;
+	/* particular OVAL component if there are two OVALs in one datastream */
+	const char *component_id;
+
 
 	bool validation;
 	bool full_validation;
@@ -107,6 +110,14 @@ void oval_session_set_datastream_id(struct oval_session *session, const char *id
 	session->datastream_id = oscap_strdup(id);
 }
 
+void oval_session_set_component_id(struct oval_session *session, const char *id)
+{
+	__attribute__nonnull__(session);
+
+	oscap_free(session->component_id);
+	session->component_id = oscap_strdup(id);
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -116,5 +127,6 @@ void oval_session_free(struct oval_session *session)
 	oscap_source_free(session->oval.variables);
 	oscap_source_free(session->source);
 	oscap_free(session->datastream_id);
+	oscap_free(session->component_id);
 	oscap_free(session);
 }
