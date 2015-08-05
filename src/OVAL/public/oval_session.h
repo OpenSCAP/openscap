@@ -203,6 +203,25 @@ int oval_session_evaluate_id(struct oval_session *session, char *probe_root, con
 int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_reporter fn, void *arg);
 
 /**
+ * Export result to a file. Results can be represented as OVAL System
+ * Characteristics if analyse has been done or OVAL Results if evaluation or
+ * collect has been done. If there aren't any filenames set or no operation was
+ * performed then this function has no effect.
+ *
+ * Alse see:
+ * \ref oval_session_set_results_export
+ * \ref oval_session_set_report_export
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ *
+ * @retval 0 on success
+ * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
+ * oscap_err_get_full_error to get more details)
+ */
+int oval_session_export(struct oval_session *session);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy

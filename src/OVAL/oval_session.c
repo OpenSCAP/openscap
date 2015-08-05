@@ -39,6 +39,7 @@
 #include "oscap_source.h"
 
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
+static const char *oval_results_report = "oval-results-report.xsl";
 
 struct oval_session {
 	/* Main source assigned with the main file (SDS or OVAL) */
@@ -370,6 +371,71 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 	session->res_model = oval_agent_get_results_model(session->sess);
 
 	return 0;
+}
+
+int oval_session_export(struct oval_session *session)
+{
+	__attribute__nonnull__(session);
+
+	struct oval_directives_model *dir_model = NULL;
+	struct oscap_source *result = NULL;		/* OVAL Results */
+	const char *filename = NULL;
+	int ret = 0;
+
+	/* Import OVAL Directives if any */
+	if (session->oval.directives && session->res_model) {
+		/* OVAL Directives can be used only if there are OVAL Resutls and these are
+		 * only available if there is a Results model which mean that either
+		 * evaluation or analyse was performed. */
+		if (oval_directives_model_import_source(dir_model, session->oval.directives) != 0)
+			goto cleanup;
+	}
+
+	/* Get OVAL Results if evaluation or analyse has been done and apply
+	 * directives to them */
+	if (session->res_model && (session->export.results || session->export.report)) {
+		result = oval_results_model_export_source(session->res_model, dir_model, NULL);
+		filename = session->export.results;
+	}
+
+	/* Validate OVAL Results. The 'result' in condition will make sure that there is
+	 * something to validate */
+	if (result && session->validation && session->full_validation) {
+		if (!oval_session_validate(session, result, OSCAP_DOCUMENT_OVAL_RESULTS))
+			goto cleanup;
+	}
+
+	if (session->export.results && result) {	/* export to XML */
+		if (oscap_source_save_as(result, filename) != 0)
+			goto cleanup;
+	}
+
+	if (session->export.report && result) {	/* export to HTML */
+		char pwd[PATH_MAX];
+
+		if (getcwd(pwd, sizeof(pwd)) == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "ERROR: %s", strerror(errno));
+			goto cleanup;
+		}
+
+		/* add params oscap-version & pwd */
+		const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
+
+		/* TODO: let the user set the xsl by oval_session_set_report_xsl? */
+		if (oscap_source_apply_xslt_path(result, oval_results_report,
+				session->export.report, stdparams, oscap_path_to_xslt()) == -1) {
+			goto cleanup;
+		}
+	}
+
+	ret = 0; 	/* successfull export */
+
+cleanup:
+	if (result)
+		oscap_source_free(result);
+	if (dir_model)
+		oval_directives_model_free(dir_model);
+	return ret;
 }
 
 void oval_session_free(struct oval_session *session)
