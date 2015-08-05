@@ -243,7 +243,7 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 			oval_generator_add_platform_schema_version(gen, platform, val);
 			oscap_free(platform);
 		} else {
-			oval_generator_set_schema_version(gen, val);
+			oval_generator_set_core_schema_version(gen, val);
 		}
 	} else if (!strcmp("timestamp", tagname)) {
 		xmlTextReaderRead(reader);
