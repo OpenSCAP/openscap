@@ -184,6 +184,25 @@ int oval_session_load(struct oval_session *session);
 int oval_session_evaluate_id(struct oval_session *session, char *probe_root, const char *id, oval_result_t *result);
 
 /**
+ * Evaluate OVAL Definitions. Optionally you can set a callback function which
+ * will be called upon single evaluation. Use \ref oval_result_definition_get_id
+ * to get the ID of the evaluated OVAL Definion and \ref
+ * oval_result_definition_get_result, \ref oval_result_get_text to get a text
+ * representation of the result.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param probe_root FIXME:
+ * @param fn a callback function
+ * @param arg an optional argument for your callback function
+ *
+ * @retval 0 on success
+ * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
+ * oscap_err_get_full_error to get more details)
+ */
+int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_reporter fn, void *arg);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy

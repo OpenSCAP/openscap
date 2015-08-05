@@ -347,6 +347,31 @@ int oval_session_evaluate_id(struct oval_session *session, char *probe_root, con
 	return 0;
 }
 
+int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_reporter fn, void *arg)
+{
+	__attribute__nonnull__(session);
+
+	if (probe_root) {
+		if (setenv("OSCAP_PROBE_ROOT", probe_root, 1) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to set the OSCAP_PROBE_ROOT environment variable.");
+			return 1;
+		}
+	}
+
+	if (oval_session_setup_agent(session) != 0) {
+		return 1;
+	}
+
+	oval_agent_eval_system(session->sess, fn, arg);
+	if (oscap_err()) {
+		return 1;
+	}
+
+	session->res_model = oval_agent_get_results_model(session->sess);
+
+	return 0;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
