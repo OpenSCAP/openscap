@@ -38,6 +38,7 @@ struct oval_session {
 	/* Main source assigned with the main file (SDS or OVAL) */
 	struct oscap_source *source;
 	struct oval_definition_model *def_model;
+	struct oval_variable_model *var_model;
 
 	struct ds_sds_session *sds_session;
 
@@ -224,6 +225,40 @@ static int oval_session_load_definitions(struct oval_session *session)
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to import the OVAL Definitions from '%s'.",
 				oscap_source_readable_origin(session->oval.definitions));
 		return 1;
+	}
+
+	return 0;
+}
+
+static int oval_session_load_variables(struct oval_session *session)
+{
+	__attribute__nonnull__(session);
+
+	if (session->oval.variables != NULL) {
+
+		if (session->def_model == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "No OVAL Definitions to bind the variables to.");
+			return 1;
+		}
+		if (!oval_session_validate(session, session->oval.variables, OSCAP_DOCUMENT_OVAL_VARIABLES)) {
+			return 1;
+		}
+
+		/* bind external variables */
+		if (session->oval.variables) {
+			session->var_model = oval_variable_model_import_source(session->oval.variables);
+
+			if (session->var_model == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to import the OVAL Variables "
+						"from '%s'.", session->oval.variables);
+				return 1;
+			}
+
+			if (oval_definition_model_bind_variable_model(session->def_model, session->var_model)) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to bind Variables to Definitions.");
+				return 1;
+			}
+		}
 	}
 
 	return 0;
