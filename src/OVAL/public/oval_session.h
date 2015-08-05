@@ -152,9 +152,25 @@ void oval_session_set_report_export(struct oval_session *session, const char *fi
 void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn);
 
 /**
+ * Load OVAL Definitions and bind OVAL Variables to it if provided. Validation
+ * if performed automatically if you've set it with \ref
+ * oval_session_set_validation. if the validation failed then the function will
+ * print information about what line in what file isn't valid and why not.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ *
+ * @retval 0 on success
+ * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
+ * oscap_err_get_full_error to get more details)
+ */
+int oval_session_load(struct oval_session *session);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
  */
 void oval_session_free(struct oval_session *session);
+
 #endif

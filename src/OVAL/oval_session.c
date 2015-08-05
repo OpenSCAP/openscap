@@ -264,6 +264,22 @@ static int oval_session_load_variables(struct oval_session *session)
 	return 0;
 }
 
+int oval_session_load(struct oval_session *session)
+{
+	__attribute__nonnull__(session);
+
+	int ret = 0;
+
+	if ((ret = oval_session_load_definitions(session)) != 0) {
+		return ret;
+	}
+	if ((ret = oval_session_load_variables(session)) != 0) {
+		return ret;
+	}
+
+	return ret;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
