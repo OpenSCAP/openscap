@@ -150,6 +150,23 @@ void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn
 	session->reporter.xml_fn = fn;
 }
 
+static bool oval_session_validate(struct oval_session *session, struct oscap_source *source, oscap_document_type_t type)
+{
+	if (oscap_source_get_scap_type(source) == type) {
+		if (oscap_source_validate(source, session->reporter.xml_fn, NULL))
+			return false;
+	}
+	else {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Type mismatch: %s. Expecting %s "
+			"but found %s.", oscap_source_readable_origin(source),
+			oscap_document_type_to_string(type),
+			oscap_document_type_to_string(oscap_source_get_scap_type(source)));
+		return false;
+	}
+
+	return true;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
