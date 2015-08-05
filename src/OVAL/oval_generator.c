@@ -156,8 +156,7 @@ void oval_generator_update_timestamp(struct oval_generator *generator)
 	lt = localtime(&et);
 	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
 		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	oscap_free(generator->timestamp);
-	generator->timestamp = oscap_strdup(timestamp);
+	oval_generator_set_timestamp(generator, timestamp);
 }
 
 void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version)
