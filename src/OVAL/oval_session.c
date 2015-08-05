@@ -42,6 +42,9 @@ struct oval_session {
 	/* particular OVAL component if there are two OVALs in one datastream */
 	const char *component_id;
 
+	struct {
+		const char *results;
+	} export;
 
 	bool validation;
 	bool full_validation;
@@ -118,6 +121,14 @@ void oval_session_set_component_id(struct oval_session *session, const char *id)
 	session->component_id = oscap_strdup(id);
 }
 
+void oval_session_set_results_export(struct oval_session *session, const char *filename)
+{
+	__attribute__nonnull__(session);
+
+	oscap_free(session->export.results);
+	session->export.results = oscap_strdup(filename);
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -128,5 +139,6 @@ void oval_session_free(struct oval_session *session)
 	oscap_source_free(session->source);
 	oscap_free(session->datastream_id);
 	oscap_free(session->component_id);
+	oscap_free(session->export.results);
 	oscap_free(session);
 }

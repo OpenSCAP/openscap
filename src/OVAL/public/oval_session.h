@@ -118,6 +118,17 @@ void oval_session_set_datastream_id(struct oval_session *session, const char *id
 void oval_session_set_component_id(struct oval_session *session, const char *id);
 
 /**
+ * Set a name of the file that the the OVAL Results will be written into. If the
+ * file's name has been already set for the current session then it will be
+ * overwritten.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param filename a path to a new file
+ */
+void oval_session_set_results_export(struct oval_session *session, const char *filename);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
