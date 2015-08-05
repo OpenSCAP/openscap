@@ -95,6 +95,18 @@ void oval_session_set_directives(struct oval_session *session, const char *filen
 void oval_session_set_validation(struct oval_session *session, bool validate, bool full_validation);
 
 /**
+ * Set ID of a specific OVAL Definition in an source datastream.
+ *
+ * If the ID has been already set then it will be overwritten. In case where
+ * there are two OVALs in one datastream use \ref oval_session_set_component_id.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param id an id of a definition
+ */
+void oval_session_set_datastream_id(struct oval_session *session, const char *id);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy

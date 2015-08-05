@@ -38,6 +38,8 @@ struct oval_session {
 		struct oscap_source *directives;
 	} oval;
 
+	const char *datastream_id;
+
 	bool validation;
 	bool full_validation;
 };
@@ -97,6 +99,14 @@ void oval_session_set_validation(struct oval_session *session, bool validate, bo
 	session->full_validation = full_validation;
 }
 
+void oval_session_set_datastream_id(struct oval_session *session, const char *id)
+{
+	__attribute__nonnull__(session);
+
+	oscap_free(session->datastream_id);
+	session->datastream_id = oscap_strdup(id);
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -105,5 +115,6 @@ void oval_session_free(struct oval_session *session)
 	oscap_source_free(session->oval.directives);
 	oscap_source_free(session->oval.variables);
 	oscap_source_free(session->source);
+	oscap_free(session->datastream_id);
 	oscap_free(session);
 }
