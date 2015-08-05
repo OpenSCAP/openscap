@@ -24,6 +24,10 @@
 #include <config.h>
 #endif
 
+#include <libgen.h>
+#include <unistd.h>
+#include <string.h>
+
 #include "common/alloc.h"
 #include "common/util.h"
 #include "common/_error.h"
@@ -34,12 +38,15 @@
 #include "../DS/public/ds_sds_session.h"
 #include "oscap_source.h"
 
+static const char *oscap_productname = "cpe:/a:open-scap:oscap";
+
 struct oval_session {
 	/* Main source assigned with the main file (SDS or OVAL) */
 	struct oscap_source *source;
 	struct oval_definition_model *def_model;
 	struct oval_variable_model *var_model;
 
+	oval_agent_session_t *sess;
 	struct ds_sds_session *sds_session;
 
 	struct {
@@ -280,6 +287,33 @@ int oval_session_load(struct oval_session *session)
 	return ret;
 }
 
+static int oval_session_setup_agent(struct oval_session *session)
+{
+	__attribute__nonnull__(session);
+
+	char *path_clone;
+
+	path_clone = oscap_strdup(oscap_source_readable_origin(session->oval.definitions));
+	if (path_clone == NULL) {
+		return 1;
+	}
+
+	/* free the previous Agent session if this function was already called */
+	if (session->sess)
+		oval_agent_destroy_session(session->sess);
+
+	session->sess = oval_agent_new_session(session->def_model, basename(path_clone));
+	if (session->sess == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to create a new agent session.");
+		oscap_free(path_clone);
+		return 1;
+	}
+	oscap_free(path_clone);
+
+	oval_agent_set_product_name(session->sess, (char *)oscap_productname);
+	return 0;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -292,6 +326,8 @@ void oval_session_free(struct oval_session *session)
 	oscap_free(session->component_id);
 	oscap_free(session->export.results);
 	oscap_free(session->export.report);
+	if (session->sess)
+		oval_agent_destroy_session(session->sess);
 	if (session->def_model)
 		oval_definition_model_free(session->def_model);
 	ds_sds_session_free(session->sds_session);
