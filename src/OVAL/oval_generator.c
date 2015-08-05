@@ -104,6 +104,11 @@ char *oval_generator_get_product_version(struct oval_generator *generator)
 
 char *oval_generator_get_schema_version(struct oval_generator *generator)
 {
+	return (char *) oval_generator_get_core_schema_version(generator);
+}
+
+const char *oval_generator_get_core_schema_version(struct oval_generator *generator)
+{
 	return generator->core_schema_version;
 }
 
@@ -135,6 +140,11 @@ void oval_generator_set_product_version(struct oval_generator *generator, const 
 }
 
 void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version)
+{
+	oval_generator_set_core_schema_version(generator, schema_version);
+}
+
+void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version)
 {
 	oscap_free(generator->core_schema_version);
 	generator->core_schema_version = oscap_strdup(schema_version);
