@@ -35,7 +35,9 @@ struct oval_session {
 
 	struct {
 		struct oscap_source *variables;
+		struct oscap_source *directives;
 	} oval;
+
 };
 
 struct oval_session *oval_session_new(const char *filename)
@@ -73,11 +75,24 @@ void oval_session_set_variables(struct oval_session *session, const char *filena
 		session->oval.variables = NULL;	/* reset */
 }
 
+void oval_session_set_directives(struct oval_session *session, const char *filename)
+{
+	__attribute__nonnull__(session);
+
+	oscap_source_free(session->oval.directives);
+
+	if (filename != NULL)
+		session->oval.directives = oscap_source_new_from_file(filename);
+	else
+		session->oval.directives = NULL;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
 		return;
 
+	oscap_source_free(session->oval.directives);
 	oscap_source_free(session->oval.variables);
 	oscap_source_free(session->source);
 	oscap_free(session);

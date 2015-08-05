@@ -71,6 +71,20 @@ struct oval_session *oval_session_new(const char *filename);
 void oval_session_set_variables(struct oval_session *session, const char *filename);
 
 /**
+ * Set OVAL Directives
+ *
+ * If a filename has been already set then it will be overwritten. If you pass
+ * NULL as filename argument then the currently set variables will be freed.
+ * Validation of the format will be perforemed when the \ref oval_session_load
+ * is called.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param filename a path to an OVAL Directives file
+ */
+void oval_session_set_directives(struct oval_session *session, const char *filename);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
