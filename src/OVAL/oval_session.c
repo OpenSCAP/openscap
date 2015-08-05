@@ -44,6 +44,7 @@ struct oval_session {
 
 	struct {
 		const char *results;
+		const char *report;
 	} export;
 
 	bool validation;
@@ -129,6 +130,14 @@ void oval_session_set_results_export(struct oval_session *session, const char *f
 	session->export.results = oscap_strdup(filename);
 }
 
+void oval_session_set_report_export(struct oval_session *session, const char *filename)
+{
+	__attribute__nonnull__(session);
+
+	oscap_free(session->export.report);
+	session->export.report = oscap_strdup(filename);
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -140,5 +149,6 @@ void oval_session_free(struct oval_session *session)
 	oscap_free(session->datastream_id);
 	oscap_free(session->component_id);
 	oscap_free(session->export.results);
+	oscap_free(session->export.report);
 	oscap_free(session);
 }
