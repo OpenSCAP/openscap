@@ -38,6 +38,8 @@ struct oval_session {
 		struct oscap_source *directives;
 	} oval;
 
+	bool validation;
+	bool full_validation;
 };
 
 struct oval_session *oval_session_new(const char *filename)
@@ -85,6 +87,14 @@ void oval_session_set_directives(struct oval_session *session, const char *filen
 		session->oval.directives = oscap_source_new_from_file(filename);
 	else
 		session->oval.directives = NULL;
+}
+
+void oval_session_set_validation(struct oval_session *session, bool validate, bool full_validation)
+{
+	__attribute__nonnull__(session);
+
+	session->validation = validate;
+	session->full_validation = full_validation;
 }
 
 void oval_session_free(struct oval_session *session)
