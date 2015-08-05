@@ -136,14 +136,13 @@ oscap_acquire_url_to_filename(const char *url)
 char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 {
 	CURL *curl;
-	struct oscap_buffer* buffer = oscap_buffer_new();
-
 	curl = curl_easy_init();
 	if (curl == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
 		return NULL;
 	}
 
+	struct oscap_buffer* buffer = oscap_buffer_new();
 
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
