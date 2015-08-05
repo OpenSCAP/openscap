@@ -169,8 +169,7 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 {
 	struct oscap_htable_iterator *sv_itr;
 	const char *platform, *version;
-	xmlNodePtr sv_node;
-	xmlNode *gen_node;
+	xmlNode *gen_node, *sv_node;
 	xmlNs *ns_common;
 
 	xmlNode *nodestr, *nodelst;
