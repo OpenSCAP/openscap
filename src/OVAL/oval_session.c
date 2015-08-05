@@ -27,13 +27,22 @@
 #include "common/alloc.h"
 #include "common/util.h"
 #include "common/_error.h"
+#include "common/oscapxml.h"
+#include "source/xslt_priv.h"
+#include "public/oval_agent_api.h"
 #include "public/oval_session.h"
+#include "../DS/public/ds_sds_session.h"
 #include "oscap_source.h"
+
 struct oval_session {
 	/* Main source assigned with the main file (SDS or OVAL) */
 	struct oscap_source *source;
+	struct oval_definition_model *def_model;
+
+	struct ds_sds_session *sds_session;
 
 	struct {
+		struct oscap_source *definitions;
 		struct oscap_source *variables;
 		struct oscap_source *directives;
 	} oval;
@@ -167,6 +176,59 @@ static bool oval_session_validate(struct oval_session *session, struct oscap_sou
 	return true;
 }
 
+static int oval_session_load_definitions(struct oval_session *session)
+{
+	__attribute__nonnull__(session);
+	__attribute__nonnull__(session->source);
+
+	oscap_document_type_t type = oscap_source_get_scap_type(session->source);
+	if (type != OSCAP_DOCUMENT_OVAL_DEFINITIONS && type != OSCAP_DOCUMENT_SDS) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Type mismatch: %s. Expecting %s "
+			"or %s but found %s.", oscap_source_readable_origin(session->source),
+			oscap_document_type_to_string(OSCAP_DOCUMENT_OVAL_DEFINITIONS),
+			oscap_document_type_to_string(OSCAP_DOCUMENT_SDS),
+			oscap_document_type_to_string(type));
+		return 1;
+	}
+	else {
+		if (!oval_session_validate(session, session->source, type))
+			return 1;
+	}
+
+	if (oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_SDS) {
+		if ((session->sds_session = ds_sds_session_new_from_source(session->source)) == NULL) {
+			return 1;
+		}
+
+		ds_sds_session_set_datastream_id(session->sds_session, session->datastream_id);
+		if (ds_sds_session_register_component_with_dependencies(session->sds_session,
+					"checks", session->component_id, "oval.xml") != 0) {
+			return 1;
+		}
+
+		session->oval.definitions = ds_sds_session_get_component_by_href(session->sds_session, "oval.xml");
+		if (session->oval.definitions == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Internal error: OVAL file was not found in "
+					"Source DataStream session cache!");
+			return 1;
+		}
+	}
+	else {
+		session->oval.definitions = session->source;
+	}
+
+	/* import OVAL Definitions */
+	if (session->def_model) oval_definition_model_free(session->def_model);
+	session->def_model = oval_definition_model_import_source(session->oval.definitions);
+	if (session->def_model == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to import the OVAL Definitions from '%s'.",
+				oscap_source_readable_origin(session->oval.definitions));
+		return 1;
+	}
+
+	return 0;
+}
+
 void oval_session_free(struct oval_session *session)
 {
 	if (session == NULL)
@@ -179,5 +241,8 @@ void oval_session_free(struct oval_session *session)
 	oscap_free(session->component_id);
 	oscap_free(session->export.results);
 	oscap_free(session->export.report);
+	if (session->def_model)
+		oval_definition_model_free(session->def_model);
+	ds_sds_session_free(session->sds_session);
 	oscap_free(session);
 }
