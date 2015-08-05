@@ -140,10 +140,21 @@ void oval_session_set_results_export(struct oval_session *session, const char *f
 void oval_session_set_report_export(struct oval_session *session, const char *filename);
 
 /**
+ * Set XML validation reporter.
+ *
+ * This function is called when there is something invalid in input/output XML
+ * file.
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param fn pointer to XML reporter function
+ */
+void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
  */
 void oval_session_free(struct oval_session *session);
-
 #endif

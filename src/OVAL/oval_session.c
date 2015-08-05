@@ -47,6 +47,11 @@ struct oval_session {
 		const char *report;
 	} export;
 
+	struct {
+		/* it's called when there is something invalid in input/output files */
+		xml_reporter xml_fn;
+	} reporter;
+
 	bool validation;
 	bool full_validation;
 };
@@ -136,6 +141,13 @@ void oval_session_set_report_export(struct oval_session *session, const char *fi
 
 	oscap_free(session->export.report);
 	session->export.report = oscap_strdup(filename);
+}
+
+void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn)
+{
+	__attribute__nonnull__(session);
+
+	session->reporter.xml_fn = fn;
 }
 
 void oval_session_free(struct oval_session *session)
