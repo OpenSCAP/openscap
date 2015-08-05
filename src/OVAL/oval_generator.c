@@ -231,6 +231,7 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 		val = (char *) xmlTextReaderValue(reader);
 		if (platform != NULL) {
 			oval_generator_add_platform_schema_version(gen, platform, val);
+			oscap_free(platform);
 		} else {
 			oval_generator_set_schema_version(gen, val);
 		}
@@ -246,7 +247,6 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 	oscap_free(tagname);
 	oscap_free(namespace);
 	oscap_free(val);
-	oscap_free(platform);
 
 	return ret;
 }
