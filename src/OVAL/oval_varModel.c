@@ -186,8 +186,8 @@ static int _oval_variable_model_parse_variable_values
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code;
-	bool is_variable_ns = strcmp(NAMESPACE_VARIABLES, namespace) == 0;
-	if (is_variable_ns && strcmp("value", tagname) == 0) {
+	bool is_variable_ns = oscap_strcmp(NAMESPACE_VARIABLES, namespace) == 0;
+	if (is_variable_ns && oscap_strcmp("value", tagname) == 0) {
 		struct oval_value *ov;
 
 		return_code = xmlTextReaderRead(reader);
@@ -236,8 +236,8 @@ static int _oval_variable_model_parse_variables
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code;
-	bool is_variable_ns = strcmp(NAMESPACE_VARIABLES, namespace) == 0;
-	if (is_variable_ns && strcmp("variable", tagname) == 0) {
+	bool is_variable_ns = oscap_strcmp(NAMESPACE_VARIABLES, namespace) == 0;
+	if (is_variable_ns && oscap_strcmp("variable", tagname) == 0) {
 		return_code = _oval_variable_model_parse_variable(reader, context, model);
 	} else {
 		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
@@ -256,13 +256,13 @@ static int _oval_variable_model_parse_tag
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
 	int return_code;
-	bool is_variable_ns = strcmp(NAMESPACE_VARIABLES, namespace) == 0;
-	if (is_variable_ns && strcmp("generator", tagname) == 0) {
+	bool is_variable_ns = oscap_strcmp(NAMESPACE_VARIABLES, namespace) == 0;
+	if (is_variable_ns && oscap_strcmp("generator", tagname) == 0) {
 		struct oval_generator *gen;
 
 		gen = oval_variable_model_get_generator(context->variable_model);
 		return_code = oval_generator_parse_tag(reader, context, gen);
-	} else if (is_variable_ns && strcmp("variables", tagname) == 0) {
+	} else if (is_variable_ns && oscap_strcmp("variables", tagname) == 0) {
 		return_code =
 		    oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_variable_model_parse_variables, model);
 	} else {
@@ -285,7 +285,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 	xmlTextReaderSetErrorHandler(reader, &libxml_error_handler, &context);
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
 	char *namespace = (char *)xmlTextReaderNamespaceUri(reader);
-	bool is_variables = (strcmp(NAMESPACE_VARIABLES, namespace) == 0) && (strcmp(OVAL_ROOT_ELM_VARIABLES, tagname) == 0);
+	bool is_variables = (oscap_strcmp(NAMESPACE_VARIABLES, namespace) == 0) && (oscap_strcmp(OVAL_ROOT_ELM_VARIABLES, tagname) == 0);
 	if (is_variables) {
 		return_code =
 		    oval_parser_parse_tag(reader, &context, (oval_xml_tag_parser) _oval_variable_model_parse_tag, model);
@@ -399,7 +399,7 @@ bool oval_variable_model_has_variable(struct oval_variable_model *model, const c
         __attribute__nonnull__(model);
         struct oval_string_iterator * str_it = (struct oval_string_iterator *)oval_string_map_keys(model->varmap);
         while (oval_string_iterator_has_more(str_it)) {
-            if (!strcmp(oval_string_iterator_next(str_it), id)) {
+            if (!oscap_strcmp(oval_string_iterator_next(str_it), id)) {
                 oval_string_iterator_free(str_it);
                 return true;
             }
