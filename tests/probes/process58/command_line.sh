@@ -2,6 +2,15 @@
 
 export LC_ALL=C
 set -e -o pipefail
+
+function clean_processes {
+	# Processes are in stopped state. SIGCONT cause their exiting
+	kill -SIGCONT ${ZOMBIE_PPID}
+	kill -SIGCONT ${PID}
+	kill -SIGCONT ${ESCAPED_PID}  
+}
+trap clean_processes EXIT
+
 PROC="$srcdir/stopped_process.sh" # the process go to stopped state after start
 
 # Parse "ps" and return command line of process with $PID
@@ -91,11 +100,5 @@ echo "stderr file: $stderr"
 	assert_exists 1 "`pid_command_line_xpath \"${PID}\" \"${CMDLINE}\"`"
 	assert_exists 1 "`pid_command_line_xpath \"${ZOMBIE_PID}\" \"${ZOMBIE_CMDLINE}\"`"
 	assert_exists 1 "`pid_command_line_xpath \"${ESCAPED_PID}\" \"${ESCAPED_CMDLINE}\"`"
-
-# Clean:
-	# Processes are in stopped state. SIGCONT cause their exiting
-	kill -SIGCONT ${ZOMBIE_PPID}
-	kill -SIGCONT ${PID}
-	kill -SIGCONT ${ESCAPED_PID}
 
 	rm $result
