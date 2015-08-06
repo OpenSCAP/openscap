@@ -476,7 +476,7 @@ Authors:
             </div>
         </div>
 
-        <table class="treetable table table-striped table-bordered">
+        <table class="treetable table table-bordered">
             <thead>
                 <tr>
                     <th>Title</th>

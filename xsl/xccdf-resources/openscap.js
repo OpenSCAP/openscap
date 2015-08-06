@@ -33,6 +33,7 @@ function toggleRuleDisplay(checkbox)
         $(".rule-overview-leaf-" + result).addClass("rule-result-filtered");
         $(".rule-detail-" + result).addClass("rule-result-filtered");
     }
+	stripeTreeTable();
 }
 
 function toggleResultDetails(button)
@@ -114,12 +115,14 @@ var original_treetable = null;
 $(document).ready( function() {
     $("#result-details").hide();
     $(".js-only").show();
+	$(".form-group select").val("default");
     $(".toggle-rule-display").each(function(){
         toggleRuleDisplay(this);
     });
     original_treetable = $(".treetable").clone();
     $(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
     is_original = true;
+	stripeTreeTable();
 });
 
 function resetTreetable() {
@@ -243,4 +246,15 @@ function groupRulesBy(key) {
 		clickableNodeNames: true,
 		initialState: "expanded",
 		indent: 0 });
+	stripeTreeTable();
+}
+
+function stripeTreeTable()
+{
+	var rows = $(".rule-overview-leaf:not(.rule-result-filtered)");
+	var even = false;
+	$(rows).each(function(){
+		$(this).css("background-color", even ? "#F9F9F9" : "inherit");
+		even = !even;
+	});
 }
