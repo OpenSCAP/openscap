@@ -169,10 +169,10 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 	}
 #if defined(OSCAP_THREAD_SAFE)
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%u:%llx) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+	fprintf(__debuglog_fp, "(%ld:%llx) [%c:%s:%zu:%s] ", (long) getpid(),
 		(unsigned long long) pthread_self(), l, f, line, fn);
 #else
-	fprintf(__debuglog_fp, "(%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+	fprintf(__debuglog_fp, "(%ld) [%c:%s:%zu:%s] ", (long) getpid(),
 		l, f, line, fn);
 #endif
 	vfprintf(__debuglog_fp, fmt, ap);
