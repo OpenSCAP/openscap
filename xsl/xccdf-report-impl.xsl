@@ -465,7 +465,7 @@ Authors:
                     </div>
                     <p id="search-matches"></p>
                     Group rules by:
-                    <select name="groupby" onchange="GroupBy(value)">
+                    <select name="groupby" onchange="groupRulesBy(value)">
                         <option value="default" selected="selected">Default</option>
                         <option value="severity">Severity</option>
                         <option value="result">Result</option>

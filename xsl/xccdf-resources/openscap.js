@@ -122,7 +122,7 @@ $(document).ready( function() {
     is_original = true;
 });
 
-function Reset() {
+function resetTreetable() {
 	if (!is_original) {
 		$(".treetable").remove();
 		$("#rule-overview").append(original_treetable.clone());
@@ -134,7 +134,7 @@ function Reset() {
 	}
 }
 
-function NewGroupLine(group_name)
+function newGroupLine(group_name)
 {
 	return "<tr class=\"rule-overview-inner-node\" data-tt-id=\"" + group_name + "\">" +
 		"<td colspan=\"3\"><strong>" + group_name + "</strong></td></tr>";
@@ -148,17 +148,17 @@ var KeysEnum = {
 	DISA: "data-disa-id"
 };
 
-function GetTargetGroupsList(rule, key)
+/* This function returns an array of target groups indentifiers */
+function getTargetGroupsList(rule, key)
 {
-	/* This function returns an array of target groups indentifiers */
-	if (key == KeysEnum.SEVERITY) {
+	switch(key) {
+	case KeysEnum.SEVERITY:
 		var severity = rule.children("td:nth-child(2)").text();
 		return [severity];
-	} else if (key == KeysEnum.RESULT) {
+	case KeysEnum.RESULT:
 		var result = rule.children(".rule-result").text();
 		return [result];
-	}
-	else {
+	default:
 		var ref_list = rule.attr(key);
 		if (!ref_list) {
 			ref_list = "unknown";
@@ -167,13 +167,14 @@ function GetTargetGroupsList(rule, key)
 	}
 }
 
-function SortGroups(groups, key)
+function sortGroups(groups, key)
 {
-	if (key == KeysEnum.SEVERITY) {
+	switch(key) {
+	case KeysEnum.SEVERITY:
 		return ["high", "medium", "low"];
-	} else if (key == KeysEnum.DISA) {
+	case KeysEnum.DISA:
 		return groups.sort(function(a, b){return a-b});
-	} else if (key == KeysEnum.NIST) {
+	case KeysEnum.NIST:
 		return groups.sort(function(a, b){
 			var regex = /(\w\w)-(\d+)(.*)/;
 			var a_parts = regex.exec(a);
@@ -194,28 +195,29 @@ function SortGroups(groups, key)
 				}
 			}
 		});
-	} else {
+	default:
 		return groups;
 	}
 }
 
-function GroupBy(key) {
-	/* We must process grouping upon the original table.
-	 * Otherwise, we would have unwanted duplicties in new table. */
-	Reset();
+function groupRulesBy(key) {
+	/* We must reset the treetable and process grouping upon the original
+	 * table to avoid unwanted duplicties in new table. */
+	resetTreetable();
 	if (key == KeysEnum.DEFAULT)
 		return;
 
+	/* Browse the rules and sort them into groups */
 	var lines = {};
 	$(".rule-overview-leaf").each(function() {
 		$(this).children("td:first").css("padding-left","0px");
 		var id = $(this).attr("data-tt-id");
-		var target_groups = GetTargetGroupsList($(this), key);
+		var target_groups = getTargetGroupsList($(this), key);
 		for (i = 0; i < target_groups.length; i++) {
 			var target_group = target_groups[i];
 			if (!lines.hasOwnProperty(target_group)) {
 				/* Create a new group */
-				lines[target_group] = [NewGroupLine(target_group)];
+				lines[target_group] = [newGroupLine(target_group)];
 			}
 			var clone = $(this).clone();
 			clone.attr("data-tt-id", id + "copy" + i);
@@ -224,8 +226,10 @@ function GroupBy(key) {
 			lines[target_group].push(new_line);
 		}
 	});
+
+	/* Remove old treetable and replace it with a new one */
 	$(".treetable").remove();
-	var groups = SortGroups(Object.keys(lines), key);
+	var groups = sortGroups(Object.keys(lines), key);
 	var html_text = "";
 	for (i = 0; i < groups.length; i++) {
 		html_text += lines[groups[i]].join("\n");
@@ -233,6 +237,10 @@ function GroupBy(key) {
 	new_table ="<table class=\"treetable table table-bordered\"><thead><tr><th>Group</th> <th style=\"width: 120px; text-align: center\">Severity</th><th style=\"width: 120px; text-align: center\">Result</th></tr></thead><tbody>" + html_text + "</tbody></table>";
 	$("#rule-overview").append(new_table);
 	is_original = false;
-	$(".treetable").treetable({ column: 0, expandable: true, initialState : "expanded", indent : 0 });
-
+	$(".treetable").treetable({
+		column: 0,
+		expandable: true,
+		clickableNodeNames: true,
+		initialState: "expanded",
+		indent: 0 });
 }
