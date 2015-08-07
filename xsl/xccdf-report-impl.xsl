@@ -608,6 +608,7 @@ Authors:
                 <xsl:with-param name="profile" select="$profile"/>
             </xsl:call-template>
             <xsl:value-of select="concat($item/@id, ' ')"/>
+            <xsl:value-of select="$ruleresult/@severity"/>
             <xsl:for-each select="$ruleresult/cdf:ident">
                 <xsl:value-of select="concat(text(), ' ')"/>
             </xsl:for-each>
