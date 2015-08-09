@@ -22,7 +22,7 @@ function get_process_cmdline() {
 # We can scan processes before process's exec() and get wrong command_line
 function wait_for_process() {
 	local PID="$1"
-	for i in `seq 1 10`; # wait max 10 * 100ms
+	for i in `seq 1 100`; # wait max 100 * 100ms
 		do
 			PROCESS_CMDLINE="`get_process_cmdline $PID`"
 			[[ "${PROCESS_CMDLINE}" == *${PROC}* ]] && break
@@ -34,7 +34,7 @@ function wait_for_process() {
 # Wait max 10 x 100ms
 function get_zombie_pid_from_ppid() {
 	local PARENT_PID="$1"
-	for i in `seq 1 10`;
+	for i in `seq 1 100`;
 		do
 			ZOMBIE_PID=`ps -ostate,pid --ppid ${PARENT_PID}| grep "^Z" | sed -E 's/^.\s*?([[:digit:]]+).*$/\1/'`
 			[ "${ZOMBIE_PID}" != "" ] && break;
