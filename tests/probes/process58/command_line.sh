@@ -16,6 +16,7 @@ PROC="$srcdir/stopped_process.sh" # the process go to stopped state after start
 function get_process_cmdline() {
 	local PID="$1"
 	ps opid,cmd | grep -E "^\s*$PID\s+" | sed -E 's/^\s*'$PID'\s+(.*)$/\1/'
+	return 0
 }
 
 # Wait for process start
