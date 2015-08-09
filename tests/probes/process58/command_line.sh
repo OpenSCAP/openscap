@@ -6,7 +6,7 @@ function clean_processes {
 	# Processes are in stopped state. SIGCONT cause their exiting
 	[ -n "${ZOMBIE_PPID}" ] && kill -SIGCONT ${ZOMBIE_PPID}
 	[ -n "${PID}" ] && kill -SIGCONT ${PID}
-	[ -n "${ESCAPED_PPID}" ] && kill -SIGCONT ${ESCAPED_PID}
+	[ -n "${ESCAPED_PID}" ] && kill -SIGCONT ${ESCAPED_PID}
 }
 trap clean_processes EXIT
 
