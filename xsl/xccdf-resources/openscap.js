@@ -145,10 +145,10 @@ function newGroupLine(group_name)
 
 var KeysEnum = {
 	DEFAULT: "default",
-	SEVERITY : "severity",
+	SEVERITY: "severity",
 	RESULT: "result",
-	NIST: "data-nist-id",
-	DISA: "data-disa-id"
+	NIST: "http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf",
+	DISA: "http://iase.disa.mil/stigs/cci/Pages/index.aspx"
 };
 
 /* This function returns an array of target groups indentifiers */
@@ -162,11 +162,14 @@ function getTargetGroupsList(rule, key)
 		var result = rule.children(".rule-result").text();
 		return [result];
 	default:
-		var ref_list = rule.attr(key);
-		if (!ref_list) {
-			ref_list = "unknown";
+		try {
+			var references = JSON.parse(rule.attr("data-references"));
+		} catch (err) {
+			return ["unknown"];
 		}
-		return ref_list.split(",");
+		if (!references.hasOwnProperty(key))
+			return ["unknown"];
+		return references[key];
 	}
 }
 
