@@ -176,7 +176,9 @@ function sortGroups(groups, key)
 	case KeysEnum.SEVERITY:
 		return ["high", "medium", "low"];
 	case KeysEnum.DISA:
-		return groups.sort(function(a, b){return a-b});
+		return groups.sort(function(a, b){
+			return parseInt(a) - parseInt(b);
+		});
 	case KeysEnum.NIST:
 		return groups.sort(function(a, b){
 			var regex = /(\w\w)-(\d+)(.*)/;
@@ -199,7 +201,7 @@ function sortGroups(groups, key)
 			}
 		});
 	default:
-		return groups;
+		return groups.sort();
 	}
 }
 
