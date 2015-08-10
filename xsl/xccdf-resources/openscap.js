@@ -156,7 +156,7 @@ function getTargetGroupsList(rule, key)
 {
 	switch(key) {
 	case KeysEnum.SEVERITY:
-		var severity = rule.children("td:nth-child(2)").text();
+		var severity = rule.children(".rule-severity").text();
 		return [severity];
 	case KeysEnum.RESULT:
 		var result = rule.children(".rule-result").text();
