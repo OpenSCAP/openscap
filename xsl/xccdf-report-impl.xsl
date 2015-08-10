@@ -324,7 +324,7 @@ Authors:
                 <xsl:with-param name="profile" select="$profile"/>
             </xsl:call-template>
         </a></td>
-        <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
+        <td class="rule-severity" style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
             <xsl:variable name="result_tooltip">
                 <xsl:call-template name="rule-result-tooltip">
