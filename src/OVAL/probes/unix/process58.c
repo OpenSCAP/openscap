@@ -433,8 +433,6 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	DIR *d;
 	struct dirent *ent;
 
-	struct oscap_buffer *cmdline_buffer = oscap_buffer_new();
-
 	d = opendir("/proc");
 	if (d == NULL)
 		return err;
@@ -443,6 +441,8 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	ticks = (unsigned long)sysconf(_SC_CLK_TCK);
 	get_boot_time();
 
+	struct oscap_buffer *cmdline_buffer = oscap_buffer_new();
+	
 	char cmd_buffer[1 + 15 + 11 + 1]; // Format:" [ cmd:15 ] <defunc>"
 	cmd_buffer[0] = '[';
 
