@@ -76,9 +76,13 @@ function usage()
     echo "  --variables"
     echo "  --skip-valid"
     echo
+    echo "specific option for oscap-ssh (must be first argument):"
+    echo "  --sudo"
+    echo
     echo "See \`man oscap\` to learn more about semantics of these options."
 }
 
+OSCAP_SUDO=""
 if [ $# -lt 1 ]; then
     echo "No arguments provided."
     usage
@@ -86,7 +90,11 @@ if [ $# -lt 1 ]; then
 elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     usage
     die
-elif [ $# -lt 2 ]; then
+elif [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]; then
+    OSCAP_SUDO="sudo"
+    shift
+fi
+if [ $# -lt 2 ]; then
     echo "Missing ssh host and ssh port."
     usage
     die
@@ -209,8 +217,9 @@ if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_DIRECTIVES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/directives.xml" || die "Failed to copy OVAL directives file to remote temporary directory!"
 fi
 
+# Use 'sudo' if SSH_HOST user is not root
 echo "Starting the evaluation..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "oscap ${args[*]}"
+ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "$OSCAP_SUDO oscap ${args[*]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
