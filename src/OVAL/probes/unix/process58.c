@@ -376,6 +376,10 @@ static inline bool get_process_cmdline(const char* filepath, struct oscap_buffer
 		char chunk[chunk_size];
 		// Read data, store to buffer
 		ssize_t read_size = read(fd, chunk, chunk_size );
+		if (read_size < 0) {
+			close(fd);
+			return false;
+		}
 		oscap_buffer_append_binary_data(buffer, chunk, read_size);
 
 		// If reach end of file, then end the loop
