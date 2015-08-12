@@ -194,12 +194,17 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 	if (generator->core_schema_version)
 		xmlNewTextChild(gen_node, ns_common, BAD_CAST "schema_version", BAD_CAST generator->core_schema_version);
 
+	const char *namespace_uri = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
 	sv_itr = oscap_htable_iterator_new(generator->platform_schema_versions);
 	while (oscap_htable_iterator_has_more(sv_itr)) {
 		oscap_htable_iterator_next_kv(sv_itr, &platform, (void **) &version);
 		sv_node = xmlNewTextChild(gen_node, ns_common,
 			BAD_CAST "schema_version", BAD_CAST version);
-		xmlNewProp(sv_node, BAD_CAST "platform", BAD_CAST platform);
+		size_t namespace_uri_length = strlen(namespace_uri) + 1 + strlen(platform) + 1;
+		char *platform_uri = oscap_alloc(namespace_uri_length);
+		snprintf(platform_uri, namespace_uri_length, "%s#%s", namespace_uri, platform);
+		xmlNewProp(sv_node, BAD_CAST "platform", BAD_CAST platform_uri);
+		oscap_free(platform_uri);
 	}
 	oscap_htable_iterator_free(sv_itr);
 
@@ -240,7 +245,11 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
 		if (platform != NULL) {
-			oval_generator_add_platform_schema_version(gen, platform, val);
+			char *platform_name = strrchr(platform, '#');
+			if (platform_name != NULL) {
+				platform_name++;
+				oval_generator_add_platform_schema_version(gen, platform_name, val);
+			}
 			oscap_free(platform);
 		} else {
 			oval_generator_set_core_schema_version(gen, val);
