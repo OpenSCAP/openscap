@@ -19,6 +19,7 @@ common_oval_sources = \
 	collectVarRefs.c \
 	collectVarRefs_impl.h \
 	oval_agent.c \
+	oval_session.c \
 	oval_defModel.c \
 	oval_sysModel.c \
 	oval_affected.c \
@@ -123,6 +124,7 @@ liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 pkginclude_HEADERS  = \
 			public/oval_adt.h \
 			public/oval_agent_api.h \
+			public/oval_session.h \
 			public/oval_definitions.h \
 			public/oval_system_characteristics.h \
 			public/oval_variables.h \
