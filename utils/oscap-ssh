@@ -83,6 +83,7 @@ function usage()
 }
 
 OSCAP_SUDO=""
+SSH_ADDITIONAL_ARGS=""
 if [ $# -lt 1 ]; then
     echo "No arguments provided."
     usage
@@ -92,6 +93,8 @@ elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     die
 elif [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]; then
     OSCAP_SUDO="sudo"
+    # force pseudo-tty allocation so that users can type their password if necessary
+    SSH_ADDITIONAL_ARGS="-t"
     shift
 fi
 if [ $# -lt 2 ]; then
@@ -217,9 +220,8 @@ if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
     scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_DIRECTIVES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/directives.xml" || die "Failed to copy OVAL directives file to remote temporary directory!"
 fi
 
-# Use 'sudo' if SSH_HOST user is not root
 echo "Starting the evaluation..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "$OSCAP_SUDO oscap ${args[*]}"
+ssh -o ControlPath=$MASTER_SOCKET $SSH_ADDITIONAL_ARGS -p "$SSH_PORT" "$SSH_HOST" "$OSCAP_SUDO oscap ${args[*]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
