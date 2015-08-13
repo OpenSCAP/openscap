@@ -33,6 +33,8 @@ Authors:
     xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
     exclude-result-prefixes="xsl cdf ovalres sceres exsl">
 
+<xsl:key name="references" match="//cdf:Rule/cdf:reference" use="@href"/>
+
 <xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-resources.xsl" />
 <xsl:include href="xccdf-share.xsl" />
@@ -284,6 +286,40 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:template name="references-to-json">
+    <xsl:param name="item"/>
+    <xsl:text>{</xsl:text>
+    <xsl:for-each select="$item/cdf:reference">
+        <xsl:sort select="@href"/>
+        <xsl:variable name="href" select="@href"/>
+        <xsl:if test="not(preceding-sibling::cdf:reference[@href=$href]) and @href">
+            <xsl:if test="position() != 1">
+                <xsl:text>,</xsl:text>
+            </xsl:if>
+            <xsl:text>"</xsl:text>
+            <xsl:value-of select="$href"/>
+            <xsl:text>":[</xsl:text>
+            <xsl:for-each select="$item/cdf:reference[@href=$href]">
+                <xsl:text>"</xsl:text>
+                <xsl:choose>
+                    <xsl:when test="normalize-space(.)">
+                        <xsl:value-of select="."/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:text>unknown</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:text>"</xsl:text>
+                <xsl:if test="position() != last()">
+                    <xsl:text>,</xsl:text>
+                </xsl:if>
+            </xsl:for-each>
+            <xsl:text>]</xsl:text>
+        </xsl:if>
+    </xsl:for-each>
+    <xsl:text>}</xsl:text>
+</xsl:template>
+
 <xsl:template name="rule-overview-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
@@ -296,6 +332,11 @@ Authors:
     <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result} rule-overview-leaf-id-{$item/@id}" id="rule-overview-leaf-{generate-id($ruleresult)}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
+        </xsl:attribute>
+        <xsl:attribute name="data-references">
+            <xsl:call-template name="references-to-json">
+                <xsl:with-param name="item" select="$item"/>
+            </xsl:call-template>
         </xsl:attribute>
         <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
             <xsl:attribute name="class">rule-overview-leaf rule-overview-leaf-<xsl:value-of select="$result"/> rule-overview-needs-attention</xsl:attribute>
@@ -313,7 +354,7 @@ Authors:
                 &#160;<span class="label label-warning">waived</span>
             </xsl:if>
         </td>
-        <td style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
+        <td class="rule-severity" style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
         <td class="rule-result rule-result-{$result}">
             <xsl:variable name="result_tooltip">
                 <xsl:call-template name="rule-result-tooltip">
@@ -392,6 +433,29 @@ Authors:
     </xsl:for-each>
 </xsl:template>
 
+<xsl:template name="get-all-references">
+    <xsl:for-each select="//cdf:Rule/cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+        <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
+            <option>
+                <xsl:attribute name="value">
+                    <xsl:value-of select="@href"/>
+                </xsl:attribute>
+                <xsl:choose>
+                    <xsl:when test="@href = 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf'">
+                        NIST SP 800-53 ID
+                    </xsl:when>
+                    <xsl:when test="@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx'">
+                        DISA ID
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@href"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </option>
+        </xsl:if>
+    </xsl:for-each>
+</xsl:template>
+
 <xsl:template name="rule-overview">
     <xsl:param name="testresult"/>
     <xsl:param name="benchmark"/>
@@ -448,11 +512,18 @@ Authors:
                         </div>
                     </div>
                     <p id="search-matches"></p>
+                    Group rules by:
+                    <select name="groupby" onchange="groupRulesBy(value)">
+                        <option value="default" selected="selected">Default</option>
+                        <option value="severity">Severity</option>
+                        <option value="result">Result</option>
+                        <xsl:call-template name="get-all-references"/>
+                    </select>
                 </div>
             </div>
         </div>
 
-        <table class="treetable table table-striped table-bordered">
+        <table class="treetable table table-bordered">
             <thead>
                 <tr>
                     <th>Title</th>
