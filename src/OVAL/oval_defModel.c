@@ -125,32 +125,24 @@ struct oval_definition_model *oval_definition_model_clone(struct oval_definition
 
 void oval_definition_model_free(struct oval_definition_model *model)
 {
-	__attribute__nonnull__(model);
-
-	oval_string_map_free(model->definition_map, (oscap_destruct_func) oval_definition_free);
-	oval_string_map_free(model->object_map, (oscap_destruct_func) oval_object_free);
-	oval_string_map_free(model->state_map, (oscap_destruct_func) oval_state_free);
-	oval_string_map_free(model->test_map, (oscap_destruct_func) oval_test_free);
-	oval_string_map_free(model->variable_map, (oscap_destruct_func) oval_variable_free);
-	if (model->vardef_map != NULL)
-		oval_string_map_free(model->vardef_map, (oscap_destruct_func) oval_string_map_free0);
-	if (model->bound_variable_models)
-		oval_collection_free_items(model->bound_variable_models,
+	if (model != NULL) {
+		oval_string_map_free(model->definition_map, (oscap_destruct_func) oval_definition_free);
+		oval_string_map_free(model->object_map, (oscap_destruct_func) oval_object_free);
+		oval_string_map_free(model->state_map, (oscap_destruct_func) oval_state_free);
+		oval_string_map_free(model->test_map, (oscap_destruct_func) oval_test_free);
+		oval_string_map_free(model->variable_map, (oscap_destruct_func) oval_variable_free);
+		if (model->vardef_map != NULL)
+			oval_string_map_free(model->vardef_map, (oscap_destruct_func) oval_string_map_free0);
+		if (model->bound_variable_models)
+			oval_collection_free_items(model->bound_variable_models,
 					   (oscap_destruct_func) oval_variable_model_free);
 
-        if (model->schema != NULL)
-            oscap_free(model->schema);
+	        if (model->schema != NULL)
+			oscap_free(model->schema);
 
-	model->definition_map = NULL;
-	model->object_map = NULL;
-	model->state_map = NULL;
-	model->test_map = NULL;
-	model->variable_map = NULL;
-        model->schema = NULL;
-
-	oval_generator_free(model->generator);
-
-	oscap_free(model);
+		oval_generator_free(model->generator);
+		oscap_free(model);
+	}
 }
 
 struct oval_generator *oval_definition_model_get_generator(struct oval_definition_model *model)

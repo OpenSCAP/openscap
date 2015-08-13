@@ -1915,6 +1915,49 @@ static long unsigned int _parse_fmt_sse(char *dt)
 	return (long unsigned int) t;
 }
 
+static bool _match(const char *pattern, const char *string)
+{
+	bool match = false;
+#if defined USE_REGEX_PCRE
+	pcre *re;
+	const char *error;
+	int erroffset = -1, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
+	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
+	match = (pcre_exec(re, NULL, string, strlen(string), 0, 0, ovector, ovector_len) >= 0);
+	pcre_free(re);
+#elif defined USE_REGEX_POSIX
+	regex_t re;
+	regcomp(&re, pattern, REG_EXTENDED);
+	match = (regexec(&re, string, 0, NULL, 0) == 0);
+	regfree(&re);
+#endif
+	return match;
+}
+
+static long unsigned int _parse_fmt_cim(char *dt)
+{
+	const char *pattern1 = "^[0-9]{14}\\.[0-9]{6}[+-][0-9]{3}$"; // yyyymmddHHMMSS.mmmmmmsUUU
+	const char *fmt_str1 = "%4u%2u%2u%2u%2u%2u.%*6u%*[+-]%*3u";
+	const char *pattern2 = "^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}$"; // yyyy-mm-dd HH:MM:SS:mmm
+	const char *fmt_str2 = "%4d-%2d-%2d %2d:%2d:%2d:%*3d";
+	const char *pattern3 = "^[0-9]{2}-[0-9]{2}-[0-9]{4} [0-9]{2}:[0-9]{2}:[0-9]{2}:[0-9]{3}$"; // mm-dd-yyyy hh:mm:ss:mmm
+	const char *fmt_str3 = "%2d-%2d-%4d %2d:%2d:%2d:%*3d";
+	int year, month, day, hour, minute, second, r = 0;
+	const int number_of_items = 6;
+	if (_match(pattern1, dt)) {
+		r = sscanf(dt, fmt_str1, &year, &month, &day, &hour, &minute, &second);
+	} else if (_match(pattern2, dt)) {
+		r = sscanf(dt, fmt_str2, &year, &month, &day, &hour, &minute, &second);
+	} else if (_match(pattern3, dt)) {
+		r = sscanf(dt, fmt_str3, &month, &day, &year, &hour, &minute, &second);
+	}
+	if (r != number_of_items) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unable to interpret \"%s\" as a cim_datetime string\n", dt);
+		return 0;
+	}
+	return _comp_sec(year, month, day, hour, minute, second);
+}
+
 static long unsigned int _parse_fmt(struct oval_value *val, oval_datetime_format_t fmt)
 {
 	long unsigned int v = 0;
@@ -1937,6 +1980,9 @@ static long unsigned int _parse_fmt(struct oval_value *val, oval_datetime_format
 		break;
 	case OVAL_DATETIME_SECONDS_SINCE_EPOCH:
 		v = _parse_fmt_sse(sv);
+		break;
+	case OVAL_DATETIME_CIM_DATETIME:
+		v = _parse_fmt_cim(sv);
 		break;
 	default:
 		break;

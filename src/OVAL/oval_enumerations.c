@@ -147,6 +147,7 @@ static const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
 	{OVAL_DATETIME_DAY_MONTH_YEAR, "day_month_year"},
 	{OVAL_DATETIME_WIN_FILETIME, "win_filetime"},
 	{OVAL_DATETIME_SECONDS_SINCE_EPOCH, "seconds_since_epoch"},
+	{OVAL_DATETIME_CIM_DATETIME, "cim_datetime"},
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 

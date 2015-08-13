@@ -73,7 +73,7 @@ function _oscap {
 		case "$prev" in
 			--AV|--AC|--AU|--CI|--II|--AI|--EX|--RL|--RC|--CD|--TD|--CR|--IR|--AR)
 				COMPREPLY=( $(compgen -W "`$prog cvss $cmd -h | sed -r -n -e "s:^\s+$prev=\[(.+)\].+$:\1:gp" | tr '|' ' '`" -- ${cur}) ) ;;
-			--results|-o|--output|--template|--oval-template) _filedir 'xml' ;;
+			--results|-o|--output|--template|--oval-template) _filedir 'xml.bz2|xml' ;;
             --report) _filedir 'html' ;;
 		esac
 
@@ -88,7 +88,7 @@ function _oscap {
 
 		case "$modpath" in
 			oscap:cvss:*) ;; # no positional args for cvss
-			*) _filedir 'xml' ;;
+			*) _filedir 'xml.bz2|xml' ;;
 		esac
 
 	fi

@@ -173,10 +173,10 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 	}
 #if defined(OSCAP_THREAD_SAFE)
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%u:%llx) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+	fprintf(__debuglog_fp, "(%ld:%llx) [%c:%s:%zu:%s] ", (long) getpid(),
 		(unsigned long long) pthread_self(), l, f, line, fn);
 #else
-	fprintf(__debuglog_fp, "(%u) [%c:%s:%zu:%s] ", (unsigned int) getpid(),
+	fprintf(__debuglog_fp, "(%ld) [%c:%s:%zu:%s] ", (long) getpid(),
 		l, f, line, fn);
 #endif
 	vfprintf(__debuglog_fp, fmt, ap);
@@ -217,8 +217,8 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
                 if (logfile == NULL)
                         logfile = OSCAP_DEBUG_FILE;
 
-		if (snprintf(pathbuf, sizeof pathbuf, "%s.%u",
-			     logfile, (unsigned int)getpid()) >= (signed int) sizeof pathbuf)
+		if (snprintf(pathbuf, sizeof pathbuf, "%s.%ld",
+			     logfile, (long)getpid()) >= (signed int) sizeof pathbuf)
 		{
                         __UNLOCK_FP;
 			return;
@@ -250,9 +250,9 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 
 #if defined(SEAP_THREAD_SAFE)
         /* XXX: non-portable usage of pthread_t */
-        fprintf (__debuglog_fp, "(%u:%llx) [%s:%zu:%s]\n------ \n", (unsigned int)getpid (), (unsigned long long)pthread_self(), file, line, fn);
+	fprintf (__debuglog_fp, "(%ld:%llx) [%s:%zu:%s]\n------ \n", (long)getpid (), (unsigned long long)pthread_self(), file, line, fn);
 #else
-        fprintf (__debuglog_fp, "(%u) [%s:%zu:%s]\n------\n ", (unsigned int)getpid (), file, line, fn);
+	fprintf (__debuglog_fp, "(%ld) [%s:%zu:%s]\n------\n ", (long)getpid (), file, line, fn);
 #endif
 
         switch (objtype) {

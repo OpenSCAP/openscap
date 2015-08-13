@@ -31,6 +31,7 @@
 # include <oval_probe.h>
 #endif
 #include <oval_agent_api.h>
+#include <oval_session.h>
 #include <oval_results.h>
 #include <oval_variables.h>
 #include <ds_sds_session.h>
@@ -352,148 +353,57 @@ cleanup:
 
 int app_evaluate_oval(const struct oscap_action *action)
 {
-
-	struct oval_definition_model	*def_model = NULL;
-	struct oval_variable_model	*var_model = NULL;
-	struct oval_directives_model	*dir_model = NULL;
-	oval_agent_session_t		*sess      = NULL;
+	struct oval_session *session;
+	oval_result_t eval_result;
 	int ret = OSCAP_ERROR;
 
-	struct oscap_source *main_source = oscap_source_new_from_file(action->f_oval);
-	struct ds_sds_session *sds_session = NULL;
-	struct oscap_source *oval_source = NULL;
-
-	if (action->probe_root) {
-		if (setenv("OSCAP_PROBE_ROOT", action->probe_root, 1) != 0) {
-			fprintf(stderr, "Failed to set the OSCAP_PROBE_ROOT environment variable.\n");
-			goto cleanup;
-		}
+	/* create a new OVAL session */
+	if ((session = oval_session_new(action->f_oval)) == NULL) {
+		oscap_print_error();
+		return ret;
 	}
 
-	/* validate inputs */
-	if (action->validate) {
-		if (!valid_inputs(action)) {
-			goto cleanup;
-		}
-	}
+	/* set validation level */
+	oval_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION"));
 
-	if (oscap_source_get_scap_type(main_source) == OSCAP_DOCUMENT_SDS)
-	{
-		sds_session = ds_sds_session_new_from_source(main_source);
-		if (sds_session == NULL) {
-			goto cleanup;
-		}
+	/* set source DS related IDs */
+	oval_session_set_datastream_id(session, action->f_datastream_id);
+	oval_session_set_component_id(session, action->f_oval_id);
 
-		ds_sds_session_set_datastream_id(sds_session, action->f_datastream_id);
-		if (ds_sds_session_register_component_with_dependencies(sds_session, "checks", action->f_oval_id, "oval.xml") != 0) {
-			goto cleanup;
-		}
-		oval_source = ds_sds_session_get_component_by_href(sds_session, "oval.xml");
-		if (oval_source == NULL) {
-			fprintf(stderr, "Internal error: OVAL file was not found in Source DataStream session cache!");
-			goto cleanup;
-		}
-	}
-	else
-	{
-		oval_source = main_source;
-	}
+	/* set reporter function for XML validation of inputs and outputs */
+	oval_session_set_xml_reporter(session, reporter);
 
-	/* import OVAL Definitions */
-	def_model = oval_definition_model_import_source(oval_source);
-	if (def_model == NULL) {
-		fprintf(stderr, "Failed to import the OVAL Definitions from '%s'.\n", oscap_source_readable_origin(oval_source));
+	/* set OVAL Variables */
+	oval_session_set_variables(session, action->f_variables);
+
+	/* load all necesary OVAL Definitions and bind OVAL Variables if provided */
+	if ((oval_session_load(session)) != 0)
 		goto cleanup;
-	}
 
-	/* bind external variables */
-	if(action->f_variables) {
-		struct oscap_source *var_source = oscap_source_new_from_file(action->f_variables);
-		var_model = oval_variable_model_import_source(var_source);
-		oscap_source_free(var_source);
-		if (var_model == NULL) {
-			fprintf(stderr, "Failed to import the OVAL Variables from '%s'.\n", action->f_variables);
-			goto cleanup;
-		}
-
-		if (oval_definition_model_bind_variable_model(def_model, var_model)) {
-			fprintf(stderr, "Failed to bind Variables to Definitions\n");
-			goto cleanup;
-		}
-	}
-
-	char *path_clone = strdup(oscap_source_readable_origin(oval_source));
-	sess = oval_agent_new_session(def_model, basename(path_clone));
-	free(path_clone);
-
-	if (sess == NULL) {
-		fprintf(stderr, "Failed to create new agent session.\n");
-		goto cleanup;
-	}
-
-	/* set product name */
-	oval_agent_set_product_name(sess, OSCAP_PRODUCTNAME);
-
-	/* Evaluation */
+	/* evaluation */
 	if (action->id) {
-		oval_agent_eval_definition(sess, action->id);
-		oval_result_t result = OVAL_RESULT_NOT_EVALUATED;
-		oval_agent_get_definition_result(sess, action->id, &result);
-		printf("Definition %s: %s\n", action->id, oval_result_get_text(result));
-	} else
-		oval_agent_eval_system(sess, app_oval_callback, NULL);
-
-	if (oscap_err())
-		goto cleanup;
+		if ((oval_session_evaluate_id(session, action->probe_root, action->id, &eval_result)) != 0)
+			goto cleanup;
+		printf("Definition %s: %s\n", action->id, oval_result_get_text(eval_result));
+	}
+	else {
+		if ((oval_session_evaluate(session, action->probe_root, app_oval_callback, NULL)) != 0)
+			goto cleanup;
+	}
 
 	printf("Evaluation done.\n");
 
-	/* export results to file */
-	if (action->f_results != NULL) {
-		/* get result model */
-		struct oval_results_model *res_model = oval_agent_get_results_model(sess);
-
-		/* import directives */
-		if (action->f_directives != NULL) {
-			dir_model = oval_directives_model_new();
-			struct oscap_source *dir_source = oscap_source_new_from_file(action->f_directives);
-			oval_directives_model_import_source(dir_model, dir_source);
-			oscap_source_free(dir_source);
-		}
-
-		/* export result model to XML */
-		oval_results_model_export(res_model, dir_model, action->f_results);
-
-		const char* full_validation = getenv("OSCAP_FULL_VALIDATION");
-
-		/* validate OVAL Results */
-		if (action->validate && full_validation) {
-			struct oscap_source *result_source = oscap_source_new_from_file(action->f_results);
-			if (oscap_source_validate(result_source, reporter, (void *) action)) {
-				oscap_source_free(result_source);
-				goto cleanup;
-			}
-			fprintf(stdout, "OVAL Results are exported correctly.\n");
-			oscap_source_free(result_source);
-		}
-
-		/* generate report */
-	        if (action->f_report != NULL)
-        		oval_gen_report(action->f_results, action->f_report);
-	}
+	oval_session_set_directives(session, action->f_directives);
+	oval_session_set_results_export(session, action->f_results);
+	oval_session_set_report_export(session, action->f_report);
+	if (oval_session_export(session) != 0)
+		goto cleanup;
 
 	ret = OSCAP_OK;
 
-	/* clean up */
 cleanup:
 	oscap_print_error();
-
-	ds_sds_session_free(sds_session);
-	oscap_source_free(main_source);
-	if (sess) oval_agent_destroy_session(sess);
-	if (def_model) oval_definition_model_free(def_model);
-	if (dir_model) oval_directives_model_free(dir_model);
-
+	oval_session_free(session);
 	return ret;
 }
 #endif /* OVAL_PROBES_ENABLED */
