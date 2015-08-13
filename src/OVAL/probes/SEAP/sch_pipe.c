@@ -170,11 +170,11 @@ static int check_child (pid_t pid, int waitf)
         default:
                 /* child is dead */
 		if (WIFSIGNALED(status)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe has been killed with signal %d", WTERMSIG(status));
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe with PID=%ld has been killed with signal %d", (long)pid, WTERMSIG(status));
 			errno = EINTR;
 		}
 		if (WCOREDUMP(status)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe has core dumped.");
+			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe with PID=%ld has core dumped.", (long)pid);
 			errno = EINTR;
 		}
                 if (WIFEXITED(status)) {
