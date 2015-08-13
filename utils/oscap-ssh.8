@@ -57,16 +57,25 @@ Supported options are:
   --variables
   --skip-valid
 
+Specific option for oscap-ssh (must be first argument):
+  --sudo
+
 .SH EXEMPLARY USAGE
 .SS Simple XCCDF evaluation
 The following command evaluates a remote Fedora machine as root. HTML report is written out as report.html on the local machine. Can be executed from any machine that has ssh, scp and bash. The local machine does not need to have openscap installed.
 
 $ oscap-ssh root@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
 
-.SS XCCDF Evaluation with tailoring file.
+.SS XCCDF Evaluation with tailoring file
 The following command uses a tailoring file and also copies back ARF and XCCDF results. The tailoring file is automatically copied from local machine to remote.
 
-oscap-ssh root@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html --results results.xml --results-arf arf.xml --tailoring-file ssg-fedora-ds-tailoring.xml /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
+$ oscap-ssh --sudo oscap-user@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html --results results.xml --results-arf arf.xml --tailoring-file ssg-fedora-ds-tailoring.xml /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
+
+.SS Running remotely as root
+Note that the openscap scanner is best run by the 'root' user as in the first example above. To do this, the "PermitRootLogin" directive must be enabled in /etc/ssh/sshd_config, which is itself a security violation. A safer approach is to enable a non-privileged user ('oscap-user' in the second example above) to run only the oscap binary as root (with the '--sudo' flag) by updating the remote machine's 'sudoers' file or adding a file like /etc/sudoers.d/99-oscap-user:
+  # allow oscap-user to run openscap scanner
+  Defaults!/bin/oscap !requiretty
+  oscap-user ALL=(root) NOPASSWD: /bin/oscap
 
 .SH REPORTING BUGS
 .nf
