@@ -36,9 +36,11 @@ function shell_script_syntax(){
 
 function test_config_h(){
 	text='(#\s*include\s+<config.h>)|(#\s*include\s+"config.h")'
-
+	
+	ignore_list='MurmurHash3.c$'
+	echo "Files from this mask will not be checked: $ignore_list"
 	codebase=$(find $top_srcdir/src/ -name "*.c" | sort)
-	echo "$codebase" | while read filename;
+	echo "$codebase" | grep -vE "$ignore_list" | while read filename;
 	do
 		grep -E "$text" "$filename" --quiet || {
 			echo "$filename does not contain '$text'"
