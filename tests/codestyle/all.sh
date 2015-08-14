@@ -34,10 +34,23 @@ function shell_script_syntax(){
 	done
 }
 
+function test_config_h(){
+	text='(#\s*include\s+<config.h>)|(#\s*include\s+"config.h")'
+
+	codebase=$(find $top_srcdir/src/ -name "*.c" | sort)
+	echo "$codebase" | while read filename;
+	do
+		grep -E "$text" "$filename" --quiet || {
+			echo "$filename does not contain '$text'"
+			return 1
+		}
+	done
+}
+
 test_init "test_codebase.log"
 
 test_run "illicit use of functions" test_illicit_function_use 0
 test_run "Check syntax of distributed shell scripts" shell_script_syntax \
 	utils/oscap-ssh utils/oscap-docker
-
+test_run "Check existence including config.h in every .c file" test_config_h
 test_exit
