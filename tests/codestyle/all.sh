@@ -37,7 +37,7 @@ function shell_script_syntax(){
 function test_config_h(){
 	text='(#\s*include\s+<config.h>)|(#\s*include\s+"config.h")'
 
-	ignore_list='(MurmurHash3.c|rbt_gen.c)$'
+	ignore_list='(MurmurHash3.c|rbt_gen.c|oval_testing_ext_probe.c)$'
 	echo "Files from this mask will not be checked: $ignore_list"
 
 	codebase=$(find $top_srcdir/src/ -name "*.c" | sort)
