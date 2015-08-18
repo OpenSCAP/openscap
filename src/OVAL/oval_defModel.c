@@ -166,8 +166,26 @@ oval_version_t oval_definition_model_get_schema_version(struct oval_definition_m
 	if (model == NULL || model->generator == NULL) {
 		return OVAL_VERSION_INVALID;
 	}
-	const char *ver_str = oval_generator_get_schema_version(model->generator);
+	const char *ver_str = oval_generator_get_core_schema_version(model->generator);
 	return oval_version_from_cstr(ver_str);
+}
+
+oval_schema_version_t oval_definition_model_get_core_schema_version(struct oval_definition_model *model)
+{
+	if (model == NULL || model->generator == NULL) {
+		return OVAL_SCHEMA_VERSION_INVALID;
+	}
+	const char *version = oval_generator_get_core_schema_version(model->generator);
+	return oval_schema_version_from_cstr(version);
+}
+
+oval_schema_version_t oval_definition_model_get_platform_schema_version(struct oval_definition_model *model, const char *platform)
+{
+	if (model == NULL || model->generator == NULL) {
+		return OVAL_SCHEMA_VERSION_INVALID;
+	}
+	const char *version = oval_generator_get_platform_schema_version(model->generator, platform);
+	return oval_schema_version_from_cstr(version);
 }
 
 void oval_definition_model_add_definition(struct oval_definition_model *model, struct oval_definition *definition)
