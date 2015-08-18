@@ -51,6 +51,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "public/oval_version.h"
+#include "public/oval_schema_version.h"
 
 
 SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
@@ -416,7 +417,7 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 	struct oval_object_content *content;
 	struct oval_entity *entity;
 
-	oval_version_t obj_over;
+	const char *obj_over;
 	char obj_name[128];
 	const char *obj_id;
 
@@ -431,11 +432,12 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 		return -1;
 	}
 
-	obj_over = oval_object_get_schema_version(object);
+	obj_over = oval_schema_version_to_cstr(oval_object_get_platform_schema_version(object));
 	obj_id   = oval_object_get_id(object);
 	obj_attr = probe_attr_creat("id", SEXP_string_new_r(&sm0, obj_id, strlen(obj_id)),
-	                            "oval_version", SEXP_number_newu_32_r(&sm1, obj_over),
+	                            "oval_version", SEXP_string_new_r(&sm1, obj_over, strlen(obj_over)),
 	                            NULL);
+	oscap_free(obj_over);
 
 	obj_sexp = probe_obj_new(obj_name, obj_attr);
 
