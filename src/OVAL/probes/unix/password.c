@@ -71,7 +71,7 @@ struct result_info {
 	int64_t last_login;
 };
 
-static void report_finding(struct result_info *res, probe_ctx *ctx, oval_version_t over)
+static void report_finding(struct result_info *res, probe_ctx *ctx, oval_schema_version_t over)
 {
         SEXP_t *item;
 
@@ -85,7 +85,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx, oval_version
                                  "login_shell", OVAL_DATATYPE_STRING, res->login_shell,
                                  NULL);
 
-        if (oval_version_cmp(over, OVAL_VERSION(5.10)) >= 0) {
+        if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
 	        SEXP_t last_login;
 	        SEXP_number_newi_64_r(&last_login, res->last_login);
 	        probe_item_ent_add(item, "last_login", NULL, &last_login);
@@ -95,7 +95,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx, oval_version
         probe_item_collect(ctx, item);
 }
 
-static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_version_t over)
+static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
         struct passwd *pw;
 
@@ -116,7 +116,7 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_version_t over)
                         r.login_shell = pw->pw_shell;
                         r.last_login = -1;
 
-                        if (oval_version_cmp(over, OVAL_VERSION(5.10)) >= 0) {
+                        if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
 	                        FILE *ll_fp = fopen(_PATH_LASTLOG, "r");
 
 	                        if (ll_fp != NULL) {
@@ -140,14 +140,14 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_version_t over)
 int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *ent, *obj;
-	oval_version_t over;
+	oval_schema_version_t over;
 
 	obj = probe_ctx_getobject(ctx);
 
 	if (obj == NULL)
 		return PROBE_ENOOBJ;
 
-	over= probe_obj_get_schema_version(obj);
+	over = probe_obj_get_platform_schema_version(obj);
         ent = probe_obj_getent(obj, "username", 1);
 
         if (ent == NULL) {

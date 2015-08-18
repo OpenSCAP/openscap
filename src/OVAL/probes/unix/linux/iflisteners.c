@@ -297,12 +297,12 @@ static int collect_process_info(llist *l)
 	return 0;
 }
 
-static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx, oval_version_t over)
+static void report_finding(struct result_info *res, llist *l, probe_ctx *ctx, oval_schema_version_t over)
 {
         SEXP_t *item, *user_id;
 	lnode *n = list_get_cur(l);
 
-	if (oval_version_cmp(over, OVAL_VERSION(5.10)) < 0)
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) < 0)
 		user_id = SEXP_string_newf("%d", n->uid);
 	else
 		user_id = SEXP_number_newi_64((int64_t)n->uid);
@@ -370,7 +370,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 	return 0;
 }
 
-static int read_packet(llist *l, probe_ctx *ctx, oval_version_t over)
+static int read_packet(llist *l, probe_ctx *ctx, oval_schema_version_t over)
 {
 	int line = 0;
 	FILE *f;
@@ -429,10 +429,10 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_t *object;
 	int err;
 	llist ll;
-	oval_version_t over;
+	oval_schema_version_t over;
 
         object = probe_ctx_getobject(ctx);
-        over   = probe_obj_get_schema_version(object);
+        over   = probe_obj_get_platform_schema_version(object);
 
 	interface_name_ent = probe_obj_getent(object, "interface_name", 1);
 	if (interface_name_ent == NULL) {

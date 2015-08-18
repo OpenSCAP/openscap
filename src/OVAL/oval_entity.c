@@ -322,7 +322,8 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		} else {
 			varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 			struct oval_definition_model *model = context->definition_model;
-			if (oval_version_cmp(oval_definition_model_get_schema_version(model), OVAL_VERSION(5.6)) > 0) {
+			oval_schema_version_t version = oval_definition_model_get_core_schema_version(model);
+			if (oval_schema_version_cmp(version, OVAL_SCHEMA_VERSION(5.6)) > 0) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL, "The var_ref attribute for the var_ref entity "
 						"of a variable_object is prohibited since OVAL 5.6. Use plain "
 						"var_ref instead.");
@@ -399,8 +400,8 @@ xmlNode *oval_entity_to_dom(struct oval_entity *entity, xmlDoc * doc, xmlNode * 
 
 	/* omit the value and operation used for testing in oval_results if mask=true */
 	/* Omit it only for older versions of OVAL than 5.10 */
-	oval_version_t oval_version = oval_definition_model_get_schema_version(entity->model);
-	if (oval_version_cmp(oval_version, OVAL_VERSION(5.10)) < 0 &&
+	oval_schema_version_t oval_version = oval_definition_model_get_core_schema_version(entity->model);
+	if (oval_schema_version_cmp(oval_version, OVAL_SCHEMA_VERSION(5.10)) < 0 &&
 		mask && !xmlStrcmp(root_node->name, BAD_CAST OVAL_ROOT_ELM_RESULTS)) {
 		entity_node = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST "");
 	} else {

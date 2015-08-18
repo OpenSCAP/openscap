@@ -439,7 +439,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	int err = 1, max_cap_id;
 	DIR *d;
 	struct dirent *ent;
-	oval_version_t oval_version;
+	oval_schema_version_t oval_version;
 
 	d = opendir("/proc");
 	if (d == NULL)
@@ -449,8 +449,8 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	ticks = (unsigned long)sysconf(_SC_CLK_TCK);
 	get_boot_time();
 
-	oval_version = probe_obj_get_schema_version(probe_ctx_getobject(ctx));
-	if (oval_version_cmp(oval_version, OVAL_VERSION(5.11)) < 0) {
+	oval_version = probe_obj_get_platform_schema_version(probe_ctx_getobject(ctx));
+	if (oval_schema_version_cmp(oval_version, OVAL_SCHEMA_VERSION(5.11)) < 0) {
 		max_cap_id = OVAL_5_8_MAX_CAP_ID;
 	} else {
 		max_cap_id = OVAL_5_11_MAX_CAP_ID;

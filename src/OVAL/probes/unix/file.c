@@ -84,7 +84,7 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
-oval_version_t over;
+oval_schema_version_t over;
 
 static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
 static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
@@ -130,7 +130,7 @@ static SEXP_t *ID_cache_get(int32_t id)
 	if (rbt_i32_get(g_ID_cache, id, (void *)&s_id) == 0)
 		return SEXP_ref(s_id); /* cache hit (first attempt) */
 
-	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.8)) < 0) {
 		s_id = SEXP_string_newf("%u", id);
 	} else {
 		s_id = SEXP_number_newu_32(id);
@@ -182,7 +182,7 @@ static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
 #endif
 		);
 
-	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.8)) < 0) {
 		return SEXP_string_newf_r(sexp, "%llu", (long long unsigned) t);
 	} else {
 		return SEXP_number_newu_64_r(sexp, t);
@@ -203,7 +203,7 @@ static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
 #endif
 		);
 
-	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.8)) < 0) {
 		return SEXP_string_newf_r(sexp, "%llu", (long long unsigned) t);
 	} else {
 		return SEXP_number_newu_64_r(sexp, t);
@@ -224,7 +224,7 @@ static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
 #endif
 		);
 
-	if (oval_version_cmp(over, OVAL_VERSION(5.8)) < 0) {
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.8)) < 0) {
 		return SEXP_string_newf_r(sexp, "%llu", (long long unsigned) t);
 	} else {
 		return SEXP_number_newu_64_r(sexp, t);
@@ -290,7 +290,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                 SEXP_t  se_atime_mem, se_ctime_mem, se_mtime_mem, se_size_mem;
 		SEXP_t *se_filepath, *se_acl;
 
-		if (oval_version_cmp(over, OVAL_VERSION(5.6)) < 0
+		if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.6)) < 0
 		    || f == NULL) {
 			se_filepath = NULL;
 		} else {
@@ -308,7 +308,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		} else
 			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
 
-		if (oval_version_cmp(over, OVAL_VERSION(5.7)) < 0) {
+		if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.7)) < 0) {
 			se_acl = NULL;
 		} else {
 			se_acl = has_extended_acl(st_path);
@@ -469,7 +469,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
 
         probe_in  = probe_ctx_getobject(ctx);
 
-	over = probe_obj_get_schema_version(probe_in);
+	over = probe_obj_get_platform_schema_version(probe_in);
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
