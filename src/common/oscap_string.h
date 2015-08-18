@@ -40,6 +40,13 @@ struct oscap_string *oscap_string_new(void);
 void oscap_string_free(struct oscap_string *s);
 
 /**
+ * Return pointer to internal string
+ * Free oscap_string structure
+ * @param s buffer
+ */
+char* oscap_string_bequeath(struct oscap_string *s);
+
+/**
  * Append a single char at the end of a string.
  * @param s string
  * @param c to append
