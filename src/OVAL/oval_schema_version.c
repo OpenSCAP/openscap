@@ -146,7 +146,6 @@ const char *oval_schema_version_to_cstr(oval_schema_version_t version)
 
 int oval_schema_version_cmp(oval_schema_version_t v1, oval_schema_version_t v2)
 {
-	dI("comparing versions %s and %s\n", oval_schema_version_to_cstr(v1), oval_schema_version_to_cstr(v2));
 	for (int i = 0; i < OVAL_SCHEMA_VERSION_COMPONENTS_COUNT; i++) {
 		if (v1.component[i] < v2.component[i]) {
 			return -1;
