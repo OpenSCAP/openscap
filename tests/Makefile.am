@@ -20,6 +20,7 @@ endif
 SUBDIRS = \
 	API \
 	DS \
+	sources \
 	schemas \
 	oscap_string \
 	$(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS)
