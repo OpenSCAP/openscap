@@ -119,9 +119,9 @@ char *oval_generator_get_timestamp(struct oval_generator *generator)
 
 const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform)
 {
-	char *pschv = oscap_htable_get(generator->platform_schema_versions, platform);
-	if (pschv != NULL) {
-		return pschv;
+	char *platform_schema_version = oscap_htable_get(generator->platform_schema_versions, platform);
+	if (platform_schema_version != NULL) {
+		return platform_schema_version;
 	} else {
 		return generator->core_schema_version;
 	}
