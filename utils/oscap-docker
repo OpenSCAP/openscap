@@ -129,7 +129,7 @@ container)
 	container_name=$1; shift
 	oscap_arguments="$*"
 	container_root=`docker_container_root $container_name`
-	oscap_chroot "image" $container_name $container_root $oscap_arguments
+	oscap_chroot "container" $container_name $container_root $oscap_arguments
 	;;
 container-cve)
 	container_name=$1; shift
