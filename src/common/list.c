@@ -565,6 +565,8 @@ bool
 oscap_htable_iterator_has_more(struct oscap_htable_iterator *hit)
 {
 	__attribute__nonnull__(hit);
+	if (hit->htable == NULL)
+		return false;
 	size_t i = hit->hpos;
 	if (hit->cur != NULL) {
 		if (hit->cur->next != NULL)
