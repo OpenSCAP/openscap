@@ -720,16 +720,18 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 			relationships, assets, "collection1");
 
 	unsigned int oval_report_suffix = 2;
-	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(oval_result_sources);
-	while (oscap_htable_iterator_has_more(hit)) {
-		struct oscap_source *oval_source = oscap_htable_iterator_next_value(hit);
-		xmlDoc *oval_result_doc = oscap_source_get_xmlDoc(oval_source);
+	if ( oval_result_sources != NULL ) {
+		struct oscap_htable_iterator *hit = oscap_htable_iterator_new(oval_result_sources);
+		while (oscap_htable_iterator_has_more(hit)) {
+			struct oscap_source *oval_source = oscap_htable_iterator_next_value(hit);
+			xmlDoc *oval_result_doc = oscap_source_get_xmlDoc(oval_source);
 
-		char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
-		ds_rds_create_report(doc, reports, oval_result_doc, report_id);
-		oscap_free(report_id);
+			char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
+			ds_rds_create_report(doc, reports, oval_result_doc, report_id);
+			oscap_free(report_id);
+		}
+		oscap_htable_iterator_free(hit);
 	}
-	oscap_htable_iterator_free(hit);
 
 	xmlAddChild(root, reports);
 
