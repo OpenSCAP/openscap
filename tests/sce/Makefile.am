@@ -7,7 +7,8 @@ TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \
 		$(top_builddir)/run
 
-TESTS = test_sce.sh
+TESTS = test_sce.sh \
+		test_passing_vars.sh
 
 EXTRA_DIST +=	test_sce.sh \
 		sce_xccdf.xml \
