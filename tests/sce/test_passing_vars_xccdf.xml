@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
+  <status date="2011-12-08">draft</status>
+  <title xml:lang="en-US">Sample XCCDF using SCE test engine</title>
+  <description xml:lang="en-US">abcd</description>
+  <version>0.1</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+
+  <Profile id="default">
+    <title xml:lang="en-US">A testing profile</title>
+    <description xml:lang="en-US">This profile is used to test whether the value of a variable is passed to a SCE script correctly or not.</description>
+    <select idref="rule-1" selected="true"/>
+    <refine-value idref="var-1.1" selector="Fail" />
+    <set-value idref="var-1.2">my_pass_val</set-value>
+  </Profile>
+
+  <Value id="var-1.1" type="string" operator="equals">
+    <title xml:lang="en">simple pass/fail value</title>
+    <description xml:lang="en">abc</description>
+    <value>unknown</value>
+    <value selector="Fail">fail</value>
+    <match>m.*e$</match>
+  </Value>
+
+  <Value id="var-1.2" type="string" operator="equals">
+    <title xml:lang="en">simple pass/fail value</title>
+    <description xml:lang="en">abc</description>
+    <value>unknown</value>
+    <match>m.*e$</match>
+  </Value>
+
+  <Group id="Group_Lonely" selected="true" weight="1.0">
+    <Rule id="rule-1" selected="true" weight="1.0" role="full" severity="low">
+      <title xml:lang="en-US">A testing rule 1</title>
+      <description>Check that value of a variable is passed to a SCE script correctly</description>
+      <fixtext fixref="Test_z_fix"> No fix possible, other than specifying Value.1 </fixtext>
+      <fix id="Test_z_fix"> # echo Let it be </fix>
+      <check system="http://open-scap.org/page/SCE">
+        <check-import import-name="stdout" />
+        <check-export value-id="var-1.1" export-name="VALUE_1" />
+        <check-export value-id="var-1.2" export-name="VALUE_2" />
+        <check-content-ref href="test_passing_vars_sce.sh" />
+      </check>
+    </Rule>
+
+  </Group>
+</Benchmark>
