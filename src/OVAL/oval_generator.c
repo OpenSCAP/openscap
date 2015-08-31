@@ -44,7 +44,7 @@
 struct oval_generator {
 	char *product_name;
 	char *product_version;
-	const char *core_schema_version;
+	char *core_schema_version;
 	struct oscap_htable *platform_schema_versions;
 	char *timestamp;
 	char *anyxml;
@@ -104,6 +104,7 @@ char *oval_generator_get_product_version(struct oval_generator *generator)
 
 char *oval_generator_get_schema_version(struct oval_generator *generator)
 {
+	/* Removed a const type because we can't change API of this function. */
 	return (char *) oval_generator_get_core_schema_version(generator);
 }
 
@@ -178,10 +179,8 @@ void oval_generator_add_platform_schema_version(struct oval_generator *generator
 xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, xmlNode *parent)
 {
 	struct oscap_htable_iterator *sv_itr;
-	const char *platform, *version;
-	xmlNode *gen_node, *sv_node;
+	xmlNode *gen_node;
 	xmlNs *ns_common;
-
 	xmlNode *nodestr, *nodelst;
 	xmlDoc  *docstr;
 
@@ -197,8 +196,9 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 	const char *namespace_uri = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
 	sv_itr = oscap_htable_iterator_new(generator->platform_schema_versions);
 	while (oscap_htable_iterator_has_more(sv_itr)) {
+		const char *platform, *version;
 		oscap_htable_iterator_next_kv(sv_itr, &platform, (void **) &version);
-		sv_node = xmlNewTextChild(gen_node, ns_common,
+		xmlNode *sv_node = xmlNewTextChild(gen_node, ns_common,
 			BAD_CAST "schema_version", BAD_CAST version);
 		size_t namespace_uri_length = strlen(namespace_uri) + 1 + strlen(platform) + 1;
 		char *platform_uri = oscap_alloc(namespace_uri_length);
@@ -225,7 +225,7 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 
 int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *context, void *user)
 {
-	char *tagname, *namespace, *val = NULL, *platform = NULL;
+	char *tagname, *namespace, *val = NULL;
 	struct oval_generator *gen = user;
 	int ret=0;
 
@@ -241,7 +241,7 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 		val = (char *) xmlTextReaderValue(reader);
 		oval_generator_set_product_version(gen, val);
 	} else if (!strcmp("schema_version", tagname)) {
-		platform = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "platform");
+		char *platform = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "platform");
 		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
 		if (platform != NULL) {
