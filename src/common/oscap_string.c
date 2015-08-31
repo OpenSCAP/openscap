@@ -59,3 +59,10 @@ const char *oscap_string_get_cstr(const struct oscap_string *s)
 {
 	return oscap_buffer_get_raw((struct oscap_buffer*)s);
 }
+
+bool oscap_string_empty(const struct oscap_string *s)
+{
+	return (oscap_buffer_get_length((struct oscap_buffer*)s) == 0);
+}
+
+

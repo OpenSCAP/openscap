@@ -67,6 +67,14 @@ void oscap_string_append_string(struct oscap_string *s, const char *t);
  */
 const char *oscap_string_get_cstr(const struct oscap_string *s);
 
+/**
+ * Returns true if the string has no characters; otherwise returns false
+ * @param s string
+ * @return true if empty
+ */
+bool oscap_string_empty(const struct oscap_string *s);
+
 OSCAP_HIDDEN_END;
+
 
 #endif
