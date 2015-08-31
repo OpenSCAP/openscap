@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
+#include <libxml/xmlerror.h>
 
 #include "common/alloc.h"
 #include "common/elements.h"
@@ -40,6 +41,7 @@
 #include "CPE/cpelang_priv.h"
 #include "doc_type_priv.h"
 #include "oscap_source.h"
+#include "common/oscap_string.h"
 #include "oscap_source_priv.h"
 #include "OVAL/oval_parser_impl.h"
 #include "OVAL/public/oval_definitions.h"
@@ -175,10 +177,24 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 	return source->scap_type;
 }
 
+static void xmlErrorCb(struct oscap_string *buffer, const char * format, ...)
+{
+	va_list ap;
+	va_start(ap, format);
+
+	char* error_msg = oscap_vsprintf(format, ap);
+	oscap_string_append_string(buffer, error_msg);
+	oscap_free(error_msg);
+
+	va_end(ap);
+}
+
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 {
 	// We check origin.memory first because even with it being non-NULL
 	// filepath will be non-NULL, it will contain the filepath hint.
+	struct oscap_string *xml_error_string = oscap_string_new();
+	xmlSetGenericErrorFunc(xml_error_string, (xmlGenericErrorFunc)xmlErrorCb);
 
 	if (source->xml.doc == NULL) {
 		if (source->origin.memory != NULL) {
@@ -191,7 +207,9 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 				source->xml.doc = xmlReadMemory(source->origin.memory, source->origin.memory_size, NULL, NULL, 0);
 				if (source->xml.doc == NULL) {
 					oscap_setxmlerr(xmlGetLastError());
-					oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML from user memory buffer");
+					const char *error_msg = oscap_string_get_cstr(xml_error_string);
+					oscap_seterr(OSCAP_EFAMILY_XML, "%sUnable to parse XML from user memory buffer", error_msg);
+					oscap_string_clear(xml_error_string);
 				}
 			}
 		}
@@ -210,13 +228,24 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 					source->xml.doc = xmlReadFd(fd, NULL, NULL, 0);
 					if (source->xml.doc == NULL) {
 						oscap_setxmlerr(xmlGetLastError());
-						oscap_seterr(OSCAP_EFAMILY_XML, "Unable to parse XML at: '%s'", oscap_source_readable_origin(source));
+						const char *error_msg = oscap_string_get_cstr(xml_error_string);
+						oscap_seterr(OSCAP_EFAMILY_XML, "%sUnable to parse XML at: '%s'", error_msg, oscap_source_readable_origin(source));
+						oscap_string_clear(xml_error_string);
 					}
 				}
 				close(fd);
 			}
 		}
 	}
+
+	initGenericErrorDefaultFunc(NULL);
+
+	if (!oscap_string_empty(xml_error_string)) {
+		const char *error_msg = oscap_string_get_cstr(xml_error_string);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%sFound xml error.", error_msg);
+	}
+
+	oscap_string_free(xml_error_string);
 	return source->xml.doc;
 }
 
