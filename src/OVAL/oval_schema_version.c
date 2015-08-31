@@ -38,7 +38,7 @@
 #include <regex.h>
 #endif
 
-enum {
+enum oval_schema_version_components {
 	OVAL_SCHEMA_VERSION_CORE_MAJOR,
 	OVAL_SCHEMA_VERSION_CORE_MINOR,
 	OVAL_SCHEMA_VERSION_CORE_UPDATE,
