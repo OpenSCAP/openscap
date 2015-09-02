@@ -223,14 +223,16 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user)
 {
 	oscap_document_type_t scap_type = oscap_source_get_scap_type(source);
-	int ret = oscap_source_validate_priv(source, scap_type, oscap_source_get_schema_version(source), reporter, user);
+	const char *schema_version = oscap_source_get_schema_version(source);
+	
+	int ret = oscap_source_validate_priv(source, scap_type, schema_version, reporter, user);
 	if (ret != 0) {
 		const char *type_name = oscap_document_type_to_string(scap_type);
 		if (type_name == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unrecognized document type for: %s", oscap_source_readable_origin(source));
 		} else {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.", type_name,
-				oscap_source_get_schema_version(source), oscap_source_readable_origin(source));
+				schema_version, oscap_source_readable_origin(source));
 		}
 	}
 	return ret;
