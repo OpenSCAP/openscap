@@ -40,3 +40,11 @@ div.top-spacer-10
 {
     margin-top: 10px;
 }
+
+@media print
+{
+    .container { width: 100% }
+    /* this syntax is for compatibility with IE */
+    .rule-result abbr[title]:after { content: "" }
+    .identifiers a[href]:after { content: "" }
+}
