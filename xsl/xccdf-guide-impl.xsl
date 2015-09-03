@@ -205,9 +205,11 @@ Authors:
                     </p>
                 </xsl:if>
 
-                <xsl:call-template name="item-idents-refs">
-                    <xsl:with-param name="item" select="$item"/>
-                </xsl:call-template>
+                <div class="identifiers">
+                    <xsl:call-template name="item-idents-refs">
+                        <xsl:with-param name="item" select="$item"/>
+                    </xsl:call-template>
+                </div>
 
                 <xsl:for-each select="$item/cdf:fixtext">
                     <span class="label label-success">Remediation description:</span>
