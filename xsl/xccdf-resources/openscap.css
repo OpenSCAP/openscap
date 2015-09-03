@@ -40,3 +40,12 @@ div.top-spacer-10
 {
     margin-top: 10px;
 }
+
+@media print
+{
+    .container { width: 100% }
+    /* ":after" instead of "::after" is used for compatibility with IE8 */
+    .rule-result abbr[title]:after { content: "" }
+    .identifiers abbr[title]:after { content: "" }
+    .identifiers a[href]:after { content: "" }
+}

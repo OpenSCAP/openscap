@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_arf_benchmark_1" resolved="true">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <Profile id="xccdf_arf_profile_1">
+    <title>is kinda compulsory</title>
+  </Profile>
+</Benchmark>

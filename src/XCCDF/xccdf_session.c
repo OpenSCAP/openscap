@@ -1009,6 +1009,7 @@ static void _xccdf_session_free_oval_result_sources(struct xccdf_session *sessio
 {
 	if (session->oval.result_sources != NULL) {
 		oscap_htable_free(session->oval.result_sources, (oscap_destruct_func) oscap_source_free);
+		session->oval.result_sources = NULL;
 	}
 }
 

@@ -18,7 +18,10 @@
  *
  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
 #include "_error.h"
 #include "err_queue.h"
 #include <stdlib.h>
