@@ -22,6 +22,7 @@ SUBDIRS = \
 	bz2 \
 	codestyle \
 	DS \
+	sources \
 	schemas \
 	oscap_string \
 	oval_details \
