@@ -47,6 +47,12 @@ void oscap_string_free(struct oscap_string *s);
 char* oscap_string_bequeath(struct oscap_string *s);
 
 /**
+ * Erases the contents of the string. Length of string becomes 0
+ * @param s string
+ */
+void oscap_string_clear(struct oscap_string *s);
+
+/**
  * Append a single char at the end of a string.
  * @param s string
  * @param c to append

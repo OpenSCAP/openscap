@@ -45,6 +45,11 @@ char* oscap_string_bequeath(struct oscap_string *s)
 	return oscap_buffer_bequeath((struct oscap_buffer*)s);
 }
 
+void oscap_string_clear(struct oscap_string *s)
+{
+	oscap_buffer_clear((struct oscap_buffer*)s);
+}
+
 void oscap_string_append_char(struct oscap_string *s, char c)
 {
 	oscap_buffer_append_binary_data((struct oscap_buffer*)s, &c, 1);
