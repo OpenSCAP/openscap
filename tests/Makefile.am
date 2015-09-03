@@ -20,6 +20,7 @@ endif
 SUBDIRS = \
 	API \
 	DS \
+	sources \
 	schemas \
 	oscap_string \
 	oval_details \

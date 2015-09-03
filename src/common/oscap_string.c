@@ -40,6 +40,16 @@ void oscap_string_free(struct oscap_string *s)
 	oscap_buffer_free((struct oscap_buffer*)s);
 }
 
+char* oscap_string_bequeath(struct oscap_string *s)
+{
+	return oscap_buffer_bequeath((struct oscap_buffer*)s);
+}
+
+void oscap_string_clear(struct oscap_string *s)
+{
+	oscap_buffer_clear((struct oscap_buffer*)s);
+}
+
 void oscap_string_append_char(struct oscap_string *s, char c)
 {
 	oscap_buffer_append_binary_data((struct oscap_buffer*)s, &c, 1);
@@ -54,3 +64,10 @@ const char *oscap_string_get_cstr(const struct oscap_string *s)
 {
 	return oscap_buffer_get_raw((struct oscap_buffer*)s);
 }
+
+bool oscap_string_empty(const struct oscap_string *s)
+{
+	return (oscap_buffer_get_length((struct oscap_buffer*)s) == 0);
+}
+
+

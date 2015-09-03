@@ -40,6 +40,19 @@ struct oscap_string *oscap_string_new(void);
 void oscap_string_free(struct oscap_string *s);
 
 /**
+ * Return pointer to internal string
+ * Free oscap_string structure
+ * @param s buffer
+ */
+char* oscap_string_bequeath(struct oscap_string *s);
+
+/**
+ * Erases the contents of the string. Length of string becomes 0
+ * @param s string
+ */
+void oscap_string_clear(struct oscap_string *s);
+
+/**
  * Append a single char at the end of a string.
  * @param s string
  * @param c to append
@@ -60,6 +73,14 @@ void oscap_string_append_string(struct oscap_string *s, const char *t);
  */
 const char *oscap_string_get_cstr(const struct oscap_string *s);
 
+/**
+ * Returns true if the string has no characters; otherwise returns false
+ * @param s string
+ * @return true if empty
+ */
+bool oscap_string_empty(const struct oscap_string *s);
+
 OSCAP_HIDDEN_END;
+
 
 #endif
