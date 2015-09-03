@@ -459,7 +459,7 @@ Authors:
     <div id="rule-overview">
         <h2>Rule Overview</h2>
 
-        <div class="form-group js-only">
+        <div class="form-group js-only hidden-print">
             <div class="row">
                 <div title="Filter rules by their XCCDF result">
                     <div class="col-sm-2 toggle-rule-display-success">
@@ -849,7 +849,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <div class="js-only">
+    <div class="js-only hidden-print">
         <button type="button" class="btn btn-info" onclick="return toggleResultDetails(this)">Show all result details</button>
     </div>
     <div id="result-details">
