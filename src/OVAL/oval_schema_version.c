@@ -38,15 +38,6 @@
 #include <regex.h>
 #endif
 
-enum oval_schema_version_components {
-	OVAL_SCHEMA_VERSION_CORE_MAJOR,
-	OVAL_SCHEMA_VERSION_CORE_MINOR,
-	OVAL_SCHEMA_VERSION_CORE_UPDATE,
-	OVAL_SCHEMA_VERSION_PLATFORM_MAJOR,
-	OVAL_SCHEMA_VERSION_PLATFORM_MINOR,
-	OVAL_SCHEMA_VERSION_PLATFORM_UPDATE
-};
-
 static int _parse_int(const char *substring, size_t substring_length)
 {
 	/* Pay attention that substring_length != strlen(substring) */
