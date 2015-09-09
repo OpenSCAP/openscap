@@ -65,10 +65,9 @@ struct oval_results_model *oval_results_model_new(struct oval_definition_model *
 	if (model == NULL)
 		return NULL;
 
-	model->generator = oval_generator_new();
 	struct oval_generator *generator = oval_definition_model_get_generator(definition_model);
-	char * schema_version = oval_generator_get_schema_version(generator);
-	oval_generator_set_schema_version(model->generator, schema_version);
+	model->generator = oval_generator_clone(generator);
+	oval_generator_update_timestamp(model->generator);
 
 	model->systems = oval_collection_new();
 	model->definition_model = definition_model;

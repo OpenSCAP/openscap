@@ -195,7 +195,7 @@ static void get_flags(const struct ifaddrs *ifa, char ***fp) {
 
 }
 
-static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_version_t over)
+static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
 	struct ifaddrs *ifaddr, *ifa;
 	int family, rc=1;
@@ -227,8 +227,8 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_version_t over)
 		goto leave1;
 	}
 
-	include_type = oval_version_cmp(over, OVAL_VERSION(5.6)) >= 0;
-	use_ipstring = oval_version_cmp(over, OVAL_VERSION(5.8)) >= 0;
+	include_type = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.6)) >= 0;
+	use_ipstring = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.8)) >= 0;
 
         /* Walk through linked list, maintaining head pointer so we
 	   can free list later */
@@ -366,7 +366,7 @@ leave1:
 	return rc;
 }
 #else
-static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_version_t over)
+static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
 	/* todo */
 	SEXP_t *item;
@@ -388,13 +388,13 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_version_t over)
 int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *name_ent, *probe_in;
-	oval_version_t over;
+	oval_schema_version_t over;
 
         (void)arg;
 
 	probe_in = probe_ctx_getobject(ctx);
 	name_ent = probe_obj_getent(probe_in, "name", 1);
-	over     = probe_obj_get_schema_version(probe_in);
+	over     = probe_obj_get_platform_schema_version(probe_in);
 
 	if (name_ent == NULL) {
 		return PROBE_ENOELM;

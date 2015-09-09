@@ -80,7 +80,7 @@
 
 #define FILE_SEPARATOR '/'
 
-oval_version_t over;
+oval_schema_version_t over;
 
 #if defined USE_REGEX_PCRE
 static int get_substrings(char *str, pcre *re, int want_substrs, char ***substrings) {
@@ -192,14 +192,14 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                 return (NULL);
         }
 
-	if (oval_version_cmp(over, OVAL_VERSION(5.4)) < 0) {
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.4)) < 0) {
 		pattern = text = NULL;
 		se_instance = NULL;
 	} else {
 		text = substrs[0];
 		se_instance = SEXP_number_newu_64((int64_t) instance);
 	}
-	if (oval_version_cmp(over, OVAL_VERSION(5.6)) < 0) {
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.6)) < 0) {
 		se_filepath = NULL;
 	} else {
 		se_filepath = SEXP_string_newf("%s%c%s", path, FILE_SEPARATOR, filename);
@@ -345,7 +345,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
         probe_in = probe_ctx_getobject(ctx);
 
-	over = probe_obj_get_schema_version(probe_in);
+	over = probe_obj_get_platform_schema_version(probe_in);
 	path_ent = probe_obj_getent(probe_in, "path",     1);
 	filename_ent = probe_obj_getent(probe_in, "filename", 1);
 	line_ent = probe_obj_getent(probe_in, "line",  1);

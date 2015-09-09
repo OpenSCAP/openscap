@@ -507,8 +507,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			 * (textfilecontent_item). In OVAL 5.3 and below this syschar did not hold any usable
 			 * information ('text' ent). In OVAL 5.4 textfilecontent_test was deprecated. But the
 			 * 'text' ent has been added to textfilecontent_item, making it potentially usable. */
-			oval_version_t over = oval_state_get_schema_version(state);
-			if (oval_version_cmp(over, OVAL_VERSION(5.4)) >= 0) {
+			oval_schema_version_t over = oval_state_get_platform_schema_version(state);
+			if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.4)) >= 0) {
 				/* The OVAL-5.3 does not have textfilecontent_item/text */
 				state_entity_name = "text";
 			}

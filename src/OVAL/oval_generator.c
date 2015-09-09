@@ -39,11 +39,13 @@
 #include "common/debug_priv.h"
 #include "oval_agent_api_impl.h"
 #include "oval_definitions_impl.h"
+#include "common/list.h"
 
 struct oval_generator {
 	char *product_name;
 	char *product_version;
-	char *schema_version;
+	char *core_schema_version;
+	struct oscap_htable *platform_schema_versions;
 	char *timestamp;
 	char *anyxml;
 };
@@ -51,22 +53,14 @@ struct oval_generator {
 struct oval_generator *oval_generator_new(void)
 {
 	struct oval_generator *gen;
-	time_t et;
-	struct tm *lt;
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
-
 	gen = oscap_alloc(sizeof(struct oval_generator));
 	gen->product_name = NULL;
 	gen->product_version = NULL;
-	gen->schema_version = oscap_strdup(OVAL_SUPPORTED);
+	gen->core_schema_version = oscap_strdup(OVAL_SUPPORTED);
+	gen->platform_schema_versions = oscap_htable_new();
 	gen->anyxml = NULL;
-
-	time(&et);
-	lt = localtime(&et);
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
-		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
-	gen->timestamp = oscap_strdup(timestamp);
-
+	gen->timestamp = NULL;
+	oval_generator_update_timestamp(gen);
 	return gen;
 }
 
@@ -74,7 +68,9 @@ void oval_generator_free(struct oval_generator *generator)
 {
 	oscap_free(generator->product_name);
 	oscap_free(generator->product_version);
-	oscap_free(generator->schema_version);
+	oscap_free(generator->core_schema_version);
+	oscap_htable_free(generator->platform_schema_versions,
+		(oscap_destruct_func) oscap_free);
 	oscap_free(generator->timestamp);
 	oscap_free(generator->anyxml);
 	oscap_free(generator);
@@ -87,7 +83,9 @@ struct oval_generator *oval_generator_clone(struct oval_generator *old_generator
 	new_gen = oscap_alloc(sizeof(*new_gen));
 	new_gen->product_name = oscap_strdup(old_generator->product_name);
 	new_gen->product_version = oscap_strdup(old_generator->product_version);
-	new_gen->schema_version = oscap_strdup(old_generator->schema_version);
+	new_gen->core_schema_version = oscap_strdup(old_generator->core_schema_version);
+	new_gen->platform_schema_versions = oscap_htable_clone(
+		old_generator->platform_schema_versions, (oscap_clone_func) oscap_strdup);
 	new_gen->timestamp = oscap_strdup(old_generator->timestamp);
 	new_gen->anyxml = oscap_strdup(old_generator->anyxml);
 
@@ -106,12 +104,28 @@ char *oval_generator_get_product_version(struct oval_generator *generator)
 
 char *oval_generator_get_schema_version(struct oval_generator *generator)
 {
-	return generator->schema_version;
+	/* Removed a const type because we can't change API of this function. */
+	return (char *) oval_generator_get_core_schema_version(generator);
+}
+
+const char *oval_generator_get_core_schema_version(struct oval_generator *generator)
+{
+	return generator->core_schema_version;
 }
 
 char *oval_generator_get_timestamp(struct oval_generator *generator)
 {
 	return generator->timestamp;
+}
+
+const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform)
+{
+	char *platform_schema_version = oscap_htable_get(generator->platform_schema_versions, platform);
+	if (platform_schema_version != NULL) {
+		return platform_schema_version;
+	} else {
+		return generator->core_schema_version;
+	}
 }
 
 void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name)
@@ -128,8 +142,13 @@ void oval_generator_set_product_version(struct oval_generator *generator, const 
 
 void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version)
 {
-	oscap_free(generator->schema_version);
-	generator->schema_version = oscap_strdup(schema_version);
+	oval_generator_set_core_schema_version(generator, schema_version);
+}
+
+void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version)
+{
+	oscap_free(generator->core_schema_version);
+	generator->core_schema_version = oscap_strdup(schema_version);
 }
 
 void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp)
@@ -138,11 +157,30 @@ void oval_generator_set_timestamp(struct oval_generator *generator, const char *
 	generator->timestamp = oscap_strdup(timestamp);
 }
 
+void oval_generator_update_timestamp(struct oval_generator *generator)
+{
+	time_t et;
+	struct tm *lt;
+	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+
+	time(&et);
+	lt = localtime(&et);
+	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	oval_generator_set_timestamp(generator, timestamp);
+}
+
+void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version)
+{
+	oscap_htable_add(generator->platform_schema_versions, platform, oscap_strdup(schema_version));
+}
+
+
 xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, xmlNode *parent)
 {
+	struct oscap_htable_iterator *sv_itr;
 	xmlNode *gen_node;
 	xmlNs *ns_common;
-
 	xmlNode *nodestr, *nodelst;
 	xmlDoc  *docstr;
 
@@ -152,8 +190,24 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 		xmlNewTextChild(gen_node, ns_common, BAD_CAST "product_name", BAD_CAST generator->product_name);
 	if (generator->product_version)
 		xmlNewTextChild(gen_node, ns_common, BAD_CAST "product_version", BAD_CAST generator->product_version);
-	if (generator->schema_version)
-		xmlNewTextChild(gen_node, ns_common, BAD_CAST "schema_version", BAD_CAST generator->schema_version);
+	if (generator->core_schema_version)
+		xmlNewTextChild(gen_node, ns_common, BAD_CAST "schema_version", BAD_CAST generator->core_schema_version);
+
+	const char *namespace_uri = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
+	sv_itr = oscap_htable_iterator_new(generator->platform_schema_versions);
+	while (oscap_htable_iterator_has_more(sv_itr)) {
+		const char *platform, *version;
+		oscap_htable_iterator_next_kv(sv_itr, &platform, (void **) &version);
+		xmlNode *sv_node = xmlNewTextChild(gen_node, ns_common,
+			BAD_CAST "schema_version", BAD_CAST version);
+		size_t namespace_uri_length = strlen(namespace_uri) + 1 + strlen(platform) + 1;
+		char *platform_uri = oscap_alloc(namespace_uri_length);
+		snprintf(platform_uri, namespace_uri_length, "%s#%s", namespace_uri, platform);
+		xmlNewProp(sv_node, BAD_CAST "platform", BAD_CAST platform_uri);
+		oscap_free(platform_uri);
+	}
+	oscap_htable_iterator_free(sv_itr);
+
 	if (generator->timestamp)
 		xmlNewTextChild(gen_node, ns_common, BAD_CAST "timestamp", BAD_CAST generator->timestamp);
 
@@ -187,9 +241,19 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 		val = (char *) xmlTextReaderValue(reader);
 		oval_generator_set_product_version(gen, val);
 	} else if (!strcmp("schema_version", tagname)) {
+		char *platform = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "platform");
 		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
-		oval_generator_set_schema_version(gen, val);
+		if (platform != NULL) {
+			char *platform_name = strrchr(platform, '#');
+			if (platform_name != NULL) {
+				platform_name++;
+				oval_generator_add_platform_schema_version(gen, platform_name, val);
+			}
+			oscap_free(platform);
+		} else {
+			oval_generator_set_core_schema_version(gen, val);
+		}
 	} else if (!strcmp("timestamp", tagname)) {
 		xmlTextReaderRead(reader);
 		val = (char *) xmlTextReaderValue(reader);
