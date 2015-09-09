@@ -40,6 +40,7 @@
 #include "oval_agent_api_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "oval_schema_version.h"
 
 typedef struct oval_state_content {
 	struct oval_definition_model *model;
@@ -266,11 +267,13 @@ xmlNode *oval_state_content_to_dom(struct oval_state_content * content, xmlDoc *
 	oval_check_t ent_check = oval_state_content_get_ent_check(content);
 	if (ent_check != OVAL_CHECK_ALL)
 		xmlNewProp(content_node, BAD_CAST "entity_check", BAD_CAST oval_check_get_text(ent_check));
-	// TODO: serialize check_existence only if OVAL core schema version >= 5.11.1
-	oval_existence_t check_existence = oval_state_content_get_check_existence(content);
-	if (check_existence != OVAL_AT_LEAST_ONE_EXISTS) {
-		// at_least_one_exists is default value
-		xmlNewProp(content_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(check_existence));
+	oval_schema_version_t ver = oval_definition_model_get_core_schema_version(content->model);
+	if (oval_schema_version_cmp(ver, OVAL_SCHEMA_VERSION(5.11.1)) >= 0) {
+		oval_existence_t check_existence = oval_state_content_get_check_existence(content);
+		if (check_existence != OVAL_AT_LEAST_ONE_EXISTS) {
+			// at_least_one_exists is default value
+			xmlNewProp(content_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(check_existence));
+		}
 	}
 
 	return content_node;
