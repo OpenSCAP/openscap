@@ -721,7 +721,7 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 		}
 
 		oext = oval_state_content_get_check_existence(content);
-		if (ochk != OVAL_EXISTENCE_UNKNOWN) {
+		if (oext != OVAL_EXISTENCE_UNKNOWN) {
 			probe_ent_attr_add(ste_ent, "check_existence", r0 = SEXP_number_newu_32(oext));
 			SEXP_free(r0);
 		}
