@@ -116,7 +116,7 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 const char *oval_schema_version_to_cstr(oval_schema_version_t version)
 {
 	size_t buf_len = 32;
-	char buf[buf_len];
+	char *buf = oscap_alloc(buf_len);
 	const char *format;
 	if (version.component[OVAL_SCHEMA_VERSION_PLATFORM_MAJOR]) {
 		if (version.component[OVAL_SCHEMA_VERSION_CORE_UPDATE] &&
@@ -141,7 +141,7 @@ const char *oval_schema_version_to_cstr(oval_schema_version_t version)
 		version.component[OVAL_SCHEMA_VERSION_PLATFORM_MAJOR],
 		version.component[OVAL_SCHEMA_VERSION_PLATFORM_MINOR],
 		version.component[OVAL_SCHEMA_VERSION_PLATFORM_UPDATE]);
-	return oscap_strdup(buf);
+	return buf;
 }
 
 int oval_schema_version_cmp(oval_schema_version_t v1, oval_schema_version_t v2)
