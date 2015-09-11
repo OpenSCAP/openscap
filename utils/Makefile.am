@@ -43,6 +43,11 @@ endif
 if WANT_UTIL_OSCAP_DOCKER
 bin_SCRIPTS += oscap-docker
 man_MANS += oscap-docker.8
+oscap_docker_PYTHON = \
+	oscap_docker_python/__init__.py \
+	oscap_docker_python/get_cve_input.py \
+	oscap_docker_python/oscap_docker_util.py
+oscap_dockerdir = $(pythondir)/oscap_docker_python
 endif
 if WANT_UTIL_OSCAP_SSH
 bin_SCRIPTS += oscap-ssh
