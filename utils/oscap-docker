@@ -41,12 +41,16 @@ class OscapDocker(object):
     def cve_scan(self):
         ''' Wrapper function for container/image scanning '''
         OS = OscapScan()
-        print OS.scan_cve(self.args.scan_target, self.unknown_args)
+        result = OS.scan_cve(self.args.scan_target, self.unknown_args)
+        if result is not None:
+            print result
 
     def scan(self):
         ''' Wrapper functiopn to scan with openscap'''
         OS = OscapScan()
-        print OS.scan(self.args.scan_target, self.unknown_args)
+        result = OS.scan(self.args.scan_target, self.unknown_args)
+        if result is not None:
+            print result
 
 
 def ping_docker():
