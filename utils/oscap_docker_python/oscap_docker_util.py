@@ -191,7 +191,7 @@ class OscapScan(object):
             fetch._fetch_single(dist)
 
         # Scan the chroot
-        print self.helper._scan_cve(chroot, dist, scan_args)
+        sys.stdout.write(self.helper._scan_cve(chroot, dist, scan_args))
 
         # Clean up
         self.helper._cleanup_by_path(_tmp_mnt_dir)
@@ -209,7 +209,7 @@ class OscapScan(object):
         chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
 
         # Scan the chroot
-        print self.helper._scan(chroot, scan_args)
+        sys.stdout.write(self.helper._scan(chroot, scan_args))
 
         # Clean up
         self.helper._cleanup_by_path(_tmp_mnt_dir)
