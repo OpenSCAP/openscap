@@ -21,10 +21,29 @@ import os
 import tempfile
 import subprocess
 import platform
-from Atomic.mount import DockerMount
 import shutil
 from oscap_docker_python.get_cve_input import getInputCVE
 import sys
+
+try:
+    from Atomic.mount import DockerMount
+    import inspect
+    if "mnt_mkdir" not in inspect.getargspec(DockerMount.__init__).args:
+        # TODO Would be great to give an exact version number
+        # needs https://github.com/projectatomic/atomic/pull/121
+        sys.stderr.write(
+            "\"Atomic.mount.DockerMount\" has been successfully imported but "
+            "it doesn't support the mnt_mkdir argument. Please upgrade your "
+            "Atomic installation.\n"
+        )
+        sys.exit(1)
+
+except ImportError:
+    sys.stderr.write(
+        "Failed to import \"Atomic.mount.DockerMount\". It seems Atomic has "
+        "not been installed.\n"
+    )
+    sys.exit(1)
 
 
 class OscapError(Exception):
