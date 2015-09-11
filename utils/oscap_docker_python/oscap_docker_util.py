@@ -1,4 +1,22 @@
+# Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
 ''' Utilities for oscap-docker '''
+
 import os
 import tempfile
 import subprocess
@@ -9,12 +27,12 @@ from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 
 
-class oscapError(Exception):
+class OscapError(Exception):
     ''' oscap Error'''
     pass
 
 
-class oscapHelpers:
+class OscapHelpers(object):
     ''' oscap class full of helpers for scanning '''
     CPE = 'oval:org.open-scap.cpe.rhel:def:'
     DISTS = ["7", "6", "5"]
@@ -46,7 +64,7 @@ class oscapHelpers:
         '''
         cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
         if not os.path.exists(cpe_dict):
-            raise oscapError
+            raise OscapError()
         for dist in self.DISTS:
             output = self.oscap_chroot('foo', 'bar', chroot, 'oval', 'eval',
                                        '--id', self.CPE + dist, cpe_dict,
@@ -124,12 +142,11 @@ class oscapHelpers:
         os.rmdir(_no_rootfs)
 
 
-class oscapScan(oscapHelpers):
-
+class OscapScan(object):
     def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=os.getcwd(),
                  hours_old=2):
         self.tmp_dir = tmp_dir
-        self.helper = oscapHelpers(tmp_dir)
+        self.helper = OscapHelpers(tmp_dir)
         self.mnt_dir = mnt_dir
         self.hours_old = hours_old
 
