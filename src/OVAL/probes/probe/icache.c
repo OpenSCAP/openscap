@@ -295,6 +295,7 @@ probe_icache_t *probe_icache_new(void)
                 dE("Can't start the icache worker: %u, %s\n", errno, strerror(errno));
                 goto fail;
         }
+		pthread_setname_np(cache->thid, "icache_worker");
 
         return (cache);
 fail:
