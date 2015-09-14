@@ -30,12 +30,10 @@ try:
     import inspect
 
     if "mnt_mkdir" not in inspect.getargspec(DockerMount.__init__).args:
-        # TODO Would be great to give an exact version number
-        # needs https://github.com/projectatomic/atomic/pull/121
         sys.stderr.write(
             "\"Atomic.mount.DockerMount\" has been successfully imported but "
             "it doesn't support the mnt_mkdir argument. Please upgrade your "
-            "Atomic installation.\n"
+            "Atomic installation to 1.4 or higher.\n"
         )
         sys.exit(1)
 
@@ -46,12 +44,10 @@ try:
     ]
 
     if "_clean_temp_container_by_path" not in member_methods:
-        # TODO Would be great to give an exact version number
-        # needs https://github.com/projectatomic/atomic/pull/152
         sys.stderr.write(
             "\"Atomic.mount.DockerMount\" has been successfully imported but "
             "it doesn't have the _clean_temp_container_by_path method. Please "
-            "upgrade your Atomic installation.\n"
+            "upgrade your Atomic installation to 1.4 or higher.\n"
         )
         sys.exit(1)
 
