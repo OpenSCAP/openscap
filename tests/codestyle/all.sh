@@ -38,6 +38,6 @@ test_init "test_codebase.log"
 
 test_run "illicit use of functions" test_illicit_function_use 0
 test_run "Check syntax of distributed shell scripts" shell_script_syntax \
-	utils/oscap-ssh utils/oscap-docker
+	utils/oscap-ssh
 
 test_exit
