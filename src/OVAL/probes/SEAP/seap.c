@@ -286,6 +286,7 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                         return (-1);
                 }
 
+				pthread_setname_np(th, "command_worker");
                 pthread_attr_destroy (&th_attrs);
         } else {
                 if (cmd->flags & SEAP_CMDFLAG_REPLY) {

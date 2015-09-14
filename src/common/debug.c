@@ -34,6 +34,7 @@
 # include <sys/file.h>
 # include <unistd.h>
 # include <time.h>
+# include <errno.h>
 
 # include <sexp.h>
 # include <sexp-output.h>
@@ -59,6 +60,8 @@ static int __debuglog_pstrip = -1;
 # define __LOCK_FP   while(0)
 # define __UNLOCK_FP while(0)
 #endif
+
+#define THREAD_NAME_LEN 16
 
 static void __oscap_debuglog_close(void)
 {
@@ -168,9 +171,13 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		l = '0';
 	}
 #if defined(OSCAP_THREAD_SAFE)
+	char thread_name[THREAD_NAME_LEN];
+	pthread_t thread = pthread_self();
+	pthread_getname_np(thread, thread_name, THREAD_NAME_LEN);
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%ld:%llx) [%c:%s:%zu:%s] ", (long) getpid(),
-		(unsigned long long) pthread_self(), l, f, line, fn);
+	fprintf(__debuglog_fp, "(%s(%ld):%s(%llx)) [%c:%s:%zu:%s] ",
+		program_invocation_short_name, (long) getpid(), thread_name,
+		(unsigned long long) thread, l, f, line, fn);
 #else
 	fprintf(__debuglog_fp, "(%ld) [%c:%s:%zu:%s] ", (long) getpid(),
 		l, f, line, fn);
