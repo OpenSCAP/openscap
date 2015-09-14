@@ -493,7 +493,7 @@ static void oval_item_statuses_add_status(struct oval_item_statuses *is, oval_sy
 		is->not_collected_cnt++;
 		break;
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid oval status type: %s.", oval_syschar_status_get_text(status));
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid oval status type: %s.", oval_syschar_status_get_text(status));
 		break;
 	}
 }
@@ -583,7 +583,7 @@ static oval_result_t oval_item_statuses_get_result(struct oval_item_statuses *is
 		}
 		break;
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid check_existence value: %s.",
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid check_existence value: %s.",
 				oval_existence_get_text(check_existence));
 		result = OVAL_RESULT_ERROR;
 		break;
