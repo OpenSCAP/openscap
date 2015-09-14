@@ -21,7 +21,9 @@ libovalresults_la_SOURCES = \
 	oval_results_impl.h \
 	oval_resultSystem.c \
 	oval_resultTest.c \
-	oval_resultTestIterator.c
+	oval_resultTestIterator.c \
+	oval_item_statuses.c \
+	oval_item_statuses.h
 
 libovalcmp_la_CPPFLAGS = \
 	@xml2_CFLAGS@ \
