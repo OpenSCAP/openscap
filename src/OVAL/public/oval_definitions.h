@@ -2452,6 +2452,8 @@ void oval_state_content_set_varcheck(struct oval_state_content *, oval_check_t);
 void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
 /**
  * Sets the "check_existence" attribute of an OVAL state entity
+ * @param content An entity within the state element
+ * @param existence New value of check_existence attribute of that entity
  * @memberof oval_state_content
  */
 void oval_state_content_set_check_existence(struct oval_state_content *content, oval_existence_t existence);
@@ -2483,6 +2485,8 @@ oval_check_t oval_state_content_get_var_check(struct oval_state_content *);
 oval_check_t oval_state_content_get_ent_check(struct oval_state_content *);
 /**
  * Get "check_existence" attribute of an OVAL state entity
+ * @param content An entity within the state element
+ * @return Value of the check_existence attribute
  * @memberof oval_state_content
  */
 oval_existence_t oval_state_content_get_check_existence(struct oval_state_content *content);
