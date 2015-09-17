@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
+	xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+	xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+	xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+	xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd
+		http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd
+		http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd
+		http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd
+		http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+	<generator>
+		<oval:product_name>Text Editors</oval:product_name>
+		<oval:schema_version>5.8</oval:schema_version>
+		<oval:timestamp>2010-06-08T12:00:00-04:00</oval:timestamp>
+	</generator>
+	<definitions>
+		<definition class="compliance" id="oval:moc.elpmaxe.www:def:1" version="1">
+			<metadata><title>PASS</title><description>Bla.</description></metadata>
+			<criteria><criterion test_ref="oval:moc.elpmaxe.www:tst:1" comment="Is not executable"/></criteria>
+		</definition>
+	</definitions>
+	<tests>
+		<unix-def:file_test check_existence="all_exist" id="oval:moc.elpmaxe.www:tst:1" version="1" check="all" comment="Testing permissions on /not_executable">
+			<unix-def:object object_ref="oval:moc.elpmaxe.www:obj:1"/>
+			<unix-def:state state_ref="oval:moc.elpmaxe.www:ste:1"/>
+		</unix-def:file_test>
+	</tests>
+	<objects>
+		<unix-def:file_object id="oval:moc.elpmaxe.www:obj:1" version="1" comment="not_executable">
+			<unix-def:path>/</unix-def:path>
+			<unix-def:filename>tmp</unix-def:filename>
+		</unix-def:file_object>
+	</objects>
+	<states>
+		<unix-def:file_state id="oval:moc.elpmaxe.www:ste:1" version="1">
+			<unix-def:oexec datatype="boolean">false</unix-def:oexec>
+		</unix-def:file_state>
+	</states>
+</oval_definitions>
