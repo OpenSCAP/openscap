@@ -153,6 +153,8 @@ EXTRA_DIST += \
 	test_xccdf_multiple_testresults.xccdf.xml \
 	test_xccdf_notchecked_has_check.sh \
 	test_xccdf_notchecked_has_check.xccdf.xml \
+	test_xccdf_oval_relative_path.sh \
+	test_xccdf_oval_relative_path.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_refine_rule_refine.sh \
 	test_xccdf_refine_rule_refine.xccdf.xml \
