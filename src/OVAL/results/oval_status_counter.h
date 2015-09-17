@@ -20,8 +20,8 @@
  *      "Jan Černý" <jcerny@redhat.com>
  */
 
-#ifndef OSCAP_OVAL_ITEM_STATUSES_H_
-#define OSCAP_OVAL_ITEM_STATUSES_H_
+#ifndef OSCAP_OVAL_STATUS_COUNTER_H_
+#define OSCAP_OVAL_STATUS_COUNTER_H_
 
 #include "../common/util.h"
 #include "oval_definitions.h"
@@ -30,16 +30,16 @@
 
 OSCAP_HIDDEN_START;
 
-struct oval_item_statuses {
+struct oval_status_counter {
 	int error_cnt;
 	int exists_cnt;
 	int does_not_exist_cnt;
 	int not_collected_cnt;
 };
 
-void oval_item_statuses_clear(struct oval_item_statuses *is);
-void oval_item_statuses_add_status(struct oval_item_statuses *is, oval_syschar_status_t status);
-oval_result_t oval_item_statuses_get_result(struct oval_item_statuses *is, oval_existence_t check_existence);
+void oval_status_counter_clear(struct oval_status_counter *counter);
+void oval_status_counter_add_status(struct oval_status_counter *counter, oval_syschar_status_t status);
+oval_result_t oval_status_counter_get_result(struct oval_status_counter *counter, oval_existence_t check_existence);
 
 OSCAP_HIDDEN_END;
 
