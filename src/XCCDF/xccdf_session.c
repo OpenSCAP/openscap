@@ -1023,7 +1023,7 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 		return NULL;
 	}
 
-	if (oscap_acquire_url_is_supported(filename) || filename[0] == '/') {
+	if (oscap_acquire_url_is_supported(filename) || strchr(filename, '/')) {
 		// We need escaping if:
 		// - filename is a URL
 		// - filename is an absolute path
