@@ -17,8 +17,9 @@
 
 import urllib2
 import urlparse
-from os.path import join, exists, getmtime
-import time
+from os.path import join, exists
+from os import stat, utime
+import datetime
 
 
 class getInputCVE(object):
@@ -28,52 +29,106 @@ class getInputCVE(object):
     '''
 
     hdr = {'User-agent': 'Mozilla/5.0'}
+    hdr2 = [('User-agent', 'Mozilla/5.0')]
     url = "http://www.redhat.com/security/data/oval/"
     dist_cve_name = "Red_Hat_Enterprise_Linux_{0}.xml"
     dists = [5, 6, 7]
+    remote_pattern = '%a, %d %b %Y %H:%M:%S %Z'
 
-    def __init__(self, fs_dest):
+    def __init__(self, fs_dest, DEBUG=False):
         ''' Simple init declaration '''
         self.dest = fs_dest
+        self.DEBUG = DEBUG
 
     def _fetch_single(self, dist):
         '''
         Given a distribution number (i.e. 7), it will fetch the
-        distribution specific data file
+        distribution specific data file if upstream has a newer
+        input file.  Returns the path of file.
         '''
         cve_file = self.dist_cve_name.format(dist)
+        dest_file = join(self.dest, cve_file)
         dist_url = (urlparse.urljoin(self.url, cve_file))
+        if self._is_cache_same(dest_file, dist_url):
+            return dest_file
+
         _url = urllib2.Request(dist_url, headers=self.hdr)
+        # TODO
+        # When dist specific files are available in bz form, some
+        # of this logic may need to change
         try:
             resp = urllib2.urlopen(_url)
-        except Exception as url_error:
-            raise Exception("Unable to fetch CVE inputs")
 
-        # TODO
-        # When dist specific files are available in bz form,
-        # will need to unbz these
-        fh = open(join(self.dest, cve_file), "w")
+        except Exception as url_error:
+            raise Exception("Unable to fetch CVE inputs due to"
+                            .format(url_error))
+
+        fh = open(dest_file, "w")
         fh.write(resp.read())
         fh.close()
 
-    def _is_recent_enough(self, hours, dist):
+        # Correct Last-Modified timestamp
+        remote_ts = dict(resp.info())['last-modified']
+        epoch = datetime.datetime.utcfromtimestamp(0)
+        remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
+        seconds_epoch = (remote_dt - epoch).total_seconds()
+        utime(dest_file, (seconds_epoch, seconds_epoch))
+
+        return self.dest
+
+    def _is_cache_same(self, dest_file, dist_url):
         '''
-        Checks if the cve data already exists and if so whether
-        it is in the given timeframe.  Returns bool
+        Checks if the local cache version and the upstream
+        version is the same or not.  If they are the same,
+        returns True; else False.
         '''
-        if hours == 0:
+
+        if not exists(dest_file):
+            if self.DEBUG:
+                print "No file in cache, fetching {0}".format(dest_file)
             return False
-        _fname = join(self.dest, self.dist_cve_name.format(dist))
-        if not exists(_fname) or ((time.time() - getmtime(_fname))
-           / (60 ** 2) > hours):
+        opener = urllib2.OpenerDirector()
+        opener.add_handler(urllib2.HTTPHandler())
+        opener.add_handler(urllib2.HTTPDefaultErrorHandler())
+        # Extra for handling redirects
+        opener.add_handler(urllib2.HTTPErrorProcessor())
+        opener.add_handler(urllib2.HTTPRedirectHandler())
+        # Add the header
+        opener.addheaders = self.hdr2
+        # Grab the header
+        res = opener.open(HeadRequest(dist_url))
+        remote_ts = dict(res.info())['last-modified']
+        # The remote's datetime
+        remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
+        # Get the locals datetime from the file's mtime, converted to UTC
+        local_dt = datetime.datetime.utcfromtimestamp((stat(dest_file))
+                                                      .st_mtime)
+        res.close()
+
+        # Giving a two second comfort zone
+        # Else we declare they are different
+        if (remote_dt - local_dt).seconds > 2:
+            if self.DEBUG:
+                print "Had a local file {0} " \
+                      "but it wasn't new enough".format(dest_file)
             return False
+        if self.DEBUG:
+            print "File {0} is same as upstream".format(dest_file)
+
         return True
 
-    def fetch_dist_data(self, hours_old):
+    def fetch_dist_data(self):
         '''
         Fetches all the the distribution specific data used for
-        input with openscap cve scanning
+        input with openscap cve scanning and returns a list
+        of those files.
         '''
+        cve_files = []
         for dist in self.dists:
-            if not self._is_recent_enough(hours_old, dist):
-                self._fetch_single(dist)
+                cve_files.append(self._fetch_single(dist))
+        return cve_files
+
+
+class HeadRequest(urllib2.Request):
+    def get_method(self):
+        return 'HEAD'
