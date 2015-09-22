@@ -1,7 +1,7 @@
 EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
 
 DISTCLEANFILES = *.log *.results oscap_debug.log.* *.result.xml countries.xml foo.txt
-CLEANFILES = *.log *.results oscap_debug.log.* *.result.xml
+CLEANFILES = *.log *.results oscap_debug.log.* *.result.xml countries.xml foo.txt
 
 TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \
@@ -11,10 +11,10 @@ TESTS_ENVIRONMENT= \
 TESTS = test_oval_details.sh
 
 EXTRA_DIST +=	test_oval_details.sh \
-		countries.xml \
+		countries.src.xml \
 		file.oval.xml \
 		file.xccdf.xml \
-		foo.txt \
+		foo.src.txt \
 		partition.oval.xml \
 		partition.xccdf.xml \
 		rpminfo.oval.xml \

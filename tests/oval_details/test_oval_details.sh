@@ -22,10 +22,10 @@ function test_oval_details {
 
 test_init "test_oval_details.log"
 if ! [ -f countries.xml ] ; then
-  cp $srcdir/countries.xml .
+  cp $srcdir/countries.src.xml ./countries.xml
 fi
 if ! [ -f foo.txt ] ; then
-  cp $srcdir/foo.txt .
+  cp $srcdir/foo.src.txt ./foo.txt
 fi
 
 test_run "test_oval_details_file_object" test_oval_details file "path.*UID.*permissions" "/dev/null"
@@ -40,4 +40,5 @@ test_run "test_oval_details_variable_object" test_oval_details variable "var ref
 test_run "test_oval_details_xmlfilecontent_object" test_oval_details xmlfilecontent "filepath.*xpath.*value of" "countries\.xml.*London"
 
 rm -rf $output_dir
+rm -f ./foo.txt ./countries.xml
 test_exit
