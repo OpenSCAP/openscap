@@ -12,7 +12,7 @@ set -e -o pipefail
 function test_probes_rpmverifyfile {
     probecheck "rpmverifyfile" || return 255
 
-    DF="$srcdir/test_probes_rpmverifyfile.xml"
+    DF="$srcdir/test_probes_rpmverifyfile_older.xml"
     RF="results.xml"
 
     rm -f $RF
@@ -33,8 +33,7 @@ function test_probes_rpmverifyfile {
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:behaviors[@nordev="true"]'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:behaviors[@noconfigfiles="true"]'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:behaviors[@noghostfiles="true"]'
-    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:behaviors[@nofiledigest="true"]'
-    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:behaviors[@nocaps="true"]'
+    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:behaviors[@nomd5="true"]'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:name'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:epoch'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:version'
@@ -61,8 +60,6 @@ function test_probes_rpmverifyfile {
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:mode_differs[text()="not performed"]'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:md5_differs'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:md5_differs[text()="not performed"]'
-    assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:filedigest_differs'
-    assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:filedigest_differs[text()="not performed"]'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:device_differs'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:device_differs[text()="not performed"]'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:link_mismatch'
@@ -73,7 +70,6 @@ function test_probes_rpmverifyfile {
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:mtime_differs'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:group_differs[text()="not performed"]'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:capabilities_differ'
-    assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:capabilities_differ[text()="not performed"]'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:configuration_file'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:documentation_file'
     assert_exists 1 $sd'lin-sys:rpmverifyfile_item/lin-sys:ghost_file'

@@ -17,4 +17,6 @@ TESTS = all.sh
 EXTRA_DIST = \
 	all.sh \
 	test_probes_rpmverifyfile.sh \
-	test_probes_rpmverifyfile.xml
+	test_probes_rpmverifyfile.xml \
+	test_probes_rpmverifyfile_older.sh \
+	test_probes_rpmverifyfile_older.xml
