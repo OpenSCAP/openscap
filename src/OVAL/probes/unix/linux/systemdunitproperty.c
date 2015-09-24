@@ -254,12 +254,12 @@ static int unit_callback(const char *unit, void *cbarg)
 int probe_main(probe_ctx *ctx, void *probe_arg)
 {
 	SEXP_t *unit_entity, *probe_in, *property_entity;
-	oval_version_t oval_version;
+	oval_schema_version_t oval_version;
 
 	probe_in = probe_ctx_getobject(ctx);
-	oval_version = probe_obj_get_schema_version(probe_in);
+	oval_version = probe_obj_get_platform_schema_version(probe_in);
 
-	if (oval_version_cmp(oval_version, OVAL_VERSION(5.11)) < 0) {
+	if (oval_schema_version_cmp(oval_version, OVAL_SCHEMA_VERSION(5.11)) < 0) {
 		// OVAL 5.10 and less
 		return PROBE_EOPNOTSUPP;
 	}

@@ -143,9 +143,9 @@ static void add_mnt_opt(char ***mnt_opts, uint8_t mnt_ocnt, char *opt)
 }
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
-static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_ent, blkid_cache blkcache)
+static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mntent *mnt_ent, blkid_cache blkcache)
 #else
-static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_ent)
+static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mntent *mnt_ent)
 #endif
 {
         SEXP_t *item;
@@ -200,7 +200,7 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
 	 * "Correct" the type (this won't be (hopefully) needed in a later version
 	 * of OVAL)
 	 */
-        if (oval_version_cmp(over, OVAL_VERSION(5.10)) < 0)
+        if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) < 0)
 	        mnt_ent->mnt_type = (char *)correct_fstype(mnt_ent->mnt_type);
 
         /*
@@ -244,7 +244,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         char    mnt_path[PATH_MAX];
         oval_operation_t mnt_op;
         FILE *mnt_fp;
-        oval_version_t obj_over;
+        oval_schema_version_t obj_over;
 #if defined(PROC_CHECK) && defined(__linux__)
         int   mnt_fd;
         struct statfs stfs;
@@ -277,7 +277,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 return (PROBE_ESYSTEM);
 #endif
         probe_in   = probe_ctx_getobject(ctx);
-        obj_over   = probe_obj_get_schema_version(probe_in);
+        obj_over   = probe_obj_get_platform_schema_version(probe_in);
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);
 
         if (mnt_entity == NULL) {

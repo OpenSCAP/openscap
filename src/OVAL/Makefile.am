@@ -44,6 +44,7 @@ common_oval_sources = \
 	oval_reference.c \
 	oval_directives.c \
 	oval_directives_impl.h \
+	oval_schema_version.c \
 	oval_set.c \
 	oval_state.c \
 	oval_stateContent.c \
@@ -140,6 +141,7 @@ pkginclude_HEADERS  = \
 			public/oval_directives.h \
 			public/oval_types.h \
 			public/oval_version.h \
+			public/oval_schema_version.h \
 			public/oval_agent_xccdf_api.h
 
 if WANT_PROBES

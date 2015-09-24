@@ -263,6 +263,13 @@ oval_version_t oval_state_get_schema_version(const struct oval_state *state)
 	return oval_definition_model_get_schema_version(state->model);
 }
 
+oval_schema_version_t oval_state_get_platform_schema_version(const struct oval_state *state)
+{
+	oval_family_t family = oval_state_get_family((struct oval_state *)state);
+	const char *platform = oval_family_get_text(family);
+	return oval_definition_model_get_platform_schema_version(state->model, platform);
+}
+
 static void _oval_note_consumer(char *text, void *state)
 {
 	oval_state_add_note(state, text);

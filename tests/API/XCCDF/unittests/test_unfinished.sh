@@ -22,6 +22,6 @@ $OSCAP info ${srcdir}/${name}.xccdf.xml 2> $stderr || ret=$?
 [ $ret -eq 1 ]
 [ -f $stderr ]
 [ -s $stderr ]
-cat $stderr | tail -n +4 | grep '^OpenSCAP Error:'
+cat $stderr | tail -n +1 | grep '^OpenSCAP Error:'
 
 rm $stderr

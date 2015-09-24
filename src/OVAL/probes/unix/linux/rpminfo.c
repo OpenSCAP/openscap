@@ -409,7 +409,7 @@ cleanup:
 int probe_main (probe_ctx *ctx, void *arg)
 {
 	SEXP_t *val, *item, *ent, *probe_in;
-	oval_version_t over;
+	oval_schema_version_t over;
 	int rpmret, i;
 
         struct rpminfo_req request_st;
@@ -419,7 +419,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 	if (probe_in == NULL)
 		return PROBE_ENOOBJ;
 
-	over = probe_obj_get_schema_version(probe_in);
+	over = probe_obj_get_platform_schema_version(probe_in);
 
         ent = probe_obj_getent (probe_in, "name", 1);
 
@@ -518,7 +518,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                                                          NULL);
 
 				/* OVAL 5.10 added extended_name and filepaths behavior */
-				if (oval_version_cmp(over, OVAL_VERSION(5.10)) >= 0) {
+				if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
 					SEXP_t *value, *bh_value;
 					value = probe_entval_from_cstr(
 							OVAL_DATATYPE_STRING,

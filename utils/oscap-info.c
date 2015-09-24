@@ -86,7 +86,7 @@ static int app_info(const struct oscap_action *action)
 		if(!def_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_definition_model_get_generator(def_model);
-		printf("OVAL version: %s\n", oval_generator_get_schema_version(gen));
+		printf("OVAL version: %s\n", oval_generator_get_core_schema_version(gen));
 		printf("Generated: %s\n", oval_generator_get_timestamp(gen));
 		print_time(action->file);
 		oval_definition_model_free(def_model);
@@ -98,7 +98,7 @@ static int app_info(const struct oscap_action *action)
 		if(!var_model)
 			goto cleanup;
 		struct oval_generator *gen = oval_variable_model_get_generator(var_model);
-		printf("OVAL version: %s\n", oval_generator_get_schema_version(gen));
+		printf("OVAL version: %s\n", oval_generator_get_core_schema_version(gen));
 		printf("Generated: %s\n", oval_generator_get_timestamp(gen));
 		print_time(action->file);
 		oval_variable_model_free(var_model);
@@ -111,7 +111,7 @@ static int app_info(const struct oscap_action *action)
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_directives_model_get_generator(dir_model);
-		printf("OVAL version: %s\n", oval_generator_get_schema_version(gen));
+		printf("OVAL version: %s\n", oval_generator_get_core_schema_version(gen));
 		printf("Generated: %s\n", oval_generator_get_timestamp(gen));
 		print_time(action->file);
 		oval_directives_model_free(dir_model);
@@ -125,7 +125,7 @@ static int app_info(const struct oscap_action *action)
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_syschar_model_get_generator(sys_model);
-		printf("OVAL version: %s\n", oval_generator_get_schema_version(gen));
+		printf("OVAL version: %s\n", oval_generator_get_core_schema_version(gen));
 		printf("Generated: %s\n", oval_generator_get_timestamp(gen));
 		print_time(action->file);
 		oval_syschar_model_free(sys_model);
@@ -140,7 +140,7 @@ static int app_info(const struct oscap_action *action)
 		if(ret)
 			goto cleanup;
 		struct oval_generator *gen = oval_results_model_get_generator(res_model);
-		printf("OVAL version: %s\n", oval_generator_get_schema_version(gen));
+		printf("OVAL version: %s\n", oval_generator_get_core_schema_version(gen));
 		printf("Generated: %s\n", oval_generator_get_timestamp(gen));
 		print_time(action->file);
 		oval_results_model_free(res_model);

@@ -75,7 +75,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
         return (0);
 }
 
-static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_version_t over)
+static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_schema_version_t over)
 {
         SEXP_t *itm;
         char   pbuf[PATH_MAX+1];
@@ -104,7 +104,7 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_versi
 
         memcpy (pbuf + plen, f, sizeof (char) * flen);
         pbuf[plen+flen] = '\0';
-	include_filepath = oval_version_cmp(over, OVAL_VERSION(5.6)) >= 0;
+	include_filepath = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.6)) >= 0;
 
         /*
          * Open the file
@@ -219,7 +219,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
 
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
-	oval_version_t over;
+	oval_schema_version_t over;
 
         if (mutex == NULL) {
 		return (PROBE_EINIT);
@@ -233,7 +233,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
         filepath = probe_obj_getent (probe_in, "filepath", 1);
-	over = probe_obj_get_schema_version(probe_in);
+	over = probe_obj_get_platform_schema_version(probe_in);
 
         /* we want either path+filename or filepath */
         if ( (path == NULL || filename == NULL) && filepath==NULL ) {

@@ -1,149 +1,108 @@
-#!/bin/bash
+#!/usr/bin/env python2
+
+# Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
 #
-# Copyright (c) 2014--2015 Šimon Lukašík
-#
-# This software is free software; you can redistribute it and/or
+# This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
 # License as published by the Free Software Foundation; either
 # version 2 of the License, or (at your option) any later version.
 #
-# This software is distributed in the hope that it will be useful,
+# This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # Lesser General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with this library; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-#
+# License along with this library; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
 
-set -e -o pipefail
+''' oscap docker command '''
 
-function usage(){
-	echo "oscap-docker -- Tool for running oscap within docker container or image."
-	echo
-	echo "Usage:"
-	echo
-	echo "# oscap-docker image IMAGE-NAME OSCAP-ARGUMENTS"
-	echo "	Scan a docker image."
-	echo "# oscap-docker image-cve IMAGE-NAME [--results oval-results-file.xml [--report report.html]]"
-	echo "	Scan a docker image for known vulnerabilities."
-	echo "# oscap-docker container CONTAINER-NAME OSCAP-ARGUMENTS"
-	echo "	Scan a running docker container of given name."
-	echo "# oscap-docker container-cve CONTAINER-NAME [--results oval-results-file.xml [--report report.html]]"
-	echo "	Scan a running container for known vulnerabilities."
-	echo
-	echo "See \`man oscap\` to learn more about OSCAP-ARGUMENTS"
-}
+import argparse
+from oscap_docker_python.oscap_docker_util import OscapScan
+import docker
+import sys
+from requests import exceptions
 
-function docker_mount_image(){
-	local image_name=$1
-	local target_dir=$2
-	local tmp=`mktemp -d docker.XXXXXX`
-	# -- 'docker mount' will be hopefully comming later to docker
-	docker save $image_name | tar x --directory $tmp
-	# layers now in the working directory
-	for layer in `find $tmp/* -maxdepth 1 -type d`; do
-		if tar tvf $layer/layer.tar | grep . > /dev/null; then
-			# TODO: layer ordering: can multiple layers contain data?
-			tar xf $layer/layer.tar --directory $target_dir
-		fi
-	done
-	rm -r $tmp
-}
 
-function docker_umount_image(){
-	rm -r $1
-}
+class OscapDocker(object):
+    ''' Generic class to call the scans '''
+    def __init__(self):
+        pass
 
-function docker_container_pid(){
-	local container_name="$1"
-	docker inspect --format '{{.State.Pid}}' $container_name
-}
+    def set_args(self, args, unknown):
+        '''
+        Sets arguments for argparse into the oscapDocker class
+        '''
+        self.args = args
+        self.unknown_args = unknown
 
-function docker_container_root(){
-	local container_name="$1"
-	local pid=`docker_container_pid $container_name`
-	local root="/proc/$pid/root"
-	echo $root
-	test -d $root
-}
+    def cve_scan(self):
+        ''' Wrapper function for container/image scanning '''
+        OS = OscapScan()
+        result = OS.scan_cve(self.args.scan_target, self.unknown_args)
+        if result is not None:
+            print result
 
-function oscap_chroot(){
-	local target=$1; shift
-	local image=$1; shift
-	local path=$1; shift
-	local oscap_arguments="$*"
+    def scan(self):
+        ''' Wrapper functiopn to scan with openscap'''
+        OS = OscapScan()
+        result = OS.scan(self.args.scan_target, self.unknown_args)
+        if result is not None:
+            print result
 
-	# Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
-	export OSCAP_PROBE_ROOT="$(cd $path; pwd)"
-	export OSCAP_PROBE_OS_NAME="Linux"
-	export OSCAP_PROBE_OS_VERSION=`uname --kernel-release`
-	export OSCAP_PROBE_ARCHITECTURE=`uname --hardware-platform`
-	export OSCAP_PROBE_PRIMARY_HOST_NAME="docker-$target-$image"
-	oscap $oscap_arguments
-}
 
-function query_cpe_in_chroot(){
-	local image_root=$1; shift
-	local cpe=$1
-	local cpe_dict=/usr/share/openscap/cpe/openscap-cpe-oval.xml
-	oscap_chroot "image" "noname" $image_root oval eval --id $cpe $cpe_dict 2>&1 > /dev/null
-}
+def ping_docker():
+    ''' Simple check if the docker daemon is running '''
+    client = docker.Client()
+    client.ping()
 
-function cve_definitions_uri(){
-	local name=$1; shift
-	local image_root=$1; shift
-	if query_cpe_in_chroot $image_root oval:org.open-scap.cpe.rhel:def:7 || \
-			query_cpe_in_chroot $image_root oval:org.open-scap.cpe.rhel:def:6 ||\
-			query_cpe_in_chroot $image_root oval:org.open-scap.cpe.rhel:def:5; then
-		echo "http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml.bz2"
-	else
-		echo "Could not found CVE definitions for: $name" >&2
-		return 1
-	fi
-}
+if __name__ == '__main__':
 
-module=$1; shift
-case $module in
-image)
-	image_name=$1; shift
-	oscap_arguments="$*"
-	image_root=`mktemp -d docker.XXXXXX`
-	docker_mount_image $image_name $image_root
-	oscap_chroot "image" $image_name $image_root $oscap_arguments
-	docker_umount_image $image_root
-	;;
-image-cve)
-	image_name=$1; shift
-	oscap_oval_eval_arguments="$*"
-	image_root=`mktemp -d docker.XXXXXX`
-	cve_oval=$image_root/cve-oval.xml.bz2
-	docker_mount_image $image_name $image_root
-	cve_definitions_uri=`cve_definitions_uri $image_name $image_root`
-	wget --no-verbose -O "$cve_oval" $cve_definitions_uri
-	oscap_chroot "image" $image_name $image_root oval eval $oscap_oval_eval_arguments $cve_oval
-	docker_umount_image $image_root
-	;;
-container)
-	container_name=$1; shift
-	oscap_arguments="$*"
-	container_root=`docker_container_root $container_name`
-	oscap_chroot "container" $container_name $container_root $oscap_arguments
-	;;
-container-cve)
-	container_name=$1; shift
-	oscap_oval_eval_arguments="$*"
-	container_root=`docker_container_root $container_name`
-	cve_oval=`mktemp -t oval.XXXXX.xml.bz2`
-	cve_definitions_uri=`cve_definitions_uri $container_name $container_root`
-	wget --no-verbose -O "$cve_oval" $cve_definitions_uri
-	oscap_chroot "container" $container_name $container_root oval eval $oscap_oval_eval_arguments $cve_oval
-	rm $cve_oval
-	;;
-*)
-	usage
-	exit 1
-	;;
-esac
+    OD = OscapDocker()
 
+    parser = argparse.ArgumentParser(description='oscap docker',
+                                     epilog='See `man oscap` to learn \
+                                     more about OSCAP-ARGUMENTS')
+    subparser = parser.add_subparsers(help="commands")
+
+    # Scan CVEs in image
+    image_cve = subparser.add_parser('image-cve', help='Scan a docker image \
+                                    for known vulnerabilities.')
+    image_cve.set_defaults(func=OD.cve_scan)
+    image_cve.add_argument('scan_target', help='Container or image to scan')
+
+    # Scan an Image
+    image = subparser.add_parser('image', help='Scan a docker image')
+    image.add_argument('scan_target',
+                       help='Container or image to scan')
+
+    image.set_defaults(func=OD.scan)
+    # Scan a container
+    container = subparser.add_parser('container', help='Scan a running docker\
+                                      container of given name.')
+    container.add_argument('scan_target',
+                           help='Container or image to scan')
+    container.set_defaults(func=OD.scan)
+
+    # Scan CVEs in container
+    container_cve = subparser.add_parser('container-cve', help='Scan a \
+                                         running container for known \
+                                         vulnerabilities.')
+
+    container_cve.set_defaults(func=OD.cve_scan)
+    container_cve.add_argument('scan_target',
+                               help='Container or image to scan')
+
+    args, unknown = parser.parse_known_args()
+
+    try:
+        ping_docker()
+
+    except exceptions.ConnectionError:
+        print "The docker daemon does not appear to be running"
+        sys.exit(1)
+
+    OD.set_args(args, unknown)
+    args.func()

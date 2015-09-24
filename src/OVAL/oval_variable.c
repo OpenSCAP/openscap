@@ -1067,6 +1067,8 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	}
 	oval_collection_iterator_free(possible_values);
 
+	oval_schema_version_t schema_version = oval_definition_model_get_core_schema_version(variable->model);
+	bool serialize_operator = oval_schema_version_cmp(schema_version, OVAL_SCHEMA_VERSION(5.11)) >= 0;
 	struct oval_iterator *possible_restrictions = oval_variable_get_possible_restrictions(variable);
 	while (oval_collection_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_collection_iterator_next(possible_restrictions);
@@ -1078,7 +1080,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 		if (oval_collection_iterator_has_more(restrictions)) {
 			xmlNode *possible_restriction_node = xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "possible_restriction", NULL);
 			/* Attribute "operator" is new in OVAL 5.11, we don't serialize it in older OVAL versions */
-			if (oval_version_cmp(oval_definition_model_get_schema_version(variable->model), OVAL_VERSION(5.11)) >= 0) {
+			if (serialize_operator) {
 				xmlNewProp(possible_restriction_node, BAD_CAST "operator", BAD_CAST oval_operator_get_text(pr->operator));
 			}
 			xmlNewProp(possible_restriction_node, BAD_CAST "hint", BAD_CAST pr->hint);

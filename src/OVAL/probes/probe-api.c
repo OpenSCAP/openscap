@@ -471,23 +471,34 @@ int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_
 
 oval_version_t probe_obj_get_schema_version(const SEXP_t *obj)
 {
+	oval_schema_version_t version = probe_obj_get_platform_schema_version(obj);
+	const char *version_str = oval_schema_version_to_cstr(version);
+	oval_version_t old_version_format = oval_version_from_cstr(version_str);
+	oscap_free(version_str);
+	return old_version_format;
+}
+
+oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP_t *obj)
+{
 	SEXP_t *sexp_ver;
-	oval_version_t ver;
 
 	if (obj == NULL)
-		return OVAL_VERSION_INVALID;
+		return OVAL_SCHEMA_VERSION_INVALID;
 	sexp_ver = probe_obj_getattrval(obj, "oval_version");
 
-	if (!SEXP_numberp(sexp_ver)) {
+	if (!SEXP_stringp(sexp_ver)) {
 		SEXP_free(sexp_ver);
-		return OVAL_VERSION_INVALID;
+		return OVAL_SCHEMA_VERSION_INVALID;
 	}
 
-	ver = SEXP_number_getu_32(sexp_ver);
+	char *ver = SEXP_string_cstr(sexp_ver);
 	SEXP_free(sexp_ver);
-
-	return ver;
+	oval_schema_version_t parsed_version = oval_schema_version_from_cstr(ver);
+	oscap_free(ver);
+	return parsed_version;
 }
+
+
 
 SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 {

@@ -216,11 +216,6 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
     NULL
 };
 
-static int oval_gen_report(const char *infile, const char *outfile)
-{
-    return app_xslt(infile, "oval-results-report.xsl", outfile, NULL);
-}
-
 static int app_oval_callback(const struct oval_result_definition * res_def, void *arg)
 {
 	oval_result_t result =  oval_result_definition_get_result(res_def);

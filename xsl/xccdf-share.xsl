@@ -347,6 +347,7 @@ Authors:
 
     <xsl:if test="$benchmark[not(@resolved=1)][not(@resolved='true')]">
         <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
+        <xsl:message>You can resolve the document using "oscap xccdf resolve -o resolved-xccdf.xml xccdf.xml"</xsl:message>
     </xsl:if>
 </xsl:template>
 

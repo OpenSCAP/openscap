@@ -55,13 +55,13 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         SEXP_t *name_entity, *probe_in;
         SEXP_t *r0, *r1, *r2, *r3;
         SEXP_t *ent_attrs, *bh_entity, *path_entity, *filename_entity;
-        oval_version_t over;
+        oval_schema_version_t over;
         int over_cmp;
 
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
-        over        = probe_obj_get_schema_version(probe_in);
-        over_cmp    = oval_version_cmp(over, OVAL_VERSION(5.10));
+        over        = probe_obj_get_platform_schema_version(probe_in);
+        over_cmp    = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10));
 
         if (name_entity == NULL) {
                 dE("Missing \"name\" entity in the input object\n");

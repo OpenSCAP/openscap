@@ -569,7 +569,8 @@ int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, 
 SEXP_t *probe_entval_from_cstr(oval_datatype_t type, const char *value, size_t vallen);
 SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type, const char *value, size_t vallen);
 
-oval_version_t probe_obj_get_schema_version(const SEXP_t *obj);
+OSCAP_DEPRECATED(oval_version_t probe_obj_get_schema_version(const SEXP_t *obj));
+oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP_t *obj);
 
 /**
  * Get object entity mask

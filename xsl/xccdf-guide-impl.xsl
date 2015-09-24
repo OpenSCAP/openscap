@@ -493,6 +493,10 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile_id"/>
 
+    <xsl:call-template name="warn-unresolved">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+    </xsl:call-template>
+
     <xsl:variable name="profile" select="$benchmark/cdf:Profile[@id = $profile_id]"/>
 
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>

@@ -44,6 +44,7 @@
 #include "oval_adt.h"
 #include "oval_types.h"
 #include "oval_version.h"
+#include "oval_schema_version.h"
 #include <stdbool.h>
 
 /**
@@ -595,12 +596,17 @@ void oval_generator_free(struct oval_generator *generator);
 struct oval_generator *oval_generator_clone(struct oval_generator *old_generator);
 char *oval_generator_get_product_name(struct oval_generator *generator);
 char *oval_generator_get_product_version(struct oval_generator *generator);
-char *oval_generator_get_schema_version(struct oval_generator *generator);
+OSCAP_DEPRECATED(char *oval_generator_get_schema_version(struct oval_generator *generator));
+const char *oval_generator_get_core_schema_version(struct oval_generator *generator);
 char *oval_generator_get_timestamp(struct oval_generator *generator);
+const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform);
 void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name);
 void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version);
-void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version);
+OSCAP_DEPRECATED(void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version));
+void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version);
+void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version);
 void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp);
+void oval_generator_update_timestamp(struct oval_generator *generator);
 
 /**
  * Create an empty oval_definition_model.
@@ -1361,7 +1367,13 @@ int oval_object_get_version(struct oval_object *);
 /**
  * Returns schema version of the associated definition model
  */
-oval_version_t oval_object_get_schema_version(struct oval_object *object);
+OSCAP_DEPRECATED(oval_version_t oval_object_get_schema_version(struct oval_object *object));
+
+/**
+ * Returns schema version of the associated platform extension definition model
+ * @memberof oval_object
+ */
+oval_schema_version_t oval_object_get_platform_schema_version(struct oval_object *object);
 
 /**
  * Returns attribute @ref oval_object->contents.

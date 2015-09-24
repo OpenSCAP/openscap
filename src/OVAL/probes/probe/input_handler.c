@@ -196,6 +196,7 @@ void *probe_input_handler(void *arg)
 
 								goto __error_reply;
 							}
+							pthread_setname_np(pair->pth->tid, "worker");
 						}
 
 						seap_request = NULL;
