@@ -193,7 +193,7 @@ uint64_t strto_uint64_bin (const char *str, size_t len, char **endptr)
         }
 
         while (len > 0) {
-                if (*s != '0' || *s != '1')
+                if (*s != '0' && *s != '1')
                         break;
 
                 n <<= 1;

@@ -187,8 +187,7 @@ void xccdf_policy_add_profile_refine_rules(struct xccdf_policy* policy, struct x
 			assert(false);
 			continue;
 		}
-		struct xccdf_refine_rule* clone = xccdf_refine_rule_clone(rr);
-		_xccdf_policy_add_xccdf_refine_rule_internal(policy, benchmark, clone);
+		_xccdf_policy_add_xccdf_refine_rule_internal(policy, benchmark, rr);
 	}
 	xccdf_refine_rule_iterator_free(rr_it);
 }
