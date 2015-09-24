@@ -37,7 +37,7 @@
 
 #include "oscap_acquire.h"
 #include "common/_error.h"
-#include "oscap_buffer.h"
+#include "oscap_string.h"
 
 #ifndef P_tmpdir
 #define P_tmpdir "/tmp"
