@@ -19,6 +19,7 @@ import urllib2
 import urlparse
 from os.path import join, exists
 from os import stat, utime
+from sys import stderr
 import datetime
 
 
@@ -85,7 +86,7 @@ class getInputCVE(object):
 
         if not exists(dest_file):
             if self.DEBUG:
-                print "No file in cache, fetching {0}".format(dest_file)
+                stderr.write("No file in cache, fetching {0}\n".format(dest_file))
             return False
         opener = urllib2.OpenerDirector()
         opener.add_handler(urllib2.HTTPHandler())
@@ -109,11 +110,11 @@ class getInputCVE(object):
         # Else we declare they are different
         if (remote_dt - local_dt).seconds > 2:
             if self.DEBUG:
-                print "Had a local file {0} " \
-                      "but it wasn't new enough".format(dest_file)
+                stderr.write("Had a local file {0} " \
+                      "but it wasn't new enough\n".format(dest_file))
             return False
         if self.DEBUG:
-            print "File {0} is same as upstream".format(dest_file)
+            stderr.write("File {0} is same as upstream\n".format(dest_file))
 
         return True
 
