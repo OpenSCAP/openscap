@@ -198,10 +198,10 @@ class OscapScan(object):
 
         # Fetch the CVE input data for the dist
         fetch = getInputCVE(self.tmp_dir)
-        if not fetch._is_recent_enough(self.hours_old, dist):
-            # TODO
-            # This should probably be in a try/except
-            fetch._fetch_single(dist)
+
+        # TODO
+        # This should probably be in a try/except
+        fetch._fetch_single(dist)
 
         # Scan the chroot
         sys.stdout.write(self.helper._scan_cve(chroot, dist, scan_args))
