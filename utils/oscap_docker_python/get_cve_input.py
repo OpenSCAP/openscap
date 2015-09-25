@@ -74,7 +74,7 @@ class getInputCVE(object):
         seconds_epoch = (remote_dt - epoch).total_seconds()
         utime(dest_file, (seconds_epoch, seconds_epoch))
 
-        return self.dest
+        return dest_file
 
     def _is_cache_same(self, dest_file, dist_url):
         '''
