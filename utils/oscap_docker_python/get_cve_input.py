@@ -69,12 +69,18 @@ class getInputCVE(object):
         fh.close()
 
         # Correct Last-Modified timestamp
-        remote_ts = dict(resp.info())['last-modified']
-        epoch = datetime.datetime.utcfromtimestamp(0)
-        remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
-        seconds_epoch = (remote_dt - epoch).total_seconds()
-        utime(dest_file, (seconds_epoch, seconds_epoch))
-
+        headers = dict(resp.info())
+        resp.close()
+        try:
+            remote_ts = headers['last-modified']
+            epoch = datetime.datetime.utcfromtimestamp(0)
+            remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
+            seconds_epoch = (remote_dt - epoch).total_seconds()
+            utime(dest_file, (seconds_epoch, seconds_epoch))
+        except KeyError:
+            sys.stderr.write("Response header of HTTP doesn't contain" \
+                  "\"last-modified\" field. Cannot determine version" \
+                  " of remote file \"{0}\"".format(dist_url))
         return dest_file
 
     def _is_cache_same(self, dest_file, dist_url):
@@ -98,13 +104,20 @@ class getInputCVE(object):
         opener.addheaders = self.hdr2
         # Grab the header
         res = opener.open(HeadRequest(dist_url))
-        remote_ts = dict(res.info())['last-modified']
+        headers = dict(res.info())
+        res.close()
+        try:
+            remote_ts = headers['last-modified']
+        except KeyError:
+            sys.stderr.write("Response header of HTTP doesn't contain" \
+                  "\"last-modified\" field. Cannot determine version" \
+                  " of remote file \"{0}\"".format(dist_url))
+            return False
         # The remote's datetime
         remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
         # Get the locals datetime from the file's mtime, converted to UTC
         local_dt = datetime.datetime.utcfromtimestamp((stat(dest_file))
                                                       .st_mtime)
-        res.close()
 
         # Giving a two second comfort zone
         # Else we declare they are different
