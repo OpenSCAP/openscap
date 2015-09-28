@@ -1018,9 +1018,20 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 		return 1;
 	}
 
+	struct oscap_source* results = session->xccdf.result_source;
+	struct oscap_source* arf = NULL;
+	if (session->export.oval_results) {
+		arf = xccdf_session_create_arf_source(session);
+		if (arf == NULL) {
+			 return 1;
+		}
+		results = arf;
+	}
+	
+
 	/* generate report */
 	if (session->export.report_file != NULL)
-		_xccdf_gen_report(session->xccdf.result_source,
+		_xccdf_gen_report(results,
 				xccdf_result_get_id(session->xccdf.result),
 				session->export.report_file,
 				"",
@@ -1028,6 +1039,7 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 				(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
 				session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
 		);
+	oscap_source_free(arf);
 	return 0;
 }
 
