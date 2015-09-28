@@ -194,6 +194,32 @@ static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *ses
 
 static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session);
 
+static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session *session){
+	struct oscap_source *sds_source = NULL;
+
+	if (xccdf_session_is_sds(session)) {
+		sds_source = session->source;
+	}
+	else {
+		if (!session->temp_dir)
+			session->temp_dir = oscap_acquire_temp_dir();
+		if (session->temp_dir == NULL)
+			return NULL;
+
+		char *sds_path = malloc(PATH_MAX * sizeof(char));
+		snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
+		ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
+		sds_source = oscap_source_new_from_file(sds_path);
+		free(sds_path);
+	}
+
+	struct oscap_source *arf_source = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
+	if (!xccdf_session_is_sds(session)) {
+		oscap_source_free(sds_source);
+	}
+	return arf_source;
+}
+
 void xccdf_session_free(struct xccdf_session *session)
 {
 	if (session == NULL)
@@ -1258,28 +1284,7 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 int xccdf_session_export_arf(struct xccdf_session *session)
 {
 	if (session->export.arf_file != NULL) {
-		struct oscap_source *sds_source = NULL;
-
-		if (xccdf_session_is_sds(session)) {
-			sds_source = session->source;
-		}
-		else {
-			if (!session->temp_dir)
-				session->temp_dir = oscap_acquire_temp_dir();
-			if (session->temp_dir == NULL)
-				return 1;
-
-			char *sds_path = malloc(PATH_MAX * sizeof(char));
-			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
-			ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
-			sds_source = oscap_source_new_from_file(sds_path);
-			free(sds_path);
-		}
-
-		struct oscap_source *arf_source = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
-		if (!xccdf_session_is_sds(session)) {
-			oscap_source_free(sds_source);
-		}
+		struct oscap_source* arf_source = xccdf_session_create_arf_source(session);
 		if (arf_source == NULL) {
 			return 1;
 		}
