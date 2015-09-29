@@ -1,3 +1,20 @@
+openscap-1.2.6                                                  29-09-2015
+ - New features
+   - added user HTML user manual 
+   - introduce a new oval_session() 
+   - introduce OVAL  5.11.1 core/platfrom schema versions
+   - added support for bz2 files with --fetch-remote-resources
+   - introduce CPE name for upcomming Fedora 24
+   - completely new version of oscap-docker
+   - Add OVAL 5.11.1 schematrons
+ - Maintenance
+   - smaller bugfixes
+ - HTML report
+   - improve searching
+   - add the "group by" feature
+   - hide interactive report elements when printing
+   - show RHSA identifiers as clickable links
+   
 openscap-1.2.5                                                  06-07-2015
  - maintenance
    - smaller bugfixes
