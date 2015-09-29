@@ -68,6 +68,7 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		docs/examples/oval_probes.py \
 		docs/examples/package-test.xml \
                 docs/oscap-scan.cron \
+		docs/manual/manual.adoc \
 		dist/fedora/sectool-xccdf/00_integrity.sh \
 		dist/fedora/sectool-xccdf/01_bootloader.sh \
 		dist/fedora/sectool-xccdf/01_disk_usage.sh \
@@ -98,6 +99,7 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 
 dist-hook: ChangeLog
 	cd $(distdir)/docs && doxygen Doxyfile
+	cd $(distdir)/docs/manual && asciidoctor -b html5 manual.adoc
 
 ChangeLog:
 	git log | sed '/^commit/d; /^Merge/d' > ChangeLog
