@@ -24,13 +24,13 @@
 
   <objects>
     <lin-def:rpmverifyfile_object id="oval:x:obj:1" version="1" comment="Object">
-        <lin-def:behaviors nolinkto="true" nosize="true" nouser="true" nogroup="true" nomtime="true" nomode="true" nordev="true" noconfigfiles="true" noghostfiles="true" nofiledigest="true" nocaps="true"/>
+        <lin-def:behaviors nolinkto="true" nosize="true" nouser="true" nogroup="true" nomtime="true" nomode="true" nordev="true" noghostfiles="true" nofiledigest="true" nocaps="true"/>
         <lin-def:name operation="pattern match"/>
         <lin-def:epoch operation="pattern match"/>
         <lin-def:version operation="pattern match"/>
         <lin-def:release operation="pattern match"/>
         <lin-def:arch operation="pattern match"/>
-        <lin-def:filepath>/etc/redhat-release</lin-def:filepath>
+        <lin-def:filepath>/etc/passwd</lin-def:filepath>
     </lin-def:rpmverifyfile_object>
   </objects>
 
