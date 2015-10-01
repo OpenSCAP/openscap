@@ -40,6 +40,7 @@
 #include "oval_agent_api_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
+#include "oval_schema_version.h"
 
 typedef struct oval_state_content {
 	struct oval_definition_model *model;
@@ -47,6 +48,7 @@ typedef struct oval_state_content {
 	struct oval_collection *record_fields;
 	oval_check_t ent_check;
 	oval_check_t var_check;
+	oval_existence_t check_existence;
 } oval_state_content_t;
 
 bool oval_state_content_iterator_has_more(struct oval_state_content_iterator
@@ -104,6 +106,13 @@ oval_check_t oval_state_content_get_ent_check(struct oval_state_content * conten
 	return content->ent_check;
 }
 
+oval_existence_t oval_state_content_get_check_existence(struct oval_state_content *content)
+{
+	__attribute__nonnull__(content);
+
+	return content->check_existence;
+}
+
 struct oval_state_content *oval_state_content_new(struct oval_definition_model *model)
 {
 	oval_state_content_t *content = (oval_state_content_t *)
@@ -115,6 +124,7 @@ struct oval_state_content *oval_state_content_new(struct oval_definition_model *
 	content->record_fields = oval_collection_new();
 	content->ent_check = OVAL_CHECK_UNKNOWN;
 	content->var_check = OVAL_CHECK_UNKNOWN;
+	content->check_existence = OVAL_EXISTENCE_UNKNOWN;
 	content->model = model;
 	return content;
 }
@@ -128,6 +138,8 @@ struct oval_state_content *oval_state_content_clone
 	oval_state_content_set_entity(new_content, oval_entity_clone(new_model, entity));
 	oval_check_t vcheck = oval_state_content_get_var_check(old_content);
 	oval_state_content_set_varcheck(new_content, vcheck);
+	oval_existence_t check_existence = oval_state_content_get_check_existence(old_content);
+	oval_state_content_set_check_existence(new_content, check_existence);
 	return new_content;
 }
 
@@ -167,6 +179,12 @@ void oval_state_content_set_entcheck(struct oval_state_content *content, oval_ch
 	content->ent_check = check;
 }
 
+void oval_state_content_set_check_existence(struct oval_state_content *content, oval_existence_t existence)
+{
+	__attribute__nonnull__(content);
+	content->check_existence = existence;
+}
+
 static void _oval_state_content_entity_consumer(struct oval_entity *entity, struct oval_state_content *content) {
 	oval_state_content_set_entity(content, entity);
 }
@@ -195,6 +213,12 @@ int oval_state_content_parse_tag(xmlTextReaderPtr reader,
 
 	oval_check_t var_check = oval_check_parse(reader, "var_check", OVAL_CHECK_ALL);
 	oval_check_t ent_check = oval_check_parse(reader, "entity_check", OVAL_CHECK_ALL);
+	/* "check_existence" is new optional attribute in OVAL 5.11.1
+	 * if this attribute is not present, the default value
+	 * of "at_least_one_exists" is used
+	 */
+	oval_existence_t check_existence = oval_existence_parse(reader,
+		"check_existence", OVAL_AT_LEAST_ONE_EXISTS);
 
 	ent_datatype = oval_entity_get_datatype(content->entity);
 	if (ent_datatype == OVAL_DATATYPE_RECORD) {
@@ -204,6 +228,7 @@ int oval_state_content_parse_tag(xmlTextReaderPtr reader,
 
 	oval_state_content_set_varcheck(content, var_check);
 	oval_state_content_set_entcheck(content, ent_check);
+	oval_state_content_set_check_existence(content, check_existence);
 
 	(*consumer) (content, user);
 	return retcode;
@@ -242,6 +267,14 @@ xmlNode *oval_state_content_to_dom(struct oval_state_content * content, xmlDoc *
 	oval_check_t ent_check = oval_state_content_get_ent_check(content);
 	if (ent_check != OVAL_CHECK_ALL)
 		xmlNewProp(content_node, BAD_CAST "entity_check", BAD_CAST oval_check_get_text(ent_check));
+	oval_schema_version_t ver = oval_definition_model_get_core_schema_version(content->model);
+	if (oval_schema_version_cmp(ver, OVAL_SCHEMA_VERSION(5.11.1)) >= 0) {
+		oval_existence_t check_existence = oval_state_content_get_check_existence(content);
+		if (check_existence != OVAL_AT_LEAST_ONE_EXISTS) {
+			// at_least_one_exists is default value
+			xmlNewProp(content_node, BAD_CAST "check_existence", BAD_CAST oval_existence_get_text(check_existence));
+		}
+	}
 
 	return content_node;
 }

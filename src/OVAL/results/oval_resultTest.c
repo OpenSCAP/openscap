@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
 #include "results/oval_results_impl.h"
+#include "results/oval_status_counter.h"
 #include "oval_cmp_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "adt/oval_string_map_impl.h"
@@ -481,9 +482,11 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		char *state_entity_name;
 		oval_operation_t state_entity_operation;
 		oval_check_t entity_check;
+		oval_existence_t check_existence;
 		oval_result_t ste_ent_res;
 		struct oval_sysent_iterator *item_entities_itr;
 		struct oresults ent_ores;
+		struct oval_status_counter counter;
 		bool found_matching_item;
 
 		if ((content = oval_state_content_iterator_next(state_contents_itr)) == NULL) {
@@ -515,16 +518,19 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		}
 
 		entity_check = oval_state_content_get_ent_check(content);
+		check_existence = oval_state_content_get_check_existence(content);
 		state_entity_operation = oval_entity_get_operation(state_entity);
 
 		ores_clear(&ent_ores);
 		found_matching_item = false;
+		oval_status_counter_clear(&counter);
 
 		item_entities_itr = oval_sysitem_get_sysents(cur_sysitem);
 		while (oval_sysent_iterator_has_more(item_entities_itr)) {
 			struct oval_sysent *item_entity;
 			oval_result_t ent_val_res;
 			char *item_entity_name;
+			oval_syschar_status_t item_status;
 
 			item_entity = oval_sysent_iterator_next(item_entities_itr);
 			if (item_entity == NULL) {
@@ -532,6 +538,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 				oval_sysent_iterator_free(item_entities_itr);
 				goto fail;
 			}
+			item_status = oval_sysent_get_status(item_entity);
+			oval_status_counter_add_status(&counter, item_status);
 
 			item_entity_name = oval_sysent_get_name(item_entity);
 			if (strcmp(item_entity_name, state_entity_name))
@@ -560,6 +568,8 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
 		ores_add_res(&ste_ores, ste_ent_res);
+		oval_result_t cres = oval_status_counter_get_result(&counter, check_existence);
+		ores_add_res(&ste_ores, cres);
 	}
 	oval_state_content_iterator_free(state_contents_itr);
 
