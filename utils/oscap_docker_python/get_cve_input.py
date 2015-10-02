@@ -67,7 +67,7 @@ class getInputCVE(object):
             resp = urllib.urlopen(_url)
 
         except Exception as url_error:
-            raise Exception("Unable to fetch CVE inputs due to"
+            raise Exception("Unable to fetch CVE inputs due to {0}"
                             .format(url_error))
 
         fh = open(dest_file, "w")
@@ -114,11 +114,12 @@ class getInputCVE(object):
             headers = dict(res.info())
             res.close()
             remote_ts = headers['last-modified']
-        except urllib2.HTTPError as http_error:
+
+        except urllib.HTTPError as http_error:
             if self.DEBUG:
                 stderr.write("Cannot send HTTP HEAD request to get \"last-modified\"" \
-                      " attribute of remote content file.\n{0} - {1}\n"
-                      .format(http_error.code, http_error.reason))
+                             " attribute of remote content file.\n{0} - {1}\n"
+                             .format(http_error.code, http_error.reason))
             return False
 
         except KeyError:
@@ -154,7 +155,7 @@ class getInputCVE(object):
         '''
         cve_files = []
         for dist in self.dists:
-                cve_files.append(self._fetch_single(dist))
+            cve_files.append(self._fetch_single(dist))
         return cve_files
 
 
