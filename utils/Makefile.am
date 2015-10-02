@@ -57,4 +57,4 @@ endif
 CONFIG_CLEAN_FILES = oscap-docker
 
 
-EXTRA_DIST	= $(bin_SCRIPTS) $(man_MANS)
+EXTRA_DIST = $(filter-out oscap-docker, $(bin_SCRIPTS)) $(man_MANS)
