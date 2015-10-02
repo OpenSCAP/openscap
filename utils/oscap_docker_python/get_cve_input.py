@@ -103,16 +103,25 @@ class getInputCVE(object):
         # Add the header
         opener.addheaders = self.hdr2
         # Grab the header
-        res = opener.open(HeadRequest(dist_url))
-        headers = dict(res.info())
-        res.close()
         try:
+            res = opener.open(HeadRequest(dist_url))
+            headers = dict(res.info())
+            res.close()
             remote_ts = headers['last-modified']
-        except KeyError:
-            sys.stderr.write("Response header of HTTP doesn't contain" \
-                  "\"last-modified\" field. Cannot determine version" \
-                  " of remote file \"{0}\"".format(dist_url))
+        except urllib2.HTTPError as http_error:
+            if self.DEBUG:
+                sys.stderr.write("Cannot send HTTP HEAD request to get \"last-modified\"" \
+                      " attribute of remote content file.\n{0} - {1}\n"
+                      .format(http_error.code, http_error.reason))
             return False
+
+        except KeyError:
+            if self.DEBUG:
+                sys.stderr.write("Response header of HTTP doesn't contain" \
+                      "\"last-modified\" field. Cannot determine version" \
+                      " of remote file \"{0}\"".format(dist_url))
+            return False
+
         # The remote's datetime
         remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
         # Get the locals datetime from the file's mtime, converted to UTC
