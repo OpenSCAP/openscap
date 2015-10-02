@@ -43,14 +43,14 @@ class OscapDocker(object):
         OS = OscapScan()
         result = OS.scan_cve(self.args.scan_target, self.unknown_args)
         if result is not None:
-            print result
+            print(result)
 
     def scan(self):
         ''' Wrapper functiopn to scan with openscap'''
         OS = OscapScan()
         result = OS.scan(self.args.scan_target, self.unknown_args)
         if result is not None:
-            print result
+            print(result)
 
 
 def ping_docker():
@@ -101,7 +101,7 @@ if __name__ == '__main__':
         ping_docker()
 
     except exceptions.ConnectionError:
-        print "The docker daemon does not appear to be running"
+        print("The docker daemon does not appear to be running")
         sys.exit(1)
 
     OD.set_args(args, unknown)
