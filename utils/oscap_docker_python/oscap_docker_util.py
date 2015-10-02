@@ -40,7 +40,9 @@ try:
     # we only care about method names
     member_methods = [
         x[0] for x in
-        inspect.getmembers(DockerMount, predicate=inspect.ismethod)
+        inspect.getmembers(
+            DockerMount, predicate=lambda member: inspect.isfunction(member) or inspect.ismethod(member)
+        )
     ]
 
     if "_clean_temp_container_by_path" not in member_methods:
@@ -119,9 +121,9 @@ class OscapHelpers(object):
         try:
             run = subprocess.check_output(cmd)
         except Exception as error:
-            print "\nCommand: {0} failed!\n".format(" ".join(cmd))
-            print "Error was:\n"
-            print error
+            print("\nCommand: {0} failed!\n".format(" ".join(cmd)))
+            print("Error was:\n")
+            print(error)
 
             # Clean up
             self._cleanup_by_path(chroot_path)
