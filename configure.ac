@@ -1068,6 +1068,10 @@ AC_ARG_ENABLE([python3],
 		*) AC_MSG_ERROR([bad value ${enableval} for --enable-python3]);;
 	esac],[python3_bind=no])
 
+
+AC_ARG_VAR([preferred_python], [set preferred Python interpreter])
+AS_IF([test "$preferred_python" = ""], [preferred_python=$PYTHON])
+
 AC_ARG_ENABLE([perl],
      [AC_HELP_STRING([--enable-perl], [enable compilation of perl bindings (default=no)])],
      [case "${enableval}" in
@@ -1255,6 +1259,10 @@ if test "x${python3_bind}" = xyes; then
 	AC_SUBST(python3dir, $PYTHON3_DIR)
 	AC_SUBST(py3execdir, $PYTHON3_EXECDIR)
 fi
+
+# oscap-docker determine python dir on default python version
+OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
+AC_SUBST(oscapdocker_pythondir, $OSCAPDOCKER_PYTHONDIR)
 
 
 AM_CONDITIONAL([probe_system_info_enabled], test "$probe_system_info_req_deps_ok" = yes)
@@ -1486,6 +1494,8 @@ AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
 AC_CONFIG_FILES([tests/test_common.sh],
                 [chmod +x,-w tests/test_common.sh])
+AC_CONFIG_FILES([utils/oscap-docker],
+                [chmod +x,-w utils/oscap-docker])
 
 AC_OUTPUT
 
