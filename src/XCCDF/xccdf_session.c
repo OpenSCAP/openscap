@@ -86,6 +86,7 @@ struct xccdf_session {
 		struct oval_agent_session **agents;	///< OVAL Agent Session
 		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
 		char *product_cpe;			///< CPE of scanner product.
+		struct oscap_source* arf_report;	///< ARF report
 		struct oscap_htable *result_sources;    ///< mapping 'filepath' to oscap_source for OVAL results
 	} oval;
 	struct {
@@ -194,7 +195,12 @@ static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *ses
 
 static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session);
 
-static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session *session){
+static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session *session)
+{
+	if (session->oval.arf_report != NULL) {
+		return session->oval.arf_report;
+	}
+
 	struct oscap_source *sds_source = NULL;
 
 	if (xccdf_session_is_sds(session)) {
@@ -213,11 +219,11 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 		free(sds_path);
 	}
 
-	struct oscap_source *arf_source = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
+	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
 	if (!xccdf_session_is_sds(session)) {
 		oscap_source_free(sds_source);
 	}
-	return arf_source;
+	return session->oval.arf_report;
 }
 
 void xccdf_session_free(struct xccdf_session *session)
@@ -236,6 +242,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	_xccdf_session_free_oval_agents(session);
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
+	oscap_source_free(session->oval.arf_report);
 	oscap_source_free(session->xccdf.result_source);
 	if (session->xccdf.policy_model != NULL)
 		xccdf_policy_model_free(session->xccdf.policy_model);
@@ -1041,7 +1048,6 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 			session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
 	);
 
-	oscap_source_free(arf);
 	return 0;
 }
 
@@ -1313,7 +1319,6 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 				return 1;
 			}
 		}
-		oscap_source_free(arf_source);
 	}
 	return 0;
 }
