@@ -965,13 +965,13 @@ static int _app_xslt(struct oscap_source *infile, const char *xsltfile, const ch
 	return oscap_source_apply_xslt_path(infile, xsltfile, outfile, par, oscap_path_to_xslt()) == -1;
 }
 
-static inline int _xccdf_gen_report(struct oscap_source *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile)
+static inline int _xccdf_gen_report(struct oscap_source *infile, const char *id, const char *outfile, const char *show, const char* sce_template, const char* profile)
 {
 	const char *params[] = {
 		"result-id",		id,
 		"show",			show,
 		"profile",		profile,
-		"oval-template",	oval_template,
+		"oval-template",	"",
 		"sce-template",		sce_template,
 		"verbosity",		"",
 		"hide-profile-info",	NULL,
@@ -1043,7 +1043,6 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 			xccdf_result_get_id(session->xccdf.result),
 			session->export.report_file,
 			"",
-			(session->export.oval_results ? "%.result.xml" : ""),
 			(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
 			session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
 	);
