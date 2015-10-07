@@ -253,7 +253,7 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 {
 	int ret;
 	oscap_document_type_t scap_type = oscap_source_get_scap_type(source);
-	
+
 	if (scap_type == OSCAP_DOCUMENT_UNKNOWN) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unrecognized document type for: %s", oscap_source_readable_origin(source));
 		ret = -1;
