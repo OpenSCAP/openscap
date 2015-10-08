@@ -1,0 +1,72 @@
+.TH oscap-vm "8" "October 2015" "Red Hat, Inc." "System Administration Utilities"
+.SH NAME
+oscap-vm \- Tool for offline SCAP evaluation of virtual machines.
+.SH DESCRIPTION
+oscap-vm mounts given virtual machine and runs oscap tool on it.
+
+The tool requires bash, guestmount, mktemp and umount to perform OVAL and XCCDF
+evaluation of virtual machines.
+
+Usage of the tool mimics usage and options of oscap(8) tool.
+
+.SH USAGE
+.SS Evaluation of XCCDF content
+$ oscap-vm image VM_STORAGE_IMAGE xccdf eval [options] INPUT_CONTENT
+
+$ oscap-vm domain VM_DOMAIN xccdf eval [options] INPUT_CONTENT
+
+supported oscap xccdf eval options are:
+  --profile
+  --tailoring-file
+  --tailoring-id
+  --cpe (external OVAL dependencies are not supported yet!)
+  --oval-results
+  --sce-results
+  --check-engine-results
+  --results
+  --results-arf
+  --report
+  --skip-valid
+  --fetch-remote-resources
+  --progress
+  --datastream-id
+  --xccdf-id
+  --benchmark-id
+  --remediate
+
+.SS Evaluation of OVAL content
+$ oscap-vm image VM_STORAGE_IMAGE oval eval [options] INPUT_CONTENT
+
+$ oscap-vm domain VM_DOMAIN oval eval [options] INPUT_CONTENT
+
+supported oscap oval eval options are:
+  --id
+  --variables
+  --directives
+  --results
+  --report
+  --skip-valid
+  --datastream-id
+  --oval-id
+  --probe-root
+
+.SS Collection of OVAL System Characteristic
+$ oscap-vm image VM_STORAGE_IMAGE oval collect [options] INPUT_CONTENT
+
+$ oscap-vm domain VM_DOMAIN oval collect [options] INPUT_CONTENT
+
+supported oscap oval collect options are:
+  --id
+  --syschar
+  --variables
+  --skip-valid
+
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH AUTHORS
+.nf
+Martin Preisler <mpreisle@redhat.com>
+.fi

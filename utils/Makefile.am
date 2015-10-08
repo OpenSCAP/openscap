@@ -55,6 +55,7 @@ man_MANS += oscap-ssh.8
 endif
 if WANT_UTIL_OSCAP_VM
 bin_SCRIPTS += oscap-vm
+man_MANS += oscap-vm.8
 endif
 
 CONFIG_CLEAN_FILES = oscap-docker

@@ -28,7 +28,7 @@ which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
 {
-    echo "oscap-vm -- Tool for offline evaluation of virtual machine storage images."
+    echo "oscap-vm -- Tool for offline SCAP evaluation of virtual machines."
     echo ""
     echo "Your VM must use /dev/sda1 as the root partition for this script to"
     echo "work. We think that other configurations are rare enough to limit"
@@ -70,7 +70,7 @@ function usage()
     echo "  --skip-valid"
     echo "  --datastream-id"
     echo "  --oval-id"
-    echo "  --probe-root (has to be remote probe root!)"
+    echo "  --probe-root"
     echo
     echo "$ oscap-vm image VM_STORAGE_IMAGE oval collect [options] INPUT_CONTENT"
     echo "$ oscap-vm domain VM_DOMAIN oval collect [options] INPUT_CONTENT"
