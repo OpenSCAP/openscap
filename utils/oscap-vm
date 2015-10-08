@@ -123,4 +123,5 @@ oscap $*
 EXIT_CODE=$?
 echo "Unmounting '$MOUNTPOINT'..."
 umount "$MOUNTPOINT"
+rmdir "$MOUNTPOINT"
 exit $EXIT_CODE
