@@ -26,6 +26,7 @@ Authors:
 <xsl:stylesheet version="1.1"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:ovaldef="http://oval.mitre.org/XMLSchema/oval-definitions-5"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:ovalsys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
     xmlns:ovalunixsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"
@@ -36,7 +37,11 @@ Authors:
 <xsl:key name='oval-test'       match='ovalres:test'          use='@test_id'       />
 <xsl:key name='oval-items'      match='ovalsys:system_data/*' use='@id'            />
 
-<xsl:key name='oval-testdef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_test")]' use='@id' />
+<xsl:key name='oval-testdef'
+    match='oval_def:oval_definitions/ovaldef:tests/*
+        [starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions")
+        and contains(local-name(), "_test")]'
+    use='@id' />
 <xsl:key name='oval-objectdef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_object")]' use='@id' />
 <xsl:key name='oval-statedef' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-definitions") and contains(local-name(), "_state")]' use='@id' />
 <xsl:key name='oval-variable' match='*[starts-with(namespace-uri(), "http://oval.mitre.org/XMLSchema/oval-results-5") and contains(local-name(), "tested_variable")]' use='@variable_id' />
