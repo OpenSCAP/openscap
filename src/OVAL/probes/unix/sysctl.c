@@ -109,8 +109,21 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 SEXP_t *se_mib;
                 char    mibpath[PATH_MAX], *mib;
                 size_t  miblen;
+		struct stat file_stat;
 
                 snprintf(mibpath, sizeof mibpath, "%s/%s", ofts_ent->path, ofts_ent->file);
+
+		/* Skip write-only files, eg. /proc/sys/net/ipv4/route/flush */
+		if (stat(mibpath, &file_stat) == -1) {
+			dE("Stat failed on %s: %u, %s\n", mibpath, errno, strerror(errno));
+			oval_ftsent_free(ofts_ent);
+			continue;
+		}
+		if ((file_stat.st_mode & S_IRUSR) == 0) {
+			dI("Skipping write-only file %s\n", mibpath);
+			oval_ftsent_free(ofts_ent);
+			continue;
+		}
 
                 mib    = strdup(mibpath + strlen(PROC_SYS_DIR) + 1);
                 miblen = strlen(mib);
