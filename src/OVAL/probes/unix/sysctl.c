@@ -122,6 +122,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 			oval_ftsent_free(ofts_ent);
 			continue;
 		}
+		/* the sysctl utility uses same condition in sysctl.c in ReadSetting() */
 		if ((file_stat.st_mode & S_IRUSR) == 0) {
 			dI("Skipping write-only file %s\n", mibpath);
 			oval_ftsent_free(ofts_ent);
@@ -167,7 +168,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         if (ferror(fp)) {
 				/* Linux 4.1.0 introduced a per-NIC IPv6 stable_secret file.
 				 * The stable_secret file cannot be read until it is set,
-				 * so we skip it.
+				 * so we skip it when it is not readable. Otherwise we collect it.
 				 */
 				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
 						strcmp(ofts_ent->file, "stable_secret") == 0) {
