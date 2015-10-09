@@ -29,10 +29,6 @@ which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 function usage()
 {
     echo "oscap-vm -- Tool for offline SCAP evaluation of virtual machines."
-    echo ""
-    echo "Your VM must use /dev/sda1 as the root partition for this script to"
-    echo "work. We think that other configurations are rare enough to limit"
-    echo "the script like that."
     echo
     echo "Usage:"
     echo
