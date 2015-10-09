@@ -23,6 +23,7 @@ function die()
 }
 
 which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
+which guestunmount > /dev/null || die "Cannot find guestunmount, please install libguestfs utilities."
 which umount > /dev/null || die "Cannot find umount, please install coreutils."
 which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
@@ -118,6 +119,6 @@ shift 2
 oscap "$@"
 EXIT_CODE=$?
 echo "Unmounting '$MOUNTPOINT'..."
-umount "$MOUNTPOINT"
+guestunmount "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
 exit $EXIT_CODE
