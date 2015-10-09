@@ -58,6 +58,9 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         oval_version_t over;
         int over_cmp;
 
+	const char *ipv6_conf_path = "/proc/sys/net/ipv6/conf/";
+	size_t ipv6_conf_path_len = strlen(ipv6_conf_path);
+
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
         over        = probe_obj_get_schema_version(probe_in);
@@ -162,9 +165,21 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         l = fread(sysval, 1, sizeof sysval - 1, fp);
 
                         if (ferror(fp)) {
-                                dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",
-                                    mibpath, fp, l, errno, strerror(errno));
-                                goto fail_item;
+				/* Linux 4.1.0 introduced a per-NIC IPv6 stable_secret file.
+				 * The stable_secret file cannot be read until it is set,
+				 * so we skip it.
+				 */
+				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
+						strcmp(ofts_ent->file, "stable_secret") == 0) {
+					dI("Skippping file %s\n", mibpath);
+					oval_ftsent_free(ofts_ent);
+					SEXP_free(se_mib);
+					continue;
+				} else {
+					dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",
+						mibpath, fp, l, errno, strerror(errno));
+					goto fail_item;
+				}
                         }
 
                         fclose(fp);
