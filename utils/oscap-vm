@@ -53,7 +53,6 @@ function usage()
     echo "  --datastream-id"
     echo "  --xccdf-id"
     echo "  --benchmark-id"
-    echo "  --remediate"
     echo
     echo "$ oscap-vm image VM_STORAGE_IMAGE oval eval [options] INPUT_CONTENT"
     echo "$ oscap-vm domain VM_DOMAIN oval eval [options] INPUT_CONTENT"
