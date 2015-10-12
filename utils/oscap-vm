@@ -1,0 +1,123 @@
+#!/bin/bash
+
+# Copyright 2015 Martin Preisler <martin@preisler.me>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+function die()
+{
+    echo "$*" >&2
+    exit 1
+}
+
+which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
+which guestunmount > /dev/null || die "Cannot find guestunmount, please install libguestfs utilities."
+which umount > /dev/null || die "Cannot find umount, please install coreutils."
+which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
+
+function usage()
+{
+    echo "oscap-vm -- Tool for offline SCAP evaluation of virtual machines."
+    echo
+    echo "Usage:"
+    echo
+    echo "$ oscap-vm image VM_STORAGE_IMAGE xccdf eval [options] INPUT_CONTENT"
+    echo "$ oscap-vm domain VM_DOMAIN xccdf eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap xccdf eval options are:"
+    echo "  --profile"
+    echo "  --tailoring-file"
+    echo "  --tailoring-id"
+    echo "  --cpe (external OVAL dependencies are not supported yet!)"
+    echo "  --oval-results"
+    echo "  --sce-results"
+    echo "  --check-engine-results"
+    echo "  --results"
+    echo "  --results-arf"
+    echo "  --report"
+    echo "  --skip-valid"
+    echo "  --fetch-remote-resources"
+    echo "  --progress"
+    echo "  --datastream-id"
+    echo "  --xccdf-id"
+    echo "  --benchmark-id"
+    echo
+    echo "$ oscap-vm image VM_STORAGE_IMAGE oval eval [options] INPUT_CONTENT"
+    echo "$ oscap-vm domain VM_DOMAIN oval eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval eval options are:"
+    echo "  --id"
+    echo "  --variables"
+    echo "  --directives"
+    echo "  --results"
+    echo "  --report"
+    echo "  --skip-valid"
+    echo "  --datastream-id"
+    echo "  --oval-id"
+    echo "  --probe-root"
+    echo
+    echo "$ oscap-vm image VM_STORAGE_IMAGE oval collect [options] INPUT_CONTENT"
+    echo "$ oscap-vm domain VM_DOMAIN oval collect [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval collect options are:"
+    echo "  --id"
+    echo "  --syschar"
+    echo "  --variables"
+    echo "  --skip-valid"
+    echo
+    echo "See \`man oscap\` to learn more about semantics of these options."
+}
+
+if [ $# -lt 1 ]; then
+    echo "No arguments provided."
+    usage
+    die
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    usage
+    die
+elif [ "$1" == "image" ] && [ $# -gt 2 ]; then
+    true
+elif [ "$1" == "domain" ] && [ $# -gt 2 ]; then
+    true
+else
+    echo "Invalid arguments provided."
+    usage
+    die
+fi
+
+MOUNTPOINT=$(mktemp -d)
+
+if [ "$1" == "image" ]; then
+    echo "Mounting guestfs image '$2' to '$MOUNTPOINT'..."
+    guestmount -a "$2" -i --ro "$MOUNTPOINT"
+elif [ "$1" == "domain" ]; then
+    echo "Mounting guestfs domain '$2' to '$MOUNTPOINT'..."
+    guestmount -d "$2" -i --ro "$MOUNTPOINT"
+fi
+
+# Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
+export OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT"; pwd)"
+export OSCAP_PROBE_OS_NAME="Linux" # TODO: This may be wrong!
+export OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)" # TODO
+export OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)" # TODO
+export OSCAP_PROBE_PRIMARY_HOST_NAME="oscap-vm $1 $2"
+shift 2
+
+oscap "$@"
+EXIT_CODE=$?
+echo "Unmounting '$MOUNTPOINT'..."
+guestunmount "$MOUNTPOINT"
+rmdir "$MOUNTPOINT"
+exit $EXIT_CODE
