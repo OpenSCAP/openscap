@@ -40,7 +40,7 @@ function testInDirectory(){
 }
 
 name=$(basename $0 .sh)
-ORIGINAL_XCCDF="$(realpath "$srcdir/${name}.xccdf.xml")"
+ORIGINAL_XCCDF="$(readlink -e "$srcdir/${name}.xccdf.xml")"
 
 ### test in XCCDF's directory
 
@@ -51,7 +51,7 @@ mkdir -p "$testDir/oval/always-fail"
 cp "$ORIGINAL_XCCDF" "$srcdir/test_default_selector.oval.xml" "$testDir"
 cp "$srcdir/oval/always-fail/oval.xml" "$testDir/oval/always-fail"
 
-XCCDF="$(realpath "$testDir/${name}.xccdf.xml")"
+XCCDF="$(readlink -e "$testDir/${name}.xccdf.xml")"
 testInDirectory "$testDir" "$XCCDF"
 rm -rf "$testDir"
 
