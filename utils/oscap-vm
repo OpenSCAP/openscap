@@ -24,7 +24,6 @@ function die()
 
 which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
 which guestunmount > /dev/null || die "Cannot find guestunmount, please install libguestfs utilities."
-which umount > /dev/null || die "Cannot find umount, please install coreutils."
 which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
