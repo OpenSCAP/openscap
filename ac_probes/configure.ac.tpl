@@ -501,6 +501,12 @@ else
 fi
 AC_SUBST([vgcheck])
 
+if test "x${util_oscap_docker}" = "xyes"; then
+	if test ! "x${HAVE_BZIP2}" = xyes; then
+		AC_MSG_FAILURE(oscap-docker requires bzip2! Either disable oscap-docker or install bzip2.)
+	fi
+fi
+
 if test "x${perl_bind}" = xyes; then
 	AC_PATH_PROG(PERL, perl)
 	PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
