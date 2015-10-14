@@ -77,7 +77,50 @@
             <title xml:lang="en-us">Fedora 24</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:24</check>
       </cpe-item>
-
+      <cpe-item name="cpe:/o:suse:sle">
+            <title xml:lang="en-us">SUSE Linux Enterprise all versions</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:suse:sles:10">
+            <title xml:lang="en-us">SUSE Linux Enterprise Server 10</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sles:def:10</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:suse:sled:10">
+            <title xml:lang="en-us">SUSE Linux Enterprise Desktop 10</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sled:def:10</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:suse:sles:11">
+            <title xml:lang="en-us">SUSE Linux Enterprise Server 11</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sles:def:11</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:suse:sled:11">
+            <title xml:lang="en-us">SUSE Linux Enterprise Desktop 11</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sled:def:11</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:suse:sles:12">
+            <title xml:lang="en-us">SUSE Linux Enterprise Server 12</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sles:def:12</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:suse:sled:12">
+            <title xml:lang="en-us">SUSE Linux Enterprise Desktop 12</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sled:def:12</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:opensuse:opensuse:11.4">
+            <title xml:lang="en-us">openSUSE 11.4</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:114</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:opensuse:opensuse:13.1">
+            <title xml:lang="en-us">openSUSE 13.1</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:131</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:opensuse:opensuse:13.2">
+            <title xml:lang="en-us">openSUSE 13.2</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:132</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:opensuse:opensuse">
+            <title xml:lang="en-us">openSUSE All Versions</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:1</check>
+      </cpe-item>
       <!-- Add-ons -->
       <cpe-item name="cpe:/a:redhat:rhel_productivity">
             <title xml:lang="en-us">Red Hat Enterprise Linux Optional Productivity Applications</title>
