@@ -278,6 +278,175 @@
                         <criterion comment="Fedora 24 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:24"/>
                   </criteria>
             </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sle:def:1" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise All Platforms</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise All Platforms</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sle" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+			<criteria operator="OR">
+				<criterion comment="SLES is installed" test_ref="oval:org.open-scap.cpe.sles:tst:1"/>
+				<criterion comment="SLED is installed" test_ref="oval:org.open-scap.cpe.sled:tst:1"/>
+			</criteria>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sles:def:10" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise Server 10</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise Server 10</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sles:10" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise Server 10</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="SLES 10 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:10"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sled:def:10" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise Desktop 10</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise Desktop 10</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sled:10" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 10</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="SLED 10 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:10"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sles:def:11" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise Server 11</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise Server 11</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sles:11" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise Server 11</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="SLES 11 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:11"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sled:def:11" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise Desktop 11</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise Desktop 11</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sles:11" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 11</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="SLED 11 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:11"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sles:def:12" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise Server 12</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise Server 12</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sles:12" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise Server 12</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="SLES 12 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:12"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.sled:def:12" version="1">
+                  <metadata>
+                        <title>SUSE Linux Enterprise Desktop 12</title>
+                        <affected family="unix">
+                            <platform>SUSE Linux Enterprise Desktop 12</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:suse:sled:12" source="CPE"/>
+                        <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 12</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="SLED 12 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:12"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:1" version="1">
+                  <metadata>
+                        <title>openSUSE All Versions</title>
+                        <affected family="unix">
+                            <platform>openSUSE</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:opensuse:opensuse" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="openSUSE is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:1"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:114" version="1">
+                  <metadata>
+                        <title>openSUSE 11.4</title>
+                        <affected family="unix">
+                            <platform>openSUSE 11.4</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:opensuse:opensuse:11.4" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE 11.4</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="openSUSE 11.4 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:114"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:131" version="1">
+                  <metadata>
+                        <title>openSUSE 13.1</title>
+                        <affected family="unix">
+                            <platform>openSUSE 13.1</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:opensuse:opensuse:13.1" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE 13.1</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="openSUSE 13.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:131"/>
+                  </criteria>
+            </definition>
+
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:132" version="1">
+                  <metadata>
+                        <title>openSUSE 13.2</title>
+                        <affected family="unix">
+                            <platform>openSUSE 13.2</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:opensuse:opensuse:13.2" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE 13.2</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
+                        <criterion comment="openSUSE 13.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:132"/>
+                  </criteria>
+            </definition>
+
       </definitions>
       <tests>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1" version="1" check="only one" 
@@ -381,6 +550,77 @@
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:24"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:1" version="1" check="at least one" comment="/etc/sles-release is provided by sles-release package"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sles:ste:1"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sled:tst:1" version="1" check="at least one" comment="/etc/sled-release is provided by sled-release package"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sled:ste:1"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:2" version="1" check="at least one" comment="/etc/sles-release is provided by sles-release package"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sles:ste:2"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sled:tst:2" version="1" check="at least one" comment="/etc/sles-release is provided by sles-release package"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sled-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sled:ste:2"/>
+            </rpminfo_test>
+
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:10" version="1" check="at least one" comment="sles-release is version 10"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sles:ste:10"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:11" version="1" check="at least one" comment="sles-release is version 11"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sles:ste:11"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:12" version="1" check="at least one" comment="sles-release is version 12"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sles:ste:12"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sled:tst:10" version="1" check="at least one" comment="sled-release is version 10"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sled-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.sled:ste:10"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sled:tst:11" version="1" check="at least one" comment="sled-release is version 11"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sled-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.sled:ste:11"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sled:tst:12" version="1" check="at least one" comment="sled-release is version 12"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.sled-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.sled:ste:12"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:1" version="1" check="at least one" comment="openSUSE-release is version 11.4"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:2"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:114" version="1" check="at least one" comment="openSUSE-release is version 11.4"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:114"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:131" version="1" check="at least one" comment="openSUSE-release is version 13.1"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:131"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:132" version="1" check="at least one" comment="openSUSE-release is version 13.2"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:132"/>
+            </rpminfo_test>
       </tests>
       <objects>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.redhat-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -400,6 +640,15 @@
                   <lin-def:filepath>/etc/redhat-release</lin-def:filepath>
             </lin-def:rpmverifyfile_object>
             <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+            <lin-def:rpminfo_object id="oval:org.open-scap.cpe.sles-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <lin-def:name>sles-release</lin-def:name>
+            </lin-def:rpminfo_object>
+            <lin-def:rpminfo_object id="oval:org.open-scap.cpe.sled-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <lin-def:name>sled-release</lin-def:name>
+            </lin-def:rpminfo_object>
+            <lin-def:rpminfo_object id="oval:org.open-scap.cpe.openSUSE-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <lin-def:name>openSUSE-release</lin-def:name>
+            </lin-def:rpminfo_object>
       </objects>
       <states>
             <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -469,6 +718,42 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:24" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^24$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^sles-release</name>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sled:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^sled-release</name>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:10" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^10($|[^\d])</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:11" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^11($|[^\d])</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:12" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^12($|[^\d])</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sled:ste:10" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^10($|[^\d])</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sled:ste:11" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^11($|[^\d])</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.sled:ste:12" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^12($|[^\d])</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^openSUSE-release</name>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:114" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^11.4$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:131" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^13.1$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:132" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^13.2$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>
