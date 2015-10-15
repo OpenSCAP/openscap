@@ -38,7 +38,7 @@ class getInputCVE(object):
     hdr = {'User-agent': 'Mozilla/5.0'}
     hdr2 = [('User-agent', 'Mozilla/5.0')]
     url = "https://www.redhat.com/security/data/oval/"
-    dist_cve_name = "Red_Hat_Enterprise_Linux_{0}.xml"
+    dist_cve_name = "com.redhat.rhsa-RHEL{0}.xml.bz2"
     dists = [5, 6, 7]
     remote_pattern = '%a, %d %b %Y %H:%M:%S %Z'
 
