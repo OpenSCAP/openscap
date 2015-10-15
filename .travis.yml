@@ -1,0 +1,17 @@
+language: c
+
+os:
+ - linux
+ - osx
+
+compiler:
+ - clang
+ - gcc
+
+script:
+ - ./configure && make && make check
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
