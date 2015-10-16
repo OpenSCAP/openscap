@@ -50,6 +50,7 @@ test_run "Unsupported Check System" $srcdir/test_xccdf_check_unsupported_check_s
 test_run "Multiple xccdf:TestResult elements" $srcdir/test_xccdf_multiple_testresults.sh
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
+test_run "test xccdf resolve" $srcdir/test_xccdf_resolve.sh
 test_run "Exported arf results from xccdf without reference to oval" $srcdir/test_xccdf_results_arf_no_oval.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 
