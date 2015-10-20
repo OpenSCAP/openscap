@@ -1,0 +1,53 @@
+= Versioning
+
+openscap release versions have the common *$major.$minor.$patch* format.
+
+Most of bleeding edge unstable development happens in the *master* branch. This branch is likely to break API and ABI and is likely not suitable for anyone but the developers. Only release candidates or other test releases are tagged from the master branch.
+
+*$major.$minor* together (e.g.: 1.0) are called *feature releases*. As the name suggests, once a feature release is made, no new features are added to it. For example once 1.0.0 is released, 1.0.1, 1.0.2, 1.0.3, etc. shall not have more features than 1.0.0. Patch version 0 (e.g.: 1.0.0) establishes the feature set.
+
+Feature releases form a maintenance branch that we call *maint-$major.$minor*. For example the maintenance branch for 1.0.x is called maint-1.0 in the git repository. This means that all releases with version 1.0.x shall be tagged from the maint-1.0 branch.
+
+Releases from the same maintenance branch are called *sibling releases*.
+
+== Maintenance branch rules
+
+Library users tend to use released versions, because that is the only sure way to avoid rebuilds, breakages and/or mysterious bugs caused by ABI incompatibility. To make sure our released versions do not suffer from these we maintain them in a separate branch and only allow commits that pass very strict rules.
+
+=== No API/ABI breaks!
+
+Only changes that do not break API and ABI can be applied to the maintenance branch. This is a non-negotiable rule! If a breaking change is applied to maintenance branch by mistake it has to be reverted. ABI checking should be done before releases using abi-compliance-checker.
+
+=== No changes to documented behavior
+
+If a certain behavior of the library or tools is documented it cannot be changed in the maintenance branch even if it is considered broken or wrong. Only changes that make the implementation more compliant to documentation can be considered - these changes are most commonly bugfixes.
+
+Incompatible improvements shall always be done in a development branch if they are done at all. The commits should be accompanied with appropriate changes in documentation.
+
+Of course there is a gray area in this rule. In cases where the documentation is vague and permits multiple interpretations we prefer to make the documentation explicit and consistent with established behavior. In other words: changing documentation is preferred to changing behavior.
+
+=== Only careful changes of supporting files (XSD schemas, XSLT)
+
+Only small non-invasive changes should be considered. Make sure old use-cases aren't broken.
+
+As an example the report XSLT may get a small usability improvement - it will show number of notchecked rules along with all the other information. However we may not remove or replace information from it in the maintenance branch - users may be relying on it being there. Radically moving information around in the report is also discouraged. It's very hard to lay formal rules surrounding this so please use your best judgement.
+
+=== All applied changes must be propagated
+
+Bugfixes applied to maintenance branches must be merged up. For example a bugfix applied to maint-1.0 shall be merged to maint-1.2 which then shall be merged to master.
+
+This rule makes sure we always carry bugfixes to new feature releases.
+
+In cases where the bugfix does not make sense in newer feature releases, a noop merge shall be done. For example a fix for functionality that was removed in newer feature release.
+
+== Maintenance status
+
+	* 1.2.x: supported
+	* 1.1.x: unsupported
+	* 1.0.x: supported
+
+== Feature release
+
+A new feature release will typically contain new symbols and ABI breaking changes in existing symbols, although this is not a rule. Therefore it will likely but not necessarily have incompatible ABI (and thus different soname).
+
+Deprecated symbols from feature release N shall be removed in feature release N + 1. For example deprecated symbols from 1.0.x shall be removed from 1.1.x. In other words, deprecated symbols shall not be carried to future feature releases. 
