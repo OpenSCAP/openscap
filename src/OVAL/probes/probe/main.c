@@ -43,6 +43,7 @@
 #include "input_handler.h"
 #include "probe-api.h"
 #include "option.h"
+#include "../common/debug.h"
 
 static int fail(int err, const char *who, int line)
 {
@@ -166,6 +167,11 @@ int main(int argc, char *argv[])
 	sigset_t       sigmask;
 	probe_t        probe;
 	char *rootdir = NULL;
+
+	/* Turn on verbose mode */
+	char *verbosity_level = getenv("OSCAP_PROBE_VERBOSITY_LEVEL");
+	char *verbose_log_file = getenv("OSCAP_PROBE_VERBOSE_LOG_FILE");
+	oscap_set_verbose(verbosity_level, verbose_log_file, true);
 
 	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
 	                                  1 + // signal thread
