@@ -115,6 +115,7 @@ struct oscap_action {
 	char *f_results_arf;
         char *f_report;
 	char *f_variables;
+	char *f_verbose_log;
 	/* others */
         char *profile;
         char *show;
@@ -149,6 +150,7 @@ struct oscap_action {
 	int export_variables;
         int list_dynamic;
 	char *probe_root;
+	char *verbosity_level;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);
