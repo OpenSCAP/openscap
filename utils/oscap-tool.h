@@ -161,6 +161,7 @@ bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err,
 int oscap_module_call(struct oscap_action *action);
 
 void oscap_print_error(void);
+bool check_verbose_options(struct oscap_action *action);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
 extern struct oscap_module OSCAP_DS_MODULE;

@@ -581,6 +581,9 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
+	if (!check_verbose_options(action)) {
+		return false;
+	}
 
 	/* We should have Definitions file here */
 	if (optind >= argc)
@@ -621,6 +624,9 @@ bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action)
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
+	if (!check_verbose_options(action)) {
+		return false;
+	}
 
 	/* We should have Definitions file here */
 	if (optind >= argc)
@@ -660,6 +666,9 @@ bool getopt_oval_analyse(int argc, char **argv, struct oscap_action *action)
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
+	}
+	if (!check_verbose_options(action)) {
+		return false;
 	}
 
 	/* We should have Definitions file here */

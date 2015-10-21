@@ -992,6 +992,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}
+	if (!check_verbose_options(action)) {
+		return false;
+	}
 
 	if (action->module == &XCCDF_EVAL) {
 		/* We should have XCCDF file here */
