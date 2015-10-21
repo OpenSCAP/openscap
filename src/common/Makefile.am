@@ -4,7 +4,7 @@ liboscapcommon_la_SOURCES = \
 	alloc.c alloc.h \
 	assume.h \
 	bfind.c bfind.h \
-	debug.c debug_priv.h \
+	debug.c debug.h debug_priv.h \
 	elements.c elements.h \
 	err_queue.c err_queue.h \
 	error.c _error.h \
