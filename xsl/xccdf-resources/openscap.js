@@ -148,7 +148,8 @@ var KeysEnum = {
     SEVERITY: "severity",
     RESULT: "result",
     NIST: "http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf",
-    DISA: "http://iase.disa.mil/stigs/cci/Pages/index.aspx"
+    DISA: "http://iase.disa.mil/stigs/cci/Pages/index.aspx",
+    PCI_DSS: "https://www.pcisecuritystandards.org/documents/PCI_DSS_v3.pdf"
 };
 
 /* This function returns an array of target groups indentifiers */
@@ -202,6 +203,17 @@ function sortGroups(groups, key)
                     return a_parts[3].localeCompare(b_parts[3]);
                 }
             }
+        });
+    case KeysEnum.PCI_DSS:
+        return groups.sort(function(a, b){
+            var regex = /Req-(\d+)/;
+            var a_parts = regex.exec(a);
+            var b_parts = regex.exec(b);
+            if (a_parts == null)
+                return 1;
+            if (b_parts == null)
+                return -1;
+            return parseInt(a_parts[1]) - parseInt(b_parts[1]);
         });
     default:
         return groups.sort();

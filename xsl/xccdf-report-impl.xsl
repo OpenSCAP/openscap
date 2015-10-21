@@ -446,6 +446,9 @@ Authors:
                     <xsl:when test="@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx'">
                         DISA ID
                     </xsl:when>
+                    <xsl:when test="@href = 'https://www.pcisecuritystandards.org/documents/PCI_DSS_v3.pdf'">
+                        PCI DSS Requirement
+                    </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="@href"/>
                     </xsl:otherwise>
