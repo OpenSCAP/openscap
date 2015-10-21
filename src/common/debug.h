@@ -19,9 +19,9 @@
  * Authors:
  *       Jan Černý <jcerny@redhat.com>
  */
- 
-#ifndef OSCAP_DEBUG_PRIV_H_
-#define OSCAP_DEBUG_PRIV_H_
+
+#ifndef OSCAP_DEBUG_H_
+#define OSCAP_DEBUG_H_
 
 /**
  * Turn on debugging information
