@@ -29,7 +29,13 @@
 #ifndef OSCAP_DEBUG_PRIV_H_
 #define OSCAP_DEBUG_PRIV_H_
 
+#include <assert.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdarg.h>
 #include "util.h"
+
+OSCAP_HIDDEN_START;
 
 /**
  * Hardcodede output filename. This is used as the default
@@ -73,24 +79,17 @@
 
 #define OSCAP_DEBUGOBJ_SEXP 1
 
-#include <assert.h>
 #ifndef _A
 #define _A(x) assert(x)
 #endif
 
-#if defined(NDEBUG)
-# define oscap_dlprintf(...) while(0)
-# define debug(l) if (0)
-# define dO(type, obj) while(0)
-#else
-# include <stdlib.h>
-# include <stddef.h>
-# include <stdarg.h>
 
-enum {
+enum oscap_verbosity_levels {
 	DBG_E = 1,
 	DBG_W,
-	DBG_I
+	DBG_I,
+	DBG_D,
+	DBG_UNKNOWN = -1
 };
 
 # define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
@@ -135,10 +134,12 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 
 # define dO(type, obj) __oscap_debuglog_object(__FILE__, __PRETTY_FUNCTION__, __LINE__, type, obj)
 
-#endif                          /* NDEBUG */
 
 #define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
 #define dW(...) oscap_dlprintf(DBG_W, __VA_ARGS__)
 #define dE(...) oscap_dlprintf(DBG_E, __VA_ARGS__)
+#define dD(...) oscap_dlprintf(DBG_D, __VA_ARGS__)
+
+OSCAP_HIDDEN_END;
 
 #endif
