@@ -36,7 +36,7 @@
 #include <ftw.h>
 
 #include "oscap_acquire.h"
-#include "comon/oscap_buffer.h"
+#include "common/oscap_buffer.h"
 #include "common/_error.h"
 #include "oscap_string.h"
 
