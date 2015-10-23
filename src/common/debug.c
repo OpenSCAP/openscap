@@ -60,7 +60,7 @@ static const struct oscap_string_map OSCAP_VERBOSITY_LEVELS[] = {
 static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
-int __debuglog_level = DBG_UNKNOWN;
+static int __debuglog_level = DBG_UNKNOWN;
 static int __debuglog_pstrip = -1;
 
 #if defined(OSCAP_THREAD_SAFE)

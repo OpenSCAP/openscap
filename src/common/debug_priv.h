@@ -67,8 +67,6 @@ enum oscap_verbosity_levels {
 
 # define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 
-extern int __debuglog_level;
-
 /**
  * Version of the oscap_dprintf function with support for debug level.
  * Uses logic similar to the debug() macro described above.
