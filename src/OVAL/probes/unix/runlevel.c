@@ -49,6 +49,7 @@
 #endif
 
 #define _BSD_SOURCE
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
