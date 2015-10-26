@@ -63,7 +63,8 @@ extern char **environ;
 
 static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 {
-	int err = 1, pid, empty, fd;
+	int err = 1, pid, fd;
+	bool empty;
 	size_t env_name_size;
 	SEXP_t *env_name, *env_value, *item, *pid_sexp;
 	DIR *d;
@@ -115,10 +116,10 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 			continue;
 		}
 
-		empty = 1;
+		empty = true;
 
 		if ((buffer_used = read(fd, buffer, buffer_size - 1)) > 0) {
-			empty = 0;
+			empty = false;
 		}
 
 		while (! empty) {
@@ -135,7 +136,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 				}
 				s = read(fd, buffer + buffer_used, buffer_size - buffer_used);
 				if (s <= 0) {
-					empty = 1;
+					empty = true;
 					buffer[buffer_used++] = 0;
 				}
 				else {

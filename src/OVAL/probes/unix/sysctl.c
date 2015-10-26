@@ -58,6 +58,9 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         oval_schema_version_t over;
         int over_cmp;
 
+	const char *ipv6_conf_path = "/proc/sys/net/ipv6/conf/";
+	size_t ipv6_conf_path_len = strlen(ipv6_conf_path);
+
         probe_in    = probe_ctx_getobject(ctx);
         name_entity = probe_obj_getent(probe_in, "name", 1);
         over        = probe_obj_get_platform_schema_version(probe_in);
@@ -109,8 +112,22 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 SEXP_t *se_mib;
                 char    mibpath[PATH_MAX], *mib;
                 size_t  miblen;
+		struct stat file_stat;
 
                 snprintf(mibpath, sizeof mibpath, "%s/%s", ofts_ent->path, ofts_ent->file);
+
+		/* Skip write-only files, eg. /proc/sys/net/ipv4/route/flush */
+		if (stat(mibpath, &file_stat) == -1) {
+			dE("Stat failed on %s: %u, %s\n", mibpath, errno, strerror(errno));
+			oval_ftsent_free(ofts_ent);
+			continue;
+		}
+		/* the sysctl utility uses same condition in sysctl.c in ReadSetting() */
+		if ((file_stat.st_mode & S_IRUSR) == 0) {
+			dI("Skipping write-only file %s\n", mibpath);
+			oval_ftsent_free(ofts_ent);
+			continue;
+		}
 
                 mib    = strdup(mibpath + strlen(PROC_SYS_DIR) + 1);
                 miblen = strlen(mib);
@@ -149,9 +166,21 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         l = fread(sysval, 1, sizeof sysval - 1, fp);
 
                         if (ferror(fp)) {
-                                dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",
-                                    mibpath, fp, l, errno, strerror(errno));
-                                goto fail_item;
+				/* Linux 4.1.0 introduced a per-NIC IPv6 stable_secret file.
+				 * The stable_secret file cannot be read until it is set,
+				 * so we skip it when it is not readable. Otherwise we collect it.
+				 */
+				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
+						strcmp(ofts_ent->file, "stable_secret") == 0) {
+					dI("Skippping file %s\n", mibpath);
+					oval_ftsent_free(ofts_ent);
+					SEXP_free(se_mib);
+					continue;
+				} else {
+					dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",
+						mibpath, fp, l, errno, strerror(errno));
+					goto fail_item;
+				}
                         }
 
                         fclose(fp);
