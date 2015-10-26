@@ -27,6 +27,7 @@
 #include <libgen.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "common/alloc.h"
 #include "common/util.h"
@@ -320,12 +321,14 @@ int oval_session_evaluate_id(struct oval_session *session, char *probe_root, con
 {
 	__attribute__nonnull__(session);
 
+#if defined(OVAL_PROBES_ENABLED)
 	if (probe_root) {
 		if (setenv("OSCAP_PROBE_ROOT", probe_root, 1) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to set the OSCAP_PROBE_ROOT environment variable.");
 			return 1;
 		}
 	}
+#endif
 
 	if (id == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "No OVAL Definion id set.");
@@ -352,12 +355,14 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 {
 	__attribute__nonnull__(session);
 
+#if defined(OVAL_PROBES_ENABLED)
 	if (probe_root) {
 		if (setenv("OSCAP_PROBE_ROOT", probe_root, 1) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to set the OSCAP_PROBE_ROOT environment variable.");
 			return 1;
 		}
 	}
+#endif
 
 	if (oval_session_setup_agent(session) != 0) {
 		return 1;
