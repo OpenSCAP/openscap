@@ -196,14 +196,14 @@ bool bz2_fd_is_bzip(int fd)
 	FILE* file = fdopen(dup(fd), "r");
 	bool is_bzip;
 	if (file == NULL) {
-		is_bzip = false; // cannot open/determine file type
+		return false; // cannot open/determine file type
 	} else {
 		// Compare magic number with file header. Type casting to integer solve EOF (-1) returned by fgetc()
 		is_bzip = (fgetc(file) == (int)magic_number[0]) && (fgetc(file) == (int)magic_number[1]);
 	}
 
-	rewind(file);
 	fclose(file);
+	lseek(fd, 0, SEEK_SET);
 	return is_bzip;
 
 }

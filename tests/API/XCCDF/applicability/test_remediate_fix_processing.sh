@@ -44,7 +44,7 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 rm test_file_cpe_na
 
 #
-# Second, try with CPE and asser that result is different
+# Second, try with CPE and assert that result is different
 #
 :> $result
 $OSCAP xccdf remediate --cpe $srcdir/cpe-dict.xml --results $result $srcdir/${name}.xccdf.xml 2> $stderr

@@ -156,6 +156,8 @@ EXTRA_DIST += \
 	test_xccdf_multiple_testresults.xccdf.xml \
 	test_xccdf_notchecked_has_check.sh \
 	test_xccdf_notchecked_has_check.xccdf.xml \
+	test_xccdf_oval_relative_path.sh \
+	test_xccdf_oval_relative_path.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
 	test_xccdf_overrides.arf.xml \
 	test_xccdf_overrides.sh \
@@ -165,6 +167,8 @@ EXTRA_DIST += \
 	test_xccdf_refine_rule.xccdf.xml \
 	test_xccdf_refine_value_bad.sh \
 	test_xccdf_refine_value_bad.xccdf.xml \
+	test_xccdf_resolve.sh \
+	test_xccdf_resolve.xccdf.xml \
 	test_xccdf_results_arf_no_oval.sh \
 	test_xccdf_results_arf_no_oval.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \

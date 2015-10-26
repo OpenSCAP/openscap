@@ -75,5 +75,7 @@ EXTRA_DIST = \
 	item_not_exist.xml \
 	anyxmlsyschar.xml \
 	anyxmloval.xml \
-	test_anyxml.sh
+	test_anyxml.sh \
+	test_state_check_existence.sh \
+	state_check_existence.xml
 

@@ -7,10 +7,9 @@ Open Source Security Compliance Solution
 The oscap program is a command line tool that allows users to load, scan,
 validate, edit, and export SCAP documents.
 
-Homepage of the project is http://www.open-scap.org
-
-Documentation is on http://www.open-scap.org/page/Documentation
-
+ * Homepage of the project: [www.open-scap.org](http://www.open-scap.org)
+ * Manual: [Oscap User Manual](https://github.com/OpenSCAP/openscap/blob/maint-1.0/docs/manual/manual.adoc)
+ * For new contributors: [How to contribute](https://github.com/OpenSCAP/openscap/blob/maint-1.0/docs/contribute/contribute.adoc)
 
 ## Compilation
 
@@ -82,24 +81,25 @@ oscap ds sds-validate scap-ds.xml
 ### Scanning
 
  * To evaluate all definitions within the given OVAL Definition file, run the following command: 
+ * To evaluate all definitions within the given OVAL Definition file, run the following command:
 ```
 oscap oval eval --results oval-results.xml scap-oval.xml
 ```
 *where scap-oval.xml is the OVAL Definition file and oval-results.xml is the OVAL Result file.*
 
- * To evaluate all definitions from the OVAL component that are part of a particular data stream within a SCAP data stream collection, run the following command: 
+ * To evaluate all definitions from the OVAL component that are part of a particular data stream within a SCAP data stream collection, run the following command:
 ```
 oscap oval eval --datastream-id ds.xml --oval-id xccdf.xml --results oval-results.xml scap-ds.xml
 ```
 *where ds.xml is the given data stream, xccdf.xml is an XCCDF file specifying the OVAL component, oval-results.xml is the OVAL Result file, and scap-ds.xml is a file representing the SCAP data stream collection.*
 
- * To evaluate a specific profile in an XCCDF file run this command: 
+ * To evaluate a specific profile in an XCCDF file run this command:
 ```
 oscap xccdf eval --profile Desktop --results xccdf-results.xml --cpe cpe-dictionary.xml scap-xccdf.xml
 ```
 *where scap-xccdf.xml is the XCCDF document, Desktop is the selected profile from the XCCDF document, xccdf-results.xml is a file storing the scan results, and cpe-dictionary.xml is the CPE dictionary.*
 
- * To evaluate a specific XCCDF benchmark that is part of a data stream within a SCAP data stream collection run the following command: 
+ * To evaluate a specific XCCDF benchmark that is part of a data stream within a SCAP data stream collection run the following command:
 ```
 oscap xccdf eval --datastream-id ds.xml --xccdf-id xccdf.xml --results xccdf-results.xml scap-ds.xml
 ```

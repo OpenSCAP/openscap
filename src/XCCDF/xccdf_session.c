@@ -86,6 +86,7 @@ struct xccdf_session {
 		struct oval_agent_session **agents;	///< OVAL Agent Session
 		xccdf_policy_engine_eval_fn user_eval_fn;///< Custom OVAL engine callback
 		char *product_cpe;			///< CPE of scanner product.
+		struct oscap_source* arf_report;	///< ARF report
 		struct oscap_htable *result_sources;    ///< mapping 'filepath' to oscap_source for OVAL results
 	} oval;
 	struct {
@@ -194,6 +195,37 @@ static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *ses
 
 static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *session);
 
+static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session *session)
+{
+	if (session->oval.arf_report != NULL) {
+		return session->oval.arf_report;
+	}
+
+	struct oscap_source *sds_source = NULL;
+
+	if (xccdf_session_is_sds(session)) {
+		sds_source = session->source;
+	}
+	else {
+		if (!session->temp_dir)
+			session->temp_dir = oscap_acquire_temp_dir();
+		if (session->temp_dir == NULL)
+			return NULL;
+
+		char *sds_path = malloc(PATH_MAX * sizeof(char));
+		snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
+		ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
+		sds_source = oscap_source_new_from_file(sds_path);
+		free(sds_path);
+	}
+
+	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
+	if (!xccdf_session_is_sds(session)) {
+		oscap_source_free(sds_source);
+	}
+	return session->oval.arf_report;
+}
+
 void xccdf_session_free(struct xccdf_session *session)
 {
 	if (session == NULL)
@@ -210,6 +242,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	_xccdf_session_free_oval_agents(session);
 	_oval_content_resources_free(session->oval.custom_resources);
 	_oval_content_resources_free(session->oval.resources);
+	oscap_source_free(session->oval.arf_report);
 	oscap_source_free(session->xccdf.result_source);
 	if (session->xccdf.policy_model != NULL)
 		xccdf_policy_model_free(session->xccdf.policy_model);
@@ -932,13 +965,13 @@ static int _app_xslt(struct oscap_source *infile, const char *xsltfile, const ch
 	return oscap_source_apply_xslt_path(infile, xsltfile, outfile, par, oscap_path_to_xslt()) == -1;
 }
 
-static inline int _xccdf_gen_report(struct oscap_source *infile, const char *id, const char *outfile, const char *show, const char *oval_template, const char* sce_template, const char* profile)
+static inline int _xccdf_gen_report(struct oscap_source *infile, const char *id, const char *outfile, const char *show, const char* sce_template, const char* profile)
 {
 	const char *params[] = {
 		"result-id",		id,
 		"show",			show,
 		"profile",		profile,
-		"oval-template",	oval_template,
+		"oval-template",	"",
 		"sce-template",		sce_template,
 		"verbosity",		"",
 		"hide-profile-info",	NULL,
@@ -992,16 +1025,28 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 		return 1;
 	}
 
+	if (session->export.report_file == NULL)
+		return 0;
+
+	struct oscap_source* results = session->xccdf.result_source;
+	struct oscap_source* arf = NULL;
+	if (session->export.oval_results) {
+		arf = xccdf_session_create_arf_source(session);
+		if (arf == NULL) {
+			return 1;
+		}
+		results = arf;
+	}
+
 	/* generate report */
-	if (session->export.report_file != NULL)
-		_xccdf_gen_report(session->xccdf.result_source,
-				xccdf_result_get_id(session->xccdf.result),
-				session->export.report_file,
-				"",
-				(session->export.oval_results ? "%.result.xml" : ""),
-				(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
-				session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
-		);
+	_xccdf_gen_report(results,
+			xccdf_result_get_id(session->xccdf.result),
+			session->export.report_file,
+			"",
+			(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+			session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+	);
+
 	return 0;
 }
 
@@ -1023,7 +1068,7 @@ static char *_xccdf_session_get_unique_oval_result_filename(struct xccdf_session
 		return NULL;
 	}
 
-	if (oscap_acquire_url_is_supported(filename) || filename[0] == '/') {
+	if (oscap_acquire_url_is_supported(filename) || strchr(filename, '/')) {
 		// We need escaping if:
 		// - filename is a URL
 		// - filename is an absolute path
@@ -1258,28 +1303,7 @@ int xccdf_session_export_sce(struct xccdf_session *session)
 int xccdf_session_export_arf(struct xccdf_session *session)
 {
 	if (session->export.arf_file != NULL) {
-		struct oscap_source *sds_source = NULL;
-
-		if (xccdf_session_is_sds(session)) {
-			sds_source = session->source;
-		}
-		else {
-			if (!session->temp_dir)
-				session->temp_dir = oscap_acquire_temp_dir();
-			if (session->temp_dir == NULL)
-				return 1;
-
-			char *sds_path = malloc(PATH_MAX * sizeof(char));
-			snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
-			ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
-			sds_source = oscap_source_new_from_file(sds_path);
-			free(sds_path);
-		}
-
-		struct oscap_source *arf_source = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
-		if (!xccdf_session_is_sds(session)) {
-			oscap_source_free(sds_source);
-		}
+		struct oscap_source* arf_source = xccdf_session_create_arf_source(session);
 		if (arf_source == NULL) {
 			return 1;
 		}
@@ -1294,7 +1318,6 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 				return 1;
 			}
 		}
-		oscap_source_free(arf_source);
 	}
 	return 0;
 }

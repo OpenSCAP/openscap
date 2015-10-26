@@ -39,6 +39,7 @@ test_run "Check Processing Algorithm -- bad refine must select check without @se
 test_run "Check Processing Algorithm -- none selected for candidate" $srcdir/test_xccdf_check_processing_selector_empty.sh
 test_run "Check Processing Algorithm -- none check-content-ref resolvable." $srcdir/test_xccdf_check_processing_invalid_content_refs.sh
 test_run "Check Processing Algorithm -- always include xccdf:check" $srcdir/test_xccdf_notchecked_has_check.sh
+test_run "Load OVAL using relative path" $srcdir/test_xccdf_oval_relative_path.sh
 test_run "xccdf:select and @cluster-id -- disable group" $srcdir/test_xccdf_selectors_cluster1.sh
 test_run "xccdf:select and @cluster-id -- enable a set of items" $srcdir/test_xccdf_selectors_cluster2.sh
 test_run "xccdf:select and @cluster-id -- complex example" $srcdir/test_xccdf_selectors_cluster3.sh
@@ -52,6 +53,7 @@ test_run "Multiple xccdf:TestResult elements" $srcdir/test_xccdf_multiple_testre
 test_run "default selector for xccdf value" $srcdir/test_default_selector.sh
 test_run "inherit selector for xccdf value" $srcdir/test_inherit_selector.sh
 test_run "incorrect selector for xccdf value" $srcdir/test_xccdf_refine_value_bad.sh
+test_run "test xccdf resolve" $srcdir/test_xccdf_resolve.sh
 test_run "Exported arf results from xccdf without reference to oval" $srcdir/test_xccdf_results_arf_no_oval.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 

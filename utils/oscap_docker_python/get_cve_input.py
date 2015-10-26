@@ -15,8 +15,14 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import urllib2
-import urlparse
+try:
+    # Python2 imports
+    import urlparse
+    import urllib2 as urllib
+except ImportError:
+    #Python3 imports
+    import urllib.parse as urlparse
+    import urllib.request as urllib
 from os.path import join, exists
 from os import stat, utime
 from sys import stderr
@@ -31,8 +37,8 @@ class getInputCVE(object):
 
     hdr = {'User-agent': 'Mozilla/5.0'}
     hdr2 = [('User-agent', 'Mozilla/5.0')]
-    url = "http://www.redhat.com/security/data/oval/"
-    dist_cve_name = "Red_Hat_Enterprise_Linux_{0}.xml"
+    url = "https://www.redhat.com/security/data/oval/"
+    dist_cve_name = "com.redhat.rhsa-RHEL{0}.xml.bz2"
     dists = [5, 6, 7]
     remote_pattern = '%a, %d %b %Y %H:%M:%S %Z'
 
@@ -53,15 +59,15 @@ class getInputCVE(object):
         if self._is_cache_same(dest_file, dist_url):
             return dest_file
 
-        _url = urllib2.Request(dist_url, headers=self.hdr)
+        _url = urllib.Request(dist_url, headers=self.hdr)
         # TODO
         # When dist specific files are available in bz form, some
         # of this logic may need to change
         try:
-            resp = urllib2.urlopen(_url)
+            resp = urllib.urlopen(_url)
 
         except Exception as url_error:
-            raise Exception("Unable to fetch CVE inputs due to"
+            raise Exception("Unable to fetch CVE inputs due to {0}"
                             .format(url_error))
 
         fh = open(dest_file, "w")
@@ -78,7 +84,7 @@ class getInputCVE(object):
             seconds_epoch = (remote_dt - epoch).total_seconds()
             utime(dest_file, (seconds_epoch, seconds_epoch))
         except KeyError:
-            sys.stderr.write("Response header of HTTP doesn't contain" \
+            stderr.write("Response header of HTTP doesn't contain" \
                   "\"last-modified\" field. Cannot determine version" \
                   " of remote file \"{0}\"".format(dist_url))
         return dest_file
@@ -94,25 +100,36 @@ class getInputCVE(object):
             if self.DEBUG:
                 stderr.write("No file in cache, fetching {0}\n".format(dest_file))
             return False
-        opener = urllib2.OpenerDirector()
-        opener.add_handler(urllib2.HTTPHandler())
-        opener.add_handler(urllib2.HTTPDefaultErrorHandler())
+        opener = urllib.OpenerDirector()
+        opener.add_handler(urllib.HTTPHandler())
+        opener.add_handler(urllib.HTTPSHandler())
+        opener.add_handler(urllib.HTTPDefaultErrorHandler())
         # Extra for handling redirects
-        opener.add_handler(urllib2.HTTPErrorProcessor())
-        opener.add_handler(urllib2.HTTPRedirectHandler())
+        opener.add_handler(urllib.HTTPErrorProcessor())
+        opener.add_handler(urllib.HTTPRedirectHandler())
         # Add the header
         opener.addheaders = self.hdr2
         # Grab the header
-        res = opener.open(HeadRequest(dist_url))
-        headers = dict(res.info())
-        res.close()
         try:
+            res = opener.open(HeadRequest(dist_url))
+            headers = dict(res.info())
+            res.close()
             remote_ts = headers['last-modified']
-        except KeyError:
-            sys.stderr.write("Response header of HTTP doesn't contain" \
-                  "\"last-modified\" field. Cannot determine version" \
-                  " of remote file \"{0}\"".format(dist_url))
+
+        except urllib.HTTPError as http_error:
+            if self.DEBUG:
+                stderr.write("Cannot send HTTP HEAD request to get \"last-modified\"" \
+                             " attribute of remote content file.\n{0} - {1}\n"
+                             .format(http_error.code, http_error.reason))
             return False
+
+        except KeyError:
+            if self.DEBUG:
+                stderr.write("Response header of HTTP doesn't contain" \
+                      "\"last-modified\" field. Cannot determine version" \
+                      " of remote file \"{0}\"".format(dist_url))
+            return False
+
         # The remote's datetime
         remote_dt = datetime.datetime.strptime(remote_ts, self.remote_pattern)
         # Get the locals datetime from the file's mtime, converted to UTC
@@ -139,10 +156,10 @@ class getInputCVE(object):
         '''
         cve_files = []
         for dist in self.dists:
-                cve_files.append(self._fetch_single(dist))
+            cve_files.append(self._fetch_single(dist))
         return cve_files
 
 
-class HeadRequest(urllib2.Request):
+class HeadRequest(urllib.Request):
     def get_method(self):
         return 'HEAD'

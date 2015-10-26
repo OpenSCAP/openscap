@@ -683,6 +683,7 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 	contents = oval_state_get_contents(state);
 	while (oval_state_content_iterator_has_more(contents)) {
 		oval_check_t ochk;
+		oval_existence_t oext;
 		oval_entity_varref_type_t vr_type;
 		struct oval_entity *ent;
 		struct oval_state_content *content = oval_state_content_iterator_next(contents);
@@ -716,6 +717,12 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 		ochk = oval_state_content_get_ent_check(content);
 		if (ochk != OVAL_CHECK_UNKNOWN) {
 			probe_ent_attr_add(ste_ent, "entity_check", r0 = SEXP_number_newu_32(ochk));
+			SEXP_free(r0);
+		}
+
+		oext = oval_state_content_get_check_existence(content);
+		if (oext != OVAL_EXISTENCE_UNKNOWN) {
+			probe_ent_attr_add(ste_ent, "check_existence", r0 = SEXP_number_newu_32(oext));
 			SEXP_free(r0);
 		}
 

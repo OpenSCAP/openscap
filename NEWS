@@ -1,3 +1,27 @@
+openscap-1.2.6                                                  05-10-2015
+  - New features
+    - introduced OpenSCAP user manual
+    - improved OVAL 5.11.1 support
+      - added OVAL 5.11.1 XSD schemas and schematrons
+      - support for core/platform schema versions
+      - support for check_existence attribute in state entities
+      - support for CIM datetime format
+      - amended behavior of mask attribute
+    - added support for remote .xml.bz2 files (use with
+--fetch-remote-resources)
+    - rewrote oscap-docker to python, deeper integration with Atomic Host
+    - introduced CPE name for Fedora 24 to the internal dictionary
+  - HTML report & guide
+    - results can be grouped by according to various aspects
+    - printing supported (interactive elements are now hidden when printing)
+    - table of content now shows only selected items (rule & groups)
+    - references to RHSA are presented as links to website (rhbz#1243808)
+  - Maintenance
+    - scap-as-rpm can now build source rpm packages (srpms) (trac#469)
+    - scap-as-rpm now supports python3
+    - refactored oval processing into oval_session structure
+    - many smaller bugfixes and new tests
+
 openscap-1.2.5                                                  06-07-2015
  - maintenance
    - smaller bugfixes

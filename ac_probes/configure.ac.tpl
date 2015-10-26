@@ -39,15 +39,15 @@ AC_PROG_SWIG([])
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-LT_CURRENT=13
+LT_CURRENT=14
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=1
+LT_REVISION=0
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
 ## precedence over adding, so set to 0 if both happened.
-LT_AGE=5
+LT_AGE=6
 
 LT_CURRENT_MINUS_AGE=`expr $LT_CURRENT - $LT_AGE`
 
@@ -412,6 +412,10 @@ AC_ARG_ENABLE([python3],
 		*) AC_MSG_ERROR([bad value ${enableval} for --enable-python3]);;
 	esac],[python3_bind=no])
 
+
+AC_ARG_VAR([preferred_python], [set preferred Python interpreter])
+AS_IF([test "$preferred_python" = ""], [preferred_python=$PYTHON])
+
 AC_ARG_ENABLE([perl],
      [AC_HELP_STRING([--enable-perl], [enable compilation of perl bindings (default=no)])],
      [case "${enableval}" in
@@ -550,6 +554,14 @@ AC_ARG_ENABLE([util-oscap-docker],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-docker]) ;;
      esac],[util_oscap_docker=yes])
 
+AC_ARG_ENABLE([util-oscap-vm],
+     [AC_HELP_STRING([--enable-util-oscap-vm], [enable compilation of the oscap-vm utility (default=yes)])],
+     [case "${enableval}" in
+       yes) util_oscap_vm=yes ;;
+       no)  util_oscap_vm=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-vm]) ;;
+     esac],[util_oscap_vm=yes])
+
 if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
@@ -560,6 +572,12 @@ else
    vgcheck="no"
 fi
 AC_SUBST([vgcheck])
+
+if test "x${util_oscap_docker}" = "xyes"; then
+	if test ! "x${HAVE_BZIP2}" = xyes; then
+		AC_MSG_FAILURE(oscap-docker requires bzip2! Either disable oscap-docker or install bzip2.)
+	fi
+fi
 
 if test "x${perl_bind}" = xyes; then
 	AC_PATH_PROG(PERL, perl)
@@ -603,6 +621,10 @@ if test "x${python3_bind}" = xyes; then
 	AC_SUBST(py3execdir, $PYTHON3_EXECDIR)
 fi
 
+# oscap-docker determine python dir on default python version
+OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
+AC_SUBST(oscapdocker_pythondir, $OSCAPDOCKER_PYTHONDIR)
+
 @@@@PROBE_EVAL@@@@
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
@@ -617,6 +639,7 @@ AM_CONDITIONAL([WANT_UTIL_OSCAP], test "$util_oscap" = yes)
 AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_SSH], test "$util_oscap_ssh" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_DOCKER], test "$util_oscap_docker" = yes)
+AM_CONDITIONAL([WANT_UTIL_OSCAP_VM], test "$util_oscap_vm" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PYTHON3], test "$python3_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
@@ -676,6 +699,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/process58/Makefile
                  tests/probes/sysinfo/Makefile
                  tests/probes/rpminfo/Makefile
+		tests/probes/rpmverifyfile/Makefile
                  tests/probes/rpmverifypackage/Makefile
 		 tests/probes/rpmverify/Makefile
                  tests/probes/systemdunitproperty/Makefile
@@ -745,6 +769,8 @@ AC_CONFIG_FILES([run],
                 [chmod +x,-w run])
 AC_CONFIG_FILES([tests/test_common.sh],
                 [chmod +x,-w tests/test_common.sh])
+AC_CONFIG_FILES([utils/oscap-docker],
+                [chmod +x,-w utils/oscap-docker])
 
 AC_OUTPUT
 
@@ -755,6 +781,7 @@ echo "oscap tool:                    $util_oscap"
 echo "scap-as-rpm tool:              $util_scap_as_rpm"
 echo "oscap-ssh tool:                $util_oscap_ssh"
 echo "oscap-docker tool:             $util_oscap_docker"
+echo "oscap-vm tool:                 $util_oscap_vm"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
