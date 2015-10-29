@@ -89,6 +89,13 @@ oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 	return result;
 }
 
+oval_result_t probe_ent_cmp_debian_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
+{
+	//TODO: implement Debian's epoch-version-release comparing algorithm
+	// it is different algorithm than RPM algorithm
+	return probe_ent_cmp_evr(val1, val2, op);
+}
+
 oval_result_t probe_ent_cmp_filesetrev(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
 	oval_result_t result = OVAL_RESULT_ERROR;
@@ -183,6 +190,8 @@ static inline oval_result_t probe_ent_cmp_single(SEXP_t *state_ent, oval_datatyp
 		return probe_ent_cmp_bool(state_ent, sysent, op);
 	case OVAL_DATATYPE_EVR_STRING:
 		return probe_ent_cmp_evr(state_ent, sysent, op);
+	case OVAL_DATATYPE_DEBIAN_EVR_STRING:
+		return probe_ent_cmp_debian_evr(state_ent, sysent, op);
 	case OVAL_DATATYPE_FILESET_REVISION:
 		return probe_ent_cmp_filesetrev(state_ent, sysent, op);
 	case OVAL_DATATYPE_FLOAT:

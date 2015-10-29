@@ -97,6 +97,15 @@ oval_result_t probe_ent_cmp_bool(SEXP_t * val1, SEXP_t * val2, oval_operation_t 
 oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 /**
+ * Compare two Debian epoch-version-release values.
+ * The operation to use is specified by the operation enumeration value.
+ * @param val1 the first value
+ * @param val2 the second value
+ * @param op the desired operation
+ */
+oval_result_t probe_ent_cmp_debian_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
+
+/**
  * Compare two  values.
  * The operation to use is specified by the operation enumeration value.
  * @param val1 the first value

@@ -55,6 +55,8 @@
 #include <probe-api.h>
 #include <alloc.h>
 
+#include "common/debug_priv.h"
+#include "public/oval_schema_version.h"
 
 #include "dpkginfo-helper.h"
 
@@ -86,12 +88,13 @@ void probe_fini (void *ptr)
 
 int probe_main (probe_ctx *ctx, void *arg)
 {
-        SEXP_t *val, *item, *ent;
+	SEXP_t *val, *item, *ent, *obj;
         char *request_st = NULL;
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
 
-        ent = probe_obj_getent(probe_ctx_getobject(ctx), "name", 1);
+	obj = probe_ctx_getobject(ctx);
+	ent = probe_obj_getent(obj, "name", 1);
 
         if (ent == NULL) {
                 return (PROBE_ENOENT);
@@ -149,6 +152,13 @@ int probe_main (probe_ctx *ctx, void *arg)
         } else { /* Ok */
                 int i;
                 int num_items = 1; /* FIXME */
+		oval_datatype_t evr_string_type;
+		oval_schema_version_t oval_version = probe_obj_get_platform_schema_version(obj);
+		if (oval_schema_version_cmp(oval_version, OVAL_SCHEMA_VERSION(5.11.1)) >= 0) {
+			evr_string_type = OVAL_DATATYPE_DEBIAN_EVR_STRING;
+		} else {
+			evr_string_type = OVAL_DATATYPE_EVR_STRING;
+		}
 
                 for (i = 0; i < num_items; ++i) {
                         dI("%s: element found version %s\n", dpkginfo_reply->name, dpkginfo_reply->evr);
@@ -158,7 +168,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                                         "epoch", OVAL_DATATYPE_STRING, dpkginfo_reply->epoch,
                                         "release", OVAL_DATATYPE_STRING, dpkginfo_reply->release,
                                         "version", OVAL_DATATYPE_STRING, dpkginfo_reply->version,
-                                        "evr", OVAL_DATATYPE_EVR_STRING, dpkginfo_reply->evr,
+					"evr", evr_string_type, dpkginfo_reply->evr,
                                         NULL);
 
 			probe_item_collect(ctx, item);

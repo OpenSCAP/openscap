@@ -1485,6 +1485,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 			SEXP_list_add(item, entity);
 			goto skip;
                 case OVAL_DATATYPE_EVR_STRING:
+                case OVAL_DATATYPE_DEBIAN_EVR_STRING:
                 case OVAL_DATATYPE_FILESET_REVISION:
                 case OVAL_DATATYPE_IOS_VERSION:
 		case OVAL_DATATYPE_IPV4ADDR:
@@ -1690,6 +1691,7 @@ SEXP_t *probe_entval_from_cstr(oval_datatype_t type,
 	}	break;
 
 	case OVAL_DATATYPE_EVR_STRING:
+	case OVAL_DATATYPE_DEBIAN_EVR_STRING:
 	case OVAL_DATATYPE_FILESET_REVISION:
 	case OVAL_DATATYPE_IOS_VERSION:
 	case OVAL_DATATYPE_STRING:
