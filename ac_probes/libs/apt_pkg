@@ -1,7 +1,7 @@
 name=apt-pkg
 pkgconfig=yes
 pkgconfig_name=libapt-pkg
-functions_req=(pkgInitConfig pkgInitSystem)
+functions_req=(pkgVersion)
 functions_opt=
 functions_lang=C++
 probes_req=(dpkginfo)
