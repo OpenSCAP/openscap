@@ -225,7 +225,9 @@ int app_collect_oval(const struct oscap_action *action)
 	int ret = OSCAP_ERROR;
 
 	/* Turn on verbosity */
-	oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false);
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		goto cleanup;
+	}
 
 	/* validate inputs */
 	if (action->validate) {
@@ -339,12 +341,14 @@ cleanup:
 
 int app_evaluate_oval(const struct oscap_action *action)
 {
-	struct oval_session *session;
+	struct oval_session *session = NULL;
 	oval_result_t eval_result;
 	int ret = OSCAP_ERROR;
 
 	/* Turn on verbosity */
-	oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false);
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		goto cleanup;
+	}
 
 	/* create a new OVAL session */
 	if ((session = oval_session_new(action->f_oval)) == NULL) {
@@ -407,7 +411,9 @@ static int app_analyse_oval(const struct oscap_action *action) {
 	int ret = OSCAP_ERROR;
 
 	/* Turn on verbosity */
-	oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false);
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		goto cleanup;
+	}
 
 	/* validate inputs */
 	if (action->validate) {

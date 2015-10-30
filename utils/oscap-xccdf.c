@@ -454,7 +454,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	int result = OSCAP_ERROR;
 	int priority = LOG_NOTICE;
-	oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false);
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		goto cleanup;
+	}
 
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
