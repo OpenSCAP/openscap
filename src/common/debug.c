@@ -88,6 +88,10 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
 	if (verbosity_level == NULL || filename == NULL) {
 		return true;
 	}
+	__debuglog_level = oscap_verbosity_level_from_cstr(verbosity_level);
+	if (__debuglog_level == DBG_UNKNOWN) {
+		return false;
+	}
 	if (is_probe) {
 		__debuglog_fp = fopen(filename, "a");
 	} else {
@@ -100,7 +104,6 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
 		return false;
 	}
 	setbuf(__debuglog_fp, NULL);
-	__debuglog_level = oscap_verbosity_level_from_cstr(verbosity_level);
 	atexit(&__oscap_debuglog_close);
 	return true;
 }
