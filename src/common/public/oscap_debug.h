@@ -38,7 +38,7 @@ typedef enum {
  *                 and other additional information.
  * @param is_probe Determines whether the function is called
  *                 from a probe (true) or from the base library (false).
- * @return When the verbose mode has been turned on it returns true, otherwise false.
+ * @return When an error occured, returns false, otherwise true.
  */
 bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe);
 

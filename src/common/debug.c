@@ -86,7 +86,7 @@ oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name)
 bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe)
 {
 	if (verbosity_level == NULL || filename == NULL) {
-		return false;
+		return true;
 	}
 	if (is_probe) {
 		__debuglog_fp = fopen(filename, "a");
