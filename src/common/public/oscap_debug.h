@@ -47,6 +47,6 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
  * @param level_name Verbosity level as a C string.
  * @return Verbosity level number (or -1 on error).
  */
-int oscap_verbosity_level_from_cstr(const char *level_name);
+oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name);
 
 #endif

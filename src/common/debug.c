@@ -78,7 +78,7 @@ static void __oscap_debuglog_close(void)
         fclose(__debuglog_fp);
 }
 
-int oscap_verbosity_level_from_cstr(const char *level_name)
+oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name)
 {
 	return oscap_string_to_enum(OSCAP_VERBOSITY_LEVELS, level_name);
 }
