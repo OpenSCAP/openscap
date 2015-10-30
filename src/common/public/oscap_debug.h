@@ -23,6 +23,14 @@
 #ifndef OSCAP_DEBUG_H_
 #define OSCAP_DEBUG_H_
 
+typedef enum {
+	DBG_E = 1,
+	DBG_W,
+	DBG_I,
+	DBG_D,
+	DBG_UNKNOWN = -1
+} oscap_verbosity_levels;
+
 /**
  * Turn on debugging information
  * @param verbosity_level Verbosity level

@@ -57,14 +57,6 @@ OSCAP_HIDDEN_START;
 #endif
 
 
-enum oscap_verbosity_levels {
-	DBG_E = 1,
-	DBG_W,
-	DBG_I,
-	DBG_D,
-	DBG_UNKNOWN = -1
-};
-
 # define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
 
 /**
