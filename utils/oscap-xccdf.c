@@ -47,7 +47,7 @@
 #include "oscap-tool.h"
 #include "oscap.h"
 #include "oscap_source.h"
-#include "../src/common/debug.h"
+#include <oscap_debug.h>
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);

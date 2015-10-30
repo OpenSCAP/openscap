@@ -43,7 +43,7 @@
 #include "input_handler.h"
 #include "probe-api.h"
 #include "option.h"
-#include "../common/debug.h"
+#include <oscap_debug.h>
 
 static int fail(int err, const char *who, int line)
 {

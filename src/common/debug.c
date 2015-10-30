@@ -40,7 +40,7 @@
 
 # include "debug_priv.h"
 
-#include "debug.h"
+#include <oscap_debug.h>
 #include "_error.h"
 
 #ifndef PATH_SEPARATOR

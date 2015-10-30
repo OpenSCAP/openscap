@@ -35,7 +35,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <cvss_score.h>
-#include "../src/common/debug.h"
+#include <oscap_debug.h>
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024

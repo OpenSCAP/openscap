@@ -38,7 +38,7 @@
 
 #include "oscap-tool.h"
 #include "scap_ds.h"
-#include "../src/common/debug.h"
+#include <oscap_debug.h>
 
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
