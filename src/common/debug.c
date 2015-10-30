@@ -83,7 +83,7 @@ int oscap_verbosity_level_from_cstr(const char *level_name)
 	return oscap_string_to_enum(OSCAP_VERBOSITY_LEVELS, level_name);
 }
 
-bool oscap_set_verbose(const char* verbosity_level, const char *filename, bool is_probe)
+bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe)
 {
 	if (verbosity_level == NULL || filename == NULL) {
 		return false;

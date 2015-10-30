@@ -32,7 +32,7 @@
  *                 from a probe (true) or from the base library (false).
  * @return When the verbose mode has been turned on it returns true, otherwise false.
  */
-bool oscap_set_verbose(const char* verbosity_level, const char *filename, bool is_probe);
+bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe);
 
 /**
  * Parse verbosity level from a string.
