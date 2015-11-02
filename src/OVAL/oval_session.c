@@ -201,7 +201,7 @@ static int oval_session_load_definitions(struct oval_session *session)
 		return 1;
 	}
 	else {
-		if (!oval_session_validate(session, session->source, type))
+		if (session->validation && !oval_session_validate(session, session->source, type))
 			return 1;
 	}
 
@@ -249,7 +249,7 @@ static int oval_session_load_variables(struct oval_session *session)
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "No OVAL Definitions to bind the variables to.");
 			return 1;
 		}
-		if (!oval_session_validate(session, session->oval.variables, OSCAP_DOCUMENT_OVAL_VARIABLES)) {
+		if (session->validation && !oval_session_validate(session, session->oval.variables, OSCAP_DOCUMENT_OVAL_VARIABLES)) {
 			return 1;
 		}
 
