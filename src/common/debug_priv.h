@@ -29,34 +29,13 @@
 #ifndef OSCAP_DEBUG_PRIV_H_
 #define OSCAP_DEBUG_PRIV_H_
 
+#include <assert.h>
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdarg.h>
 #include "util.h"
 
-/**
- * Hardcodede output filename. This is used as the default
- * filename if the variable specified by OSCAP_DEBUG_FILE_ENV
- * isn't defined.
- */
-#ifndef OSCAP_DEBUG_FILE
-# define OSCAP_DEBUG_FILE     "oscap_debug.log"
-#endif
-
-/**
- * Name of the environment variable that can be used to change
- * the default output filename.
- */
-#ifndef OSCAP_DEBUG_FILE_ENV
-# define OSCAP_DEBUG_FILE_ENV "OSCAP_DEBUG_FILE"
-#endif
-
-/**
- * Name of the environment variable that can be used to change
- * the debug level, i.e. the number and verbosity of the debug
- * messages.
- * XXX: not implemented yet
- */
-#ifndef OSCAP_DEBUG_LEVEL_ENV
-# define OSCAP_DEBUG_LEVEL_ENV "OSCAP_DEBUG_LEVEL"
-#endif
+OSCAP_HIDDEN_START;
 
 /**
  * Name of the environment variable that can be used to enable
@@ -73,44 +52,12 @@
 
 #define OSCAP_DEBUGOBJ_SEXP 1
 
-#include <assert.h>
 #ifndef _A
 #define _A(x) assert(x)
 #endif
 
-#if defined(NDEBUG)
-# define oscap_dlprintf(...) while(0)
-# define debug(l) if (0)
-# define dO(type, obj) while(0)
-#else
-# include <stdlib.h>
-# include <stddef.h>
-# include <stdarg.h>
-
-enum {
-	DBG_E = 1,
-	DBG_W,
-	DBG_I
-};
 
 # define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
-
-extern int __debuglog_level;
-
-/**
- * Using this macro you can create a "debug block" with a verbosity level `l'.
- * Example:
- *  The following code inside the debug block will be executed only if the debug level
- *  is larger that or equal to 3.
- *
- * debug(3) {
- *   int foo;
- *   foo = do_something_only_in_debug_mode();
- *   ...
- * }
- *
- */
-# define debug(l) if ((__debuglog_level = (__debuglog_level == -1 ? atoi (getenv (OSCAP_DEBUG_LEVEL_ENV) == NULL ? "0" : getenv (OSCAP_DEBUG_LEVEL_ENV)) : __debuglog_level)) && __debuglog_level >= (l))
 
 /**
  * Version of the oscap_dprintf function with support for debug level.
@@ -135,10 +82,12 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 
 # define dO(type, obj) __oscap_debuglog_object(__FILE__, __PRETTY_FUNCTION__, __LINE__, type, obj)
 
-#endif                          /* NDEBUG */
 
 #define dI(...) oscap_dlprintf(DBG_I, __VA_ARGS__)
 #define dW(...) oscap_dlprintf(DBG_W, __VA_ARGS__)
 #define dE(...) oscap_dlprintf(DBG_E, __VA_ARGS__)
+#define dD(...) oscap_dlprintf(DBG_D, __VA_ARGS__)
+
+OSCAP_HIDDEN_END;
 
 #endif

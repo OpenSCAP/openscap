@@ -47,6 +47,7 @@
 #include "oscap-tool.h"
 #include "oscap.h"
 #include "oscap_source.h"
+#include <oscap_debug.h>
 
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
@@ -160,7 +161,9 @@ static struct oscap_module XCCDF_EVAL = {
 	"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
 	"                   \r\t\t\t\t   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 	"   --remediate \r\t\t\t\t - Automatically execute XCCDF fix elements for failed rules.\n"
-	"               \r\t\t\t\t   Use of this option is always at your own risk.",
+	"               \r\t\t\t\t   Use of this option is always at your own risk.\n"
+	"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
+	"   --verbose-log-file <file>\r\t\t\t\t - Write verbose informations into file.\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -451,6 +454,9 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	int result = OSCAP_ERROR;
 	int priority = LOG_NOTICE;
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		goto cleanup;
+	}
 
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
@@ -900,7 +906,9 @@ enum oval_opt {
     XCCDF_OPT_CPE,
     XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
-    XCCDF_OPT_RESULT_ID = 'i'
+    XCCDF_OPT_RESULT_ID = 'i',
+	XCCDF_OPT_VERBOSE,
+	XCCDF_OPT_VERBOSE_LOG_FILE
 };
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
@@ -930,6 +938,8 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
+		{ "verbose", required_argument, NULL, XCCDF_OPT_VERBOSE },
+		{ "verbose-log-file", required_argument, NULL, XCCDF_OPT_VERBOSE_LOG_FILE },
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -974,9 +984,18 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				action->cpe = optarg; break;
 			}
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
+		case XCCDF_OPT_VERBOSE:
+			action->verbosity_level = optarg;
+			break;
+		case XCCDF_OPT_VERBOSE_LOG_FILE:
+			action->f_verbose_log = optarg;
+			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
+	}
+	if (!check_verbose_options(action)) {
+		return false;
 	}
 
 	if (action->module == &XCCDF_EVAL) {
