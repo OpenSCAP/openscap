@@ -330,14 +330,10 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	char state_name[strlen(subtype_text) + 7];
 	sprintf(state_name, "%s_state", subtype_text);
 
-	/* get family URI */
 	oval_family_t family = oval_state_get_family(state);
-	const char *family_text = oval_family_get_text(family);
-	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
-	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
 	/* search namespace & create child */ 
-	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
+	xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_DEFINITIONS_NAMESPACE, doc, parent);
 	xmlNode *state_node = xmlNewTextChild(parent, ns_family, BAD_CAST state_name, NULL);
 
 	char *id = oval_state_get_id(state);

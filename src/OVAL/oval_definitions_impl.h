@@ -40,6 +40,7 @@
 OSCAP_HIDDEN_START;
 
 oval_family_t oval_family_parse(xmlTextReaderPtr);
+xmlNs *oval_family_to_namespace(oval_family_t family, const char *schema_ns, xmlDoc *doc, xmlNode *parent);
 oval_subtype_t oval_subtype_parse(xmlTextReaderPtr);
 oval_affected_family_t oval_affected_family_parse(xmlTextReaderPtr);
 oval_operator_t oval_operator_parse(xmlTextReaderPtr, char *, oval_operator_t);

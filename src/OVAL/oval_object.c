@@ -391,14 +391,10 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	char object_name[strlen(subtype_text) + 8];
 	sprintf(object_name, "%s_object", subtype_text);
 
-	/* get family URI */
 	oval_family_t family = oval_object_get_family(object);
-	const char *family_text = oval_family_get_text(family);
-	char family_uri[strlen((const char *)OVAL_DEFINITIONS_NAMESPACE) + strlen(family_text) + 2];
-	sprintf(family_uri,"%s#%s", OVAL_DEFINITIONS_NAMESPACE, family_text);
 
 	/* search namespace & create child */
-	xmlNs *ns_family = xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
+	xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_DEFINITIONS_NAMESPACE, doc, parent);
 	object_node = xmlNewTextChild(parent, ns_family, BAD_CAST object_name, NULL);
 
 	char *id = oval_object_get_id(object);
