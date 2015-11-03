@@ -492,27 +492,27 @@ oval_version_t probe_obj_get_schema_version(const SEXP_t *obj)
 SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 {
 	SEXP_t *obj_name;
-	char name_buf[64 + 1];
-	size_t name_len;
 
 	obj_name = SEXP_list_first(obj);
-	name_len = snprintf(name_buf, sizeof name_buf, ":%s", name);
-
-	_A(name_len < sizeof name_buf);
 
 	if (SEXP_listp(obj_name)) {
 		uint32_t i;
 		SEXP_t *attr;
+		char *name_buf = NULL;
 
 		i = 2;
 
 		while ((attr = SEXP_list_nth(obj_name, i)) != NULL) {
 			if (SEXP_stringp(attr)) {
 				if (SEXP_string_nth(attr, 1) == ':') {
+					if (name_buf == NULL) {
+						name_buf = oscap_sprintf(":%s", name);
+					}
 					if (SEXP_strcmp(attr, name_buf) == 0) {
 						SEXP_t *val;
 
 						val = SEXP_list_nth(obj_name, i + 1);
+						oscap_free(name_buf);
 						SEXP_free(attr);
 						SEXP_free(obj_name);
 
@@ -527,6 +527,7 @@ SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 
 			SEXP_free(attr);
 		}
+		oscap_free(name_buf);
 	}
 
 	SEXP_free(obj_name);
@@ -537,24 +538,23 @@ SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 {
 	SEXP_t *obj_name;
-	char name_buf[64 + 1];
-	size_t name_len;
-
 	obj_name = SEXP_list_first(obj);
-	name_len = snprintf(name_buf, sizeof name_buf, ":%s", name);
-
-	_A(name_len < sizeof name_buf);
 
 	if (SEXP_listp(obj_name)) {
 		uint32_t i;
 		SEXP_t *attr;
+		char *name_buf = NULL;
 
 		i = 2;
 
 		while ((attr = SEXP_list_nth(obj_name, i)) != NULL) {
 			if (SEXP_stringp(attr)) {
 				if (SEXP_string_nth(attr, 1) == ':') {
+					if (name_buf == NULL) {
+						name_buf = oscap_sprintf(":%s", name);
+					}
 					if (SEXP_strcmp(attr, name_buf) == 0) {
+						oscap_free(name_buf);
 						SEXP_free(attr);
 						SEXP_free(obj_name);
 
@@ -562,7 +562,8 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 					}
 					++i;
 				} else {
-                                    if (SEXP_strcmp(attr, name_buf + 1) == 0) {
+					if (SEXP_strcmp(attr, name) == 0) {
+						oscap_free(name_buf);
                                         SEXP_free(attr);
                                         SEXP_free(obj_name);
                                         return true;
@@ -573,6 +574,7 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 
 			SEXP_free(attr);
 		}
+		oscap_free(name_buf);
 	}
 
 	SEXP_free(obj_name);
