@@ -162,6 +162,7 @@ typedef enum {
 	OVAL_DATATYPE_STRING,
 	OVAL_DATATYPE_STRING_M,
 	OVAL_DATATYPE_VERSION,
+	OVAL_DATATYPE_DEBIAN_EVR_STRING
 } oval_datatype_t;
 
 /// Varref types
