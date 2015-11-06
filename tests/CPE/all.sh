@@ -8,8 +8,8 @@ set -e -o pipefail
 . ${srcdir}/../test_common.sh
 
 function test_cpe() {
-    $OSCAP oval validate --schematron ${srcdir}/../../cpe/openscap-cpe-oval.xml
-    $OSCAP cpe validate ${srcdir}/../../cpe/openscap-cpe-dict.xml
+    $OSCAP oval validate --schematron ${top_srcdir}/cpe/openscap-cpe-oval.xml
+    $OSCAP cpe validate ${top_srcdir}/cpe/openscap-cpe-dict.xml
 }
 
 test_init "test_cpe.log"
