@@ -260,13 +260,10 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * p
 			char tagname[strlen(subtype_text) + 6];
 			sprintf(tagname, "%s_item", subtype_text);
 
-			 /* get family URI */
-			const char *family = oval_family_get_text(oval_subtype_get_family(subtype));
-			char family_uri[strlen((const char *)OVAL_SYSCHAR_NAMESPACE) + strlen(family) + 2];
-			sprintf(family_uri, "%s#%s", OVAL_SYSCHAR_NAMESPACE, family);
+			oval_family_t family = oval_subtype_get_family(subtype);
 
 			/* search namespace & create child */
-			xmlNs *ns_family = xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
+			xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_SYSCHAR_NAMESPACE, doc, parent);
 			xmlNode *tag_sysitem = xmlNewTextChild(parent, ns_family, BAD_CAST tagname, NULL);
 
 			/* attributes */
