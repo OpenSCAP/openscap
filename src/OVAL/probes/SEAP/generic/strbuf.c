@@ -291,18 +291,18 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
         cur   = buf->beg;
 	iot   = (buf->size / buf->blkmax) + 1;
 
-	dI("total I/O vectors = %d\n", iot);
+	dD("total I/O vectors = %d\n", iot);
 
 	while (iot > 0) {
 		/*
 		 * Prepare I/O vector
 		 */
 		if (iot > IOV_MAX) {
-			dI("iot (%d) > IOV_MAX (%d)\n", iot, IOV_MAX);
+			dD("iot (%d) > IOV_MAX (%d)\n", iot, IOV_MAX);
 			iow  = IOV_MAX;
 			iot -= IOV_MAX;
 		} else {
-			dI("iot (%d) < IOV_MAX (%d)\n", iot, IOV_MAX);
+			dD("iot (%d) < IOV_MAX (%d)\n", iot, IOV_MAX);
 			iow  = iot;
 			iot  = 0;
 		}
@@ -318,7 +318,7 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 			cur = cur->next;
 		}
 
-		dI("ioc = %d\n", ioc);
+		dD("ioc = %d\n", ioc);
 
 		/*
 		 * Write
@@ -335,7 +335,7 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 	}
 
         free (iov);
-	dI("total bytes written: %zu\n", (size_t)rsize);
+	dD("total bytes written: %zu\n", (size_t)rsize);
 
         return (rsize);
 }
