@@ -21,6 +21,7 @@ SUBDIRS = \
 	API \
 	bz2 \
 	codestyle \
+	CPE \
 	DS \
 	sources \
 	schemas \

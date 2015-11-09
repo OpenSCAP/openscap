@@ -399,6 +399,18 @@ const char *oval_family_get_text(oval_family_t family)
 	return oval_enumeration_get_text(OVAL_FAMILY_MAP, family);
 }
 
+xmlNs *oval_family_to_namespace(oval_family_t family, const char *schema_ns, xmlDoc *doc, xmlNode *parent)
+{
+	const char *family_text = oval_family_get_text(family);
+	if (family_text == NULL) {
+		return NULL;
+	}
+	/* We need to allocate memory also for '#' and '\0'. */
+	char family_uri[strlen(schema_ns) + 1 + strlen(family_text) + 1];
+	sprintf(family_uri,"%s#%s", schema_ns, family_text);
+	return xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
+}
+
 static const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {
 	{OVAL_AIX_FILESET, "fileset"},
 	{OVAL_AIX_FIX, "fix"},

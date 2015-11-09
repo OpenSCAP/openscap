@@ -617,6 +617,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/SEAP/Makefile
                  tests/API/probes/Makefile
 		tests/sources/Makefile
+		tests/CPE/Makefile
                  tests/probes/file/Makefile
                  tests/probes/fileextendedattribute/Makefile
                  tests/probes/uname/Makefile
