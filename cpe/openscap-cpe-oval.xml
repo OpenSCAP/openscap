@@ -202,26 +202,26 @@
                   <object object_ref="oval:org.open-scap.cpe.unix:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.unix:ste:1"/>
             </family_test>
-            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
+            <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:2"/>
-            </rpminfo_test>
+            </rpmverifyfile_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:5" version="1" check="at least one" comment="redhat-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:5"/>
             </rpminfo_test>
-            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:6" version="1" check="at least one" comment="redhat-release is version 6"
+            <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:6" version="1" check="at least one" comment="redhat-release is version 6"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:6"/>
-            </rpminfo_test>
-            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:7" version="1" check="at least one" comment="redhat-release is version 7"
+            </rpmverifyfile_test>
+            <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:7" version="1" check="at least one" comment="redhat-release is version 7"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:7"/>
-            </rpminfo_test>
+            </rpmverifyfile_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:16" version="1" check="at least one" comment="fedora-release is version Fedora 16"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
@@ -291,20 +291,20 @@
             <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
                   <family>unix</family>
             </family_state>
-            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
-            </rpminfo_state>
+            </rpmverifyfile_state>
             <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:5" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^5[^\d]</version>
             </rpminfo_state>
-            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:6" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^6[^\d]</version>
-            </rpminfo_state>
-            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+            </rpmverifyfile_state>
+            <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^7[^\d]</version>
-            </rpminfo_state>
+            </rpmverifyfile_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^16$</version>
             </rpminfo_state>

@@ -19,6 +19,7 @@ endif
 
 SUBDIRS = \
 	API \
+	CPE \
 	DS \
 	sources \
 	schemas \
