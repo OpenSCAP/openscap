@@ -994,21 +994,21 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
 		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
 
-                dI("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
+                dD("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
 
 		for (r = 0, i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
                         if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
-                                dI("skipped: %s (not an external probe)\n", OSCAP_GSYM(__probe_meta)[i].stype);
+                                dD("skipped: %s (not an external probe)\n", OSCAP_GSYM(__probe_meta)[i].stype);
                                 continue;
                         }
 
 			if (stat(OSCAP_GSYM(__probe_meta)[i].pname, &st) != 0) {
-				dW("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(__probe_meta)[i].stype, errno);
+				dD("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(__probe_meta)[i].stype, errno);
 				continue;
 			}
 
 			if (!S_ISREG(st.st_mode)) {
-				dW("skipped: %s (not a regular file)\n", OSCAP_GSYM(__probe_meta)[i].stype);
+				dD("skipped: %s (not a regular file)\n", OSCAP_GSYM(__probe_meta)[i].stype);
 				continue;
 			}
 

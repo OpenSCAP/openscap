@@ -134,7 +134,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 
         __init_once();
 
-        dI("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
+        dD("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
 
         for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
                 handler_arg = NULL;
