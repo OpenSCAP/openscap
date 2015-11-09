@@ -246,6 +246,7 @@ const char *oval_check_get_text(oval_check_t check)
 static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
 	{OVAL_DATATYPE_BINARY, "binary"},
 	{OVAL_DATATYPE_BOOLEAN, "boolean"},
+	{OVAL_DATATYPE_DEBIAN_EVR_STRING, "debian_evr_string"},
 	{OVAL_DATATYPE_EVR_STRING, "evr_string"},
 	{OVAL_DATATYPE_FILESET_REVISION, "fileset_revision"},
 	{OVAL_DATATYPE_FLOAT, "float"},
@@ -396,6 +397,18 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 const char *oval_family_get_text(oval_family_t family)
 {
 	return oval_enumeration_get_text(OVAL_FAMILY_MAP, family);
+}
+
+xmlNs *oval_family_to_namespace(oval_family_t family, const char *schema_ns, xmlDoc *doc, xmlNode *parent)
+{
+	const char *family_text = oval_family_get_text(family);
+	if (family_text == NULL) {
+		return NULL;
+	}
+	/* We need to allocate memory also for '#' and '\0'. */
+	char family_uri[strlen(schema_ns) + 1 + strlen(family_text) + 1];
+	sprintf(family_uri,"%s#%s", schema_ns, family_text);
+	return xmlSearchNsByHref(doc, parent, BAD_CAST family_uri);
 }
 
 static const struct oscap_string_map OVAL_SUBTYPE_AIX_MAP[] = {

@@ -138,6 +138,8 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 		return oval_binary_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_EVR_STRING) {
 		return oval_evr_string_cmp(state_data, sys_data, operation);
+	} else if (state_data_type == OVAL_DATATYPE_DEBIAN_EVR_STRING) {
+		return oval_evr_string_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_VERSION) {
 		return oval_versiontype_cmp(state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_IPV4ADDR) {

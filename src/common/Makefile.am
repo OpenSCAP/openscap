@@ -37,6 +37,7 @@ liboscapcommon_la_LIBADD = \
 	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
 
 pkginclude_HEADERS =\
+	public/oscap_debug.h \
 	public/oscap_error.h \
 	public/oscap.h \
 	public/oscap_reference.h \

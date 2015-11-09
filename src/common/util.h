@@ -27,6 +27,7 @@
 #include <stdbool.h>
 #include <assert.h>
 #include "public/oscap.h"
+#include "public/oscap_debug.h"
 #include "alloc.h"
 #include <stdarg.h>
 

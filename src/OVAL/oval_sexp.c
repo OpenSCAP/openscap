@@ -61,6 +61,7 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 
 	switch (dtype) {
 	case OVAL_DATATYPE_EVR_STRING:
+	case OVAL_DATATYPE_DEBIAN_EVR_STRING:
 	case OVAL_DATATYPE_IPV4ADDR:
 	case OVAL_DATATYPE_IPV6ADDR:
 	case OVAL_DATATYPE_STRING:
@@ -878,6 +879,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 			}
 			break;
 		case OVAL_DATATYPE_EVR_STRING:
+		case OVAL_DATATYPE_DEBIAN_EVR_STRING:
 		case OVAL_DATATYPE_IPV4ADDR:
 		case OVAL_DATATYPE_IPV6ADDR:
 		case OVAL_DATATYPE_STRING:

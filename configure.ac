@@ -699,7 +699,7 @@ echo
 echo '* Checking for apt_pkg library used by: dpkginfo '
 PKG_CHECK_MODULES([apt_pkg], [libapt-pkg >= 0.0],[],[
 SAVE_LIBS=$LIBS
-AC_SEARCH_LIBS([pkgInitConfig],[apt-pkg],[
+AC_SEARCH_LIBS([pkgVersion],[apt-pkg],[
 apt_pkg_CFLAGS=;
 apt_pkg_LIBS=-lapt-pkg;
 ],[
@@ -713,7 +713,7 @@ LIBS=$SAVE_LIBS
 SAVE_LIBS=$LIBS
 LIBS=$apt_pkg_LIBS
 AC_LANG_PUSH([C++])
-AC_CHECK_FUNCS([pkgInitConfig pkgInitSystem], [], [
+AC_CHECK_FUNCS([pkgVersion], [], [
 probe_dpkginfo_req_deps_ok=no;
 probe_dpkginfo_req_deps_missing+=", $ac_func func";
 ])
@@ -1502,6 +1502,7 @@ AC_CONFIG_FILES([Makefile
                  tests/API/SEAP/Makefile
                  tests/API/probes/Makefile
 		tests/sources/Makefile
+		tests/CPE/Makefile
                  tests/probes/file/Makefile
                  tests/probes/fileextendedattribute/Makefile
                  tests/probes/uname/Makefile
