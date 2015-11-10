@@ -232,6 +232,7 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
+		fputc('\n', __debuglog_fp);
 		break;
 	default:
 		fprintf(__debuglog_fp, "Attempt to dump a not supported object.\n");
