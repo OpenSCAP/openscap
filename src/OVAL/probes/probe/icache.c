@@ -99,7 +99,7 @@ static void *probe_icache_worker(void *arg)
         }
 
 	pair = &pair_mem;
-        dI("icache worker ready\n");
+        dD("icache worker ready\n");
 
         switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
         {
@@ -116,7 +116,7 @@ static void *probe_icache_worker(void *arg)
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
                 assume_d(cache->queue_cnt > 0, NULL);
         next:
-                dI("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"\n", cache->queue_cnt, cache->queue_beg);
+                dD("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"\n", cache->queue_cnt, cache->queue_beg);
                 /*
                  * Extract an item from the queue and update queue beg, end & cnt
                  */
@@ -143,7 +143,7 @@ static void *probe_icache_worker(void *arg)
                         abort();
                 }
 
-                dI("Signaling `notfull'\n");
+                dD("Signaling `notfull'\n");
 
                 if (pthread_cond_signal(&cache->queue_notfull) != 0) {
                         dE("An error ocured while signaling the `notfull' condition: %u, %s\n",
@@ -157,7 +157,7 @@ static void *probe_icache_worker(void *arg)
                          */
                         assume_d(pair->p.cond != NULL, NULL);
 
-                        dI("Handling NOP\n");
+                        dD("Handling NOP\n");
 
                         if (pthread_cond_signal(pair->p.cond) != 0) {
                                 dE("An error ocured while signaling NOP condition: %u, %s\n",
@@ -167,13 +167,13 @@ static void *probe_icache_worker(void *arg)
                 } else {
                         probe_citem_t *cached = NULL;
 
-                        dI("Handling cache request\n");
+                        dD("Handling cache request\n");
 
                         /*
                          * Compute item ID
                          */
                         item_ID = SEXP_ID_v(pair->p.item);
-                        dI("item ID=%"PRIu64"\n", item_ID);
+                        dD("item ID=%"PRIu64"\n", item_ID);
 
                         /*
                          * Perform cache lookup
@@ -184,7 +184,7 @@ static void *probe_icache_worker(void *arg)
                                 /*
                                  * Maybe a cache HIT
                                  */
-                                dI("cache HIT #1\n");
+                                dD("cache HIT #1\n");
 
                                 for (i = 0; i < cached->count; ++i) {
                                         if (SEXP_deepcmp(SEXP_list_rest_r(&rest1, pair->p.item),
@@ -203,7 +203,7 @@ static void *probe_icache_worker(void *arg)
                                         /*
                                          * Cache MISS
                                          */
-                                        dI("cache MISS\n");
+                                        dD("cache MISS\n");
 
                                         cached->item = oscap_realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
                                         cached->item[cached->count - 1] = pair->p.item;
@@ -214,7 +214,7 @@ static void *probe_icache_worker(void *arg)
                                         /*
                                          * Cache HIT
                                          */
-                                        dI("cache HIT #2 -> real HIT\n");
+                                        dD("cache HIT #2 -> real HIT\n");
                                         SEXP_free(pair->p.item);
                                         pair->p.item = cached->item[i];
                                 }
@@ -222,7 +222,7 @@ static void *probe_icache_worker(void *arg)
                                 /*
                                  * Cache MISS
                                  */
-                                dI("cache MISS\n");
+                                dD("cache MISS\n");
                                 cached = oscap_talloc(probe_citem_t);
                                 cached->item = oscap_talloc(SEXP_t *);
                                 cached->item[0] = pair->p.item;
@@ -382,7 +382,7 @@ int probe_icache_nop(probe_icache_t *cache)
 {
         pthread_cond_t cond;
 
-        dI("NOP\n");
+        dD("NOP\n");
 
         if (pthread_mutex_lock(&cache->queue_mutex) != 0) {
                 dE("An error ocured while locking the queue mutex: %u, %s\n",
@@ -407,7 +407,7 @@ int probe_icache_nop(probe_icache_t *cache)
                 return (-1);
         }
 
-        dI("Signaling `notempty'\n");
+        dD("Signaling `notempty'\n");
 
         if (pthread_cond_signal(&cache->queue_notempty) != 0) {
                 dE("An error ocured while signaling the `notempty' condition: %u, %s\n",
@@ -417,7 +417,7 @@ int probe_icache_nop(probe_icache_t *cache)
                 return (-1);
         }
 
-        dI("Waiting for icache worker to handle the NOP\n");
+        dD("Waiting for icache worker to handle the NOP\n");
 
         if (pthread_cond_wait(&cond, &cache->queue_mutex) != 0) {
                 dE("An error ocured while waiting for the `NOP' queue condition: %u, %s\n",
@@ -425,7 +425,7 @@ int probe_icache_nop(probe_icache_t *cache)
                 return (-1);
         }
 
-        dI("Sync\n");
+        dD("Sync\n");
 
         if (pthread_mutex_unlock(&cache->queue_mutex) != 0) {
                 dE("An error ocured while unlocking the queue mutex: %u, %s\n",
