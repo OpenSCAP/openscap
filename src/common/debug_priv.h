@@ -34,6 +34,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include "util.h"
+#include "public/oscap_debug.h"
 
 OSCAP_HIDDEN_START;
 
