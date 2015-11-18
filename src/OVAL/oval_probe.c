@@ -305,6 +305,8 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
         oval_ph_t *ph;
 	int ret;
 
+	dI("Querying system information.\n");
+
         ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
 
         if (ph == NULL) {
