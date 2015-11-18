@@ -232,6 +232,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	char *oid;
 	struct oval_syschar *sysc;
         oval_subtype_t type;
+	const char *type_name;
         oval_ph_t *ph;
 	struct oval_string_map *vm;
 	struct oval_syschar_model *model;
@@ -240,7 +241,9 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	oid = oval_object_get_id(object);
 	model = psess->sys_model;
 
-	dI("Querying object id: \"%s\", flags: %u.\n", oid, flags);
+	type = oval_object_get_subtype(object);
+	type_name = oval_subtype_get_text(type);
+	dI("Querying %s object '%s', flags: %u.\n", type_name, oid, flags);
 
 	sysc = oval_syschar_model_get_syschar(model, oid);
 	if (sysc != NULL) {
@@ -270,7 +273,6 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	if (out_syschar)
 		*out_syschar = sysc;
 
-	type = oval_object_get_subtype(object);
 	ph = oval_probe_handler_get(psess->ph, type);
 
         if (ph == NULL) {
