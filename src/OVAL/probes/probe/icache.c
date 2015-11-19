@@ -92,6 +92,8 @@ static void *probe_icache_worker(void *arg)
 
         assume_d(cache != NULL, NULL);
 
+	pthread_setname_np(pthread_self(), "icache_worker");
+
         if (pthread_mutex_lock(&cache->queue_mutex) != 0) {
                 dE("An error ocured while locking the queue mutex: %u, %s\n",
                    errno, strerror(errno));
@@ -295,7 +297,6 @@ probe_icache_t *probe_icache_new(void)
                 dE("Can't start the icache worker: %u, %s\n", errno, strerror(errno));
                 goto fail;
         }
-		pthread_setname_np(cache->thid, "icache_worker");
 
         return (cache);
 fail:

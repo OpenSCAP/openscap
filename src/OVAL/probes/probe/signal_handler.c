@@ -64,6 +64,8 @@ void *probe_signal_handler(void *arg)
 	siginfo_t siinf;
 	sigset_t  siset;
 
+	pthread_setname_np(pthread_self(), "signal_handler");
+
 	sigemptyset(&siset);
 	sigaddset(&siset, SIGHUP);
 	sigaddset(&siset, SIGUSR1);
