@@ -232,6 +232,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	char *oid;
 	struct oval_syschar *sysc;
         oval_subtype_t type;
+	const char *type_name;
         oval_ph_t *ph;
 	struct oval_string_map *vm;
 	struct oval_syschar_model *model;
@@ -240,7 +241,9 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	oid = oval_object_get_id(object);
 	model = psess->sys_model;
 
-	dI("Querying object id: \"%s\", flags: %u.\n", oid, flags);
+	type = oval_object_get_subtype(object);
+	type_name = oval_subtype_get_text(type);
+	dI("Querying %s object '%s', flags: %u.\n", type_name, oid, flags);
 
 	sysc = oval_syschar_model_get_syschar(model, oid);
 	if (sysc != NULL) {
@@ -252,11 +255,9 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 			oval_syschar_set_variable_instance_hint(sysc, variable_instance_hint);
 		}
 		else {
-			oval_syschar_collection_flag_t sc_flg;
-
-			sc_flg = oval_syschar_get_flag(sysc);
-
-			dI("Syschar already exists, flag: %u, '%s'.\n", sc_flg, oval_syschar_collection_flag_get_text(sc_flg));
+			oval_syschar_collection_flag_t sc_flg = oval_syschar_get_flag(sysc);
+			const char *flag_text = oval_syschar_collection_flag_get_text(sc_flg);
+			dI("System characteristics for %s_object '%s' already exist, flag: %s.\n", type_name, oid, flag_text);
 
 			if (sc_flg != SYSCHAR_FLAG_UNKNOWN || (flags & OVAL_PDFLAG_NOREPLY)) {
 				if (out_syschar)
@@ -264,13 +265,14 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 				return 0;
 			}
 		}
-	} else
+	} else {
+		dI("Creating new syschar for for %s_object '%s'.\n", type_name, oid);
 		sysc = oval_syschar_new(model, object);
+	}
 
 	if (out_syschar)
 		*out_syschar = sysc;
 
-	type = oval_object_get_subtype(object);
 	ph = oval_probe_handler_get(psess->ph, type);
 
         if (ph == NULL) {
@@ -302,6 +304,8 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 	struct oval_sysinfo *sysinf;
         oval_ph_t *ph;
 	int ret;
+
+	dI("Querying system information.\n");
 
         ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
 
