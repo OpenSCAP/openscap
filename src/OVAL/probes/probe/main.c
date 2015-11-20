@@ -246,7 +246,6 @@ int main(int argc, char *argv[])
 
 	if (pthread_create(&probe.th_signal, &th_attr, &probe_signal_handler, &probe))
 		fail(errno, "pthread_create(probe_signal_handler)", __LINE__ - 1);
-	pthread_setname_np(probe.th_signal, "signal_handler");
 
 	pthread_attr_destroy(&th_attr);
 
@@ -285,7 +284,6 @@ int main(int argc, char *argv[])
 
 	if (pthread_create(&probe.th_input, &th_attr, &probe_input_handler, &probe))
 		fail(errno, "pthread_create(probe_input_handler)", __LINE__ - 1);
-	pthread_setname_np(probe.th_input, "input_handler");
 
 	pthread_attr_destroy(&th_attr);
 
