@@ -322,7 +322,7 @@ def main():
 
         ret = subprocess.call(["rpmbuild", "-ba", spec_file_path], stdout = sys.stdout)
         if ret != 0:
-            raise RuntimeError("Failed to build RPM and SRPM for %s" % spec_file_path)
+            raise CannotContinueError("Failed to build RPM and SRPM for %s" % spec_file_path)
 
     finally:
         shutil.rmtree(temp_dir)
