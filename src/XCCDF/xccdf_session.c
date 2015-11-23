@@ -39,6 +39,7 @@
 #include "common/list.h"
 #include "common/oscapxml.h"
 #include "common/_error.h"
+#include "common/debug_priv.h"
 #include "CPE/cpe_session_priv.h"
 #include "DS/public/scap_ds.h"
 #include "DS/public/ds_sds_session.h"
@@ -121,13 +122,14 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
 
 	session->source = oscap_source_new_from_file(filename);
-	if (oscap_source_get_scap_type(session->source) == 0) {
+	oscap_document_type_t document_type = oscap_source_get_scap_type(session->source);
+	if (document_type == OSCAP_DOCUMENT_UNKNOWN) {
 		xccdf_session_free(session);
 		return NULL;
 	}
-	if (oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_XCCDF
-			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_SDS
-			&& oscap_source_get_scap_type(session->source) != OSCAP_DOCUMENT_XCCDF_TAILORING) {
+	if (document_type != OSCAP_DOCUMENT_XCCDF
+			&& document_type != OSCAP_DOCUMENT_SDS
+			&& document_type != OSCAP_DOCUMENT_XCCDF_TAILORING) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 			"Session input file was determined but it isn't an XCCDF file, "
 			"a source datastream or an XCCDF tailoring file.");
@@ -140,13 +142,15 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
 
-	if (oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+	if (document_type == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 		if (_xccdf_session_autonegotiate_tailoring_file(session, filename) != 0) {
 			xccdf_session_free(session);
 			return NULL;
 		}
 	}
 
+	dI("Created a new XCCDF session from a %s '%s'.\n",
+		oscap_document_type_to_string(document_type), filename);
 	return session;
 }
 
