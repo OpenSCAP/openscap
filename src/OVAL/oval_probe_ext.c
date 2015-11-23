@@ -795,7 +795,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                         ret = -1;
                 } else {
-                        oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
+                        dI("Starting probe on URI '%s'.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "%s probe not supported", probe_dsc->name);
@@ -863,7 +863,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                                 return (-1);
                         }
 
-                        oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
+                        dI("Starting probe on URI '%s'.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);

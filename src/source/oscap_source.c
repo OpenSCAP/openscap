@@ -34,6 +34,7 @@
 #include "common/alloc.h"
 #include "common/elements.h"
 #include "common/_error.h"
+#include "common/debug_priv.h"
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "CPE/public/cpe_lang.h"
@@ -259,10 +260,11 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 		ret = -1;
 	} else {
 		const char *schema_version = oscap_source_get_schema_version(source);
+		const char *type_name = oscap_document_type_to_string(scap_type);
+		const char *origin = oscap_source_readable_origin(source);
+		dD("Validating %s (%s) document from %s.\n", type_name, schema_version, origin);
 		ret = oscap_source_validate_priv(source, scap_type, schema_version, reporter, user);
 		if (ret != 0) {
-			const char *type_name = oscap_document_type_to_string(scap_type);
-			const char *origin = oscap_source_readable_origin(source);
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.", type_name, schema_version, origin);
 		}
 	}
