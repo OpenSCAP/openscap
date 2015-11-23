@@ -140,10 +140,9 @@ def get_rpmbuild_paths():
 
     if not os.path.exists(sources):
         if subprocess.call(["rpmdev-setuptree"], stdout = sys.stdout, stderr = sys.stderr) != 0:
-            sys.stderr.write("Failed to setup rpmbuild tree. Please make sure you have rpmdev-setuptree "
+            raise CannotContinueError("Failed to setup rpmbuild tree. Please make sure you have rpmdev-setuptree "
                 "installed, or set it up manually. The SOURCES directory (%%{_sourcedir}) was expected at "
-                "'%s'\n" % (sources))
-            raise CannotContinueError()
+                "'%s'" % (sources))
 
     rpm = subprocess_check_output(["rpm", "--eval", "%{_rpmdir}"]).strip().decode('utf-8')
     srpm = subprocess_check_output(["rpm", "--eval", "%{_srcrpmdir}"]).strip().decode('utf-8')
