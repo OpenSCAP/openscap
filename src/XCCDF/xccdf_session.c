@@ -39,6 +39,7 @@
 #include "common/list.h"
 #include "common/oscapxml.h"
 #include "common/_error.h"
+#include "common/debug_priv.h"
 #include "CPE/cpe_session_priv.h"
 #include "DS/public/scap_ds.h"
 #include "DS/public/ds_sds_session.h"
@@ -148,6 +149,8 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		}
 	}
 
+	dI("Created a new XCCDF session from a %s '%s'.\n",
+		oscap_document_type_to_string(document_type), filename);
 	return session;
 }
 
