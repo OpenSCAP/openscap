@@ -347,5 +347,6 @@ if __name__ == "__main__":
     try:
         ret = main()
         sys.exit(ret)
-    except CannotContinueError:
+    except CannotContinueError as e:
+        sys.stderr.write("%s\n" % e.message)
         sys.exit(1)
