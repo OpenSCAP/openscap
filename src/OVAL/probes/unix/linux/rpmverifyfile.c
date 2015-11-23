@@ -251,23 +251,28 @@ static int rpmverify_collect(probe_ctx *ctx,
 		  fi = rpmfiNew(g_rpm.rpmts, pkgh, tag[i], 1);
 
 		  while (rpmfiNext(fi) != -1) {
-		    res.file   = rpmfiFN(fi);
+				res.file = oscap_strdup(rpmfiFN(fi));
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
 
 		    if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
-			((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST)))
-		      continue;
+					((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
+					oscap_free(res.file);
+					continue;
+				}
 
 		    switch(file_op) {
 		    case OVAL_OPERATION_EQUALS:
-		      if (strcmp(res.file, file) != 0)
-			continue;
-		      res.file = file;
+					if (strcmp(res.file, file) != 0) {
+						oscap_free(res.file);
+						continue;
+					}
 		      break;
 		    case OVAL_OPERATION_NOT_EQUAL:
-		      if (strcmp(res.file, file) == 0)
-			continue;
+					if (strcmp(res.file, file) == 0) {
+						oscap_free(res.file);
+						continue;
+					}
 		      break;
 		    case OVAL_OPERATION_PATTERN_MATCH:
 		      ret = pcre_exec(re, NULL, res.file, strlen(res.file), 0, 0, NULL, 0);
@@ -277,10 +282,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 			break;
 		      case -1:
 			/* mismatch */
+			oscap_free(res.file);
 			continue;
 		      default:
 			dE("pcre_exec() failed!\n");
 			ret = -1;
+			oscap_free(res.file);
 			goto ret;
 		      }
 		      break;
@@ -288,6 +295,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      /* unsupported operation */
 		      dE("Operation \"%d\" on `filepath' not supported\n", file_op);
 		      ret = -1;
+					oscap_free(res.file);
 		      goto ret;
 		    }
 
@@ -296,8 +304,10 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 		    if (callback(ctx, &res) != 0) {
 			    ret = 0;
+					oscap_free(res.file);
 			    goto ret;
 		    }
+			oscap_free(res.file);
 		  }
 
 		  rpmfiFree(fi);
