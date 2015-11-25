@@ -625,7 +625,7 @@ Authors:
         <xsl:otherwise>
             <xsl:variable name="filename">
                 <xsl:choose>
-                    <xsl:when test='contains($sce-tmpl, "%")'><xsl:value-of select='concat(substring-before($sce-tmpl, "%"), $check/@href, substring-after($sce-tmpl, "%"))'/></xsl:when>
+                    <xsl:when test='contains($sce-tmpl, "%")'><xsl:value-of select='concat(substring-before($sce-tmpl, "%"), $check/cdf:check-content-ref/@href, substring-after($sce-tmpl, "%"))'/></xsl:when>
                     <xsl:otherwise><xsl:value-of select='$sce-tmpl'/></xsl:otherwise>
                 </xsl:choose>
             </xsl:variable>
