@@ -239,7 +239,7 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 		}
 	}
 
-	initGenericErrorDefaultFunc(NULL);
+	xmlSetGenericErrorFunc(stderr, NULL);
 
 	if (!oscap_string_empty(xml_error_string)) {
 		const char *error_msg = oscap_string_get_cstr(xml_error_string);
