@@ -245,7 +245,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
         }
 #endif
 
-        dI("code=%u, args=%p\n", code, args);
+        dD("code=%u, args=%p\n", code, args);
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
 
@@ -253,7 +253,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 return (NULL);
 
         if (flags & (SEAP_EXEC_LOCAL | SEAP_EXEC_WQUEUE)) {
-                dI("EXEC_LOCAL\n");
+                dD("EXEC_LOCAL\n");
 
                 /* get table pointers */
                 if (flags & SEAP_EXEC_WQUEUE) {
@@ -281,7 +281,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         if ((rec = SEAP_cmdtbl_get (tbl[i], code)) != NULL)
                                 break;
 
-                dI("rec=%p, w=%u\n", rec, (flags & SEAP_EXEC_WQUEUE) ? 1 : 0);
+                dD("rec=%p, w=%u\n", rec, (flags & SEAP_EXEC_WQUEUE) ? 1 : 0);
 
                 if (rec == NULL) {
 
@@ -290,13 +290,13 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 /* execute command */
                 res = rec->func (args, rec->arg);
 
-                dI("res=%p\n", res);
+                dD("res=%p\n", res);
 
                 /* filter result */
                 if (func != NULL)
                         res = func (res, funcarg);
 
-                dI("func@%p(res)=%p\n", func, res);
+                dD("func@%p(res)=%p\n", func, res);
 
                 /* delete command from the wait queue */
                 if (flags & SEAP_EXEC_WQUEUE) {
@@ -308,7 +308,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 SEAP_cmd_t    *cmdptr;
                 SEAP_packet_t *packet;
 
-                dI("EXEC_REMOTE\n");
+                dD("EXEC_REMOTE\n");
 
                 packet = SEAP_packet_new ();
                 cmdptr = SEAP_packet_settype (packet, SEAP_PACKET_CMD);
