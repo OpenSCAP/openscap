@@ -47,12 +47,12 @@ void *probe_worker_runfn(void *arg)
 	SEXP_t *probe_res, *obj, *oid;
 	int     probe_ret;
 
-	dI("handling SEAP message ID %u\n", pair->pth->sid);
+	dD("handling SEAP message ID %u\n", pair->pth->sid);
 	//
 	probe_ret = -1;
 	probe_res = pair->pth->msg_handler(pair->probe, pair->pth->msg, &probe_ret);
 	//
-	dI("handler result = %p, return code = %d\n", probe_res, probe_ret);
+	dD("handler result = %p, return code = %d\n", probe_res, probe_ret);
 
 	/* Assuming that the red-black tree API is doing locking for us... */
 	if (rbt_i32_del(pair->probe->workers, pair->pth->sid, NULL) != 0) {
@@ -71,7 +71,7 @@ void *probe_worker_runfn(void *arg)
 	} else {
                 SEXP_t *items;
 
-		dI("probe thread deleted\n");
+		dD("probe thread deleted\n");
 
 		obj = SEAP_msg_get(pair->pth->msg);
 		oid = probe_obj_getattrval(obj, "id");
