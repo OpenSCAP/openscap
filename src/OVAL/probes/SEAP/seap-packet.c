@@ -634,7 +634,7 @@ eloop_start:
                 if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
                         return (-1);
 
-                dI("return from select\n");
+                dD("return from select\n");
 
                 switch (DESC_TRYRLOCK (dsc)) {
                 case  1:
@@ -653,7 +653,7 @@ eloop_start:
                         fail_rmutex:
 
                         protect_errno {
-                                dI("An error ocured while locking the read mutex: dsc=%p, errno=%u, %s.\n",
+                                dE("An error ocured while locking the read mutex: dsc=%p, errno=%u, %s.\n",
                                    dsc, errno, strerror (errno));
                         }
 
