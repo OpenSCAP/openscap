@@ -1337,13 +1337,13 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 	if (!object)
 		return flag;
 
+	const char *obj_id = oval_object_get_id(object);
+	dI("Variable component references to object '%s'.\n", obj_id);
+
 	if (argu->mode == OVAL_MODE_QUERY) {
 		if (oval_probe_query_object(argu->u.sess, object, 0, &syschar) != 0)
 			return flag;
 	} else {
-		char *obj_id;
-
-		obj_id = oval_object_get_id(object);
 		syschar = oval_syschar_model_get_syschar(argu->u.sysmod, obj_id);
 	}
 
