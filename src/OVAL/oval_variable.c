@@ -368,6 +368,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
 		return 0;
 
+	dI("Querying variable '%s'.\n", var->id);
 	component = var->component;
         if (component) {
 		if (!var->values)
@@ -383,6 +384,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	case SYSCHAR_FLAG_INCOMPLETE:
 		break;
 	default:
+		dI("Variable '%s' has no values.\n", var->id);
 		return 0;
 	}
 
