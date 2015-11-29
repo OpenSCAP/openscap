@@ -266,7 +266,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 			}
 		}
 	} else {
-		dI("Creating new syschar for for %s_object '%s'.\n", type_name, oid);
+		dI("Creating new syschar for %s_object '%s'.\n", type_name, oid);
 		sysc = oval_syschar_new(model, object);
 	}
 
