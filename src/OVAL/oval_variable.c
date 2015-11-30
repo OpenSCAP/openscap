@@ -42,6 +42,7 @@
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
+#include "common/oscap_string.h"
 #include "results/oval_cmp_impl.h"
 #include "results/oval_results_impl.h"
 
@@ -358,6 +359,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	oval_variable_LOCAL_t *var;
 	struct oval_component *component;
 	struct oval_value_iterator *val_itr;
+	struct oscap_string *val_dump;
 
 	__attribute__nonnull__(variable);
 
@@ -395,16 +397,27 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 		return 0;
 	}
 
-	while (oval_value_iterator_has_more(val_itr)) {
+	val_dump = oscap_string_new();
+	oscap_string_append_char(val_dump, '\"');
+	while(1) {
 		struct oval_value *val;
 
 		val = oval_value_iterator_next(val_itr);
 		if (oval_value_cast(val, var->datatype) != 0) {
 			oval_value_iterator_free(val_itr);
 			var->flag = SYSCHAR_FLAG_ERROR;
+			oscap_string_free(val_dump);
 			return 0;
 		}
+		oscap_string_append_string(val_dump, oval_value_get_text(val));
+		if (!oval_value_iterator_has_more(val_itr)) {
+			break;
+		}
+		oscap_string_append_string(val_dump, "\", \"");
 	}
+	oscap_string_append_char(val_dump, '\"');
+	dI("Variable '%s' has values %s.\n", var->id, oscap_string_get_cstr(val_dump));
+	oscap_string_free(val_dump);
 	oval_value_iterator_free(val_itr);
 
 	return 0;
