@@ -256,7 +256,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #if defined(HAVE_ACL_EXTENDED_FILE)
 	int has_acl = acl_extended_file(path);
 	if (has_acl == -1) {
-		dW("acl_extended_file(%s), %s", path, strerror(errno));
+		dW("Getting extended ACL for file '%s' has failed, %s\n", path, strerror(errno));
 		return NULL;
 	}
 	return (has_acl == 1) ? gr_true : gr_false;
