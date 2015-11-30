@@ -390,6 +390,12 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 				if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
 					oval_syschar_collection_flag_t flag;
 					struct oval_variable *var = oval_entity_get_variable(entity);
+					const char *state_id = oval_state_get_id(state);
+					oval_variable_type_t var_type = oval_variable_get_type(var);
+					const char *var_type_text = oval_variable_type_get_text(var_type);
+					const char *var_id = oval_variable_get_id(var);
+					dI("State '%s' references %s '%s'.\n", state_id,
+						var_type_text, var_id);
 
 					ret = oval_probe_query_variable(sess, var);
 					if (ret == -1) {
