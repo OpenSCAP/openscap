@@ -140,10 +140,9 @@ def get_rpmbuild_paths():
 
     if not os.path.exists(sources):
         if subprocess.call(["rpmdev-setuptree"], stdout = sys.stdout, stderr = sys.stderr) != 0:
-            sys.stderr.write("Failed to setup rpmbuild tree. Please make sure you have rpmdev-setuptree "
+            raise CannotContinueError("Failed to setup rpmbuild tree. Please make sure you have rpmdev-setuptree "
                 "installed, or set it up manually. The SOURCES directory (%%{_sourcedir}) was expected at "
-                "'%s'\n" % (sources))
-            raise CannotContinueError()
+                "'%s'" % (sources))
 
     rpm = subprocess_check_output(["rpm", "--eval", "%{_rpmdir}"]).strip().decode('utf-8')
     srpm = subprocess_check_output(["rpm", "--eval", "%{_srcrpmdir}"]).strip().decode('utf-8')
@@ -322,7 +321,7 @@ def main():
 
         ret = subprocess.call(["rpmbuild", "-ba", spec_file_path], stdout = sys.stdout)
         if ret != 0:
-            raise RuntimeError("Failed to build RPM and SRPM for %s" % spec_file_path)
+            raise CannotContinueError("Failed to build RPM and SRPM for %s" % spec_file_path)
 
     finally:
         shutil.rmtree(temp_dir)
@@ -347,5 +346,6 @@ if __name__ == "__main__":
     try:
         ret = main()
         sys.exit(ret)
-    except CannotContinueError:
+    except CannotContinueError as e:
+        sys.stderr.write("%s\n" % e.message)
         sys.exit(1)

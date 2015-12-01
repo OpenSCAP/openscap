@@ -52,6 +52,8 @@ void *probe_input_handler(void *arg)
         SEAP_msg_t *seap_request, *seap_reply;
         SEXP_t *probe_in, *probe_out, *oid;
 
+	pthread_setname_np(pthread_self(), "input_handler");
+
 #define TH_CANCEL_ON  pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &cstate)
 #define TH_CANCEL_OFF pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cstate)
 
@@ -195,7 +197,6 @@ void *probe_input_handler(void *arg)
 
 								goto __error_reply;
 							}
-							pthread_setname_np(pair->pth->tid, "worker");
 						}
 
 						seap_request = NULL;

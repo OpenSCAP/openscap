@@ -47,6 +47,7 @@ void *probe_worker_runfn(void *arg)
 	SEXP_t *probe_res, *obj, *oid;
 	int     probe_ret;
 
+	pthread_setname_np(pthread_self(), "probe_worker");
 	dD("handling SEAP message ID %u\n", pair->pth->sid);
 	//
 	probe_ret = -1;
