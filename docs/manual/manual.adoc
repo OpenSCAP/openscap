@@ -1178,11 +1178,53 @@ available under the following directories:
 
 === Debugging
 Developers and users who intend to help find and fix possible bugs in OpenSCAP
-should follow these instructions on how to enable debugging in OpenSCAP:
+or possible bugs in their security policies have these possibilities:
+
+==== Verbose mode
+The verbose mode provides user additional information about process of system
+scanning. The mode is useful for diagnostics of SCAP content evaluation
+and also for debugging. It produces a detailed report log with various messages.
+The mode is available for ```xccdf eval```, ```oval eval```, ```oval collect```
+and ```oval analyse``` modules.
+There is no need to special compilation, the feature is available for all
+OpenSCAP users.
+
+To turn the verbose mode on, run ```oscap``` with both those two options:
+
+* ```--verbose VERBOSITY_LEVEL``` - Turn on verbose mode at specified
+verbosity level.
+* ```--verbose-log-file FILE``` - Provide name of a log file that the log
+will be written into.
+
+The ```VERBOSITY_LEVEL``` can be one of:
+
+1. *DEVEL* - the most detailed information for developers and bug hunters
+2. *INFO* - reports content processing and system scanning
+3. *WARNING* - possible failures which OpenSCAP can recover from
+4. *ERROR* - shows only serious errors
+
+If you omit one of those two options, verbose mode can't be turned on
+and you will get an error message.
+
+This is an example describing how to run OpenSCAP in verbose mode:
+
+----
+$ oscap oval eval --results results.xml --verbose INFO --verbose-log-file log.txt oval.xml
+----
+
+Then see the log using eg.:
+
+----
+$ less log.txt
+----
+
+Each message contains identifier and name of the process and thread which produced
+the message, then its verbosity level, and also source file, line and function
+describing specific place of its origin.
 
 ==== Debug mode
-The first and an obvious step is to re-compile library so debug mode is
-enabled.
+Debug mode is useful for programmers. You need to build OpenSCAP from source code
+with a custom configuration to enable the debug mode. Use this command:
 
 ------------------------------------
 $ ./configure --enable-debug && make
@@ -1191,13 +1233,12 @@ $ ./configure --enable-debug && make
 Debug mode provides:
 
 * debug symbols on and optimization off - you can use ```gdb```,
-* logs - ```oscap``` tool will generate *oscap_debug.log.\{pid}* log files for
 every process that was run.
 * http://www.gnu.org/software/gawk/manual/html_node/Assert-Function.html[assertions]
 are evaluated.
 
 ==== Testing library
-Next important step is to ```preload libopenscap_testing.so``` before you run
+Next important step is to preload ```libopenscap_testing.so``` before you run
  ```oscap``` tool. The testing library allows you to specify custom path to
 probes via *OVAL_PROBE_DIR* environment variable. The easiest way how to
 achieve that without need to install libopenscap, is to use shell
@@ -1209,7 +1250,7 @@ $ ./run utils/.libs/oscap xccdf eval ... whatever
 
 The *run* script is generated at configure time and it sets:
 
-* **LD_PRELOAD* and *LD_LIBRARY_PATH* - preload ```libopenscap_testing.so```
+* *LD_PRELOAD* and *LD_LIBRARY_PATH* - preload ```libopenscap_testing.so```
 * *OVAL_PROBE_DIR* - path to probes
 * *OSCAP_SCHEMA_PATH* - path to XCCDF, OVAL, CPE, ... schemas. (required
 for valudation)
@@ -1240,8 +1281,8 @@ Then you can run gdb with probe binary:
 $ ./run gdb src/OVAL/probes/.libs/probe_rpmverifypackage
 --------------------------------------------------------
 
-An input for the probe can be found in ```oscap_debug.log``` created by
-previous ```oscap``` tool run, e.g.:
+An input for the probe can be found in the log file created by
+previous ```oscap``` tool run in verbose mode, e.g.:
 
 ----
  ("seap.msg" ":id" 0 (("rpmverifypackage_object" ":id" "oval:org.mitre.oval.test:obj:1386" ":oval_version" 84541440 ) (("name" ":operation" 5 ":var_check" 1 ) "plymouth" ) (("behaviors" ":nodeps" "false" ":nodigest" "false" ":noscripts" "true" ":nosignature" "false" ) ) ) )
@@ -1253,11 +1294,6 @@ behaviour.
 
 * *OSCAP_FULL_VALIDATION=1* - validate all exported documents (slower)
 * *SEXP_VALIDATE_DISABLE=1* - do not validate SEXP expressions (faster)
-* *OSCAP_DEBUG_FILE="foo"* - name for debug files
-* *OSCAP_DEBUG_LEVEL=2* - set verbosity in debug logs
-** ```1``` for Errors
-** ```2``` for Errors & Warnings
-** ```3``` for Errors & Warnings & Info messages
 
 
 

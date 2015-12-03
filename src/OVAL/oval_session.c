@@ -30,6 +30,7 @@
 #include <stdlib.h>
 
 #include "common/alloc.h"
+#include "common/debug_priv.h"
 #include "common/util.h"
 #include "common/_error.h"
 #include "common/oscapxml.h"
@@ -96,6 +97,7 @@ struct oval_session *oval_session_new(const char *filename)
 		return NULL;
 	}
 
+	dI("Created a new OVAL session from input file '%s'.\n", filename);
 	return session;
 }
 
@@ -269,6 +271,9 @@ static int oval_session_load_variables(struct oval_session *session)
 				return 1;
 			}
 		}
+		dI("Loaded OVAL variables.\n");
+	} else {
+		dI("No external OVAL variables provided.\n");
 	}
 
 	return 0;
@@ -361,6 +366,7 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to set the OSCAP_PROBE_ROOT environment variable.");
 			return 1;
 		}
+		dI("OSCAP_PROBE_ROOT environment variable set to '%s'.\n", probe_root);
 	}
 #endif
 
@@ -375,6 +381,7 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 
 	session->res_model = oval_agent_get_results_model(session->sess);
 
+	dI("OVAL evaluation successfully finished.\n");
 	return 0;
 }
 

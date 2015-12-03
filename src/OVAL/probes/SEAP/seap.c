@@ -239,6 +239,7 @@ static void *__SEAP_cmdexec_worker (void *arg)
 
         _A(job != NULL);
         _A(job->cmd != NULL);
+	pthread_setname_np(pthread_self(), "command_worker");
 
         if (job->cmd->flags & SEAP_CMDFLAG_REPLY) {
                 (void) SEAP_cmd_exec (job->ctx, job->sd, SEAP_EXEC_WQUEUE,
@@ -286,7 +287,6 @@ int __SEAP_recvmsg_process_cmd (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                         return (-1);
                 }
 
-				pthread_setname_np(th, "command_worker");
                 pthread_attr_destroy (&th_attrs);
         } else {
                 if (cmd->flags & SEAP_CMDFLAG_REPLY) {

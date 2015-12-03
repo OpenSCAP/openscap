@@ -71,7 +71,7 @@ void SEAP_msg_free (SEAP_msg_t *msg)
 
         if (msg->attrs != NULL) {
                 for (; msg->attrs_cnt > 0; --msg->attrs_cnt) {
-                        dI("name=%s, value=%p\n",
+                        dD("name=%s, value=%p\n",
                            msg->attrs[msg->attrs_cnt - 1].name,
                            msg->attrs[msg->attrs_cnt - 1].value);
 

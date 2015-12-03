@@ -1,3 +1,23 @@
+openscap-1.2.7                                                  02-12-2015
+  - New features
+    - OVAL 5.11.1 fully supported
+    - oscap-vm - tool for offline scanning of virtual machines
+    - verbose mode
+    - added SLED, SLES and OpenSUSE CPE names
+    - show profile description in HTML report and guide
+    - group rules by PCI DSS identifier in HTML report
+    - preliminary support for Ansible Playbooks within xccdf:fix
+    - added "How to contribute" and "Versioning" documents
+  - Maintenance
+    - using bziped RHSA documents in oscap-docker
+    - fixed errors of sysctl probe
+    - fixed skip-valid option (issue #203)
+    - fixed segmentation faults in SCE content reporting (issue #231)
+    - fixed tracebacks of scap-as-rpm
+    - fixed invalid memory reads in rpmverifyfile probe (issue #212)
+    - updated README and user manual
+    - many small bugfixes and new tests
+
 openscap-1.2.6                                                  05-10-2015
   - New features
     - introduced OpenSCAP user manual

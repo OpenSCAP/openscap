@@ -795,7 +795,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                         ret = -1;
                 } else {
-                        oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
+                        dI("Starting probe on URI '%s'.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "%s probe not supported", probe_dsc->name);
@@ -863,7 +863,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                                 return (-1);
                         }
 
-                        oscap_dlprintf(DBG_I, "URI: %s.\n", probe_uri);
+                        dI("Starting probe on URI '%s'.\n", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
@@ -994,21 +994,21 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
 		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
 
-                dI("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
+                dD("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
 
 		for (r = 0, i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
                         if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
-                                dI("skipped: %s (not an external probe)\n", OSCAP_GSYM(__probe_meta)[i].stype);
+                                dD("skipped: %s (not an external probe)\n", OSCAP_GSYM(__probe_meta)[i].stype);
                                 continue;
                         }
 
 			if (stat(OSCAP_GSYM(__probe_meta)[i].pname, &st) != 0) {
-				dW("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(__probe_meta)[i].stype, errno);
+				dD("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(__probe_meta)[i].stype, errno);
 				continue;
 			}
 
 			if (!S_ISREG(st.st_mode)) {
-				dW("skipped: %s (not a regular file)\n", OSCAP_GSYM(__probe_meta)[i].stype);
+				dD("skipped: %s (not a regular file)\n", OSCAP_GSYM(__probe_meta)[i].stype);
 				continue;
 			}
 

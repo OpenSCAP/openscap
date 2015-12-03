@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e -o pipefail
+set -x
 
 function clean_processes {
 	# Processes are in stopped state. SIGCONT cause their exiting

@@ -92,15 +92,29 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
 	if (__debuglog_level == DBG_UNKNOWN) {
 		return false;
 	}
+	int fd;
 	if (is_probe) {
-		__debuglog_fp = fopen(filename, "a");
+		fd = open(filename, O_APPEND | O_WRONLY);
 	} else {
 		setenv("OSCAP_PROBE_VERBOSITY_LEVEL", verbosity_level, 1);
 		setenv("OSCAP_PROBE_VERBOSE_LOG_FILE", filename, 1);
-		__debuglog_fp = fopen(filename, "w");
+		/* Open a file. If the file doesn't exist, create it.
+		 * If the file exists, erase its content.
+		 * File is opened in "append" mode.
+		 * Append mode is necessary when more processes write to same file.
+		 * Every process using the log file must open it in append mode,
+		 * because otherwise some data may be missing on output.
+		 */
+		fd = open(filename, O_APPEND | O_CREAT | O_TRUNC | O_WRONLY,
+			S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 	}
+	if (fd == -1) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to open file %s: %s.", filename, strerror(errno));
+		return false;
+	}
+	__debuglog_fp = fdopen(fd, "a");
 	if (__debuglog_fp == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to open file %s.", filename);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to associate stream with file %s: %s.", filename, strerror(errno));
 		return false;
 	}
 	setbuf(__debuglog_fp, NULL);
@@ -232,6 +246,7 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
+		fputc('\n', __debuglog_fp);
 		break;
 	default:
 		fprintf(__debuglog_fp, "Attempt to dump a not supported object.\n");
