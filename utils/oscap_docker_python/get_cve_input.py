@@ -125,9 +125,9 @@ class getInputCVE(object):
 
         except KeyError:
             if self.DEBUG:
-                stderr.write("Response header of HTTP doesn't contain" \
+                stderr.write("Response header of HTTP doesn't contain " \
                       "\"last-modified\" field. Cannot determine version" \
-                      " of remote file \"{0}\"".format(dist_url))
+                      " of remote file \"{0}\"\n".format(dist_url))
             return False
 
         # The remote's datetime
