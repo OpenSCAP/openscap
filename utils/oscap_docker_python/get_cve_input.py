@@ -70,7 +70,7 @@ class getInputCVE(object):
             raise Exception("Unable to fetch CVE inputs due to {0}"
                             .format(url_error))
 
-        fh = open(dest_file, "w")
+        fh = open(dest_file, "wb")
         fh.write(resp.read())
         fh.close()
 

@@ -130,7 +130,7 @@ class OscapHelpers(object):
 
             sys.exit(1)
 
-        return run
+        return run.decode("utf-8")
 
     def _scan_cve(self, chroot, dist, scan_args):
         '''
