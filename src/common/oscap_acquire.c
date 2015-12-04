@@ -159,10 +159,15 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 	return output_filename;
 }
 
+static inline bool _str_startswith(const char *str, const char *with)
+{
+	return !strncmp(str, with, strlen(with));
+}
+
 bool
 oscap_acquire_url_is_supported(const char *url)
 {
-	return !strncmp(url, "http://", strlen("http://"));
+	return _str_startswith(url, "http://");
 }
 
 char *
