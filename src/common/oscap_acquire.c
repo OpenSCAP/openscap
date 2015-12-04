@@ -167,7 +167,7 @@ static inline bool _str_startswith(const char *str, const char *with)
 bool
 oscap_acquire_url_is_supported(const char *url)
 {
-	return _str_startswith(url, "http://");
+	return _str_startswith(url, "http://") || _str_startswith(url, "https://");
 }
 
 char *
