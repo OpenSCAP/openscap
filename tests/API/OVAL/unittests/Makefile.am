@@ -58,6 +58,8 @@ EXTRA_DIST += \
 	test_float_comparison.syschar.xml \
 	test_oval_empty_variable_evaluation.sh \
 	test_oval_empty_variable_evaluation.xml \
+	test_skip_valid.sh \
+	test_skip_valid.oval.xml \
 	test_xmlns_missing.oval.xml \
 	test_xmlns_missing.sh \
 	test_xsinil_envv58_pid.oval.xml \
