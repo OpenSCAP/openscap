@@ -715,7 +715,7 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	if (map) {
 		return oval_enumeration_get_text(map, subtype);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Warning: Zero family index");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL family.");
 		return _invalid;
 	}
 }
