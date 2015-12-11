@@ -54,6 +54,9 @@ endif
 if probe_fileextendedattribute_enabled
 UNIX_SUBDIRS += fileextendedattribute
 endif
+if probe_sysctl_enabled
+UNIX_SUBDIRS += sysctl
+endif
 endif
 
 if WANT_PROBES_LINUX

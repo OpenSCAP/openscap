@@ -545,6 +545,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/isainfo/Makefile
                  tests/probes/iflisteners/Makefile
 		 tests/probes/maskattr/Makefile
+		tests/probes/sysctl/Makefile
 
                  tests/probes/vgtest/Makefile
 
