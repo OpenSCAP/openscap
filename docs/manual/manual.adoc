@@ -1163,6 +1163,7 @@ installed on your system:
 * libcurl-devel
 * libxslt-devel
 * libtool
+* perl-XML-XPath
 
 . Run library self-checks by executing the following command: # make check
 
