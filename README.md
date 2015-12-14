@@ -56,6 +56,7 @@ Build dependencies:
  * python-devel
  * rpm-devel
  * swig
+ * bzip2-devel
 
 3) Run library self-checks by executing the following command:
 ```
