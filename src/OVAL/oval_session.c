@@ -440,8 +440,6 @@ int oval_session_export(struct oval_session *session)
 cleanup:
 	if (result)
 		oscap_source_free(result);
-	if (dir_model)
-		oval_directives_model_free(dir_model);
 	return ret;
 }
 
