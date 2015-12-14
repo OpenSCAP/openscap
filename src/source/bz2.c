@@ -193,7 +193,11 @@ bool bz2_memory_is_bzip(const char* memory, const size_t size){
 
 bool bz2_fd_is_bzip(int fd)
 {
-	FILE* file = fdopen(dup(fd), "r");
+	int fd_dup = dup(fd);
+	if (fd_dup == -1) {
+		return false;
+	}
+	FILE* file = fdopen(fd_dup, "r");
 	bool is_bzip;
 	if (file == NULL) {
 		return false; // cannot open/determine file type
