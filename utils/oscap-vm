@@ -107,7 +107,8 @@ elif [ "$1" == "domain" ]; then
 fi
 
 # Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
-export OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT"; pwd)"
+export OSCAP_PROBE_ROOT
+OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT"; pwd)"
 export OSCAP_PROBE_OS_NAME="Linux" # TODO: This may be wrong!
 export OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)" # TODO
 export OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)" # TODO
