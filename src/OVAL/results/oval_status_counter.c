@@ -58,7 +58,7 @@ void oval_status_counter_add_status(struct oval_status_counter *counter, oval_sy
 
 oval_result_t oval_status_counter_get_result(struct oval_status_counter *counter, oval_existence_t check_existence)
 {
-	oval_result_t result;
+	oval_result_t result = OVAL_RESULT_UNKNOWN;
 	switch (check_existence) {
 	case OVAL_ALL_EXIST:
 		if (counter->exists_cnt >= 1 && counter->does_not_exist_cnt == 0
