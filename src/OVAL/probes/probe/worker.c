@@ -208,7 +208,9 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 		}
 
 		if (varref == NULL) {
-			dE("Unexpected error: variable id \"%s\" not found in varrefs.", SEXP_string_cstr(vid));
+			char *var_id = SEXP_string_cstr(vid);
+			dE("Unexpected error: variable id \"%s\" not found in varrefs.", var_id);
+			free(var_id);
 			SEXP_vfree(vid, ent_name, vidx_name, vidx_val, NULL);
 			probe_varref_destroy_ctx(ctx);
 			return -1;
