@@ -394,6 +394,7 @@ int oval_session_export(struct oval_session *session)
 		/* OVAL Directives can be used only if there are OVAL Resutls and these are
 		 * only available if there is a Results model which mean that either
 		 * evaluation or analyse was performed. */
+		dir_model = oval_directives_model_new();
 		if (oval_directives_model_import_source(dir_model, session->oval.directives) != 0)
 			goto cleanup;
 	}
