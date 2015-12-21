@@ -330,7 +330,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			if (variable == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL,
 						"Could not found variable '%s' referenced by var_ref element.", varref);
-				return_code = 1;
+				return_code = -1;
 			} else {
 				oscap_free(varref);
 				varref = NULL;
