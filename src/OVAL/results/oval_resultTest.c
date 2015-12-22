@@ -418,6 +418,10 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 			oval_datatype_t state_entity_val_datatype = oval_value_get_datatype(var_val);
 
 			var_val_res = oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
+			if (var_val_res == OVAL_RESULT_ERROR) {
+				dE("Error occured when comparing a variable '%s' value '%s' with collected item entity = '%s'",
+					oval_variable_get_id(state_entity_var), state_entity_val_text, oval_sysent_get_value(item_entity));
+			}
 			ores_add_res(&var_ores, var_val_res);
 		}
 		oval_value_iterator_free(val_itr);
