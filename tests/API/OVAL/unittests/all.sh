@@ -25,4 +25,5 @@ test_run "textfilecontent: 'line' comparison" $srcdir/test_filecontent_line.sh
 test_run "anyxml element" $srcdir/test_anyxml.sh
 test_run "invalid regular expression" $srcdir/test_invalid_regex.sh
 test_run "skip validation" $srcdir/test_skip_valid.sh
+test_run "object component data type evaluation" $srcdir/test_object_component_type.sh
 test_exit
