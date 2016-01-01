@@ -23,6 +23,8 @@ EXTRA_DIST = \
 	test_comment.sh \
 	test_cim_datetime.sh \
 	cim_datetime.xml \
+	test_directives.sh \
+	test_directives.xml \
 	test_int_comparison.oval.xml \
 	test_int_comparison.sh \
 	test_int_comparison.syschar.xml \
