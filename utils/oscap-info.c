@@ -72,6 +72,61 @@ static void print_time(const char *file) {
 	}
 }
 
+static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
+{
+	/* import xccdf */
+	struct xccdf_benchmark* bench = NULL;
+        bench = xccdf_benchmark_import_source(xccdf_source);
+	if(!bench) {
+		return 1;
+	}
+
+	/* print profiles */
+	struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
+	printf("\t\tProfiles:\n");
+	while (xccdf_profile_iterator_has_more(prof_it)) {
+		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
+		printf("\t\t\t%s\n", xccdf_profile_get_id(prof));
+	}
+	xccdf_profile_iterator_free(prof_it);
+
+	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+	struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
+	struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
+	printf("\t\tReferenced check files:\n");
+	while (oscap_file_entry_iterator_has_more(files_it)) {
+		struct oscap_file_entry *file_entry;
+
+		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+
+		printf("\t\t\t%s\n", oscap_file_entry_get_file(file_entry));
+		printf("\t\t\t\tsystem: %s\n", oscap_file_entry_get_system(file_entry));
+	}
+	oscap_file_entry_iterator_free(files_it);
+	oscap_file_entry_list_free(referenced_files);
+
+	struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
+	if (xccdf_result_iterator_has_more(res_it))
+		printf("\t\tTest Results:\n");
+	struct xccdf_result * test_result = NULL;
+	while (xccdf_result_iterator_has_more(res_it)) {
+		test_result = xccdf_result_iterator_next(res_it);
+		printf("\t\t\t%s\n", xccdf_result_get_id(test_result));
+	}
+	xccdf_result_iterator_free(res_it);
+
+	xccdf_policy_model_free(policy_model);
+	// already freed by policy!
+	//xccdf_benchmark_free(bench);
+
+	if (oscap_err()) {
+		/* This might have set error, when some of the removals failed.
+		   No need to abort this operation, we can safely procceed. */
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+		oscap_clearerr();
+	}
+	return 0;
+}
 
 static int app_info(const struct oscap_action *action)
 {
@@ -264,61 +319,13 @@ static int app_info(const struct oscap_action *action)
 					goto cleanup;
 				}
 
-				/* import xccdf */
-				struct xccdf_benchmark* bench = NULL;
-		                bench = xccdf_benchmark_import_source(xccdf_source);
-				if(!bench) {
+				if (_print_sds_component_xccdf_benchmark(xccdf_source)) {
 					oscap_string_iterator_free(checklist_it);
 					ds_stream_index_iterator_free(sds_it);
 					ds_sds_session_free(session);
 					goto cleanup;
 				}
 				ds_sds_session_reset(session);
-
-				/* print profiles */
-				struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
-				printf("\t\tProfiles:\n");
-				while (xccdf_profile_iterator_has_more(prof_it)) {
-					struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
-					printf("\t\t\t%s\n", xccdf_profile_get_id(prof));
-				}
-				xccdf_profile_iterator_free(prof_it);
-
-				struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
-				struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
-				struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
-				printf("\t\tReferenced check files:\n");
-				while (oscap_file_entry_iterator_has_more(files_it)) {
-					struct oscap_file_entry *file_entry;
-
-					file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
-
-					printf("\t\t\t%s\n", oscap_file_entry_get_file(file_entry));
-					printf("\t\t\t\tsystem: %s\n", oscap_file_entry_get_system(file_entry));
-				}
-				oscap_file_entry_iterator_free(files_it);
-				oscap_file_entry_list_free(referenced_files);
-
-				struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
-				if (xccdf_result_iterator_has_more(res_it))
-					printf("\t\tTest Results:\n");
-				struct xccdf_result * test_result = NULL;
-				while (xccdf_result_iterator_has_more(res_it)) {
-					test_result = xccdf_result_iterator_next(res_it);
-					printf("\t\t\t%s\n", xccdf_result_get_id(test_result));
-				}
-				xccdf_result_iterator_free(res_it);
-
-				xccdf_policy_model_free(policy_model);
-				// already freed by policy!
-				//xccdf_benchmark_free(bench);
-
-				if (oscap_err()) {
-					/* This might have set error, when some of the removals failed.
-					   No need to abort this operation, we can safely procceed. */
-					fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-					oscap_clearerr();
-				}
 			}
 			oscap_string_iterator_free(checklist_it);
 
