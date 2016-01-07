@@ -1162,7 +1162,8 @@ installed on your system:
 * perl-devel
 * libcurl-devel
 * libxslt-devel
-* libtools
+* libtool
+* perl-XML-XPath
 
 . Run library self-checks by executing the following command: # make check
 

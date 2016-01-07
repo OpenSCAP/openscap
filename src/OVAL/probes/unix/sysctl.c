@@ -175,6 +175,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 					dI("Skippping file %s\n", mibpath);
 					oval_ftsent_free(ofts_ent);
 					SEXP_free(se_mib);
+					fclose(fp);
 					continue;
 				} else {
 					dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",

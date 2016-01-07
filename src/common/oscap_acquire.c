@@ -104,10 +104,15 @@ oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 	return fd;
 }
 
+static inline bool _str_startswith(const char *str, const char *with)
+{
+	return !strncmp(str, with, strlen(with));
+}
+
 bool
 oscap_acquire_url_is_supported(const char *url)
 {
-	return !strncmp(url, "http://", strlen("http://"));
+	return _str_startswith(url, "http://") || _str_startswith(url, "https://");
 }
 
 char *

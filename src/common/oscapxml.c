@@ -174,6 +174,8 @@ const char *oscap_document_type_to_string(oscap_document_type_t type)
 		return "SCAP Source Datastream";
 	case OSCAP_DOCUMENT_XCCDF:
 		return "XCCDF Checklist";
+	case OSCAP_DOCUMENT_XCCDF_TAILORING:
+		return "XCCDF Tailoring";
 	case OSCAP_DOCUMENT_SCE_RESULT:
 		return "SCE Results";
 	case OSCAP_DOCUMENT_CPE_DICTIONARY:
