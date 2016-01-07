@@ -183,6 +183,7 @@ static void __oscap_vdlprintf(int level, const char *file, const char *fn, size_
 		l, f, line, fn);
 #endif
 	vfprintf(__debuglog_fp, fmt, ap);
+	fputc('\n', __debuglog_fp);
 
 	if (flock(fileno(__debuglog_fp), LOCK_UN) == -1) {
 		/* __UNLOCK_FP; */
