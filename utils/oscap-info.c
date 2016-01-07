@@ -319,11 +319,13 @@ static int app_info(const struct oscap_action *action)
 					goto cleanup;
 				}
 
-				if (_print_sds_component_xccdf_benchmark(xccdf_source)) {
-					oscap_string_iterator_free(checklist_it);
-					ds_stream_index_iterator_free(sds_it);
-					ds_sds_session_free(session);
-					goto cleanup;
+				if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
+					if (_print_sds_component_xccdf_benchmark(xccdf_source)) {
+						oscap_string_iterator_free(checklist_it);
+						ds_stream_index_iterator_free(sds_it);
+						ds_sds_session_free(session);
+						goto cleanup;
+					}
 				}
 				ds_sds_session_reset(session);
 			}
