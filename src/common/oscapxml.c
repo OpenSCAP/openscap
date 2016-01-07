@@ -632,7 +632,7 @@ int oscap_determine_document_type(const char *document, oscap_document_type_t *d
                 return -1;
         }
 
-        dI("Identified document type: %s\n", elm_name);
+        dI("Identified document type: %s", elm_name);
 
         xmlFreeTextReader(reader);
         return 0;

@@ -126,7 +126,7 @@ static bool xccdf_policy_filter_selected(void *item, void *policy)
 
         struct xccdf_item * titem = xccdf_benchmark_get_item(benchmark, xccdf_select_get_item((struct xccdf_select *) item));
         if (titem == NULL) {
-            oscap_dlprintf(DBG_E, "Item \"%s\" does not exist. Remove it from Profile !\n", xccdf_select_get_item((struct xccdf_select *) item));
+            dE("Item \"%s\" does not exist. Remove it from Profile !", xccdf_select_get_item((struct xccdf_select *) item));
             return false;
         }
 	return ((xccdf_item_get_type(titem) == XCCDF_RULE) &&
@@ -305,7 +305,7 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
      */
     if ((A == 0) || (B == 0)
 	|| A > XCCDF_RESULT_INFORMATIONAL || B > XCCDF_RESULT_INFORMATIONAL) {
-	oscap_dlprintf(DBG_E, "Bad test results %d, %d.\n", A, B);
+	dE("Bad test results %d, %d.", A, B);
 	return 0;
     }
 
@@ -318,7 +318,7 @@ static xccdf_test_result_type_t _resolve_operation(int A, int B, xccdf_bool_oper
             value = (xccdf_test_result_type_t) RESULT_TABLE_OR[A][B];
             break;
 	default:
-	    oscap_dlprintf(DBG_E, "Operation not supported.\n");
+	    dE("Operation not supported.");
             return 0;
             break;
     }
@@ -2280,7 +2280,7 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
         oscap_free(item_score);
     } else {
         xccdf_score_free(score);
-        oscap_dlprintf(DBG_E, "Scoring system \"%s\" is not supported.\n", scsystem);
+        dE("Scoring system \"%s\" is not supported.", scsystem);
         return NULL;
     }
 

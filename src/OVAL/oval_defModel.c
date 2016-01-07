@@ -214,7 +214,7 @@ struct oval_definition_model * oval_definition_model_import(const char *file)
         struct oval_definition_model *model = oval_definition_model_new();
         int ret = oval_definition_model_merge(model,file);
         if (ret == -1 ) {
-		oscap_dlprintf(DBG_E, "Failed to merge the definition model from: %s.\n", file);
+		dE("Failed to merge the definition model from: %s.", file);
                 oval_definition_model_free(model);
                 model = NULL;
         }

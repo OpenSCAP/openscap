@@ -317,7 +317,7 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
                         } else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_system_parse_tag , NULL);
                         } else {
-                                dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+                                dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
                                 oval_parser_skip_tag(reader, context);
                         }
 

@@ -1399,7 +1399,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 
         list_it[0].block = SEXP_LCASTP(v_dsc.mem)->b_addr;
 
-        dI("Sorting blocks & building iterator array\n");
+        dI("Sorting blocks & building iterator array");
 
         while (list_it[list_it_count - 1].block != NULL) {
                 /* initialize the rest of the iterator */
@@ -1413,7 +1413,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 
                 /* reallocate the iterator array if needed */
                 if (list_it_count == list_it_alloc) {
-                        dI("Reallocating iterator array: %z -> %z\n",
+                        dI("Reallocating iterator array: %z -> %z",
                            list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
 
                         list_it_alloc += SEXP_LISTIT_ARRAY_INC;
@@ -1426,7 +1426,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
         }
 
         --list_it_count;
-        dI("Iterator count = %zu\n", list_it_count);
+        dI("Iterator count = %zu", list_it_count);
 
         if (list_it_count > 0) {
                 /*
@@ -1463,7 +1463,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 								    list_it[min_i].count - 1, sizeof(SEXP_t), (void *)&tmp_v,
 								    (int(*)(void *, void *))compare, &dst_i);
 
-						dI("dst_i = %zu\n", dst_i);
+						dI("dst_i = %zu", dst_i);
 
 						/* make place for the old value in the min. value source block */
 						memmove(list_it[min_i].block->memb, list_it[min_i].block->memb + 1,
@@ -2083,7 +2083,7 @@ void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const
         SEXP_val_t v_dsc;
 
 #ifdef SEXP_VALIDATE_DEBUG
-        dI("VALIDATE: s_exp=%p (%s:%u:%s)\n", s_exp, file, line, func);
+        dI("VALIDATE: s_exp=%p (%s:%u:%s)", s_exp, file, line, func);
 #endif
 
         if (getenv ("SEXP_VALIDATE_DISABLE") != NULL)

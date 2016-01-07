@@ -116,7 +116,7 @@ struct rpminfo_global {
 	do { \
 		int prev_cancel_state = -1; \
 		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex\n"); \
+			dE("Can't lock mutex"); \
 			return (-1); \
 		} \
 		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
@@ -126,7 +126,7 @@ struct rpminfo_global {
 	do { \
 		int prev_cancel_state = -1; \
 		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting...\n"); \
+			dE("Can't unlock mutex. Aborting..."); \
 			abort(); \
 		} \
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
@@ -182,7 +182,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 
 	if (regexec(&g_keyid_regex, str, 1, keyid_match, 0) != 0) {
 		sid = NULL;
-		dW("Failed to extract the Key ID value: regex=\"%s\", string=\"%s\"\n",
+		dW("Failed to extract the Key ID value: regex=\"%s\", string=\"%s\"",
 		   g_keyid_regex_string, str);
 	} else {
 		size_t keyid_start, keyid_length;
@@ -306,7 +306,7 @@ void *probe_init (void)
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-                dI("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
+                dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
         }
 
@@ -319,7 +319,7 @@ void *probe_init (void)
         pthread_mutex_init (&(g_rpm.mutex), NULL);
 
 	if (regcomp(&g_keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {
-		dE("regcomp(%s) failed.\n");
+		dE("regcomp(%s) failed.");
 		return NULL;
 	}
 
@@ -430,7 +430,7 @@ int probe_main (probe_ctx *ctx, void *arg)
         val = probe_ent_getval (ent);
 
         if (val == NULL) {
-                dI("%s: no value\n", "name");
+                dI("%s: no value", "name");
                 SEXP_free (ent);
                 return (PROBE_ENOVAL);
         }
@@ -464,11 +464,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 		SEXP_free (ent);
                 switch (errno) {
                 case EINVAL:
-                        dI("%s: invalid value type\n", "name");
+                        dI("%s: invalid value type", "name");
 			return PROBE_EINVAL;
                         break;
                 case EFAULT:
-                        dI("%s: element not found\n", "name");
+                        dI("%s: element not found", "name");
 			return PROBE_ENOELM;
                         break;
 		default:
@@ -481,10 +481,10 @@ int probe_main (probe_ctx *ctx, void *arg)
         /* get info from RPM db */
         switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
         case 0: /* Not found */
-                dI("Package \"%s\" not found.\n", request_st.name);
+                dI("Package \"%s\" not found.", request_st.name);
                 break;
         case -1: /* Error */
-                dI("get_rpminfo failed\n");
+                dI("get_rpminfo failed");
 
                 item = probe_item_create(OVAL_LINUX_RPM_INFO, NULL,
                                          "name", OVAL_DATATYPE_STRING, request_st.name,

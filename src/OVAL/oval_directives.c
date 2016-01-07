@@ -326,7 +326,7 @@ static int oval_directives_model_parse(xmlTextReaderPtr reader, struct oval_pars
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, class_dir);
 				oscap_free(class_str);
 			} else {
-				dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+				dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 				oval_parser_skip_tag(reader, context);
 			}
 
@@ -379,7 +379,7 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 			if (content != OVAL_DIRECTIVE_CONTENT_UNKNOWN) {
 				oval_result_directives_set_content(directives, type, content);
 			} else {
-				oscap_dlprintf(DBG_W, "Cannot resolve @content: \"%s\".\n", contentstr);
+				dW("Cannot resolve @content: \"%s\".", contentstr);
 				retcode = 1;
 			}
 			oscap_free(contentstr);
@@ -387,7 +387,7 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 			content = OVAL_DIRECTIVE_CONTENT_FULL;
 		}
 	} else {
-		oscap_dlprintf(DBG_W, "Cannot resolve <%s>.\n", name);
+		dW("Cannot resolve <%s>.", name);
 		retcode = 1;
 	}
 	oscap_free(name);

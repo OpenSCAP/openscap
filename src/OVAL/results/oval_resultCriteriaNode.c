@@ -137,7 +137,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 		} break;
 	default:
 		va_end(ap);
-		dE("Unsupported criteria node type: %d.\n", type);
+		dE("Unsupported criteria node type: %d.", type);
 		return NULL;
 	}
 	node->sys = sys;
@@ -562,12 +562,12 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
 						     variable_instance);
 		oscap_free(definition_ref);
 	} else {
-		dW("unhandled criteria node: <%s>.\n",(char *)localName);
+		dW("unhandled criteria node: <%s>.",(char *)localName);
 		oval_parser_skip_tag(reader, context);
 	}
 
 	if (node==NULL || rc==-1) {
-		dE("Can't parse result criteria node.\n");
+		dE("Can't parse result criteria node.");
 		return 1;
 	}
 

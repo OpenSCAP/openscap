@@ -214,7 +214,7 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 			oscap_free(product);
 		}
 	} else {
-		oscap_dlprintf(DBG_I, "Skipping tag: %s\n", tagname);
+		dI("Skipping tag: %s", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);

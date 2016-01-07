@@ -165,7 +165,7 @@ static int oval_varref_attr_to_sexp(void *sess, struct oval_entity *entity, stru
 
 	var = oval_entity_get_variable(entity);
 	if (oval_probe_query_variable(sess, var) != 0) {
-		dE("Can't convert variable reference to SEXP.\n");
+		dE("Can't convert variable reference to SEXP.");
 		return -1;
 	}
 
@@ -188,7 +188,7 @@ static int oval_varref_attr_to_sexp(void *sess, struct oval_entity *entity, stru
 	}
 
 	if (ret) {
-		dW("%s\n", msg);
+		dW("%s", msg);
 		oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
 		oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);
 		return ret;
@@ -241,7 +241,7 @@ static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_d
 	if (flag == SYSCHAR_FLAG_DOES_NOT_EXIST) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).", oval_variable_get_id(var));
-		dW("%s\n", msg);
+		dW("%s", msg);
 		if (syschar != NULL)  {
 			oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
 			oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);
@@ -661,7 +661,7 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
         subtype_name = oval_subtype_to_str(oval_state_get_subtype(state));
 
 	if (subtype_name == NULL) {
-		dI("FAIL: unknown subtype: %d\n", oval_state_get_subtype(state));
+		dI("FAIL: unknown subtype: %d", oval_state_get_subtype(state));
 		return (-1);
 	}
 
@@ -863,7 +863,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 				snprintf(val, sizeof(val), "%" PRIu64, SEXP_number_getu_64(sval));
 				break;
 			default:
-				dE("Unexpected SEXP number datatype: %d, name: '%s'.\n", sndt, key);
+				dE("Unexpected SEXP number datatype: %d, name: '%s'.", sndt, key);
 				valp = '\0';
 				break;
 			}
@@ -876,7 +876,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 			valp = SEXP_string_cstr(sval);
 			break;
 		default:
-			dE("Unexpected OVAL datatype: %d, '%s', name: '%s'.\n",
+			dE("Unexpected OVAL datatype: %d, '%s', name: '%s'.",
 			   dt, oval_datatype_get_text(dt), key);
 			valp = '\0';
 			break;
@@ -926,7 +926,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 
 	int type = oval_str_to_subtype(name);
 
-	dI("Syschar entry type: %d '%s' => %s\n", type, name,
+	dI("Syschar entry type: %d '%s' => %s", type, name,
 	   ((type != OVAL_SUBTYPE_UNKNOWN) ? "OK" : "FAILED to decode"));
 #ifndef NDEBUG
 	if (type == OVAL_SUBTYPE_UNKNOWN)

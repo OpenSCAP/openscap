@@ -55,12 +55,12 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 
 	input_document = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", input_text);
 	if ((doc = xmlParseMemory(input_document, strlen(input_document))) == NULL) {
-		dW("Could not xmlParseMemory: '%s'\n", input_document);
+		dW("Could not xmlParseMemory: '%s'", input_document);
 		free(input_document);
 		return 1;
 	}
 	if ((root = xmlDocGetRootElement(doc)) == NULL) {
-		dW("Could not xmlDocGetRootElement: '%s'\n", input_document);
+		dW("Could not xmlDocGetRootElement: '%s'", input_document);
 		xmlFreeDoc(doc);
 		free(input_document);
 		return 1;
@@ -71,7 +71,7 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 	if (output_text != NULL) {
 		// We cannot simply xmlDumpMemory, because we need to skip the upper <x/> element.
 		if ((root = xmlDocGetRootElement(doc)) == NULL) {
-			dW("Could not get xmlDocGetRootElement of result document.\n");
+			dW("Could not get xmlDocGetRootElement of result document.");
 			xmlFreeDoc(doc);
 			return 1;
 		}
@@ -80,7 +80,7 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 		while (child != NULL) {
 			int size = xmlNodeDump(buff, doc, child, 0, 0);
 			if (size == 0) {
-				dW("xmlBufNodeDump returns zero.\n");
+				dW("xmlBufNodeDump returns zero.");
 			}
 			child = child->next;
 		}

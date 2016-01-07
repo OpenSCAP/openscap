@@ -93,12 +93,12 @@ int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEA
                 /* rec is freed by SEAP_cmdtbl_add */
                 break;
         case SEAP_CMDTBL_ECOLL:
-                dI("Can't register command: code=%u, tbl=%p: already registered.\n",
+                dI("Can't register command: code=%u, tbl=%p: already registered.",
                    code, (void *)tbl);
                 SEAP_cmdrec_free (rec);
                 return (-1);
         case -1:
-                dI("Can't register command: code=%u, func=%p, tbl=%p, arg=%p: errno=%u, %s.\n",
+                dI("Can't register command: code=%u, func=%p, tbl=%p, arg=%p: errno=%u, %s.",
                    code, (void *)func, (void *)tbl, arg, errno, strerror (errno));
                 SEAP_cmdrec_free (rec);
                 return (-1);
@@ -145,7 +145,7 @@ SEAP_cmdtbl_t *SEAP_cmdtbl_new (void)
 
 #if defined(SEAP_THREAD_SAFE)
         if (pthread_rwlock_init (&t->lock, NULL) != 0) {
-                dI("Can't initialize rwlock: %u, %s.\n",
+                dI("Can't initialize rwlock: %u, %s.",
                    errno, strerror (errno));
                 sm_free (t);
                 return (NULL);
@@ -245,7 +245,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
         }
 #endif
 
-        dI("code=%u, args=%p\n", code, args);
+        dI("code=%u, args=%p", code, args);
 
         dsc = SEAP_desc_get (ctx->sd_table, sd);
 
@@ -253,7 +253,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 return (NULL);
 
         if (flags & (SEAP_EXEC_LOCAL | SEAP_EXEC_WQUEUE)) {
-                dI("EXEC_LOCAL\n");
+                dI("EXEC_LOCAL");
 
                 /* get table pointers */
                 if (flags & SEAP_EXEC_WQUEUE) {
@@ -281,7 +281,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         if ((rec = SEAP_cmdtbl_get (tbl[i], code)) != NULL)
                                 break;
 
-                dI("rec=%p, w=%u\n", rec, (flags & SEAP_EXEC_WQUEUE) ? 1 : 0);
+                dI("rec=%p, w=%u", rec, (flags & SEAP_EXEC_WQUEUE) ? 1 : 0);
 
                 if (rec == NULL) {
 
@@ -290,13 +290,13 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 /* execute command */
                 res = rec->func (args, rec->arg);
 
-                dI("res=%p\n", res);
+                dI("res=%p", res);
 
                 /* filter result */
                 if (func != NULL)
                         res = func (res, funcarg);
 
-                dI("func@%p(res)=%p\n", func, res);
+                dI("func@%p(res)=%p", func, res);
 
                 /* delete command from the wait queue */
                 if (flags & SEAP_EXEC_WQUEUE) {
@@ -308,7 +308,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                 SEAP_cmd_t    *cmdptr;
                 SEAP_packet_t *packet;
 
-                dI("EXEC_REMOTE\n");
+                dI("EXEC_REMOTE");
 
                 packet = SEAP_packet_new ();
                 cmdptr = SEAP_packet_settype (packet, SEAP_PACKET_CMD);
@@ -345,12 +345,12 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         case 0:
                                 break;
                         case SEAP_CMDTBL_ECOLL:
-                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.\n",
+                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.",
                                    rec->code, (void *)dsc->cmd_w_table, sd);
                                 SEAP_cmdrec_free (rec);
                                 return (NULL);
                         case -1:
-                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.\n",
+                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.",
                                    rec->code, (void *)dsc->cmd_w_table, sd, errno, strerror (errno));
                                 SEAP_cmdrec_free (rec);
                                 return (NULL);
@@ -362,7 +362,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
 
                         if (SEAP_packet_send (ctx, sd, packet) != 0) {
                                 protect_errno {
-                                        dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                                        dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                                         SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
                                         SEAP_packet_free (packet);
                                 }
@@ -388,7 +388,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                         pthread_mutex_unlock(&h.mtx);
 
                                         if (SEAP_packet_recv(ctx, sd, &packet_rcv) != 0) {
-                                                dI("FAIL: ctx=%p, sd=%d, errno=%u, %s.\n", ctx, sd, errno, strerror(errno));
+                                                dI("FAIL: ctx=%p, sd=%d, errno=%u, %s.", ctx, sd, errno, strerror(errno));
                                                 return(NULL);
                                         }
 
@@ -430,7 +430,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 }
                         }
 
-                        dI("cond return: h.args=%p\n", h.args);
+                        dI("cond return: h.args=%p", h.args);
 
                         if (h.args == NULL)
                                 res = NULL;
@@ -462,12 +462,12 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         case 0:
                                 break;
                         case SEAP_CMDTBL_ECOLL:
-                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.\n",
+                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.",
                                    rec->code, (void *)dsc->cmd_w_table, sd);
                                 SEAP_cmdrec_free (rec);
                                 return (NULL);
                         case -1:
-                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.\n",
+                                dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.",
                                    rec->code, (void *)dsc->cmd_w_table, sd, errno, strerror (errno));
                                 SEAP_cmdrec_free (rec);
                                 return (NULL);
@@ -479,7 +479,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
 
                         if (SEAP_packet_send (ctx, sd, packet) != 0) {
                                 protect_errno {
-                                        dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                                        dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                                         SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
                                         SEAP_cmdrec_free(rec);
                                         SEAP_packet_free (packet);

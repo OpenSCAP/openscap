@@ -174,7 +174,7 @@ oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_opera
 			result = OVAL_RESULT_FALSE;
 		break;
 	default:
-		dE("Unexpected compare operation: %d.\n", op);
+		dE("Unexpected compare operation: %d.", op);
 		assert(false);
 	}
 
@@ -204,7 +204,7 @@ static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask
 	}
 
 	if (inet_pton(AF_INET, s, ip_out) <= 0)
-		dW("inet_pton() failed.\n");
+		dW("inet_pton() failed.");
 	else
 		result = 0;
 
@@ -232,7 +232,7 @@ static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out
 	}
 
 	if (inet_pton(AF_INET6, s, ip_out) <= 0)
-		dW("inet_pton() failed.\n");
+		dW("inet_pton() failed.");
 	else
 		result = 0;
 

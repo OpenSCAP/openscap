@@ -210,7 +210,7 @@ static int get_uids(int pid, struct result_info *r)
 	sf = fopen(buf, "rt");
 	if (sf) {
 		if (fscanf(sf, "%u", &r->loginuid) < 1) {
-			dW("fscanf failed from %s\n", buf);
+			dW("fscanf failed from %s", buf);
 		}
 		fclose(sf);
 	}
@@ -244,7 +244,7 @@ static char *get_selinux_label(int pid) {
 
 	if (getpidcon(pid, &pid_context) == -1) {
 		/* error getting pid selinux context */
-		dW("Can't get selinux context for process %d\n", pid);
+		dW("Can't get selinux context for process %d", pid);
 		return NULL;
 	}
 	context = context_new(pid_context);
@@ -268,19 +268,19 @@ static char **get_posix_capability(int pid) {
 #if LIBCAP_VERSION == 1
 	pid_caps = cap_init();
 	if (capgetp(pid, pid_caps) == -1) {
-		dW("Can't get capabilities for process %d\n", pid);
+		dW("Can't get capabilities for process %d", pid);
 		cap_free(pid_caps);
 		return NULL;
 	}
 #elif LIBCAP_VERSION == 2
 	pid_caps = cap_get_pid(pid);
 #else
-	dW("Can't detect libcap version\n");
+	dW("Can't detect libcap version");
 	return NULL;
 #endif
 
 	if (pid_caps == NULL) {
-		dW("Can't get capabilities for process %d\n", pid);
+		dW("Can't get capabilities for process %d", pid);
 		return NULL;
 	}
 
@@ -515,7 +515,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 
 
 		err = 0; // If we get this far, no permission problems
-		dI("Have command: %s\n", cmd);
+		dI("Have command: %s", cmd);
 		cmd_sexp = SEXP_string_newf("%s", cmd);
 		pid_sexp = SEXP_number_newu_32(pid);
 		if ((cmd_sexp == NULL || probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) &&
@@ -704,7 +704,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 
 
 		err = 0; // If we get this far, no permission problems
-		dI("Have command: %s\n", psinfo->pr_fname);
+		dI("Have command: %s", psinfo->pr_fname);
 		cmd_sexp = SEXP_string_newf("%s", psinfo->pr_fname);
 		if (probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) {
 			struct result_info r;

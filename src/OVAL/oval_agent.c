@@ -499,13 +499,13 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
 			/* Add variable to variable model */
 			oval_variable_model_add(session->cur_var_model, name, "Unknown", o_type, value);
 			oval_variable_bind_ext_var(variable, session->cur_var_model, name);
-			oscap_dlprintf(DBG_I, "Adding external variable %s.\n", name);
+			dI("Adding external variable %s.", name);
 		} else {
 			/* Skip this variable (we assume it has same values otherwise conflict was detected) */
-			oscap_dlprintf(DBG_W, "Skipping external variable %s.\n", name);
+			dW("Skipping external variable %s.", name);
 		}
         } else {
-                oscap_dlprintf(DBG_W, "Variable %s does not exist, skipping.\n", name);
+                dW("Variable %s does not exist, skipping.", name);
         }
     }
 

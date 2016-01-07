@@ -257,7 +257,7 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	int defvsn = oval_definition_get_version(definition->definition);
 	if (defvsn && resvsn != defvsn) {
-		dW("Definition versions don't match: definition id: %s, ovaldef vsn: %d, resdef vsn: %d.\n", definition_id, defvsn, resvsn);
+		dW("Definition versions don't match: definition id: %s, ovaldef vsn: %d, resdef vsn: %d.", definition_id, defvsn, resvsn);
 	}
 	oval_definition_set_version(definition->definition, resvsn);
 	// The following _set_instance() might be overabundant, since it should be already set
@@ -269,7 +269,7 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 	if ((int)result != OVAL_ENUMERATION_INVALID) {
 		oval_result_definition_set_result(definition, result);
 	} else {
-		dW("Can't resolve result attribute, definition id: %s.\n", definition_id);
+		dW("Can't resolve result attribute, definition id: %s.", definition_id);
 		oval_result_definition_set_result(definition, OVAL_RESULT_UNKNOWN);
 	}
 

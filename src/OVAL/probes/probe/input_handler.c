@@ -75,7 +75,7 @@ void *probe_input_handler(void *arg)
         case PTHREAD_BARRIER_SERIAL_THREAD:
 	        break;
         default:
-	        dE("pthread_barrier_wait: %d, %s.\n",
+	        dE("pthread_barrier_wait: %d, %s.",
 	           errno, strerror(errno));
 	        return (NULL);
         }
@@ -84,7 +84,7 @@ void *probe_input_handler(void *arg)
                 TH_CANCEL_ON;
 
 		if (SEAP_recvmsg(probe->SEAP_ctx, probe->sd, &seap_request) == -1) {
-			dE("An error ocured while receiving SEAP message. errno=%u, %s.\n", errno, strerror(errno));
+			dE("An error ocured while receiving SEAP message. errno=%u, %s.", errno, strerror(errno));
 
                         /*
                          * TODO: check for abort request
@@ -111,12 +111,12 @@ void *probe_input_handler(void *arg)
 		if (oid != NULL) {
 			SEXP_VALIDATE(oid);
 
-			dI("offline_mode=%08x\n", OSCAP_GSYM(offline_mode));
-			dI("offline_supp=%08x\n", OSCAP_GSYM(offline_mode_supported));
+			dI("offline_mode=%08x", OSCAP_GSYM(offline_mode));
+			dI("offline_supp=%08x", OSCAP_GSYM(offline_mode_supported));
 
 			if ((OSCAP_GSYM(offline_mode) != PROBE_OFFLINE_NONE) &&
 			    !(OSCAP_GSYM(offline_mode) & OSCAP_GSYM(offline_mode_supported))) {
-				dW("Requested offline mode is not supported by %s.\n", probe->name);
+				dW("Requested offline mode is not supported by %s.", probe->name);
 				/* Return a dummy. */
 				probe_out = probe_cobj_new(OSCAP_GSYM(offline_mode_cobjflag), NULL, NULL, NULL);
 				probe_ret = 0;
@@ -183,10 +183,10 @@ void *probe_input_handler(void *arg)
 
 							if (pthread_create(&pair->pth->tid, &pth_attr, &probe_worker_runfn, pair))
 							{
-								dE("Cannot start a new worker thread: %d, %s.\n", errno, strerror(errno));
+								dE("Cannot start a new worker thread: %d, %s.", errno, strerror(errno));
 
 								if (rbt_i32_del(probe->workers, pair->pth->sid, NULL) != 0)
-									dE("rbt_i32_del: failed to remove worker thread (ID=%u)\n", pair->pth->sid);
+									dE("rbt_i32_del: failed to remove worker thread (ID=%u)", pair->pth->sid);
 
 								SEAP_msg_free(pair->pth->msg);
 								oscap_free(pair->pth);
@@ -211,7 +211,7 @@ void *probe_input_handler(void *arg)
 			}
 		} else {
                         /* the `id' was not found in the input object */
-                        dE("No `id' attribute\n");
+                        dE("No `id' attribute");
                         probe_ret = PROBE_ENOATTR;
 			probe_out = NULL;
                 }
@@ -220,7 +220,7 @@ void *probe_input_handler(void *arg)
 		__error_reply:
 			if (SEAP_replyerr(probe->SEAP_ctx, probe->sd, seap_request, probe_ret) == -1)
                         {
-				dE("An error ocured while sending error status. errno=%u, %s.\n",
+				dE("An error ocured while sending error status. errno=%u, %s.",
 				   errno, strerror(errno));
 
 				SEAP_msg_free(seap_request);
@@ -236,7 +236,7 @@ void *probe_input_handler(void *arg)
                         SEXP_free(probe_out);
 
 			if (SEAP_reply(probe->SEAP_ctx, probe->sd, seap_reply, seap_request) == -1) {
-				dE("An error ocured while sending SEAP message. errno=%u, %s.\n",
+				dE("An error ocured while sending SEAP message. errno=%u, %s.",
 				   errno, strerror(errno));
 
                                 /* TODO: check for abort request */

@@ -186,7 +186,7 @@ int oval_definition_model_parse(xmlTextReaderPtr reader, struct oval_parser_cont
 				gen = oval_definition_model_get_generator(context->definition_model);
 				ret = oval_parser_parse_tag(reader, context, &oval_generator_parse_tag, gen);
 			} else {
-				dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+				dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 				oval_parser_skip_tag(reader, context);
 			}
 

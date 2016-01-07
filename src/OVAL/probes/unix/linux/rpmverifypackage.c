@@ -123,7 +123,7 @@ static struct poptOption optionsTable[] = {
 	do { \
 		int prev_cancel_state = -1; \
 		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex\n"); \
+			dE("Can't lock mutex"); \
 			return (-1); \
 		} \
 		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
@@ -133,7 +133,7 @@ static struct poptOption optionsTable[] = {
 	do { \
 		int prev_cancel_state = -1; \
 		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting...\n"); \
+			dE("Can't unlock mutex. Aborting..."); \
 			abort(); \
 		} \
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
@@ -313,7 +313,7 @@ ret:
 void *probe_init (void)
 {
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
+		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
 	}
 
@@ -352,25 +352,25 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 NULL);
 
 	if (res->vflags & VERIFY_DEPS) {
-		dI("VERIFY_DEPS %d\n", res->vresults & VERIFY_DEPS);
+		dI("VERIFY_DEPS %d", res->vresults & VERIFY_DEPS);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DEPS ? "1" : "0"), 1);
 		probe_item_ent_add(item, "dependency_check_passed", NULL, value);
 		SEXP_free(value);
 	}
 	if (res->vflags & VERIFY_DIGEST) {
-		dI("VERIFY_DIGEST %d\n", res->vresults & VERIFY_DIGEST);
+		dI("VERIFY_DIGEST %d", res->vresults & VERIFY_DIGEST);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DIGEST ? "1" : "0"), 1);
 		probe_item_ent_add(item, "digest_check_passed", NULL, value);
 		SEXP_free(value);
 	}
 	if (res->vflags & VERIFY_SCRIPT) {
-		dI("VERIFY_SCRIPT %d\n", res->vresults & VERIFY_SCRIPT);
+		dI("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SCRIPT ? "1" : "0"), 1);
 		probe_item_ent_add(item, "verification_script_successful", NULL, value);
 		SEXP_free(value);
 	}
 	if (res->vflags & VERIFY_SIGNATURE) {
-		dI("VERIFY_SIGNATURE %d\n", res->vresults & VERIFY_SIGNATURE);
+		dI("VERIFY_SIGNATURE %d", res->vresults & VERIFY_SIGNATURE);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SIGNATURE ? "1" : "0"), 1);
 		probe_item_ent_add(item, "signature_check_passed", NULL, value);
 		SEXP_free(value);
@@ -409,7 +409,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 
 			if (aval != NULL) {
 				if (SEXP_strcmp(aval, "true") == 0) {
-					dI("omit verify attr: %s\n", rpmverifypackage_bhmap[i].a_name);
+					dI("omit verify attr: %s", rpmverifypackage_bhmap[i].a_name);
 					collect_flags |= rpmverifypackage_bhmap[i].a_flag;
 				}
 
@@ -425,7 +425,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 			      collect_flags,
 			      rpmverifypackage_additem) != 0)
 	{
-		dE("An error ocured while collecting rpmverifypackage data\n");
+		dE("An error ocured while collecting rpmverifypackage data");
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 	}
 

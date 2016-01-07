@@ -492,7 +492,7 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	}
 
 	if ((st.st_mode & S_IFMT) != S_IFREG) {
-		dE("Not a regular file: %s\n", path);
+		dE("Not a regular file: %s", path);
 		close (fd);
 		return (NULL);
 	}
@@ -554,15 +554,15 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	xiconf_file_t *xifile;
 
 	if (xiconf->count + 1 > XICFG_PARSER_MAXFILECOUNT) {
-		dE("include count limit reached: %u\n", XICFG_PARSER_MAXFILECOUNT);
+		dE("include count limit reached: %u", XICFG_PARSER_MAXFILECOUNT);
 		return (-1);
 	}
 
-	dI("Reading included file: %s\n", path);
+	dI("Reading included file: %s", path);
 	xifile = xiconf_read (path, 0);
 
 	if (xifile == NULL) {
-		dW("Failed to read file: %s\n", path);
+		dW("Failed to read file: %s", path);
 		return (-1);
 	}
 
@@ -570,7 +570,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
-	dI("Added new file to the cfile queue: %s; fi=%zu\n", path, xiconf->count - 1);
+	dI("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);
 
 	return (0);
 }
@@ -724,18 +724,18 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				buffer[l_size] = '\0';
 
 				if (*inclarg == '\0') {
-					dW("Found includedir directive without an argument!\n");
+					dW("Found includedir directive without an argument!");
 					break;
 				}
 
 				if (xifile->depth + 1 > max_depth) {
-					dE("include depth limit reached: %u\n", max_depth);
+					dE("include depth limit reached: %u", max_depth);
 					break;
 				}
 
 				switch (inctype) {
 				case XICONF_INCTYPE_FILE:
-					dI("includefile: %s\n", pathbuf);
+					dI("includefile: %s", pathbuf);
 
 					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
 						continue;
@@ -746,11 +746,11 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 					DIR           *dirfp;
 					struct dirent  dent, *dentp = NULL;
 
-					dI("includedir open: %s\n", inclarg);
+					dI("includedir open: %s", inclarg);
 					dirfp = opendir (inclarg);
 
 					if (dirfp == NULL) {
-						dW("Can't open includedir: %s; %d, %s.\n", inclarg, errno, strerror (errno));
+						dW("Can't open includedir: %s; %d, %s.", inclarg, errno, strerror (errno));
 						break;
 					}
 
@@ -762,7 +762,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 							pathbuf[incllen++] =  '/';
 							pathbuf[incllen  ] = '\0';
 						} else {
-							dE("Length of the includedir argument is out of range: len=%zu, max=%zu\n",
+							dE("Length of the includedir argument is out of range: len=%zu, max=%zu",
 							   incllen, PATH_MAX);
 							closedir(dirfp);
 							break;
@@ -771,7 +771,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 					for (;;) {
 						if (readdir_r (dirfp, &dent, &dentp) != 0) {
-							dW("Can't read directory: %s; %d, %s.\n", inclarg, errno, strerror (errno));
+							dW("Can't read directory: %s; %d, %s.", inclarg, errno, strerror (errno));
 							break;
 						}
 
@@ -781,7 +781,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 						if (fnmatch ("*~",  dent.d_name, FNM_PATHNAME) == 0 ||
 						    fnmatch ("*.*", dent.d_name, FNM_PATHNAME) == 0)
 						{
-							dI("Skipping: %s\n", dent.d_name);
+							dI("Skipping: %s", dent.d_name);
 							continue;
 						}
 
@@ -791,14 +791,14 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 							continue;
 					}
 
-					dI("includedir close: %s\n", inclarg);
+					dI("includedir close: %s", inclarg);
 					closedir(dirfp);
 					break;
 				}}
 				break;
 			}
 			default:
-				dE("Don't know how to parse the line: %s\n", buffer);
+				dE("Don't know how to parse the line: %s", buffer);
 				tmpbuf_free(buffer);
 
 				return (NULL);
@@ -813,7 +813,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 int xiconf_update(xiconf_t *xiconf)
 {
-	dI("Not implemented yet.\n");
+	dI("Not implemented yet.");
 	return (0);
 }
 
@@ -829,7 +829,7 @@ static int xiconf_service_merge_defaults(xiconf_service_t *dst, xiconf_service_t
 			if (xiattr_table[i].op_merge (xiattr_ptr(dst, xiattr_table[i].offset),
 						      xiattr_ptr(def, xiattr_table[i].offset), XIATTR_MERGE_DEFAULTS) != 0)
 			{
-				dE("Merge failed. Merge operation returned a non-zero value.\n");
+				dE("Merge failed. Merge operation returned a non-zero value.");
 				    return (-1);
 			}
 		}
@@ -853,10 +853,10 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 	tmpbuf_def(128);
 
 	if (type == XICONF_SECTION_DEFAULTS && xiconf->defaults != NULL) {
-		dE("defaults section was already parsed!\n");
+		dE("defaults section was already parsed!");
 		return (-1);
 	} else if (type == XICONF_SECTION_SERVICE && name == NULL) {
-		dE("Don't know how to handle anonymous service sections!\n");
+		dE("Don't know how to handle anonymous service sections!");
 		return (-1);
 	}
 
@@ -953,7 +953,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 			xiattr = oscap_bfind(xiattr_table, XIATTR_TABLE_COUNT, sizeof(struct xiconf_attr), key, &xiattr_cmp);
 
 			if (xiattr == NULL) {
-				dW("Unknown keyword: %s\n", key);
+				dW("Unknown keyword: %s", key);
 #if XICFG_PARSER_IGNORE_UNKNOWN != 1
 				goto fail;
 #else
@@ -962,7 +962,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 			}
 
 			if (!(type & xiattr->sections)) {
-				dW("Don't know how to handle attribute %s in this sections type (%d)\n",
+				dW("Don't know how to handle attribute %s in this sections type (%d)",
 				   key, type);
 #if XICFG_PARSER_IGNORE_INVSECT != 1
 				goto fail;
@@ -974,11 +974,11 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 			switch (xiattr->pass_arg) {
 			case XIATTR_OPARG_LOCAL:
 				opvar = (void *)xiattr_ptr(snew, xiattr->offset);
-				dI("local opvar\n");
+				dI("local opvar");
 				break;
 			case XIATTR_OPARG_GLOBAL:
 				opvar = (void *)xiconf;
-				dI("global opvar\n");
+				dI("global opvar");
 				break;
 			default:
 				abort ();
@@ -988,21 +988,21 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 				opfun = xiattr->op_assign;
 				opval = op + 1;
 
-				dI("assign(%p): var=%s (at %p+%zu = %p), val=%s\n",
+				dI("assign(%p): var=%s (at %p+%zu = %p), val=%s",
 				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 
 			} else if (*op == '+' && *(op+1) == '=') {
 				opfun = xiattr->op_insert;
 				opval = op + 2;
 
-				dI("insert(%p): var=%s (at %p+%zu = %p), val=%s\n",
+				dI("insert(%p): var=%s (at %p+%zu = %p), val=%s",
 				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 
 			} else if (*op == '-' && *(op+1) == '=') {
 				opfun = xiattr->op_remove;
 				opval = op + 2;
 
-				dI("remove(%p): var=%s (at %p+%zu = %p), val=%s\n",
+				dI("remove(%p): var=%s (at %p+%zu = %p), val=%s",
 				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 			} else
 				goto fail;
@@ -1021,12 +1021,12 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 
 finish_section:
 	if (buffer != NULL) {
-		dW("Line buffer not freed; freeing now...\n");
+		dW("Line buffer not freed; freeing now...");
 		tmpbuf_free(buffer);
 	}
 
 	if (key != NULL) {
-		dW("key not freed; freeing now...\n");
+		dW("key not freed; freeing now...");
 		free(key);
 	}
 
@@ -1050,7 +1050,7 @@ finish_section:
 
 		if (scur == NULL) {
 			if (rbt_str_add (xiconf->stree, snew->id, snew) != 0) {
-				dE("Can't add service (%s) into the service tree (%p)\n",
+				dE("Can't add service (%s) into the service tree (%p)",
 				   snew->id, xiconf->stree);
 
 				xiconf_service_free(snew);
@@ -1080,21 +1080,21 @@ finish_section:
 			// If we still don't know the protocol, then get the default from /etc/services
 			if (scur->protocol == NULL) {
 				struct servent *service = getservbyname(scur->name, NULL);
-				dI("protocol is empty, trying to guess from /etc/services for %s\n", scur->name);
+				dI("protocol is empty, trying to guess from /etc/services for %s", scur->name);
 				if (service != NULL) {
 					scur->protocol = strdup(service->s_proto);
-					dI("service %s has default protocol=%s\n", scur->name, scur->protocol);
+					dI("service %s has default protocol=%s", scur->name, scur->protocol);
 				}
 				endservent();
 			}
 		}
 		if (scur->port == 0) {
 			struct servent *service = getservbyname(scur->name, scur->protocol);
-			dI("port not set, trying to guess from /etc/services for %s\n", scur->name);
+			dI("port not set, trying to guess from /etc/services for %s", scur->name);
 			if (service != NULL) {
 				if (service->s_port > 0 && service->s_port < 65536) {
 					scur->port = ntohs((uint16_t)service->s_port);
-					dI("service %s has default port=%hu/%s\n",
+					dI("service %s has default port=%hu/%s",
 					   scur->name, scur->port, scur->protocol);
 				}
 			}
@@ -1130,7 +1130,7 @@ finish_section:
 		rbt_str_get(xiconf->ttree, st_key, (void *)&st);
 
 		if (st == NULL) {
-			dI("new strans record: k=%s\n", st_key);
+			dI("new strans record: k=%s", st_key);
 
 			st = oscap_talloc (xiconf_strans_t);
 			st->cnt = 1;
@@ -1138,12 +1138,12 @@ finish_section:
 			st->srv[0] = scur;
 
 			if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
-				dE("Can't add strans record (k=%s) into the strans tree (%p)\n",
+				dE("Can't add strans record (k=%s) into the strans tree (%p)",
 				   st_key, xiconf->ttree);
 				return (-1);
 			}
 		} else {
-			dI("adding new strans record to an exiting one: k=%s, cnt=%u+1\n",
+			dI("adding new strans record to an exiting one: k=%s, cnt=%u+1",
 			   st_key, st->cnt);
 
 			st->srv = oscap_realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
@@ -1155,7 +1155,7 @@ finish_section:
 		 * that happen to have a default value defined.
 		 */
 		if (xiconf_service_merge_defaults(scur, xiconf->defaults) != 0) {
-			dE("Failed to merge service (%p, id=%s) with defaults (%p)\n",
+			dE("Failed to merge service (%p, id=%s) with defaults (%p)",
 			   scur, scur->id, xiconf->defaults);
 			return (-1);
 		}
@@ -1172,12 +1172,12 @@ finish_section:
 fail:
 	tmpbuf_free(buffer);
 	if (key) {
-		dW("fail: key not freed; freeing now...\n");
+		dW("fail: key not freed; freeing now...");
 		free(key);
 	}
 
 	if (snew->name) {
-		dW("fail: snew->name not freed; freeing now...\n");
+		dW("fail: snew->name not freed; freeing now...");
 		free(snew->name);
 	}
 	free(snew);
@@ -1313,7 +1313,7 @@ int op_merge_str(void *dst, void *src, int type)
 	char **b = (char **)src;
 
 	if (*a != NULL) {
-		dE("Cannot merge str value: dst=%p (%s), src=%p (%s)\n", dst, *a, src, *b);
+		dE("Cannot merge str value: dst=%p (%s), src=%p (%s)", dst, *a, src, *b);
 		return (-1);
 	} else
 		*a = *b;
@@ -1346,7 +1346,7 @@ int op_assign_strl(void *var, char *val)
 		if (*tok == '\0') {
 			continue;
 		}
-		dI("Adding new member to string array: %s\n", tok);
+		dI("Adding new member to string array: %s", tok);
 		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
@@ -1367,7 +1367,7 @@ int op_insert_strl(void *var, char *val)
 		while(string_array[string_array_size]) {
 			++string_array_size;
 		}
-		dI("String array has %zu members\n", string_array_size);
+		dI("String array has %zu members", string_array_size);
 	}
 	str = val;
 	while ((tok = strsep(&str, " ")) != NULL) {
@@ -1377,7 +1377,7 @@ int op_insert_strl(void *var, char *val)
 		if (*tok == '\0') {
 			continue;
 		}
-		dI("Adding new member to string array: %s\n", tok);
+		dI("Adding new member to string array: %s", tok);
 		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
@@ -1401,7 +1401,7 @@ int op_remove_strl(void *var, char *val)
 		while(string_array[string_array_size]) {
 			++string_array_size;
 		}
-		dI("String array has %zu members\n", string_array_size);
+		dI("String array has %zu members", string_array_size);
 	}
 
 	if (string_array_size < 1) {
@@ -1423,7 +1423,7 @@ int op_remove_strl(void *var, char *val)
 		if (*tok == '\0') {
 			continue;
 		}
-		dI("Adding new member to string array: %s\n", tok);
+		dI("Adding new member to string array: %s", tok);
 		valstr_array = oscap_realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
@@ -1436,10 +1436,10 @@ int op_remove_strl(void *var, char *val)
 
 		for (valstr_array_pos = 0; valstr_array[valstr_array_pos]; ++valstr_array_pos) {
 			char *delete_val = valstr_array[valstr_array_pos];
-			dI("Removing: %s\n", delete_val);
+			dI("Removing: %s", delete_val);
 			// Destroy the string if it matches a string from the value string array
 			// Otherwise move it to the new string array
-			dI("cmp: %s ?= %s\n", string_array_val, delete_val);
+			dI("cmp: %s ?= %s", string_array_val, delete_val);
 			if (strcmp(string_array_val, delete_val) == 0) {
 				oscap_free(string_array_val);
 				string_array_val = NULL;
@@ -1485,17 +1485,17 @@ int op_assign_disabled(void *var, char *val)
 			srv->id = strdup (tok);
 			srv->def_disabled = 1;
 
-			dI("new: def_disabled: = 1: %s\n", srv->id);
+			dI("new: def_disabled: = 1: %s", srv->id);
 
 			if (rbt_str_add (xiconf->stree, srv->id, srv) != 0) {
-				dE("Can't add service (%s) into the service tree (%p)\n",
+				dE("Can't add service (%s) into the service tree (%p)",
 				   srv->id, xiconf->stree);
 
 				xiconf_service_free(srv);
 				return (-1);
 			}
 		} else {
-			dI("mod: def_disabled: %u -> 1: %s\n", srv->def_disabled, srv->id);
+			dI("mod: def_disabled: %u -> 1: %s", srv->def_disabled, srv->id);
 			srv->def_disabled = 1;
 		}
 	}
@@ -1526,17 +1526,17 @@ int op_assign_enabled(void *var, char *val)
 			srv->id = strdup (tok);
 			srv->def_enabled = 1;
 
-			dI("new: def_enabled: = 1: %s\n", srv->id);
+			dI("new: def_enabled: = 1: %s", srv->id);
 
 			if (rbt_str_add (xiconf->stree, srv->id, srv) != 0) {
-				dE("Can't add service (%s) into the service tree (%p)\n",
+				dE("Can't add service (%s) into the service tree (%p)",
 				   srv->id, xiconf->stree);
 
 				xiconf_service_free(srv);
 				return (-1);
 			}
 		} else {
-			dI("mod: def_enabled: %u -> 1: %s\n", srv->def_disabled, srv->id);
+			dI("mod: def_enabled: %u -> 1: %s", srv->def_disabled, srv->id);
 			srv->def_enabled = 1;
 		}
 	}
