@@ -135,6 +135,7 @@ typedef enum {
 	XCCDFE_END_
 } xccdf_element_t;
 
+const char *xccdf_element_to_str(xccdf_element_t element);
 xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader);
 
 #define XCCDF_ASSERT_ELEMENT(reader, element) do { if (xccdf_element_get(reader) != element) return false; } while(false)
