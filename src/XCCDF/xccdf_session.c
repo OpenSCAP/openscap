@@ -479,6 +479,12 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->xccdf.source == NULL) {
 			goto cleanup;
 		}
+		if (oscap_source_get_scap_type(session->xccdf.source) != OSCAP_DOCUMENT_XCCDF) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "The selected checklist document is not '%s', but '%s'.",
+					oscap_document_type_to_string(OSCAP_DOCUMENT_XCCDF),
+					oscap_document_type_to_string(oscap_source_get_scap_type(session->xccdf.source)));
+			goto cleanup;
+		}
 	}
 	else {
 		session->xccdf.source = session->source;
