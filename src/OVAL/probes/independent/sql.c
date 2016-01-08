@@ -214,7 +214,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 	tmp = NULL;
 
 	while ((tok = strsep (&copy, ";")) != NULL) {
-		dI("tok: '%s'.\n", tok);
+		dI("tok: '%s'.", tok);
 		switch (tolower(*tok)) {
 			matchitem1(tok, 's',
 				  "erver", info->host); break;
@@ -248,7 +248,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 	oscap_free(conn_copy);
 	return (0);
 __fail:
-	dE("Parsing failed.\n");
+	dE("Parsing failed.");
 	oscap_free(conn_copy);
 	return (-1);
 }
@@ -267,7 +267,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 	 * parse the connection string
 	 */
 	if (dbURIInfo_parse(&uriInfo, conn) != 0) {
-		dE("Malformed connection string: %s\n", conn);
+		dE("Malformed connection string: %s", conn);
 		goto __exit;
 	} else {
 		int            sql_err = 0;
@@ -287,7 +287,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			err = 0;
-			dE("DB engine not found: %s\n", engine);
+			dE("DB engine not found: %s", engine);
 			goto __exit;
 		}
 
@@ -298,7 +298,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			err = 0;
-			dE("DB engine not supported: %s\n", engine);
+			dE("DB engine not supported: %s", engine);
 			goto __exit;
 		}
 
@@ -306,7 +306,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 				uriInfo.host, uriInfo.port);
 		if (odbx_res != ODBX_ERR_SUCCESS) {
 			const char *error_msg = odbx_error(NULL, odbx_res);
-			dE("odbx_init failed: e=%s, h=%s:%s msg=%s\n",
+			dE("odbx_init failed: e=%s, h=%s:%s msg=%s",
 				sql_dbe->b_engine, uriInfo.host, uriInfo.port,
 				error_msg != NULL ? error_msg : "(none)");
 			if (odbx_res == -ODBX_ERR_NOTEXIST) {
@@ -335,14 +335,14 @@ static int dbSQL_eval(const char *engine, const char *version,
 			SEXP_free(msg);
 			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 			err = 0;
-			dE("odbx_bind failed: db=%s, u=%s, p=%s\n",
+			dE("odbx_bind failed: db=%s, u=%s, p=%s",
 			   uriInfo.db, uriInfo.user, uriInfo.pass);
 			odbx_finish(sql_dbh);
 			goto __exit;
 		}
 
 		if (odbx_query(sql_dbh, sql, strlen (sql)) != ODBX_ERR_SUCCESS) {
-			dE("odbx_query failed: q=%s\n", sql);
+			dE("odbx_query failed: q=%s", sql);
 			odbx_finish(sql_dbh);
 
 			goto __exit;
@@ -359,7 +359,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 
 			while ((sql_err = odbx_result (sql_dbh, &sql_dbr, NULL, 0)) == ODBX_RES_ROWS) {
 				if (odbx_column_count(sql_dbr) != 1) {
-					dE("Don't how to handle result, column count != 1\n");
+					dE("Don't how to handle result, column count != 1");
 					odbx_result_finish(sql_dbr);
 					SEXP_free(item);
 					goto __exit;
@@ -380,7 +380,7 @@ static int dbSQL_eval(const char *engine, const char *version,
 		}
 
 		if (odbx_finish(sql_dbh) != ODBX_ERR_SUCCESS) {
-			dE("odbx_finish failed\n");
+			dE("odbx_finish failed");
 			goto __exit;
 		}
 	}
@@ -404,7 +404,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		__sval = probe_obj_getentval (obj, ent_name, 1);	\
 									\
 		if (__sval == NULL) {					\
-			dE("Missing entity or value: obj=%p, ent=%s\n", obj, #ent_name); \
+			dE("Missing entity or value: obj=%p, ent=%s", obj, #ent_name); \
 			err = PROBE_ENOENT;				\
 			goto __exit;					\
 		}							\

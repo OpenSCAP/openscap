@@ -169,7 +169,7 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 	char *text;
 
         if (strlen(path) + strlen(filename) + 1 > PATH_MAX) {
-                dE("path+filename too long\n");
+                dE("path+filename too long");
                 return (NULL);
         }
 

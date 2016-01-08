@@ -183,7 +183,7 @@ static int process_line_ip4(char *line, struct route_info *rt)
 #define TOK_flags  token[3]
 #define TOK_ifname token[0]
 
-    dI("name=%s, dst=%s, gw=%s, flags=%s\n", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
+    dI("name=%s, dst=%s, gw=%s, flags=%s", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
 
     if (proc_ip4_to_string(TOK_dst, strlen(TOK_dst), rt->ip_dst, sizeof rt->ip_dst) != 0 ||
         proc_ip4_to_string(TOK_gw, strlen(TOK_gw), rt->ip_gw, sizeof rt->ip_gw) != 0)
@@ -245,7 +245,7 @@ static int process_line_ip6(char *line, struct route_info *rt)
 #define TOK_flags  token[8]
 #define TOK_ifname token[9]
 
-    dI("name=%s, dst=%s, gw=%s, flags=%s\n", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
+    dI("name=%s, dst=%s, gw=%s, flags=%s", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
 
     if (proc_ip6_to_string(TOK_dst, strlen(TOK_dst), rt->ip_dst, sizeof rt->ip_dst) != 0 ||
         proc_ip6_to_string(TOK_gw, strlen(TOK_gw), rt->ip_gw, sizeof rt->ip_gw) != 0)
@@ -311,7 +311,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	    if (!feof(fp)) {
 	      /* error */
-              dE("An error ocured while reading /proc/net/route: %s\n", strerror(errno));
+              dE("An error ocured while reading /proc/net/route: %s", strerror(errno));
 	    }
 	    break;
 	  case OVAL_DATATYPE_IPV6ADDR:
@@ -326,7 +326,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	    if (!feof(fp)) {
 	      /* error */
-              dE("An error ocured while reading /proc/net/ipv6_route: %s\n", strerror(errno));
+              dE("An error ocured while reading /proc/net/ipv6_route: %s", strerror(errno));
             }
 	    break;
           default:

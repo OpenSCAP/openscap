@@ -236,12 +236,12 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysitem_parse_subtag, sysitem);
 	} else {
-		dW("Unknown sysitem: %s\n", tagname);
+		dW("Unknown sysitem: %s", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
         if (return_code != 0) {
-                dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+                dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
 	oscap_free(tagname);

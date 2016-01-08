@@ -428,7 +428,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		(*consumer) (node, user);
 	} else {
 		return_code = 1;
-		oscap_dlprintf(DBG_W, "Invalid node type: OVAL_NODETYPE_UNKNOWN.\n");
+		dW("Invalid node type: OVAL_NODETYPE_UNKNOWN.");
 		oval_parser_skip_tag(reader, context);
 	}
 	oscap_free(tagname);

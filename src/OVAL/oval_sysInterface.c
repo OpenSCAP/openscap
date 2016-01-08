@@ -188,7 +188,7 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	} else if (is_ovalsys && (strcmp(tagname, "mac_address") == 0)) {
 		return_code = oval_parser_text_value(reader, context, &oval_consume_mac_address, sysint);
 	} else {
-		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
+		dW("Skipping tag: <%s:%s>.", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 	}
 
@@ -212,7 +212,7 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 	if (is_ovalsys && (strcmp(tagname, "interface") == 0)) {
 		return_code = oval_parser_parse_tag(reader, context, &_oval_sysint_parse_tag, sysint);
 	} else {
-		dW("Skipping tag: <%s:%s>.\n", namespace, tagname);
+		dW("Skipping tag: <%s:%s>.", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 	}
 

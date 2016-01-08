@@ -78,7 +78,7 @@ static void split_range(const char *range, char **l_s, char **l_c, char **h_s, c
 	const char *range_split;
 
 	if (range == NULL) {
-		dW("%s: range is NULL\n", __func__);
+		dW("%s: range is NULL", __func__);
 		*l_s = *l_c = *h_s = *h_c = NULL;
 		return;
 	}
@@ -114,7 +114,7 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
 
 	if ((proc = opendir("/proc")) == NULL) {
-		dE("Can't open /proc dir: %s\n", strerror(errno));
+		dE("Can't open /proc dir: %s", strerror(errno));
 
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 		return errno;
@@ -130,7 +130,7 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 
 			if (getpidcon(pid_number, &pid_context) == -1) {
 				/* error getting pid selinux context */
-				dW("Can't get selinux context for process %d\n", pid_number);
+				dW("Can't get selinux context for process %d", pid_number);
 				SEXP_free(pid_sexp);
 				continue;
 			}
@@ -218,7 +218,7 @@ static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_c
 
 	file_context_size = getfilecon(pbuf, &file_context);
 	if (file_context_size == -1) {
-		dE("Can't get context for %s: %s\n", pbuf, strerror(errno));
+		dE("Can't get context for %s: %s", pbuf, strerror(errno));
 
 		item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
 						"filepath", OVAL_DATATYPE_STRING, pbuf,

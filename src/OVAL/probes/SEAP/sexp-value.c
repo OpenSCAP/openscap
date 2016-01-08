@@ -48,7 +48,7 @@ int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
         dst->type      = type;
         dst->ptr       = SEXP_val_ptr (dst);
 #if defined(SEAP_VERBOSE_DEBUG)
-        dI("\n"
+        dI(""
            "new value: hdr->refs = %u\n"
            "           hdr->size = %zu\n"
            "                type = %hhu\n"

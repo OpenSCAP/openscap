@@ -237,13 +237,13 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 	oid = oval_object_get_id(object);
 	model = psess->sys_model;
 
-	dI("Querying object id: \"%s\", flags: %u.\n", oid, flags);
+	dI("Querying object id: \"%s\", flags: %u.", oid, flags);
 
 	sysc = oval_syschar_model_get_syschar(model, oid);
 	if (sysc != NULL) {
 		int variable_instance_hint = oval_syschar_get_variable_instance_hint(sysc);
 		if (oval_syschar_get_variable_instance_hint(sysc) != oval_syschar_get_variable_instance(sysc)) {
-			dI("Creating another syschar for variable_instance=%d)\n", variable_instance_hint);
+			dI("Creating another syschar for variable_instance=%d)", variable_instance_hint);
 			sysc = oval_syschar_new(model, object);
 			oval_syschar_set_variable_instance(sysc, variable_instance_hint);
 			oval_syschar_set_variable_instance_hint(sysc, variable_instance_hint);
@@ -253,7 +253,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 
 			sc_flg = oval_syschar_get_flag(sysc);
 
-			dI("Syschar already exists, flag: %u, '%s'.\n", sc_flg, oval_syschar_collection_flag_get_text(sc_flg));
+			dI("Syschar already exists, flag: %u, '%s'.", sc_flg, oval_syschar_collection_flag_get_text(sc_flg));
 
 			if (sc_flg != SYSCHAR_FLAG_UNKNOWN || (flags & OVAL_PDFLAG_NOREPLY)) {
 				if (out_syschar)
@@ -273,7 +273,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
         if (ph == NULL) {
                 char *msg = "OVAL object not supported.";
 
-		dW("%s\n", msg);
+		dW("%s", msg);
 		oval_syschar_add_new_message(sysc, msg, OVAL_MESSAGE_LEVEL_WARNING);
 		oval_syschar_set_flag(sysc, SYSCHAR_FLAG_NOT_COLLECTED);
 
@@ -479,9 +479,9 @@ void oval_probe_meta_list(FILE *output, int flags)
 			strncat(probe_path, meta[i].pname, PATH_MAX - strlen(probe_dir) - 1);
 
 			if (flags & OVAL_PROBEMETA_LIST_DYNAMIC) {
-				dI("Checking access to \"%s\"\n", probe_path);
+				dI("Checking access to \"%s\"", probe_path);
 				if (access(probe_path, X_OK) != 0) {
-					dW("access: errno=%d, %s\n", errno, strerror(errno));
+					dW("access: errno=%d, %s", errno, strerror(errno));
 					continue;
 				}
 			}

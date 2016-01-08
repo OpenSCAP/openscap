@@ -75,7 +75,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 
 	d = opendir("/proc");
 	if (d == NULL) {
-		dE("Can't read /proc: errno=%d, %s.\n", errno, strerror (errno));
+		dE("Can't read /proc: errno=%d, %s.", errno, strerror (errno));
 		return PROBE_EACCESS;
 	}
 
@@ -102,7 +102,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 		sprintf(env_file, "/proc/%d/environ", pid);
 
 		if ((fd = open(env_file, O_RDONLY)) == -1) {
-			dE("Can't open \"%s\": errno=%d, %s.\n", env_file, errno, strerror (errno));
+			dE("Can't open \"%s\": errno=%d, %s.", env_file, errno, strerror (errno));
 			item = probe_item_create(
 					OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
 					"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,

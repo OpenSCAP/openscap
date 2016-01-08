@@ -83,7 +83,7 @@ static int read_status(const char *source, void *base, struct stat_parser *spt, 
 
 		for (i = 0; i < spt_size - 1; ++i) {
 			if (cmpkey(spt[i].keyword, spt + i+1) > 0) {
-				dE("spt not sorted! %s > %s\n",
+				dE("spt not sorted! %s > %s",
 				   spt[i].keyword, spt[i+1].keyword);
 				abort();
 			}
@@ -117,7 +117,7 @@ static int read_status(const char *source, void *base, struct stat_parser *spt, 
 			sp = oscap_bfind(spt, spt_size, sizeof(struct stat_parser),
 			                 linebuf, (int(*)(void *, void *))&cmpkey);
 
-			dI("spt: %s\n", linebuf);
+			dI("spt: %s", linebuf);
 
 			if (sp == NULL) {
 				/* drop end of unread line */

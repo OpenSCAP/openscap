@@ -404,7 +404,7 @@ static int read_packet(llist *l, probe_ctx *ctx, oval_version_t over)
 		if (list_find_inode(l, inode) && get_interface(ifindex, &interface)) {
 			struct result_info r;
 			SEXP_t *r0;
-			dI("Have interface_name: %s, hw_address: %s\n",
+			dI("Have interface_name: %s, hw_address: %s",
 					interface.interface_name, interface.hw_address);
 
 			r0 = SEXP_string_newf("%s", interface.interface_name);

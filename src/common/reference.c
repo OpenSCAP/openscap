@@ -173,7 +173,7 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
     }
 
     if (!oscap_to_start_element(reader, depth))
-	    dW("oscap_to_start_element returned `false'\n");
+	    dW("oscap_to_start_element returned `false'");
 
     return ref;
 }

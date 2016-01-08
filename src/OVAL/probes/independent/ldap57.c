@@ -89,12 +89,12 @@ int probe_main(probe_ctx *ctx, void *mutex)
                 SEXP_free(se_ldap_behaviors);
 
                 if (sa_scope == NULL) {
-                        dE("Atrribute `scope' is missing!\n");
+                        dE("Atrribute `scope' is missing!");
                         return (PROBE_ENOATTR);
                 }
 
                 if (!SEXP_stringp(sa_scope)) {
-                        dE("Invalid value type of the `scope' attribute.\n");
+                        dE("Invalid value type of the `scope' attribute.");
                         SEXP_free(sa_scope);
                         return (PROBE_EINVAL);
                 }
@@ -106,7 +106,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                 else if (SEXP_strcmp(sa_scope, "SUBTREE") == 0)
                         scope = LDAP_SCOPE_SUBTREE;
                 else {
-                        dE("Invalid value of the `scope' attribute.\n");
+                        dE("Invalid value of the `scope' attribute.");
                         SEXP_free(sa_scope);
                         return (PROBE_EINVAL);
                 }
@@ -192,7 +192,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                 probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
                 probe_item_collect(ctx, item);
 
-                dE("ldap_get_option failed\n");
+                dE("ldap_get_option failed");
                 goto fail0;
         }
 
@@ -221,7 +221,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                         probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
                         probe_item_collect(ctx, item);
 
-                        dE("ldap_search_ext_s failed\n");
+                        dE("ldap_search_ext_s failed");
                         goto fail0;
                 }
 
@@ -260,13 +260,13 @@ int probe_main(probe_ctx *ctx, void *mutex)
 
                                         switch(bertag & LBER_ENCODING_MASK) {
                                         case LBER_PRIMITIVE:
-                                                dI("Found primitive value, bertag = %u\n", bertag);
+                                                dI("Found primitive value, bertag = %u", bertag);
 						break;
                                         case LBER_CONSTRUCTED:
-                                                dW("Don't know how to handle LBER_CONSTRUCTED values\n");
+                                                dW("Don't know how to handle LBER_CONSTRUCTED values");
 						/* FALLTHROUGH */
                                         default:
-                                                dW("Skipping attribute value, bertag = %u\n", bertag);
+                                                dW("Skipping attribute value, bertag = %u", bertag);
                                                 continue;
                                         }
 
@@ -278,7 +278,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                                 ber_int_t val = -1;
 
                                                 if (ber_get_boolean(berelm, &val) == LBER_ERROR) {
-                                                        dW("ber_get_boolean: LBER_ERROR\n");
+                                                        dW("ber_get_boolean: LBER_ERROR");
                                                         /* XXX: set error status on field */
                                                         continue;
                                                 }
@@ -293,7 +293,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                                 ber_int_t val = -1;
 
                                                 if (ber_get_int(berelm, &val) == LBER_ERROR) {
-                                                        dW("ber_get_int: LBER_ERROR\n");
+                                                        dW("ber_get_int: LBER_ERROR");
                                                         /* XXX: set error status on field */
                                                         continue;
                                                 }
@@ -304,7 +304,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                         }       break;
                                         case LBER_BITSTRING:
                                                 /* LDAPTYPE_BIT_STRING */
-                                                dW("LBER_BITSTRING: not implemented\n");
+                                                dW("LBER_BITSTRING: not implemented");
                                                 continue;
                                         case LBER_OCTETSTRING:
                                         {       /*
@@ -316,7 +316,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                                 char *val = NULL;
 
                                                 if (ber_get_stringa(berelm, &val) == LBER_ERROR) {
-                                                        dW("ber_get_stringa: LBER_ERROR\n");
+                                                        dW("ber_get_stringa: LBER_ERROR");
                                                         /* XXX: set error status on field */
                                                         continue;
                                                 }
@@ -329,14 +329,14 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                         }       break;
                                         case LBER_NULL:
                                                 /* XXX: no equivalent LDAPTYPE_? or empty */
-                                                dI("LBER_NULL: skipped\n");
+                                                dI("LBER_NULL: skipped");
                                                 continue;
                                         case LBER_ENUMERATED:
                                                 /* XXX: no equivalent LDAPTYPE_? */
-                                                dW("Don't know how to handle LBER_ENUMERATED type\n");
+                                                dW("Don't know how to handle LBER_ENUMERATED type");
                                                 continue;
                                         default:
-                                                dW("Unknown attribute value type, bertag = %u\n", bertag);
+                                                dW("Unknown attribute value type, bertag = %u", bertag);
                                                 continue;
                                         }
 

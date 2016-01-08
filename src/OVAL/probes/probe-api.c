@@ -427,7 +427,7 @@ SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n)
 #if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
 			char buf[128];
 			SEXP_string_cstr_r(ent_name, buf, sizeof buf);
-			dI("1=\"%s\", 2=\"%s\", n=%u\n", buf, name, n);
+			dI("1=\"%s\", 2=\"%s\", n=%u", buf, name, n);
 #endif
 
 			if (SEXP_strcmp(ent_name, name) == 0 && (--n == 0)) {
@@ -672,7 +672,7 @@ void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag)
 	of = SEXP_number_getu(old_sflag);
 	SEXP_free(old_sflag);
 	SEXP_free(sflag);
-	dI("old flag: %d, new flag: %d.\n", of, flag);
+	dI("old flag: %d, new flag: %d.", of, flag);
 }
 
 oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj)
@@ -682,7 +682,7 @@ oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj)
 
 	sflag = SEXP_list_first(cobj);
 	if (sflag == NULL) {
-		dE("sflag == NULL.\n");
+		dE("sflag == NULL.");
 		return SYSCHAR_FLAG_UNKNOWN;
 	}
 
@@ -908,7 +908,7 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
 {
 	SEXP_t *lvl, *str, *msg;
 
-	dI("%s\n", message);
+	dI("%s", message);
 	lvl = SEXP_number_newu(level);
 	str = SEXP_string_newf("%s", message);
 	msg = SEXP_list_new(lvl, str, NULL);
@@ -930,7 +930,7 @@ SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...)
 	if (len < 0)
 		return NULL;
 
-	dI("%s\n", cstr);
+	dI("%s", cstr);
 	str = SEXP_string_new(cstr, len);
 	oscap_free(cstr);
 	lvl = SEXP_number_newu(level);
@@ -1135,7 +1135,7 @@ static oval_datatype_t _sexp_val_getdatatype(const SEXP_t *val)
 			return OVAL_DATATYPE_INTEGER;
 		}
 	default:
-		dE("Unexpected SEXP datatype: %d, '%s'.\n", sdt, SEXP_strtype(val));
+		dE("Unexpected SEXP datatype: %d, '%s'.", sdt, SEXP_strtype(val));
 		return OVAL_DATATYPE_UNKNOWN;
 	}
 }
@@ -1397,7 +1397,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         subtype_name = oval_subtype_to_str(item_subtype);
 
         if (subtype_name == NULL) {
-                dE("Invalid/Unknown subtype: %d\n", (int)item_subtype);
+                dE("Invalid/Unknown subtype: %d", (int)item_subtype);
                 return (NULL);
         }
 
@@ -1406,7 +1406,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 strcat(item_name, "_item");
                 item_name[sizeof item_name - 1] = '\0';
         } else {
-                dE("item name too long: no buffer space available\n");
+                dE("item name too long: no buffer space available");
                 return (NULL);
         }
 
@@ -1488,7 +1488,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         /* TODO */
                 case OVAL_DATATYPE_BINARY:
                 case OVAL_DATATYPE_UNKNOWN:
-			dE("Unknown or unsupported OVAL datatype: %d, '%s', name: '%s'.\n",
+			dE("Unknown or unsupported OVAL datatype: %d, '%s', name: '%s'.",
 			   value_type, oval_datatype_get_text(value_type), value_name);
                         SEXP_free(item);
 
@@ -1548,19 +1548,19 @@ oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t default
         SEXP_t *aval;
 
         if (entity == NULL) {
-                dW("entity == NULL\n");
+                dW("entity == NULL");
                 return (OVAL_OPERATION_UNKNOWN);
         }
 
         aval = probe_ent_getattrval(entity, "operation");
 
         if (aval == NULL) {
-                dW("Attribute \"operation\" not found. Using default.\n");
+                dW("Attribute \"operation\" not found. Using default.");
                 return (default_op);
         }
 
         if (!SEXP_numberp(aval)) {
-                dW("Invalid type\n");
+                dW("Invalid type");
                 SEXP_free(aval);
                 return (OVAL_OPERATION_UNKNOWN);
         }
@@ -1584,13 +1584,13 @@ int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, 
     msg_length = vsnprintf(msg_buffer, sizeof msg_buffer, msgfmt, ap);
 
     if (msg_length < 0) {
-	dE("vsnprintf failed! errno=%u, %s.\n", errno, strerror(errno));
+	dE("vsnprintf failed! errno=%u, %s.", errno, strerror(errno));
 	va_end(ap);
 	return (-1);
     }
 
     if ((size_t)msg_length >= sizeof msg_buffer) {
-	dE("message too long!\n");
+	dE("message too long!");
 	va_end(ap);
 	return (-1);
     }

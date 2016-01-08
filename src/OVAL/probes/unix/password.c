@@ -102,7 +102,7 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_version_t over)
         while ((pw = getpwent())) {
                 SEXP_t *un;
 
-                dI("Have user: %s\n", pw->pw_name);
+                dI("Have user: %s", pw->pw_name);
                 un = SEXP_string_newf("%s", pw->pw_name);
                 if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {
                         struct result_info r;

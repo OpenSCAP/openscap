@@ -110,7 +110,7 @@ retry_list:
                 return (0);
 
         if (xattr_count < 0) {
-                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.\n", errno, strerror(errno));
+                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
                 return 0;
         }
 
@@ -126,7 +126,7 @@ retry_list:
                 goto retry_list;
 
         if (xattr_count < 0) {
-                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.\n", errno, strerror(errno));
+                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
                 oscap_free(xattr_buf);
         }
 
@@ -167,7 +167,7 @@ retry_list:
 
                                 oscap_free(xattr_val);
                         } else {
-                                dI("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.\n", errno, strerror(errno));
+                                dI("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
 
                                 item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL, NULL);
                                 probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
@@ -204,7 +204,7 @@ void *probe_init (void)
         case 0:
                 return ((void *)&__file_probe_mutex);
         default:
-                dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+                dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
 #if 0
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
@@ -270,7 +270,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                dI("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                dI("Can't lock mutex(%p): %u, %s.", &__file_probe_mutex, errno, strerror (errno));
 
 		SEXP_free(path);
 		SEXP_free(filename);
@@ -305,7 +305,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                dI("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                dI("Can't unlock mutex(%p): %u, %s.", &__file_probe_mutex, errno, strerror (errno));
 
                 return PROBE_EFATAL;
         }

@@ -101,7 +101,7 @@ static struct rpmverify_global g_rpm;
 	do { \
 		int prev_cancel_state = -1; \
 		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex\n"); \
+			dE("Can't lock mutex"); \
 			return (-1); \
 		} \
 		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
@@ -111,7 +111,7 @@ static struct rpmverify_global g_rpm;
 	do { \
 		int prev_cancel_state = -1; \
 		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting...\n"); \
+			dE("Can't unlock mutex. Aborting..."); \
 			abort(); \
 		} \
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
@@ -285,7 +285,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 			oscap_free(res.file);
 			continue;
 		      default:
-			dE("pcre_exec() failed!\n");
+			dE("pcre_exec() failed!");
 			ret = -1;
 			oscap_free(res.file);
 			goto ret;
@@ -293,7 +293,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      break;
 		    default:
 		      /* unsupported operation */
-		      dE("Operation \"%d\" on `filepath' not supported\n", file_op);
+		      dE("Operation \"%d\" on `filepath' not supported", file_op);
 		      ret = -1;
 					oscap_free(res.file);
 		      goto ret;
@@ -327,7 +327,7 @@ ret:
 void *probe_init (void)
 {
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.\n", errno, strerror (errno));
+		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
 	}
 
@@ -423,7 +423,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 	file_ent = probe_obj_getent(probe_in, "filepath", 1);
 
 	if (file_ent == NULL) {
-		dE("Missing \"filepath\" (%p) entity\n", file_ent);
+		dE("Missing \"filepath\" (%p) entity", file_ent);
 
 		SEXP_free(file_ent);
 
@@ -465,7 +465,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 
 			if (aval != NULL) {
 				if (SEXP_strcmp(aval, "true") == 0) {
-					dI("omit verify attr: %s\n", rpmverifyfile_bhmap[i].a_name);
+					dI("omit verify attr: %s", rpmverifyfile_bhmap[i].a_name);
 					collect_flags |= rpmverifyfile_bhmap[i].a_flag;
 				}
 
@@ -476,7 +476,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 		SEXP_free(bh_ent);
 	}
 
-	dI("Collecting rpmverifyfile data, query: f=\"%s\" (%d)\n",
+	dI("Collecting rpmverifyfile data, query: f=\"%s\" (%d)",
 	   file, file_op);
 
 	if (rpmverify_collect(ctx,
@@ -485,7 +485,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 			      collect_flags,
 			      rpmverify_additem) != 0)
 	{
-		dE("An error ocured while collecting rpmverifyfile data\n");
+		dE("An error ocured while collecting rpmverifyfile data");
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 	}
 

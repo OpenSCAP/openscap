@@ -165,7 +165,7 @@ int sch_generic_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t fl
         switch (select (fd + 1, rptr, wptr, NULL, tv_ptr)) {
         case -1:
                 protect_errno {
-                        dI("FAIL: errno=%u, %s.\n", errno, strerror (errno));
+                        dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                 }
                 return (-1);
         case  0:

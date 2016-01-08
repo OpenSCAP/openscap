@@ -328,7 +328,7 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 	}
 
 	if (return_code != 0) {
-		dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 
 	oscap_free(tagname);
@@ -349,7 +349,7 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 
 	oval_subtype_t subtype = oval_subtype_parse(reader);
 	if ( subtype == OVAL_SUBTYPE_UNKNOWN) {
-		oscap_dlprintf(DBG_E,  "Unknown object %s.\n", id);
+		dE("Unknown object %s.", id);
 		ret = -1;
 		goto cleanup;
 	}
@@ -382,7 +382,7 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	/* skip unknown object */
 	oval_subtype_t subtype = oval_object_get_subtype(object);
         if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
-                oscap_dlprintf(DBG_E, "Unknown Object %s.\n", oval_object_get_id(object));
+                dE("Unknown Object %s.", oval_object_get_id(object));
                 return object_node;
         }
 

@@ -368,7 +368,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	(*consumer) (entity, user);
 
 	if (return_code != 0) {
-		dW("Parsing of <%s> terminated by an error at line %d.\n", name, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of <%s> terminated by an error at line %d.", name, xmlTextReaderGetParserLineNumber(reader));
 	}
 
 	oscap_free(name);

@@ -175,7 +175,7 @@ static int collect_item(probe_ctx *ctx, oval_version_t over, struct mntent *mnt_
                 mnt_opts[mnt_ocnt] = NULL;
         } while ((tok = strtok_r(NULL, ",", &save)) != NULL);
 
-        dI("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p\n", mnt_ocnt, mnt_opts[mnt_ocnt]);
+        dI("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p", mnt_ocnt, mnt_opts[mnt_ocnt]);
 
 	/*
 	 * "Correct" the type (this won't be (hopefully) needed in a later version

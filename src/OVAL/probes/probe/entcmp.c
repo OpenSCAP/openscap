@@ -200,7 +200,7 @@ static inline oval_result_t probe_ent_cmp_single(SEXP_t *state_ent, oval_datatyp
 	case OVAL_DATATYPE_IPV6ADDR:
 		return probe_ent_cmp_ipaddr(AF_INET6, state_ent, sysent, op);
 	default:
-		dI("Unexpected data type: %d\n", state_data_type);
+		dI("Unexpected data type: %d", state_data_type);
 		break;
 	}
 
@@ -243,7 +243,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 
 	SEXP_list_foreach(val1, vals) {
 		if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
-			dI("Types of values to compare don't match: val1: %d, val2: %d\n",
+			dI("Types of values to compare don't match: val1: %d, val2: %d",
 			   SEXP_typeof(val1), SEXP_typeof(val2));
 
                         SEXP_free(vals);
@@ -427,13 +427,13 @@ oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 	valcnt = probe_ent_getvals(ent_obj, &r0);
 	SEXP_free(r0);
 	if (valcnt == 0) {
-		dI("valcnt == 0.\n");
+		dI("valcnt == 0.");
 		return OVAL_RESULT_FALSE;
 	}
 
 	ores = probe_ent_cmp(ent_obj, val);
 #if defined(OSCAP_VERBOSE_DEBUG)
-	dI("ores: %d, '%s'.\n", ores, oval_result_get_text(ores));
+	dI("ores: %d, '%s'.", ores, oval_result_get_text(ores));
 #endif
 	if (ores == OVAL_RESULT_NOT_EVALUATED)
 		return OVAL_RESULT_FALSE;

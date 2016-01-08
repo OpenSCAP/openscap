@@ -259,7 +259,7 @@ int oval_syschar_model_import(struct oval_syschar_model *model, const char *file
 		ret = oval_syschar_model_parse(reader, &context);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Missing \"oval_system_characteristics\" element");
-		dE("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		dE("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		ret = -1;
 	}
 
