@@ -1115,7 +1115,7 @@ finish_section:
 			}
 			if (!type_enum_match) {
 				dE("The value of the type setting does not match"
-				   " any of the allowed values by OVAL: %s\n", scur->type);
+				   " any of the allowed values by OVAL: %s", scur->type);
 				scur->type = "";
 			}
 		}

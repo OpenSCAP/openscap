@@ -114,10 +114,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	}
 
 #if defined(OSCAP_FTS_DEBUG)
-	dI(""
-	   "New OVAL_FTSENT:\n"
-	   "\t    file: '%s'.\n"
-	   "\t    path: '%s'.\n", ofts_ent->file, ofts_ent->path);
+	dD("New OVAL_FTSENT: file: '%s', path: '%s'.", ofts_ent->file, ofts_ent->path);
 #endif
 	return (ofts_ent);
 }
@@ -315,7 +312,7 @@ static int badpartial_transform_pattern(char *pattern, pcre **regex_out)
 	if (s == NULL) {
 		dW("Nonfatal failure: can't transform the pattern for partial "
 		   "match optimization: none of the suspected culprits found, "
-		   "pattern: '%s'.\n", pattern);
+		   "pattern: '%s'.", pattern);
 		return -1;
 	}
 
@@ -328,7 +325,7 @@ static int badpartial_transform_pattern(char *pattern, pcre **regex_out)
 	if (regex == NULL) {
 		dW("Nonfatal failure: can't transform the pattern for partial "
 		   "match optimization, error: '%s', error offset: %d, "
-		   "pattern: '%s'.\n", errptr, errofs, pattern);
+		   "pattern: '%s'.", errptr, errofs, pattern);
 		return -1;
 	}
 
@@ -338,7 +335,7 @@ static int badpartial_transform_pattern(char *pattern, pcre **regex_out)
 		pcre_free(regex);
 		dW("Nonfatal failure: can't transform the pattern for partial "
 		   "match optimization, pcre_exec() return code: %d, pattern: "
-		   "'%s'.\n", ret, pattern);
+		   "'%s'.", ret, pattern);
 		return -1;
 	}
 
@@ -371,7 +368,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		memcpy(pattern + 1, path, plen);
 		dW("The pattern doesn't contain a leading caret - added. "
 		   "All paths with the 'pattern match' operation must begin "
-		   "with a caret.\n");
+		   "with a caret.");
 	} else {
 		pattern = strdup(path);
 	}
@@ -482,7 +479,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		dI("Disabling partial match optimization.");
 	} else {
 		dI("Enabling partial match optimization using "
-		   "pattern: '%s'.\n", pattern);
+		   "pattern: '%s'.", pattern);
 		if (regex_out != NULL)
 			*regex_out = regex;
 	}
@@ -546,10 +543,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 					 return NULL;, /* noop */;);
 		}
 #if defined(OSCAP_FTS_DEBUG)
-		dI(""
-		   "        path: '%s'.\n"
-		   "    filename: '%s'.\n"
-		   "nil filename: %d.\n", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
+		dD("path: '%s', filename: '%s', filename: %d.", cstr_path, nilfilename ? "" : cstr_file, nilfilename);
 #endif
 	} else { /* filepath != NULL */
 		PROBE_ENT_STRVAL(filepath, cstr_path, sizeof cstr_path, return NULL;, return NULL;);
