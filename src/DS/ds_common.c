@@ -59,7 +59,7 @@ xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent)
 	return new_doc;
 }
 
-int ds_dump_component_sources(struct oscap_htable *component_sources)
+int ds_dump_component_sources(struct oscap_htable *component_sources, const char *target_dir)
 {
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(component_sources);
 	while (oscap_htable_iterator_has_more(hit)) {

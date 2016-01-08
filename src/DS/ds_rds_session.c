@@ -117,7 +117,7 @@ int ds_rds_session_register_component_source(struct ds_rds_session *session, con
 
 int ds_rds_session_dump_component_files(struct ds_rds_session *session)
 {
-	return ds_dump_component_sources(session->component_sources);
+	return ds_dump_component_sources(session->component_sources, NULL);
 }
 
 struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id)
