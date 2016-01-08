@@ -530,7 +530,7 @@ oval_result_t probe_ent_result_bychk(SEXP_t * res_lst, oval_check_t check)
 		break;
 	case OVAL_CHECK_NONE_EXIST:
 		dW("The 'none exist' CheckEnumeration value has been deprecated. "
-		   "Converted to check='none satisfy'.\n");
+		   "Converted to check='none satisfy'.");
 		/* FALLTHROUGH */
 	case OVAL_CHECK_NONE_SATISFY:
 		if (ores.true_cnt > 0) {
