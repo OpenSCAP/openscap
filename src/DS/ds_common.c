@@ -64,12 +64,15 @@ int ds_dump_component_sources(struct oscap_htable *component_sources, const char
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(component_sources);
 	while (oscap_htable_iterator_has_more(hit)) {
 		struct oscap_source *s = oscap_htable_iterator_next_value(hit);
-		int ret = oscap_acquire_ensure_parent_dir(oscap_source_readable_origin(s));
+		const char *filename = target_dir == NULL ? oscap_strdup(oscap_source_readable_origin(s))
+				: oscap_sprintf("%s/%s", target_dir, oscap_source_readable_origin(s));
+		int ret = oscap_acquire_ensure_parent_dir(filename);
 		if (ret != 0) {
 			oscap_htable_iterator_free(hit);
 			return ret;
 		}
-		ret = oscap_source_save_as(s, NULL);
+		ret = oscap_source_save_as(s, filename);
+		oscap_free(filename);
 		if (ret != 0) {
 			oscap_htable_iterator_free(hit);
 			return ret;
