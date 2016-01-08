@@ -77,7 +77,8 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, 0, ovector, ovector_len);
 
 	if (rc < -1) {
-		return -1;
+		dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
+		return rc;
 	} else if (rc == -1) {
 		/* no match */
 		return 0;
@@ -300,6 +301,18 @@ static int process_file(const char *path, const char *file, void *arg)
 
 		SEXP_free(next_inst);
 		substr_cnt = get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
+
+		if (substr_cnt < 0) {
+			SEXP_t *msg;
+			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"Regular expression pattern match failed in file %s with error %d.",
+				whole_path, substr_cnt);
+			probe_cobj_add_msg(probe_ctx_getresult(pfd->ctx), msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_ctx_getresult(pfd->ctx), SYSCHAR_FLAG_ERROR);
+			ret = -3;
+			goto cleanup;
+		}
 
 		if (substr_cnt > 0) {
 			++cur_inst;
