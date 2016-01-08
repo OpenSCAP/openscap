@@ -61,7 +61,6 @@ static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
 static oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
-static int __debuglog_pstrip = -1;
 
 #if defined(OSCAP_THREAD_SAFE)
 # define __LOCK_FP    do { if (pthread_mutex_lock   (&__debuglog_mutex) != 0) abort(); } while(0)
@@ -123,17 +122,11 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
 }
 
 
-static const char *__oscap_path_rstrip(const char *path, int num)
+static const char *__oscap_path_rstrip(const char *path)
 {
-	register size_t len;
-
-	len = strlen(path);
-
-	for (len = strlen(path); len > 0; --len) {
-		if (path[len - 1] == PATH_SEPARATOR)
-			--num;
-		if (num == 0)
-			return (path + len);
+	const char *separator = strrchr(path, PATH_SEPARATOR);
+	if (separator) {
+		return (separator + 1);
 	}
 
 	return (path);
@@ -147,21 +140,7 @@ static void debug_message_start(int level, const char *file, const char *fn, siz
 
 	__LOCK_FP;
 
-	if (__debuglog_pstrip == -1) {
-		char *pstrip;
-
-		pstrip = getenv(OSCAP_DEBUG_PATHSTRIP_ENV);
-
-		if (pstrip == NULL)
-			__debuglog_pstrip = 0;
-		else
-			__debuglog_pstrip = atol(pstrip);
-
-	}
-	if (__debuglog_pstrip != 0)
-		f = __oscap_path_rstrip(file, __debuglog_pstrip);
-	else
-		f = file;
+	f = __oscap_path_rstrip(file);
 
 #if defined(__SVR4) && defined (__sun)
 	if (lockf(fileno(__debuglog_fp), F_LOCK, 0L) == -1) {
