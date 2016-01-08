@@ -133,15 +133,11 @@ static const char *__oscap_path_rstrip(const char *path)
 }
 
 
-static void debug_message_start(int level, const char *file, const char *fn, size_t line)
+static void debug_message_start(int level)
 {
 	char  l;
-	const char *f;
 
 	__LOCK_FP;
-
-	f = __oscap_path_rstrip(file);
-
 #if defined(__SVR4) && defined (__sun)
 	if (lockf(fileno(__debuglog_fp), F_LOCK, 0L) == -1) {
 #else
@@ -167,17 +163,23 @@ static void debug_message_start(int level, const char *file, const char *fn, siz
 	default:
 		l = '0';
 	}
+	fprintf(__debuglog_fp, "%c: %s: ", l, program_invocation_short_name);
+}
+
+static void debug_message_devel_metadata(const char *file, const char *fn, size_t line)
+{
+	const char *f = __oscap_path_rstrip(file);
 #if defined(OSCAP_THREAD_SAFE)
 	char thread_name[THREAD_NAME_LEN];
 	pthread_t thread = pthread_self();
 	pthread_getname_np(thread, thread_name, THREAD_NAME_LEN);
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%s(%ld):%s(%llx)) [%c:%s:%zu:%s] ",
+	fprintf(__debuglog_fp, " [%s(%ld):%s(%llx):%s:%zu:%s]",
 		program_invocation_short_name, (long) getpid(), thread_name,
-		(unsigned long long) thread, l, f, line, fn);
+		(unsigned long long) thread, f, line, fn);
 #else
-	fprintf(__debuglog_fp, "(%ld) [%c:%s:%zu:%s] ", (long) getpid(),
-		l, f, line, fn);
+	fprintf(__debuglog_fp, " [%ld:%s:%zu:%s]", (long) getpid(),
+		f, line, fn);
 #endif
 }
 
@@ -208,8 +210,11 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
 		return;
 	}
 	va_start(ap, fmt);
-	debug_message_start(level, file, fn, line);
+	debug_message_start(level);
 	vfprintf(__debuglog_fp, fmt, ap);
+	if (__debuglog_level == DBG_D) {
+		debug_message_devel_metadata(file, fn, line);
+	}
 	debug_message_end();
 	va_end(ap);
 }
@@ -219,17 +224,18 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	if (__debuglog_fp == NULL) {
 		return;
 	}
-	if (__debuglog_level < DBG_I) {
+	if (__debuglog_level < DBG_D) {
 		return;
 	}
-	debug_message_start(DBG_I, file, fn, line);
+	debug_message_start(DBG_D);
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
 		break;
 	default:
-		fprintf(__debuglog_fp, "Attempt to dump a not supported object.\n");
+		fprintf(__debuglog_fp, "Attempt to dump a not supported object.");
 	}
+	debug_message_devel_metadata(file, fn, line);
 	debug_message_end();
 }
 
