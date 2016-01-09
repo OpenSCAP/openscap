@@ -83,6 +83,20 @@ static inline void _print_xccdf_profiles(struct xccdf_benchmark *bench, const ch
 	xccdf_profile_iterator_free(prof_it);
 }
 
+static inline void _print_xccdf_referenced_files(struct xccdf_policy_model *policy_model, const char *prefix)
+{
+	struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
+	struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
+	printf("%sReferenced check files:\n", prefix);
+	while (oscap_file_entry_iterator_has_more(files_it)) {
+		struct oscap_file_entry *file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
+		printf("%s\t%s\n", prefix, oscap_file_entry_get_file(file_entry));
+		printf("%s\t\tsystem: %s\n", prefix, oscap_file_entry_get_system(file_entry));
+	}
+	oscap_file_entry_iterator_free(files_it);
+	oscap_file_entry_list_free(referenced_files);
+}
+
 static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
 {
 	const char *prefix = "\t\t";
@@ -95,19 +109,7 @@ static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccd
 	_print_xccdf_profiles(bench, prefix);
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
-	struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
-	struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
-	printf("\t\tReferenced check files:\n");
-	while (oscap_file_entry_iterator_has_more(files_it)) {
-		struct oscap_file_entry *file_entry;
-
-		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
-
-		printf("\t\t\t%s\n", oscap_file_entry_get_file(file_entry));
-		printf("\t\t\t\tsystem: %s\n", oscap_file_entry_get_system(file_entry));
-	}
-	oscap_file_entry_iterator_free(files_it);
-	oscap_file_entry_list_free(referenced_files);
+	_print_xccdf_referenced_files(policy_model, prefix);
 
 	struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
 	if (xccdf_result_iterator_has_more(res_it))
@@ -232,19 +234,7 @@ static int app_info(const struct oscap_action *action)
 		_print_xccdf_profiles(bench, prefix);
 
 		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
-		struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
-		struct oscap_file_entry_iterator *files_it = oscap_file_entry_list_get_files(referenced_files);
-		printf("Referenced check files:\n");
-		while (oscap_file_entry_iterator_has_more(files_it)) {
-			struct oscap_file_entry *file_entry;
-
-			file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
-
-			printf("\t%s\n", oscap_file_entry_get_file(file_entry));
-			printf("\t\tsystem: %s\n", oscap_file_entry_get_system(file_entry));
-		}
-		oscap_file_entry_iterator_free(files_it);
-		oscap_file_entry_list_free(referenced_files);
+		_print_xccdf_referenced_files(policy_model, prefix);
 
 		struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
 		if (xccdf_result_iterator_has_more(res_it))
