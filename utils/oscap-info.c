@@ -110,6 +110,7 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 
 static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix)
 {
+	printf("%sResolved: %s\n", prefix, xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 	_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), prefix);
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
@@ -225,7 +226,6 @@ static int app_info(const struct oscap_action *action)
 			}
 		}
 		print_time(action->file);
-		printf("Resolved: %s\n", xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 
 		_print_xccdf_benchmark(bench, "");
 	}
