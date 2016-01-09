@@ -187,10 +187,11 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 		}
 		case XCCDFE_PROFILE: {
 			if (benchmark != NULL) {
-				struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
-				if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
-					dW("Failed to add profile to tailoring while parsing!");
-				}
+				dW("Parsing Tailoring Profiles without reference to Benchmark");
+			}
+			struct xccdf_item *item = xccdf_profile_parse(reader, benchmark);
+			if (!xccdf_tailoring_add_profile(tailoring, XPROFILE(item))) {
+				dW("Failed to add profile to tailoring while parsing!");
 			}
 			break;
 		}
