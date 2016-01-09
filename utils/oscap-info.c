@@ -72,23 +72,27 @@ static void print_time(const char *file) {
 	}
 }
 
+static inline void _print_xccdf_profiles(struct xccdf_benchmark *bench, const char *prefix)
+{
+	struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
+	printf("%sProfiles:\n", prefix);
+	while (xccdf_profile_iterator_has_more(prof_it)) {
+		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
+		printf("%s\t%s\n", prefix, xccdf_profile_get_id(prof));
+	}
+	xccdf_profile_iterator_free(prof_it);
+}
+
 static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
 {
+	const char *prefix = "\t\t";
 	/* import xccdf */
 	struct xccdf_benchmark* bench = NULL;
         bench = xccdf_benchmark_import_source(xccdf_source);
 	if(!bench) {
 		return 1;
 	}
-
-	/* print profiles */
-	struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
-	printf("\t\tProfiles:\n");
-	while (xccdf_profile_iterator_has_more(prof_it)) {
-		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
-		printf("\t\t\t%s\n", xccdf_profile_get_id(prof));
-	}
-	xccdf_profile_iterator_free(prof_it);
+	_print_xccdf_profiles(bench, prefix);
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
@@ -224,14 +228,8 @@ static int app_info(const struct oscap_action *action)
 		print_time(action->file);
 		printf("Resolved: %s\n", xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 
-		struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
-		printf("Profiles:\n");
-		struct xccdf_profile * prof = NULL;
-		while (xccdf_profile_iterator_has_more(prof_it)) {
-			prof = xccdf_profile_iterator_next(prof_it);
-			printf("\t%s\n", xccdf_profile_get_id(prof));
-		}
-		xccdf_profile_iterator_free(prof_it);
+		const char *prefix = "";
+		_print_xccdf_profiles(bench, prefix);
 
 		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 		struct oscap_file_entry_list *referenced_files = xccdf_policy_model_get_systems_and_files(policy_model);
