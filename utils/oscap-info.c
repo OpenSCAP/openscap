@@ -131,19 +131,6 @@ static inline void _print_xccdf_tailoring(struct oscap_source *source, const cha
 	xccdf_tailoring_free(tailoring);
 }
 
-static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
-{
-	const char *prefix = "\t\t";
-	/* import xccdf */
-	struct xccdf_benchmark* bench = NULL;
-        bench = xccdf_benchmark_import_source(xccdf_source);
-	if(!bench) {
-		return 1;
-	}
-	_print_xccdf_benchmark(bench, prefix);
-	return 0;
-}
-
 static int app_info(const struct oscap_action *action)
 {
         int result = OSCAP_ERROR;
@@ -301,12 +288,14 @@ static int app_info(const struct oscap_action *action)
 
 				const char *prefix = "\t\t";
 				if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
-					if (_print_sds_component_xccdf_benchmark(xccdf_source)) {
+					struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+					if(!bench) {
 						oscap_string_iterator_free(checklist_it);
 						ds_stream_index_iterator_free(sds_it);
 						ds_sds_session_free(session);
 						goto cleanup;
 					}
+					_print_xccdf_benchmark(bench, prefix);
 				} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 					_print_xccdf_tailoring(xccdf_source, prefix);
 				}
