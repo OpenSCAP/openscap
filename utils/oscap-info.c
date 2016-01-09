@@ -109,6 +109,18 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 	xccdf_result_iterator_free(res_it);
 }
 
+static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix)
+{
+	_print_xccdf_profiles(bench, prefix);
+
+	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
+	_print_xccdf_referenced_files(policy_model, prefix);
+	_print_xccdf_testresults(bench, prefix);
+
+	xccdf_policy_model_free(policy_model);
+	// xccdf_benchmark_free not needed, it si already freed by the policy!
+}
+
 static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
 {
 	const char *prefix = "\t\t";
@@ -118,16 +130,7 @@ static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccd
 	if(!bench) {
 		return 1;
 	}
-	_print_xccdf_profiles(bench, prefix);
-
-	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
-	_print_xccdf_referenced_files(policy_model, prefix);
-	_print_xccdf_testresults(bench, prefix);
-
-	xccdf_policy_model_free(policy_model);
-	// already freed by policy!
-	//xccdf_benchmark_free(bench);
-
+	_print_xccdf_benchmark(bench, prefix);
 	return 0;
 }
 
@@ -227,16 +230,7 @@ static int app_info(const struct oscap_action *action)
 		print_time(action->file);
 		printf("Resolved: %s\n", xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 
-		const char *prefix = "";
-		_print_xccdf_profiles(bench, prefix);
-
-		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
-		_print_xccdf_referenced_files(policy_model, prefix);
-		_print_xccdf_testresults(bench, prefix);
-
-		xccdf_policy_model_free(policy_model);
-		// already freed by policy!
-		//xccdf_benchmark_free(bench);
+		_print_xccdf_benchmark(bench, "");
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
