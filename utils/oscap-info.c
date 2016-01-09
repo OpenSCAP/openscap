@@ -128,12 +128,6 @@ static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccd
 	// already freed by policy!
 	//xccdf_benchmark_free(bench);
 
-	if (oscap_err()) {
-		/* This might have set error, when some of the removals failed.
-		   No need to abort this operation, we can safely procceed. */
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-		oscap_clearerr();
-	}
 	return 0;
 }
 
