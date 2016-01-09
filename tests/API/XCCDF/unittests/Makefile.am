@@ -171,6 +171,8 @@ EXTRA_DIST += \
 	test_xccdf_resolve.xccdf.xml \
 	test_xccdf_results_arf_no_oval.sh \
 	test_xccdf_results_arf_no_oval.xccdf.xml \
+	test_xccdf_role_unchecked.sh \
+	test_xccdf_role_unchecked.xccdf.xml \
 	test_xccdf_selectors_cluster1.sh \
 	test_xccdf_selectors_cluster1.xccdf.xml \
 	test_xccdf_selectors_cluster2.sh \
