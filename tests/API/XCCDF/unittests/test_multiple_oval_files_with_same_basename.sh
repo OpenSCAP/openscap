@@ -50,7 +50,7 @@ $OSCAP info $sds 2> $stderr
 
 :>$result
 $OSCAP xccdf eval --results $result $sds 2> $stderr
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
 
 assert_exists 8 '//rule-result'
 assert_exists 8 '//rule-result/result'
@@ -69,5 +69,24 @@ assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:flat"][text()="8.
 
 rm $result
 
-# TODO: run the sds-split here
+split=$(mktemp -d -t ${name}.sds.XXXXXX)
+echo "Creating SDS split = $split"
+
+$OSCAP ds sds-split $sds $split 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
 rm $sds
+
+# The following rm commands ensure that the files are present
+for dir in fail pass; do
+	$OSCAP oval validate $split/oval/$dir/oval.xml 2> $stderr
+	[ -f $stderr ]; [ ! -s $stderr ]
+	rm $split/oval/$dir/oval.xml
+	rmdir $split/oval/$dir
+done
+rmdir $split/oval
+
+mangle="scap_org.open-scap_cref_"
+$OSCAP xccdf validate $split/${mangle}${name}.xccdf.xml 2> $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+rm $split/${mangle}${name}.xccdf.xml
+rmdir $split
