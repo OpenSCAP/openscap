@@ -72,9 +72,8 @@ static void print_time(const char *file) {
 	}
 }
 
-static inline void _print_xccdf_profiles(struct xccdf_benchmark *bench, const char *prefix)
+static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix)
 {
-	struct xccdf_profile_iterator * prof_it = xccdf_benchmark_get_profiles(bench);
 	printf("%sProfiles:\n", prefix);
 	while (xccdf_profile_iterator_has_more(prof_it)) {
 		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
@@ -111,7 +110,7 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 
 static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix)
 {
-	_print_xccdf_profiles(bench, prefix);
+	_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), prefix);
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	_print_xccdf_referenced_files(policy_model, prefix);
