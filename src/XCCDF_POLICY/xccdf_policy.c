@@ -964,13 +964,13 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	struct xccdf_refine_rule_internal* r_rule = oscap_htable_get(policy->refine_rules_internal, rule_id);
 
 	xccdf_role_t role = xccdf_get_final_role(rule, r_rule);
-	if (role  == XCCDF_ROLE_UNCHECKED )
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
-
 	if (!is_selected) {
 		dI("Rule '%s' is not selected.\n", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 	}
+
+	if (role == XCCDF_ROLE_UNCHECKED)
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
 
 	const bool is_applicable = xccdf_policy_model_item_is_applicable(policy->model, (struct xccdf_item*)rule);
 	if (!is_applicable) {
