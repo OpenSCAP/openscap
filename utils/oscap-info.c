@@ -97,6 +97,18 @@ static inline void _print_xccdf_referenced_files(struct xccdf_policy_model *poli
 	oscap_file_entry_list_free(referenced_files);
 }
 
+static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const char *prefix)
+{
+	struct xccdf_result_iterator *res_it = xccdf_benchmark_get_results(bench);
+	if (xccdf_result_iterator_has_more(res_it))
+		printf("%sTest Results:\n", prefix);
+	while (xccdf_result_iterator_has_more(res_it)) {
+		struct xccdf_result *test_result = xccdf_result_iterator_next(res_it);
+		printf("%s\t%s\n", prefix, xccdf_result_get_id(test_result));
+	}
+	xccdf_result_iterator_free(res_it);
+}
+
 static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
 {
 	const char *prefix = "\t\t";
@@ -110,16 +122,7 @@ static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccd
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	_print_xccdf_referenced_files(policy_model, prefix);
-
-	struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
-	if (xccdf_result_iterator_has_more(res_it))
-		printf("\t\tTest Results:\n");
-	struct xccdf_result * test_result = NULL;
-	while (xccdf_result_iterator_has_more(res_it)) {
-		test_result = xccdf_result_iterator_next(res_it);
-		printf("\t\t\t%s\n", xccdf_result_get_id(test_result));
-	}
-	xccdf_result_iterator_free(res_it);
+	_print_xccdf_testresults(bench, prefix);
 
 	xccdf_policy_model_free(policy_model);
 	// already freed by policy!
@@ -235,16 +238,7 @@ static int app_info(const struct oscap_action *action)
 
 		struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 		_print_xccdf_referenced_files(policy_model, prefix);
-
-		struct xccdf_result_iterator * res_it = xccdf_benchmark_get_results(bench);
-		if (xccdf_result_iterator_has_more(res_it))
-			printf("Test Results:\n");
-		struct xccdf_result * test_result = NULL;
-		while (xccdf_result_iterator_has_more(res_it)) {
-			test_result = xccdf_result_iterator_next(res_it);
-			printf("\t%s\n", xccdf_result_get_id(test_result));
-		}
-		xccdf_result_iterator_free(res_it);
+		_print_xccdf_testresults(bench, prefix);
 
 		xccdf_policy_model_free(policy_model);
 		// already freed by policy!
