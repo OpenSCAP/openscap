@@ -72,6 +72,20 @@ static void print_time(const char *file) {
 	}
 }
 
+static inline void _print_xccdf_status(struct xccdf_status *status, const char *prefix)
+{
+	if (status) {
+		printf("%sStatus: %s\n", prefix, xccdf_status_type_to_text(xccdf_status_get_status(status)));
+		const time_t date_time = xccdf_status_get_date(status);
+		if (date_time != 0) {
+			struct tm *date = localtime(&date_time);
+			char date_str[] = "YYYY-DD-MM";
+			snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+			printf("%sGenerated: %s\n", prefix, date_str);
+		}
+	}
+}
+
 static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix)
 {
 	printf("%sProfiles:\n", prefix);
@@ -110,6 +124,7 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 
 static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix)
 {
+	_print_xccdf_status(xccdf_benchmark_get_status_current(bench), prefix);
 	printf("%sResolved: %s\n", prefix, xccdf_benchmark_get_resolved(bench) ? "true" : "false");
 	_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), prefix);
 
@@ -212,19 +227,6 @@ static int app_info(const struct oscap_action *action)
 		if(!bench)
 			goto cleanup;
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
-		/* get current status */
-		struct xccdf_status * status = NULL;
-		status = xccdf_benchmark_get_status_current(bench);
-		if (status) {
-			printf("Status: %s\n", xccdf_status_type_to_text(xccdf_status_get_status(status)));
-			const time_t date_time = xccdf_status_get_date(status);
-			if (date_time != 0) {
-				struct tm *date = localtime(&date_time);
-				char date_str[] = "YYYY-DD-MM";
-				snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
-				printf("Generated: %s\n", date_str);
-			}
-		}
 		print_time(action->file);
 
 		_print_xccdf_benchmark(bench, "");
