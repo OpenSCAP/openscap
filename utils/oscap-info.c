@@ -120,6 +120,17 @@ static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const c
 	// xccdf_benchmark_free not needed, it si already freed by the policy!
 }
 
+static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix)
+{
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, NULL);
+	if (tailoring == NULL) {
+		return;
+	}
+	printf("%sBenchmark Hint: %s\n", prefix, xccdf_tailoring_get_benchmark_ref(tailoring));
+	_print_xccdf_profiles(xccdf_tailoring_get_profiles(tailoring), prefix);
+	xccdf_tailoring_free(tailoring);
+}
+
 static inline int _print_sds_component_xccdf_benchmark(struct oscap_source *xccdf_source)
 {
 	const char *prefix = "\t\t";
@@ -288,6 +299,7 @@ static int app_info(const struct oscap_action *action)
 					goto cleanup;
 				}
 
+				const char *prefix = "\t\t";
 				if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
 					if (_print_sds_component_xccdf_benchmark(xccdf_source)) {
 						oscap_string_iterator_free(checklist_it);
@@ -295,6 +307,8 @@ static int app_info(const struct oscap_action *action)
 						ds_sds_session_free(session);
 						goto cleanup;
 					}
+				} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+					_print_xccdf_tailoring(xccdf_source, prefix);
 				}
 				ds_sds_session_reset(session);
 			}
@@ -357,12 +371,8 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_XCCDF_TAILORING:
 		printf("Document type: XCCDF Tailoring\n");
-
-		// XCCDF Tailoring is not trivial to parse and interpret without
-		// knowing which content file it is supposed to be used with.
-		//
-		// Since we don't have this info when `oscap info` is called, we
-		// can't list profiles the tailoring file adds.
+		print_time(action->file);
+		_print_xccdf_tailoring(source, "");
 	break;
 	case OSCAP_DOCUMENT_CVE_FEED:
 		printf("Document type: CVE Feed\n");
