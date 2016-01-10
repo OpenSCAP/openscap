@@ -128,12 +128,12 @@ void *__sm_alloc_dbg (size_t s, const char *func, size_t line)
         m = malloc (s);
 #if defined(SEAP_MALLOC_EXIT)
         if (m == NULL) {
-                dI("FAIL: size=%zu\n", s);
+                dI("FAIL: size=%zu", s);
                 exit (ENOMEM);
         }
 #endif
 #if defined(SEAP_VERBOSE_DEBUG)
-        dI("%s:%u, ptr=%p, size=%zu\n", func, line, m, s);
+        dI("%s:%u, ptr=%p, size=%zu", func, line, m, s);
 #endif
         return (m);
 }
@@ -148,13 +148,13 @@ void *__sm_calloc_dbg (size_t n, size_t s, const char *f, size_t l)
         m = calloc (n, s);
 #if defined(SEAP_MALLOC_EXIT)
         if (m == NULL) {
-                dI("FAIL: nmemb=%zu, size=%zu, total=%zu\n",
+                dI("FAIL: nmemb=%zu, size=%zu, total=%zu",
                    n, s, n * s);
                 exit (ENOMEM);
         }
 #endif
 #if defined(SEAP_VERBOSE_DEBUG)
-        dI("ptr=%p, nmemb=%zu, size=%zu, total=%zu\n",
+        dI("ptr=%p, nmemb=%zu, size=%zu, total=%zu",
            m, n, s, n * s);
 #endif
         return (m);
@@ -166,12 +166,12 @@ void *__sm_realloc_dbg (void *p, size_t s, const char *f, size_t l)
         m = realloc (p, s);
 #if defined(SEAP_MALLOC_EXIT)
         if (m == NULL && s > 0) {
-                dI("FAIL: old=%p, size=%zu\n", p, s);
+                dI("FAIL: old=%p, size=%zu", p, s);
                 exit (ENOMEM);
         }
 #endif
 #if defined(SEAP_VERBOSE_DEBUG)
-        dI("%s:%u, old=%p, new=%p, size=%zu\n", f, l, p, m, s);
+        dI("%s:%u, old=%p, new=%p, size=%zu", f, l, p, m, s);
 #endif
         return (m);
 }
@@ -181,14 +181,14 @@ void *__sm_reallocf_dbg (void *p, size_t s, const char *f, size_t l)
         void *m;
         m = realloc (p, s);
         if (m == NULL && s > 0) {
-                dI("FAIL: old=%p, size=%zu\n", p, s);
+                dI("FAIL: old=%p, size=%zu", p, s);
                 sm_free (p);
 #if defined(SEAP_MALLOC_EXIT)
                 exit (ENOMEM);
 #endif
         } else {
 #if defined(SEAP_VERBOSE_DEBUG)
-                dI("old=%p, new=%p, size=%zu\n", p, m, s);
+                dI("old=%p, new=%p, size=%zu", p, m, s);
 #endif
         }
         return (m);
@@ -204,7 +204,7 @@ int __sm_memalign_dbg (void **p, size_t a, size_t s, const char *f, size_t l)
 
 #if defined(SEAP_MALLOC_EXIT)
         if (ret != 0) {
-                dI("FAIL: p=%p, a=%zu, s=%zu\n", p, a, s);
+                dI("FAIL: p=%p, a=%zu, s=%zu", p, a, s);
                 exit (ret);
         }
 #endif
@@ -217,7 +217,7 @@ void __sm_free_dbg (void *p, const char *f, size_t l)
         _A(p != NULL);
 #endif
 #if defined(SEAP_VERBOSE_DEBUG)
-        dI("ptr=%p\n", p);
+        dI("ptr=%p", p);
 #endif
         if (p != NULL)
                 free (p);

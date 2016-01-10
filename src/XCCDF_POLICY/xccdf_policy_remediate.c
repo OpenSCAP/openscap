@@ -236,7 +236,7 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 		xccdf_fix_get_content(fix));
         xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER |
 		XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET | XML_PARSE_NSCLEAN);
-	dI("Following script will be executed: '''%s'''\n", str);
+	dI("Following script will be executed: '''%s'''", str);
 	oscap_free(str);
 
         xmlBuffer *buff = xmlBufferCreate();
@@ -468,21 +468,21 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	// Ensure that given Rule is selected and applicable (CPE).
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
 	if (!is_selected) {
-		dI("Skipping unselected Rule/@id=\"%s\"\n", xccdf_rule_get_id(rule));
+		dI("Skipping unselected Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
 		return 0;
 	}
 	const bool is_applicable = xccdf_policy_model_item_is_applicable(xccdf_policy_get_model(policy), (struct xccdf_item*)rule);
 	if (!is_applicable) {
-		dI("Skipping notapplicable Rule/@id\"%s\"\n", xccdf_rule_get_id(rule));
+		dI("Skipping notapplicable Rule/@id\"%s\"", xccdf_rule_get_id(rule));
 		return 0;
 	}
 	// Find the most suitable fix.
 	const struct xccdf_fix *fix = _find_fix_for_template(policy, rule, template);
 	if (fix == NULL) {
-		dI("No fix element was found for Rule/@id=\"%s\"\n", xccdf_rule_get_id(rule));
+		dI("No fix element was found for Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
 		return 0;
 	}
-	dI("Processing a fix for Rule/@id=\"%s\"\n", xccdf_rule_get_id(rule));
+	dI("Processing a fix for Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
 
 	// Process Text Substitute within the fix
 	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
@@ -541,7 +541,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 	if (result == NULL) {
 		// No TestResult is available. Generate fix from the stock profile.
-		dI("Generating fixes for policy(profile/@id=%s)\n", xccdf_policy_get_id(policy));
+		dI("Generating fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
 		int ret = 0;
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 		if (benchmark == NULL) {

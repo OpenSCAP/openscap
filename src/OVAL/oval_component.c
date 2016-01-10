@@ -333,7 +333,7 @@ void oval_component_set_record_field(struct oval_component *component, char *fie
 	__attribute__nonnull__(component);
 
 	if (oval_component_get_type(component) != OVAL_COMPONENT_OBJECTREF) {
-		dW("Wrong component type: %d.\n", oval_component_get_type(component));
+		dW("Wrong component type: %d.", oval_component_get_type(component));
 		return;
 	}
 
@@ -1170,7 +1170,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		component = oval_component_new(model, OVAL_FUNCTION_REGEX_CAPTURE);
 		return_code = _oval_component_parse_REGEX_CAPTURE_tag(reader, context, component);
 	} else {
-		oscap_dlprintf(DBG_I, "Tag <%s> not handled, line: %d.\n", tagname,
+		dI("Tag <%s> not handled, line: %d.", tagname,
                               xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
@@ -1178,7 +1178,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		(*consumer) (component, user);
 
 	if (return_code != 0 ) {
-		dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	return return_code;
@@ -1862,23 +1862,23 @@ static long unsigned int _parse_datetime(char *datetime, const char *fmt[], size
         size_t    i;
         char     *r;
 
-        dI("Parsing datetime string \"%s\"\n", datetime);
+        dI("Parsing datetime string \"%s\"", datetime);
 
         for (i = 0; i < fmtcnt; ++i) {
-                dI("%s\n", fmt[i]);
+                dI("%s", fmt[i]);
                 memset(&t, 0, sizeof t);
                 r = strptime(datetime, fmt[i], &t);
 
                 if (r != NULL) {
                         if (*r == '\0') {
-                                dI("Success!\n");
+                                dI("Success!");
                                 return _comp_sec(t.tm_year, t.tm_mon, t.tm_mday,
                                                  t.tm_hour, t.tm_min, t.tm_sec);
                         }
                 }
         }
 
-        dE("Unable to interpret \"%s\" as a datetime string\n");
+        dE("Unable to interpret \"%s\" as a datetime string");
 
         return (0);
 }
@@ -2146,7 +2146,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 	pattern = oval_component_get_regex_pattern(component);
 	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
 	if (re == NULL) {
-		oscap_dlprintf(DBG_E, "pcre_compile() failed: \"%s\".\n", error);
+		dE("pcre_compile() failed: \"%s\".", error);
 		return SYSCHAR_FLAG_ERROR;
 	}
 #elif defined USE_REGEX_POSIX
@@ -2154,7 +2154,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 	pattern = oval_component_get_regex_pattern(component);
 	if ((rc = regcomp(&re, pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
-		oscap_dlprintf(DBG_E, "regcomp() failed: %d.\n", rc);
+		dE("regcomp() failed: %d.", rc);
 		return SYSCHAR_FLAG_ERROR;
 	}
 #endif
@@ -2176,7 +2176,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 			rc = pcre_exec(re, NULL, text, strlen(text), 0, 0, ovector, ovector_len);
 			if (rc < -1) {
-				oscap_dlprintf(DBG_E, "pcre_exec() failed: %d.\n", rc);
+				dE("pcre_exec() failed: %d.", rc);
 				flag = SYSCHAR_FLAG_ERROR;
 				break;
 			}

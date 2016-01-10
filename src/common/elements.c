@@ -232,7 +232,7 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 		if (buff == NULL) {
 			close(fd);
 			oscap_setxmlerr(xmlGetLastError());
-			oscap_dlprintf(DBG_W, "xmlOutputBufferCreateFile() failed.\n");
+			dW("xmlOutputBufferCreateFile() failed.");
 			return -1;
 		}
 
@@ -241,7 +241,7 @@ int oscap_xml_save_filename(const char *filename, xmlDocPtr doc)
 	}
 	if (xmlCode <= 0) {
 		oscap_setxmlerr(xmlGetLastError());
-		oscap_dlprintf(DBG_W, "No bytes exported: xmlCode: %d.\n", xmlCode);
+		dW("No bytes exported: xmlCode: %d.", xmlCode);
 	}
 
 	return (xmlCode >= 1) ? 1 : -1;

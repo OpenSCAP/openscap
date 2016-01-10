@@ -213,7 +213,7 @@ void *probe_init (void)
 	case 0:
 		return ((void *)&__filehash58_probe_mutex);
 	default:
-		dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+		dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
 	}
 
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
@@ -275,7 +275,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 	case 0:
 		break;
 	default:
-		dI("Can't lock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
+		dI("Can't lock mutex(%p): %u, %s.", &__filehash58_probe_mutex, errno, strerror (errno));
 
 		err = PROBE_EFATAL;
 		goto cleanup;
@@ -311,7 +311,7 @@ cleanup:
 	case 0:
 		break;
 	default:
-		dI("Can't unlock mutex(%p): %u, %s.\n", &__filehash58_probe_mutex, errno, strerror (errno));
+		dI("Can't unlock mutex(%p): %u, %s.", &__filehash58_probe_mutex, errno, strerror (errno));
 
 		err = PROBE_EFATAL;
 	}

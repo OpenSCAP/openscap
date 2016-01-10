@@ -69,7 +69,7 @@ int oval_syschar_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
 			} else if (is_ovalsys && (strcmp(tagname, "system_data") == 0)) {
 				ret = oval_parser_parse_tag(reader, context, &oval_sysitem_parse_tag, NULL);
 			} else {
-				dW("Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+				dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 				oval_parser_skip_tag(reader, context);
 			}
 

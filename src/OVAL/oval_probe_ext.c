@@ -190,13 +190,13 @@ static int oval_probe_cmd_init(oval_pext_t *pext)
 	if (SEAP_cmd_register(pext->pdtbl->ctx, PROBECMD_OBJ_EVAL, SEAP_CMDREG_USEARG,
                               &oval_probe_cmd_obj_eval, (void *)pext) != 0)
         {
-		oscap_dlprintf(DBG_E, "Can't register command: %s: errno=%u, %s.\n", "obj_eval", errno, strerror(errno));
+		dE("Can't register command: %s: errno=%u, %s.", "obj_eval", errno, strerror(errno));
 		return (-1);
 	}
 
 	if (SEAP_cmd_register(pext->pdtbl->ctx, PROBECMD_STE_FETCH, SEAP_CMDREG_USEARG,
 			      &oval_probe_cmd_ste_fetch, (void *)pext) != 0) {
-		oscap_dlprintf(DBG_E, "Can't register command: %s: errno=%u, %s.\n", "ste_fetch", errno, strerror(errno));
+		dE("Can't register command: %s: errno=%u, %s.", "ste_fetch", errno, strerror(errno));
 
 		/* FIXME: unregister the first command */
 
@@ -220,7 +220,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
         assume_d (arg  != NULL, NULL);
 
 	if (!SEXP_stringp(sexp)) {
-		oscap_dlprintf(DBG_E, "Invalid argument: type=%s.\n", SEXP_strtype(sexp));
+		dE("Invalid argument: type=%s.", SEXP_strtype(sexp));
 		return (NULL);
 	}
 
@@ -229,10 +229,10 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	obj    = oval_definition_model_get_object(defs, id_str);
 	ret    = SEXP_list_new (sexp, NULL);
 
-	oscap_dlprintf(DBG_I, "Get_object: %s.\n", id_str);
+	dI("Get_object: %s.", id_str);
 
 	if (obj == NULL) {
-		oscap_dlprintf(DBG_E, "Can't find obj: id=%s.\n", id_str);
+		dE("Can't find obj: id=%s.", id_str);
 		oscap_free(id_str);
                 SEXP_free(ret);
 
@@ -250,7 +250,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	SEXP_free(ret_code);
 
 	if (oscap_err()) {
-		oscap_dlprintf(DBG_E, "Failed: id: %s, err: %d, %s.\n",
+		dE("Failed: id: %s, err: %d, %s.",
 			       id_str, oscap_err_family(), oscap_err_desc());
 		oscap_clearerr();
 		oscap_free(id_str);
@@ -285,7 +285,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 			ste = oval_definition_model_get_state(definition_model, id_str);
 
 			if (ste == NULL) {
-				oscap_dlprintf(DBG_E, "Can't find ste: id: %s.\n", id_str);
+				dE("Can't find ste: id: %s.", id_str);
 				SEXP_list_free(ste_list);
 				oscap_free(id_str);
                                 SEXP_free(id);
@@ -295,7 +295,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 
 			ret = oval_state_to_sexp(pext->sess_ptr, ste, &ste_sexp);
 			if (ret !=0) {
-				oscap_dlprintf(DBG_E, "Failed to convert OVAL state to SEXP, id: %s.\n",
+				dE("Failed to convert OVAL state to SEXP, id: %s.",
 					       id_str);
 				SEXP_list_free(ste_list);
 				oscap_free(id_str);
@@ -362,7 +362,7 @@ static inline const char *_probe_strerror(uint32_t error_code)
 static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, SEAP_msg_t *s_omsg, int flags)
 {
 	protect_errno {
-		oscap_dlprintf(DBG_W, "Can't receive message: %u, %s.\n", errno, strerror(errno));
+		dW("Can't receive message: %u, %s.", errno, strerror(errno));
 	}
 
 	if (errno == ECANCELED) {
@@ -374,11 +374,11 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		case  0:
 			break;
 		case  1: /* no error found */
-			dE("Internal error: An error was signaled on sd=%d but the error queue is empty.\n");
+			dE("Internal error: An error was signaled on sd=%d but the error queue is empty.");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
 			return (-1);
 		case -1: /* internal error */
-			dE("Internal error: SEAP_recverr_byid returned -1\n");
+			dE("Internal error: SEAP_recverr_byid returned -1");
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error.");
 			return (-1);
 		}
@@ -417,7 +417,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		char errbuf[__ERRBUF_SIZE];
 
 		protect_errno {
-			oscap_dlprintf(DBG_E, "Can't close sd: %u, %s.\n", errno, strerror(errno));
+			dE("Can't close sd: %u, %s.", errno, strerror(errno));
 		}
 
 		if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
@@ -451,17 +451,17 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 			if (pd->sd < 0) {
                                 protect_errno {
-                                        oscap_dlprintf(DBG_W, "Can't connect: %u, %s.\n", errno, strerror(errno));
+                                        dW("Can't connect: %u, %s.", errno, strerror(errno));
                                 }
 
 				if (++retry <= OVAL_PROBE_MAXRETRY) {
-					oscap_dlprintf(DBG_I, "Connect: retry %u/%u.\n", retry, OVAL_PROBE_MAXRETRY);
+					dI("Connect: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
 					continue;
 				} else {
                                         char errbuf[__ERRBUF_SIZE];
 
                                         protect_errno {
-                                                oscap_dlprintf(DBG_E, "Connect: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+                                                dE("Connect: retry limit (%u) reached.", OVAL_PROBE_MAXRETRY);
                                         }
 
                                         if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
@@ -480,7 +480,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 		if (flags & OVAL_PDFLAG_NOREPLY) {
 			if (SEAP_msgattr_set(s_omsg, "no-reply", NULL) != 0) {
                                 protect_errno {
-                                        oscap_dlprintf(DBG_E, "Can't set no-reply attribute.\n");
+                                        dE("Can't set no-reply attribute.");
                                 }
 
                                 SEAP_msg_free(s_omsg);
@@ -490,12 +490,12 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			}
 		}
 
-		oscap_dlprintf(DBG_I, "Sending message.\n");
+		dI("Sending message.");
 
 		ret = SEAP_sendmsg(ctx, pd->sd, s_omsg);
 		if (ret != 0) {
                         protect_errno {
-                                oscap_dlprintf(DBG_W, "Can't send message: %u, %s.\n", errno, strerror(errno));
+                                dW("Can't send message: %u, %s.", errno, strerror(errno));
                         }
 
 			if (flags & OVAL_PDFLAG_SLAVE) {
@@ -514,7 +514,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 char errbuf[__ERRBUF_SIZE];
 
                                 protect_errno {
-                                        oscap_dlprintf(DBG_E, "Can't close sd: %u, %s.\n", errno, strerror(errno));
+                                        dE("Can't close sd: %u, %s.", errno, strerror(errno));
                                         SEAP_msg_free(s_omsg);
                                 }
 
@@ -530,13 +530,13 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			pd->sd = -1;
 
 			if (++retry <= OVAL_PROBE_MAXRETRY) {
-				oscap_dlprintf(DBG_I, "Send: retry %u/%u.\n", retry, OVAL_PROBE_MAXRETRY);
+				dI("Send: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
 				continue;
 			} else {
                                 char errbuf[__ERRBUF_SIZE];
 
                                 protect_errno {
-                                        oscap_dlprintf(DBG_E, "Send: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+                                        dE("Send: retry limit (%u) reached.", OVAL_PROBE_MAXRETRY);
                                         SEAP_msg_free(s_omsg);
                                 }
 
@@ -549,7 +549,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			}
 		}
 
-		oscap_dlprintf(DBG_I, "Waiting for reply.\n");
+		dI("Waiting for reply.");
 
 		/* recv_retry: */
 		s_imsg = NULL;
@@ -562,15 +562,15 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 				SEAP_msg_free(s_omsg);
 			}
 			if (errno == ECONNABORTED) {
-				oscap_dlprintf(DBG_I, "Connection was aborted.\n");
+				dI("Connection was aborted.");
 				return (-2);
 			} else {
 				if (++retry <= OVAL_PROBE_MAXRETRY) {
-					oscap_dlprintf(DBG_I, "Recv: retry %u/%u.\n", retry, OVAL_PROBE_MAXRETRY);
+					dI("Recv: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
 					continue;
 				} else {
 					protect_errno {
-						oscap_dlprintf(DBG_E, "Recv: retry limit (%u) reached.\n", OVAL_PROBE_MAXRETRY);
+						dE("Recv: retry limit (%u) reached.", OVAL_PROBE_MAXRETRY);
 					}
 
 					char errbuf[__ERRBUF_SIZE];
@@ -583,7 +583,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			}
 		}
 
-		oscap_dlprintf(DBG_I, "Message received.\n");
+		dI("Message received.");
 		break;
 	}
 
@@ -663,12 +663,12 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                 val = probe_obj_getentval (obj, __STRING(name), 1);     \
                                                                         \
                 if (val == NULL) {                                      \
-                        dI("No entity or value: %s\n", __STRING(name)); \
+                        dI("No entity or value: %s", __STRING(name)); \
                         goto fail;                                      \
                 }                                                       \
                                                                         \
                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                        dI("Value too large: %s\n", __STRING(name));    \
+                        dI("Value too large: %s", __STRING(name));    \
                         SEXP_free (val);                                \
                         goto fail;                                      \
                 }                                                       \
@@ -699,12 +699,12 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                 val = probe_ent_getattrval (ent, __STRING(name)); \
                                                                         \
                                 if (val == NULL) {                      \
-                                        dI("No value: %s\n", __STRING(name)); \
+                                        dI("No value: %s", __STRING(name)); \
                                         goto fail;                      \
                                 }                                       \
                                                                         \
                                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                                        dI("Value too large: %s\n", __STRING(name)); \
+                                        dI("Value too large: %s", __STRING(name)); \
                                         SEXP_free (val);                \
                                         goto fail;                      \
                                 }                                       \
@@ -795,7 +795,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                         ret = -1;
                 } else {
-                        dI("Starting probe on URI '%s'.\n", probe_uri);
+                        dI("Starting probe on URI '%s'.", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "%s probe not supported", probe_dsc->name);
@@ -863,7 +863,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                                 return (-1);
                         }
 
-                        dI("Starting probe on URI '%s'.\n", probe_uri);
+                        dI("Starting probe on URI '%s'.", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
@@ -981,34 +981,34 @@ int oval_probe_ext_init(oval_pext_t *pext)
 		register unsigned int i, r;
 
 		if (getcwd(curdir, PATH_MAX) == NULL) {
-			dE("getcwd() failed\n");
+			dE("getcwd() failed");
                         ret = -1;
                         goto _ret;
 		}
 
 		if (chdir(pext->probe_dir) != 0) {
-			dE("Can't chdir to \"%s\"\n", pext->probe_dir);
+			dE("Can't chdir to \"%s\"", pext->probe_dir);
                         ret = -1;
                         goto _ret;
 		}
 
 		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
 
-                dD("__probe_meta_count = %zu\n", OSCAP_GSYM(__probe_meta_count));
+                dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
 
 		for (r = 0, i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
                         if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
-                                dD("skipped: %s (not an external probe)\n", OSCAP_GSYM(__probe_meta)[i].stype);
+                                dD("skipped: %s (not an external probe)", OSCAP_GSYM(__probe_meta)[i].stype);
                                 continue;
                         }
 
 			if (stat(OSCAP_GSYM(__probe_meta)[i].pname, &st) != 0) {
-				dD("skipped: %s (stat failed, errno=%d)\n", OSCAP_GSYM(__probe_meta)[i].stype, errno);
+				dD("skipped: %s (stat failed, errno=%d)", OSCAP_GSYM(__probe_meta)[i].stype, errno);
 				continue;
 			}
 
 			if (!S_ISREG(st.st_mode)) {
-				dD("skipped: %s (not a regular file)\n", OSCAP_GSYM(__probe_meta)[i].stype);
+				dD("skipped: %s (not a regular file)", OSCAP_GSYM(__probe_meta)[i].stype);
 				continue;
 			}
 
@@ -1027,7 +1027,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
 		      (int(*)(const void *, const void *))oval_pdsc_cmp);
 
 		if (chdir(curdir) != 0) {
-			dE("Can't chdir back to \"%s\"\n", curdir);
+			dE("Can't chdir back to \"%s\"", curdir);
 			oscap_free(pext->pdsc);
 			pext->pdsc_cnt = 0;
                         ret = -1;
@@ -1070,7 +1070,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	if (ret != 0) {
 		switch (errno) {
 		case ECONNABORTED:
-			dI("Closing sd=%d (pd=%p) after abort\n", pd->sd, pd);
+			dI("Closing sd=%d (pd=%p) after abort", pd->sd, pd);
 
 			SEAP_close(ctx, pd->sd);
 			pd->sd = -1;
@@ -1085,7 +1085,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
                          * The no-reply flag is set and oval_probe_comm returned some
                          * data. This is considered a non-fatal error.
                          */
-                        oscap_dlprintf(DBG_W, "Obtrusive data from probe!\n");
+                        dW("Obtrusive data from probe!");
                         SEXP_free(s_sys);
 		}
 		return (0);
@@ -1124,7 +1124,7 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 	assume_d(pd   != NULL, -1);
 	assume_d(pext != NULL, -1);
 
-	dI("Sending abort to sd=%d\n", pd->sd);
+	dI("Sending abort to sd=%d", pd->sd);
 
 	dsc = SEAP_desc_get(ctx->sd_table, pd->sd);
 
@@ -1136,10 +1136,10 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 	{
 		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
 
-		dI("Sending SIGUSR1 to pid=%u\n", pipeinfo->pid);
+		dI("Sending SIGUSR1 to pid=%u", pipeinfo->pid);
 
 		if (kill(pipeinfo->pid, SIGUSR1) != 0)
-			dW("kill(SIGUSR1, %u): %u, %s\n", errno, strerror(errno));
+			dW("kill(SIGUSR1, %u): %u, %s", errno, strerror(errno));
 
 		break;
 	}

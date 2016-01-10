@@ -236,7 +236,7 @@ oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check)
 		break;
 	case OVAL_CHECK_NONE_EXIST:
 		dW("The 'none exist' CheckEnumeration value has been deprecated. "
-		   "Converted to check='none satisfy'.\n");
+		   "Converted to check='none satisfy'.");
 		/* FALLTHROUGH */
 	case OVAL_CHECK_NONE_SATISFY:
 		if (ores->true_cnt > 0) {
@@ -411,7 +411,7 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 			var_val = oval_value_iterator_next(val_itr);
 			state_entity_val_text = oval_value_get_text(var_val);
 			if (state_entity_val_text == NULL) {
-				dE("Found NULL variable value text.\n");
+				dE("Found NULL variable value text.");
 				ores_add_res(&var_ores, OVAL_RESULT_ERROR);
 				break;
 			}
@@ -567,7 +567,7 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 		oval_sysent_iterator_free(item_entities_itr);
 
 		if (!found_matching_item)
-			dW("Entity name '%s' from state (id: '%s') not found in item (id: '%s').\n",
+			dW("Entity name '%s' from state (id: '%s') not found in item (id: '%s').",
 			   state_entity_name, oval_state_get_id(state), oval_sysitem_get_id(cur_sysitem));
 
 		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
@@ -865,7 +865,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 
 	/* is the test already evaluated? */
 	if (rtest->result != OVAL_RESULT_NOT_EVALUATED) {
-		dI("Found result from previous evaluation: %d, returning without further processing.\n", rtest->result);
+		dI("Found result from previous evaluation: %d, returning without further processing.", rtest->result);
 		return (rtest->result);
 	}
 
@@ -879,7 +879,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 
 	struct oval_syschar * syschar = oval_syschar_model_get_syschar(syschar_model, object_id);
 	if (syschar == NULL) {
-		dW("No syschar for object: %s\n", object_id);
+		dW("No syschar for object: %s", object_id);
 		return OVAL_RESULT_UNKNOWN;
 	}
 
@@ -991,7 +991,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 			rtest->result = OVAL_RESULT_UNKNOWN;
 	}
 
-        dI("\t%s => %s\n", oval_result_test_get_id(rtest), oval_result_get_text(rtest->result));
+        dI("\t%s => %s", oval_result_test_get_id(rtest), oval_result_get_text(rtest->result));
 
 	return rtest->result;
 }
@@ -1102,7 +1102,7 @@ static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_c
 	} else if (strcmp((const char *)localName, "tested_variable") == 0) {
 		return_code = _oval_result_test_binding_parse(reader, context, args);
 	} else {
-		dW( "Unhandled tag: <%s>.\n", localName);
+		dW("Unhandled tag: <%s>.", localName);
 		oval_parser_skip_tag(reader, context);
 	}
 
@@ -1138,7 +1138,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	if (tst_check_existence == OVAL_EXISTENCE_UNKNOWN) {
 		oval_test_set_existence(ovaltst, check_existence);
 	} else if (tst_check_existence != check_existence) {
-		oscap_dlprintf(DBG_W, "@check_existence does not match, test_id: %s.\n", test_id);
+		dW("@check_existence does not match, test_id: %s.", test_id);
 	}
 
 	oval_check_t check = oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
@@ -1146,7 +1146,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	if (tst_check == OVAL_CHECK_UNKNOWN) {
 		oval_test_set_check(ovaltst, check);
 	} else if (tst_check != check) {
-		oscap_dlprintf(DBG_W, "@check does not match, test_id: %s.\n", test_id);
+		dW("@check does not match, test_id: %s.", test_id);
 	}
 
 	int version = oval_parser_int_attribute(reader, "version", 0);
@@ -1154,7 +1154,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	if (tst_version == 0) {
 		oval_test_set_version(ovaltst, version);
 	} else if (tst_version != version) {
-		oscap_dlprintf(DBG_W, "@version does not match, test_id: %s.\n", test_id);
+		dW("@version does not match, test_id: %s.", test_id);
 	}
 
 	struct oval_string_map *itemmap = oval_string_map_new();

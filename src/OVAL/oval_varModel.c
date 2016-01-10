@@ -198,7 +198,7 @@ static int _oval_variable_model_parse_variable_values
 		oval_collection_add(frame->values, ov);
 		oscap_free(value);
 	} else {
-		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
@@ -216,7 +216,7 @@ static int _oval_variable_model_parse_variable
 	int return_code = 1;
 	if (frame) {
 		if (frame->datatype != datatype) {
-			oscap_dlprintf(DBG_W, "Unmatched variable datatypes: %s:%s.\n",
+			dW("Unmatched variable datatypes: %s:%s.",
 				      oval_datatype_get_text(frame->datatype), oval_datatype_get_text(datatype));
 			oval_parser_skip_tag(reader, context);
 			return_code = 0;
@@ -242,7 +242,7 @@ static int _oval_variable_model_parse_variables
 	if (is_variable_ns && oscap_strcmp("variable", tagname) == 0) {
 		return_code = _oval_variable_model_parse_variable(reader, context, model);
 	} else {
-		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 
 		/*oscap_seterr */
@@ -268,7 +268,7 @@ static int _oval_variable_model_parse_tag
 		return_code =
 		    oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_variable_model_parse_variables, model);
 	} else {
-		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
@@ -291,7 +291,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 		return_code =
 		    oval_parser_parse_tag(reader, &context, (oval_xml_tag_parser) _oval_variable_model_parse_tag, model);
 	} else {
-		oscap_dlprintf(DBG_W, "Unprocessed tag: <%s:%s>.\n", namespace, tagname);
+		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, &context);
 	}
 	oscap_free(tagname);

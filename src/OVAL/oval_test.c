@@ -346,7 +346,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 			state_ref = NULL;
 		}
 	} else {
-		oscap_dlprintf(DBG_W, "Skipping tag <%s>.\n", tagname);
+		dW("Skipping tag <%s>.", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
@@ -383,7 +383,7 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	oval_check_t check = oval_check_parse(reader, "check", OVAL_CHECK_UNKNOWN);
 	if (check == OVAL_CHECK_NONE_EXIST) {
 		dW("The 'none exist' CheckEnumeration value has been deprecated. "
-		   "Converted to check='none satisfy' and check_existence='none exist'.\n");
+		   "Converted to check='none satisfy' and check_existence='none exist'.");
 		oval_test_set_check(test, OVAL_CHECK_NONE_SATISFY);
 		oval_test_set_existence(test, OVAL_NONE_EXIST);
 	} else {
@@ -425,7 +425,7 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 	/* skip unknown test */
 	oval_subtype_t subtype = oval_test_get_subtype(test);
 	if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
-		oscap_dlprintf(DBG_E, "Unknown Test %s.\n", oval_test_get_id(test));
+		dE("Unknown Test %s.", oval_test_get_id(test));
 		return test_node;
 	}
 

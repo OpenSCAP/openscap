@@ -174,7 +174,7 @@ static int process_file(const char *path, const char *filename, void *arg)
                                  "xpath",    OVAL_DATATYPE_STRING, pfd->xpath,
                                  NULL);
 
-	dI("xpath obj type: %d.\n", xpath_obj->type);
+	dI("xpath obj type: %d.", xpath_obj->type);
 	switch(xpath_obj->type) {
 	case XPATH_BOOLEAN:
 	{
@@ -223,7 +223,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		}
 
 		node_cnt = nodes->nodeNr;
-		dI("node_cnt: %d.\n", node_cnt);
+		dI("node_cnt: %d.", node_cnt);
 		if (node_cnt == 0) {
 			probe_item_setstatus(item, SYSCHAR_STATUS_DOES_NOT_EXIST);
 			probe_item_ent_add(item, "value_of", NULL, NULL);
@@ -232,7 +232,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 			node_tab = nodes->nodeTab;
 			for (i = 0; i < node_cnt; ++i) {
 				cur_node = node_tab[i];
-				dI("node[%d] line: %d, name: '%s', type: %d.\n",
+				dI("node[%d] line: %d, name: '%s', type: %d.",
 				   i, cur_node->line, cur_node->name, cur_node->type);
 				if (cur_node->type == XML_ATTRIBUTE_NODE
 				    || cur_node->type == XML_TEXT_NODE) {
