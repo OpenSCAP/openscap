@@ -45,6 +45,7 @@
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "oval_probe_session.h"
+#include "oval_probe_impl.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
@@ -1261,13 +1262,12 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 	if (!object)
 		return flag;
 
+	const char *obj_id = oval_object_get_id(object);
+
 	if (argu->mode == OVAL_MODE_QUERY) {
 		if (oval_probe_query_object(argu->u.sess, object, 0, &syschar) != 0)
 			return flag;
 	} else {
-		char *obj_id;
-
-		obj_id = oval_object_get_id(object);
 		syschar = oval_syschar_model_get_syschar(argu->u.sysmod, obj_id);
 	}
 
@@ -1281,6 +1281,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		while (oval_sysitem_iterator_has_more(sysitems)) {
 			struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
 			struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
+			const char *oval_sysitem_id = oval_sysitem_get_id(sysitem);
+			const char *oval_sysitem_subtype = oval_subtype_to_str(oval_sysitem_get_subtype(sysitem));
+			bool entity_matched = false;
 			while (oval_sysent_iterator_has_more(sysent_itr)) {
 				oval_datatype_t dt;
 				struct oval_sysent *sysent = oval_sysent_iterator_next(sysent_itr);
@@ -1289,14 +1292,28 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 				if (strcmp(ifield_name, sysent_name))
 					continue;
 
+				entity_matched = true;
 				dt = oval_sysent_get_datatype(sysent);
-				if ((dt == OVAL_DATATYPE_RECORD && rfield_name == NULL)
-				    || (dt != OVAL_DATATYPE_RECORD && rfield_name != NULL))
-					/* todo: throw error */
-					continue;
+				if (dt == OVAL_DATATYPE_RECORD && rfield_name == NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OVAL,
+							"Unexpected record data type in %s_item (id: %s) specified by object '%s'.",
+							oval_sysitem_subtype, oval_sysitem_id, obj_id);
+					oval_sysent_iterator_free(sysent_itr);
+					oval_sysitem_iterator_free(sysitems);
+					return SYSCHAR_FLAG_ERROR;
+				}
+				if (dt != OVAL_DATATYPE_RECORD && rfield_name != NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OVAL,
+							"Expected record data type, but found %s data type in %s entity in %s_item (id: %s) specified by object '%s'.",
+							oval_datatype_get_text(dt), ifield_name, oval_sysitem_subtype, oval_sysitem_id, obj_id);
+					oval_sysent_iterator_free(sysent_itr);
+					oval_sysitem_iterator_free(sysitems);
+					return SYSCHAR_FLAG_ERROR;
+				}
 
 				if (dt == OVAL_DATATYPE_RECORD) {
 					struct oval_record_field_iterator *rf_itr;
+					bool field_matched = false;
 
 					rf_itr = oval_sysent_get_record_fields(sysent);
 					while (oval_record_field_iterator_has_more(rf_itr)) {
@@ -1309,13 +1326,23 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 						if (strcmp(rfield_name, txtval))
 							continue;
 
+						field_matched = true;
 						dt = oval_record_field_get_datatype(rf);
 						txtval = oval_record_field_get_value(rf);
 						val = oval_value_new(dt, txtval);
 						oval_collection_add(value_collection, val);
 					}
+					/* throw error if none matched */
+					if (!field_matched) {
+						oscap_seterr(OSCAP_EFAMILY_OVAL,
+								"Record field '%s' has not been found in %s_item (id: %s) specified by object '%s'.",
+								rfield_name, oval_sysitem_subtype, oval_sysitem_id, obj_id);
+						oval_record_field_iterator_free(rf_itr);
+						oval_sysent_iterator_free(sysent_itr);
+						oval_sysitem_iterator_free(sysitems);
+						return SYSCHAR_FLAG_ERROR;
+					}
 					oval_record_field_iterator_free(rf_itr);
-					/* todo: throw error if none matched */
 				} else {
 					char *txtval;
 					struct oval_value *val;
@@ -1325,8 +1352,16 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 					oval_collection_add(value_collection, val);
 				}
 			}
+			/* throw error if none matched */
+			if (!entity_matched) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL,
+						"Entity '%s' has not been found in %s_item (id: %s) specified by object '%s'.",
+						ifield_name, oval_sysitem_subtype, oval_sysitem_id, obj_id);
+				oval_sysent_iterator_free(sysent_itr);
+				oval_sysitem_iterator_free(sysitems);
+				return SYSCHAR_FLAG_ERROR;
+			}
 			oval_sysent_iterator_free(sysent_itr);
-			/* todo: throw error if none matched */
 		}
 		oval_sysitem_iterator_free(sysitems);
 	}
