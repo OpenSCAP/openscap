@@ -183,6 +183,7 @@ static void debug_message_start(int level, const char *file, const char *fn, siz
 
 static void debug_message_end()
 {
+	fputc('\n', __debuglog_fp);
 #if defined(__SVR4) && defined (__sun)
 	if (lockf(fileno(__debuglog_fp), F_ULOCK, 0L) == -1) {
 #else
@@ -225,7 +226,6 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
-		fputc('\n', __debuglog_fp);
 		break;
 	default:
 		fprintf(__debuglog_fp, "Attempt to dump a not supported object.\n");
