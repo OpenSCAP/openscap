@@ -131,6 +131,15 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 		return NULL;
 	}
 
+	if (curl_global_init(CURL_GLOBAL_ALL) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
+		if (remove(output_filename))
+			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Failed to initialize libcurl. Failed to remove temp file %s. %s",
+				output_filename, strerror(errno));
+		fclose(fp);
+		free(output_filename);
+		return NULL;
+	}
 	curl = curl_easy_init();
 	if (curl == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
@@ -155,6 +164,7 @@ oscap_acquire_url_download(const char *temp_dir, const char *url)
 		output_filename = NULL;
 	}
 	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 	fclose(fp);
 	return output_filename;
 }
@@ -178,6 +188,10 @@ oscap_acquire_url_to_filename(const char *url)
 	char *filename = NULL;
 	CURL *curl;
 
+	if (curl_global_init(CURL_GLOBAL_ALL) != 0) {
+		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
+		return NULL;
+	}
 	curl = curl_easy_init();
 	if (curl == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to initialize libcurl.");
@@ -186,12 +200,15 @@ oscap_acquire_url_to_filename(const char *url)
 
 	curl_filename = curl_easy_escape(curl , url , 0);
 	if (curl_filename == NULL) {
+		curl_easy_cleanup(curl);
+		curl_global_cleanup();
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to escape the given url %s", url);
 		return NULL;
 	}
 	filename = strdup(curl_filename);
 	curl_free(curl_filename);
 	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 	return filename;
 }
 
