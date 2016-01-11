@@ -89,7 +89,7 @@ int oscap_determine_document_type_reader(xmlTextReader *reader, oscap_document_t
                 return -1;
         }
 
-        dI("Identified document type: %s\n", elm_name);
+        dI("Identified document type: %s", elm_name);
 
         return 0;
 }

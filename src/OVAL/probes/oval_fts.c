@@ -200,17 +200,17 @@ int load_zones_path_list()
 		if (strcmp(name, "global") == 0)
 			continue;
 		if (zone_get_state(name, &state_num) != Z_OK) {
-			dE("Could not get zone state for %s\n", name);
+			dE("Could not get zone state for %s", name);
 			continue;
 		} else if (state_num > ZONE_STATE_CONFIGURED) {
 			temp = malloc(sizeof(zone_path_t));
 			if (temp == NULL) {
-				dE("Memory alloc failed\n");
+				dE("Memory alloc failed");
 				return(1);
 			}
 			if (zone_get_zonepath(name, rpath,
 			    sizeof(rpath)) != Z_OK) {
-				dE("Could not get zone path for %s\n",
+				dE("Could not get zone path for %s",
 				    name);
 				continue;
 			}

@@ -269,7 +269,7 @@ struct xccdf_score *xccdf_result_calculate_score(struct xccdf_result *test_resul
 		oscap_free(item_score);
 	} else {
 		xccdf_score_free(score);
-		oscap_dlprintf(DBG_E, "Scoring system \"%s\" is not supported.\n", score_system);
+		dE("Scoring system \"%s\" is not supported.", score_system);
 		return NULL;
 	}
 	return score;

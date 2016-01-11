@@ -96,7 +96,7 @@ struct oval_session *oval_session_new(const char *filename)
 		return NULL;
 	}
 
-	dI("Created a new OVAL session from input file '%s'.\n", filename);
+	dI("Created a new OVAL session from input file '%s'.", filename);
 	return session;
 }
 
@@ -270,9 +270,9 @@ static int oval_session_load_variables(struct oval_session *session)
 				return 1;
 			}
 		}
-		dI("Loaded OVAL variables.\n");
+		dI("Loaded OVAL variables.");
 	} else {
-		dI("No external OVAL variables provided.\n");
+		dI("No external OVAL variables provided.");
 	}
 
 	return 0;
@@ -362,7 +362,7 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to set the OSCAP_PROBE_ROOT environment variable.");
 			return 1;
 		}
-		dI("OSCAP_PROBE_ROOT environment variable set to '%s'.\n", probe_root);
+		dI("OSCAP_PROBE_ROOT environment variable set to '%s'.", probe_root);
 	}
 
 	if (oval_session_setup_agent(session) != 0) {
@@ -376,7 +376,7 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 
 	session->res_model = oval_agent_get_results_model(session->sess);
 
-	dI("OVAL evaluation successfully finished.\n");
+	dI("OVAL evaluation successfully finished.");
 	return 0;
 }
 

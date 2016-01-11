@@ -965,7 +965,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 
 	xccdf_role_t role = xccdf_get_final_role(rule, r_rule);
 	if (!is_selected) {
-		dI("Rule '%s' is not selected.\n", rule_id);
+		dI("Rule '%s' is not selected.", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 	}
 
@@ -974,7 +974,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 
 	const bool is_applicable = xccdf_policy_model_item_is_applicable(policy->model, (struct xccdf_item*)rule);
 	if (!is_applicable) {
-		dI("Rule '%s' is not applicable.\n", rule_id);
+		dI("Rule '%s' is not applicable.", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_APPLICABLE, NULL);
 	}
 
@@ -1092,13 +1092,13 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
     switch (itype) {
         case XCCDF_RULE:{
 			const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *)item);
-			dI("Evaluating XCCDF rule '%s'.\n", rule_id);
+			dI("Evaluating XCCDF rule '%s'.", rule_id);
 			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result);
         } break;
 
         case XCCDF_GROUP:{
 			const char *group_id = xccdf_group_get_id((const struct xccdf_group *)item);
-			dI("Evaluating XCCDF group '%s'.\n", group_id);
+			dI("Evaluating XCCDF group '%s'.", group_id);
 			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
 			while (xccdf_item_iterator_has_more(child_it)) {
 				child = xccdf_item_iterator_next(child_it);
@@ -2031,7 +2031,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     else
         id = oscap_strdup("default-profile");
 
-	dI("Evaluating a XCCDF policy with selected '%s' profile.\n", id);
+	dI("Evaluating a XCCDF policy with selected '%s' profile.", id);
 
     /* Get all constant information */
     benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));

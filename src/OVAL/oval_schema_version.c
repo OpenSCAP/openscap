@@ -60,7 +60,7 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 	int erroffset;
 	pcre *re = pcre_compile(pattern, 0, &error, &erroffset, NULL);
 	if (re == NULL) {
-		dE("Regular expression compilation failed with %s\n", pattern);
+		dE("Regular expression compilation failed with %s", pattern);
 		return version;
 	}
 	const int ovector_size = 30; // must be a multiple of 30
@@ -68,7 +68,7 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 	int rc = pcre_exec(re, NULL, ver_str, strlen(ver_str), 0, 0, ovector, ovector_size);
 	pcre_free(re);
 	if (rc < 0) {
-		dE("Regular expression %s did not match string %s\n", pattern, ver_str);
+		dE("Regular expression %s did not match string %s", pattern, ver_str);
 		return version;
 	}
 	for (int i = 1; i < rc; i++) {
@@ -81,7 +81,7 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 	int groups[OVAL_SCHEMA_VERSION_COMPONENTS_COUNT] = {1, 2, 4, 6, 7, 9};
 	regex_t re;
 	if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
-		dE("Regular expression compilation failed with %s\n", pattern);
+		dE("Regular expression compilation failed with %s", pattern);
 		return version;
 	}
 	size_t max_matches = 10;
@@ -89,7 +89,7 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 	int match = regexec(&re, ver_str, max_matches, matches, 0);
 	regfree(&re);
 	if (match != 0) {
-		dE("Regular expression %s did not match string %s\n", pattern, ver_str);
+		dE("Regular expression %s did not match string %s", pattern, ver_str);
 		return version;
 	}
 	for (int i = 0; i < OVAL_SCHEMA_VERSION_COMPONENTS_COUNT; i++) {

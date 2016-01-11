@@ -49,7 +49,7 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 		"Get"
 	);
 	if (msg == NULL) {
-		dI("Failed to create dbus_message via dbus_message_new_method_call!\n");
+		dI("Failed to create dbus_message via dbus_message_new_method_call!");
 		goto cleanup;
 	}
 
@@ -59,20 +59,20 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 
 	dbus_message_iter_init_append(msg, &args);
 	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface)) {
-		dI("Failed to append interface '%s' string parameter to dbus message!\n", interface);
+		dI("Failed to append interface '%s' string parameter to dbus message!", interface);
 		goto cleanup;
 	}
 	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &property)) {
-		dI("Failed to append property '%s' string parameter to dbus message!\n", property);
+		dI("Failed to append property '%s' string parameter to dbus message!", property);
 		goto cleanup;
 	}
 
 	if (!dbus_connection_send_with_reply(conn, msg, &pending, -1)) {
-		dI("Failed to send message via dbus!\n");
+		dI("Failed to send message via dbus!");
 		goto cleanup;
 	}
 	if (pending == NULL) {
-		dI("Invalid dbus pending call!\n");
+		dI("Invalid dbus pending call!");
 		goto cleanup;
 	}
 
@@ -82,19 +82,19 @@ static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_pa
 	dbus_pending_call_block(pending);
 	msg = dbus_pending_call_steal_reply(pending);
 	if (msg == NULL) {
-		dI("Failed to steal dbus pending call reply.\n");
+		dI("Failed to steal dbus pending call reply.");
 		goto cleanup;
 	}
 	dbus_pending_call_unref(pending); pending = NULL;
 
 	if (!dbus_message_iter_init(msg, &args)) {
-		dI("Failed to initialize iterator over received dbus message.\n");
+		dI("Failed to initialize iterator over received dbus message.");
 		goto cleanup;
 	}
 
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_VARIANT)
 	{
-		dI("Expected variant argument in reply. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		dI("Expected variant argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
 		goto cleanup;
 	}
 
