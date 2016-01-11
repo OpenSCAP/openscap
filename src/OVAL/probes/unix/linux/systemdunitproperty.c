@@ -48,7 +48,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 		"GetAll"
 	);
 	if (msg == NULL) {
-		dI("Failed to create dbus_message via dbus_message_new_method_call!\n");
+		dI("Failed to create dbus_message via dbus_message_new_method_call!");
 		goto cleanup;
 	}
 
@@ -58,16 +58,16 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 
 	dbus_message_iter_init_append(msg, &args);
 	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface)) {
-		dI("Failed to append interface '%s' string parameter to dbus message!\n", interface);
+		dI("Failed to append interface '%s' string parameter to dbus message!", interface);
 		goto cleanup;
 	}
 
 	if (!dbus_connection_send_with_reply(conn, msg, &pending, -1)) {
-		dI("Failed to send message via dbus!\n");
+		dI("Failed to send message via dbus!");
 		goto cleanup;
 	}
 	if (pending == NULL) {
-		dI("Invalid dbus pending call!\n");
+		dI("Invalid dbus pending call!");
 		goto cleanup;
 	}
 
@@ -77,18 +77,18 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 	dbus_pending_call_block(pending);
 	msg = dbus_pending_call_steal_reply(pending);
 	if (msg == NULL) {
-		dI("Failed to steal dbus pending call reply.\n");
+		dI("Failed to steal dbus pending call reply.");
 		goto cleanup;
 	}
 	dbus_pending_call_unref(pending); pending = NULL;
 
 	if (!dbus_message_iter_init(msg, &args)) {
-		dI("Failed to initialize iterator over received dbus message.\n");
+		dI("Failed to initialize iterator over received dbus message.");
 		goto cleanup;
 	}
 
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_ARRAY && dbus_message_iter_get_element_type(&args) != DBUS_TYPE_DICT_ENTRY) {
-		dI("Expected array of dict_entry argument in reply. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		dI("Expected array of dict_entry argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
 		goto cleanup;
 	}
 
@@ -98,7 +98,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 		dbus_message_iter_recurse(&property_iter, &dict_entry);
 
 		if (dbus_message_iter_get_arg_type(&dict_entry) != DBUS_TYPE_STRING) {
-			dI("Expected string as key in dict_entry. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&dict_entry)));
+			dI("Expected string as key in dict_entry. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&dict_entry)));
 			goto cleanup;
 		}
 
@@ -113,7 +113,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 		}
 
 		if (dbus_message_iter_get_arg_type(&dict_entry) != DBUS_TYPE_VARIANT) {
-			dI("Expected variant as value in dict_entry. Instead received: %s.\n", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&dict_entry)));
+			dI("Expected variant as value in dict_entry. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&dict_entry)));
 			oscap_free(property_name);
 			goto cleanup;
 		}

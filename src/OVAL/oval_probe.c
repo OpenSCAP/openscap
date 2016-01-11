@@ -266,7 +266,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 			}
 		}
 	} else {
-		dI("Creating new syschar for %s_object '%s'.\n", type_name, oid);
+		dI("Creating new syschar for %s_object '%s'.", type_name, oid);
 		sysc = oval_syschar_new(model, object);
 	}
 
@@ -305,7 +305,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
         oval_ph_t *ph;
 	int ret;
 
-	dI("Querying system information.\n");
+	dI("Querying system information.");
 
         ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
 
@@ -394,7 +394,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 					oval_variable_type_t var_type = oval_variable_get_type(var);
 					const char *var_type_text = oval_variable_type_get_text(var_type);
 					const char *var_id = oval_variable_get_id(var);
-					dI("State '%s' references %s '%s'.\n", state_id,
+					dI("State '%s' references %s '%s'.", state_id,
 						var_type_text, var_id);
 
 					ret = oval_probe_query_variable(sess, var);

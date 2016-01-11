@@ -370,7 +370,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
 		return 0;
 
-	dI("Querying variable '%s'.\n", var->id);
+	dI("Querying variable '%s'.", var->id);
 	component = var->component;
         if (component) {
 		if (!var->values)
@@ -386,7 +386,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	case SYSCHAR_FLAG_INCOMPLETE:
 		break;
 	default:
-		dI("Variable '%s' has no values.\n", var->id);
+		dI("Variable '%s' has no values.", var->id);
 		return 0;
 	}
 
@@ -416,7 +416,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 		oscap_string_append_string(val_dump, "\", \"");
 	}
 	oscap_string_append_char(val_dump, '\"');
-	dI("Variable '%s' has values %s.\n", var->id, oscap_string_get_cstr(val_dump));
+	dI("Variable '%s' has values %s.", var->id, oscap_string_get_cstr(val_dump));
 	oscap_string_free(val_dump);
 	oval_value_iterator_free(val_itr);
 
@@ -951,7 +951,7 @@ static int _oval_variable_parse_external_tag(xmlTextReaderPtr reader, struct ova
 		return_code = 1;
 	}
 	if (return_code != 0) {
-		dW("Parsing of %s terminated by an error at <%s>, line %d.\n", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of %s terminated by an error at <%s>, line %d.", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);

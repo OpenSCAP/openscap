@@ -92,7 +92,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	struct oval_generator *generator;
 	int ret;
 
-	dI("Started new OVAL agent.\n", name);
+	dI("Started new OVAL agent.", name);
 
         /* Optimalization */
         oval_definition_model_optimize_by_filter_propagation(model);
@@ -168,7 +168,7 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 	if (oval_def != NULL) {
 		title = oval_definition_get_title(oval_def);
 	}
-	dI("Evaluating definition '%s': %s.\n", id, title);
+	dI("Evaluating definition '%s': %s.", id, title);
 
 	/* probe */
 	ret = oval_probe_query_definition(ag_sess->psess, id);
@@ -260,7 +260,7 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, agent_reporter cb, vo
 	char   *id;
 	int ret = 0;
 
-	dI("OVAL agent started to evaluate OVAL definitions on your system.\n");
+	dI("OVAL agent started to evaluate OVAL definitions on your system.");
 	oval_def_it = oval_definition_model_get_definitions(ag_sess->def_model);
 	while (oval_definition_iterator_has_more(oval_def_it)) {
 		oval_def = oval_definition_iterator_next(oval_def_it);
@@ -290,7 +290,7 @@ int oval_agent_eval_system(oval_agent_session_t * ag_sess, agent_reporter cb, vo
 
 cleanup:
 	oval_definition_iterator_free(oval_def_it);
-	dI("OVAL agent finished evaluation.\n");
+	dI("OVAL agent finished evaluation.");
 	return ret;
 }
 

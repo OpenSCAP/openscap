@@ -149,7 +149,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		}
 	}
 
-	dI("Created a new XCCDF session from a %s '%s'.\n",
+	dI("Created a new XCCDF session from a %s '%s'.",
 		oscap_document_type_to_string(document_type), filename);
 	return session;
 }

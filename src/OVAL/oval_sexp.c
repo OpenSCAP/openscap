@@ -481,7 +481,7 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 			if (vr_type == OVAL_ENTITY_VARREF_ATTRIBUTE) {
 				const char *var_id = oval_variable_get_id(oval_entity_get_variable(entity));
 				const char *field_name = oval_object_content_get_field_name(content);
-				dI("Object '%s' references variable '%s' in '%s' field.\n", obj_id, var_id, field_name);
+				dI("Object '%s' references variable '%s' in '%s' field.", obj_id, var_id, field_name);
 				ret = oval_varref_attr_to_sexp(sess, entity, syschar, &stmp);
 
 				if (ret == 0) {

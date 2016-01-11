@@ -223,7 +223,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 						collect_item_regexp(ctx, gconf_addr, gconf_engine, gconf_key);
 						break;
 					default:
-						dE("Unsupported operation on the `key' entity: %d\n.", key_op);
+						dE("Unsupported operation on the `key' entity: %d.", key_op);
 						probe_ret = PROBE_EOPNOTSUPP;
 						abort(); /* XXX */
 					}
@@ -250,7 +250,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 			collect_item_regexp(ctx, NULL, gconf_engine, gconf_key);
 			break;
 		default:
-			dE("Unsupported operation on the `key' entity: %d\n.", key_op);
+			dE("Unsupported operation on the `key' entity: %d.", key_op);
 			probe_ret = PROBE_EOPNOTSUPP;
 		}
 

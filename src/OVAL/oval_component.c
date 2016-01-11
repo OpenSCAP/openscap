@@ -1338,7 +1338,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		return flag;
 
 	const char *obj_id = oval_object_get_id(object);
-	dI("Variable component references to object '%s'.\n", obj_id);
+	dI("Variable component references to object '%s'.", obj_id);
 
 	if (argu->mode == OVAL_MODE_QUERY) {
 		if (oval_probe_query_object(argu->u.sess, object, 0, &syschar) != 0)
