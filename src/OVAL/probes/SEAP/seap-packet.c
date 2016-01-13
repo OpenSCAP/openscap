@@ -258,9 +258,9 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
                 SEXP_free(r0);
         }
 
-	dI("MSG -> SEXP");
+	dD("MSG -> SEXP");
 	dO(OSCAP_DEBUGOBJ_SEXP, sexp);
-	dI("packet size: %zu", SEXP_sizeof(sexp));
+	dD("packet size: %zu", SEXP_sizeof(sexp));
 
         return (sexp);
 }
