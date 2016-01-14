@@ -81,64 +81,6 @@ static struct rds_report_request_index *rds_report_request_index_parse(xmlTextRe
 	return ret;
 }
 
-struct rds_asset_index
-{
-	char *id;
-	struct oscap_list *reports;
-};
-
-struct rds_asset_index *rds_asset_index_new(void)
-{
-	struct rds_asset_index *ret = oscap_calloc(1, sizeof(struct rds_asset_index));
-	ret->id = NULL;
-	ret->reports = oscap_list_new();
-
-	return ret;
-}
-
-void rds_asset_index_free(struct rds_asset_index *s)
-{
-	if (s != NULL) {
-		oscap_list_free0(s->reports);
-		oscap_free(s->id);
-		oscap_free(s);
-	}
-}
-
-const char *rds_asset_index_get_id(struct rds_asset_index *s)
-{
-	return s->id;
-}
-
-void rds_asset_index_add_report_ref(struct rds_asset_index *s, struct rds_report_index *report)
-{
-	oscap_list_add(s->reports, report);
-}
-
-struct rds_report_index_iterator *rds_asset_index_get_reports(struct rds_asset_index *s)
-{
-	return (struct rds_report_index_iterator*)oscap_iterator_new(s->reports);
-}
-
-static struct rds_asset_index *rds_asset_index_parse(xmlTextReaderPtr reader)
-{
-	// sanity check
-	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
-	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "asset") != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML,
-		             "Expected to have xmlTextReader at start of <arf:report>, "
-		             "the current event is '%i' at '%s' instead. I refuse to parse!",
-		             xmlTextReaderNodeType(reader), (const char*)xmlTextReaderConstLocalName(reader));
-
-		return NULL;
-	}
-
-	struct rds_asset_index *ret = rds_asset_index_new();
-
-	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	return ret;
-}
-
 struct rds_report_index
 {
 	char *id;
@@ -522,21 +464,6 @@ bool rds_report_request_index_iterator_has_more(struct rds_report_request_index_
 }
 
 void rds_report_request_index_iterator_free(struct rds_report_request_index_iterator *it)
-{
-	oscap_iterator_free((struct oscap_iterator*)it);
-}
-
-struct rds_asset_index *rds_asset_index_iterator_next(struct rds_asset_index_iterator *it)
-{
-	return (struct rds_asset_index*)(oscap_iterator_next((struct oscap_iterator*)it));
-}
-
-bool rds_asset_index_iterator_has_more(struct rds_asset_index_iterator *it)
-{
-	return oscap_iterator_has_more((struct oscap_iterator*)it);
-}
-
-void rds_asset_index_iterator_free(struct rds_asset_index_iterator *it)
 {
 	oscap_iterator_free((struct oscap_iterator*)it);
 }
