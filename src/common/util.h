@@ -357,6 +357,7 @@ int oscap_strcmp(const char *s1, const char *s2);
 /// Check for string equality
 bool oscap_streq(const char *s1, const char *s2);
 bool oscap_str_startswith(const char *str, const char *with);
+bool oscap_str_endswith(const char *str, const char *with);
 /// Trim whitespace (modifies its argument!)
 char *oscap_trim(char *str);
 /// Print to a newly allocated string using a va_list.
