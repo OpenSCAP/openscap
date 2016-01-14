@@ -176,6 +176,46 @@ static xmlChar *relationship_get_inner_ref(xmlNodePtr node)
 	return ret;
 }
 
+static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr relationships_node)
+{
+	// relationships node can only be NULL if the ARF is invalid
+	if (relationships_node != NULL) {
+		xmlNodePtr relationship_node = relationships_node->children;
+
+		for (; relationship_node != NULL; relationship_node = relationship_node->next)
+		{
+			if (relationship_node->type != XML_ELEMENT_NODE)
+				continue;
+
+			if (strcmp((const char*)(relationship_node->name), "relationship") != 0)
+				continue; // TODO: Warning?
+
+			xmlChar *type_attr = xmlGetProp(relationship_node, BAD_CAST "type");
+			xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
+			xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
+
+			if (strcmp((const char*)type_attr, "arfvocab:isAbout") == 0) {
+				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
+				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
+
+				rds_asset_index_add_report_ref(asset, report);
+			}
+			else if (strcmp((const char*)type_attr, "arfvocab:createdFor") == 0) {
+				struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
+				struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
+
+				// This is based on the assumption that every report has at most 1 request
+				// it was "created for".
+				rds_report_index_set_request(report, request);
+			}
+
+			xmlFree(type_attr);
+			xmlFree(subject_attr);
+			xmlFree(inner_ref);
+		}
+	}
+}
+
 struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 {
 	if (!oscap_to_start_element(reader, 0)) {
@@ -294,44 +334,8 @@ struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 		xmlTextReaderRead(reader);
 	}
 
-	// relationships node can only be NULL if the ARF is invalid
-	if (relationships_node != NULL) {
-		xmlNodePtr relationship_node = relationships_node->children;
-
-		for (; relationship_node != NULL; relationship_node = relationship_node->next)
-		{
-			if (relationship_node->type != XML_ELEMENT_NODE)
-				continue;
-
-			if (strcmp((const char*)(relationship_node->name), "relationship") != 0)
-				continue; // TODO: Warning?
-
-			xmlChar *type_attr = xmlGetProp(relationship_node, BAD_CAST "type");
-			xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
-			xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
-
-			if (strcmp((const char*)type_attr, "arfvocab:isAbout") == 0) {
-				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
-				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
-
-				rds_asset_index_add_report_ref(asset, report);
-			}
-			else if (strcmp((const char*)type_attr, "arfvocab:createdFor") == 0) {
-				struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
-				struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
-
-				// This is based on the assumption that every report has at most 1 request
-				// it was "created for".
-				rds_report_index_set_request(report, request);
-			}
-
-			xmlFree(type_attr);
-			xmlFree(subject_attr);
-			xmlFree(inner_ref);
-		}
-
-		xmlFreeNode(relationships_node);
-	}
+	_parse_relationships_node(ret, relationships_node);
+	xmlFreeNode(relationships_node);
 
 	return ret;
 }
