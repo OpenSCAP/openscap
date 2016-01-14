@@ -81,62 +81,6 @@ static struct rds_report_request_index *rds_report_request_index_parse(xmlTextRe
 	return ret;
 }
 
-struct rds_report_index
-{
-	char *id;
-	struct rds_report_request_index *request;
-};
-
-struct rds_report_index* rds_report_index_new(void)
-{
-	struct rds_report_index *ret = oscap_calloc(1, sizeof(struct rds_report_index));
-	ret->id = NULL;
-
-	return ret;
-}
-
-void rds_report_index_free(struct rds_report_index *s)
-{
-	if (s != NULL) {
-		oscap_free(s->id);
-		oscap_free(s);
-	}
-}
-
-const char *rds_report_index_get_id(struct rds_report_index *s)
-{
-	return s->id;
-}
-
-void rds_report_index_set_request(struct rds_report_index *s, struct rds_report_request_index *request)
-{
-	s->request = request;
-}
-
-struct rds_report_request_index *rds_report_index_get_request(struct rds_report_index *s)
-{
-	return s->request;
-}
-
-static struct rds_report_index *rds_report_index_parse(xmlTextReaderPtr reader)
-{
-	// sanity check
-	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
-	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "report") != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML,
-		             "Expected to have xmlTextReader at start of <arf:report>, "
-		             "the current event is '%i' at '%s' instead. I refuse to parse!",
-		             xmlTextReaderNodeType(reader), (const char*)xmlTextReaderConstLocalName(reader));
-
-		return NULL;
-	}
-
-	struct rds_report_index *ret = rds_report_index_new();
-
-	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	return ret;
-}
-
 struct rds_index
 {
 	struct oscap_list *report_requests;
@@ -464,21 +408,6 @@ bool rds_report_request_index_iterator_has_more(struct rds_report_request_index_
 }
 
 void rds_report_request_index_iterator_free(struct rds_report_request_index_iterator *it)
-{
-	oscap_iterator_free((struct oscap_iterator*)it);
-}
-
-struct rds_report_index *rds_report_index_iterator_next(struct rds_report_index_iterator *it)
-{
-	return (struct rds_report_index*)(oscap_iterator_next((struct oscap_iterator*)it));
-}
-
-bool rds_report_index_iterator_has_more(struct rds_report_index_iterator *it)
-{
-	return oscap_iterator_has_more((struct oscap_iterator*)it);
-}
-
-void rds_report_index_iterator_free(struct rds_report_index_iterator *it)
 {
 	oscap_iterator_free((struct oscap_iterator*)it);
 }

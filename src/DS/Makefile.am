@@ -13,6 +13,7 @@ libds_la_SOURCES = ds_common.c \
 		   sds_index_priv.h \
 		   rds.c \
 		rds_asset_index.c \
+		rds_report_index.c \
 		   rds_priv.h \
 		   rds_index.c \
 		   rds_index_priv.h
