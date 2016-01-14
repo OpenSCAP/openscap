@@ -41,7 +41,7 @@
 struct rds_asset_index
 {
 	char *id;
-	struct oscap_list *reports;
+	struct oscap_list *reports;	//< rds_report_index
 };
 
 struct rds_asset_index *rds_asset_index_new(void)
