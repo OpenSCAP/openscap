@@ -28,6 +28,7 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/alloc.h"
+#include "common/util.h"
 #include "common/elements.h"
 #include "rds_index_priv.h"
 #include "source/oscap_source_priv.h"
@@ -196,19 +197,20 @@ static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr r
 		xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
 		xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
 
-		if (strcmp((const char*)type_attr, "arfvocab:isAbout") == 0) {
-			struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
-			struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
+		if (oscap_str_startswith((const char *) type_attr, "arfvocab:")) {
+			if (oscap_str_endswith((const char*)type_attr, ":isAbout")) {
+				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
+				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
 
-			rds_asset_index_add_report_ref(asset, report);
-		}
-		else if (strcmp((const char*)type_attr, "arfvocab:createdFor") == 0) {
-			struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
-			struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
+				rds_asset_index_add_report_ref(asset, report);
+			} else if (oscap_str_endswith((const char*)type_attr, ":createdFor")) {
+				struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
+				struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
 
-			// This is based on the assumption that every report has at most 1 request
-			// it was "created for".
-			rds_report_index_set_request(report, request);
+				// This is based on the assumption that every report has at most 1 request
+				// it was "created for".
+				rds_report_index_set_request(report, request);
+			}
 		}
 
 		xmlFree(type_attr);
