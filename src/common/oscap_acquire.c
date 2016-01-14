@@ -36,6 +36,7 @@
 #include <ftw.h>
 
 #include "oscap_acquire.h"
+#include "common/util.h"
 #include "common/oscap_buffer.h"
 #include "common/_error.h"
 #include "oscap_string.h"
@@ -104,15 +105,10 @@ oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 	return fd;
 }
 
-static inline bool _str_startswith(const char *str, const char *with)
-{
-	return !strncmp(str, with, strlen(with));
-}
-
 bool
 oscap_acquire_url_is_supported(const char *url)
 {
-	return _str_startswith(url, "http://") || _str_startswith(url, "https://");
+	return oscap_str_startswith(url, "http://") || oscap_str_startswith(url, "https://");
 }
 
 char *
