@@ -197,7 +197,8 @@ static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr r
 		xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
 		xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
 
-		if (oscap_str_startswith((const char *) type_attr, "arfvocab:")) {
+		if (oscap_str_startswith((const char *) type_attr, "arfvocab:")
+				|| oscap_str_startswith((const char *) type_attr, "arfrel:")) {
 			if (oscap_str_endswith((const char*)type_attr, ":isAbout")) {
 				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
 				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
