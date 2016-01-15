@@ -30,6 +30,7 @@
 #include "common/alloc.h"
 #include "common/util.h"
 #include "common/elements.h"
+#include "common/debug_priv.h"
 #include "rds_index_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
@@ -211,7 +212,11 @@ static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr r
 				// This is based on the assumption that every report has at most 1 request
 				// it was "created for".
 				rds_report_index_set_request(report, request);
+			} else {
+				dW("Unsupported core:relationship/@type='%s'", (const char *) type_attr);
 			}
+		} else {
+			dW("Unsupported core:relationship/@type='%s'", (const char *) type_attr);
 		}
 
 		xmlFree(type_attr);
