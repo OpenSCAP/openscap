@@ -12,9 +12,15 @@ $OSCAP xccdf eval --results $result --results-arf $resultArf $srcdir/${name}.xcc
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+[ -f $stderr ]; [ ! -s $stderr ]
 
 $OSCAP xccdf validate-xml $result
 $OSCAP ds rds-validate $resultArf
+
+$OSCAP info $resultArf > $result 2> $stderr
+grep "^Asset: asset0" $result
+grep " - collection1 -> xccdf1" $result
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+
 
 rm $result $resultArf
