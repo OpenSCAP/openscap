@@ -534,8 +534,16 @@ int oval_object_to_sexp(void *sess, const char *typestr, struct oval_syschar *sy
 			elm = oval_set_to_sexp(oval_object_content_get_setobject(content));
 			break;
 
-		case OVAL_OBJECTCONTENT_FILTER:
-			elm = oval_filter_to_sexp(oval_object_content_get_filter(content));
+		case OVAL_OBJECTCONTENT_FILTER: {
+			struct oval_filter *filter = oval_object_content_get_filter(content);
+			struct oval_state *ste = oval_filter_get_state(filter);
+			const char *ste_id = oval_state_get_id(ste);
+			oval_filter_action_t action = oval_filter_get_filter_action(filter);
+			const char *action_text = oval_filter_action_get_text(action);
+			dI("Object '%s' has a filter that %ss items conforming to state '%s'.",
+					obj_id, action_text, ste_id);
+			elm = oval_filter_to_sexp(filter);
+			}
 			break;
 
 		case OVAL_OBJECTCONTENT_UNKNOWN:
