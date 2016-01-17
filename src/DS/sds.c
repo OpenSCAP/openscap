@@ -191,7 +191,7 @@ static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component
 	}
 }
 
-static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char* filename, const char *relative_filepath)
+static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *sce_filename, const char *relative_filepath)
 {
 	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
@@ -211,7 +211,7 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 
 	// If the inner root is script, we have to treat it in a special way
 	if (strcmp((const char*)inner_root->name, "script") == 0) {
-		int ret = ds_sds_dump_component_sce(inner_root->children, component_id, filename);
+		int ret = ds_sds_dump_component_sce(inner_root->children, component_id, sce_filename);
 		if (ret != 0) {
 			return ret;
 		}
@@ -260,9 +260,9 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 	const char* file_basename = basename((char*)relative_filepath);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
-	const char* target_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
-	ds_sds_dump_component(component_id, session, target_filename, relative_filepath);
-	oscap_free(target_filename);
+	const char* sce_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
+	ds_sds_dump_component(component_id, session, sce_filename, relative_filepath);
+	oscap_free(sce_filename);
 	oscap_free(filename_cpy);
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
