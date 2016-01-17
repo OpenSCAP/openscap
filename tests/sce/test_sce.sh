@@ -5,7 +5,7 @@
 
 . ../test_common.sh
 
-# Test Cases.
+set -e -o pipefail
 
 function test_sce {
 
@@ -13,39 +13,17 @@ function test_sce {
     local DEFFILE=${srcdir}/$1
     local RESFILE=$1.results
 
-    [ -f $RESFILE ] && rm -f $RESFILE
-    
+    [ -f $RESFILE ] && rm $RESFILE
+
     $OSCAP xccdf eval --results "$RESFILE" --profile "default" "$DEFFILE"
-    
-    # catch error from oscap tool
-    ret_val=$?
-    if [ $ret_val -eq 1 ]; then
-	return 1
-    fi
 
     LINES=`grep \<result\> "$RESFILE"`
-    # catch error from grep
-    ret_val=$?
-    if [ $ret_val -eq 2 ]; then
-	return 1
-    fi
 
     # calculate return code
-    echo "$LINES" | grep -q -v "pass"
-    ret_val=$?
-    if [ $ret_val -eq 1 ]; then
-        return 0;
-    elif [ $ret_val -eq 0 ]; then
-	return 1;
-    else
-	return "$ret_val"
-    fi
+    echo "$LINES" | grep -q -v "pass" || ret_val=$?
+    [ $ret_val -eq 1 ]
 }
 
-# Testing.
 test_init "test_sce.log"
-
-test_run "sce" test_sce sce_xccdf.xml 
-
+test_run "sce" test_sce sce_xccdf.xml
 test_exit
-
