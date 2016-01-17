@@ -660,9 +660,6 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 		return -1;
 	}
 
-	//xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf11", BAD_CAST "http://checklists.nist.gov/xccdf/1.1");
-	//xmlXPathRegisterNs(xpathCtx, BAD_CAST "cdf12", BAD_CAST "http://checklists.nist.gov/xccdf/1.2");
-
 	xmlXPathObjectPtr xpathObj = xmlXPathEvalExpression(
 			// we want robustness and support for future versions, this expression
 			// retrieves check-content-refs from any namespace
