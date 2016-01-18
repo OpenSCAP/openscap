@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" >
+    <generator>
+        <oval:product_name>human</oval:product_name>
+        <oval:product_version>0.1</oval:product_version>
+        <oval:schema_version>5.10</oval:schema_version>
+        <oval:timestamp>2015-12-08T08:08:08+01:00</oval:timestamp>
+    </generator>
+
+    <definitions>
+        <definition class="compliance" id="oval:oscap:def:1" version="1">
+            <metadata>
+                <title>Test the ObjectComponentType complex type</title>
+                <description>The ObjectComponentType complex type should work as defined in OVAL specification. However the test does not test fields of the record data type, because the record data type is used only within ldap_item and sql57_item which we don't test in upstream.</description>
+            </metadata>
+            <criteria>
+                <criterion comment="A well-written test." negate="false" test_ref="oval:oscap:tst:1"/>
+                <criterion comment="A test that will report an error due to entity name in textfilecontent_item." negate="false" test_ref="oval:oscap:tst:2"/>
+                <criterion comment="A test that will report an error because it expects record data type of 'subexpression' entity in textfilecontent_item." negate="false" test_ref="oval:oscap:tst:3"/>
+            </criteria>
+        </definition>
+    </definitions>
+
+    <tests>
+        <ind:variable_test id="oval:oscap:tst:1" check="all" comment="A well-written test." version="1">
+            <ind:object object_ref="oval:oscap:obj:1" />
+            <ind:state state_ref="oval:oscap:ste:1" />
+        </ind:variable_test>
+        <ind:variable_test id="oval:oscap:tst:2" check="all" comment="A test that will cause report an error due to entity name in textfilecontent_item." version="1">
+            <ind:object object_ref="oval:oscap:obj:2" />
+            <ind:state state_ref="oval:oscap:ste:1" />
+        </ind:variable_test>
+        <ind:variable_test id="oval:oscap:tst:3" check="all" comment="The value of PASS_MIN_LEN should be set appropriately in /etc/login.defs" version="1">
+            <ind:object object_ref="oval:oscap:obj:3" />
+            <ind:state state_ref="oval:oscap:ste:1" />
+        </ind:variable_test>
+    </tests>
+
+    <objects>
+        <ind:variable_object id="oval:oscap:obj:1" version="1">
+            <ind:var_ref>oval:oscap:var:1</ind:var_ref>
+        </ind:variable_object>
+        <ind:variable_object id="oval:oscap:obj:2" version="1">
+            <ind:var_ref>oval:oscap:var:2</ind:var_ref>
+        </ind:variable_object>
+        <ind:variable_object id="oval:oscap:obj:3" version="1">
+            <ind:var_ref>oval:oscap:var:3</ind:var_ref>
+        </ind:variable_object>
+        <ind:textfilecontent54_object id="oval:oscap:obj:10" version="1">
+            <!-- Read whole /etc/login.defs as single line so we can retrieve last PASS_MIN_LEN directive occurrence -->
+            <ind:behaviors singleline="true" />
+            <ind:filepath>/etc/login.defs</ind:filepath>
+            <!-- Retrieve last (uncommented) occurrence of PASS_MIN_LEN directive -->
+            <ind:pattern operation="pattern match">.*\n[^#]*(PASS_MIN_LEN\s+\d+)\s*\n</ind:pattern>
+            <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+        </ind:textfilecontent54_object>
+    </objects>
+
+    <states>
+        <ind:variable_state id="oval:oscap:ste:1" version="1">
+            <ind:value operation="greater than or equal" datatype="int">4</ind:value>
+        </ind:variable_state>
+    </states>
+
+    <variables>
+        <!-- variable with a meaningfully specified object_component/@item_field attribute -->
+        <local_variable id="oval:oscap:var:1" datatype="int" comment="The value of last PASS_MIN_LEN directive in /etc/login.defs" version="1">
+            <regex_capture pattern="PASS_MIN_LEN\s+(\d+)">
+               <object_component item_field="subexpression" object_ref="oval:oscap:obj:10" />
+            </regex_capture>
+        </local_variable>
+        <!-- variable with a nonsense in the object_component/@item_field attribute -->
+        <local_variable id="oval:oscap:var:2" datatype="int" comment="Reference to not existing entity within textfilecontent_item. Should report an error when evaluating." version="1">
+            <regex_capture pattern="PASS_MIN_LEN\s+(\d+)">
+               <object_component item_field="something_bogus" object_ref="oval:oscap:obj:10" />
+            </regex_capture>
+        </local_variable>
+        <!-- variable that requires a record data type in OVAL Item -->
+        <local_variable id="oval:oscap:var:3" datatype="int" comment="Record_field attribute suggest than an record data type is expected, but actually string data type will be provided. Should report an error when evaluating." version="1">
+            <regex_capture pattern="PASS_MIN_LEN\s+(\d+)">
+               <object_component item_field="subexpression" record_field="some_record_field_name" object_ref="oval:oscap:obj:10" />
+            </regex_capture>
+        </local_variable>
+    </variables>
+
+</oval_definitions>

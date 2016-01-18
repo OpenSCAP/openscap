@@ -20,6 +20,7 @@ test_run "Assert for environment better" $OSCAP oval eval --id oval:moc.elpmaxe.
 #
 # General XCCDF Tests. (Mostly, oscap xccdf eval)
 #
+test_run "Test unscored roles" $srcdir/test_xccdf_role_unscored.sh
 test_run "Fix containing unresolved elements" $srcdir/test_remediate_unresolved.sh
 test_run "Empty XCCDF variable element" $srcdir/test_empty_variable.sh
 test_run "Test xccdf:fix/xccdf:instance elements" $srcdir/test_fix_instance.sh

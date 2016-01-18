@@ -32,4 +32,5 @@ test_run "glob to regex" $srcdir/test_glob_to_regex.sh
 test_run "test platform schema version" $srcdir/test_platform_version.sh
 test_run "state entity check_existence attribute" $srcdir/test_state_check_existence.sh
 test_run "skip validation" $srcdir/test_skip_valid.sh
+test_run "object component data type evaluation" $srcdir/test_object_component_type.sh
 test_exit

@@ -69,6 +69,8 @@ EXTRA_DIST = \
 	test_oval_empty_variable_evaluation.xml \
 	test_platform_version.sh \
 	test_platform_version.xml \
+	test_object_component_type.oval.xml \
+	test_object_component_type.sh \
 	test_skip_valid.sh \
 	test_skip_valid.oval.xml \
 	test_xmlns_missing.oval.xml \
