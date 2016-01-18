@@ -1,3 +1,21 @@
+openscap-1.2.8                                                  18-01-2016
+  - Maintenance
+    - textfilecontent54_probe does not produce false positives on non-UTF files (rhbz #1285757)
+    - fixed oscap-docker
+    - small improvements in verbose mode
+    - oscap info module shows information about tailoring files
+    - fixed build with CCE (issue #264)
+    - fixed XCCDF score computation (issue #272)
+    - fixed segmentation fault in variable probe (issue #277)
+    - fixed broken support for OVAL directives
+    - fixed bash completion
+    - plugged memory leaks
+    - fixed fresh static analysis (coverity) findings
+    - fixed shellcheck warnings
+    - new tests
+    - refactoring in datastream module
+    - many small bugfixes and typo fixes
+
 openscap-1.2.7                                                  02-12-2015
   - New features
     - OVAL 5.11.1 fully supported
