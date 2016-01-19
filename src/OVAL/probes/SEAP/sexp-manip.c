@@ -1399,7 +1399,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 
         list_it[0].block = SEXP_LCASTP(v_dsc.mem)->b_addr;
 
-        dI("Sorting blocks & building iterator array");
+        dD("Sorting blocks & building iterator array");
 
         while (list_it[list_it_count - 1].block != NULL) {
                 /* initialize the rest of the iterator */
@@ -1413,7 +1413,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 
                 /* reallocate the iterator array if needed */
                 if (list_it_count == list_it_alloc) {
-                        dI("Reallocating iterator array: %z -> %z",
+                        dD("Reallocating iterator array: %z -> %z",
                            list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
 
                         list_it_alloc += SEXP_LISTIT_ARRAY_INC;
@@ -1426,7 +1426,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
         }
 
         --list_it_count;
-        dI("Iterator count = %zu", list_it_count);
+        dD("Iterator count = %zu", list_it_count);
 
         if (list_it_count > 0) {
                 /*
