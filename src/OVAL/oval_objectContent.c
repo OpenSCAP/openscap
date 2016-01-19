@@ -193,7 +193,7 @@ struct oval_object_content
 		}
 		break;
 	default:
-		dE("Unsupported object content type: %d.\n", type);
+		dE("Unsupported object content type: %d.", type);
 		return NULL;
 	}
 	content->model = model;
@@ -389,7 +389,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	(*consumer) (content, user);
 
 	if (return_code != 0)
-		dW("Parsing of <%s> terminated by an error at line %d.\n",tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of <%s> terminated by an error at line %d.",tagname, xmlTextReaderGetParserLineNumber(reader));
 
 	oscap_free(namespace);
 	return return_code;

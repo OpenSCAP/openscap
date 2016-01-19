@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+    <generator>
+        <oval:product_name>human</oval:product_name>
+        <oval:product_version>0.1</oval:product_version>
+        <oval:schema_version>5.10</oval:schema_version>
+        <oval:timestamp>2015-12-08T08:08:08+01:00</oval:timestamp>
+    </generator>
+
+    <definitions>
+        <definition class="compliance" id="oval:oscap:def:1" version="1">
+            <metadata>
+                <title>Test the sysctl probe</title>
+                <description>The probe will collect kernel parameters form the system</description>
+                <expected_results>
+                    <result configuration="1">PASS</result>
+                </expected_results>
+            </metadata>
+            <criteria>
+                <criterion comment="Test that probe can collect an object." negate="false" test_ref="oval:oscap:tst:1"/>
+            </criteria>
+        </definition>
+    </definitions>
+
+    <tests>
+        <sysctl_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check="all" comment="Test that probe can collect an object." id="oval:oscap:tst:1" version="1">
+            <object object_ref="oval:oscap:obj:1"/>
+        </sysctl_test>
+    </tests>
+
+    <objects>
+        <sysctl_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:oscap:obj:1" version="1">
+            <name datatype="string" operation="pattern match">kernel.hostname</name>
+        </sysctl_object>
+    </objects>
+
+</oval_definitions>

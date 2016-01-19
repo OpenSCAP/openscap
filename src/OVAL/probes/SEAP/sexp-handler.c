@@ -90,10 +90,10 @@ SEXP_handler_t *SEXP_gethandler (SEXP_handlertbl_t *htbl, const char *typestr, s
         key.handler.typelen = typelen;
 
         if ((nret = RB_SEARCH(handlers)(&(htbl->tree), &key)) != NULL) {
-                dI("Found handler for: %.*s\n", key.handler.typelen, key.handler.typestr);
+                dI("Found handler for: %.*s", key.handler.typelen, key.handler.typestr);
                 ret = &(nret->handler);
         } else {
-                dI("Handler for %.*s not found\n", key.handler.typelen, key.handler.typestr);
+                dI("Handler for %.*s not found", key.handler.typelen, key.handler.typestr);
                 ret = NULL;
         }
 
@@ -119,10 +119,10 @@ SEXP_handler_t *SEXP_reghandler (SEXP_handlertbl_t *htbl, SEXP_handler_t *handle
         memcpy (&(new->handler), handler, sizeof (SEXP_handler_t));
 
         if (RB_INSERT(handlers)(&(htbl->tree), new) == E_OK) {
-                dI("Registered handler for: %.*s\n", handler->typelen, handler->typestr);
+                dI("Registered handler for: %.*s", handler->typelen, handler->typestr);
                 ret = &(new->handler);
         } else {
-                dI("Failed to register handler for: %.*s\n", handler->typelen, handler->typestr);
+                dI("Failed to register handler for: %.*s", handler->typelen, handler->typestr);
                 sm_free (new);
                 ret = NULL;
         }

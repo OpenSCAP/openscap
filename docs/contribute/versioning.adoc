@@ -40,11 +40,15 @@ This rule makes sure we always carry bugfixes to new feature releases.
 
 In cases where the bugfix does not make sense in newer feature releases, a noop merge shall be done. For example a fix for functionality that was removed in newer feature release.
 
+== Frozen branches
+
+Maintenance branches can be frozen which further restricts the changes that can be applied to them. Only bugfixes are permitted in frozen branches.
+
 == Maintenance status
 
 	* 1.2.x: supported
 	* 1.1.x: unsupported since 2015-10-16
-	* 1.0.x: supported
+	* 1.0.x: supported, frozen since 2016-01-07
 
 == Feature release
 

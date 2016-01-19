@@ -122,6 +122,20 @@ bool oscap_streq(const char *s1, const char *s2)
 	return (oscap_strcmp(s1, s2) == 0);
 }
 
+bool oscap_str_startswith(const char *str, const char *with)
+{
+	return !strncmp(str, with, strlen(with));
+}
+
+bool oscap_str_endswith(const char *str, const char *with)
+{
+	size_t str_len = strlen(str);
+	size_t with_len = strlen(with);
+	if (with_len > str_len)
+		return false;
+	return strncmp(str + str_len - with_len, with, with_len) == 0;
+}
+
 char *oscap_trim(char *str)
 {
 	int off, i = 0;

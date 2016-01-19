@@ -135,7 +135,7 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 
 	re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
 	if (re == NULL) {
-		oscap_dlprintf(DBG_E, "Unable to compile regex pattern, "
+		dE("Unable to compile regex pattern, "
 			       "pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
 		return OVAL_RESULT_ERROR;
 	}
@@ -146,7 +146,7 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 	} else if (ret == -1) {
 		result = OVAL_RESULT_FALSE;
 	} else {
-		oscap_dlprintf(DBG_E, "Unable to match regex pattern, "
+		dE("Unable to match regex pattern, "
 			       "pcre_exec() returned error: %d.\n", ret);
 		result = OVAL_RESULT_ERROR;
 	}
@@ -157,7 +157,7 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 
 	ret = regcomp(&re, pattern, REG_EXTENDED);
 	if (ret != 0) {
-		oscap_dlprintf(DBG_E, "Unable to compile regex pattern, "
+		dE("Unable to compile regex pattern, "
 			       "regcomp() returned error: %d.\n", ret);
 		return OVAL_RESULT_ERROR;
 	}
@@ -168,7 +168,7 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 	} else if (ret == REG_NOMATCH) {
 		result = OVAL_RESULT_FALSE;
 	} else {
-		oscap_dlprintf(DBG_E, "Unable to match regex pattern: %d.\n", ret);
+		dE("Unable to match regex pattern: %d.", ret);
 		result = OVAL_RESULT_ERROR;
 	}
 

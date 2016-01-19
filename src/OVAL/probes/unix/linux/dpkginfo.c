@@ -103,7 +103,7 @@ int probe_main (probe_ctx *ctx, void *arg)
         val = probe_ent_getval (ent);
 
         if (val == NULL) {
-                dI("%s: no value\n", "name");
+                dI("%s: no value", "name");
                 SEXP_free (ent);
                 return (PROBE_ENOVAL);
         }
@@ -114,11 +114,11 @@ int probe_main (probe_ctx *ctx, void *arg)
         if (request_st == NULL) {
                 switch (errno) {
                 case EINVAL:
-                        dI("%s: invalid value type\n", "name");
+                        dI("%s: invalid value type", "name");
 			return PROBE_EINVAL;
                         break;
                 case EFAULT:
-                        dI("%s: element not found\n", "name");
+                        dI("%s: element not found", "name");
 			return PROBE_ENOELM;
                         break;
 		default:
@@ -135,12 +135,12 @@ int probe_main (probe_ctx *ctx, void *arg)
                 switch (errflag) {
 		case 0: /* Not found */
 		{
-			dI("Package \"%s\" not found.\n", request_st);
+			dI("Package \"%s\" not found.", request_st);
 			break;
 		}
 		case -1: /* Error */
 		{
-			dI("dpkginfo_get_by_name failed.\n");
+			dI("dpkginfo_get_by_name failed.");
 			item = probe_item_create(OVAL_LINUX_DPKG_INFO, NULL,
 					"name", OVAL_DATATYPE_STRING, request_st,
 					NULL);
@@ -161,7 +161,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 		}
 
                 for (i = 0; i < num_items; ++i) {
-                        dI("%s: element found version %s\n", dpkginfo_reply->name, dpkginfo_reply->evr);
+                        dI("%s: element found version %s", dpkginfo_reply->name, dpkginfo_reply->evr);
                         item = probe_item_create (OVAL_LINUX_DPKG_INFO, NULL,
                                         "name", OVAL_DATATYPE_STRING, dpkginfo_reply->name,
                                         "arch", OVAL_DATATYPE_STRING, dpkginfo_reply->arch,

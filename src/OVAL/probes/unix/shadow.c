@@ -183,7 +183,7 @@ static int read_shadow(SEXP_t *un_ent, probe_ctx *ctx)
 	while ((pw = getspent())) {
 		SEXP_t *un;
 
-		dI("Have user: %s\n", pw->sp_namp);
+		dI("Have user: %s", pw->sp_namp);
 		err = 0;
 		un = SEXP_string_newf("%s", pw->sp_namp);
 		if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {

@@ -46,7 +46,7 @@
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-			dW("entity has no value!\n");		\
+			dW("entity has no value!");		\
 			return (NULL);				\
 		} else {					\
 			if (!SEXP_stringp(___r)) {		\

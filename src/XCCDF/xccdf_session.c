@@ -149,7 +149,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 		}
 	}
 
-	dI("Created a new XCCDF session from a %s '%s'.\n",
+	dI("Created a new XCCDF session from a %s '%s'.",
 		oscap_document_type_to_string(document_type), filename);
 	return session;
 }
@@ -454,14 +454,41 @@ static int _reporter(const char *file, int line, const char *msg, void *arg)
 	return 0;
 }
 
-int xccdf_session_load_xccdf(struct xccdf_session *session)
+static inline int _xccdf_session_load_xccdf_benchmark(struct xccdf_session *session)
 {
-	struct xccdf_benchmark *benchmark = NULL;
-
 	if (session->xccdf.policy_model != NULL) {
 		xccdf_policy_model_free(session->xccdf.policy_model);
 		session->xccdf.policy_model = NULL;
 	}
+
+	/* Validate documents */
+	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
+		if (oscap_source_validate(session->xccdf.source, _reporter, NULL)) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+					oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
+					oscap_source_get_schema_version(session->source),
+					oscap_source_readable_origin(session->source));
+			return 1;
+		}
+	}
+
+	/* Load XCCDF model and XCCDF Policy model */
+	struct xccdf_benchmark *benchmark = xccdf_benchmark_import_source(session->xccdf.source);
+	if (benchmark == NULL) {
+		return 1;
+	}
+
+	/* create the policy model */
+	session->xccdf.policy_model = xccdf_policy_model_new(benchmark);
+	if (session->xccdf.policy_model == NULL) {
+		xccdf_benchmark_free(benchmark);
+		return 1;
+	}
+	return 0;
+}
+
+int xccdf_session_load_xccdf(struct xccdf_session *session)
+{
 	session->xccdf.source = NULL;
 
 	if (xccdf_session_is_sds(session)) {
@@ -471,43 +498,26 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
 						oscap_source_get_schema_version(session->source),
 						oscap_source_readable_origin(session->source));
-				goto cleanup;
+				return 1;
 			}
 		}
 		session->xccdf.source = ds_sds_session_select_checklist(xccdf_session_get_ds_sds_session(session), session->ds.user_datastream_id,
 				session->ds.user_component_id, session->ds.user_benchmark_id);
 		if (session->xccdf.source == NULL) {
-			goto cleanup;
+			return 1;
+		}
+		if (oscap_source_get_scap_type(session->xccdf.source) != OSCAP_DOCUMENT_XCCDF) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "The selected checklist document is not '%s', but '%s'.",
+					oscap_document_type_to_string(OSCAP_DOCUMENT_XCCDF),
+					oscap_document_type_to_string(oscap_source_get_scap_type(session->xccdf.source)));
+			return 1;
 		}
 	}
 	else {
 		session->xccdf.source = session->source;
 	}
 
-
-	/* Validate documents */
-	if (session->validate && (!xccdf_session_is_sds(session) || session->full_validation)) {
-		if (oscap_source_validate(session->xccdf.source, _reporter, NULL)) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
-					oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
-					oscap_source_get_schema_version(session->source),
-					oscap_source_readable_origin(session->source));
-			goto cleanup;
-		}
-	}
-
-	/* Load XCCDF model and XCCDF Policy model */
-	benchmark = xccdf_benchmark_import_source(session->xccdf.source);
-	if (benchmark == NULL) {
-		goto cleanup;
-	}
-
-	/* create the policy model */
-	session->xccdf.policy_model = xccdf_policy_model_new(benchmark);
-cleanup:
-	if (benchmark != NULL && session->xccdf.policy_model == NULL)
-		xccdf_benchmark_free(benchmark);
-	return session->xccdf.policy_model != NULL ? 0 : 1;
+	return _xccdf_session_load_xccdf_benchmark(session);
 }
 static inline void _connect_cpe_session_with_sds(struct xccdf_session *session)
 {

@@ -78,7 +78,7 @@ static int collect_item(probe_ctx *ctx, const char *source, GConfEntry *entry)
                 case GCONF_VALUE_LIST:
                 case GCONF_VALUE_PAIR:
                 default:
-                        dE("Unsupported GConfValue type: %d\n", gconf_value->type);
+                        dE("Unsupported GConfValue type: %d", gconf_value->type);
                         gconf_type = "GCONF_VALUE_INVALID";
                         sexp_value = NULL;
                 }
@@ -184,7 +184,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                 gconf_engine = gconf_engine_get_default();
 
 		if (gconf_engine == NULL) {
-			dE("Unable to get the default GConf engine!\n");
+			dE("Unable to get the default GConf engine!");
 			SEXP_free(gconf_src);
 			SEXP_free(gconf_key);
 			/* XXX: construct an error item */
@@ -210,7 +210,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                                 gconf_addr[ofts_ent->path_len] = '/';
                                 strcpy(gconf_addr + ofts_ent->path_len + 1, ofts_ent->file);
 
-                                dI("GConf source: %s\n", gconf_addr);
+                                dI("GConf source: %s", gconf_addr);
 
                                 gconf_engine = gconf_engine_get_for_address(gconf_addr, &gconf_err);
 
@@ -223,14 +223,14 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 						collect_item_regexp(ctx, gconf_addr, gconf_engine, gconf_key);
 						break;
 					default:
-						dE("Unsupported operation on the `key' entity: %d\n.", key_op);
+						dE("Unsupported operation on the `key' entity: %d.", key_op);
 						probe_ret = PROBE_EOPNOTSUPP;
 						abort(); /* XXX */
 					}
 
 					gconf_engine_unref(gconf_engine);
 				} else {
-					dW("Invalid GConf source, skipping!\n");
+					dW("Invalid GConf source, skipping!");
 				}
 
 				oval_ftsent_free(ofts_ent);
@@ -240,7 +240,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
 		SEXP_free(behaviors);
         } else {
-                dI("GConf source: gconfd\n");
+                dI("GConf source: gconfd");
 
 		switch(key_op) {
 		case OVAL_OPERATION_EQUALS:
@@ -250,7 +250,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 			collect_item_regexp(ctx, NULL, gconf_engine, gconf_key);
 			break;
 		default:
-			dE("Unsupported operation on the `key' entity: %d\n.", key_op);
+			dE("Unsupported operation on the `key' entity: %d.", key_op);
 			probe_ret = PROBE_EOPNOTSUPP;
 		}
 

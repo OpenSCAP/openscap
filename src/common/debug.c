@@ -61,7 +61,6 @@ static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
 #  endif
 static FILE *__debuglog_fp = NULL;
 static oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
-static int __debuglog_pstrip = -1;
 
 #if defined(OSCAP_THREAD_SAFE)
 # define __LOCK_FP    do { if (pthread_mutex_lock   (&__debuglog_mutex) != 0) abort(); } while(0)
@@ -123,46 +122,22 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
 }
 
 
-static const char *__oscap_path_rstrip(const char *path, int num)
+static const char *__oscap_path_rstrip(const char *path)
 {
-	register size_t len;
-
-	len = strlen(path);
-
-	for (len = strlen(path); len > 0; --len) {
-		if (path[len - 1] == PATH_SEPARATOR)
-			--num;
-		if (num == 0)
-			return (path + len);
+	const char *separator = strrchr(path, PATH_SEPARATOR);
+	if (separator) {
+		return (separator + 1);
 	}
 
 	return (path);
 }
 
 
-static void debug_message_start(int level, const char *file, const char *fn, size_t line)
+static void debug_message_start(int level)
 {
 	char  l;
-	const char *f;
 
 	__LOCK_FP;
-
-	if (__debuglog_pstrip == -1) {
-		char *pstrip;
-
-		pstrip = getenv(OSCAP_DEBUG_PATHSTRIP_ENV);
-
-		if (pstrip == NULL)
-			__debuglog_pstrip = 0;
-		else
-			__debuglog_pstrip = atol(pstrip);
-
-	}
-	if (__debuglog_pstrip != 0)
-		f = __oscap_path_rstrip(file, __debuglog_pstrip);
-	else
-		f = file;
-
 #if defined(__SVR4) && defined (__sun)
 	if (lockf(fileno(__debuglog_fp), F_LOCK, 0L) == -1) {
 #else
@@ -188,22 +163,29 @@ static void debug_message_start(int level, const char *file, const char *fn, siz
 	default:
 		l = '0';
 	}
+	fprintf(__debuglog_fp, "%c: %s: ", l, program_invocation_short_name);
+}
+
+static void debug_message_devel_metadata(const char *file, const char *fn, size_t line)
+{
+	const char *f = __oscap_path_rstrip(file);
 #if defined(OSCAP_THREAD_SAFE)
 	char thread_name[THREAD_NAME_LEN];
 	pthread_t thread = pthread_self();
 	pthread_getname_np(thread, thread_name, THREAD_NAME_LEN);
 	/* XXX: non-portable usage of pthread_t */
-	fprintf(__debuglog_fp, "(%s(%ld):%s(%llx)) [%c:%s:%zu:%s] ",
+	fprintf(__debuglog_fp, " [%s(%ld):%s(%llx):%s:%zu:%s]",
 		program_invocation_short_name, (long) getpid(), thread_name,
-		(unsigned long long) thread, l, f, line, fn);
+		(unsigned long long) thread, f, line, fn);
 #else
-	fprintf(__debuglog_fp, "(%ld) [%c:%s:%zu:%s] ", (long) getpid(),
-		l, f, line, fn);
+	fprintf(__debuglog_fp, " [%ld:%s:%zu:%s]", (long) getpid(),
+		f, line, fn);
 #endif
 }
 
 static void debug_message_end()
 {
+	fputc('\n', __debuglog_fp);
 #if defined(__SVR4) && defined (__sun)
 	if (lockf(fileno(__debuglog_fp), F_ULOCK, 0L) == -1) {
 #else
@@ -228,8 +210,11 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
 		return;
 	}
 	va_start(ap, fmt);
-	debug_message_start(level, file, fn, line);
+	debug_message_start(level);
 	vfprintf(__debuglog_fp, fmt, ap);
+	if (__debuglog_level == DBG_D) {
+		debug_message_devel_metadata(file, fn, line);
+	}
 	debug_message_end();
 	va_end(ap);
 }
@@ -239,18 +224,18 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	if (__debuglog_fp == NULL) {
 		return;
 	}
-	if (__debuglog_level < DBG_I) {
+	if (__debuglog_level < DBG_D) {
 		return;
 	}
-	debug_message_start(DBG_I, file, fn, line);
+	debug_message_start(DBG_D);
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
-		fputc('\n', __debuglog_fp);
 		break;
 	default:
-		fprintf(__debuglog_fp, "Attempt to dump a not supported object.\n");
+		fprintf(__debuglog_fp, "Attempt to dump a not supported object.");
 	}
+	debug_message_devel_metadata(file, fn, line);
 	debug_message_end();
 }
 

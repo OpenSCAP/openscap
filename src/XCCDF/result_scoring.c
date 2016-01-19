@@ -74,6 +74,9 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
 			dE("Rule result ID(%s) not fount", rule_id);
 			return NULL;
 		}
+		if (xccdf_rule_result_get_role(rule_result) == XCCDF_ROLE_UNSCORED) {
+			return NULL;
+		}
 
 		/* Ignore these rules */
 		if ((xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_SELECTED) ||
@@ -169,6 +172,9 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 		rule_result = xccdf_result_get_rule_result_by_id(test_result, rule_id);
 		if (rule_result == NULL) {
 			dE("Rule result ID(%s) not fount", rule_id);
+			return NULL;
+		}
+		if (xccdf_rule_result_get_role(rule_result) == XCCDF_ROLE_UNSCORED) {
 			return NULL;
 		}
 
@@ -269,7 +275,7 @@ struct xccdf_score *xccdf_result_calculate_score(struct xccdf_result *test_resul
 		oscap_free(item_score);
 	} else {
 		xccdf_score_free(score);
-		oscap_dlprintf(DBG_E, "Scoring system \"%s\" is not supported.\n", score_system);
+		dE("Scoring system \"%s\" is not supported.", score_system);
 		return NULL;
 	}
 	return score;

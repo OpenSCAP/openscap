@@ -334,7 +334,7 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
 			var->values = oval_collection_new();
 		var->flag = oval_component_compute(sysmod, component, var->values);
 	} else {
-		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s.\n", var->id);
+		dW("NULL component bound to a variable, id: %s.", var->id);
 		return -1;
         }
 
@@ -371,14 +371,14 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
 		return 0;
 
-	dI("Querying variable '%s'.\n", var->id);
+	dI("Querying variable '%s'.", var->id);
 	component = var->component;
         if (component) {
 		if (!var->values)
 			var->values = oval_collection_new();
 		var->flag = oval_component_query(sess, component, var->values);
 	} else {
-		oscap_dlprintf(DBG_W, "NULL component bound to a variable, id: %s.\n", var->id);
+		dW("NULL component bound to a variable, id: %s.", var->id);
 		return -1;
         }
 
@@ -387,7 +387,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 	case SYSCHAR_FLAG_INCOMPLETE:
 		break;
 	default:
-		dI("Variable '%s' has no values.\n", var->id);
+		dI("Variable '%s' has no values.", var->id);
 		return 0;
 	}
 
@@ -417,7 +417,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 		oscap_string_append_string(val_dump, "\", \"");
 	}
 	oscap_string_append_char(val_dump, '\"');
-	dI("Variable '%s' has values %s.\n", var->id, oscap_string_get_cstr(val_dump));
+	dI("Variable '%s' has values %s.", var->id, oscap_string_get_cstr(val_dump));
 	oscap_string_free(val_dump);
 	oval_value_iterator_free(val_itr);
 
@@ -667,7 +667,7 @@ void oval_variable_set_datatype(struct oval_variable *variable, oval_datatype_t 
 void oval_variable_set_type(struct oval_variable *variable, oval_variable_type_t new_type)
 {
 	if (variable->type != OVAL_VARIABLE_UNKNOWN) {
-		oscap_dlprintf(DBG_E, "Attempt to reset valid variable type, oldtype: %s, newtype: %s.\n",
+		dE("Attempt to reset valid variable type, oldtype: %s, newtype: %s.",
 			       oval_variable_type_get_text(variable->type), oval_variable_type_get_text(new_type));
 		return;
 	}
@@ -768,7 +768,7 @@ void oval_variable_clear_values(struct oval_variable *variable)
 	__attribute__nonnull__(variable);
 
 	if (variable->type != OVAL_VARIABLE_CONSTANT && variable->type != OVAL_VARIABLE_EXTERNAL) {
-		oscap_dlprintf(DBG_W, "Wrong variable type for this operation: %d.\n", variable->type);
+		dW("Wrong variable type for this operation: %d.", variable->type);
 		return;
         }
 
@@ -861,7 +861,7 @@ int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_m
 	oval_variable_EXTERNAL_t *evar;
 
 	if (var->type != OVAL_VARIABLE_EXTERNAL) {
-		dW("Attemp to bind a non-external variable, id: %s, type: %s.\n", var->id, oval_variable_type_get_text(var->type));
+		dW("Attemp to bind a non-external variable, id: %s, type: %s.", var->id, oval_variable_type_get_text(var->type));
 		return 2;
 	}
 
@@ -899,7 +899,7 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_p
 	xmlChar *namespace = xmlTextReaderNamespaceUri(reader);
 	int return_code = oval_component_parse_tag(reader, context, &_oval_variable_parse_local_tag_component_consumer, variable);
 	if (return_code != 0) {
-		dW("Parsing of %s terminated by an error at <%s>, line %d.\n", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of %s terminated by an error at <%s>, line %d.", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -953,7 +953,7 @@ static int _oval_variable_parse_external_tag(xmlTextReaderPtr reader, struct ova
 		return_code = 1;
 	}
 	if (return_code != 0) {
-		dW("Parsing of %s terminated by an error at <%s>, line %d.\n", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of %s terminated by an error at <%s>, line %d.", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	oscap_free(namespace);
@@ -978,7 +978,7 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct ova
 	struct oval_variable *variable = (struct oval_variable *)user;
 
 	if (strcmp("value", (char *) tagname) || strcmp(DEFINITION_NAMESPACE, (char *) namespace)) {
-		dW("Invalid element <%s:%s> in constant variable %s on line %d.\n",
+		dW("Invalid element <%s:%s> in constant variable %s on line %d.",
 		   namespace, tagname, variable->id, xmlTextReaderGetParserLineNumber(reader));
 		goto out;
 	}
@@ -1010,7 +1010,7 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		type = OVAL_VARIABLE_LOCAL;
 	else {
 		type = OVAL_VARIABLE_UNKNOWN;
-		dW("Unhandled variable type: %s, line: %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Unhandled variable type: %s, line: %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_variable *variable = oval_definition_model_get_new_variable(model, id, type);

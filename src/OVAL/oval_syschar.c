@@ -276,7 +276,7 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 	}
 
 	if (return_code != 0) {
-                dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+                dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
 	oscap_free(tagname);
@@ -307,12 +307,12 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
 	} else {
-                dW("Skipping tag: %s\n", tagname);
+                dW("Skipping tag: %s", tagname);
                 oval_parser_skip_tag(reader, context);
 	}
 
         if (return_code != 0) {
-                dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+                dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
 	oscap_free(tagname);

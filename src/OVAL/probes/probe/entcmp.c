@@ -93,7 +93,7 @@ oval_result_t probe_ent_cmp_debian_evr(SEXP_t * val1, SEXP_t * val2, oval_operat
 {
 	//TODO: implement Debian's epoch-version-release comparing algorithm
 	// it is different algorithm than RPM algorithm
-	dW("Using RPM algorithm to compare epoch, version and release.\n");
+	dW("Using RPM algorithm to compare epoch, version and release.");
 	return probe_ent_cmp_evr(val1, val2, op);
 }
 
@@ -210,7 +210,7 @@ static inline oval_result_t probe_ent_cmp_single(SEXP_t *state_ent, oval_datatyp
 	case OVAL_DATATYPE_IPV6ADDR:
 		return probe_ent_cmp_ipaddr(AF_INET6, state_ent, sysent, op);
 	default:
-		dI("Unexpected data type: %d\n", state_data_type);
+		dI("Unexpected data type: %d", state_data_type);
 		break;
 	}
 
@@ -253,7 +253,7 @@ static oval_result_t probe_ent_cmp(SEXP_t * ent, SEXP_t * val2)
 
 	SEXP_list_foreach(val1, vals) {
 		if (SEXP_typeof(val1) != SEXP_typeof(val2)) {
-			dI("Types of values to compare don't match: val1: %d, val2: %d\n",
+			dI("Types of values to compare don't match: val1: %d, val2: %d",
 			   SEXP_typeof(val1), SEXP_typeof(val2));
 
                         SEXP_free(vals);
@@ -437,13 +437,13 @@ oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 	valcnt = probe_ent_getvals(ent_obj, &r0);
 	SEXP_free(r0);
 	if (valcnt == 0) {
-		dI("valcnt == 0.\n");
+		dI("valcnt == 0.");
 		return OVAL_RESULT_FALSE;
 	}
 
 	ores = probe_ent_cmp(ent_obj, val);
 #if defined(OSCAP_VERBOSE_DEBUG)
-	dI("Result of entobj comparison: %s.\n", oval_result_get_text(ores));
+	dI("Result of entobj comparison: %s.", oval_result_get_text(ores));
 #endif
 	if (ores == OVAL_RESULT_NOT_EVALUATED)
 		return OVAL_RESULT_FALSE;
@@ -540,7 +540,7 @@ oval_result_t probe_ent_result_bychk(SEXP_t * res_lst, oval_check_t check)
 		break;
 	case OVAL_CHECK_NONE_EXIST:
 		dW("The 'none exist' CheckEnumeration value has been deprecated. "
-		   "Converted to check='none satisfy'.\n");
+		   "Converted to check='none satisfy'.");
 		/* FALLTHROUGH */
 	case OVAL_CHECK_NONE_SATISFY:
 		if (ores.true_cnt > 0) {

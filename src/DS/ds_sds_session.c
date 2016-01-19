@@ -284,7 +284,7 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
 {
-	return ds_dump_component_sources(session->component_sources);
+	return ds_dump_component_sources(session->component_sources, ds_sds_session_get_target_dir(session));
 }
 
 char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id)

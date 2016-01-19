@@ -42,7 +42,7 @@ AC_PROG_SWIG([])
 LT_CURRENT=15
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=0
+LT_REVISION=1
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
@@ -718,6 +718,7 @@ AC_CONFIG_FILES([Makefile
                  tests/probes/isainfo/Makefile
                  tests/probes/iflisteners/Makefile
 		 tests/probes/maskattr/Makefile
+		tests/probes/sysctl/Makefile
 
                  src/CVSS/Makefile
                  tests/API/CVSS/Makefile

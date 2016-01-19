@@ -332,7 +332,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 			if (variable == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL,
 						"Could not found variable '%s' referenced by var_ref element.", varref);
-				return_code = 1;
+				return_code = -1;
 			} else {
 				oscap_free(varref);
 				varref = NULL;
@@ -370,7 +370,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	(*consumer) (entity, user);
 
 	if (return_code != 0) {
-		dW("Parsing of <%s> terminated by an error at line %d.\n", name, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of <%s> terminated by an error at line %d.", name, xmlTextReaderGetParserLineNumber(reader));
 	}
 
 	oscap_free(name);

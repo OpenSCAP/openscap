@@ -148,7 +148,7 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 		return oval_ipaddr_cmp(AF_INET6, state_data, sys_data, operation);
 	} else if (state_data_type == OVAL_DATATYPE_FILESET_REVISION
 			|| state_data_type == OVAL_DATATYPE_IOS_VERSION) {
-		dW("Unsupported data type: %s.\n", oval_datatype_get_text(state_data_type));
+		dW("Unsupported data type: %s.", oval_datatype_get_text(state_data_type));
 		return OVAL_RESULT_NOT_EVALUATED;
 	}
 

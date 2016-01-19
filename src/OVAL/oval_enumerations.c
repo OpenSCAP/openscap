@@ -378,7 +378,7 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 	}
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
-		dW("No OVAL family for namespace: %s\n", namespace);
+		dW("No OVAL family for namespace: %s", namespace);
 		oscap_free(namespace);
 		return OVAL_FAMILY_UNKNOWN;
 	}
@@ -386,7 +386,7 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 	int ret = oscap_string_to_enum(OVAL_FAMILY_MAP, ++family_text);
 
 	if (ret == OVAL_ENUMERATION_INVALID) {
-		dW("Unknown OVAL family: %s\n", family_text);
+		dW("Unknown OVAL family: %s", family_text);
 		ret = OVAL_FAMILY_UNKNOWN;
 	}
 
@@ -665,7 +665,7 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 
 	int subtype_s = oscap_string_to_enum(map, tagname);
 	if (subtype < 0) {
-		dW("Unknown OVAL family subtype: %s\n", tagname);
+		dW("Unknown OVAL family subtype: %s", tagname);
 		subtype = OVAL_ENUMERATION_INVALID;
 	}
 	else {
@@ -735,7 +735,7 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	if (map) {
 		return oval_enumeration_get_text(map, subtype);
 	} else {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Warning: Zero family index");
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL family.");
 		return _invalid;
 	}
 }

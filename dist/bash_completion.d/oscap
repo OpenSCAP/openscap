@@ -19,7 +19,7 @@ function _oscap {
     cmds[oscap:cvss]="score describe"
     cmds[oscap:xccdf]="eval remediate resolve validate export-oval-variables generate"
     cmds[oscap:xccdf:generate]="report guide fix custom"
-    cmds[oscap:ds]="sds-add sds-compose sds-split sds-validate rds-create rds-validate"
+    cmds[oscap:ds]="sds-add sds-compose sds-split sds-validate rds-create rds-split rds-validate"
     cmds[oscap:cpe]="check match validate"
     cmds[oscap:cve]="validate find"
 
@@ -41,8 +41,11 @@ function _oscap {
     opts[oscap:xccdf:generate:guide]="-o --output --hide-profile-info --profile"
     opts[oscap:xccdf:generate:fix]="-o --output --template --profile --result-id --profile"
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
-    opts[oscap:ds:sds-add]="--datastream-id"
-    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id"
+    opts[oscap:ds:sds-add]="--datastream-id --skip-valid"
+    opts[oscap:ds:sds-compose]="--skip-valid"
+    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-valid"
+    opts[oscap:ds:rds-create]="--skip-valid"
+    opts[oscap:ds:rds-split]="--report-id --skip-valid"
     opts[oscap:cvss:score]=""
     opts[oscap:cvss:describe]=""
 

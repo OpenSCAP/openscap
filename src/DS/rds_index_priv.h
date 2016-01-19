@@ -34,5 +34,11 @@ OSCAP_HIDDEN_START;
 
 struct rds_index* rds_index_parse(xmlTextReaderPtr reader);
 
+struct rds_asset_index *rds_asset_index_parse(xmlTextReaderPtr reader);
+
+struct rds_report_index *rds_report_index_parse(xmlTextReaderPtr reader);
+
+struct rds_report_request_index *rds_report_request_index_parse(xmlTextReaderPtr reader);
+
 OSCAP_HIDDEN_END;
 #endif

@@ -48,6 +48,7 @@
 #if defined(OVAL_PROBES_ENABLED)
 #include "oval_probe.h"
 #include "oval_probe_session.h"
+#include "oval_probe_impl.h"
 #endif
 #include "common/util.h"
 #include "common/debug_priv.h"
@@ -338,7 +339,7 @@ void oval_component_set_record_field(struct oval_component *component, char *fie
 	__attribute__nonnull__(component);
 
 	if (oval_component_get_type(component) != OVAL_COMPONENT_OBJECTREF) {
-		dW("Wrong component type: %d.\n", oval_component_get_type(component));
+		dW("Wrong component type: %d.", oval_component_get_type(component));
 		return;
 	}
 
@@ -1175,7 +1176,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		component = oval_component_new(model, OVAL_FUNCTION_REGEX_CAPTURE);
 		return_code = _oval_component_parse_REGEX_CAPTURE_tag(reader, context, component);
 	} else {
-		oscap_dlprintf(DBG_I, "Tag <%s> not handled, line: %d.\n", tagname,
+		dI("Tag <%s> not handled, line: %d.", tagname,
                               xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
@@ -1183,7 +1184,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		(*consumer) (component, user);
 
 	if (return_code != 0 ) {
-		dW("Parsing of <%s> terminated by an error at line %d.\n", tagname, xmlTextReaderGetParserLineNumber(reader));
+		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 	oscap_free(tagname);
 	return return_code;
@@ -1343,7 +1344,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		return flag;
 
 	const char *obj_id = oval_object_get_id(object);
-	dI("Variable component references to object '%s'.\n", obj_id);
+	dI("Variable component references to object '%s'.", obj_id);
 
 	if (argu->mode == OVAL_MODE_QUERY) {
 #if defined(OVAL_PROBES_ENABLED)
@@ -1366,6 +1367,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 		while (oval_sysitem_iterator_has_more(sysitems)) {
 			struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
 			struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
+			const char *oval_sysitem_id = oval_sysitem_get_id(sysitem);
+			const char *oval_sysitem_subtype = oval_subtype_to_str(oval_sysitem_get_subtype(sysitem));
+			bool entity_matched = false;
 			while (oval_sysent_iterator_has_more(sysent_itr)) {
 				oval_datatype_t dt;
 				struct oval_sysent *sysent = oval_sysent_iterator_next(sysent_itr);
@@ -1374,14 +1378,28 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 				if (strcmp(ifield_name, sysent_name))
 					continue;
 
+				entity_matched = true;
 				dt = oval_sysent_get_datatype(sysent);
-				if ((dt == OVAL_DATATYPE_RECORD && rfield_name == NULL)
-				    || (dt != OVAL_DATATYPE_RECORD && rfield_name != NULL))
-					/* todo: throw error */
-					continue;
+				if (dt == OVAL_DATATYPE_RECORD && rfield_name == NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OVAL,
+							"Unexpected record data type in %s_item (id: %s) specified by object '%s'.",
+							oval_sysitem_subtype, oval_sysitem_id, obj_id);
+					oval_sysent_iterator_free(sysent_itr);
+					oval_sysitem_iterator_free(sysitems);
+					return SYSCHAR_FLAG_ERROR;
+				}
+				if (dt != OVAL_DATATYPE_RECORD && rfield_name != NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OVAL,
+							"Expected record data type, but found %s data type in %s entity in %s_item (id: %s) specified by object '%s'.",
+							oval_datatype_get_text(dt), ifield_name, oval_sysitem_subtype, oval_sysitem_id, obj_id);
+					oval_sysent_iterator_free(sysent_itr);
+					oval_sysitem_iterator_free(sysitems);
+					return SYSCHAR_FLAG_ERROR;
+				}
 
 				if (dt == OVAL_DATATYPE_RECORD) {
 					struct oval_record_field_iterator *rf_itr;
+					bool field_matched = false;
 
 					rf_itr = oval_sysent_get_record_fields(sysent);
 					while (oval_record_field_iterator_has_more(rf_itr)) {
@@ -1394,13 +1412,23 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 						if (strcmp(rfield_name, txtval))
 							continue;
 
+						field_matched = true;
 						dt = oval_record_field_get_datatype(rf);
 						txtval = oval_record_field_get_value(rf);
 						val = oval_value_new(dt, txtval);
 						oval_collection_add(value_collection, val);
 					}
+					/* throw error if none matched */
+					if (!field_matched) {
+						oscap_seterr(OSCAP_EFAMILY_OVAL,
+								"Record field '%s' has not been found in %s_item (id: %s) specified by object '%s'.",
+								rfield_name, oval_sysitem_subtype, oval_sysitem_id, obj_id);
+						oval_record_field_iterator_free(rf_itr);
+						oval_sysent_iterator_free(sysent_itr);
+						oval_sysitem_iterator_free(sysitems);
+						return SYSCHAR_FLAG_ERROR;
+					}
 					oval_record_field_iterator_free(rf_itr);
-					/* todo: throw error if none matched */
 				} else {
 					char *txtval;
 					struct oval_value *val;
@@ -1410,8 +1438,16 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 					oval_collection_add(value_collection, val);
 				}
 			}
+			/* throw error if none matched */
+			if (!entity_matched) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL,
+						"Entity '%s' has not been found in %s_item (id: %s) specified by object '%s'.",
+						ifield_name, oval_sysitem_subtype, oval_sysitem_id, obj_id);
+				oval_sysent_iterator_free(sysent_itr);
+				oval_sysitem_iterator_free(sysitems);
+				return SYSCHAR_FLAG_ERROR;
+			}
 			oval_sysent_iterator_free(sysent_itr);
-			/* todo: throw error if none matched */
 		}
 		oval_sysitem_iterator_free(sysitems);
 	}
@@ -1875,23 +1911,23 @@ static long unsigned int _parse_datetime(char *datetime, const char *fmt[], size
         size_t    i;
         char     *r;
 
-        dI("Parsing datetime string \"%s\"\n", datetime);
+        dI("Parsing datetime string \"%s\"", datetime);
 
         for (i = 0; i < fmtcnt; ++i) {
-                dI("%s\n", fmt[i]);
+                dI("%s", fmt[i]);
                 memset(&t, 0, sizeof t);
                 r = strptime(datetime, fmt[i], &t);
 
                 if (r != NULL) {
                         if (*r == '\0') {
-                                dI("Success!\n");
+                                dI("Success!");
                                 return _comp_sec(t.tm_year, t.tm_mon, t.tm_mday,
                                                  t.tm_hour, t.tm_min, t.tm_sec);
                         }
                 }
         }
 
-        dE("Unable to interpret \"%s\" as a datetime string\n");
+        dE("Unable to interpret \"%s\" as a datetime string");
 
         return (0);
 }
@@ -2159,7 +2195,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 	pattern = oval_component_get_regex_pattern(component);
 	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
 	if (re == NULL) {
-		oscap_dlprintf(DBG_E, "pcre_compile() failed: \"%s\".\n", error);
+		dE("pcre_compile() failed: \"%s\".", error);
 		return SYSCHAR_FLAG_ERROR;
 	}
 #elif defined USE_REGEX_POSIX
@@ -2167,7 +2203,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 	pattern = oval_component_get_regex_pattern(component);
 	if ((rc = regcomp(&re, pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
-		oscap_dlprintf(DBG_E, "regcomp() failed: %d.\n", rc);
+		dE("regcomp() failed: %d.", rc);
 		return SYSCHAR_FLAG_ERROR;
 	}
 #endif
@@ -2189,7 +2225,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 			rc = pcre_exec(re, NULL, text, strlen(text), 0, 0, ovector, ovector_len);
 			if (rc < -1) {
-				oscap_dlprintf(DBG_E, "pcre_exec() failed: %d.\n", rc);
+				dE("pcre_exec() failed: %d.", rc);
 				flag = SYSCHAR_FLAG_ERROR;
 				break;
 			}

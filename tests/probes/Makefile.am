@@ -56,6 +56,9 @@ endif
 if probe_symlink_enabled
 UNIX_SUBDIRS += symlink
 endif
+if probe_sysctl_enabled
+UNIX_SUBDIRS += sysctl
+endif
 endif
 
 if WANT_PROBES_LINUX

@@ -28,172 +28,15 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/alloc.h"
+#include "common/util.h"
 #include "common/elements.h"
+#include "common/debug_priv.h"
 #include "rds_index_priv.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 
 #include <libxml/xmlreader.h>
 #include <string.h>
-
-struct rds_report_request_index
-{
-	char *id;
-};
-
-struct rds_report_request_index *rds_report_request_index_new(void)
-{
-	struct rds_report_request_index *ret = oscap_calloc(1, sizeof(struct rds_report_request_index));
-	ret->id = NULL;
-
-	return ret;
-}
-
-void rds_report_request_index_free(struct rds_report_request_index *s)
-{
-	if (s != NULL) {
-		oscap_free(s->id);
-		oscap_free(s);
-	}
-}
-
-const char *rds_report_request_index_get_id(struct rds_report_request_index *s)
-{
-	return s->id;
-}
-
-static struct rds_report_request_index *rds_report_request_index_parse(xmlTextReaderPtr reader)
-{
-	// sanity check
-	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
-	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "report-request") != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML,
-		             "Expected to have xmlTextReader at start of <arf:report-request>, "
-		             "the current event is '%i' at '%s' instead. I refuse to parse!",
-		             xmlTextReaderNodeType(reader), (const char*)xmlTextReaderConstLocalName(reader));
-
-		return NULL;
-	}
-
-	struct rds_report_request_index* ret = rds_report_request_index_new();
-
-	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	return ret;
-}
-
-struct rds_asset_index
-{
-	char *id;
-	struct oscap_list *reports;
-};
-
-struct rds_asset_index *rds_asset_index_new(void)
-{
-	struct rds_asset_index *ret = oscap_calloc(1, sizeof(struct rds_asset_index));
-	ret->id = NULL;
-	ret->reports = oscap_list_new();
-
-	return ret;
-}
-
-void rds_asset_index_free(struct rds_asset_index *s)
-{
-	if (s != NULL) {
-		oscap_list_free0(s->reports);
-		oscap_free(s->id);
-		oscap_free(s);
-	}
-}
-
-const char *rds_asset_index_get_id(struct rds_asset_index *s)
-{
-	return s->id;
-}
-
-void rds_asset_index_add_report_ref(struct rds_asset_index *s, struct rds_report_index *report)
-{
-	oscap_list_add(s->reports, report);
-}
-
-struct rds_report_index_iterator *rds_asset_index_get_reports(struct rds_asset_index *s)
-{
-	return (struct rds_report_index_iterator*)oscap_iterator_new(s->reports);
-}
-
-static struct rds_asset_index *rds_asset_index_parse(xmlTextReaderPtr reader)
-{
-	// sanity check
-	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
-	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "asset") != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML,
-		             "Expected to have xmlTextReader at start of <arf:report>, "
-		             "the current event is '%i' at '%s' instead. I refuse to parse!",
-		             xmlTextReaderNodeType(reader), (const char*)xmlTextReaderConstLocalName(reader));
-
-		return NULL;
-	}
-
-	struct rds_asset_index *ret = rds_asset_index_new();
-
-	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	return ret;
-}
-
-struct rds_report_index
-{
-	char *id;
-	struct rds_report_request_index *request;
-};
-
-struct rds_report_index* rds_report_index_new(void)
-{
-	struct rds_report_index *ret = oscap_calloc(1, sizeof(struct rds_report_index));
-	ret->id = NULL;
-
-	return ret;
-}
-
-void rds_report_index_free(struct rds_report_index *s)
-{
-	if (s != NULL) {
-		oscap_free(s->id);
-		oscap_free(s);
-	}
-}
-
-const char *rds_report_index_get_id(struct rds_report_index *s)
-{
-	return s->id;
-}
-
-void rds_report_index_set_request(struct rds_report_index *s, struct rds_report_request_index *request)
-{
-	s->request = request;
-}
-
-struct rds_report_request_index *rds_report_index_get_request(struct rds_report_index *s)
-{
-	return s->request;
-}
-
-static struct rds_report_index *rds_report_index_parse(xmlTextReaderPtr reader)
-{
-	// sanity check
-	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT ||
-	    strcmp((const char*)xmlTextReaderConstLocalName(reader), "report") != 0) {
-		oscap_seterr(OSCAP_EFAMILY_XML,
-		             "Expected to have xmlTextReader at start of <arf:report>, "
-		             "the current event is '%i' at '%s' instead. I refuse to parse!",
-		             xmlTextReaderNodeType(reader), (const char*)xmlTextReaderConstLocalName(reader));
-
-		return NULL;
-	}
-
-	struct rds_report_index *ret = rds_report_index_new();
-
-	ret->id = (char*)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
-	return ret;
-}
 
 struct rds_index
 {
@@ -335,6 +178,53 @@ static xmlChar *relationship_get_inner_ref(xmlNodePtr node)
 	return ret;
 }
 
+static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr relationships_node)
+{
+	if (relationships_node == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_XML, "There is no <core:relationships> element in the Result DataStream.\n");
+		return;
+	}
+
+	xmlNodePtr relationship_node = relationships_node->children;
+	for (; relationship_node != NULL; relationship_node = relationship_node->next)
+	{
+		if (relationship_node->type != XML_ELEMENT_NODE)
+			continue;
+
+		if (strcmp((const char*)(relationship_node->name), "relationship") != 0)
+			continue; // TODO: Warning?
+
+		xmlChar *type_attr = xmlGetProp(relationship_node, BAD_CAST "type");
+		xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
+		xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
+
+		if (oscap_str_startswith((const char *) type_attr, "arfvocab:")
+				|| oscap_str_startswith((const char *) type_attr, "arfrel:")) {
+			if (oscap_str_endswith((const char*)type_attr, ":isAbout")) {
+				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
+				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
+
+				rds_asset_index_add_report_ref(asset, report);
+			} else if (oscap_str_endswith((const char*)type_attr, ":createdFor")) {
+				struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
+				struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
+
+				// This is based on the assumption that every report has at most 1 request
+				// it was "created for".
+				rds_report_index_set_request(report, request);
+			} else {
+				dW("Unsupported core:relationship/@type='%s'", (const char *) type_attr);
+			}
+		} else {
+			dW("Unsupported core:relationship/@type='%s'", (const char *) type_attr);
+		}
+
+		xmlFree(type_attr);
+		xmlFree(subject_attr);
+		xmlFree(inner_ref);
+	}
+}
+
 struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 {
 	if (!oscap_to_start_element(reader, 0)) {
@@ -453,44 +343,8 @@ struct rds_index *rds_index_parse(xmlTextReaderPtr reader)
 		xmlTextReaderRead(reader);
 	}
 
-	// relationships node can only be NULL if the ARF is invalid
-	if (relationships_node != NULL) {
-		xmlNodePtr relationship_node = relationships_node->children;
-
-		for (; relationship_node != NULL; relationship_node = relationship_node->next)
-		{
-			if (relationship_node->type != XML_ELEMENT_NODE)
-				continue;
-
-			if (strcmp((const char*)(relationship_node->name), "relationship") != 0)
-				continue; // TODO: Warning?
-
-			xmlChar *type_attr = xmlGetProp(relationship_node, BAD_CAST "type");
-			xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
-			xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
-
-			if (strcmp((const char*)type_attr, "arfvocab:isAbout") == 0) {
-				struct rds_asset_index* asset = rds_index_get_asset(ret, (const char*)inner_ref);
-				struct rds_report_index* report = rds_index_get_report(ret, (const char*)subject_attr);
-
-				rds_asset_index_add_report_ref(asset, report);
-			}
-			else if (strcmp((const char*)type_attr, "arfvocab:createdFor") == 0) {
-				struct rds_report_request_index *request = rds_index_get_report_request(ret, (const char*)inner_ref);
-				struct rds_report_index *report = rds_index_get_report(ret, (const char*)subject_attr);
-
-				// This is based on the assumption that every report has at most 1 request
-				// it was "created for".
-				rds_report_index_set_request(report, request);
-			}
-
-			xmlFree(type_attr);
-			xmlFree(subject_attr);
-			xmlFree(inner_ref);
-		}
-
-		xmlFreeNode(relationships_node);
-	}
+	_parse_relationships_node(ret, relationships_node);
+	xmlFreeNode(relationships_node);
 
 	return ret;
 }
@@ -509,51 +363,6 @@ struct rds_index *rds_index_import(const char *file)
 	xmlFreeTextReader(reader);
 	oscap_source_free(source);
 	return ret;
-}
-
-struct rds_report_request_index *rds_report_request_index_iterator_next(struct rds_report_request_index_iterator *it)
-{
-	return (struct rds_report_request_index*)(oscap_iterator_next((struct oscap_iterator*)it));
-}
-
-bool rds_report_request_index_iterator_has_more(struct rds_report_request_index_iterator *it)
-{
-	return oscap_iterator_has_more((struct oscap_iterator*)it);
-}
-
-void rds_report_request_index_iterator_free(struct rds_report_request_index_iterator *it)
-{
-	oscap_iterator_free((struct oscap_iterator*)it);
-}
-
-struct rds_asset_index *rds_asset_index_iterator_next(struct rds_asset_index_iterator *it)
-{
-	return (struct rds_asset_index*)(oscap_iterator_next((struct oscap_iterator*)it));
-}
-
-bool rds_asset_index_iterator_has_more(struct rds_asset_index_iterator *it)
-{
-	return oscap_iterator_has_more((struct oscap_iterator*)it);
-}
-
-void rds_asset_index_iterator_free(struct rds_asset_index_iterator *it)
-{
-	oscap_iterator_free((struct oscap_iterator*)it);
-}
-
-struct rds_report_index *rds_report_index_iterator_next(struct rds_report_index_iterator *it)
-{
-	return (struct rds_report_index*)(oscap_iterator_next((struct oscap_iterator*)it));
-}
-
-bool rds_report_index_iterator_has_more(struct rds_report_index_iterator *it)
-{
-	return oscap_iterator_has_more((struct oscap_iterator*)it);
-}
-
-void rds_report_index_iterator_free(struct rds_report_index_iterator *it)
-{
-	oscap_iterator_free((struct oscap_iterator*)it);
 }
 
 int rds_index_select_report(struct rds_index *s, const char **report_id)

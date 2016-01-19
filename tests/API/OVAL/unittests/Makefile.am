@@ -23,6 +23,8 @@ EXTRA_DIST = \
 	test_comment.sh \
 	test_cim_datetime.sh \
 	cim_datetime.xml \
+	test_directives.sh \
+	test_directives.xml \
 	test_int_comparison.oval.xml \
 	test_int_comparison.sh \
 	test_int_comparison.syschar.xml \
@@ -67,6 +69,10 @@ EXTRA_DIST = \
 	test_oval_empty_variable_evaluation.xml \
 	test_platform_version.sh \
 	test_platform_version.xml \
+	test_object_component_type.oval.xml \
+	test_object_component_type.sh \
+	test_skip_valid.sh \
+	test_skip_valid.oval.xml \
 	test_xmlns_missing.oval.xml \
 	test_xmlns_missing.sh \
 	test_xsinil_envv58_pid.oval.xml \

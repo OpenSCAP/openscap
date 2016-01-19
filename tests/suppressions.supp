@@ -18,3 +18,12 @@
    fun:dlerror
    ...
 }
+
+{
+   curl
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:curl_easy_init
+   ...
+}

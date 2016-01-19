@@ -242,6 +242,16 @@ static const struct xccdf_element_spec XCCDF_ELEMENT_MAP[] = {
 	{0, NULL, NULL}
 };
 
+const char *xccdf_element_to_str(xccdf_element_t element)
+{
+	for (const struct xccdf_element_spec *mapptr = XCCDF_ELEMENT_MAP; mapptr->id != 0; ++mapptr) {
+		if (element == mapptr->id) {
+			return mapptr->name;
+		}
+	}
+	return NULL;
+}
+
 xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader)
 {
 	if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)

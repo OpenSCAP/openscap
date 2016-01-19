@@ -67,7 +67,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         over_cmp    = oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10));
 
         if (name_entity == NULL) {
-                dE("Missing \"name\" entity in the input object\n");
+                dE("Missing \"name\" entity in the input object");
                 return (PROBE_ENOENT);
         }
 
@@ -102,7 +102,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         ofts = oval_fts_open(path_entity, filename_entity, NULL, bh_entity);
 
         if (ofts == NULL) {
-                dE("oval_ftp_open(%s, %s) failed\n", PROC_SYS_DIR, ".\\+");
+                dE("oval_ftp_open(%s, %s) failed", PROC_SYS_DIR, ".\\+");
                 SEXP_vfree(path_entity, filename_entity, bh_entity, name_entity, NULL);
 
                 return (PROBE_EFATAL);
@@ -118,13 +118,13 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
 		/* Skip write-only files, eg. /proc/sys/net/ipv4/route/flush */
 		if (stat(mibpath, &file_stat) == -1) {
-			dE("Stat failed on %s: %u, %s\n", mibpath, errno, strerror(errno));
+			dE("Stat failed on %s: %u, %s", mibpath, errno, strerror(errno));
 			oval_ftsent_free(ofts_ent);
 			continue;
 		}
 		/* the sysctl utility uses same condition in sysctl.c in ReadSetting() */
 		if ((file_stat.st_mode & S_IRUSR) == 0) {
-			dI("Skipping write-only file %s\n", mibpath);
+			dI("Skipping write-only file %s", mibpath);
 			oval_ftsent_free(ofts_ent);
 			continue;
 		}
@@ -138,7 +138,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         --miblen;
                 }
 
-                dI("MIB: %s\n", mib);
+                dI("MIB: %s", mib);
                 se_mib = SEXP_string_new(mib, strlen(mib));
                 oscap_free(mib);
 
@@ -150,7 +150,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         long i, l;
                         size_t s;
 
-                        dI("MIB match\n");
+                        dI("MIB match");
 
                         /*
                          * read sysctl value
@@ -158,7 +158,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         fp = fopen(mibpath, "r");
 
                         if (fp == NULL) {
-                                dE("Can't read sysctl value from \"%s\": %u, %s\n",
+                                dE("Can't read sysctl value from \"%s\": %u, %s",
                                    mibpath, errno, strerror(errno));
                                 goto fail_item;
                         }
@@ -172,12 +172,13 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 				 */
 				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
 						strcmp(ofts_ent->file, "stable_secret") == 0) {
-					dI("Skippping file %s\n", mibpath);
+					dI("Skippping file %s", mibpath);
 					oval_ftsent_free(ofts_ent);
 					SEXP_free(se_mib);
+					fclose(fp);
 					continue;
 				} else {
-					dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s\n",
+					dE("An error ocured when reading from \"%s\" (fp=%p): l=%ld, %u, %s",
 						mibpath, fp, l, errno, strerror(errno));
 					goto fail_item;
 				}

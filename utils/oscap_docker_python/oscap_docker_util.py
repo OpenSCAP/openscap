@@ -130,13 +130,13 @@ class OscapHelpers(object):
 
             sys.exit(1)
 
-        return run
+        return run.decode("utf-8")
 
     def _scan_cve(self, chroot, dist, scan_args):
         '''
         Scan a chroot for cves
         '''
-        cve_input = "Red_Hat_Enterprise_Linux_{0}.xml".format(dist)
+        cve_input = getInputCVE.dist_cve_name.format(dist)
         tmp_tuple = ('oval', 'eval') + tuple(scan_args) + \
             (os.path.join(self.cve_input_dir, cve_input),)
         return self.oscap_chroot("foo", "bar", chroot, *tmp_tuple)

@@ -256,7 +256,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #if defined(HAVE_ACL_EXTENDED_FILE)
 	int has_acl = acl_extended_file(path);
 	if (has_acl == -1) {
-		dW("Getting extended ACL for file '%s' has failed, %s\n", path, strerror(errno));
+		dW("Getting extended ACL for file '%s' has failed, %s", path, strerror(errno));
 		return NULL;
 	}
 	return (has_acl == 1) ? gr_true : gr_false;
@@ -283,7 +283,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 	}
 
         if (lstat (st_path, &st) == -1) {
-                dI("lstat failed when processing %s: errno=%u, %s.\n", st_path, errno, strerror (errno));
+                dI("lstat failed when processing %s: errno=%u, %s.", st_path, errno, strerror (errno));
 		return strncmp(st_path, "/proc", 4) == 0 ? 0 : -1;
         } else {
                 SEXP_t *se_usr_id, *se_grp_id;
@@ -415,7 +415,7 @@ void *probe_init (void)
         case 0:
                 return ((void *)&__file_probe_mutex);
         default:
-                dI("Can't initialize mutex: errno=%u, %s.\n", errno, strerror (errno));
+                dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
 #if 0
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
@@ -491,7 +491,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                dI("Can't lock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                dI("Can't lock mutex(%p): %u, %s.", &__file_probe_mutex, errno, strerror (errno));
 
 		SEXP_free(path);
 		SEXP_free(filename);
@@ -526,7 +526,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                dI("Can't unlock mutex(%p): %u, %s.\n", &__file_probe_mutex, errno, strerror (errno));
+                dI("Can't unlock mutex(%p): %u, %s.", &__file_probe_mutex, errno, strerror (errno));
 
                 return PROBE_EFATAL;
         }
