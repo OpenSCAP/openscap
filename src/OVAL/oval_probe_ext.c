@@ -490,7 +490,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			}
 		}
 
-		dI("Sending message.");
+		dD("Sending message.");
 
 		ret = SEAP_sendmsg(ctx, pd->sd, s_omsg);
 		if (ret != 0) {
@@ -549,7 +549,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			}
 		}
 
-		dI("Waiting for reply.");
+		dD("Waiting for reply.");
 
 		/* recv_retry: */
 		s_imsg = NULL;
@@ -583,7 +583,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			}
 		}
 
-		dI("Message received.");
+		dD("Message received.");
 		break;
 	}
 
