@@ -331,7 +331,8 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 				NULL
 			};
 
-			char *const envp[1] = {
+			char *const envp[2] = {
+				"PATH=/bin:/sbin:/usr/bin:/usr/sbin",
 				NULL
 			};
 
