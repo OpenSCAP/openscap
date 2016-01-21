@@ -81,7 +81,7 @@ void *probe_signal_handler(void *arg)
                 dW("prctl(PR_SET_PDEATHSIG, SIGTERM) failed");
 #endif
        
-	dI("Signal handler ready");
+	dD("Signal handler ready");
 	switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
 	{
 	case 0:
@@ -94,7 +94,7 @@ void *probe_signal_handler(void *arg)
 
 	while (sigwaitinfo(&siset, &siinf) != -1) {
 
-		dI("Received signal %d from %u (%s)",
+		dD("Received signal %d from %u (%s)",
 		   siinf.si_signo, (unsigned int)siinf.si_pid,
 		   getppid() == siinf.si_pid ? "parent" : "not my parent");
 

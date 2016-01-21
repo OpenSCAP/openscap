@@ -135,11 +135,11 @@ bool SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name)
         _A(msg  != NULL);
         _A(name != NULL);
 
-        dI("cnt = %u", msg->attrs_cnt);
+        dD("cnt = %u", msg->attrs_cnt);
 
         /* FIXME: this is stupid */
         for (i = 0; i < msg->attrs_cnt; ++i) {
-                dI("%s ?= %s", name, msg->attrs[i].name);
+                dD("%s ?= %s", name, msg->attrs[i].name);
                 if (strcmp (name, msg->attrs[i].name) == 0)
                         return (true);
         }

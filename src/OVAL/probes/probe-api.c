@@ -683,7 +683,7 @@ void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag)
 	of = SEXP_number_getu(old_sflag);
 	SEXP_free(old_sflag);
 	SEXP_free(sflag);
-	dI("old flag: %d, new flag: %d.", of, flag);
+	dD("old flag: %d, new flag: %d.", of, flag);
 }
 
 oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj)

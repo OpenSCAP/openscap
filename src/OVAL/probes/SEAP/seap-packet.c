@@ -437,9 +437,9 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
         if (cmd->args != NULL)
                 SEXP_list_add (sexp, cmd->args);
 
-	dI("CMD -> SEXP");
+	dD("CMD -> SEXP");
 	dO(OSCAP_DEBUGOBJ_SEXP, sexp);
-	dI("packet size: %zu", SEXP_sizeof(sexp));
+	dD("packet size: %zu", SEXP_sizeof(sexp));
 
         SEXP_VALIDATE(sexp);
         return (sexp);
@@ -900,9 +900,9 @@ eloop_exit:
 		}
 
 
-		dI("Received packet");
+		dD("Received packet");
 		dO(OSCAP_DEBUGOBJ_SEXP, sexp_packet);
-		dI("packet size: %zu", SEXP_sizeof(sexp_packet));
+		dD("packet size: %zu", SEXP_sizeof(sexp_packet));
 
 		SEXP_free(sexp_packet);
 
