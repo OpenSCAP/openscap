@@ -22,9 +22,6 @@ function die()
     exit 1
 }
 
-which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
-which guestunmount > /dev/null || die "Cannot find guestunmount, please install libguestfs utilities."
-which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
 {
@@ -95,6 +92,10 @@ else
     usage
     die
 fi
+
+which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
+which guestunmount > /dev/null || die "Cannot find guestunmount, please install libguestfs utilities."
+which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 MOUNTPOINT=$(mktemp -d)
 
