@@ -94,7 +94,7 @@ else
 fi
 
 which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
-which guestunmount > /dev/null || die "Cannot find guestunmount, please install libguestfs utilities."
+which fusermount > /dev/null || die "Cannot find fusermount, please install fuse."
 which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 MOUNTPOINT=$(mktemp -d)
@@ -121,6 +121,6 @@ shift 2
 oscap "$@"
 EXIT_CODE=$?
 echo "Unmounting '$MOUNTPOINT'..."
-guestunmount "$MOUNTPOINT"
+fusermount -u "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
 exit $EXIT_CODE
