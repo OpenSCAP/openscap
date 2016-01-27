@@ -22,7 +22,6 @@ function die()
     exit 1
 }
 
-
 function usage()
 {
     echo "oscap-vm -- Tool for offline SCAP evaluation of virtual machines."
@@ -94,7 +93,16 @@ else
 fi
 
 which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
-which fusermount > /dev/null || die "Cannot find fusermount, please install fuse."
+
+if [ `which guestunmount` > /dev/null ]; then
+    UNMOUNT_COMMAND="guestunmount"
+elif [ `which fusermount` > /dev/null ]; then
+    echo "guestunmount command not present on the system, using simpler fusermount instead"
+    UNMOUNT_COMMAND="fusermount -u"
+else
+    die "Cannot find guestunmount or fusermount, please install libguestfs utilities, or fuse."
+fi
+
 which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
 
 MOUNTPOINT=$(mktemp -d)
@@ -121,6 +129,6 @@ shift 2
 oscap "$@"
 EXIT_CODE=$?
 echo "Unmounting '$MOUNTPOINT'..."
-fusermount -u "$MOUNTPOINT"
+$UNMOUNT_COMMAND "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
 exit $EXIT_CODE
