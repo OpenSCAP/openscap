@@ -1,4 +1,4 @@
-.TH oscap-ssh "8" "June 2015" "Red Hat, Inc." "System Administration Utilities"
+.TH oscap-ssh "8" "January 2016" "Red Hat, Inc." "System Administration Utilities"
 .SH NAME
 oscap-ssh \- Tool for running oscap over SSH and collecting results.
 .SH DESCRIPTION
@@ -74,8 +74,8 @@ $ oscap-ssh --sudo oscap-user@192.168.1.13 22 xccdf eval --profile xccdf_org.ssg
 .SS Running remotely as root
 Note that the openscap scanner is best run by the 'root' user as in the first example above. To do this, the "PermitRootLogin" directive must be enabled in /etc/ssh/sshd_config, which is itself a security violation. A safer approach is to enable a non-privileged user ('oscap-user' in the second example above) to run only the oscap binary as root (with the '--sudo' flag) by updating the remote machine's 'sudoers' file or adding a file like /etc/sudoers.d/99-oscap-user:
   # allow oscap-user to run openscap scanner
-  Defaults!/bin/oscap !requiretty
-  oscap-user ALL=(root) NOPASSWD: /bin/oscap
+  Defaults!/usr/bin/oscap !requiretty
+  oscap-user ALL=(root) NOPASSWD: /usr/bin/oscap
 
 .SH REPORTING BUGS
 .nf
