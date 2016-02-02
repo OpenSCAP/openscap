@@ -89,7 +89,7 @@ class getInputCVE(object):
         return dest_file
 
     def _print_no_last_modified_warning(self, url):
-        stderr.write("Response header of HTTP doesn't contain " \
+        stderr.write("Warning: Response header of HTTP doesn't contain " \
                      "\"last-modified\" field. Cannot determine version" \
                      " of remote file \"{0}\"\n".format(url))
 
