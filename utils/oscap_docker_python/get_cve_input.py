@@ -45,7 +45,7 @@ class getInputCVE(object):
     def __init__(self, fs_dest, DEBUG=False):
         ''' Simple init declaration '''
         self.dest = fs_dest
-        self.DEBUG = DEBUG
+        self.DEBUG = True
 
     def _fetch_single(self, dist):
         '''
@@ -89,9 +89,10 @@ class getInputCVE(object):
         return dest_file
 
     def _print_no_last_modified_warning(self, url):
-        stderr.write("Warning: Response header of HTTP doesn't contain " \
-                     "\"last-modified\" field. Cannot determine version" \
-                     " of remote file \"{0}\"\n".format(url))
+        if self.DEBUG:
+            stderr.write("Warning: Response header of HTTP doesn't contain " \
+                         "\"last-modified\" field. Cannot determine version" \
+                         " of remote file \"{0}\"\n".format(url))
 
     def _parse_http_headers(self, http_headers):
         '''
@@ -136,8 +137,7 @@ class getInputCVE(object):
             return False
 
         except KeyError:
-            if self.DEBUG:
-                self._print_no_last_modified_warning(dist_url)
+            self._print_no_last_modified_warning(dist_url)
             return False
 
         # The remote's datetime
