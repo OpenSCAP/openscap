@@ -81,7 +81,6 @@ oscap ds sds-validate scap-ds.xml
 
 ### Scanning
 
- * To evaluate all definitions within the given OVAL Definition file, run the following command: 
  * To evaluate all definitions within the given OVAL Definition file, run the following command:
 ```
 oscap oval eval --results oval-results.xml scap-oval.xml
