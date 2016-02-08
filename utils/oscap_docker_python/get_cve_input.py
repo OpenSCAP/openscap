@@ -45,7 +45,7 @@ class getInputCVE(object):
     def __init__(self, fs_dest, DEBUG=False):
         ''' Simple init declaration '''
         self.dest = fs_dest
-        self.DEBUG = True
+        self.DEBUG = DEBUG
 
     def _fetch_single(self, dist):
         '''
