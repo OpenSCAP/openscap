@@ -466,7 +466,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
                         SEAP_msg_t *nil_msg;
                         int         ret;
 
-                        dI("no-reply set: sending empty reply");
+                        dD("no-reply set: sending empty reply");
 
                         nil_msg = SEAP_msg_clone (rep_msg);
                         SEAP_msg_unset (nil_msg);
@@ -475,7 +475,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
 
                         return (ret);
                 } else {
-                        dI("no-reply not set: sending full reply");
+                        dD("no-reply not set: sending full reply");
                         return SEAP_sendmsg (ctx, sd, rep_msg);
                 }
         } else {
