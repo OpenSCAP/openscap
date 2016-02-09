@@ -585,6 +585,9 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 	operator = oval_state_get_operator(state);
 	result = ores_get_result_byopr(&ste_ores, operator);
+	dI("Item '%s' compared to state '%s' with result %s.",
+			   oval_sysitem_get_id(cur_sysitem), oval_state_get_id(state),
+			   oval_result_get_text(result));
 
 	return result;
 
