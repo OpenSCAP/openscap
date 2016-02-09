@@ -1019,7 +1019,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 			rtest->result = OVAL_RESULT_UNKNOWN;
 	}
 
-        dI("\t%s => %s", oval_result_test_get_id(rtest), oval_result_get_text(rtest->result));
+	dI("Test '%s' evaluated as %s.", oval_result_test_get_id(rtest), oval_result_get_text(rtest->result));
 
 	return rtest->result;
 }
