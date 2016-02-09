@@ -745,13 +745,16 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 {
 	struct oval_sysitem_iterator *collected_items_itr;
 	oval_result_t result;
-	int exists_cnt, error_cnt;
+	int exists_cnt, error_cnt, total_cnt;
 	bool hasstate;
+	const char *test_id;
 	oval_check_t test_check;
 	oval_existence_t test_check_existence;
 	struct oval_state_iterator *ste_itr;
+	oval_syschar_collection_flag_t flag;
 
-	exists_cnt = error_cnt = 0;
+	exists_cnt = error_cnt = total_cnt = 0;
+	test_id = oval_test_get_id(test);
 	collected_items_itr = oval_syschar_get_sysitem(syschar_object);
 	while (oval_sysitem_iterator_has_more(collected_items_itr)) {
 		struct oval_sysitem *item;
@@ -759,6 +762,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		oval_syschar_status_t item_status;
 		struct oval_result_item *ritem;
 
+		total_cnt++;
 		item = oval_sysitem_iterator_next(collected_items_itr);
 		if (item == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "Iterator returned null.");
@@ -785,7 +789,18 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 	hasstate = oval_state_iterator_has_more(ste_itr);
 	oval_state_iterator_free(ste_itr);
 
-	switch (oval_syschar_get_flag(syschar_object)) {
+	flag = oval_syschar_get_flag(syschar_object);
+	dI("Object referenced in test '%s' is %s.",
+			test_id, oval_syschar_collection_flag_get_text(flag));
+	dI("Test '%s' requires existence of collected items as '%s'. "
+			"%d items of %d has a status of 'exists'.",
+			test_id, oval_existence_get_text(test_check_existence),
+			exists_cnt, total_cnt);
+	if (!hasstate) {
+		dI("Test '%s' does not contain any state to compare object with.", test_id);
+	}
+
+	switch (flag) {
 	case SYSCHAR_FLAG_ERROR:
 		if (test_check_existence == OVAL_ANY_EXIST
 		    && !hasstate) {
@@ -856,7 +871,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 	default: {
 		const char *object_id = oval_syschar_get_object(syschar_object) ? oval_object_get_id(oval_syschar_get_object(syschar_object)) : "<UNKNOWN>";
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: '%d' when evaluating object: '%s' from test: '%s' ",
-				oval_syschar_get_flag(syschar_object), object_id, oval_test_get_id(test));
+				oval_syschar_get_flag(syschar_object), object_id, test_id);
 		return OVAL_RESULT_ERROR;
 		}
 	}
