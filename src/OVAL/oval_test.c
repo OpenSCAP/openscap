@@ -39,6 +39,7 @@
 #include "oval_definitions_impl.h"
 #include "adt/oval_collection_impl.h"
 #include "oval_agent_api_impl.h"
+#include "common/oscap_string.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/elements.h"
@@ -158,6 +159,33 @@ struct oval_state_iterator *oval_test_get_states(struct oval_test *test)
 	__attribute__nonnull__(test);
 
 	return (struct oval_state_iterator *) oval_collection_iterator(test->states);
+}
+
+char *oval_test_get_state_names(struct oval_test *test)
+{
+	__attribute__nonnull__(test);
+
+	struct oval_state_iterator *ste_itr = oval_test_get_states(test);
+	if (!oval_state_iterator_has_more(ste_itr)) {
+		oval_state_iterator_free(ste_itr);
+		return oscap_strdup("");
+	}
+	struct oscap_string *state_list = oscap_string_new();
+	oscap_string_append_char(state_list, '\'');
+	while (1) {
+		struct oval_state *ste = oval_state_iterator_next(ste_itr);
+		const char *ste_id = oval_state_get_id(ste);
+		oscap_string_append_string(state_list, ste_id);
+		if (!oval_state_iterator_has_more(ste_itr)) {
+			break;
+		}
+		oscap_string_append_string(state_list, "', '");
+	}
+	oscap_string_append_char(state_list, '\'');
+	char *state_names = oscap_strdup(oscap_string_get_cstr(state_list));
+	oscap_string_free(state_list);
+	oval_state_iterator_free(ste_itr);
+	return state_names;
 }
 
 struct oval_test *oval_test_new(struct oval_definition_model *model, const char *id)
