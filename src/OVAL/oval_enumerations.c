@@ -233,6 +233,15 @@ static const struct oscap_string_map OVAL_CHECK_MAP[] = {
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
+static const struct oscap_string_map OVAL_CHECK_DESCRIPTION_MAP[] = {
+	{OVAL_CHECK_ALL, "all"},
+	{OVAL_CHECK_AT_LEAST_ONE, "at least one"},
+	{OVAL_CHECK_NONE_EXIST, "none"},
+	{OVAL_CHECK_NONE_SATISFY, "none"},
+	{OVAL_CHECK_ONLY_ONE, "only one"},
+	{OVAL_ENUMERATION_INVALID, NULL}
+};
+
 oval_check_t oval_check_parse(xmlTextReaderPtr reader, char *attname, oval_check_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_CHECK_MAP, defval);
@@ -241,6 +250,11 @@ oval_check_t oval_check_parse(xmlTextReaderPtr reader, char *attname, oval_check
 const char *oval_check_get_text(oval_check_t check)
 {
 	return oval_enumeration_get_text(OVAL_CHECK_MAP, check);
+}
+
+const char *oval_check_get_description(oval_check_t check)
+{
+	return oval_enumeration_get_text(OVAL_CHECK_DESCRIPTION_MAP, check);
 }
 
 static const struct oscap_string_map OVAL_DATATYPE_MAP[] = {
