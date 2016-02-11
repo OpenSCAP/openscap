@@ -557,6 +557,12 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 
 			ent_val_res = _evaluate_sysent(syschar_model, item_entity, state_entity,
 					state_entity_operation, content);
+			if (ent_val_res == OVAL_RESULT_TRUE) {
+				dI("Entity '%s'='%s' of item '%s' matches corresponding entity in state '%s'.",
+						oval_sysent_get_name(item_entity),
+						oval_sysent_get_value(item_entity),
+						oval_sysitem_get_id(cur_sysitem), oval_state_get_id(state));
+			}
 			if (((signed) ent_val_res) == -1) {
 				oval_sysent_iterator_free(item_entities_itr);
 				goto fail;
