@@ -2,7 +2,7 @@
 Michal Šrubař <msrubar@redhat.com>
 v1.0, 2015-31-08
 :imagesdir: ./images
-:workbench_url: https://fedorahosted.org/scap-workbench/
+:workbench_url: https://www.open-scap.org/tools/scap-workbench/
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
 :ssg_git:       https://github.com/OpenSCAP/scap-security-guide
