@@ -42,6 +42,10 @@ function get_zombie_pid_from_ppid() {
 			[ "${ZOMBIE_PID}" != "" ] && break;
 			sleep 0.1s
 		done
+	if [ "x${ZOMBIE_PID}" == "x" ]; then
+		echo "Debug: The ZOMBIE_PID was not found!" >&2
+		ps -ostate,pid --ppid ${PARENT_PID} >&2
+	fi
 	echo ${ZOMBIE_PID}
 }
 
