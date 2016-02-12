@@ -154,6 +154,7 @@ oval_result_t oval_result_definition_eval(struct oval_result_definition * defini
 		definition->result = (criteria == NULL)
 		    ? OVAL_RESULT_ERROR : oval_result_criteria_node_eval(criteria);
 	}
+	dI("Definition '%s' evaluated as %s.", oval_result_definition_get_id(definition), oval_result_get_text(definition->result));
 	return definition->result;
 }
 
