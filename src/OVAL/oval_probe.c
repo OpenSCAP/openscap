@@ -372,6 +372,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 		test = oval_criteria_node_get_test(cnode);
 		if (test == NULL)
 			return 0;
+		dI("Evaluating test '%s'.", oval_test_get_id(test));
 		object = oval_test_get_object(test);
 		if (object == NULL)
 			return 0;
