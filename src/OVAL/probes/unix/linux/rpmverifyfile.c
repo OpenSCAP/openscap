@@ -73,6 +73,9 @@
 #include "debug_priv.h"
 #include "probe/entcmp.h"
 
+#include <probe/probe.h>
+#include <probe/option.h>
+
 struct rpmverify_res {
 	char *name;  /**< package name */
 	const char *epoch;
@@ -334,7 +337,7 @@ void *probe_init (void)
 	g_rpm.rpmts = rpmtsCreate();
 
 	pthread_mutex_init(&(g_rpm.mutex), NULL);
-
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 	return ((void *)&g_rpm);
 }
 
