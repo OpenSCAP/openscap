@@ -40,6 +40,9 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#include <probe/probe.h>
+#include <probe/option.h>
+
 static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 {
 	SEXP_t *ent_val, *item_sexp, *msg;
@@ -110,6 +113,12 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	oscap_free(linkname);
 	oscap_free(pathname);
 	return 0;
+}
+
+void *probe_init (void)
+{
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	return NULL;
 }
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
