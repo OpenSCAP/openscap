@@ -1184,12 +1184,6 @@ struct oval_object *oval_test_get_object(struct oval_test *);
  * @memberof oval_test
  */
 struct oval_state_iterator *oval_test_get_states(struct oval_test *);
-/**
- * Get a nicely formated list of states referenced by test.
- * @return String containing state names delimited by a comma.
- * @memberof oval_test
- */
-char *oval_test_get_state_names(struct oval_test *test);
 
 /** @} */
 

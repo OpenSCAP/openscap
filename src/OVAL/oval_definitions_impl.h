@@ -69,6 +69,7 @@ const char *oval_definition_class_text(oval_definition_class_t);
 typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
 int oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_affected_consumer, void *);
 
+char *oval_test_get_state_names(struct oval_test *test);
 int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *);
 xmlNode *oval_test_to_dom(struct oval_test *, xmlDoc *, xmlNode *);
 
