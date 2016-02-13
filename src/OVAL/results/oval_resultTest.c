@@ -628,11 +628,11 @@ static oval_result_t eval_check_state(struct oval_test *test, void **args)
 	ores_clear(&item_ores);
 
 	char *state_names = oval_test_get_state_names(test);
-	dI("To get result of '%s', collected items will be compared with these oval states: %s.",
-		oval_test_get_id(test), state_names);
-	dI("In test '%s' %s of the collected items must satisfy these states: %s.",
-		oval_test_get_id(test), oval_check_get_description(ste_check), state_names);
-	oscap_free(state_names);
+	if (state_names) {
+		dI("In test '%s' %s of the collected items must satisfy these states: %s.",
+			oval_test_get_id(test), oval_check_get_description(ste_check), state_names);
+		oscap_free(state_names);
+	}
 
 	ritems_itr = oval_result_test_get_items(TEST);
 	while (oval_result_item_iterator_has_more(ritems_itr)) {
