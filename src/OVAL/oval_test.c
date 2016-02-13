@@ -168,7 +168,7 @@ char *oval_test_get_state_names(struct oval_test *test)
 	struct oval_state_iterator *ste_itr = oval_test_get_states(test);
 	if (!oval_state_iterator_has_more(ste_itr)) {
 		oval_state_iterator_free(ste_itr);
-		return oscap_strdup("");
+		return NULL;
 	}
 	struct oscap_string *state_list = oscap_string_new();
 	oscap_string_append_char(state_list, '\'');
