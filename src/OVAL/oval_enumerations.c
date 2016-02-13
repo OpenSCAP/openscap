@@ -236,7 +236,7 @@ static const struct oscap_string_map OVAL_CHECK_MAP[] = {
 static const struct oscap_string_map OVAL_CHECK_DESCRIPTION_MAP[] = {
 	{OVAL_CHECK_ALL, "all"},
 	{OVAL_CHECK_AT_LEAST_ONE, "at least one"},
-	{OVAL_CHECK_NONE_EXIST, "none"},
+	{OVAL_CHECK_NONE_EXIST, "none"}, // deprecated since OVAL 5.3
 	{OVAL_CHECK_NONE_SATISFY, "none"},
 	{OVAL_CHECK_ONLY_ONE, "only one"},
 	{OVAL_ENUMERATION_INVALID, NULL}
