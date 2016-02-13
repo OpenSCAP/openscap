@@ -757,11 +757,12 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 	oval_result_t result;
 	int exists_cnt, error_cnt, total_cnt;
 	bool hasstate;
-	const char *test_id;
+	const char *test_id, *object_id, *flag_text;
 	oval_check_t test_check;
 	oval_existence_t test_check_existence;
 	struct oval_state_iterator *ste_itr;
 	oval_syschar_collection_flag_t flag;
+	struct oval_object *object;
 
 	exists_cnt = error_cnt = total_cnt = 0;
 	test_id = oval_test_get_id(test);
@@ -799,9 +800,6 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 	hasstate = oval_state_iterator_has_more(ste_itr);
 	oval_state_iterator_free(ste_itr);
 
-	flag = oval_syschar_get_flag(syschar_object);
-	dI("Object referenced in test '%s' is %s.",
-			test_id, oval_syschar_collection_flag_get_text(flag));
 	dI("Test '%s' requires existence of collected items as '%s'. "
 			"%d items of %d has a status of 'exists'.",
 			test_id, oval_existence_get_text(test_check_existence),
@@ -809,9 +807,14 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 	if (!hasstate) {
 		dI("Test '%s' does not contain any state to compare object with.", test_id);
 	}
+	object = oval_syschar_get_object(syschar_object);
+	object_id = object ? oval_object_get_id(object) : "<UNKNOWN>";
+	flag = oval_syschar_get_flag(syschar_object);
+	flag_text = oval_syschar_collection_flag_get_text(flag);
 
 	switch (flag) {
 	case SYSCHAR_FLAG_ERROR:
+		dI("An error occured while collecting items matching object '%s'. (flag=%s)", object_id, flag_text);
 		if (test_check_existence == OVAL_ANY_EXIST
 		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;
@@ -820,6 +823,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	case SYSCHAR_FLAG_NOT_COLLECTED:
+		dI("No attempt was made to collect items matching object '%s'. (flag=%s)", object_id, flag_text);
 		if (test_check_existence == OVAL_ANY_EXIST
 		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;
@@ -828,6 +832,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	case SYSCHAR_FLAG_NOT_APPLICABLE:
+		dI("Object '%s' is not applicable to the system. (flag=%s)", object_id, flag_text);
 		if (test_check_existence == OVAL_ANY_EXIST
 		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;
@@ -836,6 +841,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	case SYSCHAR_FLAG_DOES_NOT_EXIST:
+		dI("No item matching object '%s' was found on the system. (flag=%s)", object_id, flag_text);
 		if (test_check_existence == OVAL_NONE_EXIST
 		    || test_check_existence == OVAL_ANY_EXIST) {
 			result = OVAL_RESULT_TRUE;
@@ -844,6 +850,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	case SYSCHAR_FLAG_COMPLETE:
+		dI("All items matching object '%s' were collected. (flag=%s)", object_id, flag_text);
 		result = eval_check_existence(test_check_existence, exists_cnt, error_cnt);
 		if (result == OVAL_RESULT_TRUE
 		    && hasstate) {
@@ -851,6 +858,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	case SYSCHAR_FLAG_INCOMPLETE:
+		dI("Only some of items matching object '%s' have been collected from the system. It is unknown if other matching items also exist. (flag=%s)", object_id, flag_text);
 		if (test_check_existence == OVAL_ANY_EXIST) {
 			result = OVAL_RESULT_TRUE;
 		} else if (test_check_existence == OVAL_AT_LEAST_ONE_EXISTS
@@ -879,9 +887,8 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 		}
 		break;
 	default: {
-		const char *object_id = oval_syschar_get_object(syschar_object) ? oval_object_get_id(oval_syschar_get_object(syschar_object)) : "<UNKNOWN>";
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown syschar flag: '%d' when evaluating object: '%s' from test: '%s' ",
-				oval_syschar_get_flag(syschar_object), object_id, test_id);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Item corresponding to object '%s' from test '%s' has an unknown flag. This may indicate a bug in OpenSCAP.",
+				object_id, test_id);
 		return OVAL_RESULT_ERROR;
 		}
 	}
