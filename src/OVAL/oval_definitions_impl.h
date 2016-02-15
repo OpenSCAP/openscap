@@ -48,6 +48,7 @@ oval_operation_t oval_operation_parse(xmlTextReaderPtr, char *, oval_operation_t
 oval_definition_class_t oval_definition_class_parse(xmlTextReaderPtr);
 oval_existence_t oval_existence_parse(xmlTextReaderPtr, char *, oval_existence_t);
 oval_check_t oval_check_parse(xmlTextReaderPtr, char *, oval_check_t);
+const char *oval_check_get_description(oval_check_t);
 oval_entity_type_t oval_entity_type_parse(xmlTextReaderPtr);
 oval_datatype_t oval_datatype_parse(xmlTextReaderPtr, char *, oval_datatype_t);
 oval_entity_varref_type_t oval_entity_varref_type_parse(xmlTextReaderPtr);
@@ -69,6 +70,7 @@ const char *oval_definition_class_text(oval_definition_class_t);
 typedef void (*oval_affected_consumer) (struct oval_affected *, void *);
 int oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, oval_affected_consumer, void *);
 
+char *oval_test_get_state_names(struct oval_test *test);
 int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *);
 xmlNode *oval_test_to_dom(struct oval_test *, xmlDoc *, xmlNode *);
 
