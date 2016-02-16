@@ -58,6 +58,8 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 #include "common/debug_priv.h"
+#include <probe/probe.h>
+#include <probe/option.h>
 
 oval_schema_version_t over;
 
@@ -205,6 +207,13 @@ static int read_shadow(SEXP_t *un_ent, probe_ctx *ctx)
 	}
 	endspent();
 	return err;
+}
+
+void *probe_init(void)
+{
+	// Intentionally commented-out, see commit message
+	// probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	return (NULL);
 }
 
 int probe_main(probe_ctx *ctx, void *arg)
