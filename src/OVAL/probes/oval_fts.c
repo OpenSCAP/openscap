@@ -817,7 +817,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return NULL;
 	}
 
-	dI("fts_open args: path: \"%s\", options: %d.", paths[0], mtc_fts_options);
+	dI("Opening file '%s'.", paths[0]);
 
 	ofts = OVAL_FTS_new();
 	/* reset errno as fts_open() doesn't do it itself. */
