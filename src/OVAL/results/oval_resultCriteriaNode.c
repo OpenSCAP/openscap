@@ -324,8 +324,9 @@ static struct oval_result_system *oval_result_criteria_get_system(struct oval_re
         return node->sys;
 }
 
-static oval_result_t _oval_result_negate(bool negate, oval_result_t result)
+oval_result_t oval_result_criteria_node_negate(struct oval_result_criteria_node *node, oval_result_t result)
 {
+	bool negate = node->negate;
 	return (negate && result == OVAL_RESULT_TRUE) ? OVAL_RESULT_FALSE :
 	    (negate && result == OVAL_RESULT_FALSE) ? OVAL_RESULT_TRUE : result;
 }
@@ -365,7 +366,7 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 		break;
 	}
 
-	result = _oval_result_negate(node->negate, result);
+	result = oval_result_criteria_node_negate(node, result);
 
 	return result;
 }

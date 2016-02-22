@@ -724,6 +724,10 @@ void oval_result_criteria_node_iterator_free(struct oval_result_criteria_node_it
  * @name Evaluators
  * @{
  */
+/**
+ * @memberof oval_result_criteria_node
+ */
+oval_result_t oval_result_criteria_node_negate(struct oval_result_criteria_node *node, oval_result_t result);
 /** @} */
 
 
