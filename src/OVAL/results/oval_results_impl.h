@@ -97,6 +97,9 @@ struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_smc 
 
 const char *oval_result_test_get_id(const struct oval_result_test *test);
 
+
+struct oval_result_definition *oval_result_system_prepare_definition(struct oval_result_system *sys, const char *id);
+
 OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_RESULTS_IMPL_H_ */
