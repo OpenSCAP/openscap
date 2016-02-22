@@ -131,6 +131,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
+        sess->result_system = NULL;
 
         __init_once();
 
