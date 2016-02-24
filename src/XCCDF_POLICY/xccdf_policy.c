@@ -1832,11 +1832,9 @@ struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_poli
                                                                        policy);
 }
 
-OSCAP_DEPRECATED(
 bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
 	return false;
 }
-);
 
 static struct xccdf_policy *_xccdf_policy_model_create_policy_by_id(struct xccdf_policy_model *policy_model, const char *id)
 {
