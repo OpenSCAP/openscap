@@ -164,7 +164,7 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 
 	// We only use benchmark ID if datastream ID and/or component ID were NOT supplied.
 	if (!datastream_id && !component_id && benchmark_id) {
-		if (ds_sds_index_select_checklist_by_benchmark_id(ds_sds_session_get_sds_idx(session), 	benchmark_id,
+		if (ds_sds_index_select_checklist_by_benchmark_id(ds_sds_session_get_sds_idx(session), benchmark_id,
 				(const char **) &(session->datastream_id), (const char **) &(session->checklist_id)) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with component-ref "
 				"that points to a component containing Benchmark with ID '%s'.", benchmark_id);
