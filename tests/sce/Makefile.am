@@ -22,4 +22,6 @@ EXTRA_DIST +=	test_sce.sh \
 		empty_stdout.sh \
 		test_passing_vars.sh \
 		test_passing_vars_sce.sh \
-		test_passing_vars_xccdf.xml
+		test_passing_vars_xccdf.xml \
+		test_sce_in_ds.sh \
+		test_sce_in_ds.xml
