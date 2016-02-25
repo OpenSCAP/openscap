@@ -329,6 +329,16 @@ struct xccdf_value_binding_iterator  * xccdf_policy_get_values(const struct xccd
 struct xccdf_policy_iterator * xccdf_policy_model_get_policies(const struct xccdf_policy_model *model);
 
 /**
+ * Build all policies that can be useful for user. The useful policy is any
+ * that contains at least one Rule. For example the default profile oftentimes
+ * does not contain any rules.
+ * @memberof xccdf_policy_model
+ * @param policy_model - XCCDF Policy Model
+ * @return 0 on success
+ */
+int xccdf_policy_model_build_all_useful_policies(struct xccdf_policy_model *policy_model);
+
+/**
  * Get selected rules from policy
  * @memberof xccdf_policy
  * @return Pointer to select iterator.

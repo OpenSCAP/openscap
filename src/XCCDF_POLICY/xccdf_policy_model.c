@@ -29,6 +29,7 @@
 #include "public/xccdf_benchmark.h"
 #include "public/xccdf_policy.h"
 #include "xccdf_policy_model_priv.h"
+#include "xccdf_policy_priv.h"
 #include "XCCDF/item.h"
 
 struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_policy_model *policy_model, const char *profile_id)
@@ -77,4 +78,56 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 	}
 
 	return xccdf_policy_new(policy_model, profile);
+}
+
+static int _xccdf_policy_model_create_policy_if_useful(struct xccdf_policy_model *policy_model, const char *profile_id)
+{
+	if (xccdf_policy_model_get_existing_policy_by_id(policy_model, profile_id) == NULL) {
+		struct xccdf_policy *policy = xccdf_policy_model_create_policy_by_id(policy_model, profile_id);
+		if (policy == NULL) {
+			return -1;
+		}
+		if (xccdf_policy_get_selected_rules_count(policy) > 0) {
+			oscap_list_add(policy_model->policies, policy);
+		}
+	}
+	return 0;
+}
+
+static int _xccdf_policy_model_create_policies_if_useful(struct xccdf_policy_model *policy_model, struct xccdf_profile_iterator *profit)
+{
+	while (xccdf_profile_iterator_has_more(profit)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profit);
+		const char *profile_id = xccdf_profile_get_id(profile);
+		if (_xccdf_policy_model_create_policy_if_useful(policy_model, profile_id) != 0) {
+			xccdf_profile_iterator_free(profit);
+			return -1;
+		}
+	}
+	xccdf_profile_iterator_free(profit);
+	return 0;
+}
+
+int xccdf_policy_model_build_all_useful_policies(struct xccdf_policy_model *policy_model)
+{
+	if (_xccdf_policy_model_create_policy_if_useful(policy_model, NULL) != 0) {
+		return -1;
+	}
+	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(policy_model);
+	if (tailoring != NULL) {
+		struct xccdf_profile_iterator *profit = xccdf_tailoring_get_profiles(tailoring);
+		if (_xccdf_policy_model_create_policies_if_useful(policy_model, profit) != 0) {
+			return -1;
+		}
+	}
+
+	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
+	if (benchmark == NULL) {
+		return -1;
+	}
+	struct xccdf_profile_iterator *profit = xccdf_benchmark_get_profiles(benchmark);
+	if (_xccdf_policy_model_create_policies_if_useful(policy_model, profit) != 0) {
+		return -1;
+	}
+	return 0;
 }
