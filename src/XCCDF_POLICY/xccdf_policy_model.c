@@ -88,7 +88,7 @@ static int _xccdf_policy_model_create_policy_if_useful(struct xccdf_policy_model
 			return -1;
 		}
 		if (xccdf_policy_get_selected_rules_count(policy) > 0) {
-			oscap_list_add(policy_model->policies, policy);
+			xccdf_policy_model_add_policy(policy_model, policy);
 		}
 	}
 	return 0;
