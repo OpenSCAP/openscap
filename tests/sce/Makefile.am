@@ -15,5 +15,9 @@ EXTRA_DIST =	test_sce.sh \
 		lua_passer.lua \
 		python_passer.py \
 		python_is16.py \
+		test_check_engine_results.sh \
 		test_check_engine_results.xccdf.xml \
-		empty_stdout.sh
+		empty_stdout.sh \
+		test_passing_vars.sh \
+		test_passing_vars_sce.sh \
+		test_passing_vars_xccdf.xml
