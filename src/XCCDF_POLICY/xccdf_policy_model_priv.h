@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2014--2016 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -68,6 +68,8 @@ bool xccdf_policy_model_item_is_applicable(struct xccdf_policy_model *model, str
  * @returns cpe_session or NULL
  */
 struct cpe_session *xccdf_policy_model_get_cpe_session(struct xccdf_policy_model *model);
+
+struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_policy_model *policy_model, const char *profile_id);
 
 OSCAP_HIDDEN_END;
 

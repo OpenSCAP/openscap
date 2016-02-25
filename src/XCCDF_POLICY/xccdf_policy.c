@@ -1875,18 +1875,10 @@ static struct xccdf_policy *_xccdf_policy_model_create_policy_by_id(struct xccdf
  */
 struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_model * policy_model, const char * id)
 {
-    struct xccdf_policy_iterator * policy_it;
-    struct xccdf_policy          * policy;
-
-    policy_it = xccdf_policy_model_get_policies(policy_model);
-    while (xccdf_policy_iterator_has_more(policy_it)) {
-        policy = xccdf_policy_iterator_next(policy_it);
-        if (oscap_streq(xccdf_policy_get_id(policy), id)) {
-            xccdf_policy_iterator_free(policy_it);
-            return policy;
-        }
-    }
-    xccdf_policy_iterator_free(policy_it);
+	struct xccdf_policy *policy = xccdf_policy_model_get_existing_policy_by_id(policy_model, id);
+	if (policy != NULL) {
+		return policy;
+	}
 
 	policy = _xccdf_policy_model_create_policy_by_id(policy_model, id);
 	if (policy != NULL)
