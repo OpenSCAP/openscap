@@ -1836,40 +1836,6 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
 	return false;
 }
 
-static struct xccdf_policy *_xccdf_policy_model_create_policy_by_id(struct xccdf_policy_model *policy_model, const char *id)
-{
-	struct xccdf_profile *profile = NULL;
-	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(policy_model);
-
-	// Tailoring profiles take precedence over Benchmark profiles.
-	if (tailoring) {
-		profile = xccdf_tailoring_get_profile_by_id(tailoring, id);
-	}
-
-	if (!profile) {
-		if (id == NULL) {
-			profile = xccdf_profile_new();
-			xccdf_profile_set_id(profile, NULL);
-			struct oscap_text * title = oscap_text_new();
-			oscap_text_set_text(title, "No profile (default benchmark)");
-			oscap_text_set_lang(title, "en");
-			xccdf_profile_add_title(profile, title);
-		}
-		else {
-			struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
-			if (benchmark == NULL) {
-				assert(benchmark != NULL);
-				return NULL;
-			}
-			profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
-			if (profile == NULL)
-				return NULL;
-		}
-	}
-
-	return xccdf_policy_new(policy_model, profile);
-}
-
 /**
  * Get Policy from Policy model by it's id.
  */
@@ -1880,7 +1846,7 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
 		return policy;
 	}
 
-	policy = _xccdf_policy_model_create_policy_by_id(policy_model, id);
+	policy = xccdf_policy_model_create_policy_by_id(policy_model, id);
 	if (policy != NULL)
 		oscap_list_add(policy_model->policies, policy);
 	return policy;

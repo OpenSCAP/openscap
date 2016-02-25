@@ -71,6 +71,8 @@ struct cpe_session *xccdf_policy_model_get_cpe_session(struct xccdf_policy_model
 
 struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_policy_model *policy_model, const char *profile_id);
 
+struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_model *policy_model, const char *id);
+
 OSCAP_HIDDEN_END;
 
 #endif
