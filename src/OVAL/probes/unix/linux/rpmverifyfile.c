@@ -499,7 +499,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 
 			if (aval != NULL) {
 				if (SEXP_strcmp(aval, "true") == 0) {
-					dI("omit verify attr: %s", rpmverifyfile_bhmap[i].a_name);
+					dD("omit verify attr: %s", rpmverifyfile_bhmap[i].a_name);
 					collect_flags |= rpmverifyfile_bhmap[i].a_flag;
 				}
 
