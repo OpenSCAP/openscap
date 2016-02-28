@@ -430,7 +430,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 }
                         }
 
-                        dI("cond return: h.args=%p", h.args);
+                        dD("cond return: h.args=%p", h.args);
 
                         if (h.args == NULL)
                                 res = NULL;
