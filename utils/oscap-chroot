@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# Copyright 2016 Red Hat Inc., Durham, North Carolina.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+#
+# Authors:
+#      Martin Preisler <mpreisle@redhat.com>
+
+function die()
+{
+    echo "$*" >&2
+    exit 1
+}
+
+function usage()
+{
+    echo "oscap-chroot -- Tool for offline SCAP evaluation of filesystems mounted in arbitrary paths."
+    echo
+    echo "Usage:"
+    echo
+    echo "$ oscap-chroot CHROOT_PATH xccdf eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap xccdf eval options are:"
+    echo "  --profile"
+    echo "  --tailoring-file"
+    echo "  --tailoring-id"
+    echo "  --cpe (external OVAL dependencies are not supported yet!)"
+    echo "  --oval-results"
+    echo "  --sce-results"
+    echo "  --check-engine-results"
+    echo "  --results"
+    echo "  --results-arf"
+    echo "  --report"
+    echo "  --skip-valid"
+    echo "  --fetch-remote-resources"
+    echo "  --progress"
+    echo "  --datastream-id"
+    echo "  --xccdf-id"
+    echo "  --benchmark-id"
+    echo
+    echo "$ oscap-chroot CHROOT_PATH oval eval [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval eval options are:"
+    echo "  --id"
+    echo "  --variables"
+    echo "  --directives"
+    echo "  --results"
+    echo "  --report"
+    echo "  --skip-valid"
+    echo "  --datastream-id"
+    echo "  --oval-id"
+    echo "  --probe-root"
+    echo
+    echo "$ oscap-chroot CHROOT_PATH oval collect [options] INPUT_CONTENT"
+    echo
+    echo "supported oscap oval collect options are:"
+    echo "  --id"
+    echo "  --syschar"
+    echo "  --variables"
+    echo "  --skip-valid"
+    echo
+    echo "See \`man oscap\` to learn more about semantics of these options."
+}
+
+if [ $# -lt 1 ]; then
+    echo "No arguments provided."
+    usage
+    die
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    usage
+    die
+elif [ "$#" -gt 1 ]; then
+    true
+else
+    echo "Invalid arguments provided."
+    usage
+    die
+fi
+
+# Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
+export OSCAP_PROBE_ROOT
+OSCAP_PROBE_ROOT="$(cd "$1"; pwd)"
+export OSCAP_PROBE_OS_NAME="Linux" # TODO: This may be wrong!
+export OSCAP_PROBE_OS_VERSION
+OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)" # TODO
+export OSCAP_PROBE_ARCHITECTURE
+OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)" # TODO
+export OSCAP_PROBE_PRIMARY_HOST_NAME="oscap-chroot of $1"
+shift 1
+
+oscap "$@"
+EXIT_CODE=$?
+exit $EXIT_CODE

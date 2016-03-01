@@ -1215,6 +1215,14 @@ AC_ARG_ENABLE([util-oscap-vm],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-vm]) ;;
      esac],[util_oscap_vm=yes])
 
+AC_ARG_ENABLE([util-oscap-chroot],
+     [AC_HELP_STRING([--enable-util-oscap-chroot], [enable compilation of the oscap-chroot utility (default=yes)])],
+     [case "${enableval}" in
+       yes) util_oscap_chroot=yes ;;
+       no)  util_oscap_chroot=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-util-oscap-chroot]) ;;
+     esac],[util_oscap_chroot=yes])
+
 if test "$vgdebug" = "yes"; then
  if test "$HAVE_VALGRIND" = "yes"; then
    vgcheck="yes"
@@ -1381,6 +1389,7 @@ AM_CONDITIONAL([WANT_UTIL_SCAP_AS_RPM], test "$util_scap_as_rpm" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_SSH], test "$util_oscap_ssh" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_DOCKER], test "$util_oscap_docker" = yes)
 AM_CONDITIONAL([WANT_UTIL_OSCAP_VM], test "$util_oscap_vm" = yes)
+AM_CONDITIONAL([WANT_UTIL_OSCAP_CHROOT], test "$util_oscap_chroot" = yes)
 AM_CONDITIONAL([WANT_PYTHON], test "$python_bind" = yes)
 AM_CONDITIONAL([WANT_PYTHON3], test "$python3_bind" = yes)
 AM_CONDITIONAL([WANT_PERL], test "$perl_bind" = yes)
@@ -1525,6 +1534,7 @@ echo "scap-as-rpm tool:              $util_scap_as_rpm"
 echo "oscap-ssh tool:                $util_oscap_ssh"
 echo "oscap-docker tool:             $util_oscap_docker"
 echo "oscap-vm tool:                 $util_oscap_vm"
+echo "oscap-chroot tool:             $util_oscap_chroot"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
