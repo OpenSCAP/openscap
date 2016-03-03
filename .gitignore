@@ -87,6 +87,7 @@ selinux/oscap.pp
 /tests/API/CVSS/test_api_cvss
 /tests/API/OVAL/exported-directives.xml
 /tests/API/OVAL/exported-results.xml
+/tests/API/OVAL/report_variable_values/report_variable_values.log
 /tests/API/OVAL/test_api_directives
 /tests/API/OVAL/test_api_oval
 /tests/API/OVAL/test_api_results
@@ -156,6 +157,7 @@ selinux/oscap.pp
 /tests/mitre/oval_version_datatype.xml.results
 /tests/mitre/unix-def_password_test.xml.results
 /tests/mitre/unix-def_uname_test.xml.results
+/tests/oscap_string/test_oscap_string
 /tests/probes/environmentvariable/test_probes_environmentvariable-fail.results.xml
 /tests/probes/environmentvariable/test_probes_environmentvariable-fail.xml
 /tests/probes/environmentvariable/test_probes_environmentvariable.results.xml
