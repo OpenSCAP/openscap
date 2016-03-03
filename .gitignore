@@ -70,6 +70,7 @@ selinux/oscap.pp
 /tests/**/*.sh.trs
 /tests/**/test-suite.log
 /tests/**/test_*.log
+/tests/**/tests_*.log
 /tests/API/CPE/dict/dict.xml.out
 /tests/API/CPE/dict/test_api_cpe_dict
 /tests/API/CPE/lang/export.xml.out.0
