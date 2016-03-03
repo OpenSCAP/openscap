@@ -32,6 +32,7 @@ oscap_debug.log.*
 /config/ltmain.sh
 /config/install-sh
 /config/missing
+/config/test-driver
 /cscope.*
 /run
 /stamp-*
