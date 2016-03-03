@@ -27,6 +27,7 @@ import sys
 
 try:
     from Atomic.mount import DockerMount
+    from Atomic.mount import MountError
     import inspect
 
     if "mnt_mkdir" not in inspect.getargspec(DockerMount.__init__).args:
@@ -190,7 +191,11 @@ class OscapScan(object):
         '''
         # Mount the temporary image/container to the dir
         DM = DockerMount(self.mnt_dir, mnt_mkdir=True)
-        _tmp_mnt_dir = DM.mount(image)
+        try:
+            _tmp_mnt_dir = DM.mount(image)
+        except MountError as e:
+            sys.stderr.write(str(e) + "\n")
+            return None
 
         # Remeber actual mounted fs in 'rootfs'
         chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
@@ -218,7 +223,11 @@ class OscapScan(object):
         '''
         # Mount the temporary image/container to the dir
         DM = DockerMount(self.mnt_dir, mnt_mkdir=True)
-        _tmp_mnt_dir = DM.mount(image)
+        try:
+            _tmp_mnt_dir = DM.mount(image)
+        except MountError as e:
+            sys.stderr.write(str(e) + "\n")
+            return None
 
         # Remeber actual mounted fs in 'rootfs'
         chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
