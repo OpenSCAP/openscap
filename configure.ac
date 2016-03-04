@@ -313,7 +313,7 @@ fi
 SAVE_CFLAGS=$CFLAGS
 CFLAGS="$CFLAGS -D_GNU_SOURCE"
 LIBS="$pthread_LIBS"
-AC_CHECK_FUNCS([pthread_timedjoin_np clock_gettime])
+AC_CHECK_FUNCS([pthread_timedjoin_np pthread_setname_np pthread_getname_np clock_gettime])
 CFLAGS=$SAVE_CFLAGS
 
 LIBS=$SAVE_LIBS

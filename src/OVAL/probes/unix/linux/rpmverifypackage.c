@@ -283,7 +283,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 			rpmReadConfigFiles ((const char *)NULL, (const char *)NULL);
 			rpmts ts = rpmtsCreate();
-			ret = rpmcliVerify(ts, qva, (ARGV_const_t) poptGetArgs(rpmcli_context));
+			ret = rpmcliVerify(ts, qva, (char * const *) poptGetArgs(rpmcli_context));
 			ts = rpmtsFree(ts);
 			rpmcli_context = rpmcliFini(rpmcli_context);
 
