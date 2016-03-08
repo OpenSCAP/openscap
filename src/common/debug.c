@@ -172,7 +172,11 @@ static void debug_message_devel_metadata(const char *file, const char *fn, size_
 #if defined(OSCAP_THREAD_SAFE)
 	char thread_name[THREAD_NAME_LEN];
 	pthread_t thread = pthread_self();
+#if defined(HAVE_PTHREAD_GETNAME_NP)
 	pthread_getname_np(thread, thread_name, THREAD_NAME_LEN);
+#else
+	snprintf(thread_name, THREAD_NAME_LEN, "unknown");
+#endif
 	/* XXX: non-portable usage of pthread_t */
 	fprintf(__debuglog_fp, " [%s(%ld):%s(%llx):%s:%zu:%s]",
 		program_invocation_short_name, (long) getpid(), thread_name,

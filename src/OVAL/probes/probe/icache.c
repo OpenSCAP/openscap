@@ -92,7 +92,9 @@ static void *probe_icache_worker(void *arg)
 
         assume_d(cache != NULL, NULL);
 
+#if defined(HAVE_PTHREAD_SETNAME_NP)
 	pthread_setname_np(pthread_self(), "icache_worker");
+#endif
 
         if (pthread_mutex_lock(&cache->queue_mutex) != 0) {
                 dE("An error ocured while locking the queue mutex: %u, %s",

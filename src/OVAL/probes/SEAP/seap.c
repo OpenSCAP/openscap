@@ -239,7 +239,9 @@ static void *__SEAP_cmdexec_worker (void *arg)
 
         _A(job != NULL);
         _A(job->cmd != NULL);
+#if defined(HAVE_PTHREAD_SETNAME_NP)
 	pthread_setname_np(pthread_self(), "command_worker");
+#endif
 
         if (job->cmd->flags & SEAP_CMDFLAG_REPLY) {
                 (void) SEAP_cmd_exec (job->ctx, job->sd, SEAP_EXEC_WQUEUE,
