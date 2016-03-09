@@ -35,6 +35,7 @@
 #include "ds_sds_session_priv.h"
 #include "sds_priv.h"
 
+#include "common/debug_priv.h"
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
@@ -180,6 +181,7 @@ static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component
 			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
 		}
 
+		dD("Successfully dumped script component (id='%s') to file '%s'.", component_id, filename);
 		fclose(output_file);
 		xmlFree(text_contents);
 		return 0;

@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
 #include "common/alloc.h"
 #include "common/elements.h"
@@ -104,6 +105,7 @@ static const char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
 {
 	if (session->temp_dir == NULL) {
 		session->temp_dir = oscap_acquire_temp_dir();
+		dD("SDS session created temporary directory '%s'.", session->temp_dir);
 	}
 	return session->temp_dir;
 }
