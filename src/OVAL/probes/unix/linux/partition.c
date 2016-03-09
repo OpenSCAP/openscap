@@ -59,6 +59,8 @@
 #include <limits.h>
 #include <sys/statvfs.h>
 #include <probe-api.h>
+#include <probe/probe.h>
+#include <probe/option.h>
 #include <mntent.h>
 #include <pcre.h>
 
@@ -235,6 +237,13 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         oscap_free(mnt_opts);
 
         return (0);
+}
+
+void *probe_init(void)
+{
+	// Intentionally commented-out, see commit message
+	// probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	return (NULL);
 }
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
