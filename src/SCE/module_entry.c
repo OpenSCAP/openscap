@@ -42,10 +42,8 @@ static int sce_engine_register(struct xccdf_policy_model *model, const char *pat
 		sce_parameters_free(parameters);
 
 	parameters = sce_parameters_new();
-	char *xccdf_pathcopy = strdup(path_hint);
-	sce_parameters_set_xccdf_directory(parameters, dirname(xccdf_pathcopy));
+	sce_parameters_set_xccdf_directory(parameters, path_hint);
 	sce_parameters_allocate_session(parameters);
-	free(xccdf_pathcopy);
 
 	*user_data = (void*)parameters; // This way the data will get freed later
 

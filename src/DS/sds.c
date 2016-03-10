@@ -159,6 +159,10 @@ static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *com
 static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component_id, const char *filename)
 {
 	if (script_node) {
+		if (oscap_acquire_ensure_parent_dir(filename) < 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script parent directory for file '%s' of (id='%s')", filename, component_id);
+			return -1;
+		}
 		// TODO: should we check whether the component is extended?
 		int fd;
 		xmlChar* text_contents = xmlNodeGetContent(script_node);

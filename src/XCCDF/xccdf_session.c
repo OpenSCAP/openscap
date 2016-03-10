@@ -821,7 +821,14 @@ int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const 
 
 	oscap_list_add(session->check_engine_plugins, plugin);
 
-	return check_engine_plugin_register(plugin, session->xccdf.policy_model, oscap_source_readable_origin(session->xccdf.source));
+	if (xccdf_session_get_datastream_id(session) != NULL){
+		return check_engine_plugin_register(plugin, session->xccdf.policy_model, ds_sds_session_get_target_dir(session->ds.session));
+	} else {
+		char* xccdf_filename = oscap_strdup(oscap_source_readable_origin(session->xccdf.source));
+		int res = check_engine_plugin_register(plugin, session->xccdf.policy_model, dirname(xccdf_filename));
+		oscap_free(xccdf_filename);
+		return res;
+	}
 }
 
 int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
