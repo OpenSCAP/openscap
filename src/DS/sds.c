@@ -237,7 +237,7 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	return 0;
 }
 
-int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* relative_filepath)
+int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -263,11 +263,15 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 
 	// the cast is safe to do because we are using the GNU basename, it doesn't
 	// modify the string
-	const char* file_basename = basename((char*)relative_filepath);
 
-	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
-	const char* sce_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
+
+	const char* file_basename = basename((char*)relative_filepath);
+	const char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
+	const char* sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session),target_filename_dirname, file_basename);
+
+
 	ds_sds_dump_component(component_id, session, sce_filename, relative_filepath);
+
 	oscap_free(sce_filename);
 	oscap_free(filename_cpy);
 
@@ -354,7 +358,7 @@ int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *s
 		return -1;
 	}
 
-	int result = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), cref_id);
+	int result = ds_sds_dump_component_ref_as(component_ref, session, ".", cref_id);
 	xmlFree(cref_id);
 
 	// if result is -1, oscap_seterr was already called, no need to call it again

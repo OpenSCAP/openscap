@@ -272,7 +272,7 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 		if (target_filename == NULL) {
 			res = ds_sds_dump_component_ref(component_ref, session);
 		} else {
-			res = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), target_filename);
+			res = ds_sds_dump_component_ref_as(component_ref, session, "." , target_filename);
 		}
 	}
 	else {
