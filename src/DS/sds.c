@@ -267,10 +267,9 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 	char* file_reldir = dirname(filename_cpy);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
+	oscap_free(filename_cpy);
 
 	ds_sds_dump_component(component_id, session, target_filename_dirname, relative_filepath);
-
-	oscap_free(filename_cpy);
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
 	if (catalog)
