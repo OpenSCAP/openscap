@@ -20,8 +20,8 @@
 	<ns0:Benchmark xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap.sce-community-content_benchmark_all" resolved="1" xml:lang="en">
 		<ns0:status date="2016-02-23">draft</ns0:status>
 		<ns0:title xml:lang="en">SCE in DS</ns0:title>
-		<ns0:description xml:lang="en"></ns0:description>
-		<ns0:notice id="disclaimer" xml:lang="en"></ns0:notice>
+		<ns0:description xml:lang="en"/>
+		<ns0:notice id="disclaimer" xml:lang="en"/>
 		<ns0:front-matter xml:lang="en"/>
 
 		<ns0:version>1.0</ns0:version>
@@ -29,20 +29,16 @@
 		<ns0:model system="urn:xccdf:scoring:flat"/>
 
 		<ns0:Profile id="xccdf_org.open-scap.sce-community-content_profile_pci-dss">
-		<ns0:title xml:lang="en"></ns0:title>
-		<ns0:description xml:lang="en">
-			<html:p></html:p>
-			<html:p></html:p>
-		</ns0:description>
+		<ns0:title xml:lang="en" />
+		<ns0:description xml:lang="en"/>
 		</ns0:Profile>
 
 			<ns0:Rule id="xccdf_org.open-scap.sce-community-content_rule_services_obsolete-disable_nfs_exports" selected="true">
-			<ns0:title xml:lang="en"></ns0:title>
-			<ns0:description xml:lang="en"></ns0:description>
+			<ns0:title xml:lang="en"/>
+			<ns0:description xml:lang="en"/>
 			
 			<ns0:check system="http://open-scap.org/page/SCE">
-				<ns0:check-import import-name="stdout">
-			</ns0:check-import>
+				<ns0:check-import import-name="stdout"/>
 				<ns0:check-content-ref href="services/obsolete/disable_nfs_exports.sh"/>
 			</ns0:check>
 			</ns0:Rule>
