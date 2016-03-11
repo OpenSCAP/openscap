@@ -260,6 +260,8 @@ ret:
 
 void *probe_init (void)
 {
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
                 dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
@@ -268,8 +270,6 @@ void *probe_init (void)
         g_rpm.rpmts = rpmtsCreate();
 
         pthread_mutex_init(&(g_rpm.mutex), NULL);
-
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
         return ((void *)&g_rpm);
 }
