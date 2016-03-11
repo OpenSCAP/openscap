@@ -303,16 +303,12 @@ ret:
 
 void *probe_init (void)
 {
-	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT|PROBE_OFFLINE_RPMDB);
+	addMacro(NULL, "_dbpath", NULL, getenv("OSCAP_PROBE_RPMDB_PATH"), 0);
 
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
                 dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
-        }
-
-        probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
-        if (offline_mode & PROBE_OFFLINE_RPMDB) {
-	        addMacro(NULL, "_dbpath", NULL, getenv("OSCAP_PROBE_RPMDB_PATH"), 0);
         }
 
         g_rpm.rpmts = rpmtsCreate();
@@ -322,8 +318,6 @@ void *probe_init (void)
 		dE("regcomp(%s) failed.");
 		return NULL;
 	}
-
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT|PROBE_OFFLINE_RPMDB);
 
         return ((void *)&g_rpm);
 }
