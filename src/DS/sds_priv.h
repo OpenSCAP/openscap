@@ -38,9 +38,9 @@ xmlNodePtr node_get_child_element(xmlNodePtr parent, const char* name);
 
 xmlNode *containter_get_component_ref_by_id(xmlNode *container, const char *component_id);
 
-int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session);
+int ds_sds_dump_component_ref(const xmlNodePtr component_ref, struct ds_sds_session *session);
 
-int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char *sub_dir, const char *relative_filepath);
+int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char *sub_dir, const char *relative_filepath);
 
 OSCAP_HIDDEN_END;
 #endif

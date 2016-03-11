@@ -156,7 +156,7 @@ static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *com
 	return component;
 }
 
-static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component_id, const char *filename)
+static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *component_id, const char *filename)
 {
 	if (script_node) {
 		if (oscap_acquire_ensure_parent_dir(filename) < 0) {
@@ -242,7 +242,7 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	return 0;
 }
 
-int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
+int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -344,7 +344,7 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 	return 0;
 }
 
-int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session)
+int ds_sds_dump_component_ref(const xmlNodePtr component_ref, struct ds_sds_session *session)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
