@@ -190,6 +190,44 @@ static void xmlErrorCb(struct oscap_string *buffer, const char * format, ...)
 	va_end(ap);
 }
 
+static bool fd_file_is_executable(int fd)
+{
+	int fd_dup = dup(fd);
+	if (fd_dup == -1) {
+		return false;
+	}
+	lseek(fd_dup, 0, SEEK_SET);
+	FILE* file = fdopen(fd_dup, "r");
+
+	if (file == NULL) {
+		// Cannot determine type of file we cannot open
+		return false;
+	}
+
+	// Check SHEBANG
+	// When we read after end of file, we get EOF (-1),
+	// So we don't have to do any special check
+	bool is_exec = true;
+	if ( fgetc(file) != (int)'#' ) is_exec = false;
+	if ( fgetc(file) != (int)'!' ) is_exec = false;
+
+	fclose(file);
+	lseek(fd, 0, SEEK_SET);
+	return is_exec;
+}
+
+static bool memory_file_is_executable(const char* memory, const size_t size)
+{
+	if (size < 2){
+		return false; // Cannot read SHEBANG
+	}
+
+	// Check that file in memory starts with SHEBANG
+	if ( memory[0] != '#' ) return false;
+	if ( memory[1] != '!' ) return false;
+	return true;
+}
+
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 {
 	// We check origin.memory first because even with it being non-NULL
@@ -207,10 +245,15 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 			{
 				source->xml.doc = xmlReadMemory(source->origin.memory, source->origin.memory_size, NULL, NULL, 0);
 				if (source->xml.doc == NULL) {
-					oscap_setxmlerr(xmlGetLastError());
-					const char *error_msg = oscap_string_get_cstr(xml_error_string);
-					oscap_seterr(OSCAP_EFAMILY_XML, "%sUnable to parse XML from user memory buffer", error_msg);
-					oscap_string_clear(xml_error_string);
+					if (memory_file_is_executable(source->origin.memory, source->origin.memory_size)) {
+						dI("oscap-source in memory was detected as executable file. Skipped XML parsing", oscap_source_readable_origin(source));
+						oscap_string_clear(xml_error_string);
+					} else {
+						oscap_setxmlerr(xmlGetLastError());
+						const char *error_msg = oscap_string_get_cstr(xml_error_string);
+						oscap_seterr(OSCAP_EFAMILY_XML, "%sUnable to parse XML from user memory buffer", error_msg);
+						oscap_string_clear(xml_error_string);
+					}
 				}
 			}
 		}
@@ -228,10 +271,15 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 				{
 					source->xml.doc = xmlReadFd(fd, NULL, NULL, 0);
 					if (source->xml.doc == NULL) {
-						oscap_setxmlerr(xmlGetLastError());
-						const char *error_msg = oscap_string_get_cstr(xml_error_string);
-						oscap_seterr(OSCAP_EFAMILY_XML, "%sUnable to parse XML at: '%s'", error_msg, oscap_source_readable_origin(source));
-						oscap_string_clear(xml_error_string);
+						if (fd_file_is_executable(fd)) {
+							dI("oscap-source file was detected as executable file. Skipped XML parsing", oscap_source_readable_origin(source));
+							oscap_string_clear(xml_error_string);
+						} else {
+							oscap_setxmlerr(xmlGetLastError());
+							const char *error_msg = oscap_string_get_cstr(xml_error_string);
+							oscap_seterr(OSCAP_EFAMILY_XML, "%sUnable to parse XML at: '%s'", error_msg, oscap_source_readable_origin(source));
+							oscap_string_clear(xml_error_string);
+						}
 					}
 				}
 				close(fd);
