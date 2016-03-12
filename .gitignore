@@ -99,6 +99,8 @@ selinux/oscap.pp
 /tests/API/CVSS/test_api_cvss
 /tests/API/OVAL/exported-directives.xml
 /tests/API/OVAL/exported-results.xml
+/tests/API/OVAL/glob_to_regex/test_glob_to_regex
+/tests/API/OVAL/schema_version/test_schema_version
 /tests/API/OVAL/report_variable_values/report_variable_values.log
 /tests/API/OVAL/test_api_directives
 /tests/API/OVAL/test_api_oval
@@ -116,11 +118,13 @@ selinux/oscap.pp
 /tests/API/XCCDF/parser/test_api_xccdf
 /tests/API/XCCDF/unittests/not_executable
 /tests/API/XCCDF/unittests/test_oscap_common
+/tests/API/XCCDF/unittests/test_xccdf_overrides
 /tests/API/XCCDF/unittests/test_xccdf_shall_pass
 /tests/API/crypt/test_crapi_digest
 /tests/API/crypt/test_crapi_mdigest
 /tests/API/probes/oval_fts_list
 /tests/API/probes/test_api_probes_smoke
+/tests/bz2/test_bz2_memory_source
 /tests/DS/ds_sds_index/ds_sds_index.log
 /tests/DS/ds_sds_index/test_ds_sds_index
 /tests/DS/ds_sds_index/test_ds_sds_index_invalid
