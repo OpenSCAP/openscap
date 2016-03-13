@@ -21,8 +21,8 @@ function test_probes_systemdunitproperty {
     $OSCAP oval eval --results $RF $DF
 
     [ -f $RF ]
-    verify_results "def" $DF $RF 13
-    verify_results "tst" $DF $RF 16
+    verify_results "def" $DF $RF 8
+    verify_results "tst" $DF $RF 8
 }
 
 test_probes_systemdunitproperty
