@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-# Copyright 2014 Red Hat Inc., Durham, North Carolina.
+# Copyright 2014--2016 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 #
 # OpenScap Probes Test Suite.
+
+set -e -o pipefail
 
 . ../../test_common.sh
 
