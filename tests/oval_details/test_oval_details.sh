@@ -16,6 +16,7 @@ function test_oval_details {
   reportfile=$output_dir/$1.report.html
   $OSCAP xccdf eval --results $resultfile --oval-results --report $reportfile $xccdffile
   grep -i $2 $reportfile >/dev/null && grep -i $3 $reportfile >/dev/null
+  rm "$1.oval.xml.result.xml"
 }
 
 # Testing.
