@@ -23,6 +23,7 @@ function test_probes_systemdunitproperty {
     [ -f $RF ]
     verify_results "def" $DF $RF 8
     verify_results "tst" $DF $RF 8
+    rm $RF
 }
 
 test_probes_systemdunitproperty

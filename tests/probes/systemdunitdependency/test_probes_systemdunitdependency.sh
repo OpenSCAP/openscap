@@ -23,6 +23,7 @@ function test_probes_systemdunitdependency {
     [ -f $RF ]
     verify_results "def" $DF $RF 3
     verify_results "tst" $DF $RF 3
+    rm $RF
 }
 
 test_probes_systemdunitdependency
