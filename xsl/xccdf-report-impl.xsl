@@ -297,7 +297,9 @@ Authors:
                 <xsl:text>,</xsl:text>
             </xsl:if>
             <xsl:text>"</xsl:text>
-            <xsl:value-of select="$href"/>
+            <xsl:call-template name="convert-url-to-name">
+                <xsl:with-param name="href" select="$href"/>
+            </xsl:call-template>
             <xsl:text>":[</xsl:text>
             <xsl:for-each select="$item/cdf:reference[@href=$href]">
                 <xsl:text>"</xsl:text>
