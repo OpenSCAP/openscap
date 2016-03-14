@@ -717,6 +717,16 @@ struct cpe_check_cb_usr
 	struct cpe_lang_model* lang_model;
 };
 
+/**
+ * Return true if path starts with '.' or './'
+ */
+static bool is_path_relative_subdir(const char* path) {
+	if ( path[0] == '.' ) {
+		if ( path[1] == '/' || path[1] == '\0' ) return true;
+	}
+	return false;
+}
+
 static char *_cpe_get_oval_href(struct cpe_dict_model *dict, struct cpe_lang_model *lang_model, const char *oval_relative_href)
 {
 	char *oval_href = NULL;
@@ -737,9 +747,7 @@ static char *_cpe_get_oval_href(struct cpe_dict_model *dict, struct cpe_lang_mod
 		// we need to strdup because dirname potentially alters the string
 		origin_file = oscap_strdup(origin_file_c ? origin_file_c : "");
 		const char* prefix_dirname = dirname(origin_file);
-
-		bool is_path_relative = (prefix_dirname[0] == '.');
-		if (is_path_relative) {
+		if (is_path_relative_subdir(prefix_dirname)) {
 			// The path is relative. Do not overide it.
 			// Chances are that ds_sds_session expects the very same href
 			oval_href = oscap_strdup(oval_relative_href);
