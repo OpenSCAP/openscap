@@ -437,13 +437,13 @@ Authors:
 <xsl:template name="convert-url-to-name">
     <xsl:param name="href"/>
     <xsl:choose>
-        <xsl:when test="$href = 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf'">
+        <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53 ID</xsl:text>
         </xsl:when>
-        <xsl:when test="$href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx'">
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/')">
             <xsl:text>DISA ID</xsl:text>
         </xsl:when>
-        <xsl:when test="$href = 'https://www.pcisecuritystandards.org/documents/PCI_DSS_v3.pdf'">
+        <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
             <xsl:text>PCI DSS Requirement</xsl:text>
         </xsl:when>
         <xsl:otherwise>
