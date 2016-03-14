@@ -432,27 +432,37 @@ Authors:
     </xsl:for-each>
 </xsl:template>
 
+<xsl:template name="convert-url-to-name">
+    <xsl:param name="href"/>
+    <xsl:choose>
+        <xsl:when test="$href = 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf'">
+            <xsl:text>NIST SP 800-53 ID</xsl:text>
+        </xsl:when>
+        <xsl:when test="$href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx'">
+            <xsl:text>DISA ID</xsl:text>
+        </xsl:when>
+        <xsl:when test="$href = 'https://www.pcisecuritystandards.org/documents/PCI_DSS_v3.pdf'">
+            <xsl:text>PCI DSS Requirement</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="$href"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
 <xsl:template name="get-all-references">
     <xsl:for-each select="//cdf:Rule/cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
+                <xsl:variable name="reference">
+                    <xsl:call-template name="convert-url-to-name">
+                        <xsl:with-param name="href" select="@href"/>
+                    </xsl:call-template>
+                </xsl:variable>
                 <xsl:attribute name="value">
-                    <xsl:value-of select="@href"/>
+                    <xsl:value-of select="$reference"/>
                 </xsl:attribute>
-                <xsl:choose>
-                    <xsl:when test="@href = 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf'">
-                        NIST SP 800-53 ID
-                    </xsl:when>
-                    <xsl:when test="@href = 'http://iase.disa.mil/stigs/cci/Pages/index.aspx'">
-                        DISA ID
-                    </xsl:when>
-                    <xsl:when test="@href = 'https://www.pcisecuritystandards.org/documents/PCI_DSS_v3.pdf'">
-                        PCI DSS Requirement
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@href"/>
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="$reference"/>
             </option>
         </xsl:if>
     </xsl:for-each>
