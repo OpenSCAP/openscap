@@ -446,6 +446,9 @@ Authors:
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
             <xsl:text>PCI DSS Requirement</xsl:text>
         </xsl:when>
+        <xsl:when test="starts-with($href, 'https://benchmarks.cisecurity.org/')">
+            <xsl:text>CIS Recommendation</xsl:text>
+        </xsl:when>
         <xsl:otherwise>
             <xsl:value-of select="$href"/>
         </xsl:otherwise>

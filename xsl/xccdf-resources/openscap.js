@@ -149,7 +149,8 @@ var KeysEnum = {
     RESULT: "result",
     NIST: "NIST SP 800-53 ID",
     DISA: "DISA ID",
-    PCI_DSS: "PCI DSS Requirement"
+    PCI_DSS: "PCI DSS Requirement",
+    CIS: "CIS Recommendation"
 };
 
 /* This function returns an array of target groups indentifiers */
