@@ -67,6 +67,7 @@ xmlNode *oval_result_item_to_dom(struct oval_result_item *, xmlDocPtr, xmlNode *
 struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node(struct oval_result_system *, struct oval_criteria_node *, int variable_instance);
 
 int oval_result_criteria_node_parse(xmlTextReaderPtr, struct oval_parser_context *, struct oval_result_system *, oscap_consumer_func, void *);
+oval_result_t oval_result_criteria_node_negate(struct oval_result_criteria_node *node, oval_result_t result);
 xmlNode *oval_result_criteria_node_to_dom(struct oval_result_criteria_node *, xmlDocPtr, xmlNode *);
 
 oval_result_t oval_result_parse(xmlTextReaderPtr, char *, oval_result_t);
