@@ -248,5 +248,9 @@ int	 fts_set (FTS * sp, FTSENT * p, int instr) __THROW
 __END_DECLS
 
 #endif /* fts.h */
+#else
+#if defined(__SVR4) && defined(__sun)
+#include <fts.h>
+#endif /* defined(__SVR4) && defined(__sun) */ 
 
 #endif /* HAVE_FTS_OPEN */
