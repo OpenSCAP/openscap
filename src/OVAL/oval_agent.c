@@ -165,7 +165,6 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 {
 	int ret;
 	const char *title = NULL;
-	struct oval_result_system *rsystem;
 	struct oval_definition *oval_def;
 
 	oval_def = oval_definition_model_get_definition(ag_sess->def_model, id);
@@ -176,13 +175,6 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 
 	/* probe */
 	ret = oval_probe_query_definition(ag_sess->psess, id);
-	if (ret == -1)
-		return ret;
-
-	rsystem = _oval_agent_get_first_result_system(ag_sess);
-	/* eval */
-	ret = oval_result_system_eval_definition(rsystem, id);
-
 	return ret;
 }
 
