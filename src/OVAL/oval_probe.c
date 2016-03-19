@@ -49,6 +49,8 @@
 #include "oval_probe_meta.h"
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
+#include "public/oval_results.h"
+#include "results/oval_results_impl.h"
 
 oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
@@ -329,7 +331,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 	return(0);
 }
 
-static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
+static oval_result_t oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode);
 
 int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 
@@ -438,17 +440,14 @@ static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct
 	return oval_probe_query_definition(sess, def_id);
 }
 
-/**
- * @returns 0 on success; -1 on error; 1 on warning
- */
-static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
-	int ret;
+static oval_result_t oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
+{
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	switch (oval_criteria_node_get_type(cnode)) {
 	/* Criterion node is the final node that has a reference to a test */
 	case OVAL_NODETYPE_CRITERION:{
-		ret = oval_probe_query_criterion(sess, cnode);
-		return ret;
+		result = oval_probe_query_criterion(sess, cnode, result_cnode);
 		}
 		break;
                 /* Criteria node is type of set that contains more criterias. Criteria node
@@ -457,34 +456,37 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
                         /* group of criterion nodes, get subnodes, continue recursive */
                         struct oval_criteria_node_iterator *cnode_it = oval_criteria_node_get_subnodes(cnode);
                         if (cnode_it == NULL)
-                                return 0;
+		break;
                         /* we have subnotes */
                         struct oval_criteria_node *node;
+
+		oval_operator_t operator = oval_result_criteria_node_get_operator(result_cnode);
+		struct oval_result_criteria_node_iterator *subnodes = oval_result_criteria_node_get_subnodes(result_cnode);
+		struct oresults node_res;
+		ores_clear(&node_res);
                         while (oval_criteria_node_iterator_has_more(cnode_it)) {
                                 node = oval_criteria_node_iterator_next(cnode_it);
-                                ret = oval_probe_query_criteria(sess, node);
-                                if (ret != 0) {
-                                        oval_criteria_node_iterator_free(cnode_it);
-                                        return ret;
-                                }
+			struct oval_result_criteria_node *result_node = oval_result_criteria_node_iterator_next(subnodes);
+			oval_result_t subres = oval_probe_query_criteria(sess, node, result_node);
+			ores_add_res(&node_res, subres);
                         }
                         oval_criteria_node_iterator_free(cnode_it);
-			return 0;
+		result = ores_get_result_byopr(&node_res, operator);
                 }
                 break;
                 /* Extended definition contains reference to definition, we need criteria of this
                  * definition to be evaluated completely */
         case OVAL_NODETYPE_EXTENDDEF:{
-		ret = oval_probe_query_extend_definition(sess, cnode);
-		return ret;
+		result = oval_probe_query_extend_definition(sess, cnode, result_cnode);
                 }
                 break;
         case OVAL_NODETYPE_UNKNOWN:
                 break;
         }
 
-	/* we shouldn't get here */
-        return -1;
+	result = oval_result_criteria_node_negate(result_cnode, result);
+	oval_result_criteria_node_set_result(result_cnode, result);
+	return result;
 }
 
 #if 0
