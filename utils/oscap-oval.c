@@ -269,7 +269,7 @@ int app_collect_oval(const struct oscap_action *action)
 	oval_generator_set_product_name(generator, OSCAP_PRODUCTNAME);
 
 	/* create probe session */
-	pb_sess = oval_probe_session_new(sys_model);
+	pb_sess = oval_probe_session_with_result_system_new(sys_model, NULL);
 
 	/* query sysinfo */
 	ret = oval_probe_query_sysinfo(pb_sess, &sysinfo);
