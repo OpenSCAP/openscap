@@ -39,8 +39,10 @@ typedef struct oval_probe_session oval_probe_session_t;
 /**
  * Create and initialize a new probe session
  * @param model system characteristics model
+ * @deprecated This function has been deprecated. Make a use of oval_probe_session_with_result_system_new
+ * instead. This function may be dropped from later versions of the library.
  */
-oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model);
+OSCAP_DEPRECATED(oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model));
 
 /**
  * Create and initialize a new probe session
