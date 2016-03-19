@@ -34,12 +34,20 @@ typedef struct oval_probe_session oval_probe_session_t;
 
 #include "oval_probe_handler.h"
 #include "oval_system_characteristics.h"
+#include "oval_results.h"
 
 /**
  * Create and initialize a new probe session
  * @param model system characteristics model
  */
 oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model);
+
+/**
+ * Create and initialize a new probe session
+ * @param model system characteristics model
+ * @param result_system OVAL results system
+ */
+oval_probe_session_t *oval_probe_session_with_result_system_new(struct oval_syschar_model *model, struct oval_result_system *result_system);
 
 /**
  * Destroy probe session. All state information created during the lifetime
