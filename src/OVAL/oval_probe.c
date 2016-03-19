@@ -433,12 +433,17 @@ static oval_result_t oval_probe_query_criterion(oval_probe_session_t *sess, stru
 	return oval_result_test_eval(result_test);
 }
 
-static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+static oval_result_t oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
 {
 	struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 	const char *def_id = oval_definition_get_id(oval_def);
 	dI("Criteria are extended by definition '%s'.", def_id);
-	return oval_probe_query_definition(sess, def_id);
+	int ret = oval_probe_query_definition(sess, def_id);
+	if (ret != 0) {
+		return OVAL_RESULT_ERROR;
+	}
+	struct oval_result_definition *extends = oval_result_criteria_node_get_extends(result_cnode);
+	return oval_result_definition_get_result(extends);
 }
 
 static oval_result_t oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
