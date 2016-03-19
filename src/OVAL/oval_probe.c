@@ -394,42 +394,43 @@ static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_stat
 	return 1;
 }
 
-static int oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+static oval_result_t oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
 {
 	/* There should be a test .. */
 	struct oval_test *test;
 	struct oval_object *object;
 	struct oval_state_iterator *ste_itr;
+	struct oval_result_test *result_test;
 	const char *type, *test_id, *comment;
 	int ret;
 
+	result_test = oval_result_criteria_node_get_test(result_cnode);
 	test = oval_criteria_node_get_test(cnode);
 	if (test == NULL)
-		return 0;
+		return oval_result_test_eval(result_test);
 	type = oval_subtype_get_text(oval_test_get_subtype(test));
 	test_id = oval_test_get_id(test);
 	comment = oval_test_get_comment(test);
 	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
 	object = oval_test_get_object(test);
 	if (object == NULL)
-		return 0;
+		return oval_result_test_eval(result_test);
 	/* probe object */
 	ret = oval_probe_query_object(sess, object, 0, NULL);
 	if (ret == -1)
-		return ret;
+		return oval_result_test_eval(result_test);
 	/* probe objects referenced like this: test->state->variable->object */
 	ste_itr = oval_test_get_states(test);
 	while (oval_state_iterator_has_more(ste_itr)) {
 		struct oval_state *state = oval_state_iterator_next(ste_itr);
 		ret = oval_probe_query_var_ref(sess, state);
 		if (ret < 1) {
-			oval_state_iterator_free(ste_itr);
-			return ret;
+			break;
 		}
 	}
 	oval_state_iterator_free(ste_itr);
 
-	return 0;
+	return oval_result_test_eval(result_test);
 }
 
 static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
