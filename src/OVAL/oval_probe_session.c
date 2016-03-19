@@ -216,4 +216,9 @@ struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *ses
 	return (sess->sys_model);
 }
 
+struct oval_result_system *oval_probe_session_get_result_system(oval_probe_session_t *sess)
+{
+	return sess->result_system;
+}
+
 /// @}
