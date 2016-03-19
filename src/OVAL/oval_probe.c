@@ -338,7 +338,6 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 	struct oval_syschar_model * syschar_model;
         struct oval_definition_model *definition_model;
 	struct oval_definition *definition;
-	int ret;
 
 	syschar_model = sess->sys_model;
         definition_model = oval_syschar_model_get_definition_model(syschar_model);
@@ -352,9 +351,26 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 	if (cnode == NULL)
 		return -1;
 
-	ret = oval_probe_query_criteria(sess, cnode);
-
-	return ret;
+	struct oval_result_system *result_system = oval_probe_session_get_result_system(sess);
+	if (result_system == NULL) {
+		return -1;
+	}
+	struct oval_result_definition *result_definition = oval_result_system_prepare_definition(result_system, id);
+	if (result_definition == NULL) {
+		return -1;
+	}
+	oval_result_t result = oval_result_definition_get_result(result_definition);
+	if (result == OVAL_RESULT_NOT_EVALUATED) {
+		struct oval_result_criteria_node *result_cnode = oval_result_definition_get_criteria(result_definition);
+		if (result_cnode == NULL) {
+			oval_result_definition_set_result(result_definition, OVAL_RESULT_ERROR);
+			return -1;
+		}
+		result = oval_probe_query_criteria(sess, cnode, result_cnode);
+		oval_result_definition_set_result(result_definition, result);
+	}
+	dI("Definition '%s' evaluated as %s.", id, oval_result_get_text(result));
+	return 0;
 }
 
 static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_state *state)
