@@ -245,7 +245,7 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	}
 
 	oval_probe_session_destroy(ag_sess->psess);
-	ag_sess->psess = oval_probe_session_new(ag_sess->sys_model);
+	ag_sess->psess = oval_probe_session_with_result_system_new(ag_sess->sys_model, _oval_agent_get_first_result_system(ag_sess));
 
 	return 0;
 }
