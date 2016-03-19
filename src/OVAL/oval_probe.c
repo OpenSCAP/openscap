@@ -422,6 +422,20 @@ static int oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_cr
 	return 0;
 }
 
+static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+{
+	struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
+	const char *def_id = oval_definition_get_id(oval_def);
+	dI("Criteria are extended by definition '%s'.", def_id);
+	struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
+	if (node == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find extended definition: %s.",
+			def_id);
+		return -1;
+	}
+	return oval_probe_query_criteria(sess, node);
+}
+
 /**
  * @returns 0 on success; -1 on error; 1 on warning
  */
@@ -459,16 +473,8 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
                 /* Extended definition contains reference to definition, we need criteria of this
                  * definition to be evaluated completely */
         case OVAL_NODETYPE_EXTENDDEF:{
-                        struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
-			const char *def_id = oval_definition_get_id(oval_def);
-			dI("Criteria are extended by definition '%s'.", def_id);
-			struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
-			if (node == NULL) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find extended definition: %s.",
-					def_id);
-				return -1;
-			}
-                        return oval_probe_query_criteria(sess, node);
+		ret = oval_probe_query_extend_definition(sess, cnode);
+		return ret;
                 }
                 break;
         case OVAL_NODETYPE_UNKNOWN:
