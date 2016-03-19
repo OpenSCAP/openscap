@@ -355,6 +355,43 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 	return ret;
 }
 
+static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_state *state)
+{
+	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
+	while (oval_state_content_iterator_has_more(contents)) {
+		struct oval_state_content *content = oval_state_content_iterator_next(contents);
+		struct oval_entity * entity = oval_state_content_get_entity(content);
+		if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+			oval_syschar_collection_flag_t flag;
+			struct oval_variable *var = oval_entity_get_variable(entity);
+			const char *state_id = oval_state_get_id(state);
+			oval_variable_type_t var_type = oval_variable_get_type(var);
+			const char *var_type_text = oval_variable_type_get_text(var_type);
+			const char *var_id = oval_variable_get_id(var);
+			dI("State '%s' references %s '%s'.", state_id,
+			   var_type_text, var_id);
+
+			int ret = oval_probe_query_variable(sess, var);
+			if (ret == -1) {
+				oval_state_content_iterator_free(contents);
+				return ret;
+			}
+
+			flag = oval_variable_get_collection_flag(var);
+			switch (flag) {
+			case SYSCHAR_FLAG_COMPLETE:
+			case SYSCHAR_FLAG_INCOMPLETE:
+				break;
+			default:
+				oval_state_content_iterator_free(contents);
+				return 0;
+			}
+		}
+	}
+	oval_state_content_iterator_free(contents);
+	return 1;
+}
+
 static int oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
 {
 	/* There should be a test .. */
@@ -382,40 +419,11 @@ static int oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_cr
 	ste_itr = oval_test_get_states(test);
 	while (oval_state_iterator_has_more(ste_itr)) {
 		struct oval_state *state = oval_state_iterator_next(ste_itr);
-		struct oval_state_content_iterator *contents = oval_state_get_contents(state);
-		while (oval_state_content_iterator_has_more(contents)) {
-			struct oval_state_content *content = oval_state_content_iterator_next(contents);
-			struct oval_entity * entity = oval_state_content_get_entity(content);
-			if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-				oval_syschar_collection_flag_t flag;
-				struct oval_variable *var = oval_entity_get_variable(entity);
-				const char *state_id = oval_state_get_id(state);
-				oval_variable_type_t var_type = oval_variable_get_type(var);
-				const char *var_type_text = oval_variable_type_get_text(var_type);
-				const char *var_id = oval_variable_get_id(var);
-				dI("State '%s' references %s '%s'.", state_id,
-				   var_type_text, var_id);
-
-				ret = oval_probe_query_variable(sess, var);
-				if (ret == -1) {
-					oval_state_content_iterator_free(contents);
-					oval_state_iterator_free(ste_itr);
-					return ret;
-				}
-
-				flag = oval_variable_get_collection_flag(var);
-				switch (flag) {
-				case SYSCHAR_FLAG_COMPLETE:
-				case SYSCHAR_FLAG_INCOMPLETE:
-					break;
-				default:
-					oval_state_content_iterator_free(contents);
-					oval_state_iterator_free(ste_itr);
-					return 0;
-				}
-			}
+		ret = oval_probe_query_var_ref(sess, state);
+		if (ret < 1) {
+			oval_state_iterator_free(ste_itr);
+			return ret;
 		}
-		oval_state_content_iterator_free(contents);
 	}
 	oval_state_iterator_free(ste_itr);
 
