@@ -118,7 +118,7 @@ static void __init_once(void)
         return;
 }
 
-oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
+oval_probe_session_t *oval_probe_session_with_result_system_new(struct oval_syschar_model *model, struct oval_result_system *result_system)
 {
         oval_probe_session_t *sess;
         void *handler_arg;
@@ -131,6 +131,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
+        sess->result_system = result_system;
 
         __init_once();
 
@@ -149,6 +150,11 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */
         return(sess);
+}
+
+oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
+{
+	return oval_probe_session_with_result_system_new(model, NULL);
 }
 
 void oval_probe_session_destroy(oval_probe_session_t *sess)
@@ -213,6 +219,11 @@ struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *ses
 	}
 
 	return (sess->sys_model);
+}
+
+struct oval_result_system *oval_probe_session_get_result_system(oval_probe_session_t *sess)
+{
+	return sess->result_system;
 }
 
 /// @}

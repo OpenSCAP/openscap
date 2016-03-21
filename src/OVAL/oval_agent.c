@@ -86,10 +86,13 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 	{0, 0, 0}
 };
 
+static struct oval_result_system *_oval_agent_get_first_result_system(oval_agent_session_t *ag_sess);
+
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
 	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
 	struct oval_generator *generator;
+	struct oval_result_system *result_system;
 	int ret;
 
 	dI("Started new OVAL agent.", name);
@@ -102,7 +105,16 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	ag_sess->def_model = model;
 	ag_sess->cur_var_model = NULL;
 	ag_sess->sys_model = oval_syschar_model_new(model);
-	ag_sess->psess     = oval_probe_session_new(ag_sess->sys_model);
+
+	/* one system only */
+	ag_sess->sys_models[0] = ag_sess->sys_model;
+	ag_sess->sys_models[1] = NULL;
+	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
+	generator = oval_results_model_get_generator(ag_sess->res_model);
+	oval_generator_set_product_version(generator, oscap_get_version());
+
+	result_system = _oval_agent_get_first_result_system(ag_sess);
+	ag_sess->psess = oval_probe_session_with_result_system_new(ag_sess->sys_model, result_system);
 
 	/* probe sysinfo */
 	ret = oval_probe_query_sysinfo(ag_sess->psess, &sysinfo);
@@ -114,14 +126,6 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	}
 	oval_syschar_model_set_sysinfo(ag_sess->sys_model, sysinfo);
 	oval_sysinfo_free(sysinfo);
-
-	/* one system only */
-	ag_sess->sys_models[0] = ag_sess->sys_model;
-	ag_sess->sys_models[1] = NULL;
-	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
-	generator = oval_results_model_get_generator(ag_sess->res_model);
-	oval_generator_set_product_version(generator, oscap_get_version());
-
 
 	ag_sess->product_name = NULL;
 
@@ -161,7 +165,6 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 {
 	int ret;
 	const char *title = NULL;
-	struct oval_result_system *rsystem;
 	struct oval_definition *oval_def;
 
 	oval_def = oval_definition_model_get_definition(ag_sess->def_model, id);
@@ -172,13 +175,6 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 
 	/* probe */
 	ret = oval_probe_query_definition(ag_sess->psess, id);
-	if (ret == -1)
-		return ret;
-
-	rsystem = _oval_agent_get_first_result_system(ag_sess);
-	/* eval */
-	ret = oval_result_system_eval_definition(rsystem, id);
-
 	return ret;
 }
 
@@ -241,7 +237,7 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	}
 
 	oval_probe_session_destroy(ag_sess->psess);
-	ag_sess->psess = oval_probe_session_new(ag_sess->sys_model);
+	ag_sess->psess = oval_probe_session_with_result_system_new(ag_sess->sys_model, _oval_agent_get_first_result_system(ag_sess));
 
 	return 0;
 }

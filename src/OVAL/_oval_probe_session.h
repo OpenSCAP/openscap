@@ -45,7 +45,10 @@ struct oval_probe_session {
         struct oval_syschar_model *sys_model; /**< system characteristics model */
         char         *dir;  /**< probe session directory */
         uint32_t      flg;  /**< probe session flags */
+        struct oval_result_system *result_system; /**< results system model */
 };
+
+struct oval_result_system *oval_probe_session_get_result_system(oval_probe_session_t *sess);
 
 #endif /* _OVAL_PROBE_SESSION */
 

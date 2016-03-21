@@ -49,6 +49,8 @@
 #include "oval_probe_meta.h"
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
+#include "public/oval_results.h"
+#include "results/oval_results_impl.h"
 
 oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
@@ -329,14 +331,13 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 	return(0);
 }
 
-static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
+static oval_result_t oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode);
 
 int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 
 	struct oval_syschar_model * syschar_model;
         struct oval_definition_model *definition_model;
 	struct oval_definition *definition;
-	int ret;
 
 	syschar_model = sess->sys_model;
         definition_model = oval_syschar_model_get_definition_model(syschar_model);
@@ -350,97 +351,125 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 	if (cnode == NULL)
 		return -1;
 
-	ret = oval_probe_query_criteria(sess, cnode);
-
-	return ret;
+	struct oval_result_system *result_system = oval_probe_session_get_result_system(sess);
+	if (result_system == NULL) {
+		return -1;
+	}
+	struct oval_result_definition *result_definition = oval_result_system_prepare_definition(result_system, id);
+	if (result_definition == NULL) {
+		return -1;
+	}
+	oval_result_t result = oval_result_definition_get_result(result_definition);
+	if (result == OVAL_RESULT_NOT_EVALUATED) {
+		struct oval_result_criteria_node *result_cnode = oval_result_definition_get_criteria(result_definition);
+		if (result_cnode == NULL) {
+			oval_result_definition_set_result(result_definition, OVAL_RESULT_ERROR);
+			return -1;
+		}
+		result = oval_probe_query_criteria(sess, cnode, result_cnode);
+		oval_result_definition_set_result(result_definition, result);
+	}
+	dI("Definition '%s' evaluated as %s.", id, oval_result_get_text(result));
+	return 0;
 }
 
-static int oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_state *state)
+{
+	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
+	while (oval_state_content_iterator_has_more(contents)) {
+		struct oval_state_content *content = oval_state_content_iterator_next(contents);
+		struct oval_entity * entity = oval_state_content_get_entity(content);
+		if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+			oval_syschar_collection_flag_t flag;
+			struct oval_variable *var = oval_entity_get_variable(entity);
+			const char *state_id = oval_state_get_id(state);
+			oval_variable_type_t var_type = oval_variable_get_type(var);
+			const char *var_type_text = oval_variable_type_get_text(var_type);
+			const char *var_id = oval_variable_get_id(var);
+			dI("State '%s' references %s '%s'.", state_id,
+			   var_type_text, var_id);
+
+			int ret = oval_probe_query_variable(sess, var);
+			if (ret == -1) {
+				oval_state_content_iterator_free(contents);
+				return ret;
+			}
+
+			flag = oval_variable_get_collection_flag(var);
+			switch (flag) {
+			case SYSCHAR_FLAG_COMPLETE:
+			case SYSCHAR_FLAG_INCOMPLETE:
+				break;
+			default:
+				oval_state_content_iterator_free(contents);
+				return 0;
+			}
+		}
+	}
+	oval_state_content_iterator_free(contents);
+	return 1;
+}
+
+static oval_result_t oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
 {
 	/* There should be a test .. */
 	struct oval_test *test;
 	struct oval_object *object;
 	struct oval_state_iterator *ste_itr;
+	struct oval_result_test *result_test;
 	const char *type, *test_id, *comment;
 	int ret;
 
+	result_test = oval_result_criteria_node_get_test(result_cnode);
 	test = oval_criteria_node_get_test(cnode);
 	if (test == NULL)
-		return 0;
+		return oval_result_test_eval(result_test);
 	type = oval_subtype_get_text(oval_test_get_subtype(test));
 	test_id = oval_test_get_id(test);
 	comment = oval_test_get_comment(test);
 	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
 	object = oval_test_get_object(test);
 	if (object == NULL)
-		return 0;
+		return oval_result_test_eval(result_test);
 	/* probe object */
 	ret = oval_probe_query_object(sess, object, 0, NULL);
 	if (ret == -1)
-		return ret;
+		return oval_result_test_eval(result_test);
 	/* probe objects referenced like this: test->state->variable->object */
 	ste_itr = oval_test_get_states(test);
 	while (oval_state_iterator_has_more(ste_itr)) {
 		struct oval_state *state = oval_state_iterator_next(ste_itr);
-		struct oval_state_content_iterator *contents = oval_state_get_contents(state);
-		while (oval_state_content_iterator_has_more(contents)) {
-			struct oval_state_content *content = oval_state_content_iterator_next(contents);
-			struct oval_entity * entity = oval_state_content_get_entity(content);
-			if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-				oval_syschar_collection_flag_t flag;
-				struct oval_variable *var = oval_entity_get_variable(entity);
-				const char *state_id = oval_state_get_id(state);
-				oval_variable_type_t var_type = oval_variable_get_type(var);
-				const char *var_type_text = oval_variable_type_get_text(var_type);
-				const char *var_id = oval_variable_get_id(var);
-				dI("State '%s' references %s '%s'.", state_id,
-				   var_type_text, var_id);
-
-				ret = oval_probe_query_variable(sess, var);
-				if (ret == -1) {
-					oval_state_content_iterator_free(contents);
-					oval_state_iterator_free(ste_itr);
-					return ret;
-				}
-
-				flag = oval_variable_get_collection_flag(var);
-				switch (flag) {
-				case SYSCHAR_FLAG_COMPLETE:
-				case SYSCHAR_FLAG_INCOMPLETE:
-					break;
-				default:
-					oval_state_content_iterator_free(contents);
-					oval_state_iterator_free(ste_itr);
-					return 0;
-				}
-			}
+		ret = oval_probe_query_var_ref(sess, state);
+		if (ret < 1) {
+			break;
 		}
-		oval_state_content_iterator_free(contents);
 	}
 	oval_state_iterator_free(ste_itr);
 
-	return 0;
+	return oval_result_test_eval(result_test);
 }
 
-static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+static oval_result_t oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
 {
 	struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 	const char *def_id = oval_definition_get_id(oval_def);
 	dI("Criteria are extended by definition '%s'.", def_id);
-	return oval_probe_query_definition(sess, def_id);
+	int ret = oval_probe_query_definition(sess, def_id);
+	if (ret != 0) {
+		return OVAL_RESULT_ERROR;
+	}
+	struct oval_result_definition *extends = oval_result_criteria_node_get_extends(result_cnode);
+	return oval_result_definition_get_result(extends);
 }
 
-/**
- * @returns 0 on success; -1 on error; 1 on warning
- */
-static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
-	int ret;
+static oval_result_t oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode, struct oval_result_criteria_node *result_cnode)
+{
+	oval_result_t result = OVAL_RESULT_ERROR;
 
 	switch (oval_criteria_node_get_type(cnode)) {
 	/* Criterion node is the final node that has a reference to a test */
 	case OVAL_NODETYPE_CRITERION:{
-		ret = oval_probe_query_criterion(sess, cnode);
-		return ret;
+		result = oval_probe_query_criterion(sess, cnode, result_cnode);
 		}
 		break;
                 /* Criteria node is type of set that contains more criterias. Criteria node
@@ -449,34 +478,37 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
                         /* group of criterion nodes, get subnodes, continue recursive */
                         struct oval_criteria_node_iterator *cnode_it = oval_criteria_node_get_subnodes(cnode);
                         if (cnode_it == NULL)
-                                return 0;
+		break;
                         /* we have subnotes */
                         struct oval_criteria_node *node;
+
+		oval_operator_t operator = oval_result_criteria_node_get_operator(result_cnode);
+		struct oval_result_criteria_node_iterator *subnodes = oval_result_criteria_node_get_subnodes(result_cnode);
+		struct oresults node_res;
+		ores_clear(&node_res);
                         while (oval_criteria_node_iterator_has_more(cnode_it)) {
                                 node = oval_criteria_node_iterator_next(cnode_it);
-                                ret = oval_probe_query_criteria(sess, node);
-                                if (ret != 0) {
-                                        oval_criteria_node_iterator_free(cnode_it);
-                                        return ret;
-                                }
+			struct oval_result_criteria_node *result_node = oval_result_criteria_node_iterator_next(subnodes);
+			oval_result_t subres = oval_probe_query_criteria(sess, node, result_node);
+			ores_add_res(&node_res, subres);
                         }
                         oval_criteria_node_iterator_free(cnode_it);
-			return 0;
+		result = ores_get_result_byopr(&node_res, operator);
                 }
                 break;
                 /* Extended definition contains reference to definition, we need criteria of this
                  * definition to be evaluated completely */
         case OVAL_NODETYPE_EXTENDDEF:{
-		ret = oval_probe_query_extend_definition(sess, cnode);
-		return ret;
+		result = oval_probe_query_extend_definition(sess, cnode, result_cnode);
                 }
                 break;
         case OVAL_NODETYPE_UNKNOWN:
                 break;
         }
 
-	/* we shouldn't get here */
-        return -1;
+	result = oval_result_criteria_node_negate(result_cnode, result);
+	oval_result_criteria_node_set_result(result_cnode, result);
+	return result;
 }
 
 #if 0
