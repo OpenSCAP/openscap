@@ -7,13 +7,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -35,6 +35,7 @@
 #include "ds_sds_session_priv.h"
 #include "sds_priv.h"
 
+#include "common/debug_priv.h"
 #include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
@@ -155,9 +156,13 @@ static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *com
 	return component;
 }
 
-static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component_id, const char *filename)
+static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *component_id, const char *filename)
 {
 	if (script_node) {
+		if (oscap_acquire_ensure_parent_dir(filename) < 0) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Error while creating script parent directory for file '%s' of (id='%s')", filename, component_id);
+			return -1;
+		}
 		// TODO: should we check whether the component is extended?
 		int fd;
 		xmlChar* text_contents = xmlNodeGetContent(script_node);
@@ -180,6 +185,7 @@ static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component
 			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);
 		}
 
+		dD("Successfully dumped script component (id='%s') to file '%s'.", component_id, filename);
 		fclose(output_file);
 		xmlFree(text_contents);
 		return 0;
@@ -191,7 +197,7 @@ static int ds_sds_dump_component_sce(xmlNode *script_node, const char *component
 	}
 }
 
-static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *sce_filename, const char *relative_filepath)
+static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
 	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
@@ -211,7 +217,12 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 
 	// If the inner root is script, we have to treat it in a special way
 	if (strcmp((const char*)inner_root->name, "script") == 0) {
+		// the cast is safe to do because we are using the GNU basename, it doesn't
+		// modify the string
+		const char* file_basename = basename((char*)relative_filepath);
+		const char* sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session), target_filename_dirname, file_basename);
 		int ret = ds_sds_dump_component_sce(inner_root->children, component_id, sce_filename);
+		oscap_free(sce_filename);
 		if (ret != 0) {
 			return ret;
 		}
@@ -231,7 +242,7 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	return 0;
 }
 
-int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session *session, const char* target_dir, const char* relative_filepath)
+int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -255,15 +266,10 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
 	char* file_reldir = dirname(filename_cpy);
 
-	// the cast is safe to do because we are using the GNU basename, it doesn't
-	// modify the string
-	const char* file_basename = basename((char*)relative_filepath);
-
-	const char* target_filename_dirname = oscap_sprintf("%s/%s", target_dir, file_reldir);
-	const char* sce_filename = oscap_sprintf("%s/%s/%s", target_dir, file_reldir, file_basename);
-	ds_sds_dump_component(component_id, session, sce_filename, relative_filepath);
-	oscap_free(sce_filename);
+	const char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
 	oscap_free(filename_cpy);
+
+	ds_sds_dump_component(component_id, session, target_filename_dirname, relative_filepath);
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
 	if (catalog)
@@ -338,7 +344,7 @@ int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, struct ds_sds_session
 	return 0;
 }
 
-int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *session)
+int ds_sds_dump_component_ref(const xmlNodePtr component_ref, struct ds_sds_session *session)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
 	if (!cref_id)
@@ -348,7 +354,7 @@ int ds_sds_dump_component_ref(xmlNodePtr component_ref, struct ds_sds_session *s
 		return -1;
 	}
 
-	int result = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), cref_id);
+	int result = ds_sds_dump_component_ref_as(component_ref, session, ".", cref_id);
 	xmlFree(cref_id);
 
 	// if result is -1, oscap_seterr was already called, no need to call it again
