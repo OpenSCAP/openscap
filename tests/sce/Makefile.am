@@ -8,7 +8,7 @@ TESTS_ENVIRONMENT= \
 TESTS = test_sce.sh \
 		test_passing_vars.sh \
 		test_check_engine_results.sh \
-		test_sce_parse_errors.sh
+		test_sce_parse_errors.sh \
 		test_sce_in_ds.sh
 
 EXTRA_DIST =	test_sce.sh \
