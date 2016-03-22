@@ -315,8 +315,17 @@ xmlNode *xccdf_benchmark_to_dom(struct xccdf_benchmark *benchmark, xmlDocPtr doc
 	oscap_string_iterator_free(platforms);
 
 	const char *version = xccdf_benchmark_get_version(benchmark);
-	if (version)
-		xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+	if (version) {
+		xmlNodePtr version_node = xmlNewTextChild(root_node, ns_xccdf, BAD_CAST "version", BAD_CAST version);
+
+		const char *version_time = xccdf_benchmark_get_version_time(benchmark);
+		if (version_time)
+			xmlNewProp(version_node, BAD_CAST "time", BAD_CAST version_time);
+
+		const char *version_update = xccdf_benchmark_get_version_update(benchmark);
+		if (version_update)
+			xmlNewProp(version_node, BAD_CAST "update", BAD_CAST version_update);
+	}
 
 	struct oscap_string_iterator* metadata = xccdf_item_get_metadata(XITEM(benchmark));
 	while (oscap_string_iterator_has_more(metadata))

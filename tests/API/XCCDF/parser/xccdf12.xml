@@ -24,7 +24,7 @@
     </platform>
   </platform-specification>
   <platform idref="cpe:/o:redhat:enterprise_linux:5"/>
-  <version>1.0</version>
+  <version time="2016-03-22T09:00:00" update="http://github.com/OpenSCAP">1.0</version>
   <metadata xmlns:xhtml="http://www.w3.org/1999/xhtml">
             <dc:publisher xmlns="http://purl.org/dc/elements/1.1/" xmlns:dc="http://purl.org/dc/elements/1.1/">OpenSCAP</dc:publisher>
             <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">OpenSCAP team</dc:creator>
