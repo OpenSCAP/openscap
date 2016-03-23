@@ -148,6 +148,12 @@ struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_r
 	    oval_collection_iterator(model->systems);
 }
 
+struct oval_probe_session *oval_results_model_get_probe_session(struct oval_results_model *model)
+{
+	__attribute__nonnull__(model);
+	return model->probe_session;
+}
+
 void oval_results_model_add_system(struct oval_results_model *model, struct oval_result_system *sys)
 {
 	__attribute__nonnull__(model);
