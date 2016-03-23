@@ -392,18 +392,13 @@ static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_stat
 	return 1;
 }
 
-static int oval_probe_query_criterion(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+static int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
 {
-	/* There should be a test .. */
-	struct oval_test *test;
 	struct oval_object *object;
 	struct oval_state_iterator *ste_itr;
 	const char *type, *test_id, *comment;
 	int ret;
 
-	test = oval_criteria_node_get_test(cnode);
-	if (test == NULL)
-		return 0;
 	type = oval_subtype_get_text(oval_test_get_subtype(test));
 	test_id = oval_test_get_id(test);
 	comment = oval_test_get_comment(test);
@@ -447,7 +442,12 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 	switch (oval_criteria_node_get_type(cnode)) {
 	/* Criterion node is the final node that has a reference to a test */
 	case OVAL_NODETYPE_CRITERION:{
-		ret = oval_probe_query_criterion(sess, cnode);
+		/* There should be a test .. */
+		struct oval_test *test = oval_criteria_node_get_test(cnode);
+		if (test == NULL) {
+			return 0;
+		}
+		ret = oval_probe_query_test(sess, test);
 		return ret;
 		}
 		break;
