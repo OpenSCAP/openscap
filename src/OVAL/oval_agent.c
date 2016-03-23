@@ -172,9 +172,6 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 	dI("Evaluating definition '%s': %s.", id, title);
 
 	/* probe */
-	ret = oval_probe_query_definition(ag_sess->psess, id);
-	if (ret == -1)
-		return ret;
 
 	rsystem = _oval_agent_get_first_result_system(ag_sess);
 	/* eval */
