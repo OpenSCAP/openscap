@@ -55,6 +55,8 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_PROBE_MAXRETRY 0
 
+int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test);
+
 OSCAP_HIDDEN_END;
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);

@@ -392,7 +392,7 @@ static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_stat
 	return 1;
 }
 
-static int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
+int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
 {
 	struct oval_object *object;
 	struct oval_state_iterator *ste_itr;
