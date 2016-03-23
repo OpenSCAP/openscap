@@ -91,6 +91,7 @@ void ores_clear(struct oresults *ores);
 oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check);
 oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op);
 
+struct oval_results_model *oval_results_model_new_with_probe_session(struct oval_definition_model *definition_model, struct oval_syschar_model **syschar_models, struct oval_probe_session *probe_session);
 void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
 
 struct oval_result_definition_iterator *oval_result_definition_iterator_new(struct oval_smc *mapping);
