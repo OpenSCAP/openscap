@@ -118,7 +118,8 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	/* one system only */
 	ag_sess->sys_models[0] = ag_sess->sys_model;
 	ag_sess->sys_models[1] = NULL;
-	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
+	ag_sess->res_model = oval_results_model_new_with_probe_session(
+			model, ag_sess->sys_models, ag_sess->psess);
 	generator = oval_results_model_get_generator(ag_sess->res_model);
 	oval_generator_set_product_version(generator, oscap_get_version());
 
