@@ -323,7 +323,6 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	}
 	xccdf_ident_iterator_free(idents);
 
-	printf("Result\r\t");
 	fflush(stdout);
 
 	return 0;
@@ -338,6 +337,7 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 		return 0;
 
 	/* print result */
+	printf("Result\r\t");
 	const char * result_str = xccdf_test_result_type_get_text(result);
 	if (isatty(1))
 		printf("\033[%sm%s\033[0m\n\n", RESULT_COLORS[result], result_str);
