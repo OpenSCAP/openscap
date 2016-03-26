@@ -84,18 +84,24 @@ oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name)
 
 bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe)
 {
-	if (verbosity_level == NULL || filename == NULL) {
+	if (verbosity_level == NULL) {
 		return true;
 	}
 	__debuglog_level = oscap_verbosity_level_from_cstr(verbosity_level);
 	if (__debuglog_level == DBG_UNKNOWN) {
 		return false;
 	}
+	if (!is_probe) {
+		setenv("OSCAP_PROBE_VERBOSITY_LEVEL", verbosity_level, 1);
+	}
+	if (filename == NULL) {
+		__debuglog_fp = stderr;
+		return true;
+	}
 	int fd;
 	if (is_probe) {
 		fd = open(filename, O_APPEND | O_WRONLY);
 	} else {
-		setenv("OSCAP_PROBE_VERBOSITY_LEVEL", verbosity_level, 1);
 		setenv("OSCAP_PROBE_VERBOSE_LOG_FILE", filename, 1);
 		/* Open a file. If the file doesn't exist, create it.
 		 * If the file exists, erase its content.
