@@ -36,6 +36,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
+#include "oval_probe_impl.h"
 #include "results/oval_results_impl.h"
 #include "results/oval_status_counter.h"
 #include "oval_cmp_impl.h"
@@ -929,6 +930,16 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	char * object_id = oval_object_get_id(object);
 
 	struct oval_result_system *sys = oval_result_test_get_system(rtest);
+	struct oval_results_model *results_model = oval_result_system_get_results_model(sys);
+	struct oval_probe_session *probe_session = oval_results_model_get_probe_session(results_model);
+	if (probe_session != NULL) {
+		/* probe test */
+		int ret = oval_probe_query_test(probe_session, test);
+		if (ret != 0) {
+			return ret;
+		}
+	}
+
 	struct oval_syschar_model *syschar_model = oval_result_system_get_syschar_model(sys);
 
 	struct oval_syschar * syschar = oval_syschar_model_get_syschar(syschar_model, object_id);

@@ -118,7 +118,8 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	/* one system only */
 	ag_sess->sys_models[0] = ag_sess->sys_model;
 	ag_sess->sys_models[1] = NULL;
-	ag_sess->res_model = oval_results_model_new(model, ag_sess->sys_models);
+	ag_sess->res_model = oval_results_model_new_with_probe_session(
+			model, ag_sess->sys_models, ag_sess->psess);
 	generator = oval_results_model_get_generator(ag_sess->res_model);
 	oval_generator_set_product_version(generator, oscap_get_version());
 
@@ -171,9 +172,6 @@ int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 	dI("Evaluating definition '%s': %s.", id, title);
 
 	/* probe */
-	ret = oval_probe_query_definition(ag_sess->psess, id);
-	if (ret == -1)
-		return ret;
 
 	rsystem = _oval_agent_get_first_result_system(ag_sess);
 	/* eval */
