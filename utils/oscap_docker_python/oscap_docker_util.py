@@ -185,9 +185,9 @@ class OscapScan(object):
         self.mnt_dir = mnt_dir
         self.hours_old = hours_old
 
-    def _get_mnt_dir(self):
+    def _ensure_mnt_dir(self):
         '''
-        Get directory for mount container
+        Ensure existing temporary directory
         '''
         if self.mnt_dir is None:
             return tempfile.mkdtemp()
@@ -196,10 +196,10 @@ class OscapScan(object):
 
     def _remove_mnt_dir(self, mnt_dir):
         '''
-        Remove temporary directory if it was not passed by __init__
-        We don't want to remove directory what was created by used
+        Remove temporary directory, but only if the directory was not
+        passed through __init__
         '''
-        if self.mnt_dir != mnt_dir:
+        if self.mnt_dir is None:
             os.rmdir(mnt_dir)
 
     def scan_cve(self, image, scan_args):
@@ -207,7 +207,7 @@ class OscapScan(object):
         Wrapper function for scanning a container or image
         '''
 
-        mnt_dir = self._get_mnt_dir()
+        mnt_dir = self._ensure_mnt_dir()
 
         # Mount the temporary image/container to the dir
         DM = DockerMount(mnt_dir, mnt_mkdir=True)
@@ -243,7 +243,7 @@ class OscapScan(object):
         openscap
         '''
 
-        mnt_dir = self._get_mnt_dir()
+        mnt_dir = self._ensure_mnt_dir()
 
         # Mount the temporary image/container to the dir
         DM = DockerMount(mnt_dir, mnt_mkdir=True)
