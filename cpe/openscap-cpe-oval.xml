@@ -22,7 +22,6 @@
                         <description>The operating system installed on the system is Red Hat Enterprise Linux</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Red Hat Enterprise Linux is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:2"/>
                   </criteria>
             </definition>
@@ -36,7 +35,6 @@
                         <description>The operating system installed on the system is Red Hat Enterprise Linux 5</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Red Hat Enterprise Linux 5 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:5"/>
                   </criteria>
             </definition>
@@ -50,7 +48,6 @@
                         <description>The operating system installed on the system is Red Hat Enterprise Linux 6</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Red Hat Enterprise Linux 6 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:6"/>
                   </criteria>
             </definition>
@@ -64,7 +61,6 @@
                         <description>The operating system installed on the system is Red Hat Enterprise Linux 7</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Red Hat Enterprise Linux 7 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:7"/>
                   </criteria>
             </definition>
@@ -78,7 +74,6 @@
                         <description>The operating system installed on the system is Fedora 16</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 16 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:16"/>
                   </criteria>
             </definition>
@@ -92,7 +87,6 @@
                         <description>The operating system installed on the system is Fedora 17</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 17 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:17"/>
                   </criteria>
             </definition>
@@ -106,7 +100,6 @@
                         <description>The operating system installed on the system is Fedora 18</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 18 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:18"/>
                   </criteria>
             </definition>
@@ -120,7 +113,6 @@
                         <description>The operating system installed on the system is Fedora 19</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 19 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:19"/>
                   </criteria>
             </definition>
@@ -134,7 +126,6 @@
                         <description>The operating system installed on the system is Fedora 20</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 20 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:20"/>
                   </criteria>
             </definition>
@@ -148,7 +139,6 @@
                         <description>The operating system installed on the system is Fedora 21</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 21 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:21"/>
                   </criteria>
             </definition>
@@ -162,7 +152,6 @@
                         <description>The operating system installed on the system is Fedora 22</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 22 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:22"/>
                   </criteria>
             </definition>
@@ -176,7 +165,6 @@
                         <description>The operating system installed on the system is Fedora 23</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 23 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:23"/>
                   </criteria>
             </definition>
@@ -190,7 +178,6 @@
                         <description>The operating system installed on the system is Fedora 24</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 24 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:24"/>
                   </criteria>
             </definition>
@@ -204,18 +191,11 @@
                         <description>The operating system installed on the system is Fedora 25</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Fedora 25 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:25"/>
                   </criteria>
             </definition>
       </definitions>
       <tests>
-            <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1" version="1" check="only one" 
-                  comment="installed operating system is part of the Unix family" 
-                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-                  <object object_ref="oval:org.open-scap.cpe.unix:obj:1"/>
-                  <state state_ref="oval:org.open-scap.cpe.unix:ste:1"/>
-            </family_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
@@ -304,12 +284,8 @@
                   <lin-def:arch operation="pattern match"/>
                   <lin-def:filepath>/etc/redhat-release</lin-def:filepath>
             </lin-def:rpmverifyfile_object>
-            <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
       </objects>
       <states>
-            <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-                  <family>unix</family>
-            </family_state>
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
             </rpmverifyfile_state>
