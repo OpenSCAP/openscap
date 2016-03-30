@@ -178,19 +178,39 @@ class OscapHelpers(object):
 
 
 class OscapScan(object):
-    def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=os.getcwd(),
+    def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=None,
                  hours_old=2):
         self.tmp_dir = tmp_dir
         self.helper = OscapHelpers(tmp_dir)
         self.mnt_dir = mnt_dir
         self.hours_old = hours_old
 
+    def _ensure_mnt_dir(self):
+        '''
+        Ensure existing temporary directory
+        '''
+        if self.mnt_dir is None:
+            return tempfile.mkdtemp()
+        else:
+            return self.mnt_dir
+
+    def _remove_mnt_dir(self, mnt_dir):
+        '''
+        Remove temporary directory, but only if the directory was not
+        passed through __init__
+        '''
+        if self.mnt_dir is None:
+            os.rmdir(mnt_dir)
+
     def scan_cve(self, image, scan_args):
         '''
         Wrapper function for scanning a container or image
         '''
+
+        mnt_dir = self._ensure_mnt_dir()
+
         # Mount the temporary image/container to the dir
-        DM = DockerMount(self.mnt_dir, mnt_mkdir=True)
+        DM = DockerMount(mnt_dir, mnt_mkdir=True)
         try:
             _tmp_mnt_dir = DM.mount(image)
         except MountError as e:
@@ -215,14 +235,18 @@ class OscapScan(object):
 
         # Clean up
         self.helper._cleanup_by_path(_tmp_mnt_dir)
+        self._remove_mnt_dir(mnt_dir)
 
     def scan(self, image, scan_args):
         '''
         Wrapper function for basic security scans using
         openscap
         '''
+
+        mnt_dir = self._ensure_mnt_dir()
+
         # Mount the temporary image/container to the dir
-        DM = DockerMount(self.mnt_dir, mnt_mkdir=True)
+        DM = DockerMount(mnt_dir, mnt_mkdir=True)
         try:
             _tmp_mnt_dir = DM.mount(image)
         except MountError as e:
@@ -237,3 +261,4 @@ class OscapScan(object):
 
         # Clean up
         self.helper._cleanup_by_path(_tmp_mnt_dir)
+        self._remove_mnt_dir(mnt_dir)
