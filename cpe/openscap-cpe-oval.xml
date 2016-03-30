@@ -196,12 +196,6 @@
             </definition>
       </definitions>
       <tests>
-            <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1" version="1" check="only one" 
-                  comment="installed operating system is part of the Unix family" 
-                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-                  <object object_ref="oval:org.open-scap.cpe.unix:obj:1"/>
-                  <state state_ref="oval:org.open-scap.cpe.unix:ste:1"/>
-            </family_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
@@ -290,12 +284,8 @@
                   <lin-def:arch operation="pattern match"/>
                   <lin-def:filepath>/etc/redhat-release</lin-def:filepath>
             </lin-def:rpmverifyfile_object>
-            <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
       </objects>
       <states>
-            <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
-                  <family>unix</family>
-            </family_state>
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
             </rpmverifyfile_state>
