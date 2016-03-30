@@ -78,7 +78,6 @@
                         <description>The operating system installed on the system is Community Enterprise Operating System 5</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Community Enterprise Operating System 5 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:1005"/>
                   </criteria>
             </definition>
@@ -92,7 +91,6 @@
                         <description>The operating system installed on the system is Community Enterprise Operating System 6</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Community Enterprise Operating System 6 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:1006"/>
                   </criteria>
             </definition>
@@ -106,7 +104,6 @@
                         <description>The operating system installed on the system is Community Enterprise Operating System 7</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Community Enterprise Operating System 7 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:1007"/>
                   </criteria>
             </definition>
@@ -120,7 +117,6 @@
                         <description>The operating system installed on the system is Scientific Linux 5</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Scientific Linux 5 is installed" test_ref="oval:org.open-scap.cpe.scientific:tst:5"/>
                   </criteria>
             </definition>
@@ -134,7 +130,6 @@
                         <description>The operating system installed on the system is Scientific Linux 6</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Scientific Linux 6 is installed" test_ref="oval:org.open-scap.cpe.scientific:tst:6"/>
                   </criteria>
             </definition>
@@ -148,7 +143,6 @@
                         <description>The operating system installed on the system is Scientific Linux 7</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="Scientific Linux 7 is installed" test_ref="oval:org.open-scap.cpe.scientific:tst:7"/>
                   </criteria>
             </definition>
@@ -303,7 +297,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
 			<criteria operator="OR">
 				<criterion comment="SLES is installed" test_ref="oval:org.open-scap.cpe.sles:tst:1"/>
 				<criterion comment="SLED is installed" test_ref="oval:org.open-scap.cpe.sled:tst:1"/>
@@ -321,7 +314,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise Server 10</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="SLES 10 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:10"/>
                   </criteria>
             </definition>
@@ -336,7 +328,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 10</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="SLED 10 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:10"/>
                   </criteria>
             </definition>
@@ -351,7 +342,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise Server 11</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="SLES 11 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:11"/>
                   </criteria>
             </definition>
@@ -366,7 +356,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 11</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="SLED 11 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:11"/>
                   </criteria>
             </definition>
@@ -381,7 +370,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise Server 12</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="SLES 12 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:12"/>
                   </criteria>
             </definition>
@@ -396,7 +384,6 @@
                         <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 12</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="SLED 12 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:12"/>
                   </criteria>
             </definition>
@@ -411,7 +398,6 @@
                         <description>The operating system installed on the system is openSUSE</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="openSUSE is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:1"/>
                   </criteria>
             </definition>
@@ -426,7 +412,6 @@
                         <description>The operating system installed on the system is openSUSE 11.4</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="openSUSE 11.4 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:114"/>
                   </criteria>
             </definition>
@@ -441,7 +426,6 @@
                         <description>The operating system installed on the system is openSUSE 13.1</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="openSUSE 13.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:131"/>
                   </criteria>
             </definition>
@@ -456,7 +440,6 @@
                         <description>The operating system installed on the system is openSUSE 13.2</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.rhel:tst:1"/>
                         <criterion comment="openSUSE 13.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:132"/>
                   </criteria>
             </definition>
