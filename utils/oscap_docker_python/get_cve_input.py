@@ -75,7 +75,7 @@ class getInputCVE(object):
         fh.close()
 
         # Correct Last-Modified timestamp
-        headers = dict(resp.info())
+        headers = self._parse_http_headers(resp.info())
         resp.close()
         try:
             remote_ts = headers['last-modified']
@@ -84,10 +84,23 @@ class getInputCVE(object):
             seconds_epoch = (remote_dt - epoch).total_seconds()
             utime(dest_file, (seconds_epoch, seconds_epoch))
         except KeyError:
-            stderr.write("Response header of HTTP doesn't contain" \
-                  "\"last-modified\" field. Cannot determine version" \
-                  " of remote file \"{0}\"".format(dist_url))
+            self._print_no_last_modified_warning(dist_url)
+
         return dest_file
+
+    def _print_no_last_modified_warning(self, url):
+        if self.DEBUG:
+            stderr.write("Warning: Response header of HTTP doesn't contain " \
+                         "\"last-modified\" field. Cannot determine version" \
+                         " of remote file \"{0}\"\n".format(url))
+
+    def _parse_http_headers(self, http_headers):
+        '''
+        Returns dictionary containing HTTP headers with lowercase keys
+        '''
+
+        headers_dict = dict(http_headers)
+        return dict( (key.lower(), value) for key, value in headers_dict.items() )
 
     def _is_cache_same(self, dest_file, dist_url):
         '''
@@ -112,7 +125,7 @@ class getInputCVE(object):
         # Grab the header
         try:
             res = opener.open(HeadRequest(dist_url))
-            headers = dict(res.info())
+            headers = self._parse_http_headers(res.info())
             res.close()
             remote_ts = headers['last-modified']
 
@@ -124,10 +137,7 @@ class getInputCVE(object):
             return False
 
         except KeyError:
-            if self.DEBUG:
-                stderr.write("Response header of HTTP doesn't contain " \
-                      "\"last-modified\" field. Cannot determine version" \
-                      " of remote file \"{0}\"\n".format(dist_url))
+            self._print_no_last_modified_warning(dist_url)
             return False
 
         # The remote's datetime

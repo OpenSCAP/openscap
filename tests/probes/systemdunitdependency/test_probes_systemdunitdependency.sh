@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 
-# Copyright 2014 Red Hat Inc., Durham, North Carolina.
+# Copyright 2014--2016 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 #
 # OpenScap Probes Test Suite.
+
+set -e -o pipefail
 
 . ../../test_common.sh
 
@@ -18,14 +20,10 @@ function test_probes_systemdunitdependency {
 
     $OSCAP oval eval --results $RF $DF
 
-    if [ -f $RF ]; then
-        verify_results "def" $DF $RF 3 && verify_results "tst" $DF $RF 3
-        ret_val=$?
-    else
-        ret_val=1
-    fi
-
-    return $ret_val
+    [ -f $RF ]
+    verify_results "def" $DF $RF 3
+    verify_results "tst" $DF $RF 3
+    rm $RF
 }
 
 test_probes_systemdunitdependency

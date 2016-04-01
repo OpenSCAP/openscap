@@ -24,6 +24,7 @@ function test_passing_values {
   grep "VALUE_1=fail" "$RESFILE"
   # ensure that value set with <set-value> was passed correctly
   grep "VALUE_2=my_pass_val" "$RESFILE"
+  rm $RESFILE
 }
 
 # Testing.

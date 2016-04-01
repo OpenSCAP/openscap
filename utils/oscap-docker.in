@@ -65,6 +65,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='oscap docker',
                                      epilog='See `man oscap` to learn \
                                      more about OSCAP-ARGUMENTS')
+    parser.set_defaults(func=parser.print_help)
     subparser = parser.add_subparsers(help="commands")
 
     # Scan CVEs in image

@@ -73,6 +73,9 @@
 #include "debug_priv.h"
 #include "probe/entcmp.h"
 
+#include <probe/probe.h>
+#include <probe/option.h>
+
 struct rpmverify_res {
 	char *name;  /**< package name */
 	const char *epoch;
@@ -326,6 +329,7 @@ ret:
 
 void *probe_init (void)
 {
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
@@ -334,7 +338,6 @@ void *probe_init (void)
 	g_rpm.rpmts = rpmtsCreate();
 
 	pthread_mutex_init(&(g_rpm.mutex), NULL);
-
 	return ((void *)&g_rpm);
 }
 
@@ -447,6 +450,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 	uint64_t collect_flags = 0;
 	unsigned int i;
 
+	if (g_rpm.rpmts == NULL) {
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+		return 0;
+	}
+
 	/*
 	 * Get refs to object entities
 	 */
@@ -496,7 +504,7 @@ int probe_main (probe_ctx *ctx, void *arg)
 
 			if (aval != NULL) {
 				if (SEXP_strcmp(aval, "true") == 0) {
-					dI("omit verify attr: %s", rpmverifyfile_bhmap[i].a_name);
+					dD("omit verify attr: %s", rpmverifyfile_bhmap[i].a_name);
 					collect_flags |= rpmverifyfile_bhmap[i].a_flag;
 				}
 

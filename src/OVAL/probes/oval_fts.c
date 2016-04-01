@@ -817,7 +817,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return NULL;
 	}
 
-	dI("fts_open args: path: \"%s\", options: %d.", paths[0], mtc_fts_options);
+	dI("Opening file '%s'.", paths[0]);
 
 	ofts = OVAL_FTS_new();
 	/* reset errno as fts_open() doesn't do it itself. */
@@ -966,11 +966,11 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			if (ret < 0) {
 				switch (ret) {
 				case PCRE_ERROR_NOMATCH:
-					dI("Partial match optimization: PCRE_ERROR_NOMATCH, skipping.");
+					dD("Partial match optimization: PCRE_ERROR_NOMATCH, skipping.");
 					fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
 					continue;
 				case PCRE_ERROR_PARTIAL:
-					dI("Partial match optimization: PCRE_ERROR_PARTIAL, continuing.");
+					dD("Partial match optimization: PCRE_ERROR_PARTIAL, continuing.");
 					continue;
 				default:
 					dE("pcre_exec() error: %d.", ret);

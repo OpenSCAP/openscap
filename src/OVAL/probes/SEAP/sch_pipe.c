@@ -219,21 +219,12 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
                 close (pfd[0]);
 
                 /*
-                 * setup input, output and error streams
+                 * setup input and output streams
                  */
                 if (dup2 (pfd[1], STDIN_FILENO) != STDIN_FILENO)
                         _exit (errno);
                 if (dup2 (pfd[1], STDOUT_FILENO) != STDOUT_FILENO)
                         _exit (errno);
-#ifdef NDEBUG
-                pfd[0] = open ("/dev/null", O_WRONLY);
-
-                if (pfd[0] < 0)
-                        _exit (errno);
-
-                if (dup2 (pfd[0], STDERR_FILENO) != STDERR_FILENO)
-                        _exit (errno);
-#endif
                 execl (data->execpath, data->execpath, NULL);
                 _exit (errno);
         default: /* parent */

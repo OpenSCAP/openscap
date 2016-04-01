@@ -730,7 +730,6 @@ eloop_exit:
                         } else {
                                 SEXP_list_free (sexp_buffer);
                                 SEXP_psetup_free (psetup);
-				SEXP_free(sexp_buffer);
                                 dI("eloop_restart");
                                 goto eloop_start;
                         }

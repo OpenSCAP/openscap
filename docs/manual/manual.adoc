@@ -2,7 +2,7 @@
 Michal Šrubař <msrubar@redhat.com>
 v1.0, 2015-31-08
 :imagesdir: ./images
-:workbench_url: https://fedorahosted.org/scap-workbench/
+:workbench_url: https://www.open-scap.org/tools/scap-workbench/
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
 :ssg_git:       https://github.com/OpenSCAP/scap-security-guide
@@ -1190,12 +1190,10 @@ and ```oval analyse``` modules.
 There is no need to special compilation, the feature is available for all
 OpenSCAP users.
 
-To turn the verbose mode on, run ```oscap``` with both those two options:
+To turn the verbose mode on, run ```oscap``` with this option:
 
 * ```--verbose VERBOSITY_LEVEL``` - Turn on verbose mode at specified
 verbosity level.
-* ```--verbose-log-file FILE``` - Provide name of a log file that the log
-will be written into.
 
 The ```VERBOSITY_LEVEL``` can be one of:
 
@@ -1204,8 +1202,9 @@ The ```VERBOSITY_LEVEL``` can be one of:
 3. *WARNING* - possible failures which OpenSCAP can recover from
 4. *ERROR* - shows only serious errors
 
-If you omit one of those two options, verbose mode can't be turned on
-and you will get an error message.
+The verbose messages will be written on standard error output (stderr).
+Optionally, you can write the log into a file using
+ ```--verbose-log-file FILE```.
 
 This is an example describing how to run OpenSCAP in verbose mode:
 
@@ -1218,10 +1217,6 @@ Then see the log using eg.:
 ----
 $ less log.txt
 ----
-
-Each message contains identifier and name of the process and thread which produced
-the message, then its verbosity level, and also source file, line and function
-describing specific place of its origin.
 
 ==== Debug mode
 Debug mode is useful for programmers. You need to build OpenSCAP from source code

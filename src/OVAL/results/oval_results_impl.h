@@ -67,6 +67,7 @@ xmlNode *oval_result_item_to_dom(struct oval_result_item *, xmlDocPtr, xmlNode *
 struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node(struct oval_result_system *, struct oval_criteria_node *, int variable_instance);
 
 int oval_result_criteria_node_parse(xmlTextReaderPtr, struct oval_parser_context *, struct oval_result_system *, oscap_consumer_func, void *);
+oval_result_t oval_result_criteria_node_negate(struct oval_result_criteria_node *node, oval_result_t result);
 xmlNode *oval_result_criteria_node_to_dom(struct oval_result_criteria_node *, xmlDocPtr, xmlNode *);
 
 oval_result_t oval_result_parse(xmlTextReaderPtr, char *, oval_result_t);
@@ -90,12 +91,17 @@ void ores_clear(struct oresults *ores);
 oval_result_t ores_get_result_bychk(struct oresults *ores, oval_check_t check);
 oval_result_t ores_get_result_byopr(struct oresults *ores, oval_operator_t op);
 
+struct oval_results_model *oval_results_model_new_with_probe_session(struct oval_definition_model *definition_model, struct oval_syschar_model **syschar_models, struct oval_probe_session *probe_session);
+struct oval_probe_session *oval_results_model_get_probe_session(struct oval_results_model *model);
 void oval_results_model_add_system(struct oval_results_model *, struct oval_result_system *);
 
 struct oval_result_definition_iterator *oval_result_definition_iterator_new(struct oval_smc *mapping);
 struct oval_result_test_iterator *oval_result_test_iterator_new(struct oval_smc *mapping);
 
 const char *oval_result_test_get_id(const struct oval_result_test *test);
+
+
+struct oval_result_definition *oval_result_system_prepare_definition(struct oval_result_system *sys, const char *id);
 
 OSCAP_HIDDEN_END;
 

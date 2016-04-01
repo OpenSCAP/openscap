@@ -355,6 +355,84 @@ int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
 	return ret;
 }
 
+static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_state *state)
+{
+	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
+	while (oval_state_content_iterator_has_more(contents)) {
+		struct oval_state_content *content = oval_state_content_iterator_next(contents);
+		struct oval_entity * entity = oval_state_content_get_entity(content);
+		if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
+			oval_syschar_collection_flag_t flag;
+			struct oval_variable *var = oval_entity_get_variable(entity);
+			const char *state_id = oval_state_get_id(state);
+			oval_variable_type_t var_type = oval_variable_get_type(var);
+			const char *var_type_text = oval_variable_type_get_text(var_type);
+			const char *var_id = oval_variable_get_id(var);
+			dI("State '%s' references %s '%s'.", state_id,
+			   var_type_text, var_id);
+
+			int ret = oval_probe_query_variable(sess, var);
+			if (ret == -1) {
+				oval_state_content_iterator_free(contents);
+				return ret;
+			}
+
+			flag = oval_variable_get_collection_flag(var);
+			switch (flag) {
+			case SYSCHAR_FLAG_COMPLETE:
+			case SYSCHAR_FLAG_INCOMPLETE:
+				break;
+			default:
+				oval_state_content_iterator_free(contents);
+				return 0;
+			}
+		}
+	}
+	oval_state_content_iterator_free(contents);
+	return 1;
+}
+
+int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
+{
+	struct oval_object *object;
+	struct oval_state_iterator *ste_itr;
+	const char *type, *test_id, *comment;
+	int ret;
+
+	type = oval_subtype_get_text(oval_test_get_subtype(test));
+	test_id = oval_test_get_id(test);
+	comment = oval_test_get_comment(test);
+	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
+	object = oval_test_get_object(test);
+	if (object == NULL)
+		return 0;
+	/* probe object */
+	ret = oval_probe_query_object(sess, object, 0, NULL);
+	if (ret == -1)
+		return ret;
+	/* probe objects referenced like this: test->state->variable->object */
+	ste_itr = oval_test_get_states(test);
+	while (oval_state_iterator_has_more(ste_itr)) {
+		struct oval_state *state = oval_state_iterator_next(ste_itr);
+		ret = oval_probe_query_var_ref(sess, state);
+		if (ret < 1) {
+			oval_state_iterator_free(ste_itr);
+			return ret;
+		}
+	}
+	oval_state_iterator_free(ste_itr);
+
+	return 0;
+}
+
+static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
+{
+	struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
+	const char *def_id = oval_definition_get_id(oval_def);
+	dI("Criteria are extended by definition '%s'.", def_id);
+	return oval_probe_query_definition(sess, def_id);
+}
+
 /**
  * @returns 0 on success; -1 on error; 1 on warning
  */
@@ -365,63 +443,12 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 	/* Criterion node is the final node that has a reference to a test */
 	case OVAL_NODETYPE_CRITERION:{
 		/* There should be a test .. */
-		struct oval_test *test;
-		struct oval_object *object;
-		struct oval_state_iterator *ste_itr;
-
-		test = oval_criteria_node_get_test(cnode);
-		if (test == NULL)
+		struct oval_test *test = oval_criteria_node_get_test(cnode);
+		if (test == NULL) {
 			return 0;
-		object = oval_test_get_object(test);
-		if (object == NULL)
-			return 0;
-		/* probe object */
-		ret = oval_probe_query_object(sess, object, 0, NULL);
-		if (ret == -1)
-			return ret;
-		/* probe objects referenced like this: test->state->variable->object */
-		ste_itr = oval_test_get_states(test);
-		while (oval_state_iterator_has_more(ste_itr)) {
-			struct oval_state *state = oval_state_iterator_next(ste_itr);
-			struct oval_state_content_iterator *contents = oval_state_get_contents(state);
-			while (oval_state_content_iterator_has_more(contents)) {
-				struct oval_state_content *content = oval_state_content_iterator_next(contents);
-				struct oval_entity * entity = oval_state_content_get_entity(content);
-				if (oval_entity_get_varref_type(entity) == OVAL_ENTITY_VARREF_ATTRIBUTE) {
-					oval_syschar_collection_flag_t flag;
-					struct oval_variable *var = oval_entity_get_variable(entity);
-					const char *state_id = oval_state_get_id(state);
-					oval_variable_type_t var_type = oval_variable_get_type(var);
-					const char *var_type_text = oval_variable_type_get_text(var_type);
-					const char *var_id = oval_variable_get_id(var);
-					dI("State '%s' references %s '%s'.", state_id,
-						var_type_text, var_id);
-
-					ret = oval_probe_query_variable(sess, var);
-					if (ret == -1) {
-						oval_state_content_iterator_free(contents);
-						oval_state_iterator_free(ste_itr);
-						return ret;
-					}
-
-					flag = oval_variable_get_collection_flag(var);
-					switch (flag) {
-					case SYSCHAR_FLAG_COMPLETE:
-					case SYSCHAR_FLAG_INCOMPLETE:
-						break;
-					default:
-						oval_state_content_iterator_free(contents);
-						oval_state_iterator_free(ste_itr);
-						return 0;
-					}
-				}
-			}
-			oval_state_content_iterator_free(contents);
 		}
-		oval_state_iterator_free(ste_itr);
-
-		return 0;
-
+		ret = oval_probe_query_test(sess, test);
+		return ret;
 		}
 		break;
                 /* Criteria node is type of set that contains more criterias. Criteria node
@@ -448,14 +475,8 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
                 /* Extended definition contains reference to definition, we need criteria of this
                  * definition to be evaluated completely */
         case OVAL_NODETYPE_EXTENDDEF:{
-                        struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
-			struct oval_criteria_node *node =  oval_definition_get_criteria(oval_def);
-			if (node == NULL) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find extended definition: %s.",
-					oval_definition_get_id(oval_def));
-				return -1;
-			}
-                        return oval_probe_query_criteria(sess, node);
+		ret = oval_probe_query_extend_definition(sess, cnode);
+		return ret;
                 }
                 break;
         case OVAL_NODETYPE_UNKNOWN:

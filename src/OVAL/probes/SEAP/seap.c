@@ -239,7 +239,9 @@ static void *__SEAP_cmdexec_worker (void *arg)
 
         _A(job != NULL);
         _A(job->cmd != NULL);
+#if defined(HAVE_PTHREAD_SETNAME_NP)
 	pthread_setname_np(pthread_self(), "command_worker");
+#endif
 
         if (job->cmd->flags & SEAP_CMDFLAG_REPLY) {
                 (void) SEAP_cmd_exec (job->ctx, job->sd, SEAP_EXEC_WQUEUE,
@@ -466,7 +468,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
                         SEAP_msg_t *nil_msg;
                         int         ret;
 
-                        dI("no-reply set: sending empty reply");
+                        dD("no-reply set: sending empty reply");
 
                         nil_msg = SEAP_msg_clone (rep_msg);
                         SEAP_msg_unset (nil_msg);
@@ -475,7 +477,7 @@ int SEAP_reply (SEAP_CTX_t *ctx, int sd, SEAP_msg_t *rep_msg, SEAP_msg_t *req_ms
 
                         return (ret);
                 } else {
-                        dI("no-reply not set: sending full reply");
+                        dD("no-reply not set: sending full reply");
                         return SEAP_sendmsg (ctx, sd, rep_msg);
                 }
         } else {

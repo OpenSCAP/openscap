@@ -77,6 +77,10 @@
             <title xml:lang="en-us">Fedora 24</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:24</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:25">
+            <title xml:lang="en-us">Fedora 25</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:25</check>
+      </cpe-item>
       <cpe-item name="cpe:/o:suse:sle">
             <title xml:lang="en-us">SUSE Linux Enterprise all versions</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:1</check>
@@ -121,6 +125,7 @@
             <title xml:lang="en-us">openSUSE All Versions</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:1</check>
       </cpe-item>
+
       <!-- Add-ons -->
       <cpe-item name="cpe:/a:redhat:rhel_productivity">
             <title xml:lang="en-us">Red Hat Enterprise Linux Optional Productivity Applications</title>

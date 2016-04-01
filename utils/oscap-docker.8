@@ -1,4 +1,4 @@
-.TH oscap-docker "8" "June 2015" "Red Hat, Inc." "System Administration Utilities"
+.TH oscap-docker "8" "January 2016" "Red Hat, Inc." "System Administration Utilities"
 .SH NAME
 oscap-docker \- Tool for running oscap within docker container or image
 .SH DESCRIPTION
@@ -7,19 +7,19 @@ containers or cold Docker images. OpenSCAP tool (oscap) is used underneath. Defi
 of vulnerabilities (CVE stream) is downloaded from product vendor.
 
 .SS Compliance scan of Docker image
-Usage: docker-oscap image IMAGE_NAME [OSCAP_ARGUMENTS]
+Usage: oscap-docker image IMAGE_NAME [OSCAP_ARGUMENTS]
 
 Run any OpenSCAP (oscap) command within chroot of mounted docker image. Learn more
 about OSCAP_ARGUMENTS in oscap(8) man page.
 
 .SS Compliance scan of Docker container
-Usage: docker-oscap container CONTAINER_NAME [OSCAP_ARGUMENTS]
+Usage: oscap-docker container CONTAINER_NAME [OSCAP_ARGUMENTS]
 
 Run any OpenSCAP (oscap) command within chroot of mounted docker container. Result
 of this command may differ from scanning just an image due to defined mount points.
 
 .SS "Vulnerability scan of Docker image"
-Usage: docker\-oscap image\-cve IMAGE_NAME [--results oval-results-file.xml [--report report.html]]
+Usage: oscap-docker image-cve IMAGE_NAME [--results oval-results-file.xml [--report report.html]]
 
 Attach docker image, determine OS variant/version, download CVE stream applicable to
 the given OS, and finally run vulnerability scan.
@@ -38,7 +38,7 @@ to the given OS and finally run a vulnerability scan.
 
 .SH REPORTING BUGS
 .nf
-Please report bugs using https://fedorahosted.org/openscap/
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
 
 .SH AUTHORS
 .nf

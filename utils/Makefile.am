@@ -58,6 +58,10 @@ if WANT_UTIL_OSCAP_VM
 bin_SCRIPTS += oscap-vm
 man_MANS += oscap-vm.8
 endif
+if WANT_UTIL_OSCAP_CHROOT
+bin_SCRIPTS += oscap-chroot
+man_MANS += oscap-chroot.8
+endif
 
 CONFIG_CLEAN_FILES = oscap-docker
 

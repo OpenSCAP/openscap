@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
 #include "common/alloc.h"
 #include "common/elements.h"
@@ -104,6 +105,7 @@ static const char *ds_sds_session_get_temp_dir(struct ds_sds_session *session)
 {
 	if (session->temp_dir == NULL) {
 		session->temp_dir = oscap_acquire_temp_dir();
+		dD("SDS session created temporary directory '%s'.", session->temp_dir);
 	}
 	return session->temp_dir;
 }
@@ -164,7 +166,7 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 
 	// We only use benchmark ID if datastream ID and/or component ID were NOT supplied.
 	if (!datastream_id && !component_id && benchmark_id) {
-		if (ds_sds_index_select_checklist_by_benchmark_id(ds_sds_session_get_sds_idx(session), 	benchmark_id,
+		if (ds_sds_index_select_checklist_by_benchmark_id(ds_sds_session_get_sds_idx(session), benchmark_id,
 				(const char **) &(session->datastream_id), (const char **) &(session->checklist_id)) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to locate a datastream with component-ref "
 				"that points to a component containing Benchmark with ID '%s'.", benchmark_id);
@@ -270,7 +272,7 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 		if (target_filename == NULL) {
 			res = ds_sds_dump_component_ref(component_ref, session);
 		} else {
-			res = ds_sds_dump_component_ref_as(component_ref, session, ds_sds_session_get_target_dir(session), target_filename);
+			res = ds_sds_dump_component_ref_as(component_ref, session, "." , target_filename);
 		}
 	}
 	else {

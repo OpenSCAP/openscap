@@ -74,6 +74,9 @@
 #include "debug_priv.h"
 #include "probe/entcmp.h"
 
+#include <probe/probe.h>
+#include <probe/option.h>
+
 typedef struct {
 	const char *a_name;
 	uint64_t    a_flag;
@@ -283,7 +286,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 			rpmReadConfigFiles ((const char *)NULL, (const char *)NULL);
 			rpmts ts = rpmtsCreate();
-			ret = rpmcliVerify(ts, qva, (ARGV_const_t) poptGetArgs(rpmcli_context));
+			ret = rpmcliVerify(ts, qva, (char * const *) poptGetArgs(rpmcli_context));
 			ts = rpmtsFree(ts);
 			rpmcli_context = rpmcliFini(rpmcli_context);
 
@@ -312,6 +315,8 @@ ret:
 
 void *probe_init (void)
 {
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
@@ -320,7 +325,6 @@ void *probe_init (void)
 	g_rpm.rpmts = rpmtsCreate();
 
 	pthread_mutex_init(&(g_rpm.mutex), NULL);
-
 	return ((void *)&g_rpm);
 }
 
@@ -384,6 +388,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 	SEXP_t *name_ent, *epoch_ent, *version_ent, *release_ent, *arch_ent;
 	uint64_t collect_flags = 0;
 	unsigned int i;
+
+	if (g_rpm.rpmts == NULL) {
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
+		return 0;
+	}
 
 	/*
 	 * Get refs to object entities

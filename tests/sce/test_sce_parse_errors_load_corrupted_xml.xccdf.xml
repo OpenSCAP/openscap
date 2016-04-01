@@ -1,0 +1,16 @@
+<ns0:Benchmark xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap.sce-community-content_benchmark_all" xml:lang="en">
+	<ns0:status date="2016-03-10">draft</ns0:status>
+	<ns0:title xml:lang="en">Dummy content - check no error occurs whe we tries to load .sh script as xml</ns0:title>
+	<ns0:version>1.0</ns0:version>
+	<ns0:Rule id="xccdf_org.open-scap.sce-community-content_rule_system_authsettings-passwd_file_permissions" selected="true">
+		<ns0:check system="http://open-scap.org/page/SCE">
+			<ns0:check-content-ref href="test_sce_parse_errors-invalid-oval.xml" />
+		</ns0:check>
+	</ns0:Rule>
+	<ns0:Rule id="xccdf_org.open-scap.sce-community-content_rule_oval_dummy" selected="false">
+		<ns0:title>Without this file we don't have valid output DS</ns0:title>
+		<ns0:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+			<ns0:check-content-ref href="test_sce_parse_errors_stub-oval.xml" />
+		</ns0:check>
+	</ns0:Rule>
+</ns0:Benchmark>

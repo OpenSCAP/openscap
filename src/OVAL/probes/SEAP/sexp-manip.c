@@ -1463,7 +1463,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
 								    list_it[min_i].count - 1, sizeof(SEXP_t), (void *)&tmp_v,
 								    (int(*)(void *, void *))compare, &dst_i);
 
-						dI("dst_i = %zu", dst_i);
+						dD("dst_i = %zu", dst_i);
 
 						/* make place for the old value in the min. value source block */
 						memmove(list_it[min_i].block->memb, list_it[min_i].block->memb + 1,
