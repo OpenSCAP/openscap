@@ -396,13 +396,8 @@ int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
 {
 	struct oval_object *object;
 	struct oval_state_iterator *ste_itr;
-	const char *type, *test_id, *comment;
 	int ret;
 
-	type = oval_subtype_get_text(oval_test_get_subtype(test));
-	test_id = oval_test_get_id(test);
-	comment = oval_test_get_comment(test);
-	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
 	object = oval_test_get_object(test);
 	if (object == NULL)
 		return 0;

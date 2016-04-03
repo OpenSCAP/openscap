@@ -1041,6 +1041,12 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 {
 	__attribute__nonnull__(rtest);
 
+	struct oval_test *test = oval_result_test_get_test(rtest);
+	const char *type = oval_subtype_get_text(oval_test_get_subtype(test));
+	const char *test_id = oval_test_get_id(test);
+	const char *comment = oval_test_get_comment(test);
+	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
+
 	if (rtest->result == OVAL_RESULT_NOT_EVALUATED) {
 		if ((oval_independent_subtype_t)oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN ) {
 			struct oval_string_map *tmp_map = oval_string_map_new();
@@ -1056,7 +1062,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 			rtest->result = OVAL_RESULT_UNKNOWN;
 	}
 
-	dI("Test '%s' evaluated as %s.", oval_result_test_get_id(rtest), oval_result_get_text(rtest->result));
+	dI("Test '%s' evaluated as %s.", test_id, oval_result_get_text(rtest->result));
 
 	return rtest->result;
 }
