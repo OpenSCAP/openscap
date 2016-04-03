@@ -429,7 +429,6 @@ static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct
 {
 	struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
 	const char *def_id = oval_definition_get_id(oval_def);
-	dI("Criteria are extended by definition '%s'.", def_id);
 	return oval_probe_query_definition(sess, def_id);
 }
 

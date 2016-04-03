@@ -359,6 +359,8 @@ static oval_result_t _oval_result_criteria_node_result(struct oval_result_criter
 		} break;
 	case OVAL_NODETYPE_EXTENDDEF:{
 			struct oval_result_definition *extends = oval_result_criteria_node_get_extends(node);
+			const char *def_id = oval_result_definition_get_id(extends);
+			dI("Criteria are extended by definition '%s'.", def_id);
 			result = oval_result_definition_eval(extends);
 		} break;
 	default:
