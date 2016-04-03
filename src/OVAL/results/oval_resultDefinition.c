@@ -151,7 +151,9 @@ oval_result_t oval_result_definition_eval(struct oval_result_definition * defini
 	if (definition->result == OVAL_RESULT_NOT_EVALUATED) {
 		struct oval_result_criteria_node *criteria = oval_result_definition_get_criteria(definition);
 		if (criteria != NULL) {
+			dIndent(1);
 			definition->result = oval_result_criteria_node_eval(criteria);
+			dIndent(-1);
 		}
 	}
 	dI("Definition '%s' evaluated as %s.", oval_result_definition_get_id(definition), oval_result_get_text(definition->result));

@@ -1045,7 +1045,9 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 		if ((oval_independent_subtype_t)oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN ) {
 			struct oval_string_map *tmp_map = oval_string_map_new();
 			void *args[] = { rtest->system, rtest, tmp_map };
+			dIndent(1);
 			rtest->result = _oval_result_test_result(rtest, args);
+			dIndent(-1);
 			oval_string_map_free(tmp_map, NULL);
 
 			if (!rtest->bindings_initialized) {
