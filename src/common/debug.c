@@ -139,7 +139,7 @@ static const char *__oscap_path_rstrip(const char *path)
 }
 
 
-static void debug_message_start(int level)
+static void debug_message_start(int level, int indent)
 {
 	char  l;
 
@@ -170,6 +170,9 @@ static void debug_message_start(int level)
 		l = '0';
 	}
 	fprintf(__debuglog_fp, "%c: %s: ", l, program_invocation_short_name);
+	for (int i = 0; i < indent; i++) {
+		fprintf(__debuglog_fp, "  ");
+	}
 }
 
 static void debug_message_devel_metadata(const char *file, const char *fn, size_t line)
@@ -209,18 +212,23 @@ static void debug_message_end()
 	return;
 }
 
-void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, ...)
+void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, int delta_indent, const char *fmt, ...)
 {
+	static int indent = 0;
 	va_list ap;
 
 	if (__debuglog_fp == NULL) {
+		return;
+	}
+	indent += delta_indent;
+	if (fmt == NULL) {
 		return;
 	}
 	if (__debuglog_level < level) {
 		return;
 	}
 	va_start(ap, fmt);
-	debug_message_start(level);
+	debug_message_start(level, indent);
 	vfprintf(__debuglog_fp, fmt, ap);
 	if (__debuglog_level == DBG_D) {
 		debug_message_devel_metadata(file, fn, line);
@@ -237,7 +245,7 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	if (__debuglog_level < DBG_D) {
 		return;
 	}
-	debug_message_start(DBG_D);
+	debug_message_start(DBG_D, 0);
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
@@ -248,4 +256,3 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	debug_message_devel_metadata(file, fn, line);
 	debug_message_end();
 }
-
