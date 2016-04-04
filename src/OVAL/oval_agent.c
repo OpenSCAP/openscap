@@ -161,17 +161,7 @@ static struct oval_result_system *_oval_agent_get_first_result_system(oval_agent
 int oval_agent_eval_definition(oval_agent_session_t *ag_sess, const char *id)
 {
 	int ret;
-	const char *title = NULL;
 	struct oval_result_system *rsystem;
-	struct oval_definition *oval_def;
-
-	oval_def = oval_definition_model_get_definition(ag_sess->def_model, id);
-	if (oval_def != NULL) {
-		title = oval_definition_get_title(oval_def);
-	}
-	dI("Evaluating definition '%s': %s.", id, title);
-
-	/* probe */
 
 	rsystem = _oval_agent_get_first_result_system(ag_sess);
 	/* eval */

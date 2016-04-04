@@ -147,6 +147,9 @@ int oval_result_definition_get_instance(const struct oval_result_definition *def
 oval_result_t oval_result_definition_eval(struct oval_result_definition * definition)
 {
 	__attribute__nonnull__(definition);
+	const char *id = oval_result_definition_get_id(definition);
+	const char *title = oval_definition_get_title(oval_result_definition_get_definition(definition));
+	dI("Evaluating definition '%s': %s.", id, title);
 
 	if (definition->result == OVAL_RESULT_NOT_EVALUATED) {
 		struct oval_result_criteria_node *criteria = oval_result_definition_get_criteria(definition);
@@ -156,7 +159,8 @@ oval_result_t oval_result_definition_eval(struct oval_result_definition * defini
 			dIndent(-1);
 		}
 	}
-	dI("Definition '%s' evaluated as %s.", oval_result_definition_get_id(definition), oval_result_get_text(definition->result));
+
+	dI("Definition '%s' evaluated as %s.", id, oval_result_get_text(definition->result));
 	return definition->result;
 }
 
