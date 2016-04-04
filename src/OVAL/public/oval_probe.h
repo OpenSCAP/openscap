@@ -69,7 +69,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
  * @param id definition id
  * @return 0 on success; -1 on error; 1 warning
  */
-int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) __attribute__ ((nonnull(1, 2)));
+OSCAP_DEPRECATED(int oval_probe_query_definition(oval_probe_session_t *sess, const char *id)) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Query the specified variable and all its dependencies in order to compute the vector of its values
