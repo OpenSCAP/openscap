@@ -224,7 +224,6 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 
 static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **rep)
 {
-	const char runlevel_list[] = {'0', '1', '2', '3', '4', '5', '6'};
 #if defined(__linux__) || defined(__GLIBC__)
 	const char *init_path = "/etc/rc.d/init.d";
 #elif defined(__SVR4) && defined(__sun)
