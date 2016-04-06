@@ -13,20 +13,14 @@ function test_api_xccdf_tailoring {
     local PROFILE=$3
     local EXPECTED_PASS=$4
 
-    local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --tailoring-file $TAILORING --profile $PROFILE --results $TMP_RESULTS $INPUT
+    result=`mktemp`
+    $OSCAP xccdf eval --tailoring-file $TAILORING --profile $PROFILE --results $result $INPUT
     if [ "$?" != "0" ]; then
         return 1
     fi
 
-    local PASS_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="pass"])')
-    rm -f $TMP_RESULTS
-
-    if [ "$PASS_COUNT" == "$EXPECTED_PASS" ]; then
-        return 0
-    fi
-
-    return 1
+    assert_exists $4 '//result[text()="pass"]'
+    rm -f $result
 }
 
 function test_api_xccdf_tailoring_ds {
@@ -35,20 +29,14 @@ function test_api_xccdf_tailoring_ds {
     local PROFILE=$3
     local EXPECTED_PASS=$4
 
-    local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --tailoring-id $TAILORING_ID --profile $PROFILE --results $TMP_RESULTS $INPUT
+    result=`mktemp`
+    $OSCAP xccdf eval --tailoring-id $TAILORING_ID --profile $PROFILE --results $result $INPUT
     if [ "$?" != "0" ]; then
         return 1
     fi
 
-    local PASS_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="pass"])')
-    rm -f $TMP_RESULTS
-
-    if [ "$PASS_COUNT" == "$EXPECTED_PASS" ]; then
-        return 0
-    fi
-
-    return 1
+    assert_exists $4 '//result[text()="pass"]'
+    rm -f $result
 }
 
 function test_api_xccdf_tailoring_ds_hybrid {
@@ -57,20 +45,14 @@ function test_api_xccdf_tailoring_ds_hybrid {
     local PROFILE=$3
     local EXPECTED_PASS=$4
 
-    local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --tailoring-file $TAILORING --profile $PROFILE --results $TMP_RESULTS $INPUT
+    result=`mktemp`
+    $OSCAP xccdf eval --tailoring-file $TAILORING --profile $PROFILE --results $result $INPUT
     if [ "$?" != "0" ]; then
         return 1
     fi
 
-    local PASS_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="pass"])')
-    rm -f $TMP_RESULTS
-
-    if [ "$PASS_COUNT" == "$EXPECTED_PASS" ]; then
-        return 0
-    fi
-
-    return 1
+    assert_exists $4 '//result[text()="pass"]'
+    rm -f $result
 }
 
 function test_api_xccdf_tailoring_oscap_info {
@@ -92,20 +74,13 @@ function test_api_xccdf_tailoring_autonegotiation {
     local PROFILE=$2
     local EXPECTED_PASS=$3
 
-    local TMP_RESULTS=`mktemp`
-    $OSCAP xccdf eval --profile $PROFILE --results $TMP_RESULTS $TAILORING
+    result=`mktemp`
+    $OSCAP xccdf eval --profile $PROFILE --results $result $TAILORING
     if [ "$?" != "0" ]; then
         return 1
     fi
 
-    local PASS_COUNT=$($XPATH $TMP_RESULTS 'count(//result[text()="pass"])')
-    rm -f $TMP_RESULTS
-
-    if [ "$PASS_COUNT" == "$EXPECTED_PASS" ]; then
-        return 0
-    fi
-
-    return 1
+    assert_exists $3 '//result[text()="pass"]'
 }
 
 # Testing.
