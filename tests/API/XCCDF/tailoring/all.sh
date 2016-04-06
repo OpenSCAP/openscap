@@ -19,7 +19,7 @@ function test_api_xccdf_tailoring {
         return 1
     fi
 
-    assert_exists $4 '//result[text()="pass"]'
+    assert_exists $EXPECTED_PASS '//result[text()="pass"]'
     rm -f $result
 }
 
@@ -35,7 +35,7 @@ function test_api_xccdf_tailoring_ds {
         return 1
     fi
 
-    assert_exists $4 '//result[text()="pass"]'
+    assert_exists $EXPECTED_PASS '//result[text()="pass"]'
     rm -f $result
 }
 
@@ -51,7 +51,7 @@ function test_api_xccdf_tailoring_ds_hybrid {
         return 1
     fi
 
-    assert_exists $4 '//result[text()="pass"]'
+    assert_exists $EXPECTED_PASS '//result[text()="pass"]'
     rm -f $result
 }
 
@@ -80,7 +80,8 @@ function test_api_xccdf_tailoring_autonegotiation {
         return 1
     fi
 
-    assert_exists $3 '//result[text()="pass"]'
+    assert_exists $EXPECTED_PASS '//result[text()="pass"]'
+    rm -f $result
 }
 
 # Testing.

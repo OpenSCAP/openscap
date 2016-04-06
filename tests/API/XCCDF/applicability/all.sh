@@ -18,7 +18,8 @@ function test_api_xccdf_cpe_eval {
         return 1
     fi
 
-    assert_exists $3 '//result[text()="notapplicable"]'
+    assert_exists $EXPECTED_NA '//result[text()="notapplicable"]'
+    rm -f $result
 }
 
 function test_api_xccdf_cpe2_eval {
@@ -32,7 +33,8 @@ function test_api_xccdf_cpe2_eval {
         return 1
     fi
 
-    assert_exists $3 '//result[text()="notapplicable"]'
+    assert_exists $EXPECTED_NA '//result[text()="notapplicable"]'
+    rm -f $result
 }
 
 function test_api_xccdf_embedded_cpe_eval {
@@ -45,7 +47,8 @@ function test_api_xccdf_embedded_cpe_eval {
         return 1
     fi
 
-    assert_exists $2 '//result[text()="notapplicable"]'
+    assert_exists $EXPECTED_NA '//result[text()="notapplicable"]'
+    rm -f $result
 }
 # Testing.
 
