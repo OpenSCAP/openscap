@@ -89,16 +89,11 @@ struct rpminfo_rep {
 	char extended_name[1024];
 };
 
-struct rpminfo_global {
-        rpmts           rpmts;
-        pthread_mutex_t mutex;
-};
-
 #define RPMINFO_LOCK	RPM_MUTEX_LOCK(&g_rpm.mutex)
 
 #define RPMINFO_UNLOCK	RPM_MUTEX_UNLOCK(&g_rpm.mutex)
 
-static struct rpminfo_global g_rpm;
+static struct rpm_probe_global g_rpm;
 static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";
 static regex_t g_keyid_regex;
 
@@ -296,7 +291,7 @@ void *probe_init (void)
 
 void probe_fini (void *ptr)
 {
-        struct rpminfo_global *r = (struct rpminfo_global *)ptr;
+        struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
         rpmtsFree(r->rpmts);
 	rpmFreeCrypto();

@@ -36,6 +36,10 @@
 #include "common/debug_priv.h"
 #include "pthread.h"
 
+struct rpm_probe_global {
+	rpmts rpmts;
+	pthread_mutex_t mutex;
+};
 
 #ifndef HAVE_HEADERFORMAT
 # define HAVE_LIBRPM44 1 /* hack */

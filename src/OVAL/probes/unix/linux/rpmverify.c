@@ -66,12 +66,7 @@ struct rpmverify_res {
 #define RPMVERIFY_SKIP_GHOST  0x2000000000000000
 #define RPMVERIFY_RPMATTRMASK 0x00000000ffffffff
 
-struct rpmverify_global {
-        rpmts           rpmts;
-        pthread_mutex_t mutex;
-};
-
-static struct rpmverify_global g_rpm;
+static struct rpm_probe_global g_rpm;
 
 #define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm.mutex)
 #define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm.mutex)
@@ -237,7 +232,7 @@ void *probe_init (void)
 
 void probe_fini (void *ptr)
 {
-        struct rpmverify_global *r = (struct rpmverify_global *)ptr;
+        struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
         rpmtsFree(r->rpmts);
 	rpmFreeCrypto();
