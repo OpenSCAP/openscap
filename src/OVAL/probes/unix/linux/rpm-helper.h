@@ -20,4 +20,23 @@
 #ifndef __RPM_HELPER__
 #define __RPM_HELPER__
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifndef HAVE_HEADERFORMAT
+# define HAVE_LIBRPM44 1 /* hack */
+# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
+#endif
+
+#ifndef HAVE_RPMFREECRYPTO
+# define rpmFreeCrypto() while(0)
+#endif
+
+#ifndef HAVE_RPMFREEFILESYSTEMS
+# define rpmFreeFilesystems() while(0)
+#endif
+
+
+
 #endif

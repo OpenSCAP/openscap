@@ -54,18 +54,6 @@
 #include <rpm/rpmcli.h>
 
 #include "rpm-helper.h"
-#ifndef HAVE_HEADERFORMAT
-# define HAVE_LIBRPM44 1 /* hack */
-# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
-#endif
-
-#ifndef HAVE_RPMFREECRYPTO
-# define rpmFreeCrypto() while(0)
-#endif
-
-#ifndef HAVE_RPMFREEFILESYSTEMS
-# define rpmFreeFilesystems() while(0)
-#endif
 
 /* SEAP */
 #include <probe-api.h>
