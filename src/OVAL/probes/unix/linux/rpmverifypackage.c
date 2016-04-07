@@ -43,12 +43,12 @@
 #include <fcntl.h>
 #include <pcre.h>
 
-/* RPM headers */
+#include "rpm-helper.h"
+
+/* Individual RPM headers */
 #include <rpm/rpmfi.h>
 #include <rpm/rpmcli.h>
 #include <popt.h>
-
-#include "rpm-helper.h"
 
 /* SEAP */
 #include <probe-api.h>
