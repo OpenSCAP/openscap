@@ -24,6 +24,13 @@
 #include <config.h>
 #endif
 
+#include <rpm/rpmdb.h>
+#include <rpm/rpmlib.h>
+#include <rpm/rpmts.h>
+#include <rpm/rpmmacro.h>
+#include <rpm/rpmlog.h>
+#include <rpm/header.h>
+
 #ifndef HAVE_HEADERFORMAT
 # define HAVE_LIBRPM44 1 /* hack */
 # define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))

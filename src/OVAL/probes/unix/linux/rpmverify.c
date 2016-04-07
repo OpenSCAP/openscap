@@ -42,13 +42,7 @@
 #include <pcre.h>
 
 /* RPM headers */
-#include <rpm/rpmdb.h>
-#include <rpm/rpmlib.h>
-#include <rpm/rpmts.h>
-#include <rpm/rpmmacro.h>
-#include <rpm/rpmlog.h>
 #include <rpm/rpmfi.h>
-#include <rpm/header.h>
 #include <rpm/rpmcli.h>
 
 #include "rpm-helper.h"
