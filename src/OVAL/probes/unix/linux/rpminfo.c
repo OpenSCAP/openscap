@@ -94,25 +94,9 @@ struct rpminfo_global {
         pthread_mutex_t mutex;
 };
 
-#define RPMINFO_LOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex"); \
-			return (-1); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
-	} while(0)
+#define RPMINFO_LOCK	RPM_MUTEX_LOCK(&g_rpm.mutex)
 
-#define RPMINFO_UNLOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting..."); \
-			abort(); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
-	} while(0)
+#define RPMINFO_UNLOCK	RPM_MUTEX_UNLOCK(&g_rpm.mutex)
 
 static struct rpminfo_global g_rpm;
 static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";

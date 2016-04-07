@@ -31,6 +31,12 @@
 #include <rpm/rpmlog.h>
 #include <rpm/header.h>
 
+#include <pthread.h>
+#include "common/util.h"
+#include "common/debug_priv.h"
+#include "pthread.h"
+
+
 #ifndef HAVE_HEADERFORMAT
 # define HAVE_LIBRPM44 1 /* hack */
 # define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
@@ -44,6 +50,24 @@
 # define rpmFreeFilesystems() while(0)
 #endif
 
+#define RPM_MUTEX_LOCK(mutex_ptr) \
+	do { \
+		int prev_cancel_state = -1; \
+		if (pthread_mutex_lock(mutex_ptr) != 0) { \
+			dE("Can't lock mutex"); \
+			return (-1); \
+		} \
+		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
+	} while(0)
 
+#define RPM_MUTEX_UNLOCK(mutex_ptr) \
+	do { \
+		int prev_cancel_state = -1; \
+		if (pthread_mutex_unlock(mutex_ptr) != 0) { \
+			dE("Can't unlock mutex. Aborting..."); \
+			abort(); \
+		} \
+		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
+	} while(0)
 
 #endif

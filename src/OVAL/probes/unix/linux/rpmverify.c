@@ -73,25 +73,8 @@ struct rpmverify_global {
 
 static struct rpmverify_global g_rpm;
 
-#define RPMVERIFY_LOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex"); \
-			return (-1); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
-	} while(0)
-
-#define RPMVERIFY_UNLOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting..."); \
-			abort(); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
-	} while(0)
+#define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm.mutex)
+#define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm.mutex)
 
 static int rpmverify_collect(probe_ctx *ctx,
                              const char *name, oval_operation_t name_op,
