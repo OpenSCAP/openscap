@@ -241,28 +241,40 @@ endif
 
 if probe_rpminfo_enabled
 pkglibexec_PROGRAMS += probe_rpminfo
-probe_rpminfo_SOURCES= unix/linux/rpminfo.c
+probe_rpminfo_SOURCES= \
+    unix/linux/rpminfo.c \
+    unix/linux/rpm-helper.h \
+    unix/linux/rpm-helper.c
 probe_rpminfo_CFLAGS= @rpm_CFLAGS@
 probe_rpminfo_LDFLAGS= @rpm_LIBS@
 endif
 
 if probe_rpmverify_enabled
 pkglibexec_PROGRAMS += probe_rpmverify
-probe_rpmverify_SOURCES= unix/linux/rpmverify.c
+probe_rpmverify_SOURCES= \
+    unix/linux/rpmverify.c \
+    unix/linux/rpm-helper.h \
+    unix/linux/rpm-helper.c
 probe_rpmverify_CFLAGS= @rpm_CFLAGS@
 probe_rpmverify_LDFLAGS= @rpm_LIBS@
 endif
 
 if probe_rpmverifyfile_enabled
 pkglibexec_PROGRAMS += probe_rpmverifyfile
-probe_rpmverifyfile_SOURCES= unix/linux/rpmverifyfile.c
+probe_rpmverifyfile_SOURCES= \
+    unix/linux/rpmverifyfile.c \
+    unix/linux/rpm-helper.h \
+    unix/linux/rpm-helper.c
 probe_rpmverifyfile_CFLAGS= @rpm_CFLAGS@
 probe_rpmverifyfile_LDFLAGS= @rpm_LIBS@
 endif
 
 if probe_rpmverifypackage_enabled
 pkglibexec_PROGRAMS += probe_rpmverifypackage
-probe_rpmverifypackage_SOURCES= unix/linux/rpmverifypackage.c
+probe_rpmverifypackage_SOURCES= \
+    unix/linux/rpmverifypackage.c \
+    unix/linux/rpm-helper.h \
+    unix/linux/rpm-helper.c
 probe_rpmverifypackage_CFLAGS= @rpm_CFLAGS@
 probe_rpmverifypackage_LDFLAGS= @rpm_LIBS@ -lpopt
 endif
