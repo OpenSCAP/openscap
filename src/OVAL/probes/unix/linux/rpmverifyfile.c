@@ -43,28 +43,11 @@
 #include <fcntl.h>
 #include <pcre.h>
 
-/* RPM headers */
-#include <rpm/rpmdb.h>
-#include <rpm/rpmlib.h>
-#include <rpm/rpmts.h>
-#include <rpm/rpmmacro.h>
-#include <rpm/rpmlog.h>
+#include "rpm-helper.h"
+
+/* Individual RPM headers */
 #include <rpm/rpmfi.h>
-#include <rpm/header.h>
 #include <rpm/rpmcli.h>
-
-#ifndef HAVE_HEADERFORMAT
-# define HAVE_LIBRPM44 1 /* hack */
-# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
-#endif
-
-#ifndef HAVE_RPMFREECRYPTO
-# define rpmFreeCrypto() while(0)
-#endif
-
-#ifndef HAVE_RPMFREEFILESYSTEMS
-# define rpmFreeFilesystems() while(0)
-#endif
 
 /* SEAP */
 #include <probe-api.h>
@@ -93,32 +76,11 @@ struct rpmverify_res {
 #define RPMVERIFY_SKIP_GHOST  0x2000000000000000
 #define RPMVERIFY_RPMATTRMASK 0x00000000ffffffff
 
-struct rpmverify_global {
-	rpmts	   rpmts;
-	pthread_mutex_t mutex;
-};
+static struct rpm_probe_global g_rpm;
 
-static struct rpmverify_global g_rpm;
+#define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm.mutex)
 
-#define RPMVERIFY_LOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex"); \
-			return (-1); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
-	} while(0)
-
-#define RPMVERIFY_UNLOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting..."); \
-			abort(); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
-	} while(0)
+#define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm.mutex)
 
 /* modify passed-in iterator to test also given entity */
 static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_tag) {
@@ -343,7 +305,7 @@ void *probe_init (void)
 
 void probe_fini (void *ptr)
 {
-	struct rpmverify_global *r = (struct rpmverify_global *)ptr;
+	struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
 	rpmtsFree(r->rpmts);
 	rpmFreeCrypto();
