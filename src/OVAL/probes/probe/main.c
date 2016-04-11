@@ -43,6 +43,7 @@
 #include "input_handler.h"
 #include "probe-api.h"
 #include "option.h"
+#include <dlfcn.h>
 
 static int fail(int err, const char *who, int line)
 {
@@ -257,6 +258,7 @@ int main(int argc, char *argv[])
 			if (chdir(rootdir) != 0) {
 				fail(errno, "chdir", __LINE__ -1);
 			}
+			dlopen("libgcc_s.so.1", RTLD_NOW | RTLD_GLOBAL);
 			if (chroot(rootdir) != 0) {
 				fail(errno, "chroot", __LINE__ - 1);
 			}
