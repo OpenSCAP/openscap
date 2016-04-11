@@ -23,3 +23,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
+{
+	dE("RPM: %s", rpmlogRecMessage(rec));
+	return RPMLOG_EXIT; // don't perform default logging
+}
