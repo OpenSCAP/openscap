@@ -75,3 +75,5 @@ struct rpm_probe_global {
 	} while(0)
 
 #endif
+
+int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
