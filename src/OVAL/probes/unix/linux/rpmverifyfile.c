@@ -288,6 +288,7 @@ ret:
 
 void *probe_init (void)
 {
+	rpmlogSetCallback(rpmErrorCb, NULL);
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
