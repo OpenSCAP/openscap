@@ -74,6 +74,6 @@ struct rpm_probe_global {
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
 	} while(0)
 
-#endif
-
 int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
+
+#endif
