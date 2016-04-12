@@ -80,6 +80,6 @@ int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
  * Preload libraries required by rpm
  * It destroy error callback!
  */
-void rpmLibsPreload();
+void rpmLibsPreload(void);
 
 #endif

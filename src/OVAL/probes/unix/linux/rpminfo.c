@@ -262,6 +262,11 @@ ret:
         return (ret);
 }
 
+void probe_preload ()
+{
+	rpmLibsPreload();
+}
+
 void *probe_init (void)
 {
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
