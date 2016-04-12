@@ -275,6 +275,7 @@ int main(int argc, char *argv[])
 			}
 
 			preload_libraries_before_chroot();
+			probe_preload();
 			if (chroot(rootdir) != 0) {
 				fail(errno, "chroot", __LINE__ - 1);
 			}
