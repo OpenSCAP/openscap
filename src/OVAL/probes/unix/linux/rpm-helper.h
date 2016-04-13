@@ -76,4 +76,10 @@ struct rpm_probe_global {
 
 int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
 
+/**
+ * Preload libraries required by rpm
+ * It destroy error callback!
+ */
+void rpmLibsPreload();
+
 #endif

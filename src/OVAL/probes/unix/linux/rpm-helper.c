@@ -28,4 +28,8 @@ int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
 {
 	dE("RPM: %s", rpmlogRecMessage(rec));
 	return RPMLOG_EXIT; // don't perform default logging
+
+void rpmLibsPreload()
+{
+	rpmReadConfigFiles(NULL, NULL);
 }
