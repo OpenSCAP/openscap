@@ -1169,13 +1169,6 @@ installed on your system:
 
 . Run the installation procedure by executing the following command: # make install
 
-If you want to create a package for Fedora or Red Hat Enterprise Linux
-distribution, you will need the respective spec files. These spec files are
-available under the following directories:
-
-* dist/fedora
-* dist/rhel5
-* dist/rhel6
 
 === Debugging
 Developers and users who intend to help find and fix possible bugs in OpenSCAP
