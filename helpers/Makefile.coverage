@@ -1,0 +1,24 @@
+# Makefile wrapper to generate coverage of code
+# Usage:
+#	make configure -f ./helpers/Makefile.coverage
+#   # run oscap
+#	make generate -f ./helpers/Makefile.coverage
+
+htmlResultsDir=./coverage
+coverageInfoFile=./coverage.info
+
+.PHONY: install-deps configure clean generate
+
+configure:
+	./configure CFLAGS="--coverage" LDFLAGS=-lgcov --enable-debug
+
+install-deps:
+	sudo yum install lcov
+
+clean:
+	lcov -t all -o ${coverageInfoFile} -z -d .
+	rm -rf ${htmlResultsDir}
+
+generate:
+	lcov -t "OpenSCAP coverage" -o ${coverageInfoFile} -c -d .
+	genhtml -o ${htmlResultsDir} ${coverageInfoFile}
