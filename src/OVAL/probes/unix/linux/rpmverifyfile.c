@@ -286,6 +286,11 @@ ret:
 	return (ret);
 }
 
+void probe_preload ()
+{
+	rpmLibsPreload();
+}
+
 void *probe_init (void)
 {
 	rpmlogSetCallback(rpmErrorCb, NULL);
