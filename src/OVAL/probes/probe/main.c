@@ -161,6 +161,22 @@ static int probe_opthandler_offlinemode(int option, int op, va_list args)
 	return 0;
 }
 
+// Dummy pthread routine
+static void * dummy_routine(void *dummy_param)
+{
+	return NULL;
+}
+
+static void preload_libraries_before_chroot()
+{
+	// Force to load dynamic libraries used by pthread_cancel
+	pthread_t t;
+	if (pthread_create(&t, NULL, dummy_routine, NULL))
+		fail(errno, "pthread_create(probe_preload)", __LINE__ - 1);
+	pthread_cancel(t);
+	pthread_join(t, NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	pthread_attr_t th_attr;
@@ -263,6 +279,9 @@ int main(int argc, char *argv[])
 			if (chdir(rootdir) != 0) {
 				fail(errno, "chdir", __LINE__ -1);
 			}
+
+			preload_libraries_before_chroot();
+			probe_preload();
 			if (chroot(rootdir) != 0) {
 				fail(errno, "chroot", __LINE__ - 1);
 			}

@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <linux/limits.h>
 
 #include "common/alloc.h"
 #include "common/debug_priv.h"

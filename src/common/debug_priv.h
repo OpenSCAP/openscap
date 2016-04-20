@@ -45,7 +45,7 @@ OSCAP_HIDDEN_START;
 #endif
 
 
-# define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, __VA_ARGS__)
+# define __dlprintf_wrapper(l, ...) __oscap_dlprintf (l, __FILE__, __PRETTY_FUNCTION__, __LINE__, 0, __VA_ARGS__)
 
 /**
  * Version of the oscap_dprintf function with support for debug level.
@@ -54,10 +54,11 @@ OSCAP_HIDDEN_START;
  * @param file  name of the source file
  * @param fn    name of the function
  * @param line  current line
+ * @param delta_indent changes indentation
  * @param fmt   printf-line format string
  * @param ...   __oscap_dlprintf parameters
  */
-void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, const char *fmt, ...);
+void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, int delta_indent, const char *fmt, ...);
 
 /**
  * Convenience macro for calling __oscap_dlprintf. Only the fmt & it's arguments
@@ -75,6 +76,8 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 #define dW(...) oscap_dlprintf(DBG_W, __VA_ARGS__)
 #define dE(...) oscap_dlprintf(DBG_E, __VA_ARGS__)
 #define dD(...) oscap_dlprintf(DBG_D, __VA_ARGS__)
+
+#define dIndent(indent_change) __oscap_dlprintf(DBG_I, __FILE__, __PRETTY_FUNCTION__, __LINE__, indent_change, NULL)
 
 OSCAP_HIDDEN_END;
 

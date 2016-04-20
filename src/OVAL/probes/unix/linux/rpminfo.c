@@ -60,25 +60,7 @@
 #include <regex.h>
 
 /* RPM headers */
-#include <rpm/rpmdb.h>
-#include <rpm/rpmlib.h>
-#include <rpm/rpmts.h>
-#include <rpm/rpmmacro.h>
-#include <rpm/rpmlog.h>
-#include <rpm/header.h>
-
-#ifndef HAVE_HEADERFORMAT
-# define HAVE_LIBRPM44 1 /* hack */
-# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
-#endif
-
-#ifndef HAVE_RPMFREECRYPTO
-# define rpmFreeCrypto() while(0)
-#endif
-
-#ifndef HAVE_RPMFREEFILESYSTEMS
-# define rpmFreeFilesystems() while(0)
-#endif
+#include "rpm-helper.h"
 
 /* SEAP */
 #include <seap.h>
@@ -107,32 +89,11 @@ struct rpminfo_rep {
 	char extended_name[1024];
 };
 
-struct rpminfo_global {
-        rpmts           rpmts;
-        pthread_mutex_t mutex;
-};
+#define RPMINFO_LOCK	RPM_MUTEX_LOCK(&g_rpm.mutex)
 
-#define RPMINFO_LOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_lock(&g_rpm.mutex) != 0) { \
-			dE("Can't lock mutex"); \
-			return (-1); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &prev_cancel_state); \
-	} while(0)
+#define RPMINFO_UNLOCK	RPM_MUTEX_UNLOCK(&g_rpm.mutex)
 
-#define RPMINFO_UNLOCK	  \
-	do { \
-		int prev_cancel_state = -1; \
-		if (pthread_mutex_unlock(&g_rpm.mutex) != 0) { \
-			dE("Can't unlock mutex. Aborting..."); \
-			abort(); \
-		} \
-		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
-	} while(0)
-
-static struct rpminfo_global g_rpm;
+static struct rpm_probe_global g_rpm;
 static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";
 static regex_t g_keyid_regex;
 
@@ -301,11 +262,17 @@ ret:
         return (ret);
 }
 
+void probe_preload ()
+{
+	rpmLibsPreload();
+}
+
 void *probe_init (void)
 {
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT|PROBE_OFFLINE_RPMDB);
 	addMacro(NULL, "_dbpath", NULL, getenv("OSCAP_PROBE_RPMDB_PATH"), 0);
 
+	rpmlogSetCallback(rpmErrorCb, NULL);
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
                 dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
@@ -324,7 +291,7 @@ void *probe_init (void)
 
 void probe_fini (void *ptr)
 {
-        struct rpminfo_global *r = (struct rpminfo_global *)ptr;
+        struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
         rpmtsFree(r->rpmts);
 	rpmFreeCrypto();

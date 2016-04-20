@@ -1169,13 +1169,6 @@ installed on your system:
 
 . Run the installation procedure by executing the following command: # make install
 
-If you want to create a package for Fedora or Red Hat Enterprise Linux
-distribution, you will need the respective spec files. These spec files are
-available under the following directories:
-
-* dist/fedora
-* dist/rhel5
-* dist/rhel6
 
 === Debugging
 Developers and users who intend to help find and fix possible bugs in OpenSCAP
@@ -1348,6 +1341,41 @@ Example: gcc myapp.c -I/path/to/headers -L/path/to/dynamic/library -lcygopenscap
 
 If you want to run your app, make sure ```cygopenscap-0.dll``` is either in
 working directory or in PATH variable directories.
+
+=== Generating of code coverage
+Code coverage can be usefull during writing of test or performance profiling. 
+We could separate the process into five phases.
+
+1) *Get dependencies*
+
+ # dnf install lcov
+
+2) *Run configure & make*
+
+To allow code to generate statistics, we need to compile it with specific flags.
+
+ $ ./configure CFLAGS="--coverage" LDFLAGS=-lgcov --enable-debug
+ $ make
+
+3) *Run code.*
+
+In this phase we should run code. We can run it directly or via test suite.
+
+ $ ./run ./utils/.libs/oscap
+
+4) *Generate and browse results*
+
+ $ lcov -t "OpenSCAP coverage" -o ./coverage.info -c -d .
+ $ genhtml -o ./coverage ./coverage.info
+ $ xdg-open ./coverage/index.html # open results in browser
+
+5) *Clean stats*
+
+Every run only modify our current statistics and not rewrite them completely.
+If we want to generate new statistics, we should remove the old ones.
+ 
+ $ lcov --directory ./ --zerocounters ; find ./ -name "*.gcno" | xargs rm
+ $ rm -rf ./coverage
 
 === Building OpenSCAP for Windows (cross-compilation)
 Building OpenSCAP for Windows without a POSIX emulation layer is currently not
