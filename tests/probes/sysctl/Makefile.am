@@ -17,9 +17,13 @@ TESTS = all.sh
 endif
 endif
 
-check_SCRIPTS = test_sysctl_probe.sh
+check_SCRIPTS = \
+	test_sysctl_probe.sh \
+	test_sysctl_probe_all.sh
 
 EXTRA_DIST += \
 	all.sh \
 	test_sysctl_probe.sh \
-	test_sysctl_probe.oval.xml
+	test_sysctl_probe.oval.xml \
+	test_sysctl_probe_all.sh \
+	test_sysctl_probe_all.oval.xml

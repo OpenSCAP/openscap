@@ -468,6 +468,7 @@ void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 #define PROBECMD_OBJ_EVAL  2 /**< Object eval command code */
 #define PROBECMD_RESET     3 /**< Reset command code */
 
+void probe_preload(void);
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));
 

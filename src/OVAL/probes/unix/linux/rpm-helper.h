@@ -74,4 +74,12 @@ struct rpm_probe_global {
 		pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &prev_cancel_state); \
 	} while(0)
 
+int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
+
+/**
+ * Preload libraries required by rpm
+ * It destroy error callback!
+ */
+void rpmLibsPreload(void);
+
 #endif
