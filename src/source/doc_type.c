@@ -84,8 +84,9 @@ int oscap_determine_document_type_reader(xmlTextReader *reader, oscap_document_t
 	}
 	else if (!strcmp("sce_results", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_SCE_RESULT;
-        }
-	else {
+	} else if (!strcmp("ocil", elm_name)) {
+		*doc_type = OSCAP_DOCUMENT_OCIL;
+	} else {
                 return -1;
         }
 

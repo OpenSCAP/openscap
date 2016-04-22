@@ -94,7 +94,8 @@ typedef enum oscap_document_type {
 	OSCAP_DOCUMENT_SCE_RESULT,            ///< SCE result file
 	OSCAP_DOCUMENT_SDS,                   ///< Source Data Stream file
 	OSCAP_DOCUMENT_ARF,                   ///< Result Data Stream file
-	OSCAP_DOCUMENT_XCCDF_TAILORING        ///< XCCDF tailoring file
+	OSCAP_DOCUMENT_XCCDF_TAILORING,       ///< XCCDF tailoring file
+	OSCAP_DOCUMENT_OCIL                   ///< OCIL Definitions file
 	// If you are adding a new enum here, make sure you add support for it
 	// to utils/oscap-info.c!
 } oscap_document_type_t;
