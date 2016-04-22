@@ -373,6 +373,10 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: SCE Result File\n");
 		// Currently, we do not have any SCE result file parsing capabilities.
 	break;
+	case OSCAP_DOCUMENT_OCIL:
+		printf("Document type: OCIL Definitions file\n");
+		// we don't support OCIL yet
+	break;
 	default:
 		printf("Could not determine document type\n");
 		goto cleanup;
