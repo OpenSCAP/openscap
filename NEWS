@@ -1,3 +1,31 @@
+openscap-1.2.9                                                  22-04-2016
+  - New features
+    - oscap-chroot - a tool for offline scanning of filesystems mounted at arbitrary paths
+    - enabled offline scanning in many probes
+    - support for SCE in data streams
+    - many improvements of verbose mode
+    - verbose messages can be written on stderr
+    - runlevel probe supports SUSE systems
+    - new upstream tests
+  - Maintenance
+    - a lot of refactoring
+    - fixes in various tests
+    - OCILs are correctly placed in datastreams (issue #364)
+    - oscap-vm can work with fusermount when guestunmount is not available
+    - fixed oscap-docker HTTP communication issues (issue #304)
+    - fixed oscap-docker tracebacks (issue #303, #317)
+    - fixed container mounting in oscap-docker (issue #329)
+    - added Fedora 25 CPE
+    - only non-empty profiles are built (rhbz#1256879, rhbz#1302230)
+    - fixed compiler errors on RHEL5 and SLES11
+    - fixed sorting of groups in HTML report (issue #342)
+    - fixed version/@time and version/@update in XCCDF Benchmark
+    - fixed CPE definitions to work also in offline mode
+    - fixed sysctl probe (issue #258)
+    - fixed manual page for oscap-ssh (rhbz#1299969)
+    - updated user manuals and manual pages
+    - updated .gitignore
+
 openscap-1.2.8                                                  18-01-2016
   - Maintenance
     - textfilecontent54_probe does not produce false positives on non-UTF files (rhbz #1285757)
