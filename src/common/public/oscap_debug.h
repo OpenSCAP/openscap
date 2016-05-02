@@ -49,8 +49,9 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
  */
 oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name);
 
+#if defined(_WIN32)
 errno_t getenv_s(size_t *pReturnValue, char* buffer, size_t numberOfElements, const char * varname);
-
 int setenv(const char *name, const char *value, int overwrite);
+#endif
 
 #endif
