@@ -28,7 +28,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#include <linux/limits.h>
 
 #include "common/alloc.h"
 #include "common/debug_priv.h"
@@ -40,6 +39,14 @@
 #include "public/oval_session.h"
 #include "../DS/public/ds_sds_session.h"
 #include "oscap_source.h"
+
+#if !defined(_WIN32)
+#include <linux/limits.h>
+#endif
+
+#if !defined(OVAL_PROBES_ENABLED)
+const char *oval_subtype_to_str(oval_subtype_t subtype);
+#endif
 
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
 static const char *oval_results_report = "oval-results-report.xsl";

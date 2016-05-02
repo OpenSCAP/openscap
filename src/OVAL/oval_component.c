@@ -61,6 +61,10 @@
 #include <regex.h>
 #endif
 
+#if !defined(OVAL_PROBES_ENABLED)
+const char *oval_subtype_to_str(oval_subtype_t subtype);
+#endif
+
 /***************************************************************************/
 /* Variable definitions
  * */
