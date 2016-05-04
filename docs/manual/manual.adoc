@@ -1385,6 +1385,8 @@ OpenSCAP for Windows:
 
 1) Install the cross-compiler & dependencies
 
+NOTE: mingw32-pthreads needs to be version 5.0 or greater.
+
 -------------------------------------------------------------
  # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
  mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
@@ -1419,23 +1421,11 @@ OpenSCAP for Windows:
 -----------------------------------------------
 
 -----------------------------------------------------------------------------
-debug.c:98:3: warning: implicit declaration of function 'setenv'
-debug.c:155:2: warning: implicit declaration of function 'flock'
-debug.c:155:35: error: 'LOCK_EX' undeclared (first use in this function)
-debug.c:180:2: warning: implicit declaration of function 'pthread_getname_np'
-debug.c:183:3: error: 'program_invocation_short_name' undeclared
-debug.c:196:35: error: 'LOCK_UN' undeclared (first use in this function)
+oval_resModel.c:70:28: error: conflicting types for 'oval_results_model_new_with_probe_session'
 -----------------------------------------------------------------------------
 
-We need to solve the following problems:
-
-1.  No implementation of ```setenv``` for Windows
-2.  No implementation of ```flock``` for Windows
-3.  No implementation of ```program_invocation_short_name``` for Windows
-4.  No implementation of ```pthread_getname_np``` for Windows
-
-If you would like to send us a patch solving one of these problems,
-please consult the page about
+If you would like to send us a patch fixing any Windows
+compiling issues, please consult the page about
 http://open-scap.org/page/Contribute[contributing to the OpenSCAP
 project].
 
