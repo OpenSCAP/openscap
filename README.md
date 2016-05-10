@@ -41,6 +41,7 @@ make
 Build dependencies:
 (some of these can be turned off via configure)
  * libacl-devel
+ * libblkid-devel
  * libcap-devel
  * libcurl-devel
  * libgcrypt-devel
