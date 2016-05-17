@@ -234,6 +234,8 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
         "\nGuide Options:\n"
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
         "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
+		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
     .opt_parser = getopt_xccdf,
     .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
@@ -856,6 +858,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 	const char *params[] = {
 		"result-id",         action->id,
 		"show",              action->show,
+		"benchmark_id",      action->f_benchmark_id,
 		"profile_id",        action->profile,
 		"template",          action->tmpl,
 		"oval-template",     oval_template,
