@@ -233,9 +233,9 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .help = GEN_OPTS
         "\nGuide Options:\n"
         "   --output <file>\r\t\t\t\t - Write the document into file.\n"
-        "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n",
+        "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n"
 		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
