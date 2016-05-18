@@ -723,7 +723,7 @@ cleanup:
 	return ret;
 }
 
-static bool _some_oval_result_exists(struct oscap_source *xccdf_source)
+static bool _some_result_exists(struct oscap_source *xccdf_source, const char *namespace)
 {
 	struct xccdf_benchmark *benchmark = NULL;
 	struct xccdf_policy_model *policy_model = NULL;
@@ -743,7 +743,7 @@ static bool _some_oval_result_exists(struct oscap_source *xccdf_source)
 	while (oscap_file_entry_iterator_has_more(files_it)) {
 		struct oscap_file_entry *file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);;
 		struct stat sb;
-		if (strcmp(oscap_file_entry_get_system(file_entry), "http://oval.mitre.org/XMLSchema/oval-definitions-5"))
+		if (strcmp(oscap_file_entry_get_system(file_entry), namespace))
 			continue;
 		snprintf(oval_result, PATH_MAX, "./%s.result.xml", oscap_file_entry_get_file(file_entry));
 		if (stat(oval_result, &sb) == 0) {
@@ -836,16 +836,21 @@ cleanup:
 int app_xccdf_xslt(const struct oscap_action *action)
 {
 	const char *oval_template = action->oval_template;
+	const char *sce_template = action->sce_template;
 
-	if (action->module == &XCCDF_GEN_REPORT && oval_template == NULL) {
+	if (action->module == &XCCDF_GEN_REPORT && (oval_template == NULL || sce_template == NULL)) {
 		/* If generating the report and the option is missing -> use defaults */
 		struct oscap_source *xccdf_source = oscap_source_new_from_file(action->f_xccdf);
-		if (_some_oval_result_exists(xccdf_source))
-			/* We want to define default template because we strive to serve user the
-			 * best. However, we must not offer a template, if there is a risk it might
-			 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
-			 * to stderr. */
+		/* We want to define default template because we strive to serve user the
+		 * best. However, we must not offer a template, if there is a risk it might
+		 * be incorrect. Otherwise, libxml2 will throw a lot of misleading messages
+		 * to stderr. */
+		if (oval_template == NULL && _some_result_exists(xccdf_source, "http://oval.mitre.org/XMLSchema/oval-definitions-5")) {
 			oval_template = "%.result.xml";
+		}
+		if (sce_template == NULL && _some_result_exists(xccdf_source, "http://open-scap.org/page/SCE")) {
+			sce_template = "%.result.xml";
+		}
 		oscap_source_free(xccdf_source);
 	}
 
@@ -859,7 +864,7 @@ int app_xccdf_xslt(const struct oscap_action *action)
 		"profile_id",        action->profile,
 		"template",          action->tmpl,
 		"oval-template",     oval_template,
-		"sce-template",      action->sce_template,
+		"sce-template",      sce_template,
 		"verbosity",         "",
 		"hide-profile-info", action->hide_profile_info ? "yes" : NULL,
 		NULL
