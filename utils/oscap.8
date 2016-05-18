@@ -298,6 +298,9 @@ Specify what result types shall be displayed in the result report. The default i
 .TP
 \fB\-\-oval-template \fItemplate-string\fR
 To use the ability to include additional information from OVAL in xccdf result file, a template which will be used to obtain OVAL result file names has to be specified. The template can be either a filename or a string containing wildcard character (percent sign '%'). Wildcard will be replaced by the original OVAL definition file name as referenced from the XCCDF file. This way it is possible to obtain OVAL information even from XCCDF documents referencing several OVAL files. To use this option with results from an XCCDF evaluation, specify \fI%.result.xml\fR as a OVAL file name template.
+.TP
+\fB\-\-sce-template \fItemplate-string\fR
+To use the ability to include additional information from SCE in XCCDF result file, a template which will be used to obtain SCE result file names has to be specified. The template can be either a filename or a string containing wildcard character (percent sign '%'). Wildcard will be replaced by the original SCE script file name as referenced from the XCCDF file. This way it is possible to obtain SCE information even from XCCDF documents referencing several SCE files. To use this option with results from an XCCDF evaluation, specify \fI%.result.xml\fR as a SCE file name template.
 .RE
 .TP
 .B \fBfix\fR  [\fIoptions\fR] xccdf-file
