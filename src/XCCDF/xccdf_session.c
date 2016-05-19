@@ -1335,6 +1335,7 @@ int xccdf_session_export_arf(struct xccdf_session *session)
 
 		if (oscap_source_save_as(arf_source, NULL) != 0) {
 			oscap_source_free(arf_source);
+			session->oval.arf_report = NULL;
 			return 1;
 		}
 		if (session->full_validation) {
