@@ -308,6 +308,9 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 		ret = -1;
 	} else {
 		const char *schema_version = oscap_source_get_schema_version(source);
+		if (!schema_version) {
+			schema_version = "unknown schema version";
+		}
 		const char *type_name = oscap_document_type_to_string(scap_type);
 		const char *origin = oscap_source_readable_origin(source);
 		dD("Validating %s (%s) document from %s.", type_name, schema_version, origin);
