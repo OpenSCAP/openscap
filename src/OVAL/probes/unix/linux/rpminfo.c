@@ -523,9 +523,9 @@ int probe_main (probe_ctx *ctx, void *arg)
 				SEXP_free(name);
                                 __rpminfo_rep_free (&(reply_st[i]));
 
-				if (probe_item_collect(ctx, item)) {
+				if (probe_item_collect(ctx, item) < 0) {
 					SEXP_vfree(ent, NULL);
-					return 1;
+					return PROBE_EUNKNOWN;
 				}
                         }
 
