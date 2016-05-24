@@ -40,6 +40,7 @@ make
 ```
 Build dependencies:
 (some of these can be turned off via configure)
+ * GConf2-devel
  * libacl-devel
  * libblkid-devel
  * libcap-devel

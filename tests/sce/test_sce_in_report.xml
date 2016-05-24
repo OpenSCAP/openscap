@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
+  <status date="2011-12-08">draft</status>
+  <title xml:lang="en-US">Sample XCCDF using SCE test engine</title>
+  <description xml:lang="en-US">The SCE results should appear in XCCDF report</description>
+  <version>0.1</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+  <Group id="bash-passer" hidden="false">
+    <title xml:lang="en-US">Check in bash</title>
+    <description xml:lang="en-US">abcd</description>
+    <Rule id="rule-1000" selected="true" weight="10.000000">
+      <title xml:lang="en-US">List files (bash)</title>
+      <check system="http://open-scap.org/page/SCE">
+        <check-content-ref href="bash_list.sh"/>
+      </check>
+    </Rule>
+  </Group>
+</Benchmark>
