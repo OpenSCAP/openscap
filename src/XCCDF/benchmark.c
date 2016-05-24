@@ -145,7 +145,6 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 	xccdf_benchmark_set_schema_version(XBENCHMARK(benchmark), xccdf_detect_version_parser(reader));
 
 	if (!xccdf_item_process_attributes(benchmark, reader)) {
-		xccdf_benchmark_free(XBENCHMARK(benchmark));
 		return false;
 	}
 	benchmark->sub.benchmark.style = xccdf_attribute_copy(reader, XCCDFA_STYLE);
