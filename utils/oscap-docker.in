@@ -65,7 +65,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='oscap docker',
                                      epilog='See `man oscap` to learn \
                                      more about OSCAP-ARGUMENTS')
-    parser.set_defaults(func=parser.print_help)
     subparser = parser.add_subparsers(help="commands")
 
     # Scan CVEs in image
@@ -97,6 +96,10 @@ if __name__ == '__main__':
                                help='Container or image to scan')
 
     args, unknown = parser.parse_known_args()
+
+    if "func" not in args:
+        parser.print_help()
+        sys.exit(2)
 
     try:
         ping_docker()

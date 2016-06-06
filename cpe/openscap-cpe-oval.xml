@@ -429,6 +429,19 @@
                         <criterion comment="openSUSE 13.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:132"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:421" version="1">
+                  <metadata>
+                        <title>openSUSE 42.1</title>
+                        <affected family="unix">
+                            <platform>openSUSE 42.1</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:novell:leap:42.1" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE 42.1</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="openSUSE 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
@@ -592,6 +605,11 @@
                   <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:132"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:421" version="1" check="at least one" comment="openSUSE-release is version 42.1"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:421"/>
+            </rpminfo_test>
       </tests>
       <objects>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.redhat-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -724,6 +742,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:132" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^13.2$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:421" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^42.1$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>
