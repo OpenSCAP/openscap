@@ -231,9 +231,6 @@ class OscapScan(object):
 
             # Fetch the CVE input data for the dist
             fetch = getInputCVE(self.tmp_dir)
-
-            # TODO
-            # This should probably be in a try/except
             fetch._fetch_single(dist)
 
             # Scan the chroot
