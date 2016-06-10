@@ -225,6 +225,10 @@ class OscapScan(object):
             # Figure out which RHEL dist is in the chroot
             dist = self.helper._get_dist(chroot)
 
+            if dist is None:
+                sys.stderr.write("{0} is not based on RHEL\n".format(image))
+                return None
+
             # Fetch the CVE input data for the dist
             fetch = getInputCVE(self.tmp_dir)
 
