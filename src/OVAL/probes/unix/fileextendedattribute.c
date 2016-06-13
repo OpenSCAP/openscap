@@ -151,6 +151,12 @@ retry_list:
                         xattr_vallen = lgetxattr(st_path, xattr_buf + i, NULL, 0);
                 retry_value:
                         if (xattr_vallen >= 0) {
+				// Check possible buffer overflow
+				if (sizeof(char) * (xattr_vallen + 1) <= sizeof(char) * xattr_vallen) {
+					dE("Attribute is too long.");
+					abort();
+				}
+
 				// Allocate buffer, '+1' is for trailing '\0'
  				xattr_val    = oscap_realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
 
