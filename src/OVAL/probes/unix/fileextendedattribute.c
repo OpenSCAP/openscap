@@ -184,7 +184,8 @@ retry_list:
                 /* skip to next name */
                 while (i < xattr_buflen && xattr_buf[i] != '\0')
                         ++i;
-        } while (xattr_buf + i != xattr_buf + xattr_buflen - 1);
+		++i;
+        } while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
 
         oscap_free(xattr_buf);
 
