@@ -151,11 +151,17 @@ retry_list:
                         xattr_vallen = lgetxattr(st_path, xattr_buf + i, NULL, 0);
                 retry_value:
                         if (xattr_vallen >= 0) {
-                                xattr_val    = oscap_realloc(xattr_val, sizeof(char) * xattr_vallen);
+				// Allocate buffer, '+1' is for trailing '\0'
+ 				xattr_val    = oscap_realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+
+				// we don't want to override space for '\0' by call of 'lgetxattr'
+				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'
                                 xattr_vallen = lgetxattr(st_path, xattr_buf + i, xattr_val, xattr_vallen);
 
                                 if (xattr_vallen < 0 || errno == ERANGE)
                                         goto retry_value;
+
+				xattr_val[xattr_vallen] = '\0';
 
                                 item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL,
                                                          "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
