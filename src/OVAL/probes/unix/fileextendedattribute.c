@@ -102,28 +102,28 @@ static int file_cb (const char *p, const char *f, void *ptr)
 	}
 
         SEXP_init(&xattr_name);
-retry_list:
-        /* estimate the size of the buffer */
-        xattr_count = llistxattr(st_path, NULL, 0);
 
-        if (xattr_count == 0)
-                return (0);
+	do {
+		/* estimate the size of the buffer */
+		xattr_count = llistxattr(st_path, NULL, 0);
 
-        if (xattr_count < 0) {
-                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
-                return 0;
-        }
+		if (xattr_count == 0)
+				return (0);
 
-        /* allocate space for xattr names */
-        xattr_buflen = xattr_count;
-        xattr_buf    = oscap_realloc(xattr_buf, sizeof(char) * xattr_buflen);
+		if (xattr_count < 0) {
+				dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+				return 0;
+		}
 
-        /* fill the buffer */
-        xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
+		/* allocate space for xattr names */
+		xattr_buflen = xattr_count;
+		xattr_buf    = oscap_realloc(xattr_buf, sizeof(char) * xattr_buflen);
 
-        /* check & retry if needed */
-        if (errno == ERANGE)
-                goto retry_list;
+		/* fill the buffer */
+		xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
+
+		/* check & retry if needed */
+	} while (errno == ERANGE);
 
         if (xattr_count < 0) {
                 dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
