@@ -102,28 +102,28 @@ static int file_cb (const char *p, const char *f, void *ptr)
 	}
 
         SEXP_init(&xattr_name);
-retry_list:
-        /* estimate the size of the buffer */
-        xattr_count = llistxattr(st_path, NULL, 0);
 
-        if (xattr_count == 0)
-                return (0);
+	do {
+		/* estimate the size of the buffer */
+		xattr_count = llistxattr(st_path, NULL, 0);
 
-        if (xattr_count < 0) {
-                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
-                return 0;
-        }
+		if (xattr_count == 0)
+				return (0);
 
-        /* allocate space for xattr names */
-        xattr_buflen = xattr_count;
-        xattr_buf    = oscap_realloc(xattr_buf, sizeof(char) * xattr_buflen);
+		if (xattr_count < 0) {
+				dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+				return 0;
+		}
 
-        /* fill the buffer */
-        xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
+		/* allocate space for xattr names */
+		xattr_buflen = xattr_count;
+		xattr_buf    = oscap_realloc(xattr_buf, sizeof(char) * xattr_buflen);
 
-        /* check & retry if needed */
-        if (errno == ERANGE)
-                goto retry_list;
+		/* fill the buffer */
+		xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
+
+		/* check & retry if needed */
+	} while (errno == ERANGE);
 
         if (xattr_count < 0) {
                 dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
@@ -151,11 +151,23 @@ retry_list:
                         xattr_vallen = lgetxattr(st_path, xattr_buf + i, NULL, 0);
                 retry_value:
                         if (xattr_vallen >= 0) {
-                                xattr_val    = oscap_realloc(xattr_val, sizeof(char) * xattr_vallen);
+				// Check possible buffer overflow
+				if (sizeof(char) * (xattr_vallen + 1) <= sizeof(char) * xattr_vallen) {
+					dE("Attribute is too long.");
+					abort();
+				}
+
+				// Allocate buffer, '+1' is for trailing '\0'
+ 				xattr_val    = oscap_realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+
+				// we don't want to override space for '\0' by call of 'lgetxattr'
+				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'
                                 xattr_vallen = lgetxattr(st_path, xattr_buf + i, xattr_val, xattr_vallen);
 
                                 if (xattr_vallen < 0 || errno == ERANGE)
                                         goto retry_value;
+
+				xattr_val[xattr_vallen] = '\0';
 
                                 item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL,
                                                          "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
@@ -184,7 +196,8 @@ retry_list:
                 /* skip to next name */
                 while (i < xattr_buflen && xattr_buf[i] != '\0')
                         ++i;
-        } while (xattr_buf + i != xattr_buf + xattr_buflen - 1);
+		++i;
+        } while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
 
         oscap_free(xattr_buf);
 
