@@ -237,6 +237,11 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.6],[
 ],[
 	AC_MSG_NOTICE([libprm is older than 4.6])
 ])
+PKG_CHECK_MODULES([rpm], [rpm >= 4.12],[
+	AC_DEFINE([HAVE_RPM412], [1], [Define to 1 if rpm is newer than 4.12.])
+],[
+	AC_MSG_NOTICE([libprm is older than 4.12])
+])
 echo
 echo '* Checking for bz2 library (optional dependency of libopenscap)'
 AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
