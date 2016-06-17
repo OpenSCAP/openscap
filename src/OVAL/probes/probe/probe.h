@@ -75,6 +75,7 @@ typedef enum {
 	PROBE_OFFLINE_NONE = 0x00,
 	PROBE_OFFLINE_CHROOT = 0x01,
 	PROBE_OFFLINE_RPMDB = 0x02,
+	PROBE_OFFLINE_OWN = 0x04,
 	PROBE_OFFLINE_ALL = 0x0f
 } probe_offline_flags;
 
