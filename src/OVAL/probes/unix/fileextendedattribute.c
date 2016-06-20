@@ -208,6 +208,8 @@ static pthread_mutex_t __file_probe_mutex;
 
 void *probe_init (void)
 {
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+
 	SEXP_init(&gr_lastpath);
 
         /*
@@ -223,7 +225,6 @@ void *probe_init (void)
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "filename");
 #endif
-		probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
         return (NULL);
 }
 
