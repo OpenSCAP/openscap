@@ -220,22 +220,26 @@ class OscapScan(object):
         # Remeber actual mounted fs in 'rootfs'
         chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
 
-        # Figure out which RHEL dist is in the chroot
-        dist = self.helper._get_dist(chroot)
 
-        # Fetch the CVE input data for the dist
-        fetch = getInputCVE(self.tmp_dir)
+        try:
+            # Figure out which RHEL dist is in the chroot
+            dist = self.helper._get_dist(chroot)
 
-        # TODO
-        # This should probably be in a try/except
-        fetch._fetch_single(dist)
+            if dist is None:
+                sys.stderr.write("{0} is not based on RHEL\n".format(image))
+                return None
 
-        # Scan the chroot
-        sys.stdout.write(self.helper._scan_cve(chroot, dist, scan_args))
+            # Fetch the CVE input data for the dist
+            fetch = getInputCVE(self.tmp_dir)
+            fetch._fetch_single(dist)
 
-        # Clean up
-        self.helper._cleanup_by_path(_tmp_mnt_dir)
-        self._remove_mnt_dir(mnt_dir)
+            # Scan the chroot
+            sys.stdout.write(self.helper._scan_cve(chroot, dist, scan_args))
+
+        finally:
+            # Clean up
+            self.helper._cleanup_by_path(_tmp_mnt_dir)
+            self._remove_mnt_dir(mnt_dir)
 
     def scan(self, image, scan_args):
         '''
