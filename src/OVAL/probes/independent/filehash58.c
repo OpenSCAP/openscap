@@ -200,6 +200,8 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 
 void *probe_init (void)
 {
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+
 	/*
 	 * Initialize crypto API
 	 */
@@ -215,8 +217,6 @@ void *probe_init (void)
 	default:
 		dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
 	}
-
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
 	return (NULL);
 }
