@@ -271,7 +271,11 @@ void *probe_init (void)
 {
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 
+#ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
+#else
+	rpmlogSetCallback(rpmErrorCb);
+#endif
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
                 dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
