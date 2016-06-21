@@ -293,7 +293,11 @@ void probe_preload ()
 
 void *probe_init (void)
 {
+#ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
+#else
+	rpmlogSetCallback(rpmErrorCb);
+#endif
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
