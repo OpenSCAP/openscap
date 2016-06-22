@@ -20,10 +20,6 @@
 #ifndef __PROBE_CHROOT__
 #define __PROBE_CHROOT__
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include "common/util.h"
 
 OSCAP_HIDDEN_START;
