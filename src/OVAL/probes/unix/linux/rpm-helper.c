@@ -30,11 +30,6 @@ int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
 	dE("RPM: %s", rpmlogRecMessage(rec));
 	return RPMLOG_DEFAULT;
 }
-#else
-void rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
-{
-	dE("RPM: %s", rpmlogRecMessage(rec));
-}
 #endif
 
 void rpmLibsPreload()
