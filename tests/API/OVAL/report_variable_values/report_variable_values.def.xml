@@ -70,10 +70,10 @@
             comment="unreferenced test; verify no variables are exported for it">
             <ind-def:object object_ref="oval:x:obj:7"/>
         </ind-def:textfilecontent54_test>
-        <ind-def:textfilecontent54_test id="oval:x:tst:8" check="all" version="1"
+        <ind-def:variable_test id="oval:x:tst:8" check="all" version="1"
             comment="a variable_object">
             <ind-def:object object_ref="oval:x:obj:8"/>
-        </ind-def:textfilecontent54_test>
+        </ind-def:variable_test>
         <ind-def:textfilecontent54_test id="oval:x:tst:9" check="all" version="1"
             comment="an object with a filter">
             <ind-def:object object_ref="oval:x:obj:9"/>
@@ -98,7 +98,7 @@
         </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:x:obj:4" version="1" comment="x">
             <ind-def:filepath datatype="string" operation="equals">/etc/passwd</ind-def:filepath>
-            <ind-def:pattern datatype="string" operation="equals" var_ref="oval:x:var:4"/>
+            <ind-def:pattern datatype="string" operation="pattern match" var_ref="oval:x:var:4"/>
             <ind-def:instance datatype="int" operation="equals" var_ref="oval:x:var:3"/>
         </ind-def:textfilecontent54_object>
         <ind-def:textfilecontent54_object id="oval:x:obj:5" version="1" comment="x">
