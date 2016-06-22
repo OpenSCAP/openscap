@@ -599,7 +599,7 @@ AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h pthread.h rpm/header.
 
 echo
 echo ' * Checking presence of required headers for the rpmverifypackage probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h popt.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverifypackage_req_deps_ok=no; probe_rpmverifypackage_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h popt.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_rpmverifypackage_req_deps_ok=no; probe_rpmverifypackage_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the dpkginfo probe'

@@ -1,12 +1,10 @@
 /**
- * @file   probe-skeleton.c
- * @brief  probe skeleton
- * @author "Daniel Kopecek" <dkopecek@redhat.com>
- *
+ * @file   offline_mode.c
+ * @brief  file containg the dummy probe_offline_mode function
  */
 
 /*
- * Copyright 2011 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2016 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,8 +21,6 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * Authors:
- *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
 #ifdef HAVE_CONFIG_H
@@ -33,30 +29,10 @@
 
 #include <probe-api.h>
 
+/**
+ * In this function can be set supported type of offline mode
+ */
 void probe_offline_mode(void)
 {
 	return;
-}
-
-void probe_preload()
-{
-	/* preload dynamic libraries */
-	return;
-}
-
-void *probe_init(void)
-{
-        /* initialize stuff */
-        return (NULL);
-}
-
-void probe_fini(void *probe_arg)
-{
-        /* cleanup stuff */
-        return;
-}
-
-int probe_main(SEXP_t *probe_in, SEXP_t *probe_out, void *probe_arg, SEXP_t *filters)
-{
-        return (PROBE_EUNKNOWN);
 }

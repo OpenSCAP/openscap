@@ -44,7 +44,7 @@
 #include "probe-api.h"
 #include "option.h"
 #include <oscap_debug.h>
-
+#include "debug_priv.h"
 static int fail(int err, const char *who, int line)
 {
 	fprintf(stderr, "FAIL: %d:%s: %d, %s\n", line, who, err, strerror(err));
@@ -271,16 +271,27 @@ int main(int argc, char *argv[])
 
 	pthread_attr_destroy(&th_attr);
 
+	probe_offline_mode();
+
 	/*
 	 * Setup offline mode(s)
 	 */
-	if ((rootdir = getenv("OSCAP_PROBE_ROOT")) != NULL) {
-		if(strlen(rootdir) > 0) {
+	rootdir = getenv("OSCAP_PROBE_ROOT");
+	if ((rootdir != NULL) && (strlen(rootdir) > 0)) {
+
+		preload_libraries_before_chroot(); // todo - maybe useless for own mode
+		probe_offline_flags supported_mode = OSCAP_GSYM(offline_mode_supported);
+		bool own_mode = (supported_mode & PROBE_OFFLINE_OWN);
+
+		if (own_mode) {
+			dD("Own offline mode selected");
+			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_OWN;
+
+		} else {
 			if (chdir(rootdir) != 0) {
 				fail(errno, "chdir", __LINE__ -1);
 			}
 
-			preload_libraries_before_chroot();
 			probe_preload();
 			if (chroot(rootdir) != 0) {
 				fail(errno, "chroot", __LINE__ - 1);
@@ -295,6 +306,7 @@ int main(int argc, char *argv[])
 			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_CHROOT;
 		}
 	}
+
 	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
 		OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_RPMDB;
 	}

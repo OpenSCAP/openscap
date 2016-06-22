@@ -81,6 +81,13 @@ typedef void *rpmlogCallbackData;
 void rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
 #endif
 
+// todo: HAVE_RPM412 needs to be set by configure,
+// although fallback solution should have same result
+#ifdef HAVE_RPM412
+#define DISABLE_PLUGINS(ts) rpmtsSetFlags(ts, RPMTRANS_FLAG_NOPLUGINS)
+#else
+#define DISABLE_PLUGINS(ts) rpmDefineMacro(NULL,"__plugindir \"\"", 0);
+#endif
 
 /**
  * Preload libraries required by rpm
