@@ -30,8 +30,7 @@
 #include <probe-api.h>
 
 /**
- * Dummy probe_preload function
- * Return type of supported offline mode.
+ * In this function can be set supported type of offline mode
  */
 void probe_offline_mode(void)
 {
