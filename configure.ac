@@ -413,6 +413,11 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.6],[
 ],[
 	AC_MSG_NOTICE([libprm is older than 4.6])
 ])
+PKG_CHECK_MODULES([rpm], [rpm >= 4.7],[
+	AC_DEFINE([HAVE_RPM47], [1], [Define to 1 if rpm is newer than 4.7.])
+],[
+	AC_MSG_NOTICE([libprm is older than 4.7])
+])
 echo
 echo '* Checking for bz2 library (optional dependency of libopenscap)'
 AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
@@ -587,7 +592,7 @@ AC_CHECK_HEADERS([dirent.h errno.h fcntl.h limits.h pthread.h selinux/context.h 
 
 echo
 echo ' * Checking presence of required headers for the rpminfo probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h pthread.h regex.h rpm/header.h rpm/rpmdb.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h pthread.h regex.h rpm/header.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpmverify probe'

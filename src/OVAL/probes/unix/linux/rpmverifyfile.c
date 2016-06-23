@@ -76,6 +76,12 @@ struct rpmverify_res {
 #define RPMVERIFY_SKIP_GHOST  0x2000000000000000
 #define RPMVERIFY_RPMATTRMASK 0x00000000ffffffff
 
+#ifndef HAVE_RPM47
+	#define RPMVERIFY_FILEDIGEST RPMVERIFY_MD5
+	#define VERIFY_FILEDIGEST VERIFY_MD5
+	#define VERIFY_CAPS 0
+#endif
+
 static struct rpm_probe_global g_rpm;
 
 #define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm.mutex)
