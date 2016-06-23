@@ -254,8 +254,8 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 int oval_agent_abort_session(oval_agent_session_t *ag_sess)
 {
 	assume_d(ag_sess != NULL, -1);
-	assume_d(ag_sess->psess != NULL, -1);
 #if defined(OVAL_PROBES_ENABLED)
+	assume_d(ag_sess->psess != NULL, -1);
 	return oval_probe_session_abort(ag_sess->psess);
 #else
 	/* TODO */
