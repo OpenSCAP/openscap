@@ -1,12 +1,12 @@
 # getcwd.m4 - check for working getcwd that is compatible with glibc
 
-# Copyright (C) 2001, 2003-2007, 2009-2014 Free Software Foundation, Inc.
+# Copyright (C) 2001, 2003-2007, 2009-2016 Free Software Foundation, Inc.
 # This file is free software; the Free Software Foundation
 # gives unlimited permission to copy and/or distribute it,
 # with or without modifications, as long as this notice is preserved.
 
 # Written by Paul Eggert.
-# serial 12
+# serial 13
 
 AC_DEFUN([gl_FUNC_GETCWD_NULL],
   [
@@ -15,6 +15,7 @@ AC_DEFUN([gl_FUNC_GETCWD_NULL],
    AC_CACHE_CHECK([whether getcwd (NULL, 0) allocates memory for result],
      [gl_cv_func_getcwd_null],
      [AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+#	 include <stdlib.h>
 #        if HAVE_UNISTD_H
 #         include <unistd.h>
 #        else /* on Windows with MSVC */
@@ -39,6 +40,7 @@ AC_DEFUN([gl_FUNC_GETCWD_NULL],
                  return 3;
                if (f[1] != '\0')
                  return 4;
+               free (f);
                return 0;
              }
 #endif
@@ -136,11 +138,16 @@ AC_DEFUN([gl_FUNC_GETCWD],
         [Define to 1 if getcwd works, except it sometimes fails when it
          shouldn't, setting errno to ERANGE, ENAMETOOLONG, or ENOENT.])
       ;;
+    "yes, but with shorter paths")
+      AC_DEFINE([HAVE_GETCWD_SHORTER], [1],
+        [Define to 1 if getcwd works, but with shorter paths
+         than is generally tested with the replacement.])
+      ;;
   esac
 
   if { case "$gl_cv_func_getcwd_null" in *yes) false;; *) true;; esac; } \
      || test $gl_cv_func_getcwd_posix_signature != yes \
-     || test "$gl_cv_func_getcwd_path_max" != yes \
+     || { case "$gl_cv_func_getcwd_path_max" in *yes*) false;; *) true;; esac; } \
      || test $gl_abort_bug = yes; then
     REPLACE_GETCWD=1
   fi

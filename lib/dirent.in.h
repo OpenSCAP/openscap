@@ -1,5 +1,5 @@
 /* A GNU-like <dirent.h>.
-   Copyright (C) 2006-2014 Free Software Foundation, Inc.
+   Copyright (C) 2006-2016 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU Lesser General Public License as published by
@@ -77,6 +77,7 @@ typedef struct gl_directory DIR;
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef opendir
 #   define opendir rpl_opendir
+#   define GNULIB_defined_opendir 1
 #  endif
 _GL_FUNCDECL_RPL (opendir, DIR *, (const char *dir_name) _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (opendir, DIR *, (const char *dir_name));
@@ -128,6 +129,7 @@ _GL_WARN_ON_USE (rewinddir, "rewinddir is not portable - "
 #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
 #   undef closedir
 #   define closedir rpl_closedir
+#   define GNULIB_defined_closedir 1
 #  endif
 _GL_FUNCDECL_RPL (closedir, int, (DIR *dirp) _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (closedir, int, (DIR *dirp));
@@ -156,6 +158,13 @@ _GL_WARN_ON_USE (closedir, "closedir is not portable - "
 #  endif
 _GL_FUNCDECL_RPL (dirfd, int, (DIR *) _GL_ARG_NONNULL ((1)));
 _GL_CXXALIAS_RPL (dirfd, int, (DIR *));
+
+#  ifdef __KLIBC__
+/* Gnulib internal hooks needed to maintain the dirfd metadata.  */
+_GL_EXTERN_C int _gl_register_dirp_fd (int fd, DIR *dirp)
+     _GL_ARG_NONNULL ((2));
+_GL_EXTERN_C void _gl_unregister_dirp_fd (int fd);
+#  endif
 # else
 #  if defined __cplusplus && defined GNULIB_NAMESPACE && defined dirfd
     /* dirfd is defined as a macro and not as a function.

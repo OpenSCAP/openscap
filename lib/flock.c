@@ -6,7 +6,7 @@
 
    Written by Richard W.M. Jones <rjones.at.redhat.com>
 
-   Copyright (C) 2008-2012 Free Software Foundation, Inc.
+   Copyright (C) 2008-2016 Free Software Foundation, Inc.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 /* LockFileEx */
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
-# include <flock.h>
+
 # include <errno.h>
 
 /* _get_osfhandle */
@@ -39,7 +39,8 @@
  * APIs we'll call need lower/upper 32 bit pairs, keep the file size
  * like that too.
  */
-static BOOL file_size (HANDLE h, DWORD * lower, DWORD * upper)
+static BOOL
+file_size (HANDLE h, DWORD * lower, DWORD * upper)
 {
   *lower = GetFileSize (h, upper);
   return 1;
@@ -51,7 +52,8 @@ static BOOL file_size (HANDLE h, DWORD * lower, DWORD * upper)
 # endif
 
 /* Acquire a lock. */
-static BOOL do_lock (HANDLE h, int non_blocking, int exclusive)
+static BOOL
+do_lock (HANDLE h, int non_blocking, int exclusive)
 {
   BOOL res;
   DWORD size_lower, size_upper;
@@ -75,7 +77,8 @@ static BOOL do_lock (HANDLE h, int non_blocking, int exclusive)
 }
 
 /* Unlock reader or exclusive lock. */
-static BOOL do_unlock (HANDLE h)
+static BOOL
+do_unlock (HANDLE h)
 {
   int res;
   DWORD size_lower, size_upper;
@@ -88,7 +91,8 @@ static BOOL do_unlock (HANDLE h)
 }
 
 /* Now our BSD-like flock operation. */
-int flock (int fd, int operation)
+int
+flock (int fd, int operation)
 {
   HANDLE h = (HANDLE) _get_osfhandle (fd);
   DWORD res;
@@ -154,4 +158,63 @@ int flock (int fd, int operation)
   return 0;
 }
 
-#endif /* Windows */
+#else /* !Windows */
+
+# ifdef HAVE_STRUCT_FLOCK_L_TYPE
+/* We know how to implement flock in terms of fcntl. */
+
+#  include <fcntl.h>
+
+#  ifdef HAVE_UNISTD_H
+#   include <unistd.h>
+#  endif
+
+#  include <errno.h>
+#  include <string.h>
+
+int
+flock (int fd, int operation)
+{
+  int cmd, r;
+  struct flock fl;
+
+  if (operation & LOCK_NB)
+    cmd = F_SETLK;
+  else
+    cmd = F_SETLKW;
+  operation &= ~LOCK_NB;
+
+  memset (&fl, 0, sizeof fl);
+  fl.l_whence = SEEK_SET;
+  /* l_start & l_len are 0, which as a special case means "whole file". */
+
+  switch (operation)
+    {
+    case LOCK_SH:
+      fl.l_type = F_RDLCK;
+      break;
+    case LOCK_EX:
+      fl.l_type = F_WRLCK;
+      break;
+    case LOCK_UN:
+      fl.l_type = F_UNLCK;
+      break;
+    default:
+      errno = EINVAL;
+      return -1;
+    }
+
+  r = fcntl (fd, cmd, &fl);
+  if (r == -1 && errno == EACCES)
+    errno = EAGAIN;
+
+  return r;
+}
+
+# else /* !HAVE_STRUCT_FLOCK_L_TYPE */
+
+#  error "This platform lacks flock function, and Gnulib doesn't provide a replacement. This is a bug in Gnulib."
+
+# endif /* !HAVE_STRUCT_FLOCK_L_TYPE */
+
+#endif /* !Windows */

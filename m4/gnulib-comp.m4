@@ -1,5 +1,5 @@
 # DO NOT EDIT! GENERATED AUTOMATICALLY!
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2016 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -37,11 +37,16 @@ AC_DEFUN([gl_EARLY],
   m4_pattern_allow([^gl_ES$])dnl a valid locale name
   m4_pattern_allow([^gl_LIBOBJS$])dnl a variable
   m4_pattern_allow([^gl_LTLIBOBJS$])dnl a variable
+
+  # Pre-early section.
+  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   AC_REQUIRE([gl_PROG_AR_RANLIB])
+
   AC_REQUIRE([AM_PROG_CC_C_O])
   # Code from module absolute-header:
   # Code from module alloca-opt:
   # Code from module arpa_inet:
+  # Code from module assure:
   # Code from module c-ctype:
   # Code from module canonicalize-lgpl:
   # Code from module chdir:
@@ -55,7 +60,6 @@ AC_DEFUN([gl_EARLY],
   # Code from module dup2:
   # Code from module errno:
   # Code from module extensions:
-  AC_REQUIRE([gl_USE_SYSTEM_EXTENSIONS])
   # Code from module extern-inline:
   # Code from module fchdir:
   # Code from module fcntl:
@@ -64,6 +68,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module filename:
   # Code from module filenamecat-lgpl:
   # Code from module float:
+  # Code from module flock:
   # Code from module fstat:
   # Code from module getcwd-lgpl:
   # Code from module getdelim:
@@ -128,6 +133,7 @@ AC_DEFUN([gl_EARLY],
   # Code from module strings:
   # Code from module strptime:
   # Code from module strsep:
+  # Code from module sys_file:
   # Code from module sys_socket:
   # Code from module sys_stat:
   # Code from module sys_time:
@@ -186,7 +192,8 @@ AC_DEFUN([gl_INIT],
   gl_DIRENT_MODULE_INDICATOR([closedir])
   gl_DIRENT_H
   gl_FUNC_DIRFD
-  if test $ac_cv_func_dirfd = no && test $gl_cv_func_dirfd_macro = no; then
+  if test $ac_cv_func_dirfd = no && test $gl_cv_func_dirfd_macro = no \
+     || test $REPLACE_DIRFD = 1; then
     AC_LIBOBJ([dirfd])
     gl_PREREQ_DIRFD
   fi
@@ -217,6 +224,12 @@ AC_DEFUN([gl_INIT],
   if test $REPLACE_ITOLD = 1; then
     AC_LIBOBJ([itold])
   fi
+  gl_FUNC_FLOCK
+  if test $HAVE_FLOCK = 0; then
+    AC_LIBOBJ([flock])
+    gl_PREREQ_FLOCK
+  fi
+  gl_HEADER_SYS_FILE_MODULE_INDICATOR([flock])
   gl_FUNC_FSTAT
   if test $REPLACE_FSTAT = 1; then
     AC_LIBOBJ([fstat])
@@ -302,11 +315,11 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_MKSTEMP
   fi
   gl_STDLIB_MODULE_INDICATOR([mkstemp])
-  gl_MSVC_INVAL
+  AC_REQUIRE([gl_MSVC_INVAL])
   if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
     AC_LIBOBJ([msvc-inval])
   fi
-  gl_MSVC_NOTHROW
+  AC_REQUIRE([gl_MSVC_NOTHROW])
   if test $HAVE_MSVC_INVALID_PARAMETER_HANDLER = 1; then
     AC_LIBOBJ([msvc-nothrow])
   fi
@@ -443,6 +456,8 @@ AC_DEFUN([gl_INIT],
     gl_PREREQ_STRSEP
   fi
   gl_STRING_MODULE_INDICATOR([strsep])
+  gl_HEADER_SYS_FILE_H
+  AC_PROG_MKDIR_P
   AC_REQUIRE([gl_HEADER_SYS_SOCKET])
   AC_PROG_MKDIR_P
   gl_HEADER_SYS_STAT_H
@@ -626,6 +641,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/arpa_inet.in.h
   lib/asnprintf.c
   lib/asprintf.c
+  lib/assure.h
   lib/basename-lgpl.c
   lib/c-ctype.c
   lib/c-ctype.h
@@ -651,6 +667,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/float+.h
   lib/float.c
   lib/float.in.h
+  lib/flock.c
   lib/fstat.c
   lib/getcwd-lgpl.c
   lib/getdelim.c
@@ -718,6 +735,7 @@ AC_DEFUN([gl_FILE_LIST], [
   lib/strncasecmp.c
   lib/strptime.c
   lib/strsep.c
+  lib/sys_file.in.h
   lib/sys_socket.c
   lib/sys_socket.in.h
   lib/sys_stat.in.h
@@ -764,6 +782,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/fcntl_h.m4
   m4/filenamecat.m4
   m4/float_h.m4
+  m4/flock.m4
   m4/fstat.m4
   m4/getcwd.m4
   m4/getdelim.m4
@@ -837,6 +856,7 @@ AC_DEFUN([gl_FILE_LIST], [
   m4/strings_h.m4
   m4/strptime.m4
   m4/strsep.m4
+  m4/sys_file_h.m4
   m4/sys_socket_h.m4
   m4/sys_stat_h.m4
   m4/sys_time_h.m4
