@@ -26,7 +26,13 @@ function test_probes_file {
 
     [ -f $RF ] && rm -f $RF
 
-    $OSCAP oval eval --results $RF $DF
+	if [ "$1" == "verbose" ];
+	then
+		VF="verbose"
+		$OSCAP oval eval --verbose DEVEL --verbose-log-file $VF --results $RF $DF
+	else
+		$OSCAP oval eval --results $RF $DF
+	fi
 
     if [ -f $RF ]; then
 	verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 204
@@ -42,6 +48,7 @@ function test_probes_file {
 
 test_init "test_probes_file.log"
 
+test_run "test_probes_file with verbose mode" test_probes_file verbose
 test_run "test_probes_file" test_probes_file
 
 test_exit
