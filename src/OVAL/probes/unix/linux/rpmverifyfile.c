@@ -76,9 +76,18 @@ struct rpmverify_res {
 #define RPMVERIFY_SKIP_GHOST  0x2000000000000000
 #define RPMVERIFY_RPMATTRMASK 0x00000000ffffffff
 
+/* In rmplib older than 4.7 some of the enum values aren't defined.
+ * We need to provide fallback definitions.
+ */
 #ifndef HAVE_RPM47
+	/* *VERIFY_FILEDIGEST were introduced as aliases to *VERIFY_MD5
+	 * They all have the same value (1) - see 'rpm/rpmvf.h'.
+	 */
 	#define RPMVERIFY_FILEDIGEST RPMVERIFY_MD5
 	#define VERIFY_FILEDIGEST VERIFY_MD5
+	/* VERIFY_CAPS is not supported in older rpmlib.
+	 * We can set it to 0 because 0 is neutral to bit OR operation.
+	 */
 	#define VERIFY_CAPS 0
 #endif
 
