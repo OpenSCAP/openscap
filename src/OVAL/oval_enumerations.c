@@ -754,6 +754,11 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	}
 }
 
+const char *oval_subtype_to_str(oval_subtype_t subtype)
+{
+	return oval_subtype_get_text(subtype);
+}
+
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {
 	{OVAL_RESULT_TRUE, "true"},
 	{OVAL_RESULT_FALSE, "false"},

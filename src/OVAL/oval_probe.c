@@ -173,18 +173,6 @@ static void __init_once(void)
         return;
 }
 
-const char *oval_subtype_to_str(oval_subtype_t subtype)
-{
-        oval_subtypedsc_t *d;
-
-        __init_once();
-
-        d = oscap_bfind(OSCAP_GSYM(__s2n_tbl), __s2n_tbl_count, sizeof(oval_subtypedsc_t), &subtype,
-                        (int(*)(void *, void *))__s2n_tbl_cmp);
-
-        return (d == NULL ? NULL : d->name);
-}
-
 oval_subtype_t oval_str_to_subtype(const char *str)
 {
         oval_subtypedsc_t *d;
