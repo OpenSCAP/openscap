@@ -8,7 +8,7 @@ libopenscap_la_LDFLAGS = -no-undefined -version-info $(LT_CURRENT):$(LT_REVISION
 
 libopenscap_testing_la_SOURCES =
 libopenscap_testing_la_LIBADD = $(top_builddir)/lib/libgnu.la
-libopenscap_testing_la_LDFLAGS= -rpath /nowhere
+libopenscap_testing_la_LDFLAGS= -no-undefined -rpath /nowhere
 
 SUBDIRS += common
 libopenscap_la_LIBADD += common/liboscapcommon.la
