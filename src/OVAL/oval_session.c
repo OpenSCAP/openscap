@@ -44,9 +44,6 @@
 #include <linux/limits.h>
 #endif
 
-#if !defined(OVAL_PROBES_ENABLED)
-const char *oval_subtype_to_str(oval_subtype_t subtype);
-#endif
 
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
 static const char *oval_results_report = "oval-results-report.xsl";
