@@ -1405,12 +1405,12 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         bool    multiplied;
         int     value_i, multiply;
 
-        subtype_name = oval_subtype_to_str(item_subtype);
-
-        if (subtype_name == NULL) {
+        if (!oval_subtype_is_valid(item_subtype) && item_subtype != OVAL_SUBTYPE_SYSINFO) {
                 dE("Invalid/Unknown subtype: %d", (int)item_subtype);
                 return (NULL);
         }
+
+        subtype_name = oval_subtype_get_text(item_subtype);
 
         if (strlen(subtype_name) + strlen("_item") < sizeof item_name) {
                 strcpy(item_name, subtype_name);

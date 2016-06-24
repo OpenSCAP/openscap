@@ -740,6 +740,13 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 	}
 }
 
+bool oval_subtype_is_valid(oval_subtype_t subtype)
+{
+	const char *str = oval_subtype_get_text(subtype);
+	return (str != NULL && strcmp(str, _invalid) != 0);
+}
+
+
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {
 	{OVAL_RESULT_TRUE, "true"},
 	{OVAL_RESULT_FALSE, "false"},
