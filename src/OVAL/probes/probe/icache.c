@@ -176,6 +176,8 @@ static void *probe_icache_worker(void *arg)
                         /*
                          * Compute item ID
                          */
+			dD("pair address: %"PRIu64, (uint64_t) pair);
+			dD("item address: %"PRIu64, (uint64_t) pair->p.item);
                         item_ID = SEXP_ID_v(pair->p.item);
                         dD("item ID=%"PRIu64"", item_ID);
 
