@@ -172,6 +172,8 @@ EXTRA_DIST += \
 	test_xccdf_selectors_cluster3.xccdf.xml \
 	test_xccdf_sub_title.sh \
 	test_xccdf_sub_title.xccdf.xml \
+	test_xccdf_test_system.sh \
+	test_xccdf_test_system.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
 	oval \
