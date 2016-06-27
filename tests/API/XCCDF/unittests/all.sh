@@ -74,6 +74,7 @@ test_run "XCCDF Remediation bypass XML Comments" $srcdir/test_remediation_xml_co
 test_run "XCCDF Remediation understands <[CDATA[." $srcdir/test_remediation_cdata.sh
 test_run "XCCDF Remediation Aborts on unresolved element." $srcdir/test_remediation_subs_unresolved.sh
 test_run "XCCDF Remediation requires fix/@system attribute" $srcdir/test_remediation_fix_without_system.sh
+test_run "XCCDF Remediation output should not contain unallowed characters" $srcdir/test_remediation_invalid_characters.sh
 #
 # Tests for 'oscap xccdf remediate'
 #

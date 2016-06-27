@@ -91,6 +91,8 @@ EXTRA_DIST += \
 	test_remediation_cdata.xccdf.xml \
 	test_remediation_fix_without_system.sh \
 	test_remediation_fix_without_system.xccdf.xml \
+	test_remediation_invalid_characters.sh \
+	test_remediation_invalid_characters.xccdf.xml \
 	test_remediation_simple.oval.xml \
 	test_remediation_simple.sh \
 	test_remediation_simple.xccdf.xml \

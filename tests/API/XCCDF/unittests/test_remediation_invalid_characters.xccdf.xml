@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+  <status>accepted</status>
+  <version>1.0</version>
+  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+    <title>Ensure that file exists and it is not executable</title>
+    <fix system="urn:xccdf:fix:script:sh">
+      echo -e "\a \b \r \x1F"
+      touch test_file
+      chmod a-x test_file
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
+    </check>
+  </Rule>
+</Benchmark>
