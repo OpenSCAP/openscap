@@ -1,3 +1,23 @@
+openscap-1.2.10                                                 29-06-2016
+  - New features
+    - support --benchmark-id when running `oscap xccdf generate guide`
+    - added CPE support for OpenSUSE 42.1
+  - Maintenance
+    - oscap-docker fixed to be source compatible with both Python 2 and 3
+    - fixed offline mode in rpmverifypackage probe
+    - fixed scanning of non-RHEL containers in oscap-docker (issue #427)
+    - fixed regression in loading a datastream session (RHBZ #1250072)
+    - fixed missing SCE results in XCCDF reports (issue #394)
+    - fixed a segmentation fault (issue #370)
+    - fix error message when OVAL generator element is missing (issue #345)
+    - fixed failing rpminfo probe
+    - fixed compilation on RHEL5 (issue #393)
+    - new tests in upstream test suite
+    - test suite is able to run on Fedora 24
+    - fixed remediation scripts appearance in HTML guides (issue #460)
+    - fixed autoconf build
+    - small fixes, refactoring, small documentation improvements
+
 openscap-1.2.9                                                  22-04-2016
   - New features
     - oscap-chroot - a tool for offline scanning of filesystems mounted at arbitrary paths
