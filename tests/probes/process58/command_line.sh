@@ -53,7 +53,7 @@ function get_command_line_node_text() {
 	local PID="$1"
 	local item='/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:process58_item[@status="exists"]/unix-sys:pid[text()="'${PID}'"]'
 	assert_exists 1 "${item}"
-	xpath $result "${item}/../unix-sys:command_line/text()" 2>/dev/null
+	$XPATH $result "${item}/../unix-sys:command_line/text()" 2>/dev/null
 }
 
 function assert_match_command_line() {
