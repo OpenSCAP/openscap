@@ -13,11 +13,36 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 
 [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
 export XMLDIFF=$(cd $(dirname $BASH_SOURCE); pwd)/xmldiff.pl
-if ! XPATH=`command -v xpath 2>&1`; then
+
+if ! XPATH_ORIG=`command -v xpath 2>&1`; then
   echo "I require xpath tool but it's not installed. Aborting." >&2
   exit 1
 fi
-export XPATH
+
+xpath_variant=$(perl -MXML::XPath -e 'print $XML::XPath::VERSION >= 1.34 ? "need_wrapper" : "standard"')
+
+if [ "$xpath_variant" == "need_wrapper" ];
+then
+	export XPATH_ORIG
+	xpath_wrapper() {
+		if [ "$#" == "1" ]; then
+			# read file from stdin
+			xpath_expr="$1"
+			"$XPATH_ORIG" -e "$xpath_expr"
+		elif [ "$#" == "2" ]; then
+			file="$1"
+			xpath_expr="$2"
+			"$XPATH_ORIG" -e "$xpath_expr" "$file"
+		else
+			echo "Parameters are not supported by xpath wrapper" >&2
+			exit 1
+		fi
+	}
+	export -f xpath_wrapper
+	export XPATH=xpath_wrapper
+else
+	export XPATH="$XPATH_ORIG"
+fi
 
 # Overall test result.
 result=0
