@@ -325,8 +325,6 @@ void *probe_init (void)
 
 #ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
-#else
-	rpmlogSetCallback(rpmErrorCb);
 #endif
 
 	if (CHROOT_IS_SET()) {

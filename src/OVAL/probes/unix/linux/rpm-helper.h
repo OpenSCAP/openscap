@@ -77,9 +77,6 @@ struct rpm_probe_global {
 
 #ifdef HAVE_RPM46
 int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
-#else
-typedef void *rpmlogCallbackData;
-void rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
 #endif
 
 // todo: HAVE_RPM412 needs to be set by configure,

@@ -799,6 +799,10 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	const char *version = xccdf_result_get_version(result);
         if (version != NULL)
 		xmlNewProp(result_node, BAD_CAST "version", BAD_CAST version);
+	const char *test_system = xccdf_result_get_test_system(result);
+	if (test_system != NULL) {
+		xmlNewProp(result_node, BAD_CAST "test-system", BAD_CAST test_system);
+	}
 
 	/* Handle children */
 	xccdf_texts_to_dom(xccdf_result_get_remarks(result), result_node, "remark");
@@ -1113,7 +1117,9 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	while (xccdf_message_iterator_has_more(messages)) {
 		struct xccdf_message *message = xccdf_message_iterator_next(messages);
 		const char *content = xccdf_message_get_content(message);
-		xmlNode *message_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "message", BAD_CAST content);
+		xmlChar *encoded_content = xmlEncodeEntitiesReentrant(doc, BAD_CAST content);
+		xmlNode *message_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "message", encoded_content);
+		xmlFree(encoded_content);
 
                 xccdf_level_t message_severity = xccdf_message_get_severity(message);
 		if (message_severity != XCCDF_LEVEL_NOT_DEFINED)
