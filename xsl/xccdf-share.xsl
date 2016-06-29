@@ -167,6 +167,9 @@ Authors:
         <xsl:when test="$profile and $profile/cdf:set-value[@idref = $subid]">
             <abbr title="from Profile/set-value: {$subid}"><xsl:value-of select="$profile/cdf:set-value[@idref = $subid][last()]/text()"/></abbr>
         </xsl:when>
+        <xsl:when test="$benchmark//cdf:Value[@id = $subid and @prohibitChanges='true']/cdf:value[not(@selector)]">
+            <xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/>
+        </xsl:when>
         <xsl:when test="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)]">
             <abbr title="from Benchmark/Value: {$subid}"><xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/></abbr>
         </xsl:when>
