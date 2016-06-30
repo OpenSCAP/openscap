@@ -385,10 +385,20 @@ int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
 	struct oval_object *object;
 	struct oval_state_iterator *ste_itr;
 	int ret;
+	oval_subtype_t test_subtype, object_subtype;
 
 	object = oval_test_get_object(test);
 	if (object == NULL)
 		return 0;
+	test_subtype = oval_test_get_subtype(test);
+	object_subtype = oval_object_get_subtype(object);
+	if (test_subtype != object_subtype) {
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "%s_test '%s' is not compatible with %s_object '%s'.",
+				oval_subtype_to_str(test_subtype), oval_test_get_id(test),
+				oval_subtype_to_str(object_subtype), oval_object_get_id(object));
+		return 0;
+	}
+
 	/* probe object */
 	ret = oval_probe_query_object(sess, object, 0, NULL);
 	if (ret == -1)

@@ -30,14 +30,12 @@ int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
 	dE("RPM: %s", rpmlogRecMessage(rec));
 	return RPMLOG_DEFAULT;
 }
-#else
-void rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
-{
-	dE("RPM: %s", rpmlogRecMessage(rec));
-}
 #endif
 
 void rpmLibsPreload()
 {
-	rpmReadConfigFiles(NULL, NULL);
+	// Don't load rpmrc files. The are useless for us,
+	// because we only need to preload libraries
+	const char* rcfiles = "";
+	rpmReadConfigFiles(rcfiles, NULL);
 }

@@ -42,7 +42,7 @@ AC_PROG_SWIG([])
 LT_CURRENT=16
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-LT_REVISION=0
+LT_REVISION=1
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
@@ -303,7 +303,12 @@ PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
 PKG_CHECK_MODULES([rpm], [rpm >= 4.6],[
 	AC_DEFINE([HAVE_RPM46], [1], [Define to 1 if rpm is newer than 4.6.])
 ],[
-	AC_MSG_NOTICE([libprm is older than 4.6])
+	AC_MSG_NOTICE([librpm is older than 4.6])
+])
+PKG_CHECK_MODULES([rpm], [rpm >= 4.7],[
+	AC_DEFINE([HAVE_RPM47], [1], [Define to 1 if rpm is newer than 4.7.])
+],[
+	AC_MSG_NOTICE([librpm is older than 4.7])
 ])
 echo
 echo '* Checking for bz2 library (optional dependency of libopenscap)'

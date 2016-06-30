@@ -15,6 +15,7 @@ EXTRA_DIST = \
 	fedora20-xccdf.xml \
 	fedora21-xccdf.xml \
 	fedora23-xccdf.xml \
+	fedora24-xccdf.xml \
 	rhel5-xccdf.xml \
 	rhel6-xccdf.xml \
 	rhel7-xccdf.xml \

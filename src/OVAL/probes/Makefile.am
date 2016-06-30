@@ -268,7 +268,7 @@ endif
 
 if probe_rpmverifypackage_enabled
 pkglibexec_PROGRAMS += probe_rpmverifypackage
-probe_rpmverifypackage_SOURCES= unix/linux/rpmverifypackage.c unix/linux/rpm-helper.h unix/linux/rpm-helper.c
+probe_rpmverifypackage_SOURCES= unix/linux/rpmverifypackage.c unix/linux/rpm-helper.h unix/linux/rpm-helper.c unix/linux/probe-chroot.h unix/linux/probe-chroot.c
 probe_rpmverifypackage_CFLAGS= @rpm_CFLAGS@
 probe_rpmverifypackage_LDFLAGS= @rpm_LIBS@ -lpopt
 endif

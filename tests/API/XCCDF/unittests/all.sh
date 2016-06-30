@@ -58,6 +58,7 @@ test_run "incorrect selector for xccdf value" $srcdir/test_xccdf_refine_value_ba
 test_run "test xccdf resolve" $srcdir/test_xccdf_resolve.sh
 test_run "Exported arf results from xccdf without reference to oval" $srcdir/test_xccdf_results_arf_no_oval.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
+test_run "TestResult element should contain test-system attribute" $srcdir/test_xccdf_test_system.sh
 
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh
 
@@ -77,6 +78,7 @@ test_run "XCCDF Remediation bypass XML Comments" $srcdir/test_remediation_xml_co
 test_run "XCCDF Remediation understands <[CDATA[." $srcdir/test_remediation_cdata.sh
 test_run "XCCDF Remediation Aborts on unresolved element." $srcdir/test_remediation_subs_unresolved.sh
 test_run "XCCDF Remediation requires fix/@system attribute" $srcdir/test_remediation_fix_without_system.sh
+test_run "XCCDF Remediation output should not contain unallowed characters" $srcdir/test_remediation_invalid_characters.sh
 #
 # Tests for 'oscap xccdf remediate'
 #

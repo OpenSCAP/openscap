@@ -16,6 +16,7 @@ libprobe_la_CFLAGS=	@pthread_CFLAGS@				\
 
 libprobe_la_SOURCES=	\
 			fini.c		\
+			offline_mode.c		\
 			preload.c		\
 			init.c			\
 			main.c			\

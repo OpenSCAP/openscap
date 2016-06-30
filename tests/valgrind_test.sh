@@ -10,7 +10,7 @@ oscap_program=$actualdir/utils/.libs/oscap
 valgrind_output=/tmp/valgrind_$$.log
 logfile=$actualdir/tests/valgrind_test.log
 suppfile=$actualdir/tests/suppressions.supp
-valgrind_args="--trace-children=yes --leak-check=full --show-reachable=yes --show-leak-kinds=all --log-file=$valgrind_output --suppressions=$suppfile"
+valgrind_args="--trace-children=yes --free-fill=55 --malloc-fill=55 --leak-check=full --show-reachable=yes --show-leak-kinds=all --log-file=$valgrind_output --suppressions=$suppfile"
 
 
 echo "VALGRIND TEST" >> $logfile
