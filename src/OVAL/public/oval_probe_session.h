@@ -42,6 +42,12 @@ typedef struct oval_probe_session oval_probe_session_t;
 oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model);
 
 /**
+ * Reinitialize already allocated probe session inplace
+ * @param model system characteristics model
+ */
+void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval_syschar_model *model);
+
+/**
  * Destroy probe session. All state information created during the lifetime
  * of the session is freed, resources used by probes are freed using the probe
  * handler API.
