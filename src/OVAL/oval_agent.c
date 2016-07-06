@@ -132,10 +132,9 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 #if defined(OVAL_PROBES_ENABLED)
 	ag_sess->res_model = oval_results_model_new_with_probe_session(
 			model, ag_sess->sys_models, ag_sess->psess);
-#endif
 	generator = oval_results_model_get_generator(ag_sess->res_model);
 	oval_generator_set_product_version(generator, oscap_get_version());
-
+#endif
 
 	ag_sess->product_name = NULL;
 
