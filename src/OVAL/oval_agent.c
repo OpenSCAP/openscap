@@ -60,8 +60,8 @@ struct oval_agent_session {
 	struct oval_variable_model *cur_var_model;
 	struct oval_syschar_model    * sys_model;
 	struct oval_syschar_model    * sys_models[2];
-	struct oval_results_model    * res_model;
 #if defined(OVAL_PROBES_ENABLED)
+	struct oval_results_model    * res_model;
 	oval_probe_session_t  * psess;
 #endif
 };
@@ -154,8 +154,10 @@ void oval_agent_set_product_name(oval_agent_session_t *ag_sess, char * product_n
 	generator = oval_syschar_model_get_generator(ag_sess->sys_models[0]);
 	oval_generator_set_product_name(generator, product_name);
 
+#if defined(OVAL_PROBES_ENABLED)
 	generator = oval_results_model_get_generator(ag_sess->res_model);
 	oval_generator_set_product_name(generator, product_name);
+#endif
 }
 
 static struct oval_result_system *_oval_agent_get_first_result_system(oval_agent_session_t *ag_sess)
@@ -236,6 +238,7 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	 * results model. Hooray corner cases! */
 	//oval_syschar_model_reset(ag_sess->sys_model);
 
+#if defined(OVAL_PROBES_ENABLED)
 	/* Apply product name to new results_model */
 	if (ag_sess->product_name) {
 		struct oval_generator *generator;
@@ -243,7 +246,6 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	        generator = oval_results_model_get_generator(ag_sess->res_model);
         	oval_generator_set_product_name(generator, ag_sess->product_name);
 	}
-#if defined(OVAL_PROBES_ENABLED)
 	oval_probe_session_destroy(ag_sess->psess);
 	ag_sess->psess = oval_probe_session_new(ag_sess->sys_model);
 #endif
@@ -305,7 +307,11 @@ cleanup:
 struct oval_results_model * oval_agent_get_results_model(oval_agent_session_t * ag_sess) {
 	__attribute__nonnull__(ag_sess);
 
+#if defined(OVAL_PROBES_ENABLED)
 	return ag_sess->res_model;
+#else
+	return NULL;
+#endif
 }
 
 const char * oval_agent_get_filename(oval_agent_session_t * ag_sess) {
@@ -319,9 +325,9 @@ void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 		oscap_free(ag_sess->product_name);
 #if defined(OVAL_PROBES_ENABLED)
 		oval_probe_session_destroy(ag_sess->psess);
+		oval_results_model_free(ag_sess->res_model);
 #endif
 		oval_syschar_model_free(ag_sess->sys_model);
-		oval_results_model_free(ag_sess->res_model);
 	        oscap_free(ag_sess->filename);
 		oscap_free(ag_sess);
 	}
