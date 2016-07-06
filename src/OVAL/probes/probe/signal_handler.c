@@ -66,7 +66,11 @@ void *probe_signal_handler(void *arg)
 	sigset_t  siset;
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
+# if defined(__APPLE__)
+	pthread_setname_np("signal_handler");
+# else
 	pthread_setname_np(pthread_self(), "signal_handler");
+# endif
 #endif
 
 	sigemptyset(&siset);

@@ -93,7 +93,11 @@ static void *probe_icache_worker(void *arg)
         assume_d(cache != NULL, NULL);
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
+# if defined(__APPLE__)
+	pthread_setname_np("icache_worker");
+# else
 	pthread_setname_np(pthread_self(), "icache_worker");
+# endif
 #endif
 
         if (pthread_mutex_lock(&cache->queue_mutex) != 0) {
