@@ -14,6 +14,9 @@ echo "Result file = $result"
 [ -f $result ]; [ -s $result ]
 
 $OSCAP xccdf validate-xml $result
+
+assert_exists 1 "//message[contains(text(),'<tag>')]"
+
 rm test_file
 
 rm $result
