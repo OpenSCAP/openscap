@@ -102,7 +102,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         ofts = oval_fts_open(path_entity, filename_entity, NULL, bh_entity);
 
         if (ofts == NULL) {
-                dE("oval_ftp_open(%s, %s) failed", PROC_SYS_DIR, ".\\+");
+                dE("oval_fts_open(%s, %s) failed", PROC_SYS_DIR, ".\\+");
                 SEXP_vfree(path_entity, filename_entity, bh_entity, name_entity, NULL);
 
                 return (PROBE_EFATAL);
