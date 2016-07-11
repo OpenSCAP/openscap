@@ -479,7 +479,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 #endif
-	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent)) != NULL) {
+	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
