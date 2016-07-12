@@ -6,6 +6,7 @@
     <title>Ensure that file exists and it is not executable</title>
     <fix system="urn:xccdf:fix:script:sh">
       echo -e "\a \b \r \x1F"
+      echo "&lt;tag&gt;"
       touch test_file
       chmod a-x test_file
     </fix>

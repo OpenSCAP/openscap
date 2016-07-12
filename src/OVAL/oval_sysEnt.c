@@ -288,7 +288,9 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 	if (mask && !xmlStrcmp(root_node->name, BAD_CAST OVAL_ROOT_ELM_RESULTS)) {
 		sysent_tag = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST "");
 	} else {
-		sysent_tag = xmlNewTextChild(parent, ent_ns, BAD_CAST tagname, BAD_CAST content);
+		xmlChar *encoded_content = xmlEncodeEntitiesReentrant(doc, BAD_CAST content);
+		sysent_tag = xmlNewChild(parent, ent_ns, BAD_CAST tagname, encoded_content);
+		xmlFree(encoded_content);
 	}
 
 	if (mask) {

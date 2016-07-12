@@ -240,7 +240,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
 		return (PROBE_EFATAL);
         }
 
-	if ((ofts = oval_fts_open(path, filename, filepath, behaviors)) != NULL) {
+	if ((ofts = oval_fts_open(path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out, filters);
 			oval_ftsent_free(ofts_ent);
