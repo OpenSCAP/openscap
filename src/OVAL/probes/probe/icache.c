@@ -555,10 +555,9 @@ static void probe_icache_free_node(struct rbt_i64_node *n)
 {
         probe_citem_t *ci = (probe_citem_t *)n->data;
 
-        while (ci->count > 0) {
-                SEXP_free(ci->item[ci->count - 1]);
-                --ci->count;
-        }
+	for ( ; ci->count > 0 ; --ci->count ) {
+		SEXP_free(ci->item[ci->count - 1]);
+	}
 
         oscap_free(ci->item);
         oscap_free(ci);
