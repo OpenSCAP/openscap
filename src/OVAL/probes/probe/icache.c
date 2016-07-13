@@ -363,6 +363,12 @@ int probe_icache_add(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item)
 
         ret = __probe_icache_add_nolock(cache, cobj, item, NULL);
 
+        if (pthread_cond_signal(&cache->queue_notempty) != 0) {
+                dE("An error ocured while signaling the `notempty' condition: %u, %s",
+                   errno, strerror(errno));
+                return (-1);
+        }
+
         if (pthread_mutex_unlock(&cache->queue_mutex) != 0) {
                 dE("An error ocured while unlocking the queue mutex: %u, %s",
                    errno, strerror(errno));
@@ -371,12 +377,6 @@ int probe_icache_add(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item)
 
         if (ret != 0)
                 return (-1);
-
-        if (pthread_cond_signal(&cache->queue_notempty) != 0) {
-                dE("An error ocured while signaling the `notempty' condition: %u, %s",
-                   errno, strerror(errno));
-                return (-1);
-        }
 
         return (0);
 }
