@@ -139,19 +139,19 @@ static void *probe_icache_worker(void *arg)
 			 cache->queue_end == cache->queue_beg :
 			 cache->queue_end != cache->queue_beg, NULL);
 
-                /*
-                 * Release the mutex
-                 */
-                if (pthread_mutex_unlock(&cache->queue_mutex) != 0) {
-                        dE("An error ocured while unlocking the queue mutex: %u, %s",
-                           errno, strerror(errno));
-                        abort();
-                }
 
                 dI("Signaling `notfull'");
 
                 if (pthread_cond_signal(&cache->queue_notfull) != 0) {
                         dE("An error ocured while signaling the `notfull' condition: %u, %s",
+                           errno, strerror(errno));
+                        abort();
+                }
+                /*
+                 * Release the mutex
+                 */
+                if (pthread_mutex_unlock(&cache->queue_mutex) != 0) {
+                        dE("An error ocured while unlocking the queue mutex: %u, %s",
                            errno, strerror(errno));
                         abort();
                 }
