@@ -136,6 +136,27 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_citem_t* cached, pr
 	return 0;
 }
 
+static void icache_add_to_tree(rbt_t *tree, int64_t item_id, probe_citem_t* cached, probe_iqpair_t *pair) {
+
+	cached = oscap_talloc(probe_citem_t);
+	cached->item = oscap_talloc(SEXP_t *);
+	cached->item[0] = pair->p.item;
+	cached->count = 1;
+
+	/* Assign an unique item ID */
+	probe_icache_item_setID(pair->p.item, item_id);
+
+	if (rbt_i64_add(tree, (int64_t)item_id, (void **)cached, NULL) != 0) {
+		dE("Can't add item (k=%"PRIi64" to the cache (%p)", item_id, tree);
+
+		oscap_free(cached->item);
+		oscap_free(cached);
+
+		/* now what? */
+		abort();
+	}
+}
+
 static void *probe_icache_worker(void *arg)
 {
         probe_icache_t *cache = (probe_icache_t *)(arg);
@@ -235,24 +256,9 @@ static void *probe_icache_worker(void *arg)
                                 /*
                                  * Cache MISS
                                  */
+
                                 dI("cache MISS");
-                                cached = oscap_talloc(probe_citem_t);
-                                cached->item = oscap_talloc(SEXP_t *);
-                                cached->item[0] = pair->p.item;
-                                cached->count = 1;
-
-                                /* Assign an unique item ID */
-                                probe_icache_item_setID(pair->p.item, item_ID);
-
-                                if (rbt_i64_add(cache->tree, (int64_t)item_ID, (void *)cached, NULL) != 0) {
-                                        dE("Can't add item (k=%"PRIi64" to the cache (%p)", (int64_t)item_ID, cache->tree);
-
-                                        oscap_free(cached->item);
-                                        oscap_free(cached);
-
-                                        /* now what? */
-                                        abort();
-                                }
+                                icache_add_to_tree(cache->tree, item_ID, cached, pair);
                         }
 
                         if (probe_cobj_add_item(pair->cobj, pair->p.item) != 0) {
