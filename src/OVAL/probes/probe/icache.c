@@ -91,24 +91,27 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_citem_t* cached, pr
 		return -1;
 	}
 
-	register uint16_t i;
-	SEXP_t   rest1, rest2;
 	/*
 	* Maybe a cache HIT
 	*/
 	dI("cache HIT #1");
 
+	register uint16_t i;
 	for (i = 0; i < cached->count; ++i) {
-		if (SEXP_deepcmp(SEXP_list_rest_r(&rest1, pair->p.item),
-			 SEXP_list_rest_r(&rest2, cached->item[i])))
-			{
-				SEXP_free_r(&rest1);
-				SEXP_free_r(&rest2);
-				break;
-			}
+		SEXP_t rest1;
+		SEXP_t* rest_r1 = SEXP_list_rest_r(&rest1, pair->p.item);
 
+		SEXP_t rest2;
+		SEXP_t* rest_r2 = SEXP_list_rest_r(&rest2, cached->item[i]);
+
+		if (SEXP_deepcmp(rest_r1, rest_r2)) {
 			SEXP_free_r(&rest1);
 			SEXP_free_r(&rest2);
+			break;
+		}
+
+		SEXP_free_r(&rest1);
+		SEXP_free_r(&rest2);
 	}
 
 	if (i == cached->count) {
