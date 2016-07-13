@@ -85,7 +85,9 @@ static void probe_icache_item_setID(SEXP_t *item, SEXP_ID_t item_ID)
         return;
 }
 
-static int icache_lookup(rbt_t *tree, int64_t item_id, probe_citem_t* cached, probe_iqpair_t *pair) {
+static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
+
+	probe_citem_t *cached = NULL;
 
 	if (rbt_i64_get(tree, item_id, (void**)&cached) != 0) {
 		return -1;
@@ -136,9 +138,9 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_citem_t* cached, pr
 	return 0;
 }
 
-static void icache_add_to_tree(rbt_t *tree, int64_t item_id, probe_citem_t* cached, probe_iqpair_t *pair) {
+static void icache_add_to_tree(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 
-	cached = oscap_talloc(probe_citem_t);
+	probe_citem_t *cached = oscap_talloc(probe_citem_t);
 	cached->item = oscap_talloc(SEXP_t *);
 	cached->item[0] = pair->p.item;
 	cached->count = 1;
@@ -242,7 +244,6 @@ static void *probe_icache_worker(void *arg)
                                 abort();
                         }
                 } else {
-                        probe_citem_t *cached = NULL;
 
                         dI("Handling cache request");
 
@@ -252,13 +253,13 @@ static void *probe_icache_worker(void *arg)
                         item_ID = SEXP_ID_v(pair->p.item);
                         dI("item ID=%"PRIu64"", item_ID);
 
-                        if (icache_lookup(cache->tree, item_ID, cached, pair) != 0) {
+                        if (icache_lookup(cache->tree, item_ID, pair) != 0) {
                                 /*
                                  * Cache MISS
                                  */
 
                                 dI("cache MISS");
-                                icache_add_to_tree(cache->tree, item_ID, cached, pair);
+                                icache_add_to_tree(cache->tree, item_ID, pair);
                         }
 
                         if (probe_cobj_add_item(pair->cobj, pair->p.item) != 0) {
