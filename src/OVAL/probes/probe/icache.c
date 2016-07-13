@@ -120,7 +120,7 @@ static void *probe_icache_worker(void *arg)
 
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
                 assume_d(cache->queue_cnt > 0, NULL);
-        next:
+        do {
                 dI("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"", cache->queue_cnt, cache->queue_beg);
                 /*
                  * Extract an item from the queue and update queue beg, end & cnt
@@ -265,8 +265,7 @@ static void *probe_icache_worker(void *arg)
                         abort();
                 }
 
-                if (cache->queue_cnt > 0)
-                        goto next;
+                } while (cache->queue_cnt > 0);
         }
 
         return (NULL);
@@ -371,6 +370,12 @@ int probe_icache_add(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item)
 
         ret = __probe_icache_add_nolock(cache, cobj, item, NULL);
 
+        if (pthread_cond_signal(&cache->queue_notempty) != 0) {
+                dE("An error ocured while signaling the `notempty' condition: %u, %s",
+                   errno, strerror(errno));
+                return (-1);
+        }
+
         if (pthread_mutex_unlock(&cache->queue_mutex) != 0) {
                 dE("An error ocured while unlocking the queue mutex: %u, %s",
                    errno, strerror(errno));
@@ -379,12 +384,6 @@ int probe_icache_add(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item)
 
         if (ret != 0)
                 return (-1);
-
-        if (pthread_cond_signal(&cache->queue_notempty) != 0) {
-                dE("An error ocured while signaling the `notempty' condition: %u, %s",
-                   errno, strerror(errno));
-                return (-1);
-        }
 
         return (0);
 }
@@ -563,10 +562,9 @@ static void probe_icache_free_node(struct rbt_i64_node *n)
 {
         probe_citem_t *ci = (probe_citem_t *)n->data;
 
-        while (ci->count > 0) {
-                SEXP_free(ci->item[ci->count - 1]);
-                --ci->count;
-        }
+	for ( ; ci->count > 0 ; --ci->count ) {
+		SEXP_free(ci->item[ci->count - 1]);
+	}
 
         oscap_free(ci->item);
         oscap_free(ci);
