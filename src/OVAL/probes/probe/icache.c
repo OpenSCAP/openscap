@@ -119,7 +119,7 @@ static void *probe_icache_worker(void *arg)
 
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
                 assume_d(cache->queue_cnt > 0, NULL);
-        next:
+        do {
                 dI("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"", cache->queue_cnt, cache->queue_beg);
                 /*
                  * Extract an item from the queue and update queue beg, end & cnt
@@ -257,8 +257,7 @@ static void *probe_icache_worker(void *arg)
                         abort();
                 }
 
-                if (cache->queue_cnt > 0)
-                        goto next;
+                } while (cache->queue_cnt > 0);
         }
 
         return (NULL);
