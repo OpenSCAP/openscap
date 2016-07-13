@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <string.h>
 #include <inttypes.h>
+#include <stdlib.h>
 
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe-api.h"
@@ -185,6 +186,13 @@ static void *probe_icache_worker(void *arg)
                         if (rbt_i64_get(cache->tree, (int64_t)item_ID, (void *)&cached) == 0) {
                                 register uint16_t i;
 				SEXP_t   rest1, rest2;
+
+				if (cached == NULL) {
+					// We will never get here because the data were claimed
+					// to be found in the cache sucessfully.
+					dE("Invalid item retreived from the cache lookup.");
+					abort();
+				}
                                 /*
                                  * Maybe a cache HIT
                                  */
