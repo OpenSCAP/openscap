@@ -85,6 +85,80 @@ static void probe_icache_item_setID(SEXP_t *item, SEXP_ID_t item_ID)
         return;
 }
 
+static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
+
+	probe_citem_t *cached = NULL;
+
+	if (rbt_i64_get(tree, item_id, (void**)&cached) != 0) {
+		return -1;
+	}
+
+	/*
+	* Maybe a cache HIT
+	*/
+	dI("cache HIT #1");
+
+	register uint16_t i;
+	for (i = 0; i < cached->count; ++i) {
+		SEXP_t rest1;
+		SEXP_t* rest_r1 = SEXP_list_rest_r(&rest1, pair->p.item);
+
+		SEXP_t rest2;
+		SEXP_t* rest_r2 = SEXP_list_rest_r(&rest2, cached->item[i]);
+
+		if (SEXP_deepcmp(rest_r1, rest_r2)) {
+			SEXP_free_r(&rest1);
+			SEXP_free_r(&rest2);
+			break;
+		}
+
+		SEXP_free_r(&rest1);
+		SEXP_free_r(&rest2);
+	}
+
+	if (i == cached->count) {
+		/*
+		* Cache MISS
+		*/
+		dI("cache MISS");
+
+		cached->item = oscap_realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
+		cached->item[cached->count - 1] = pair->p.item;
+
+		/* Assign an unique item ID */
+		probe_icache_item_setID(pair->p.item, item_id);
+	} else {
+		/*
+		* Cache HIT
+		*/
+		dI("cache HIT #2 -> real HIT");
+		SEXP_free(pair->p.item);
+		pair->p.item = cached->item[i];
+	}
+	return 0;
+}
+
+static void icache_add_to_tree(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
+
+	probe_citem_t *cached = oscap_talloc(probe_citem_t);
+	cached->item = oscap_talloc(SEXP_t *);
+	cached->item[0] = pair->p.item;
+	cached->count = 1;
+
+	/* Assign an unique item ID */
+	probe_icache_item_setID(pair->p.item, item_id);
+
+	if (rbt_i64_add(tree, (int64_t)item_id, (void **)cached, NULL) != 0) {
+		dE("Can't add item (k=%"PRIi64" to the cache (%p)", item_id, tree);
+
+		oscap_free(cached->item);
+		oscap_free(cached);
+
+		/* now what? */
+		abort();
+	}
+}
+
 static void *probe_icache_worker(void *arg)
 {
         probe_icache_t *cache = (probe_icache_t *)(arg);
@@ -170,7 +244,6 @@ static void *probe_icache_worker(void *arg)
                                 abort();
                         }
                 } else {
-                        probe_citem_t *cached = NULL;
 
                         dI("Handling cache request");
 
@@ -180,78 +253,13 @@ static void *probe_icache_worker(void *arg)
                         item_ID = SEXP_ID_v(pair->p.item);
                         dI("item ID=%"PRIu64"", item_ID);
 
-                        /*
-                         * Perform cache lookup
-                         */
-                        if (rbt_i64_get(cache->tree, (int64_t)item_ID, (void *)&cached) == 0) {
-                                register uint16_t i;
-				SEXP_t   rest1, rest2;
-
-				if (cached == NULL) {
-					// We will never get here because the data were claimed
-					// to be found in the cache sucessfully.
-					dE("Invalid item retreived from the cache lookup.");
-					abort();
-				}
-                                /*
-                                 * Maybe a cache HIT
-                                 */
-                                dI("cache HIT #1");
-
-                                for (i = 0; i < cached->count; ++i) {
-                                        if (SEXP_deepcmp(SEXP_list_rest_r(&rest1, pair->p.item),
-							 SEXP_list_rest_r(&rest2, cached->item[i])))
-					{
-						SEXP_free_r(&rest1);
-						SEXP_free_r(&rest2);
-                                                break;
-					}
-
-					SEXP_free_r(&rest1);
-					SEXP_free_r(&rest2);
-                                }
-
-                                if (i == cached->count) {
-                                        /*
-                                         * Cache MISS
-                                         */
-                                        dI("cache MISS");
-
-                                        cached->item = oscap_realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
-                                        cached->item[cached->count - 1] = pair->p.item;
-
-                                        /* Assign an unique item ID */
-                                        probe_icache_item_setID(pair->p.item, item_ID);
-                                } else {
-                                        /*
-                                         * Cache HIT
-                                         */
-                                        dI("cache HIT #2 -> real HIT");
-                                        SEXP_free(pair->p.item);
-                                        pair->p.item = cached->item[i];
-                                }
-                        } else {
+                        if (icache_lookup(cache->tree, item_ID, pair) != 0) {
                                 /*
                                  * Cache MISS
                                  */
+
                                 dI("cache MISS");
-                                cached = oscap_talloc(probe_citem_t);
-                                cached->item = oscap_talloc(SEXP_t *);
-                                cached->item[0] = pair->p.item;
-                                cached->count = 1;
-
-                                /* Assign an unique item ID */
-                                probe_icache_item_setID(pair->p.item, item_ID);
-
-                                if (rbt_i64_add(cache->tree, (int64_t)item_ID, (void *)cached, NULL) != 0) {
-                                        dE("Can't add item (k=%"PRIi64" to the cache (%p)", (int64_t)item_ID, cache->tree);
-
-                                        oscap_free(cached->item);
-                                        oscap_free(cached);
-
-                                        /* now what? */
-                                        abort();
-                                }
+                                icache_add_to_tree(cache->tree, item_ID, pair);
                         }
 
                         if (probe_cobj_add_item(pair->cobj, pair->p.item) != 0) {
