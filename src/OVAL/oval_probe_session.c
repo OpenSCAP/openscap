@@ -155,7 +155,7 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         return sess;
 }
 
-void oval_probe_session_free(oval_probe_session_t *sess)
+static void oval_probe_session_free(oval_probe_session_t *sess)
 {
 	if (sess == NULL) {
 		dE("Invalid session (NULL)");
