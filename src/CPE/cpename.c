@@ -95,8 +95,6 @@ struct cpe_name {
  */
 //static const char *CPE_PART_CHAR[] = { NULL, "h", "o", "a" };
 
-static const char CPE_SEP_CHAR = ':';
-
 static const struct oscap_string_map CPE_PART_MAP[] = {
 	{ CPE_PART_HW,   "h"  },
 	{ CPE_PART_OS,   "o"  },
