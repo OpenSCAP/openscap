@@ -5,9 +5,9 @@ set -x
 
 function clean_processes {
 	# Processes are in stopped state. SIGCONT cause their exiting
-	[ -n "${ZOMBIE_PPID}" ] && kill -SIGCONT ${ZOMBIE_PPID}
-	[ -n "${PID}" ] && kill -SIGCONT ${PID}
-	[ -n "${ESCAPED_PID}" ] && kill -SIGCONT ${ESCAPED_PID}
+	[ -n "${ZOMBIE_PPID}" ] && kill -SIGCONT "${ZOMBIE_PPID}"
+	[ -n "${PID}" ] && kill -SIGCONT "${PID}"
+	[ -n "${ESCAPED_PID}" ] && kill -SIGCONT "${ESCAPED_PID}"
 }
 trap clean_processes EXIT
 
@@ -24,9 +24,9 @@ function get_process_cmdline() {
 # We can scan processes before process's exec() and get wrong command_line
 function wait_for_process() {
 	local PID="$1"
-	for i in `seq 1 100`; # wait max 100 * 100ms
+	for i in $(seq 1 100); # wait max 100 * 100ms
 		do
-			PROCESS_CMDLINE="`get_process_cmdline $PID`"
+			PROCESS_CMDLINE=$(get_process_cmdline "$PID")
 			[[ "${PROCESS_CMDLINE}" == *${PROC}* ]] && break
 			sleep 0.1s
 		done
@@ -36,15 +36,15 @@ function wait_for_process() {
 # Wait max 10 x 100ms
 function get_zombie_pid_from_ppid() {
 	local PARENT_PID="$1"
-	for i in `seq 1 100`;
+	for i in $(seq 1 100);
 		do
-			ZOMBIE_PID=`ps -ostate,pid --ppid ${PARENT_PID}| grep "^Z" | sed -E 's/^.\s*?([[:digit:]]+).*$/\1/'`
+			ZOMBIE_PID=$(ps -ostate,pid --ppid "${PARENT_PID}" | grep "^Z" | sed -E 's/^.\s*?([[:digit:]]+).*$/\1/')
 			[ "${ZOMBIE_PID}" != "" ] && break;
 			sleep 0.1s
 		done
 	if [ "x${ZOMBIE_PID}" == "x" ]; then
 		echo "Debug: The ZOMBIE_PID was not found!" >&2
-		ps -ostate,pid --ppid ${PARENT_PID} >&2
+		ps -ostate,pid --ppid "${PARENT_PID}" >&2
 	fi
 	echo ${ZOMBIE_PID}
 }
@@ -59,10 +59,10 @@ function get_command_line_node_text() {
 function assert_match_command_line() {
 	local PID="$1"
 	local EXPECTED_COMMAND_LINE="$2"
-	
+
 	# get text from element and fix xpath bug
-	cmdline="`get_command_line_node_text \"$PID\" | sed 's|&lt;|<|g' | sed 's|&gt;|>|g'`" 
-	
+	cmdline=$(get_command_line_node_text "$PID" | sed 's|&lt;|<|g' | sed 's|&gt;|>|g')
+
 	echo "$cmdline" | grep -qE "${EXPECTED_COMMAND_LINE}" || { # compare commands
 		echo "Failed: expected command-line of process with PID=${PID} is '${EXPECTED_COMMAND_LINE}' but real is: '$cmdline'"
 		exit 1
@@ -90,7 +90,7 @@ echo "stderr file: $stderr"
 	# Run zombie process (without full cmdline)
 	( : & exec "${PROC}" ) &
 	ZOMBIE_PPID=$!
-	ZOMBIE_PID=`get_zombie_pid_from_ppid ${ZOMBIE_PPID}`
+	ZOMBIE_PID=$(get_zombie_pid_from_ppid ${ZOMBIE_PPID})
 	[ -n "${ZOMBIE_PPID}" ]
 	wait_for_process ${ZOMBIE_PID}
 	# "[command_line.sh] <defunct>"
@@ -98,7 +98,7 @@ echo "stderr file: $stderr"
 
 
 	# Run process with special characters in parameters
-	"${PROC}" escaped "`echo -ne \"\e\n\E[1;33m\"`" "\\\n\e" &
+	"${PROC}" escaped "$(echo -ne "\e\n\E[1;33m") \\\n\e" &
 	ESCAPED_PID=$!
 	[ -n "${ESCAPED_PID}" ]
 	wait_for_process ${ESCAPED_PID}
