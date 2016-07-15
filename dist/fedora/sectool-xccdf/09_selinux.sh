@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 SELINUX_STATE=`/usr/sbin/getenforce | tr '[A-Z]' '[a-z]'`
 
