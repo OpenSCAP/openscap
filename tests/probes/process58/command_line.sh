@@ -82,28 +82,30 @@ echo "stderr file: $stderr"
 	"${PROC}" param1 param2 param3 &
 	PID=$!
 	[ -n "${PID}" ]
-	wait_for_process $PID
 	# "/bin/bash ./stopped_process.sh param1 param2 param3"
 	CMDLINE_REGEX='/(\w+/)+bash.*stopped_process\.sh param1 param2 param3$'
-
 
 	# Run zombie process (without full cmdline)
 	( : & exec "${PROC}" ) &
 	ZOMBIE_PPID=$!
 	ZOMBIE_PID=$(get_zombie_pid_from_ppid ${ZOMBIE_PPID})
 	[ -n "${ZOMBIE_PPID}" ]
-	wait_for_process ${ZOMBIE_PID}
 	# "[command_line.sh] <defunct>"
 	ZOMBIE_CMDLINE_REGEX='^\[command_line.sh\] <defunct>$'
-
 
 	# Run process with special characters in parameters
 	"${PROC}" escaped "$(echo -ne "\e\n\E[1;33m") \\\n\e" &
 	ESCAPED_PID=$!
 	[ -n "${ESCAPED_PID}" ]
-	wait_for_process ${ESCAPED_PID}
 	# "/bin/bash ./stopped_process.sh escaped . .[1;33m \\n\e"
 	ESCAPED_CMDLINE_REGEX='/(\w+/)+bash.*stopped_process\.sh escaped \. \.\[1;33m \\\\n\\e$'
+
+########################################################################
+### Wait for start of all processes (all processes have done exec())
+########################################################################
+	wait_for_process $PID
+	wait_for_process ${ZOMBIE_PID}
+	wait_for_process ${ESCAPED_PID}
 
 ########################################################################
 ### Run evaluation:
