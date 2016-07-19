@@ -605,11 +605,12 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 		char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
 		ds_rds_add_relationship(doc, relationships, "arfrel:isAbout",
 				"xccdf1", asset_id);
-		xmlFree(asset_id);
 
 		// We deliberately don't act on errors in inject refs as
 		// these aren't fatal errors.
 		ds_rds_report_inject_refs(doc, report, asset_id);
+
+		xmlFree(asset_id);
 	}
 
 	// 2) the root element is a Benchmark, TestResults are embedded within

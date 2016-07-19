@@ -118,13 +118,11 @@ static void __init_once(void)
         return;
 }
 
-oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
+static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_syschar_model *model)
 {
-        oval_probe_session_t *sess;
         void *handler_arg;
         register size_t i;
 
-        sess = oscap_talloc(oval_probe_session_t);
         sess->ph = oval_phtbl_new();
         sess->sys_model = model;
         sess->flg = 0;
@@ -148,19 +146,37 @@ oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
         }
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */
-        return(sess);
 }
 
-void oval_probe_session_destroy(oval_probe_session_t *sess)
+oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
+{
+        oval_probe_session_t *sess = oscap_talloc(oval_probe_session_t);
+        oval_probe_session_init(sess, model);
+        return sess;
+}
+
+static void oval_probe_session_free(oval_probe_session_t *sess)
 {
 	if (sess == NULL) {
 		dE("Invalid session (NULL)");
 		return;
 	}
 
-        oval_phtbl_free(sess->ph);
-        oval_pext_free(sess->pext);
-        oscap_free(sess);
+	oval_phtbl_free(sess->ph);
+	oval_pext_free(sess->pext);
+}
+
+void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval_syschar_model *model)
+{
+	oval_probe_session_free(sess);
+
+	oval_probe_session_init(sess, model);
+}
+
+void oval_probe_session_destroy(oval_probe_session_t *sess)
+{
+	oval_probe_session_free(sess);
+	oscap_free(sess);
 }
 
 int oval_probe_session_close(oval_probe_session_t *sess)

@@ -246,9 +246,13 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 	        generator = oval_results_model_get_generator(ag_sess->res_model);
         	oval_generator_set_product_name(generator, ag_sess->product_name);
 	}
-	oval_probe_session_destroy(ag_sess->psess);
-	ag_sess->psess = oval_probe_session_new(ag_sess->sys_model);
+
+	/* We have to reset probe_session inplace, because
+	 * ag_sess->res_model points to old probe_session
+	 * and we are not able to update the reference clearly */
+	oval_probe_session_reinit(ag_sess->psess, ag_sess->sys_model);
 #endif
+
 	return 0;
 }
 

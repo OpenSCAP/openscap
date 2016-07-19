@@ -645,7 +645,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 #undef TEST_PATH1
 #undef TEST_PATH2
 
-OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors)
+OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
 {
 	OVAL_FTS *ofts;
 
@@ -887,6 +887,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		free_zones_path_list();
 	}
 #endif
+
+	ofts->result = result;
+
 	return (ofts);
 }
 
@@ -1099,8 +1102,20 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 					SEXP_t *stmp;
 
 					stmp = SEXP_string_newf("%s", fts_ent->fts_name);
-					if (probe_entobj_cmp(ofts->ofts_sfilename, stmp) == OVAL_RESULT_TRUE)
-						out_fts_ent = fts_ent;
+					oval_result_t result = probe_entobj_cmp(ofts->ofts_sfilename, stmp);
+					switch (result){
+						case OVAL_RESULT_TRUE:
+							out_fts_ent = fts_ent;
+							break;
+
+						case OVAL_RESULT_ERROR:
+							probe_cobj_set_flag(ofts->result, SYSCHAR_FLAG_ERROR);
+							break;
+
+						default:
+							break;
+					}
+
 					SEXP_free(stmp);
 				}
 			}

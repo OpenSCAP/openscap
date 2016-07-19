@@ -7,13 +7,14 @@
 #include <string.h>
 #include "sexp.h"
 #include "oval_fts.h"
+#include "probe-api.h"
 
 int main(int argc, char *argv[])
 {
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 
-	SEXP_t *path, *filename, *behaviors, *filepath;
+	SEXP_t *path, *filename, *behaviors, *filepath, *result;
 
 	SEXP_psetup_t *psetup = NULL;
 	SEXP_pstate_t *pstate = NULL;
@@ -24,6 +25,7 @@ int main(int argc, char *argv[])
 	filename  = SEXP_list_first(SEXP_parse(psetup, argv[2], strlen(argv[2]), &pstate));
 	filepath  = SEXP_list_first(SEXP_parse(psetup, argv[3], strlen(argv[3]), &pstate));
 	behaviors = SEXP_list_first(SEXP_parse(psetup, argv[4], strlen(argv[4]), &pstate));
+	result    = probe_cobj_new(SYSCHAR_FLAG_UNKNOWN, NULL, NULL, NULL);
 
 	fprintf(stderr,
 		"path=%p\n"
@@ -31,7 +33,7 @@ int main(int argc, char *argv[])
 		"filepath=%p\n"
 		"behaviors=%p\n", path, filename, filepath, behaviors);
 
-	ofts = oval_fts_open(path, filename, filepath, behaviors);
+	ofts = oval_fts_open(path, filename, filepath, behaviors, result);
 
 	if (ofts != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {

@@ -1136,7 +1136,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		struct xccdf_message *message = xccdf_message_iterator_next(messages);
 		const char *content = xccdf_message_get_content(message);
 		xmlChar *encoded_content = xmlEncodeEntitiesReentrant(doc, BAD_CAST content);
-		xmlNode *message_node = xmlNewTextChild(result_node, ns_xccdf, BAD_CAST "message", encoded_content);
+		xmlNode *message_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "message", encoded_content);
 		xmlFree(encoded_content);
 
                 xccdf_level_t message_severity = xccdf_message_get_severity(message);
