@@ -250,7 +250,7 @@ static int ds_sds_dump_component_ref_as(xmlNodePtr component_ref, xmlDocPtr doc,
 	}
 
 	assert(xlink_href[0] == '#');
-	const char* component_id = xlink_href + 1 * sizeof(char);
+	const char* component_id = xlink_href + 1;
 	char* filename_cpy = oscap_sprintf("./%s", filename);
 	char* file_reldir = dirname(filename_cpy);
 
