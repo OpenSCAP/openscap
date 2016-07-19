@@ -62,11 +62,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <limits.h>
-#if defined USE_REGEX_PCRE
 #include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 
 #include <seap.h>
 #include <probe-api.h>
@@ -82,7 +78,6 @@
 
 oval_schema_version_t over;
 
-#if defined USE_REGEX_PCRE
 static int get_substrings(char *str, pcre *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
@@ -135,48 +130,6 @@ static int get_substrings(char *str, pcre *re, int want_substrs, char ***substri
 
 	return ret;
 }
-#elif defined USE_REGEX_POSIX
-static int get_substrings(char *str, regex_t *re, int want_substrs, char ***substrings) {
-	int i, ret, rc;
-	regmatch_t pmatch[40];
-	int pmatch_len = sizeof (pmatch) / sizeof (pmatch[0]);
-
-	rc = regexec(re, str, pmatch_len, pmatch, 0);
-	if (rc == REG_NOMATCH) {
-		/* no match */
-		return 0;
-	} else if (!want_substrs) {
-		/* just report successful match */
-		return 1;
-	}
-
-	char **substrs;
-
-	ret = 0;
-	substrs = oscap_alloc(pmatch_len * sizeof (char *));
-	for (i = 0; i < pmatch_len; ++i) {
-		int len;
-		char *buf;
-
-		if (pmatch[i].rm_so == -1)
-			continue;
-		len = pmatch[i].rm_eo - pmatch[i].rm_so;
-		buf = oscap_alloc(len + 1);
-		memcpy(buf, str + pmatch[i].rm_so, len);
-		buf[len] = '\0';
-		substrs[ret] = buf;
-		++ret;
-	}
-
-	/*
-	  if (ret < pmatch_len)
-	  substrs = realloc(substrs, ret * sizeof (char *));
-	*/
-	*substrings = substrs;
-
-	return ret;
-}
-#endif
 
 static SEXP_t *create_item(const char *path, const char *filename, char *pattern,
 			   int instance, char **substrs, int substr_cnt)
@@ -238,7 +191,6 @@ static int process_file(const char *path, const char *filename, void *arg)
 	struct stat st;
 
 // todo: move to probe_main()?
-#if defined USE_REGEX_PCRE
 	int erroffset = -1;
 	pcre *re = NULL;
 	const char *error;
@@ -247,13 +199,6 @@ static int process_file(const char *path, const char *filename, void *arg)
 	if (re == NULL) {
 		return -1;
 	}
-#elif defined USE_REGEX_POSIX
-	regex_t _re, *re = &_re;
-
-	if (regcomp(re, pfd->pattern, REG_EXTENDED | REG_NEWLINE) != 0) {
-		return -1;
-	}
-#endif
 
 	if (filename == NULL)
 		goto cleanup;
@@ -317,12 +262,8 @@ static int process_file(const char *path, const char *filename, void *arg)
 		fclose(fp);
 	if (whole_path != NULL)
 		free(whole_path);
-#if defined USE_REGEX_PCRE
 	if (re != NULL)
 		pcre_free(re);
-#elif defined USE_REGEX_POSIX
-	regfree(re);
-#endif
 
 	return ret;
 }

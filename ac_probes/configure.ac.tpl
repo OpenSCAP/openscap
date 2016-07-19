@@ -240,14 +240,6 @@ AC_ARG_ENABLE([perl],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-perl]) ;;
      esac],[perl_bind=no])
 
-AC_ARG_ENABLE([regex-posix],
-     [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=no)])],
-     [case "${enableval}" in
-       yes) regex_posix=yes ;;
-       no)  regex_posix=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-regex-posix]) ;;
-     esac],[regex_posix=no])
-
 AC_ARG_ENABLE([debug],
      [AC_HELP_STRING([--enable-debug], [enable debugging flags (default=no)])],
      [case "${enableval}" in
@@ -434,14 +426,6 @@ AC_ARG_ENABLE([perl],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-perl]) ;;
      esac],[perl_bind=no])
 
-AC_ARG_ENABLE([regex-posix],
-     [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=no)])],
-     [case "${enableval}" in
-       yes) regex_posix=yes ;;
-       no)  regex_posix=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-regex-posix]) ;;
-     esac],[regex_posix=no])
-
 AC_ARG_ENABLE([debug],
      [AC_HELP_STRING([--enable-debug], [enable debugging flags (default=no)])],
      [case "${enableval}" in
@@ -500,12 +484,6 @@ if test "x${prefix}" = xNONE; then
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_CPE_PATH], ["/usr/local/share/openscap/cpe"], [Path to cpe files])
 else
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_CPE_PATH], ["${prefix}/share/openscap/cpe"], [Path to cpe files])
-fi
-
-if test "$regex_posix" = "yes"; then
-   AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
-else
-   AC_DEFINE([USE_REGEX_PCRE], [1], [Use PCRE])
 fi
 
 if test "$ssp" = "yes"; then
@@ -807,7 +785,6 @@ echo "oscap-chroot tool:             $util_oscap_chroot"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
-echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"

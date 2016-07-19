@@ -55,11 +55,7 @@
 #include "common/_error.h"
 #include "common/oscap_string.h"
 #include "oval_glob_to_regex.h"
-#if defined USE_REGEX_PCRE
 #include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 
 #if !defined(OVAL_PROBES_ENABLED)
 const char *oval_subtype_to_str(oval_subtype_t subtype);
@@ -1958,19 +1954,12 @@ static long unsigned int _parse_fmt_sse(char *dt)
 static bool _match(const char *pattern, const char *string)
 {
 	bool match = false;
-#if defined USE_REGEX_PCRE
 	pcre *re;
 	const char *error;
 	int erroffset = -1, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
 	re = pcre_compile(pattern, PCRE_UTF8, &error, &erroffset, NULL);
 	match = (pcre_exec(re, NULL, string, strlen(string), 0, 0, ovector, ovector_len) >= 0);
 	pcre_free(re);
-#elif defined USE_REGEX_POSIX
-	regex_t re;
-	regcomp(&re, pattern, REG_EXTENDED);
-	match = (regexec(&re, string, 0, NULL, 0) == 0);
-	regfree(&re);
-#endif
 	return match;
 }
 
@@ -2191,7 +2180,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int rc;
 	char *pattern;
-#if defined USE_REGEX_PCRE
 	int erroffset = -1;
 	pcre *re = NULL;
 	const char *error;
@@ -2202,15 +2190,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 		dE("pcre_compile() failed: \"%s\".", error);
 		return SYSCHAR_FLAG_ERROR;
 	}
-#elif defined USE_REGEX_POSIX
-	regex_t re;
-
-	pattern = oval_component_get_regex_pattern(component);
-	if ((rc = regcomp(&re, pattern, REG_EXTENDED | REG_NEWLINE)) != 0) {
-		dE("regcomp() failed: %d.", rc);
-		return SYSCHAR_FLAG_ERROR;
-	}
-#endif
 
 	if (oval_component_iterator_has_more(subcomps)) {	//Only first component is considered
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
@@ -2221,7 +2200,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 			struct oval_value *value = oval_value_iterator_next(values);
 			char *text = oval_value_get_text(value);
 			char *nval = NULL;
-#if defined USE_REGEX_PCRE
 			int i, ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
 
 			for (i = 0; i < ovector_len; ++i)
@@ -2243,21 +2221,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 			} else {
 				nval = NULL;
 			}
-#elif defined USE_REGEX_POSIX
-			regmatch_t pmatch[40];
-			int pmatch_len = sizeof (pmatch) / sizeof (pmatch[0]);
-
-			rc = regexec(&re, text, pmatch_len, pmatch, 0);
-			if (rc != REG_NOMATCH && pmatch[1].rm_so != -1) {
-				int substr_len = pmatch[1].rm_eo - pmatch[1].rm_so;
-
-				nval = oscap_alloc(substr_len + 1);
-				memcpy(nval, text + pmatch[1].rm_so, substr_len);
-				nval[substr_len] = '\0';
-			} else {
-				nval = NULL;
-			}
-#endif
 			flag = SYSCHAR_FLAG_COMPLETE;
 
 			if (nval != NULL) {
@@ -2272,9 +2235,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 		oval_collection_free_items(subcoll, (oscap_destruct_func) oval_value_free);
 	}
 	oval_component_iterator_free(subcomps);
-#if defined USE_REGEX_PCRE
-        pcre_free(re);
-#endif
+	pcre_free(re);
 	return flag;
 }
 

@@ -43,11 +43,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits.h>
-#if defined USE_REGEX_PCRE
 #include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 
 #include <seap.h>
 #include <probe-api.h>
@@ -63,7 +59,6 @@
 
 oval_schema_version_t over;
 
-#if defined USE_REGEX_PCRE
 static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
@@ -121,47 +116,6 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 
 	return ret;
 }
-#elif defined USE_REGEX_POSIX
-static int get_substrings(char *str, int *ofs, regex_t *re, int want_substrs, char ***substrings) {
-	int i, ret, rc;
-	regmatch_t pmatch[40];
-	int pmatch_len = sizeof (pmatch) / sizeof (pmatch[0]);
-	char **substrs;
-
-	rc = regexec(re, str + *ofs, pmatch_len, pmatch, 0);
-	if (rc == REG_NOMATCH) {
-		/* no match */
-		return 0;
-	}
-
-	*ofs += (0 == pmatch[0].rm_eo) ? 1 : pmatch[0].rm_eo;
-
-	if (!want_substrs) {
-		/* just report successful match */
-		return 1;
-	}
-
-	ret = 0;
-	substrs = oscap_alloc(pmatch_len * sizeof (char *));
-	for (i = 0; i < pmatch_len; ++i) {
-		int len;
-		char *buf;
-
-		if (pmatch[i].rm_so == -1)
-			continue;
-		len = pmatch[i].rm_eo - pmatch[i].rm_so;
-		buf = oscap_alloc(len + 1);
-		memcpy(buf, str + pmatch[i].rm_so, len);
-		buf[len] = '\0';
-		substrs[ret] = buf;
-		++ret;
-	}
-
-	*substrings = substrs;
-
-	return ret;
-}
-#endif
 
 static SEXP_t *create_item(const char *path, const char *filename, char *pattern,
 			   int instance, char **substrs, int substr_cnt)
@@ -213,11 +167,7 @@ struct pfdata {
 	int re_opts;
 	SEXP_t *instance_ent;
         probe_ctx *ctx;
-#if defined USE_REGEX_PCRE
 	pcre *compiled_regex;
-#elif defined USE_REGEX_POSIX
-	regex_t *compiled_regex;
-#endif
 };
 
 static int process_file(const char *path, const char *file, void *arg)
@@ -361,14 +311,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 	bool val;
 	struct pfdata pfd;
 	int ret = 0;
-#if defined USE_REGEX_PCRE
 	int errorffset = -1;
 	const char *error;
-#elif defined USE_REGEX_POSIX
-	regex_t _re;
-	pfd.compiled_regex = &_re;
-	int err;
-#endif
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 
@@ -428,7 +372,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	pfd.instance_ent = inst_ent;
         pfd.ctx          = ctx;
-#if defined USE_REGEX_PCRE
 	pfd.re_opts = PCRE_UTF8;
 	r0 = probe_ent_getattrval(bh_ent, "ignore_case");
 	if (r0) {
@@ -463,26 +406,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 		probe_cobj_set_flag(probe_ctx_getresult(pfd.ctx), SYSCHAR_FLAG_ERROR);
 		goto cleanup;
 	}
-#elif defined USE_REGEX_POSIX
-	pfd.re_opts = REG_EXTENDED | REG_NEWLINE;
-	r0 = probe_ent_getattrval(bh_ent, "ignore_case");
-	if (r0) {
-		val = SEXP_string_getb(r0);
-		SEXP_free(r0);
-		if (val)
-			pfd.re_opts |= REG_ICASE;
-	}
-
-	if ((err = regcomp(pfd.compiled_regex, pfd.pattern, pfd.re_opts)) != 0) {
-		SEXP_t *msg;
-
-		msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "regcomp() '%s' returned %d.", pfd.pattern, err);
-		probe_cobj_add_msg(probe_ctx_getresult(pfd.ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(pfd.ctx), SYSCHAR_FLAG_ERROR);
-		goto cleanup;
-	}
-#endif
 	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F
@@ -504,11 +427,7 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_free(filepath_ent);
 	if (pfd.pattern != NULL)
 		oscap_free(pfd.pattern);
-#if defined USE_REGEX_PCRE
 	if (pfd.compiled_regex != NULL)
 		pcre_free(pfd.compiled_regex);
-#elif defined USE_REGEX_POSIX
-	regfree(&_re);
-#endif
 	return ret;
 }
