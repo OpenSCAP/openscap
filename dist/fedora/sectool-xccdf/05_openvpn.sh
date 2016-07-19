@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Copyright (C) 2012 Red Hat, Inc.
 # Author(s): Daniel Kopecek <dkopecek@redhat.com>
