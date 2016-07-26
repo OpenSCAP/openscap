@@ -33,10 +33,10 @@ Authors:
 
   <xsl:param name="reverse_DNS"/>
 
-  <xsl:key name="profiles" match="xccdf_11:Benchmark/xccdf_11:Profile" use="@id"/>
-  <xsl:key name="rules" match="xccdf_11:Benchmark//xccdf_11:Rule" use="@id"/>
-  <xsl:key name="groups" match="xccdf_11:Benchmark//xccdf_11:Group" use="@id"/>
-  <xsl:key name="values" match="xccdf_11:Benchmark//xccdf_11:Value" use="@id"/>
+  <xsl:key name="profiles" match="/xccdf_11:Benchmark/xccdf_11:Profile" use="@id"/>
+  <xsl:key name="rules" match="/xccdf_11:Benchmark//xccdf_11:Rule" use="@id"/>
+  <xsl:key name="groups" match="/xccdf_11:Benchmark//xccdf_11:Group" use="@id"/>
+  <xsl:key name="values" match="/xccdf_11:Benchmark//xccdf_11:Value" use="@id"/>
 
   <!-- This is the generic matched template that by default copies everything
        verbatim, every template that is more specifically matched that this
@@ -174,10 +174,10 @@ Authors:
       </xsl:when>
       <xsl:otherwise>
         <xsl:choose>
-          <xsl:when test="//xccdf_11:Group[@id = substring-before($string, ' ')]">
+          <xsl:when test="key('groups', substring-before($string, ' '))">
            <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_group_', substring-before($string, ' '))"/>
           </xsl:when>
-          <xsl:when test="//xccdf_11:Rule[@id = substring-before($string, ' ')]">
+          <xsl:when test="key('rules', substring-before($string, ' '))">
             <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_rule_', substring-before($string, ' '))"/>
           </xsl:when>
           <xsl:otherwise>
@@ -212,7 +212,7 @@ Authors:
            change its format accordingly -->
 
       <xsl:choose>
-        <xsl:when test="//xccdf_11:Value[@id = $old_value_id]">
+        <xsl:when test="key('values', $old_value_id)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_value_', $old_value_id)"/>
         </xsl:when>
 
@@ -230,7 +230,7 @@ Authors:
 
     <xsl:attribute name="extends">
       <xsl:choose>
-       <xsl:when test="//xccdf_11:Group[@id = $old_extends]">
+       <xsl:when test="key('groups', $old_extends)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_group_', $old_extends)"/>
         </xsl:when>
         <xsl:otherwise>
@@ -247,7 +247,7 @@ Authors:
 
     <xsl:attribute name="extends">
       <xsl:choose>
-       <xsl:when test="//xccdf_11:Rule[@id = $old_extends]">
+       <xsl:when test="key('rules', $old_extends)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_rule_', $old_extends)"/>
         </xsl:when>
         <xsl:otherwise>
@@ -264,7 +264,7 @@ Authors:
 
     <xsl:attribute name="extends">
       <xsl:choose>
-       <xsl:when test="//xccdf_11:Value[@id = $old_extends]">
+       <xsl:when test="key('values', $old_extends)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_value_', $old_extends)"/>
         </xsl:when>
         <xsl:otherwise>
@@ -281,7 +281,7 @@ Authors:
 
     <xsl:attribute name="extends">
       <xsl:choose>
-       <xsl:when test="//xccdf_11:Profile[@id = $old_extends]">
+       <xsl:when test="key('profiles', $old_extends)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_profile_', $old_extends)"/>
         </xsl:when>
         <xsl:otherwise>
