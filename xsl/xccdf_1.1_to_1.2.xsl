@@ -33,6 +33,11 @@ Authors:
 
   <xsl:param name="reverse_DNS"/>
 
+  <xsl:key name="profiles" match="xccdf_11:Benchmark/xccdf_11:Profile" use="@id"/>
+  <xsl:key name="rules" match="xccdf_11:Benchmark//xccdf_11:Rule" use="@id"/>
+  <xsl:key name="groups" match="xccdf_11:Benchmark//xccdf_11:Group" use="@id"/>
+  <xsl:key name="values" match="xccdf_11:Benchmark//xccdf_11:Value" use="@id"/>
+
   <!-- This is the generic matched template that by default copies everything
        verbatim, every template that is more specifically matched that this
        will take precedence -->  
@@ -134,19 +139,19 @@ Authors:
            change its format accordingly -->
 
       <xsl:choose>
-        <xsl:when test="/xccdf_11:Benchmark/xccdf_11:Profile[@id = $old_idref]">
+        <xsl:when test="key('profiles', $old_idref)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_profile_', $old_idref)"/>
         </xsl:when>
 
-        <xsl:when test="/xccdf_11:Benchmark//xccdf_11:Rule[@id = $old_idref]">
+        <xsl:when test="key('rules', $old_idref)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_rule_', $old_idref)"/>
         </xsl:when>
 
-        <xsl:when test="/xccdf_11:Benchmark//xccdf_11:Group[@id = $old_idref]">
+        <xsl:when test="key('groups', $old_idref)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_group_', $old_idref)"/>
         </xsl:when>
 
-        <xsl:when test="/xccdf_11:Benchmark//xccdf_11:Value[@id = $old_idref]">
+        <xsl:when test="key('values', $old_idref)">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_value_', $old_idref)"/>
         </xsl:when>
         
