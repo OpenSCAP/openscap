@@ -456,7 +456,8 @@ Authors:
 </xsl:template>
 
 <xsl:template name="get-all-references">
-    <xsl:for-each select="//cdf:Rule/cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+    <xsl:param name="benchmark"/>
+    <xsl:for-each select="$benchmark//cdf:Rule/cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
@@ -534,7 +535,9 @@ Authors:
                         <option value="default" selected="selected">Default</option>
                         <option value="severity">Severity</option>
                         <option value="result">Result</option>
-                        <xsl:call-template name="get-all-references"/>
+                        <xsl:call-template name="get-all-references">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                        </xsl:call-template>
                     </select>
                 </div>
             </div>
