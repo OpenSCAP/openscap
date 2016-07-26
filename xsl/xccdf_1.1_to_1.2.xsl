@@ -134,19 +134,19 @@ Authors:
            change its format accordingly -->
 
       <xsl:choose>
-        <xsl:when test="//xccdf_11:Profile[@id = $old_idref]">
+        <xsl:when test="/xccdf_11:Benchmark/xccdf_11:Profile[@id = $old_idref]">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_profile_', $old_idref)"/>
         </xsl:when>
 
-        <xsl:when test="//xccdf_11:Rule[@id = $old_idref]">
+        <xsl:when test="/xccdf_11:Benchmark//xccdf_11:Rule[@id = $old_idref]">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_rule_', $old_idref)"/>
         </xsl:when>
 
-        <xsl:when test="//xccdf_11:Group[@id = $old_idref]">
+        <xsl:when test="/xccdf_11:Benchmark//xccdf_11:Group[@id = $old_idref]">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_group_', $old_idref)"/>
         </xsl:when>
 
-        <xsl:when test="//xccdf_11:Value[@id = $old_idref]">
+        <xsl:when test="/xccdf_11:Benchmark//xccdf_11:Value[@id = $old_idref]">
           <xsl:value-of select="concat('xccdf_', $reverse_DNS, '_value_', $old_idref)"/>
         </xsl:when>
         
