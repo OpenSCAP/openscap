@@ -167,14 +167,21 @@ Authors:
         <xsl:when test="$profile and $profile/cdf:set-value[@idref = $subid]">
             <abbr title="from Profile/set-value: {$subid}"><xsl:value-of select="$profile/cdf:set-value[@idref = $subid][last()]/text()"/></abbr>
         </xsl:when>
-        <xsl:when test="$benchmark//cdf:Value[@id = $subid and @prohibitChanges='true']/cdf:value[not(@selector)]">
-            <xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/>
-        </xsl:when>
-        <xsl:when test="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)]">
-            <abbr title="from Benchmark/Value: {$subid}"><xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/></abbr>
-        </xsl:when>
         <xsl:otherwise>
-            <abbr title="Substitution failed: {$subid}">(N/A)</abbr>
+            <!-- We have to look it up in the benchmark and that's a
+                 performance hit. Let's treat it as a special case and
+                 only do the lookups once -->
+            <xsl:choose>
+                <xsl:when test="$benchmark//cdf:Value[@id = $subid and @prohibitChanges='true']/cdf:value[not(@selector)]">
+                    <xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/>
+                </xsl:when>
+                <xsl:when test="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)]">
+                    <abbr title="from Benchmark/Value: {$subid}"><xsl:value-of select="$benchmark//cdf:Value[@id = $subid]/cdf:value[not(@selector)][last()]"/></abbr>
+                </xsl:when>
+                <xsl:otherwise>
+                    <abbr title="Substitution failed: {$subid}">(N/A)</abbr>
+                </xsl:otherwise>
+            </xsl:choose>
         </xsl:otherwise>
     </xsl:choose>
 </xsl:template>
