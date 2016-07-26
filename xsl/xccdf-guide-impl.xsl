@@ -134,9 +134,11 @@ Authors:
     2) is-item-selected-final is called for Groups and only if it returns true it's called for child items
     -->
 
+    <xsl:variable name="profile_select" select="$profile/cdf:select[@idref = $item/@id][last()]/@selected"/>
+
     <xsl:choose>
-        <xsl:when test="$profile and $profile/cdf:select[@idref = $item/@id]">
-            <xsl:value-of select="$profile/cdf:select[@idref = $item/@id][last()]/@selected"/>
+        <xsl:when test="$profile_select">
+            <xsl:value-of select="$profile_select"/>
         </xsl:when>
         <xsl:when test="$item/@selected">
             <xsl:value-of select="$item/@selected"/>
