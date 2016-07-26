@@ -237,23 +237,6 @@ Authors:
     </xsl:if>
 </xsl:template>
 
-<xsl:template name="substring-count">
-    <xsl:param name="string"/>
-    <xsl:param name="substr"/>
-    <xsl:choose>
-        <xsl:when test="contains($string, $substr) and $string and $substr">
-            <xsl:variable name="rest">
-                <xsl:call-template name="substring-count">
-                    <xsl:with-param name="string" select="substring-after($string, $substr)"/>
-                    <xsl:with-param name="substr" select="$substr"/>
-                </xsl:call-template>
-            </xsl:variable>
-            <xsl:value-of select="$rest + 1"/>
-        </xsl:when>
-        <xsl:otherwise>0</xsl:otherwise>
-    </xsl:choose>
-</xsl:template>
-
 <xsl:template name="guide-count-contained-selected-rules-impl">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
@@ -275,17 +258,13 @@ Authors:
 
         <xsl:for-each select="$item/cdf:Rule">
             <xsl:variable name="rule" select="."/>
-
             <xsl:variable name="rule_selected_final">
                 <xsl:call-template name="is-item-selected-final">
                     <xsl:with-param name="item" select="$rule"/>
                     <xsl:with-param name="profile" select="$profile"/>
                 </xsl:call-template>
             </xsl:variable>
-
-            <xsl:if test="$rule_selected_final = 'true'">
-                RULE
-            </xsl:if>
+            <xsl:if test="$rule_selected_final = 'true'">R</xsl:if>
         </xsl:for-each>
     </xsl:if>
 </xsl:template>
@@ -307,10 +286,7 @@ Authors:
         </xsl:call-template>
     </xsl:variable>
 
-    <xsl:call-template name="substring-count">
-        <xsl:with-param name="string" select="$impl-ret"/>
-        <xsl:with-param name="substr" select="'RULE'"/>
-    </xsl:call-template>
+    <xsl:value-of select="string-length($impl-ret)"/>
 </xsl:template>
 
 <xsl:template name="guide-tree-inner-node">
