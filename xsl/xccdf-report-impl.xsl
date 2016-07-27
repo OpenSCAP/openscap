@@ -375,12 +375,12 @@ Authors:
     <xsl:param name="profile"/>
     <xsl:param name="indent"/>
 
-    <xsl:variable name="descendant_rules" select="$item/descendant::cdf:Rule"/>
+    <xsl:param name="failed_rule_results"/>
+    <xsl:param name="error_rule_results"/>
+    <xsl:param name="unknown_rule_results"/>
+    <xsl:param name="notchecked_rule_results"/>
 
-    <xsl:variable name="failed_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'fail']"/>
-    <xsl:variable name="error_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'error']"/>
-    <xsl:variable name="unknown_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'unknown']"/>
-    <xsl:variable name="notchecked_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'notchecked']"/>
+    <xsl:variable name="descendant_rules" select="$item/descendant::cdf:Rule"/>
 
     <xsl:variable name="contained_rules_fail" select="count($descendant_rules[@id = $failed_rule_results/@idref])"/>
     <xsl:variable name="contained_rules_error" select="count($descendant_rules[@id = $error_rule_results/@idref])"/>
@@ -428,6 +428,11 @@ Authors:
             <xsl:with-param name="item" select="."/>
             <xsl:with-param name="profile" select="$profile"/>
             <xsl:with-param name="indent" select="$indent + 1"/>
+
+            <xsl:with-param name="failed_rule_results" select="$failed_rule_results"/>
+            <xsl:with-param name="error_rule_results" select="$error_rule_results"/>
+            <xsl:with-param name="unknown_rule_results" select="$unknown_rule_results"/>
+            <xsl:with-param name="notchecked_rule_results" select="$notchecked_rule_results"/>
         </xsl:call-template>
     </xsl:for-each>
 
@@ -559,11 +564,21 @@ Authors:
                 </tr>
             </thead>
             <tbody>
+                <xsl:variable name="failed_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'fail']"/>
+                <xsl:variable name="error_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'error']"/>
+                <xsl:variable name="unknown_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'unknown']"/>
+                <xsl:variable name="notchecked_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'notchecked']"/>
+
                 <xsl:call-template name="rule-overview-inner-node">
                     <xsl:with-param name="testresult" select="$testresult"/>
                     <xsl:with-param name="item" select="$benchmark"/>
                     <xsl:with-param name="profile" select="$profile"/>
                     <xsl:with-param name="indent" select="0"/>
+
+                    <xsl:with-param name="failed_rule_results" select="$failed_rule_results"/>
+                    <xsl:with-param name="error_rule_results" select="$error_rule_results"/>
+                    <xsl:with-param name="unknown_rule_results" select="$unknown_rule_results"/>
+                    <xsl:with-param name="notchecked_rule_results" select="$notchecked_rule_results"/>
                 </xsl:call-template>
             </tbody>
         </table>
