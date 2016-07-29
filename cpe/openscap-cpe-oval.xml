@@ -442,6 +442,20 @@
                         <criterion comment="openSUSE 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.wrlinux:def:8" version="1">
+                  <metadata>
+                        <title>WR Linux 8</title>
+                        <affected family="unix">
+                            <platform>WR Linux 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:windriver:wrlinux:8" source="CPE"/>
+                        <description>The operating system installed on the system is WR Linux 8</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.wrlinux:tst:1"/>
+                        <!-- <criterion comment="WR Linux 8 is installed" test_ref="oval:org.open-scap.cpe.wrlinux:tst:8"/> -->
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
@@ -610,6 +624,17 @@
                   <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:421"/>
             </rpminfo_test>
+            <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:1" version="1" check="only one"
+                  comment="installed operating system is part of the Unix family"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <object object_ref="oval:org.open-scap.cpe.unix:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.unix:ste:1"/>
+            </family_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:8" version="1" check="at least one" comment="wrlinux-release is version wrlinux 8"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.wrlinux-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.wrlinux:ste:8"/>
+            </rpminfo_test>
       </tests>
       <objects>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.redhat-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -636,6 +661,9 @@
             </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.openSUSE-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <lin-def:name>openSUSE-release</lin-def:name>
+            </lin-def:rpminfo_object>
+            <lin-def:rpminfo_object id="oval:org.open-scap.cpe.wrlinux-release:obj:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <lin-def:name>wrlinux-release</lin-def:name>
             </lin-def:rpminfo_object>
       </objects>
       <states>
@@ -745,6 +773,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:421" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^42.1$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.wrlinux:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^8$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>
