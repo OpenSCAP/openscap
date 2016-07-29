@@ -142,4 +142,12 @@
                  We assume that the productivity is equal to RHEL5. We are unable to write a better OVAL check. -->
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:5</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:windriver:wrlinux">
+            <title xml:lang="en-us">Wind River Linux all versions</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:windriver:wrlinux:8">
+            <title xml:lang="en-us">Wind River Linux 8</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:8</check>
+      </cpe-item>
 </cpe-list>
