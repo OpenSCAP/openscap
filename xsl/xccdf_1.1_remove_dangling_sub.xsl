@@ -28,6 +28,8 @@ Authors:
   version="1.0">
   <xsl:output method="xml" indent="yes"/>
 
+  <xsl:key name="values" match="//xccdf_11:Value" use="@id"/>
+
   <xsl:template match="@*|node()">
     <xsl:copy>
       <xsl:apply-templates select="@*|node()"/>
@@ -37,7 +39,7 @@ Authors:
   <xsl:template match="xccdf_11:sub">
     <xsl:variable name="idref" select="@idref"/>
     <xsl:choose>
-      <xsl:when test="//xccdf_11:Value[@id = $idref]">
+      <xsl:when test="key('values', $idref)">
         <xsl:element name="{local-name()}" namespace="{namespace-uri()}">
           <xsl:apply-templates select="@*"/>
           <xsl:apply-templates/>
