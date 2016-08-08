@@ -1670,7 +1670,8 @@ bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model, struct x
 	xccdf_tailoring_free(model->tailoring);
 	model->tailoring = tailoring;
 
-	xccdf_tailoring_resolve(tailoring, xccdf_policy_model_get_benchmark(model));
+	if (tailoring)
+		xccdf_tailoring_resolve(tailoring, xccdf_policy_model_get_benchmark(model));
 
 	return true;
 }
