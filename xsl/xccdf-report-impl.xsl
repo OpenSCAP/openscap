@@ -721,7 +721,7 @@ Authors:
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
 
-    <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+    <xsl:variable name="ruleresult" select="key('testresult_ruleresults', concat($testresult/@id, '|', $item/@id))"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
     <div class="panel panel-default rule-detail rule-detail-{$result} rule-detail-id-{$item/@id}" id="rule-detail-{generate-id($ruleresult)}">
