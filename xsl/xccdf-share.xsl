@@ -30,6 +30,8 @@ Authors:
 
 <xsl:param name="verbosity"/>
 
+<xsl:key name="values" match="//cdf:Value" use="concat(ancestor::cdf:Benchmark/@id, @id)"/>
+
 <xsl:template name="rule-result-tooltip">
     <xsl:param name="ruleresult"/>
     <!-- The texts are sourced from XCCDF 1.2 specification with minor modifications -->
@@ -167,7 +169,7 @@ Authors:
             <!-- We have to look up the cdf:Value in benchmark and that's a
                  performance hit. Let's treat it as a special case and do
                  do the lookup once -->
-            <xsl:variable name="value" select="$benchmark//cdf:Value[@id = $subid]"/>
+            <xsl:variable name="value" select="key('values', concat($benchmark/@id, $subid))"/>
 
             <xsl:choose>
                 <xsl:when test="$profile and $profile/cdf:refine-value[@idref = $subid]">
