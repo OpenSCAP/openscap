@@ -326,13 +326,15 @@ Authors:
     <xsl:text>}</xsl:text>
 </xsl:template>
 
+<xsl:key name="testresult_ruleresults" match="//cdf:rule-result" use="concat(ancestor::cdf:TestResult/@id, '|', @idref)"/>
+
 <xsl:template name="rule-overview-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
     <xsl:param name="indent"/>
 
-    <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+    <xsl:variable name="ruleresult" select="key('testresult_ruleresults', concat($testresult/@id, '|', $item/@id))"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
     <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result} rule-overview-leaf-id-{$item/@id}" id="rule-overview-leaf-{generate-id($ruleresult)}">
