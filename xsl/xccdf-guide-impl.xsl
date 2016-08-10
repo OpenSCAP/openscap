@@ -124,6 +124,8 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:key name="profile_selects" match="//cdf:select" use="concat(generate-id(ancestor::cdf:Profile), '|', @idref)"/>
+
 <xsl:template name="is-item-selected-final">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
@@ -134,7 +136,7 @@ Authors:
     2) is-item-selected-final is called for Groups and only if it returns true it's called for child items
     -->
 
-    <xsl:variable name="profile_select" select="$profile/cdf:select[@idref = $item/@id][last()]/@selected"/>
+    <xsl:variable name="profile_select" select="key('profile_selects', concat(generate-id($profile), '|', $item/@id))[last()]/@selected"/>
 
     <xsl:choose>
         <xsl:when test="$profile_select">
