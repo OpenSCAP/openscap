@@ -33,7 +33,7 @@ Authors:
     xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
     exclude-result-prefixes="xsl cdf ovalres sceres exsl">
 
-<xsl:key name="references" match="//cdf:Rule/cdf:reference" use="@href"/>
+<xsl:key name="references" match="//cdf:reference" use="@href"/>
 
 <xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-resources.xsl" />
@@ -469,7 +469,7 @@ Authors:
 
 <xsl:template name="get-all-references">
     <xsl:param name="benchmark"/>
-    <xsl:for-each select="$benchmark//cdf:Rule/cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+    <xsl:for-each select="$benchmark//cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
