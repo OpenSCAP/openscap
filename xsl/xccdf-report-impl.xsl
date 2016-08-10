@@ -33,6 +33,10 @@ Authors:
     xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
     exclude-result-prefixes="xsl cdf ovalres sceres exsl">
 
+<!-- This selects all the references, even if the SDS has multiple benchmarks.
+     That is fine because we will go through just the benchmark references
+     and only then we compare to this map. So this is correct.
+     See template "get-all-references". -->
 <xsl:key name="references" match="//cdf:reference" use="@href"/>
 
 <xsl:include href="xccdf-branding.xsl" />
