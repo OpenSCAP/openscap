@@ -1385,6 +1385,8 @@ OpenSCAP for Windows:
 
 1) Install the cross-compiler & dependencies
 
+NOTE: mingw32-pthreads needs to be version 5.0 or greater.
+
 -------------------------------------------------------------
  # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
  mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
@@ -1392,20 +1394,19 @@ OpenSCAP for Windows:
  automake autoconf libtool
 -------------------------------------------------------------
 
-2) Checkout the portable branch of the OpenSCAP repository
+2) Checkout the master branch of the OpenSCAP repository
 
 ----------------------------------------------------------------------
- $ git clone -b portable git://git.fedorahosted.org/git/openscap.git \
- openscap-portable.git
- $ cd openscap-portable.git/
+ $ git clone -b master https://github.com/openscap/openscap.git
+ $ cd openscap
 ----------------------------------------------------------------------
 
 3) Prepare the build
 
-------------------------------------------------------
+----------------------------------------------------------------------------------
  $ ./autogen.sh
- $ mingw32-configure --disable-probes --disable-python
-------------------------------------------------------
+ $ mingw32-configure --disable-probes --disable-python --disable-util-oscap-docker
+----------------------------------------------------------------------------------
 
 4) Build!
 
@@ -1419,26 +1420,12 @@ OpenSCAP for Windows:
  $ grep -E '(error:|implicit)' build-errors.log
 -----------------------------------------------
 
---------------------------------------------------------------------------
-oscap_acquire.c:32:17: fatal error: ftw.h: No such file or directory
-rbt_i32.c:36:9: warning: implicit declaration of function 'posix_memalign'
-rbt_i64.c:35:9: warning: implicit declaration of function 'posix_memalign'
-rbt_str.c:39:9: warning: implicit declaration of function 'posix_memalign'
-tailoring.c:200:2: warning: implicit declaration of function 'strverscmp'
-oscap-tool.c:37:17: fatal error: ftw.h: No such file or directory
-oscap-oval.c:37:17: fatal error: ftw.h: No such file or directory
-oscap-info.c:37:26: fatal error: linux/limits.h: No such file or directory
---------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+oval_resModel.c:70:28: error: conflicting types for 'oval_results_model_new_with_probe_session'
+-----------------------------------------------------------------------------
 
-We need to solve the following problems:
-
-1.  No implementation of ```strverscmp``` for Windows
-2.  No implementation of ftw API for Windows
-3.  Replace posix_memalign with a Windows API equivalent
-4.  Get rid of ```linux/limits.h``` dependency on Windows
-
-If you would like to send us a patch solving one of these problems,
-please consult the page about
+If you would like to send us a patch fixing any Windows
+compiling issues, please consult the page about
 http://open-scap.org/page/Contribute[contributing to the OpenSCAP
 project].
 

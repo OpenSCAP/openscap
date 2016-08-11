@@ -36,11 +36,6 @@
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
-#if defined USE_REGEX_PCRE
-#include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 #include <arpa/inet.h>
 
 #include "common/debug_priv.h"

@@ -42,7 +42,13 @@
 #include <assert.h>
 #include <limits.h>
 #include <unistd.h>
+#if defined(HAVE_SYSLOG_H)
 #include <syslog.h>
+#endif
+
+#if defined(_WIN32)
+#include <windows.h>
+#endif
 
 #include "oscap-tool.h"
 #include "oscap.h"
@@ -294,7 +300,11 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
  * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:white(1;37), NOT_CHECKED:white(1;37),
  * NOT_SELECTED:white(1;37), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
  */
+#if defined(_WIN32)
+int RESULT_COLORS[] = {0, 10, 12, 12, 8, 15, 15, 15, 9, 14};
+#else
 static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "1;37", "1;37", "34", "1;33" };
+#endif
 
 static char custom_stylesheet_path[PATH_MAX];
 
@@ -310,18 +320,35 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	const char *title = xccdf_policy_get_readable_item_title((struct xccdf_policy *)arg, (struct xccdf_item *) rule, NULL);
 
 	/* print */
-	if (isatty(1))
+	if (isatty(1)) {
+#if defined(_WIN32)
+		HANDLE console;
+		console = GetStdHandle(STD_OUTPUT_HANDLE);
+		printf("Title");
+		SetConsoleTextAttribute(console, 15);
+		printf("\t%s\n", title);
+		SetConsoleTextAttribute(console, 7);
+#else
 		printf("Title\r\t\033[1m%s\033[0;0m\n", title);
-	else
+#endif
+	} else
 		printf("Title\r\t%s\n", title);
 	free((char *)title);
+#if defined(_WIN32)
+	printf("Rule\t%s\n", rule_id);
+#else
 	printf("Rule\r\t%s\n", rule_id);
+#endif
 
 	struct xccdf_ident_iterator *idents = xccdf_rule_get_idents(rule);
 	while (xccdf_ident_iterator_has_more(idents)) {
 		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
 		const char *ident_id = xccdf_ident_get_id(ident);
+#if defined(_WIN32)
+		printf("Ident\t%s\n", ident_id);
+#else
 		printf("Ident\r\t%s\n", ident_id);
+#endif
 	}
 	xccdf_ident_iterator_free(idents);
 
@@ -339,11 +366,24 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 		return 0;
 
 	/* print result */
+#if defined(_WIN32)
+	printf("Result\t");
+#else
 	printf("Result\r\t");
+#endif
 	const char * result_str = xccdf_test_result_type_get_text(result);
-	if (isatty(1))
+	if (isatty(1)) {
+#if defined(_WIN32)
+		HANDLE console;
+		console = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(console, RESULT_COLORS[result]);
+		printf("%s", result_str);
+		SetConsoleTextAttribute(console, 7);
+		printf("\n\n");
+#else
 		printf("\033[%sm%s\033[0m\n\n", RESULT_COLORS[result], result_str);
-	else
+#endif
+	} else
 		printf("%s\n\n", result_str);
 
 	return 0;
@@ -455,6 +495,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 
 	int result = OSCAP_ERROR;
+#if defined(HAVE_SYSLOG_H)
 	int priority = LOG_NOTICE;
 	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
 		goto cleanup;
@@ -462,7 +503,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
-
+#endif
 	session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
@@ -541,8 +582,10 @@ cleanup:
 	oscap_print_error();
 
 	/* syslog message */
+#if defined(HAVE_SYSLOG_H)
 	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
 		session == NULL ? 0 : xccdf_session_get_base_score(session));
+#endif
 
 	if (session != NULL)
 		xccdf_session_free(session);

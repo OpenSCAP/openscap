@@ -266,6 +266,7 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 	return 0;
 }
 
+#if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
 	const char *interpret = NULL;
@@ -364,6 +365,16 @@ cleanup:
 	oscap_acquire_cleanup_dir(&temp_dir);
 	return result;
 }
+#else
+static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
+{
+	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
+		return 1;
+	else
+		_rule_add_info_message(rr, "Cannot execute the fix script: not implemented");
+	return 1;
+}
+#endif
 
 int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf_rule_result *rr, struct xccdf_fix *fix, struct xccdf_result *test_result)
 {

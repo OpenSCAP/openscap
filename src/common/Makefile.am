@@ -4,6 +4,7 @@ liboscapcommon_la_SOURCES = \
 	alloc.c alloc.h \
 	assume.h \
 	bfind.c bfind.h \
+	compat_pthread_barrier.h compat_pthread_barrier.c \
 	debug.c debug_priv.h \
 	elements.c elements.h \
 	err_queue.c err_queue.h \
@@ -28,7 +29,8 @@ liboscapcommon_la_CPPFLAGS  = \
 	-I$(srcdir)/public \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
-	-I$(top_srcdir)/src/source/public
+	-I$(top_srcdir)/src/source/public \
+	-I$(top_srcdir)/lib
 
 liboscapcommon_la_LIBADD = \
 	@curl_LIBS@ \

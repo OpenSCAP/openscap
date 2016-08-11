@@ -354,6 +354,7 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
         return 0;
 }
 
+#if defined(OVAL_PROBES_ENABLED)
 int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable)
 {
 	oval_variable_LOCAL_t *var;
@@ -422,6 +423,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 
 	return 0;
 }
+#endif /* OVAL_PROBES_ENABLED */
 
 struct oval_component *oval_variable_get_component(struct oval_variable *variable)
 {

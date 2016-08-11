@@ -27,7 +27,7 @@
  * SUCH DAMAGE.
  */
 
-#include "config.h"
+#include <config.h>
 
 #if !defined(HAVE_FTS_OPEN)
 

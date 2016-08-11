@@ -28,14 +28,19 @@
 #include <sys/utsname.h>
 
 #if defined(__linux__)
-#include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <netdb.h>
-#include <string.h>
 #include <sys/ioctl.h>
+#endif
+#include <arpa/inet.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#if defined(_WIN32)
+# include <windows.h>
+# include <lmcons.h>
 #endif
 
 #include "item.h"
@@ -146,11 +151,22 @@ static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
 static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 {
 	struct xccdf_identity *id = xccdf_identity_new();
+#if defined(_WIN32)
+	TCHAR w32_username[UNLEN + 1];
+	DWORD w32_usernamesize = UNLEN + 1;
+#endif
 	// Reasoning here is that OpenSCAP does not authenticate user
 	// nor it grants she any additional privileges
 	xccdf_identity_set_authenticated(id, 0);
 	xccdf_identity_set_privileged(id, 0);
+#if defined(unix) || defined(__unix__) || defined(__unix)
 	xccdf_identity_set_name(id, getlogin());
+#elif defined(_WIN32)
+	GetUserName((TCHAR *) w32_username, &w32_usernamesize); /* XXX: Check the return value? */
+	xccdf_identity_set_name(id, w32_username);
+#else
+# warning "_xccdf_result_fill_identity: no support for identity on this OS"
+#endif
 	xccdf_result_add_identity(result, id);
 }
 
@@ -170,9 +186,11 @@ static inline void _xccdf_result_clear_metadata(struct xccdf_item *result)
 
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
-	struct utsname sname;
+#if defined(__linux__)
 	struct ifaddrs *ifaddr, *ifa;
 	int fd;
+#endif
+	struct utsname sname;
 
 	if (uname(&sname) == -1)
 		return;

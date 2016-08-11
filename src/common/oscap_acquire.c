@@ -33,7 +33,9 @@
 #include <curl/easy.h>
 #include <libgen.h>
 
+#ifndef _WIN32
 #include <ftw.h>
+#endif
 
 #include "oscap_acquire.h"
 #include "common/util.h"
@@ -60,6 +62,7 @@ oscap_acquire_temp_dir()
 	return temp_dir;
 }
 
+#ifndef _WIN32
 static int
 __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
 {
@@ -70,16 +73,21 @@ __unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *
 
 	return rv;
 }
+#endif
 
 void
 oscap_acquire_cleanup_dir(char **dir_path)
 {
+#ifndef _WIN32
 	if (*dir_path != NULL)
 	{
 		nftw(*dir_path, __unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 		free(*dir_path);
 		*dir_path = NULL;
 	}
+#else
+	// TODO
+#endif
 }
 
 int
@@ -241,7 +249,11 @@ int oscap_acquire_mkdir_p(const char *path)
 				if (strlen(temp) == 0)
 					continue;
 
+#ifndef _WIN32
 				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
+#else
+				if (mkdir(temp) != 0 && errno != EEXIST) {
+#endif
 					oscap_seterr(OSCAP_EFAMILY_GLIBC,
 						"Error making directory '%s', while doing recursive mkdir for '%s', error was '%s'.",
 						temp, path, strerror(errno));

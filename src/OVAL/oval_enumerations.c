@@ -566,39 +566,53 @@ static const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
 };
 
 static const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
-	{OVAL_WINDOWS_ACCESS_TOKEN, "access_token"},
-	{OVAL_WINDOWS_ACTIVE_DIRECTORY, "active_directory"},
-	{OVAL_WINDOWS_AUDIT_EVENT_POLICY, "audit_event_policy"},
-	{OVAL_WINDOWS_AUDIT_EVENT_SUBCATEGORIES, "audit_event_subcatagories"},
+	{OVAL_WINDOWS_ACCESS_TOKEN, "accesstoken"},
+	{OVAL_WINDOWS_ACTIVE_DIRECTORY, "activedirectory"},
+	{OVAL_WINDOWS_AUDIT_EVENT_POLICY, "auditeventpolicy"},
+	{OVAL_WINDOWS_AUDIT_EVENT_POLICY_SUBCATEGORIES, "auditeventpolicysubcategories"},
 	{OVAL_WINDOWS_FILE, "file"},
-	{OVAL_WINDOWS_FILE_AUDITED_PERMISSIONS_53, "file_audited_permissions_53"},
-	{OVAL_WINDOWS_FILE_AUDITED_PERMISSIONS, "file_audited_permissions"},
-	{OVAL_WINDOWS_FILE_EFFECTIVE_RIGHTS_53, "file_effective_rights_53"},
-	{OVAL_WINDOWS_FILE_EFFECTIVE_RIGHTS, "file_effective_rights"},
+	{OVAL_WINDOWS_FILE_AUDITED_PERMISSIONS_53, "fileauditedpermissions53"},
+	{OVAL_WINDOWS_FILE_AUDITED_PERMISSIONS, "fileauditedpermissions"},
+	{OVAL_WINDOWS_FILE_EFFECTIVE_RIGHTS_53, "fileeffectiverights53"},
+	{OVAL_WINDOWS_FILE_EFFECTIVE_RIGHTS, "fileeffectiverights"},
 	{OVAL_WINDOWS_GROUP, "group"},
 	{OVAL_WINDOWS_GROUP_SID, "group_sid"},
 	{OVAL_WINDOWS_INTERFACE, "interface"},
-	{OVAL_WINDOWS_LOCKOUT_POLICY, "lockout_policy"},
+	{OVAL_WINDOWS_LOCKOUT_POLICY, "lockoutpolicy"},
 	{OVAL_WINDOWS_METABASE, "metabase"},
-	{OVAL_WINDOWS_PASSWORD_POLICY, "password_policy"},
+	{OVAL_WINDOWS_PASSWORD_POLICY, "passwordpolicy"},
 	{OVAL_WINDOWS_PORT, "port"},
-	{OVAL_WINDOWS_PRINTER_EFFECTIVE_RIGHTS, "printer_effective_rights"},
+	{OVAL_WINDOWS_PRINTER_EFFECTIVE_RIGHTS, "printereffectiverights"},
 	{OVAL_WINDOWS_PROCESS, "process"},
 	{OVAL_WINDOWS_REGISTRY, "registry"},
-	{OVAL_WINDOWS_REGKEY_AUDITED_PERMISSIONS_53, "regkey_audited_permissions_53"},
-	{OVAL_WINDOWS_REGKEY_AUDITED_PERMISSIONS, "regkey_audited_permissions"},
-	{OVAL_WINDOWS_REGKEY_EFFECTIVE_RIGHTS_53, "regkey_effective_rights_53"},
-	{OVAL_WINDOWS_REGKEY_EFFECTIVE_RIGHTS, "regkey_effective_rights"},
-	{OVAL_WINDOWS_SHARED_RESOURCE, "shared_resource"},
+	{OVAL_WINDOWS_REGKEY_AUDITED_PERMISSIONS_53, "regkeyauditedpermissions53"},
+	{OVAL_WINDOWS_REGKEY_AUDITED_PERMISSIONS, "regkeyauditedpermissions"},
+	{OVAL_WINDOWS_REGKEY_EFFECTIVE_RIGHTS_53, "regkeyeffectiverights53"},
+	{OVAL_WINDOWS_REGKEY_EFFECTIVE_RIGHTS, "regkeyeffectiverights"},
+	{OVAL_WINDOWS_SHARED_RESOURCE, "sharedresource"},
 	{OVAL_WINDOWS_SID, "sid"},
 	{OVAL_WINDOWS_SID_SID, "sid_sid"},
 	{OVAL_WINDOWS_USER_ACCESS_CONTROL, "user_access_control"},
 	{OVAL_WINDOWS_USER, "user"},
-	{OVAL_WINDOWS_USER_SID_55, "user_sid_55"},
+	{OVAL_WINDOWS_USER_SID_55, "user_sid55"},
 	{OVAL_WINDOWS_USER_SID, "user_sid"},
 	{OVAL_WINDOWS_VOLUME, "volume"},
 	{OVAL_WINDOWS_WMI, "wmi"},
-	{OVAL_WINDOWS_WUA_UPDATE_SEARCHER, "wua_update_searcher"},
+	{OVAL_WINDOWS_WUA_UPDATE_SEARCHER, "wuaupdatesearcher"},
+	{OVAL_WINDOWS_ACTIVE_DIRECTORY_57, "activedirectory57"},
+	{OVAL_WINDOWS_CMDLET, "cmdlet"},
+	{OVAL_WINDOWS_DNSCACHE, "dnscache"},
+	{OVAL_WINDOWS_LICENSE, "license"},
+	{OVAL_WINDOWS_NTUSER, "ntuser"},
+	{OVAL_WINDOWS_PEHEADER, "peheader"},
+	{OVAL_WINDOWS_PROCESS_58, "process58"},
+	{OVAL_WINDOWS_SERVICE, "service"},
+	{OVAL_WINDOWS_SERVICE_EFFECTIVE_RIGHTS, "serviceeffectiverights"},
+	{OVAL_WINDOWS_SHARED_RESOURCE_AUDITED_PERMISSIONS, "sharedresourceauditedpermissions"},
+	{OVAL_WINDOWS_SHARED_RESOURCE_EFFECTIVE_RIGHTS, "sharedresourceeffectiverights"},
+	{OVAL_WINDOWS_SYSTEM_METRIC, "systemmetric"},
+	{OVAL_WINDOWS_USER_RIGHT, "userright"},
+	{OVAL_WINDOWS_WMI_57, "wmi57"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -738,6 +752,11 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL family.");
 		return _invalid;
 	}
+}
+
+const char *oval_subtype_to_str(oval_subtype_t subtype)
+{
+	return oval_subtype_get_text(subtype);
 }
 
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {

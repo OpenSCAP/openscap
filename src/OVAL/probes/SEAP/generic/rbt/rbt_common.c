@@ -25,11 +25,11 @@
 #endif
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <assume.h>
 
 #include "rbt_common.h"
-#include "sm_alloc.h"
 
 rbt_t *rbt_new(rbt_type_t type)
 {
@@ -46,7 +46,10 @@ rbt_t *rbt_new(rbt_type_t type)
                 return (NULL);
         }
 
-        rbt = sm_talloc (rbt_t);
+        rbt = malloc (sizeof (rbt_t));
+        if (rbt == NULL)
+	        return NULL;
+
         rbt->type = type;
         rbt->root = NULL;
         rbt->size = 0;
@@ -89,7 +92,7 @@ void rbt_free(rbt_t *rbt, void (*callback)(void *))
                                         callback((void *)&(rbt_walk_top()->_node));
 
                                 n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
-                                sm_free(rbt_walk_top());
+                                free(rbt_walk_top());
 
                                 if (n != NULL)
                                         rbt_walk_top() = n;
@@ -111,7 +114,7 @@ void rbt_free(rbt_t *rbt, void (*callback)(void *))
 #if defined(RBT_IMPLICIT_LOCKING)
         pthread_rwlock_destroy (&rbt->lock);
 #endif
-        sm_free (rbt);
+        free (rbt);
         return;
 }
 
@@ -139,7 +142,7 @@ void rbt_free2(rbt_t *rbt, void (*callback)(void *, void *), void *user)
                                         callback((void *)&(rbt_walk_top()->_node), user);
 
                                 n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
-                                sm_free(rbt_walk_top());
+                                free(rbt_walk_top());
 
                                 if (n != NULL)
                                         rbt_walk_top() = n;
@@ -161,7 +164,7 @@ void rbt_free2(rbt_t *rbt, void (*callback)(void *, void *), void *user)
 #if defined(RBT_IMPLICIT_LOCKING)
         pthread_rwlock_destroy (&rbt->lock);
 #endif
-        sm_free (rbt);
+        free (rbt);
         return;
 }
 

@@ -26,18 +26,22 @@
 #include <errno.h>
 #include <assume.h>
 #include <stdlib.h>
-#include "sm_alloc.h"
 #include "rbt_common.h"
 #include "rbt_i64.h"
 
 static struct rbt_node *rbt_i64_node_alloc(void)
 {
         struct rbt_node *n = NULL;
+#ifndef _WIN32
         if (posix_memalign((void **)(void *)(&n), sizeof(void *),
                            sizeof (struct rbt_node) + sizeof (struct rbt_i64_node)) != 0)
         {
                 abort ();
         }
+#else
+        // https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+        n = _aligned_malloc(sizeof (struct rbt_node) + sizeof (struct rbt_i64_node), sizeof(void *));
+#endif
         n->_chld[0] = NULL;
         n->_chld[1] = NULL;
 
@@ -47,7 +51,7 @@ static struct rbt_node *rbt_i64_node_alloc(void)
 static void rbt_i64_node_free(struct rbt_node *n)
 {
         if (n != NULL)
-                sm_free(rbt_node_ptr(n));
+                free(rbt_node_ptr(n));
 }
 
 rbt_t *rbt_i64_new (void)

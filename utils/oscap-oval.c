@@ -27,7 +27,9 @@
 
 /* OVAL & OSCAP common */
 #include "oscap_source.h"
-#include <oval_probe.h>
+#if defined(OVAL_PROBES_ENABLED)
+# include <oval_probe.h>
+#endif
 #include <oval_agent_api.h>
 #include <oval_session.h>
 #include <oval_results.h>
@@ -40,17 +42,25 @@
 #include "scap_ds.h"
 #include <oscap_debug.h>
 
+#if defined(OVAL_PROBES_ENABLED)
 static int app_collect_oval(const struct oscap_action *action);
 static int app_evaluate_oval(const struct oscap_action *action);
+#endif
 static int app_oval_validate(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
+#if defined(OVAL_PROBES_ENABLED)
 static int app_oval_list_probes(const struct oscap_action *action);
+#endif
 static int app_analyse_oval(const struct oscap_action *action);
 
+#if defined(OVAL_PROBES_ENABLED)
 static bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action);
+#endif
 static bool getopt_oval_analyse(int argc, char **argv, struct oscap_action *action);
+#if defined(OVAL_PROBES_ENABLED)
 static bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action);
+#endif
 static bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_report(int argc, char **argv, struct oscap_action *action);
 
@@ -99,6 +109,7 @@ static struct oscap_module OVAL_VALIDATE = {
     .func = app_oval_validate
 };
 
+#if defined(OVAL_PROBES_ENABLED)
 static struct oscap_module OVAL_EVAL = {
     .name = "eval",
     .parent = &OSCAP_OVAL_MODULE,
@@ -139,6 +150,7 @@ static struct oscap_module OVAL_COLLECT = {
     .opt_parser = getopt_oval_collect,
     .func = app_collect_oval
 };
+#endif /* OVAL_PROBES_ENABLED */
 
 static struct oscap_module OVAL_ANALYSE = {
     .name = "analyse",
@@ -177,6 +189,7 @@ static struct oscap_module OVAL_REPORT = {
     .func = app_oval_xslt
 };
 
+#if defined(OVAL_PROBES_ENABLED)
 static struct oscap_module OVAL_LIST_PROBES = {
     .name = "list-probes",
     .parent = &OSCAP_OVAL_MODULE,
@@ -189,19 +202,24 @@ static struct oscap_module OVAL_LIST_PROBES = {
     .opt_parser = getopt_oval_list_probes,
     .func = app_oval_list_probes
 };
+#endif
 
 static struct oscap_module* OVAL_GEN_SUBMODULES[] = {
     &OVAL_REPORT,
     NULL
 };
 static struct oscap_module* OVAL_SUBMODULES[] = {
+#if defined(OVAL_PROBES_ENABLED)
     &OVAL_COLLECT,
     &OVAL_EVAL,
+#endif
     &OVAL_ANALYSE,
     &OVAL_VALIDATE,
     &OVAL_VALIDATE_XML,
     &OVAL_GENERATE,
+#if defined(OVAL_PROBES_ENABLED)
     &OVAL_LIST_PROBES,
+#endif
     NULL
 };
 
@@ -214,6 +232,7 @@ static int app_oval_callback(const struct oval_result_definition * res_def, void
 	return 0;
 }
 
+#if defined(OVAL_PROBES_ENABLED)
 int app_collect_oval(const struct oscap_action *action)
 {
 	struct oval_definition_model	*def_model = NULL;
@@ -399,6 +418,7 @@ cleanup:
 	oval_session_free(session);
 	return ret;
 }
+#endif /* OVAL_PROBES_ENABLED */
 
 static int app_analyse_oval(const struct oscap_action *action) {
 	struct oval_definition_model	*def_model = NULL;
@@ -517,6 +537,7 @@ static int app_oval_xslt(const struct oscap_action *action)
     return app_xslt(action->f_oval, action->module->user, action->f_results, NULL);
 }
 
+#if defined(OVAL_PROBES_ENABLED)
 static int app_oval_list_probes(const struct oscap_action *action)
 {
     int flags = 0;
@@ -529,6 +550,7 @@ static int app_oval_list_probes(const struct oscap_action *action)
     oval_probe_meta_list(stdout, flags);
     return (0);
 }
+#endif /* OVAL_PROBES_ENABLED */
 
 enum oval_opt {
     OVAL_OPT_RESULT_FILE = 1,
@@ -540,11 +562,14 @@ enum oval_opt {
     OVAL_OPT_DATASTREAM_ID,
     OVAL_OPT_OVAL_ID,
     OVAL_OPT_OUTPUT = 'o',
+#if defined(OVAL_PROBES_ENABLED)
 	OVAL_OPT_PROBE_ROOT,
+#endif
 	OVAL_OPT_VERBOSE,
 	OVAL_OPT_VERBOSE_LOG_FILE
 };
 
+#if defined(OVAL_PROBES_ENABLED)
 bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 {
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
@@ -598,7 +623,9 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 
 	return true;
 }
+#endif /* OVAL_PROBES_ENABLED */
 
+#if defined(OVAL_PROBES_ENABLED)
 bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action)
 {
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
@@ -641,6 +668,7 @@ bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action)
 
 	return true;
 }
+#endif /* OVAL_PROBES_ENABLED */
 
 bool getopt_oval_analyse(int argc, char **argv, struct oscap_action *action)
 {
@@ -727,6 +755,7 @@ bool getopt_oval_report(int argc, char **argv, struct oscap_action *action)
 	return true;
 }
 
+#if defined(OVAL_PROBES_ENABLED)
 bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
 {
 #define PROBE_LIST_STATIC  0
@@ -758,6 +787,7 @@ bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
 
 	return true;
 }
+#endif /* OVAL_PROBES_ENABLED */
 
 bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 {

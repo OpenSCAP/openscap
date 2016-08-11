@@ -38,6 +38,7 @@
 #include "worker.h"
 #include "common/debug_priv.h"
 #include "signal_handler.h"
+#include "common/compat_pthread_barrier.h"
 
 typedef struct {
 	probe_worker_t **thr;
@@ -65,7 +66,11 @@ void *probe_signal_handler(void *arg)
 	sigset_t  siset;
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
+# if defined(__APPLE__)
+	pthread_setname_np("signal_handler");
+# else
 	pthread_setname_np(pthread_self(), "signal_handler");
+# endif
 #endif
 
 	sigemptyset(&siset);

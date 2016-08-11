@@ -32,11 +32,7 @@
 #include "common/debug_priv.h"
 #include "public/oval_schema_version.h"
 
-#if defined USE_REGEX_PCRE
 #include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 
 static int _parse_int(const char *substring, size_t substring_length)
 {
@@ -54,7 +50,6 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 	if (ver_str == NULL) {
 		return version;
 	}
-#if defined USE_REGEX_PCRE
 	const char *pattern = "([0-9]+)\\.([0-9]+)(?:\\.([0-9]+))?(?::([0-9]+)\\.([0-9]+)(?:\\.([0-9]+))?)?";
 	const char *error;
 	int erroffset;
@@ -76,31 +71,6 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 		size_t substring_length = ovector[2 * i + 1] - ovector[2 * i];
 		version.component[i - 1] = _parse_int(substring, substring_length);
 	}
-#elif defined USE_REGEX_POSIX
-	const char *pattern = "([0-9]+)\\.([0-9]+)(\\.([0-9]+))?(:([0-9]+)\\.([0-9]+)(\\.([0-9]+))?)?";
-	int groups[OVAL_SCHEMA_VERSION_COMPONENTS_COUNT] = {1, 2, 4, 6, 7, 9};
-	regex_t re;
-	if (regcomp(&re, pattern, REG_EXTENDED) != 0) {
-		dE("Regular expression compilation failed with %s", pattern);
-		return version;
-	}
-	size_t max_matches = 10;
-	regmatch_t matches[max_matches];
-	int match = regexec(&re, ver_str, max_matches, matches, 0);
-	regfree(&re);
-	if (match != 0) {
-		dE("Regular expression %s did not match string %s", pattern, ver_str);
-		return version;
-	}
-	for (int i = 0; i < OVAL_SCHEMA_VERSION_COMPONENTS_COUNT; i++) {
-		int group = groups[i];
-		if (matches[group].rm_so >= 0) {
-			const char *substring = ver_str + matches[group].rm_so;
-			size_t substring_length = matches[group].rm_eo - matches[group].rm_so;
-			version.component[i] = _parse_int(substring, substring_length);
-		}
-	}
-#endif
 	return version;
 }
 

@@ -36,7 +36,9 @@
 #include <string.h>
 #include <ctype.h>
 #include "oval_agent_api_impl.h"
+#ifdef OVAL_PROBES_ENABLED
 #include "oval_probe_impl.h"
+#endif
 #include "results/oval_results_impl.h"
 #include "results/oval_status_counter.h"
 #include "oval_cmp_impl.h"
@@ -924,6 +926,7 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 		return (rtest->result);
 	}
 
+#if defined(OVAL_PROBES_ENABLED)
 	/* get syschar of rtest */
 	struct oval_test *test = oval_result_test_get_test(rtest);
 	struct oval_object * object = oval_test_get_object(test);
@@ -952,6 +955,9 @@ static oval_result_t _oval_result_test_result(struct oval_result_test *rtest, vo
 	oval_result_t result = _oval_result_test_evaluate_items(test, syschar, args);
 
 	return result;
+#else
+	return OVAL_RESULT_UNKNOWN;
+#endif
 }
 
 static void _oval_result_test_initialize_bindings(struct oval_result_test *rslt_test)

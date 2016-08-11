@@ -27,11 +27,7 @@
 
 #include <math.h>
 #include <string.h>
-#if defined USE_REGEX_PCRE
 #include <pcre.h>
-#elif defined USE_REGEX_POSIX
-#include <regex.h>
-#endif
 
 #include "oval_types.h"
 #include "common/_error.h"
@@ -128,7 +124,6 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 {
 	int ret;
 	oval_result_t result = OVAL_RESULT_ERROR;
-#if defined USE_REGEX_PCRE
 	pcre *re;
 	const char *err;
 	int errofs;
@@ -152,28 +147,6 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 	}
 
 	pcre_free(re);
-#elif defined USE_REGEX_POSIX
-	regex_t re;
-
-	ret = regcomp(&re, pattern, REG_EXTENDED);
-	if (ret != 0) {
-		dE("Unable to compile regex pattern, "
-			       "regcomp() returned error: %d.\n", ret);
-		return OVAL_RESULT_ERROR;
-	}
-
-	ret = regexec(&re, test_str, 0, NULL, 0);
-	if (ret == 0) {
-		result = OVAL_RESULT_TRUE;
-	} else if (ret == REG_NOMATCH) {
-		result = OVAL_RESULT_FALSE;
-	} else {
-		dE("Unable to match regex pattern: %d.", ret);
-		result = OVAL_RESULT_ERROR;
-	}
-
-	regfree(&re);
-#endif
 	return result;
 }
 

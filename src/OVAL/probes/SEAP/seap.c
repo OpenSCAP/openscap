@@ -240,7 +240,11 @@ static void *__SEAP_cmdexec_worker (void *arg)
         _A(job != NULL);
         _A(job->cmd != NULL);
 #if defined(HAVE_PTHREAD_SETNAME_NP)
+# if defined(__APPLE__)
+	pthread_setname_np("command_worker");
+# else
 	pthread_setname_np(pthread_self(), "command_worker");
+# endif
 #endif
 
         if (job->cmd->flags & SEAP_CMDFLAG_REPLY) {

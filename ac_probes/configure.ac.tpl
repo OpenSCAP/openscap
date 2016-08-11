@@ -5,7 +5,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 AC_PREREQ(2.59)
-AC_INIT([openscap], [1.2.11], [open-scap-list@redhat.com])
+AC_INIT([openscap], [1.3.0], [open-scap-list@redhat.com])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
@@ -127,19 +127,19 @@ SAVE_LIBS=$LIBS
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(c_r, pthread_attr_init, [
                      pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
-                     pthread_LIBS="-pthread -lrt" ])
+                     pthread_LIBS="-pthread" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(pthread, pthread_attr_init, [
                          pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
-                         pthread_LIBS="-lpthread -lrt" ])
+                         pthread_LIBS="-lpthread" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
    AC_CHECK_LIB(pthreads, pthread_attr_init, [
                           pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
-                          pthread_LIBS="-lpthreads -lrt" ])
+                          pthread_LIBS="-lpthreads" ])
 fi
 
 if test "x$pthread_LIBS" = "xerror"; then
@@ -216,6 +216,66 @@ esac
 AC_SUBST(crapi_CFLAGS)
 AC_SUBST(crapi_LIBS)
 
+AC_ARG_ENABLE([cce],
+     [AC_HELP_STRING([--enable-cce], [include support for CCE (default=no)])],
+     [case "${enableval}" in
+       yes) cce=yes ;;
+       no)  cce=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-cce]) ;;
+     esac],[cce=no])
+
+AC_ARG_ENABLE([python],
+     [AC_HELP_STRING([--enable-python], [enable compilation of python bindings (default=yes)])],
+     [case "${enableval}" in
+       yes) python_bind=yes ;;
+       no)  python_bind=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-python]) ;;
+     esac],[python_bind=yes])
+
+AC_ARG_ENABLE([perl],
+     [AC_HELP_STRING([--enable-perl], [enable compilation of perl bindings (default=no)])],
+     [case "${enableval}" in
+       yes) perl_bind=yes ;;
+       no)  perl_bind=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-perl]) ;;
+     esac],[perl_bind=no])
+
+AC_ARG_ENABLE([debug],
+     [AC_HELP_STRING([--enable-debug], [enable debugging flags (default=no)])],
+     [case "${enableval}" in
+       yes) debug=yes ;;
+       no)  debug=no ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-debug]) ;;
+     esac], [debug=no])
+
+AC_ARG_ENABLE([valgrind],
+     [AC_HELP_STRING([--enable-valgrind], [enable valgrind checks (default=no)])],
+     [case "${enableval}" in
+       yes) vgdebug=yes ;;
+       no)  vgdebug=no ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-valgrind]) ;;
+     esac], [vgdebug=no])
+
+
+AC_ARG_ENABLE([ssp],
+     [AC_HELP_STRING([--enable-ssp], [enable SSP (fstack-protector, default=no)])],
+     [case "${enableval}" in
+       yes) ssp=yes ;;
+       no)  ssp=no ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-ssp]) ;;
+     esac], [ssp=no])
+
+AC_ARG_ENABLE([probes],
+     [AC_HELP_STRING([--enable-probes], [enable compilation of probes (default=yes)])],
+     [case "${enableval}" in
+       yes) probes=yes ;;
+       no)  probes=no  ;;
+       *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes]) ;;
+     esac],[probes=yes])
+
+AC_CHECK_HEADERS([syslog.h ftw.h])
+AC_CHECK_FUNCS([posix_memalign memalign])
+
 AC_CHECK_FUNCS([fts_open posix_memalign memalign])
 AC_CHECK_FUNC(sigwaitinfo, [sigwaitinfo_LIBS=""], [sigwaitinfo_LIBS="-lrt"])
 AC_SUBST(sigwaitinfo_LIBS)
@@ -254,10 +314,11 @@ AC_CHECK_LIB([bz2], [BZ2_bzReadOpen],
 	])
 AM_CONDITIONAL([HAVE_BZIP2], [test "x${HAVE_BZIP2}" = xyes])
 
-
 @@@@PROBE_HEADERS@@@@
 
 @@@@PROBE_LIBRARIES@@@@
+
+if test "$probes" = "yes"; then
 echo
 
 
@@ -279,7 +340,6 @@ if test $ac_cv_atomic_builtins = yes; then
 else
   AC_MSG_NOTICE([!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!])
 fi
-
 
 AC_ARG_ENABLE([probes-independent],
      [AC_HELP_STRING([--enable-probes-independent], [enable compilation of probes independent of the base system (default=yes)])],
@@ -328,6 +388,7 @@ AC_ARG_ENABLE([probes-solaris],
        no)  probes_solaris=no  ;;
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-probes-solaris]) ;;
      esac],)
+fi # probes = yes
 
 AC_ARG_ENABLE([cce],
      [AC_HELP_STRING([--enable-cce], [include support for CCE (default=no)])],
@@ -365,14 +426,6 @@ AC_ARG_ENABLE([perl],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-perl]) ;;
      esac],[perl_bind=no])
 
-AC_ARG_ENABLE([regex-posix],
-     [AC_HELP_STRING([--enable-regex-posix], [compile with POSIX instead of PCRE regex (default=no)])],
-     [case "${enableval}" in
-       yes) regex_posix=yes ;;
-       no)  regex_posix=no  ;;
-       *) AC_MSG_ERROR([bad value ${enableval} for --enable-regex-posix]) ;;
-     esac],[regex_posix=no])
-
 AC_ARG_ENABLE([debug],
      [AC_HELP_STRING([--enable-debug], [enable debugging flags (default=no)])],
      [case "${enableval}" in
@@ -404,13 +457,16 @@ AC_ARG_WITH([crypto],
      [],
      [crypto=gcrypt])
 
-if test "x${libexecdir}" = xNONE; then
-	probe_dir="/usr/local/libexec/openscap"
-else
-	EXPAND_DIR(probe_dir,"${libexecdir}/openscap")
-fi
+if test "$probes" = "yes"; then
+   AC_DEFINE([OVAL_PROBES_ENABLED], [1], [Compile the probe subsystem])
 
-AC_SUBST(probe_dir)
+   if test "x${libexecdir}" = xNONE; then
+      probe_dir="/usr/local/libexec/openscap"
+   else
+      EXPAND_DIR(probe_dir,"${libexecdir}/openscap")
+   fi
+   AC_SUBST(probe_dir)
+fi
 
 if test "x${prefix}" = xNONE; then
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_SCHEMA_PATH], ["/usr/local/share/openscap/schemas"], [Path to xml schemas])
@@ -428,12 +484,6 @@ if test "x${prefix}" = xNONE; then
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_CPE_PATH], ["/usr/local/share/openscap/cpe"], [Path to cpe files])
 else
 	AC_DEFINE_UNQUOTED([OSCAP_DEFAULT_CPE_PATH], ["${prefix}/share/openscap/cpe"], [Path to cpe files])
-fi
-
-if test "$regex_posix" = "yes"; then
-   AC_DEFINE([USE_REGEX_POSIX], [1], [Use POSIX regular expressions])
-else
-   AC_DEFINE([USE_REGEX_PCRE], [1], [Use PCRE])
 fi
 
 if test "$ssp" = "yes"; then
@@ -574,7 +624,7 @@ AC_SUBST(oscapdocker_pythondir, $OSCAPDOCKER_PYTHONDIR)
 @@@@PROBE_EVAL@@@@
 
 AM_CONDITIONAL([WANT_CCE],  test "$cce"  = yes)
-
+AM_CONDITIONAL([WANT_PROBES], test "$probes" = yes)
 AM_CONDITIONAL([WANT_PROBES_INDEPENDENT], test "$probes_independent" = yes)
 AM_CONDITIONAL([WANT_PROBES_UNIX], test "$probes_unix" = yes)
 AM_CONDITIONAL([WANT_PROBES_LINUX], test "$probes_linux" = yes)
@@ -735,17 +785,18 @@ echo "oscap-chroot tool:             $util_oscap_chroot"
 echo "python2 bindings enabled:      $python_bind"
 echo "python3 bindings enabled:      $python3_bind"
 echo "perl bindings enabled:         $perl_bind"
-echo "use POSIX regex:               $regex_posix"
 echo "SCE enabled                    $sce"
 echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
 echo
+
+if test "$probes" = "yes"; then
 @@@@PROBE_TABLE@@@@
 echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"
 echo ""
-
+fi # probes = "yes"
 echo "  === crypto === "
 echo "  library:                     $crapi_libname"
 echo "     libs:                     $crapi_LIBS"

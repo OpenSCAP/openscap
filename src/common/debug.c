@@ -47,6 +47,15 @@
 # define PATH_SEPARATOR '/'
 #endif
 
+#if defined(_WIN32)
+# include "flock.h"
+# define GET_PROGRAM_NAME get_program_name()
+#elif defined(__APPLE__)
+# define GET_PROGRAM_NAME getprogname()
+#else
+# define GET_PROGRAM_NAME program_invocation_short_name
+#endif
+
 static const struct oscap_string_map OSCAP_VERBOSITY_LEVELS[] = {
     {DBG_E, "ERROR"},
     {DBG_W, "WARNING"},
@@ -71,6 +80,34 @@ oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
 #endif
 
 #define THREAD_NAME_LEN 16
+
+#if defined(_WIN32)
+static char * get_program_name()
+{
+        char path[MAX_PATH + 1];
+        int path_size = GetModuleFileName(NULL, path, sizeof(path) - 1);
+
+        if(path_size < 0)
+                return NULL;
+        if(path_size == sizeof(path) - 1)
+                path[path_size] = '\0';
+        return strdup(path);
+}
+
+int setenv(const char *name, const char *value, int overwrite)
+{
+        int errorcode = 0;
+
+        if(!overwrite) {
+                size_t envsize = 0;
+                errorcode = getenv_s(&envsize, NULL, 0, name);
+                if(errorcode || envsize)
+                        return errorcode;
+        }
+
+        return _putenv_s(name, value);
+}
+#endif
 
 static void __oscap_debuglog_close(void)
 {
@@ -169,7 +206,7 @@ static void debug_message_start(int level, int indent)
 	default:
 		l = '0';
 	}
-	fprintf(__debuglog_fp, "%c: %s: ", l, program_invocation_short_name);
+	fprintf(__debuglog_fp, "%c: %s: ", l, GET_PROGRAM_NAME);
 	for (int i = 0; i < indent; i++) {
 		fprintf(__debuglog_fp, "  ");
 	}
@@ -188,7 +225,7 @@ static void debug_message_devel_metadata(const char *file, const char *fn, size_
 #endif
 	/* XXX: non-portable usage of pthread_t */
 	fprintf(__debuglog_fp, " [%s(%ld):%s(%llx):%s:%zu:%s]",
-		program_invocation_short_name, (long) getpid(), thread_name,
+		GET_PROGRAM_NAME, (long) getpid(), thread_name,
 		(unsigned long long) thread, f, line, fn);
 #else
 	fprintf(__debuglog_fp, " [%ld:%s:%zu:%s]", (long) getpid(),
@@ -248,7 +285,9 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 	debug_message_start(DBG_D, 0);
 	switch (objtype) {
 	case OSCAP_DEBUGOBJ_SEXP:
+#if defined(OVAL_PROBES_ENABLED)
 		SEXP_fprintfa(__debuglog_fp, (SEXP_t *)obj);
+#endif
 		break;
 	default:
 		fprintf(__debuglog_fp, "Attempt to dump a not supported object.");

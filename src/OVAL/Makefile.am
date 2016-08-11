@@ -40,8 +40,6 @@ common_oval_sources = \
 	oval_objectContent.c \
 	oval_parser.c \
 	oval_parser_impl.h \
-	oval_probe.c	\
-	oval_probe_hint.c \
 	oval_recordField.c \
 	oval_reference.c \
 	oval_directives.c \
@@ -63,6 +61,13 @@ common_oval_sources = \
 	oval_variableBinding.c \
 	oval_sys_parser.c \
 	oval_varModel.c \
+	oval_vardefMapping.c \
+	oval_version.c
+
+if WANT_PROBES
+common_oval_sources += \
+	oval_probe.c	\
+	oval_probe_hint.c \
 	oval_probe_session.c	\
 	_oval_probe_session.h	\
 	oval_probe_handler.c	\
@@ -70,27 +75,26 @@ common_oval_sources = \
 	fts_sun.c 		\
 	fts_sun.h 		\
 	oval_probe_meta.h	\
-	oval_vardefMapping.c	\
-	oval_version.c		\
 	probes/probe-api.c 	\
 	probes/_probe-api.h	\
-        probes/fsdev.c		\
-        probes/oval_fts.c	\
-        probes/oval_fts.h	\
-        probes/public/probe-api.h\
-        probes/public/probe-common.h\
-        probes/public/fsdev.h	\
-        probes/public/findfile.h \
-        probes/probe/ncache.c	\
-        probes/probe/ncache.h	\
-        probes/probe/rcache.c	\
-        probes/probe/rcache.h	\
-        probes/probe/entcmp.c	\
-        probes/probe/entcmp.h	\
-        oval_sexp.c 		\
-        oval_sexp.h 		\
-        oval_probe_ext.h	\
+	probes/fsdev.c		\
+	probes/oval_fts.c	\
+	probes/oval_fts.h	\
+	probes/public/probe-api.h\
+	probes/public/probe-common.h\
+	probes/public/fsdev.h	\
+	probes/public/findfile.h \
+	probes/probe/ncache.c	\
+	probes/probe/ncache.h	\
+	probes/probe/rcache.c	\
+	probes/probe/rcache.h	\
+	probes/probe/entcmp.c	\
+	probes/probe/entcmp.h	\
+	oval_sexp.c 		\
+	oval_sexp.h 		\
+	oval_probe_ext.h	\
 	oval_probe_impl.h
+endif
 
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
@@ -99,27 +103,32 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		@pcre_CFLAGS@ \
 		@rpm_CFLAGS@ \
 		-I$(srcdir)/public \
+		-I$(srcdir)/adt \
+		-I$(top_srcdir)/lib \
 		-I$(top_srcdir)/src \
 		-I$(top_srcdir)/src/common \
 		-I$(top_srcdir)/src/common/public \
 		-I$(top_srcdir)/src/source/public \
-		-I$(srcdir)/adt \
-		-I$(srcdir)/probes \
-		-I$(srcdir)/probes/public \
-		-I$(srcdir)/probes/SEAP/public \
-		-I$(top_srcdir)/src/OVAL/probes/SEAP/generic \
 		-I$(top_srcdir)/src/XCCDF_POLICY/public \
 		-I$(top_srcdir)/src/XCCDF/public \
 		-I$(top_srcdir)/src/CPE/public \
+		-I$(top_srcdir)/src/OVAL/probes/SEAP/generic
+
+if WANT_PROBES
+AM_CPPFLAGS +=	-I$(srcdir)/probes \
+		-I$(srcdir)/probes/public \
+		-I$(srcdir)/probes/SEAP/public \
 		-DSEAP_MSGID_BITS=32 \
 		-DSEAP_THREAD_SAFE \
 		-DOVAL_PROBE_DIR='"$(probe_dir)"'
+endif
 
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
 liboval_la_LIBADD =	@xml2_LIBS@ \
 			@pthread_LIBS@ \
 			@pcre_LIBS@ \
 			@rpm_LIBS@
+
 liboval_testing_la_LIBADD = $(liboval_la_LIBADD)
 
 pkginclude_HEADERS  = \
@@ -131,30 +140,37 @@ pkginclude_HEADERS  = \
 			public/oval_variables.h \
 			public/oval_directives.h \
 			public/oval_types.h \
-			public/oval_probe.h \
-			public/oval_probe_session.h \
-			public/oval_probe_handler.h	\
 			public/oval_version.h \
 			public/oval_schema_version.h \
 			public/oval_agent_xccdf_api.h
 
+if WANT_PROBES
+pkginclude_HEADERS += \
+			public/oval_probe.h \
+			public/oval_probe_session.h \
+			public/oval_probe_handler.h
+
 liboval_la_SOURCES += oval_probe_ext.c
 nodist_liboval_testing_la_SOURCES = oval_testing_ext_probe.c
+CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
 
 oval_testing_ext_probe.c: Makefile
 	(echo '#define OVAL_PROBEDIR_ENV 1'; \
 	 echo '#include <oval_probe_ext.c>' ) >$@
+endif
 
 SUBDIRS = \
 	adt \
-	probes/SEAP \
 	results
 
 liboval_la_LIBADD  += \
 	adt/libovaladt.la \
-	probes/SEAP/libseap.la \
 	results/libovalresults.la
 
-
-CLEANFILES = $(nodist_liboval_testing_la_SOURCES)
-
+if WANT_PROBES
+SUBDIRS += probes/SEAP
+liboval_la_LIBADD += probes/SEAP/libseap.la
+else
+SUBDIRS += probes/SEAP/generic/rbt
+liboval_la_LIBADD += probes/SEAP/generic/rbt/librbt.la
+endif

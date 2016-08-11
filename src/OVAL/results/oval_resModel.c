@@ -40,8 +40,10 @@
 #include "oval_parser_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "oval_system_characteristics_impl.h"
-#include "oval_probe_impl.h"
 #include "results/oval_results_impl.h"
+#if defined(OVAL_PROBES_ENABLED)
+# include "oval_probe_impl.h"
+#endif
 #include "oval_directives_impl.h"
 
 #include "common/util.h"
@@ -56,12 +58,15 @@ struct oval_results_model {
 	struct oval_directives_model *directives_model;
 	struct oval_definition_model *definition_model;
 	struct oval_collection *systems;
+#if defined(OVAL_PROBES_ENABLED)
 	struct oval_probe_session *probe_session;
+#endif
 };
 
 struct oval_results_model *oval_results_model_new(struct oval_definition_model *definition_model,
 						  struct oval_syschar_model **syschar_models)
 {
+#if defined(OVAL_PROBES_ENABLED)
 	return oval_results_model_new_with_probe_session(definition_model, syschar_models, NULL);
 }
 
@@ -69,6 +74,7 @@ struct oval_results_model *oval_results_model_new_with_probe_session(struct oval
 						  struct oval_syschar_model **syschar_models,
 						  struct oval_probe_session *probe_session)
 {
+#endif
 	struct oval_results_model *model = (struct oval_results_model *) oscap_alloc(sizeof(struct oval_results_model));
 	if (model == NULL)
 		return NULL;
@@ -86,7 +92,9 @@ struct oval_results_model *oval_results_model_new_with_probe_session(struct oval
 		}
 	}
 	model->directives_model = oval_directives_model_new();
+#if defined(OVAL_PROBES_ENABLED)
 	model->probe_session = probe_session;
+#endif
 	return model;
 }
 
@@ -148,11 +156,13 @@ struct oval_result_system_iterator *oval_results_model_get_systems(struct oval_r
 	    oval_collection_iterator(model->systems);
 }
 
+#if defined(OVAL_PROBES_ENABLED)
 struct oval_probe_session *oval_results_model_get_probe_session(struct oval_results_model *model)
 {
 	__attribute__nonnull__(model);
 	return model->probe_session;
 }
+#endif
 
 void oval_results_model_add_system(struct oval_results_model *model, struct oval_result_system *sys)
 {

@@ -39,6 +39,7 @@ oscap_debug.log.*
 /libtool
 /docs/html/
 /utils/oscap
+/utils/oscap.exe
 /utils/oscap_docker_python/*.pyc
 /utils/oscap-docker
 /libopenscap.pc
