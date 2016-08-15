@@ -269,6 +269,11 @@ static int get_runlevel_suse (struct runlevel_req *req, struct runlevel_rep **re
 	return (get_runlevel_sysv (req, rep, suse, init_path, rc_path));
 }
 
+static int get_runlevel_wrlinux (struct runlevel_req *req, struct runlevel_rep **rep)
+{
+        return (-1);
+}
+
 static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         return (-1);
@@ -327,6 +332,12 @@ static int is_solaris (void)
         return (stat ("/etc/release", &st)   == 0);
 }
 
+static int is_wrlinux (void)
+{
+        struct stat st;
+        return (stat ("/etc/wrlinux-release", &st) == 0 );
+}
+
 static int is_common (void)
 {
         return (1);
@@ -346,6 +357,7 @@ const distro_tbl_t distro_tbl[] = {
         { &is_mandriva, &get_runlevel_mandriva },
         { &is_suse,     &get_runlevel_suse     },
         { &is_solaris,  &get_runlevel_redhat   },
+        { &is_wrlinux,  &get_runlevel_wrlinux  },
         { &is_common,   &get_runlevel_common   }
 };
 
