@@ -3,6 +3,7 @@ Michal Šrubař <msrubar@redhat.com>
 v1.0, 2015-31-08
 :imagesdir: ./images
 :workbench_url: https://www.open-scap.org/tools/scap-workbench/
+:sce_web:       https://www.open-scap.org/features/other-standards/sce/
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
 :ssg_git:       https://github.com/OpenSCAP/scap-security-guide
@@ -386,7 +387,7 @@ results are as they are. Please note these files are not generated
 unless *--oval-results* is used.
 
 Some content may use alternative check engines, for example the
-link:/page/SCE[SCE] check engine.
+{sce_web}[SCE] check engine.
 
 Results of rules with a check that requires a check engine not supported
 by openscap will be reported as *notchecked*. Check contents are not
@@ -1267,7 +1268,7 @@ The Script Check Engine (SCE) is an alternative check engine for XCCDF checklist
 evaluation.  SCE allows you to call shell scripts out of the XCCDF document.
 This approach might be suitable for various use cases, mostly when OVAL checks
 are not required. More information about SCE usage is available on this page:
-http://open-scap.org/page/SCE[Using SCE].
+{sce_web}[Using SCE].
 
 WARNING: SCE is not part of any SCAP specification.
 
