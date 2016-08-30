@@ -578,7 +578,7 @@ can be either ```report```, ```guide```, ```custom``` or ```fix```. Please see
 === Content Transformation
 The oscap tool is also capable of using the {xslt}[XSLT] (Extensible Stylesheet
 Language Transformations) language, which allows transformation of a SCAP
-content XML file into another XML, HTML, plain text or {xsl}[XLS] document.
+content XML file into another XML, HTML, plain text or {xsl}[XSL] document.
 This feature is very useful when you need the SCAP document in a
 human-readable form. The following commands represent the most common
 cases:
