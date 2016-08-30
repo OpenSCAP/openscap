@@ -390,7 +390,7 @@ Some content may use alternative check engines, for example the
 {sce_web}[SCE] check engine.
 
 Results of rules with a check that requires a check engine not supported
-by openscap will be reported as *notchecked*. Check contents are not
+by OpenSCAP will be reported as *notchecked*. Check contents are not
 read or interpreted in any way unless the check system is known and
 supported. Following is an evaluation output of an XCCDF with unknown
 check system:
@@ -448,11 +448,11 @@ displayed, only the identifiers themselves are displayed there.
 
 Identifiers are also part of the HTML report output. If the identifier
 is a CVE you can click it to display its metadata from the official NVD
-database (requires internet connection). openscap doesn't provide
+database (requires internet connection). OpenSCAP doesn't provide
 metadata for other types of identifiers.
 
 ==== Bundled CCE data
-openscap does not provide any static or product bundled CCE data. Thus
+OpenSCAP does not provide any static or product bundled CCE data. Thus
 it has no way of displaying the last generated, updated and officially
 published dates of static or product bundled CCE data because the dates
 are not defined.
@@ -1203,7 +1203,7 @@ Next important step is to ```preload libopenscap_testing.so``` before you run
  ```oscap``` tool. The testing library allows you to specify custom path to
 probes via *OVAL_PROBE_DIR* environment variable. The easiest way how to
 achieve that without need to install libopenscap, is to use shell
-script called *run* in the openscap directory.
+script called *run* in the OpenSCAP directory.
 
 -------------------------------------------------
 $ ./run utils/.libs/oscap xccdf eval ... whatever
