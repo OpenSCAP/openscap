@@ -1118,6 +1118,24 @@ https://github.com/OpenSCAP/scap-security-guide
 
 
 
+=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6
+This section describes how to check that software patches are up-to-date using
+external OVAL content.
+
+1) Install the SSG
+
+ $ sudo yum install -y scap-security-guide
+
+2) Evaluate common profile
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+
+This command evaluates common profile for Red Hat Enterprise Linux 6. Part of
+the profile is a rule to check that patches are up-to-date. To evaluate the rule
+correctly, oscap tool needs to fetch remote up-to-date OVAL file. This can be
+allowed using *--fetch-remote-resources* option. Result of this scan will be saved
+in **results.xml** using ARF format.
+
 [[devs]]
 == Developer's operations
 This part of documentation is meant to serve mainly to developers who want to
