@@ -1136,6 +1136,18 @@ correctly, oscap tool needs to fetch remote up-to-date OVAL file. This can be
 allowed using *--fetch-remote-resources* option. Result of this scan will be saved
 in **results.xml** using ARF format.
 
+=== Evaluation of content
+Specified XCCDF or data stream content can contains zero or more profiles.
+
+You can select existing profile using *--profile* option, or you can evaluate scan without
+selection of profile.
+
+ $ oscap xccdf eval --results results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+
+The command above evaluates rules without specific profile. XCCDF results are stored in *results.xml* file.
+
+
+
 [[devs]]
 == Developer's operations
 This part of documentation is meant to serve mainly to developers who want to
