@@ -1283,9 +1283,9 @@ http://www.cygwin.com/[cygwin]. First install basic set of packages from
 * *autoconf automake libtool make gcc*
 * *pcre-devel libxml2-devel libcurl-devel libgrcypt-devel*
 * *swig perl python*
-2.  Checkout the portable branch of OpenSCAP:
+2.  Checkout the master branch of OpenSCAP:
 
- $ git clone -b portable git://git.fedorahosted.org/git/openscap.git
+ $ git clone -b master https://github.com/OpenSCAP/openscap.git
 
 3.  Run autotools machinery by
 
@@ -1371,7 +1371,7 @@ OpenSCAP for Windows:
 2) Checkout the portable branch of the OpenSCAP repository
 
 ----------------------------------------------------------------------
- $ git clone -b portable git://git.fedorahosted.org/git/openscap.git \
+ $ git clone -b master https://github.com/OpenSCAP/openscap.git \
  openscap-portable.git
  $ cd openscap-portable.git/
 ----------------------------------------------------------------------
