@@ -178,7 +178,7 @@ static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *ses
 	char *real_source_path = source_path[0] == '/' ?
 		oscap_strdup(source_path) : oscap_sprintf("%s/%s", base_dir, source_path);
 
-	oscap_free(base_dir);
+	oscap_free(original_path_cpy);
 	oscap_free(source_path);
 
 	struct oscap_source *real_source = oscap_source_new_from_file(real_source_path);
