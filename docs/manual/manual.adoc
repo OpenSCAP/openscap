@@ -1136,6 +1136,72 @@ correctly, oscap tool needs to fetch remote up-to-date OVAL file. This can be
 allowed using *--fetch-remote-resources* option. Result of this scan will be saved
 in **results.xml** using ARF format.
 
+
+=== How to tailor Source data stream
+This section describes tailoring of content using Tailoring file. This allows
+you to change behavior of content without its direct modification.
+
+1) Obtain tailoring file
+
+Tailoring file can be easily generated using {workbench_url}[SCAP Workbench].
+
+2) List profiles of tailoring file
+
+ $ oscap info
+----
+Document type: XCCDF Tailoring
+Imported: 2016-08-31T11:08:16
+Benchmark Hint: /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+Profiles:
+	xccdf_org.ssgproject.content_profile_C2S_customized
+----
+
+3) Evaluate
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_C2S_customized --tailoring-file ssg-rhel6-ds-tailoring.xml --results results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+
+The command above evaluates tailored data stream by **ssg-rhel6-ds-tailoring.xml** tailoring file.
+XCCDF results can be found in **results.xml** file.
+
+Despite of external tailoring file, you can also use tailoring component integrated to data stream.
+
+ $ oscap info simple-ds.xml
+
+----
+Document type: Source Data Stream
+Imported: 2016-02-02T14:06:14
+
+Stream: scap_org.open-scap_datastream_from_xccdf_simple-xccdf.xml
+Generated: (null)
+Version: 1.2
+Checklists:
+	Ref-Id: scap_org.open-scap_cref_simple-xccdf.xml
+		Status: incomplete
+		Resolved: false
+		Profiles:
+			xccdf_org.open-scap_profile_override
+		Referenced check files:
+			simple-oval.xml
+				system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+	Ref-Id: scap_org.open-scap_cref_simple-tailoring.xml
+		Benchmark Hint: (null)
+		Profiles:
+			xccdf_org.open-scap_profile_default
+			xccdf_org.open-scap_profile_unselecting
+			xccdf_org.open-scap_profile_override
+Checks:
+	Ref-Id: scap_org.open-scap_cref_simple-oval.xml
+No dictionaries.
+----
+
+We will choose "scap_org.open-scap_cref_simple-tailoring.xml" tailoring component.
+
+ $ oscap xccdf eval --tailoring-id scap_org.open-scap_cref_simple-tailoring.xml --profile xccdf_org.open-scap_profile_default --results results.xml simple-ds.xml
+
+The command above evaluates content using tailoring component *scap_org.open-scap_cref_simple-tailoring.xml* from source data stream.
+Scan results are stored in *results.xml* file.
+
+
 === Evaluation of content
 Specified XCCDF or data stream content can contains zero or more profiles.
 
