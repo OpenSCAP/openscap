@@ -451,6 +451,15 @@ is a CVE you can click it to display its metadata from the official NVD
 database (requires internet connection). OpenSCAP doesn't provide
 metadata for other types of identifiers.
 
+Another place, where these identifiers are located is machine-readable Result
+Datastream files.
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml 
+
+Result data stream file **results.xml** contains these identifiers in <rule-result>
+elements.
+
+
 ==== Bundled CCE data
 OpenSCAP does not provide any static or product bundled CCE data. Thus
 it has no way of displaying the last generated, updated and officially
