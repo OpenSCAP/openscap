@@ -265,6 +265,7 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
+    <span class="label label-success">Remediation script:</span>
     <pre><code>
         <xsl:apply-templates mode="sub-testresult" select="$fix">
             <xsl:with-param name="testresult" select="$testresult"/>

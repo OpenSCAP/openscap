@@ -876,7 +876,6 @@ Authors:
                         </xsl:for-each>
                         <xsl:for-each select="$item/cdf:fix">
                             <tr><td colspan="2"><div class="remediation">
-                                <span class="label label-success">Remediation script:</span>
                                 <xsl:call-template name="show-fix">
                                     <xsl:with-param name="fix" select="."/>
                                     <xsl:with-param name="testresult" select="$testresult"/>
