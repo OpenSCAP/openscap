@@ -276,14 +276,16 @@ Authors:
         </xsl:choose>
     </xsl:variable>
 
-    <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>
-    <pre><code>
-        <xsl:apply-templates mode="sub-testresult" select="$fix">
-            <xsl:with-param name="testresult" select="$testresult"/>
-            <xsl:with-param name="benchmark" select="$benchmark"/>
-            <xsl:with-param name="profile" select="$profile"/>
-        </xsl:apply-templates>
-    </code></pre>
+    <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>&#160;&#160;&#160;<a data-toggle="collapse" data-target="#{generate-id($fix)}">(show)</a><br />
+    <div class="panel-collapse collapse" id="{generate-id($fix)}">
+        <pre><code>
+            <xsl:apply-templates mode="sub-testresult" select="$fix">
+                <xsl:with-param name="testresult" select="$testresult"/>
+                <xsl:with-param name="benchmark" select="$benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:apply-templates>
+        </code></pre>
+    </div>
 </xsl:template>
 
 <xsl:template name="show-title-front-matter-description-notices">
