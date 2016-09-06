@@ -268,7 +268,15 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <span class="label label-success">Remediation script:</span>
+    <xsl:variable name="fix_type">
+        <xsl:choose>
+            <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:sh'">Shell script</xsl:when>
+            <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:ansible'">Ansible snippet</xsl:when>
+            <xsl:otherwise>script</xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+    <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>
     <pre><code>
         <xsl:apply-templates mode="sub-testresult" select="$fix">
             <xsl:with-param name="testresult" select="$testresult"/>
