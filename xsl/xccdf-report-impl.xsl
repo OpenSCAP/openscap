@@ -863,15 +863,12 @@ Authors:
                     <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
                         <xsl:for-each select="$item/cdf:fixtext">
                             <tr><td colspan="2"><div class="remediation-description">
-                                <span class="label label-success">Remediation description:</span>
-                                <div class="panel panel-default"><div class="panel-body">
-                                    <xsl:call-template name="show-fixtext">
-                                        <xsl:with-param name="fixtext" select="."/>
-                                        <xsl:with-param name="testresult" select="$testresult"/>
-                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                        <xsl:with-param name="profile" select="$profile"/>
-                                    </xsl:call-template>
-                                </div></div>
+                                <xsl:call-template name="show-fixtext">
+                                    <xsl:with-param name="fixtext" select="."/>
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:call-template>
                             </div></td></tr>
                         </xsl:for-each>
                         <xsl:for-each select="$item/cdf:fix">

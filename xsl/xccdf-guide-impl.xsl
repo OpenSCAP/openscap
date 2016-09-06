@@ -216,14 +216,11 @@ Authors:
                 </div>
 
                 <xsl:for-each select="$item/cdf:fixtext">
-                    <span class="label label-success">Remediation description:</span>
-                    <div class="panel panel-default"><div class="panel-body">
-                        <xsl:call-template name="show-fixtext">
-                            <xsl:with-param name="fixtext" select="."/>
-                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:call-template>
-                    </div></div>
+                    <xsl:call-template name="show-fixtext">
+                        <xsl:with-param name="fixtext" select="."/>
+                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:call-template>
                 </xsl:for-each>
 
                 <xsl:for-each select="$item/cdf:fix">

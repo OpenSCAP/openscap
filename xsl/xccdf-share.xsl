@@ -252,11 +252,14 @@ Authors:
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
 
-    <xsl:apply-templates mode="sub-testresult" select="$fixtext">
-        <xsl:with-param name="testresult" select="$testresult"/>
-        <xsl:with-param name="benchmark" select="$benchmark"/>
-        <xsl:with-param name="profile" select="$profile"/>
-    </xsl:apply-templates>
+    <span class="label label-success">Remediation description:</span>
+    <div class="panel panel-default"><div class="panel-body">
+        <xsl:apply-templates mode="sub-testresult" select="$fixtext">
+            <xsl:with-param name="testresult" select="$testresult"/>
+            <xsl:with-param name="benchmark" select="$benchmark"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:apply-templates>
+    </div></div>
 </xsl:template>
 
 <xsl:template name="show-fix">
