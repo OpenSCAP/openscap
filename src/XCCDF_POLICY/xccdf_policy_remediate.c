@@ -64,18 +64,27 @@ static inline bool _file_exists(const char *file)
 	return file != NULL && stat(file, &sb) == 0;
 }
 
-static int _write_text_to_fd_and_free(int output_fd, const char *text)
-{
-	ssize_t len = strlen(text);
+static int _write_text_to_fd(int output_fd, const char* text) {
+
 	ssize_t written = 0;
-	while (written < len) {
-		ssize_t w = write(output_fd, text + written, len - written);
+	ssize_t length = strlen(text);
+
+	while (written < length) {
+		ssize_t w = write(output_fd, text + written, length - written);
 		if (w < 0)
 			break;
 		written += w;
 	}
+
+	return written != length;
+
+}
+
+static int _write_text_to_fd_and_free(int output_fd, const char *text)
+{
+	int ret = _write_text_to_fd(output_fd, text);
 	oscap_free(text);
-	return written != len;
+	return ret;
 }
 
 struct _interpret_map {
