@@ -64,20 +64,63 @@ static inline bool _file_exists(const char *file)
 	return file != NULL && stat(file, &sb) == 0;
 }
 
-static int _write_text_to_fd_and_free(int output_fd, const char *text)
-{
-	ssize_t len = strlen(text);
+static int _write_text_to_fd(int output_fd, const char* text) {
+
 	ssize_t written = 0;
-	while (written < len) {
-		ssize_t w = write(output_fd, text + written, len - written);
+	ssize_t length = strlen(text);
+
+	while (written < length) {
+		ssize_t w = write(output_fd, text + written, length - written);
 		if (w < 0)
 			break;
 		written += w;
 	}
-	oscap_free(text);
-	return written != len;
+
+	return written != length;
+
 }
 
+static int _write_text_to_fd_and_free(int output_fd, const char *text)
+{
+	int ret = _write_text_to_fd(output_fd, text);
+	oscap_free(text);
+	return ret;
+}
+
+static int _write_remediation_to_fd_and_free(int output_fd, const char* template, char* text)
+{
+	if (oscap_streq(template, "urn:xccdf:fix:script:ansible")) {
+		// Add required indentation in front of every single line
+
+		const char *delim = "\n";
+		const char *indentation = "\n    "; // we add indentation using replacement "\n" => "\n    "
+
+		char *token = strtok(text, delim);
+		while (token != NULL) {
+
+			// write indentation
+			if (_write_text_to_fd(output_fd, indentation) != 0) {
+				oscap_free(text);
+				return 1;
+			}
+
+			// write rest of line
+			if (_write_text_to_fd(output_fd, token) != 0) {
+				oscap_free(text);
+				return 1;
+			}
+
+			token = strtok(NULL, delim);
+		}
+
+		oscap_free(text);
+		return _write_text_to_fd(output_fd, "\n");
+
+	} else {
+		// no extra processing is needed
+		return _write_text_to_fd_and_free(output_fd, text);
+	}
+}
 struct _interpret_map {
 	const char *sys;
 	const char *interpret;
@@ -509,7 +552,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	xccdf_fix_free(cfix);
 
 	// Print-out the fix to the output_fd
-	if (_write_text_to_fd_and_free(output_fd, fix_text) != 0) {
+	if (_write_remediation_to_fd_and_free(output_fd, template, fix_text) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "write of the fix to fd=%d failed: %s", output_fd, strerror(errno));
 		return 1;
 	}
@@ -540,6 +583,23 @@ static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct x
 	return ret;
 }
 
+static int _write_script_header_to_fd(const char *sys, int output_fd)
+{
+	if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
+
+		static const char *ansible_header =
+			"---\n"
+			"# - hosts: localhost # set required host\n"
+			"   tasks:\n";
+
+		return _write_text_to_fd(output_fd, ansible_header);
+
+	} else {
+		// no header required
+		return 0;
+	}
+}
+
 int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	__attribute__nonnull__(policy);
@@ -553,6 +613,10 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
 			return 1;
 		}
+
+		if (_write_script_header_to_fd(sys, output_fd) != 0)
+			return 1;
+
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
 			struct xccdf_item *item = xccdf_item_iterator_next(item_it);
