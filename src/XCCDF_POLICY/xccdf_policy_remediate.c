@@ -589,7 +589,7 @@ static int _write_script_header_to_fd(const char *sys, int output_fd)
 
 		static const char *ansible_header =
 			"---\n"
-			" - hosts: localhost # set required host\n"
+			"# - hosts: localhost # set required host\n"
 			"   tasks:\n";
 
 		return _write_text_to_fd(output_fd, ansible_header);
