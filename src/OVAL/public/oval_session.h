@@ -222,6 +222,16 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
 int oval_session_export(struct oval_session *session);
 
 /**
+ * Set exporting of system characteristics in OVAL results
+ *
+ *
+ * @memberof oval_session
+ * @param session an \ref oval_session
+ * @param export false values indicated no system_characteristics in OVAL Results
+ */
+void oval_session_set_export_system_characteristics(struct oval_session *session, bool export);
+
+/**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
