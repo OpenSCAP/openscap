@@ -73,6 +73,8 @@ EXTRA_DIST = \
 	test_object_component_type.sh \
 	test_skip_valid.sh \
 	test_skip_valid.oval.xml \
+	test_without_syschars.sh \
+	test_without_syschars.xml \
 	test_xmlns_missing.oval.xml \
 	test_xmlns_missing.sh \
 	test_xsinil_envv58_pid.oval.xml \
