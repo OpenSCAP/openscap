@@ -1170,7 +1170,7 @@ Profiles:
 The command above evaluates tailored data stream by **ssg-rhel6-ds-tailoring.xml** tailoring file.
 XCCDF results can be found in **results.xml** file.
 
-Despite of external tailoring file, you can also use tailoring component integrated to data stream.
+Instead of external tailoring file, you can also use tailoring component integrated to data stream.
 
  $ oscap info simple-ds.xml
 
