@@ -147,7 +147,10 @@ static const char *_get_supported_interpret(const char *sys, const struct _inter
 		{"urn:xccdf:fix:script:csh",		"/bin/csh"},
 		{"urn:xccdf:fix:script:tclsh",		"/usr/bin/tclsh"},
 		{"urn:xccdf:fix:script:javascript",	"/usr/bin/js"},
-		{"urn:xccdf:fix:script:ansible",	"/usr/bin/ansible-playbook"},
+
+		// Current Ansible remediations are only Ansible snippets and are
+		// not runnable without header.
+		// {"urn:xccdf:fix:script:ansible",	"/usr/bin/ansible-playbook"},
 		{NULL,					NULL}
 	};
 	const char *interpret = _search_interpret_map(sys, _openscap_supported_interprets);
