@@ -233,7 +233,7 @@ Definition file, *usgcb-rhel5desktop-oval.xml-0.variables-0.xml* is the
 file containing exported variables from the XCCDF file, and
 *usgcb-results-oval.xml* is the the OVAL Result file.
 
-OVAL directives file can be used to control, whether results should be "thin" or "full".
+An OVAL directives file can be used to control whether results should be "thin" or "full".
 This file can be loaded by OpenSCAP using *--directives <file>* option.
 
 ---------------------------------------------------------------------------------------------------
@@ -458,7 +458,7 @@ is a CVE you can click it to display its metadata from the official NVD
 database (requires internet connection). OpenSCAP doesn't provide
 metadata for other types of identifiers.
 
-Another place, where these identifiers are located are machine-readable Result Datastream files.
+Another place where these identifiers can be found are machine-readable Result Datastream files.
 This file can be generated during the scan by adding *--results-arf* option.
 
  $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml 
@@ -1201,7 +1201,7 @@ Checks:
 No dictionaries.
 ----
 
-To choose tailoring component "scap_org.open-scap_cref_simple-tailoring.xml", can be used the command below.
+To choose tailoring component "scap_org.open-scap_cref_simple-tailoring.xml", the command below can be used.
 
  $ oscap xccdf eval --tailoring-id scap_org.open-scap_cref_simple-tailoring.xml --profile xccdf_org.open-scap_profile_default --results results.xml simple-ds.xml
 
