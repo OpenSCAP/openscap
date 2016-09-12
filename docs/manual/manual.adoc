@@ -1139,7 +1139,7 @@ external OVAL content.
 
 This command evaluates common profile for Red Hat Enterprise Linux 6. Part of
 the profile is a rule to check that patches are up-to-date. To evaluate the rule
-correctly, oscap tool needs to fetch remote up-to-date OVAL file. This can be
+correctly, oscap tool needs to download an up-to-date OVAL file from Red Hat servers. This can be
 allowed using *--fetch-remote-resources* option. Result of this scan will be saved
 in **results.xml** using ARF format.
 
