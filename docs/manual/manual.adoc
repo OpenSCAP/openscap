@@ -1201,7 +1201,7 @@ Checks:
 No dictionaries.
 ----
 
-We will choose "scap_org.open-scap_cref_simple-tailoring.xml" tailoring component.
+To choose tailoring component "scap_org.open-scap_cref_simple-tailoring.xml", can be used the command below.
 
  $ oscap xccdf eval --tailoring-id scap_org.open-scap_cref_simple-tailoring.xml --profile xccdf_org.open-scap_profile_default --results results.xml simple-ds.xml
 
