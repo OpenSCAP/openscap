@@ -233,6 +233,9 @@ Definition file, *usgcb-rhel5desktop-oval.xml-0.variables-0.xml* is the
 file containing exported variables from the XCCDF file, and
 *usgcb-results-oval.xml* is the the OVAL Result file.
 
+OVAL results file contains, by default, exported system characteristics.
+OpenSCAP provides *--without-syschar* option to change this behavior.
+
 ==== XCCDF
 When evaluating an XCCDF benchmark, ```oscap``` usually processes an XCCDF
 file, an OVAL file and the CPE dictionary. It performs system
