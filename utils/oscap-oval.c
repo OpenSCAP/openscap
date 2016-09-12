@@ -109,7 +109,7 @@ static struct oscap_module OVAL_EVAL = {
 	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
 	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
         "   --directives <file>\r\t\t\t\t - Use OVAL Directives content to specify desired results content.\n"
-        "   --without-syschars \r\t\t\t\t - Don't provide system characteristics in result file.\n"
+        "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in result file.\n"
         "   --results <file>\r\t\t\t\t - Write OVAL Results into file.\n"
         "   --report <file>\r\t\t\t\t - Create human readable (HTML) report from OVAL Results.\n"
         "   --skip-valid\r\t\t\t\t - Skip validation.\n"
@@ -559,7 +559,7 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		{ "id",        	required_argument, NULL, OVAL_OPT_ID           },
 		{ "variables",	required_argument, NULL, OVAL_OPT_VARIABLES    },
 		{ "directives",	required_argument, NULL, OVAL_OPT_DIRECTIVES   },
-		{ "without-syschars",	no_argument, &action->without_sys_chars, 1},
+		{ "without-syschar",	no_argument, &action->without_sys_chars, 1},
 		{ "datastream-id",required_argument, NULL, OVAL_OPT_DATASTREAM_ID},
 		{ "oval-id",    required_argument, NULL, OVAL_OPT_OVAL_ID},
 		{ "skip-valid",	no_argument, &action->validate, 0 },
