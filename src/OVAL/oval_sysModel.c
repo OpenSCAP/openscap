@@ -317,7 +317,7 @@ struct oval_sysitem *oval_syschar_model_get_new_sysitem(struct oval_syschar_mode
 }
 
 xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xmlDocPtr doc, xmlNode * parent, 
-			           oval_syschar_resolver resolver, void *user_arg)
+			           oval_syschar_resolver resolver, void *user_arg, bool export_syschar)
 {
 
 	xmlNodePtr root_node = NULL;
@@ -347,6 +347,10 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 
         /* Report sysinfo */
 	oval_sysinfo_to_dom(oval_syschar_model_get_sysinfo(syschar_model), doc, root_node);
+
+	if (!export_syschar) {
+		return root_node;
+	}
 
 	struct oval_smc *resolved_smc = NULL;
 	struct oval_syschar_iterator *syschars = oval_syschar_model_get_syschars(syschar_model);
@@ -412,7 +416,7 @@ int oval_syschar_model_export(struct oval_syschar_model *model, const char *file
 		return -1;
 	}
 
-	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL);
+	oval_syschar_model_to_dom(model, doc, NULL, NULL, NULL, true);
 	return oscap_xml_save_filename_free(file, doc);
 }
 

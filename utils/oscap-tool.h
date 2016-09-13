@@ -144,6 +144,7 @@ struct oscap_action {
 	int remote_resources;
 	int progress;
 	int oval_results;
+	int without_sys_chars;
 	int remediate;
 	char *sce_template;
 	int check_engine_results;
