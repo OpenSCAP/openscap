@@ -197,9 +197,19 @@ static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *com
 	}
 }
 
-static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+static int ds_sds_dump_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
-	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
+	xmlDoc *doc;
+	struct oscap_source* source_file = NULL;
+
+	if (external_file != NULL) {
+
+		source_file = oscap_source_new_from_file(external_file);
+		doc = oscap_source_get_xmlDoc(source_file);
+	} else {
+		doc = ds_sds_session_get_xmlDoc(session);
+	}
+
 	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
 	if (component == NULL)
 	{
@@ -235,8 +245,9 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 		if (new_doc == NULL) {
 			return -1;
 		}
-		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
-		ds_sds_session_register_component_source(session, relative_filepath, source);
+
+		struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
+		ds_sds_session_register_component_source(session, relative_filepath, component_source);
 	}
 
 	return 0;
@@ -261,15 +272,40 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		return -1;
 	}
 
-	assert(xlink_href[0] == '#');
-	const char* component_id = xlink_href + 1;
+
+    const char* component_id;
+	const char* filename;
+
+	if (xlink_href[0] == '#')
+	{
+		filename = NULL;
+		component_id = xlink_href + 1;
+
+	} else if (oscap_str_startswith(xlink_href, "file:")){
+
+		char* sep = strchr(xlink_href, '#');
+		assert(sep != NULL);
+
+		filename = xlink_href + strlen("file:");
+		*sep = '\0';
+
+		component_id = sep + 1;
+
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
+		xmlFree(cref_id);
+		xmlFree(xlink_href);
+		return -1;
+	}
+
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
 	char* file_reldir = dirname(filename_cpy);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
 	oscap_free(filename_cpy);
 
-	ds_sds_dump_component(component_id, session, target_filename_dirname, relative_filepath);
+	ds_sds_dump_component(filename, component_id, session, target_filename_dirname, relative_filepath);
+
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
 	if (catalog)
