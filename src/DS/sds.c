@@ -308,6 +308,30 @@ static int ds_sds_dump_component(const char* external_file, const char* componen
 		return ret;
 }
 
+static int ds_sds_dump_file_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+{
+	int ret = 0;
+
+	struct oscap_source *source_file = load_referenced_source(session, external_file);
+	xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
+
+	if (doc == NULL) {
+		ret = -1;
+		goto cleanup;
+	}
+
+	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
+
+	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+
+	cleanup:
+		oscap_source_free(source_file);
+		return ret;
+}
+
 int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
