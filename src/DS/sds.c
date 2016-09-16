@@ -228,11 +228,12 @@ static int ds_sds_dump_component(const char* external_file, const char* componen
 	if (external_file != NULL) {
 
 		source_file = load_referenced_source(session, external_file);
-		if (source_file == NULL) {
+		doc = oscap_source_get_xmlDoc(source_file);
+
+		if (doc == NULL) {
 			ret = -1;
 			goto cleanup;
 		}
-		doc = oscap_source_get_xmlDoc(source_file);
 	} else {
 		doc = ds_sds_session_get_xmlDoc(session);
 	}
