@@ -310,6 +310,35 @@ static int ds_sds_dump_file_component(const char* external_file, const char* com
 		return ret;
 }
 
+static int ds_dsd_dump_remote_component(const char* url, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+{
+	int ret = 0;
+	size_t memory_size = 0;
+	char* mem = oscap_acquire_url_download(url, &memory_size);
+	if (mem == NULL) {
+		// todo: print error
+		return -1;
+	}
+	struct oscap_source *source_file = oscap_source_new_take_memory(mem, memory_size, url);
+	xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
+
+	if (doc == NULL) {
+		ret = -1;
+		goto cleanup;
+	}
+
+	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
+
+	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+		ret = -1;
+		goto cleanup;
+	}
+
+	cleanup:
+		oscap_source_free(source_file);
+		return ret;
+}
+
 static char *compose_target_filename_dirname(const char *relative_filepath, const char* sub_dir)
 {
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
@@ -350,6 +379,18 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 
 		return ds_sds_dump_file_component(filename, *component_id, session, target_filename_dirname, relative_filepath);
 
+	} else if (oscap_acquire_url_is_supported(xlink_href)){
+		char *sep = strchr(xlink_href, '#');
+
+		char* url = xlink_href;
+
+		if (sep == NULL) {
+			*component_id = NULL;
+		} else {
+			*sep = '\0';
+			*component_id = sep + 1;
+		}
+		return ds_dsd_dump_remote_component(url, *component_id, session, target_filename_dirname, relative_filepath);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
 		return 0;
