@@ -197,6 +197,28 @@ static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *com
 	}
 }
 
+/**
+ * Load oscap source from file
+ * Filename is relatively to datastream file
+ */
+static struct oscap_source *load_referenced_source(const struct ds_sds_session *session, const char *filename)
+{
+	const char* readable_origin = ds_sds_session_get_readable_origin(session);
+	assert(readable_origin != NULL);
+	char* readable_origin_cp = oscap_strdup(readable_origin);
+
+	char* dir_name = dirname(readable_origin_cp);
+	char* full_path = oscap_sprintf("%s/%s", dir_name, filename);
+
+	struct oscap_source *source_file = oscap_source_new_from_file(full_path);
+
+	oscap_free(full_path);
+	oscap_free(readable_origin_cp);
+
+	return source_file;
+}
+
+
 static int ds_sds_dump_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
 	int ret = 0;
@@ -205,7 +227,7 @@ static int ds_sds_dump_component(const char* external_file, const char* componen
 
 	if (external_file != NULL) {
 
-		source_file = oscap_source_new_from_file(external_file);
+		source_file = load_referenced_source(session, external_file);
 		if (source_file == NULL) {
 			ret = -1;
 			goto cleanup;
@@ -305,7 +327,7 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
 		xmlFree(cref_id);
 		xmlFree(xlink_href);
-		return -1;
+		return 0;
 	}
 
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);

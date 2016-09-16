@@ -159,6 +159,14 @@ struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session 
 	return session->component_sources;
 }
 
+const char *ds_sds_session_get_readable_origin(const struct ds_sds_session *session)
+{
+	if (session->source == NULL)
+		return NULL;
+
+	return oscap_source_readable_origin(session->source);
+}
+
 struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id)
 {
 	session->datastream_id = datastream_id;
