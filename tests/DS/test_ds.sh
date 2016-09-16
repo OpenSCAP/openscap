@@ -332,10 +332,25 @@ function test_rds_split {
     return 0
 }
 
+function test_sds_external_xccdf {
+    local SDS_FILE="${srcdir}/$2"
+    local XCCDF="$3"
+    local PROFILE="$4"
+    local result="${1}-${PROFILE}.xml"
+
+    $OSCAP xccdf eval --xccdf-id "$XCCDF" --profile "$PROFILE" --results "$result" "$SDS_FILE"
+
+    assert_exists 1 '//rule-result/result[text()="pass"]'
+
+    rm -f "$result"
+}
+
 # Testing.
 test_init "test_ds.log"
 
 test_run "sds_simple" test_sds sds_simple scap-fedora14-xccdf.xml 0
+test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf.xml xccdf_external_profile_datastream_1
+test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf-file.xml xccdf_external_profile_file_1
 test_run "sds_simple OVAL 5.11.1" test_sds sds_simple_5_11_1 simple_xccdf.xml 0
 test_run "sds_multiple_oval" test_sds sds_multiple_oval multiple-oval-xccdf.xml 0
 test_run "sds_missing_oval-prepare" [ ! -f sds_missing_oval/second-oval.xml ]
