@@ -124,6 +124,8 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:key name="profile_selects" match="//cdf:select" use="concat(generate-id(ancestor::cdf:Profile), '|', @idref)"/>
+
 <xsl:template name="is-item-selected-final">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
@@ -134,7 +136,7 @@ Authors:
     2) is-item-selected-final is called for Groups and only if it returns true it's called for child items
     -->
 
-    <xsl:variable name="profile_select" select="$profile/cdf:select[@idref = $item/@id][last()]/@selected"/>
+    <xsl:variable name="profile_select" select="key('profile_selects', concat(generate-id($profile), '|', $item/@id))[last()]/@selected"/>
 
     <xsl:choose>
         <xsl:when test="$profile_select">
@@ -214,18 +216,14 @@ Authors:
                 </div>
 
                 <xsl:for-each select="$item/cdf:fixtext">
-                    <span class="label label-success">Remediation description:</span>
-                    <div class="panel panel-default"><div class="panel-body">
-                        <xsl:call-template name="show-fixtext">
-                            <xsl:with-param name="fixtext" select="."/>
-                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:call-template>
-                    </div></div>
+                    <xsl:call-template name="show-fixtext">
+                        <xsl:with-param name="fixtext" select="."/>
+                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:call-template>
                 </xsl:for-each>
 
                 <xsl:for-each select="$item/cdf:fix">
-                    <span class="label label-success">Remediation script:</span>
                     <xsl:call-template name="show-fix">
                         <xsl:with-param name="fix" select="."/>
                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>

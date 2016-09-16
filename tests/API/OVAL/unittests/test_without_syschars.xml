@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd      http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+  <generator>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:x:def:282" version="3" class="miscellaneous">
+      <metadata>
+        <title>Test presence /etc/passwd</title>
+        <description>Test presence /etc/passwd</description>
+      </metadata>
+      <criteria>
+        <criterion comment="Test that /etc/passwd exists." test_ref="oval:x:tst:1288"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <file_test id="oval:x:tst:1288" version="1" comment="Test that /etc/passwd is collected if filename in object was empty." check_existence="at_least_one_exists" check="only one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <object object_ref="oval:x:obj:512"/>
+    </file_test>
+  </tests>
+  <objects>
+    <file_object id="oval:x:obj:512" version="1" comment="File /etc/passwd" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix">
+      <path operation="pattern match">^/etc$</path>
+      <filename operation="pattern match">^passwd$</filename>
+    </file_object>
+  </objects>
+</oval_definitions>

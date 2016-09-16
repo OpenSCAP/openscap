@@ -33,7 +33,11 @@ Authors:
     xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
     exclude-result-prefixes="xsl cdf ovalres sceres exsl">
 
-<xsl:key name="references" match="//cdf:Rule/cdf:reference" use="@href"/>
+<!-- This selects all the references, even if the SDS has multiple benchmarks.
+     That is fine because we will go through just the benchmark references
+     and only then we compare to this map. So this is correct.
+     See template "get-all-references". -->
+<xsl:key name="references" match="//cdf:reference" use="@href"/>
 
 <xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-resources.xsl" />
@@ -322,13 +326,15 @@ Authors:
     <xsl:text>}</xsl:text>
 </xsl:template>
 
+<xsl:key name="testresult_ruleresults" match="//cdf:rule-result" use="concat(ancestor::cdf:TestResult/@id, '|', @idref)"/>
+
 <xsl:template name="rule-overview-leaf">
     <xsl:param name="testresult"/>
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
     <xsl:param name="indent"/>
 
-    <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+    <xsl:variable name="ruleresult" select="key('testresult_ruleresults', concat($testresult/@id, '|', $item/@id))"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
     <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result} rule-overview-leaf-id-{$item/@id}" id="rule-overview-leaf-{generate-id($ruleresult)}">
@@ -469,7 +475,7 @@ Authors:
 
 <xsl:template name="get-all-references">
     <xsl:param name="benchmark"/>
-    <xsl:for-each select="$benchmark//cdf:Rule/cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+    <xsl:for-each select="$benchmark//cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
@@ -715,7 +721,7 @@ Authors:
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
 
-    <xsl:variable name="ruleresult" select="$testresult/cdf:rule-result[@idref = $item/@id]"/>
+    <xsl:variable name="ruleresult" select="key('testresult_ruleresults', concat($testresult/@id, '|', $item/@id))"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
     <div class="panel panel-default rule-detail rule-detail-{$result} rule-detail-id-{$item/@id}" id="rule-detail-{generate-id($ruleresult)}">
@@ -857,20 +863,16 @@ Authors:
                     <xsl:if test="$result = 'fail' or $result = 'error' or $result = 'unknown'">
                         <xsl:for-each select="$item/cdf:fixtext">
                             <tr><td colspan="2"><div class="remediation-description">
-                                <span class="label label-success">Remediation description:</span>
-                                <div class="panel panel-default"><div class="panel-body">
-                                    <xsl:call-template name="show-fixtext">
-                                        <xsl:with-param name="fixtext" select="."/>
-                                        <xsl:with-param name="testresult" select="$testresult"/>
-                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                        <xsl:with-param name="profile" select="$profile"/>
-                                    </xsl:call-template>
-                                </div></div>
+                                <xsl:call-template name="show-fixtext">
+                                    <xsl:with-param name="fixtext" select="."/>
+                                    <xsl:with-param name="testresult" select="$testresult"/>
+                                    <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:call-template>
                             </div></td></tr>
                         </xsl:for-each>
                         <xsl:for-each select="$item/cdf:fix">
                             <tr><td colspan="2"><div class="remediation">
-                                <span class="label label-success">Remediation script:</span>
                                 <xsl:call-template name="show-fix">
                                     <xsl:with-param name="fix" select="."/>
                                     <xsl:with-param name="testresult" select="$testresult"/>

@@ -4,6 +4,7 @@
 
 test_init test_api_oval_unittests.log
 test_run "comment before root element" $srcdir/test_comment.sh
+test_run "--without-syschar" $srcdir/test_without_syschars.sh
 test_run "cim_datetime format" $srcdir/test_cim_datetime.sh
 test_run "remove <oval_definiton> using oval directives" $srcdir/test_directives.sh
 test_run "empty filename(pattern match)" $srcdir/test_empty_filename.sh

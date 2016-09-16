@@ -91,7 +91,9 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 	printf("%sProfiles:\n", prefix);
 	while (xccdf_profile_iterator_has_more(prof_it)) {
 		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
-		printf("%s\t%s\n", prefix, xccdf_profile_get_id(prof));
+		printf("%s\t%s%s\n", prefix,
+			xccdf_profile_get_abstract(prof) ? "(abstract) " : "",
+			xccdf_profile_get_id(prof));
 	}
 	xccdf_profile_iterator_free(prof_it);
 }

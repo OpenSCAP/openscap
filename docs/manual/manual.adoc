@@ -3,6 +3,7 @@ Michal Šrubař <msrubar@redhat.com>
 v1.0, 2015-31-08
 :imagesdir: ./images
 :workbench_url: https://www.open-scap.org/tools/scap-workbench/
+:sce_web:       https://www.open-scap.org/features/other-standards/sce/
 :openscap_web: https://open-scap.org/
 :oscap_git:     https://github.com/OpenSCAP/openscap
 :ssg_git:       https://github.com/OpenSCAP/scap-security-guide
@@ -386,10 +387,10 @@ results are as they are. Please note these files are not generated
 unless *--oval-results* is used.
 
 Some content may use alternative check engines, for example the
-link:/page/SCE[SCE] check engine.
+{sce_web}[SCE] check engine.
 
 Results of rules with a check that requires a check engine not supported
-by openscap will be reported as *notchecked*. Check contents are not
+by OpenSCAP will be reported as *notchecked*. Check contents are not
 read or interpreted in any way unless the check system is known and
 supported. Following is an evaluation output of an XCCDF with unknown
 check system:
@@ -447,11 +448,11 @@ displayed, only the identifiers themselves are displayed there.
 
 Identifiers are also part of the HTML report output. If the identifier
 is a CVE you can click it to display its metadata from the official NVD
-database (requires internet connection). openscap doesn't provide
+database (requires internet connection). OpenSCAP doesn't provide
 metadata for other types of identifiers.
 
 ==== Bundled CCE data
-openscap does not provide any static or product bundled CCE data. Thus
+OpenSCAP does not provide any static or product bundled CCE data. Thus
 it has no way of displaying the last generated, updated and officially
 published dates of static or product bundled CCE data because the dates
 are not defined.
@@ -578,7 +579,7 @@ can be either ```report```, ```guide```, ```custom``` or ```fix```. Please see
 === Content Transformation
 The oscap tool is also capable of using the {xslt}[XSLT] (Extensible Stylesheet
 Language Transformations) language, which allows transformation of a SCAP
-content XML file into another XML, HTML, plain text or {xsl}[XLS] document.
+content XML file into another XML, HTML, plain text or {xsl}[XSL] document.
 This feature is very useful when you need the SCAP document in a
 human-readable form. The following commands represent the most common
 cases:
@@ -1231,7 +1232,7 @@ Next important step is to preload ```libopenscap_testing.so``` before you run
  ```oscap``` tool. The testing library allows you to specify custom path to
 probes via *OVAL_PROBE_DIR* environment variable. The easiest way how to
 achieve that without need to install libopenscap, is to use shell
-script called *run* in the openscap directory.
+script called *run* in the OpenSCAP directory.
 
 -------------------------------------------------
 $ ./run utils/.libs/oscap xccdf eval ... whatever
@@ -1291,7 +1292,7 @@ The Script Check Engine (SCE) is an alternative check engine for XCCDF checklist
 evaluation.  SCE allows you to call shell scripts out of the XCCDF document.
 This approach might be suitable for various use cases, mostly when OVAL checks
 are not required. More information about SCE usage is available on this page:
-http://open-scap.org/page/SCE[Using SCE].
+{sce_web}[Using SCE].
 
 WARNING: SCE is not part of any SCAP specification.
 
@@ -1307,9 +1308,9 @@ http://www.cygwin.com/[cygwin]. First install basic set of packages from
 * *autoconf automake libtool make gcc*
 * *pcre-devel libxml2-devel libcurl-devel libgrcypt-devel*
 * *swig perl python*
-2.  Checkout the portable branch of OpenSCAP:
+2.  Checkout the master branch of OpenSCAP:
 
- $ git clone -b portable git://git.fedorahosted.org/git/openscap.git
+ $ git clone -b master https://github.com/OpenSCAP/openscap.git
 
 3.  Run autotools machinery by
 

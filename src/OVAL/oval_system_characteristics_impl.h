@@ -66,7 +66,7 @@ void oval_sysent_to_print(struct oval_sysent *, char *, int);
 
 /* syschar_model */
 typedef bool oval_syschar_resolver(struct oval_syschar *, void *);
-xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model *, xmlDocPtr, xmlNode *, oval_syschar_resolver, void *);
+xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model *, xmlDocPtr, xmlNode *, oval_syschar_resolver, void *, bool);
 void oval_syschar_model_reset(struct oval_syschar_model *model);
 
 struct oval_syschar *oval_syschar_model_get_new_syschar(struct oval_syschar_model *, struct oval_object *);

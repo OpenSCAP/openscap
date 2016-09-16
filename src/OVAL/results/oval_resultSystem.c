@@ -504,8 +504,9 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 	}
 	oval_smc_iterator_free(result_tests);
 
+	bool export_sys_char = oval_results_model_get_export_system_characteristics(results_model);
 	oval_syschar_model_to_dom(syschar_model, doc, system_node, 
-				  (oval_syschar_resolver *) _oval_result_system_resolve_syschar, sysmap);
+				  (oval_syschar_resolver *) _oval_result_system_resolve_syschar, sysmap, export_sys_char);
 
 	oval_string_map_free(sysmap, NULL);
 	oval_string_map_free(objmap, NULL);

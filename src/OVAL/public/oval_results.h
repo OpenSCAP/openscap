@@ -148,6 +148,15 @@ OSCAP_DEPRECATED(int oval_results_model_import(struct oval_results_model *model,
  */
 struct oval_results_model *oval_results_model_clone(struct oval_results_model *);
 /**
+ * @memberof oval_results_model
+ */
+void oval_results_model_set_export_system_characteristics(struct oval_results_model *, bool export);
+
+/**
+ * @memberof oval_results_model
+ */
+bool oval_results_model_get_export_system_characteristics(struct oval_results_model *);
+/**
  * Free memory allocated to a specified oval results model.
  * @param the specified oval_results model
  * @memberof oval_results_model

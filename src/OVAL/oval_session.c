@@ -75,6 +75,7 @@ struct oval_session {
 	} reporter;
 
 	bool validation;
+	bool export_sys_chars;
 	bool full_validation;
 };
 
@@ -97,6 +98,8 @@ struct oval_session *oval_session_new(const char *filename)
 		oval_session_free(session);
 		return NULL;
 	}
+
+	session->export_sys_chars = true;
 
 	dI("Created a new OVAL session from input file '%s'.", filename);
 	return session;
@@ -408,6 +411,7 @@ int oval_session_export(struct oval_session *session)
 	/* Get OVAL Results if evaluation or analyse has been done and apply
 	 * directives to them */
 	if (session->res_model && (session->export.results || session->export.report)) {
+		oval_results_model_set_export_system_characteristics(session->res_model, session->export_sys_chars);
 		result = oval_results_model_export_source(session->res_model, dir_model, NULL);
 		filename = session->export.results;
 	}
@@ -450,6 +454,11 @@ cleanup:
 	if (dir_model)
 		oval_directives_model_free(dir_model);
 	return ret;
+}
+
+void oval_session_set_export_system_characteristics(struct oval_session *session, bool export)
+{
+	session->export_sys_chars = export;
 }
 
 void oval_session_free(struct oval_session *session)

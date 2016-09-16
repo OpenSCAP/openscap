@@ -61,6 +61,7 @@ struct oval_results_model {
 #if defined(OVAL_PROBES_ENABLED)
 	struct oval_probe_session *probe_session;
 #endif
+	bool   export_sys_chars;
 };
 
 struct oval_results_model *oval_results_model_new(struct oval_definition_model *definition_model,
@@ -95,6 +96,7 @@ struct oval_results_model *oval_results_model_new_with_probe_session(struct oval
 #if defined(OVAL_PROBES_ENABLED)
 	model->probe_session = probe_session;
 #endif
+	model->export_sys_chars = true;
 	return model;
 }
 
@@ -112,6 +114,16 @@ struct oval_results_model *oval_results_model_clone(struct oval_results_model *o
 	/* ToDo: Directives Model clone */
 
 	return new_resmodel;
+}
+
+void oval_results_model_set_export_system_characteristics(struct oval_results_model *model, bool export)
+{
+	model->export_sys_chars = export;
+}
+
+bool oval_results_model_get_export_system_characteristics(struct oval_results_model *model)
+{
+	return model->export_sys_chars;
 }
 
 void oval_results_model_free(struct oval_results_model *model)
