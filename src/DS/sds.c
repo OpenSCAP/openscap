@@ -365,11 +365,15 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 
 	const char* component_id;
 	const char* filename;
+	const char* target_filename_dirname;
 
 	if (xlink_href[0] == '#')
 	{
 		filename = NULL;
 		component_id = xlink_href + 1;
+		target_filename_dirname = compose_target_filename_dirname(relative_filepath, sub_dir);
+
+		ds_sds_dump_component(filename, component_id, session, target_filename_dirname, relative_filepath);
 
 	} else if (oscap_str_startswith(xlink_href, "file:")){
 
@@ -383,7 +387,10 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 			*sep = '\0';
 			component_id = sep + 1;
 		}
+		
+		target_filename_dirname = compose_target_filename_dirname(relative_filepath, sub_dir);
 
+		ds_sds_dump_file_component(filename, component_id, session, target_filename_dirname, relative_filepath);
 
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
@@ -391,11 +398,6 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		xmlFree(xlink_href);
 		return 0;
 	}
-
-	const char* target_filename_dirname = compose_target_filename_dirname(relative_filepath, sub_dir);
-
-	ds_sds_dump_component(filename, component_id, session, target_filename_dirname, relative_filepath);
-
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
 	if (catalog)
