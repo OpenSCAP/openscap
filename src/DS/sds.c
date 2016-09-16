@@ -277,35 +277,13 @@ static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* compo
 	return node_get_child_element(component, NULL);
 }
 
-static int ds_sds_dump_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
-	int ret = 0;
-	xmlDoc *doc;
-	struct oscap_source* source_file = NULL;
-
-	if (external_file != NULL) {
-
-		source_file = load_referenced_source(session, external_file);
-		doc = oscap_source_get_xmlDoc(source_file);
-
-		if (doc == NULL) {
-			ret = -1;
-			goto cleanup;
-		}
-	} else {
-		doc = ds_sds_session_get_xmlDoc(session);
-	}
+	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
 
 	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
 
-	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
-		ret = -1;
-		goto cleanup;
-	}
-
-	cleanup:
-		oscap_source_free(source_file);
-		return ret;
+	return ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath);
 }
 
 static int ds_sds_dump_file_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
@@ -364,22 +342,20 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 
 
 	const char* component_id;
-	const char* filename;
 	const char* target_filename_dirname;
 
 	if (xlink_href[0] == '#')
 	{
-		filename = NULL;
 		component_id = xlink_href + 1;
 		target_filename_dirname = compose_target_filename_dirname(relative_filepath, sub_dir);
 
-		ds_sds_dump_component(filename, component_id, session, target_filename_dirname, relative_filepath);
+		ds_sds_dump_component(component_id, session, target_filename_dirname, relative_filepath);
 
 	} else if (oscap_str_startswith(xlink_href, "file:")){
 
 		char* sep = strchr(xlink_href, '#');
 
-		filename = xlink_href + strlen("file:");
+		const char *filename = xlink_href + strlen("file:");
 
 		if (sep == NULL) {
 			component_id = NULL;
