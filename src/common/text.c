@@ -146,8 +146,8 @@ xmlNode *oscap_text_to_dom(struct oscap_text *text, xmlNode *parent, const char 
 
 	if (text->lang)
 		xmlNodeSetLang(text_node, BAD_CAST text->lang);
-	if (text->traits.can_override)
-		xmlNewProp(text_node, BAD_CAST "override", BAD_CAST (text->traits.overrides ? "true" : "false"));
+	if (text->traits.can_override && text->traits.overrides)
+		xmlNewProp(text_node, BAD_CAST "override", BAD_CAST "true");
 
 
 	return text_node;
@@ -161,8 +161,8 @@ bool oscap_text_export(struct oscap_text *text, xmlTextWriter *writer, const cha
 
 	if (text->lang)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST text->lang);
-	if (text->traits.can_override)
-		xmlTextWriterWriteAttribute(writer, BAD_CAST "override", BAD_CAST (text->traits.overrides ? "true" : "false"));
+	if (text->traits.can_override && text->traits.overrides)
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "override", BAD_CAST "true");
 
 	if (text->traits.html || text->traits.can_substitute)
 		xmlTextWriterWriteRaw(writer, BAD_CAST text->text);
