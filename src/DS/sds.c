@@ -218,6 +218,45 @@ static struct oscap_source *load_referenced_source(const struct ds_sds_session *
 	return source_file;
 }
 
+static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath)
+{
+	int ret = 0;
+
+	if (component_inner_root == NULL)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
+		ret = -1;
+		goto cleanup;
+	}
+
+	// If the inner root is script, we have to treat it in a special way
+	if (strcmp((const char*)component_inner_root->name, "script") == 0) {
+		// the cast is safe to do because we are using the GNU basename, it doesn't
+		// modify the string
+		const char* file_basename = basename((char*)relative_filepath);
+		const char* sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session), target_filename_dirname, file_basename);
+		ret = ds_sds_dump_component_sce(component_inner_root->children, component_id, sce_filename);
+		oscap_free(sce_filename);
+		if (ret != 0) {
+			goto cleanup;
+		}
+	}
+	// Otherwise we create a new XML doc we will dump the contents to.
+	// We can't just dump node "innerXML" because namespaces have to be
+	// handled.
+	else {
+		xmlDoc *new_doc = ds_doc_from_foreign_node(component_inner_root, doc);
+		if (new_doc == NULL) {
+			ret = -1;
+			goto cleanup;
+		}
+
+		struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
+		ds_sds_session_register_component_source(session, relative_filepath, component_source);
+	}
+	cleanup:
+		return ret;
+}
 
 static int ds_sds_dump_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
@@ -250,40 +289,10 @@ static int ds_sds_dump_component(const char* external_file, const char* componen
 			goto cleanup;
 		}
 	}
-
 	xmlNodePtr inner_root = node_get_child_element(component, NULL);
-
-	if (inner_root == NULL)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
+	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
 		ret = -1;
 		goto cleanup;
-	}
-
-	// If the inner root is script, we have to treat it in a special way
-	if (strcmp((const char*)inner_root->name, "script") == 0) {
-		// the cast is safe to do because we are using the GNU basename, it doesn't
-		// modify the string
-		const char* file_basename = basename((char*)relative_filepath);
-		const char* sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session), target_filename_dirname, file_basename);
-		ret = ds_sds_dump_component_sce(inner_root->children, component_id, sce_filename);
-		oscap_free(sce_filename);
-		if (ret != 0) {
-			goto cleanup;
-		}
-	}
-	// Otherwise we create a new XML doc we will dump the contents to.
-	// We can't just dump node "innerXML" because namespaces have to be
-	// handled.
-	else {
-		xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
-		if (new_doc == NULL) {
-			ret = -1;
-			goto cleanup;
-		}
-
-		struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
-		ds_sds_session_register_component_source(session, relative_filepath, component_source);
 	}
 
 	cleanup:
