@@ -238,12 +238,17 @@ static int ds_sds_dump_component(const char* external_file, const char* componen
 		doc = ds_sds_session_get_xmlDoc(session);
 	}
 
-	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
-	if (component == NULL)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
-		ret = -1;
-		goto cleanup;
+	xmlNodePtr component;
+	if (component_id == NULL) {
+		component = (xmlNodePtr)doc;
+	} else {
+		component = _lookup_component_in_collection(doc, component_id);
+		if (component == NULL)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
+			ret = -1;
+			goto cleanup;
+		}
 	}
 
 	xmlNodePtr inner_root = node_get_child_element(component, NULL);
@@ -306,7 +311,7 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	}
 
 
-    const char* component_id;
+	const char* component_id;
 	const char* filename;
 
 	if (xlink_href[0] == '#')
@@ -317,12 +322,16 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	} else if (oscap_str_startswith(xlink_href, "file:")){
 
 		char* sep = strchr(xlink_href, '#');
-		assert(sep != NULL);
 
 		filename = xlink_href + strlen("file:");
-		*sep = '\0';
 
-		component_id = sep + 1;
+		if (sep == NULL) {
+			component_id = NULL;
+		} else {
+			*sep = '\0';
+			component_id = sep + 1;
+		}
+
 
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
