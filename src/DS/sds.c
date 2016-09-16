@@ -332,6 +332,17 @@ static int ds_sds_dump_file_component(const char* external_file, const char* com
 		return ret;
 }
 
+static char *compose_target_filename_dirname(const char *relative_filepath, const char* sub_dir)
+{
+	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
+	char* file_reldir = dirname(filename_cpy);
+
+	char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
+	oscap_free(filename_cpy);
+
+	return target_filename_dirname;
+}
+
 int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
 {
 	char* cref_id = (char*)xmlGetProp(component_ref, BAD_CAST "id");
@@ -381,11 +392,7 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		return 0;
 	}
 
-	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
-	char* file_reldir = dirname(filename_cpy);
-
-	const char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
-	oscap_free(filename_cpy);
+	const char* target_filename_dirname = compose_target_filename_dirname(relative_filepath, sub_dir);
 
 	ds_sds_dump_component(filename, component_id, session, target_filename_dirname, relative_filepath);
 
