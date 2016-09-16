@@ -229,6 +229,18 @@ static int ds_sds_register_sce(struct ds_sds_session *session, xmlNodePtr compon
 	return ret;
 }
 
+static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char *relative_filepath)
+{
+	xmlDoc *new_doc = ds_doc_from_foreign_node(component_inner_root, doc);
+	if (new_doc == NULL) {
+		return -1;
+	}
+
+	struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
+
+	return ds_sds_session_register_component_source(session, relative_filepath, component_source);
+}
+
 static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath)
 {
 	int ret = 0;
@@ -251,14 +263,10 @@ static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc
 	// We can't just dump node "innerXML" because namespaces have to be
 	// handled.
 	} else {
-		xmlDoc *new_doc = ds_doc_from_foreign_node(component_inner_root, doc);
-		if (new_doc == NULL) {
+		if (ds_sds_register_xmlDoc(session, doc, component_inner_root, relative_filepath) != 0) {
 			ret = -1;
 			goto cleanup;
 		}
-
-		struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
-		ds_sds_session_register_component_source(session, relative_filepath, component_source);
 	}
 	cleanup:
 		return ret;
