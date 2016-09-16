@@ -260,6 +260,23 @@ static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc
 	}
 }
 
+static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* component_id)
+{
+	xmlNodePtr component;
+	if (component_id == NULL) {
+		component = (xmlNodePtr)doc;
+	} else {
+		component = _lookup_component_in_collection(doc, component_id);
+		if (component == NULL)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
+			return NULL;
+		}
+	}
+
+	return node_get_child_element(component, NULL);
+}
+
 static int ds_sds_dump_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
 	int ret = 0;
@@ -279,19 +296,7 @@ static int ds_sds_dump_component(const char* external_file, const char* componen
 		doc = ds_sds_session_get_xmlDoc(session);
 	}
 
-	xmlNodePtr component;
-	if (component_id == NULL) {
-		component = (xmlNodePtr)doc;
-	} else {
-		component = _lookup_component_in_collection(doc, component_id);
-		if (component == NULL)
-		{
-			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
-			ret = -1;
-			goto cleanup;
-		}
-	}
-	xmlNodePtr inner_root = node_get_child_element(component, NULL);
+	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
 
 	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
 		ret = -1;
