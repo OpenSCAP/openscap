@@ -398,8 +398,15 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 		}
 
 		if (!ds_sds_session_fetch_remote_resources(session)) {
-			ds_sds_session_remote_resources_progress(session)(false, "'%s'' datastream component points out to the remote '%s'. "
-								"Use `--fetch-remote-resources' option to download it.\n", cref_id, url);
+			static bool fetch_remote_resources_suggested = false;
+
+			if (!fetch_remote_resources_suggested) {
+				fetch_remote_resources_suggested = true;
+				ds_sds_session_remote_resources_progress(session)(false, "Datastream component '%s' points out to the remote '%s'. "
+									"Use '--fetch-remote-resources' option to download it.\n", cref_id, url);
+			}
+
+			ds_sds_session_remote_resources_progress(session)(true, "WARNING: Skipping '%s' file which is referenced from datastream\n", url);
 			return -2;
 		}
 
