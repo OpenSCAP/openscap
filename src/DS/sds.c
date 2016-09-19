@@ -315,15 +315,15 @@ static int ds_dsd_dump_remote_component(const char* url, const char* component_i
 	int ret = 0;
 	size_t memory_size = 0;
 
-	if (ds_sds_session_remote_resources_progress(session)) ds_sds_session_remote_resources_progress(session)(false, "Downloading: %s ... ", url);
+	ds_sds_session_remote_resources_progress(session)(false, "Downloading: %s ... ", url);
 
 	char* mem = oscap_acquire_url_download(url, &memory_size);
 	if (mem == NULL) {
-		if (ds_sds_session_remote_resources_progress(session)) ds_sds_session_remote_resources_progress(session)(false, "error", url);
+		ds_sds_session_remote_resources_progress(session)(false, "error", url);
 		return -1;
 	}
 
-	if (ds_sds_session_remote_resources_progress(session)) ds_sds_session_remote_resources_progress(session)(false, "ok", url);
+	ds_sds_session_remote_resources_progress(session)(false, "ok", url);
 
 	struct oscap_source *source_file = oscap_source_new_take_memory(mem, memory_size, url);
 	xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
@@ -398,8 +398,7 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 		}
 
 		if (!ds_sds_session_fetch_remote_resources(session)) {
-			if (ds_sds_session_remote_resources_progress(session))
-				ds_sds_session_remote_resources_progress(session)(false, "'%s'' datastream component points out to the remote '%s'. "
+			ds_sds_session_remote_resources_progress(session)(false, "'%s'' datastream component points out to the remote '%s'. "
 								"Use `--fetch-remote-resources' option to download it.\n", cref_id, url);
 			return -2;
 		}

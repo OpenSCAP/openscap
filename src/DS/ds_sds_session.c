@@ -56,6 +56,13 @@ struct ds_sds_session {
 	download_progress_calllback_t progress;	///< Callback to report progress of download.
 };
 
+/**
+ * "null object" for download callback
+ */
+void download_progress_empty_calllback (bool warning, const char * format, ...) {
+	; // no action
+}
+
 struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
 {
 	if (oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
@@ -66,6 +73,7 @@ struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *sourc
 	struct ds_sds_session *sds_session = (struct ds_sds_session *) oscap_calloc(1, sizeof(struct ds_sds_session));
 	sds_session->source = source;
 	sds_session->component_sources = oscap_htable_new();
+	sds_session->progress = download_progress_empty_calllback;
 	return sds_session;
 }
 
