@@ -57,10 +57,22 @@ struct oscap_module OSCAP_INFO_MODULE = {
     .parent = &OSCAP_ROOT_MODULE,
     .summary = "info module",
     .usage = "some-file.xml",
-    .help = "Print information about a file",
+    .help = "Print information about a file\n"
+    "\n"
+    "Options:\n"
+    "   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by DataStream.\n",
     .opt_parser = getopt_info,
     .func = app_info
 };
+
+static void _download_reporting_callback(bool warning, const char *format, ...)
+{
+	va_list argptr;
+	va_start(argptr, format);
+	vfprintf(stderr, format, argptr);
+	va_end(argptr);
+	fflush(stderr);
+}
 
 static void print_time(const char *file) {
 	struct stat buffer;
@@ -260,6 +272,9 @@ static int app_info(const struct oscap_action *action)
 		if (session == NULL) {
 			goto cleanup;
 		}
+
+		ds_sds_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+
 		/* get collection */
 		struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
 		if (!sds) {
@@ -396,11 +411,29 @@ cleanup:
 
 bool getopt_info(int argc, char **argv, struct oscap_action *action)
 {
-	if(  argc != 3) {
-		oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
+	assert(action != NULL);
+
+	/* Command-options */
+	const struct option long_options[] = {
+		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		// end
+		{0, 0, 0, 0}
+	};
+
+	int c;
+	while ((c = getopt_long(argc, argv, "o:i:", long_options, NULL)) != -1) {
+		switch(c) {
+			case 0: break;
+			default: return oscap_module_usage(action->module, stderr, NULL);
+		}
+	}
+
+	if (optind >= argc) {
+		oscap_module_usage(action->module, stderr, "SCAP file need to be specified!\n");
 		return false;
 	}
-	action->file = argv[2];
+
+	action->file = argv[optind];
 
 	return true;
 }
