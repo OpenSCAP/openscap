@@ -336,12 +336,6 @@ void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const c
 	session->tailoring.user_component_id = oscap_strdup(user_tailoring_cid);
 }
 
-void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
-{
-	session->oval.fetch_remote_resources = allowed;
-	session->oval.progress = callback;
-}
-
 void xccdf_session_set_custom_oval_eval_fn(struct xccdf_session *session, xccdf_policy_engine_eval_fn eval_fn)
 {
 	session->oval.user_eval_fn = eval_fn;
@@ -417,6 +411,18 @@ static struct ds_sds_session *xccdf_session_get_ds_sds_session(struct xccdf_sess
 		session->ds.session = ds_sds_session_new_from_source(session->source);
 	}
 	return session->ds.session;
+}
+
+void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	session->oval.fetch_remote_resources = allowed;
+	session->oval.progress = callback;
+
+	if (xccdf_session_is_sds(session)) {
+		// We have to propagate this option to allow loading
+		// of external datastream components
+		ds_sds_session_set_remote_resources(xccdf_session_get_ds_sds_session(session), allowed, callback);
+	}
 }
 
 /**

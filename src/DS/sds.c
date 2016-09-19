@@ -314,11 +314,17 @@ static int ds_dsd_dump_remote_component(const char* url, const char* component_i
 {
 	int ret = 0;
 	size_t memory_size = 0;
+
+	if (ds_sds_session_remote_resources_progress(session)) ds_sds_session_remote_resources_progress(session)(false, "Downloading: %s ... ", url);
+
 	char* mem = oscap_acquire_url_download(url, &memory_size);
 	if (mem == NULL) {
-		// todo: print error
+		if (ds_sds_session_remote_resources_progress(session)) ds_sds_session_remote_resources_progress(session)(false, "error", url);
 		return -1;
 	}
+
+	if (ds_sds_session_remote_resources_progress(session)) ds_sds_session_remote_resources_progress(session)(false, "ok", url);
+
 	struct oscap_source *source_file = oscap_source_new_take_memory(mem, memory_size, url);
 	xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
 
@@ -350,7 +356,7 @@ static char *compose_target_filename_dirname(const char *relative_filepath, cons
 	return target_filename_dirname;
 }
 
-static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* xlink_href, const char *target_filename_dirname, const char* relative_filepath, char **component_id)
+static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* xlink_href, char *target_filename_dirname, const char* relative_filepath, char* cref_id, char **component_id)
 {
 	if (!xlink_href || strlen(xlink_href) < 2)
 	{
@@ -390,6 +396,14 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 			*sep = '\0';
 			*component_id = sep + 1;
 		}
+
+		if (!ds_sds_session_fetch_remote_resources(session)) {
+			if (ds_sds_session_remote_resources_progress(session))
+				ds_sds_session_remote_resources_progress(session)(false, "'%s'' datastream component points out to the remote '%s'. "
+								"Use `--fetch-remote-resources' option to download it.\n", cref_id, url);
+			return -2;
+		}
+
 		return ds_dsd_dump_remote_component(url, *component_id, session, target_filename_dirname, relative_filepath);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
@@ -414,9 +428,13 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 
 	char* component_id = NULL;
 
-	if (ds_sds_dump_component_by_href(session, xlink_href, target_filename_dirname, relative_filepath, &component_id) != 0) {
+	int ret = ds_sds_dump_component_by_href(session, xlink_href, target_filename_dirname, relative_filepath, cref_id, &component_id);
+	if (ret != 0) {
 		xmlFree(cref_id);
 		xmlFree(xlink_href);
+		oscap_free(target_filename_dirname);
+		if (ret == -2) // skipped remote component
+			return 0;
 		return -1;
 	}
 

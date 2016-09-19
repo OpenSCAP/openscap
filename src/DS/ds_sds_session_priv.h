@@ -32,6 +32,7 @@
 #include <libxml/tree.h>
 
 OSCAP_HIDDEN_START;
+typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...); // todo merge with xccdf callback
 
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session);
 xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session);
@@ -39,6 +40,8 @@ int ds_sds_session_register_component_source(struct ds_sds_session *session, con
 const char *ds_sds_session_get_target_dir(struct ds_sds_session *session);
 struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session *session);
 const char *ds_sds_session_get_readable_origin(const struct ds_sds_session *session);
-
+void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback);
+bool ds_sds_session_fetch_remote_resources(struct ds_sds_session *session);
+download_progress_calllback_t ds_sds_session_remote_resources_progress(struct ds_sds_session *session);
 OSCAP_HIDDEN_END;
 #endif
