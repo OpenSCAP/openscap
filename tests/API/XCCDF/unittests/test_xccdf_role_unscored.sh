@@ -19,7 +19,7 @@ $OSCAP xccdf validate-xml $result
 
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'
-assert_exists 1 '//rule-result/result[text()="pass"]'
+assert_exists 1 '//rule-result/result[text()="informational"]'
 assert_exists 1 '//rule-result/check'
 assert_exists 1 '//rule-result/check/check-content-ref'
 assert_exists 1 '//score[@system="urn:xccdf:scoring:default" and text()="0.000000"]'
