@@ -277,7 +277,7 @@ static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* compo
 	return node_get_child_element(component, NULL);
 }
 
-static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+static int ds_sds_dump_local_component(const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
 {
 	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
 
@@ -368,7 +368,7 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 	{
 		*component_id = xlink_href + 1;
 
-		return ds_sds_dump_component(*component_id, session, target_filename_dirname, relative_filepath);
+		return ds_sds_dump_local_component(*component_id, session, target_filename_dirname, relative_filepath);
 
 	} else if (oscap_str_startswith(xlink_href, "file:")){
 
