@@ -1101,7 +1101,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 		message = "None of the check-content-ref elements was resolvable.";
 
 	if (role == XCCDF_ROLE_UNSCORED)
-        ret = XCCDF_RESULT_INFORMATIONAL;
+		ret = XCCDF_RESULT_INFORMATIONAL;
 
 	xccdf_check_content_ref_iterator_free(content_it);
 	oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
