@@ -233,6 +233,13 @@ Definition file, *usgcb-rhel5desktop-oval.xml-0.variables-0.xml* is the
 file containing exported variables from the XCCDF file, and
 *usgcb-results-oval.xml* is the the OVAL Result file.
 
+An OVAL directives file can be used to control whether results should be "thin" or "full".
+This file can be loaded by OpenSCAP using *--directives <file>* option.
+
+---------------------------------------------------------------------------------------------------
+$ oscap oval eval --directives directives.xml --datastream-id ds.xml --oval-id xccdf.xml --results oval-results.xml scap-ds.xml
+---------------------------------------------------------------------------------------------------
+
 ==== XCCDF
 When evaluating an XCCDF benchmark, ```oscap``` usually processes an XCCDF
 file, an OVAL file and the CPE dictionary. It performs system
@@ -450,6 +457,15 @@ Identifiers are also part of the HTML report output. If the identifier
 is a CVE you can click it to display its metadata from the official NVD
 database (requires internet connection). OpenSCAP doesn't provide
 metadata for other types of identifiers.
+
+Another place where these identifiers can be found are machine-readable Result Datastream files.
+This file can be generated during the scan by adding *--results-arf* option.
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml 
+
+Result data stream file **results.xml** contains these identifiers in <rule-result>
+elements.
+
 
 ==== Bundled CCE data
 OpenSCAP does not provide any static or product bundled CCE data. Thus
@@ -1106,6 +1122,102 @@ sector.
 
 The SSG project contains baselines for both desktops and servers. See
 https://github.com/OpenSCAP/scap-security-guide
+
+
+
+=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6
+This section describes how to check that software patches are up-to-date using
+external OVAL content.
+
+1) Install the SSG
+
+ $ sudo yum install -y scap-security-guide
+
+2) Evaluate common profile
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+
+This command evaluates common profile for Red Hat Enterprise Linux 6. Part of
+the profile is a rule to check that patches are up-to-date. To evaluate the rule
+correctly, oscap tool needs to download an up-to-date OVAL file from Red Hat servers. This can be
+allowed using *--fetch-remote-resources* option. Result of this scan will be saved
+in **results.xml** using ARF format.
+
+
+=== How to tailor Source data stream
+This section describes tailoring of content using Tailoring file. This allows
+you to change behavior of content without its direct modification.
+
+1) Obtain tailoring file
+
+Tailoring file can be easily generated using {workbench_url}[SCAP Workbench].
+
+2) List profiles of tailoring file
+
+ $ oscap info
+----
+Document type: XCCDF Tailoring
+Imported: 2016-08-31T11:08:16
+Benchmark Hint: /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+Profiles:
+	xccdf_org.ssgproject.content_profile_C2S_customized
+----
+
+3) Evaluate
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_C2S_customized --tailoring-file ssg-rhel6-ds-tailoring.xml --results results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+
+The command above evaluates tailored data stream by **ssg-rhel6-ds-tailoring.xml** tailoring file.
+XCCDF results can be found in **results.xml** file.
+
+Instead of external tailoring file, you can also use tailoring component integrated to data stream.
+
+ $ oscap info simple-ds.xml
+
+----
+Document type: Source Data Stream
+Imported: 2016-02-02T14:06:14
+
+Stream: scap_org.open-scap_datastream_from_xccdf_simple-xccdf.xml
+Generated: (null)
+Version: 1.2
+Checklists:
+	Ref-Id: scap_org.open-scap_cref_simple-xccdf.xml
+		Status: incomplete
+		Resolved: false
+		Profiles:
+			xccdf_org.open-scap_profile_override
+		Referenced check files:
+			simple-oval.xml
+				system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+	Ref-Id: scap_org.open-scap_cref_simple-tailoring.xml
+		Benchmark Hint: (null)
+		Profiles:
+			xccdf_org.open-scap_profile_default
+			xccdf_org.open-scap_profile_unselecting
+			xccdf_org.open-scap_profile_override
+Checks:
+	Ref-Id: scap_org.open-scap_cref_simple-oval.xml
+No dictionaries.
+----
+
+To choose tailoring component "scap_org.open-scap_cref_simple-tailoring.xml", the command below can be used.
+
+ $ oscap xccdf eval --tailoring-id scap_org.open-scap_cref_simple-tailoring.xml --profile xccdf_org.open-scap_profile_default --results results.xml simple-ds.xml
+
+The command above evaluates content using tailoring component *scap_org.open-scap_cref_simple-tailoring.xml* from source data stream.
+Scan results are stored in *results.xml* file.
+
+
+=== Evaluation of content
+Specified XCCDF or data stream content can contain zero or more profiles.
+
+Scan can be evaluated without specific profile, otherwise profile can be selected using
+*--profile* option.
+
+ $ oscap xccdf eval --results results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
+
+The command above evaluates rules without specific profile. XCCDF results are stored in *results.xml* file.
 
 
 
