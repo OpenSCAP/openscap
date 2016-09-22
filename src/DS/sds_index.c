@@ -194,7 +194,8 @@ static struct ds_stream_index* ds_stream_index_parse(xmlTextReaderPtr reader)
 						oscap_seterr(OSCAP_EFAMILY_XML,
 				             "There is already a mapping from component id '%s' to component-ref id '%s'. "
 							 "Having multiple mappings is legal in a datastream but it may prove problematic "
-							 "when selecting component-refs using XCCDF Benchmark IDs.");
+							"when selecting component-refs using XCCDF Benchmark IDs.",
+							component_id, id_attr);
 					}
 
 					xmlFree(id_attr);
