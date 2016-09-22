@@ -491,6 +491,39 @@ static inline int _xccdf_session_load_xccdf_benchmark(struct xccdf_session *sess
 	return 0;
 }
 
+static int _acquire_xccdf_checklist_from_tailoring(struct xccdf_session* session)
+{
+	struct ds_sds_session *ds_sds_session = xccdf_session_get_ds_sds_session(session);
+	if (ds_sds_session == NULL) {
+		return 1;
+	}
+
+	xmlDoc *tailoring_xmlDoc = xmlCopyDoc(oscap_source_get_xmlDoc(session->xccdf.source), true);
+	struct oscap_source *tailoring_source = oscap_source_new_from_xmlDoc(tailoring_xmlDoc, NULL);
+	struct xccdf_tailoring* tailoring = xccdf_tailoring_import_source(tailoring_source, NULL);
+	if (tailoring == NULL) {
+		return 1;
+	}
+	const char *benchmark_ref = oscap_strdup(xccdf_tailoring_get_benchmark_ref(tailoring));
+	xccdf_tailoring_free(tailoring);
+	if (benchmark_ref == NULL) {
+		return 1;
+	}
+	char *benchmark_id = strchr(benchmark_ref, '#') + 1;
+
+	struct oscap_source *xccdf_source = ds_sds_session_select_checklist(ds_sds_session,
+			NULL, benchmark_id, NULL);
+	if (xccdf_source == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+				"Could not find benchmark '%s' referenced from tailoring", benchmark_id);
+		return 1;
+	}
+
+	session->xccdf.source = xccdf_source;
+	session->tailoring.user_file = tailoring_source;
+	return 0;
+}
+
 int xccdf_session_load_xccdf(struct xccdf_session *session)
 {
 	session->xccdf.source = NULL;
@@ -509,6 +542,13 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 				session->ds.user_component_id, session->ds.user_benchmark_id);
 		if (session->xccdf.source == NULL) {
 			return 1;
+		}
+		if (oscap_source_get_scap_type(session->xccdf.source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+			if (_acquire_xccdf_checklist_from_tailoring(session)) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP,
+						"Could not find appropriate checklist to tailor.");
+				return 1;
+			}
 		}
 		if (oscap_source_get_scap_type(session->xccdf.source) != OSCAP_DOCUMENT_XCCDF) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "The selected checklist document is not '%s', but '%s'.",
