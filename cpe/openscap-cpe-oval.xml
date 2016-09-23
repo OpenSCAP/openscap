@@ -469,6 +469,35 @@
                         <criterion comment="Wind River Linux version is 8." test_ref="oval:org.open-scap.cpe.wrlinux:tst:8" />
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.amznlinux:def:1" version="1" >
+                  <metadata>
+                        <title>Amazon Linux</title>
+                        <affected family="unix">
+                            <platform>Amazon Linux</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:amazon:linux" source="CPE"/>
+                        <description>The operating system installed on the system is Amazon Linux</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Installed operating system is part of the unix family." test_ref="oval:org.open-scap.cpe.amznlinux:tst:1" />
+                        <criterion comment="Amazon Linux is installed." test_ref="oval:org.open-scap.cpe.amznlinux:tst:2" />
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.wrlinux:def:201603" version="1" >
+                  <metadata>
+                        <title>Amazon Linux 2016.03</title>
+                        <affected family="unix">
+                            <platform>Amazon Linux 2016.03</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:amazon:linux:2016.03:ga" source="CPE"/>
+                        <description>The operating system installed on the system is Amazon Linux 2016.03</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Amazon Linux is version 2016.03." test_ref="oval:org.open-scap.cpe.wrlinux:tst:201603" />
+                  </criteria>
+            </definition>
+
+
       </definitions>
       <tests>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
@@ -657,6 +686,26 @@
                   <object object_ref="oval:org.open-scap.cpe.wrlinux-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.wrlinux-release:ste:8"/>
             </textfilecontent54_test>
+            <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.amznlinux:tst:1" version="1" check="only one"
+                  comment="Installed operating system is part of the Unix family."
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <object object_ref="oval:org.open-scap.cpe.unix:obj:1" />
+                  <state state_ref="oval:org.open-scap.cpe.unix:ste:1" />
+            </family_test>
+            <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="at_least_one_exists" version="1" id="oval:org.open-scap.cpe.amznlinux:tst:2" check="all" comment="Test presence of /etc/os-release.">
+                <object object_ref="oval:org.open-scap.cpe.aamznnlinux-release:obj:1" />
+            </file_test>
+            <textfilecontent54_test
+                            id="oval:org.open-scap.cpe.amznlinux:tst:201603"
+                            check="all"
+                            check_existence="all_exist"
+                            comment="Check /etc/os-release for VERSION 2016.03 specification."
+                            version="1"
+                            xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+                            >
+                  <object object_ref="oval:org.open-scap.cpe.amznlinux-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.amznlinux-release:ste:201603"/>
+            </textfilecontent54_test>
       </tests>
       <objects>
             <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
@@ -696,6 +745,20 @@
                             >
                 <path>/etc</path>
                 <filename>wrlinux-release</filename>
+                <pattern operation="pattern match">^VERSION=.([[:digit:]]*)</pattern>
+                <instance operation="greater than or equal" datatype="int">1</instance>
+            </textfilecontent54_object>
+            <file_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" version="1" id="oval:org.open-scap.cpe.amznlinux-release:obj:1" >
+                <filepath>/etc/os-release</filepath>
+            </file_object>
+            <textfilecontent54_object
+                            id="oval:org.open-scap.cpe.amznlinux-release:obj:2"
+                            comment="Check VERSION specification in /etc/os-release."
+                            version="1"
+                            xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+                            >
+                <path>/etc</path>
+                <filename>os-release</filename>
                 <pattern operation="pattern match">^VERSION=.([[:digit:]]*)</pattern>
                 <instance operation="greater than or equal" datatype="int">1</instance>
             </textfilecontent54_object>
@@ -818,6 +881,14 @@
                             xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
                             >
                   <subexpression operation="pattern match">8</subexpression>
+            </textfilecontent54_state>
+            <textfilecontent54_state
+                            id="oval:org.open-scap.cpe.amznlinux-release:ste:201603"
+                            comment="Check the /etc/os-release file for VERSION 2016.03 specification."
+                            version="1"
+                            xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+                            >
+                  <subexpression operation="pattern match">2016.03</subexpression>
             </textfilecontent54_state>
       </states>
 </oval_definitions>
