@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_cdf_collection_fedora.zip" schematron-version="1.0" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2-draft.xsd">
+
+  <!-- Data Stream with XCCDF checklist -->
+  <data-stream id="scap_com.example_datastream_with_checklist" scap-version="1.2" timestamp="2016-09-26T15:00:00" use-case="CONFIGURATION">
+    <checklists>
+      <component-ref id="scap_com.example_cref_xccdf_01" xlink:href="#scap_com.example_comp_xccdf_01">
+        <cat:catalog>
+          <cat:uri name="oval" uri="#scap_com.example_cref_oval_01"/>
+        </cat:catalog>
+      </component-ref>
+    </checklists>
+    <checks>
+      <component-ref id="scap_com.example_cref_oval_01" xlink:href="#scap_com.example_comp_oval_01"/>
+    </checks>
+  </data-stream>
+
+  <!-- Data Stream with tailoring -->
+  <data-stream id="scap_com.example_datastream_with_tailoring" scap-version="1.2" timestamp="2016-05-09T15:00:00" use-case="CONFIGURATION">
+    <checklists>
+      <component-ref id="scap_com.example_cref_tailoring_01" xlink:href="#scap_com.example_comp_tailoring_01"/>
+      <component-ref id="scap_com.example_cref_xccdf_01-source" xlink:href="#scap_com.example_comp_xccdf_01">
+        <cat:catalog>
+          <cat:uri name="oval" uri="#scap_com.example_cref_oval_01-source"/>
+        </cat:catalog>
+      </component-ref>
+    </checklists>
+    <checks>
+      <component-ref id="scap_com.example_cref_oval_01-source" xlink:href="#scap_com.example_comp_oval_01"/>
+    </checks>
+  </data-stream>
+
+  <!-- XCCDF checklist -->
+  <component id="scap_com.example_comp_xccdf_01" timestamp="2016-09-26T14:00:00">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_moc.elpmaxe.www_benchmark_test">
+      <status>incomplete</status>
+      <version>1.0</version>
+      <model system="urn:xccdf:scoring:default"/>
+      <Rule selected="true" id="xccdf_com.example_rule_1">
+        <title>Rule 1</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref href="oval" name="oval:x:def:1"/>
+        </check>
+      </Rule>
+      <Rule selected="false" id="xccdf_com.example_rule_2">
+        <title>Rule 2</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref href="oval" name="oval:x:def:2"/>
+        </check>
+      </Rule>
+    </Benchmark>
+  </component>
+
+  <!-- OVAL definitions -->
+  <component id="scap_com.example_comp_oval_01" timestamp="2016-09-26T14:00:00">
+    <oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+      <generator>
+        <oval:schema_version>5.11.1</oval:schema_version>
+        <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+      </generator>
+
+      <definitions>
+        <definition class="compliance" version="1" id="oval:x:def:1">
+          <metadata>
+            <title>First simple OVAL definition</title>
+            <description>x</description>
+            <affected family="unix">
+              <platform>x</platform>
+            </affected>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" version="1" id="oval:x:def:2">
+          <metadata>
+            <title>Second simple OVAL definition</title>
+            <description>x</description>
+            <affected family="unix">
+              <platform>x</platform>
+            </affected>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+          </criteria>
+        </definition>
+      </definitions>
+
+      <tests>
+        <ind:textfilecontent54_test id="oval:x:tst:1" version="1" comment="File foo.txt cannnot contain 'Hello'"  check="none satisfy">
+            <ind:object object_ref="oval:x:obj:1"/>
+        </ind:textfilecontent54_test>
+      </tests>
+
+      <objects>
+        <ind:textfilecontent54_object id="oval:x:obj:1" version="1" comment="Object representing file">
+            <ind:filepath>/etc/passwd</ind:filepath>
+          <ind:pattern operation="pattern match">^.*$</ind:pattern>
+          <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+        </ind:textfilecontent54_object>
+      </objects>
+
+    </oval_definitions>
+  </component>
+
+  <!-- local tailoring component -->
+  <component id="scap_com.example_comp_tailoring_01" timestamp="2016-09-26T14:00:00">
+    <Tailoring xmlns="http://checklists.nist.gov/xccdf/1.2" 
+      id="xccdf_com.example_tailoring_01"
+      xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd
+      http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+
+      <benchmark href="#scap_com.example_cref_xccdf_01" id="scap_com.example_benchmark_01" version="1-2.1.1.0"/>
+      <status date="2016-09-26">draft</status>
+      <version time="2016-09-26T14:00:00">1.0</version>
+      <Profile id="xccdf_com.example_profile_tailoring" abstract="false" prohibitChanges="true">
+        <title>Tailoring profile</title>
+        <description>Tailoring profile</description>
+        <select idref="xccdf_com.example_rule_1" selected="false"/>
+        <select idref="xccdf_com.example_rule_2" selected="true"/>
+      </Profile>
+    </Tailoring>
+  </component>
+
+</data-stream-collection>

@@ -345,6 +345,29 @@ function test_sds_external_xccdf {
     rm -f "$result"
 }
 
+function test_sds_tailoring {
+	local SDS_FILE="${srcdir}/$2"
+	local DATASTREAM_ID="$3"
+	local TAILORING_ID="$4"
+	local PROFILE="$5"
+	local result=$(mktemp)
+
+	$OSCAP info "$SDS_FILE"
+
+	$OSCAP xccdf eval --datastream-id "$DATASTREAM_ID" --tailoring-id "$TAILORING_ID" --profile "$PROFILE" --results "$result" "$SDS_FILE"
+
+	assert_exists 2 '//Rule'
+	assert_exists 1 '//Rule[@id="xccdf_com.example_rule_1" and @selected="true"]'
+	assert_exists 1 '//Rule[@id="xccdf_com.example_rule_2" and @selected="false"]'
+	assert_exists 2 '//rule-result'
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example_rule_1"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example_rule_2"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example_rule_1"]/result[text()="notselected"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example_rule_2"]/result[text()="pass"]'
+
+	rm -f "$result"
+}
+
 # Testing.
 test_init "test_ds.log"
 
@@ -360,6 +383,7 @@ test_run "sds_extended_component" test_sds sds_extended_component fake-check-xcc
 test_run "sds_extended_component_plain_text" test_sds sds_extended_component_plain_text fake-check-xccdf.xml 0
 test_run "sds_extended_component_plain_text_entities" test_sds sds_extended_component_plain_text_entities fake-check-xccdf.xml 0
 test_run "sds_extended_component_plain_text_whitespace" test_sds sds_extended_component_plain_text_whitespace fake-check-xccdf.xml 0
+test_run "sds_tailoring" test_sds_tailoring sds_tailoring sds_tailoring/sds.ds.xml scap_com.example_datastream_with_tailoring xccdf_com.example_cref_tailoring_01 xccdf_com.example_profile_tailoring
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
 test_run "cpe_in_ds" test_eval cpe_in_ds/sds.xml

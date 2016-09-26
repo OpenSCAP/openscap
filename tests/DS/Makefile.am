@@ -55,6 +55,7 @@ EXTRA_DIST = test_ds.sh \
 		sds_simple_5_11_1/simple_oval.xml \
 		sds_simple_5_11_1/simple_xccdf.xml \
 		sds_subdir/subdir/scap-fedora14-oval.xml \
-		sds_subdir/subdir/scap-fedora14-xccdf.xml
+		sds_subdir/subdir/scap-fedora14-xccdf.xml \
+		sds_tailoring/sds.ds.xml
 
 SUBDIRS = ds_sds_index signed validate
