@@ -435,9 +435,12 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	char* component_id = NULL;
 
 	int ret = ds_sds_dump_component_by_href(session, xlink_href, target_filename_dirname, relative_filepath, cref_id, &component_id);
+
+	xmlFree(xlink_href);
+	xmlFree(cref_id);
+
 	if (ret != 0) {
-		xmlFree(cref_id);
-		xmlFree(xlink_href);
+
 		oscap_free(target_filename_dirname);
 		if (ret == -2) // skipped remote component
 			return 0;
@@ -462,8 +465,6 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 			if (!name)
 			{
 				oscap_seterr(OSCAP_EFAMILY_XML, "No 'name' attribute for a component referenced in the catalog of component '%s'.", component_id);
-				xmlFree(cref_id);
-				xmlFree(xlink_href);
 				oscap_free(target_filename_dirname);
 				return -1;
 			}
@@ -475,8 +476,6 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 				oscap_seterr(OSCAP_EFAMILY_XML, "No or invalid 'uri' attribute for a component referenced in the catalog of component '%s'.", component_id);
 				xmlFree(str_uri);
 				xmlFree(name);
-				xmlFree(cref_id);
-				xmlFree(xlink_href);
 				oscap_free(target_filename_dirname);
 				return -1;
 			}
@@ -490,8 +489,6 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 				oscap_seterr(OSCAP_EFAMILY_XML, "component-ref with given id '%s' wasn't found in the document! We are looking for it because it's in the catalog of component '%s'.", str_uri + 1 * sizeof(char), component_id);
 				xmlFree(str_uri);
 				xmlFree(name);
-				xmlFree(cref_id);
-				xmlFree(xlink_href);
 				oscap_free(target_filename_dirname);
 				return -1;
 			}
@@ -500,8 +497,6 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 			if (ds_sds_dump_component_ref_as(cat_component_ref, session, target_filename_dirname, name) != 0)
 			{
 				xmlFree(name);
-				xmlFree(cref_id);
-				xmlFree(xlink_href);
 				oscap_free(target_filename_dirname);
 				return -1; // no need to call oscap_seterr here, it's already set
 			}
@@ -511,8 +506,7 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	}
 
 	oscap_free(target_filename_dirname);
-	xmlFree(cref_id);
-	xmlFree(xlink_href);
+
 
 	return 0;
 }
