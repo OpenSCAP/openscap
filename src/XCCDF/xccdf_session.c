@@ -502,11 +502,13 @@ static int _acquire_xccdf_checklist_from_tailoring(struct xccdf_session* session
 	struct oscap_source *tailoring_source = oscap_source_new_from_xmlDoc(tailoring_xmlDoc, NULL);
 	struct xccdf_tailoring* tailoring = xccdf_tailoring_import_source(tailoring_source, NULL);
 	if (tailoring == NULL) {
+		xmlFree(tailoring_xmlDoc);
 		return 1;
 	}
 	const char *benchmark_ref = oscap_strdup(xccdf_tailoring_get_benchmark_ref(tailoring));
 	xccdf_tailoring_free(tailoring);
 	if (benchmark_ref == NULL) {
+		xmlFree(tailoring_xmlDoc);
 		return 1;
 	}
 	char *benchmark_id = strchr(benchmark_ref, '#') + 1;
@@ -516,11 +518,14 @@ static int _acquire_xccdf_checklist_from_tailoring(struct xccdf_session* session
 	if (xccdf_source == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 				"Could not find benchmark '%s' referenced from tailoring", benchmark_id);
+		xmlFree(tailoring_xmlDoc);
+		oscap_free(benchmark_ref);
 		return 1;
 	}
 
 	session->xccdf.source = xccdf_source;
 	session->tailoring.user_file = tailoring_source;
+	oscap_free(benchmark_ref);
 	return 0;
 }
 
