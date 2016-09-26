@@ -43,7 +43,7 @@ function _oscap {
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
     opts[oscap:ds:sds-add]="--datastream-id --skip-valid"
     opts[oscap:ds:sds-compose]="--skip-valid"
-    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-valid"
+    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-valid --fetch-remote-resources"
     opts[oscap:ds:rds-create]="--skip-valid"
     opts[oscap:ds:rds-split]="--report-id --skip-valid"
     opts[oscap:cvss:score]=""
