@@ -46,11 +46,16 @@ Common Vulnerabilities and Exposures
 
 .SH INFO OPERATIONS
 .TP
-any-scap-file.xml
+[\fIoptions\fR] any-scap-file.xml
 .RS
 This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional opperation switch.
 
 For XCCDF or Datastream files, info module prints out IDs of incorporated profiles, components, and datastreams. These IDs can be used to specify the target for evaluation. Use options --profile, --xccdf-id (or --oval-id), and --datastream-id respectively.
+.PP
+\fB\-\-fetch-remote-resources\fR
+.RS
+Allow download of remote components referenced from Datastream.
+.RE
 .SH XCCDF OPERATIONS
 .TP
 .B \fBeval\fR [\fIoptions\fR] INPUT_FILE [\fIoval-definitions-files\fR]
