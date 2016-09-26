@@ -442,8 +442,6 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	if (ret != 0) {
 
 		oscap_free(target_filename_dirname);
-		if (ret == -2) // skipped remote component
-			return 0;
 		return -1;
 	}
 
