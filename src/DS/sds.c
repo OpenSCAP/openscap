@@ -319,11 +319,11 @@ static int ds_dsd_dump_remote_component(const char* url, const char* component_i
 
 	char* mem = oscap_acquire_url_download(url, &memory_size);
 	if (mem == NULL) {
-		ds_sds_session_remote_resources_progress(session)(false, "error", url);
+		ds_sds_session_remote_resources_progress(session)(false, "error\n", url);
 		return -1;
 	}
 
-	ds_sds_session_remote_resources_progress(session)(false, "ok", url);
+	ds_sds_session_remote_resources_progress(session)(false, "ok\n", url);
 
 	struct oscap_source *source_file = oscap_source_new_take_memory(mem, memory_size, url);
 	xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
