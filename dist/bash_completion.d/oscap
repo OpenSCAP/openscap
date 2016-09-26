@@ -48,6 +48,7 @@ function _oscap {
     opts[oscap:ds:rds-split]="--report-id --skip-valid"
     opts[oscap:cvss:score]=""
     opts[oscap:cvss:describe]=""
+    opts[oscap:info]="--fetch-remote-resources"
 
     # local variables
 	local std cmd i prev
