@@ -360,17 +360,17 @@ typedef struct {
 } distro_tbl_t;
 
 const distro_tbl_t distro_tbl[] = {
-        { &is_debian,    &get_runlevel_debian     },
-        { &is_redhat,    &get_runlevel_redhat     },
-        { &is_slack,     &get_runlevel_slack      },
-        { &is_gentoo,    &get_runlevel_gentoo     },
-        { &is_arch,      &get_runlevel_arch       },
-        { &is_mandriva,  &get_runlevel_mandriva   },
-        { &is_suse,      &get_runlevel_suse       },
-        { &is_solaris,   &get_runlevel_redhat     },
-        { &is_wrlinux,   &get_runlevel_wrlinux    },
-	{ &is_amznlinux, &get_runlevel_amznlinux },
-        { &is_common,    &get_runlevel_common     }
+        { &is_debian,    &get_runlevel_debian   },
+        { &is_redhat,    &get_runlevel_redhat   },
+        { &is_slack,     &get_runlevel_slack    },
+        { &is_gentoo,    &get_runlevel_gentoo   },
+        { &is_arch,      &get_runlevel_arch     },
+        { &is_mandriva,  &get_runlevel_mandriva },
+        { &is_suse,      &get_runlevel_suse     },
+        { &is_solaris,   &get_runlevel_redhat   },
+        { &is_wrlinux,   &get_runlevel_wrlinux  },
+        { &is_amznlinux, &get_runlevel_amznlinux},
+        { &is_common,    &get_runlevel_common   }
 };
 
 #define DISTRO_TBL_SIZE ((sizeof distro_tbl)/sizeof (distro_tbl_t))
