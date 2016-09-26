@@ -174,10 +174,10 @@ int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *ta
 void ds_sds_session_reset(struct ds_sds_session *session);
 
 /**
- * Set properties of remote content.
+ * Set property of remote content.
  * @memberof ds_sds_session
  * @param session The Source DataStream Session
- * @param allowed Whether is download od remote resources allowed in this session (defaults to false)
+ * @param allowed Whether is download of remote resources allowed in this session (defaults to false)
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */

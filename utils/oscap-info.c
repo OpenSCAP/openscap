@@ -429,7 +429,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	}
 
 	if (optind >= argc) {
-		oscap_module_usage(action->module, stderr, "SCAP file need to be specified!\n");
+		oscap_module_usage(action->module, stderr, "SCAP file needs to be specified!\n");
 		return false;
 	}
 
