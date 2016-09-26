@@ -159,6 +159,14 @@ struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session 
 	return session->component_sources;
 }
 
+const char *ds_sds_session_get_readable_origin(const struct ds_sds_session *session)
+{
+	if (session->source == NULL)
+		return NULL;
+
+	return oscap_source_readable_origin(session->source);
+}
+
 struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id)
 {
 	session->datastream_id = datastream_id;
@@ -189,13 +197,13 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
 			return NULL;
 		}
 	}
-	if (ds_sds_session_register_component_with_dependencies(session, "checklists", session->checklist_id, "xccdf.xml") != 0) {
+	if (ds_sds_session_register_component_with_dependencies(session, "checklists", session->checklist_id, session->checklist_id) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not extract %s with all dependencies from datastream.", session->checklist_id);
 		return NULL;
 	}
-	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, "xccdf.xml");
+	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, session->checklist_id);
 	if (xccdf == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to '%s' source.", session->checklist_id);
 	}
 	return xccdf;
 }

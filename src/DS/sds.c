@@ -199,14 +199,58 @@ static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *com
 	}
 }
 
-static int ds_sds_dump_component(const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+/**
+ * Load oscap source from file
+ * Filename is relatively to datastream file
+ */
+static struct oscap_source *load_referenced_source(const struct ds_sds_session *session, const char *filename)
 {
-	xmlDoc *doc = ds_sds_session_get_xmlDoc(session);
-	xmlNodePtr component = _lookup_component_in_collection(doc, component_id);
-	if (component == NULL)
-	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
-		return -1;
+	const char* readable_origin = ds_sds_session_get_readable_origin(session);
+	assert(readable_origin != NULL);
+	char* readable_origin_cp = oscap_strdup(readable_origin);
+
+	char* dir_name = dirname(readable_origin_cp);
+	char* full_path = oscap_sprintf("%s/%s", dir_name, filename);
+
+	struct oscap_source *source_file = oscap_source_new_from_file(full_path);
+
+	oscap_free(full_path);
+	oscap_free(readable_origin_cp);
+
+	return source_file;
+}
+
+
+static int ds_sds_dump_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
+{
+	int ret = 0;
+	xmlDoc *doc;
+	struct oscap_source* source_file = NULL;
+
+	if (external_file != NULL) {
+
+		source_file = load_referenced_source(session, external_file);
+		doc = oscap_source_get_xmlDoc(source_file);
+
+		if (doc == NULL) {
+			ret = -1;
+			goto cleanup;
+		}
+	} else {
+		doc = ds_sds_session_get_xmlDoc(session);
+	}
+
+	xmlNodePtr component;
+	if (component_id == NULL) {
+		component = (xmlNodePtr)doc;
+	} else {
+		component = _lookup_component_in_collection(doc, component_id);
+		if (component == NULL)
+		{
+			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
+			ret = -1;
+			goto cleanup;
+		}
 	}
 
 	xmlNodePtr inner_root = node_get_child_element(component, NULL);
@@ -214,7 +258,8 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	if (inner_root == NULL)
 	{
 		oscap_seterr(OSCAP_EFAMILY_XML, "Found component (id='%s') but it has no element contents, nothing to dump, skipping...", component_id);
-		return -1;
+		ret = -1;
+		goto cleanup;
 	}
 
 	// If the inner root is script, we have to treat it in a special way
@@ -223,10 +268,10 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 		// modify the string
 		const char* file_basename = basename((char*)relative_filepath);
 		const char* sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session), target_filename_dirname, file_basename);
-		int ret = ds_sds_dump_component_sce(inner_root->children, component_id, sce_filename);
+		ret = ds_sds_dump_component_sce(inner_root->children, component_id, sce_filename);
 		oscap_free(sce_filename);
 		if (ret != 0) {
-			return ret;
+			goto cleanup;
 		}
 	}
 	// Otherwise we create a new XML doc we will dump the contents to.
@@ -235,13 +280,17 @@ static int ds_sds_dump_component(const char* component_id, struct ds_sds_session
 	else {
 		xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, doc);
 		if (new_doc == NULL) {
-			return -1;
+			ret = -1;
+			goto cleanup;
 		}
-		struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
-		ds_sds_session_register_component_source(session, relative_filepath, source);
+
+		struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
+		ds_sds_session_register_component_source(session, relative_filepath, component_source);
 	}
 
-	return 0;
+	cleanup:
+		oscap_source_free(source_file);
+		return ret;
 }
 
 int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char* sub_dir, const char* relative_filepath)
@@ -263,15 +312,44 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 		return -1;
 	}
 
-	assert(xlink_href[0] == '#');
-	const char* component_id = xlink_href + 1;
+
+	const char* component_id;
+	const char* filename;
+
+	if (xlink_href[0] == '#')
+	{
+		filename = NULL;
+		component_id = xlink_href + 1;
+
+	} else if (oscap_str_startswith(xlink_href, "file:")){
+
+		char* sep = strchr(xlink_href, '#');
+
+		filename = xlink_href + strlen("file:");
+
+		if (sep == NULL) {
+			component_id = NULL;
+		} else {
+			*sep = '\0';
+			component_id = sep + 1;
+		}
+
+
+	} else {
+		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
+		xmlFree(cref_id);
+		xmlFree(xlink_href);
+		return 0;
+	}
+
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
 	char* file_reldir = dirname(filename_cpy);
 
 	const char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
 	oscap_free(filename_cpy);
 
-	ds_sds_dump_component(component_id, session, target_filename_dirname, relative_filepath);
+	ds_sds_dump_component(filename, component_id, session, target_filename_dirname, relative_filepath);
+
 
 	xmlNodePtr catalog = node_get_child_element(component_ref, "catalog");
 	if (catalog)

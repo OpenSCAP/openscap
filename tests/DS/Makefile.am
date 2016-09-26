@@ -30,6 +30,9 @@ EXTRA_DIST = test_ds.sh \
 		rds_testresult/results-oval.xml \
 		rds_testresult/results-xccdf.xml \
 		rds_testresult/sds.xml \
+		sds_external_xccdf/sds.ds.xml \
+		sds_external_xccdf/xccdf.sds.xml \
+		sds_external_xccdf/xccdf.xml \
 		sds_extended_component/check.xml \
 		sds_extended_component/fake-check-xccdf.xml \
 		sds_extended_component/scap-fedora14-oval.xml \
@@ -52,6 +55,7 @@ EXTRA_DIST = test_ds.sh \
 		sds_simple_5_11_1/simple_oval.xml \
 		sds_simple_5_11_1/simple_xccdf.xml \
 		sds_subdir/subdir/scap-fedora14-oval.xml \
-		sds_subdir/subdir/scap-fedora14-xccdf.xml
+		sds_subdir/subdir/scap-fedora14-xccdf.xml \
+		sds_tailoring/sds.ds.xml
 
 SUBDIRS = ds_sds_index signed validate
