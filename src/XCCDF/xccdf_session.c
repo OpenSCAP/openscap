@@ -676,7 +676,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 				}
 				else if (!fetch_option_suggested) {
 					if (session->oval.progress != NULL)
-						session->oval.progress(false, "This content points out to the remote resources. "
+						session->oval.progress(true, "WARNING: This content points out to remote resources. "
 								"Use `--fetch-remote-resources' option to download them.\n");
 					fetch_option_suggested = true;
 				}
