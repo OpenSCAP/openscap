@@ -138,6 +138,7 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 	}
 	session->validate = true;
 	session->xccdf.base_score = 0;
+	session->oval.progress = download_progress_empty_calllback;
 	session->check_engine_plugins = oscap_list_new();
 
 	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
@@ -336,12 +337,6 @@ void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const c
 	session->tailoring.user_component_id = oscap_strdup(user_tailoring_cid);
 }
 
-void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
-{
-	session->oval.fetch_remote_resources = allowed;
-	session->oval.progress = callback;
-}
-
 void xccdf_session_set_custom_oval_eval_fn(struct xccdf_session *session, xccdf_policy_engine_eval_fn eval_fn)
 {
 	session->oval.user_eval_fn = eval_fn;
@@ -417,6 +412,24 @@ static struct ds_sds_session *xccdf_session_get_ds_sds_session(struct xccdf_sess
 		session->ds.session = ds_sds_session_new_from_source(session->source);
 	}
 	return session->ds.session;
+}
+
+void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	if (callback == NULL) {
+		// With empty cb we don't have to check for NULL
+		// when we want to use it
+		callback = download_progress_empty_calllback;
+	}
+
+	session->oval.fetch_remote_resources = allowed;
+	session->oval.progress = callback;
+
+	if (xccdf_session_is_sds(session)) {
+		// We have to propagate this option to allow loading
+		// of external datastream components
+		ds_sds_session_set_remote_resources(xccdf_session_get_ds_sds_session(session), allowed, callback);
+	}
 }
 
 /**
@@ -737,17 +750,14 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 				printable_path = (char *) oscap_file_entry_get_file(file_entry);
 
 				if (session->oval.fetch_remote_resources) {
-					if (session->oval.progress != NULL)
-						session->oval.progress(false, "Downloading: %s ... ", printable_path);
+					session->oval.progress(false, "Downloading: %s ... ", printable_path);
 
 					size_t data_size;
 					char *data = oscap_acquire_url_download(printable_path, &data_size);
 					if (data == NULL) {
-						if (session->oval.progress != NULL)
-							session->oval.progress(false, "error\n");
+						session->oval.progress(false, "error\n");
 					} else {
-						if (session->oval.progress != NULL)
-							session->oval.progress(false, "ok\n");
+						session->oval.progress(false, "ok\n");
 
 						resources[idx] = malloc(sizeof(struct oval_content_resource));
 						resources[idx]->href = strdup(printable_path);
@@ -761,16 +771,14 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 					}
 				}
 				else if (!fetch_option_suggested) {
-					if (session->oval.progress != NULL)
-						session->oval.progress(true, "WARNING: This content points out to remote resources. "
+					session->oval.progress(true, "WARNING: This content points out to the remote resources. "
 								"Use `--fetch-remote-resources' option to download them.\n");
 					fetch_option_suggested = true;
 				}
 			}
 			else
 				printable_path = tmp_path;
-			if (session->oval.progress != NULL)
-				session->oval.progress(true, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
+			session->oval.progress(true, "WARNING: Skipping %s file which is referenced from XCCDF content\n", printable_path);
 		}
 		free(tmp_path);
 	}

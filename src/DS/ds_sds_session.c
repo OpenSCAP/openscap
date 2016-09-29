@@ -52,7 +52,16 @@ struct ds_sds_session {
 	const char *datastream_id;              ///< ID of selected datastream
 	const char *checklist_id;               ///< ID of selected checklist
 	struct oscap_htable *component_sources;	///< oscap_source for parsed components
+	bool fetch_remote_resources;            ///< Allows loading of external components;
+	download_progress_calllback_t progress;	///< Callback to report progress of download.
 };
+
+/**
+ * "null object" for download callback
+ */
+void download_progress_empty_calllback (bool warning, const char * format, ...) {
+	; // no action
+}
 
 struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source)
 {
@@ -64,6 +73,7 @@ struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *sourc
 	struct ds_sds_session *sds_session = (struct ds_sds_session *) oscap_calloc(1, sizeof(struct ds_sds_session));
 	sds_session->source = source;
 	sds_session->component_sources = oscap_htable_new();
+	sds_session->progress = download_progress_empty_calllback;
 	return sds_session;
 }
 
@@ -292,9 +302,25 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 	return res;
 }
 
+void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	session->fetch_remote_resources = allowed;
+	session->progress = callback;
+}
+
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
 {
 	return ds_dump_component_sources(session->component_sources, ds_sds_session_get_target_dir(session));
+}
+
+bool ds_sds_session_fetch_remote_resources(struct ds_sds_session *session)
+{
+	return session->fetch_remote_resources;
+}
+
+download_progress_calllback_t ds_sds_session_remote_resources_progress(struct ds_sds_session *session)
+{
+	return session->progress;
 }
 
 char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id)
