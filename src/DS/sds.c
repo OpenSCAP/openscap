@@ -253,10 +253,10 @@ static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc
 	// If the inner root is script, we have to treat it in a special way
 	if (strcmp((const char*)component_inner_root->name, "script") == 0) {
 		return ds_sds_register_sce(session, component_inner_root, component_id, target_filename_dirname, relative_filepath);
-	// Otherwise we create a new XML doc we will dump the contents to.
-	// We can't just dump node "innerXML" because namespaces have to be
-	// handled.
 	} else {
+		// Otherwise we create a new XML doc we will dump the contents to.
+		// We can't just dump node "innerXML" because namespaces have to be
+		// handled.
 		return ds_sds_register_xmlDoc(session, doc, component_inner_root, relative_filepath);
 	}
 }
