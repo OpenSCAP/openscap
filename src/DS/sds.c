@@ -403,7 +403,7 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 
 			if (!fetch_remote_resources_suggested) {
 				fetch_remote_resources_suggested = true;
-				ds_sds_session_remote_resources_progress(session)(true, "Datastream component '%s' points out to the remote '%s'. "
+				ds_sds_session_remote_resources_progress(session)(true, "WARNING: Datastream component '%s' points out to the remote '%s'. "
 									"Use '--fetch-remote-resources' option to download it.\n", cref_id, url);
 			}
 
