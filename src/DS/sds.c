@@ -413,7 +413,7 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 		return ds_dsd_dump_remote_component(url, *component_id, session, target_filename_dirname, relative_filepath);
 	} else {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Unsupported type of xlink:href attribute on given component-ref - '%s'.", xlink_href);
-		return 0;
+		return -1;
 	}
 	return 0;
 }
