@@ -238,7 +238,8 @@ static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, x
 
 	struct oscap_source *component_source = oscap_source_new_from_xmlDoc(new_doc, relative_filepath);
 
-	return ds_sds_session_register_component_source(session, relative_filepath, component_source);
+	ds_sds_session_register_component_source(session, relative_filepath, component_source);
+	return 0; // TODO: Return value of ds_sds_session_register_component_source(). (commit message)
 }
 
 static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath)
