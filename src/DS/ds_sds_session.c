@@ -305,7 +305,7 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
 {
 	session->fetch_remote_resources = allowed;
-	session->progress = callback;
+	session->progress = (callback != NULL) ? callback : download_progress_empty_calllback;
 }
 
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)
