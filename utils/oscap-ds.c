@@ -157,16 +157,6 @@ enum ds_opt {
 	DS_OPT_REPORT_ID,
 };
 
-static void _download_reporting_callback(bool warning, const char *format, ...)
-{
-	FILE *dest = warning ? stderr : stdout;
-	va_list argptr;
-	va_start(argptr, format);
-	vfprintf(dest, format, argptr);
-	va_end(argptr);
-	fflush(dest);
-}
-
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	action->doctype = OSCAP_DOCUMENT_SDS;
 
@@ -300,7 +290,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	}
 	ds_sds_session_set_datastream_id(session, f_datastream_id);
 
-	ds_sds_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	ds_sds_session_set_target_dir(session, action->ds_action->target);
 	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
 		goto cleanup;

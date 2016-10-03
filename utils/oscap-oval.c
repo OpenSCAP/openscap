@@ -206,16 +206,6 @@ static struct oscap_module* OVAL_SUBMODULES[] = {
     NULL
 };
 
-static void _download_reporting_callback(bool warning, const char *format, ...)
-{
-	FILE *dest = warning ? stderr : stdout;
-	va_list argptr;
-	va_start(argptr, format);
-	vfprintf(dest, format, argptr);
-	va_end(argptr);
-	fflush(dest);
-}
-
 static int app_oval_callback(const struct oval_result_definition * res_def, void *arg)
 {
 	oval_result_t result =  oval_result_definition_get_result(res_def);
@@ -380,7 +370,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* set OVAL Variables */
 	oval_session_set_variables(session, action->f_variables);
 
-	oval_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+	oval_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	/* load all necesary OVAL Definitions and bind OVAL Variables if provided */
 	if ((oval_session_load(session)) != 0)
 		goto cleanup;
