@@ -36,7 +36,7 @@
 
 #ifndef OVAL_SESSION_H_
 #define OVAL_SESSION_H_
-#include "xccdf_download_cb.h"
+#include "oscap_download_cb.h"
 
 /**
  * @struct oval_session
