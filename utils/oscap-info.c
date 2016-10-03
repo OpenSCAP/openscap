@@ -264,7 +264,7 @@ static int app_info(const struct oscap_action *action)
 			goto cleanup;
 		}
 
-		ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback_error);
+		ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 
 		/* get collection */
 		struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
