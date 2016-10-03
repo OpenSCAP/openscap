@@ -39,5 +39,5 @@ pkginclude_HEADERS =\
 	public/oscap_error.h \
 	public/oscap.h \
 	public/oscap_reference.h \
-	public/xccdf_download_cb.h \
+	public/oscap_download_cb.h \
 	public/oscap_text.h

@@ -29,7 +29,7 @@
 #include "oscap.h"
 #include "oscap_source.h"
 #include "scap_ds.h"
-#include "xccdf_download_cb.h"
+#include "oscap_download_cb.h"
 
 /**
  * The ds_sds_session is structure tight closely to oscap_source.

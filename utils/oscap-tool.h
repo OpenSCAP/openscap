@@ -163,6 +163,7 @@ int oscap_module_call(struct oscap_action *action);
 
 void oscap_print_error(void);
 bool check_verbose_options(struct oscap_action *action);
+void download_reporting_callback(bool warning, const char *format, ...);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
 extern struct oscap_module OSCAP_DS_MODULE;

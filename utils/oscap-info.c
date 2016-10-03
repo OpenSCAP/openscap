@@ -65,15 +65,6 @@ struct oscap_module OSCAP_INFO_MODULE = {
     .func = app_info
 };
 
-static void _download_reporting_callback(bool warning, const char *format, ...)
-{
-	va_list argptr;
-	va_start(argptr, format);
-	vfprintf(stderr, format, argptr);
-	va_end(argptr);
-	fflush(stderr);
-}
-
 static void print_time(const char *file) {
 	struct stat buffer;
 	char timeStr[ 100 ] = "";
@@ -273,7 +264,7 @@ static int app_info(const struct oscap_action *action)
 			goto cleanup;
 		}
 
-		ds_sds_session_set_remote_resources(session, action->remote_resources, _download_reporting_callback);
+		ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 
 		/* get collection */
 		struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);

@@ -370,6 +370,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* set OVAL Variables */
 	oval_session_set_variables(session, action->f_variables);
 
+	oval_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	/* load all necesary OVAL Definitions and bind OVAL Variables if provided */
 	if ((oval_session_load(session)) != 0)
 		goto cleanup;
@@ -566,6 +567,7 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		{ "probe-root", required_argument, NULL, OVAL_OPT_PROBE_ROOT},
 		{ "verbose", required_argument, NULL, OVAL_OPT_VERBOSE },
 		{ "verbose-log-file", required_argument, NULL, OVAL_OPT_VERBOSE_LOG_FILE },
+		{ "fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{ 0, 0, 0, 0 }
 	};
 

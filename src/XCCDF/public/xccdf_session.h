@@ -33,7 +33,7 @@
 #define XCCDF_SESSION_H_
 
 #include "xccdf_policy.h"
-#include "xccdf_download_cb.h"
+#include "oscap_download_cb.h"
 
 /**
  * @struct xccdf_session
