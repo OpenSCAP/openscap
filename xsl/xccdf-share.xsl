@@ -279,32 +279,34 @@ Authors:
 
     <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>&#160;&#160;&#160;<a data-toggle="collapse" data-target="#{generate-id($fix)}">(show)</a><br />
     <div class="panel-collapse collapse" id="{generate-id($fix)}">
-        <table class="table table-striped table-bordered table-condensed">
-            <xsl:if test="$fix/@complexity">
-                <tr>
-                    <th>Complexity:</th>
-                    <td><xsl:value-of select="$fix/@complexity" /></td>
-                </tr>
-            </xsl:if>
-            <xsl:if test="$fix/@disruption">
-                <tr>
-                    <th>Disruption:</th>
-                    <td><xsl:value-of select="$fix/@disruption" /></td>
-                </tr>
-            </xsl:if>
-            <xsl:if test="$fix/@reboot">
-                <tr>
-                    <th>Reboot:</th>
-                    <td><xsl:value-of select="$fix/@reboot" /></td>
-                </tr>
-            </xsl:if>
-            <xsl:if test="$fix/@strategy">
-                <tr>
-                    <th>Strategy:</th>
-                    <td><xsl:value-of select="$fix/@strategy" /></td>
-                </tr>
-            </xsl:if>
-        </table>
+        <xsl:if test="$fix/@complexity or $fix/@disruption or $fix/@reboot or $fix/@strategy">
+            <table class="table table-striped table-bordered table-condensed">
+                <xsl:if test="$fix/@complexity">
+                    <tr>
+                        <th>Complexity:</th>
+                        <td><xsl:value-of select="$fix/@complexity" /></td>
+                    </tr>
+                </xsl:if>
+                <xsl:if test="$fix/@disruption">
+                    <tr>
+                        <th>Disruption:</th>
+                        <td><xsl:value-of select="$fix/@disruption" /></td>
+                    </tr>
+                </xsl:if>
+                <xsl:if test="$fix/@reboot">
+                    <tr>
+                        <th>Reboot:</th>
+                        <td><xsl:value-of select="$fix/@reboot" /></td>
+                    </tr>
+                </xsl:if>
+                <xsl:if test="$fix/@strategy">
+                    <tr>
+                        <th>Strategy:</th>
+                        <td><xsl:value-of select="$fix/@strategy" /></td>
+                    </tr>
+                </xsl:if>
+            </table>
+        </xsl:if>
         <pre><code>
             <xsl:apply-templates mode="sub-testresult" select="$fix">
                 <xsl:with-param name="testresult" select="$testresult"/>
