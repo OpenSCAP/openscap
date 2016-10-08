@@ -100,7 +100,7 @@ function run_multiple_times {
 		stdout=$("$@" 2> "$stderr_file")
 		ret_val=$?
 
-		# if test was skipped or failed
+		# if test passed or skipped
 		if [ "$ret_val" -eq 0 ] || [ "$ret_val" -eq 255 ];
 		then
 			break
