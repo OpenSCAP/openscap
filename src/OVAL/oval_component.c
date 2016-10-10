@@ -2137,7 +2137,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC_rec(st
 
 		ov = oval_value_iterator_next(val_itr);
 		dt = oval_value_get_datatype(ov);
-		if (dt == OVAL_DATATYPE_INTEGER) {
+		if (dt == OVAL_DATATYPE_STRING) {
+			errno = 0; // Setting errno to 0 as suggested by strtod() manpage, as 0 is used both on success and failure
+			new_val = strtod(oval_value_get_text(ov), NULL);
+			if (errno) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected content: %s.", oval_value_get_text(ov));
+				oval_value_iterator_free(val_itr);
+				return SYSCHAR_FLAG_ERROR;
+			}
+		} else if (dt == OVAL_DATATYPE_INTEGER) {
 			new_val = (double) oval_value_get_integer(ov);
 		} else if (dt == OVAL_DATATYPE_FLOAT) {
 			new_val = (double) oval_value_get_float(ov);
@@ -2207,7 +2215,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 
 		ov = oval_value_iterator_next(val_itr);
 		datatype = oval_value_get_datatype(ov);
-		if (datatype == OVAL_DATATYPE_INTEGER) {
+		if (datatype == OVAL_DATATYPE_STRING) {
+			errno = 0; // Setting errno to 0 as suggested by strtod() manpage, as 0 is used both on success and failure
+			val = strtod(oval_value_get_text(ov), NULL);
+			if (errno) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "Unexpected content: %s.", oval_value_get_text(ov));
+				flag = SYSCHAR_FLAG_ERROR;
+				goto cleanup;
+			}
+		} else if (datatype == OVAL_DATATYPE_INTEGER) {
 			val = (double) oval_value_get_integer(ov);
 		} else if (datatype == OVAL_DATATYPE_FLOAT) {
 			val = (double) oval_value_get_float(ov);
