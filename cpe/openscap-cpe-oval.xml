@@ -318,31 +318,24 @@
                   </criteria>
             </definition>
 
-            <definition class="inventory" id="oval:org.open-scap.cpe.sles:def:11" version="1">
+            <definition class="inventory" id="oval:org.open-scap.cpe.sle:def:11" version="1">
                   <metadata>
-                        <title>SUSE Linux Enterprise Server 11</title>
+                        <title>SUSE Linux Enterprise 11</title>
                         <affected family="unix">
                             <platform>SUSE Linux Enterprise Server 11</platform>
-                        </affected>
-                        <reference ref_id="cpe:/o:suse:sles:11" source="CPE"/>
-                        <description>The operating system installed on the system is SUSE Linux Enterprise Server 11</description>
-                  </metadata>
-                  <criteria>
-                        <criterion comment="SLES 11 is installed" test_ref="oval:org.open-scap.cpe.sles:tst:11"/>
-                  </criteria>
-            </definition>
-
-            <definition class="inventory" id="oval:org.open-scap.cpe.sled:def:11" version="1">
-                  <metadata>
-                        <title>SUSE Linux Enterprise Desktop 11</title>
-                        <affected family="unix">
                             <platform>SUSE Linux Enterprise Desktop 11</platform>
                         </affected>
-                        <reference ref_id="cpe:/o:suse:sles:11" source="CPE"/>
-                        <description>The operating system installed on the system is SUSE Linux Enterprise Desktop 11</description>
+                        <reference ref_id="cpe:/o:suse:linux_enterprise_server:11" source="CPE" />
+                        <reference ref_id="cpe:/o:suse:linux_enterprise_desktop:11" source="CPE" />
+                        <description>The operating system installed on the system is SUSE Linux Enterprise 11.</description>
+                        <reference source="galford" ref_id="20160920" ref_url="test_attestation" />
                   </metadata>
                   <criteria>
-                        <criterion comment="SLED 11 is installed" test_ref="oval:org.open-scap.cpe.sled:tst:11"/>
+                        <criterion comment="Installed operating system is part of the unix family" test_ref="oval:org.open-scap.cpe.sle:tst:1" />
+                        <criteria operator="OR">
+                              <criterion comment="SLE 11 Desktop is installed" test_ref="oval:org.open-scap.cpe.sled:tst:11" />
+                              <criterion comment="SLE 11 Server is installed" test_ref="oval:org.open-scap.cpe.sles:tst:11" />
+                        </criteria>
                   </criteria>
             </definition>
 
@@ -646,6 +639,12 @@
             <file_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check_existence="at_least_one_exists" version="1" id="oval:org.open-scap.cpe.wrlinux:tst:2" check="all" comment="Test presence of /etc/wrlinux-release.">
                 <object object_ref="oval:org.open-scap.cpe.wrlinux-release:obj:1" />
             </file_test>
+            <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sle:tst:1" version="1" check="only one"
+                  comment="Installed operating system is part of the Unix family."
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <object object_ref="oval:org.open-scap.cpe.unix:obj:1" />
+                  <state state_ref="oval:org.open-scap.cpe.unix:ste:1" />
+            </family_test>
             <textfilecontent54_test
                             id="oval:org.open-scap.cpe.wrlinux:tst:8"
                             check="all"
