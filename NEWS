@@ -1,3 +1,29 @@
+openscap-1.2.11                                                 14-10-2016
+  - New features
+    - huge speed-up of generating HTML reports and guides
+    - support remote datastream components (issue #526)
+    - support tailoring of external datastreams
+    - various attributes of remediation scripts are now shown in HTML report (issue #541)
+    - new option generating OVAL results without system characteristics
+    - remediation scripts in HTML report are now collapsed
+    - support for extracting Ansible playbooks
+    - enabled fetching remote resources in OVAL module
+    - added Wind River Linux CPE
+  - Maintenance
+    - updated jQuery and bootstrap libraries in HTML reports
+    - extended, improved and updated user manual
+    - fixed issues with proxy in oscap-docker (RHBZ #1351952)
+    - fixed a bug in OVAL arithmetic function
+    - fixed a segmentation fault (issue #529)
+    - fixed results of XCCDF rules with @role="unscored" (issue #525)
+    - fixed invalid characters in OVAL results (issue #468)
+    - fixed a segmentation fault in tailoring (RHBZ #1367896)
+    - updated SUSE 11 CPE
+    - fixed many memory issues
+    - large refactoring of datastream module
+    - new tests in upstream test suite
+    - various small fixes and improvements
+
 openscap-1.2.10                                                 29-06-2016
   - New features
     - support --benchmark-id when running `oscap xccdf generate guide`
