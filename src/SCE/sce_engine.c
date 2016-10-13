@@ -466,7 +466,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	// We open a pipe for communication with the forked process
 	int stdout_pipefd[2];
 	int stderr_pipefd[2];
-	if (pipe(stdout_pipefd) == -1 || pipe(stderr_pipefd))
+	if (pipe(stdout_pipefd) == -1 || pipe(stderr_pipefd) == -1)
 	{
 		perror("pipe");
 		// the first 9 values (0 to 8) are compiled in
