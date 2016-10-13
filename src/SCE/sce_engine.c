@@ -492,7 +492,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		    close(stdout_pipefd[0]);
 		    close(stderr_pipefd[0]);
 
-		    // forward stdout and stderr to the opened pipe
+			// forward stdout and stderr to our custom opened pipes
 			dup2(stdout_pipefd[1], fileno(stdout));
 			dup2(stderr_pipefd[1], fileno(stderr));
 
