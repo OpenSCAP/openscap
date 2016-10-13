@@ -25,25 +25,23 @@
 #include "config.h"
 #endif
 
-#ifdef HAVE_BZ2
-
-#include <bzlib.h>
 #include <libxml/tree.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-
 #include "bz2_priv.h"
 #include "common/_error.h"
+
+#ifdef HAVE_BZ2
+
+#include <bzlib.h>
 
 struct bz2_file {
 	FILE *f;
 	BZFILE *file;
 	bool eof;
 };
-
-static const char magic_number[] = {'B','Z'};
 
 static struct bz2_file *bz2_fd_open(int fd)
 {
@@ -182,6 +180,10 @@ xmlDoc *bz2_mem_read_doc(const char *buffer, size_t size)
 	return xmlReadIO((xmlInputReadCallback) bz2_mem_read, bz2_mem_close, bzmem, "url", NULL, XML_PARSE_PEDANTIC);
 }
 
+#endif
+
+static const char magic_number[] = {'B','Z'};
+
 bool bz2_memory_is_bzip(const char* memory, const size_t size){
 	if (size < 2){
 		return false; // Cannot read magic number
@@ -211,4 +213,3 @@ bool bz2_fd_is_bzip(int fd)
 	return is_bzip;
 
 }
-#endif
