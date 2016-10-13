@@ -21,6 +21,7 @@
     <sequence>
       <element name="environment" type="sceres:environment_type"></element>
       <element name="stdout" type="string"></element>
+      <element name="stderr" type="string" minOccurs="0"></element>
       <element name="exit_code" type="int"></element>
       <element name="result" type="xccdf:resultEnumType"></element>
     </sequence>
