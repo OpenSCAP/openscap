@@ -29,6 +29,7 @@
 #include "oscap.h"
 #include "oscap_source.h"
 #include "scap_ds.h"
+#include "oscap_download_cb.h"
 
 /**
  * The ds_sds_session is structure tight closely to oscap_source.
@@ -171,6 +172,16 @@ int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *ta
  * @param session The Source DataStream session to reset
  */
 void ds_sds_session_reset(struct ds_sds_session *session);
+
+/**
+ * Set property of remote content.
+ * @memberof ds_sds_session
+ * @param session The Source DataStream Session
+ * @param allowed Whether is download of remote resources allowed in this session (defaults to false)
+ * @param callback used to notify user about download proceeds. This might be safely set
+ * to NULL -- ignoring user notification.
+ */
+void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback);
 
 /**
  * Returns HTML representation of selected checklist in form of OpenSCAP guide.

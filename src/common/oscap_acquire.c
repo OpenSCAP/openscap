@@ -165,6 +165,7 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
 
 	CURLcode res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);

@@ -391,3 +391,13 @@ bool check_verbose_options(struct oscap_action *action)
 	}
 	return true;
 }
+
+void download_reporting_callback(bool warning, const char *format, ...)
+{
+	FILE *dest = stderr;
+	va_list argptr;
+	va_start(argptr, format);
+	vfprintf(dest, format, argptr);
+	va_end(argptr);
+	fflush(dest);
+}

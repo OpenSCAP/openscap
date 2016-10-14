@@ -33,13 +33,7 @@
 #define XCCDF_SESSION_H_
 
 #include "xccdf_policy.h"
-
-/**
- * Type of the function used to report progress of download.
- * @param warning indicates whether the message is rather warning or notice
- * @param format printf-like format string
- */
-typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
+#include "oscap_download_cb.h"
 
 /**
  * @struct xccdf_session

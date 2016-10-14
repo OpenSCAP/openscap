@@ -27,7 +27,7 @@ function _oscap {
     local -A opts=()
 	opts[oscap]="--version --quiet --help -V -q -h"
     opts[oscap:oval:validate]="--version --definitions --variables --syschar --results --directives --schematron"
-    opts[oscap:oval:eval]="--datastream-id --oval-id --id --variables --directives --without-syschar --results --report --skip-valid --verbose --verbose-log-file"
+    opts[oscap:oval:eval]="--datastream-id --oval-id --id --variables --directives --without-syschar --results --report --skip-valid --fetch-remote-resources --verbose --verbose-log-file"
     opts[oscap:oval:analyse]="--variables --directives --verbose --verbose-log-file"
     opts[oscap:oval:collect]="--variables --verbose --verbose-log-file"
     opts[oscap:oval:generate:report]="-o --output"
@@ -43,11 +43,12 @@ function _oscap {
     opts[oscap:xccdf:generate:custom]="-o --output --stylesheet"
     opts[oscap:ds:sds-add]="--datastream-id --skip-valid"
     opts[oscap:ds:sds-compose]="--skip-valid"
-    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-valid"
+    opts[oscap:ds:sds-split]="--datastream-id --xccdf-id --skip-valid --fetch-remote-resources"
     opts[oscap:ds:rds-create]="--skip-valid"
     opts[oscap:ds:rds-split]="--report-id --skip-valid"
     opts[oscap:cvss:score]=""
     opts[oscap:cvss:describe]=""
+    opts[oscap:info]="--fetch-remote-resources"
 
     # local variables
 	local std cmd i prev

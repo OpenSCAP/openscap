@@ -697,8 +697,8 @@ bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct x
 	assert(list != NULL);
 	assert(item != NULL);
 
-    if (parent == NULL)
-        return false;
+	if (parent == NULL)
+		return false;
 
 	struct xccdf_benchmark *bench = xccdf_item_get_benchmark(parent);
 
@@ -715,7 +715,7 @@ bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct x
 	}
 	else return true;
 
-    return false;
+	return false;
 }
 
 struct xccdf_item *
