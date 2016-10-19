@@ -53,6 +53,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <strings.h>
 #include <errno.h>
 #include <assert.h>
 #include <unistd.h>
@@ -68,6 +69,9 @@
 #include <probe/option.h>
 #include <alloc.h>
 #include "common/debug_priv.h"
+
+#define RELEASENAME_MAX_SIZE	256
+#define RELEASENAME_PATTERN	"CPE_NAME=\"%255s\""
 
 struct runlevel_req {
         SEXP_t *service_name_ent;
@@ -281,6 +285,42 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **
 
 #if !defined(LINUX_DISTRO)
 # define LINUX_DISTRO generic
+
+static int parse_os_release(const char * cpe)
+{
+        struct stat st;
+        int got;
+        int ret;
+        FILE * osrelease;
+        char buf[RELEASENAME_MAX_SIZE];
+        char *releasename = &buf[0];
+        char c;
+
+        got = stat ("/etc/os-release", &st);
+        if ( got ) return (got == 0);
+
+        osrelease = fopen("/etc/os-release", "r");
+        if ( osrelease < 0 ) return (! errno);
+
+        bzero(releasename, RELEASENAME_MAX_SIZE);
+
+        got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
+        while ( got == 0 ) {
+                c = fgetc(osrelease);
+                got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
+        }
+        if ( got < 0 ) {
+                ret = !got;
+                goto done;
+        }
+
+        ret = strncmp(releasename, cpe, strlen(cpe)) == 0;
+
+done:
+        fclose(osrelease);
+        return(ret);
+}
+
 static int is_redhat (void)
 {
         struct stat st;
@@ -334,8 +374,7 @@ static int is_solaris (void)
 
 static int is_wrlinux (void)
 {
-        struct stat st;
-        return (stat ("/etc/wrlinux-release", &st) == 0 );
+	return (parse_os_release("cpe:/o:windriver:wrlinux"));
 }
 
 static int is_common (void)
