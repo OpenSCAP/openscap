@@ -65,6 +65,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 
 #undef OS_FREEBSD
 #undef OS_LINUX
@@ -96,6 +97,11 @@
 #include <string.h>
 #include <net/if.h>
 #include <arpa/inet.h>
+#include <pcre.h>
+#include <sys/types.h>
+
+#define MAX_ENTRY_SIZE  256
+#define MAX_BUFFER_SIZE 4096
 
 static int fd=-1;
 
@@ -334,6 +340,145 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
+static char * _offline_chroot_get_menuentry(int entry_num)
+{
+	FILE *fp;
+	pcre *re;
+	const char *error;
+	char *ptr, grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
+	int erroffset, rc, ovector[30] = { 0 }, len;
+
+	fp = fopen("/boot/grub2/grub.cfg", "r");
+	if (fp == NULL)
+		return NULL;
+
+	while ((len = fread(grubcfg, 1, MAX_BUFFER_SIZE, fp)) > 0) {
+		if (ferror(fp))
+			return NULL;
+
+		memset(ovector, 0, sizeof(ovector));
+		do {
+			re = pcre_compile("(?<=menuentry ').*?(?=')", 0, &error, &erroffset, NULL);
+			rc = pcre_exec(re, NULL, grubcfg, len, ovector[1], 0, ovector, 30);
+			if (rc > 0)
+				entry_num--;
+		} while (rc > 0 && entry_num > 0);
+
+		if (entry_num == 0)
+			break;
+	}
+
+	pcre_free(re);
+	if (rc == PCRE_ERROR_NOMATCH)
+		return NULL;
+
+	grubcfg[ovector[1]] = '\0';
+	ptr = grubcfg + ovector[0];
+	return strdup(ptr);
+}
+
+static char * _offline_chroot_get_os_version(char *os)
+{
+	char *ptr;
+
+	if (os == NULL)
+		return NULL;
+
+	ptr = strchr(os, ' ');
+	if (ptr)
+		*ptr++ = '\0';
+
+	return ptr;
+}
+
+static char * _offline_chroot_get_arch(char *os)
+{
+	pcre *re;
+	const char *error;
+	int erroffset, rc, ovector[30] = { 0 };
+	char *ptr;
+	size_t len;
+
+	if (os == NULL)
+		return NULL;
+
+	/* Check if grubenv is a menuentry # or identifier */
+	re = pcre_compile("(?<=\.)i386|i686|x86_64|ia64|alpha|amd64|arm|armeb|armel|hppa|m32r"
+			"|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc",
+			 0, &error, &erroffset, NULL);
+	rc = pcre_exec(re, NULL, os, strlen(os), 0, 0, ovector, 30);
+	pcre_free(re);
+
+	if (rc == PCRE_ERROR_NOMATCH)
+		return NULL;
+
+	len = ovector[1] - ovector[0];
+	ptr = malloc(sizeof(char) * len + 1);
+	if (ptr == NULL)
+		return NULL;
+	ptr = strncpy(ptr, os + ovector[0], len);
+	ptr[len] = '\0';
+	return ptr;
+}
+
+static char * _offline_chroot_get_os_name(void)
+{
+	FILE *fp;
+	pcre *re;
+	const char *error;
+	int erroffset, rc, nr, ovector[30] = { 0 };
+	char saved_entry[MAX_ENTRY_SIZE+1], *ptr;
+
+	fp = fopen("/boot/grub2/grubenv", "r");
+	if (fp == NULL)
+		return NULL;
+
+	fread(saved_entry, MAX_ENTRY_SIZE, 1, fp);
+	if (ferror(fp))
+		return NULL;
+
+	/* Check if grubenv is a menuentry # or identifier */
+	re = pcre_compile("(?<=saved_entry=)[0-9]+", 0, &error, &erroffset, NULL);
+	rc = pcre_exec(re, NULL, saved_entry, strlen(saved_entry), 0, 0, ovector, 30);
+	pcre_free(re);
+
+	if (rc != PCRE_ERROR_NOMATCH) {	// The saved entry is an entry id for grub.cfg
+		saved_entry[ovector[1]] = '\0';
+		ptr = saved_entry + ovector[0];
+		nr = atoi(ptr);
+		return _offline_chroot_get_menuentry(nr);
+	}
+
+	re = pcre_compile("(?<=saved_entry=).*", 0, &error, &erroffset, NULL);
+	rc = pcre_exec(re, NULL, saved_entry, strlen(saved_entry), 0, 0, ovector, 30);
+	pcre_free(re);
+
+	if (rc != PCRE_ERROR_NOMATCH) { // Saved entry is os version already, use it
+		saved_entry[ovector[1]] = '\0';
+		ptr = saved_entry + ovector[0];
+		return strdup(ptr);
+	}
+
+	return NULL;
+}
+
+static char * _offline_chroot_get_hname(void)
+{
+	FILE *fp;
+	char hname[HOST_NAME_MAX+1] = { '\0' };
+
+	fp = fopen("/etc/hostname", "r");
+	if (fp == NULL)
+		return NULL;
+
+	fread(hname, HOST_NAME_MAX, 1, fp);
+	if (ferror(fp))
+		return NULL;
+
+	hname[strcspn(hname, "\n")] = '\0';
+	return strdup(hname);
+}
+
 void *probe_init(void)
 {
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
@@ -347,7 +492,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 	struct utsname sname;
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 	(void)arg;
+	char unknown[] = "Unknown";
 
+	os_name = os_version = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
 	if (offline_mode == PROBE_OFFLINE_NONE) {
@@ -358,22 +505,31 @@ int probe_main(probe_ctx *ctx, void *arg)
 		os_version = sname.version;
 		architecture = sname.machine;
 		hname = sname.nodename;
-	} else {
-		os_name = getenv("OSCAP_PROBE_OS_NAME");
-		os_version = getenv("OSCAP_PROBE_OS_VERSION");
-		architecture = getenv("OSCAP_PROBE_ARCHITECTURE");
-		hname = getenv("OSCAP_PROBE_PRIMARY_HOST_NAME");
+	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
+		os_name = _offline_chroot_get_os_name();
+		os_version = _offline_chroot_get_os_version(os_name);
+		architecture = _offline_chroot_get_arch(os_version);
+		hname = _offline_chroot_get_hname();
+	}
 
-		/* All four elements are required */
-		if (!os_name || !os_version || !architecture || !hname) {
-			return PROBE_ENOVAL;
-		}
-		if (__sysinfo_saneval(os_name) < 1 ||
-			__sysinfo_saneval(os_version) < 1 ||
-			__sysinfo_saneval(architecture) < 1 ||
-			__sysinfo_saneval(hname) < 1) {
-			return PROBE_EINVAL;
-		}
+	/* All four elements are required */
+	if (!os_name)
+		os_name = unknown;
+
+	if (!os_version)
+		os_version = unknown;
+
+	if (!architecture)
+		architecture = unknown;
+
+	if (!hname)
+		hname = unknown;
+
+	if (__sysinfo_saneval(os_name) < 1 ||
+		__sysinfo_saneval(os_version) < 1 ||
+		__sysinfo_saneval(architecture) < 1 ||
+		__sysinfo_saneval(hname) < 1) {
+		return PROBE_EINVAL;
 	}
 
 	item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
@@ -383,7 +539,15 @@ int probe_main(probe_ctx *ctx, void *arg)
 	                         "primary_host_name", OVAL_DATATYPE_STRING, hname,
 	                         NULL);
 
-	if (!offline_mode) {
+	if (offline_mode) {
+		if (os_name != unknown)
+			free(os_name);
+		// Don't free os_version, it shares same memory from os_name!
+		if (architecture != unknown)
+			free(architecture);
+		if (hname != unknown)
+			free(hname);
+	} else {
 		if (get_ifs(item)) {
 			SEXP_free(item);
 			return PROBE_EUNKNOWN;
