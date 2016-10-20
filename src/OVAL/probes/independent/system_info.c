@@ -344,20 +344,22 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 {
 	FILE *fp;
 	pcre *re;
-	const char *error;
-	char *ptr, grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
-	int erroffset, rc, ovector[30] = { 0 }, len;
+	char *ptr, *ret = NULL;
+	char grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
+	int rc, ovector[30] = { 0 }, len;
 
 	fp = fopen("/boot/grub2/grub.cfg", "r");
 	if (fp == NULL)
-		return NULL;
+		goto fail;
 
 	while ((len = fread(grubcfg, 1, MAX_BUFFER_SIZE, fp)) > 0) {
 		if (ferror(fp))
-			return NULL;
+			goto fail2;
 
 		memset(ovector, 0, sizeof(ovector));
 		do {
+			const char *error;
+			int erroffset;
 			re = pcre_compile("(?<=menuentry ').*?(?=')", 0, &error, &erroffset, NULL);
 			rc = pcre_exec(re, NULL, grubcfg, len, ovector[1], 0, ovector, 30);
 			if (rc > 0)
@@ -370,11 +372,16 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 
 	pcre_free(re);
 	if (rc == PCRE_ERROR_NOMATCH)
-		return NULL;
+		goto fail2;
 
 	grubcfg[ovector[1]] = '\0';
-	ptr = grubcfg + ovector[0];
-	return strdup(ptr);
+	ret = strdup(grubcfg + ovector[0]);
+
+fail2:
+	fclose(fp);
+
+fail:
+	return ret;
 }
 
 static char * _offline_chroot_get_os_version(char *os)
@@ -397,7 +404,6 @@ static char * _offline_chroot_get_arch(char *os)
 	const char *error;
 	int erroffset, rc, ovector[30] = { 0 };
 	char *ptr;
-	size_t len;
 
 	if (os == NULL)
 		return NULL;
@@ -412,7 +418,7 @@ static char * _offline_chroot_get_arch(char *os)
 	if (rc == PCRE_ERROR_NOMATCH)
 		return NULL;
 
-	len = ovector[1] - ovector[0];
+	size_t len = ovector[1] - ovector[0];
 	ptr = malloc(sizeof(char) * len + 1);
 	if (ptr == NULL)
 		return NULL;
@@ -426,16 +432,17 @@ static char * _offline_chroot_get_os_name(void)
 	FILE *fp;
 	pcre *re;
 	const char *error;
-	int erroffset, rc, nr, ovector[30] = { 0 };
-	char saved_entry[MAX_ENTRY_SIZE+1], *ptr;
+	int erroffset, rc, ovector[30] = { 0 };
+	char saved_entry[MAX_ENTRY_SIZE+1];
+	char *ptr, *ret = NULL;
 
 	fp = fopen("/boot/grub2/grubenv", "r");
 	if (fp == NULL)
-		return NULL;
+		goto fail;
 
 	fread(saved_entry, MAX_ENTRY_SIZE, 1, fp);
 	if (ferror(fp))
-		return NULL;
+		goto finish;
 
 	/* Check if grubenv is a menuentry # or identifier */
 	re = pcre_compile("(?<=saved_entry=)[0-9]+", 0, &error, &erroffset, NULL);
@@ -445,8 +452,9 @@ static char * _offline_chroot_get_os_name(void)
 	if (rc != PCRE_ERROR_NOMATCH) {	// The saved entry is an entry id for grub.cfg
 		saved_entry[ovector[1]] = '\0';
 		ptr = saved_entry + ovector[0];
-		nr = atoi(ptr);
-		return _offline_chroot_get_menuentry(nr);
+		int nr = atoi(ptr);
+		ret = _offline_chroot_get_menuentry(nr);
+		goto finish;
 	}
 
 	re = pcre_compile("(?<=saved_entry=).*", 0, &error, &erroffset, NULL);
@@ -456,27 +464,38 @@ static char * _offline_chroot_get_os_name(void)
 	if (rc != PCRE_ERROR_NOMATCH) { // Saved entry is os version already, use it
 		saved_entry[ovector[1]] = '\0';
 		ptr = saved_entry + ovector[0];
-		return strdup(ptr);
+		ret = strdup(ptr);
+		goto finish;
 	}
 
-	return NULL;
+finish:
+	fclose(fp);
+
+fail:
+	return ret;
 }
 
 static char * _offline_chroot_get_hname(void)
 {
 	FILE *fp;
 	char hname[HOST_NAME_MAX+1] = { '\0' };
+	char *ret = NULL;
 
 	fp = fopen("/etc/hostname", "r");
 	if (fp == NULL)
-		return NULL;
+		goto fail;
 
 	fread(hname, HOST_NAME_MAX, 1, fp);
 	if (ferror(fp))
-		return NULL;
+		goto finish;
 
 	hname[strcspn(hname, "\n")] = '\0';
-	return strdup(hname);
+	ret = strdup(hname);
+
+finish:
+	fclose(fp);
+fail:
+	return ret;
 }
 
 void *probe_init(void)
