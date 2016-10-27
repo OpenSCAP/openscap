@@ -129,6 +129,11 @@ Authors:
     </xsl:attribute>
   </xsl:template>
 
+  <!-- Change style from SCAP_1.1 to SCAP_1.2 -->
+  <xsl:template match="@style[parent::xccdf_11:Benchmark][.='SCAP_1.1']">
+    <xsl:attribute name="style">SCAP_1.2</xsl:attribute>
+  </xsl:template>
+
   <!-- idrefs -->
   <!-- we want to migrate all @idrefs except platform's, we don't migrate requires/@idref here, it's handled elsewhere -->
   <xsl:template match="@idref[parent::xccdf_11:*][not(parent::xccdf_11:platform)][not(parent::xccdf_11:requires)]">
