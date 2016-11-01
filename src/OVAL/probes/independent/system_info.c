@@ -101,6 +101,7 @@
 
 #if defined USE_REGEX_PCRE
 #include <pcre.h>
+#define _REGEX_RES_VECSIZE     3
 #define _REGEX_MENUENTRY       "(?<=menuentry ').*?(?=')"
 #define _REGEX_SAVED_ENTRY_NR  "(?<=saved_entry=)[0-9]+"
 #define _REGEX_SAVED_ENTRY     "(?<=saved_entry=).*"
@@ -113,7 +114,6 @@
 #define _REGEX_ARCH            "\\.(i386|i686|x86_64|ia64|alpha|amd64|arm|armeb|armel|hppa|m32r" \
 		               "|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc)"
 #endif
-#define _REGEX_RES_VECSIZE     3
 #define MAX_ENTRY_SIZE         256
 #define MAX_BUFFER_SIZE        4096
 
@@ -628,10 +628,10 @@ int probe_main(probe_ctx *ctx, void *arg)
 	SEXP_t* item;
 	char* os_name, *architecture, *hname;
 	const char *os_version = NULL;
+	const char unknown[] = "Unknown";
 	struct utsname sname;
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 	(void)arg;
-	char unknown[] = "Unknown";
 
 	os_name = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
@@ -653,16 +653,17 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	/* All four elements are required */
 	if (!os_name)
-		os_name = unknown;
+		os_name = strdup(unknown);
 
+	// os_version kept static as it shared memory with os_name if os_name exists
 	if (!os_version)
 		os_version = unknown;
 
 	if (!architecture)
-		architecture = unknown;
+		architecture = strdup(unknown);
 
 	if (!hname)
-		hname = unknown;
+		hname = strdup(unknown);
 
 	if (__sysinfo_saneval(os_name) < 1 ||
 		__sysinfo_saneval(os_version) < 1 ||
@@ -679,12 +680,12 @@ int probe_main(probe_ctx *ctx, void *arg)
 	                         NULL);
 
 	if (offline_mode) {
-		if (os_name != unknown)
+		if (os_name)
 			free(os_name);
 		// Don't free os_version, it shares same memory from os_name!
-		if (architecture != unknown)
+		if (architecture)
 			free(architecture);
-		if (hname != unknown)
+		if (hname)
 			free(hname);
 	} else {
 		if (get_ifs(item)) {
