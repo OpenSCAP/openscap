@@ -65,6 +65,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 
 #undef OS_FREEBSD
 #undef OS_LINUX
@@ -96,6 +97,25 @@
 #include <string.h>
 #include <net/if.h>
 #include <arpa/inet.h>
+#include <sys/types.h>
+
+#if defined USE_REGEX_PCRE
+#include <pcre.h>
+#define _REGEX_RES_VECSIZE     3
+#define _REGEX_MENUENTRY       "(?<=menuentry ').*?(?=')"
+#define _REGEX_SAVED_ENTRY_NR  "(?<=saved_entry=)[0-9]+"
+#define _REGEX_SAVED_ENTRY     "(?<=saved_entry=).*"
+#define _REGEX_ARCH            "(?<=\\.)i386|i686|x86_64|ia64|alpha|amd64|arm|armeb|armel|hppa|m32r" \
+		               "|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc"
+#elif defined USE_REGEX_POSIX
+#include <regex.h>
+#define _REGEX_MENUENTRY       "^menuentry '.*'"
+#define _REGEX_SAVED_ENTRY     "^saved_entry=.*"
+#define _REGEX_ARCH            "\\.(i386|i686|x86_64|ia64|alpha|amd64|arm|armeb|armel|hppa|m32r" \
+		               "|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc)"
+#endif
+#define MAX_ENTRY_SIZE         256
+#define MAX_BUFFER_SIZE        4096
 
 static int fd=-1;
 
@@ -334,6 +354,269 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
+static char * _offline_chroot_get_menuentry(int entry_num)
+{
+	FILE *fp;
+	char *ret = NULL;
+	char grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
+	int len, rc;
+
+	fp = fopen("/boot/grub2/grub.cfg", "r");
+	if (fp == NULL)
+		goto fail;
+
+#ifdef USE_REGEX_PCRE
+	int erroffset, ovec[_REGEX_RES_VECSIZE];
+	const char *error;
+	pcre *re;
+	re = pcre_compile(_REGEX_MENUENTRY, 0, &error, &erroffset, NULL);
+
+	if (re == NULL)
+		goto fail2;
+
+	while ((len = fread(grubcfg, 1, MAX_BUFFER_SIZE, fp)) > 0) {
+		if (ferror(fp)) {
+			pcre_free(re);
+			goto fail2;
+		}
+
+		memset(ovec, 0, sizeof(ovec));
+		do {
+			rc = pcre_exec(re, NULL, grubcfg, len, ovec[1], 0, ovec, _REGEX_RES_VECSIZE);
+			if (rc > 0)
+				entry_num--;
+		} while (rc > 0 && entry_num > 0);
+
+		if (entry_num == 0)
+			break;
+	}
+	pcre_free(re);
+
+	if (rc == PCRE_ERROR_NOMATCH)
+		goto fail2;
+
+	grubcfg[ovec[1]] = '\0';
+	ret = strdup(grubcfg + ovec[0]);
+#elif defined USE_REGEX_POSIX
+	regex_t preg;
+	regmatch_t pmatch[1];
+
+	rc = regcomp(&preg, _REGEX_MENUENTRY, REG_EXTENDED|REG_NEWLINE);
+	if (rc)
+		goto fail2;
+
+	while ((len = fread(grubcfg, 1, MAX_BUFFER_SIZE, fp)) > 0) {
+		if (ferror(fp)) {
+			regfree(&preg);
+			goto fail2;
+		}
+
+		do {
+			rc = regexec(&preg, grubcfg, 1, pmatch, 0);
+			if (rc == 0)
+				entry_num--;
+		} while (rc == 0 && entry_num > 0);
+
+		if (entry_num == 0)
+			break;
+	}
+	regfree(&preg);
+
+	/* End string at first ' character ocurrance or matched string end  */
+	char *ptr = grubcfg + pmatch->rm_so + sizeof("menuentry '") - 1;
+	char *replace = strstr(ptr, "'");
+	if (replace)
+		*replace = '\0';
+	grubcfg[pmatch->rm_eo] = '\0';
+
+	ret = strdup(ptr);
+#endif
+fail2:
+	fclose(fp);
+fail:
+	return ret;
+}
+
+static const char * _offline_chroot_get_os_version(char *os)
+{
+	char *ptr;
+
+	if (os == NULL)
+		return NULL;
+
+	ptr = strchr(os, ' ');
+	if (ptr)
+		*ptr++ = '\0';
+
+	return ptr;
+}
+
+static char * _offline_chroot_get_arch(const char *os)
+{
+	int rc;
+	char *ptr = NULL;
+
+	if (os == NULL)
+		return NULL;
+
+#ifdef USE_REGEX_PCRE
+	int erroffset, ovec[_REGEX_RES_VECSIZE] = { 0 };
+	const char *error;
+	pcre *re;
+
+	re = pcre_compile(_REGEX_ARCH, 0, &error, &erroffset, NULL);
+	if (re == NULL)
+		return NULL;
+
+	rc = pcre_exec(re, NULL, os, strlen(os), 0, 0, ovec, _REGEX_RES_VECSIZE);
+	if (rc == PCRE_ERROR_NOMATCH)
+		goto fail;
+
+	size_t len = ovec[1] - ovec[0];
+	ptr = malloc(sizeof(char) * len + 1);
+	if (ptr == NULL)
+		goto fail;
+	ptr = strncpy(ptr, os + ovec[0], len);
+	ptr[len] = '\0';
+fail:
+	pcre_free(re);
+	return ptr;
+#elif defined USE_REGEX_POSIX
+	regex_t preg;
+	regmatch_t pmatch[1];
+
+	rc = regcomp(&preg, _REGEX_ARCH, REG_EXTENDED|REG_NEWLINE);
+	if (rc)
+		goto fail2;
+
+	rc = regexec(&preg, os, 1, pmatch, 0);
+	if (rc) {
+		regfree(&preg);
+		goto fail2;
+	}
+
+	size_t len = pmatch->rm_eo - pmatch->rm_so - 1; // Skip '.' char
+	ptr = malloc(sizeof(char) * len + 1);
+	if (ptr == NULL)
+		goto fail2;
+	ptr = strncpy(ptr, os + pmatch->rm_so+1, len);
+	ptr[len] = '\0';
+fail2:
+	regfree(&preg);
+	return ptr;
+#endif
+}
+
+static char * _offline_chroot_get_os_name(void)
+{
+	FILE *fp;
+	int rc;
+	char saved_entry[MAX_ENTRY_SIZE+1];
+	char *ptr, *ret = NULL;
+
+	fp = fopen("/boot/grub2/grubenv", "r");
+	if (fp == NULL)
+		goto fail;
+
+	fread(saved_entry, MAX_ENTRY_SIZE, 1, fp);
+	if (ferror(fp))
+		goto finish;
+
+#ifdef USE_REGEX_PCRE
+	size_t len;
+	int erroffset, ovec[_REGEX_RES_VECSIZE] = { 0 };
+	const char *error;
+	pcre *re;
+
+	re = pcre_compile(_REGEX_SAVED_ENTRY_NR, 0, &error, &erroffset, NULL);
+	if (re == NULL)
+		goto finish;
+
+	len = strlen(saved_entry);
+
+	rc = pcre_exec(re, NULL, saved_entry, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
+	if (rc > 0) {
+		saved_entry[ovec[1]] = '\0';
+		ptr = saved_entry + ovec[0];
+		int nr = atoi(ptr);
+		ret = _offline_chroot_get_menuentry(nr);
+		pcre_free(re);
+		goto finish;
+	}
+
+	re = pcre_compile(_REGEX_SAVED_ENTRY, 0, &error, &erroffset, NULL);
+	if (re == NULL)
+		goto finish;
+
+	rc = pcre_exec(re, NULL, saved_entry, len, 0, 0, ovec, _REGEX_RES_VECSIZE);
+	if (rc > 0) {
+		saved_entry[ovec[1]] = '\0';
+		ptr = saved_entry + ovec[0];
+		ret = strdup(ptr);
+		pcre_free(re);
+		goto finish;
+	}
+#elif defined USE_REGEX_POSIX
+	regex_t preg;
+	regmatch_t pmatch[1];
+
+	rc = regcomp(&preg, _REGEX_SAVED_ENTRY, REG_EXTENDED|REG_NEWLINE);
+	if (rc)
+		goto finish;
+
+	rc = regexec(&preg, saved_entry, 1, pmatch, 0);
+	if (rc) {
+		regfree(&preg);
+		goto finish;
+	}
+
+	ptr = saved_entry + pmatch->rm_so + sizeof("saved_entry=")-1;
+	saved_entry[pmatch->rm_eo] = '\0';
+
+	/* Check if we got an entry # in grub.cfg or a name we can use */
+	for (char *tmp = ptr; *tmp; tmp++) {
+		if (!isdigit(*tmp)) {
+			ret = strdup(ptr);
+			break;
+		}
+	}
+
+	if (ret == NULL) { // Saved entry is all digits, so we need to inspect grub.cfg
+		int nr = atoi(ptr);
+		ret = _offline_chroot_get_menuentry(nr);
+	}
+
+	regfree(&preg);
+#endif
+finish:
+	fclose(fp);
+fail:
+	return ret;
+}
+
+static char * _offline_chroot_get_hname(void)
+{
+	FILE *fp;
+	char hname[HOST_NAME_MAX+1] = { '\0' };
+	char *ret = NULL;
+
+	fp = fopen("/etc/hostname", "r");
+	if (fp == NULL)
+		goto fail;
+
+	fread(hname, HOST_NAME_MAX, 1, fp);
+	if (ferror(fp))
+		goto finish;
+
+	hname[strcspn(hname, "\n")] = '\0';
+	ret = strdup(hname);
+
+finish:
+	fclose(fp);
+fail:
+	return ret;
+}
+
 void *probe_init(void)
 {
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
@@ -343,11 +626,14 @@ void *probe_init(void)
 int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t* item;
-	char* os_name, *os_version, *architecture, *hname;
+	char* os_name, *architecture, *hname;
+	const char *os_version = NULL;
+	const char unknown[] = "Unknown";
 	struct utsname sname;
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 	(void)arg;
 
+	os_name = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
 	if (offline_mode == PROBE_OFFLINE_NONE) {
@@ -358,22 +644,32 @@ int probe_main(probe_ctx *ctx, void *arg)
 		os_version = sname.version;
 		architecture = sname.machine;
 		hname = sname.nodename;
-	} else {
-		os_name = getenv("OSCAP_PROBE_OS_NAME");
-		os_version = getenv("OSCAP_PROBE_OS_VERSION");
-		architecture = getenv("OSCAP_PROBE_ARCHITECTURE");
-		hname = getenv("OSCAP_PROBE_PRIMARY_HOST_NAME");
+	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
+		os_name = _offline_chroot_get_os_name();
+		os_version = _offline_chroot_get_os_version(os_name);
+		architecture = _offline_chroot_get_arch(os_version);
+		hname = _offline_chroot_get_hname();
+	}
 
-		/* All four elements are required */
-		if (!os_name || !os_version || !architecture || !hname) {
-			return PROBE_ENOVAL;
-		}
-		if (__sysinfo_saneval(os_name) < 1 ||
-			__sysinfo_saneval(os_version) < 1 ||
-			__sysinfo_saneval(architecture) < 1 ||
-			__sysinfo_saneval(hname) < 1) {
-			return PROBE_EINVAL;
-		}
+	/* All four elements are required */
+	if (!os_name)
+		os_name = strdup(unknown);
+
+	// os_version kept static as it shared memory with os_name if os_name exists
+	if (!os_version)
+		os_version = unknown;
+
+	if (!architecture)
+		architecture = strdup(unknown);
+
+	if (!hname)
+		hname = strdup(unknown);
+
+	if (__sysinfo_saneval(os_name) < 1 ||
+		__sysinfo_saneval(os_version) < 1 ||
+		__sysinfo_saneval(architecture) < 1 ||
+		__sysinfo_saneval(hname) < 1) {
+		return PROBE_EINVAL;
 	}
 
 	item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
@@ -383,7 +679,15 @@ int probe_main(probe_ctx *ctx, void *arg)
 	                         "primary_host_name", OVAL_DATATYPE_STRING, hname,
 	                         NULL);
 
-	if (!offline_mode) {
+	if (offline_mode) {
+		if (os_name)
+			free(os_name);
+		// Don't free os_version, it shares same memory from os_name!
+		if (architecture)
+			free(architecture);
+		if (hname)
+			free(hname);
+	} else {
 		if (get_ifs(item)) {
 			SEXP_free(item);
 			return PROBE_EUNKNOWN;
