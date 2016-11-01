@@ -515,13 +515,14 @@ static int _acquire_xccdf_checklist_from_tailoring(struct xccdf_session* session
 	struct oscap_source *tailoring_source = oscap_source_new_from_xmlDoc(tailoring_xmlDoc, NULL);
 	struct xccdf_tailoring* tailoring = xccdf_tailoring_import_source(tailoring_source, NULL);
 	if (tailoring == NULL) {
-		xmlFree(tailoring_xmlDoc);
+		/* Freeing tailoring_source also frees the tailoring_xmlDoc used to create the source */
+		oscap_source_free(tailoring_source);
 		return 1;
 	}
 	const char *benchmark_ref = oscap_strdup(xccdf_tailoring_get_benchmark_ref(tailoring));
 	xccdf_tailoring_free(tailoring);
 	if (benchmark_ref == NULL) {
-		xmlFree(tailoring_xmlDoc);
+		oscap_source_free(tailoring_source);
 		return 1;
 	}
 
@@ -541,7 +542,7 @@ static int _acquire_xccdf_checklist_from_tailoring(struct xccdf_session* session
 				oscap_seterr(OSCAP_EFAMILY_OSCAP,
 						"The referenced component is a datastream, but no datastream component was specified.");
 				oscap_source_free(external_file);
-				xmlFree(tailoring_xmlDoc);
+				oscap_source_free(tailoring_source);
 				oscap_free(benchmark_ref);
 				return 1;
 			}
@@ -561,7 +562,7 @@ static int _acquire_xccdf_checklist_from_tailoring(struct xccdf_session* session
 	if (xccdf_source == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 				"Could not find benchmark referenced from tailoring as '%s'.", benchmark_ref);
-		xmlFree(tailoring_xmlDoc);
+		oscap_source_free(tailoring_source);
 		oscap_free(benchmark_ref);
 		return 1;
 	}
