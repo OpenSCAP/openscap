@@ -171,10 +171,14 @@ Authors:
 
             <td style="padding-left: {$indent * 19}px">
                 <h4>
+                    <xsl:attribute name="id">
+                        <xsl:value-of select="$item/@id"/>
+                    </xsl:attribute>
                     <xsl:call-template name="item-title">
                         <xsl:with-param name="item" select="$item"/>
                         <xsl:with-param name="profile" select="$profile"/>
                     </xsl:call-template>
+                    &#160;&#160;<a class="small" href="{concat('#', $item/@id)}">[ref]</a>
                     <span class="label label-default pull-right">rule</span>
                 </h4>
 
@@ -317,15 +321,14 @@ Authors:
 
                 <td style="padding-left: {$indent * 19}px">
                     <h3>
-                        <xsl:if test="$indent=1 or $indent=2">
-                            <xsl:attribute name="id">
-                                <xsl:value-of select="$item/@id"/>
-                            </xsl:attribute>
-                        </xsl:if>
+                        <xsl:attribute name="id">
+                            <xsl:value-of select="$item/@id"/>
+                        </xsl:attribute>
                         <xsl:call-template name="item-title">
                             <xsl:with-param name="item" select="$item"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:call-template>
+                        &#160;&#160;<a class="small" href="{concat('#', $item/@id)}">[ref]</a>
                         <span class="label label-default pull-right">group</span>
                     </h3>
 
