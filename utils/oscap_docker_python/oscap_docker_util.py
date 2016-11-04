@@ -119,19 +119,19 @@ class OscapHelpers(object):
         os.environ["OSCAP_PROBE_"
                    "PRIMARY_HOST_NAME"] = "{0}-{1}".format(target, image)
         cmd = ['oscap'] + [x for x in oscap_args]
-        try:
-            run = subprocess.check_output(cmd)
-        except Exception as error:
-            print("\nCommand: {0} failed!\n".format(" ".join(cmd)))
-            print("Error was:\n")
-            print(error)
+        oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        oscap_stdout, oscap_stderr = oscap_process.communicate()
+        if oscap_process.returncode not in [0, 2]:
+            sys.stderr.write("\nCommand: {0} failed!\n".format(" ".join(cmd)))
+            sys.stderr.write("Command returned exit code {0}.\n".format(oscap_process.returncode))
+            sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
 
             # Clean up
             self._cleanup_by_path(chroot_path)
 
             sys.exit(1)
 
-        return run.decode("utf-8")
+        return oscap_stdout.decode("utf-8")
 
     def _scan_cve(self, chroot, dist, scan_args):
         '''

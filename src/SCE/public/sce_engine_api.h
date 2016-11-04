@@ -63,7 +63,7 @@ const char* sce_check_result_get_basename(struct sce_check_result* v);
 /**
  * Sets stdout that was captured while script was evaluating
  *
- * @param stdout should contain output from both stdout and stderr (interleaved)
+ * @param stdout should contain output only from stdout
  * @memberof sce_check_result
  */
 void sce_check_result_set_stdout(struct sce_check_result* v, const char* details);
@@ -72,6 +72,19 @@ void sce_check_result_set_stdout(struct sce_check_result* v, const char* details
  * @memberof sce_check_result
  */
 const char* sce_check_result_get_stdout(struct sce_check_result* v);
+
+/**
+ * Sets stderr that was captured while script was evaluating
+ *
+ * @param stderr should contain output only from stderr
+ * @memberof sce_check_result
+ */
+void sce_check_result_set_stderr(struct sce_check_result* v, const char* details);
+
+/**
+ * @memberof sce_check_result
+ */
+const char* sce_check_result_get_stderr(struct sce_check_result* v);
 
 /**
  * Sets exit code with which the script ended execution after evaluation
