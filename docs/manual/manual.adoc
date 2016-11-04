@@ -1,6 +1,4 @@
 = OpenSCAP User Manual
-Michal Šrubař <msrubar@redhat.com>
-v1.0, 2015-31-08
 :imagesdir: ./images
 :workbench_url: https://www.open-scap.org/tools/scap-workbench/
 :sce_web:       https://www.open-scap.org/features/other-standards/sce/
