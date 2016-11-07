@@ -124,7 +124,7 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
 
         b_idx = spb_bindex (spb, start);
 
-        if (b_idx < spb->btotal) {
+        if (b_idx < spb->btotal || (b_idx == spb->btotal && size == 0)) {
                 size_t l_off;
                 size_t l_len;
 
