@@ -51,19 +51,6 @@
                         <criterion comment="Red Hat Enterprise Linux 6 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:6"/>
                   </criteria>
             </definition>
-            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:2006" version="1">
-                  <metadata>
-                        <title>Red Hat Enterprise Linux 6 ComputeNode</title>
-                        <affected family="unix">
-                              <platform>Red Hat Enterprise Linux 6 ComputeNode</platform>
-                        </affected>
-                        <reference ref_id="cpe:/o:redhat:enterprise_linux:6::computenode" source="CPE"/>
-                        <description>The operating system installed on the system is Red Hat Enterprise Linux 6 ComputeNode</description>
-                  </metadata>
-                  <criteria>
-                        <criterion comment="Red Hat Enterprise Linux 6 ComputeNode is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:2006"/>
-                  </criteria>
-            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:7" version="1">
                   <metadata>
                         <title>Red Hat Enterprise Linux 7</title>
@@ -75,19 +62,6 @@
                   </metadata>
                   <criteria>
                         <criterion comment="Red Hat Enterprise Linux 7 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:7"/>
-                  </criteria>
-            </definition>
-            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:2007" version="1">
-                  <metadata>
-                        <title>Red Hat Enterprise Linux 7 ComputeNode</title>
-                        <affected family="unix">
-                              <platform>Red Hat Enterprise Linux 7 ComputeNode</platform>
-                        </affected>
-                        <reference ref_id="cpe:/o:redhat:enterprise_linux:7::computenode" source="CPE"/>
-                        <description>The operating system installed on the system is Red Hat Enterprise Linux 7 ComputeNode</description>
-                  </metadata>
-                  <criteria>
-                        <criterion comment="Red Hat Enterprise Linux 7 ComputeNode is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:2007"/>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1005" version="1">
@@ -505,21 +479,11 @@
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:6"/>
             </rpmverifyfile_test>
-            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2006" version="1" check="at least one" comment="redhat-release-computenode is version 6"
-                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:4"/>
-                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:2006"/>
-            </rpminfo_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:7" version="1" check="at least one" comment="redhat-release is version 7"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:7"/>
             </rpmverifyfile_test>
-            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2007" version="1" check="at least one" comment="redhat-release-computenode is version 7"
-                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:4"/>
-                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:2007"/>
-            </rpminfo_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1005" version="1" check="at least one" comment="centos-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
@@ -711,9 +675,6 @@
                   <lin-def:arch operation="pattern match"/>
                   <lin-def:filepath>/etc/redhat-release</lin-def:filepath>
             </lin-def:rpmverifyfile_object>
-            <lin-def:rpminfo_object id="oval:org.open-scap.cpe.redhat-release:obj:4" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <lin-def:name>redhat-release-computenode</lin-def:name>
-            </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.sles-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <lin-def:name>sles-release</lin-def:name>
             </lin-def:rpminfo_object>
@@ -752,16 +713,10 @@
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^6[^\d]</version>
             </rpmverifyfile_state>
-            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:2006" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <version operation="pattern match">^6[^\d]</version>
-            </rpminfo_state>
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^7[^\d]</version>
             </rpmverifyfile_state>
-            <rpminfo_state id="oval:org.open-scap.cpe.rhel:ste:2007" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <version operation="pattern match">^7[^\d]</version>
-            </rpminfo_state>
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:1005" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^centos-release</name>
                   <version operation="pattern match">^5</version>
