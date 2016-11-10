@@ -89,6 +89,8 @@ struct xccdf_session {
 		char *product_cpe;			///< CPE of scanner product.
 		struct oscap_source* arf_report;	///< ARF report
 		struct oscap_htable *result_sources;    ///< mapping 'filepath' to oscap_source for OVAL results
+		struct oscap_htable *results_mapping;    ///< mapping OVAL filename to filepath for OVAL results
+		struct oscap_htable *arf_report_mapping;    ///< mapping OVAL filename to ARF report ID for OVAL results
 	} oval;
 	struct {
 		char *arf_file;				///< Path to ARF file to export
@@ -260,6 +262,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_source_free(session->source);
 	oscap_source_free(session->tailoring.user_file);
 	oscap_free(session->tailoring.user_component_id);
+	oscap_htable_free(session->oval.results_mapping, (oscap_destruct_func) oscap_free);
+	oscap_htable_free(session->oval.arf_report_mapping, (oscap_destruct_func) oscap_free);
 	oscap_free(session);
 }
 
@@ -1300,6 +1304,8 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 
 	/* Export OVAL results */
 	session->oval.result_sources = oscap_htable_new();
+	session->oval.results_mapping = oscap_htable_new();
+	session->oval.arf_report_mapping = oscap_htable_new();
 	for (int i = 0; session->oval.agents[i]; i++) {
 		char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
 		if (filename == NULL) {
