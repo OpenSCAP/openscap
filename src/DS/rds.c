@@ -804,7 +804,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	}
 	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
 	oscap_htable_free(oval_result_mapping, (oscap_destruct_func) oscap_free);
-	oscap_htable_free(arf_report_mapping, (oscap_destruct_func) arf_report_mapping);
+	oscap_htable_free(arf_report_mapping, (oscap_destruct_func) oscap_free);
 	oscap_source_free(sds_source);
 	oscap_source_free(xccdf_result_source);
 
