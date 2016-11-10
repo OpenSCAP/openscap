@@ -586,7 +586,7 @@ static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const cha
 
 static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 		xmlDocPtr xccdf_result_file_doc, xmlNodePtr relationships, xmlNodePtr assets,
-		const char* report_request_id)
+		const char* report_request_id, struct oscap_htable *arf_report_mapping)
 {
 	xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
 
@@ -718,7 +718,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
 	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc,
-			relationships, assets, "collection1");
+			relationships, assets, "collection1", arf_report_mapping);
 
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(arf_report_mapping);
 	while (oscap_htable_iterator_has_more(hit)) {
