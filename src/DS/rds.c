@@ -673,7 +673,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources)
+static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
 {
 	*ret = NULL;
 
@@ -720,15 +720,16 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc,
 			relationships, assets, "collection1");
 
-	unsigned int oval_report_suffix = 2;
-	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(oval_result_sources);
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(arf_report_mapping);
 	while (oscap_htable_iterator_has_more(hit)) {
-		struct oscap_source *oval_source = oscap_htable_iterator_next_value(hit);
+		const struct oscap_htable_item *report_mapping_item = oscap_htable_iterator_next(hit);
+		char *oval_filename = report_mapping_item->key;
+		char *report_id = report_mapping_item->value;
+		char *report_file = oscap_htable_get(oval_result_mapping, oval_filename);
+		struct oscap_source *oval_source = oscap_htable_get(oval_result_sources, report_file);
 		xmlDoc *oval_result_doc = oscap_source_get_xmlDoc(oval_source);
 
-		char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
 		ds_rds_create_report(doc, reports, oval_result_doc, report_id);
-		oscap_free(report_id);
 	}
 	oscap_htable_iterator_free(hit);
 
@@ -750,7 +751,8 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 	}
 
 	xmlDocPtr rds_doc = NULL;
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_sources) != 0) {
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc,
+				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
 		return NULL;
 	}
 	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
