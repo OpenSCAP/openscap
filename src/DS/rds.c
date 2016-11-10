@@ -448,7 +448,29 @@ static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr test_
 	return 0;
 }
 
-static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePtr rule_result, char *desired_href)
+static void ds_rds_report_inject_check_content_ref(xmlNodePtr check_content_ref, struct oscap_htable *arf_report_mapping)
+{
+	if (check_content_ref->type == XML_ELEMENT_NODE) {
+		if (strcmp((const char*)check_content_ref->name, "check-content-ref") == 0) {
+			char *oval_filename = (char *) xmlGetProp(check_content_ref,
+					BAD_CAST "href");
+			if (oval_filename == NULL) {
+				return;
+			}
+			char *report_id = oscap_htable_get(arf_report_mapping, oval_filename);
+			if (report_id == NULL) {
+				oscap_free(oval_filename);
+				return;
+			}
+			char *desired_href = oscap_sprintf("#%s", report_id);
+			xmlSetProp(check_content_ref, BAD_CAST "href", BAD_CAST desired_href);
+			oscap_free(desired_href);
+			oscap_free(oval_filename);
+		}
+	}
+}
+
+static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePtr rule_result, struct oscap_htable *arf_report_mapping)
 {
 	xmlNodePtr child = rule_result->children;
 
@@ -458,12 +480,7 @@ static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePt
 				xmlNodePtr check_content_ref = child->children;
 
 				while (check_content_ref) {
-					if (check_content_ref->type == XML_ELEMENT_NODE) {
-						if (strcmp((const char*)check_content_ref->name, "check-content-ref") == 0) {
-							xmlSetProp(check_content_ref, BAD_CAST "href", BAD_CAST desired_href);
-						}
-					}
-
+					ds_rds_report_inject_check_content_ref(check_content_ref, arf_report_mapping);
 					check_content_ref = check_content_ref->next;
 				}
 			}
@@ -481,22 +498,18 @@ static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePt
  *
  * TODO: Consider dropping this functionality if 370-1 is changed / clarified.
  */
-static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test_result_node, char *report_id)
+static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test_result_node, struct oscap_htable *arf_report_mapping)
 {
-	char *desired_href = oscap_sprintf("#%s", report_id);
-
 	xmlNodePtr child = test_result_node->children;
 	while (child) {
 		if (child->type == XML_ELEMENT_NODE) {
 			if (strcmp((const char*)child->name, "rule-result") == 0) {
-				ds_rds_report_inject_rule_result_check_refs(doc, child, desired_href);
+				ds_rds_report_inject_rule_result_check_refs(doc, child, arf_report_mapping);
 			}
 		}
 
 		child = child->next;
 	}
-
-	oscap_free(desired_href);
 }
 
 static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const char *asset_id, struct oscap_htable* arf_report_mapping)
@@ -577,9 +590,7 @@ static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const cha
 
 	int ret = ds_rds_report_inject_ai_target_id_ref(doc, test_result_node, asset_id);
 
-	char *report_id = (char*)xmlGetProp(report, BAD_CAST "id");
-	ds_rds_report_inject_rule_result_refs(doc, test_result_node, report_id);
-	xmlFree(report_id);
+	ds_rds_report_inject_rule_result_refs(doc, test_result_node, arf_report_mapping);
 
 	return ret;
 }
