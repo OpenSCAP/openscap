@@ -499,7 +499,7 @@ static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test
 	oscap_free(desired_href);
 }
 
-static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const char *asset_id)
+static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const char *asset_id, struct oscap_htable* arf_report_mapping)
 {
 	xmlNodePtr content_node = ds_rds_get_inner_content(doc, report);
 
@@ -608,7 +608,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 		// We deliberately don't act on errors in inject refs as
 		// these aren't fatal errors.
-		ds_rds_report_inject_refs(doc, report, asset_id);
+		ds_rds_report_inject_refs(doc, report, asset_id, arf_report_mapping);
 
 		xmlFree(asset_id);
 	}
@@ -652,7 +652,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 			// We deliberately don't act on errors in inject ref as
 			// these aren't fatal errors.
-			ds_rds_report_inject_refs(doc, report, asset_id);
+			ds_rds_report_inject_refs(doc, report, asset_id, arf_report_mapping);
 
 			xmlFree(asset_id);
 
