@@ -738,7 +738,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	return 0;
 }
 
-struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, const char *target_file)
+struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
 {
 	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
 	if (sds_doc == NULL) {
@@ -761,6 +761,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	struct oscap_source *sds_source = oscap_source_new_from_file(sds_file);
 	struct oscap_source *xccdf_result_source = oscap_source_new_from_file(xccdf_result_file);
 	struct oscap_htable *oval_result_sources = oscap_htable_new();
+	struct oscap_htable *oval_result_mapping = oscap_htable_new();
+	struct oscap_htable *arf_report_mapping = oscap_htable_new();
 
 	int result = 0;
 	// this check is there to allow passing NULL instead of having to allocate
@@ -780,7 +782,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		}
 	}
 	if (result == 0) {
-		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, target_file);
+		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, oval_result_mapping, arf_report_mapping, target_file);
 		result = target_rds == NULL;
 		if (result == 0) {
 			result = oscap_source_save_as(target_rds, NULL);
@@ -788,6 +790,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		oscap_source_free(target_rds);
 	}
 	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
+	oscap_htable_free(oval_result_mapping, (oscap_destruct_func) oscap_free);
+	oscap_htable_free(arf_report_mapping, (oscap_destruct_func) arf_report_mapping);
 	oscap_source_free(sds_source);
 	oscap_source_free(xccdf_result_source);
 

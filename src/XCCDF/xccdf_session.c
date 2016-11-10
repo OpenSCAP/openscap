@@ -226,7 +226,7 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 		free(sds_path);
 	}
 
-	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
+	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping, session->export.arf_file);
 	if (!xccdf_session_is_sds(session)) {
 		oscap_source_free(sds_source);
 	}
