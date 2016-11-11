@@ -490,14 +490,6 @@ static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePt
 	}
 }
 
-/*
- * This function replaces all check-content-ref/@href with "#" + id of ancestor arf:report.
- * Doing this replaces potentially valuable data with a value easily calculated from the XML.
- *
- * The only reason we do this is to pass requirement 370-1.
- *
- * TODO: Consider dropping this functionality if 370-1 is changed / clarified.
- */
 static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test_result_node, struct oscap_htable *arf_report_mapping)
 {
 	xmlNodePtr child = test_result_node->children;
