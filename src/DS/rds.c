@@ -726,9 +726,9 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(arf_report_mapping);
 	while (oscap_htable_iterator_has_more(hit)) {
 		const struct oscap_htable_item *report_mapping_item = oscap_htable_iterator_next(hit);
-		char *oval_filename = report_mapping_item->key;
-		char *report_id = report_mapping_item->value;
-		char *report_file = oscap_htable_get(oval_result_mapping, oval_filename);
+		const char *oval_filename = report_mapping_item->key;
+		const char *report_id = report_mapping_item->value;
+		const char *report_file = oscap_htable_get(oval_result_mapping, oval_filename);
 		struct oscap_source *oval_source = oscap_htable_get(oval_result_sources, report_file);
 		xmlDoc *oval_result_doc = oscap_source_get_xmlDoc(oval_source);
 
