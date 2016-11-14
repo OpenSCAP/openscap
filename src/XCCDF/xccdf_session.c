@@ -89,6 +89,8 @@ struct xccdf_session {
 		char *product_cpe;			///< CPE of scanner product.
 		struct oscap_source* arf_report;	///< ARF report
 		struct oscap_htable *result_sources;    ///< mapping 'filepath' to oscap_source for OVAL results
+		struct oscap_htable *results_mapping;    ///< mapping OVAL filename to filepath for OVAL results
+		struct oscap_htable *arf_report_mapping;    ///< mapping OVAL filename to ARF report ID for OVAL results
 	} oval;
 	struct {
 		char *arf_file;				///< Path to ARF file to export
@@ -224,7 +226,7 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 		free(sds_path);
 	}
 
-	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->export.arf_file);
+	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping, session->export.arf_file);
 	if (!xccdf_session_is_sds(session)) {
 		oscap_source_free(sds_source);
 	}
@@ -260,6 +262,8 @@ void xccdf_session_free(struct xccdf_session *session)
 	oscap_source_free(session->source);
 	oscap_source_free(session->tailoring.user_file);
 	oscap_free(session->tailoring.user_component_id);
+	oscap_htable_free(session->oval.results_mapping, (oscap_destruct_func) oscap_free);
+	oscap_htable_free(session->oval.arf_report_mapping, (oscap_destruct_func) oscap_free);
 	oscap_free(session);
 }
 
@@ -1280,6 +1284,13 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 		return NULL;
 	}
 
+	static int counter = 0;
+	char *report_id = oscap_sprintf("oval%d", counter++);
+	const char *original_name = oval_agent_get_filename(oval_session);
+	char *results_file_name = oscap_strdup(name);
+	oscap_htable_add(session->oval.results_mapping, original_name, results_file_name);
+	oscap_htable_add(session->oval.arf_report_mapping, original_name, report_id);
+
 	/* validate OVAL Results */
 	if (session->validate && session->full_validation) {
 		if (oscap_source_validate(source, _reporter, NULL)) {
@@ -1300,6 +1311,8 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 
 	/* Export OVAL results */
 	session->oval.result_sources = oscap_htable_new();
+	session->oval.results_mapping = oscap_htable_new();
+	session->oval.arf_report_mapping = oscap_htable_new();
 	for (int i = 0; session->oval.agents[i]; i++) {
 		char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
 		if (filename == NULL) {
