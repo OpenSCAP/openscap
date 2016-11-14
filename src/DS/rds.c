@@ -476,7 +476,9 @@ static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePt
 
 	while (child) {
 		if (child->type == XML_ELEMENT_NODE) {
-			if (strcmp((const char*)child->name, "check") == 0) {
+			if (strcmp((const char*)child->name, "complex-check") == 0) {
+				ds_rds_report_inject_rule_result_check_refs(doc, child, arf_report_mapping);
+			} else if (strcmp((const char*)child->name, "check") == 0) {
 				xmlNodePtr check_content_ref = child->children;
 
 				while (check_content_ref) {
