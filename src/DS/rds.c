@@ -53,7 +53,6 @@
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vocabulary/relationships/1.0#";
-static const char* arfrel_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
 
 xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
@@ -608,7 +607,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 		xmlNodePtr asset = ds_rds_add_ai_from_xccdf_results(doc, assets, xccdf_result_file_doc);
 		char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
-		ds_rds_add_relationship(doc, relationships, "arfrel:isAbout",
+		ds_rds_add_relationship(doc, relationships, "arfvocab:isAbout",
 				"xccdf1", asset_id);
 
 		// We deliberately don't act on errors in inject refs as
@@ -652,7 +651,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 			xmlNodePtr asset = ds_rds_add_ai_from_xccdf_results(doc, assets, wrap_doc);
 			char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
-			ds_rds_add_relationship(doc, relationships, "arfrel:isAbout",
+			ds_rds_add_relationship(doc, relationships, "arfvocab:isAbout",
 					report_id, asset_id);
 
 			// We deliberately don't act on errors in inject ref as
@@ -694,7 +693,6 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 
 	xmlNodePtr relationships = xmlNewNode(core_ns, BAD_CAST "relationships");
 	xmlNewNs(relationships, BAD_CAST arfvocab_ns_uri, BAD_CAST "arfvocab");
-	xmlNewNs(relationships, BAD_CAST arfrel_ns_uri, BAD_CAST "arfrel");
 	xmlAddChild(root, relationships);
 
 	xmlNodePtr report_requests = xmlNewNode(arf_ns, BAD_CAST "report-requests");
