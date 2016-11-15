@@ -1313,13 +1313,15 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 	session->oval.result_sources = oscap_htable_new();
 	session->oval.results_mapping = oscap_htable_new();
 	session->oval.arf_report_mapping = oscap_htable_new();
-	for (int i = 0; session->oval.agents[i]; i++) {
-		char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
-		if (filename == NULL) {
-			_xccdf_session_free_oval_result_sources(session);
-			return 1;
+	if (session->oval.agents) {
+		for (int i = 0; session->oval.agents[i]; i++) {
+			char *filename = _xccdf_session_export_oval_result_file(session, session->oval.agents[i]);
+			if (filename == NULL) {
+				_xccdf_session_free_oval_result_sources(session);
+				return 1;
+			}
+			oscap_free(filename);
 		}
-		oscap_free(filename);
 	}
 
 	struct oscap_htable_iterator *cpe_it = xccdf_policy_model_get_cpe_oval_sessions(session->xccdf.policy_model);
@@ -1342,7 +1344,7 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 
 int xccdf_session_export_oval(struct xccdf_session *session)
 {
-	if ((session->export.oval_results || session->export.arf_file != NULL) && session->oval.agents) {
+	if (session->export.oval_results || session->export.arf_file != NULL) {
 		if (_build_oval_result_sources(session) != 0) {
 			return 1;
 		}
