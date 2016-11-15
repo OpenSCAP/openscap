@@ -45,11 +45,13 @@ OSCAP_HIDDEN_START;
 #define OVAL_SYSCHAR_UNIX_NS       BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"
 #define OVAL_SYSCHAR_IND_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
 #define OVAL_SYSCHAR_LIN_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux"
+#define OVAL_SYSCHAR_WIN_NS        BAD_CAST "http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows"
 
 #define OVAL_DEFINITIONS_NAMESPACE BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5"
 #define OVAL_DEFINITIONS_UNIX_NS   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#unix"
 #define OVAL_DEFINITIONS_IND_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
 #define OVAL_DEFINITIONS_LIN_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#linux"
+#define OVAL_DEFINITIONS_WIN_NS    BAD_CAST "http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
 
 #define OVAL_RESULTS_NAMESPACE     BAD_CAST "http://oval.mitre.org/XMLSchema/oval-results-5"
 #define OVAL_VARIABLES_NAMESPACE   BAD_CAST "http://oval.mitre.org/XMLSchema/oval-variables-5"

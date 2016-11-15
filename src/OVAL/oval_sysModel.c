@@ -334,12 +334,14 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 	xmlNs *ns_unix = xmlNewNs(root_node, OVAL_SYSCHAR_UNIX_NS, BAD_CAST "unix-sys");
 	xmlNs *ns_ind = xmlNewNs(root_node, OVAL_SYSCHAR_IND_NS, BAD_CAST "ind-sys");
 	xmlNs *ns_lin = xmlNewNs(root_node, OVAL_SYSCHAR_LIN_NS, BAD_CAST "lin-sys");
+	xmlNs *ns_win = xmlNewNs(root_node, OVAL_SYSCHAR_WIN_NS, BAD_CAST "win-sys");
 	xmlNs *ns_syschar = xmlNewNs(root_node, OVAL_SYSCHAR_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
 	xmlSetNs(root_node, ns_unix);
 	xmlSetNs(root_node, ns_ind);
 	xmlSetNs(root_node, ns_lin);
+	xmlSetNs(root_node, ns_win);
 	xmlSetNs(root_node, ns_syschar);
 
         /* Always report the generator */
