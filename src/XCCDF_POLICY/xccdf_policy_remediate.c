@@ -178,6 +178,19 @@ static inline bool _is_platform_applicable(struct xccdf_policy *policy, const ch
 	return ret;
 }
 
+static struct oscap_list *_get_fixes(struct xccdf_policy *policy, const struct xccdf_rule *rule)
+{
+	struct oscap_list *result = oscap_list_new();
+
+	struct xccdf_fix_iterator *fix_it = xccdf_rule_get_fixes(rule);
+	while (xccdf_fix_iterator_has_more(fix_it)) {
+		struct xccdf_fix *fix = xccdf_fix_iterator_next(fix_it);
+		oscap_list_add(result, fix);
+	}
+	xccdf_fix_iterator_free(fix_it);
+	return result;
+}
+
 static struct oscap_list *_filter_fixes_by_applicability(struct xccdf_policy *policy, const struct xccdf_rule *rule)
 {
 	/* Filters out the fixes which are not applicable */
@@ -499,12 +512,8 @@ int xccdf_policy_remediate(struct xccdf_policy *policy, struct xccdf_result *res
 static const struct xccdf_fix *_find_fix_for_template(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template)
 {
 	struct xccdf_fix *fix = NULL;
-	struct oscap_list *fixes = _filter_fixes_by_applicability(policy, rule);
-	const struct _interpret_map map[] = {
-		{template, "Cloud!"},
-		{NULL, NULL}
-	};
-	fixes = _filter_fixes_by_system(fixes, _search_interpret_map, map);
+	struct oscap_list *fixes = _get_fixes(policy, rule);
+
 	fixes = _filter_fixes_by_distruption_and_reboot(fixes);
 	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(fixes);
 	if (xccdf_fix_iterator_has_more(fix_it))
@@ -520,11 +529,6 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
 	if (!is_selected) {
 		dI("Skipping unselected Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
-		return 0;
-	}
-	const bool is_applicable = xccdf_policy_model_item_is_applicable(xccdf_policy_get_model(policy), (struct xccdf_item*)rule);
-	if (!is_applicable) {
-		dI("Skipping notapplicable Rule/@id\"%s\"", xccdf_rule_get_id(rule));
 		return 0;
 	}
 	// Find the most suitable fix.
