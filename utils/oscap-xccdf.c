@@ -753,6 +753,10 @@ static bool _some_result_exists(struct oscap_source *xccdf_source, const char *n
 
 int app_generate_fix(const struct oscap_action *action)
 {
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		return OSCAP_ERROR;
+	}
+
 	if (action->id != NULL) {
 		/* Listen very carefully -- I shall say this only once. This is temporaly
 		 * fallback mode. Which may be dropped from future OpenSCAP releases.
