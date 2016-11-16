@@ -514,6 +514,11 @@ static const struct xccdf_fix *_find_fix_for_template(struct xccdf_policy *polic
 	struct xccdf_fix *fix = NULL;
 	struct oscap_list *fixes = _get_fixes(policy, rule);
 
+	if (template) {
+		const struct _interpret_map map[] = {	{template, "Cloud!"},
+							{NULL, NULL}};
+		fixes = _filter_fixes_by_system(fixes, _search_interpret_map, map);
+	}
 	fixes = _filter_fixes_by_distruption_and_reboot(fixes);
 	struct xccdf_fix_iterator *fix_it = oscap_iterator_new(fixes);
 	if (xccdf_fix_iterator_has_more(fix_it))
