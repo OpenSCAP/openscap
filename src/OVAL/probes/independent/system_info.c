@@ -114,7 +114,6 @@
 #define _REGEX_ARCH            "\\.(i386|i686|x86_64|ia64|alpha|amd64|arm|armeb|armel|hppa|m32r" \
 		               "|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc)"
 #endif
-#define MAX_ENTRY_SIZE         256
 #define MAX_BUFFER_SIZE        4096
 
 static int fd=-1;
@@ -359,7 +358,8 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 	FILE *fp;
 	char *ret = NULL;
 	char grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
-	int len, rc;
+	int rc = PCRE_ERROR_NOMATCH;
+	int len;
 
 	fp = fopen("/boot/grub2/grub.cfg", "r");
 	if (fp == NULL)
@@ -511,16 +511,17 @@ static char * _offline_chroot_get_os_name(void)
 {
 	FILE *fp;
 	int rc;
-	char saved_entry[MAX_ENTRY_SIZE+1];
+	char saved_entry[MAX_BUFFER_SIZE+1];
 	char *ptr, *ret = NULL;
 
 	fp = fopen("/boot/grub2/grubenv", "r");
 	if (fp == NULL)
 		goto fail;
 
-	fread(saved_entry, MAX_ENTRY_SIZE, 1, fp);
+	rc = fread(saved_entry, 1, MAX_BUFFER_SIZE, fp);
 	if (ferror(fp))
 		goto finish;
+	saved_entry[rc] = '\0';
 
 #ifdef USE_REGEX_PCRE
 	size_t len;
@@ -604,7 +605,7 @@ static char * _offline_chroot_get_hname(void)
 	if (fp == NULL)
 		goto fail;
 
-	fread(hname, HOST_NAME_MAX, 1, fp);
+	(void) fread(hname, 1, HOST_NAME_MAX, fp);
 	if (ferror(fp))
 		goto finish;
 
@@ -631,19 +632,19 @@ int probe_main(probe_ctx *ctx, void *arg)
 	const char unknown[] = "Unknown";
 	struct utsname sname;
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
+	int ret = 0;
 	(void)arg;
 
 	os_name = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
 	if (offline_mode == PROBE_OFFLINE_NONE) {
-		if (uname(&sname) == -1) {
-			return PROBE_EUNKNOWN;
+		if (uname(&sname) == 0) {
+			os_name = sname.sysname;
+			os_version = sname.version;
+			architecture = sname.machine;
+			hname = sname.nodename;
 		}
-		os_name = sname.sysname;
-		os_version = sname.version;
-		architecture = sname.machine;
-		hname = sname.nodename;
 	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
 		os_name = _offline_chroot_get_os_name();
 		os_version = _offline_chroot_get_os_version(os_name);
@@ -669,7 +670,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 		__sysinfo_saneval(os_version) < 1 ||
 		__sysinfo_saneval(architecture) < 1 ||
 		__sysinfo_saneval(hname) < 1) {
-		return PROBE_EINVAL;
+		ret = PROBE_EINVAL;
+		goto cleanup;
 	}
 
 	item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
@@ -678,7 +680,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	                         "os_architecture",   OVAL_DATATYPE_STRING, architecture,
 	                         "primary_host_name", OVAL_DATATYPE_STRING, hname,
 	                         NULL);
-
+cleanup:
 	if (offline_mode) {
 		if (os_name)
 			free(os_name);
@@ -695,5 +697,5 @@ int probe_main(probe_ctx *ctx, void *arg)
 	}
 	probe_item_collect(ctx, item);
 
-	return (0);
+	return ret;
 }
