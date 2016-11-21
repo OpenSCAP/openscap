@@ -154,6 +154,7 @@ OSCAP_ACCESSOR_STRING(cve_entry, id)
 #define ATTR_XML_LANG_STR BAD_CAST "xml:lang"
 /* Vulnerability entry info */
 #define TAG_CVE_STR BAD_CAST "entry"
+#define TAG_DISCOVERED_DATETIME_STR BAD_CAST "discovered-datetime"
 #define TAG_PUBLISHED_DATETIME_STR BAD_CAST "published-datetime"
 #define TAG_LAST_MODIFIED_DATETIME_STR BAD_CAST "last-modified-datetime"
 #define TAG_CWE_STR BAD_CAST "cwe"
@@ -178,6 +179,9 @@ OSCAP_ACCESSOR_STRING(cve_entry, id)
 #define ATTR_REFERENCE_TYPE_STR BAD_CAST "reference_type"
 #define ATTR_REFERENCE_HREF_STR BAD_CAST "href"
 #define NS_VULN_STR BAD_CAST "vuln"
+#define TAG_ASSESSMENT_CHECK_STR BAD_CAST "assessment_check"
+#define TAG_SCANNER_STR BAD_CAST "scanner"
+#define TAG_DEFINITION_STR BAD_CAST "definition"
 /* namespaces */
 #define CVE_NS  BAD_CAST "http://scap.nist.gov/schema/vulnerability/0.4"
 #define FEED_NS BAD_CAST "http://scap.nist.gov/schema/feed/vulnerability/2.0"
@@ -523,6 +527,9 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVE_ID_STR)) {
 			ret->cve_id = oscap_element_string_copy(reader);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISCOVERED_DATETIME_STR)) {
+			/* Skip the discovered-datetime in the XML file */
+			xmlTextReaderNextNode(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHED_DATETIME_STR)) {
 			ret->published = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_LAST_MODIFIED_DATETIME_STR)) {
@@ -564,6 +571,23 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
                                 summary->summary = oscap_element_string_copy(reader);
 				oscap_list_add(ret->summaries, summary);
                         }
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ASSESSMENT_CHECK_STR)) {
+			/* Skip the assessment_check section in the XML file */
+			while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+				xmlTextReaderNextNode(reader);
+			}
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SCANNER_STR)) {
+			/* Skip the scanner section in the XML file */
+			xmlTextReaderNextNode(reader);
+			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SCANNER_STR) != 0) {
+				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DEFINITION_STR) &&
+				    xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT) {
+					while (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+						xmlTextReaderNextNode(reader);
+					}
+				}
+				xmlTextReaderNextNode(reader);
+			}
 		} else {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown XML element in CVE entry: %s",
 				(const char*) xmlTextReaderConstLocalName(reader));

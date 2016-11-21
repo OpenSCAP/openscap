@@ -1,3 +1,18 @@
+openscap-1.2.12                                                 16-11-2016
+  - New features
+    - separated stdout and stderr in SCE results and HTML report
+    - HTML reports contain [ref] links for rules and groups
+  - Maintenance
+    - fixed ARF errors reported by the SCAPval tool
+    - fixed CVE parsing (issue #550)
+    - fixed namespace of ARF vocabulary according to NIST SP800-126 errata
+    - fixed exporting OVAL Windows namespaces
+    - fixed injecting xccdf:check-content-ref references in ARF results
+    - fixed oscap-docker incompliance reporting (issue #475, RHBZ #1387248)
+    - fixed oscap-docker man page (RHBZ #1387166)
+    - fixed memory leaks and resource leaks
+    - small fixes and refactoring, test suite fixes
+
 openscap-1.2.11                                                 14-10-2016
   - New features
     - huge speed-up of generating HTML reports and guides

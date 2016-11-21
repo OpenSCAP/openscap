@@ -198,6 +198,7 @@ static inline void _parse_relationships_node(struct rds_index *ret, xmlNodePtr r
 		xmlChar *subject_attr = xmlGetProp(relationship_node, BAD_CAST "subject");
 		xmlChar *inner_ref = relationship_get_inner_ref(relationship_node);
 
+		// We now only use arfvocab: but arfrel: is kept here for compatibility
 		if (oscap_str_startswith((const char *) type_attr, "arfvocab:")
 				|| oscap_str_startswith((const char *) type_attr, "arfrel:")) {
 			if (oscap_str_endswith((const char*)type_attr, ":isAbout")) {

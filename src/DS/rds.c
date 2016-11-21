@@ -53,7 +53,6 @@
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vocabulary/relationships/1.0#";
-static const char* arfrel_ns_uri = "http://scap.nist.gov/vocabulary/arf/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
 
 xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
@@ -448,22 +447,41 @@ static int ds_rds_report_inject_ai_target_id_ref(xmlDocPtr doc, xmlNodePtr test_
 	return 0;
 }
 
-static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePtr rule_result, char *desired_href)
+static void ds_rds_report_inject_check_content_ref(xmlNodePtr check_content_ref, struct oscap_htable *arf_report_mapping)
+{
+	if (check_content_ref->type == XML_ELEMENT_NODE) {
+		if (strcmp((const char*)check_content_ref->name, "check-content-ref") == 0) {
+			char *oval_filename = (char *) xmlGetProp(check_content_ref,
+					BAD_CAST "href");
+			if (oval_filename == NULL) {
+				return;
+			}
+			char *report_id = oscap_htable_get(arf_report_mapping, oval_filename);
+			if (report_id == NULL) {
+				oscap_free(oval_filename);
+				return;
+			}
+			char *desired_href = oscap_sprintf("#%s", report_id);
+			xmlSetProp(check_content_ref, BAD_CAST "href", BAD_CAST desired_href);
+			oscap_free(desired_href);
+			oscap_free(oval_filename);
+		}
+	}
+}
+
+static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePtr rule_result, struct oscap_htable *arf_report_mapping)
 {
 	xmlNodePtr child = rule_result->children;
 
 	while (child) {
 		if (child->type == XML_ELEMENT_NODE) {
-			if (strcmp((const char*)child->name, "check") == 0) {
+			if (strcmp((const char*)child->name, "complex-check") == 0) {
+				ds_rds_report_inject_rule_result_check_refs(doc, child, arf_report_mapping);
+			} else if (strcmp((const char*)child->name, "check") == 0) {
 				xmlNodePtr check_content_ref = child->children;
 
 				while (check_content_ref) {
-					if (check_content_ref->type == XML_ELEMENT_NODE) {
-						if (strcmp((const char*)check_content_ref->name, "check-content-ref") == 0) {
-							xmlSetProp(check_content_ref, BAD_CAST "href", BAD_CAST desired_href);
-						}
-					}
-
+					ds_rds_report_inject_check_content_ref(check_content_ref, arf_report_mapping);
 					check_content_ref = check_content_ref->next;
 				}
 			}
@@ -473,33 +491,21 @@ static void ds_rds_report_inject_rule_result_check_refs(xmlDocPtr doc, xmlNodePt
 	}
 }
 
-/*
- * This function replaces all check-content-ref/@href with "#" + id of ancestor arf:report.
- * Doing this replaces potentially valuable data with a value easily calculated from the XML.
- *
- * The only reason we do this is to pass requirement 370-1.
- *
- * TODO: Consider dropping this functionality if 370-1 is changed / clarified.
- */
-static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test_result_node, char *report_id)
+static void ds_rds_report_inject_rule_result_refs(xmlDocPtr doc, xmlNodePtr test_result_node, struct oscap_htable *arf_report_mapping)
 {
-	char *desired_href = oscap_sprintf("#%s", report_id);
-
 	xmlNodePtr child = test_result_node->children;
 	while (child) {
 		if (child->type == XML_ELEMENT_NODE) {
 			if (strcmp((const char*)child->name, "rule-result") == 0) {
-				ds_rds_report_inject_rule_result_check_refs(doc, child, desired_href);
+				ds_rds_report_inject_rule_result_check_refs(doc, child, arf_report_mapping);
 			}
 		}
 
 		child = child->next;
 	}
-
-	oscap_free(desired_href);
 }
 
-static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const char *asset_id)
+static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const char *asset_id, struct oscap_htable* arf_report_mapping)
 {
 	xmlNodePtr content_node = ds_rds_get_inner_content(doc, report);
 
@@ -577,16 +583,14 @@ static int ds_rds_report_inject_refs(xmlDocPtr doc, xmlNodePtr report, const cha
 
 	int ret = ds_rds_report_inject_ai_target_id_ref(doc, test_result_node, asset_id);
 
-	char *report_id = (char*)xmlGetProp(report, BAD_CAST "id");
-	ds_rds_report_inject_rule_result_refs(doc, test_result_node, report_id);
-	xmlFree(report_id);
+	ds_rds_report_inject_rule_result_refs(doc, test_result_node, arf_report_mapping);
 
 	return ret;
 }
 
 static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 		xmlDocPtr xccdf_result_file_doc, xmlNodePtr relationships, xmlNodePtr assets,
-		const char* report_request_id)
+		const char* report_request_id, struct oscap_htable *arf_report_mapping)
 {
 	xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
 
@@ -603,12 +607,12 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 		xmlNodePtr asset = ds_rds_add_ai_from_xccdf_results(doc, assets, xccdf_result_file_doc);
 		char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
-		ds_rds_add_relationship(doc, relationships, "arfrel:isAbout",
+		ds_rds_add_relationship(doc, relationships, "arfvocab:isAbout",
 				"xccdf1", asset_id);
 
 		// We deliberately don't act on errors in inject refs as
 		// these aren't fatal errors.
-		ds_rds_report_inject_refs(doc, report, asset_id);
+		ds_rds_report_inject_refs(doc, report, asset_id, arf_report_mapping);
 
 		xmlFree(asset_id);
 	}
@@ -647,12 +651,12 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 			xmlNodePtr asset = ds_rds_add_ai_from_xccdf_results(doc, assets, wrap_doc);
 			char* asset_id = (char*)xmlGetProp(asset, BAD_CAST "id");
-			ds_rds_add_relationship(doc, relationships, "arfrel:isAbout",
+			ds_rds_add_relationship(doc, relationships, "arfvocab:isAbout",
 					report_id, asset_id);
 
 			// We deliberately don't act on errors in inject ref as
 			// these aren't fatal errors.
-			ds_rds_report_inject_refs(doc, report, asset_id);
+			ds_rds_report_inject_refs(doc, report, asset_id, arf_report_mapping);
 
 			xmlFree(asset_id);
 
@@ -673,7 +677,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources)
+static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
 {
 	*ret = NULL;
 
@@ -689,7 +693,6 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 
 	xmlNodePtr relationships = xmlNewNode(core_ns, BAD_CAST "relationships");
 	xmlNewNs(relationships, BAD_CAST arfvocab_ns_uri, BAD_CAST "arfvocab");
-	xmlNewNs(relationships, BAD_CAST arfrel_ns_uri, BAD_CAST "arfrel");
 	xmlAddChild(root, relationships);
 
 	xmlNodePtr report_requests = xmlNewNode(arf_ns, BAD_CAST "report-requests");
@@ -718,17 +721,18 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	xmlNodePtr reports = xmlNewNode(arf_ns, BAD_CAST "reports");
 
 	ds_rds_add_xccdf_test_results(doc, reports, xccdf_result_file_doc,
-			relationships, assets, "collection1");
+			relationships, assets, "collection1", arf_report_mapping);
 
-	unsigned int oval_report_suffix = 2;
-	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(oval_result_sources);
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(arf_report_mapping);
 	while (oscap_htable_iterator_has_more(hit)) {
-		struct oscap_source *oval_source = oscap_htable_iterator_next_value(hit);
+		const struct oscap_htable_item *report_mapping_item = oscap_htable_iterator_next(hit);
+		const char *oval_filename = report_mapping_item->key;
+		const char *report_id = report_mapping_item->value;
+		const char *report_file = oscap_htable_get(oval_result_mapping, oval_filename);
+		struct oscap_source *oval_source = oscap_htable_get(oval_result_sources, report_file);
 		xmlDoc *oval_result_doc = oscap_source_get_xmlDoc(oval_source);
 
-		char* report_id = oscap_sprintf("oval%i", oval_report_suffix++);
 		ds_rds_create_report(doc, reports, oval_result_doc, report_id);
-		oscap_free(report_id);
 	}
 	oscap_htable_iterator_free(hit);
 
@@ -738,7 +742,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	return 0;
 }
 
-struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, const char *target_file)
+struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
 {
 	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
 	if (sds_doc == NULL) {
@@ -750,7 +754,8 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 	}
 
 	xmlDocPtr rds_doc = NULL;
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc, oval_result_sources) != 0) {
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc,
+				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
 		return NULL;
 	}
 	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
@@ -761,6 +766,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 	struct oscap_source *sds_source = oscap_source_new_from_file(sds_file);
 	struct oscap_source *xccdf_result_source = oscap_source_new_from_file(xccdf_result_file);
 	struct oscap_htable *oval_result_sources = oscap_htable_new();
+	struct oscap_htable *oval_result_mapping = oscap_htable_new();
+	struct oscap_htable *arf_report_mapping = oscap_htable_new();
 
 	int result = 0;
 	// this check is there to allow passing NULL instead of having to allocate
@@ -780,7 +787,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		}
 	}
 	if (result == 0) {
-		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, target_file);
+		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, oval_result_mapping, arf_report_mapping, target_file);
 		result = target_rds == NULL;
 		if (result == 0) {
 			result = oscap_source_save_as(target_rds, NULL);
@@ -788,6 +795,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		oscap_source_free(target_rds);
 	}
 	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
+	oscap_htable_free(oval_result_mapping, (oscap_destruct_func) oscap_free);
+	oscap_htable_free(arf_report_mapping, (oscap_destruct_func) oscap_free);
 	oscap_source_free(sds_source);
 	oscap_source_free(xccdf_result_source);
 

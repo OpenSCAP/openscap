@@ -499,12 +499,14 @@ xmlNode *oval_definition_model_to_dom(struct oval_definition_model *definition_m
 	xmlNs *ns_unix = xmlNewNs(root_node, OVAL_DEFINITIONS_UNIX_NS, BAD_CAST "unix-def");
 	xmlNs *ns_ind = xmlNewNs(root_node, OVAL_DEFINITIONS_IND_NS, BAD_CAST "ind-def");
 	xmlNs *ns_lin = xmlNewNs(root_node, OVAL_DEFINITIONS_LIN_NS, BAD_CAST "lin-def");
+	xmlNs *ns_win = xmlNewNs(root_node, OVAL_DEFINITIONS_WIN_NS, BAD_CAST "win-def");
 	xmlNs *ns_defntns = xmlNewNs(root_node, OVAL_DEFINITIONS_NAMESPACE, NULL);
 
 	xmlSetNs(root_node, ns_common);
 	xmlSetNs(root_node, ns_unix);
 	xmlSetNs(root_node, ns_ind);
 	xmlSetNs(root_node, ns_lin);
+	xmlSetNs(root_node, ns_win);
 	xmlSetNs(root_node, ns_defntns);
 
 	/* Always report the generator */

@@ -1155,7 +1155,7 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 	xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
 	oscap_free(collection_id);
 
-	xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.0");
+	xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.2");
 
 	// we will need this namespace later when creating component-ref
 	// dependency catalog
