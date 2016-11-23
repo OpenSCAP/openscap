@@ -16,8 +16,8 @@ line3='^\W*passwd --minlen=14$'
 $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
-grep "$line1" $result && true
-grep "$line2" $result && true
+grep "$line1" $result
+grep "$line2" $result
 grep "$line3" $result && false
 :> $result
 
@@ -25,9 +25,9 @@ $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 	--profile xccdf_moc.elpmaxe.www_profile_1 \
 	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
-grep "$line1" $result && true
-grep "$line2" $result && true
-grep "$line3" $result && true
+grep "$line1" $result
+grep "$line2" $result
+grep "$line3" $result
 :> $result
 
 $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
