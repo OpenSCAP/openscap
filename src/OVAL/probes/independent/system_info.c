@@ -600,13 +600,15 @@ static char * _offline_chroot_get_hname(void)
 	FILE *fp;
 	char hname[HOST_NAME_MAX+1] = { '\0' };
 	char *ret = NULL;
+	int rc;
 
 	fp = fopen("/etc/hostname", "r");
 	if (fp == NULL)
 		goto fail;
 
-	(void) fread(hname, 1, HOST_NAME_MAX, fp);
-	if (ferror(fp))
+	rc = fread(hname, 1, HOST_NAME_MAX, fp);
+	/* If file is empty, we don't want to allocate an empty string for it */
+	if (ferror(fp) || rc == 0 )
 		goto finish;
 
 	hname[strcspn(hname, "\n")] = '\0';
