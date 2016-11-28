@@ -615,11 +615,11 @@ static int _write_script_header_to_fd(const char *sys, int output_fd)
 int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	__attribute__nonnull__(policy);
+	int ret = 0;
 
+	dI("Generating fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
 	if (result == NULL) {
 		// No TestResult is available. Generate fix from the stock profile.
-		dI("Generating fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
-		int ret = 0;
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 		if (benchmark == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
@@ -640,7 +640,18 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		return ret;
 	}
 	else {
-		// TODO.
-		return 1;
+		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
+		while (xccdf_rule_result_iterator_has_more(rr_it)) {
+			struct xccdf_rule_result *rr = xccdf_rule_result_iterator_next(rr_it);
+			if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
+				continue;
+			struct xccdf_rule *rule = _lookup_rule_by_rule_result(policy, rr);
+			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd);
+			if (ret != 0)
+				break;
+		}
+		xccdf_rule_result_iterator_free(rr_it);
+
+		return ret;
 	}
 }
