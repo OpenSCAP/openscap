@@ -134,7 +134,7 @@ static struct oscap_module DS_RDS_VALIDATE_MODULE = {
 	.name = "rds-validate",
 	.parent = &OSCAP_DS_MODULE,
 	.summary = "Validate given ResultDataStream",
-	.usage = "result_datastream.xml",
+	.usage = "[options] result_datastream.xml",
 	.help = "Options:\n"
 		"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
 		"   --verbose-log-file <file>\r\t\t\t\t - Write verbose informations into file.\n",
