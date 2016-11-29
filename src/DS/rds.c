@@ -54,6 +54,10 @@ static xmlNodePtr _lookup_container_in_arf(xmlDocPtr doc, const char *container_
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr ret = NULL;
+
+	if (root == NULL)
+		return NULL;
+
 	xmlNodePtr candidate = root->children;
 
 	for (; candidate != NULL; candidate = candidate->next)
@@ -74,6 +78,10 @@ static xmlNodePtr _lookup_report_in_arf(xmlDocPtr doc, const char *report_id)
 {
 	xmlNodePtr container = _lookup_container_in_arf(doc, "reports");
 	xmlNodePtr component = NULL;
+
+	if (container == NULL)
+		return NULL;
+
 	xmlNodePtr candidate = container->children;
 
 	for (; candidate != NULL; candidate = candidate->next)
@@ -101,6 +109,10 @@ static xmlNodePtr _lookup_request_in_arf(xmlDocPtr doc, const char *request_id)
 {
 	xmlNodePtr container = _lookup_container_in_arf(doc, "report-requests");
 	xmlNodePtr component = NULL;
+
+	if (container == NULL)
+		return NULL;
+
 	xmlNodePtr candidate = container->children;
 
 	for (; candidate != NULL; candidate = candidate->next)
