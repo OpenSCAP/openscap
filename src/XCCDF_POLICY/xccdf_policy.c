@@ -657,24 +657,8 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 		xccdf_rule_result_add_ident(rule_ritem, xccdf_ident_clone(ident));
 	}
 	xccdf_ident_iterator_free(ident_it);
-	if (check != NULL) {
+	if (check != NULL)
 		xccdf_rule_result_add_check(rule_ritem, check);
-	} else {
-		/* Workaround: No applicable or candidate check was found. However,
-		 * the ARF schematron requires us to include at least one check.
-		 *
-		 * For more info see thread on xccdf-dev mailing list named:
-		 *     [Xccdf-dev] xccdf:rule-result element properties
-		 */
-		struct xccdf_check_iterator *check_it = xccdf_rule_get_checks(rule);
-		while (xccdf_check_iterator_has_more(check_it)) {
-			struct xccdf_check *orig_check = xccdf_check_iterator_next(check_it);
-			struct xccdf_check *new_check = xccdf_check_clone(orig_check);
-			xccdf_rule_result_add_check(rule_ritem, new_check);
-		}
-		xccdf_check_iterator_free(check_it);
-
-	}
 
 	if (message != NULL) {
 		struct xccdf_message *msg = xccdf_message_new();
