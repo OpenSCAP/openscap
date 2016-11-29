@@ -78,7 +78,10 @@ const char *xccdf_session_get_filename(const struct xccdf_session *session);
 bool xccdf_session_is_sds(const struct xccdf_session *session);
 
 /**
- * Set XSD validation level.
+ * Set XSD validation level to one of three possibilities:
+ *	- None: 	All XSD validations will be skipped.
+ *	- Default:	Partial (input) XSD validations will be done.
+ *	- Full Valid.:	Every possible (input & output) XSD validation will be done.
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @param validate False value indicates to skip any XSD validation.
