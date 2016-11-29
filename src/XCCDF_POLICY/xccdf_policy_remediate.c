@@ -617,9 +617,9 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	__attribute__nonnull__(policy);
 	int ret = 0;
 
-	dI("Generating fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
 	if (result == NULL) {
 		// No TestResult is available. Generate fix from the stock profile.
+		dI("Generating profile-oriented fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 		if (benchmark == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
@@ -640,6 +640,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		return ret;
 	}
 	else {
+		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
 		while (xccdf_rule_result_iterator_has_more(rr_it)) {
 			struct xccdf_rule_result *rr = xccdf_rule_result_iterator_next(rr_it);

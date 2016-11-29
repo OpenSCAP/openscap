@@ -788,7 +788,6 @@ int app_generate_fix(const struct oscap_action *action)
 		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, action->id);
 		if (xccdf_policy_generate_fix(policy, result, action->tmpl, output_fd) == 0)
 			ret = OSCAP_OK;
-		//ret = app_generate_fix_by_result(session, action->tmpl, output_fd);
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
 		if (!xccdf_session_set_profile_id(session, action->profile)) {
