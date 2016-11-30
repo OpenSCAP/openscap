@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_gov.nist_collection_r1200-datastream.zip" schematron-version="1.2" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2.xsd">
+  <data-stream id="scap_gov.nist_datastream_r1200-datastream.zip" scap-version="1.2" timestamp="2016-05-25T14:00:00" use-case="CONFIGURATION">
+    <dictionaries>
+      <component-ref id="scap_gov.nist_cref_r1200-cpe-dictionary.xml" xlink:href="#scap_gov.nist_comp_r1200-cpe-dictionary.xml">
+        <cat:catalog>
+          <cat:uri name="cpe_applicability_validation_content-cpe-oval.xml" uri="#scap_gov.nist_cref_r1200-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+    </dictionaries>
+    <checklists>
+      <component-ref id="scap_gov.nist_cref_r1200-xccdf1.xml" xlink:href="#scap_gov.nist_comp_r1200-xccdf1.xml">
+        <cat:catalog>
+          <cat:uri name="r1200-oval.xml" uri="#scap_gov.nist_cref_r1200-oval.xml"/>
+          <cat:uri name="r1200-cpe-oval.xml" uri="#scap_gov.nist_cref_r1200-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+      <component-ref id="scap_gov.nist_cref_r1200-xccdf2.xml" xlink:href="#scap_gov.nist_comp_r1200-xccdf2.xml">
+        <cat:catalog>
+          <cat:uri name="r1200-oval.xml" uri="#scap_gov.nist_cref_r1200-oval.xml"/>
+          <cat:uri name="r1200-cpe-oval.xml" uri="#scap_gov.nist_cref_r1200-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+      <component-ref id="scap_gov.nist_cref_r1200-xccdf3.xml" xlink:href="#scap_gov.nist_comp_r1200-xccdf3.xml">
+        <cat:catalog>
+          <cat:uri name="r1200-oval.xml" uri="#scap_gov.nist_cref_r1200-oval.xml"/>
+          <cat:uri name="r1200-cpe-oval.xml" uri="#scap_gov.nist_cref_r1200-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+      <component-ref id="scap_gov.nist_cref_r1200-xccdf4.xml" xlink:href="#scap_gov.nist_comp_r1200-xccdf4.xml">
+        <cat:catalog>
+          <cat:uri name="r1200-oval.xml" uri="#scap_gov.nist_cref_r1200-oval.xml"/>
+          <cat:uri name="r1200-cpe-oval.xml" uri="#scap_gov.nist_cref_r1200-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+      <component-ref id="scap_gov.nist_cref_r1200-xccdf5.xml" xlink:href="#scap_gov.nist_comp_r1200-xccdf5.xml">
+        <cat:catalog>
+          <cat:uri name="r1200-oval.xml" uri="#scap_gov.nist_cref_r1200-oval.xml"/>
+          <cat:uri name="r1200-cpe-oval.xml" uri="#scap_gov.nist_cref_r1200-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+    </checklists>
+    <checks>
+      <component-ref id="scap_gov.nist_cref_r1200-oval.xml" xlink:href="#scap_gov.nist_comp_r1200-oval.xml"/>
+      <component-ref id="scap_gov.nist_cref_r1200-cpe-oval.xml" xlink:href="#scap_gov.nist_comp_r1200-cpe-oval.xml"/>
+    </checks>
+  </data-stream>
+  <component id="scap_gov.nist_comp_r1200-xccdf1.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_gov.nist_benchmark_r1200-1" style="SCAP_1.2" xml:lang="en" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for R.1200 (benchmark_r1200-1 - cpe-lang:platform-specification - Applicable)</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for R.1200.</xccdf:description>
+      <cpe-lang:platform-specification>
+        <cpe-lang:platform id="platform_1">
+          <cpe-lang:title xml:lang="en-US">Test Platform 1</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:1"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_2">
+          <cpe-lang:title xml:lang="en-US">Test Platform 2</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:2"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_3">
+          <cpe-lang:title xml:lang="en-US">Test Platform 3</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:3"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_4">
+          <cpe-lang:title xml:lang="en-US">Test Platform 4</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:1"/>
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:2"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_5">
+          <cpe-lang:title xml:lang="en-US">Test Platform 5</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:1"/>
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:3"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_6">
+          <cpe-lang:title xml:lang="en-US">Test Platform 6</cpe-lang:title>
+          <cpe-lang:logical-test operator="OR" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:1"/>
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:2"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_7">
+          <cpe-lang:title xml:lang="en-US">Test Platform 7</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="true">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:1"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+      </cpe-lang:platform-specification>
+      <xccdf:platform idref="#platform_1"/>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_cpe_applicability_1" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile that test CPE applicability processing (cpe-lang:platform-specification - Applicable)</xccdf:title>
+        <xccdf:description>XCCDF Profile that test CPE applicability processing (cpe-lang:platform-specification - Applicable)</xccdf:description>
+        <xccdf:platform idref="#platform_1"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-1" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-2" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-3" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-4" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-5" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-6" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-7" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-8" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-9" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-10" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-11" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-12" selected="true"/>
+      </xccdf:Profile>
+      <xccdf:Group id="xccdf_gov.nist_group_cpe_applicability-1" selected="true">
+        <xccdf:title xml:lang="en-US">Applicability Group 1 - No Applicability</xccdf:title>
+        <xccdf:description>Always applicable, no CPE Applicability statement.</xccdf:description>
+        <xccdf:platform idref="#platform_1"/>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-1" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should return pass</xccdf:description>
+          <xccdf:platform idref="#platform_1"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-2" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>should not be applicable</xccdf:description>
+          <xccdf:platform idref="#platform_2"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-3" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should Pass</xccdf:description>
+          <xccdf:platform idref="#platform_3"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-4" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should be not applicable</xccdf:description>
+          <xccdf:platform idref="#platform_4"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-5" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should Pass</xccdf:description>
+          <xccdf:platform idref="#platform_5"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-6" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should Pass</xccdf:description>
+          <xccdf:platform idref="#platform_6"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-7" selected="false">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should be not applicable</xccdf:description>
+          <xccdf:platform idref="#platform_7"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+      </xccdf:Group>
+      <xccdf:Group id="xccdf_gov.nist_group_cpe_applicability-2" selected="true">
+        <xccdf:title xml:lang="en-US">Applicability Group 2 - No Applicability</xccdf:title>
+        <xccdf:description>Never Applicable</xccdf:description>
+        <xccdf:platform idref="#platform_2"/>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-8" selected="true">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should be not applicable</xccdf:description>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+      </xccdf:Group>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-9" selected="false">
+        <xccdf:title>Test the Applicability processing capabilities (Applicable)</xccdf:title>
+        <xccdf:description>Should return pass</xccdf:description>
+        <xccdf:platform idref="#platform_1"/>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-10" selected="true">
+        <xccdf:title>Test the Applicability processing capabilities (Not Applicable)</xccdf:title>
+        <xccdf:description>should not be applicable</xccdf:description>
+        <xccdf:platform idref="#platform_2"/>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-11" selected="false">
+        <xccdf:title>Test the Applicability processing capabilities (Applicable)</xccdf:title>
+        <xccdf:description>Should return pass</xccdf:description>
+        <xccdf:platform idref="cpe:/o:vendor:os:10"/>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-12" selected="true">
+        <xccdf:title>Test the Applicability processing capabilities (Not Applicable)</xccdf:title>
+        <xccdf:description>should not be applicable</xccdf:description>
+        <xccdf:platform idref="cpe:/o:vendor:os:20"/>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-xccdf2.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_gov.nist_benchmark_r1200-2" style="SCAP_1.2" xml:lang="en" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for R.1200 (benchmark_r1200-2 - cpe-lang:platform-specification - Not Applicable)</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for R.1200.</xccdf:description>
+      <cpe-lang:platform-specification>
+        <cpe-lang:platform id="platform_1">
+          <cpe-lang:title xml:lang="en-US">Test Platform 1</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:1"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+        <cpe-lang:platform id="platform_2">
+          <cpe-lang:title xml:lang="en-US">Test Platform 2</cpe-lang:title>
+          <cpe-lang:logical-test operator="AND" negate="false">
+            <cpe-lang:check-fact-ref system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="r1200-oval.xml" id-ref="oval:gov.nist.validation:def:2"/>
+          </cpe-lang:logical-test>
+        </cpe-lang:platform>
+      </cpe-lang:platform-specification>
+      <xccdf:platform idref="#platform_2"/>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_cpe_applicability_2" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile that test CPE applicability processing (cpe-lang:platform-specification - Not Applicable)</xccdf:title>
+        <xccdf:description>XCCDF Profile that test CPE applicability processing (cpe-lang:platform-specification - Not Applicable)</xccdf:description>
+        <xccdf:platform idref="#platform_1"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-20" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-21" selected="true"/>
+      </xccdf:Profile>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-20" selected="false">
+        <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+        <xccdf:description>Should return Not Applicable or notselected</xccdf:description>
+        <xccdf:platform idref="#platform_1"/>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-21" selected="true">
+        <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+        <xccdf:description>Should return Not Applicable</xccdf:description>
+        <xccdf:platform idref="#platform_1"/>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-xccdf3.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_gov.nist_benchmark_r1200-3" style="SCAP_1.2" xml:lang="en" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for R.1200 (benchmark_r1200-3 - No cpe-lang:platform-specification or cpe name)</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for R.1200.</xccdf:description>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_cpe_applicability_3" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile that test CPE applicability processing (Applicable)</xccdf:title>
+        <xccdf:description>XCCDF Profile that test CPE applicability processing (Applicable)</xccdf:description>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-100" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-200" selected="true"/>
+      </xccdf:Profile>
+      <xccdf:Group id="xccdf_gov.nist_group_cpe_applicability-100" selected="true">
+        <xccdf:title xml:lang="en-US">Applicability Group 100 - CPE NAME - Applicability</xccdf:title>
+        <xccdf:description>Always applicable, no CPE Applicability statement.</xccdf:description>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-100" selected="true">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should return pass</xccdf:description>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+      </xccdf:Group>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-200" selected="false">
+        <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+        <xccdf:description>Should return fail</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:2"/>
+          </xccdf:check>
+      </xccdf:Rule>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-xccdf4.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_gov.nist_benchmark_r1200-4" style="SCAP_1.2" xml:lang="en" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for R.1200 (benchmark_r1200-4 - CPE Name - Applicable)</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for R.1200.</xccdf:description>
+      <xccdf:platform idref="cpe:/o:vendor:os:10"/>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_cpe_applicability_4" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile that test CPE applicability processing (Applicable)</xccdf:title>
+        <xccdf:description>XCCDF Profile that test CPE applicability processing (Applicable)</xccdf:description>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-1000" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-2000" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-8000" selected="true"/>
+      </xccdf:Profile>
+      <xccdf:Group id="xccdf_gov.nist_group_cpe_applicability-1000" selected="true">
+        <xccdf:title xml:lang="en-US">Applicability Group 1000 - CPE Name - Applicability</xccdf:title>
+        <xccdf:description>Always applicable, no CPE Applicability statement.</xccdf:description>
+        <xccdf:platform idref="cpe:/o:vendor:os:10"/>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-1000" selected="true">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should return pass</xccdf:description>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-2000" selected="true">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should return fail</xccdf:description>
+          <xccdf:platform idref="cpe:/o:vendor:os:10"/>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:2"/>
+            </xccdf:check>
+        </xccdf:Rule>
+      </xccdf:Group>
+      <xccdf:Group id="xccdf_gov.nist_group_cpe_applicability-2000" selected="true">
+        <xccdf:title xml:lang="en-US">Applicability Group 2000 - No Applicability</xccdf:title>
+        <xccdf:description>Never Applicable</xccdf:description>
+        <xccdf:platform idref="cpe:/o:vendor:os:20"/>
+        <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-8000" selected="true">
+          <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+          <xccdf:description>Should be not applicable</xccdf:description>
+          <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+            </xccdf:check>
+        </xccdf:Rule>
+      </xccdf:Group>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-xccdf5.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_gov.nist_benchmark_r1200-5" style="SCAP_1.2" xml:lang="en" xmlns:cpe-lang="http://cpe.mitre.org/language/2.0" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for R.1200 (benchmark_r1200-5 - CPE Name - Not Applicable)</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for R.1200.</xccdf:description>
+      <xccdf:platform idref="cpe:/o:vendor:os:20"/>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_cpe_applicability_5" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile that test CPE applicability processing (Applicable)</xccdf:title>
+        <xccdf:description>XCCDF Profile that test CPE applicability processing (Applicable)</xccdf:description>
+        <xccdf:select idref="xccdf_gov.nist_rule_r1200_cpe_applicability-10000" selected="true"/>
+      </xccdf:Profile>
+      <xccdf:Rule id="xccdf_gov.nist_rule_r1200_cpe_applicability-10000" selected="true">
+        <xccdf:title>Test the Applicability processing capabilities</xccdf:title>
+        <xccdf:description>Should return pass</xccdf:description>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r1200-oval.xml" name="oval:gov.nist.validation:def:1"/>
+          </xccdf:check>
+      </xccdf:Rule>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-oval.xml" timestamp="2016-05-25T14:00:00">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/windows-definitions-schema.xsd               http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/independent-definitions-schema.xsd                  http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-definitions-schema.xsd               http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-common-schema.xsd">
+      <generator>
+        <oval:product_name>NIST Validation Content Generation Script</oval:product_name>
+        <oval:product_version>1.0</oval:product_version>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition id="oval:gov.nist.validation:def:1" version="1" class="compliance">
+          <metadata>
+            <title>Test for platform 1</title>
+            <description>Should always return true</description>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:gov.nist.validation:tst:1" comment="Should always return true"/>
+          </criteria>
+        </definition>
+        <definition id="oval:gov.nist.validation:def:2" version="1" class="compliance">
+          <metadata>
+            <title>Test for platform 2</title>
+            <description>Should always return false</description>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:gov.nist.validation:tst:2" comment="Should always return false"/>
+          </criteria>
+        </definition>
+        <definition id="oval:gov.nist.validation:def:3" version="1" class="compliance">
+          <metadata>
+            <title>Test for platform 3</title>
+            <description>Should always return true</description>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:gov.nist.validation:tst:3" comment="Should always return true"/>
+          </criteria>
+        </definition>
+        <definition id="oval:gov.nist.validation:def:4" version="1" class="compliance">
+          <metadata>
+            <title>Sample Defintion</title>
+            <description>Should always return true</description>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:gov.nist.validation:tst:1" comment="Should always return true"/>
+          </criteria>
+        </definition>
+        <definition id="oval:gov.nist.validation:def:5" version="1" class="compliance">
+          <metadata>
+            <title>Sample Defintion False</title>
+            <description>Should always return false</description>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:gov.nist.validation:tst:2" comment="Should always return false"/>
+          </criteria>
+        </definition>
+        </definitions>
+      <tests>
+        <ind-def:variable_test check="all" comment="Should always return true" version="1" id="oval:gov.nist.validation:tst:1">
+          <ind-def:object object_ref="oval:gov.nist.validation:obj:1"/>
+          <ind-def:state state_ref="oval:gov.nist.validation:ste:1"/>
+        </ind-def:variable_test>
+        <ind-def:variable_test check="all" comment="Should always return false" version="1" id="oval:gov.nist.validation:tst:2">
+          <ind-def:object object_ref="oval:gov.nist.validation:obj:2"/>
+          <ind-def:state state_ref="oval:gov.nist.validation:ste:2"/>
+        </ind-def:variable_test>
+        <ind-def:variable_test check="all" comment="Should always return true" version="1" id="oval:gov.nist.validation:tst:3">
+          <ind-def:object object_ref="oval:gov.nist.validation:obj:1"/>
+          <ind-def:state state_ref="oval:gov.nist.validation:ste:1"/>
+        </ind-def:variable_test>
+      </tests>
+      <objects>
+        <ind-def:variable_object version="1" id="oval:gov.nist.validation:obj:1">
+          <ind-def:var_ref datatype="string">oval:gov.nist.validation:var:1</ind-def:var_ref>
+        </ind-def:variable_object>
+        <ind-def:variable_object version="1" id="oval:gov.nist.validation:obj:2">
+          <ind-def:var_ref datatype="string">oval:gov.nist.validation:var:2</ind-def:var_ref>
+        </ind-def:variable_object>
+      </objects>
+      <states>
+        <ind-def:variable_state version="1" id="oval:gov.nist.validation:ste:1">
+          <ind-def:value datatype="string" operation="equals">1</ind-def:value>
+        </ind-def:variable_state>
+        <ind-def:variable_state version="1" id="oval:gov.nist.validation:ste:2">
+          <ind-def:value datatype="string" operation="not equal">2</ind-def:value>
+        </ind-def:variable_state>
+      </states>
+      <variables>
+        <local_variable id="oval:gov.nist.validation:var:1" version="2" datatype="string" comment="A sample variable">
+          <literal_component datatype="string">1</literal_component>
+        </local_variable>
+        <local_variable datatype="string" id="oval:gov.nist.validation:var:2" version="1" comment="A sample variable">
+          <literal_component datatype="string">2</literal_component>
+        </local_variable>
+      </variables>
+    </oval_definitions>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-cpe-oval.xml" timestamp="2016-01-22T14:47:18">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+      xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/windows-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/independent-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#unix http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/unix-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/linux-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-definitions-schema.xsd
+      http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.10.1/ovaldefinition/complete/oval-common-schema.xsd">
+      <generator>
+        <oval:product_name>National Institute of Standards and Technology</oval:product_name>
+        <oval:schema_version>5.10.1</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:2" version="2">
+          <metadata>
+            <title>Microsoft Windows 7 is installed</title>
+            <affected family="windows">
+              <platform>Microsoft Windows 7</platform>
+            </affected>
+            <reference ref_id="cpe:/o:microsoft:windows_7" source="CPE"/>
+            <description>The operating system installed on the system is Microsoft Windows 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="the installed operating system is part of the Microsoft Windows family" test_ref="oval:org.mitre.oval:tst:99"/>
+            <criterion comment="Windows 7 is installed" test_ref="oval:org.mitre.oval:tst:10792"/>
+          </criteria>
+        </definition>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:100" version="2">
+          <metadata>
+            <title>Red Hat Enterprise Linux 3, 4, 5, 6, or 7</title>
+            <affected family="unix">
+              <platform>Red Hat Enterprise Linux</platform>
+            </affected>
+            <reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+            <description>The operating system installed on the system is Red Hat Enterprise Linux 3, 4, 5, 6, or 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Installed operating system is part of the unix family" test_ref="oval:gov.nist.validation.cpe.oval:tst:100"/>
+            <criterion comment="Red Hat Enterprise Linux 3, 4, 5, 6, or 7 is installed" test_ref="oval:gov.nist.validation.cpe.oval:tst:101"/>
+          </criteria>
+        </definition>
+        <definition id="oval:gov.nist.r1200:def:1" version="1" class="inventory">
+          <metadata>
+            <title>Test for platform 10</title>
+            <reference ref_id="cpe:/o:vendor:os:10" source="CPE"/>
+            <description>Should always return true</description>
+          </metadata>
+          <criteria>
+            <criterion test_ref="oval:gov.nist.r1200:tst:1" comment="Should always return true"/>
+          </criteria>
+        </definition>
+        <definition id="oval:gov.nist.r1200:def:2" version="1" class="inventory">
+          <metadata>
+            <title>Test for platform 20</title>
+            <reference ref_id="cpe:/o:vendor:os:20" source="CPE"/>
+            <description>Should always return false</description>
+          </metadata>
+          <criteria>
+            <criterion negate="true" test_ref="oval:gov.nist.r1200:tst:1" comment="Should always return true"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="the installed operating system is part of the Microsoft Windows family" id="oval:org.mitre.oval:tst:99" version="1">
+          <object object_ref="oval:org.mitre.oval:obj:99"/>
+          <state state_ref="oval:org.mitre.oval:ste:99"/>
+        </family_test>
+        <registry_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" check="at least one" check_existence="at_least_one_exists" comment="Windows 7 is installed" id="oval:org.mitre.oval:tst:10792" version="4">
+          <object object_ref="oval:org.mitre.oval:obj:5590"/>
+          <state state_ref="oval:org.mitre.oval:ste:5027"/>
+        </registry_test>
+        <family_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.cpe.oval:tst:100" version="1" check="only one" comment="installed operating system is part of the Unix family" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:100"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:100"/>
+        </family_test>
+        <rpminfo_test check_existence="at_least_one_exists" id="oval:gov.nist.validation.cpe.oval:tst:101" version="2" check="at least one" comment="redhat-release is version 3, 4, 5, 6, or 7" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:101"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:101"/>
+        </rpminfo_test>
+        <ind-def:variable_test check="all" comment="Should always return true" version="1" id="oval:gov.nist.r1200:tst:1">
+          <ind-def:object object_ref="oval:gov.nist.r1200:obj:1"/>
+          <ind-def:state state_ref="oval:gov.nist.r1200:ste:1"/>
+        </ind-def:variable_test>
+      </tests>
+      <objects>
+        <ind-def:variable_object version="1" id="oval:gov.nist.r1200:obj:1">
+          <ind-def:var_ref datatype="string">oval:gov.nist.r1200:var:1</ind-def:var_ref>
+        </ind-def:variable_object>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="This is the default family object. Only one family object should exist." id="oval:org.mitre.oval:obj:99" version="1"/>
+        <registry_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" comment="This registry key identifies the Windows ProductName" id="oval:org.mitre.oval:obj:5590" version="1">
+          <hive>HKEY_LOCAL_MACHINE</hive>
+          <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+          <name>ProductName</name>
+        </registry_object>
+        <family_object id="oval:gov.nist.validation.cpe.oval:obj:100" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
+        <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="the redhat-release rpm" id="oval:gov.nist.validation.cpe.oval:obj:101" version="2">
+          <name operation="pattern match">^redhat-release.*$</name>
+        </rpminfo_object>
+      </objects>
+      <states>
+        <ind-def:variable_state version="1" id="oval:gov.nist.r1200:ste:1">
+          <ind-def:value datatype="string" operation="equals">1</ind-def:value>
+        </ind-def:variable_state>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="Microsoft Windows family" id="oval:org.mitre.oval:ste:99" version="2">
+          <family operation="equals">windows</family>
+        </family_state>
+        <registry_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" comment="The registry key matches with Windows 7" id="oval:org.mitre.oval:ste:5027" version="4">
+          <value operation="pattern match">^[a-zA-Z0-9\(\)\s]*[Ww][Ii][Nn][Dd][Oo][Ww][Ss] 7[a-zA-Z0-9\(\)\s]*$</value>
+        </registry_state>
+        <family_state id="oval:gov.nist.validation.cpe.oval:ste:100" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+          <family>unix</family>
+        </family_state>
+        <rpminfo_state id="oval:gov.nist.validation.cpe.oval:ste:101" version="2" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+          <version operation="pattern match">^[3-7]\D</version>
+        </rpminfo_state>
+      </states>
+      <variables>
+        <local_variable id="oval:gov.nist.r1200:var:1" version="1" datatype="string" comment="A sample variable">
+          <literal_component datatype="string">1</literal_component>
+        </local_variable>
+      </variables>
+    </oval_definitions>
+  </component>
+  <component id="scap_gov.nist_comp_r1200-cpe-dictionary.xml" timestamp="2016-01-22T14:47:18">
+    <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:microsoft:windows_7">
+        <title xml:lang="en-US">Microsoft Windows 7</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents version 6.1.7600 of the Windows OS</note>
+        </notes>
+        <check href="cpe_applicability_validation_content-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:2</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux">
+        <title xml:lang="en-US">Red Hat Enterprise Linux</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents Red Hat Enterprise Linux OS</note>
+        </notes>
+        <check href="cpe_applicability_validation_content-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:100</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:vendor:os:10">
+        <title xml:lang="en-US">Vendor OS 10</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents OS 10</note>
+        </notes>
+        <check href="cpe_applicability_validation_content-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.r1200:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:vendor:os:20">
+        <title xml:lang="en-US">Vendor OS 20</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents OS 20</note>
+        </notes>
+        <check href="cpe_applicability_validation_content-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.r1200:def:2</check>
+      </cpe-item>
+    </cpe-list>
+  </component>
+</data-stream-collection>
