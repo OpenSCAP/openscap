@@ -11,7 +11,7 @@ set -e -o pipefail
 
 function test_nist {
 	test_dir="$1"
-	./test_worker.py --scanner "$(top_builddir)/run $OSCAP" $test_dir
+	./test_worker.py --scanner "${top_builddir}/run $OSCAP" $test_dir
 	ret_val=$?
 	if [ $ret_val -eq 1 ]; then
 		return 1

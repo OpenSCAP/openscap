@@ -1523,6 +1523,7 @@ AC_CONFIG_FILES([Makefile
 		tests/bz2/Makefile
 		tests/codestyle/Makefile
 		tests/oval_details/Makefile
+		tests/nist/Makefile
 
                  src/SCE/Makefile
                  tests/sce/Makefile])
