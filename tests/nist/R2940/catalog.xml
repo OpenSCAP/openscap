@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.r2940" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R2940 Datastream</bundleName>
+	<bundleGuiName>R2940 Datastream</bundleGuiName>
+	<testSuite version="1" suiteId="G2.R2940">
+		<suiteName>Configuration 1</suiteName>
+		<guiName>Configuration 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r2940-datastream.xml</datastreamFile>
+		<cpeOvalFilename>r2940-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r2940-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r2940-oval.xml</ovalFilename>
+		<xccdfFilename>r2940-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r2940</xccdfProfile>
+
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_2" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_4" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_5" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_7" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_8" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_10" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_11" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_12" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_13" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_14" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_15" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_16" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_17" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_18" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_19" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_20" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_21" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_22" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_23" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_24" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_25" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_26" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_27" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_28" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_29" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_30" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_31" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_32" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_33" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_34" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r2940_rule_35" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>
