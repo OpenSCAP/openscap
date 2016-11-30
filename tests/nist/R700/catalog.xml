@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.r700" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R700</bundleName>
+	<bundleGuiName>R700 Test</bundleGuiName>
+	<testSuite version="1" suiteId="G2.datastream.profile1">
+		<suiteName>R700 Data Stream - profile1</suiteName>
+		<guiName>R700 Data Stream - profile1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r700-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_gov.nist_comp_r700-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_gov.nist_comp_r700-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>scap_gov.nist_comp_r700-oval.xml</ovalFilename>
+		<xccdfFilename>scap_gov.nist_comp_r700-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r700_1</xccdfProfile>
+		<preparation ordered="false" platform="TODO">
+			<command commandType="python" order="1" revision="1">
+				<command>text_file_test_config_1.py</command>
+			</command>
+		</preparation>
+		<expectedResults reportType="xccdf">
+			<result definition="xccdf_gov.nist.validation_rule_r700_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_2" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_4" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_5" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_6" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_7" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_8" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_10" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_11" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_13" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_14" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_15" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_16" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_17" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_18" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_19" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_20" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_21" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_22" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_23" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_25" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_26" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_27" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_28" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_29" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_30" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_31" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_32" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_33" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_34" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_36" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_37" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_38" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_39" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_40" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_41" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_42" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_43" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_44" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_45" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_47" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_48" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_49" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_50" expectedResult="fail"/>
+		</expectedResults>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist.validation_rule_r700_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_2" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_4" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_5" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_6" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_7" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_8" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_10" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_11" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_13" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_14" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_15" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_16" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_17" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_18" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_19" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_20" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_21" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_22" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_23" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_25" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_26" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_27" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_28" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_29" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_30" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_31" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_32" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_33" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_34" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_36" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_37" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_38" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_39" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_40" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_41" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_42" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_43" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_44" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_45" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_47" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_48" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_49" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_50" expectedResult="fail"/>
+		</expectedResults>
+		<cleanup ordered="false" platform="linux">
+			<command commandType="python">
+				<command>text_file_content_test_cleanup.py</command>
+			</command>
+		</cleanup>
+	</testSuite>
+
+	<testSuite version="1" suiteId="G2.datastream.profile2">
+		<suiteName>R700 Data Stream - profile1</suiteName>
+		<guiName>R700 Data Stream - profile1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r700-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_gov.nist_comp_r700-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_gov.nist_comp_r700-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>scap_gov.nist_comp_r700-oval.xml</ovalFilename>
+		<xccdfFilename>scap_gov.nist_comp_r700-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r700_2</xccdfProfile>
+		<preparation ordered="false" platform="TODO">
+			<command commandType="python" order="1" revision="1">
+				<command>text_file_test_config_2.py</command>
+			</command>
+		</preparation>
+		<expectedResults reportType="xccdf">
+			<result definition="xccdf_gov.nist.validation_rule_r700_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_2" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_3" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_4" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_5" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_6" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_7" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_8" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_9" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_10" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_11" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_13" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_14" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_15" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_16" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_17" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_18" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_19" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_20" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_21" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_22" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_23" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_25" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_26" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_27" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_28" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_29" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_30" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_31" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_32" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_33" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_34" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_36" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_37" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_38" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_39" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_40" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_41" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_42" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_43" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_44" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_45" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_47" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_48" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_49" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_50" expectedResult="notselected"/>
+		</expectedResults>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist.validation_rule_r700_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_2" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_3" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_4" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_5" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_6" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_7" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_8" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_9" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_10" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_11" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_13" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_14" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_15" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_16" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_17" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_18" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_19" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_20" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_21" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_22" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_23" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_25" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_26" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_27" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_28" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_29" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_30" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_31" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_32" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_33" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_34" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_36" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_37" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_38" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_39" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_40" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_41" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_42" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_43" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_44" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_45" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_47" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_48" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_49" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_50" expectedResult="notselected"/>
+		</expectedResults>
+	</testSuite>
+	<cleanup ordered="false" platform="linux">
+		<command commandType="python">
+			<command>text_file_content_test_cleanup.py</command>
+		</command>
+	</cleanup>
+</testBundle>
