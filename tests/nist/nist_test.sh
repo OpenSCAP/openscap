@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenSCAP test suite
-# Tests NIST validation requirements
+# Tests a subset of NIST validation requirements
 # Author:
 #     Jan Černý <jcerny@redhat.com>
 
