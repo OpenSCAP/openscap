@@ -21,11 +21,6 @@ EXTRA_DIST += nist_test.sh \
 	R500/r500-datastream.xml \
 	R600/catalog.xml \
 	R600/r600-datastream.xml \
-	R700/catalog.xml \
-	R700/configuration_scripts \
-	R700/configuration_scripts/text_file_content_test_cleanup.py \
-	R700/configuration_scripts/text_file_test_config_1.py \
-	R700/configuration_scripts/text_file_test_config_2.py \
 	R700/r700-datastream.xml \
 	R1100/catalog.xml \
 	R1100/r1100-scap10-rhel-cpe-dictionary.xml \
