@@ -21,7 +21,6 @@ EXTRA_DIST += nist_test.sh \
 	R500/r500-datastream.xml \
 	R600/catalog.xml \
 	R600/r600-datastream.xml \
-	R700/r700-datastream.xml \
 	R1100/catalog.xml \
 	R1100/r1100-scap10-rhel-cpe-dictionary.xml \
 	R1100/r1100-scap10-rhel-cpe-oval.xml \
