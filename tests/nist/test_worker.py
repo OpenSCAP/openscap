@@ -45,7 +45,7 @@ def are_remote_resources_allowed(test):
     remote_resources = get_test_property(test, "remoteResources")
     return remote_resources == "true"
 
-def run_test(test, scanner):
+def run_test(test, scanner, output_dir):
     test_id = test.get("suiteId")
     datastream = get_datastream_file_name(test)
     oval = get_oval_file_name(test)
@@ -56,7 +56,7 @@ def run_test(test, scanner):
     profile = get_profile_name(test)
     command = scanner
     if datastream:
-        results_file = test_id + ".results_arf.xml"
+        results_file = os.path.join(output_dir, test_id + ".results_arf.xml")
         command += " xccdf eval"
         if are_remote_resources_allowed(test):
             command += " --fetch-remote-resources"
@@ -79,7 +79,7 @@ def run_test(test, scanner):
         sys.stderr.write("Unable to run the test! Check the catalog.xml.\n")
         return None
     print(command)
-    with open(test_id + ".stdout", "w") as stdout_file:
+    with open(os.path.join(output_dir, test_id + ".stdout"), "w") as stdout_file:
         oscap_return_code = subprocess.call(["bash", "-c", command],
                                             stdout=stdout_file)
         # 0 is success, 2 is success but not compliant
@@ -115,7 +115,7 @@ def find_actual_result_in_oval(oval_root, definition_id):
             return result
     return None
 
-def check_results(test):
+def check_results(test, output_dir):
     test_id = test.get("suiteId")
     all_expected_results_elements = test.findall("expectedResults")
     expected_results = None
@@ -133,7 +133,9 @@ def check_results(test):
     elif report_type == "oval":
         results_file = test_id + ".results_oval.xml"
     try:
-        actual_results_xml_tree = etree.parse(results_file)
+        actual_results_xml_tree = etree.parse(
+            os.path.join(output_dir, results_file)
+        )
     except IOError:
         print("ERROR: No results were generated in test " + test_id)
         return False
@@ -155,33 +157,19 @@ def check_results(test):
             test_result = False
     return test_result
 
-def run_script(script_node):
-    script = script_node.find("command").text
-    if script is None:
-        return
-    script_type = script_node.get("commandType")
-    old_wd = os.getcwd()
-    os.chdir("configuration_scripts")
-    print("Running setup script " + script)
-    if script_type == "python":
-        interpreter = "/usr/bin/python"
-    else:
-        interpreter = "/bin/bash"
-    subprocess.call([interpreter, script])
-    os.chdir(old_wd)
-    # refresh bash
-    subprocess.call(["/bin/bash", "-c", "exit"])
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--scanner", default="oscap",
             help="Specifies a custom path to oscap scanner.")
+    parser.add_argument("--outputdir",
+            help="Specifies a custom path where any output artifacts will be "
+                 "written. By default the same directory as testdir is used.")
     parser.add_argument("testdir",
             help="Specifies a directory containing test case, its SCAP content and catalog.")
-    parser.add_argument("--nosetup", default=False, action="store_true",
-            help="Skips test setup, will not run configuartion scripts.")
     args = parser.parse_args()
-    test_dir = args.testdir
+    test_dir = os.path.abspath(args.testdir)
+    output_dir = os.path.abspath(args.outputdir) \
+        if args.outputdir is not None else test_dir
     scanner_path = args.scanner
 
     os.chdir(test_dir)
@@ -199,8 +187,8 @@ if __name__ == "__main__":
         if "remote" in test_id:
             print("SKIPPED")
             continue
-        run_test(test, scanner_path)
-        if check_results(test):
+        run_test(test, scanner_path, output_dir)
+        if check_results(test, output_dir):
             print("PASS")
         else:
             print("FAIL")
