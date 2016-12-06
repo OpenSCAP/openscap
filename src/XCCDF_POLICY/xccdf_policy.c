@@ -2484,7 +2484,7 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
          * profile is created by Policy layer and need
          * to be freed
          */
-        if (xccdf_profile_get_id(policy->profile) == NULL)
+        if (policy->profile && xccdf_profile_get_id(policy->profile) == NULL)
             xccdf_profile_free((struct xccdf_item *) policy->profile);
 
 	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_select_free);
