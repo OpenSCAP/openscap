@@ -79,9 +79,16 @@ def run_test(test, scanner):
         sys.stderr.write("Unable to run the test! Check the catalog.xml.\n")
         return None
     print(command)
-    stdout_file = open(test_id + ".stdout", "w")
-    oscap_return_code = subprocess.call(["bash", "-c", command], stdout=stdout_file)
-    stdout_file.close()
+    with open(test_id + ".stdout", "w") as stdout_file:
+        oscap_return_code = subprocess.call(["bash", "-c", command],
+                                            stdout=stdout_file)
+        # 0 is success, 2 is success but not compliant
+        if oscap_return_code not in [0, 2]:
+            sys.stderr.write(
+                "oscap returned an invalid exit code '%i'" % (oscap_return_code)
+            )
+            return None
+
 
 def find_actual_result_in_arf(arf_root, rule_id):
     rule_results = arf_root.findall(".//{%s}rule-result" % xccdf_ns)
