@@ -285,28 +285,37 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **
 #if !defined(LINUX_DISTRO)
 # define LINUX_DISTRO generic
 
-static int parse_os_release(const char * cpe)
+/**
+ * Parse /etc/os-release and return 1 if CPE_NAME inside starts with given
+ * value in "cpe". Otherwise returns 0.
+ *
+ * Examples (on Fedora 25):
+ * - parse_os_release("cpe:/o:fedoraproject:fedora:25") returns 1
+ * - parse_os_release("cpe:/o:fedoraproject:fedora:24") returns 0
+ * - parse_os_release("aasdfasdfasdf") returns 0
+ * - parse_os_release("cpe") returns 1 (!!!)
+ * - parse_os_release("cpe:/o:fedoraproject:fedora:*") returns 0 (!!!)
+ */
+static int parse_os_release(const char *cpe)
 {
-	struct stat st;
-	int got = stat("/etc/os-release", &st);
-	if (got)
-		return got == 0;
-
 	FILE *osrelease = fopen("/etc/os-release", "r");
-	if (osrelease < 0)
-		return !errno;
+	if (osrelease == NULL)
+		// we cound't match the CPE because we couldn't open the file
+		return 0;
 
 	char releasename[RELEASENAME_MAX_SIZE];
 	memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
-	got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
-	while (got == 0) {
-		/*const char c = */fgetc(osrelease);
+	int got = -1;
+	do {
 		got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
+		/*const char c = */fgetc(osrelease);
 	}
+	while (got == 0);
+
 	int ret;
 	if (got < 0) {
-		ret = !got;
+		ret = 0; // 0 means we couldn't find a match
 		goto done;
 	}
 
