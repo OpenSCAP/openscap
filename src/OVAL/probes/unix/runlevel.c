@@ -287,37 +287,37 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **
 
 static int parse_os_release(const char * cpe)
 {
-        struct stat st;
-        int got;
-        int ret;
-        FILE * osrelease;
-        char buf[RELEASENAME_MAX_SIZE];
-        char *releasename = &buf[0];
-        char c;
+	struct stat st;
+	int got;
+	int ret;
+	FILE * osrelease;
+	char buf[RELEASENAME_MAX_SIZE];
+	char *releasename = &buf[0];
+	char c;
 
-        got = stat ("/etc/os-release", &st);
-        if ( got ) return (got == 0);
+	got = stat("/etc/os-release", &st);
+	if ( got ) return (got == 0);
 
-        osrelease = fopen("/etc/os-release", "r");
-        if ( osrelease < 0 ) return (! errno);
+	osrelease = fopen("/etc/os-release", "r");
+	if ( osrelease < 0 ) return (! errno);
 
-        memset(releasename, 0, RELEASENAME_MAX_SIZE);
+	memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
-        got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
-        while ( got == 0 ) {
-                c = fgetc(osrelease);
-                got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
-        }
-        if ( got < 0 ) {
-                ret = !got;
-                goto done;
-        }
+	got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
+	while ( got == 0 ) {
+		c = fgetc(osrelease);
+		got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
+	}
+	if ( got < 0 ) {
+		ret = !got;
+		goto done;
+	}
 
-        ret = strncmp(releasename, cpe, strlen(cpe)) == 0;
+	ret = strncmp(releasename, cpe, strlen(cpe)) == 0;
 
 done:
-        fclose(osrelease);
-        return(ret);
+	fclose(osrelease);
+	return(ret);
 }
 
 static int is_redhat (void)
