@@ -45,7 +45,7 @@ def are_remote_resources_allowed(test):
     remote_resources = get_test_property(test, "remoteResources")
     return remote_resources == "true"
 
-def run_test(test, scanner, dryrun):
+def run_test(test, scanner):
     test_id = test.get("suiteId")
     datastream = get_datastream_file_name(test)
     oval = get_oval_file_name(test)
@@ -79,10 +79,9 @@ def run_test(test, scanner, dryrun):
         sys.stderr.write("Unable to run the test! Check the catalog.xml.\n")
         return None
     print(command)
-    if not dryrun:
-        stdout_file = open(test_id + ".stdout", "w")
-        oscap_return_code = subprocess.call(["bash", "-c", command], stdout=stdout_file)
-        stdout_file.close()
+    stdout_file = open(test_id + ".stdout", "w")
+    oscap_return_code = subprocess.call(["bash", "-c", command], stdout=stdout_file)
+    stdout_file.close()
 
 def find_actual_result_in_arf(arf_root, rule_id):
     rule_results = arf_root.findall(".//{%s}rule-result" % xccdf_ns)
@@ -184,13 +183,10 @@ if __name__ == "__main__":
             help="Specifies a directory containing test case, its SCAP content and catalog.")
     parser.add_argument("--nosetup", default=False, action="store_true",
             help="Skips test setup, will not run configuartion scripts.")
-    parser.add_argument("--dryrun", default=False, action="store_true",
-            help="Write all commands to be run to stdout, don't actually run anything")
     args = parser.parse_args()
     test_dir = args.testdir
     scanner_path = args.scanner
     no_set_up = args.nosetup
-    dryrun = args.dryrun
 
     os.chdir(test_dir)
     # open and parse the Catalog
@@ -207,16 +203,15 @@ if __name__ == "__main__":
         if "remote" in test_id:
             print("SKIPPED")
             continue
-        if not no_set_up and not dryrun:
+        if not no_set_up:
             set_up(test)
-        run_test(test, scanner_path, dryrun)
-        if not dryrun:
-            if check_results(test):
-                print("PASS")
-            else:
-                print("FAIL")
-                return_value = 1
-            print("")
-            tear_down(test)
+        run_test(test, scanner_path)
+        if check_results(test):
+            print("PASS")
+        else:
+            print("FAIL")
+            return_value = 1
+        print("")
+        tear_down(test)
 
     sys.exit(return_value)
