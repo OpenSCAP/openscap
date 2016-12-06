@@ -296,8 +296,7 @@ static int parse_os_release(const char * cpe)
 	if (osrelease < 0)
 		return !errno;
 
-	char buf[RELEASENAME_MAX_SIZE];
-	char *releasename = &buf[0];
+	char releasename[RELEASENAME_MAX_SIZE];
 	memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
 	got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
@@ -369,9 +368,9 @@ static int is_solaris (void)
         return (stat ("/etc/release", &st)   == 0);
 }
 
-static int is_wrlinux (void)
+static int is_wrlinux(void)
 {
-	return (parse_os_release("cpe:/o:windriver:wrlinux"));
+	return parse_os_release("cpe:/o:windriver:wrlinux");
 }
 
 static int is_common (void)
