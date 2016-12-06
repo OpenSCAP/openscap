@@ -2480,12 +2480,15 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 void xccdf_policy_free(struct xccdf_policy * policy) {
 
-        /* If ID of policy's profile is NULL then this
-         * profile is created by Policy layer and need
-         * to be freed
-         */
-        if (xccdf_profile_get_id(policy->profile) == NULL)
-            xccdf_profile_free((struct xccdf_item *) policy->profile);
+	/* A policy which is set to use default profile has its profile member set to NULL,
+	 * check it so we don't try to get the ID from a NULL profile.
+	 * */
+	if (policy->profile && xccdf_profile_get_id(policy->profile) == NULL)
+		/* If ID of policy's profile is NULL then this
+		 * profile is created by Policy layer and need
+		 * to be freed
+		 */
+		xccdf_profile_free((struct xccdf_item *) policy->profile);
 
 	oscap_list_free(policy->selects, (oscap_destruct_func) xccdf_select_free);
 	oscap_list_free(policy->values, (oscap_destruct_func) xccdf_value_binding_free);
