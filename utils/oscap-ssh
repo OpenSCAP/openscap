@@ -22,9 +22,9 @@ function die()
     exit 1
 }
 
-which ssh > /dev/null || die "Cannot find ssh, please install the OpenSSH client."
-which scp > /dev/null || die "Cannot find scp, please install the OpenSSH client."
-which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
+hash ssh 2> /dev/null || die "Cannot find ssh, please install the OpenSSH client."
+hash scp 2> /dev/null || die "Cannot find scp, please install the OpenSSH client."
+hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
 {
