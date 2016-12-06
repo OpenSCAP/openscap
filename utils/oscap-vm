@@ -92,18 +92,18 @@ else
     die
 fi
 
-which guestmount > /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
+hash guestmount 2> /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
 
-if [ `which guestunmount` > /dev/null ]; then
+if hash guestunmount 2> /dev/null; then
     UNMOUNT_COMMAND="guestunmount"
-elif [ `which fusermount` > /dev/null ]; then
+elif hash fusermount 2> /dev/null; then
     echo "guestunmount command not present on the system, using simpler fusermount instead"
     UNMOUNT_COMMAND="fusermount -u"
 else
     die "Cannot find guestunmount or fusermount, please install libguestfs utilities, or fuse."
 fi
 
-which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
+hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
 
 MOUNTPOINT=$(mktemp -d)
 
