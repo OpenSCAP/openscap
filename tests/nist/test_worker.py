@@ -176,19 +176,6 @@ def run_script(script_node):
     # refresh bash
     subprocess.call(["/bin/bash", "-c", "exit"])
 
-def validate_by_scapval(test, scapval_path, test_dir):
-    test_id = test.get("suiteId")
-    arf_file = test_id + ".results_arf.xml"
-    scapval_command = ["java", "-jar", scapval_path, "-scapversion", "1.2", "-resultfile", arf_file]
-    print("Validating " + arf_file + " by SCAPval")
-    scapval_output = subprocess.check_output(scapval_command)
-    if "ERROR:" in scapval_output:
-        print("SCAPVal validation failed. Please see ")
-        return False
-    else:
-        print("SCAPVAl validation finished succesfully.")
-        return True
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--scanner", default="oscap",
@@ -199,14 +186,11 @@ if __name__ == "__main__":
             help="Skips test setup, will not run configuartion scripts.")
     parser.add_argument("--dryrun", default=False, action="store_true",
             help="Write all commands to be run to stdout, don't actually run anything")
-    parser.add_argument("--scapval",
-            help="Perform SCAPval validation, requires to specify path to SCAPval tool")
     args = parser.parse_args()
     test_dir = args.testdir
     scanner_path = args.scanner
     no_set_up = args.nosetup
     dryrun = args.dryrun
-    scapval = args.scapval
 
     os.chdir(test_dir)
     # open and parse the Catalog
@@ -227,13 +211,7 @@ if __name__ == "__main__":
             set_up(test)
         run_test(test, scanner_path, dryrun)
         if not dryrun:
-            test_result = check_results(test)
-            if scapval:
-                validation_result = validate_by_scapval(test, scapval, test_dir)
-            else:
-                validation_result = True
-            final_result = (test_result and validation_result)
-            if final_result:
+            if check_results(test):
                 print("PASS")
             else:
                 print("FAIL")
