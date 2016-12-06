@@ -53,7 +53,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <strings.h>
 #include <errno.h>
 #include <assert.h>
 #include <unistd.h>
@@ -302,7 +301,7 @@ static int parse_os_release(const char * cpe)
         osrelease = fopen("/etc/os-release", "r");
         if ( osrelease < 0 ) return (! errno);
 
-        bzero(releasename, RELEASENAME_MAX_SIZE);
+        memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
         got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
         while ( got == 0 ) {
