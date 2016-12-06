@@ -288,27 +288,25 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **
 static int parse_os_release(const char * cpe)
 {
 	struct stat st;
-	int got;
-	int ret;
-	FILE * osrelease;
+	int got = stat("/etc/os-release", &st);
+	if (got)
+		return got == 0;
+
+	FILE *osrelease = fopen("/etc/os-release", "r");
+	if (osrelease < 0)
+		return !errno;
+
 	char buf[RELEASENAME_MAX_SIZE];
 	char *releasename = &buf[0];
-	char c;
-
-	got = stat("/etc/os-release", &st);
-	if ( got ) return (got == 0);
-
-	osrelease = fopen("/etc/os-release", "r");
-	if ( osrelease < 0 ) return (! errno);
-
 	memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
-	got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
-	while ( got == 0 ) {
-		c = fgetc(osrelease);
-		got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
+	got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
+	while (got == 0) {
+		/*const char c = */fgetc(osrelease);
+		got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
 	}
-	if ( got < 0 ) {
+	int ret;
+	if (got < 0) {
 		ret = !got;
 		goto done;
 	}
@@ -317,7 +315,7 @@ static int parse_os_release(const char * cpe)
 
 done:
 	fclose(osrelease);
-	return(ret);
+	return ret;
 }
 
 static int is_redhat (void)
