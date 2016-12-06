@@ -148,16 +148,6 @@ def check_results(test):
             test_result = False
     return test_result
 
-def set_up(test):
-    script_node = test.find("preparation/command")
-    if script_node is not None:
-        run_script(script_node)
-
-def tear_down(test):
-    script_node = test.find("cleanup/command")
-    if script_node is not None:
-        run_script(script_node)
-
 def run_script(script_node):
     script = script_node.find("command").text
     if script is None:
@@ -186,7 +176,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     test_dir = args.testdir
     scanner_path = args.scanner
-    no_set_up = args.nosetup
 
     os.chdir(test_dir)
     # open and parse the Catalog
@@ -203,8 +192,6 @@ if __name__ == "__main__":
         if "remote" in test_id:
             print("SKIPPED")
             continue
-        if not no_set_up:
-            set_up(test)
         run_test(test, scanner_path)
         if check_results(test):
             print("PASS")
@@ -212,6 +199,5 @@ if __name__ == "__main__":
             print("FAIL")
             return_value = 1
         print("")
-        tear_down(test)
 
     sys.exit(return_value)
