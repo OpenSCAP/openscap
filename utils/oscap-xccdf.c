@@ -148,6 +148,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
+        "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in result file.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
 	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
@@ -492,6 +493,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_evaluate(session) != 0)
 		goto cleanup;
 
+	xccdf_session_set_without_sys_chars_export(session, action->without_sys_chars);
 	xccdf_session_set_oval_results_export(session, action->oval_results);
 	xccdf_session_set_oval_variables_export(session, action->export_variables);
 	xccdf_session_set_arf_export(session, action->f_results_arf);
@@ -955,6 +957,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
 		{"schematron",          no_argument, &action->schematron, 1},
+		{"without-syschar",    no_argument, &action->without_sys_chars, 1},
 	// end
 		{0, 0, 0, 0}
 	};

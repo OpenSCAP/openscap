@@ -195,6 +195,14 @@ void xccdf_session_set_custom_oval_eval_fn(struct xccdf_session *session, xccdf_
 bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *product_cpe);
 
 /**
+ * Set whether the System Characteristics shall be exported in result files.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param without_sys_chars whether to export System Characteristics or not.
+ */
+void xccdf_session_set_without_sys_chars_export(struct xccdf_session *session, bool without_sys_chars);
+
+/**
  * Set whether the OVAL result files shall be exported.
  * @memberof xccdf_session
  * @param session XCCDF Session
