@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
+## THIS FILE HAS BEEN DEPRECATED! ##
+OpenSCAP doesn't use this file anymore, but it's still installed
+for compatibility reasons.
+
+
 Copyright 2010 Red Hat Inc., Durham, North Carolina.
 All Rights Reserved.
 
