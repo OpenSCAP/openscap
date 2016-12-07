@@ -53,7 +53,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <strings.h>
 #include <errno.h>
 #include <assert.h>
 #include <unistd.h>
@@ -286,39 +285,45 @@ static int get_runlevel_common (struct runlevel_req *req, struct runlevel_rep **
 #if !defined(LINUX_DISTRO)
 # define LINUX_DISTRO generic
 
-static int parse_os_release(const char * cpe)
+/**
+ * Parse /etc/os-release and return 1 if CPE_NAME inside starts with given
+ * value in "cpe". Otherwise returns 0.
+ *
+ * Examples (on Fedora 25):
+ * - parse_os_release("cpe:/o:fedoraproject:fedora:25") returns 1
+ * - parse_os_release("cpe:/o:fedoraproject:fedora:24") returns 0
+ * - parse_os_release("aasdfasdfasdf") returns 0
+ * - parse_os_release("cpe") returns 1 (!!!)
+ * - parse_os_release("cpe:/o:fedoraproject:fedora:*") returns 0 (!!!)
+ */
+static int parse_os_release(const char *cpe)
 {
-        struct stat st;
-        int got;
-        int ret;
-        FILE * osrelease;
-        char buf[RELEASENAME_MAX_SIZE];
-        char *releasename = &buf[0];
-        char c;
+	FILE *osrelease = fopen("/etc/os-release", "r");
+	if (osrelease == NULL)
+		// we cound't match the CPE because we couldn't open the file
+		return 0;
 
-        got = stat ("/etc/os-release", &st);
-        if ( got ) return (got == 0);
+	char releasename[RELEASENAME_MAX_SIZE];
+	memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
-        osrelease = fopen("/etc/os-release", "r");
-        if ( osrelease < 0 ) return (! errno);
+	int got = -1;
+	do {
+		got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
+		/*const char c = */fgetc(osrelease);
+	}
+	while (got == 0);
 
-        bzero(releasename, RELEASENAME_MAX_SIZE);
+	int ret;
+	if (got < 0) {
+		ret = 0; // 0 means we couldn't find a match
+		goto done;
+	}
 
-        got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
-        while ( got == 0 ) {
-                c = fgetc(osrelease);
-                got = fscanf(osrelease, RELEASENAME_PATTERN , releasename);
-        }
-        if ( got < 0 ) {
-                ret = !got;
-                goto done;
-        }
-
-        ret = strncmp(releasename, cpe, strlen(cpe)) == 0;
+	ret = strncmp(releasename, cpe, strlen(cpe)) == 0;
 
 done:
-        fclose(osrelease);
-        return(ret);
+	fclose(osrelease);
+	return ret;
 }
 
 static int is_redhat (void)
@@ -372,9 +377,9 @@ static int is_solaris (void)
         return (stat ("/etc/release", &st)   == 0);
 }
 
-static int is_wrlinux (void)
+static int is_wrlinux(void)
 {
-	return (parse_os_release("cpe:/o:windriver:wrlinux"));
+	return parse_os_release("cpe:/o:windriver:wrlinux");
 }
 
 static int is_common (void)
