@@ -22,9 +22,9 @@ function die()
     exit 1
 }
 
-which ssh > /dev/null || die "Cannot find ssh, please install the OpenSSH client."
-which scp > /dev/null || die "Cannot find scp, please install the OpenSSH client."
-which mktemp > /dev/null || die "Cannot find mktemp, please install coreutils."
+hash ssh 2> /dev/null || die "Cannot find ssh, please install the OpenSSH client."
+hash scp 2> /dev/null || die "Cannot find scp, please install the OpenSSH client."
+hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
 
 function usage()
 {
@@ -128,10 +128,10 @@ MASTER_SOCKET_DIR=$(mktemp -d)
 MASTER_SOCKET="$MASTER_SOCKET_DIR/ssh_socket"
 
 echo "Connecting to '$SSH_HOST' on port '$SSH_PORT'..."
-ssh -M -f -N -o ServerAliveInterval=60 -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" || die "Failed to connect!"
+ssh -M -f -N -o ServerAliveInterval=60 -o ControlPath="$MASTER_SOCKET" -p "$SSH_PORT" "$SSH_HOST" || die "Failed to connect!"
 echo "Connected!"
 
-REMOTE_TEMP_DIR=$(ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" mktemp -d) || die "Failed to create remote temporary directory!"
+REMOTE_TEMP_DIR=$(ssh -o ControlPath="$MASTER_SOCKET" -p "$SSH_PORT" "$SSH_HOST" mktemp -d) || die "Failed to create remote temporary directory!"
 
 args=("$@")
 
@@ -201,48 +201,48 @@ fi
 
 if [ "$LOCAL_CONTENT_PATH" != "" ]; then
     echo "Copying input file '$LOCAL_CONTENT_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$LOCAL_CONTENT_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/input.xml" || die "Failed to copy input file to remote temporary directory!"
 fi
 if [ "$LOCAL_TAILORING_PATH" != "" ]; then
     echo "Copying tailoring file '$LOCAL_TAILORING_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$LOCAL_TAILORING_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/tailoring.xml" || die "Failed to copy tailoring file to remote temporary directory!"
 fi
 if [ "$LOCAL_CPE_PATH" != "" ]; then
     echo "Copying CPE file '$LOCAL_CPE_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_CPE_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/cpe.xml" || die "Failed to copy CPE file to remote temporary directory!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$LOCAL_CPE_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/cpe.xml" || die "Failed to copy CPE file to remote temporary directory!"
 fi
 if [ "$LOCAL_VARIABLES_PATH" != "" ]; then
     echo "Copying OVAL variables file '$LOCAL_VARIABLES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_VARIABLES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/variables.xml" || die "Failed to copy OVAL variables file to remote temporary directory!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$LOCAL_VARIABLES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/variables.xml" || die "Failed to copy OVAL variables file to remote temporary directory!"
 fi
 if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
     echo "Copying OVAL directives file '$LOCAL_DIRECTIVES_PATH' to remote working directory '$REMOTE_TEMP_DIR'..."
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$LOCAL_DIRECTIVES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/directives.xml" || die "Failed to copy OVAL directives file to remote temporary directory!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$LOCAL_DIRECTIVES_PATH" "$SSH_HOST:$REMOTE_TEMP_DIR/directives.xml" || die "Failed to copy OVAL directives file to remote temporary directory!"
 fi
 
 echo "Starting the evaluation..."
-ssh -o ControlPath=$MASTER_SOCKET $SSH_ADDITIONAL_ARGS -p "$SSH_PORT" "$SSH_HOST" "$OSCAP_SUDO oscap ${args[*]}"
+ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_ARGS -p "$SSH_PORT" "$SSH_HOST" "$OSCAP_SUDO oscap ${args[*]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
 echo "Copying back requested files..."
 if [ "$TARGET_RESULTS" != "" ]; then
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results.xml" "$TARGET_RESULTS" || die "Failed to copy the results file back to local machine!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results.xml" "$TARGET_RESULTS" || die "Failed to copy the results file back to local machine!"
 fi
 if [ "$TARGET_RESULTS_ARF" != "" ]; then
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-arf.xml" "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF file back to local machine!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/results-arf.xml" "$TARGET_RESULTS_ARF" || die "Failed to copy the ARF file back to local machine!"
 fi
 if [ "$TARGET_REPORT" != "" ]; then
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/report.html" "$TARGET_REPORT" || die "Failed to copy the HTML report back to local machine!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/report.html" "$TARGET_REPORT" || die "Failed to copy the HTML report back to local machine!"
 fi
 if [ "$TARGET_SYSCHAR" != "" ]; then
-    scp -o ControlPath=$MASTER_SOCKET -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/syschar.xml" "$TARGET_SYSCHAR" || die "Failed to copy the OVAL syschar file back to local machine!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/syschar.xml" "$TARGET_SYSCHAR" || die "Failed to copy the OVAL syschar file back to local machine!"
 fi
 
 echo "Removing remote temporary directory..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
+ssh -o ControlPath="$MASTER_SOCKET" -p "$SSH_PORT" "$SSH_HOST" "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
 echo "Disconnecting ssh and removing master ssh socket directory..."
-ssh -o ControlPath=$MASTER_SOCKET -p "$SSH_PORT" "$SSH_HOST" -O exit || die "Failed to disconnect!"
+ssh -o ControlPath="$MASTER_SOCKET" -p "$SSH_PORT" "$SSH_HOST" -O exit || die "Failed to disconnect!"
 rm -r "$MASTER_SOCKET_DIR" || die "Failed to remove local master SSH socket directory!"
 
 exit $OSCAP_EXIT_CODE
