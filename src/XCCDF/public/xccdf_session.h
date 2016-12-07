@@ -51,6 +51,15 @@ struct xccdf_session;
 struct xccdf_session *xccdf_session_new(const char *filename);
 
 /**
+ * Costructor of xccdf_session. It creates a new xccdf_session from an oscap_source structure.
+ * @memberof xccdf_session
+ * @param source oscap_source which can represent a DS or XCCDF file.
+ * @returns newly created \ref xccdf_session.
+ * @retval NULL is returned in case of error. Details might be found through \ref oscap_err_desc()
+ */
+struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source);
+
+/**
  * Destructor of xccdf_session.
  * @memberof xccdf_session
  * @param session to destroy.

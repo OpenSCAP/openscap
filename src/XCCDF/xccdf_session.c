@@ -121,11 +121,14 @@ static void _xccdf_session_free_oval_result_sources(struct xccdf_session *sessio
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
 static const char *oval_sysname = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
 
-struct xccdf_session *xccdf_session_new(const char *filename)
+struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 {
+	if (source == NULL) {
+		return NULL;
+	}
+	const char *filename = oscap_source_get_filepath(source);
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
-
-	session->source = oscap_source_new_from_file(filename);
+	session->source = source;
 	oscap_document_type_t document_type = oscap_source_get_scap_type(session->source);
 	if (document_type == OSCAP_DOCUMENT_UNKNOWN) {
 		xccdf_session_free(session);
@@ -156,6 +159,13 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 	dI("Created a new XCCDF session from a %s '%s'.",
 		oscap_document_type_to_string(document_type), filename);
+	return session;
+}
+
+struct xccdf_session *xccdf_session_new(const char *filename)
+{
+	struct oscap_source *source = oscap_source_new_from_file(filename);
+	struct xccdf_session *session = xccdf_session_new_from_source(source);
 	return session;
 }
 
