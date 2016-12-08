@@ -148,7 +148,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
-        "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in result file.\n"
+        "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in OVAL/ARF result files.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
 	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
