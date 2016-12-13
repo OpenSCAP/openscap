@@ -147,6 +147,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
+        "   --thin-results\r\t\t\t\t - Set OVAL/ARF results to Thin Results.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
         "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in OVAL/ARF result files.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
@@ -459,7 +460,8 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (session == NULL)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
-
+	if (action->f_directives)
+		xccdf_session_set_thin_results(session, true);
 	if (xccdf_session_is_sds(session)) {
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
@@ -958,6 +960,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"export-variables",	no_argument, &action->export_variables, 1},
 		{"schematron",          no_argument, &action->schematron, 1},
 		{"without-syschar",    no_argument, &action->without_sys_chars, 1},
+		{"thin-results",        no_argument, &action->f_directives, 1}, /* Small hack to use current structure */
 	// end
 		{0, 0, 0, 0}
 	};

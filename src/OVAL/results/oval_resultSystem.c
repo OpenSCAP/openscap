@@ -406,6 +406,8 @@ static void _oval_result_definition_to_dom_based_on_directives(struct oval_resul
 			/* collect the tests that are referenced from reported definitions */
 			if (criteria)
 				_oval_result_system_scan_criteria_for_references(criteria, tstmap);
+		} else if (content == OVAL_DIRECTIVE_CONTENT_THIN) {
+			// TODO
 		}
 	}
 }

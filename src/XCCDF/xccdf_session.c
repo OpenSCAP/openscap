@@ -100,6 +100,7 @@ struct xccdf_session {
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
 		bool check_engine_plugins_results;	///< Shall the check engine plugins results be exported?
 		bool without_sys_chars;			///< Shall system characteristics be exported?
+		bool thin_results;			///< Shall OVAL/ARF results be exported as THIN? Default is FULL
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	struct {
@@ -282,6 +283,11 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
 {
 	session->validate = validate;
 	session->full_validation = full_validation;
+}
+
+void xccdf_session_set_thin_results(struct xccdf_session *session, bool thin_results)
+{
+	session->export.thin_results = thin_results;
 }
 
 void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *datastream_id)
@@ -888,6 +894,25 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new OVAL agent session for: '%s'.", contents[idx]->href);
 			oval_definition_model_free(tmp_def_model);
 			return 2;
+		}
+
+		if (session->export.thin_results) {
+			struct oval_results_model *res_model = oval_agent_get_results_model(tmp_sess);
+			struct oval_result_directives *dir = oval_directives_model_new();
+			if (dir == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new directives model for: '%s'.", contents[idx]->href);
+				return 1;
+			}
+			oval_result_directives_set_reported(dir,
+						OVAL_RESULT_TRUE	| OVAL_RESULT_FALSE |
+						OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+						OVAL_RESULT_ERROR	| OVAL_RESULT_NOT_APPLICABLE,
+						true);
+			oval_result_directives_set_content(dir,  OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+							OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+							OVAL_RESULT_NOT_APPLICABLE | OVAL_RESULT_ERROR,
+							OVAL_DIRECTIVE_CONTENT_THIN);
+			oval_results_model_set_defdirectives_model(res_model, dir);
 		}
 
 		/* store our name in the generated documents */
