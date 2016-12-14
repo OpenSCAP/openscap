@@ -202,14 +202,10 @@ struct oval_generator *oval_results_model_get_generator(struct oval_results_mode
 struct oval_definition_model *oval_results_model_get_definition_model(struct oval_results_model *model);
 
 /**
- * TODO
+ * Return the OVAL directives model
+ * @memberof oval_results_model
  */
 struct oval_directives_model *oval_results_model_get_directives_model(struct oval_results_model *model);
-
-/**
- * TODO
- */
-void oval_results_model_set_directives_model(struct oval_results_model *model, struct oval_directives_model* dir_model);
 
 /**
  * Return iterator over reporting systems.
