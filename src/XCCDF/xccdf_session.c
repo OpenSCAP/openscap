@@ -98,7 +98,8 @@ struct xccdf_session {
 		char *report_file;			///< Path to HTML file to eport
 		bool oval_results;			///< Shall be the OVAL results files exported?
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
-		bool check_engine_plugins_results; ///< Shall the check engine plugins results be exported?
+		bool check_engine_plugins_results;	///< Shall the check engine plugins results be exported?
+		bool without_sys_chars;			///< Shall system characteristics be exported?
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	struct {
@@ -351,6 +352,11 @@ bool xccdf_session_set_product_cpe(struct xccdf_session *session, const char *pr
 	oscap_free(session->oval.product_cpe);
 	session->oval.product_cpe = oscap_strdup(product_cpe);
 	return true;
+}
+
+void xccdf_session_set_without_sys_chars_export(struct xccdf_session *session, bool without_sys_chars)
+{
+	session->export.without_sys_chars = without_sys_chars;
 }
 
 void xccdf_session_set_oval_results_export(struct xccdf_session *session, bool to_export_oval_results)
@@ -1249,6 +1255,8 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 {
 	/* get result model and session name */
 	struct oval_results_model *res_model = oval_agent_get_results_model(oval_session);
+	/* Import XCCDF session without_sys_chars flag to res_model */
+	oval_results_model_set_export_system_characteristics(res_model, !session->export.without_sys_chars);
 	const char* oval_results_directory = NULL;
 
 	if (session->export.oval_results == true) {

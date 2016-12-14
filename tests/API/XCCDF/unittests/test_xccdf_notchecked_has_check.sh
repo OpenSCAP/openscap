@@ -21,10 +21,7 @@ $OSCAP xccdf validate-xml $result
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'
 assert_exists 1 '//rule-result/result[text()="notchecked"]'
-assert_exists 1 '//rule-result/check'
-assert_exists 1 '//rule-result/check/check-content-ref'
-assert_exists 1 '//rule-result/check/check-content-ref/@name'
-assert_exists 1 '//rule-result/check/check-content-ref/@href'
+assert_exists 0 '//rule-result/check'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 rm $result

@@ -22,6 +22,5 @@ assert_exists 1 '//rule-result/result[text()="notchecked"]'
 assert_exists 1 '//rule-result/message'
 assert_exists 1 '//rule-result/message[@severity="info"]'
 assert_exists 1 '//rule-result/message[text()="No candidate or applicable check found."]'
-assert_exists 6 '//rule-result/*'
-assert_exists 4 '//rule-result/check'
+assert_exists 0 '//rule-result/check'
 rm $result

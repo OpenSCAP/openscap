@@ -59,6 +59,10 @@ xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr ret = NULL;
+
+	if (root == NULL)
+		return NULL;
+
 	xmlNodePtr candidate = root->children;
 
 	for (; candidate != NULL; candidate = candidate->next)
@@ -79,6 +83,9 @@ xmlNode *ds_rds_lookup_component(xmlDocPtr doc, const char *container_name, cons
 {
 	xmlNodePtr container = ds_rds_lookup_container(doc, container_name);
 	xmlNodePtr component = NULL;
+
+	if (container == NULL)
+		return NULL;
 
 	for (xmlNode *candidate = container->children; candidate != NULL; candidate = candidate->next) {
 		if (candidate->type != XML_ELEMENT_NODE)
