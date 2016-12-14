@@ -640,6 +640,12 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 	if (session == NULL || session->xccdf.policy_model == NULL)
 		return 1;
 
+	// The CPE session will load OVAL files for any CPE dicts that require it.
+	// These OVAL files are outside of scope of XCCDF session but we still want
+	// to apply the thin results settings to them.
+	struct cpe_session *cpe_session = xccdf_policy_model_get_cpe_session(session->xccdf.policy_model);
+	cpe_session_set_thin_results(cpe_session, session->export.thin_results);
+
 	/* Use custom CPE dict if given */
 	if (session->user_cpe != NULL) {
 		struct oscap_source *source = oscap_source_new_from_file(session->user_cpe);
