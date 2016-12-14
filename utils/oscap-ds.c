@@ -38,6 +38,7 @@
 #include <ds_sds_session.h>
 
 #include "oscap-tool.h"
+#include <oscap_debug.h>
 
 static struct oscap_module* DS_SUBMODULES[];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
