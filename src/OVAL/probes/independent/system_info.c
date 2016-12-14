@@ -358,7 +358,6 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 	FILE *fp;
 	char *ret = NULL;
 	char grubcfg[MAX_BUFFER_SIZE+1] = { '\0' };
-	int rc = PCRE_ERROR_NOMATCH;
 	int len;
 
 	fp = fopen("/boot/grub2/grub.cfg", "r");
@@ -366,6 +365,7 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 		goto fail;
 
 #ifdef USE_REGEX_PCRE
+	int rc = PCRE_ERROR_NOMATCH;
 	int erroffset, ovec[_REGEX_RES_VECSIZE];
 	const char *error;
 	pcre *re;
@@ -401,7 +401,7 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 	regex_t preg;
 	regmatch_t pmatch[1];
 
-	rc = regcomp(&preg, _REGEX_MENUENTRY, REG_EXTENDED|REG_NEWLINE);
+	int rc = regcomp(&preg, _REGEX_MENUENTRY, REG_EXTENDED|REG_NEWLINE);
 	if (rc)
 		goto fail2;
 
