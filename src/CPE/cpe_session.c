@@ -120,22 +120,16 @@ struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *c
 			return NULL;
 		}
 		if (cpe->thin_results) {
-			struct oval_result_directives *dir = oval_result_directives_new();
-			if (dir == NULL) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new directives model for: '%s'.", prefixed_href);
-				return NULL;
-			}
+			struct oval_results_model *res_model = oval_agent_get_results_model(session);
+			struct oval_directives_model *dir_model = oval_results_model_get_directives_model(res_model);
+			// This is the worst function name in existence, despite its name,
+			// it's getting the oval_result_directives of the oval_directives_model.
+			// You would expect oval_directives_model_getresdirs at least, but no..
+			struct oval_result_directives *dir = oval_directives_model_get_defdirs(dir_model);
 			oval_result_directives_set_content(dir,  OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
 							OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
 							OVAL_RESULT_NOT_APPLICABLE | OVAL_RESULT_ERROR,
 							OVAL_DIRECTIVE_CONTENT_THIN);
-
-			struct oval_results_model *res_model = oval_agent_get_results_model(session);
-			struct oval_directives_model *dir_model = oval_results_model_get_directives_model(res_model);
-			// This is the worst function name in existence, despite its name,
-			// it's setting the oval_result_directives of the oval_directives_model.
-			// You would expect oval_directives_model_setresdirs at least, but no..
-			oval_directives_model_set_defdirs(dir_model, dir);
 		}
 		oscap_htable_add(cpe->oval_sessions, prefixed_href, session);
 	}
