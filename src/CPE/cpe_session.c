@@ -125,11 +125,6 @@ struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *c
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new directives model for: '%s'.", prefixed_href);
 				return NULL;
 			}
-			oval_result_directives_set_reported(dir,
-						OVAL_RESULT_TRUE	| OVAL_RESULT_FALSE |
-						OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
-						OVAL_RESULT_ERROR	| OVAL_RESULT_NOT_APPLICABLE,
-						true);
 			oval_result_directives_set_content(dir,  OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
 							OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
 							OVAL_RESULT_NOT_APPLICABLE | OVAL_RESULT_ERROR,
