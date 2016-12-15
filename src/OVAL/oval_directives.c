@@ -175,11 +175,6 @@ struct oval_result_directives *oval_directives_model_get_defdirs(struct oval_dir
 	return model->def_directives;
 }
 
-void oval_directives_model_set_defdirs(struct oval_directives_model *model, struct oval_result_directives *def_directives)
-{
-	model->def_directives = def_directives;
-}
-
 struct oval_result_directives *oval_directives_model_get_classdir(struct oval_directives_model *model, oval_definition_class_t classdir)
 {
 	/* enum -> index */

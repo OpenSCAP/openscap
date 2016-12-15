@@ -91,10 +91,6 @@ struct oval_result_directives *oval_directives_model_get_defdirs(struct oval_dir
 /**
  * @memberof oval_directives_model
  */
-void oval_directives_model_set_defdirs(struct oval_directives_model *model, struct oval_result_directives *def_directives);
-/**
- * @memberof oval_directives_model
- */
 struct oval_result_directives *oval_directives_model_get_classdir(struct oval_directives_model *, oval_definition_class_t);
 /**
  * @memberof oval_directives_model
