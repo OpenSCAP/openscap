@@ -84,7 +84,12 @@ bool xccdf_session_is_sds(const struct xccdf_session *session);
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation);
 
 /**
- * TODO
+ * Set whether the thin results override is enabled.
+ * If true the OVAL results put in ARF or separate files will have thin results.
+ * Thin results do not contain details about the evaluated criteria, only
+ * minimal OVAL results.
+ * @memberof xccdf_session
+ * @param thin_results true to enable thin_results, default is false
  */
 void xccdf_session_set_thin_results(struct xccdf_session *session, bool thin_result);
 
