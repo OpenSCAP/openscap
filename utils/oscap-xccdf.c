@@ -147,8 +147,9 @@ static struct oscap_module XCCDF_EVAL = {
         "   --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
-        "   --thin-results\r\t\t\t\t - Set OVAL/ARF results to Thin Results.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
+        "   --thin-results\r\t\t\t\t - Thin Results provides only minimal amount of information in OVAL/ARF results.\n"
+        "                 \r\t\t\t\t   The option --without-syschar is automatically enabled when you use Thin Results.\n"
         "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in OVAL/ARF result files.\n"
         "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
         "   --skip-valid \r\t\t\t\t - Skip validation.\n"
@@ -460,8 +461,10 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (session == NULL)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
-	if (action->thin_results)
+	if (action->thin_results) {
 		xccdf_session_set_thin_results(session, true);
+		xccdf_session_set_without_sys_chars_export(session, true);
+	}
 	if (xccdf_session_is_sds(session)) {
 		xccdf_session_set_datastream_id(session, action->f_datastream_id);
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
