@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.r3005" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R3005 Datastream</bundleName>
+	<bundleGuiName>R3005 Datastream</bundleGuiName>
+	<!-- TestCase 01 - OK -->
+	<testSuite version="1" suiteId="G2.R3005.xccdf_gov.nist.validation_profile_r3005_01">
+		<suiteName>Test Case 1</suiteName>
+		<guiName>Test Case 1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r3005-datastream-01.xml</datastreamFile>
+		<cpeOvalFilename>r3005-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r3005-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r3005-oval.xml</ovalFilename>
+		<xccdfFilename>r3005-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r3005_01</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_2" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_4" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_5" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_7" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_8" expectedResult="notchecked"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_9" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_10" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+	
+	<!-- TestCase 02 - OK -->
+	<testSuite version="1" suiteId="G2.R3005.xccdf_gov.nist.validation_profile_r3005_tailoring_01">
+		<suiteName>Test Case 2</suiteName>
+		<guiName>Test Case 2</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r3005-datastream-01.xml</datastreamFile>
+		<cpeOvalFilename>r3005-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r3005-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r3005-oval.xml</ovalFilename>
+		<xccdfFilename>r3005-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r3005_tailoring_01</xccdfProfile>
+		<tailoringID>scap_gov.nist_cref_r3005-xccdf_tailoring_01</tailoringID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_1" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_2" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_4" expectedResult="notchecked"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_5" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_6" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_7" expectedResult="informational"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_8" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_9" expectedResult="notchecked"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_10" expectedResult="notselected"/>
+		</expectedResults>
+	</testSuite>
+	
+	<!-- TestCase 03 - OK -->
+	<testSuite version="1" suiteId="G2.R3005.xccdf_gov.nist.validation_profile_r3005_tailoring_02">
+		<suiteName>Test Case 3</suiteName>
+		<guiName>Test Case 3</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r3005-datastream-02.xml</datastreamFile>
+		<cpeOvalFilename>r3005-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r3005-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r3005-oval.xml</ovalFilename>
+		<xccdfFilename>r3005-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r3005_tailoring_02</xccdfProfile>
+		<datastreamID>scap_gov.nist_datastream_r3005-tailoring_02</datastreamID>
+		<tailoringID>scap_gov.nist_cref_r3005-xccdf_tailoring_02</tailoringID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_1" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_2" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_3" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_4" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_5" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_6" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_7" expectedResult="informational"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_8" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_9" expectedResult="notchecked"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_10" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+	
+	<!-- TestCase 04 - OK -->
+	<testSuite version="1" suiteId="G2.R3005.xccdf_gov.nist.validation_profile_r3005_tailoring_03">
+		<suiteName>Test Case 4</suiteName>
+		<guiName>Test Case 4</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r3005-datastream-03.xml</datastreamFile>
+		<cpeOvalFilename>r3005-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r3005-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r3005-oval.xml</ovalFilename>
+		<xccdfFilename>r3005-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r3005_tailoring_03</xccdfProfile>
+		<tailoringID>scap_gov.nist_cref_r3005-xccdf_tailoring_03</tailoringID>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_1" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_2" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_3" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_4" expectedResult="notselected"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_5" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_6" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_7" expectedResult="informational"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_8" expectedResult="notchecked"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_9" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist_rule_validation.r3005_rule_10" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

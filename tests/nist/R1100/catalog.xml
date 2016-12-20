@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.R1100" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R1100 SCAP 1.0 and 1.1</bundleName>
+	<bundleGuiName>R1100 Test SCAP 1.0 and 1.1</bundleGuiName>
+	<testSuite version="1" suiteId="G2.SCAP1.0-RHEL">
+		<suiteName>SCAP 1.0 - Windows</suiteName>
+		<guiName>SCAP 1.0 - Windows</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1100-scap10-rhel-xccdf.xml</datastreamFile>
+		<cpeOvalFilename>r1100-scap10-rhel-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1100-scap10-rhel-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r1100-scap10-rhel-oval.xml</ovalFilename>
+		<xccdfFilename>r1100-scap10-rhel-oval.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.r1100_scap10_rhel_profile</xccdfProfile>
+		<expectedResults reportType="xccdf">
+			<result definition="r1100_scap10_rhel_validation_rule_1" expectedResult="fail"/>
+			<result definition="r1100_scap10_rhel_validation_rule_2" expectedResult="pass"/>
+			<result definition="r1100_scap10_rhel_validation_rule_3" expectedResult="fail"/>
+			<result definition="r1100_scap10_rhel_validation_rule_4" expectedResult="pass"/>
+			<result definition="r1100_scap10_rhel_validation_rule_5" expectedResult="pass"/>
+			<result definition="security_patches_up_to_date" expectedResult="pass"/>
+		</expectedResults>
+		<expectedResults reportType="arf">
+			<result definition="r1100_scap10_rhel_validation_rule_1" expectedResult="fail"/>
+			<result definition="r1100_scap10_rhel_validation_rule_2" expectedResult="pass"/>
+			<result definition="r1100_scap10_rhel_validation_rule_3" expectedResult="fail"/>
+			<result definition="r1100_scap10_rhel_validation_rule_4" expectedResult="pass"/>
+			<result definition="r1100_scap10_rhel_validation_rule_5" expectedResult="pass"/>
+			<result definition="security_patches_up_to_date" expectedResult="pass"/>
+		</expectedResults>
+	</testSuite>
+
+	<testSuite version="1" suiteId="G2.SCAP1.1-Windows-RHEL">
+		<suiteName>SCAP 1.1 - Windows and RHEL</suiteName>
+		<guiName>SCAP 1.1 - Windows and RHEL</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r1100-scap11-win_rhel-xccdf.xml</datastreamFile>
+		<cpeOvalFilename>r1100-scap11-win_rhel-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>r1100-scap11-win_rhel-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>r1100-scap11-win_rhel-oval.xml</ovalFilename>
+		<xccdfFilename>r1100-scap11-win_rhel-oval.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.r1100_scap11_win_rhel_profile</xccdfProfile>
+		<expectedResults reportType="xccdf">
+			<result definition="r1100_scap11_win_rhel_validation_rule_1" expectedResult="fail"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_2" expectedResult="pass"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_3" expectedResult="fail"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_4" expectedResult="pass"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_5" expectedResult="pass"/>
+			<result definition="security_patches_up_to_date" expectedResult="fail"/>
+		</expectedResults>
+		<expectedResults reportType="arf">
+			<result definition="r1100_scap11_win_rhel_validation_rule_1" expectedResult="fail"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_2" expectedResult="pass"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_3" expectedResult="fail"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_4" expectedResult="pass"/>
+			<result definition="r1100_scap11_win_rhel_validation_rule_5" expectedResult="pass"/>
+			<result definition="security_patches_up_to_date" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+
+</testBundle>

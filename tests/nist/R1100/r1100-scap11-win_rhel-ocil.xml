@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ocil xmlns="http://scap.nist.gov/schema/ocil/2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:xhtml="http://www.w3.org/1999/xhtml" 
+	xsi:schemaLocation="http://scap.nist.gov/schema/ocil/2.0 http://scap.nist.gov/schema/ocil/2.0/ocil-2.0.xsd">
+	<generator>
+		<author>
+			<name>Dragos Prisaca</name>
+			<organization>NIST</organization>
+			<email>dragos.prisaca@nist.gov</email>
+		</author>
+		<schema_version>2.0</schema_version>
+		<timestamp>2016-01-22T10:00:00</timestamp>
+	</generator>
+	<document>
+		<title>OCIL content validation program</title>
+		<description/>
+		<notice>No notice</notice>
+	</document>
+	
+	<questionnaires>
+		
+		<questionnaire id="ocil:gov.nist.validation.r1100_scap11_win_rhel:questionnaire:6">
+			<title>Ensure all configurations are made to the appropriate server profile</title>
+			<description>Production environments should utilize the production server profile. Development and test environments should choose the profile that best fits their needs.</description>
+			<actions operation="AND">
+				<test_action_ref>ocil:gov.nist.validation.r1100_scap11_win_rhel:testaction:601</test_action_ref>
+			</actions>
+		</questionnaire>
+		<questionnaire id="ocil:gov.nist.validation.r1100_scap11_win_rhel:questionnaire:7">
+			<title>Declare an Software authorization policy for deployed applications</title>
+			<description>When configuring your application specific security policy, you must declare one (or more) of the following authorization modules in the security domain &lt;policy-module&gt; element: org.Software.security.authorization.modules.DelegatingAuthorizationModule, org.Software.security.authorization.modules.JACCAuthorizationModule. A security domain does not explicitly require an authorization policy. If an authorization policy is not specified, the default Software-web-policy and Software-Software-policy authorization configured in Software-as/server/$PROFILE/deploy/security/security-policies-Software-beans.xml is used. If you do choose to specify an authorization policy, or create a custom deployment descriptor file with a valid authorization policy, these settings override the default settings in security-policies-Software-beans.xml.</description>
+			<actions operation="AND">
+				<test_action_ref>ocil:gov.nist.validation.r1100_scap11_win_rhel:testaction:701</test_action_ref>
+			</actions>
+		</questionnaire>
+	</questionnaires>
+
+	<test_actions>
+		<boolean_question_test_action id="ocil:gov.nist.validation.r1100_scap11_win_rhel:testaction:601" question_ref="ocil:gov.nist.validation.r1100_scap11_win_rhel:question:601">
+			<when_true>
+				<result>PASS</result>
+			</when_true>
+			<when_false>
+				<result>FAIL</result>
+			</when_false>
+		</boolean_question_test_action>
+		<boolean_question_test_action id="ocil:gov.nist.validation.r1100_scap11_win_rhel:testaction:701" question_ref="ocil:gov.nist.validation.r1100_scap11_win_rhel:question:701">
+			<when_true>
+				<result>PASS</result>
+			</when_true>
+			<when_false>
+				<result>FAIL</result>
+			</when_false>
+		</boolean_question_test_action>
+		
+
+	</test_actions>
+
+	<questions>
+		<boolean_question id="ocil:gov.nist.validation.r1100_scap11_win_rhel:question:601">
+			<question_text>Answer Yes below.</question_text>
+			<question_text>Have all configuration changes been made to the Software production profile?     [Please reference Rule ID #6 in /docs/SoftwareEAP5_Guide.html for more information]</question_text>
+			<instructions><title>Instructions</title>
+				<step>
+					<description>Ensure that all configuration changes and deployments are made to the production server profile.</description>
+				</step>
+			</instructions>
+		</boolean_question>
+		<boolean_question id="ocil:gov.nist.validation.r1100_scap11_win_rhel:question:701">
+			<question_text>Answer No below.</question_text>
+			<question_text>Do your application specific security policies declare one of the following authorization modules: org.Software.security.authorization.modules.DelegatingAuthorizationModule, org.Software.security.authorization.modules.JACCAuthorizationModule?	     [Please reference Rule ID #7 in /docs/SoftwareEAP5_Guide.html for more information]</question_text>
+			<instructions><title>Instructions</title>
+				<step><description>Applications deploying their own security policies must specify org.Software.security.authorization.modules.DelegatingAuthorizationModule or org.Software.security.authorization.modules.JACCAuthorizationModule &lt;policy-module&gt; within their 'code' attributes:</description></step>
+			</instructions>
+		</boolean_question>
+	</questions>
+
+</ocil>
