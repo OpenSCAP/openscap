@@ -38,10 +38,12 @@ struct cpe_session {
 	struct oscap_htable *oval_sessions;             ///< Caches CPE OVAL check results
 	struct oscap_htable *applicable_platforms;
 	struct oscap_htable *sources_cache;             ///< Not owned cache [path -> oscap_source]
+	bool thin_results;                              ///< Should OVAL results related to CPE be exported as THIN?
 };
 
 struct cpe_session *cpe_session_new(void);
 void cpe_session_free(struct cpe_session *session);
+void cpe_session_set_thin_results(struct cpe_session *session, bool thin_results);
 struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *cpe, const char *prefixed_href);
 bool cpe_session_add_cpe_lang_model_source(struct cpe_session *session, struct oscap_source *source);
 bool cpe_session_add_cpe_dict_source(struct cpe_session *session, struct oscap_source *source);

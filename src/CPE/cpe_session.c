@@ -53,6 +53,7 @@ struct cpe_session *cpe_session_new(void)
 	cpe->lang_models = oscap_list_new();
 	cpe->oval_sessions = oscap_htable_new();
 	cpe->applicable_platforms = oscap_htable_new();
+	cpe->thin_results = false;
 	if (!cpe_session_add_default_cpe(cpe)) {
 		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Failed to add default CPE to newly created CPE Session.");
 	}
@@ -87,6 +88,11 @@ static inline struct oscap_source *_lookup_source_in_cache(struct cpe_session *s
 	return source;
 }
 
+void cpe_session_set_thin_results(struct cpe_session *cpe, bool thin_results)
+{
+	cpe->thin_results = thin_results;
+}
+
 struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *cpe, const char *prefixed_href)
 {
 	struct oval_agent_session* session = (struct oval_agent_session*)oscap_htable_get(cpe->oval_sessions, prefixed_href);
@@ -112,6 +118,18 @@ struct oval_agent_session *cpe_session_lookup_oval_session(struct cpe_session *c
 		if (session == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot create OVAL session for '%s' for CPE applicability checking", prefixed_href);
 			return NULL;
+		}
+		if (cpe->thin_results) {
+			struct oval_results_model *res_model = oval_agent_get_results_model(session);
+			struct oval_directives_model *dir_model = oval_results_model_get_directives_model(res_model);
+			// This is the worst function name in existence, despite its name,
+			// it's getting the oval_result_directives of the oval_directives_model.
+			// You would expect oval_directives_model_getresdirs at least, but no..
+			struct oval_result_directives *dir = oval_directives_model_get_defdirs(dir_model);
+			oval_result_directives_set_content(dir,  OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+							OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+							OVAL_RESULT_NOT_APPLICABLE | OVAL_RESULT_ERROR,
+							OVAL_DIRECTIVE_CONTENT_THIN);
 		}
 		oscap_htable_add(cpe->oval_sessions, prefixed_href, session);
 	}

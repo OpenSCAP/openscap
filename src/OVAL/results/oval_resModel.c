@@ -146,6 +146,12 @@ void oval_results_model_set_generator(struct oval_results_model *model, struct o
 	model->generator = generator;
 }
 
+struct oval_directives_model *oval_results_model_get_directives_model(struct oval_results_model *model) {
+	__attribute__nonnull__(model);
+
+	return model->directives_model;
+}
+
 struct oval_definition_model *oval_results_model_get_definition_model(struct oval_results_model *model) {
 	__attribute__nonnull__(model);
 
