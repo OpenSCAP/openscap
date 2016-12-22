@@ -742,6 +742,7 @@ echo "debugging flags enabled:       $debug"
 echo "CCE enabled:                   $cce"
 echo
 @@@@PROBE_TABLE@@@@
+echo "  system_info:                 always enabled"
 echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"

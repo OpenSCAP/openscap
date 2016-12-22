@@ -4,6 +4,8 @@ LINUX_SUBDIRS=
 SOLARIS_SUBDIRS=
 ENV_SUBDIRS=
 
+INDEPENDENT_SUBDIRS += sysinfo
+
 if WANT_PROBES_INDEPENDENT
 if probe_family_enabled
 INDEPENDENT_SUBDIRS += family
@@ -16,9 +18,6 @@ INDEPENDENT_SUBDIRS += filehash58
 endif
 if probe_textfilecontent54_enabled
 INDEPENDENT_SUBDIRS += textfilecontent54
-endif
-if probe_system_info_enabled
-INDEPENDENT_SUBDIRS += sysinfo
 endif
 if probe_sql57_enabled
 INDEPENDENT_SUBDIRS += sql57
