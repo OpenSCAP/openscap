@@ -64,7 +64,9 @@ static const struct oscap_string_map OVAL_ODAFAMILY_MAP[] = {
 	{OVAL_AFCFML_UNDEFINED, "undefined"},
 	{OVAL_AFCFML_UNIX, "unix"},
 	{OVAL_AFCFML_WINDOWS, "windows"},
-	{OVAL_CLASS_UNKNOWN, NULL}
+	// the "unknown" is not a valid OVAL family value, we use it internally
+	// when the supplied value is invalid
+	{OVAL_AFCFML_UNKNOWN, NULL}
 };
 
 /* End of variable definitions
@@ -190,7 +192,7 @@ static oval_affected_family_t _odafamily(char *family)
 
 const char *oval_affected_family_get_text(oval_affected_family_t family)
 {
-	return OVAL_ODAFAMILY_MAP[family - 1].string;
+	return oscap_enum_to_string(OVAL_ODAFAMILY_MAP, family);
 }
 
 static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *user)
