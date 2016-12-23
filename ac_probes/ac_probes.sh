@@ -249,7 +249,9 @@ mkdir  "${TEMPDIR}"
 cd "${PROBE_SRCDIR}" || exit 9
 
 # Generate source file list for each probe from Makefile.am
+# skip system_info because we always build system_info
 grep -E "${SOURCES_REGEXP}" Makefile.am | \
+    grep -v "probe_system_info" | \
     sed -e '{:q;N;s/\\\n//g;t q;/\\$/ b q;}' | \
     sed 's|^[[:space:]]*\(probe_.*SOURCES\)[[:space:]]*=[[:space:]]*\(.*\)[[:space:]]*$|export \1="\2"|' > "${TEMPDIR}/vars" || exit 1
 
