@@ -1,0 +1,1657 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_gov.nist_collection_r2920-datastream.zip" schematron-version="1.2" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2.xsd">
+  <data-stream id="scap_gov.nist_datastream_r2920-datastream.zip" scap-version="1.2" timestamp="2016-05-25T14:00:00" use-case="VULNERABILITY">
+    <dictionaries>
+      <component-ref id="scap_gov.nist_cref_r2920-cpe-dictionary.xml" xlink:href="#scap_gov.nist_comp_r2920-cpe-dictionary.xml">
+        <cat:catalog>
+          <cat:uri name="r2920-cpe-oval.xml" uri="#scap_gov.nist_cref_r2920-cpe-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+    </dictionaries>
+    <checklists>
+      <component-ref id="scap_gov.nist_cref_r2920-xccdf.xml" xlink:href="#scap_gov.nist_comp_r2920-xccdf.xml">
+        <cat:catalog>
+          <cat:uri name="r2920-oval.xml" uri="#scap_gov.nist_cref_r2920-oval.xml"/>
+        </cat:catalog>
+      </component-ref>
+    </checklists>
+    <checks>
+      <component-ref id="scap_gov.nist_cref_r2920-oval.xml" xlink:href="#scap_gov.nist_comp_r2920-oval.xml"/>
+      <component-ref id="scap_gov.nist_cref_r2920-cpe-oval.xml" xlink:href="#scap_gov.nist_comp_r2920-cpe-oval.xml"/>
+    </checks>
+  </data-stream>
+  <component id="scap_gov.nist_comp_r2920-xccdf.xml" timestamp="2016-05-25T14:00:00">
+    <xccdf:Benchmark xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_gov.nist_benchmark_r2920" style="SCAP_1.2" xml:lang="en" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.2 http://scap.nist.gov/schema/xccdf/1.2/xccdf_1.2.xsd http://cpe.mitre.org/dictionary/2.0 http://scap.nist.gov/schema/cpe/2.3/cpe-dictionary_2.3.xsd">
+      <xccdf:status date="2016-05-25">draft</xccdf:status>
+      <xccdf:title>XCCDF Benchmark That References the Validation Content for the R2920 requirement</xccdf:title>
+      <xccdf:description>This XCCDF Benchmark references the OVAL Definitions in the validation content for the R2920 requirement.</xccdf:description>
+      <xccdf:version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</xccdf:version>
+      <xccdf:metadata>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:contributor>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">National Institute of Standards and Technology</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">http://scap.nist.gov</dc:source>
+      </xccdf:metadata>
+      <xccdf:Profile id="xccdf_gov.nist.validation_profile_r2920" prohibitChanges="1">
+        <xccdf:title>XCCDF Profile That References the Validation Content for the R2920 requirement</xccdf:title>
+        <xccdf:description>This Profile allows for the tailoring of the validation content for the R2920 requirement.</xccdf:description>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_1" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_2" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_3" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_4" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_5" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_6" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_7" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_8" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_9" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_10" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_11" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_12" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_13" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_14" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_15" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_16" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_17" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_18" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_19" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_20" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_21" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_22" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_23" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_24" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_25" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_26" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_27" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_28" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_29" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_30" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_31" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_32" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_33" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_34" selected="true"/>
+        <xccdf:select idref="xccdf_gov.nist_rule_validation.r2920_rule_35" selected="true"/>
+      </xccdf:Profile>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_1" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0001</xccdf:title>
+        <xccdf:description>The Windows Error Reporting (WER) component in Microsoft Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to bypass the Protected Process Light protection mechanism and read the contents of arbitrary process-memory locations by leveraging administrative privileges, aka "Windows Error Reporting Security Feature Bypass Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0001</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:1"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_2" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0002</xccdf:title>
+        <xccdf:description>The AhcVerifyAdminContext function in ahcache.sys in the Application Compatibility component in Microsoft Windows 7 SP1, Windows Server 2008 R2 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 does not verify that an impersonation token is associated with an administrative account, which allows local users to gain privileges by running AppCompatCache.exe with a crafted DLL file, aka MSRC ID 20544 or "Microsoft Application Compatibility Infrastructure Elevation of Privilege Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0002</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:2"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_3" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0003</xccdf:title>
+        <xccdf:description>win32k.sys in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to gain privileges or cause a denial of service (NULL pointer dereference) via a crafted application, aka "Win32k Elevation of Privilege Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0003</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:3"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_4" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0004</xccdf:title>
+        <xccdf:description>The User Profile Service (aka ProfSvc) in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to gain privileges by conducting a junction attack to load another user's UsrClass.dat registry hive, aka MSRC ID 20674 or "Microsoft User Profile Service Elevation of Privilege Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0004</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:4"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_5" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0005</xccdf:title>
+        <xccdf:description>The NETLOGON service in Microsoft Windows Server 2003 SP2, Windows Server 2008 SP2 and R2 SP1, and Windows Server 2012 Gold and R2, when a Domain Controller is configured, allows remote attackers to spoof the computer name of a secure channel's endpoint, and obtain sensitive session information, by running a crafted application and leveraging the ability to sniff network traffic, aka "NETLOGON Spoofing Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0005</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:5"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_6" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0006</xccdf:title>
+        <xccdf:description>The Network Location Awareness (NLA) service in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, and Windows Server 2012 Gold and R2 does not perform mutual authentication to determine a domain connection, which allows remote attackers to trigger an unintended permissive configuration by spoofing DNS and LDAP responses on a local network, aka "NLA Security Feature Bypass Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0006</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:6"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_7" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0117</xccdf:title>
+        <xccdf:description>The LDAP Server in IBM Domino 8.5.x before 8.5.3 FP6 IF6 and 9.x before 9.0.1 FP3 IF1 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via unspecified vectors, aka SPR KLYH9SLRGM.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0117</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:7"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_8" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0008</xccdf:title>
+        <xccdf:description>The UNC implementation in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 does not include authentication from the server to the client, which allows remote attackers to execute arbitrary code by making crafted data available on a UNC share, as demonstrated by Group Policy data from a spoofed domain controller, aka "Group Policy Remote Code Execution Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0008</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:8"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_9" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0009</xccdf:title>
+        <xccdf:description>The Group Policy Security Configuration policy implementation in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows man-in-the-middle attackers to disable a signing requirement and trigger a revert-to-default action by spoofing domain-controller responses, aka "Group Policy Security Feature Bypass Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0009</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:9"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_10" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0010</xccdf:title>
+        <xccdf:description>The CryptProtectMemory function in cng.sys (aka the Cryptography Next Generation driver) in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1, when the CRYPTPROTECTMEMORY_SAME_LOGON option is used, does not check an impersonation token's level, which allows local users to bypass intended decryption restrictions by leveraging a service that (1) has a named-pipe planting vulnerability or (2) uses world-readable shared memory for encrypted data, aka "CNG Security Feature Bypass Vulnerability" or MSRC ID 20707.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0010</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:10"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_11" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0011</xccdf:title>
+        <xccdf:description>mrxdav.sys (aka the WebDAV driver) in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to bypass an impersonation protection mechanism, and obtain privileges for redirection of WebDAV requests, via a crafted application, aka "WebDAV Elevation of Privilege Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0011</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:11"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_12" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0012</xccdf:title>
+        <xccdf:description>Microsoft System Center Virtual Machine Manager (VMM) 2012 R2 Update Rollup 4 does not properly validate the roles of users, which allows local users to obtain server and virtual-machine administrative privileges by establishing a server session with Active Directory credentials, aka "Virtual Machine Manager Elevation of Privilege Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0012</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:12"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_13" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0113</xccdf:title>
+        <xccdf:description>The Jazz help system in IBM Rational Collaborative Lifecycle Management 4.0 through 5.0.2, Rational Quality Manager 4.0 through 4.0.7 and 5.0 through 5.0.2, Rational Team Concert 4.0 through 4.0.7 and 5.0 through 5.0.2, Rational Requirements Composer 4.0 through 4.0.7, Rational DOORS Next Generation 4.0 through 4.0.7 and 5.0 through 5.0.2, Rational Engineering Lifecycle Manager 4.0.3 through 4.0.7 and 5.0 through 5.0.2, Rational Rhapsody Design Manager 4.0 through 4.0.7 and 5.0 through 5.0.2, and Rational Software Architect Design Manager 4.0 through 4.0.7 and 5.0 through 5.0.2 allows remote attackers to read JSP source code via a crafted request.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0113</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:13"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_14" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0014</xccdf:title>
+        <xccdf:description>Buffer overflow in the Telnet service in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, and Windows Server 2012 Gold and R2 allows remote attackers to execute arbitrary code via crafted packets, aka "Windows Telnet Service Buffer Overflow Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0014</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:14"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_15" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0015</xccdf:title>
+        <xccdf:description>Microsoft Windows Server 2003 SP2, Server 2008 SP2 and R2 SP1, and Server 2012 Gold and R2 allow remote attackers to cause a denial of service (system hang and RADIUS outage) via crafted username strings to (1) Internet Authentication Service (IAS) or (2) Network Policy Server (NPS), aka "Network Policy Server RADIUS Implementation Denial of Service Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0015</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:15"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_16" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0016</xccdf:title>
+        <xccdf:description>Directory traversal vulnerability in the TS WebProxy (aka TSWbPrxy) component in Microsoft Windows Vista SP2, Windows 7 SP1, Windows Server 2008 R2 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows remote attackers to gain privileges via a crafted pathname in an executable file, as demonstrated by a transition from Low Integrity to Medium Integrity, aka "Directory Traversal Elevation of Privilege Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0016</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:16"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_17" selected="true">
+        <xccdf:title>XCCDF Rule title for  CVE-2015-0017</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0020, CVE-2015-0022, CVE-2015-0026, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0017</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:17"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_18" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0018</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0037, CVE-2015-0040, and CVE-2015-0066.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0018</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:18"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_19" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0019</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 9 and 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0019</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:19"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_20" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0020</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0022, CVE-2015-0026, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0020</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:20"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_21" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0021</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0021</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:21"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_22" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0022</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0026, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0022</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:22"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_23" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0023</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0025.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0023</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:23"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_24" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0124</xccdf:title>
+        <xccdf:description>Cross-site scripting (XSS) vulnerability in IBM Rational Quality Manager 2.x and 3.x before 3.0.1.6 iFix4, 4.x before 4.0.7 iFix3, and 5.x before 5.0.2 allows remote authenticated users to inject arbitrary web script or HTML via a crafted URL.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0124</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:24"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_25" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0025</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0023.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0025</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:25"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_26" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0026</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0022, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0026</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:26"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_27" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0027</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 10 and 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0035, CVE-2015-0039, CVE-2015-0052, and CVE-2015-0068.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0027</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:27"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_28" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0028</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 9 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0048.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0028</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:28"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_29" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0029</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 and 8 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0029</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:29"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_30" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0030</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0022, CVE-2015-0026, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0030</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:30"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_31" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0031</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0022, CVE-2015-0026, CVE-2015-0030, CVE-2015-0036, and CVE-2015-0041.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0031</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:31"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_32" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0032</xccdf:title>
+        <xccdf:description>vbscript.dll in Microsoft VBScript 5.6 through 5.8, as used with Internet Explorer 8 through 11 and other products, allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "VBScript Memory Corruption Vulnerability."</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0032</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:32"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_33" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0133</xccdf:title>
+        <xccdf:description>IBM WebSphere Commerce 7.0 Feature Pack 4 through 8 allows remote attackers to read arbitrary files and possibly obtain administrative privileges via an XML external entity declaration in conjunction with an entity reference, related to an XML External Entity (XXE) issue.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0133</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:33"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_34" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0134</xccdf:title>
+        <xccdf:description>Buffer overflow in the SSLv2 implementation in IBM Domino 8.5.x before 8.5.1 FP5 IF3, 8.5.2 before FP4 IF3, 8.5.3 before FP6 IF6, 9.0 before IF7, and 9.0.1 before FP2 IF3 allows remote attackers to execute arbitrary code via unspecified vectors.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0134</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:34"/>
+        </xccdf:check>
+      </xccdf:Rule>
+      <xccdf:Rule id="xccdf_gov.nist_rule_validation.r2920_rule_35" selected="true">
+        <xccdf:title>XCCDF Rule title for CVE-2015-0035</xccdf:title>
+        <xccdf:description>Microsoft Internet Explorer 10 and 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0027, CVE-2015-0039, CVE-2015-0052, and CVE-2015-0068.</xccdf:description>
+        <xccdf:ident system="http://cve.mitre.org">CVE-2015-0035</xccdf:ident>
+        <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <xccdf:check-content-ref href="r2920-oval.xml" name="oval:nist.validation.r2920:def:35"/>
+        </xccdf:check>
+      </xccdf:Rule>
+    </xccdf:Benchmark>
+  </component>
+  <component id="scap_gov.nist_comp_r2920-oval.xml" timestamp="2016-05-25T14:00:00">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/windows-definitions-schema.xsd               http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/independent-definitions-schema.xsd                  http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/oval-definitions-schema.xsd               http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.8/ovaldefinition/complete/oval-common-schema.xsd">
+      <generator>
+        <oval:product_name>NIST Validation Content Generation Script</oval:product_name>
+        <oval:product_version>1.0</oval:product_version>
+        <oval:schema_version>5.8</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:1" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0001</title>
+            <description>The Windows Error Reporting (WER) component in Microsoft Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to bypass the Protected Process Light protection mechanism and read the contents of arbitrary process-memory locations by leveraging administrative privileges, aka "Windows Error Reporting Security Feature Bypass Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0001" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0001"/>
+            <reference source="NVD" ref_id="CVE-2015-0001" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0001"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that every variable item exists for the specified object." negate="false" test_ref="oval:nist.validation.r2920:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:2" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0002</title>
+            <description>The AhcVerifyAdminContext function in ahcache.sys in the Application Compatibility component in Microsoft Windows 7 SP1, Windows Server 2008 R2 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 does not verify that an impersonation token is associated with an administrative account, which allows local users to gain privileges by running AppCompatCache.exe with a crafted DLL file, aka MSRC ID 20544 or "Microsoft Application Compatibility Infrastructure Elevation of Privilege Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0002" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0002"/>
+            <reference source="NVD" ref_id="CVE-2015-0002" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0002"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that any variable items exist for the specified object." negate="false" test_ref="oval:nist.validation.r2920:tst:2"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:3" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0003</title>
+            <description>win32k.sys in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to gain privileges or cause a denial of service (NULL pointer dereference) via a crafted application, aka "Win32k Elevation of Privilege Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0003" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0003"/>
+            <reference source="NVD" ref_id="CVE-2015-0003" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0003"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that at least one variable item exists for the specified object." negate="false" test_ref="oval:nist.validation.r2920:tst:3"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:4" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0004</title>
+            <description>The User Profile Service (aka ProfSvc) in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to gain privileges by conducting a junction attack to load another user's UsrClass.dat registry hive, aka MSRC ID 20674 or "Microsoft User Profile Service Elevation of Privilege Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0004" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0004"/>
+            <reference source="NVD" ref_id="CVE-2015-0004" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0004"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that no variable items exist for the specified object." negate="false" test_ref="oval:nist.validation.r2920:tst:4"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:5" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0005</title>
+            <description>The NETLOGON service in Microsoft Windows Server 2003 SP2, Windows Server 2008 SP2 and R2 SP1, and Windows Server 2012 Gold and R2, when a Domain Controller is configured, allows remote attackers to spoof the computer name of a secure channel's endpoint, and obtain sensitive session information, by running a crafted application and leveraging the ability to sniff network traffic, aka "NETLOGON Spoofing Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0005" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0005"/>
+            <reference source="NVD" ref_id="CVE-2015-0005" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0005"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that only one variable item exists for the specified object." negate="false" test_ref="oval:nist.validation.r2920:tst:5"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:6" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0006</title>
+            <description>The Network Location Awareness (NLA) service in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, and Windows Server 2012 Gold and R2 does not perform mutual authentication to determine a domain connection, which allows remote attackers to trigger an unintended permissive configuration by spoofing DNS and LDAP responses on a local network, aka "NLA Security Feature Bypass Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0006" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0006"/>
+            <reference source="NVD" ref_id="CVE-2015-0006" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0006"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is not equal to 2." negate="false" test_ref="oval:nist.validation.r2920:tst:6"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:7" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0117</title>
+            <description>The LDAP Server in IBM Domino 8.5.x before 8.5.3 FP6 IF6 and 9.x before 9.0.1 FP3 IF1 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via unspecified vectors, aka SPR KLYH9SLRGM.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0117" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0117"/>
+            <reference source="NVD" ref_id="CVE-2015-017" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0117"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref equals oval:nist.validation.r2920:var:1 (value='test')." negate="false" test_ref="oval:nist.validation.r2920:tst:7"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:8" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0008</title>
+            <description>The UNC implementation in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 does not include authentication from the server to the client, which allows remote attackers to execute arbitrary code by making crafted data available on a UNC share, as demonstrated by Group Policy data from a spoofed domain controller, aka "Group Policy Remote Code Execution Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0008" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0008"/>
+            <reference source="NVD" ref_id="CVE-2015-0008" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0008"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals foo.bar." negate="false" test_ref="oval:nist.validation.r2920:tst:8"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:9" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0009</title>
+            <description>The Group Policy Security Configuration policy implementation in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows man-in-the-middle attackers to disable a signing requirement and trigger a revert-to-default action by spoofing domain-controller responses, aka "Group Policy Security Feature Bypass Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0009" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0009"/>
+            <reference source="NVD" ref_id="CVE-2015-0009" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0009"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref equals foo.bar." negate="false" test_ref="oval:nist.validation.r2920:tst:9"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:10" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0010</title>
+            <description>The CryptProtectMemory function in cng.sys (aka the Cryptography Next Generation driver) in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1, when the CRYPTPROTECTMEMORY_SAME_LOGON option is used, does not check an impersonation token's level, which allows local users to bypass intended decryption restrictions by leveraging a service that (1) has a named-pipe planting vulnerability or (2) uses world-readable shared memory for encrypted data, aka "CNG Security Feature Bypass Vulnerability" or MSRC ID 20707.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0010" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0010"/>
+            <reference source="NVD" ref_id="CVE-2015-0010" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0010"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals 1." negate="false" test_ref="oval:nist.validation.r2920:tst:10"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:11" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0011</title>
+            <description>mrxdav.sys (aka the WebDAV driver) in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows local users to bypass an impersonation protection mechanism, and obtain privileges for redirection of WebDAV requests, via a crafted application, aka "WebDAV Elevation of Privilege Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0011" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0011"/>
+            <reference source="NVD" ref_id="CVE-2015-0011" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0011"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals 1." negate="false" test_ref="oval:nist.validation.r2920:tst:11"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:12" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0012</title>
+            <description>Microsoft System Center Virtual Machine Manager (VMM) 2012 R2 Update Rollup 4 does not properly validate the roles of users, which allows local users to obtain server and virtual-machine administrative privileges by establishing a server session with Active Directory credentials, aka "Virtual Machine Manager Elevation of Privilege Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0012" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0012"/>
+            <reference source="NVD" ref_id="CVE-2015-0012" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0012"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals foobar." negate="false" test_ref="oval:nist.validation.r2920:tst:12"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:13" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0113</title>
+            <description>The Jazz help system in IBM Rational Collaborative Lifecycle Management 4.0 through 5.0.2, Rational Quality Manager 4.0 through 4.0.7 and 5.0 through 5.0.2, Rational Team Concert 4.0 through 4.0.7 and 5.0 through 5.0.2, Rational Requirements Composer 4.0 through 4.0.7, Rational DOORS Next Generation 4.0 through 4.0.7 and 5.0 through 5.0.2, Rational Engineering Lifecycle Manager 4.0.3 through 4.0.7 and 5.0 through 5.0.2, Rational Rhapsody Design Manager 4.0 through 4.0.7 and 5.0 through 5.0.2, and Rational Software Architect Design Manager 4.0 through 4.0.7 and 5.0 through 5.0.2 allows remote attackers to read JSP source code via a crafted request.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0113" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0113"/>
+            <reference source="NVD" ref_id="CVE-2015-0113" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0113"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref is not equal to foo.bar." negate="false" test_ref="oval:nist.validation.r2920:tst:13"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:14" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0014</title>
+            <description>Buffer overflow in the Telnet service in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, and Windows Server 2012 Gold and R2 allows remote attackers to execute arbitrary code via crafted packets, aka "Windows Telnet Service Buffer Overflow Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0014" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0014"/>
+            <reference source="NVD" ref_id="CVE-2015-0014" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0014"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is not equal to foo.bar." negate="false" test_ref="oval:nist.validation.r2920:tst:14"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:15" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0015</title>
+            <description>Microsoft Windows Server 2003 SP2, Server 2008 SP2 and R2 SP1, and Server 2012 Gold and R2 allow remote attackers to cause a denial of service (system hang and RADIUS outage) via crafted username strings to (1) Internet Authentication Service (IAS) or (2) Network Policy Server (NPS), aka "Network Policy Server RADIUS Implementation Denial of Service Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0015" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0015"/>
+            <reference source="NVD" ref_id="CVE-2015-0015" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0015"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals testString." negate="false" test_ref="oval:nist.validation.r2920:tst:15"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:16" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0016</title>
+            <description>Directory traversal vulnerability in the TS WebProxy (aka TSWbPrxy) component in Microsoft Windows Vista SP2, Windows 7 SP1, Windows Server 2008 R2 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows remote attackers to gain privileges via a crafted pathname in an executable file, as demonstrated by a transition from Low Integrity to Medium Integrity, aka "Directory Traversal Elevation of Privilege Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0016" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0016"/>
+            <reference source="NVD" ref_id="CVE-2015-0016" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0016"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref equals 'oval:nist.validation.r2920:var:1'." negate="false" test_ref="oval:nist.validation.r2920:tst:16"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:17" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0017</title>
+            <description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0020, CVE-2015-0022, CVE-2015-0026, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0017" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0017"/>
+            <reference source="NVD" ref_id="CVE-2015-0017" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0017"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref is not equal to 'oval:nist.validation.r2920:var:1'." negate="false" test_ref="oval:nist.validation.r2920:tst:17"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:18" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0018</title>
+            <description>Microsoft Internet Explorer 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0037, CVE-2015-0040, and CVE-2015-0066.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0018" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0018"/>
+            <reference source="NVD" ref_id="CVE-2015-0018" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0018"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref case insensitive equals 'oval:nist.validation.r2920:var:1'." negate="false" test_ref="oval:nist.validation.r2920:tst:18"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:19" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0019</title>
+            <description>Microsoft Internet Explorer 9 and 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0019" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0019"/>
+            <reference source="NVD" ref_id="CVE-2015-0019" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0019"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref is case insensitive not equal to 'oval:nist.validation.r2920:var:1'." negate="false" test_ref="oval:nist.validation.r2920:tst:19"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:20" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0020</title>
+            <description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0022, CVE-2015-0026, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0020" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0020"/>
+            <reference source="NVD" ref_id="CVE-2015-0020" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0020"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref matches the regular expression 'oval:nist.validation.r2920:var:1'." negate="false" test_ref="oval:nist.validation.r2920:tst:20"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:21" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0021</title>
+            <description>Microsoft Internet Explorer 6 through 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0021" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0021"/>
+            <reference source="NVD" ref_id="CVE-2015-0021" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0021"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref equals 'oval:nist.validation.r2920:var:13'." negate="false" test_ref="oval:nist.validation.r2920:tst:21"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:22" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0022</title>
+            <description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0026, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0022" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0022"/>
+            <reference source="NVD" ref_id="CVE-2015-0022" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0022"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref is not equal to 'oval:nist.validation.r2920:var:13'." negate="false" test_ref="oval:nist.validation.r2920:tst:22"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:23" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0023</title>
+            <description>Microsoft Internet Explorer 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0025.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0023" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0023"/>
+            <reference source="NVD" ref_id="CVE-2015-0023" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0023"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref case insensitive equals 'oval:nist.validation.r2920:var:14'." negate="false" test_ref="oval:nist.validation.r2920:tst:23"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:24" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0024</title>
+            <description>Cross-site scripting (XSS) vulnerability in IBM Rational Quality Manager 2.x and 3.x before 3.0.1.6 iFix4, 4.x before 4.0.7 iFix3, and 5.x before 5.0.2 allows remote authenticated users to inject arbitrary web script or HTML via a crafted URL.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0124" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0124"/>
+            <reference source="NVD" ref_id="CVE-2015-0124" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0124"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref is case insensitive not equal to 'oval:nist.validation.r2920:var:14'." negate="false" test_ref="oval:nist.validation.r2920:tst:24"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:25" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0025</title>
+            <description>Microsoft Internet Explorer 10 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0023.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0025" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0025"/>
+            <reference source="NVD" ref_id="CVE-2015-0025" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0025"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the var_ref matches the regular expression 'oval:nist.validation.r2920:var:2'." negate="false" test_ref="oval:nist.validation.r2920:tst:25"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:26" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0026</title>
+            <description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0022, CVE-2015-0030, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0026" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0026"/>
+            <reference source="NVD" ref_id="CVE-2015-0026" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0026"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals test." negate="false" test_ref="oval:nist.validation.r2920:tst:26"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:27" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0027</title>
+            <description>Microsoft Internet Explorer 10 and 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0035, CVE-2015-0039, CVE-2015-0052, and CVE-2015-0068.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0027" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0027"/>
+            <reference source="NVD" ref_id="CVE-2015-0027" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0027"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is not equal to test." negate="false" test_ref="oval:nist.validation.r2920:tst:27"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:28" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0028</title>
+            <description>Microsoft Internet Explorer 9 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0048.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0028" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0028"/>
+            <reference source="NVD" ref_id="CVE-2015-0028" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0028"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value case insensitive equals TesT." negate="false" test_ref="oval:nist.validation.r2920:tst:28"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:29" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0029</title>
+            <description>Microsoft Internet Explorer 6 and 8 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0029" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0029"/>
+            <reference source="NVD" ref_id="CVE-2015-0029" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0029"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is case insensitive not equal to test." negate="false" test_ref="oval:nist.validation.r2920:tst:29"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:30" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0030</title>
+            <description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0022, CVE-2015-0026, CVE-2015-0031, CVE-2015-0036, and CVE-2015-0041.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0030" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0030"/>
+            <reference source="NVD" ref_id="CVE-2015-0030" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0030"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value matches the regular expression [Tt]." negate="false" test_ref="oval:nist.validation.r2920:tst:30"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:31" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0031</title>
+            <description>Microsoft Internet Explorer 6 through 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0017, CVE-2015-0020, CVE-2015-0022, CVE-2015-0026, CVE-2015-0030, CVE-2015-0036, and CVE-2015-0041.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0031" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0031"/>
+            <reference source="NVD" ref_id="CVE-2015-0031" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0031"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value equals not." negate="false" test_ref="oval:nist.validation.r2920:tst:31"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:32" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0032</title>
+            <description>vbscript.dll in Microsoft VBScript 5.6 through 5.8, as used with Internet Explorer 8 through 11 and other products, allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "VBScript Memory Corruption Vulnerability."</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0032" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0032"/>
+            <reference source="NVD" ref_id="CVE-2015-0032" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0032"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is not equal to not." negate="false" test_ref="oval:nist.validation.r2920:tst:32"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:33" version="1">
+          <metadata>
+            <title>Title for CVE-2015-01133</title>
+            <description>IBM WebSphere Commerce 7.0 Feature Pack 4 through 8 allows remote attackers to read arbitrary files and possibly obtain administrative privileges via an XML external entity declaration in conjunction with an entity reference, related to an XML External Entity (XXE) issue.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0133" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0133"/>
+            <reference source="NVD" ref_id="CVE-2015-0133" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0133"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value case insensitive equals not." negate="false" test_ref="oval:nist.validation.r2920:tst:33"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:34" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0134</title>
+            <description>Buffer overflow in the SSLv2 implementation in IBM Domino 8.5.x before 8.5.1 FP5 IF3, 8.5.2 before FP4 IF3, 8.5.3 before FP6 IF6, 9.0 before IF7, and 9.0.1 before FP2 IF3 allows remote attackers to execute arbitrary code via unspecified vectors.</description>
+            <expected_results>
+              <result configuration="1">FAIL</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0134" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0134"/>
+            <reference source="NVD" ref_id="CVE-2015-0134" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0134"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value is case insensitive not equal to not." negate="false" test_ref="oval:nist.validation.r2920:tst:34"/>
+          </criteria>
+        </definition>
+        <definition class="vulnerability" id="oval:nist.validation.r2920:def:35" version="1">
+          <metadata>
+            <title>Title for CVE-2015-0035</title>
+            <description>Microsoft Internet Explorer 10 and 11 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via a crafted web site, aka "Internet Explorer Memory Corruption Vulnerability," a different vulnerability than CVE-2015-0027, CVE-2015-0039, CVE-2015-0052, and CVE-2015-0068.</description>
+            <expected_results>
+              <result configuration="1">PASS</result>
+            </expected_results>
+            <reference source="http://cve.mitre.org" ref_id="CVE-2015-0035" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0035"/>
+            <reference source="NVD" ref_id="CVE-2015-0035" ref_url="https://web.nvd.nist.gov/view/vuln/detail?vulnId=CVE-2015-0035"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Test to see that the value matches the regular expression [Aa]." negate="false" test_ref="oval:nist.validation.r2920:tst:35"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="all_exist" comment="Test to see that every variable item exists for the specified object." id="oval:nist.validation.r2920:tst:1" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="any_exist" comment="Test to see that any variable items exist for the specified object." id="oval:nist.validation.r2920:tst:2" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that at least one variable item exists for the specified object." id="oval:nist.validation.r2920:tst:3" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="none_exist" comment="Test to see that no variable items exist for the specified object." id="oval:nist.validation.r2920:tst:4" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="only_one_exists" comment="Test to see that only one variable item exists for the specified object." id="oval:nist.validation.r2920:tst:5" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value is not equal to 2." id="oval:nist.validation.r2920:tst:6" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:143"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="at least one" check_existence="at_least_one_exists" comment="Test to see that the var_ref equals oval:nist.validation.r2920:var:1 (value='test')." id="oval:nist.validation.r2920:tst:7" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:2"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="none exist" check_existence="none_exist" comment="Test to see that the value equals foo.bar." id="oval:nist.validation.r2920:tst:8" version="2">
+          <object object_ref="oval:nist.validation.r2920:obj:13"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="none satisfy" check_existence="at_least_one_exists" comment="Test to see that the var_ref equals foo.bar." id="oval:nist.validation.r2920:tst:9" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:3"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="Test to see that the value equals 1." id="oval:nist.validation.r2920:tst:10" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:144"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value equals 1." id="oval:nist.validation.r2920:tst:11" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:144"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="at least one" check_existence="at_least_one_exists" comment="Test to see that the value equals foobar." id="oval:nist.validation.r2920:tst:12" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:6"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="none exist" check_existence="none_exist" comment="Test to see that the var_ref is not equal to foo.bar." id="oval:nist.validation.r2920:tst:13" version="2">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="none satisfy" check_existence="at_least_one_exists" comment="Test to see that the value is not equal to foo.bar." id="oval:nist.validation.r2920:tst:14" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:8"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="Test to see that the value equals testString." id="oval:nist.validation.r2920:tst:15" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:1"/>
+          <state state_ref="oval:nist.validation.r2920:ste:9"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref equals 'oval:nist.validation.r2920:var:1'." id="oval:nist.validation.r2920:tst:16" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:2"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref is not equal to 'oval:nist.validation.r2920:var:1'." id="oval:nist.validation.r2920:tst:17" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:10"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref case insensitive equals 'oval:nist.validation.r2920:var:1'." id="oval:nist.validation.r2920:tst:18" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:11"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref is case insensitive not equal to 'oval:nist.validation.r2920:var:1'." id="oval:nist.validation.r2920:tst:19" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:12"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref matches the regular expression 'oval:nist.validation.r2920:var:1'." id="oval:nist.validation.r2920:tst:20" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:13"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref equals 'oval:nist.validation.r2920:var:13'." id="oval:nist.validation.r2920:tst:21" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:14"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref is not equal to 'oval:nist.validation.r2920:var:13'." id="oval:nist.validation.r2920:tst:22" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:15"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref case insensitive equals 'oval:nist.validation.r2920:var:14'." id="oval:nist.validation.r2920:tst:23" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:16"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref is case insensitive not equal to 'oval:nist.validation.r2920:var:14'." id="oval:nist.validation.r2920:tst:24" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:17"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the var_ref matches the regular expression 'oval:nist.validation.r2920:var:2'." id="oval:nist.validation.r2920:tst:25" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:18"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value equals test." id="oval:nist.validation.r2920:tst:26" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:19"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value is not equal to test." id="oval:nist.validation.r2920:tst:27" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:20"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value case insensitive equals TesT." id="oval:nist.validation.r2920:tst:28" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:21"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value is case insensitive not equal to test." id="oval:nist.validation.r2920:tst:29" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:22"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value matches the regular expression [Tt]." id="oval:nist.validation.r2920:tst:30" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:23"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value equals not." id="oval:nist.validation.r2920:tst:31" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:24"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value is not equal to not." id="oval:nist.validation.r2920:tst:32" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:25"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value case insensitive equals not." id="oval:nist.validation.r2920:tst:33" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:26"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value is case insensitive not equal to not." id="oval:nist.validation.r2920:tst:34" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:27"/>
+        </variable_test>
+        <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="all" check_existence="at_least_one_exists" comment="Test to see that the value matches the regular expression [Aa]." id="oval:nist.validation.r2920:tst:35" version="1">
+          <object object_ref="oval:nist.validation.r2920:obj:2"/>
+          <state state_ref="oval:nist.validation.r2920:ste:28"/>
+        </variable_test>
+      </tests>
+      <objects>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:1" version="2">
+          <set xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" set_operator="UNION">
+            <set>
+              <set>
+                <object_reference>oval:nist.validation.r2920:obj:2</object_reference>
+                <object_reference>oval:nist.validation.r2920:obj:14</object_reference>
+              </set>
+              <set>
+                <object_reference>oval:nist.validation.r2920:obj:4</object_reference>
+                <object_reference>oval:nist.validation.r2920:obj:5</object_reference>
+              </set>
+            </set>
+            <set>
+              <set>
+                <set>
+                  <object_reference>oval:nist.validation.r2920:obj:6</object_reference>
+                  <object_reference>oval:nist.validation.r2920:obj:7</object_reference>
+                </set>
+              </set>
+              <set>
+                <set>
+                  <object_reference>oval:nist.validation.r2920:obj:10</object_reference>
+                  <object_reference>oval:nist.validation.r2920:obj:11</object_reference>
+                </set>
+                <set>
+                  <object_reference>oval:nist.validation.r2920:obj:12</object_reference>
+                </set>
+              </set>
+            </set>
+          </set>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:2" version="1">
+          <var_ref>oval:nist.validation.r2920:var:1</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:3" version="1">
+          <var_ref>oval:nist.validation.r2920:var:2</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:4" version="1">
+          <var_ref>oval:nist.validation.r2920:var:3</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:5" version="1">
+          <var_ref>oval:nist.validation.r2920:var:4</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:6" version="1">
+          <var_ref>oval:nist.validation.r2920:var:5</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:7" version="1">
+          <var_ref>oval:nist.validation.r2920:var:6</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:8" version="1">
+          <var_ref>oval:nist.validation.r2920:var:7</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:9" version="1">
+          <var_ref>oval:nist.validation.r2920:var:8</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:10" version="1">
+          <var_ref>oval:nist.validation.r2920:var:9</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:11" version="1">
+          <var_ref>oval:nist.validation.r2920:var:10</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:12" version="1">
+          <var_ref>oval:nist.validation.r2920:var:11</var_ref>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:13" version="1">
+          <var_ref>oval:nist.validation.r2920:var:1</var_ref>
+          <filter xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:nist.validation.r2920:ste:145</filter>
+        </variable_object>
+        <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:obj:14" version="1">
+          <var_ref>oval:nist.validation.r2920:var:15</var_ref>
+        </variable_object>
+      </objects>
+      <states>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:1" version="1">
+          <value datatype="int" operation="not equal">2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:2" version="1">
+          <var_ref datatype="string" operation="equals">oval:nist.validation.r2920:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:3" version="1">
+          <value datatype="string" operation="equals">foo.bar</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:5" version="1">
+          <value datatype="int" operation="equals">1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:6" version="1">
+          <value datatype="string" operation="equals">foobar</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:7" version="1">
+          <var_ref datatype="string" operation="not equal">oval:nist.validation.r2920:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:8" version="1">
+          <value datatype="string" operation="not equal">foo.bar</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:9" version="1">
+          <value datatype="string" operation="equals">testString</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:10" version="1">
+          <var_ref datatype="string" operation="not equal">oval:nist.validation.r2920:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:11" version="1">
+          <var_ref datatype="string" operation="case insensitive equals">oval:nist.validation.r2920:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:12" version="1">
+          <var_ref datatype="string" operation="case insensitive not equal">oval:nist.validation.r2920:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:13" version="1">
+          <var_ref datatype="string" operation="pattern match">oval:nist.validation.r2920:var:1</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:14" version="1">
+          <var_ref datatype="string" operation="equals">oval:nist.validation.r2920:var:13</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:15" version="1">
+          <var_ref datatype="string" operation="not equal">oval:nist.validation.r2920:var:13</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:16" version="1">
+          <var_ref datatype="string" operation="case insensitive equals">oval:nist.validation.r2920:var:14</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:17" version="1">
+          <var_ref datatype="string" operation="case insensitive not equal">oval:nist.validation.r2920:var:14</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:18" version="1">
+          <var_ref datatype="string" operation="pattern match">oval:nist.validation.r2920:var:2</var_ref>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:19" version="1">
+          <value datatype="string" operation="equals">test</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:20" version="1">
+          <value datatype="string" operation="not equal">test</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:21" version="1">
+          <value datatype="string" operation="case insensitive equals">TesT</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:22" version="1">
+          <value datatype="string" operation="case insensitive not equal">test</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:23" version="1">
+          <value datatype="string" operation="pattern match">[Tt]</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:24" version="1">
+          <value datatype="string" operation="equals">not</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:25" version="1">
+          <value datatype="string" operation="not equal">not</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:26" version="1">
+          <value datatype="string" operation="case insensitive equals">not</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:27" version="1">
+          <value datatype="string" operation="case insensitive not equal">not</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:28" version="1">
+          <value datatype="string" operation="pattern match">[Aa]</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:29" version="1">
+          <value datatype="boolean" operation="equals">true</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:30" version="1">
+          <value datatype="boolean" operation="not equal">true</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:31" version="1">
+          <value datatype="boolean" operation="equals">false</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:32" version="1">
+          <value datatype="boolean" operation="not equal">false</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:33" version="1">
+          <value datatype="int" operation="greater than or equal">1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:34" version="1">
+          <value datatype="int" operation="less than or equal">1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:35" version="1">
+          <value datatype="int" operation="not equal">1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:36" version="1">
+          <value datatype="int" operation="greater than or equal">2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:37" version="1">
+          <value datatype="int" operation="less than or equal">2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:38" version="1">
+          <value datatype="int" operation="equals">2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:39" version="1">
+          <value datatype="int" operation="less than or equal">0</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:40" version="1">
+          <value datatype="binary" operation="equals">9f</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:41" version="1">
+          <value datatype="binary" operation="not equal">9f</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:42" version="1">
+          <value datatype="binary" operation="equals">00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:43" version="1">
+          <value datatype="binary" operation="not equal">00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:44" version="1">
+          <value datatype="float" operation="equals">3.1519</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:45" version="1">
+          <value datatype="float" operation="not equal">3.1519</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:46" version="1">
+          <value datatype="float" operation="greater than">3.1519</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:47" version="1">
+          <value datatype="float" operation="less than">3.1519</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:48" version="1">
+          <value datatype="float" operation="less than or equal">3.1519</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:49" version="1">
+          <value datatype="float" operation="greater than or equal">3.1519</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:50" version="1">
+          <value datatype="float" operation="equals">2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:51" version="1">
+          <value datatype="float" operation="not equal">2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:52" version="1">
+          <value datatype="float" operation="greater than">2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:53" version="1">
+          <value datatype="float" operation="less than">3.1520</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:54" version="1">
+          <value datatype="float" operation="less than or equal">2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:55" version="1">
+          <value datatype="float" operation="greater than or equal">3.1520</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:56" version="1">
+          <value datatype="float" operation="greater than or equal">4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:57" version="1">
+          <value datatype="evr_string" operation="equals">1:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:58" version="1">
+          <value datatype="evr_string" operation="not equal">1:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:59" version="1">
+          <value datatype="evr_string" operation="greater than">1:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:60" version="1">
+          <value datatype="evr_string" operation="less than">1:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:61" version="1">
+          <value datatype="evr_string" operation="less than or equal">1:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:62" version="1">
+          <value datatype="evr_string" operation="greater than or equal">1:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:63" version="1">
+          <value datatype="evr_string" operation="equals">7:23-2b</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:64" version="1">
+          <value datatype="evr_string" operation="not equal">7:23-2b</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:65" version="1">
+          <value datatype="evr_string" operation="greater than">1:23-2A</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:66" version="1">
+          <value datatype="evr_string" operation="less than">7:23-2b</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:67" version="1">
+          <value datatype="evr_string" operation="less than or equal">0:23-2a</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:68" version="1">
+          <value datatype="evr_string" operation="greater than or equal">7:23-2b</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:69" version="1">
+          <value datatype="evr_string" operation="less than">7:01-2b</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:70" version="1">
+          <value datatype="fileset_revision" operation="equals">A.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:71" version="1">
+          <value datatype="fileset_revision" operation="not equal">A.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:72" version="1">
+          <value datatype="fileset_revision" operation="greater than">A.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:73" version="1">
+          <value datatype="fileset_revision" operation="less than">A.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:74" version="1">
+          <value datatype="fileset_revision" operation="less than or equal">A.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:75" version="1">
+          <value datatype="fileset_revision" operation="greater than or equal">A.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:76" version="1">
+          <value datatype="fileset_revision" operation="equals">B.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:77" version="1">
+          <value datatype="fileset_revision" operation="not equal">B.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:78" version="1">
+          <value datatype="fileset_revision" operation="greater than">B.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:79" version="1">
+          <value datatype="fileset_revision" operation="less than">B.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:80" version="1">
+          <value datatype="fileset_revision" operation="less than or equal">B.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:81" version="1">
+          <value datatype="fileset_revision" operation="greater than or equal">B.03.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:82" version="1">
+          <value datatype="fileset_revision" operation="less than">A.02.61.00</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:83" version="1">
+          <value datatype="ios_version" operation="equals">3.2.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:84" version="1">
+          <value datatype="ios_version" operation="not equal">3.2.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:85" version="1">
+          <value datatype="ios_version" operation="greater than">3.2.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:86" version="1">
+          <value datatype="ios_version" operation="less than">3.2.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:87" version="1">
+          <value datatype="ios_version" operation="less than or equal">3.2.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:88" version="1">
+          <value datatype="ios_version" operation="greater than or equal">3.2.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:89" version="1">
+          <value datatype="ios_version" operation="equals">4.4.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:90" version="1">
+          <value datatype="ios_version" operation="not equal">4.4.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:91" version="1">
+          <value datatype="ios_version" operation="greater than">4.4.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:92" version="1">
+          <value datatype="ios_version" operation="less than">4.4.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:93" version="1">
+          <value datatype="ios_version" operation="less than or equal">4.4.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:94" version="1">
+          <value datatype="ios_version" operation="greater than or equal">4.4.4</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:95" version="1">
+          <value datatype="ios_version" operation="less than">1.2.3</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:96" version="1">
+          <value datatype="ipv4_address" operation="equals">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:97" version="1">
+          <value datatype="ipv4_address" operation="not equal">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:98" version="1">
+          <value datatype="ipv4_address" operation="greater than">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:99" version="1">
+          <value datatype="ipv4_address" operation="less than">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:100" version="1">
+          <value datatype="ipv4_address" operation="less than or equal">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:101" version="1">
+          <value datatype="ipv4_address" operation="greater than or equal">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:102" version="1">
+          <value datatype="ipv4_address" operation="subset of">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:103" version="1">
+          <value datatype="ipv4_address" operation="superset of">2.2.2.2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:104" version="1">
+          <value datatype="ipv4_address" operation="equals">0.0.0.1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:105" version="1">
+          <value datatype="ipv4_address" operation="not equal">0.0.0.1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:106" version="1">
+          <value datatype="ipv4_address" operation="greater than">0.0.0.1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:107" version="1">
+          <value datatype="ipv4_address" operation="less than">2.2.2.3</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:108" version="1">
+          <value datatype="ipv4_address" operation="less than or equal">0.0.0.1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:109" version="1">
+          <value datatype="ipv4_address" operation="greater than or equal">2.2.2.3</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:110" version="1">
+          <value datatype="ipv4_address" operation="subset of">0.0.0.1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:111" version="1">
+          <value datatype="ipv4_address" operation="superset of">0.0.0.1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:112" version="1">
+          <value datatype="ipv4_address" operation="greater than">3.3.3.3</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:113" version="1">
+          <value datatype="ipv6_address" operation="equals">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:114" version="2">
+          <value datatype="ipv6_address" operation="not equal">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:115" version="2">
+          <value datatype="ipv6_address" operation="greater than">1111:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:116" version="2">
+          <value datatype="ipv6_address" operation="less than">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:117" version="1">
+          <value datatype="ipv6_address" operation="less than or equal">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:118" version="1">
+          <value datatype="ipv6_address" operation="greater than or equal">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:119" version="1">
+          <value datatype="ipv6_address" operation="subset of">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:120" version="1">
+          <value datatype="ipv6_address" operation="superset of">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:121" version="1">
+          <value datatype="ipv6_address" operation="equals">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:122" version="2">
+          <value datatype="ipv6_address" operation="not equal">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:123" version="1">
+          <value datatype="ipv6_address" operation="greater than">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:124" version="2">
+          <value datatype="ipv6_address" operation="less than">1111:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:125" version="2">
+          <value datatype="ipv6_address" operation="less than or equal">1111:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:126" version="1">
+          <value datatype="ipv6_address" operation="greater than or equal">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:127" version="1">
+          <value datatype="ipv6_address" operation="subset of">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:128" version="1">
+          <value datatype="ipv6_address" operation="superset of">9999:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:129" version="2">
+          <value datatype="ipv6_address" operation="less than">2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:130" version="1">
+          <value datatype="version" operation="equals">2-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:131" version="1">
+          <value datatype="version" operation="not equal">2-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:132" version="1">
+          <value datatype="version" operation="greater than">2-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:133" version="1">
+          <value datatype="version" operation="less than">2-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:134" version="1">
+          <value datatype="version" operation="less than or equal">2-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:135" version="1">
+          <value datatype="version" operation="greater than or equal">2-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:136" version="1">
+          <value datatype="version" operation="equals">3-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:137" version="1">
+          <value datatype="version" operation="not equal">3-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:138" version="1">
+          <value datatype="version" operation="greater than">2-2-34</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:139" version="1">
+          <value datatype="version" operation="less than">3-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:140" version="1">
+          <value datatype="version" operation="less than or equal">1-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:141" version="1">
+          <value datatype="version" operation="greater than or equal">3-2-35</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:142" version="1">
+          <value datatype="version" operation="less than">2-2-36</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:143" version="1">
+          <value datatype="string" operation="not equal">2</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:144" version="1">
+          <value datatype="string" operation="equals">1</value>
+        </variable_state>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:nist.validation.r2920:ste:145" version="1">
+          <value var_ref="oval:nist.validation.r2920:var:1"/>
+        </variable_state>
+      </states>
+      <variables>
+        <constant_variable comment="This variable contains the string value 'test'." datatype="string" id="oval:nist.validation.r2920:var:1" version="1">
+          <value>test</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the boolean value 'true'." datatype="boolean" id="oval:nist.validation.r2920:var:2" version="1">
+          <value>true</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the integer value '1'." datatype="int" id="oval:nist.validation.r2920:var:3" version="1">
+          <value>1</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the binary value '9f'." datatype="binary" id="oval:nist.validation.r2920:var:4" version="1">
+          <value>9f</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the float value '1.5'." datatype="float" id="oval:nist.validation.r2920:var:5" version="1">
+          <value>3.1519</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the evr_string value '1:23-2a'." datatype="evr_string" id="oval:nist.validation.r2920:var:6" version="1">
+          <value>1:23-2a</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the fileset_revision value 'A.03.61.00'." datatype="fileset_revision" id="oval:nist.validation.r2920:var:7" version="1">
+          <value>A.03.61.00</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the ios_version value '3.2.4'." datatype="ios_version" id="oval:nist.validation.r2920:var:8" version="1">
+          <value>A.03.61.00</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the ip4_address value '2.2.2.2'." datatype="ipv4_address" id="oval:nist.validation.r2920:var:9" version="1">
+          <value>2.2.2.2</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the ip6_address value '2001:0db8:85a3:0000:0000:8a2e:0370:7334'." datatype="ipv6_address" id="oval:nist.validation.r2920:var:10" version="1">
+          <value>2001:0db8:85a3:0000:0000:8a2e:0370:7334</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the version value '2-2-35'." datatype="version" id="oval:nist.validation.r2920:var:11" version="1">
+          <value>2-2-35</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the string value '^[Oo]val:nist\.validation\.variable:var:\d+$'." datatype="string" id="oval:nist.validation.r2920:var:12" version="1">
+          <value>^[Oo]val:nist\.validation\.variable:var:\d+$</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the string value 'TesT'." datatype="string" id="oval:nist.validation.r2920:var:13" version="1">
+          <value>TesT</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the string value 'TesT1'." datatype="string" id="oval:nist.validation.r2920:var:14" version="1">
+          <value>TesT1</value>
+        </constant_variable>
+        <constant_variable comment="This variable contains the boolean value 'false'." datatype="boolean" id="oval:nist.validation.r2920:var:15" version="1">
+          <value>false</value>
+        </constant_variable>
+      </variables>
+    </oval_definitions>
+  </component>
+  <component id="scap_gov.nist_comp_r2920-cpe-oval.xml" timestamp="2016-05-25T14:00:00">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows http://oval.mitre.org/language/download/schema/version5.3/ovaldefinition/complete/windows-definitions-schema.xsd  http://oval.mitre.org/XMLSchema/oval-definitions-5#independent http://oval.mitre.org/language/download/schema/version5.3/ovaldefinition/complete/independent-definitions-schema.xsd  http://oval.mitre.org/XMLSchema/oval-definitions-5 http://oval.mitre.org/language/download/schema/version5.3/ovaldefinition/complete/oval-definitions-schema.xsd  http://oval.mitre.org/XMLSchema/oval-common-5 http://oval.mitre.org/language/download/schema/version5.3/ovaldefinition/complete/oval-common-schema.xsd  http://oval.mitre.org/XMLSchema/oval-definitions-5#linux http://oval.mitre.org/language/download/schema/version5.3/ovaldefinition/complete/linux-definitions-schema.xsd">
+      <generator>
+        <oval:product_name>National Institute of Standards and Technology</oval:product_name>
+        <oval:schema_version>5.3</oval:schema_version>
+        <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+      </generator>
+      <!-- ==================================================================================================== -->
+      <!-- ==========================================  DEFINITIONS  =========================================== -->
+      <!-- ==================================================================================================== -->
+      <definitions>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:1" version="4">
+          <metadata>
+            <title>Microsoft Windows is installed</title>
+            <affected family="windows">
+              <platform>Microsoft Windows XP</platform>
+              <platform>Microsoft Windows Vista</platform>
+              <platform>Microsoft Windows 7</platform>
+              <platform>Microsoft Windows 8</platform>
+              <platform>Microsoft Windows 8.1</platform>
+              <platform>Microsoft Windows 10</platform>
+              <platform>Microsoft Windows Server 2012</platform>
+              <platform>Microsoft Windows Server 2012 R2</platform>
+            </affected>
+            <reference ref_id="cpe:/o:microsoft:windows" source="CPE"/>
+            <description>The operating system installed on the system is Microsoft Windows</description>
+          </metadata>
+          <criteria>
+            <criterion comment="the installed operating system is part of the Microsoft Windows family" test_ref="oval:org.mitre.oval:tst:99"/>
+          </criteria>
+        </definition>
+        <definition class="inventory" id="oval:gov.nist.validation.cpe.oval:def:100" version="2">
+          <metadata>
+            <title>Red Hat Enterprise Linux 3, 4, 5, 6, or 7</title>
+            <affected family="unix">
+              <platform>Red Hat Enterprise Linux</platform>
+            </affected>
+            <reference ref_id="cpe:/o:redhat:enterprise_linux" source="CPE"/>
+            <description>The operating system installed on the system is Red Hat Enterprise Linux 3, 4, 5, 6, or 7</description>
+          </metadata>
+          <criteria>
+            <criterion comment="Installed operating system is part of the unix family" test_ref="oval:gov.nist.validation.cpe.oval:tst:100"/>
+            <criterion comment="Red Hat Enterprise Linux 3, 4, 5, 6, or 7 is installed" test_ref="oval:gov.nist.validation.cpe.oval:tst:101"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  TESTS  =============================================== -->
+      <!-- ==================================================================================================== -->
+      <tests>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="the installed operating system is part of the Microsoft Windows family" id="oval:org.mitre.oval:tst:99" version="1">
+          <object object_ref="oval:org.mitre.oval:obj:99"/>
+          <state state_ref="oval:org.mitre.oval:ste:99"/>
+        </family_test>
+        <family_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" check="only one" check_existence="at_least_one_exists" comment="installed operating system is part of the Unix family" id="oval:gov.nist.validation.cpe.oval:tst:100" version="1">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:100"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:100"/>
+        </family_test>
+        <rpminfo_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="at least one" check_existence="at_least_one_exists" comment="redhat-release is version 3, 4, 5, 6, or 7" id="oval:gov.nist.validation.cpe.oval:tst:101" version="2">
+          <object object_ref="oval:gov.nist.validation.cpe.oval:obj:101"/>
+          <state state_ref="oval:gov.nist.validation.cpe.oval:ste:101"/>
+        </rpminfo_test>
+      </tests>
+      <!-- ==================================================================================================== -->
+      <!-- ============================================  OBJECTS  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <objects>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="This is the default family object. Only one family object should exist." id="oval:org.mitre.oval:obj:99" version="1"/>
+        <family_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:gov.nist.validation.cpe.oval:obj:100" version="1"/>
+        <rpminfo_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="the redhat-release rpm" id="oval:gov.nist.validation.cpe.oval:obj:101" version="2">
+          <name operation="pattern match">^redhat-release.*$</name>
+        </rpminfo_object>
+      </objects>
+      <!-- ==================================================================================================== -->
+      <!-- =============================================  STATES  ============================================= -->
+      <!-- ==================================================================================================== -->
+      <states>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" comment="Microsoft Windows family" id="oval:org.mitre.oval:ste:99" version="2">
+          <family operation="equals">windows</family>
+        </family_state>
+        <family_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:gov.nist.validation.cpe.oval:ste:100" version="1">
+          <family>unix</family>
+        </family_state>
+        <rpminfo_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" id="oval:gov.nist.validation.cpe.oval:ste:101" version="2">
+          <version operation="pattern match">^[3-7]\D</version>
+        </rpminfo_state>
+      </states>
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+      <!-- ==================================================================================================== -->
+    </oval_definitions>
+  </component>
+  <component id="scap_gov.nist_comp_r2920-cpe-dictionary.xml" timestamp="2016-05-25T14:00:00">
+    <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:microsoft:windows">
+        <title xml:lang="en-US">Microsoft Windows</title>
+        <notes xml:lang="en-US">
+          <note>This CPE Name represents the Windows OS</note>
+        </notes>
+        <check href="r2920-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux">
+        <title xml:lang="en-us">Red Hat Enterprise Linux</title>
+        <notes xml:lang="en-us">
+          <note>This CPE Name represents Red Hat Enterprise Linux OS</note>
+        </notes>
+        <check href="r2920-cpe-oval.xml" system="http://oval.mitre.org/XMLSchema/oval-definitions-5">oval:gov.nist.validation.cpe.oval:def:100</check>
+      </cpe-item>
+    </cpe-list>
+  </component>
+</data-stream-collection>

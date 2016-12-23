@@ -39,6 +39,7 @@
 #include <ds_sds_session.h>
 
 #include "oscap-tool.h"
+#include <oscap_debug.h>
 
 static struct oscap_module* DS_SUBMODULES[];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
@@ -303,6 +304,13 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	ds_sds_session_set_target_dir(session, action->ds_action->target);
 	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
 		goto cleanup;
+	}
+	// CPE dictionaries aren't required in datastreams, just silently continue
+	// if we can't register them
+	if (ds_sds_session_can_register_component(session, "dictionaries", NULL)) {
+		if (ds_sds_session_register_component_with_dependencies(session, "dictionaries", NULL, NULL) != 0) {
+			goto cleanup;
+		}
 	}
 	if (ds_sds_session_dump_component_files(session) != 0) {
 		goto cleanup;

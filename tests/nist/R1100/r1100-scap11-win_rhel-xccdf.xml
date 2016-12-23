@@ -1,0 +1,2479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" id="xccdf_gov.nist.r1100_scap11_win_rhel_benchmark" xml:lang="en-US" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xccdf="http://checklists.nist.gov/xccdf/1.1" xmlns:cpe="http://cpe.mitre.org/dictionary/2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:xhtml="http://www.w3.org/1999/xhtml" style="SCAP_1.1" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 http://nvd.nist.gov/schema/xccdf-1.1.4.xsd">
+  <status date="2016-05-25">draft</status>
+  <title xml:lang="en-US">SCAP 1.1 XCCDF Benchmark for testing the SCAP.R.1100 requirement on Windows\RHEL</title>
+  <description xml:lang="en-US">This XCCDF Benchmark references the OVAL Definitions in the validation content for the R1100 requirement.</description>
+  <notice id="terms_of_use" xml:lang="en-US">Do not attempt to implement any of the settings in this guide without first testing them in a non-operational environment. NIST assumes no responsibility whatsoever for its use by other parties, and makes no guarantees, expressed or implied, about its quality, reliability, or any other characteristic. NIST would appreciate acknowledgement if the document and template are used.</notice>
+  <front-matter xml:lang="en-US">The Federal CIO council created the Technology Information Subcommittee (TIS) at the direction of OMB to govern, among other federal activities, the FDCC iniatitive. The TIS, based on federal agency input, selects platforms and applcations for federal implementation. The TIS also is the Change Control Board (CCB) for configuration settings. As stated in the Federal CIO Council Memo to federal agencies, "The USGCB settings replace the Federal Desktop Core Configuration (FDCC) settings and provide the recommended security baselines for Information Technology products widely deployed across the agencies."</front-matter>
+  <rear-matter xml:lang="en-US">
+    <xhtml:strong>Trademark Information</xhtml:strong>
+    <xhtml:br/>
+    <xhtml:br/>Microsoft, Windows, Windows 7, Windows Vista, Windows 7, Internet Explorer, and Windows Firewall are either registered trademarks or trademarks of Microsoft Corporation in the United States and other countries.<xhtml:br/><xhtml:br/>All other names are registered trademarks or trademarks of their respective companies.</rear-matter>
+  <reference href="http://web.nvd.nist.gov/view/ncp/repository/checklistDetail?id=295">
+    <dc:publisher>National Institute of Standards and Technology</dc:publisher>
+    <dc:identifier>SP 800-68</dc:identifier>
+  </reference>
+  <!--
+  <platform idref="cpe:/o:microsoft:windows"/>
+  <platform idref="cpe:/o:redhat:enterprise_linux"/>
+  -->
+
+  <version time="2016-05-25T14:00:00" update="http://scap.nist.gov/validation/resources.html">1-2.1.1.0</version>
+  <metadata>
+    <dc:contributor>National Institute of Standards and Technology</dc:contributor>
+    <dc:publisher>National Institute of Standards and Technology</dc:publisher>
+    <dc:creator>National Institute of Standards and Technology</dc:creator>
+    <dc:contributor>Melanie Cook</dc:contributor>
+    <dc:contributor>Dragos Prisaca</dc:contributor>
+    <dc:source>http://scap.nist.gov</dc:source>
+  </metadata>
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+
+  <!-- ==================================================================================================== -->
+  <!-- ===================================  NIST 800-53 Rev 3 PROFILES  ================================== -->
+  <!-- ==================================================================================================== -->
+  <!--                                                                                                      -->
+  <!-- The following profiles are used to turn on specific controls as defined in 800-53.  These controls  -->
+  <!-- help determine the specific rules that will be evaluated as certain rules found in this document     -->
+  <!-- require specific controls to be enabled.  This enable FISMA compliance to be achieved by combining    -->
+  <!-- guidance defined with high level recommendations made in 800-53.                                     -->
+  <!--                                                                                                      -->
+  <Profile id="low_800_53" abstract="true">
+    <title xml:lang="en-US">800-53 Low</title>
+    <description xml:lang="en-US">This profile selects specific controls that are recommended by Special Publication 800-53 for information systems in which all three security objectives (i.e., confidentiality, integrity, and availability) are assigned a FIPS 199 potential impact value of low. Each control has an effect on other groups within this document as individual rule require certain controls to be selected.</description>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~  Note: No attempt is made to map the Priority of Implementation Codes  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-1" selected="true"/>
+    <select idref="AC-2" selected="true"/>
+    <select idref="AC-3" selected="true"/>
+    <select idref="AC-4" selected="false"/>
+    <select idref="AC-5" selected="false"/>
+    <select idref="AC-6" selected="false"/>
+    <select idref="AC-7" selected="true"/>
+    <select idref="AC-8" selected="true"/>
+    <select idref="AC-9" selected="false"/>
+    <select idref="AC-10" selected="false"/>
+    <select idref="AC-11" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-12 and AC-13 were withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-12" selected="false"/>
+    <select idref="AC-13" selected="false"/>
+    <select idref="AC-14" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-15 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-15" selected="false"/>
+    <select idref="AC-16" selected="false"/>
+    <select idref="AC-17" selected="true"/>
+    <select idref="AC-18" selected="true"/>
+    <select idref="AC-19" selected="true"/>
+    <select idref="AC-20" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-21 and AC-22 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-21" selected="false"/>
+    <select idref="AC-22" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AT  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AT-1" selected="true"/>
+    <select idref="AT-2" selected="true"/>
+    <select idref="AT-3" selected="true"/>
+    <select idref="AT-4" selected="true"/>
+    <select idref="AT-5" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-1" selected="true"/>
+    <select idref="AU-2" selected="true"/>
+    <select idref="AU-3" selected="true"/>
+    <select idref="AU-4" selected="true"/>
+    <select idref="AU-5" selected="true"/>
+    <select idref="AU-6" selected="true"/>
+    <select idref="AU-7" selected="false"/>
+    <select idref="AU-8" selected="true"/>
+    <select idref="AU-9" selected="true"/>
+    <select idref="AU-10" selected="false"/>
+    <select idref="AU-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU-12 through AU-14 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-12" selected="true"/>
+    <select idref="AU-13" selected="false"/>
+    <select idref="AU-14" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-1" selected="true"/>
+    <select idref="CA-2" selected="true"/>
+    <select idref="CA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-4" selected="false"/>
+    <select idref="CA-5" selected="true"/>
+    <select idref="CA-6" selected="true"/>
+    <select idref="CA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-1" selected="true"/>
+    <select idref="CM-2" selected="true"/>
+    <select idref="CM-3" selected="false"/>
+    <select idref="CM-4" selected="true"/>
+    <select idref="CM-5" selected="false"/>
+    <select idref="CM-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM-7 through CM-9 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-7" selected="true"/>
+    <select idref="CM-8" selected="true"/>
+    <select idref="CM-9" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-1" selected="true"/>
+    <select idref="CP-2" selected="true"/>
+    <select idref="CP-3" selected="true"/>
+    <select idref="CP-4" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP-5 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-5" selected="false"/>
+    <select idref="CP-6" selected="false"/>
+    <select idref="CP-7" selected="false"/>
+    <select idref="CP-8" selected="false"/>
+    <select idref="CP-9" selected="true"/>
+    <select idref="CP-10" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-1" selected="true"/>
+    <select idref="IA-2" selected="true"/>
+    <select idref="IA-3" selected="false"/>
+    <select idref="IA-4" selected="true"/>
+    <select idref="IA-5" selected="true"/>
+    <select idref="IA-6" selected="true"/>
+    <select idref="IA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-1" selected="true"/>
+    <select idref="IR-2" selected="true"/>
+    <select idref="IR-3" selected="false"/>
+    <select idref="IR-4" selected="true"/>
+    <select idref="IR-5" selected="true"/>
+    <select idref="IR-6" selected="true"/>
+    <select idref="IR-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MA-1" selected="true"/>
+    <select idref="MA-2" selected="true"/>
+    <select idref="MA-3" selected="false"/>
+    <select idref="MA-4" selected="true"/>
+    <select idref="MA-5" selected="true"/>
+    <select idref="MA-6" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MP-1" selected="true"/>
+    <select idref="MP-2" selected="true"/>
+    <select idref="MP-3" selected="false"/>
+    <select idref="MP-4" selected="false"/>
+    <select idref="MP-5" selected="false"/>
+    <select idref="MP-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP-7 was removed in Rev 2  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--<select idref="MP-7" selected="false"/>-->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PE  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PE-1" selected="true"/>
+    <select idref="PE-2" selected="true"/>
+    <select idref="PE-3" selected="true"/>
+    <select idref="PE-4" selected="false"/>
+    <select idref="PE-5" selected="false"/>
+    <select idref="PE-6" selected="true"/>
+    <select idref="PE-7" selected="true"/>
+    <select idref="PE-8" selected="true"/>
+    <select idref="PE-9" selected="false"/>
+    <select idref="PE-10" selected="false"/>
+    <select idref="PE-11" selected="false"/>
+    <select idref="PE-12" selected="true"/>
+    <select idref="PE-13" selected="true"/>
+    <select idref="PE-14" selected="true"/>
+    <select idref="PE-15" selected="true"/>
+    <select idref="PE-16" selected="true"/>
+    <select idref="PE-17" selected="false"/>
+    <select idref="PE-18" selected="false"/>
+    <select idref="PE-19" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-1" selected="true"/>
+    <select idref="PL-2" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL-3 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-3" selected="false"/>
+    <select idref="PL-4" selected="true"/>
+    <select idref="PL-5" selected="true"/>
+    <select idref="PL-6" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PS  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PS-1" selected="true"/>
+    <select idref="PS-2" selected="true"/>
+    <select idref="PS-3" selected="true"/>
+    <select idref="PS-4" selected="true"/>
+    <select idref="PS-5" selected="true"/>
+    <select idref="PS-6" selected="true"/>
+    <select idref="PS-7" selected="true"/>
+    <select idref="PS-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-1" selected="true"/>
+    <select idref="RA-2" selected="true"/>
+    <select idref="RA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-4" selected="false"/>
+    <select idref="RA-5" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-1" selected="true"/>
+    <select idref="SA-2" selected="true"/>
+    <select idref="SA-3" selected="true"/>
+    <select idref="SA-4" selected="true"/>
+    <select idref="SA-5" selected="true"/>
+    <select idref="SA-6" selected="true"/>
+    <select idref="SA-7" selected="true"/>
+    <select idref="SA-8" selected="false"/>
+    <select idref="SA-9" selected="true"/>
+    <select idref="SA-10" selected="false"/>
+    <select idref="SA-11" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA-12 through SA-14 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-12" selected="false"/>
+    <select idref="SA-13" selected="false"/>
+    <select idref="SA-14" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-1" selected="true"/>
+    <select idref="SC-2" selected="false"/>
+    <select idref="SC-3" selected="false"/>
+    <select idref="SC-4" selected="false"/>
+    <select idref="SC-5" selected="true"/>
+    <select idref="SC-6" selected="false"/>
+    <select idref="SC-7" selected="true"/>
+    <select idref="SC-8" selected="false"/>
+    <select idref="SC-9" selected="false"/>
+    <select idref="SC-10" selected="false"/>
+    <select idref="SC-11" selected="false"/>
+    <select idref="SC-12" selected="true"/>
+    <select idref="SC-13" selected="true"/>
+    <select idref="SC-14" selected="true"/>
+    <select idref="SC-15" selected="true"/>
+    <select idref="SC-16" selected="false"/>
+    <select idref="SC-17" selected="false"/>
+    <select idref="SC-18" selected="false"/>
+    <select idref="SC-19" selected="false"/>
+    <select idref="SC-20" selected="true"/>
+    <select idref="SC-21" selected="false"/>
+    <select idref="SC-22" selected="false"/>
+    <select idref="SC-23" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC-24 through SC-34 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-24" selected="false"/>
+    <select idref="SC-25" selected="false"/>
+    <select idref="SC-26" selected="false"/>
+    <select idref="SC-27" selected="false"/>
+    <select idref="SC-28" selected="false"/>
+    <select idref="SC-29" selected="false"/>
+    <select idref="SC-30" selected="false"/>
+    <select idref="SC-31" selected="false"/>
+    <select idref="SC-32" selected="false"/>
+    <select idref="SC-33" selected="false"/>
+    <select idref="SC-34" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-1" selected="true"/>
+    <select idref="SI-2" selected="true"/>
+    <select idref="SI-3" selected="true"/>
+    <select idref="SI-4" selected="false"/>
+    <select idref="SI-5" selected="true"/>
+    <select idref="SI-6" selected="false"/>
+    <select idref="SI-7" selected="false"/>
+    <select idref="SI-8" selected="false"/>
+    <select idref="SI-9" selected="false"/>
+    <select idref="SI-10" selected="false"/>
+    <select idref="SI-11" selected="false"/>
+    <select idref="SI-12" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI-13 was added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-13" selected="false"/>
+  </Profile>
+  <Profile id="moderate_800_53" abstract="true">
+    <title xml:lang="en-US">800-53 Moderate</title>
+    <description xml:lang="en-US">This profile selects specific controls that are recommended by Special Publication 800-53 for information systems in which at least one security objectives (i.e., confidentiality, integrity, and availability) are assigned a FIPS 199 potential impact value of moderate and no security objective is assigned a FIPS 199 potential impact value of high. Each control has an effect on other groups within this document as individual rule require certain controls to be selected.</description>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-1" selected="true"/>
+    <select idref="AC-2" selected="true"/>
+    <select idref="AC-3" selected="true"/>
+    <select idref="AC-4" selected="true"/>
+    <select idref="AC-5" selected="true"/>
+    <select idref="AC-6" selected="true"/>
+    <select idref="AC-7" selected="true"/>
+    <select idref="AC-8" selected="true"/>
+    <select idref="AC-9" selected="false"/>
+    <select idref="AC-10" selected="false"/>
+    <select idref="AC-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-12 and AC-13 were withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-12" selected="false"/>
+    <select idref="AC-13" selected="false"/>
+    <select idref="AC-14" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-15 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-15" selected="false"/>
+    <select idref="AC-16" selected="false"/>
+    <select idref="AC-17" selected="true"/>
+    <select idref="AC-18" selected="true"/>
+    <select idref="AC-19" selected="true"/>
+    <select idref="AC-20" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-21 and AC-22 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-21" selected="false"/>
+    <select idref="AC-22" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AT  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AT-1" selected="true"/>
+    <select idref="AT-2" selected="true"/>
+    <select idref="AT-3" selected="true"/>
+    <select idref="AT-4" selected="true"/>
+    <select idref="AT-5" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-1" selected="true"/>
+    <select idref="AU-2" selected="true"/>
+    <select idref="AU-3" selected="true"/>
+    <select idref="AU-4" selected="true"/>
+    <select idref="AU-5" selected="true"/>
+    <select idref="AU-6" selected="true"/>
+    <select idref="AU-7" selected="true"/>
+    <select idref="AU-8" selected="true"/>
+    <select idref="AU-9" selected="true"/>
+    <select idref="AU-10" selected="false"/>
+    <select idref="AU-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU-12 through AU-14 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-12" selected="true"/>
+    <select idref="AU-13" selected="false"/>
+    <select idref="AU-14" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-1" selected="true"/>
+    <select idref="CA-2" selected="true"/>
+    <select idref="CA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-4" selected="false"/>
+    <select idref="CA-5" selected="true"/>
+    <select idref="CA-6" selected="true"/>
+    <select idref="CA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-1" selected="true"/>
+    <select idref="CM-2" selected="true"/>
+    <select idref="CM-3" selected="true"/>
+    <select idref="CM-4" selected="true"/>
+    <select idref="CM-5" selected="true"/>
+    <select idref="CM-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM-7 through CM-9 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-7" selected="true"/>
+    <select idref="CM-8" selected="true"/>
+    <select idref="CM-9" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-1" selected="true"/>
+    <select idref="CP-2" selected="true"/>
+    <select idref="CP-3" selected="true"/>
+    <select idref="CP-4" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP-5 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-5" selected="false"/>
+    <select idref="CP-6" selected="true"/>
+    <select idref="CP-7" selected="true"/>
+    <select idref="CP-8" selected="true"/>
+    <select idref="CP-9" selected="true"/>
+    <select idref="CP-10" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-1" selected="true"/>
+    <select idref="IA-2" selected="true"/>
+    <select idref="IA-3" selected="true"/>
+    <select idref="IA-4" selected="true"/>
+    <select idref="IA-5" selected="true"/>
+    <select idref="IA-6" selected="true"/>
+    <select idref="IA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-1" selected="true"/>
+    <select idref="IR-2" selected="true"/>
+    <select idref="IR-3" selected="true"/>
+    <select idref="IR-4" selected="true"/>
+    <select idref="IR-5" selected="true"/>
+    <select idref="IR-6" selected="true"/>
+    <select idref="IR-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MA-1" selected="true"/>
+    <select idref="MA-2" selected="true"/>
+    <select idref="MA-3" selected="true"/>
+    <select idref="MA-4" selected="true"/>
+    <select idref="MA-5" selected="true"/>
+    <select idref="MA-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MP-1" selected="true"/>
+    <select idref="MP-2" selected="true"/>
+    <select idref="MP-3" selected="true"/>
+    <select idref="MP-4" selected="true"/>
+    <select idref="MP-5" selected="true"/>
+    <select idref="MP-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP-7 was removed in Rev 2  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--<select idref="MP-7" selected="false"/>-->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PE  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PE-1" selected="true"/>
+    <select idref="PE-2" selected="true"/>
+    <select idref="PE-3" selected="true"/>
+    <select idref="PE-4" selected="true"/>
+    <select idref="PE-5" selected="true"/>
+    <select idref="PE-6" selected="true"/>
+    <select idref="PE-7" selected="true"/>
+    <select idref="PE-8" selected="true"/>
+    <select idref="PE-9" selected="true"/>
+    <select idref="PE-10" selected="true"/>
+    <select idref="PE-11" selected="true"/>
+    <select idref="PE-12" selected="true"/>
+    <select idref="PE-13" selected="true"/>
+    <select idref="PE-14" selected="true"/>
+    <select idref="PE-15" selected="true"/>
+    <select idref="PE-16" selected="true"/>
+    <select idref="PE-17" selected="true"/>
+    <select idref="PE-18" selected="true"/>
+    <select idref="PE-19" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-1" selected="true"/>
+    <select idref="PL-2" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL-3 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-3" selected="false"/>
+    <select idref="PL-4" selected="true"/>
+    <select idref="PL-5" selected="true"/>
+    <select idref="PL-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PS  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PS-1" selected="true"/>
+    <select idref="PS-2" selected="true"/>
+    <select idref="PS-3" selected="true"/>
+    <select idref="PS-4" selected="true"/>
+    <select idref="PS-5" selected="true"/>
+    <select idref="PS-6" selected="true"/>
+    <select idref="PS-7" selected="true"/>
+    <select idref="PS-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-1" selected="true"/>
+    <select idref="RA-2" selected="true"/>
+    <select idref="RA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-4" selected="false"/>
+    <select idref="RA-5" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-1" selected="true"/>
+    <select idref="SA-2" selected="true"/>
+    <select idref="SA-3" selected="true"/>
+    <select idref="SA-4" selected="true"/>
+    <select idref="SA-5" selected="true"/>
+    <select idref="SA-6" selected="true"/>
+    <select idref="SA-7" selected="true"/>
+    <select idref="SA-8" selected="true"/>
+    <select idref="SA-9" selected="true"/>
+    <select idref="SA-10" selected="true"/>
+    <select idref="SA-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA-12 through SA-14 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-12" selected="false"/>
+    <select idref="SA-13" selected="false"/>
+    <select idref="SA-14" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-1" selected="true"/>
+    <select idref="SC-2" selected="true"/>
+    <select idref="SC-3" selected="false"/>
+    <select idref="SC-4" selected="true"/>
+    <select idref="SC-5" selected="true"/>
+    <select idref="SC-6" selected="false"/>
+    <select idref="SC-7" selected="true"/>
+    <select idref="SC-8" selected="true"/>
+    <select idref="SC-9" selected="true"/>
+    <select idref="SC-10" selected="true"/>
+    <select idref="SC-11" selected="false"/>
+    <select idref="SC-12" selected="true"/>
+    <select idref="SC-13" selected="true"/>
+    <select idref="SC-14" selected="true"/>
+    <select idref="SC-15" selected="true"/>
+    <select idref="SC-16" selected="false"/>
+    <select idref="SC-17" selected="true"/>
+    <select idref="SC-18" selected="true"/>
+    <select idref="SC-19" selected="true"/>
+    <select idref="SC-20" selected="true"/>
+    <select idref="SC-21" selected="false"/>
+    <select idref="SC-22" selected="true"/>
+    <select idref="SC-23" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC-24 through SC-34 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-24" selected="false"/>
+    <select idref="SC-25" selected="false"/>
+    <select idref="SC-26" selected="false"/>
+    <select idref="SC-27" selected="false"/>
+    <select idref="SC-28" selected="true"/>
+    <select idref="SC-29" selected="false"/>
+    <select idref="SC-30" selected="false"/>
+    <select idref="SC-31" selected="false"/>
+    <select idref="SC-32" selected="true"/>
+    <select idref="SC-33" selected="false"/>
+    <select idref="SC-34" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-1" selected="true"/>
+    <select idref="SI-2" selected="true"/>
+    <select idref="SI-3" selected="true"/>
+    <select idref="SI-4" selected="true"/>
+    <select idref="SI-5" selected="true"/>
+    <select idref="SI-6" selected="false"/>
+    <select idref="SI-7" selected="true"/>
+    <select idref="SI-8" selected="true"/>
+    <select idref="SI-9" selected="true"/>
+    <select idref="SI-10" selected="true"/>
+    <select idref="SI-11" selected="true"/>
+    <select idref="SI-12" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI-13 was added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-13" selected="false"/>
+  </Profile>
+  <Profile id="high_800_53" abstract="true">
+    <title xml:lang="en-US">800-53 High</title>
+    <description xml:lang="en-US">This profile selects specific controls that are recommended by Special Publication 800-53 for information systems in which at least one security objectives (i.e., confidentiality, integrity, and availability) are assigned a FIPS 199 potential impact value of high. Each control has an effect on other groups within this document as individual rule require certain controls to be selected.</description>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-1" selected="true"/>
+    <select idref="AC-2" selected="true"/>
+    <select idref="AC-3" selected="true"/>
+    <select idref="AC-4" selected="true"/>
+    <select idref="AC-5" selected="true"/>
+    <select idref="AC-6" selected="true"/>
+    <select idref="AC-7" selected="true"/>
+    <select idref="AC-8" selected="true"/>
+    <select idref="AC-9" selected="false"/>
+    <select idref="AC-10" selected="true"/>
+    <select idref="AC-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-12 and AC-13 were withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-12" selected="false"/>
+    <select idref="AC-13" selected="false"/>
+    <select idref="AC-14" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-15 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-15" selected="false"/>
+    <select idref="AC-16" selected="false"/>
+    <select idref="AC-17" selected="true"/>
+    <select idref="AC-18" selected="true"/>
+    <select idref="AC-19" selected="true"/>
+    <select idref="AC-20" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-21 and AC-22 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-21" selected="false"/>
+    <select idref="AC-22" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AT  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AT-1" selected="true"/>
+    <select idref="AT-2" selected="true"/>
+    <select idref="AT-3" selected="true"/>
+    <select idref="AT-4" selected="true"/>
+    <select idref="AT-5" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-1" selected="true"/>
+    <select idref="AU-2" selected="true"/>
+    <select idref="AU-3" selected="true"/>
+    <select idref="AU-4" selected="true"/>
+    <select idref="AU-5" selected="true"/>
+    <select idref="AU-6" selected="true"/>
+    <select idref="AU-7" selected="true"/>
+    <select idref="AU-8" selected="true"/>
+    <select idref="AU-9" selected="true"/>
+    <select idref="AU-10" selected="true"/>
+    <select idref="AU-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU-12 through AU-14 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-12" selected="true"/>
+    <select idref="AU-13" selected="false"/>
+    <select idref="AU-14" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-1" selected="true"/>
+    <select idref="CA-2" selected="true"/>
+    <select idref="CA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-4" selected="false"/>
+    <select idref="CA-5" selected="true"/>
+    <select idref="CA-6" selected="true"/>
+    <select idref="CA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-1" selected="true"/>
+    <select idref="CM-2" selected="true"/>
+    <select idref="CM-3" selected="true"/>
+    <select idref="CM-4" selected="true"/>
+    <select idref="CM-5" selected="true"/>
+    <select idref="CM-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM-7 through CM-9 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-7" selected="true"/>
+    <select idref="CM-8" selected="true"/>
+    <select idref="CM-9" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-1" selected="true"/>
+    <select idref="CP-2" selected="true"/>
+    <select idref="CP-3" selected="true"/>
+    <select idref="CP-4" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP-5 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-5" selected="false"/>
+    <select idref="CP-6" selected="true"/>
+    <select idref="CP-7" selected="true"/>
+    <select idref="CP-8" selected="true"/>
+    <select idref="CP-9" selected="true"/>
+    <select idref="CP-10" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-1" selected="true"/>
+    <select idref="IA-2" selected="true"/>
+    <select idref="IA-3" selected="true"/>
+    <select idref="IA-4" selected="true"/>
+    <select idref="IA-5" selected="true"/>
+    <select idref="IA-6" selected="true"/>
+    <select idref="IA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-1" selected="true"/>
+    <select idref="IR-2" selected="true"/>
+    <select idref="IR-3" selected="true"/>
+    <select idref="IR-4" selected="true"/>
+    <select idref="IR-5" selected="true"/>
+    <select idref="IR-6" selected="true"/>
+    <select idref="IR-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MA-1" selected="true"/>
+    <select idref="MA-2" selected="true"/>
+    <select idref="MA-3" selected="true"/>
+    <select idref="MA-4" selected="true"/>
+    <select idref="MA-5" selected="true"/>
+    <select idref="MA-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MP-1" selected="true"/>
+    <select idref="MP-2" selected="true"/>
+    <select idref="MP-3" selected="true"/>
+    <select idref="MP-4" selected="true"/>
+    <select idref="MP-5" selected="true"/>
+    <select idref="MP-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP-7 was removed in Rev 2  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--<select idref="MP-7" selected="false"/>-->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PE  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PE-1" selected="true"/>
+    <select idref="PE-2" selected="true"/>
+    <select idref="PE-3" selected="true"/>
+    <select idref="PE-4" selected="true"/>
+    <select idref="PE-5" selected="true"/>
+    <select idref="PE-6" selected="true"/>
+    <select idref="PE-7" selected="true"/>
+    <select idref="PE-8" selected="true"/>
+    <select idref="PE-9" selected="true"/>
+    <select idref="PE-10" selected="true"/>
+    <select idref="PE-11" selected="true"/>
+    <select idref="PE-12" selected="true"/>
+    <select idref="PE-13" selected="true"/>
+    <select idref="PE-14" selected="true"/>
+    <select idref="PE-15" selected="true"/>
+    <select idref="PE-16" selected="true"/>
+    <select idref="PE-17" selected="true"/>
+    <select idref="PE-18" selected="true"/>
+    <select idref="PE-19" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-1" selected="true"/>
+    <select idref="PL-2" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL-3 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-3" selected="false"/>
+    <select idref="PL-4" selected="true"/>
+    <select idref="PL-5" selected="true"/>
+    <select idref="PL-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PS  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PS-1" selected="true"/>
+    <select idref="PS-2" selected="true"/>
+    <select idref="PS-3" selected="true"/>
+    <select idref="PS-4" selected="true"/>
+    <select idref="PS-5" selected="true"/>
+    <select idref="PS-6" selected="true"/>
+    <select idref="PS-7" selected="true"/>
+    <select idref="PS-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-1" selected="true"/>
+    <select idref="RA-2" selected="true"/>
+    <select idref="RA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-4" selected="false"/>
+    <select idref="RA-5" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-1" selected="true"/>
+    <select idref="SA-2" selected="true"/>
+    <select idref="SA-3" selected="true"/>
+    <select idref="SA-4" selected="true"/>
+    <select idref="SA-5" selected="true"/>
+    <select idref="SA-6" selected="true"/>
+    <select idref="SA-7" selected="true"/>
+    <select idref="SA-8" selected="true"/>
+    <select idref="SA-9" selected="true"/>
+    <select idref="SA-10" selected="true"/>
+    <select idref="SA-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA-12 through SA-14 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-12" selected="true"/>
+    <select idref="SA-13" selected="true"/>
+    <select idref="SA-14" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-1" selected="true"/>
+    <select idref="SC-2" selected="true"/>
+    <select idref="SC-3" selected="true"/>
+    <select idref="SC-4" selected="true"/>
+    <select idref="SC-5" selected="true"/>
+    <select idref="SC-6" selected="false"/>
+    <select idref="SC-7" selected="true"/>
+    <select idref="SC-8" selected="true"/>
+    <select idref="SC-9" selected="true"/>
+    <select idref="SC-10" selected="true"/>
+    <select idref="SC-11" selected="false"/>
+    <select idref="SC-12" selected="true"/>
+    <select idref="SC-13" selected="true"/>
+    <select idref="SC-14" selected="true"/>
+    <select idref="SC-15" selected="true"/>
+    <select idref="SC-16" selected="false"/>
+    <select idref="SC-17" selected="true"/>
+    <select idref="SC-18" selected="true"/>
+    <select idref="SC-19" selected="true"/>
+    <select idref="SC-20" selected="true"/>
+    <select idref="SC-21" selected="true"/>
+    <select idref="SC-22" selected="true"/>
+    <select idref="SC-23" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC-24 through SC-34 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-24" selected="true"/>
+    <select idref="SC-25" selected="false"/>
+    <select idref="SC-26" selected="false"/>
+    <select idref="SC-27" selected="false"/>
+    <select idref="SC-28" selected="true"/>
+    <select idref="SC-29" selected="false"/>
+    <select idref="SC-30" selected="false"/>
+    <select idref="SC-31" selected="false"/>
+    <select idref="SC-32" selected="true"/>
+    <select idref="SC-33" selected="false"/>
+    <select idref="SC-34" selected="false"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-1" selected="true"/>
+    <select idref="SI-2" selected="true"/>
+    <select idref="SI-3" selected="true"/>
+    <select idref="SI-4" selected="true"/>
+    <select idref="SI-5" selected="true"/>
+    <select idref="SI-6" selected="true"/>
+    <select idref="SI-7" selected="true"/>
+    <select idref="SI-8" selected="true"/>
+    <select idref="SI-9" selected="true"/>
+    <select idref="SI-10" selected="true"/>
+    <select idref="SI-11" selected="true"/>
+    <select idref="SI-12" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI-13 was added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-13" selected="false"/>
+  </Profile>
+  <Profile id="all_800_53" abstract="true">
+    <title xml:lang="en-US">800-53 All</title>
+    <description xml:lang="en-US">This profile selects all the security controls that are recommended by Special Publication 800-53 for information systems. Each control has an effect on other groups within this document as individual rule require certain controls to be selected.</description>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-1" selected="true"/>
+    <select idref="AC-2" selected="true"/>
+    <select idref="AC-3" selected="true"/>
+    <select idref="AC-4" selected="true"/>
+    <select idref="AC-5" selected="true"/>
+    <select idref="AC-6" selected="true"/>
+    <select idref="AC-7" selected="true"/>
+    <select idref="AC-8" selected="true"/>
+    <select idref="AC-9" selected="true"/>
+    <select idref="AC-10" selected="true"/>
+    <select idref="AC-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-12 and AC-13 were withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-12" selected="false"/>
+    <select idref="AC-13" selected="false"/>
+    <select idref="AC-14" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-15 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-15" selected="false"/>
+    <select idref="AC-16" selected="true"/>
+    <select idref="AC-17" selected="true"/>
+    <select idref="AC-18" selected="true"/>
+    <select idref="AC-19" selected="true"/>
+    <select idref="AC-20" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AC-21 and AC-22 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AC-21" selected="true"/>
+    <select idref="AC-22" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AT  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AT-1" selected="true"/>
+    <select idref="AT-2" selected="true"/>
+    <select idref="AT-3" selected="true"/>
+    <select idref="AT-4" selected="true"/>
+    <select idref="AT-5" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-1" selected="true"/>
+    <select idref="AU-2" selected="true"/>
+    <select idref="AU-3" selected="true"/>
+    <select idref="AU-4" selected="true"/>
+    <select idref="AU-5" selected="true"/>
+    <select idref="AU-6" selected="true"/>
+    <select idref="AU-7" selected="true"/>
+    <select idref="AU-8" selected="true"/>
+    <select idref="AU-9" selected="true"/>
+    <select idref="AU-10" selected="true"/>
+    <select idref="AU-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  AU-12 through AU-14 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="AU-12" selected="true"/>
+    <select idref="AU-13" selected="true"/>
+    <select idref="AU-14" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-1" selected="true"/>
+    <select idref="CA-2" selected="true"/>
+    <select idref="CA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CA-4" selected="false"/>
+    <select idref="CA-5" selected="true"/>
+    <select idref="CA-6" selected="true"/>
+    <select idref="CA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-1" selected="true"/>
+    <select idref="CM-2" selected="true"/>
+    <select idref="CM-3" selected="true"/>
+    <select idref="CM-4" selected="true"/>
+    <select idref="CM-5" selected="true"/>
+    <select idref="CM-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CM-7 through CM-9 are added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CM-7" selected="true"/>
+    <select idref="CM-8" selected="true"/>
+    <select idref="CM-9" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-1" selected="true"/>
+    <select idref="CP-2" selected="true"/>
+    <select idref="CP-3" selected="true"/>
+    <select idref="CP-4" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  CP-5 was withdrawn  ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="CP-5" selected="false"/>
+    <select idref="CP-6" selected="true"/>
+    <select idref="CP-7" selected="true"/>
+    <select idref="CP-8" selected="true"/>
+    <select idref="CP-9" selected="true"/>
+    <select idref="CP-10" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-1" selected="true"/>
+    <select idref="IA-2" selected="true"/>
+    <select idref="IA-3" selected="true"/>
+    <select idref="IA-4" selected="true"/>
+    <select idref="IA-5" selected="true"/>
+    <select idref="IA-6" selected="true"/>
+    <select idref="IA-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IA-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IA-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-1" selected="true"/>
+    <select idref="IR-2" selected="true"/>
+    <select idref="IR-3" selected="true"/>
+    <select idref="IR-4" selected="true"/>
+    <select idref="IR-5" selected="true"/>
+    <select idref="IR-6" selected="true"/>
+    <select idref="IR-7" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  IR-8 added ~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="IR-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MA-1" selected="true"/>
+    <select idref="MA-2" selected="true"/>
+    <select idref="MA-3" selected="true"/>
+    <select idref="MA-4" selected="true"/>
+    <select idref="MA-5" selected="true"/>
+    <select idref="MA-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="MP-1" selected="true"/>
+    <select idref="MP-2" selected="true"/>
+    <select idref="MP-3" selected="true"/>
+    <select idref="MP-4" selected="true"/>
+    <select idref="MP-5" selected="true"/>
+    <select idref="MP-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  MP-7 was removed in Rev 2  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--<select idref="MP-7" selected="true"/>-->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PE  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PE-1" selected="true"/>
+    <select idref="PE-2" selected="true"/>
+    <select idref="PE-3" selected="true"/>
+    <select idref="PE-4" selected="true"/>
+    <select idref="PE-5" selected="true"/>
+    <select idref="PE-6" selected="true"/>
+    <select idref="PE-7" selected="true"/>
+    <select idref="PE-8" selected="true"/>
+    <select idref="PE-9" selected="true"/>
+    <select idref="PE-10" selected="true"/>
+    <select idref="PE-11" selected="true"/>
+    <select idref="PE-12" selected="true"/>
+    <select idref="PE-13" selected="true"/>
+    <select idref="PE-14" selected="true"/>
+    <select idref="PE-15" selected="true"/>
+    <select idref="PE-16" selected="true"/>
+    <select idref="PE-17" selected="true"/>
+    <select idref="PE-18" selected="true"/>
+    <select idref="PE-19" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-1" selected="true"/>
+    <select idref="PL-2" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PL-3 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PL-3" selected="false"/>
+    <select idref="PL-4" selected="true"/>
+    <select idref="PL-5" selected="true"/>
+    <select idref="PL-6" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  PS  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="PS-1" selected="true"/>
+    <select idref="PS-2" selected="true"/>
+    <select idref="PS-3" selected="true"/>
+    <select idref="PS-4" selected="true"/>
+    <select idref="PS-5" selected="true"/>
+    <select idref="PS-6" selected="true"/>
+    <select idref="PS-7" selected="true"/>
+    <select idref="PS-8" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-1" selected="true"/>
+    <select idref="RA-2" selected="true"/>
+    <select idref="RA-3" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  RA-4 was withdrawn  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="RA-4" selected="false"/>
+    <select idref="RA-5" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-1" selected="true"/>
+    <select idref="SA-2" selected="true"/>
+    <select idref="SA-3" selected="true"/>
+    <select idref="SA-4" selected="true"/>
+    <select idref="SA-5" selected="true"/>
+    <select idref="SA-6" selected="true"/>
+    <select idref="SA-7" selected="true"/>
+    <select idref="SA-8" selected="true"/>
+    <select idref="SA-9" selected="true"/>
+    <select idref="SA-10" selected="true"/>
+    <select idref="SA-11" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SA-12 through SA-14 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SA-12" selected="true"/>
+    <select idref="SA-13" selected="true"/>
+    <select idref="SA-14" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-1" selected="true"/>
+    <select idref="SC-2" selected="true"/>
+    <select idref="SC-3" selected="true"/>
+    <select idref="SC-4" selected="true"/>
+    <select idref="SC-5" selected="true"/>
+    <select idref="SC-6" selected="true"/>
+    <select idref="SC-7" selected="true"/>
+    <select idref="SC-8" selected="true"/>
+    <select idref="SC-9" selected="true"/>
+    <select idref="SC-10" selected="true"/>
+    <select idref="SC-11" selected="true"/>
+    <select idref="SC-12" selected="true"/>
+    <select idref="SC-13" selected="true"/>
+    <select idref="SC-14" selected="true"/>
+    <select idref="SC-15" selected="true"/>
+    <select idref="SC-16" selected="true"/>
+    <select idref="SC-17" selected="true"/>
+    <select idref="SC-18" selected="true"/>
+    <select idref="SC-19" selected="true"/>
+    <select idref="SC-20" selected="true"/>
+    <select idref="SC-21" selected="true"/>
+    <select idref="SC-22" selected="true"/>
+    <select idref="SC-23" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SC-24 through SC-34 were added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SC-24" selected="true"/>
+    <select idref="SC-25" selected="true"/>
+    <select idref="SC-26" selected="true"/>
+    <select idref="SC-27" selected="true"/>
+    <select idref="SC-28" selected="true"/>
+    <select idref="SC-29" selected="true"/>
+    <select idref="SC-30" selected="true"/>
+    <select idref="SC-31" selected="true"/>
+    <select idref="SC-32" selected="true"/>
+    <select idref="SC-33" selected="true"/>
+    <select idref="SC-34" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-1" selected="true"/>
+    <select idref="SI-2" selected="true"/>
+    <select idref="SI-3" selected="true"/>
+    <select idref="SI-4" selected="true"/>
+    <select idref="SI-5" selected="true"/>
+    <select idref="SI-6" selected="true"/>
+    <select idref="SI-7" selected="true"/>
+    <select idref="SI-8" selected="true"/>
+    <select idref="SI-9" selected="true"/>
+    <select idref="SI-10" selected="true"/>
+    <select idref="SI-11" selected="true"/>
+    <select idref="SI-12" selected="true"/>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~  SI-13 was added  ~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <select idref="SI-13" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_gov.nist.r1100_scap11_win_rhel_profile" prohibitChanges="1" extends="all_800_53">
+    <title xml:lang="en-US">XCCDF Profile That References the Validation Content for the R1100 requirement</title>
+    <description xml:lang="en-US">This Profile allows for the tailoring of the validation content for the R1100 requirement.</description>
+
+    <!-- <platform idref="cpe:/o:microsoft:windows"/> -->
+
+    <select idref="r1100_scap11_win_rhel_validation_rule_1" selected="true"/>
+    <select idref="r1100_scap11_win_rhel_validation_rule_2" selected="true"/>
+    <select idref="r1100_scap11_win_rhel_validation_rule_3" selected="true"/>
+    <select idref="r1100_scap11_win_rhel_validation_rule_4" selected="true"/>
+    <select idref="r1100_scap11_win_rhel_validation_rule_5" selected="true"/>
+    
+    <select idref="r1100_scap11_win_rhel_validation_rule_6" selected="true"/>
+    <select idref="r1100_scap11_win_rhel_validation_rule_7" selected="true"/>
+    
+    <select idref="security_patches_up_to_date" selected="true"/>
+    <refine-value idref="r1100_scap11_win_rhel_validation_rule_1_var" selector="admin_unlock"/>
+  </Profile>
+
+
+  <!-- ==================================================================================================== -->
+  <!-- =============================  NIST SP 800-53 Rev 3 (FISMA) Controls  ============================== -->
+  <!-- ==================================================================================================== -->
+  <!--                                                                                                      -->
+  <!-- The following group contains all the different controls defined by NIST SP 800-53.  These controls   -->
+  <!-- are hidden as they should not appear in any document generated from this file pertaining to specific -->
+  <!-- security guidance.  These controls are used by the 800-53 profiles to enable high-level guidance     -->
+  <!-- that is then passed down to the USGCB profiles and used to enable specific XCCDF Rules.               -->
+  <!--                                                                                                      -->
+  <Group id="nist_sp80053_controls" hidden="true">
+    <title xml:lang="en-US">NIST SP 800-53 Controls</title>
+    <description xml:lang="en-US"/>
+    <Group id="access_control_checks" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Access Control Checks</title>
+      <description xml:lang="en-US"/>
+      <Group id="AC-1" hidden="true">
+        <title xml:lang="en-US">Access Control Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-2" hidden="true">
+        <title xml:lang="en-US">Account Management</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-3" hidden="true">
+        <title xml:lang="en-US">Access Enforcement</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-4" hidden="true">
+        <title xml:lang="en-US">Information Flow Enforcement</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-5" hidden="true">
+        <title xml:lang="en-US">Separation of Duties</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-6" hidden="true">
+        <title xml:lang="en-US">Least Privilege</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-7" hidden="true">
+        <title xml:lang="en-US">Unsuccessful Login Attempts</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="AC-8" hidden="true">
+        <title xml:lang="en-US">System Use Notification</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-9" hidden="true">
+        <title xml:lang="en-US">Previous Logon (Access) Notification</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="AC-10" hidden="true">
+        <title xml:lang="en-US">Concurrent Session Control</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="AC-11" hidden="true">
+        <title xml:lang="en-US">Session Lock</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="AC-12" hidden="true">
+        <title xml:lang="en-US">Session Termination</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn: Incorporated into SC-10 </reference>
+      </Group>
+      <Group id="AC-13" hidden="true">
+        <title xml:lang="en-US">Supervision and Review - Access Control</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn: Incorporated into AC-2 and AU-6.</reference>
+      </Group>
+      <Group id="AC-14" hidden="true">
+        <title xml:lang="en-US">Permitted Actions without Identification or Authentication</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-15" hidden="true">
+        <title xml:lang="en-US">Automated Marking</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn: Incorporated into MP-3. </reference>
+      </Group>
+      <Group id="AC-16" hidden="true">
+        <title xml:lang="en-US">Security Attributes</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="AC-17" hidden="true">
+        <title xml:lang="en-US">Remote Access</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-46</reference>
+        <reference>NIST Special Publication 800-77</reference>
+        <reference>NIST Special Publication 800-113</reference>
+        <reference>NIST Special Publication 800-114</reference>
+        <reference>NIST Special Publication 800-121</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-18" hidden="true">
+        <title xml:lang="en-US">Wireless Access</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-48</reference>
+        <reference>NIST Special Publication 800-94</reference>
+        <reference>NIST Special Publication 800-97</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-19" hidden="true">
+        <title xml:lang="en-US">Access Control for Mobile Devices</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-114</reference>
+        <reference>NIST Special Publication 800-124</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-20" hidden="true">
+        <title xml:lang="en-US">Use of External Information Systems</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AC-21" hidden="true">
+        <title xml:lang="en-US">User-Based Collaboration and Information Sharing</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="AC-22" hidden="true">
+        <title xml:lang="en-US">Publicly Accessible Content</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+    </Group>
+    <Group id="awareness_and_training" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Awareness and Training</title>
+      <description xml:lang="en-US"/>
+      <Group id="AT-1" hidden="true">
+        <title xml:lang="en-US">Security Awareness and Training Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-16</reference>
+        <reference>NIST Special Publication 800-50</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AT-2" hidden="true">
+        <title xml:lang="en-US">Security Awareness</title>
+        <description xml:lang="en-US"/>
+        <reference>C.F.R. Part 5 Subpart C (5 C.F.R 930.301)</reference>
+        <reference>NIST Special Publication 800-50</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AT-3" hidden="true">
+        <title xml:lang="en-US">Security Training</title>
+        <description xml:lang="en-US"/>
+        <reference>C.F.R. Part 5 Subpart C (5 C.F.R 930.301)</reference>
+        <reference>NIST Special Publication 800-16</reference>
+        <reference>NIST Special Publication 800-50</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AT-4" hidden="true">
+        <title xml:lang="en-US">Security Training Records</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="AT-5" hidden="true">
+        <title xml:lang="en-US">Contacts with Security Groups and Associations</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+    </Group>
+    <Group id="audit_and_accountablility" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Audit and Accountability</title>
+      <description xml:lang="en-US"/>
+      <Group id="AU-1" hidden="true">
+        <title xml:lang="en-US">Audit and Accountability Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-2" hidden="true">
+        <title xml:lang="en-US">Auditable Events</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-92</reference>
+        <reference href="http://csrc.nist.gov/pcig/cig.html">DISA Security Technical Implementation Guides (STIGs) and Checklists</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-3" hidden="true">
+        <title xml:lang="en-US">Content of Audit Records</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-4" hidden="true">
+        <title xml:lang="en-US">Audit Storage Capacity</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-5" hidden="true">
+        <title xml:lang="en-US">Response to Audit Processing Failures</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-6" hidden="true">
+        <title xml:lang="en-US">Audit Review, Analysis, and Reporting</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-7" hidden="true">
+        <title xml:lang="en-US">Audit Reduction and Report Generation</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="AU-8" hidden="true">
+        <title xml:lang="en-US">Time Stamps</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-9" hidden="true">
+        <title xml:lang="en-US">Protection of Audit Information</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-10" hidden="true">
+        <title xml:lang="en-US">Non-repudiation</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-11" hidden="true">
+        <title xml:lang="en-US">Audit Record Retention</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-12" hidden="true">
+        <title xml:lang="en-US">Audit Generation</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="AU-13" hidden="true">
+        <title xml:lang="en-US">Monitoring for Information Disclosure</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="AU-14" hidden="true">
+        <title xml:lang="en-US">Session Audit</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+    </Group>
+    <Group id="certification_accreditation_and_security_assessment" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Certification, Accreditation, and Security Assessment</title>
+      <description xml:lang="en-US"/>
+      <Group id="CA-1" hidden="true">
+        <title xml:lang="en-US">Security Assessment and Authorization Policies and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-37</reference>
+        <reference>NIST Special Publication 800-53A</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CA-2" hidden="true">
+        <title xml:lang="en-US">Security Assessments</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-37</reference>
+        <reference>NIST Special Publication 800-53A</reference>
+        <reference>NIST Special Publication 800-115</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="CA-3" hidden="true">
+        <title xml:lang="en-US">Information System Connections</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-47</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CA-4" hidden="true">
+        <title xml:lang="en-US">Security Certification</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn: Incorporated into CA-2</reference>
+      </Group>
+      <Group id="CA-5" hidden="true">
+        <title xml:lang="en-US">Plan of Action and Milestones</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memorandum 02-01</reference>
+        <reference>NIST Special Publication 800-37</reference>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="CA-6" hidden="true">
+        <title xml:lang="en-US">Security Authorization</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Circular A-130</reference>
+        <reference>NIST Special Publication 800-37</reference>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="CA-7" hidden="true">
+        <title xml:lang="en-US">Continuous Monitoring</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-37</reference>
+        <reference>NIST Special Publication 800-53A</reference>
+        <reference>US-CERT Technical Cyber Security Alerts</reference>
+        <reference>DOD Information Assurance Vulnerability Alerts</reference>
+        <reference>Priority 3</reference>
+      </Group>
+    </Group>
+    <Group id="configuration_management" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Configuration Management</title>
+      <description xml:lang="en-US"/>
+      <Group id="CM-1" hidden="true">
+        <title xml:lang="en-US">Configuration Management Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-2" hidden="true">
+        <title xml:lang="en-US">Baseline Configuration</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-128</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-3" hidden="true">
+        <title xml:lang="en-US">Configuration Change Control</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-128</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-4" hidden="true">
+        <title xml:lang="en-US">Security Impact Analysis</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-128</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="CM-5" hidden="true">
+        <title xml:lang="en-US">Access Restrictions for Change</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-6" hidden="true">
+        <title xml:lang="en-US">Configuration Settings</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memoranda 07-11</reference>
+        <reference>OMB Memoranda 07-18</reference>
+        <reference>OMB Memoranda 07-22</reference>
+        <reference>NIST Special Publication 800-70</reference>
+        <reference>NIST Special Publication 800-128</reference>
+        <reference href="http://nvd.nist.gov">National Vulnerability Database</reference>
+        <reference href="http://www.nsa.gov">National Security Agency Website</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-7" hidden="true">
+        <title xml:lang="en-US">Least Functionality</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-8" hidden="true">
+        <title xml:lang="en-US">Information System Component Inventory</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-128</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CM-9" hidden="true">
+        <title xml:lang="en-US">Configuration Management Plan</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-128</reference>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="contingency_planning" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Contingency Planning</title>
+      <description xml:lang="en-US"/>
+      <Group id="CP-1" hidden="true">
+        <title xml:lang="en-US">Contingency Planning Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>Federal Continuity Directive 1</reference>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CP-2" hidden="true">
+        <title xml:lang="en-US">Contingency Plan</title>
+        <description xml:lang="en-US"/>
+        <reference>Federal Continuity Directive 1</reference>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CP-3" hidden="true">
+        <title xml:lang="en-US">Contingency Training</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-16</reference>
+        <reference>NIST Special Publication 800-50</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="CP-4" hidden="true">
+        <title xml:lang="en-US">Contingency Plan Testing and Exercises</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>NIST Special Publication 800-84</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="CP-5" hidden="true">
+        <title xml:lang="en-US">Contingency Plan Update</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn - Incorporated into CP-2</reference>
+      </Group>
+      <Group id="CP-6" hidden="true">
+        <title xml:lang="en-US">Alternate Storage Sites</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CP-7" hidden="true">
+        <title xml:lang="en-US">Alternate Processing Sites</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CP-8" hidden="true">
+        <title xml:lang="en-US">Telecommunications Services</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference href="http://tsp.ncs.gov">Telecommunications Service Priority (TSP) Website</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CP-9" hidden="true">
+        <title xml:lang="en-US">Information System Backup</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="CP-10" hidden="true">
+        <title xml:lang="en-US">Information System Recovery and Reconstitution</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-34</reference>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="identification_and_authentication" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Identification and Authentication</title>
+      <description xml:lang="en-US"/>
+      <Group id="IA-1" hidden="true">
+        <title xml:lang="en-US">Identification and Authentication Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-63</reference>
+        <reference>NIST Special Publication 800-73</reference>
+        <reference>NIST Special Publication 800-76</reference>
+        <reference>NIST Special Publication 800-78</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-2" hidden="true">
+        <title xml:lang="en-US">Identification and Authentication (Organizational Users)</title>
+        <description xml:lang="en-US"/>
+        <reference>Homeland Security Presidential Directive 12</reference>
+        <reference>OMB Memorandum 04-04</reference>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-63</reference>
+        <reference>NIST Special Publication 800-73</reference>
+        <reference>NIST Special Publication 800-76</reference>
+        <reference>NIST Special Publication 800-78</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-3" hidden="true">
+        <title xml:lang="en-US">Device Identification and Authentication</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-4" hidden="true">
+        <title xml:lang="en-US">Identifier Management</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-73</reference>
+        <reference>NIST Special Publication 800-76</reference>
+        <reference>NIST Special Publication 800-78</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-5" hidden="true">
+        <title xml:lang="en-US">Authenticator Management</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memorandum 04-04</reference>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-73</reference>
+        <reference>NIST Special Publication 800-63</reference>
+        <reference>NIST Special Publication 800-76</reference>
+        <reference>NIST Special Publication 800-78</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-6" hidden="true">
+        <title xml:lang="en-US">Authenticator Feedback</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-7" hidden="true">
+        <title xml:lang="en-US">Cryptographic Module Authentication</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 140-2</reference>
+        <!-- Note: following URL changed from http://csrc.nist.gov/cryptval -->
+        <reference href="http://csrc.nist.gov/groups/STM/cmvp/index.html">Cryptographic Module Validation Program</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IA-8" hidden="true">
+        <title xml:lang="en-US">Identification and Authentication (Non-Organizational Users)</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memorandum 04-04</reference>
+        <!-- Note: following URL changed from http://www.cio.gov/eauthentication -->
+        <reference href="http://www.idmanagement.gov">Federal Identity Management Website</reference>
+        <reference>NIST Special Publication 800-63</reference>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="incident_response" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Incident Response</title>
+      <description xml:lang="en-US"/>
+      <Group id="IR-1" hidden="true">
+        <title xml:lang="en-US">Incident Response Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-61</reference>
+        <reference>NIST Special Publication 800-83</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IR-2" hidden="true">
+        <title xml:lang="en-US">Incident Response Training</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-16</reference>
+        <reference>NIST Special Publication 800-50</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="IR-3" hidden="true">
+        <title xml:lang="en-US">Incident Response Testing and Exercises</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-84</reference>
+        <reference>NIST Special Publication 800-115</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="IR-4" hidden="true">
+        <title xml:lang="en-US">Incident Handling</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-61</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IR-5" hidden="true">
+        <title xml:lang="en-US">Incident Monitoring</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-61</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IR-6" hidden="true">
+        <title xml:lang="en-US">Incident Reporting</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-61</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="IR-7" hidden="true">
+        <title xml:lang="en-US">Incident Response Assistance</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="IR-8" hidden="true">
+        <title xml:lang="en-US">Incident Response Plan</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-61</reference>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="maintenance" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Maintenance</title>
+      <description xml:lang="en-US"/>
+      <Group id="MA-1" hidden="true">
+        <title xml:lang="en-US">System Maintenance Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MA-2" hidden="true">
+        <title xml:lang="en-US">Controlled Maintenance</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="MA-3" hidden="true">
+        <title xml:lang="en-US">Maintenance Tools</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-88</reference>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="MA-4" hidden="true">
+        <title xml:lang="en-US">Non-Local Maintenance</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 140-2</reference>
+        <reference>FIPS Publication 197</reference>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-63</reference>
+        <reference>NIST Special Publication 800-88</reference>
+        <reference>CNSS Policy 15</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MA-5" hidden="true">
+        <title xml:lang="en-US">Maintenance Personnel</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MA-6" hidden="true">
+        <title xml:lang="en-US">Timely Maintenance</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="media_protection" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Media Protection</title>
+      <description xml:lang="en-US"/>
+      <Group id="MP-1" hidden="true">
+        <title xml:lang="en-US">Media Protection Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MP-2" hidden="true">
+        <title xml:lang="en-US">Media Access</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-111</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MP-3" hidden="true">
+        <title xml:lang="en-US">Media Marking</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MP-4" hidden="true">
+        <title xml:lang="en-US">Media Storage</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-56</reference>
+        <reference>NIST Special Publication 800-57</reference>
+        <reference>NIST Special Publication 800-111</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MP-5" hidden="true">
+        <title xml:lang="en-US">Media Transport</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-60</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="MP-6" hidden="true">
+        <title xml:lang="en-US">Media Sanitization</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-60</reference>
+        <reference>NIST Special Publication 800-88</reference>
+        <reference>WWW.NSA.GOV/IA/GUIDANCE/MEDIA_DESTRUCTION_GUIDANCE/INDEX.SHTML</reference>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="physical_and_environmental_protection" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Physical and Environmental Protection</title>
+      <description xml:lang="en-US"/>
+      <Group id="PE-1" hidden="true">
+        <title xml:lang="en-US">Physical and Environmental Protection Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-2" hidden="true">
+        <title xml:lang="en-US">Physical Access Authorizations</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-3" hidden="true">
+        <title xml:lang="en-US">Physical Access Control</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-73</reference>
+        <reference>NIST Special Publication 800-76</reference>
+        <reference>NIST Special Publication 800-78</reference>
+        <reference>Intelligence Community Directive 704</reference>
+        <reference>DCI Directive 6/9</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-4" hidden="true">
+        <title xml:lang="en-US">Access Control for Transmission Medium</title>
+        <description xml:lang="en-US"/>
+        <reference>NSTISSI No. 7003</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-5" hidden="true">
+        <title xml:lang="en-US">Access Control for Output Devices</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-6" hidden="true">
+        <title xml:lang="en-US">Monitoring Physical Access</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-7" hidden="true">
+        <title xml:lang="en-US">Visitor Control</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-8" hidden="true">
+        <title xml:lang="en-US">Access Records</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="PE-9" hidden="true">
+        <title xml:lang="en-US">Power Equipment and Power Cabling</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-10" hidden="true">
+        <title xml:lang="en-US">Emergency Shutoff</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-11" hidden="true">
+        <title xml:lang="en-US">Emergency Power</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-12" hidden="true">
+        <title xml:lang="en-US">Emergency Lighting</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-13" hidden="true">
+        <title xml:lang="en-US">Fire Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-14" hidden="true">
+        <title xml:lang="en-US">Temperature and Humidity Controls</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-15" hidden="true">
+        <title xml:lang="en-US">Water Damage Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-16" hidden="true">
+        <title xml:lang="en-US">Delivery and Removal</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-17" hidden="true">
+        <title xml:lang="en-US">Alternate Work Site</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-46</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PE-18" hidden="true">
+        <title xml:lang="en-US">Location of Information System Components</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="PE-19" hidden="true">
+        <title xml:lang="en-US">Information Leakage</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>Priority 0</reference>
+      </Group>
+    </Group>
+    <Group id="planning" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Planning</title>
+      <description xml:lang="en-US"/>
+      <Group id="PL-1" hidden="true">
+        <title xml:lang="en-US">Security Planning Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-18</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PL-2" hidden="true">
+        <title xml:lang="en-US">System Security Plan</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-18</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PL-3" hidden="true">
+        <title xml:lang="en-US">System Security Plan Update</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn: Incorporated into PL-2</reference>
+      </Group>
+      <Group id="PL-4" hidden="true">
+        <title xml:lang="en-US">Rules of Behavior</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-18</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PL-5" hidden="true">
+        <title xml:lang="en-US">Privacy Impact Assessment</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memorandum 03-22</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PL-6" hidden="true">
+        <title xml:lang="en-US">Security-Related Activity Planning</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+    </Group>
+    <Group id="personnel_security" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Personnel Security</title>
+      <description xml:lang="en-US"/>
+      <Group id="PS-1" hidden="true">
+        <title xml:lang="en-US">Personnel Security Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PS-2" hidden="true">
+        <title xml:lang="en-US">Position Categorization</title>
+        <description xml:lang="en-US"/>
+        <reference>5 CFR 731.106(a)</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PS-3" hidden="true">
+        <title xml:lang="en-US">Personnel Screening</title>
+        <description xml:lang="en-US"/>
+        <reference>5 CFR 731.106</reference>
+        <reference>FIPS Publication 199</reference>
+        <reference>FIPS Publication 201</reference>
+        <reference>NIST Special Publication 800-73</reference>
+        <reference>NIST Special Publication 800-76</reference>
+        <reference>NIST Special Publication 800-78</reference>
+        <reference>Intelligence Community Directive 704</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="PS-4" hidden="true">
+        <title xml:lang="en-US">Personnel Termination</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="PS-5" hidden="true">
+        <title xml:lang="en-US">Personnel Transfer</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="PS-6" hidden="true">
+        <title xml:lang="en-US">Access Agreements</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="PS-7" hidden="true">
+        <title xml:lang="en-US">Third-Party Personnel Security</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-35</reference>
+        <reference>Priority 3</reference>
+      </Group>
+      <Group id="PS-8" hidden="true">
+        <title xml:lang="en-US">Personnel Sanctions</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 3</reference>
+      </Group>
+    </Group>
+    <Group id="risk_assessment" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 Risk Assessment</title>
+      <description xml:lang="en-US"/>
+      <Group id="RA-1" hidden="true">
+        <title xml:lang="en-US">Risk Assessment Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-30</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="RA-2" hidden="true">
+        <title xml:lang="en-US">Security Categorization</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-30</reference>
+        <reference>NIST Special Publication 800-39</reference>
+        <reference>NIST Special Publication 800-60</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="RA-3" hidden="true">
+        <title xml:lang="en-US">Risk Assessment</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-30</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="RA-4" hidden="true">
+        <title xml:lang="en-US">Risk Assessment Update</title>
+        <description xml:lang="en-US"/>
+        <reference>Withdrawn: Incorporated into RA-3</reference>
+      </Group>
+      <Group id="RA-5" hidden="true">
+        <title xml:lang="en-US">Vulnerability Scanning</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-40</reference>
+        <reference>NIST Special Publication 800-70</reference>
+        <reference>NIST Special Publication 800-115</reference>
+        <reference href="http://cwe.mitre.org">MITRE Common Weakness Enumeration Program</reference>
+        <reference href="http://nvd.nist.gov">National Vulnerability Database</reference>
+        <reference>Priority 1</reference>
+      </Group>
+    </Group>
+    <Group id="system_and_services_acquisition" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 System and Services Acquisition</title>
+      <description xml:lang="en-US"/>
+      <Group id="SA-1" hidden="true">
+        <title xml:lang="en-US">System and Services Acquisition Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-2" hidden="true">
+        <title xml:lang="en-US">Allocation of Resources</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-65</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-3" hidden="true">
+        <title xml:lang="en-US">Life Cycle Support</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-64</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-4" hidden="true">
+        <title xml:lang="en-US">Acquisitions</title>
+        <description xml:lang="en-US"/>
+        <reference>ISO/IEC 15408</reference>
+        <reference>FIPS Publication 140-2</reference>
+        <reference>NIST Special Publication 800-23</reference>
+        <reference>NIST Special Publication 800-35</reference>
+        <reference>NIST Special Publication 800-36</reference>
+        <reference>NIST Special Publication 800-64</reference>
+        <reference>NIST Special Publication 800-70</reference>
+        <reference href="http://www.niap-ccevs.org">National Information Assurance Partnership (NIAP)</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-5" hidden="true">
+        <title xml:lang="en-US">Information System Documentation</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="SA-6" hidden="true">
+        <title xml:lang="en-US">Software Usage Restrictions</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-7" hidden="true">
+        <title xml:lang="en-US">User-Installed Software</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-8" hidden="true">
+        <title xml:lang="en-US">Security Engineering Principles</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-9" hidden="true">
+        <title xml:lang="en-US">External Information System Services</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-10" hidden="true">
+        <title xml:lang="en-US">Developer Configuration Management</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-11" hidden="true">
+        <title xml:lang="en-US">Developer Security Testing</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="SA-12" hidden="true">
+        <title xml:lang="en-US">Supply Chain Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-13" hidden="true">
+        <title xml:lang="en-US">Trustworthiness</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>FIPS Publication 200</reference>
+        <reference>NIST Special Publication 800-53</reference>
+        <reference>NIST Special Publication 800-53A</reference>
+        <reference>NIST Special Publication 800-60</reference>
+        <reference>NIST Special Publication 800-64</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SA-14" hidden="true">
+        <title xml:lang="en-US">Critical Information System Components</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+    </Group>
+    <Group id="system_and_communications_protection" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 System and Communication Protection</title>
+      <description xml:lang="en-US"/>
+      <Group id="SC-1" hidden="true">
+        <title xml:lang="en-US">System and Communications Protection Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-2" hidden="true">
+        <title xml:lang="en-US">Application Partitioning</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-3" hidden="true">
+        <title xml:lang="en-US">Security Function Isolation</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-4" hidden="true">
+        <title xml:lang="en-US">Information in Shared Resources</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-5" hidden="true">
+        <title xml:lang="en-US">Denial of Service Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-6" hidden="true">
+        <title xml:lang="en-US">Resource Priority</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-7" hidden="true">
+        <title xml:lang="en-US">Boundary Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 199</reference>
+        <reference>NIST Special Publication 800-41</reference>
+        <reference>NIST Special Publication 800-77</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-8" hidden="true">
+        <title xml:lang="en-US">Transmission Integrity</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 140-2</reference>
+        <reference>FIPS Publication 197</reference>
+        <reference>NIST Special Publication 800-52</reference>
+        <reference>NIST Special Publication 800-77</reference>
+        <reference>NIST Special Publication 800-81</reference>
+        <reference>NIST Special Publication 800-113</reference>
+        <reference>NSTISSI No. 7003</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-9" hidden="true">
+        <title xml:lang="en-US">Transmission Confidentiality</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 140-2</reference>
+        <reference>FIPS Publication 197</reference>
+        <reference>NIST Special Publication 800-52</reference>
+        <reference>NIST Special Publication 800-77</reference>
+        <reference>NIST Special Publication 800-113</reference>
+        <reference>CNSS Policy 15</reference>
+        <reference>NSTISSI No. 7003</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-10" hidden="true">
+        <title xml:lang="en-US">Network Disconnect</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="SC-11" hidden="true">
+        <title xml:lang="en-US">Trusted Path</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-12" hidden="true">
+        <title xml:lang="en-US">Cryptographic Key Establishment and Mgmt.</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-56</reference>
+        <reference>NIST Special Publication 800-57</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-13" hidden="true">
+        <title xml:lang="en-US">Use of Cryptography</title>
+        <description xml:lang="en-US"/>
+        <reference>FIPS Publication 140-2</reference>
+        <!-- Note: following URL changed from http://csrc.nist.gov/cryptval -->
+        <reference href="http://csrc.nist.gov/groups/STM/cmvp/index.html">Cryptographic Module Validation Program</reference>
+        <reference href="http://www.cnss.gov">Committee for National Security Systems</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-14" hidden="true">
+        <title xml:lang="en-US">Public Access Protections</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-15" hidden="true">
+        <title xml:lang="en-US">Collaborative Computing</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-16" hidden="true">
+        <title xml:lang="en-US">Transmission of Security Attributes</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-17" hidden="true">
+        <title xml:lang="en-US">Public Key Infrastructure Certificates</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memorandum 05-24</reference>
+        <reference>NIST Special Publication 800-32</reference>
+        <reference>NIST Special Publication 800-63</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-18" hidden="true">
+        <title xml:lang="en-US">Mobile Code</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-28</reference>
+        <reference>DOD Instruction 8552.01</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-19" hidden="true">
+        <title xml:lang="en-US">Voice Over Internet Protocol</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-58</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-20" hidden="true">
+        <title xml:lang="en-US">Secure Name/Address Resolution Service (Authoritative Source)</title>
+        <description xml:lang="en-US"/>
+        <reference>OMB Memorandum 08-23</reference>
+        <reference>NIST Special Publication 800-81</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-21" hidden="true">
+        <title xml:lang="en-US">Secure Name Address Resolution Service (Recursive or Caching Resolver)</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-81</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-22" hidden="true">
+        <title xml:lang="en-US">Architecture and Provisioning for Name/Address Resolution Service</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-81</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-23" hidden="true">
+        <title xml:lang="en-US">Session Authenticity</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-52</reference>
+        <reference>NIST Special Publication 800-77</reference>
+        <reference>NIST Special Publication 800-95</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-24" hidden="true">
+        <title xml:lang="en-US">Fail in Known State</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-25" hidden="true">
+        <title xml:lang="en-US">Thin Nodes</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-26" hidden="true">
+        <title xml:lang="en-US">Honeypots</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-27" hidden="true">
+        <title xml:lang="en-US">Operating System-Independent Applications</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-28" hidden="true">
+        <title xml:lang="en-US">Protection of Information at Rest</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-56</reference>
+        <reference>NIST Special Publication 800-57</reference>
+        <reference>NIST Special Publication 800-111</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SC-29" hidden="true">
+        <title xml:lang="en-US">Hetrogeneity</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-30" hidden="true">
+        <title xml:lang="en-US">Virtualization Techniques</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-31" hidden="true">
+        <title xml:lang="en-US">Covert Channel Analysis</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-32" hidden="true">
+        <title xml:lang="en-US">Information System Partitioning</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-33" hidden="true">
+        <title xml:lang="en-US">Transmission Preparation Integrity</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+      <Group id="SC-34" hidden="true">
+        <title xml:lang="en-US">Non-Modifiable Executable Programs</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+    </Group>
+    <Group id="system_and_information_integrity" hidden="true">
+      <title xml:lang="en-US">Applicable 800-53 System and Information Integrity</title>
+      <description xml:lang="en-US"/>
+      <Group id="SI-1" hidden="true">
+        <title xml:lang="en-US">System and Information Integrity Policy and Procedures</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-12</reference>
+        <reference>NIST Special Publication 800-100</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-2" hidden="true">
+        <title xml:lang="en-US">Flaw Remediation</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-40</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-3" hidden="true">
+        <title xml:lang="en-US">Malicious Code Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-83</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-4" hidden="true">
+        <title xml:lang="en-US">Information System Monitoring</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-61</reference>
+        <reference>NIST Special Publication 800-83</reference>
+        <reference>NIST Special Publication 800-92</reference>
+        <reference>NIST Special Publication 800-94</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-5" hidden="true">
+        <title xml:lang="en-US">Security Alerts, Advisories and Directives</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-40</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-6" hidden="true">
+        <title xml:lang="en-US">Security Functionality Verification</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-7" hidden="true">
+        <title xml:lang="en-US">Software and Information Integrity</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-8" hidden="true">
+        <title xml:lang="en-US">Spam Protection</title>
+        <description xml:lang="en-US"/>
+        <reference>NIST Special Publication 800-45</reference>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-9" hidden="true">
+        <title xml:lang="en-US">Information Input Restrictions</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="SI-10" hidden="true">
+        <title xml:lang="en-US">Information Input Validation</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 1</reference>
+      </Group>
+      <Group id="SI-11" hidden="true">
+        <title xml:lang="en-US">Error Handling</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="SI-12" hidden="true">
+        <title xml:lang="en-US">Information Output Handling and Retention</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 2</reference>
+      </Group>
+      <Group id="SI-13" hidden="true">
+        <title xml:lang="en-US">Predictable Failure Prevention</title>
+        <description xml:lang="en-US"/>
+        <reference>Priority 0</reference>
+      </Group>
+    </Group>
+  </Group>
+
+
+  <Group id="introduction">
+    <title xml:lang="en-US">Introduction</title>
+    <description xml:lang="en-US">This guide has been created to assist federal agencies in effectively securing systems with Microsoft Windows and RHEL based on OMB US Government Configuration Baseline (USGCB) recommendations.<xhtml:br/><xhtml:br/>Under the direction of OMB and in collaboration with DHS, DISA, NSA, USAF, and Microsoft, NIST has provided the following baseline to help agencies test, implement, and deploy the Microsoft Windows 7 and RHEL baseline. The USGCB is an OMB-mandated security configuration.<xhtml:br/><xhtml:br/>Please refer to the USGCB home page for additional information: http://usgcb.nist.gov/</description>
+  </Group>
+
+  <Group id="policy_settings">
+    <title xml:lang="en-US">R1100 title</title>
+    <description xml:lang="en-US">Attackers often attempt to gain access to user accounts by guessing passwords. Windows 7 can be configured to lock out (disable) an account when too many failed login attempts occur for a single user account in a certain time period. The following account lockout parameters are set in the NIST templates:<xhtml:br/><xhtml:br/>One of the main challenges in setting account policies is balancing security, functionality, and usability. For example, locking out user accounts after only a few failed logon attempts in a long time period may make it more difficult to gain unauthorized access to accounts by guessing passwords, but may also sharply increase the number of calls to the help desk to unlock accounts accidentally locked by failed attempts from legitimate users. This could also cause more users to write down their passwords or choose easier-to-remember passwords. Organizations should carefully think out such issues before setting Windows 7 account policies.</description>
+    <reference>
+      <dc:type>GPO</dc:type>
+      <dc:source>Computer Configuration\Windows Settings\Security
+          Settings\Account Policies\Account Lockout Policy</dc:source>
+    </reference>
+
+    <Value id="r1100_scap11_win_rhel_validation_rule_1_var" type="string" operator="equals">
+      <title xml:lang="en-US">Account Lockout Duration</title>
+      <description xml:lang="en-US">The amount of time in seconds that an account is locked before it is automatically unlocked by the system. 15 minutes = 900 seconds A value of 0 means that an administrator must unlock the account.</description>
+      <value>900</value>
+      <value selector="admin_unlock">0</value>
+      <value selector="900_seconds">900</value>
+      <value selector="3600_seconds">3600</value>
+      <value selector="86400_seconds">86400</value>
+    </Value>
+
+    <xccdf:Rule id="r1100_scap11_win_rhel_validation_rule_1" selected="false" weight="10.0" severity="low">
+      <xccdf:title>XCCDF rule for R1100 SCAP 1.1</xccdf:title>
+      <xccdf:description>Should return pass</xccdf:description>
+      <reference>U.S. Department of Commerce, National Institute of Standards and Technology. (2009). Recommended security controls for federal information systems and organizations (800-53). Retrieved from website: http://csrc.nist.gov/publications/PubsSPs.html</reference>
+      <rationale>
+        <xhtml:p>Failure to utilize a supported version of the software in a production environment can lead to outages, unresolvable problems, no access to security or functional updates, etc.</xhtml:p>
+      </rationale>
+
+      <requires idref="CM-5"/>
+      <requires idref="CM-7"/>
+      <ident system="http://cce.mitre.org">CCE-3744-0</ident>
+
+      <profile-note tag="risk_score">7.5</profile-note>
+      <profile-note tag="risk_level">High</profile-note>
+      <profile-note tag="dod_cat">CAT I</profile-note>
+      <profile-note tag="risk_formula">(AV:N/AC:L/Au:N/C:P/I:P/A:P)</profile-note>
+      <profile-note tag="nist_mapping">CM-6</profile-note>
+      <profile-note tag="disa_mapping">DCCS-1,DCCS-2,DCCT-1,ECSC-1,DCSS-1</profile-note>
+      <profile-note tag="validation_text">
+        <xhtml:p>To determine the version of the Software installed, perform the following actions: <xhtml:ul>
+            <xhtml:li>Execute run.bat --version or run.sh --version</xhtml:li>
+          </xhtml:ul></xhtml:p>
+        <xhtml:p>The output of the command above will display a variety of information; including the version and build information for Software.</xhtml:p>
+        <xhtml:p>Next, review support documentation and interview administrators. (<xhtml:a href="https://access.nist.gov/home">https://access.nist.gov/home</xhtml:a>). Additionally, ensure the version of Software has not reached end-of-life. Organizations using the Software must use a vendor supported version with an active support contract.</xhtml:p>
+      </profile-note>
+      <fixtext>
+        <xhtml:p>Other environments should install a vendor supported version of Software (<xhtml:a href="http://www.nist.gov">http://www.nist.gov</xhtml:a>).</xhtml:p>
+        <xhtml:p>Ensure downloaded software is checked against vendor supplied hashes to ensure the software has not been modified in transit. Tools such as sha1sum or md5sum (Linux) or File Checksum Integrity Verifier (FCIV) for Windows can be used to generate hash checksums for downloaded files.</xhtml:p>
+      </fixtext>
+      <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-export export-name="oval:gov.nist.validation.r1100_scap11_win_rhel:var:10" value-id="r1100_scap11_win_rhel_validation_rule_1_var"/>
+        <xccdf:check-content-ref href="r1100-scap11-win_rhel-oval.xml" name="oval:gov.nist.validation.r1100_scap11_win_rhel:def:1"/>
+      </xccdf:check>
+    </xccdf:Rule>
+
+    <xccdf:Rule id="r1100_scap11_win_rhel_validation_rule_2" selected="false" weight="10.0">
+      <xccdf:title>XCCDF rule for R1100 SCAP 1.1</xccdf:title>
+      <xccdf:description>should not be applicable</xccdf:description>
+      <reference>
+        <dc:type>GPO</dc:type>
+        <dc:source>Computer Configuration\Windows Settings\Security Settings\Account Policies\Account Lockout Policy</dc:source>
+      </reference>
+      <requires idref="AC-4"/>
+      <ident system="http://cce.mitre.org">CCE-3993-3</ident>
+      <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <xccdf:check-content-ref href="r1100-scap11-win_rhel-oval.xml" name="oval:gov.nist.validation.r1100_scap11_win_rhel:def:2"/>
+      </xccdf:check>
+    </xccdf:Rule>
+    <xccdf:Rule id="r1100_scap11_win_rhel_validation_rule_3" selected="false" weight="10.0">
+      <xccdf:title>XCCDF rule for R1100 SCAP 1.1</xccdf:title>
+      <xccdf:description>Should Pass</xccdf:description>
+      <requires idref="SI-3"/>
+      <ident system="http://cce.mitre.org">CCE-3207-8</ident>
+      <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <xccdf:check-content-ref href="r1100-scap11-win_rhel-oval.xml" name="oval:gov.nist.validation.r1100_scap11_win_rhel:def:3"/>
+      </xccdf:check>
+    </xccdf:Rule>
+    <xccdf:Rule id="r1100_scap11_win_rhel_validation_rule_4" selected="false" weight="10.0">
+      <xccdf:title>XCCDF rule for R1100 SCAP 1.1</xccdf:title>
+      <xccdf:description>Should be not applicable</xccdf:description>
+      <requires idref="SC-11"/>
+      <ident system="http://cce.mitre.org">CCE-3929-7</ident>
+      <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <xccdf:check-content-ref href="r1100-scap11-win_rhel-oval.xml" name="oval:gov.nist.validation.r1100_scap11_win_rhel:def:4"/>
+      </xccdf:check>
+    </xccdf:Rule>
+    <xccdf:Rule id="r1100_scap11_win_rhel_validation_rule_5" selected="false" severity="high" weight="10.0">
+      <xccdf:title>XCCDF rule for R1100 SCAP 1.1</xccdf:title>
+      <xccdf:description>Should Pass</xccdf:description>
+      <requires idref="CM-5"/>
+      <requires idref="AC-6"/>
+      <requires idref="AC-3"/>
+      <ident system="http://cce.mitre.org">CCE-3933-9</ident>
+      <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <xccdf:check-content-ref href="r1100-scap11-win_rhel-oval.xml" name="oval:gov.nist.validation.r1100_scap11_win_rhel:def:5"/>
+      </xccdf:check>
+    </xccdf:Rule>
+
+  </Group>
+
+
+  <Rule id="r1100_scap11_win_rhel_validation_rule_6" weight="10.0" selected="false">
+    <!--Ensure all configurations are made to the appropriate server profile-->
+    <title>Ensure all configurations are made to the appropriate server profile</title>
+    <description>Production environments should utilize the production server profile. Development and test environments should choose the profile that best fits their needs.</description>
+    <reference>U.S. Department of Commerce, National Institute of Standards and Technology. (2009). Recommended security controls for federal information systems and organizations (800-53). Retrieved from website: http://csrc.nist.gov/publications/PubsSPs.html</reference>
+    <rationale><xhtml:p>The Software server profiles are preconfigured with various deployed applications. Using a more restrictive profile ensures that less applications are deployed, minimizing the attack surface of the Software server and decreasing the amount of trimming that must be performed.</xhtml:p></rationale>
+    <profile-note tag="risk_score">3</profile-note>
+    <profile-note tag="risk_level">Low</profile-note>
+    <profile-note tag="dod_cat">CAT III</profile-note>
+    <profile-note tag="nist_mapping">CM-6</profile-note>
+    <profile-note tag="disa_mapping">DCCS-1,DCCS-2,DCCT-1,ECSC-1,DCSS-1</profile-note>
+    <profile-note tag="validation_text"><xhtml:p>Ensure that all configuration changes and deployments are made to the appropriate server profile. Production environments should utilize the production server profile. Development and test environments should choose the profile that best fits their needs.</xhtml:p>
+    </profile-note>
+    <fixtext><xhtml:p>Software administrators should use the profiles as defined in the validation text.</xhtml:p></fixtext>
+
+    <check system="http://scap.nist.gov/schema/ocil/2">
+      <check-content-ref href="r1100-scap11-win_rhel-ocil.xml" name="ocil:gov.nist.validation.r1100_scap11_win_rhel:questionnaire:6"/>
+    </check>
+  </Rule>
+
+  <Rule id="r1100_scap11_win_rhel_validation_rule_7" weight="10.0" selected="false">
+    <!--Declare an EJB Authorization Policy-->
+    <title>Declare an EJB authorization policy for deployed applications</title>
+    <description>When configuring your application specific security policy, you must declare one (or more) of the following authorization modules in the security domain &lt;policy-module&gt; element. <xhtml:ul><xhtml:li>org.Software.security.authorization.modules.DelegatingAuthorizationModule</xhtml:li>
+        <xhtml:li>org.Software.security.authorization.modules.JACCAuthorizationModule</xhtml:li></xhtml:ul>
+      <xhtml:p>A security domain does not explicitly require an authorization policy. If an authorization policy is not specified, the default Software-web-policy and Software-ejb-policy authorization configured in Software-as/server/$PROFILE/deploy/security/security-policies-Software-beans.xml is used. If you do choose to specify an authorization policy, or create a custom deployment descriptor file with a valid authorization policy, these settings override the default settings in security-policies-Software-beans.xml.</xhtml:p></description>
+    <reference>U.S. Department of Commerce, National Institute of Standards and Technology. (2009). Recommended security controls for federal information systems and organizations (800-53). Retrieved from website: http://csrc.nist.gov/publications/PubsSPs.html</reference>
+    <rationale><xhtml:p>Explicitly referencing one of the identified authorization modules ensures that applications extend the security policies defined in security-policies-Software-beans.xml. This allows Software administrators to set a secure baseline that can be tuned on a per-application basis.</xhtml:p>
+    </rationale>
+
+    <profile-note tag="risk_score">3.5</profile-note>
+    <profile-note tag="risk_level">Medium</profile-note>
+    <profile-note tag="dod_cat">CAT II</profile-note>
+
+    <profile-note tag="nist_mapping">AC-3,AC-4</profile-note>
+    <profile-note tag="disa_mapping">ECAN-1,ECCD-1,ECCD-2,ECCR-2,ECIC-1,ECAN-1,EBBD-1,EBBD-2,EBBD-3</profile-note>
+    <profile-note tag="validation_text">
+      <xhtml:p>Review possible locations for definition of &lt;application-policy&gt; elements. Specifically, ensure that 'code' attributes for &lt;authorization&gt;&lt;policy-module&gt; elements are either 'org.Software.security.authorization.modules.DelegatingAuthorizationModule' or 'org.Software.security.authorization.modules.JACCAuthorizationModule'.</xhtml:p>
+      <xhtml:p>These &lt;application-policy&gt; can be defined in the server profile conf directory, in an application deployment descriptor, or directly deployed as an MBean.</xhtml:p>
+      <xhtml:ul>
+        <xhtml:li>Software_HOME/server/[PROFILE]/conf/login-config.xml</xhtml:li>
+        <xhtml:li>Software_HOME/server/[PROFILE]/deploy/[APPLICATION]/META-INF/*-Software-beans.xml</xhtml:li>
+        <xhtml:li>Software_HOME/server/[PROFILE]/deploy/[APPLICATION]/WEB-INF/*-Software-beans.xml</xhtml:li>
+        <xhtml:li>Software_HOME/server/[PROFILE]/deploy/*-Software-beans.xml</xhtml:li></xhtml:ul>
+      <xhtml:p>NOTE: This applies even if the application is using Extensible Access Control Markup Language (XACML) Authorization Module.</xhtml:p>
+    </profile-note>
+    <fixtext>
+      <xhtml:p>Applications deploying their own security policies must specify one of the following &lt;policy-module&gt; within their 'code' attributes:</xhtml:p>
+      <xhtml:ul><xhtml:li>org.Software.security.authorization.modules.DelegatingAuthorizationModule</xhtml:li>
+        <xhtml:li>org.Software.security.authorization.modules.JACCAuthorizationModule</xhtml:li></xhtml:ul>
+      <xhtml:p>Example:</xhtml:p>
+      <xhtml:pre><xhtml:code>&lt;application-policy name="demo"&gt; &lt;authorization&gt; &lt;policy-module code="org.Software.security.authorization.modules.JACCAuthorizationModule"&gt;&lt;/policy-module&gt; &lt;/authorization&gt; &lt;/application-policy&gt;</xhtml:code></xhtml:pre>
+    </fixtext>
+
+    <check system="http://scap.nist.gov/schema/ocil/2">
+      <check-content-ref href="r1100-scap11-win_rhel-ocil.xml" name="ocil:gov.nist.validation.r1100_scap11_win_rhel:questionnaire:7"/>
+    </check>
+  </Rule>
+
+
+  <Group id="security_patches">
+    <title xml:lang="en-US">Security Patches</title>
+    <description xml:lang="en-US">Securing a given computer has become increasingly important. As such, it is essential to keep a host up to current patch levels to eliminate known vulnerabilities and weaknesses. In conjunction with antivirus software and a personal firewall, patching goes a long way to securing a host against outside attacks and exploitation. Microsoft provides two mechanisms for distributing security updates: Automatic Updates and Microsoft Update. In smaller environments, either method may be sufficient for keeping systems current with patches. Other environments typically have a software change management control process or a patch management program that tests patches before deploying them; distribution may then occur through local Windows Update Services (WUS) or Windows Server Update Services (WSUS) servers, which provide approved security patches for use by the Automatic Updates feature.</description>
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--                Values                              -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!--                Rules                               -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <Rule id="security_patches_up_to_date" selected="false" weight="10.0">
+      <title xml:lang="en-US">Security Patches Up-To-Date</title>
+      <description xml:lang="en-US">All known security patches have been installed.</description>
+      <requires idref="CM-6"/>
+      <requires idref="SI-2"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref href="r1100-scap11-win_rhel-patches.xml"/>
+      </check>
+    </Rule>
+  </Group>
+</Benchmark>

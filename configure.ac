@@ -85,10 +85,6 @@ CFLAGS="$my_save_cflags"
 AC_SUBST([AM_CFLAGS])
 
 
-probe_system_info_req_deps_ok=yes
-probe_system_info_req_deps_missing=
-probe_system_info_opt_deps_ok=yes
-probe_system_info_opt_deps_missing=
 probe_family_req_deps_ok=yes
 probe_family_req_deps_missing=
 probe_family_opt_deps_ok=yes
@@ -494,20 +490,16 @@ SAVE_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS  $(pkg-config libapt-pkg --cflags) $(pkg-config blkid --cflags) $(pkg-config dbus-1 --cflags) $(pkg-config gconf-2.0 --cflags) $(pkg-config libpcre --cflags) $(pkg-config libprocps --cflags) $(pkg-config rpm --cflags) $(pkg-config libselinux --cflags) $(pkg-config libxml-2.0 --cflags) $(pkg-config libxslt --cflags) "
 
 echo
-echo ' * Checking presence of required headers for the system_info probe'
-AC_CHECK_HEADERS([arpa/inet.h ctype.h errno.h ifaddrs.h libdlpi.h netdb.h net/if.h net/if_types.h stdlib.h string.h sys/ioctl.h sys/socket.h sys/sockio.h sys/utsname.h unistd.h ],[],[probe_system_info_req_deps_ok=no; probe_system_info_req_deps_missing='header files'],[-])
-
-echo
 echo ' * Checking presence of required headers for the family probe'
 AC_CHECK_HEADERS([string.h ],[],[probe_family_req_deps_ok=no; probe_family_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the textfilecontent probe'
-AC_CHECK_HEADERS([fcntl.h limits.h pcre.h regex.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_textfilecontent_req_deps_ok=no; probe_textfilecontent_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([fcntl.h limits.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_textfilecontent_req_deps_ok=no; probe_textfilecontent_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the textfilecontent54 probe'
-AC_CHECK_HEADERS([errno.h fcntl.h limits.h pcre.h regex.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_textfilecontent54_req_deps_ok=no; probe_textfilecontent54_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([errno.h fcntl.h limits.h stdio.h stdlib.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_textfilecontent54_req_deps_ok=no; probe_textfilecontent54_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the variable probe'
@@ -619,15 +611,15 @@ AC_CHECK_HEADERS([errno.h limits.h stdlib.h string.h sys/stat.h sys/types.h unis
 
 echo
 echo ' * Checking presence of required headers for the gconf probe'
-AC_CHECK_HEADERS([gconf/gconf.h limits.h pcre.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([gconf/gconf.h limits.h stdint.h stdlib.h string.h ],[],[probe_gconf_req_deps_ok=no; probe_gconf_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the isainfo probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h stdio_ext.h stdio.h stdlib.h string.h sys/systeminfo.h ],[],[probe_isainfo_req_deps_ok=no; probe_isainfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the partition probe'
-AC_CHECK_HEADERS([fcntl.h limits.h linux/fs.h mntent.h pcre.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([fcntl.h limits.h linux/fs.h mntent.h stdint.h stdio.h stdlib.h string.h sys/stat.h sys/statvfs.h sys/types.h sys/vfs.h ],[],[probe_partition_req_deps_ok=no; probe_partition_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of optional headers for the partition probe'
@@ -635,11 +627,11 @@ AC_CHECK_HEADERS([blkid/blkid.h linux/magic.h ],[],[probe_partition_opt_deps_ok=
 
 echo
 echo ' * Checking presence of required headers for the inetlisteningservers probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_inetlisteningservers_req_deps_ok=no; probe_inetlisteningservers_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the iflisteners probe'
-AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h regex.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([arpa/inet.h dirent.h errno.h fcntl.h netdb.h stdio_ext.h stdio.h stdlib.h string.h ],[],[probe_iflisteners_req_deps_ok=no; probe_iflisteners_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the selinuxboolean probe'
@@ -651,19 +643,19 @@ AC_CHECK_HEADERS([dirent.h errno.h fcntl.h limits.h pthread.h selinux/context.h 
 
 echo
 echo ' * Checking presence of required headers for the rpminfo probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h pthread.h regex.h rpm/header.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h pthread.h rpm/header.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpminfo_req_deps_ok=no; probe_rpminfo_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpmverify probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverify_req_deps_ok=no; probe_rpmverify_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverify_req_deps_ok=no; probe_rpmverify_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpmverifyfile probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverifyfile_req_deps_ok=no; probe_rpmverifyfile_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h ],[],[probe_rpmverifyfile_req_deps_ok=no; probe_rpmverifyfile_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the rpmverifypackage probe'
-AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h pcre.h popt.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_rpmverifypackage_req_deps_ok=no; probe_rpmverifypackage_req_deps_missing='header files'],[-])
+AC_CHECK_HEADERS([assert.h errno.h fcntl.h limits.h popt.h pthread.h rpm/header.h rpm/rpmcli.h rpm/rpmdb.h rpm/rpmfi.h rpm/rpmlib.h rpm/rpmlog.h rpm/rpmmacro.h rpm/rpmts.h stdio.h string.h sys/stat.h sys/types.h unistd.h ],[],[probe_rpmverifypackage_req_deps_ok=no; probe_rpmverifypackage_req_deps_missing='header files'],[-])
 
 echo
 echo ' * Checking presence of required headers for the dpkginfo probe'
@@ -1347,8 +1339,6 @@ OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(d
 AC_SUBST(oscapdocker_pythondir, $OSCAPDOCKER_PYTHONDIR)
 
 
-AM_CONDITIONAL([probe_system_info_enabled], test "$probe_system_info_req_deps_ok" = yes)
-probe_system_info_enabled=$probe_system_info_req_deps_ok
 AM_CONDITIONAL([probe_family_enabled], test "$probe_family_req_deps_ok" = yes)
 probe_family_enabled=$probe_family_req_deps_ok
 AM_CONDITIONAL([probe_textfilecontent_enabled], test "$probe_textfilecontent_req_deps_ok" = yes)
@@ -1573,6 +1563,7 @@ AC_CONFIG_FILES([Makefile
 		tests/bz2/Makefile
 		tests/codestyle/Makefile
 		tests/oval_details/Makefile
+		tests/nist/Makefile
 
                  src/SCE/Makefile
                  tests/sce/Makefile])
@@ -1605,12 +1596,6 @@ echo
 
 if test "$probes" = "yes"; then
 echo '  === probes ==='
-if test "$probe_system_info_req_deps_ok" = "yes"; then
-  probe_system_info_table_result="yes"
-else
-  probe_system_info_table_result="NO (missing: $probe_system_info_req_deps_missing)"
-fi
-printf "  %-28s %s\n" "system_info:" "$probe_system_info_table_result"
 if test "$probe_family_req_deps_ok" = "yes"; then
   probe_family_table_result="yes"
 else
@@ -1869,6 +1854,7 @@ else
   probe_systemdunitdependency_table_result="NO (missing: $probe_systemdunitdependency_req_deps_missing)"
 fi
 printf "  %-28s %s\n" "systemdunitdependency:" "$probe_systemdunitdependency_table_result"
+echo "  system_info:                 always enabled"
 echo
 echo "  === configuration ==="
 echo "  probe directory set to:      $probe_dir"

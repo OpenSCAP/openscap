@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.r500" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R3300</bundleName>
+	<bundleGuiName>R3300 Test</bundleGuiName>
+	<testSuite version="1" suiteId="benchmark1">
+		<suiteName>Test1</suiteName>
+		<guiName>Test1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r3300-datastream.xml</datastreamFile>
+		<xccdfProfile>xccdf_gov.nist_profile_r3300</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_r3300_01" expectedResult="notchecked"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

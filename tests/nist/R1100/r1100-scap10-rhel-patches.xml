@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions 
+  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+  xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
+  xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/windows-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5#independent 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/independent-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/oval-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-common-5
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/oval-common-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5#linux 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/linux-definitions-schema.xsd
+  http://oval.mitre.org/XMLSchema/oval-definitions-5#unix 
+  http://oval.mitre.org/language/download/schema/version5.4/ovaldefinition/complete/unix-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>NIST Validation Content Generation Script</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.4</oval:schema_version>
+    <oval:timestamp>2016-05-25T14:00:00-05:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel.patch:def:1" version="1" class="patch">
+      <metadata>
+        <title>Test 1</title>
+        <affected family="unix"/>
+        <description>Test 1</description>
+      </metadata>
+      <criteria>
+        <criterion negate="true" test_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:1" comment="comment ..."/>
+      </criteria>
+    </definition>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel.patch:def:2" version="1" class="patch">
+      <metadata>
+        <title>Test 2</title>
+        <affected family="unix"/>
+        <description>Test 2</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:2" comment="comment ..."/>
+      </criteria>
+    </definition>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel.patch:def:3" version="1" class="patch">
+      <metadata>
+        <title>Test 3</title>
+        <affected family="unix"/>
+        <description>Test 3</description>
+      </metadata>
+      <criteria>
+        <criterion negate="true" test_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:3" comment="comment ..."/>
+      </criteria>
+    </definition>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel.patch:def:4" version="1" class="patch">
+      <metadata>
+        <title>Sample Defintion</title>
+        <affected family="unix"/>
+        <description>Test 4</description>
+      </metadata>
+      <criteria>
+        <criterion negate="true" test_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:1" comment="comment ..."/>
+      </criteria>
+    </definition>
+    <definition id="oval:gov.nist.validation.r1100_scap10_rhel.patch:def:5" version="1" class="patch">
+      <metadata>
+        <title>Sample Defintion</title>
+        <affected family="unix"/>
+        <description>Test 5</description>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:2" comment="comment ..."/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind-def:variable_test check="all" comment="comment ..." version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:1">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:obj:1"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:ste:1"/>
+    </ind-def:variable_test>
+    <ind-def:variable_test check="all" comment="comment ..." version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:2">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:obj:2"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:ste:2"/>
+    </ind-def:variable_test>
+    <ind-def:variable_test check="all" comment="comment ..." version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:tst:3">
+      <ind-def:object object_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:obj:1"/>
+      <ind-def:state state_ref="oval:gov.nist.validation.r1100_scap10_rhel.patch:ste:1"/>
+    </ind-def:variable_test>
+  </tests>
+  <objects>
+    <ind-def:variable_object version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:obj:1">
+      <ind-def:var_ref datatype="string">oval:gov.nist.validation.r1100_scap10_rhel.patch:var:1</ind-def:var_ref>
+    </ind-def:variable_object>
+    <ind-def:variable_object version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:obj:2">
+      <ind-def:var_ref datatype="string">oval:gov.nist.validation.r1100_scap10_rhel.patch:var:2</ind-def:var_ref>
+    </ind-def:variable_object>
+  </objects>
+  <states>
+    <ind-def:variable_state version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:ste:1">
+      <ind-def:value datatype="int" operation="greater than or equal">0</ind-def:value>
+    </ind-def:variable_state>
+    <ind-def:variable_state version="1" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:ste:2">
+      <ind-def:value datatype="string" operation="not equal">2</ind-def:value>
+    </ind-def:variable_state>
+  </states>
+  <variables>
+    <local_variable id="oval:gov.nist.validation.r1100_scap10_rhel.patch:var:1" version="2" datatype="string" comment="A sample variable">
+      <literal_component>1</literal_component>
+    </local_variable>
+    <local_variable datatype="string" id="oval:gov.nist.validation.r1100_scap10_rhel.patch:var:2" version="1" comment="A sample variable">
+      <literal_component>2</literal_component>
+    </local_variable>
+  </variables>
+</oval_definitions>

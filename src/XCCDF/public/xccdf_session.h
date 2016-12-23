@@ -84,6 +84,16 @@ bool xccdf_session_is_sds(const struct xccdf_session *session);
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation);
 
 /**
+ * Set whether the thin results override is enabled.
+ * If true the OVAL results put in ARF or separate files will have thin results.
+ * Thin results do not contain details about the evaluated criteria, only
+ * minimal OVAL results.
+ * @memberof xccdf_session
+ * @param thin_results true to enable thin_results, default is false
+ */
+void xccdf_session_set_thin_results(struct xccdf_session *session, bool thin_result);
+
+/**
  * Set requested datastream_id for this session. This datastream_id is later
  * passed down to @ref ds_sds_index_select_checklist to determine target component.
  * This function is applicable only for sessions based on a DataStream.

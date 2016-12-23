@@ -100,6 +100,7 @@ struct xccdf_session {
 		bool oval_variables;			///< Shall be the OVAL variable files exported?
 		bool check_engine_plugins_results;	///< Shall the check engine plugins results be exported?
 		bool without_sys_chars;			///< Shall system characteristics be exported?
+		bool thin_results;			///< Shall OVAL/ARF results be exported as THIN? Default is FULL
 	} export;					///< Settings of Session export
 	char *user_cpe;					///< Path to CPE dictionary required by user
 	struct {
@@ -282,6 +283,11 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
 {
 	session->validate = validate;
 	session->full_validation = full_validation;
+}
+
+void xccdf_session_set_thin_results(struct xccdf_session *session, bool thin_results)
+{
+	session->export.thin_results = thin_results;
 }
 
 void xccdf_session_set_datastream_id(struct xccdf_session *session, const char *datastream_id)
@@ -634,6 +640,12 @@ int xccdf_session_load_cpe(struct xccdf_session *session)
 	if (session == NULL || session->xccdf.policy_model == NULL)
 		return 1;
 
+	// The CPE session will load OVAL files for any CPE dicts that require it.
+	// These OVAL files are outside of scope of XCCDF session but we still want
+	// to apply the thin results settings to them.
+	struct cpe_session *cpe_session = xccdf_policy_model_get_cpe_session(session->xccdf.policy_model);
+	cpe_session_set_thin_results(cpe_session, session->export.thin_results);
+
 	/* Use custom CPE dict if given */
 	if (session->user_cpe != NULL) {
 		struct oscap_source *source = oscap_source_new_from_file(session->user_cpe);
@@ -888,6 +900,19 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to create new OVAL agent session for: '%s'.", contents[idx]->href);
 			oval_definition_model_free(tmp_def_model);
 			return 2;
+		}
+
+		if (session->export.thin_results) {
+			struct oval_results_model *res_model = oval_agent_get_results_model(tmp_sess);
+			struct oval_directives_model *dir_model = oval_results_model_get_directives_model(res_model);
+			// This is the worst function name in existence, despite its name,
+			// it's getting the oval_result_directives of the oval_directives_model.
+			// You would expect oval_directives_model_getresdirs at least, but no..
+			struct oval_result_directives *dir = oval_directives_model_get_defdirs(dir_model);
+			oval_result_directives_set_content(dir,  OVAL_RESULT_TRUE | OVAL_RESULT_FALSE |
+							OVAL_RESULT_UNKNOWN | OVAL_RESULT_NOT_EVALUATED |
+							OVAL_RESULT_NOT_APPLICABLE | OVAL_RESULT_ERROR,
+							OVAL_DIRECTIVE_CONTENT_THIN);
 		}
 
 		/* store our name in the generated documents */

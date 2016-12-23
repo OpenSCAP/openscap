@@ -145,6 +145,7 @@ struct oscap_action {
 	int progress;
 	int oval_results;
 	int without_sys_chars;
+	int thin_results;
 	int remediate;
 	char *sce_template;
 	int check_engine_results;

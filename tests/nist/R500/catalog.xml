@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle bundleId="G2.r500" bundleVersion="1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:///C:/Programs/validationTestHarness/thControlFile.xsd">
+	<bundleName>R500</bundleName>
+	<bundleGuiName>R500 Test</bundleGuiName>
+	<testSuite version="1" suiteId="G2.datastream1.profile11.rhel">
+		<suiteName>Data Stream 1 - profile11 on RHEL</suiteName>
+		<guiName>Data Stream 1 - profile11 on RHEL</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r500-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_6gA.9tIT5j86j.XFD97_comp_S-bCJJRVuB4Ggi85Yl5beBfF1ZabqD6yqECu0SUnJBrz5g8Rxy05D6vNO2J7g</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_54459XD270W.7FG_comp_729BP5J3720Hn129f939Z7XT800218T</cpeDictionaryFilename>
+		<ovalFilename>scap_6gA.9tIT5j86j.XFD97_comp_FMU52VIWUKPnuQR0aQ4v8v5p68191rzQWtANY4O78a1jW82aY67v5Zt</ovalFilename>
+		<xccdfFilename>scap_6gA.9tIT5j86j.XFD97_comp_SFUTmeR6RDa2iilMdZ-iykjFlq6feHsF1G0cWhpKuIDJrAzBXYNBBRtm-0iBHK</xccdfFilename>
+		<xccdfProfile>xccdf_6gA.9tIT5j86j.XFD97_profile_r500_11</xccdfProfile>
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist.validation_rule_r500_1_3" expectedResult="fail"/>
+			<result definition="xccdf_gov.nist.validation_rule_r500_1_6" expectedResult="pass"/>
+			<result definition="xccdf_gov.nist.validation_rule_r500_1_8" expectedResult="fail"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

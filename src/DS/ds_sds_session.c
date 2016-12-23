@@ -266,6 +266,24 @@ struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session 
 	return component;
 }
 
+bool ds_sds_session_can_register_component(struct ds_sds_session *session, const char *container_name, const char *component_id)
+{
+	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
+	if (!datastream)
+		return false;
+
+	xmlNodePtr container = node_get_child_element(datastream, container_name);
+	if (!container)
+		return false;
+
+	// it's fine if component_id is NULL, it will return any component in that case
+	xmlNode *component_ref = containter_get_component_ref_by_id(container, component_id);
+	if (component_ref == NULL)
+		return false;
+
+	return true;
+}
+
 int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename)
 {
 	xmlNode *datastream = ds_sds_session_get_selected_datastream(session);
