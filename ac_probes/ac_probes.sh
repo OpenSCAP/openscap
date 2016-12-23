@@ -35,7 +35,9 @@ HEADERS_INTERNAL=(
     probe-api.h
     procfs.h
     seap.h
-    sexp.h)
+    sexp.h
+    pcre.h
+    regex.h)
 
 SOURCES_REGEXP='(probe_.*_SOURCES|/.*\.[Cch][a-zA-Z]*\\?$)'
 PROBES_SEDEXP='s|^.*probe_\(.*\)_SOURCES.*$|\1|p'
