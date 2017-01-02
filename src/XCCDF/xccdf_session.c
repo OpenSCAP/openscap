@@ -1554,7 +1554,11 @@ int xccdf_session_remediate(struct xccdf_session *session)
 	xccdf_result_set_version(session->xccdf.result,
 			benchmark != NULL ? xccdf_benchmark_get_version(benchmark) : NULL);
 	xccdf_result_fill_sysinfo(session->xccdf.result);
-	return xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
+
+	if ((res = xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result)) != 0)
+		return res;
+
+	return xccdf_policy_update_score(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }
 
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id)
