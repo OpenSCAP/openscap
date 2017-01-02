@@ -3,7 +3,7 @@
 # Test to check there are output streams separated
 #
 # Author:
-#	Marek Haicman <mhaicman@redhat.com>
+#   Marek Haicman <mhaicman@redhat.com>
 
 . ../test_common.sh
 
@@ -11,11 +11,11 @@ set -e -o pipefail
 
 function test_sce_stdout_stderr {
 
-	local xccdf_file=${srcdir}/$1
-	local stderr=$(mktemp)
-	local result=$(mktemp)
+    local xccdf_file=${srcdir}/$1
+    local stderr=$(mktemp)
+    local result=$(mktemp)
 
-	$OSCAP xccdf eval --results "$result" "$xccdf_file" 2> $stderr
+    $OSCAP xccdf eval --results "$result" "$xccdf_file" 2> $stderr
     echo "===== result ====="
     cat $result
 
