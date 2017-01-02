@@ -37,5 +37,5 @@ EXTRA_DIST =	test_sce.sh \
 		test_sce_parse_errors.sh \
 		test_sce_parse_errors_stub-oval.xml \
 		test_sce_stdout_stderr.sh \
-		test_sce_stdout_stderr.xccdf.sh \
+		test_sce_stdout_stderr.xccdf.xml \
 		stdout_stderr.sh
