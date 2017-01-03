@@ -703,12 +703,12 @@ void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it)
 struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct xccdf_result * test_result, const char * system);
 
 /**
- * Update score of the XCCDF Benchmark
+ * Recalculate score of the XCCDF Benchmark
  * @param policy XCCDF Policy
  * @param test_result Test Result model
  * @returns zero on success
  */
-int xccdf_policy_update_score(struct xccdf_policy * policy, struct xccdf_result * test_result);
+int xccdf_policy_recalculate_score(struct xccdf_policy * policy, struct xccdf_result * test_result);
 
 /**
  * Get value of given value item in context of given policy

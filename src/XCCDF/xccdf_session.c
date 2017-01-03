@@ -1558,7 +1558,7 @@ int xccdf_session_remediate(struct xccdf_session *session)
 	if ((res = xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result)) != 0)
 		return res;
 
-	return xccdf_policy_update_score(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
+	return xccdf_policy_recalculate_score(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }
 
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id)

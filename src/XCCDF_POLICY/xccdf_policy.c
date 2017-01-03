@@ -2060,7 +2060,7 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
 	return xccdf_result_calculate_score(test_result, (struct xccdf_item *) benchmark, scsystem);
 }
 
-int xccdf_policy_update_score(struct xccdf_policy * policy, struct xccdf_result * test_result)
+int xccdf_policy_recalculate_score(struct xccdf_policy * policy, struct xccdf_result * test_result)
 {
     struct xccdf_benchmark * benchmark = xccdf_policy_model_get_benchmark(xccdf_policy_get_model(policy));
 	return xccdf_result_recalculate_scores(test_result, (struct xccdf_item *) benchmark);
