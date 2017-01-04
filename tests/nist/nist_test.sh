@@ -29,8 +29,8 @@ function test_results_directive {
 	local datastream="ind_family_test-datastream.xml"
 
 	local result="${builddir}/tests/nist/${test_dir}/results_directive.results_arf.xml"
-	# the tests of this evaluation dont need to pass, return 0
-	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null && 0
+	# the tests of this evaluation dont need to pass, return true
+	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 1 '//collected_objects'
 	assert_exists 1 '//system_data'
@@ -44,8 +44,8 @@ function test_results_directive {
 	fi
 
 	local result="${builddir}/tests/nist/${test_dir}/without-syschar-results_directive.results_arf.xml"
-	# the tests of this evaluation dont need to pass, return 0
-	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --without-syschar --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null && 0
+	# the tests of this evaluation dont need to pass, return true
+	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --without-syschar --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 0 '//collected_objects'
 	assert_exists 0 '//system_data'
@@ -59,8 +59,8 @@ function test_results_directive {
 	fi
 
 	local result="${builddir}/tests/nist/${test_dir}/thin-results-results_directive.results_arf.xml"
-	# the tests of this evaluation dont need to pass, return 0
-	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --thin-results --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null && 0
+	# the tests of this evaluation dont need to pass, return true
+	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --thin-results --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 0 '//collected_objects'
 	assert_exists 0 '//system_data'
