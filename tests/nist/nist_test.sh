@@ -23,7 +23,6 @@ function test_nist {
 
 function test_results_directive {
 	test_dir="$1"
-	run_script="$(cd "${builddir}"; pwd)/run"
 	# make sure the output dir in builddir exists
 	mkdir -p "${builddir}/tests/nist/$test_dir/"
 
@@ -35,7 +34,7 @@ function test_results_directive {
 
 	local result="${builddir}/tests/nist/${test_dir}/results_directive.results_arf.xml"
 	# the tests of this evaluation dont need to pass, return true
-	${run_script} $OSCAP xccdf eval --profile ${profile} --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
+	$OSCAP xccdf eval --profile ${profile} --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 1 '//collected_objects'
 	assert_exists 1 '//system_data'
@@ -50,7 +49,7 @@ function test_results_directive {
 
 	local result="${builddir}/tests/nist/${test_dir}/without-syschar-results_directive.results_arf.xml"
 	# the tests of this evaluation dont need to pass, return true
-	${run_script} $OSCAP xccdf eval --profile ${profile} --without-syschar --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
+	$OSCAP xccdf eval --profile ${profile} --without-syschar --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 0 '//collected_objects'
 	assert_exists 0 '//system_data'
@@ -65,7 +64,7 @@ function test_results_directive {
 
 	local result="${builddir}/tests/nist/${test_dir}/thin-results-results_directive.results_arf.xml"
 	# the tests of this evaluation dont need to pass, return true
-	${run_script} $OSCAP xccdf eval --profile ${profile} --thin-results --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
+	$OSCAP xccdf eval --profile ${profile} --thin-results --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 0 '//collected_objects'
 	assert_exists 0 '//system_data'
