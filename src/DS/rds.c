@@ -32,6 +32,7 @@
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
+#include "common/debug_priv.h"
 
 #include "ds_common.h"
 #include "ds_rds_session.h"
@@ -600,6 +601,13 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 		const char* report_request_id, struct oscap_htable *arf_report_mapping)
 {
 	xmlNodePtr root_element = xmlDocGetRootElement(xccdf_result_file_doc);
+
+	if (root_element->ns && root_element->ns->href &&
+			oscap_str_endswith((const char*)root_element->ns->href, "xccdf/1.1")) {
+		dW("Exporting ARF from XCCDF 1.1 is not allowed by SCAP specification. "
+		   "The resulting ARF will not validate. Convert the input to XCCDF 1.2 "
+		   "to get valid ARF results.");
+	}
 
 	// There are 2 possible scenarios here:
 
