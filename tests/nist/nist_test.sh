@@ -11,10 +11,9 @@ set -e -o pipefail
 
 function test_nist {
 	test_dir="$1"
-	run_script="$(cd "${builddir}"; pwd)/run"
 	# make sure the output dir in builddir exists
 	mkdir -p "${builddir}/tests/nist/$test_dir/"
-	"${srcdir}/test_worker.py" --scanner "${run_script} $OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
+	"${srcdir}/test_worker.py" --scanner "$OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
 	ret_val=$?
 	if [ $ret_val -eq 1 ]; then
 		return 1
