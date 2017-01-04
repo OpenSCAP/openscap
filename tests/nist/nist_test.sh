@@ -29,15 +29,18 @@ function test_results_directive {
 
 	# Parameters of datastream used for evaluation
 	local datastream="ind_family_test-datastream.xml"
+	local profile="xccdf_gov.nist_profile_family-validation"
+	local n_rules=9
+	local n_tests=8
 
 	local result="${builddir}/tests/nist/${test_dir}/results_directive.results_arf.xml"
 	# the tests of this evaluation dont need to pass, return true
-	${run_script} $OSCAP xccdf eval --profile  "xccdf_gov.nist_profile_family-validation" --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
+	${run_script} $OSCAP xccdf eval --profile ${profile} --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 1 '//collected_objects'
 	assert_exists 1 '//system_data'
-	assert_exists 8 '//tests/test/tested_item'
-	assert_exists 9 '//results/system/definitions/definition/criteria'
+	assert_exists ${n_tests} '//tests/test/tested_item'
+	assert_exists ${n_rules} '//results/system/definitions/definition/criteria'
 	if grep -q 'content="full"' ${result}; then
 		echo "ARF results for Single Machine with System Characteristics: PASS"
 	else
@@ -47,12 +50,12 @@ function test_results_directive {
 
 	local result="${builddir}/tests/nist/${test_dir}/without-syschar-results_directive.results_arf.xml"
 	# the tests of this evaluation dont need to pass, return true
-	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --without-syschar --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
+	${run_script} $OSCAP xccdf eval --profile ${profile} --without-syschar --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 0 '//collected_objects'
 	assert_exists 0 '//system_data'
-	assert_exists 8 '//tests/test/tested_item'
-	assert_exists 9 '//results/system/definitions/definition/criteria'
+	assert_exists ${n_tests} '//tests/test/tested_item'
+	assert_exists ${n_rules} '//results/system/definitions/definition/criteria'
 	if grep -q 'content="full"' ${result}; then
 		echo "ARF results for Single Machine without System Characteristics: PASS"
 	else
@@ -62,13 +65,13 @@ function test_results_directive {
 
 	local result="${builddir}/tests/nist/${test_dir}/thin-results-results_directive.results_arf.xml"
 	# the tests of this evaluation dont need to pass, return true
-	${run_script} $OSCAP xccdf eval --profile "xccdf_gov.nist_profile_family-validation" --thin-results --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
+	${run_script} $OSCAP xccdf eval --profile ${profile} --thin-results --results-arf ${result} "${srcdir}/$test_dir/${datastream}" > /dev/null || true
 
 	assert_exists 0 '//collected_objects'
 	assert_exists 0 '//system_data'
 	assert_exists 0 '//tests/test'
 	assert_exists 0 '//tests/test/tested_item'
-	assert_exists 9 '//results/system/definitions/definition'
+	assert_exists ${n_rules} '//results/system/definitions/definition'
 	assert_exists 0 '//results/system/definitions/definition/criteria'
 	if grep -q 'content="thin"' ${result}; then
 		echo "ARF results for Single Machine with Thin Results: PASS"
