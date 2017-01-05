@@ -1,3 +1,16 @@
+openscap-1-2.13                                                 05-01-2017
+  - Maintenance
+    - we always build system_info OVAL probe, fixed configure output accordingly
+    - warn when the user requests to generate an ARF from XCCDF 1.1
+    - fixed a segfault when loading an OVAL file with invalid family attribute
+    - added --thin-results CLI override to oscap xccdf eval
+    - added --without-syschar CLI override to oscap xccdf eval
+    - fixed a segfault when freeing xccdf_policy of the default profile
+    - removed ARF schematron workaround when there are no applicable checks
+    - fixed verbose output in oscap xccdf generate fix
+    - do not filter fix by applicability when generating remediations from results
+    - fixed memory leaks, resource leaks and other minor issues
+
 openscap-1.2.12                                                 16-11-2016
   - New features
     - separated stdout and stderr in SCE results and HTML report
