@@ -606,7 +606,8 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 			oscap_str_endswith((const char*)root_element->ns->href, "xccdf/1.1")) {
 		dW("Exporting ARF from XCCDF 1.1 is not allowed by SCAP specification. "
 		   "The resulting ARF will not validate. Convert the input to XCCDF 1.2 "
-		   "to get valid ARF results.");
+		   "to get valid ARF results. The xccdf_1.1_to_1.2.xsl transformation."
+		   "that ships with OpenSCAP can do that automatically.");
 	}
 
 	// There are 2 possible scenarios here:
