@@ -1,0 +1,185 @@
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_ssg-rhel7-xccdf-1.2.xml" schematron-version="1.2">
+  <ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_ssg-rhel7-xccdf-1.2.xml" scap-version="1.2" use-case="OTHER"><ds:dictionaries><ds:component-ref id="scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-rhel7-cpe-dictionary.xml"><cat:catalog><cat:uri name="ssg-rhel7-cpe-oval.xml" uri="#scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml"/></cat:catalog></ds:component-ref></ds:dictionaries>
+    <ds:checklists>
+      <ds:component-ref id="scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-xccdf-1.2.xml">
+        <cat:catalog>
+          <cat:uri name="ssg-rhel7-oval.xml" uri="#scap_org.open-scap_cref_ssg-rhel7-oval.xml"/>
+        </cat:catalog>
+      </ds:component-ref>
+      <ds:component-ref id="scap_org.open-scap_cref_ssg-rhel7_2-xccdf-1.2.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml">
+        <cat:catalog>
+          <cat:uri name="ssg-rhel7-oval.xml" uri="#scap_org.open-scap_cref_ssg-rhel7-oval.xml"/>
+        </cat:catalog>
+      </ds:component-ref>
+    </ds:checklists>
+    <ds:checks>
+      <ds:component-ref id="scap_org.open-scap_cref_ssg-rhel7-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml"/>
+      <ds:component-ref id="scap_org.open-scap_cref_output--ssg-rhel7-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml"/>
+      <ds:component-ref id="scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml"/></ds:checks>
+  </ds:data-stream>
+  <ds:component id="scap_org.open-scap_comp_ssg-rhel7-oval.xml" timestamp="2017-01-03T11:03:27">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>python</oval:product_name>
+    <oval:product_version>2.7.12</oval:product_version>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2017-01-03T10:03:20</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" id="oval:ssg-package_httpd_removed:def:1" version="1">
+      <metadata>
+        <title>Package httpd Removed</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 7</platform>
+          <platform>Red Hat Enterprise Linux 6</platform>
+        </affected>
+        <description>The RPM package httpd should be removed.</description>
+      <reference ref_id="package_httpd_removed" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="package httpd is removed" test_ref="oval:ssg-test_package_httpd_removed:tst:1"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <linux:rpminfo_test check="all" check_existence="none_exist" id="oval:ssg-test_package_httpd_removed:tst:1" version="1" comment="package httpd is removed">
+      <linux:object object_ref="oval:ssg-obj_package_httpd_removed:obj:1"/>
+    </linux:rpminfo_test>
+  </tests>
+  <objects>
+    <linux:rpminfo_object id="oval:ssg-obj_package_httpd_removed:obj:1" version="1">
+      <linux:name>httpd</linux:name>
+    </linux:rpminfo_object>
+  </objects>
+</oval_definitions>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_ssg-rhel7-xccdf-1.2.xml" timestamp="2017-01-03T11:03:27">
+    <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_1" resolved="1" xml:lang="en-US" style="SCAP_1.2">
+  <status date="2017-01-03">draft</status>
+  <title xml:lang="en-US">Benchmark1</title>
+  <platform idref="cpe:/o:redhat:enterprise_linux:7"/>
+  <platform idref="cpe:/o:redhat:enterprise_linux:7::client"/>
+  <platform idref="cpe:/o:redhat:enterprise_linux:7::computenode"/>
+  <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.31</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Profile id="xccdf_org.ssgproject.content_profile_C2S">
+    <title xml:lang="en-US">Benchmark1</title>
+    <select idref="xccdf_org.ssgproject.content_rule_package_httpd_removed" selected="true"/>
+  </Profile>
+  <Group id="xccdf_org.ssgproject.content_group_http">
+      <Rule id="xccdf_org.ssgproject.content_rule_package_httpd_removed" selected="false" severity="low">
+        <title xml:lang="en-US">Uninstall httpd Package</title>
+        <description xml:lang="en-US">
+      The <html:code xmlns:html="http://www.w3.org/1999/xhtml">httpd</html:code> package can be removed with the following command:
+      <html:pre xmlns:html="http://www.w3.org/1999/xhtml">$ sudo yum erase httpd</html:pre>
+        </description>
+        <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">CM-7</reference>
+        <reference href="https://benchmarks.cisecurity.org/tools2/linux/CIS_Red_Hat_Enterprise_Linux_7_Benchmark_v1.1.0.pdf">3.11</reference>
+        <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-80301-5</ident>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+          <check-content-ref name="oval:ssg-package_httpd_removed:def:1" href="ssg-rhel7-oval.xml"/>
+        </check>
+        <check system="http://scap.nist.gov/schema/ocil/2">
+          <check-content-ref href="ssg-rhel7-ocil.xml" name="ocil:ssg-package_httpd_removed_ocil:questionnaire:1"/>
+        </check>
+      </Rule>
+    </Group>
+</Benchmark>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_output--ssg-rhel7-oval.xml" timestamp="2017-01-03T11:03:27">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>python</oval:product_name>
+    <oval:product_version>2.7.12</oval:product_version>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2017-01-03T10:03:20</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" id="oval:ssg-package_bind_removed:def:1" version="1">
+      <metadata>
+        <title>Package bind Removed</title>
+        <affected family="unix">
+          <platform>Red Hat Enterprise Linux 7</platform>
+          <platform>Red Hat Enterprise Linux 6</platform>
+        </affected>
+        <description>The RPM package bind should be removed.</description>
+      <reference ref_id="package_bind_removed" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="package bind is removed" test_ref="oval:ssg-test_fedora_release_rpm:tst:1"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <linux:rpminfo_test check="all" check_existence="only_one_exists" comment="fedora-release RPM package is installed" id="oval:ssg-test_fedora_release_rpm:tst:1" version="1">
+      <linux:object object_ref="oval:ssg-object_fedora_release_rpm:obj:1"/>
+    </linux:rpminfo_test>
+  </tests>
+  <objects>
+    <linux:rpminfo_object id="oval:ssg-object_fedora_release_rpm:obj:1" version="1">
+      <linux:name>fedora-release</linux:name>
+    </linux:rpminfo_object>
+  </objects>
+</oval_definitions>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_ssg-rhel7_2-xccdf-1.2.xml" timestamp="2017-01-03T11:03:31">
+    <ns0:Benchmark xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://checklists.nist.gov/xccdf/1.2" xmlns:ns2="http://www.w3.org/2000/svg" id="xccdf_org.ssgproject.content_benchmark_2" resolved="1" style="SCAP_1.2" xml:lang="en-US">
+  <ns0:status date="2017-01-03">draft</ns0:status>
+  <ns0:title xml:lang="en-US">Benchmark2</ns0:title>
+  <ns0:platform idref="cpe:/o:redhat:enterprise_linux:7"/>
+  <ns0:platform idref="cpe:/o:redhat:enterprise_linux:7::client"/>
+  <ns0:platform idref="cpe:/o:redhat:enterprise_linux:7::computenode"/>
+  <ns0:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.31</ns0:version>
+  <ns0:model system="urn:xccdf:scoring:default"/>
+  <ns0:Profile id="xccdf_org.ssgproject.content_profile_pci-dss_centric">
+    <ns0:title xml:lang="en-US">Benchmark2</ns0:title>
+    <ns0:select idref="xccdf_org.ssgproject.content_rule_service_auditd_enabled" selected="true"/>
+  </ns0:Profile>
+  <ns0:Group id="xccdf_org.ssgproject.content_group_installed_OS_is_fedora">
+    <ns0:Rule id="xccdf_org.ssgproject.content_rule_installed_OS_is_fedora" selected="false" severity="low">
+      <ns0:title xml:lang="en-US">Uninstall httpd Package</ns0:title>
+      <ns0:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <ns0:check-content-ref name="oval:ssg-installed_OS_is_fedora:def:1" href="ssg-rhel7-oval.xml"/>
+      </ns0:check>
+    </ns0:Rule>
+  </ns0:Group>
+  </ns0:Benchmark>
+  </ds:component>
+  <ds:component id="scap_org.open-scap_comp_output--ssg-rhel7-cpe-dictionary.xml" timestamp="2017-01-03T11:03:24">
+    <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:7">
+            <title xml:lang="en-us">Red Hat Enterprise Linux 7</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_rhel7:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:7::server">
+            <title xml:lang="en-us">Red Hat Enterprise Linux 7 Server</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_rhel7:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:7::client">
+            <title xml:lang="en-us">Red Hat Enterprise Linux 7 Client</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_rhel7:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:7::computenode">
+            <title xml:lang="en-us">Red Hat Enterprise Linux 7 ComputeNode</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_rhel7:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:7::workstation">
+            <title xml:lang="en-us">Red Hat Enterprise Linux 7 Workstation</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_rhel7:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:centos:centos:7">
+            <title xml:lang="en-us">CentOS 7</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_centos7:def:1</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:7">
+            <title xml:lang="en-us">Scientific Linux 7</title>
+            <!-- the check references an OVAL file that contains an inventory definition -->
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-rhel7-cpe-oval.xml">oval:ssg-installed_OS_is_sl7:def:1</check>
+      </cpe-item>
+    </cpe-list>
+  </ds:component>
+</ds:data-stream-collection>
