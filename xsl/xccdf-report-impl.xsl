@@ -482,6 +482,7 @@ Authors:
 <xsl:template name="get-all-references">
     <xsl:param name="benchmark"/>
     <xsl:for-each select="$benchmark//cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+        <xsl:sort select="@href" />
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
