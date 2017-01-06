@@ -148,7 +148,9 @@ var KeysEnum = {
     SEVERITY: "severity",
     RESULT: "result",
     NIST: "NIST SP 800-53 ID",
-    DISA: "DISA ID",
+    DISA_CCI: "DISA CCI",
+    DISA_SRG: "DISA SRG",
+    DISA_STIG_ID: "DISA STIG ID",
     PCI_DSS: "PCI DSS Requirement",
     CIS: "CIS Recommendation"
 };

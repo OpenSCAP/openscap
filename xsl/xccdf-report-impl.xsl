@@ -458,8 +458,14 @@ Authors:
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53 ID</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'http://iase.disa.mil/')">
-            <xsl:text>DISA ID</xsl:text>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
+            <xsl:text>DISA CCI</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/srgs/')">
+            <xsl:text>DISA SRG</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/')">
+            <xsl:text>DISA STIG ID</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
             <xsl:text>PCI DSS Requirement</xsl:text>
