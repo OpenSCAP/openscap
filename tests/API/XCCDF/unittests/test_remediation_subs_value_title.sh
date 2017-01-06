@@ -61,7 +61,7 @@ assert_exists 1 '//rule-result/message'
 assert_exists 1 '//rule-result/message[@severity="info"]'
 assert_exists 1 '//rule-result/message[text()="Fix execution completed and returned: 0"]'
 assert_exists 1 '//score'
-assert_exists 1 '//score[text()="0.000000"]'
+assert_exists 1 '//score[text()="100.000000"]'
 
 rm test_file
 rm $result
