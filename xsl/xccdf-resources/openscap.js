@@ -137,10 +137,15 @@ function resetTreetable() {
     }
 }
 
-function newGroupLine(group_name)
+function newGroupLine(key, group_name)
 {
+    // ellipsize key in case it's too long
+    var maxKeyLength = 12;
+    if (key.length > maxKeyLength)
+        key = key.substring(0, maxKeyLength - 1) + "…";
+
     return "<tr class=\"rule-overview-inner-node\" data-tt-id=\"" + group_name + "\">" +
-        "<td colspan=\"3\"><strong>" + group_name + "</strong></td></tr>";
+        "<td colspan=\"3\"><small>" + key + "</small> = <strong>" + group_name + "</strong></td></tr>";
 }
 
 var KeysEnum = {
@@ -223,7 +228,7 @@ function groupRulesBy(key) {
             var target_group = target_groups[i];
             if (!lines.hasOwnProperty(target_group)) {
                 /* Create a new group */
-                lines[target_group] = [newGroupLine(target_group)];
+                lines[target_group] = [newGroupLine(key, target_group)];
             }
             var clone = $(this).clone();
             clone.attr("data-tt-id", id + "copy" + i);
