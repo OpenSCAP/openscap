@@ -560,6 +560,7 @@ Authors:
                         <option value="default" selected="selected">Default</option>
                         <option value="severity">Severity</option>
                         <option value="result">Result</option>
+                        <option disabled="disabled">──────────</option>
                         <xsl:call-template name="get-all-references">
                             <xsl:with-param name="benchmark" select="$benchmark"/>
                         </xsl:call-template>
