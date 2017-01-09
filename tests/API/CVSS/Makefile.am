@@ -1,4 +1,3 @@
-
 AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/CVE/public \
 		-I${top_srcdir}/src/CVSS/public \
@@ -16,6 +15,11 @@ LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
 DISTCLEANFILES = *.log *.out*
 CLEANFILES = *.log *.out*
+
+TESTS_ENVIRONMENT = \
+		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
+		$(top_builddir)/run
 
 TESTS = test_api_cvss.sh
 check_PROGRAMS = test_api_cvss
