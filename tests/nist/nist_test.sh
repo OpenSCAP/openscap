@@ -13,7 +13,19 @@ function test_nist {
 	test_dir="$1"
 	# make sure the output dir in builddir exists
 	mkdir -p "${builddir}/tests/nist/$test_dir/"
-	"${srcdir}/test_worker.py" --scanner "$OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
+	(
+		# workaround for OVAL 5.4 issue where var_ref regex pattern is too
+		# strict and doesn't allow numbers or underscores
+		if [ "x$test_dir" == "xR1100" ]; then
+			unset OSCAP_FULL_VALIDATION
+		fi
+		# workaround for missing idref in <platform> in an internally used
+		# XCCDF. this XCCDF is never exported and only used internally.
+		if [ "x$test_dir" == "xR1200" ]; then
+			unset OSCAP_FULL_VALIDATION
+		fi
+		"${srcdir}/test_worker.py" --scanner "$OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
+	)
 	ret_val=$?
 	if [ $ret_val -eq 1 ]; then
 		return 1

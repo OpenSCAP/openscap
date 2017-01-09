@@ -5,6 +5,7 @@ CLEANFILES = *.log *.results oscap_debug.log.* *.result.xml */*.results_arf.xml 
 
 TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
 TESTS = nist_test.sh
