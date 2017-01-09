@@ -15,7 +15,7 @@ function test_nist {
 	mkdir -p "${builddir}/tests/nist/$test_dir/"
 	(
 		# workaround for OVAL 5.4 issue where var_ref regex pattern is too
-		# strict and doesn't allow numbers or underscores
+		# strict and doesnt allow numbers or underscores
 		if [ "x$test_dir" == "xR1100" ]; then
 			unset OSCAP_FULL_VALIDATION
 		fi
