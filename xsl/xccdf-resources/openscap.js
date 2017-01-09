@@ -140,7 +140,7 @@ function resetTreetable() {
 function newGroupLine(key, group_name)
 {
     // ellipsize key in case it's too long
-    var maxKeyLength = 12;
+    var maxKeyLength = 24;
     if (key.length > maxKeyLength)
         key = key.substring(0, maxKeyLength - 1) + "…";
 
