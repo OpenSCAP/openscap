@@ -17,14 +17,15 @@ LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 DISTCLEANFILES = *.log *.out* oscap_debug.log.*
 CLEANFILES = *.log *.out* oscap_debug.log.*
 
+TESTS_ENVIRONMENT = \
+		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
+		$(top_builddir)/run
+
 TESTS = test_schema_version.sh
 check_PROGRAMS = test_schema_version
 
 test_schema_version_SOURCES = test_schema_version.c
-
-TESTS_ENVIRONMENT= \
-	builddir=$(top_builddir) \
-	$(top_builddir)/run
 
 EXTRA_DIST = test_schema_version.sh \
               test_schema_version.c
