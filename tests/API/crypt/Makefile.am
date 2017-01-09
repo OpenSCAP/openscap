@@ -16,6 +16,11 @@ LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 DISTCLEANFILES = *.log
 CLEANFILES = *.log
 
+TESTS_ENVIRONMENT = \
+		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
+		$(top_builddir)/run
+
 TESTS = test_api_crypt.sh
 
 check_PROGRAMS = test_crapi_digest \
