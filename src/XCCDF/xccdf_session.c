@@ -784,6 +784,9 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 		if (file_path[0] == '/') { // it's a simple absolute path
 			tmp_path = oscap_strdup(file_path);
 		}
+		else if (oscap_str_startswith(file_path, "file://")) { // it's an absolute path prefixed with file://
+			snprintf(tmp_path, PATH_MAX, "%s", file_path + 7);
+		}
 		else { // assume it's a relative path
 			snprintf(tmp_path, PATH_MAX, "%s/%s", dir_path, file_path);
 		}
