@@ -774,13 +774,19 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 		if (strcmp(oscap_file_entry_get_system(file_entry), oval_sysname))
 			continue;
 
+		const char *file_path = oscap_file_entry_get_file(file_entry);
 		struct oscap_source *source = NULL;
 		if (xccdf_session_get_ds_sds_session(session) != NULL) {
-			source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), oscap_file_entry_get_file(file_entry));
+			source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), file_path);
 		}
 
 		tmp_path = malloc(PATH_MAX * sizeof(char));
-		snprintf(tmp_path, PATH_MAX, "%s/%s", dir_path, oscap_file_entry_get_file(file_entry));
+		if (file_path[0] == '/') { // it's a simple absolute path
+			tmp_path = oscap_strdup(file_path);
+		}
+		else { // assume it's a relative path
+			snprintf(tmp_path, PATH_MAX, "%s/%s", dir_path, file_path);
+		}
 
 		if (source != NULL || stat(tmp_path, &sb) == 0) {
 			resources[idx] = malloc(sizeof(struct oval_content_resource));
