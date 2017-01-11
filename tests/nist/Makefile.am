@@ -5,6 +5,7 @@ CLEANFILES = *.log *.results oscap_debug.log.* *.result.xml */*.results_arf.xml 
 
 TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
 TESTS = nist_test.sh
@@ -35,6 +36,7 @@ EXTRA_DIST += nist_test.sh \
 	R1100/r1100-scap11-win_rhel-xccdf.xml \
 	R1200/catalog.xml \
 	R1200/r1200-datastream.xml \
+	R2000/ind_family_test-datastream.xml \
 	R2920/catalog.xml \
 	R2920/r2920-datastream.xml \
 	R2940/catalog.xml \

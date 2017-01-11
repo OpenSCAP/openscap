@@ -637,15 +637,15 @@ int probe_main(probe_ctx *ctx, void *arg)
 	int ret = 0;
 	(void)arg;
 
-	os_name = architecture = hname = NULL;
+	item = os_name = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
 	if (offline_mode == PROBE_OFFLINE_NONE) {
 		if (uname(&sname) == 0) {
-			os_name = sname.sysname;
+			os_name = strdup(sname.sysname);
 			os_version = sname.version;
-			architecture = sname.machine;
-			hname = sname.nodename;
+			architecture = strdup(sname.machine);
+			hname = strdup(sname.nodename);
 		}
 	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
 		os_name = _offline_chroot_get_os_name();
@@ -683,15 +683,12 @@ int probe_main(probe_ctx *ctx, void *arg)
 	                         "primary_host_name", OVAL_DATATYPE_STRING, hname,
 	                         NULL);
 cleanup:
-	if (offline_mode) {
-		if (os_name)
-			free(os_name);
-		// Don't free os_version, it shares same memory from os_name!
-		if (architecture)
-			free(architecture);
-		if (hname)
-			free(hname);
-	} else {
+	free(os_name);
+	// Don't free os_version, it shares same memory from os_name!
+	free(architecture);
+	free(hname);
+
+	if (!offline_mode && item) {
 		if (get_ifs(item)) {
 			SEXP_free(item);
 			return PROBE_EUNKNOWN;

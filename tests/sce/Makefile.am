@@ -1,8 +1,9 @@
 DISTCLEANFILES = *.log *.results oscap_debug.log.*
 CLEANFILES = *.log *.results oscap_debug.log.*
 
-TESTS_ENVIRONMENT= \
+TESTS_ENVIRONMENT = \
 		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
 TESTS = test_sce.sh \
@@ -10,7 +11,8 @@ TESTS = test_sce.sh \
 		test_check_engine_results.sh \
 		test_sce_parse_errors.sh \
 		test_sce_in_ds.sh \
-		test_sce_in_report.sh
+		test_sce_in_report.sh \
+		test_sce_stdout_stderr.sh
 
 EXTRA_DIST =	test_sce.sh \
 		sce_xccdf.xml \
@@ -34,4 +36,7 @@ EXTRA_DIST =	test_sce.sh \
 		test_sce_parse_errors_load_script.xccdf.xml \
 		test_sce_parse_errors_script.sh \
 		test_sce_parse_errors.sh \
-		test_sce_parse_errors_stub-oval.xml
+		test_sce_parse_errors_stub-oval.xml \
+		test_sce_stdout_stderr.sh \
+		test_sce_stdout_stderr.xccdf.xml \
+		stdout_stderr.sh

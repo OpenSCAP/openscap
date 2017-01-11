@@ -4,9 +4,12 @@ DISTCLEANFILES = \
 	*\.stderr\.* \
 	*\.res\.*\.xml
 CLEANFILES = $(DISTCLEANFILES)
+
 TESTS_ENVIRONMENT = \
-	builddir=$(top_builddir) \
+		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
+
 TESTS = all.sh
 EXTRA_DIST = \
 	all.sh \

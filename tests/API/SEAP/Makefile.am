@@ -19,6 +19,11 @@ EXTRA_DIST = $(top_srcdir)/tests/assume.h
 DISTCLEANFILES = *.log *.out* oscap_debug.log.*
 CLEANFILES = *.log *.out* oscap_debug.log.*
 
+TESTS_ENVIRONMENT = \
+		builddir=$(top_builddir) \
+		OSCAP_FULL_VALIDATION=1 \
+		$(top_builddir)/run
+
 TESTS = test_api_seap.sh
 check_PROGRAMS = test_api_seap_concurency \
                  test_api_seap_list       \

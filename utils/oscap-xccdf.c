@@ -807,61 +807,20 @@ int app_generate_fix(const struct oscap_action *action)
 		return OSCAP_ERROR;
 	}
 
-	if (action->id != NULL) {
-		/* Listen very carefully -- I shall say this only once. This is temporaly
-		 * fallback mode. Which may be dropped from future OpenSCAP releases.
-		 *
-		 * Previously, the OpenSCAP used XSLT to generate fixes from XCCDF files.
-		 * That is no longer viable as XSLT cannot support Text substitution, CPE
-		 * processing, DataStreams, or Tailoring.
-		 *
-		 * The XSLT used to print out <fix> elements from TestResult (if supplied)
-		 * or from a profile (otherwise). We keep the former untouched (XSLT) and
-		 * later was rewritten using C.
-		 *
-		 * When scanning OpenSCAP used to copy all the <fix> elements from Profile
-		 * to the TestResult. That was not of much value. Now OpenSCAP includes in
-		 * TestResult only those <fix> elements which were executed on a given
-		 * system.
-		 *
-		 * Thus, this mode is usefull to review which fixes has been executed as a part
-		 * of given scan (TestResult)
-		 *
-		 * TODO: Once this legacy is dropped, we need to document --cpe and --datastream
-		 * support in man pages.
-		 */
-		fprintf(stderr, "#Warning: OpenSCAP will now use fallback mode (XSLT) to generate fixes. "
-			"Some of the functionality might be missing (Text substitution, CPE processing, DataStream support, and tailoring). "
-			"Please ommit --result-id option to trigger advanced processing.\n");
-		return app_xccdf_xslt(action);
-	}
-	/* Otherwise, we better use internal solver instead of XSLT
-	 * Mainly because of Text Substitution */
 	int ret = OSCAP_ERROR;
 	struct xccdf_session *session = xccdf_session_new(action->f_xccdf);
 	if (session == NULL)
 		goto cleanup;
-	if (xccdf_session_is_sds(session)) {
-		xccdf_session_set_datastream_id(session, action->f_datastream_id);
-		xccdf_session_set_component_id(session, action->f_xccdf_id);
-		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
-	}
+
+	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_user_cpe(session, action->cpe);
+	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
-	if (xccdf_session_load_xccdf(session) != 0)
-		goto cleanup;
-	if (xccdf_session_load_cpe(session) != 0)
-		goto cleanup;
-	if (xccdf_session_load_tailoring(session) != 0)
+	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
-	if (!xccdf_session_set_profile_id(session, action->profile)) {
-		report_missing_profile(action);
-		goto cleanup;
-	}
-
-	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 	int output_fd = STDOUT_FILENO;
 	if (action->f_results != NULL) {
 		if ((output_fd = open(action->f_results, O_CREAT|O_TRUNC|O_NOFOLLOW|O_WRONLY, 0700)) < 0) {
@@ -869,14 +828,32 @@ int app_generate_fix(const struct oscap_action *action)
 			goto cleanup;
 		}
 	}
-	if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
-		ret = OSCAP_OK;
 
+	if (action->id != NULL) {
+		/* Result-oriented fixes */
+		if (xccdf_session_build_policy_from_testresult(session, action->id) != 0)
+			goto cleanup2;
+
+		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
+		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, action->id);
+		if (xccdf_policy_generate_fix(policy, result, action->tmpl, output_fd) == 0)
+			ret = OSCAP_OK;
+	} else { // Fallback to profile if result id is missing
+		/* Profile-oriented fixes */
+		if (!xccdf_session_set_profile_id(session, action->profile)) {
+			report_missing_profile(action);
+			goto cleanup2;
+		}
+		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
+		if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
+			ret = OSCAP_OK;
+	}
+cleanup2:
 	if (output_fd != STDOUT_FILENO)
 		close(output_fd);
 cleanup:
-	oscap_print_error();
 	xccdf_session_free(session);
+	oscap_print_error();
 	return ret;
 }
 
