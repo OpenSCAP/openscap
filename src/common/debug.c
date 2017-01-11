@@ -35,8 +35,10 @@
 # include <time.h>
 # include <errno.h>
 
+#if defined(OVAL_PROBES_ENABLED)
 # include <sexp.h>
 # include <sexp-output.h>
+#endif
 
 # include "debug_priv.h"
 
