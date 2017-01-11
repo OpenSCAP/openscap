@@ -294,10 +294,10 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
 
 /**
  * XCCDF Result Colors:
- * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:white(1;37), NOT_CHECKED:white(1;37),
- * NOT_SELECTED:white(1;37), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
+ * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:default bold(1), NOT_CHECKED:default bold(1),
+ * NOT_SELECTED:default dim(2), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
  */
-static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "1;37", "1;37", "34", "1;33" };
+static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1", "1", "2", "34", "1;33" };
 
 static char custom_stylesheet_path[PATH_MAX];
 
