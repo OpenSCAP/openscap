@@ -62,8 +62,8 @@
 #define __RB(l, ...) __VA_ARGS__
 #define __emitmsg_fp stderr
 
+#ifndef _WIN32
 /*
- * == Implementation note #1 ==
  * We use ftrylockfile here because it's better to drop the message than to
  * cause a deadlock.
  */
@@ -74,6 +74,13 @@
                         funlockfile(__emitmsg_fp);      \
                 }                                       \
         } while (0)
+#else
+// TODO: Locking on Windows, for now we just tolerate potentially garbled messages
+#define __atomic_emitmsg(...)                           \
+        do {                                            \
+                fprintf (__emitmsg_fp, __VA_ARGS__);    \
+        } while (0)
+#endif
 
 #ifndef NDEBUG
 # define __terminate(retval) abort()
