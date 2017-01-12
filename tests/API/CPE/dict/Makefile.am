@@ -27,10 +27,6 @@ check_PROGRAMS = test_api_cpe_dict
 
 test_api_cpe_dict_SOURCES = test_api_cpe_dict.c
 
-TESTS_ENVIRONMENT= \
-	builddir=$(top_builddir) \
-	$(top_builddir)/run
-
 EXTRA_DIST = test_api_cpe_dict.sh \
               test_api_cpe_dict.c  \
 	      dict-cp1250-dos.xml  \
