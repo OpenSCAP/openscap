@@ -458,8 +458,14 @@ Authors:
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53 ID</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'http://iase.disa.mil/')">
-            <xsl:text>DISA ID</xsl:text>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
+            <xsl:text>DISA CCI</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/srgs/')">
+            <xsl:text>DISA SRG</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/')">
+            <xsl:text>DISA STIG ID</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
             <xsl:text>PCI DSS Requirement</xsl:text>
@@ -476,6 +482,7 @@ Authors:
 <xsl:template name="get-all-references">
     <xsl:param name="benchmark"/>
     <xsl:for-each select="$benchmark//cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+        <xsl:sort select="@href" />
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
@@ -553,6 +560,7 @@ Authors:
                         <option value="default" selected="selected">Default</option>
                         <option value="severity">Severity</option>
                         <option value="result">Result</option>
+                        <option disabled="disabled">──────────</option>
                         <xsl:call-template name="get-all-references">
                             <xsl:with-param name="benchmark" select="$benchmark"/>
                         </xsl:call-template>
