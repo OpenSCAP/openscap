@@ -125,6 +125,12 @@ Authors:
     </xsl:if>
 </xsl:template>
 
+<!-- works for both XCCDF Rule elements and rule-result elements -->
+<xsl:template name="item-severity">
+    <xsl:param name="item"/>
+    <xsl:choose><xsl:when test="$item/@severity"><xsl:value-of select="$item/@severity"/></xsl:when><xsl:otherwise>unknown</xsl:otherwise></xsl:choose>
+</xsl:template>
+
 <!-- substitution for testresults, used in HTML report -->
 <xsl:template mode="sub-testresult" match="text()">
     <xsl:param name="testresult"/>
