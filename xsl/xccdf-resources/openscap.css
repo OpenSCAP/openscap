@@ -20,7 +20,7 @@ pre
 {
     overflow: auto !important;
     word-wrap: normal !important;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 
 div.check-system-details, div.remediation, div.description { display: inline-block; width: 0; min-width: 100%; overflow-x: auto }
