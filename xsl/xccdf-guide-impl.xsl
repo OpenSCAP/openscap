@@ -213,6 +213,11 @@ Authors:
                     </p>
                 </xsl:if>
 
+                <div class="severity">
+                    <span class="label label-warning">severity:</span>&#160;
+                    <xsl:call-template name="item-severity"><xsl:with-param name="item" select="$item" /></xsl:call-template>
+                </div>
+
                 <div class="identifiers">
                     <xsl:call-template name="item-idents-refs">
                         <xsl:with-param name="item" select="$item"/>
