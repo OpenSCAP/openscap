@@ -949,6 +949,7 @@ Authors:
             <xsl:with-param name="item" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
+        <a href="#result-details"><button type="button" class="btn btn-secondary">Scroll back to the first rule</button></a>
     </div>
 </xsl:template>
 
