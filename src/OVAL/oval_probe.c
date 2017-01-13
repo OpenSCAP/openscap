@@ -538,12 +538,13 @@ void oval_probe_meta_list(FILE *output, int flags)
 
 		if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
 			if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
-				fprintf(output, " %-5u %s\n", meta[i].otype, probe_path);
+				fprintf(output, " %-5u %s", meta[i].otype, probe_path);
 			} else {
-				fprintf(output, " %-5u\n", meta[i].otype);
+				fprintf(output, " %-5u", meta[i].otype);
 			}
-		} else
-			fprintf(output, "\n");
+		}
+
+		fprintf(output, "\n");
 	}
 
 	return;
