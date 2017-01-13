@@ -530,6 +530,10 @@ void oval_probe_meta_list(FILE *output, int flags)
 			}
 		}
 
+		if (flags & OVAL_PROBEMETA_LIST_OTYPE) {
+			fprintf(output, "%-14s", oval_family_get_text(oval_subtype_get_family(meta[i].otype)));
+		}
+
 		fprintf(output, "%-28s %-28s", meta[i].stype, meta[i].pname);
 
 		if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
