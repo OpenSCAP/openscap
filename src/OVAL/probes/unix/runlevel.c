@@ -307,11 +307,11 @@ static int parse_os_release(const char *cpe)
 	memset(releasename, 0, RELEASENAME_MAX_SIZE);
 
 	int got = -1;
+	int c;
 	do {
 		got = fscanf(osrelease, RELEASENAME_PATTERN, releasename);
-		/*const char c = */fgetc(osrelease);
-	}
-	while (got == 0);
+		c = fgetc(osrelease);
+	} while (got == 0 && c != EOF);
 
 	int ret;
 	if (got < 0) {
