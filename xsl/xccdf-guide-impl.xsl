@@ -194,7 +194,7 @@ Authors:
                 <xsl:for-each select="$item/cdf:warning">
                     <div class="panel panel-warning">
                         <div class="panel-heading">
-                            <span class="label label-warning">warning</span>&#160;
+                            <span class="label label-warning">Warning:</span>&#160;
                             <xsl:apply-templates mode="sub-testresult" select=".">
                                 <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                 <xsl:with-param name="profile" select="$profile"/>
@@ -215,7 +215,7 @@ Authors:
 
                 <div class="severity">
                     <p>
-                        <span class="label label-warning">severity:</span>&#160;
+                        <span class="label label-warning">Severity:</span>&#160;
                         <xsl:call-template name="item-severity"><xsl:with-param name="item" select="$item" /></xsl:call-template>
                     </p>
                 </div>
@@ -349,7 +349,7 @@ Authors:
                     <xsl:for-each select="$item/cdf:warning">
                         <div class="panel panel-warning">
                             <div class="panel-heading">
-                                <span class="label label-warning">warning</span>&#160;
+                                <span class="label label-warning">Warning:</span>&#160;
                                 <xsl:apply-templates mode="sub-testresult" select=".">
                                     <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                     <xsl:with-param name="profile" select="$profile"/>
