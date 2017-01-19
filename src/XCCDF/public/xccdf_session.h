@@ -51,6 +51,17 @@ struct xccdf_session;
 struct xccdf_session *xccdf_session_new(const char *filename);
 
 /**
+ * Costructor of xccdf_session. It creates a new xccdf_session from a Report Request source
+ * and from a Result source.
+ * @memberof xccdf_session
+ * @param source Report Request source which can be a DS or XCCDF file.
+ * @param result_source Result source that can be used for remediate/generate-fix purposes.
+ * @returns newly created \ref xccdf_session.
+ * @retval NULL is returned in case of error. Details might be found through \ref oscap_err_desc()
+ */
+struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source, struct oscap_source *result_source);
+
+/**
  * Destructor of xccdf_session.
  * @memberof xccdf_session
  * @param session to destroy.

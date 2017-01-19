@@ -121,6 +121,48 @@ static void _xccdf_session_free_oval_result_sources(struct xccdf_session *sessio
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
 static const char *oval_sysname = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
 
+struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source, struct oscap_source *result_source)
+{
+	if (source == NULL)
+		return NULL;
+
+	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
+
+	session->source = source;
+	session->xccdf.result_source = result_source;
+	oscap_document_type_t document_type = oscap_source_get_scap_type(session->source);
+	if (document_type == OSCAP_DOCUMENT_UNKNOWN) {
+		xccdf_session_free(session);
+		return NULL;
+	}
+	if (document_type != OSCAP_DOCUMENT_XCCDF
+			&& document_type != OSCAP_DOCUMENT_SDS
+			&& document_type != OSCAP_DOCUMENT_XCCDF_TAILORING) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Session input file was determined but it isn't an XCCDF file, "
+			"a source datastream or an XCCDF tailoring file.");
+		xccdf_session_free(session);
+		return NULL;
+	}
+	session->validate = true;
+	session->xccdf.base_score = 0;
+	session->oval.progress = download_progress_empty_calllback;
+	session->check_engine_plugins = oscap_list_new();
+
+	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
+
+	if (document_type == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+		if (_xccdf_session_autonegotiate_tailoring_file(session, NULL) != 0) {
+			xccdf_session_free(session);
+			return NULL;
+		}
+	}
+
+	dI("Created a new XCCDF session from a %s '%s'.",
+		oscap_document_type_to_string(document_type), session->filename);
+	return session;
+}
+
 struct xccdf_session *xccdf_session_new(const char *filename)
 {
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
