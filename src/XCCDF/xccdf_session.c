@@ -1589,3 +1589,15 @@ int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, co
 	xccdf_policy_add_result(xccdf_policy, session->xccdf.result);
 	return 0;
 }
+
+int xccdf_session_add_report_from_source(struct xccdf_session *session, struct oscap_source *report_source)
+{
+	struct xccdf_result *result = xccdf_result_import_source(report_source);
+	if (result == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find TestResult element.");
+		return 1;
+	}
+	session->xccdf.result_source = report_source;
+	session->xccdf.result = result;
+	return 0;
+}

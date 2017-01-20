@@ -505,6 +505,15 @@ int xccdf_session_remediate(struct xccdf_session *session);
  */
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id);
 
+/**
+ * Load xccdf:TestResult to the session from oscap_source
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param report_source Structure conataining oscap_source of the test results
+ * @returns zero on success.
+ */
+int xccdf_session_add_report_from_source(struct xccdf_session *session, struct oscap_source *report_source);
+
 /// @}
 /// @}
 #endif
