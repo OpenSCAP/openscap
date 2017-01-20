@@ -178,6 +178,11 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 	return source->scap_type;
 }
 
+const char *oscap_source_get_filepath(struct oscap_source *source)
+{
+	return source->origin.filepath;
+}
+
 static void xmlErrorCb(struct oscap_string *buffer, const char * format, ...)
 {
 	va_list ap;

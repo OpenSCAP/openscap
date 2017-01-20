@@ -86,6 +86,14 @@ struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t siz
 void oscap_source_free(struct oscap_source *source);
 
 /**
+ * Get filepath of the given resource
+ * @memberof oscap_source
+ * @param source
+ * @returns filepath of the original source or NULL
+ */
+const char *oscap_source_get_filepath(struct oscap_source *source);
+
+/**
  * Get SCAP document type of the given resource
  * @memberof oscap_source
  * @param source
