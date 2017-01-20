@@ -83,6 +83,7 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 				// process the <xccdf:sub> element as if @use was set to "title". but
 				// during Document Generation or Assessment, process the <xccdf:sub>
 				// element as if @use was set to "value".
+				oscap_free(sub_use);
 				sub_use = strdup((data->processing_type & _TAILORING_TYPE) ? "title" : "value");
 			}
 
