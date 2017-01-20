@@ -785,8 +785,10 @@ int app_generate_fix(const struct oscap_action *action)
 			goto cleanup;
 		}
 		session = xccdf_session_new_from_source(oscap_source_clone(report_request_source));
-		if (xccdf_session_add_report_from_source(session, oscap_source_clone(report_source))) {
-			goto cleanup;
+		if (action->id != NULL) {
+			if (xccdf_session_add_report_from_source(session, oscap_source_clone(report_source))) {
+				goto cleanup;
+			}
 		}
 		oscap_source_free(source);
 	} else {
