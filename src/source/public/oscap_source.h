@@ -80,6 +80,13 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath);
 struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath);
 
 /**
+ * Clone oscap_source structure.
+ * @param old Resource to clone
+ * @returns A clone of the given oscap_source.
+ */
+struct oscap_source *oscap_source_clone(struct oscap_source *old);
+
+/**
  * Dispose oscap_source structure.
  * @param source Resource to dispose
  */
