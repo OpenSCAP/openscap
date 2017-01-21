@@ -874,6 +874,31 @@ multiset evaluation.
 
 
 
+=== External or remote resources
+Some SCAP content references external resources. For example SCAP Security Guide
+uses external OVAL file to check that the system is up to date and has no known
+security vulnerabilities. However, other content can use external resources for
+other purposes.
+
+When you are evaluating SCAP content with external resources the `oscap` tool
+will warn you:
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common ./ssg-rhel7-ds.xml
+ WARNING: This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.
+ WARNING: Skipping https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 file which is referenced from XCCDF content
+
+By default the `oscap` tool will not blindly download and execute remote content.
+If you trust your local content and the remote content it references, you can use
+the `--fetch-remote-resources` option to automatically download it using the
+`oscap` tool.
+
+ $ oscap xccdf eval --fetch-remote-resources --profile xccdf_org.ssgproject.content_profile_common ./ssg-rhel7-ds.xml
+ Downloading: https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 ... ok
+ Title   Ensure /var/log Located On Separate Partition
+ Rule    xccdf_org.ssgproject.content_rule_partition_for_var_log
+ ...
+
+
 
 == Practical Examples
 This section demonstrates practical usage of certain security content provided
