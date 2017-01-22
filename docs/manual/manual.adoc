@@ -467,6 +467,16 @@ This file can be generated during the scan by adding *--results-arf* option.
 Result data stream file **results.xml** contains these identifiers in <rule-result>
 elements.
 
+----
+<rule-result idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" time="2017-01-20T14:30:18" severity="low" weight="1.000000">
+  <result>pass</result>
+  <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-27173-4</ident>
+  <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+    <check-content-ref name="oval:ssg-partition_for_tmp:def:1" href="#oval0"/>
+  </check>
+</rule-result>
+----
+
 
 ==== Bundled CCE data
 OpenSCAP does not provide any static or product bundled CCE data. Thus
