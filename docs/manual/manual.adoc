@@ -204,6 +204,33 @@ first using `oscap ds sds-split` and then use `oscap info` on the XCCDF.
 **Profiles** lists available profile IDs that you can use for the `--profile`
 command line attribute with `oscap xccdf eval`.
 
+==== More Information about Result Files (XCCDF and ARF)
+
+`oscap info` is less helpful with XCCDF results and ARF files. Two important
+dates that are commonly requested are the evaluation start and end dates.
+
+To look them up in the XCCDF result file open the file and look for the
+TestResult element. The start-time and end-time attributes contain the evaluation
+times and dates.
+
+----
+<TestResult id="xccdf_org.open-scap_testresult_common" start-time="2017-01-21T19:16:28" end-time="2017-01-21T19:17:35"
+----
+
+To look up the dates in ARF file open the file and again look for the TestResult
+elements. The elements will be located in the arf:report elements.
+
+----
+<arf:reports>
+  <arf:report id="xccdf1">
+    <arf:content>
+      <TestResult xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap_testresult_xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream" start-time="2017-01-20T14:30:18" end-time="2017-01-20T14:36:32"
+----
+
+You can get both dates in a more human readable format if you generate an HTML
+report from the XCCDF result or ARF. Use the `oscap xccdf generate report`
+command.
+
 === Scanning with OSCAP
 The main goal of the ```oscap``` tool is to perform configuration and
 vulnerability scans of a local system. Oscap is able to evaluate both
