@@ -913,8 +913,8 @@ two formats -- OVAL file, OVAL + XCCDF and a Source DataStream.
 
 1)  Download the content
 ---------------------------------------------------------------------------------
-$ wget http://www.redhat.com/security/data/metrics/com.redhat.rhsa-all.xccdf.xml
-$ wget http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
+$ wget https://www.redhat.com/security/data/metrics/com.redhat.rhsa-all.xccdf.xml
+$ wget https://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
 ---------------------------------------------------------------------------------
 
 2)  Run the scan
@@ -947,7 +947,7 @@ CVE description, CVSS score, CVSS vector, etc. are stored.
 
 1)  Download the content
 ---------------------------------------------------------------------------------
-$ wget http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
+$ wget https://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
 ---------------------------------------------------------------------------------
 
 2)  Run the scan
@@ -977,7 +977,7 @@ difference is that you don't have to download two separate files.
 
 1)  Download the content
 ---------------------------------------------------------------------------------
-$ wget http://www.redhat.com/security/data/metrics/ds/com.redhat.rhsa-all.ds.xml
+$ wget https://www.redhat.com/security/data/metrics/ds/com.redhat.rhsa-all.ds.xml
 ---------------------------------------------------------------------------------
 
 2)  Run the scan
@@ -1012,7 +1012,7 @@ updates released by Red Hat. You need to provide additional definitions in order
 to detect the patch status of third-party software.
 
 To find out more information about this project, see
-http://www.redhat.com/security/data/metrics/.
+https://www.redhat.com/security/data/metrics/.
 
 
 === How to Evaluate PCI-DSS on RHEL7
