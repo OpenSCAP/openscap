@@ -137,6 +137,7 @@ streams. The following example demonstrates usage of the command:
 The following is a sample output of the command above:
 
 ----
+$ oscap info ssg-rhel7-ds.xml
 Document type: Source Data Stream
 Imported: 2015-07-13T10:23:11
 
@@ -160,7 +161,48 @@ Checks:
 	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-oval.xml
 Dictionaries:
 	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
+
+$ oscap info ssg-rhel7-xccdf.xml
+Document type: XCCDF Checklist
+Checklist version: 1.1
+Imported: 2015-07-13T14:20:43
+Status: draft
+Generated: 2015-07-13
+Resolved: true
+Profiles:
+        standard
+        pci-dss
+        rht-ccp
+        common
+        stig-rhel7-server-upstream
+Referenced check files:
+        ssg-rhel7-oval.xml
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+        ssg-rhel7-ocil.xml
+                system: http://scap.nist.gov/schema/ocil/2
 ----
+
+**Document type** describes what format the file is in. Common types include
+XCCDF, OVAL, Source Data Stream and Result Data Stream.
+
+**Checklist version** is the XCCDF version only shown for XCCDF files. Common
+values are 1.1 and 1.2.
+
+**Imported** is the date the file was imported for use with OpenSCAP. Since
+OpenSCAP uses the local filesystem and has no proprietary database format
+the imported date is the same as file modification date.
+
+**Status** is the XCCDF Benchmark status. Common values include "accepted",
+"draft", "deprecated" and "incomplete". Please refer to the XCCDF specification
+for details. This is only shown for XCCDF files.
+
+**Generated** date is the date the file was created / generated. This date
+is shown for XCCDF files and is sourced from the XCCDF **status** element.
+To get this date when using Source DataStreams you have to split the datastream
+first using `oscap ds sds-split` and then use `oscap info` on the XCCDF.
+
+**Profiles** lists available profile IDs that you can use for the `--profile`
+command line attribute with `oscap xccdf eval`.
 
 === Scanning with OSCAP
 The main goal of the ```oscap``` tool is to perform configuration and
