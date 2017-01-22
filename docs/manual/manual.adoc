@@ -426,10 +426,10 @@ check implemented. *notchecked* means that there was no check in that
 particular rule that could be evaluated.
 
 
-==== CVE, CCE and other identifiers
+==== CVE, CCE, CPE and other identifiers
 Each XCCDF Rule can have xccdf:ident elements inside. These elements
 allow the content creator to reference various external identifiers like
-CVE, CCE and others.
+CVE, CCE, CPE and others.
 
 When scanning, oscap output identifiers of scanned rules regardless of
 their results. For example:
