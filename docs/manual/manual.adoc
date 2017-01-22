@@ -238,7 +238,7 @@ This file can be loaded by OpenSCAP using *--directives <file>* option.
 $ oscap oval eval --directives directives.xml --datastream-id ds.xml --oval-id xccdf.xml --results oval-results.xml scap-ds.xml
 ---------------------------------------------------------------------------------------------------
 
-==== XCCDF
+==== XCCDF and Source DataStream
 When evaluating an XCCDF benchmark, ```oscap``` usually processes an XCCDF
 file, an OVAL file and the CPE dictionary. It performs system
 analysis and produces XCCDF results based on this analysis. The results
@@ -306,6 +306,14 @@ Where *scap-ds.xml* is a file representing the SCAP data stream
 collection, *benchmark_id* is a string matching the "id" attribute of
 xccdf:Benchmark containing in a component, and *xccdf-results.xml* is a
 file containing the scan results.
+
+In the examples above we are generating XCCDF result files using the `--results`
+command-line argument. You can use `--results-arf` to generate a Result DataStream
+(also called ARF - asset reporting format) result instead.
+
+--------------------------------------------------------------------------------------
+$ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml scap-ds.xml
+--------------------------------------------------------------------------------------
 
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
