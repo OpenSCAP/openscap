@@ -477,6 +477,11 @@ elements.
 </rule-result>
 ----
 
+Since OpenSCAP 1.2.9 you can use the Group-By feature of HTML report
+to get an overview of results based on their identifiers and references.
+For example if you select "CCE" in the group-by combobox the results
+will be listed by their CCE ID instead of the usual XCCDF hierarchy.
+
 
 ==== Bundled CCE data
 OpenSCAP does not provide any static or product bundled CCE data. Thus
