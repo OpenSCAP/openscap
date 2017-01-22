@@ -122,7 +122,7 @@ names, and supported OVAL objects, type the following command:
 $ oscap -V
 ----------
 
-=== Displaying Information SCAP Content
+=== Displaying Information about SCAP Content
 One of the capabilities of ```oscap``` is to display information about the SCAP
 contents within a file. Running the ```oscap info``` command allows the
 examination of the internal structure of a SCAP document and displays
