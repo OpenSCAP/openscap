@@ -487,6 +487,14 @@ You can type the identifier (e.g.: CCE-27173-4) in the search box in
 the HTML report and only rules with this identifier will be shown.
 This can be used for any type of XCCDF identifier or reference.
 
+If you want to map two identifiers -- e.g.: map CCE identifier to
+NIST 800-53 identifier -- you need to look-up the XCCDF rule in the
+HTNML report using the first identifier. Then click its title to show
+more details. The rule details will show all identifiers, including
+the identifier you want to map to. This relies heavily on SCAP content
+quality, if the identifiers are not present in the source content they
+will not be available in the HTML report.
+
 
 ==== Bundled CCE data
 OpenSCAP does not provide any static or product bundled CCE data. Thus
