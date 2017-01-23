@@ -883,7 +883,7 @@ other purposes.
 When you are evaluating SCAP content with external resources the `oscap` tool
 will warn you:
 
- $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common ./ssg-rhel7-ds.xml
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
  WARNING: This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.
  WARNING: Skipping https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 file which is referenced from XCCDF content
 
@@ -892,7 +892,7 @@ If you trust your local content and the remote content it references, you can us
 the `--fetch-remote-resources` option to automatically download it using the
 `oscap` tool.
 
- $ oscap xccdf eval --fetch-remote-resources --profile xccdf_org.ssgproject.content_profile_common ./ssg-rhel7-ds.xml
+ $ oscap xccdf eval --fetch-remote-resources --profile xccdf_org.ssgproject.content_profile_common /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
  Downloading: https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 ... ok
  Title   Ensure /var/log Located On Separate Partition
  Rule    xccdf_org.ssgproject.content_rule_partition_for_var_log
