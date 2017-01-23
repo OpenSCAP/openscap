@@ -489,7 +489,7 @@ This can be used for any type of XCCDF identifier or reference.
 
 If you want to map two identifiers -- e.g.: map CCE identifier to
 NIST 800-53 identifier -- you need to look-up the XCCDF rule in the
-HTNML report using the first identifier. Then click its title to show
+HTML report using the first identifier. Then click its title to show
 more details. The rule details will show all identifiers, including
 the identifier you want to map to. This relies heavily on SCAP content
 quality, if the identifiers are not present in the source content they
