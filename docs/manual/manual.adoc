@@ -282,7 +282,7 @@ can open it in a text editor.
 
 You can use `oscap info` with source datastream files as well. Source
 datastream will often reference OVAL files that are bundled in the datastream.
-To get their contents you have to split (extract) the datastream.
+Is it also possible to extract OVAL files from source datastream through `oscap ds sds-split`.
 
 ---------------------------------------------------------------------------------------------------
 $ oscap ds sds-split ssg-rhel7-ds.xml extracted/
@@ -294,9 +294,10 @@ ssg-rhel7-ocil.xml
 ssg-rhel7-oval.xml
 ---------------------------------------------------------------------------------------------------
 
-After splitting the source datastream you can use `oscap info` on the XCCDF
-file as in the previous use-case. Keep in mind that this is only an example
-and filenames depend on contents of the datastream you are splitting.
+After splitting the source datastream you can inspect OVAL and XCCDF files
+individually using a text editor. Keep in mind that this is only an example
+and filenames depend on contents of the datastream you are splitting and that
+you can also inspect XCCDF and OVAL content directly in source datastream.
 
 ==== XCCDF
 When evaluating an XCCDF benchmark, ```oscap``` usually processes an XCCDF
