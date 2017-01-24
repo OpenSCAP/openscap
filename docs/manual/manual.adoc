@@ -127,59 +127,84 @@ One of the capabilities of ```oscap``` is to display information about the SCAP
 contents within a file. Running the ```oscap info``` command allows the
 examination of the internal structure of a SCAP document and displays
 information such as the document type, specification version, status, the date
-the document was published (Generated) and the date the document was copied to
-file system (Imported). When examining an XCCDF document or a SCAP data stream,
+the document was published (**Generated**) and the date the document was copied to
+file system (**Imported**). When examining an XCCDF document or a SCAP data stream,
 generally, the most useful information is about profiles, checklists, and
-streams. The following example demonstrates usage of the command:
+streams.
 
- $ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
-
-The following is a sample output of the command above:
+The following example demonstrates usage and sample output of the
+command when target is SCAP data stream:
 
 ----
-$ oscap info ssg-rhel7-ds.xml
+$ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
 Document type: Source Data Stream
-Imported: 2015-07-13T10:23:11
+Imported: 2016-08-10T20:49:16
 
 Stream: scap_org.open-scap_datastream_from_xccdf_ssg-rhel7-xccdf-1.2.xml
 Generated: (null)
 Version: 1.2
 Checklists:
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
-		Profiles:
-			xccdf_org.ssgproject.content_profile_standard
-			xccdf_org.ssgproject.content_profile_pci-dss
-			xccdf_org.ssgproject.content_profile_rht-ccp
-			xccdf_org.ssgproject.content_profile_common
-			xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream
-		Referenced check files:
-			ssg-rhel7-oval.xml
-				system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+        Ref-Id: scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
+                Status: draft
+                Generated: 2016-08-10
+                Resolved: true
+                Profiles:
+                        xccdf_org.ssgproject.content_profile_standard
+                        xccdf_org.ssgproject.content_profile_pci-dss
+                        xccdf_org.ssgproject.content_profile_C2S
+                        xccdf_org.ssgproject.content_profile_rht-ccp
+                        xccdf_org.ssgproject.content_profile_common
+                        xccdf_org.ssgproject.content_profile_stig-rhel7-workstation-upstream
+                        xccdf_org.ssgproject.content_profile_stig-rhel7-server-gui-upstream
+                        xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream
+                        xccdf_org.ssgproject.content_profile_ospp-rhel7-server
+                        xccdf_org.ssgproject.content_profile_nist-cl-il-al
+                        xccdf_org.ssgproject.content_profile_cjis-rhel7-server
+                Referenced check files:
+                        ssg-rhel7-oval.xml
+                                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+                        ssg-rhel7-ocil.xml
+                                system: http://scap.nist.gov/schema/ocil/2
+                        http://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_7.xml
+                                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
 Checks:
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel7-oval.xml
-	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml
-	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-oval.xml
+        Ref-Id: scap_org.open-scap_cref_ssg-rhel7-oval.xml
+        Ref-Id: scap_org.open-scap_cref_ssg-rhel7-ocil.xml
+        Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml
+        Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-oval.xml
 Dictionaries:
-	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
+        Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
+----
 
-$ oscap info ssg-rhel7-xccdf.xml
+and when XCCDF document is examined:
+
+----
+$ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-xccdf.xml
 Document type: XCCDF Checklist
 Checklist version: 1.1
-Imported: 2015-07-13T14:20:43
+Imported: 2016-08-10T20:49:16
 Status: draft
-Generated: 2015-07-13
+Generated: 2016-08-10
 Resolved: true
 Profiles:
         standard
         pci-dss
+        C2S
         rht-ccp
         common
+        stig-rhel7-workstation-upstream
+        stig-rhel7-server-gui-upstream
         stig-rhel7-server-upstream
+        ospp-rhel7-server
+        nist-cl-il-al
+        cjis-rhel7-server
 Referenced check files:
         ssg-rhel7-oval.xml
                 system: http://oval.mitre.org/XMLSchema/oval-definitions-5
         ssg-rhel7-ocil.xml
                 system: http://scap.nist.gov/schema/ocil/2
+        http://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_7.xml
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
 ----
 
 **Document type** describes what format the file is in. Common types include
@@ -197,9 +222,12 @@ the imported date is the same as file modification date.
 for details. This is only shown for XCCDF files.
 
 **Generated** date is the date the file was created / generated. This date
-is shown for XCCDF files and is sourced from the XCCDF **status** element.
-To get this date when using Source DataStreams you have to split the datastream
-first using `oscap ds sds-split` and then use `oscap info` on the XCCDF.
+is shown for XCCDF files and Checklists and is sourced from the XCCDF **Status**
+element.
+
+**Checklists** lists available checklists incorporated in the Data Stream that
+you can use for the `--benchmark-id` command line attribute with `oscap xccdf
+eval`. Also each checklist has the detailed information printed.
 
 **Profiles** lists available profile IDs that you can use for the `--profile`
 command line attribute with `oscap xccdf eval`.
@@ -209,8 +237,8 @@ command line attribute with `oscap xccdf eval`.
 `oscap info` is less helpful with XCCDF results and ARF files. Two important
 dates that are commonly requested are the evaluation start and end dates.
 
-To look them up in the XCCDF result file open the file and look for the
-TestResult element. The start-time and end-time attributes contain the evaluation
+To look them up in the XCCDF result file, open the file and look for the
+TestResult element. The **start-time** and **end-time** attributes contain the evaluation
 times and dates.
 
 ----
@@ -227,9 +255,9 @@ elements. The elements will be located in the arf:report elements.
       <TestResult xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap_testresult_xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream" start-time="2017-01-20T14:30:18" end-time="2017-01-20T14:36:32"
 ----
 
-You can get both dates in a more human readable format if you generate an HTML
-report from the XCCDF result or ARF. Use the `oscap xccdf generate report`
-command.
+You can also find both dates in a HTML report, table **Evaluation
+characteristics**. To generate HTML report from XCCDF result or ARF, use
+`oscap xccdf generate report` command.
 
 === Scanning with OSCAP
 The main goal of the ```oscap``` tool is to perform configuration and
