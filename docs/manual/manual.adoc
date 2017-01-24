@@ -1106,8 +1106,8 @@ standard files are native file formats of the OpenSCAP.
 
 
 
-=== How to evaluate guidances for Red Hat Enterprise Linux 6
-Guidances for Red Hat Enterprise Linux 6 can be acquired from
+=== How to evaluate guidances for Red Hat Enterprise Linux 6 or 7
+Guidances for Red Hat Enterprise Linux 6 and 7 can be acquired from
 {ssg_git}[SCAP Security Guide
 project] (SSG). SSG holds currently the most evolved and elaborate SCAP
 policy for Linux systems. The project provides practical security
@@ -1126,7 +1126,7 @@ https://github.com/OpenSCAP/scap-security-guide
 
 
 
-=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6
+=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6 or 7
 This section describes how to check that software patches are up-to-date using
 external OVAL content.
 
@@ -1134,15 +1134,20 @@ external OVAL content.
 
  $ sudo yum install -y scap-security-guide
 
-2) Evaluate common profile
+2a) Evaluate common profile for RHEL 6
 
  $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
 
-This command evaluates common profile for Red Hat Enterprise Linux 6. Part of
+2b) Evaluate common profile for RHEL 7
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+
+This command evaluates common profile for Red Hat Enterprise Linux 6 or 7. Part of
 the profile is a rule to check that patches are up-to-date. To evaluate the rule
 correctly, oscap tool needs to download an up-to-date OVAL file from Red Hat servers. This can be
 allowed using *--fetch-remote-resources* option. Result of this scan will be saved
 in **results.xml** using ARF format.
+
 
 
 === How to tailor Source data stream
