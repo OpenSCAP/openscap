@@ -999,20 +999,30 @@ the `--fetch-remote-resources` option to automatically download it using the
 === Evaluating XCCDF rules with multiple checks
 
 Normally, each XCCDF rule references to a single check with a specified name.
-However, if @name attribute of xccdf:check-content-ref of a given rule is omitted,
+However, if ```@name``` attribute of ```xccdf:check-content-ref``` of a given rule is omitted,
 multiple checks can be executed to evaluate the rule.
-This is often used in rules verifying that all security patches are installed.
-In such case, only a single result is produced for a XCCDF rule by default.
-The result is computed from all the checks from the content in the referenced location.
-But using this approach doesn't give the expected user experience.
-Instead, it would be better to have separate result for each check in the results document.
-If you wish to get a separate result for each check (one xccdf:check-result element
-in results document for each check evaluated), then multi-check attribute of
-xccdf:check element must be set to true.
+This is common for ```security_patches_up_to_date``` check.
+By default, only a single result is produced for an XCCDF rule in such case, and the
+result is computed from all results of checks in the referenced location.
+In case user wants to see separate results for each check (one ```xccdf:check-result``` element
+in results document for each check evaluated), then ```multi-check``` attribute of
+```xccdf:check``` element must be set to true.
 
-In XCCDF specification older than 1.2, the multi-check element is not defined,
+----
+   <Rule id="xccdf_org.nist-testsuite.content_rule_security_patches_up_to_date" selected="false" weight="10.0">
+      <title xml:lang="en-US">Security Patches Up-To-Date</title>
+      <description xml:lang="en-US">All known security patches have been installed.</description>
+      <requires idref="xccdf_org.nist-testsuite.content_group_CM-6"/>
+      <requires idref="xccdf_org.nist-testsuite.content_group_SI-2"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" multi-check="true">
+        <check-content-ref href="r1100-scap11-win_rhel-patches.xml"/>
+      </check>
+    </Rule>
+----
+
+In XCCDF specification older than 1.2, the ```multi-check``` element is not defined,
 which means that only a single result is always produced.
-To produce separate results from multi-check elements from content older than version 1.2,
+To produce separate results from multi-check elements from content older than XCCDF version 1.2,
 you need to convert the content into XCCDF 1.2 using the following command:
 
 ----
