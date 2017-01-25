@@ -1031,12 +1031,15 @@ Providers:
 The Red Hat Security Response Team provides OVAL definitions for all
 vulnerabilities (identified by CVE name) that affect Red Hat Enterprise
 Linux 3, 4, 5, 6 and 7. This enable users to perform a vulnerability scan
-and diagnose whether system is vulnerable or not.
+and diagnose whether system is vulnerable or not. The data is provided in
+three ways -- OVAL file, OVAL + XCCDF and a Source DataStream.
+
+==== OVAL + XCCDF
 
 1)  Download the content
 ---------------------------------------------------------------------------------
-$ wget http://www.redhat.com/security/data/metrics/com.redhat.rhsa-all.xccdf.xml
-$ wget http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
+$ wget https://www.redhat.com/security/data/metrics/com.redhat.rhsa-all.xccdf.xml
+$ wget https://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
 ---------------------------------------------------------------------------------
 
 2)  Run the scan
@@ -1044,8 +1047,8 @@ $ wget http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
 $ oscap xccdf eval --results results.xml --report report.html com.redhat.rhsa-all.xccdf.xml
 --------------------------------------------------------------------------------------------
 
-This is a sample output. It reports that Red Hat Security
-Advisory (RHSA-2013:0911) was issues but update was not applied so a
+This is the sample output. It reports that Red Hat Security
+Advisory (RHSA-2013:0911) was issued but update was not applied so a
 system is affected by multiple CVEs (CVE-2013-1935, CVE-2013-1943,
 CVE-2013-2017)
 
@@ -1058,20 +1061,85 @@ Ident   CVE-2013-2017
 Result  fail
 ------------------------------------------------------------------------------------
 
+Human readable report *report.html* is generated, as well as "machine"
+readable report **results.xml**. Both files hold information about
+vulnerability status of scanned system. They map RHSA to CVEs and report
+what security advisories are not applied to the scanned system. CVE identifiers
+are linked with National Vulnerability Databases where additional information
+like CVE description, CVSS score, CVSS vector, etc. are stored.
+
+==== OVAL only
+
+1)  Download the content
+---------------------------------------------------------------------------------
+$ wget https://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
+---------------------------------------------------------------------------------
+
+2)  Run the scan
+--------------------------------------------------------------------------------------------
+$ oscap oval eval --results results.xml --report report.html com.redhat.rhsa-all.xml
+--------------------------------------------------------------------------------------------
+
+This is the sample output. It reports that Red Hat Security
+Advisory (RHSA-2013:0911) was issued but update was not applied.
+Notice that the standard output is different from the XCCDF + OVAL output.
+
+------------------------------------------------------------------------------------
+Definition oval:com.redhat.rhsa:def:20130911: true
+------------------------------------------------------------------------------------
+
+As in case of XCCDF+OVAL, human readable report *report.html*, and "machine"
+readable report **results.xml** are generated. Look of *report.html* is different
+to the one generated when XCCDF checklist is used as a basis for the scan, the
+information in it again holds information about vulnerability status of scanned
+system, and mapping of RHSA to CVEs. CVE identifiers are linked with Red Hat
+database where additional information like CVE description, CVSS score, CVSS
+vector etc. are stored.
+
+
+==== Source DataStream
+The Source DataStream use-case is very similar to OVAL+XCCDF. The only
+difference is that you don't have to download two separate files.
+
+1)  Download the content
+---------------------------------------------------------------------------------
+$ wget https://www.redhat.com/security/data/metrics/ds/com.redhat.rhsa-all.ds.xml
+---------------------------------------------------------------------------------
+
+2)  Run the scan
+--------------------------------------------------------------------------------------------
+$ oscap xccdf eval --results results.xml --report report.html com.redhat.rhsa-all.ds.xml
+--------------------------------------------------------------------------------------------
+
+
+==== More Specialized Files
+
+The files we used above cover multiple Red Hat products. If you only want to
+scan one product - for example a specific version of Red Hat Enterprise Linux -
+we advise to download a smaller specialized file covering just this one version.
+Using a smaller file will utilitize less bandwidth and make the evaluation
+quicker.
+
+For example for Red Hat Enterprise Linux 7 the plain OVAL file is located at:
+
+----
+$ wget https://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_7.xml
+----
+
+You can get a list of all the plain OVAL files by visiting
+https://www.redhat.com/security/data/oval/
+
+The list of available datastream files is available at
+https://www.redhat.com/security/data/metrics/ds/
+
+
+==== Disclaimer
 NOTE: Note that these OVAL definitions are designed to only cover software and
 updates released by Red Hat. You need to provide additional definitions in order
 to detect the patch status of third-party software.
 
-
-Human readable report *report.html* is generated by side with "machine"
-readable report **results.xml**. Both files hold information about
-vulnerability status of scanned system. They map RHSA to CVEs and report
-what security advisories are not applied. CVE identifiers are linked
-with National Vulnerability Databases where additional information like:
-CVE description, CVSS score, CVSS vector, etc. are stored.
-
 To find out more information about this project, see
-http://www.redhat.com/security/data/metrics/.
+https://www.redhat.com/security/data/metrics/.
 
 
 === How to Evaluate PCI-DSS on RHEL7
