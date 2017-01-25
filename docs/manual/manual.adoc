@@ -338,6 +338,65 @@ $ oscap oval eval --directives directives.xml --datastream-id ds.xml --oval-id x
 OVAL results file contains, by default, exported system characteristics.
 OpenSCAP provides *--without-syschar* option to change this behavior.
 
+It is not always clear which OVAL file will be used when multiple files
+are distributed. In case you are evaluating an XCCDF file you can use:
+
+---------------------------------------------------------------------------------------------------
+$ oscap info ssg-rhel7-xccdf.xml
+Document type: XCCDF Checklist
+Checklist version: 1.1
+Imported: 2017-01-20T14:20:43
+Status: draft
+Generated: 2017-01-19
+Resolved: true
+Profiles:
+        standard
+        pci-dss
+        C2S
+        rht-ccp
+        common
+        stig-rhel7-workstation-upstream
+        stig-rhel7-server-gui-upstream
+        stig-rhel7-server-upstream
+        stig-rhevh-upstream
+        ospp-rhel7-server
+        nist-cl-il-al
+        cjis-rhel7-server
+        docker-host
+        nist-800-171-cui
+Referenced check files:
+        ssg-rhel7-oval.xml
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+        ssg-rhel7-ocil.xml
+                system: http://scap.nist.gov/schema/ocil/2
+        https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+---------------------------------------------------------------------------------------------------
+
+In the output you can see all referenced check files. In this case we see
+that `ssg-rhel7-oval.xml` is referenced. To see contents of this file you
+can open it in a text editor.
+
+You can use `oscap info` with Source DataStream files as well. Source
+DataStream will often reference OVAL files that are bundled in it.
+It is also possible to extract OVAL files from Source DataStream through `oscap ds sds-split`.
+
+---------------------------------------------------------------------------------------------------
+$ oscap ds sds-split ssg-rhel7-ds.xml extracted/
+$ ls -1 extracted/
+scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
+scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
+ssg-rhel7-cpe-oval.xml
+ssg-rhel7-ocil.xml
+ssg-rhel7-oval.xml
+---------------------------------------------------------------------------------------------------
+
+After splitting the Source DataStream you can inspect OVAL and XCCDF files
+individually using a text editor. Keep in mind that this is only an example
+and filenames depend on contents of the DataStream you are splitting and that
+you can also inspect XCCDF and OVAL content directly in Source DataStream
+or Result DataStream.
+
 ==== XCCDF
 When evaluating an XCCDF benchmark, ```oscap``` usually processes an XCCDF
 file, an OVAL file and the CPE dictionary. It performs system
