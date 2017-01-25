@@ -582,10 +582,10 @@ check implemented. *notchecked* means that there was no check in that
 particular rule that could be evaluated.
 
 
-==== CVE, CCE and other identifiers
+==== CVE, CCE, CPE and other identifiers
 Each XCCDF Rule can have xccdf:ident elements inside. These elements
 allow the content creator to reference various external identifiers like
-CVE, CCE and others.
+CVE, CCE, CPE and others.
 
 When scanning, oscap output identifiers of scanned rules regardless of
 their results. For example:
@@ -622,6 +622,35 @@ This file can be generated during the scan by adding *--results-arf* option.
 
 Result data stream file **results.xml** contains these identifiers in <rule-result>
 elements.
+
+----
+<rule-result idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" time="2017-01-20T14:30:18" severity="low" weight="1.000000">
+  <result>pass</result>
+  <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-27173-4</ident>
+  <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+    <check-content-ref name="oval:ssg-partition_for_tmp:def:1" href="#oval0"/>
+  </check>
+</rule-result>
+----
+
+Since OpenSCAP 1.2.9 you can use the Group-By feature of HTML report
+to get an overview of results based on their identifiers and references.
+
+The HTML report can also be used to look-up Rules by their identifiers.
+You can type the identifier (e.g.: CCE-27173-4) in the search box in
+the HTML report and only rules with this identifier will be shown.
+This can be used for any type of XCCDF identifier or reference.
+You can also click on the rule title to show more details and see all
+its identifiers, including the identifier you looked for.
+This relies heavily on SCAP content quality, if the identifiers are
+not present in the source content they will not be available in the
+HTML report.
+
+If you want to map two identifiers -- e.g.: map CCE identifier to
+NIST 800-53 identifier -- you need to look-up the CCE ID in the
+HTML report through the search box using the first identifier. And then,
+by grouping by NIST SP 800-53 ID, you can see all NIST 800-53 IDs
+related to the searched CCE ID.
 
 
 ==== Bundled CCE data
