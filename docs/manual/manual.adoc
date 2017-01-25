@@ -279,40 +279,40 @@ Scanning using Source DataStream is also handled by ```oscap xccdf eval``` comma
 with some additional parameters available to determine which of the bundled
 benchmarks should be performed.
 
-* To evaluate a specific XCCDF benchmark that is part of a data stream
-within a SCAP data stream collection, run the following command:
+* To evaluate a specific XCCDF benchmark that is part of a DataStream
+within a SCAP DataStream collection, run the following command:
 
 ----
 $ oscap xccdf eval --datastream-id ds.xml --xccdf-id xccdf.xml --results xccdf-results.xml scap-ds.xml
 ----
 
-Where *scap-ds.xml* is a file representing the SCAP data stream
-collection, *ds.xml* is the particular data stream, *xccdf.xml* is ID of
+Where *scap-ds.xml* is a file representing the SCAP DataStream
+collection, *ds.xml* is the particular DataStream, *xccdf.xml* is ID of
 the component-ref pointing to the desired XCCDF document, and
 *xccdf-results.xml* is a file containing the scan results.
 
 NOTE: If you omit ```--datastream-id``` on the command line, the first data
 stream from the collection will be used. If you omit ```--xccdf-id```, the
 first component from the checklists element will be used. If you omit
-both, the first data stream that has a component in the checklists
+both, the first DataStream that has a component in the checklists
 element will be used - the first component in its checklists element
 will be used.
 
 
 * (Alternative, not recommended) To evaluate a specific XCCDF benchmark
-that is part of a data stream within a SCAP data stream collection run
+that is part of a DataStream within a SCAP DataStream collection run
 the following command:
 
 --------------------------------------------------------------------------------------
 $ oscap xccdf eval --benchmark-id benchmark_id --results xccdf-results.xml scap-ds.xml
 --------------------------------------------------------------------------------------
 
-Where *scap-ds.xml* is a file representing the SCAP data stream
+Where *scap-ds.xml* is a file representing the SCAP DataStream
 collection, *benchmark_id* is a string matching the "id" attribute of
 xccdf:Benchmark containing in a component, and *xccdf-results.xml* is a
 file containing the scan results.
 
-==== Results DataStream (ARF)
+==== Result DataStream (ARF)
 
 In the examples above we are generating XCCDF result files using the `--results`
 command-line argument. You can use `--results-arf` to generate a Result DataStream
