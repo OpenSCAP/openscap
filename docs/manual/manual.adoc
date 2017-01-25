@@ -486,14 +486,17 @@ The HTML report can also be used to look-up Rules by their identifiers.
 You can type the identifier (e.g.: CCE-27173-4) in the search box in
 the HTML report and only rules with this identifier will be shown.
 This can be used for any type of XCCDF identifier or reference.
+You can also click on the rule title to show more details and see all
+its identifiers, including the identifier you looked for.
+This relies heavily on SCAP content quality, if the identifiers are
+not present in the source content they will not be available in the
+HTML report.
 
 If you want to map two identifiers -- e.g.: map CCE identifier to
-NIST 800-53 identifier -- you need to look-up the XCCDF rule in the
-HTML report using the first identifier. Then click its title to show
-more details. The rule details will show all identifiers, including
-the identifier you want to map to. This relies heavily on SCAP content
-quality, if the identifiers are not present in the source content they
-will not be available in the HTML report.
+NIST 800-53 identifier -- you need to look-up the CCE ID in the
+HTML report through the search box using the first identifier. And then,
+by grouping by NIST SP 800-53 ID, you can see all NIST 800-53 IDs
+related to the searched CCE ID.
 
 
 ==== Bundled CCE data
