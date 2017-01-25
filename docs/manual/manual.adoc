@@ -996,6 +996,36 @@ the `--fetch-remote-resources` option to automatically download it using the
  ...
 
 
+=== Evaluating XCCDF rules with multiple checks
+
+Normally, each XCCDF rule references to a single check with a specified name.
+However, if @name attribute of xccdf:check-content-ref of a given rule is omitted,
+multiple checks can be executed to evaluate the rule.
+This is often used in rules verifying that all security patches are installed.
+In such case, only a single result is produced for a XCCDF rule by default.
+The result is computed from all the checks from the content in the referenced location.
+But using this approach doesn't give the expected user experience.
+Instead, it would be better to have separate result for each check in the results document.
+If you wish to get a separate result for each check (one xccdf:check-result element
+in results document for each check evaluated), then multi-check attribute of
+xccdf:check element must be set to true.
+
+In XCCDF specification older than 1.2, the multi-check element is not defined,
+which means that only a single result is always produced.
+To produce separate results from multi-check elements from content older than version 1.2,
+you need to convert the content into XCCDF 1.2 using the following command:
+
+----
+$ xsltproc --stringparam reverse_DNS com.example.www /usr/share/openscap/xsl/xccdf_1.1_to_1.2.xsl xccdf.xml > xccdf-1.2.xml
+----
+
+And then patch the content using a text editor:
+
+----
+$ vim xccdf-1.2.xml
+
+<check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" multi-check="true"> <!-- ADDED multi-check="true" here -->
+----
 
 == Practical Examples
 This section demonstrates practical usage of certain security content provided
