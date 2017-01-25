@@ -276,7 +276,7 @@ the scan results, and *cpe-dictionary.xml* is the CPE dictionary.
 ==== Source DataStream
 Commonly, all required input files are bundled together in Source DataStream.
 Scanning using Source DataStream is also handled by ```oscap xccdf eval``` command,
-with some additional parameters required to determine which of the bundled
+with some additional parameters available to determine which of the bundled
 benchmarks should be performed.
 
 * To evaluate a specific XCCDF benchmark that is part of a data stream
