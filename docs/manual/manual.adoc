@@ -479,8 +479,6 @@ elements.
 
 Since OpenSCAP 1.2.9 you can use the Group-By feature of HTML report
 to get an overview of results based on their identifiers and references.
-For example if you select "CCE" in the group-by combobox the results
-will be listed by their CCE ID instead of the usual XCCDF hierarchy.
 
 The HTML report can also be used to look-up Rules by their identifiers.
 You can type the identifier (e.g.: CCE-27173-4) in the search box in
