@@ -1006,7 +1006,7 @@ By default, only a single result is produced for an XCCDF rule in such case, and
 result is computed from all results of checks in the referenced location.
 In case user wants to see separate results for each check (one ```xccdf:check-result``` element
 in results document for each check evaluated), then ```multi-check``` attribute
-of ```xccdf:check``` element must be set to true.
+of ```xccdf:check``` element must be set to *true*.
 
 ----
    <Rule id="xccdf_org.nist-testsuite.content_rule_security_patches_up_to_date" selected="false" weight="10.0">
@@ -1022,20 +1022,15 @@ of ```xccdf:check``` element must be set to true.
 
 In XCCDF specification older than 1.2, the ```multi-check``` element is not defined,
 which means that only a single result is always produced.
-To produce separate results from multi-check elements from content older than XCCDF version 1.2,
-you need to convert the content into XCCDF 1.2 using the following command:
+To produce separate results for each check from the content older than XCCDF version 1.2,
+you need to convert it first into XCCDF 1.2 using the following command:
 
 ----
 $ xsltproc --stringparam reverse_DNS com.example.www /usr/share/openscap/xsl/xccdf_1.1_to_1.2.xsl xccdf.xml > xccdf-1.2.xml
 ----
 
-And then patch the content using a text editor:
-
-----
-$ vim xccdf-1.2.xml
-
-<check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" multi-check="true"> <!-- ADDED multi-check="true" here -->
-----
+And then patch the content using a text editor, adding ```multi-check``` as
+shown in the example Rule snippet above.
 
 == Practical Examples
 This section demonstrates practical usage of certain security content provided
