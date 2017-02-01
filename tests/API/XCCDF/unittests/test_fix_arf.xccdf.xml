@@ -17,7 +17,8 @@
   <Rule selected="false" id="xccdf_moc.elpmaxe.www_rule_1">
     <title>Passing rule</title>
     <fix id="bash_fix_for_passing_rule" system="urn:xccdf:fix:script:sh">echo this_is_ok</fix>
-    <fix id="ansible_fix_for_passing_rule" system="urn:xccdf:fix:script:ansible">this_is_ok</fix>
+    <fix id="ansible_fix_for_passing_rule" system="urn:xccdf:fix:script:ansible">- name: ensure everything passes
+    shell: /bin/true</fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
         <check-content-ref href="oval/pass/oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
     </check>
@@ -25,7 +26,8 @@
   <Rule selected="false" id="xccdf_moc.elpmaxe.www_rule_2">
     <title>Failing rule</title>
     <fix id="fix_for_failing_rule" system="urn:xccdf:fix:script:sh">echo fix_me_please</fix>
-    <fix id="ansible_fix_for_failing_rule" system="urn:xccdf:fix:script:ansible">fix_me_please</fix>
+    <fix id="ansible_fix_for_failing_rule" system="urn:xccdf:fix:script:ansible">- name: correct the failing case
+    shell: /bin/false</fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
         <check-content-ref href="oval/fail/oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
     </check>
