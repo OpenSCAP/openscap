@@ -121,11 +121,14 @@ static void _xccdf_session_free_oval_result_sources(struct xccdf_session *sessio
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";
 static const char *oval_sysname = "http://oval.mitre.org/XMLSchema/oval-definitions-5";
 
-struct xccdf_session *xccdf_session_new(const char *filename)
+struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 {
+	if (source == NULL) {
+		return NULL;
+	}
+	const char *filename = oscap_source_get_filepath(source);
 	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
-
-	session->source = oscap_source_new_from_file(filename);
+	session->source = source;
 	oscap_document_type_t document_type = oscap_source_get_scap_type(session->source);
 	if (document_type == OSCAP_DOCUMENT_UNKNOWN) {
 		xccdf_session_free(session);
@@ -156,6 +159,13 @@ struct xccdf_session *xccdf_session_new(const char *filename)
 
 	dI("Created a new XCCDF session from a %s '%s'.",
 		oscap_document_type_to_string(document_type), filename);
+	return session;
+}
+
+struct xccdf_session *xccdf_session_new(const char *filename)
+{
+	struct oscap_source *source = oscap_source_new_from_file(filename);
+	struct xccdf_session *session = xccdf_session_new_from_source(source);
 	return session;
 }
 
@@ -1563,18 +1573,21 @@ int xccdf_session_remediate(struct xccdf_session *session)
 
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id)
 {
-	session->xccdf.result = NULL;
-	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
-	struct xccdf_result *result = xccdf_benchmark_get_result_by_id(benchmark, testresult_id);
-	if (result == NULL) {
-		if (testresult_id == NULL)
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find latest TestResult element.");
-		else
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find TestResult/@id=\"%s\"", testresult_id);
-		return 1;
+	if (session->xccdf.result_source == NULL) {
+		session->xccdf.result = NULL;
+		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
+		struct xccdf_result *result = xccdf_benchmark_get_result_by_id(benchmark, testresult_id);
+		if (result == NULL) {
+			if (testresult_id == NULL)
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find latest TestResult element.");
+			else
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find TestResult/@id=\"%s\"", testresult_id);
+			return 1;
+		}
+		session->xccdf.result = xccdf_result_clone(result);
 	}
 
-	const char *profile_id = xccdf_result_get_profile(result);
+	const char *profile_id = xccdf_result_get_profile(session->xccdf.result);
 	if (xccdf_session_set_profile_id(session, profile_id) == false) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP,
 			"Could not find Profile/@id=\"%s\" to build policy from TestResult/@id=\"%s\"",
@@ -1584,8 +1597,19 @@ int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, co
 	struct xccdf_policy *xccdf_policy = xccdf_session_get_xccdf_policy(session);
 	if (xccdf_policy == NULL)
 		return 1;
-	session->xccdf.result = xccdf_result_clone(result);
 	xccdf_result_set_start_time_current(session->xccdf.result);
 	xccdf_policy_add_result(xccdf_policy, session->xccdf.result);
+	return 0;
+}
+
+int xccdf_session_add_report_from_source(struct xccdf_session *session, struct oscap_source *report_source)
+{
+	struct xccdf_result *result = xccdf_result_import_source(report_source);
+	if (result == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find TestResult element.");
+		return 1;
+	}
+	session->xccdf.result_source = report_source;
+	session->xccdf.result = result;
 	return 0;
 }

@@ -93,8 +93,13 @@ test_run "XCCDF Remediate + perl fix" $srcdir/test_remediate_perl.sh
 test_run 'generate report: xccdf:check/@selector=""' $srcdir/test_report_check_with_empty_selector.sh
 test_run "generate report: missing xsl shall not segfault" $srcdir/test_report_without_xsl_fails_gracefully.sh
 test_run "generate report: avoid warnings from libxml" $srcdir/test_report_without_oval_poses_no_errors.sh
+
+#
+# Tests for 'oscap xccdf generate fix'
+#
 test_run "generate fix: just as the anaconda does" $srcdir/test_report_anaconda_fixes.sh
 test_run "generate fix: just as the anaconda does + DataStream" $srcdir/test_report_anaconda_fixes_ds.sh
 test_run "generate fix: ensure filtering drop fixes" $srcdir/test_fix_filtering.sh
+test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
 
 test_exit
