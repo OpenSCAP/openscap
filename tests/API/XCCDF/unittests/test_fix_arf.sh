@@ -19,7 +19,7 @@ script=$(mktemp -t ${name}.sh.XXXXXX)
 playbook=$(mktemp -t ${name}.yml.XXXXXX)
 
 # Create an ARF
-$OSCAP xccdf eval --profile $profile --results-arf $results_arf $name.xccdf.xml >$stdout 2>$stderr || [ $? == 2 ]
+$OSCAP xccdf eval --profile $profile --results-arf $results_arf $srcdir/$name.xccdf.xml >$stdout 2>$stderr || [ $? == 2 ]
 [ -f $stdout ]; [ -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
