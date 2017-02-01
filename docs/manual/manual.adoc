@@ -1149,7 +1149,7 @@ To add a CPE dictionary component into your DataStream in place, use this comman
 $ oscap ds sds-add cpe_dictionary.xml source_ds.xml
 ----
 
-Now the ```source_ds.xml``` DataStream can be evaluated as normally.
+Now the ```source_ds.xml``` DataStream can be evaluated as usual.
 
 == Practical Examples
 This section demonstrates practical usage of certain security content provided
