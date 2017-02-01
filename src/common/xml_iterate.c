@@ -79,9 +79,13 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 		xmlNode *child = root->children;
 		while (child != NULL) {
 			int size = xmlNodeDump(buff, doc, child, 0, 0);
-			if (size == 0) {
-				dW("xmlBufNodeDump returns zero.");
+			if (size < 0) {
+				dE("xmlNodeDump failed!");
 			}
+			else if (size == 0) {
+				dI("xmlNodeDump returned zero.");
+			}
+
 			child = child->next;
 		}
 		/* Sadly, we cannot use xmlBufferDetach since we want to support older libxml. */
