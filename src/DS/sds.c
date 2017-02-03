@@ -879,7 +879,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 					continue;
 				}
 
-				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0) ?
+				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0 || href[0] == '/') ?
 					oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
 
 				char* mangled_path = ds_sds_mangle_filepath(real_path);
