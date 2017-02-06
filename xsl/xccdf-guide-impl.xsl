@@ -484,6 +484,9 @@ Authors:
     </xsl:call-template>
 
     <xsl:variable name="profile" select="$benchmark/cdf:Profile[@id = $profile_id]"/>
+    <xsl:if test="$profile_id != '' and not($profile)">
+        <xsl:message terminate="yes">Profile "<xsl:value-of select="$profile_id"/>" was not found. Get available profiles using "oscap info".</xsl:message>
+    </xsl:if>
 
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
     <html lang="en">
