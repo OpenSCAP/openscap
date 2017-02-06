@@ -353,6 +353,12 @@ full results:
 </oval_directives>
 ----
 
+Usage of OVAL directives file when scanning a plain OVAL file:
+
+---------------------------------------------------------------------------------------------------
+$ oscap oval eval --directives directives.xml --without-syschar --results oval-results.xml oval.xml
+---------------------------------------------------------------------------------------------------
+
 Usage of OVAL directives file when scanning OVAL component from a Source DataStream:
 
 ---------------------------------------------------------------------------------------------------
