@@ -353,6 +353,10 @@ full results:
 </oval_directives>
 ----
 
+If your use-case requires thin OVAL results you most likely also want
+to omit system characteristics. You can use the *--without-syschar*
+option to that effect.
+
 Usage of OVAL directives file when scanning a plain OVAL file:
 
 ---------------------------------------------------------------------------------------------------
@@ -364,11 +368,6 @@ Usage of OVAL directives file when scanning OVAL component from a Source DataStr
 ---------------------------------------------------------------------------------------------------
 $ oscap oval eval --directives directives.xml --without-syschar --datastream-id ds.xml --oval-id oval.xml --results oval-results.xml scap-ds.xml
 ---------------------------------------------------------------------------------------------------
-
-OVAL results file contains, by default, exported system characteristics.
-OpenSCAP provides *--without-syschar* option to change this behavior.
-If your use-case require thin OVAL results you most likely also want
-to omit system characteristics.
 
 It is not always clear which OVAL file will be used when multiple files
 are distributed. In case you are evaluating an XCCDF file you can use:
