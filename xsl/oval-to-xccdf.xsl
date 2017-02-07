@@ -18,7 +18,7 @@ Authors:
      Šimon Lukašík <slukasik@redhat.com>
 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
-    xmlns:xccdf="http://checklists.nist.gov/xccdf/1.1"
+    xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2"
     xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
     xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5">
     <xsl:output method="xml" encoding="UTF-8"/>
@@ -69,4 +69,3 @@ Authors:
         </xccdf:ident>
     </xsl:template>
 </xsl:stylesheet>
-
