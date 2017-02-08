@@ -47,7 +47,7 @@ static void check_engine_plugin_def_free(struct check_engine_plugin_def *plugin)
 	oscap_free(plugin);
 }
 
-struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
+struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool quiet)
 {
 	struct check_engine_plugin_def *ret = check_engine_plugin_def_new();
 
@@ -61,9 +61,10 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 	if (!ret->module_handle) {
 		error = dlerror();
 
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Failed to load extra check engine from '%s'. Details: '%s'.",
-			path, error);
+		if (!quiet)
+			oscap_seterr(OSCAP_EFAMILY_GLIBC,
+				"Failed to load extra check engine from '%s'. Details: '%s'.",
+				path, error);
 
 		check_engine_plugin_def_free(ret);
 		return NULL;
@@ -73,9 +74,10 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 	*(void **)(&entry_fn) = dlsym(ret->module_handle, STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY));
 
 	if ((error = dlerror()) != NULL) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Failed to retrieve module entry '%s' from loaded extra check engine '%s'. Details: '%s'.",
-			STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY), path, error);
+		if (!quiet)
+			oscap_seterr(OSCAP_EFAMILY_GLIBC,
+				"Failed to retrieve module entry '%s' from loaded extra check engine '%s'. Details: '%s'.",
+				STRINGIZE(OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY), path, error);
 
 		dlclose(ret->module_handle);
 		check_engine_plugin_def_free(ret);
@@ -83,8 +85,9 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 	}
 
 	if ((*entry_fn)(ret) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC,
-			"Failed to fill check_engine_plugin_def when loading check engine plugin '%s'.", path);
+		if (!quiet)
+			oscap_seterr(OSCAP_EFAMILY_GLIBC,
+				"Failed to fill check_engine_plugin_def when loading check engine plugin '%s'.", path);
 
 		dlclose(ret->module_handle);
 		check_engine_plugin_def_free(ret);
@@ -92,6 +95,11 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 	}
 
 	return ret;
+}
+
+struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
+{
+	return check_engine_plugin_load2(path, false);
 }
 
 void check_engine_plugin_unload(struct check_engine_plugin_def *plugin)
