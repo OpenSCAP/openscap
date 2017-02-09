@@ -69,16 +69,16 @@ Authors:
             </xccdf:title>
             <xsl:apply-templates select="oval-def:metadata/oval-def:reference[@source='RHSA']"/>
             <xsl:apply-templates select="oval-def:metadata/oval-def:advisory/oval-def:cve"/>
-                <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-                    <xccdf:check-content-ref href="file">
-                        <xsl:attribute name="name">
-                            <xsl:value-of select="@id"/>
-                        </xsl:attribute>
-                        <xsl:attribute name="href">
-                            <xsl:value-of select="$ovalfile"/>
-                        </xsl:attribute>
-                    </xccdf:check-content-ref>
-                </xccdf:check>
+            <xccdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+                <xccdf:check-content-ref>
+                    <xsl:attribute name="name">
+                        <xsl:value-of select="@id"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="href">
+                        <xsl:value-of select="$ovalfile"/>
+                    </xsl:attribute>
+                </xccdf:check-content-ref>
+            </xccdf:check>
         </xccdf:Rule>
     </xsl:template>
 
