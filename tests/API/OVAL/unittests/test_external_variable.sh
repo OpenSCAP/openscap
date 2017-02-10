@@ -9,7 +9,10 @@ stderr=$(mktemp ${name}.err.XXXXXX)
 echo "stderr file: $stderr"
 
 $OSCAP oval eval --results $result --variables $srcdir/external_variables.xml $srcdir/$name.oval.xml 2> $stderr
-[ ! -s $stderr ] && rm $stderr
+# filter out the expected warnings in stderr
+sed -i -E "/^W: oscap:     Referenced variable has no values \(oval:x:var:[13689]\)/d" "$stderr"
+[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+
 [ -s $result ]
 
 assert_exists 10 '/oval_results/oval_definitions/variables/external_variable'
