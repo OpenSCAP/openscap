@@ -8,11 +8,8 @@
   <Value id="xccdf_test_value_small" type="string" operator="equals">
     <value>6544</value>
   </Value>
-  <Value id="xccdf_test_value_bigger" type="string" operator="equals">
-    <value>6545</value>
-  </Value>
   <Value id="xccdf_test_value_huge" type="string" operator="equals">
-    <value>99999</value>
+    <value>199999</value>
   </Value>
 
 
@@ -26,15 +23,6 @@
     </check>
   </Rule>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_2">
-    <title>Bigger stream filling</title>
-    <check system="http://open-scap.org/page/SCE">
-      <check-import import-name="stdout" />
-      <check-import import-name="stderr" />
-      <check-export value-id="xccdf_test_value_bigger" export-name="LINES"/>
-      <check-content-ref href="streams_fill.sh"/>
-    </check>
-  </Rule>
-  <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_3">
     <title>Bigger stream filling</title>
     <check system="http://open-scap.org/page/SCE">
       <check-import import-name="stdout" />
