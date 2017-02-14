@@ -527,6 +527,11 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			close(stdout_pipefd[1]);
 			close(stderr_pipefd[1]);
 
+			int flag_stdout = fcntl(stdout_pipefd[0], F_GETFL, 0);
+			fcntl(stdout_pipefd[0], F_SETFL, flag_stdout | O_NONBLOCK);
+			int flag_stderr = fcntl(stderr_pipefd[0], F_GETFL, 0);
+			fcntl(stderr_pipefd[0], F_SETFL, flag_stderr | O_NONBLOCK);
+
 			char* stdout_buffer = oscap_acquire_pipe_to_string(stdout_pipefd[0]);
 			char* stderr_buffer = oscap_acquire_pipe_to_string(stderr_pipefd[0]);
 
