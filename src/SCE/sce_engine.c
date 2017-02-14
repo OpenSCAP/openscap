@@ -328,6 +328,44 @@ void sce_parameters_allocate_session(struct sce_parameters* v)
 	sce_parameters_set_session(v, sce_session_new());
 }
 
+static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool *open)
+{
+	// FIXME: Read by larger chunks in the future
+	char readbuf;
+	while (true) {
+		const int read_status = read(fd, &readbuf, 1);
+		if (read_status == 1) {  // successful read
+			if (readbuf == '&') {
+				// & is a special case, we have to "escape" it manually
+				// (all else will eventually get handled by libxml)
+				oscap_string_append_string(string, "&amp;");
+			} else {
+				oscap_string_append_char(string, readbuf);
+			}
+			//printf("Read %i from fd=%i\n", readbuf, fd);
+		}
+		else if (read_status == 0) {  // EOF
+			close(fd);
+			*open = false;
+			//printf("fd=%i EOF\n", fd);
+			break;
+		}
+		else {
+			if (errno == EAGAIN) {
+				// NOOP, we are waiting for more input
+				//printf("fd=%i NOOP waiting for input\n", fd);
+				break;
+			}
+			else {
+				close(fd);
+				*open = false;
+				//printf("fd=%i error\n", fd);
+				break;
+			}
+		}
+	}
+}
+
 xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id, const char *href,
 		struct xccdf_value_binding_iterator *value_binding_it,
 		struct xccdf_check_import_iterator *check_import_it,
@@ -543,66 +581,16 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 				bool stdout_open = true;
 				bool stderr_open = true;
-				char stdout_readbuf;
-				char stderr_readbuf;
 
-				// FIXME: Read by larger chunks in the future
 				while (stdout_open || stderr_open) {
-					if (stdout_open) {
-						const int stdout_read = read(stdout_pipefd[0], &stdout_readbuf, 1);
-						if (stdout_read == 1) {  // successful read
-							if (stdout_readbuf == '&') {
-								// & is a special case, we have to "escape" it manually
-								// (all else will eventually get handled by libxml)
-								oscap_string_append_string(stdout_string, "&amp;");
-							} else {
-								oscap_string_append_char(stdout_string, stdout_readbuf);
-							}
-						}
-						else if (stdout_read == 0) {  // EOF
-							close(stdout_pipefd[0]);
-							stdout_open = false;
-						}
-						else {
-							if (errno == EAGAIN) {
-								// NOOP, we are waiting for more input
-							}
-							else {
-								close(stdout_pipefd[0]);
-								stdout_open = false;
+					if (stdout_open)
+						_pipe_try_read_into_string(stdout_pipefd[0], stdout_string, &stdout_open);
 
-								//dE("Error");
-							}
-						}
-					}
+					if (stderr_open)
+						_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_open);
 
-					if (stderr_open) {
-						const int stderr_read = read(stderr_pipefd[0], &stderr_readbuf, 1);
-						if (stderr_read == 1) {  // successful read
-							if (stderr_readbuf == '&') {
-								// & is a special case, we have to "escape" it manually
-								// (all else will eventually get handled by libxml)
-								oscap_string_append_string(stderr_string, "&amp;");
-							} else {
-								oscap_string_append_char(stderr_string, stderr_readbuf);
-							}
-						}
-						else if (stderr_read == 0) {  // EOF
-							close(stderr_pipefd[0]);
-							stderr_open = false;
-						}
-						else {
-							if (errno == EAGAIN) {
-								// NOOP, we are waiting for more input
-							}
-							else {
-								close(stderr_pipefd[0]);
-								stderr_open = false;
-
-								//dE("Error");
-							}
-						}
-					}
+					// sleep for a second to avoid wasting CPU
+					sleep(1);
 				}
 
 				stdout_buffer = oscap_string_bequeath(stdout_string);
