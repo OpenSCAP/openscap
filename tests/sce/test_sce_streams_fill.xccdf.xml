@@ -12,7 +12,7 @@
     <value>6545</value>
   </Value>
   <Value id="xccdf_test_value_huge" type="string" operator="equals">
-    <value>9999</value>
+    <value>99999</value>
   </Value>
 
 

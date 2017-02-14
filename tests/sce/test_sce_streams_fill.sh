@@ -21,7 +21,7 @@ function test_sce_streams_fill {
     cat $result
 
     # zero is generated into stdout, 1 is stderr
-    grep "000099990" $result && grep "100099990" $result
+    grep "0999990" $result && grep "1999990" $result
 }
 
 # Testing.
