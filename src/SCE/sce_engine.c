@@ -571,31 +571,26 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			const int flag_stderr = fcntl(stderr_pipefd[0], F_GETFL, 0);
 			fcntl(stderr_pipefd[0], F_SETFL, flag_stderr | O_NONBLOCK);
 
-			char* stdout_buffer = NULL;
-			char* stderr_buffer = NULL;
-
 			// we have to read from both pipes at the same time to avoid stalling
-			{
-				struct oscap_string *stdout_string = oscap_string_new();
-				struct oscap_string *stderr_string = oscap_string_new();
+			struct oscap_string *stdout_string = oscap_string_new();
+			struct oscap_string *stderr_string = oscap_string_new();
 
-				bool stdout_open = true;
-				bool stderr_open = true;
+			bool stdout_open = true;
+			bool stderr_open = true;
 
-				while (stdout_open || stderr_open) {
-					if (stdout_open)
-						_pipe_try_read_into_string(stdout_pipefd[0], stdout_string, &stdout_open);
+			while (stdout_open || stderr_open) {
+				if (stdout_open)
+					_pipe_try_read_into_string(stdout_pipefd[0], stdout_string, &stdout_open);
 
-					if (stderr_open)
-						_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_open);
+				if (stderr_open)
+					_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_open);
 
-					// sleep for a second to avoid wasting CPU
-					sleep(1);
-				}
-
-				stdout_buffer = oscap_string_bequeath(stdout_string);
-				stderr_buffer = oscap_string_bequeath(stderr_string);
+				// sleep for a second to avoid wasting CPU
+				sleep(1);
 			}
+
+			char *stdout_buffer = oscap_string_bequeath(stdout_string);
+			char *stderr_buffer = oscap_string_bequeath(stderr_string);
 
 			// we are the parent process
 			int wstatus;
