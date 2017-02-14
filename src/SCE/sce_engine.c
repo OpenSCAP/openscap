@@ -342,22 +342,18 @@ static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool
 			} else {
 				oscap_string_append_char(string, readbuf);
 			}
-			//printf("Read %i from fd=%i\n", readbuf, fd);
 		}
 		else if (read_status == 0) {  // EOF
 			*eof = true;
-			//printf("fd=%i EOF\n", fd);
 			break;
 		}
 		else {
 			if (errno == EAGAIN) {
 				// NOOP, we are waiting for more input
-				//printf("fd=%i NOOP waiting for input\n", fd);
 				break;
 			}
 			else {
 				*eof = true;  // signal EOF to exit the loops
-				//printf("fd=%i error\n", fd);
 				break;
 			}
 		}
