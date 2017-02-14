@@ -579,8 +579,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 				if (!stderr_eof)
 					_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_eof);
 
-				// sleep for a second to avoid wasting CPU
-				sleep(1);
+				// sleep for 10ms to avoid wasting CPU
+				usleep(10 * 1000);
 			}
 
 			close(stdout_pipefd[0]);
