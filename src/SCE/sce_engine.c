@@ -328,7 +328,7 @@ void sce_parameters_allocate_session(struct sce_parameters* v)
 	sce_parameters_set_session(v, sce_session_new());
 }
 
-static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool *open)
+static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool *eof)
 {
 	// FIXME: Read by larger chunks in the future
 	char readbuf;
@@ -345,8 +345,7 @@ static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool
 			//printf("Read %i from fd=%i\n", readbuf, fd);
 		}
 		else if (read_status == 0) {  // EOF
-			close(fd);
-			*open = false;
+			*eof = true;
 			//printf("fd=%i EOF\n", fd);
 			break;
 		}
@@ -357,8 +356,7 @@ static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool
 				break;
 			}
 			else {
-				close(fd);
-				*open = false;
+				*eof = true;  // signal EOF to exit the loops
 				//printf("fd=%i error\n", fd);
 				break;
 			}
@@ -575,19 +573,22 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			struct oscap_string *stdout_string = oscap_string_new();
 			struct oscap_string *stderr_string = oscap_string_new();
 
-			bool stdout_open = true;
-			bool stderr_open = true;
+			bool stdout_eof = false;
+			bool stderr_eof = false;
 
-			while (stdout_open || stderr_open) {
-				if (stdout_open)
-					_pipe_try_read_into_string(stdout_pipefd[0], stdout_string, &stdout_open);
+			while (!stdout_eof || !stderr_eof) {
+				if (!stdout_eof)
+					_pipe_try_read_into_string(stdout_pipefd[0], stdout_string, &stdout_eof);
 
-				if (stderr_open)
-					_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_open);
+				if (!stderr_eof)
+					_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_eof);
 
 				// sleep for a second to avoid wasting CPU
 				sleep(1);
 			}
+
+			close(stdout_pipefd[0]);
+			close(stderr_pipefd[0]);
 
 			char *stdout_buffer = oscap_string_bequeath(stdout_string);
 			char *stderr_buffer = oscap_string_bequeath(stderr_string);
