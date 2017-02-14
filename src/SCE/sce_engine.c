@@ -34,6 +34,7 @@
 #include "common/util.h"
 #include "common/list.h"
 #include "common/oscap_acquire.h"
+#include "common/oscap_string.h"
 #include "sce_engine_api.h"
 
 #include <stdlib.h>
@@ -527,13 +528,86 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			close(stdout_pipefd[1]);
 			close(stderr_pipefd[1]);
 
-			int flag_stdout = fcntl(stdout_pipefd[0], F_GETFL, 0);
+			const int flag_stdout = fcntl(stdout_pipefd[0], F_GETFL, 0);
 			fcntl(stdout_pipefd[0], F_SETFL, flag_stdout | O_NONBLOCK);
-			int flag_stderr = fcntl(stderr_pipefd[0], F_GETFL, 0);
+			const int flag_stderr = fcntl(stderr_pipefd[0], F_GETFL, 0);
 			fcntl(stderr_pipefd[0], F_SETFL, flag_stderr | O_NONBLOCK);
 
-			char* stdout_buffer = oscap_acquire_pipe_to_string(stdout_pipefd[0]);
-			char* stderr_buffer = oscap_acquire_pipe_to_string(stderr_pipefd[0]);
+			char* stdout_buffer = NULL;
+			char* stderr_buffer = NULL;
+
+			// we have to read from both pipes at the same time to avoid stalling
+			{
+				struct oscap_string *stdout_string = oscap_string_new();
+				struct oscap_string *stderr_string = oscap_string_new();
+
+				bool stdout_open = true;
+				bool stderr_open = true;
+				char stdout_readbuf;
+				char stderr_readbuf;
+
+				// FIXME: Read by larger chunks in the future
+				while (stdout_open || stderr_open) {
+					if (stdout_open) {
+						const int stdout_read = read(stdout_pipefd[0], &stdout_readbuf, 1);
+						if (stdout_read == 1) {  // successful read
+							if (stdout_readbuf == '&') {
+								// & is a special case, we have to "escape" it manually
+								// (all else will eventually get handled by libxml)
+								oscap_string_append_string(stdout_string, "&amp;");
+							} else {
+								oscap_string_append_char(stdout_string, stdout_readbuf);
+							}
+						}
+						else if (stdout_read == 0) {  // EOF
+							close(stdout_pipefd[0]);
+							stdout_open = false;
+						}
+						else {
+							if (errno == EAGAIN) {
+								// NOOP, we are waiting for more input
+							}
+							else {
+								close(stdout_pipefd[0]);
+								stdout_open = false;
+
+								//dE("Error");
+							}
+						}
+					}
+
+					if (stderr_open) {
+						const int stderr_read = read(stderr_pipefd[0], &stderr_readbuf, 1);
+						if (stderr_read == 1) {  // successful read
+							if (stderr_readbuf == '&') {
+								// & is a special case, we have to "escape" it manually
+								// (all else will eventually get handled by libxml)
+								oscap_string_append_string(stderr_string, "&amp;");
+							} else {
+								oscap_string_append_char(stderr_string, stderr_readbuf);
+							}
+						}
+						else if (stderr_read == 0) {  // EOF
+							close(stderr_pipefd[0]);
+							stderr_open = false;
+						}
+						else {
+							if (errno == EAGAIN) {
+								// NOOP, we are waiting for more input
+							}
+							else {
+								close(stderr_pipefd[0]);
+								stderr_open = false;
+
+								//dE("Error");
+							}
+						}
+					}
+				}
+
+				stdout_buffer = oscap_string_bequeath(stdout_string);
+				stderr_buffer = oscap_string_bequeath(stderr_string);
+			}
 
 			// we are the parent process
 			int wstatus;
