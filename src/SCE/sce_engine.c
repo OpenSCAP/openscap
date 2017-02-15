@@ -34,6 +34,7 @@
 #include "common/util.h"
 #include "common/list.h"
 #include "common/oscap_acquire.h"
+#include "common/oscap_string.h"
 #include "sce_engine_api.h"
 
 #include <stdlib.h>
@@ -327,6 +328,38 @@ void sce_parameters_allocate_session(struct sce_parameters* v)
 	sce_parameters_set_session(v, sce_session_new());
 }
 
+static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool *eof)
+{
+	// FIXME: Read by larger chunks in the future
+	char readbuf;
+	while (true) {
+		const int read_status = read(fd, &readbuf, 1);
+		if (read_status == 1) {  // successful read
+			if (readbuf == '&') {
+				// & is a special case, we have to "escape" it manually
+				// (all else will eventually get handled by libxml)
+				oscap_string_append_string(string, "&amp;");
+			} else {
+				oscap_string_append_char(string, readbuf);
+			}
+		}
+		else if (read_status == 0) {  // EOF
+			*eof = true;
+			break;
+		}
+		else {
+			if (errno == EAGAIN) {
+				// NOOP, we are waiting for more input
+				break;
+			}
+			else {
+				*eof = true;  // signal EOF to exit the loops
+				break;
+			}
+		}
+	}
+}
+
 xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id, const char *href,
 		struct xccdf_value_binding_iterator *value_binding_it,
 		struct xccdf_check_import_iterator *check_import_it,
@@ -527,8 +560,34 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			close(stdout_pipefd[1]);
 			close(stderr_pipefd[1]);
 
-			char* stdout_buffer = oscap_acquire_pipe_to_string(stdout_pipefd[0]);
-			char* stderr_buffer = oscap_acquire_pipe_to_string(stderr_pipefd[0]);
+			const int flag_stdout = fcntl(stdout_pipefd[0], F_GETFL, 0);
+			fcntl(stdout_pipefd[0], F_SETFL, flag_stdout | O_NONBLOCK);
+			const int flag_stderr = fcntl(stderr_pipefd[0], F_GETFL, 0);
+			fcntl(stderr_pipefd[0], F_SETFL, flag_stderr | O_NONBLOCK);
+
+			// we have to read from both pipes at the same time to avoid stalling
+			struct oscap_string *stdout_string = oscap_string_new();
+			struct oscap_string *stderr_string = oscap_string_new();
+
+			bool stdout_eof = false;
+			bool stderr_eof = false;
+
+			while (!stdout_eof || !stderr_eof) {
+				if (!stdout_eof)
+					_pipe_try_read_into_string(stdout_pipefd[0], stdout_string, &stdout_eof);
+
+				if (!stderr_eof)
+					_pipe_try_read_into_string(stderr_pipefd[0], stderr_string, &stderr_eof);
+
+				// sleep for 10ms to avoid wasting CPU
+				usleep(10 * 1000);
+			}
+
+			close(stdout_pipefd[0]);
+			close(stderr_pipefd[0]);
+
+			char *stdout_buffer = oscap_string_bequeath(stdout_string);
+			char *stderr_buffer = oscap_string_bequeath(stderr_string);
 
 			// we are the parent process
 			int wstatus;
