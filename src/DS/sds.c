@@ -879,8 +879,11 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 					continue;
 				}
 
-				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0 || href[0] == '/') ?
-					oscap_strdup(href) : oscap_sprintf("%s/%s", dir, href);
+				// skip over file:// if it's used in the file href
+				const char *altered_href = oscap_str_startswith(href, "file://") ? href + 7 : href;
+
+				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0 || altered_href[0] == '/') ?
+					oscap_strdup(altered_href) : oscap_sprintf("%s/%s", dir, altered_href);
 
 				char* mangled_path = ds_sds_mangle_filepath(real_path);
 				char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
