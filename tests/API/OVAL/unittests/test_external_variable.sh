@@ -10,7 +10,8 @@ echo "stderr file: $stderr"
 
 $OSCAP oval eval --results $result --variables $srcdir/external_variables.xml $srcdir/$name.oval.xml 2> $stderr
 # filter out the expected warnings in stderr
-sed -i -E "/^W: oscap:     Referenced variable has no values \(oval:x:var:[13689]\)/d" "$stderr"
+
+sed -i -E "/^W: oscap:[ ]+Referenced variable has no values \(oval:x:var:[13689]\)/d" "$stderr"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 [ -s $result ]
