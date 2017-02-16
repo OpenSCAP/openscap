@@ -46,6 +46,8 @@ test_xccdf_overrides_SOURCES = test_xccdf_overrides.c
 
 EXTRA_DIST += \
 	all.sh \
+	oval \
+	oval_without_definitions.oval.xml \
 	test_default_selector.oval.xml \
 	test_default_selector.sh \
 	test_default_selector.xccdf.xml \
@@ -160,6 +162,8 @@ EXTRA_DIST += \
 	test_xccdf_multiple_testresults.xccdf.xml \
 	test_xccdf_notchecked_has_check.sh \
 	test_xccdf_notchecked_has_check.xccdf.xml \
+	test_xccdf_oval_absolute_path.sh \
+	test_xccdf_oval_absolute_path.xccdf.xml \
 	test_xccdf_oval_relative_path.sh \
 	test_xccdf_oval_relative_path.xccdf.xml \
 	test_xccdf_overlaping_IDs.xccdf.xml \
@@ -191,8 +195,6 @@ EXTRA_DIST += \
 	test_xccdf_test_system.xccdf.xml \
 	test_xccdf_xml_escaping_value.sh \
 	test_xccdf_xml_escaping_value.xccdf.xml \
-	oval \
-	oval_without_definitions.oval.xml \
 	unit_helper.c \
 	unit_helper.h
 # HELLO PAL, THIS LIST IS ALPHABETICALLY SORTED.
