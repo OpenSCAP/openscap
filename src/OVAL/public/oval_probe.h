@@ -81,6 +81,7 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 
 #define OVAL_PROBEMETA_LIST_VERBOSE 0x00000001 /**< Be verbose when listing supported probes */
 #define OVAL_PROBEMETA_LIST_DYNAMIC 0x00000002 /**< Perform additional checks when listing supported probes (i.e. list only existing external probes) */
+#define OVAL_PROBEMETA_LIST_OTYPE   0x00000004 /**< Show the otype / family type of the probe */
 
 void oval_probe_meta_list(FILE *output, int flags);
 

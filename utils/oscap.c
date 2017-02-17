@@ -183,8 +183,11 @@ static int print_versions(const struct oscap_action *action)
 	printf("\n");
 #if defined(OVAL_PROBES_ENABLED)
 	printf("==== Supported OVAL objects and associated OpenSCAP probes ====\n");
-	oval_probe_meta_list(stdout, OVAL_PROBEMETA_LIST_DYNAMIC);
+	printf("%-14s%-28s %-28s\n", "OVAL family", "OVAL object", "OpenSCAP probe");
+	printf("%-14s%-28s %-28s\n", "----------", "----------", "----------");
+	oval_probe_meta_list(stdout, OVAL_PROBEMETA_LIST_DYNAMIC | OVAL_PROBEMETA_LIST_OTYPE);
 #endif
+
 	return OSCAP_OK;
 }
 

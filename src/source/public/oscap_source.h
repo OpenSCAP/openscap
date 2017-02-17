@@ -82,10 +82,25 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath);
 struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath);
 
 /**
+ * Clone oscap_source structure.
+ * @param old Resource to clone
+ * @returns A clone of the given oscap_source.
+ */
+struct oscap_source *oscap_source_clone(struct oscap_source *old);
+
+/**
  * Dispose oscap_source structure.
  * @param source Resource to dispose
  */
 void oscap_source_free(struct oscap_source *source);
+
+/**
+ * Get filepath of the given resource
+ * @memberof oscap_source
+ * @param source
+ * @returns filepath of the original source or NULL
+ */
+const char *oscap_source_get_filepath(struct oscap_source *source);
 
 /**
  * Get SCAP document type of the given resource

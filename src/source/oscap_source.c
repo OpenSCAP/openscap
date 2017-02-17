@@ -84,6 +84,19 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 	return source;
 }
 
+struct oscap_source *oscap_source_clone(struct oscap_source *old)
+{
+	struct oscap_source *new = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	new->scap_type = old->scap_type;
+	new->origin.type = old->origin.type;
+	new->origin.version = oscap_strdup(old->origin.version);
+	new->origin.filepath = oscap_strdup(old->origin.filepath);
+	new->origin.memory = oscap_strdup(old->origin.memory);
+	new->origin.memory_size = old->origin.memory_size;
+	new->xml.doc = xmlCopyDoc(old->xml.doc, true);
+	return new;
+}
+
 /**
  * Allocate oscap_source struct and fill for memory data
  * @param size_t size Size of data
@@ -176,6 +189,11 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source)
 		xmlFreeTextReader(reader);
 	}
 	return source->scap_type;
+}
+
+const char *oscap_source_get_filepath(struct oscap_source *source)
+{
+	return source->origin.filepath;
 }
 
 static void xmlErrorCb(struct oscap_string *buffer, const char * format, ...)

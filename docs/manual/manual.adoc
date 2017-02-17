@@ -122,45 +122,142 @@ names, and supported OVAL objects, type the following command:
 $ oscap -V
 ----------
 
-=== Displaying Information SCAP Content
+=== Displaying Information about SCAP Content
 One of the capabilities of ```oscap``` is to display information about the SCAP
 contents within a file. Running the ```oscap info``` command allows the
 examination of the internal structure of a SCAP document and displays
 information such as the document type, specification version, status, the date
-the document was published (Generated) and the date the document was copied to
-file system (Imported). When examining an XCCDF document or a SCAP data stream,
+the document was published (**Generated**) and the date the document was copied to
+file system (**Imported**). When examining an XCCDF document or a SCAP data stream,
 generally, the most useful information is about profiles, checklists, and
-streams. The following example demonstrates usage of the command:
+streams.
 
- $ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
-
-The following is a sample output of the command above:
+The following example demonstrates usage and sample output of the
+command when target is SCAP data stream:
 
 ----
+$ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
 Document type: Source Data Stream
-Imported: 2015-07-13T10:23:11
+Imported: 2016-08-10T20:49:16
 
 Stream: scap_org.open-scap_datastream_from_xccdf_ssg-rhel7-xccdf-1.2.xml
 Generated: (null)
 Version: 1.2
 Checklists:
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
-		Profiles:
-			xccdf_org.ssgproject.content_profile_standard
-			xccdf_org.ssgproject.content_profile_pci-dss
-			xccdf_org.ssgproject.content_profile_rht-ccp
-			xccdf_org.ssgproject.content_profile_common
-			xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream
-		Referenced check files:
-			ssg-rhel7-oval.xml
-				system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+        Ref-Id: scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
+                Status: draft
+                Generated: 2016-08-10
+                Resolved: true
+                Profiles:
+                        xccdf_org.ssgproject.content_profile_standard
+                        xccdf_org.ssgproject.content_profile_pci-dss
+                        xccdf_org.ssgproject.content_profile_C2S
+                        xccdf_org.ssgproject.content_profile_rht-ccp
+                        xccdf_org.ssgproject.content_profile_common
+                        xccdf_org.ssgproject.content_profile_stig-rhel7-workstation-upstream
+                        xccdf_org.ssgproject.content_profile_stig-rhel7-server-gui-upstream
+                        xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream
+                        xccdf_org.ssgproject.content_profile_ospp-rhel7-server
+                        xccdf_org.ssgproject.content_profile_nist-cl-il-al
+                        xccdf_org.ssgproject.content_profile_cjis-rhel7-server
+                Referenced check files:
+                        ssg-rhel7-oval.xml
+                                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+                        ssg-rhel7-ocil.xml
+                                system: http://scap.nist.gov/schema/ocil/2
+                        http://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_7.xml
+                                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
 Checks:
-	Ref-Id: scap_org.open-scap_cref_ssg-rhel7-oval.xml
-	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml
-	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-oval.xml
+        Ref-Id: scap_org.open-scap_cref_ssg-rhel7-oval.xml
+        Ref-Id: scap_org.open-scap_cref_ssg-rhel7-ocil.xml
+        Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml
+        Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-oval.xml
 Dictionaries:
-	Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
+        Ref-Id: scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
 ----
+
+and when XCCDF document is examined:
+
+----
+$ oscap info /usr/share/xml/scap/ssg/content/ssg-rhel7-xccdf.xml
+Document type: XCCDF Checklist
+Checklist version: 1.1
+Imported: 2016-08-10T20:49:16
+Status: draft
+Generated: 2016-08-10
+Resolved: true
+Profiles:
+        standard
+        pci-dss
+        C2S
+        rht-ccp
+        common
+        stig-rhel7-workstation-upstream
+        stig-rhel7-server-gui-upstream
+        stig-rhel7-server-upstream
+        ospp-rhel7-server
+        nist-cl-il-al
+        cjis-rhel7-server
+Referenced check files:
+        ssg-rhel7-oval.xml
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+        ssg-rhel7-ocil.xml
+                system: http://scap.nist.gov/schema/ocil/2
+        http://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_7.xml
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+----
+
+**Document type** describes what format the file is in. Common types include
+XCCDF, OVAL, Source Data Stream and Result Data Stream.
+
+**Checklist version** is the XCCDF version only shown for XCCDF files. Common
+values are 1.1 and 1.2.
+
+**Imported** is the date the file was imported for use with OpenSCAP. Since
+OpenSCAP uses the local filesystem and has no proprietary database format
+the imported date is the same as file modification date.
+
+**Status** is the XCCDF Benchmark status. Common values include "accepted",
+"draft", "deprecated" and "incomplete". Please refer to the XCCDF specification
+for details. This is only shown for XCCDF files.
+
+**Generated** date is the date the file was created / generated. This date
+is shown for XCCDF files and Checklists and is sourced from the XCCDF **Status**
+element.
+
+**Checklists** lists available checklists incorporated in the Data Stream that
+you can use for the `--benchmark-id` command line attribute with `oscap xccdf
+eval`. Also each checklist has the detailed information printed.
+
+**Profiles** lists available profile IDs that you can use for the `--profile`
+command line attribute with `oscap xccdf eval`.
+
+==== More Information about Result Files (XCCDF and ARF)
+
+`oscap info` is less helpful with XCCDF results and ARF files. Two important
+dates that are commonly requested are the evaluation start and end dates.
+
+To look them up in the XCCDF result file, open the file and look for the
+TestResult element. The **start-time** and **end-time** attributes contain the evaluation
+times and dates.
+
+----
+<TestResult id="xccdf_org.open-scap_testresult_common" start-time="2017-01-21T19:16:28" end-time="2017-01-21T19:17:35"
+----
+
+To look up the dates in ARF file open the file and again look for the TestResult
+elements. The elements will be located in the arf:report elements.
+
+----
+<arf:reports>
+  <arf:report id="xccdf1">
+    <arf:content>
+      <TestResult xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap_testresult_xccdf_org.ssgproject.content_profile_stig-rhel7-server-upstream" start-time="2017-01-20T14:30:18" end-time="2017-01-20T14:36:32"
+----
+
+You can also find both dates in a HTML report, table **Evaluation
+characteristics**. To generate HTML report from XCCDF result or ARF, use
+`oscap xccdf generate report` command.
 
 === Scanning with OSCAP
 The main goal of the ```oscap``` tool is to perform configuration and
@@ -168,7 +265,7 @@ vulnerability scans of a local system. Oscap is able to evaluate both
 XCCDF benchmarks and OVAL definitions and generate the appropriate
 results. Please note that SCAP content can be provided either in a
 single file (as an OVAL file or SCAP Data Stream), or as multiple
-separate XML files. The following examples distinguish between these two
+separate XML files. The following examples distinguish between these
 approaches.
 
 ==== OVAL
@@ -234,12 +331,102 @@ file containing exported variables from the XCCDF file, and
 An OVAL directives file can be used to control whether results should be "thin" or "full".
 This file can be loaded by OpenSCAP using *--directives <file>* option.
 
+Example of an OVAL directive file which enables thin results instead of
+full results:
+
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<oval_directives xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:oval-res="http://oval.mitre.org/XMLSchema/oval-results-5" xmlns="http://oval.mitre.org/XMLSchema/oval-directives-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-results-5 oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd http://oval.mitre.org/XMLSchema/oval-directives-5 oval-directives-schema.xsd">
+  <generator>
+    <oval:product_name>OpenSCAP</oval:product_name>
+    <oval:schema_version>5.8</oval:schema_version> <!-- make sure the OVAL version matches your input -->
+    <oval:timestamp>2017-02-04T00:00:00</oval:timestamp>
+  </generator>
+  <directives include_source_definitions="true">
+    <oval-res:definition_true reported="true" content="thin"/>
+    <oval-res:definition_false reported="true" content="thin"/>
+    <oval-res:definition_unknown reported="true" content="thin"/>
+    <oval-res:definition_error reported="true" content="thin"/>
+    <oval-res:definition_not_evaluated reported="true" content="thin"/>
+    <oval-res:definition_not_applicable reported="true" content="thin"/>
+  </directives>
+</oval_directives>
+----
+
+If your use-case requires thin OVAL results you most likely also want
+to omit system characteristics. You can use the *--without-syschar*
+option to that effect.
+
+Usage of OVAL directives file when scanning a plain OVAL file:
+
 ---------------------------------------------------------------------------------------------------
-$ oscap oval eval --directives directives.xml --datastream-id ds.xml --oval-id xccdf.xml --results oval-results.xml scap-ds.xml
+$ oscap oval eval --directives directives.xml --without-syschar --results oval-results.xml oval.xml
 ---------------------------------------------------------------------------------------------------
 
-OVAL results file contains, by default, exported system characteristics.
-OpenSCAP provides *--without-syschar* option to change this behavior.
+Usage of OVAL directives file when scanning OVAL component from a Source DataStream:
+
+---------------------------------------------------------------------------------------------------
+$ oscap oval eval --directives directives.xml --without-syschar --datastream-id ds.xml --oval-id oval.xml --results oval-results.xml scap-ds.xml
+---------------------------------------------------------------------------------------------------
+
+It is not always clear which OVAL file will be used when multiple files
+are distributed. In case you are evaluating an XCCDF file you can use:
+
+---------------------------------------------------------------------------------------------------
+$ oscap info ssg-rhel7-xccdf.xml
+Document type: XCCDF Checklist
+Checklist version: 1.1
+Imported: 2017-01-20T14:20:43
+Status: draft
+Generated: 2017-01-19
+Resolved: true
+Profiles:
+        standard
+        pci-dss
+        C2S
+        rht-ccp
+        common
+        stig-rhel7-workstation-upstream
+        stig-rhel7-server-gui-upstream
+        stig-rhel7-server-upstream
+        stig-rhevh-upstream
+        ospp-rhel7-server
+        nist-cl-il-al
+        cjis-rhel7-server
+        docker-host
+        nist-800-171-cui
+Referenced check files:
+        ssg-rhel7-oval.xml
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+        ssg-rhel7-ocil.xml
+                system: http://scap.nist.gov/schema/ocil/2
+        https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2
+                system: http://oval.mitre.org/XMLSchema/oval-definitions-5
+---------------------------------------------------------------------------------------------------
+
+In the output you can see all referenced check files. In this case we see
+that `ssg-rhel7-oval.xml` is referenced. To see contents of this file you
+can open it in a text editor.
+
+You can use `oscap info` with Source DataStream files as well. Source
+DataStream will often reference OVAL files that are bundled in it.
+It is also possible to extract OVAL files from Source DataStream through `oscap ds sds-split`.
+
+---------------------------------------------------------------------------------------------------
+$ oscap ds sds-split ssg-rhel7-ds.xml extracted/
+$ ls -1 extracted/
+scap_org.open-scap_cref_output--ssg-rhel7-cpe-dictionary.xml
+scap_org.open-scap_cref_ssg-rhel7-xccdf-1.2.xml
+ssg-rhel7-cpe-oval.xml
+ssg-rhel7-ocil.xml
+ssg-rhel7-oval.xml
+---------------------------------------------------------------------------------------------------
+
+After splitting the Source DataStream you can inspect OVAL and XCCDF files
+individually using a text editor. Keep in mind that this is only an example
+and filenames depend on contents of the DataStream you are splitting and that
+you can also inspect XCCDF and OVAL content directly in Source DataStream
+or Result DataStream.
 
 ==== XCCDF
 When evaluating an XCCDF benchmark, ```oscap``` usually processes an XCCDF
@@ -276,39 +463,54 @@ Where *scap-xccdf.xml* is the XCCDF document, *Desktop* is the selected
 profile from the XCCDF document, *xccdf-results.xml* is a file storing
 the scan results, and *cpe-dictionary.xml* is the CPE dictionary.
 
+==== Source DataStream
+Commonly, all required input files are bundled together in Source DataStream.
+Scanning using Source DataStream is also handled by ```oscap xccdf eval``` command,
+with some additional parameters available to determine which of the bundled
+benchmarks should be performed.
 
-* To evaluate a specific XCCDF benchmark that is part of a data stream
-within a SCAP data stream collection run the following command:
+* To evaluate a specific XCCDF benchmark that is part of a DataStream
+within a SCAP DataStream collection, run the following command:
 
 ----
 $ oscap xccdf eval --datastream-id ds.xml --xccdf-id xccdf.xml --results xccdf-results.xml scap-ds.xml
 ----
 
-Where *scap-ds.xml* is a file representing the SCAP data stream
-collection, *ds.xml* is the particular data stream, *xccdf.xml* is ID of
+Where *scap-ds.xml* is a file representing the SCAP DataStream
+collection, *ds.xml* is the particular DataStream, *xccdf.xml* is ID of
 the component-ref pointing to the desired XCCDF document, and
 *xccdf-results.xml* is a file containing the scan results.
 
 NOTE: If you omit ```--datastream-id``` on the command line, the first data
 stream from the collection will be used. If you omit ```--xccdf-id```, the
 first component from the checklists element will be used. If you omit
-both, the first data stream that has a component in the checklists
+both, the first DataStream that has a component in the checklists
 element will be used - the first component in its checklists element
 will be used.
 
 
 * (Alternative, not recommended) To evaluate a specific XCCDF benchmark
-that is part of a data stream within a SCAP data stream collection run
+that is part of a DataStream within a SCAP DataStream collection run
 the following command:
 
 --------------------------------------------------------------------------------------
 $ oscap xccdf eval --benchmark-id benchmark_id --results xccdf-results.xml scap-ds.xml
 --------------------------------------------------------------------------------------
 
-Where *scap-ds.xml* is a file representing the SCAP data stream
+Where *scap-ds.xml* is a file representing the SCAP DataStream
 collection, *benchmark_id* is a string matching the "id" attribute of
 xccdf:Benchmark containing in a component, and *xccdf-results.xml* is a
 file containing the scan results.
+
+==== Result DataStream (ARF)
+
+In the examples above we are generating XCCDF result files using the `--results`
+command-line argument. You can use `--results-arf` to generate a Result DataStream
+(also called ARF - Asset Reporting Format) XML instead.
+
+--------------------------------------------------------------------------------------
+$ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml scap-ds.xml
+--------------------------------------------------------------------------------------
 
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
@@ -426,10 +628,10 @@ check implemented. *notchecked* means that there was no check in that
 particular rule that could be evaluated.
 
 
-==== CVE, CCE and other identifiers
+==== CVE, CCE, CPE and other identifiers
 Each XCCDF Rule can have xccdf:ident elements inside. These elements
 allow the content creator to reference various external identifiers like
-CVE, CCE and others.
+CVE, CCE, CPE and others.
 
 When scanning, oscap output identifiers of scanned rules regardless of
 their results. For example:
@@ -466,6 +668,35 @@ This file can be generated during the scan by adding *--results-arf* option.
 
 Result data stream file **results.xml** contains these identifiers in <rule-result>
 elements.
+
+----
+<rule-result idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" time="2017-01-20T14:30:18" severity="low" weight="1.000000">
+  <result>pass</result>
+  <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-27173-4</ident>
+  <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+    <check-content-ref name="oval:ssg-partition_for_tmp:def:1" href="#oval0"/>
+  </check>
+</rule-result>
+----
+
+Since OpenSCAP 1.2.9 you can use the Group-By feature of HTML report
+to get an overview of results based on their identifiers and references.
+
+The HTML report can also be used to look-up Rules by their identifiers.
+You can type the identifier (e.g.: CCE-27173-4) in the search box in
+the HTML report and only rules with this identifier will be shown.
+This can be used for any type of XCCDF identifier or reference.
+You can also click on the rule title to show more details and see all
+its identifiers, including the identifier you looked for.
+This relies heavily on SCAP content quality, if the identifiers are
+not present in the source content they will not be available in the
+HTML report.
+
+If you want to map two identifiers -- e.g.: map CCE identifier to
+NIST 800-53 identifier -- you need to look-up the CCE ID in the
+HTML report through the search box using the first identifier. And then,
+by grouping by NIST SP 800-53 ID, you can see all NIST 800-53 IDs
+related to the searched CCE ID.
 
 
 ==== Bundled CCE data
@@ -874,6 +1105,82 @@ multiset evaluation.
 
 
 
+=== External or remote resources
+Some SCAP content references external resources. For example SCAP Security Guide
+uses external OVAL file to check that the system is up to date and has no known
+security vulnerabilities. However, other content can use external resources for
+other purposes.
+
+When you are evaluating SCAP content with external resources the `oscap` tool
+will warn you:
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+ WARNING: This content points out to the remote resources. Use `--fetch-remote-resources' option to download them.
+ WARNING: Skipping https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 file which is referenced from XCCDF content
+
+By default the `oscap` tool will not blindly download and execute remote content.
+If you trust your local content and the remote content it references, you can use
+the `--fetch-remote-resources` option to automatically download it using the
+`oscap` tool.
+
+ $ oscap xccdf eval --fetch-remote-resources --profile xccdf_org.ssgproject.content_profile_common /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+ Downloading: https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL7.xml.bz2 ... ok
+ Title   Ensure /var/log Located On Separate Partition
+ Rule    xccdf_org.ssgproject.content_rule_partition_for_var_log
+ ...
+
+
+=== Evaluating XCCDF rules with multiple checks
+
+Normally, each XCCDF rule references to a single check with a specified name.
+However, if ```@name``` attribute of ```xccdf:check-content-ref``` of a given rule is omitted,
+multiple checks can be executed to evaluate the rule.
+This is common for ```security_patches_up_to_date``` check.
+By default, only a single result is produced for an XCCDF rule in such case, and the
+result is computed from all results of checks in the referenced location.
+In case user wants to see separate results for each check (one ```xccdf:check-result``` element
+in results document for each check evaluated), then ```multi-check``` attribute
+of ```xccdf:check``` element must be set to *true*.
+
+----
+   <Rule id="xccdf_org.nist-testsuite.content_rule_security_patches_up_to_date" selected="false" weight="10.0">
+      <title xml:lang="en-US">Security Patches Up-To-Date</title>
+      <description xml:lang="en-US">All known security patches have been installed.</description>
+      <requires idref="xccdf_org.nist-testsuite.content_group_CM-6"/>
+      <requires idref="xccdf_org.nist-testsuite.content_group_SI-2"/>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" multi-check="true">
+        <check-content-ref href="r1100-scap11-win_rhel-patches.xml"/>
+      </check>
+    </Rule>
+----
+
+In XCCDF specification older than 1.2, the ```multi-check``` element is not defined,
+which means that only a single result is always produced.
+To produce separate results for each check from the content older than XCCDF version 1.2,
+you need to convert it first into XCCDF 1.2 using the following command:
+
+----
+$ xsltproc --stringparam reverse_DNS com.example.www /usr/share/openscap/xsl/xccdf_1.1_to_1.2.xsl xccdf.xml > xccdf-1.2.xml
+----
+
+And then patch the content using a text editor, adding ```multi-check``` as
+shown in the example Rule snippet above.
+
+To create a source DataStream from the patched content, the following command can be used:
+
+----
+$ oscap ds sds-compose xccdf-1.2.xml source_ds.xml
+----
+
+If the original XCCDF file referenced a custom CPE dictionary, you also have to inject
+the CPE dictionary into the DataStream in order to create a valid source DataStream.
+To add a CPE dictionary component into your DataStream in place, use this command:
+
+----
+$ oscap ds sds-add cpe_dictionary.xml source_ds.xml
+----
+
+Now the ```source_ds.xml``` DataStream can be evaluated as usual.
 
 == Practical Examples
 This section demonstrates practical usage of certain security content provided
@@ -909,12 +1216,15 @@ Providers:
 The Red Hat Security Response Team provides OVAL definitions for all
 vulnerabilities (identified by CVE name) that affect Red Hat Enterprise
 Linux 3, 4, 5, 6 and 7. This enable users to perform a vulnerability scan
-and diagnose whether system is vulnerable or not.
+and diagnose whether system is vulnerable or not. The data is provided in
+three ways -- OVAL file, OVAL + XCCDF and a Source DataStream.
+
+==== OVAL + XCCDF
 
 1)  Download the content
 ---------------------------------------------------------------------------------
-$ wget http://www.redhat.com/security/data/metrics/com.redhat.rhsa-all.xccdf.xml
-$ wget http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
+$ wget https://www.redhat.com/security/data/metrics/com.redhat.rhsa-all.xccdf.xml
+$ wget https://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
 ---------------------------------------------------------------------------------
 
 2)  Run the scan
@@ -922,8 +1232,8 @@ $ wget http://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
 $ oscap xccdf eval --results results.xml --report report.html com.redhat.rhsa-all.xccdf.xml
 --------------------------------------------------------------------------------------------
 
-This is a sample output. It reports that Red Hat Security
-Advisory (RHSA-2013:0911) was issues but update was not applied so a
+This is the sample output. It reports that Red Hat Security
+Advisory (RHSA-2013:0911) was issued but update was not applied so a
 system is affected by multiple CVEs (CVE-2013-1935, CVE-2013-1943,
 CVE-2013-2017)
 
@@ -936,20 +1246,85 @@ Ident   CVE-2013-2017
 Result  fail
 ------------------------------------------------------------------------------------
 
+Human readable report *report.html* is generated, as well as "machine"
+readable report **results.xml**. Both files hold information about
+vulnerability status of scanned system. They map RHSA to CVEs and report
+what security advisories are not applied to the scanned system. CVE identifiers
+are linked with National Vulnerability Databases where additional information
+like CVE description, CVSS score, CVSS vector, etc. are stored.
+
+==== OVAL only
+
+1)  Download the content
+---------------------------------------------------------------------------------
+$ wget https://www.redhat.com/security/data/oval/com.redhat.rhsa-all.xml
+---------------------------------------------------------------------------------
+
+2)  Run the scan
+--------------------------------------------------------------------------------------------
+$ oscap oval eval --results results.xml --report report.html com.redhat.rhsa-all.xml
+--------------------------------------------------------------------------------------------
+
+This is the sample output. It reports that Red Hat Security
+Advisory (RHSA-2013:0911) was issued but update was not applied.
+Notice that the standard output is different from the XCCDF + OVAL output.
+
+------------------------------------------------------------------------------------
+Definition oval:com.redhat.rhsa:def:20130911: true
+------------------------------------------------------------------------------------
+
+As in case of XCCDF+OVAL, human readable report *report.html*, and "machine"
+readable report **results.xml** are generated. Look of *report.html* is different
+to the one generated when XCCDF checklist is used as a basis for the scan, the
+information in it again holds information about vulnerability status of scanned
+system, and mapping of RHSA to CVEs. CVE identifiers are linked with Red Hat
+database where additional information like CVE description, CVSS score, CVSS
+vector etc. are stored.
+
+
+==== Source DataStream
+The Source DataStream use-case is very similar to OVAL+XCCDF. The only
+difference is that you don't have to download two separate files.
+
+1)  Download the content
+---------------------------------------------------------------------------------
+$ wget https://www.redhat.com/security/data/metrics/ds/com.redhat.rhsa-all.ds.xml
+---------------------------------------------------------------------------------
+
+2)  Run the scan
+--------------------------------------------------------------------------------------------
+$ oscap xccdf eval --results results.xml --report report.html com.redhat.rhsa-all.ds.xml
+--------------------------------------------------------------------------------------------
+
+
+==== More Specialized Files
+
+The files we used above cover multiple Red Hat products. If you only want to
+scan one product - for example a specific version of Red Hat Enterprise Linux -
+we advise to download a smaller specialized file covering just this one version.
+Using a smaller file will utilitize less bandwidth and make the evaluation
+quicker.
+
+For example for Red Hat Enterprise Linux 7 the plain OVAL file is located at:
+
+----
+$ wget https://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_7.xml
+----
+
+You can get a list of all the plain OVAL files by visiting
+https://www.redhat.com/security/data/oval/
+
+The list of available datastream files is available at
+https://www.redhat.com/security/data/metrics/ds/
+
+
+==== Disclaimer
 NOTE: Note that these OVAL definitions are designed to only cover software and
 updates released by Red Hat. You need to provide additional definitions in order
 to detect the patch status of third-party software.
 
-
-Human readable report *report.html* is generated by side with "machine"
-readable report **results.xml**. Both files hold information about
-vulnerability status of scanned system. They map RHSA to CVEs and report
-what security advisories are not applied. CVE identifiers are linked
-with National Vulnerability Databases where additional information like:
-CVE description, CVSS score, CVSS vector, etc. are stored.
-
 To find out more information about this project, see
-http://www.redhat.com/security/data/metrics/.
+https://www.redhat.com/security/data/metrics/.
 
 
 === How to Evaluate PCI-DSS on RHEL7
@@ -1106,8 +1481,8 @@ standard files are native file formats of the OpenSCAP.
 
 
 
-=== How to evaluate guidances for Red Hat Enterprise Linux 6
-Guidances for Red Hat Enterprise Linux 6 can be acquired from
+=== How to evaluate guidances for Red Hat Enterprise Linux 6 or 7
+Guidances for Red Hat Enterprise Linux 6 and 7 can be acquired from
 {ssg_git}[SCAP Security Guide
 project] (SSG). SSG holds currently the most evolved and elaborate SCAP
 policy for Linux systems. The project provides practical security
@@ -1126,7 +1501,7 @@ https://github.com/OpenSCAP/scap-security-guide
 
 
 
-=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6
+=== How to check that patches are up-to-date on Red Hat Enterprise Linux 6 or 7
 This section describes how to check that software patches are up-to-date using
 external OVAL content.
 
@@ -1134,15 +1509,20 @@ external OVAL content.
 
  $ sudo yum install -y scap-security-guide
 
-2) Evaluate common profile
+2a) Evaluate common profile for RHEL 6
 
  $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
 
-This command evaluates common profile for Red Hat Enterprise Linux 6. Part of
+2b) Evaluate common profile for RHEL 7
+
+ $ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_common --fetch-remote-resources --results-arf results.xml /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+
+This command evaluates common profile for Red Hat Enterprise Linux 6 or 7. Part of
 the profile is a rule to check that patches are up-to-date. To evaluate the rule
 correctly, oscap tool needs to download an up-to-date OVAL file from Red Hat servers. This can be
 allowed using *--fetch-remote-resources* option. Result of this scan will be saved
 in **results.xml** using ARF format.
+
 
 
 === How to tailor Source data stream

@@ -194,7 +194,7 @@ Authors:
                 <xsl:for-each select="$item/cdf:warning">
                     <div class="panel panel-warning">
                         <div class="panel-heading">
-                            <span class="label label-warning">warning</span>&#160;
+                            <span class="label label-warning">Warning:</span>&#160;
                             <xsl:apply-templates mode="sub-testresult" select=".">
                                 <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                 <xsl:with-param name="profile" select="$profile"/>
@@ -212,6 +212,13 @@ Authors:
                         </xsl:apply-templates>
                     </p>
                 </xsl:if>
+
+                <div class="severity">
+                    <p>
+                        <span class="label label-warning">Severity:</span>&#160;
+                        <xsl:call-template name="item-severity"><xsl:with-param name="item" select="$item" /></xsl:call-template>
+                    </p>
+                </div>
 
                 <div class="identifiers">
                     <xsl:call-template name="item-idents-refs">
@@ -342,7 +349,7 @@ Authors:
                     <xsl:for-each select="$item/cdf:warning">
                         <div class="panel panel-warning">
                             <div class="panel-heading">
-                                <span class="label label-warning">warning</span>&#160;
+                                <span class="label label-warning">Warning:</span>&#160;
                                 <xsl:apply-templates mode="sub-testresult" select=".">
                                     <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                     <xsl:with-param name="profile" select="$profile"/>
@@ -477,6 +484,9 @@ Authors:
     </xsl:call-template>
 
     <xsl:variable name="profile" select="$benchmark/cdf:Profile[@id = $profile_id]"/>
+    <xsl:if test="$profile_id != '' and not($profile)">
+        <xsl:message terminate="yes">Profile "<xsl:value-of select="$profile_id"/>" was not found. Get available profiles using "oscap info".</xsl:message>
+    </xsl:if>
 
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
     <html lang="en">

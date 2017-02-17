@@ -107,7 +107,7 @@ Authors:
 
     <xsl:if test="$item/cdf:ident">
         <p>
-            <span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">identifiers:</span>&#160;
+            <span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span>&#160;
             <xsl:for-each select="$item/cdf:ident">
                 <xsl:apply-templates mode="ident" select="."/>
                 <xsl:if test="position() != last()">, </xsl:if>
@@ -116,13 +116,19 @@ Authors:
     </xsl:if>
     <xsl:if test="$item/cdf:reference">
         <p>
-            <span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">references:</span>&#160;
+            <span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span>&#160;
             <xsl:for-each select="$item/cdf:reference">
                 <xsl:apply-templates mode="reference" select="."/>
                 <xsl:if test="position() != last()">, </xsl:if>
             </xsl:for-each>
         </p>
     </xsl:if>
+</xsl:template>
+
+<!-- works for both XCCDF Rule elements and rule-result elements -->
+<xsl:template name="item-severity">
+    <xsl:param name="item"/>
+    <xsl:choose><xsl:when test="$item/@severity"><xsl:value-of select="$item/@severity"/></xsl:when><xsl:otherwise>unknown</xsl:otherwise></xsl:choose>
 </xsl:template>
 
 <!-- substitution for testresults, used in HTML report -->

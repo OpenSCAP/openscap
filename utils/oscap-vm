@@ -110,9 +110,17 @@ MOUNTPOINT=$(mktemp -d)
 if [ "$1" == "image" ]; then
     echo "Mounting guestfs image '$2' to '$MOUNTPOINT'..."
     guestmount -a "$2" -i --ro "$MOUNTPOINT"
+    if [ $? -ne 0 ]; then
+        rmdir "$MOUNTPOINT"
+        die "Failed to mount image '$2' to '$MOUNTPOINT'!"
+    fi
 elif [ "$1" == "domain" ]; then
     echo "Mounting guestfs domain '$2' to '$MOUNTPOINT'..."
     guestmount -d "$2" -i --ro "$MOUNTPOINT"
+    if [ $? -ne 0 ]; then
+        rmdir "$MOUNTPOINT"
+        die "Failed to mount guestfs domain '$2' to '$MOUNTPOINT'!"
+    fi
 fi
 
 # Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html

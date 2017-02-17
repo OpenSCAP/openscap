@@ -34,6 +34,7 @@
 #include <xccdf_benchmark.h>
 #include <xccdf_policy.h>
 #include <xccdf_session.h>
+#include <ds_rds_session.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -300,13 +301,13 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
 
 /**
  * XCCDF Result Colors:
- * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:white(1;37), NOT_CHECKED:white(1;37),
- * NOT_SELECTED:white(1;37), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
+ * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:default bold(1), NOT_CHECKED:default bold(1),
+ * NOT_SELECTED:default dim(2), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
  */
 #if defined(_WIN32)
 int RESULT_COLORS[] = {0, 10, 12, 12, 8, 15, 15, 15, 9, 14};
 #else
-static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1;37", "1;37", "1;37", "34", "1;33" };
+static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1", "1", "2", "34", "1;33" };
 #endif
 
 static char custom_stylesheet_path[PATH_MAX];
@@ -803,12 +804,39 @@ static bool _some_result_exists(struct oscap_source *xccdf_source, const char *n
 
 int app_generate_fix(const struct oscap_action *action)
 {
+	struct xccdf_session *session = NULL;
+	struct ds_rds_session *arf_session = NULL;
+
 	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
 		return OSCAP_ERROR;
 	}
 
 	int ret = OSCAP_ERROR;
-	struct xccdf_session *session = xccdf_session_new(action->f_xccdf);
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+	oscap_document_type_t document_type = oscap_source_get_scap_type(source);
+	if (document_type == OSCAP_DOCUMENT_ARF) {
+		arf_session = ds_rds_session_new_from_source(source);
+		if (arf_session == NULL) {
+			goto cleanup;
+		}
+		struct oscap_source *report_source = ds_rds_session_select_report(arf_session, NULL);
+		if (report_source == NULL) {
+			goto cleanup;
+		}
+		struct oscap_source *report_request_source = ds_rds_session_select_report_request(arf_session, NULL);
+		if (report_request_source == NULL) {
+			goto cleanup;
+		}
+		session = xccdf_session_new_from_source(oscap_source_clone(report_request_source));
+		if (action->id != NULL) {
+			if (xccdf_session_add_report_from_source(session, oscap_source_clone(report_source))) {
+				goto cleanup;
+			}
+		}
+		oscap_source_free(source);
+	} else {
+		session = xccdf_session_new_from_source(source);
+	}
 	if (session == NULL)
 		goto cleanup;
 
@@ -852,6 +880,7 @@ cleanup2:
 	if (output_fd != STDOUT_FILENO)
 		close(output_fd);
 cleanup:
+	ds_rds_session_free(arf_session);
 	xccdf_session_free(session);
 	oscap_print_error();
 	return ret;

@@ -41,6 +41,7 @@ test_run "Check Processing Algorithm -- none selected for candidate" $srcdir/tes
 test_run "Check Processing Algorithm -- none check-content-ref resolvable." $srcdir/test_xccdf_check_processing_invalid_content_refs.sh
 test_run "Check Processing Algorithm -- don't include xccdf:check if result is notchecked" $srcdir/test_xccdf_notchecked_has_check.sh
 test_run "Check Processing Algorithm -- notchecked & unselected" $srcdir/test_xccdf_role_unchecked.sh
+test_run "Load OVAL using absolute path" $srcdir/test_xccdf_oval_absolute_path.sh
 test_run "Load OVAL using relative path" $srcdir/test_xccdf_oval_relative_path.sh
 test_run "xccdf:select and @cluster-id -- disable group" $srcdir/test_xccdf_selectors_cluster1.sh
 test_run "xccdf:select and @cluster-id -- enable a set of items" $srcdir/test_xccdf_selectors_cluster2.sh
@@ -93,8 +94,13 @@ test_run "XCCDF Remediate + perl fix" $srcdir/test_remediate_perl.sh
 test_run 'generate report: xccdf:check/@selector=""' $srcdir/test_report_check_with_empty_selector.sh
 test_run "generate report: missing xsl shall not segfault" $srcdir/test_report_without_xsl_fails_gracefully.sh
 test_run "generate report: avoid warnings from libxml" $srcdir/test_report_without_oval_poses_no_errors.sh
+
+#
+# Tests for 'oscap xccdf generate fix'
+#
 test_run "generate fix: just as the anaconda does" $srcdir/test_report_anaconda_fixes.sh
 test_run "generate fix: just as the anaconda does + DataStream" $srcdir/test_report_anaconda_fixes_ds.sh
 test_run "generate fix: ensure filtering drop fixes" $srcdir/test_fix_filtering.sh
+test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
 
 test_exit

@@ -361,7 +361,7 @@ Authors:
                 &#160;<span class="label label-warning">waived</span>
             </xsl:if>
         </td>
-        <td class="rule-severity" style="text-align: center"><xsl:value-of select="$ruleresult/@severity"/></td>
+        <td class="rule-severity" style="text-align: center"><xsl:call-template name="item-severity"><xsl:with-param name="item" select="$ruleresult" /></xsl:call-template></td>
         <td class="rule-result rule-result-{$result}">
             <xsl:variable name="result_tooltip">
                 <xsl:call-template name="rule-result-tooltip">
@@ -458,8 +458,14 @@ Authors:
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53 ID</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'http://iase.disa.mil/')">
-            <xsl:text>DISA ID</xsl:text>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
+            <xsl:text>DISA CCI</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/srgs/')">
+            <xsl:text>DISA SRG</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/')">
+            <xsl:text>DISA STIG ID</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
             <xsl:text>PCI DSS Requirement</xsl:text>
@@ -476,6 +482,7 @@ Authors:
 <xsl:template name="get-all-references">
     <xsl:param name="benchmark"/>
     <xsl:for-each select="$benchmark//cdf:reference[generate-id(.) = generate-id(key('references',@href)[1])]">
+        <xsl:sort select="@href" />
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
@@ -553,6 +560,7 @@ Authors:
                         <option value="default" selected="selected">Default</option>
                         <option value="severity">Severity</option>
                         <option value="result">Result</option>
+                        <option disabled="disabled">──────────</option>
                         <xsl:call-template name="get-all-references">
                             <xsl:with-param name="benchmark" select="$benchmark"/>
                         </xsl:call-template>
@@ -780,7 +788,7 @@ Authors:
                         </div>
                     </td></tr>
                     <tr><td>Time</td><td><xsl:value-of select="$ruleresult/@time"/></td></tr>
-                    <tr><td>Severity</td><td><xsl:value-of select="$ruleresult/@severity"/></td></tr>
+                    <tr><td>Severity</td><td><xsl:call-template name="item-severity"><xsl:with-param name="item" select="$ruleresult" /></xsl:call-template></td></tr>
                     <tr><td>Identifiers and References</td><td class="identifiers">
                         <!-- XCCDF 1.2 spec says that idents in rule-result should be copied from
                              the Rule itself. That means that we can just use the same code as guide
@@ -941,6 +949,7 @@ Authors:
             <xsl:with-param name="item" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
+        <a href="#result-details"><button type="button" class="btn btn-secondary">Scroll back to the first rule</button></a>
     </div>
 </xsl:template>
 

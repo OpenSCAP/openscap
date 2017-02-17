@@ -18,7 +18,9 @@ xsl_DATA =   xccdf-share.xsl \
              legacy-xccdf-share.xsl \
              \
              xccdf_1.1_to_1.2.xsl \
-             xccdf_1.1_remove_dangling_sub.xsl
+             xccdf_1.1_remove_dangling_sub.xsl \
+             \
+             oval-to-xccdf.xsl
 
 EXTRA_DIST = xccdf-share.xsl \
              xccdf-branding.xsl \
@@ -38,4 +40,6 @@ EXTRA_DIST = xccdf-share.xsl \
              legacy-xccdf-share.xsl \
              \
              xccdf_1.1_to_1.2.xsl \
-             xccdf_1.1_remove_dangling_sub.xsl
+             xccdf_1.1_remove_dangling_sub.xsl \
+             \
+             oval-to-xccdf.xsl
