@@ -8,3 +8,12 @@ set(OPENSCAP_VERSION "${OPENSCAP_VERSION_MAJOR}.${OPENSCAP_VERSION_MINOR}.${OPEN
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 include(GNUInstallDirs)
+
+# Required packages
+find_package(LibXml2 2.0 REQUIRED)
+find_package(LibXslt 1.1 REQUIRED) # Also scopes libexslt
+find_package(CURL 7.12.0 REQUIRED)
+find_package(PCRE REQUIRED) # TODO: Check if we need to check versions on PCRE
+
+# Optional packages
+find_package(BZip2)
