@@ -17,3 +17,9 @@ find_package(PCRE REQUIRED) # TODO: Check if we need to check versions on PCRE
 
 # Optional packages
 find_package(BZip2)
+
+configure_file("config.h.in" "config.h")
+add_definitions(-DHAVE_CONFIG_H)
+include_directories("${CMAKE_BINARY_DIR}")
+
+add_subdirectory("src")
