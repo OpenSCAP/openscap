@@ -954,9 +954,9 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 	return 0;
 }
 
-int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const char *plugin_name)
+int xccdf_session_load_check_engine_plugin2(struct xccdf_session *session, const char *plugin_name, bool quiet)
 {
-	struct check_engine_plugin_def *plugin = check_engine_plugin_load(plugin_name);
+	struct check_engine_plugin_def *plugin = check_engine_plugin_load2(plugin_name, quiet);
 
 	if (!plugin)
 		return -1; // error already set
@@ -973,6 +973,11 @@ int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const 
 	}
 }
 
+int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const char *plugin_name)
+{
+	return xccdf_session_load_check_engine_plugin2(session, plugin_name, false);
+}
+
 int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 {
 	xccdf_session_unload_check_engine_plugins(session);
@@ -982,7 +987,7 @@ int xccdf_session_load_check_engine_plugins(struct xccdf_session *session)
 	while (*known_plugins) {
 		// We do not report failure when a known plugin doesn't load properly, that's because they
 		// are optional and we don't know if it's not there or if it just failed to load.
-		if (xccdf_session_load_check_engine_plugin(session, *known_plugins) != 0)
+		if (xccdf_session_load_check_engine_plugin2(session, *known_plugins, true) != 0)
 			oscap_clearerr();
 
 		known_plugins++;

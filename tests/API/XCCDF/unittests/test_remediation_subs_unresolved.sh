@@ -35,6 +35,8 @@ assert_exists 1 '//score[text()="0.000000"]'
 ret=0
 $OSCAP xccdf eval --remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr || ret=$?
 [ $ret -eq 2 ]
+# filter out the expected warning in stderr
+sed -i -E "/^W: oscap: The xccdf:rule-result\/xccdf:instance element was not found./d" "$stderr"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result

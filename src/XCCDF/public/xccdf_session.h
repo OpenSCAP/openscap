@@ -358,8 +358,11 @@ int xccdf_session_load_oval(struct xccdf_session *session);
  *
  * @memberof xccdf_session
  * @param session XCCDF Session
+ * @param plugin_name Name of the plugin to load
+ * @param quiet If true we will not output errors if loading fails
  * @returns zero on success
  */
+int xccdf_session_load_check_engine_plugin2(struct xccdf_session *session, const char* plugin_name, bool quiet);
 int xccdf_session_load_check_engine_plugin(struct xccdf_session *session, const char* plugin_name);
 
 /**
