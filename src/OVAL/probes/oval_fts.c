@@ -810,7 +810,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	   without targets are accepted. */
 	if (lstat(paths[0], &st) == -1) {
 		if (errno) {
-			dE("lstat() failed: errno: %d, '%s'.",
+			dD("lstat() failed: errno: %d, '%s'.",
 			   errno, strerror(errno));
 		}
 		free((void *) paths[0]);
