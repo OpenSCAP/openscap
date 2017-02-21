@@ -1999,7 +1999,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     struct xccdf_result * result = xccdf_result_new();
 
 	xccdf_result_set_start_time_current(result);
-	xccdf_result_set_test_system(result, "cpe:/a:redhat:openscap:" VERSION);
+	xccdf_result_set_test_system(result, "cpe:/a:redhat:openscap:" OPENSCAP_VERSION);
 
     /** Set ID of TestResult */
 	char *id = NULL;
