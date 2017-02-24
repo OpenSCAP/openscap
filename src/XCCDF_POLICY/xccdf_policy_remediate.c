@@ -642,6 +642,10 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
+
+		if (_write_script_header_to_fd(sys, output_fd) != 0)
+			return 1;
+
 		while (xccdf_rule_result_iterator_has_more(rr_it)) {
 			struct xccdf_rule_result *rr = xccdf_rule_result_iterator_next(rr_it);
 			if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
