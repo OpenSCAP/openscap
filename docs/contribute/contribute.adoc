@@ -53,6 +53,10 @@ Our fix will go into the `maint-1.0` so we have to switch to this branch before
 creating a new one.
 
 == Fix the issue
+NOTE: OpenSCAP is licensed under LGPLv2. Any fixes or improvements must be licensed
+under the same license to be included. Check the COPYING file in the repository
+for more details.
+
 Now you can work on the fix. Try to create small commits which can be easily
 reviewed and make self-explaining commit messages. The
 link:http://chris.beams.io/posts/git-commit/[How to Write a Git Commit
