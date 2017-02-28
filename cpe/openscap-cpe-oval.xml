@@ -435,6 +435,19 @@
                         <criterion comment="openSUSE 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:422" version="1">
+                  <metadata>
+                        <title>openSUSE 42.2</title>
+                        <affected family="unix">
+                            <platform>openSUSE 42.2</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:novell:leap:42.2" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE 42.2</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="openSUSE 42.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:422"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.wrlinux:def:1" version="1" >
                   <metadata>
                         <title>Wind River Linux</title>
@@ -630,6 +643,11 @@
                   <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:421"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:422" version="2" check="at least one" comment="openSUSE-release is version 42.2"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:422"/>
+            </rpminfo_test>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:1" version="1" check="only one"
                   comment="Installed operating system is part of the Unix family."
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -809,6 +827,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:421" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^42.1$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:422" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^42.2$</version>
             </rpminfo_state>
             <textfilecontent54_state
                             id="oval:org.open-scap.cpe.wrlinux-release:ste:8"
