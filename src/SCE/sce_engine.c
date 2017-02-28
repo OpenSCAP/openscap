@@ -561,9 +561,33 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			close(stderr_pipefd[1]);
 
 			const int flag_stdout = fcntl(stdout_pipefd[0], F_GETFL, 0);
-			fcntl(stdout_pipefd[0], F_SETFL, flag_stdout | O_NONBLOCK);
+			if (flag_stdout == -1) {
+				oscap_seterr(OSCAP_EFAMILY_SCE, "Failed to obtain status of stdout pipe: %s",
+						strerror(errno));
+				return XCCDF_RESULT_ERROR;
+			}
+			int retval = fcntl(stdout_pipefd[0], F_SETFL, flag_stdout | O_NONBLOCK);
+			if (retval == -1) {
+				oscap_seterr(OSCAP_EFAMILY_SCE,
+						"Failed to set nonblocking flag on stdout pipe: %s",
+						strerror(errno));
+				return XCCDF_RESULT_ERROR;
+			}
+
 			const int flag_stderr = fcntl(stderr_pipefd[0], F_GETFL, 0);
-			fcntl(stderr_pipefd[0], F_SETFL, flag_stderr | O_NONBLOCK);
+			if (flag_stderr == -1) {
+				oscap_seterr(OSCAP_EFAMILY_SCE,
+						"Failed to obtain status of stderr pipe: %s",
+						strerror(errno));
+				return XCCDF_RESULT_ERROR;
+			}
+			retval = fcntl(stderr_pipefd[0], F_SETFL, flag_stderr | O_NONBLOCK);
+			if (retval == -1) {
+				oscap_seterr(OSCAP_EFAMILY_SCE,
+						"Failed to set nonblocking flag on stderr pipe: %s",
+						strerror(errno));
+				return XCCDF_RESULT_ERROR;
+			}
 
 			// we have to read from both pipes at the same time to avoid stalling
 			struct oscap_string *stdout_string = oscap_string_new();
