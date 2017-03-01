@@ -3,6 +3,11 @@
 set -e
 set -o pipefail
 
+. ../../../test_common.sh
+
+# if xsltproc is not installed we will skip the test
+require xsltproc || return 255
+
 name=$(basename $0 .sh)
 result=$(mktemp -t ${name}.xccdf12.XXXXXX)
 
@@ -12,6 +17,6 @@ xsltproc --stringparam reverse_DNS com.example.www $srcdir/../../../../xsl/xccdf
 
 $OSCAP xccdf validate $result
 
-assert_exists 1 '/Benchmark[namespace-uri()="http://checklists.nist.gov/xccdf/1.2"]'
+assert_exists 1 '//*[namespace::*="http://checklists.nist.gov/xccdf/1.2"]'
 
 rm $result
