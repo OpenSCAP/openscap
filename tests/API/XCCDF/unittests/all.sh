@@ -62,6 +62,7 @@ test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 test_run "TestResult element should contain test-system attribute" $srcdir/test_xccdf_test_system.sh
 
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh
+test_run "XCCDF 1.1 to 1.2 transformation" $srcdir/test_xccdf_transformation.sh
 
 #
 # Tests for 'oscap xccdf eval --remediate' and substitution
