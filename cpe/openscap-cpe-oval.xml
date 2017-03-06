@@ -194,6 +194,32 @@
                         <criterion comment="Fedora 25 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:25"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:26" version="1">
+                  <metadata>
+                        <title>Fedora 26</title>
+                        <affected family="unix">
+                            <platform>Fedora 26</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:26" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 26</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Fedora 26 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:26"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:27" version="1">
+                  <metadata>
+                        <title>Fedora 27</title>
+                        <affected family="unix">
+                            <platform>Fedora 27</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:27" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 27</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Fedora 27 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:27"/>
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
@@ -266,6 +292,16 @@
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:25"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:26" version="1" check="at least one" comment="fedora-release is version Fedora 26"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:26"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:27" version="1" check="at least one" comment="fedora-release is version Fedora 27"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:27"/>
+            </rpminfo_test>
       </tests>
       <objects>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.redhat-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -329,6 +365,12 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:25" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^25$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:26" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^26$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:27" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^27$</version>
             </rpminfo_state>
       </states>
 </oval_definitions>
