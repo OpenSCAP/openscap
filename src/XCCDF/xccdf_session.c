@@ -324,6 +324,10 @@ int xccdf_session_load(struct xccdf_session *session)
 {
 	int ret = 0;
 
+	if (session->ds.session) {
+		ds_sds_session_reset(session->ds.session);
+	}
+
 	if ((ret = xccdf_session_load_xccdf(session)) != 0)
 		return ret;
 	if ((ret = xccdf_session_load_cpe(session)) != 0)
