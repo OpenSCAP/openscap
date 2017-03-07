@@ -120,6 +120,9 @@ static inline void _print_xccdf_result(struct xccdf_result *xccdf_result, const 
 	const char *result_id = xccdf_result_get_id(xccdf_result);
 	const char *benchmark_uri = xccdf_result_get_benchmark_uri(xccdf_result);
 	const char *xccdf_profile = xccdf_result_get_profile(xccdf_result);
+	if (xccdf_profile == NULL) {
+		xccdf_profile = "(default)";
+	}
 	const char *start_time = xccdf_result_get_start_time(xccdf_result);
 	const char *end_time = xccdf_result_get_end_time(xccdf_result);
 	printf("%s\tResult ID: %s\n", prefix, result_id);
@@ -129,6 +132,9 @@ static inline void _print_xccdf_result(struct xccdf_result *xccdf_result, const 
 	printf("%s\tEvaluation finished: %s\n", prefix, end_time);
 	printf("%s\tPlatform CPEs:\n", prefix);
 	struct oscap_string_iterator *platforms_it = xccdf_result_get_platforms(xccdf_result);
+	if (!oscap_string_iterator_has_more(platforms_it)) {
+		printf("%s\t\t(none)\n", prefix);
+	}
 	while (oscap_string_iterator_has_more(platforms_it)) {
 		const char *platform = oscap_string_iterator_next(platforms_it);
 		printf("%s\t\t%s\n", prefix, platform);
