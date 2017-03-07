@@ -386,6 +386,10 @@ int probe_main (probe_ctx *ctx, void *arg)
 	uint64_t collect_flags = 0;
 	unsigned int i;
 
+	if (arg == NULL) {
+		return PROBE_EINIT;
+	}
+
 	if (g_rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
