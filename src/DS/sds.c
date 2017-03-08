@@ -795,6 +795,10 @@ static char* ds_sds_mangle_filepath(const char* filepath)
 			*dst_it++ = '-';
 			*dst_it++ = '-';
 		}
+		else if (*src_it == '@') {
+			*dst_it++ = '-';
+			*dst_it++ = '-';
+		}
 		else
 		{
 			*dst_it++ = *src_it;

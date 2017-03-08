@@ -518,9 +518,9 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		pattern = malloc(plen + 1);
 		pattern[0] = '^';
 		memcpy(pattern + 1, path, plen);
-		dW("The pattern doesn't contain a leading caret - added. "
+		dI("The pattern '%s' doesn't contain a leading caret - added. "
 		   "All paths with the 'pattern match' operation must begin "
-		   "with a caret.");
+		   "with a caret.", path);
 	} else {
 		pattern = strdup(path);
 	}
@@ -810,7 +810,7 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	   without targets are accepted. */
 	if (lstat(paths[0], &st) == -1) {
 		if (errno) {
-			dE("lstat() failed: errno: %d, '%s'.",
+			dD("lstat() failed: errno: %d, '%s'.",
 			   errno, strerror(errno));
 		}
 		free((void *) paths[0]);

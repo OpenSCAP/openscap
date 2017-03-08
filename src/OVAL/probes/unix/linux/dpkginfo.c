@@ -93,6 +93,10 @@ int probe_main (probe_ctx *ctx, void *arg)
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
 
+	if (arg == NULL) {
+		return PROBE_EINIT;
+	}
+
 	obj = probe_ctx_getobject(ctx);
 	ent = probe_obj_getent(obj, "name", 1);
 

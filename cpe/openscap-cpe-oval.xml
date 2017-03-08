@@ -272,6 +272,32 @@
                         <criterion comment="Fedora 25 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:25"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:26" version="1">
+                  <metadata>
+                        <title>Fedora 26</title>
+                        <affected family="unix">
+                            <platform>Fedora 26</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:26" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 26</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Fedora 26 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:26"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:27" version="1">
+                  <metadata>
+                        <title>Fedora 27</title>
+                        <affected family="unix">
+                            <platform>Fedora 27</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:27" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 27</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Fedora 27 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:27"/>
+                  </criteria>
+            </definition>
 
             <definition class="inventory" id="oval:org.open-scap.cpe.sle:def:1" version="1">
                   <metadata>
@@ -435,6 +461,19 @@
                         <criterion comment="openSUSE 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:422" version="1">
+                  <metadata>
+                        <title>openSUSE 42.2</title>
+                        <affected family="unix">
+                            <platform>openSUSE 42.2</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:novell:leap:42.2" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE 42.2</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="openSUSE 42.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:422"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.wrlinux:def:1" version="1" >
                   <metadata>
                         <title>Wind River Linux</title>
@@ -564,6 +603,16 @@
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:25"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:26" version="1" check="at least one" comment="fedora-release is version Fedora 26"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:26"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:27" version="1" check="at least one" comment="fedora-release is version Fedora 27"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:27"/>
+            </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:1" version="1" check="at least one" comment="/etc/sles-release is provided by sles-release package"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
@@ -629,6 +678,11 @@
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:421"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:422" version="2" check="at least one" comment="openSUSE-release is version 42.2"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:422"/>
             </rpminfo_test>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:1" version="1" check="only one"
                   comment="Installed operating system is part of the Unix family."
@@ -771,6 +825,12 @@
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:25" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^25$</version>
             </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:26" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^26$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:27" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^27$</version>
+            </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^sles-release</name>
             </rpminfo_state>
@@ -809,6 +869,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:421" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^42.1$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:422" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^42.2$</version>
             </rpminfo_state>
             <textfilecontent54_state
                             id="oval:org.open-scap.cpe.wrlinux-release:ste:8"

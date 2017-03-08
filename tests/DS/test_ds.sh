@@ -141,9 +141,55 @@ function test_eval {
     diff /dev/null $stderr; rm $stderr
 }
 
-function test_generate_fix {
+function test_eval_cpe {
+    local stdout=$(mktemp -t ${name}.out.XXXXXX)
+    local stderr=$(mktemp -t ${name}.err.XXXXXX)
+    local ret=0
 
-    $OSCAP xccdf generate fix "${srcdir}/$1"
+    $OSCAP xccdf eval --progress "${srcdir}/$1" 1> $stdout 2> $stderr || ret=$?
+    grep -q "rule_applicable_pass:pass" $stdout
+    grep -q "rule_applicable_fail:fail" $stdout
+    grep -q "rule_notapplicable:notapplicable" $stdout
+    diff /dev/null $stderr
+    rm $stdout $stderr
+}
+
+function test_generate_fix_source {
+    local fixfile=$(mktemp -t ${name}.out.XXXXXX)
+
+    # all rules (default profile)
+    $OSCAP xccdf generate fix --output $fixfile "${srcdir}/$1"
+    grep -q remediation_rule_applicable_pass $fixfile
+    grep -q remediation_rule_applicable_fail $fixfile
+    grep -q remediation_rule_notapplicable $fixfile
+    rm $fixfile
+
+    # selected profile
+    $OSCAP xccdf generate fix --output $fixfile --profile xccdf_org.ssgproject.content_profile_test "${srcdir}/$1"
+    grep -qv remediation_rule_applicable_pass $fixfile
+    grep -q remediation_rule_applicable_fail $fixfile
+    grep -q remediation_rule_notapplicable $fixfile
+    rm $fixfile
+}
+
+function test_generate_fix_results {
+    local fixfile=$(mktemp -t ${name}.out.XXXXXX)
+    local results=$(mktemp -t ${name}.out.XXXXXX)
+
+    # generate all from results
+    $OSCAP xccdf eval --results $results "${srcdir}/$1" || ret=$?
+    $OSCAP xccdf generate fix --output $fixfile $results
+    grep -q remediation_rule_applicable_pass $fixfile
+    grep -q remediation_rule_applicable_fail $fixfile
+    grep -q remediation_rule_notapplicable $fixfile
+    rm $fixfile
+
+    # generate based on TestResult
+    $OSCAP xccdf generate fix --output $fixfile --result-id xccdf_org.open-scap_testresult_default-profile $results
+    grep -qv remediation_rule_applicable_pass $fixfile
+    grep -q remediation_rule_applicable_fail $fixfile
+    grep -qv remediation_rule_notapplicable $fixfile
+    rm $fixfile $results
 }
 
 function test_invalid_eval {
@@ -387,7 +433,6 @@ test_run "sds_tailoring" test_sds_tailoring sds_tailoring sds_tailoring/sds.ds.x
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
 test_run "cpe_in_ds" test_eval cpe_in_ds/sds.xml
-test_run "generate_fix_simple" test_generate_fix eval_simple/sds.xml
 test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
 test_run "eval_invalid_oval" test_invalid_oval_eval eval_invalid/sds-oval.xml
 test_run "eval_xccdf_id1" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_first-xccdf.xml first
@@ -398,8 +443,9 @@ test_run "eval_benchmark_id_conflict" test_eval_benchmark_id eval_benchmark_id_c
 test_run "eval_just_oval" test_oval_eval eval_just_oval/sds.xml
 test_run "eval_oval_id1" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval1.xml "oval:x:def:1"
 test_run "eval_oval_id2" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval2.xml "oval:x:def:2"
-test_run "eval_cpe" test_eval eval_cpe/sds.xml
-test_run "generate_fix_cpe" test_generate_fix eval_cpe/sds.xml
+test_run "eval_cpe" test_eval_cpe eval_cpe/sds.xml
+test_run "generate_fix_cpe_source" test_generate_fix_source eval_cpe/sds.xml
+test_run "generate_fix_cpe_results" test_generate_fix_results eval_cpe/sds.xml
 
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml

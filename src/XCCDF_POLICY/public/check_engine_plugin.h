@@ -52,6 +52,7 @@ struct check_engine_plugin_def
 	const char *(*get_capabilities_fn)(void**);
 };
 
+struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool quiet);
 struct check_engine_plugin_def *check_engine_plugin_load(const char* path);
 void check_engine_plugin_unload(struct check_engine_plugin_def *plugin);
 

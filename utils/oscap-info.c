@@ -115,6 +115,34 @@ static inline void _print_xccdf_referenced_files(struct xccdf_policy_model *poli
 	oscap_file_entry_list_free(referenced_files);
 }
 
+static inline void _print_xccdf_result(struct xccdf_result *xccdf_result, const char *prefix)
+{
+	const char *result_id = xccdf_result_get_id(xccdf_result);
+	const char *benchmark_uri = xccdf_result_get_benchmark_uri(xccdf_result);
+	const char *xccdf_profile = xccdf_result_get_profile(xccdf_result);
+	if (xccdf_profile == NULL) {
+		xccdf_profile = "(default)";
+	}
+	const char *start_time = xccdf_result_get_start_time(xccdf_result);
+	const char *end_time = xccdf_result_get_end_time(xccdf_result);
+	printf("%s\tResult ID: %s\n", prefix, result_id);
+	printf("%s\tSource benchmark: %s\n", prefix, benchmark_uri);
+	printf("%s\tSource profile: %s\n", prefix, xccdf_profile);
+	printf("%s\tEvaluation started: %s\n", prefix, start_time);
+	printf("%s\tEvaluation finished: %s\n", prefix, end_time);
+	printf("%s\tPlatform CPEs:\n", prefix);
+	struct oscap_string_iterator *platforms_it = xccdf_result_get_platforms(xccdf_result);
+	if (!oscap_string_iterator_has_more(platforms_it)) {
+		printf("%s\t\t(none)\n", prefix);
+	}
+	while (oscap_string_iterator_has_more(platforms_it)) {
+		const char *platform = oscap_string_iterator_next(platforms_it);
+		printf("%s\t\t%s\n", prefix, platform);
+	}
+	oscap_string_iterator_free(platforms_it);
+}
+
+
 static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const char *prefix)
 {
 	struct xccdf_result_iterator *res_it = xccdf_benchmark_get_results(bench);
@@ -122,7 +150,7 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 		printf("%sTest Results:\n", prefix);
 	while (xccdf_result_iterator_has_more(res_it)) {
 		struct xccdf_result *test_result = xccdf_result_iterator_next(res_it);
-		printf("%s\t%s\n", prefix, xccdf_result_get_id(test_result));
+		_print_xccdf_result(test_result, prefix);
 	}
 	xccdf_result_iterator_free(res_it);
 }
@@ -338,6 +366,7 @@ static int app_info(const struct oscap_action *action)
 	break;
 	case OSCAP_DOCUMENT_ARF: {
 		printf("Document type: Result Data Stream\n");
+		print_time(action->file);
 		struct ds_rds_session *session = ds_rds_session_new_from_source(source);
 		if (session == NULL) {
 			goto cleanup;
@@ -357,10 +386,29 @@ static int app_info(const struct oscap_action *action)
 			while (rds_report_index_iterator_has_more(report_it)) {
 				struct rds_report_index* report = rds_report_index_iterator_next(report_it);
 				struct rds_report_request_index* request = rds_report_index_get_request(report);
+				const char *report_request_id = rds_report_request_index_get_id(request);
+				const char *report_id = rds_report_index_get_id(report);
 
-				printf(" - %s -> %s\n",
-					rds_report_request_index_get_id(request),
-					rds_report_index_get_id(report));
+				struct oscap_source *report_source = ds_rds_session_select_report(session, report_id);
+				if (report_source == NULL) {
+					goto cleanup;
+				}
+				oscap_document_type_t report_source_type = oscap_source_get_scap_type(report_source);
+				if (report_source_type != OSCAP_DOCUMENT_XCCDF) {
+					oscap_source_free(report_source);
+					goto cleanup;
+				}
+				struct xccdf_result *xccdf_result = xccdf_result_import_source(report_source);
+				if (xccdf_result == NULL) {
+					oscap_source_free(report_source);
+					goto cleanup;
+				}
+				printf("\tARF report: %s\n", report_id);
+				printf("\t\tReport request: %s\n", report_request_id);
+				_print_xccdf_result(xccdf_result, "\t");
+				xccdf_result_free(xccdf_result);
+				// oscap_source_free is not needed, it is already freed by xccdf_result_free
+
 			}
 			rds_report_index_iterator_free(report_it);
 		}

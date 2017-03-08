@@ -124,7 +124,7 @@ oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name)
 bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe)
 {
 	if (verbosity_level == NULL) {
-		return true;
+		verbosity_level = "WARNING";
 	}
 	__debuglog_level = oscap_verbosity_level_from_cstr(verbosity_level);
 	if (__debuglog_level == DBG_UNKNOWN) {

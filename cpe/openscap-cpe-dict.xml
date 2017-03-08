@@ -81,6 +81,14 @@
             <title xml:lang="en-us">Fedora 25</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:25</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:26">
+            <title xml:lang="en-us">Fedora 26</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:26</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:27">
+            <title xml:lang="en-us">Fedora 27</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:27</check>
+      </cpe-item>
       <cpe-item name="cpe:/o:suse:sle">
             <title xml:lang="en-us">SUSE Linux Enterprise all versions</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:1</check>
@@ -124,6 +132,10 @@
       <cpe-item name="cpe:/o:novell:leap:42.1">
             <title xml:lang="en-us">openSUSE 42.1</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:421</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:novell:leap:42.2">
+            <title xml:lang="en-us">openSUSE 42.2</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:422</check>
       </cpe-item>
       <cpe-item name="cpe:/o:opensuse:opensuse">
             <title xml:lang="en-us">openSUSE All Versions</title>
