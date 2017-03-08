@@ -91,6 +91,9 @@ int probe_main (probe_ctx *ctx, void *arg)
         struct dpkginfo_reply_t *dpkginfo_reply = NULL;
         int errflag;
 
+	if (arg == NULL) {
+		return PROBE_EINIT;
+	}
         ent = probe_obj_getent(probe_ctx_getobject(ctx), "name", 1);
 
         if (ent == NULL) {
