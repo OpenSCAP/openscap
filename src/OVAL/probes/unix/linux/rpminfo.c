@@ -378,6 +378,9 @@ int probe_main (probe_ctx *ctx, void *arg)
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
+	if (arg == NULL) {
+		return PROBE_EINIT;
+	}
 	if (g_rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
