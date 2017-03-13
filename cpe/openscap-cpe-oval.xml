@@ -681,7 +681,7 @@
             </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:422" version="2" check="at least one" comment="openSUSE-release is version 42.2"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:2"/>
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:422"/>
             </rpminfo_test>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:1" version="1" check="only one"
