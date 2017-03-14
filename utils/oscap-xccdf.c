@@ -193,6 +193,8 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
 			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
 			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
+			"  --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
+			"  --verbose-log-file <file>\r\t\t\t\t - Write verbose informations into file.\n"
 	,
 	.opt_parser = getopt_xccdf,
 	.func = app_xccdf_remediate
@@ -614,6 +616,10 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 
 int app_xccdf_remediate(const struct oscap_action *action)
 {
+	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
+		return OSCAP_ERROR;
+	}
+
 	struct xccdf_session *session = NULL;
 	int result = OSCAP_ERROR;
 	session = xccdf_session_new(action->f_xccdf);
