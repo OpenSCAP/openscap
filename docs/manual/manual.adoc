@@ -1601,6 +1601,90 @@ Scan can be evaluated without specific profile, otherwise profile can be selecte
 The command above evaluates rules without specific profile. XCCDF results are stored in *results.xml* file.
 
 
+== Other utilities
+
+Apart from the ```oscap``` command, OpenSCAP provides also other utilities for
+special purposes. Those utilities use ```oscap``` under the hood, but they
+enable users to perform advanced tasks in a single command.
+This manual gives a quick overview of and shows basic usage of these tools.
+Each of the tools have its own manual page that gives more detailed information.
+
+=== Scanning remote machines using oscap-ssh
+
+The ```oscap-ssh``` is a simple tool for scanning remote machines with OpenSCAP
+over network and collecting results.
+
+The tool uses SSH connection to copy the SCAP content to a remote machine, then
+it runs an evaluation of the target system and downloads the results back.
+The remote machine needs to have OpenSCAP installed.
+
+The tool can evaluate source DataStreams and OVAL files.
+Usage of the tool mimics usage and options of ```oscap``` tool.
+
+In the following example, we will scan a remote Fedora server located on IP address
+*192.168.1.13* that listens for SSH connections on port *22*.
+The server will be scanned for compliance with the *Common Profile for General-Purpose
+Fedora Systems* provided by SCAP Security Guide.
+HTML report is written out as *report.html* on the local machine.
+
+ $ oscap-ssh root@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
+
+=== Scanning of Docker containers and images using oscap-docker
+
+The ```oscap-docker``` is used to scan Docker containers and images. It can
+assess vulnerabilities in the container or image and check their compliance
+with security policies. Usage of the tool mimics usage and options
+of ```oscap``` tool.
+
+The ```oscap-docker``` tool uses a technique called offline scanning.
+That means that the filesystem of the container is mounted to a directory
+on the host. The mounted filesystem is read-only. OpenSCAP then assess
+the container from the host. Therefore no agent is installed
+in the container and container is not touched or changed in any way.
+
+However, ```oscap-docker``` requires http://www.projectatomic.io/[Atomic]
+installed on the host. Atomic is advanced container management solution and
+it enables ```oscap-docker``` to access the containers.
+
+In the first example, we will perform a vulnerability assessment
+of an Docker image of Red Hat Enterprise Linux 7 (named *rhel7*). The command
+will attach docker image, determine OS variant/version, download CVE stream
+applicable to the given image and finally it will evaluate the image
+for vulnerabilities. CVE stream is a list of vulnerabilities in SCAP format
+and is downloaded directly from Red Hat.
+HTML report is written out as *report.html* on the local machine.
+
+ $ oscap-docker image-cve rhel7 --report report.html
+
+In the second example, we will check the same *rhel7* image for
+compliance with a security policy specified in an XCCDF checklist.
+
+ $ oscap-docker image rhel7 xccdf eval --report report.html xccdf.xml
+
+To scan running containers, commands are very similar, just replace
+"image-cve" with "container-cve" and "image" with "container".
+
+=== Scanning of virtual machines using oscap-vm
+
+OpenSCAP provides a simple tool to evaluate virtual machines called ```oscap-vm```.
+
+The tool can scan given virtual machine directly from the virtualisation host.
+Usage of the tool mimics usage and options of ```oscap``` tool.
+
+Similarly to ```oscap-docker```, this utility also uses offline scanning,
+so it doesn't install anything in the guest, doesn't require OpenSCAP
+installed in the guest and it doesn't create or change anything in the
+guest's filesystem.
+
+=== Scanning arbitrary filesystems using oscap-chroot
+
+A very simple script ```oscap-chroot``` can be used to perform
+an offline scan of a filesystem that is mounted at arbitrary path.
+It can be used for scanning of custom objects that are not supported
+by ```oscap-docker``` or ```oscap-vm```, like containers in other
+formats than Docker.
+Again, usage of the tool mimics usage and options of ```oscap``` tool.
+
 
 [[devs]]
 == Developer's operations
