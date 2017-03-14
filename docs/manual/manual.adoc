@@ -833,32 +833,32 @@ human-readable form. The following commands represent the most common
 cases:
 
 * Creating a guide (see an
-http://mpreisle.fedorapeople.org/openscap/guide.html[example]):
+https://static.open-scap.org/examples/guide.html[example]):
 --------------------------------------------------------
 $ oscap xccdf generate guide scap-xccdf.xml > guide.html
 --------------------------------------------------------
 
 * Creating a guide with profile checklist (see an
-http://mpreisle.fedorapeople.org/openscap/guide-checklist.html[example]):
+https://static.open-scap.org/examples/guide-checklist.html[example]):
 ------------------------------------------------------------------------------------
 $ oscap xccdf generate guide --profile Desktop scap-xccdf.xml > guide-checklist.html
 ------------------------------------------------------------------------------------
 
 * Generating the XCCDF scan report (see an
-http://mpreisle.fedorapeople.org/openscap/report-xccdf.html[example]):
+https://static.open-scap.org/examples/report-xccdf.html[example]):
 -------------------------------------------------------------------
 $ oscap xccdf generate report xccdf-results.xml > report-xccdf.html
 -------------------------------------------------------------------
 
 * Generating the OVAL scan report (see an
-http://mpreisle.fedorapeople.org/openscap/report-oval.html[example]):
+https://static.open-scap.org/examples/report-oval.html[example]):
 ----------------------------------------------------------------
 $ oscap oval generate report oval-results.xml > report-oval.html
 ----------------------------------------------------------------
 
 * Generating the XCCDF report with additional information from failed
 OVAL tests (see an
-http://mpreisle.fedorapeople.org/openscap/report-xccdf-oval.html[example]):
+https://static.open-scap.org/examples/report-xccdf-oval.html[example]):
 ----
 $ oscap xccdf generate report --oval-template oval-results.xml xccdf-results.xml > report-xccdf-oval.html
 ----
