@@ -200,10 +200,14 @@ void sce_check_result_export(struct sce_check_result* v, const char* target_file
 	oscap_string_iterator_free(it);
 	fprintf(f, "\t</sceres:environment>\n");
 	fprintf(f, "\t<sceres:stdout><![CDATA[\n");
-	fwrite(v->std_out, 1, strlen(v->std_out), f);
+	int ret = fwrite(v->std_out, 1, strlen(v->std_out), f);
+	if (ret < strlen(v->std_out))
+		dE("Failed to write stdout result to %s.\n", target_file);
 	fprintf(f, "\t]]></sceres:stdout>\n");
 	fprintf(f, "\t<sceres:stderr><![CDATA[\n");
-	fwrite(v->std_err, 1, strlen(v->std_err), f);
+	ret = fwrite(v->std_err, 1, strlen(v->std_err), f);
+	if (ret < strlen(v->std_err))
+		dE("Failed to write stderr result to %s.\n", target_file);
 	fprintf(f, "\t]]></sceres:stderr>\n");
 	fprintf(f, "\t<sceres:exit_code>%i</sceres:exit_code>\n", sce_check_result_get_exit_code(v));
 	fprintf(f, "\t<sceres:result>%s</sceres:result>\n", xccdf_test_result_type_get_text(sce_check_result_get_xccdf_result(v)));
