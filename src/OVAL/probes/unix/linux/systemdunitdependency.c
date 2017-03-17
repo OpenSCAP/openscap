@@ -250,7 +250,11 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
 	if (dbus_conn == NULL) {
 		dbus_error_free(&dbus_error);
-		return PROBE_ESYSTEM;
+		SEXP_t *msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_INFO, "DBus connection failed, could not identify systemd units.");
+		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+		SEXP_free(msg);
+		return 0;
 	}
 
 	unit_entity = probe_obj_getent(probe_in, "unit", 1);
