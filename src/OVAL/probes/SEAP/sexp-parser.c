@@ -239,7 +239,7 @@ static inline bool isnextexp (int c)
 
 /**
  * The S-expression parser
- * @param psetup parser settings (this argument is ignored is *pstate != NULL)
+ * @param psetup parser settings (this argument is ignored if *pstate != NULL)
  * @param buffer buffer containg an S-expression in textual form
  * @param length length of the buffer
  * @param pstate pointer to SEXP_pstate_t pointer where the parser state will be allocated
@@ -518,7 +518,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         L_CHAR_FIXEDLEN:
                 e_dsc.p_label = SEXP_LABELNUM_CHAR_FIXED;
 
-                if (e_dsc.p_bufoff + e_dsc.p_explen > spb_len) {
+                if (e_dsc.p_bufoff + e_dsc.p_explen >= spb_len) {
                         ret_p = SEXP_PRET_EUNFIN;
                         break;
                 } else {
