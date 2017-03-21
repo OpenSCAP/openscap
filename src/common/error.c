@@ -54,8 +54,6 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, const char *d
 	err->line = line;
 	err->file = file;
 
-	dE("\(%s:%d:%s\()) %s", file, line, func, desc);
-
 	return (err);
 }
 

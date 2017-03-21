@@ -1666,7 +1666,7 @@ _xccdf_policy_add_selector_internal(struct xccdf_policy *policy, struct xccdf_be
 	/** If the selector doesn't point to an item it can still point to the cluster. */
 	struct oscap_htable_iterator *hit = xccdf_benchmark_get_cluster_items(benchmark, xccdf_select_get_item(sel));
 	if (hit == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_XCCDF, "Selector ID(%s) does not exist in Benchmark.", xccdf_select_get_item(sel));
+		dW("Selector ID(%s) does not exist in Benchmark and it will be ignored.", xccdf_select_get_item(sel));
 		return false;
 	}
 	if (!oscap_htable_iterator_has_more(hit)) {

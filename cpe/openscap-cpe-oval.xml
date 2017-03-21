@@ -60,8 +60,12 @@
                         <reference ref_id="cpe:/o:redhat:enterprise_linux:7" source="CPE"/>
                         <description>The operating system installed on the system is Red Hat Enterprise Linux 7</description>
                   </metadata>
-                  <criteria>
+                  <criteria operator="OR">
                         <criterion comment="Red Hat Enterprise Linux 7 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:7"/>
+                        <criteria operator="AND" comment="Red Hat Enterpise Virtualization Host is installed">
+                              <criterion comment="redhat-release-virtualization-host RPM package is installed" test_ref="oval:org.open-scap.cpe.rhevh:tst:1" />
+                              <criterion comment="Red Hat Enterpise Virtualization Host is based on RHEL 7" test_ref="oval:org.open-scap.cpe.rhevh:tst:2" />
+                         </criteria>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1005" version="1">
@@ -681,7 +685,7 @@
             </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:422" version="2" check="at least one" comment="openSUSE-release is version 42.2"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:2"/>
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:422"/>
             </rpminfo_test>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:1" version="1" check="only one"
@@ -709,6 +713,13 @@
                             >
                   <object object_ref="oval:org.open-scap.cpe.wrlinux-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.wrlinux-release:ste:8"/>
+            </textfilecontent54_test>
+            <rpminfo_test check="all" check_existence="only_one_exists" comment="redhat-release-virtualization-host RPM package is installed" id="oval:org.open-scap.cpe.rhevh:tst:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.rhevh:obj:1" />
+            </rpminfo_test>
+            <textfilecontent54_test check="all" comment="RHEVH base RHEL is version 7" id="oval:org.open-scap.cpe.rhevh:tst:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <object object_ref="oval:org.open-scap.cpe.rhevh:obj:2" />
+                  <state state_ref="oval:org.open-scap.cpe.rhevh:ste:2" />
             </textfilecontent54_test>
       </tests>
       <objects>
@@ -750,6 +761,14 @@
                 <path>/etc</path>
                 <filename>wrlinux-release</filename>
                 <pattern operation="pattern match">^VERSION=.([[:digit:]]*)</pattern>
+                <instance operation="greater than or equal" datatype="int">1</instance>
+            </textfilecontent54_object>
+            <rpminfo_object id="oval:org.open-scap.cpe.rhevh:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                <name>redhat-release-virtualization-host</name>
+            </rpminfo_object>
+            <textfilecontent54_object id="oval:org.open-scap.cpe.rhevh:obj:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                <filepath>/etc/redhat-release</filepath>
+                <pattern operation="pattern match">^Red Hat Enterprise Linux release (\d)\.\d+$</pattern>
                 <instance operation="greater than or equal" datatype="int">1</instance>
             </textfilecontent54_object>
       </objects>
@@ -880,6 +899,9 @@
                             xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
                             >
                   <subexpression operation="pattern match">8</subexpression>
+            </textfilecontent54_state>
+            <textfilecontent54_state id="oval:org.open-scap.cpe.rhevh:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
+                  <subexpression operation="pattern match">7</subexpression>
             </textfilecontent54_state>
       </states>
 </oval_definitions>

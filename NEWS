@@ -1,3 +1,33 @@
+openscap-1.2.14                                                 21-03-2017
+  - New features
+    - Detailed information about ARF files in 'oscap info' (issue #664)
+    - XSLT template creating XCCDF files from OVAL files
+    - Generating remediation scripts from ARF
+    - Significant improvements of User Manual  (issue #249, #513)
+    - HTML report UX improvements (issue #601, #620, #622, #655)
+    - Warnings are shown by default
+    - Verbose mode is available in 'xccdf remediate' module (issue #520)
+    - Added Fedora 26, Fedora 27 and OpenSUSE 42.2 CPEs (issue #698)
+    - Support for Anaconda remediation in HTML report
+  - Maintenance
+    - Fixed CPE dictionary to identify RHEVH as RHEL7 (RHBZ #1420038)
+    - Fixed systemd probes crashes inside containers (RHBZ #1431186, issue #700)
+    - Added a warning on non-existing XCCDF Benchmarks (issue #614)
+    - Fixed output on terminals with white background (RHBZ #1365911, issue #512)
+    - Error handling in oscap-vm (RHBZ #1391754)
+    - Fixed SCE stderr stalling (RHBZ #1420811)
+    - Fixed Android OVAL schema (issue #279)
+    - Fixed absolute filepath parsing in OVAL (RHBZ #1312831, #1312824)
+    - Fixes based on Coverity scan report (issue #581, #634, #681)
+    - Fixed duplicated error messages (issue #707)
+    - Fixed XCCDF score calculation (issue #617)
+    - Fixed segmentation faults in RPM probes (RHBZ #1414303, #1414312)
+    - Fixed failing DataStream build if "@" is in filepath
+    - Fixed missing header in result-oriented Ansible remediations
+    - Memory leak and resource leak fixes (issue #635, #636)
+    - New upstream tests
+    - Many minor fixes and improvements
+
 openscap-1-2.13                                                 05-01-2017
   - Maintenance
     - we always build system_info OVAL probe, fixed configure output accordingly
