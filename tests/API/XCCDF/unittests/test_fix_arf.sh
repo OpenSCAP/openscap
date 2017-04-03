@@ -34,6 +34,7 @@ grep -q "$bash_line2" $script
 
 # Generate an Ansible playbook from a profile in ARF file
 $OSCAP xccdf generate fix --profile $profile --template $ansible_template --output $playbook $results_arf >$stdout 2>$stderr
+diff $playbook $srcdir/$name.playbook1.yml
 [ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q "$ansible_task1a" $playbook
@@ -50,6 +51,7 @@ grep -q "$bash_line2" $script
 
 # Generate  an Ansible playbook based on scan results stored in ARF file
 $OSCAP xccdf generate fix --result-id $result_id --template $ansible_template --output $playbook $results_arf >$stdout 2>$stderr
+diff $playbook $srcdir/$name.playbook2.yml
 [ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q -v "$ansible_task1a" $playbook
