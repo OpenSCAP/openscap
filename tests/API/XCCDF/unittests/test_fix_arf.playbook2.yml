@@ -1,0 +1,6 @@
+---
+# - hosts: localhost # set required host
+   tasks:
+
+    - name: correct the failing case
+        shell: /bin/false
