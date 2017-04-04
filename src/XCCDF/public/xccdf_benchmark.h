@@ -780,6 +780,9 @@ struct xccdf_benchmark * xccdf_benchmark_clone( const struct  xccdf_benchmark * 
  */
 const char * xccdf_benchmark_supported(void);
 
+/// @memberof xccdf_benchmark
+const struct xccdf_version_info *xccdf_benchmark_supported_schema_version(void);
+
 /// @memberof xccdf_profile
 struct xccdf_profile *xccdf_profile_new(void);
 /// @memberof xccdf_profile

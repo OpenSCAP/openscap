@@ -78,6 +78,16 @@ static const struct xccdf_version_info XCCDF_VERSION_MAP[] = {
 	{NULL, NULL, NULL}
 };
 
+const struct xccdf_version_info *xccdf_version_info_find(const char *version)
+{
+	const struct xccdf_version_info *mapptr;
+	for (mapptr = XCCDF_VERSION_MAP; mapptr->version != 0; ++mapptr) {
+		if (!strcmp(mapptr->version, version))
+			return mapptr;
+	}
+	return NULL;
+}
+
 static const struct xccdf_version_info *_namespace_get_xccdf_version_info(const char *namespace_uri)
 {
 	const struct xccdf_version_info *mapptr;
