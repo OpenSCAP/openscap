@@ -121,6 +121,20 @@ void oval_variable_possible_value_free(struct oval_variable_possible_value *pv)
 	}
 }
 
+char* oval_variable_possible_value_get_hint(struct oval_variable_possible_value* pv)
+{
+    __attribute__nonnull__(pv);
+
+    return pv->hint;
+}
+
+char* oval_variable_possible_value_get_value(struct oval_variable_possible_value* pv)
+{
+    __attribute__nonnull__(pv);
+
+    return pv->value;
+}
+
 bool oval_variable_possible_value_iterator_has_more(struct oval_variable_possible_value_iterator* iter)
 {
 	return oval_collection_iterator_has_more((struct oval_iterator*)iter);
@@ -174,7 +188,16 @@ struct oval_variable_restriction_iterator *oval_variable_possible_restriction_ge
 
 oval_operator_t oval_variable_possible_restriction_get_operator(struct oval_variable_possible_restriction *possible_restriction)
 {
+	__attribute__nonnull__(possible_restriction);
+
 	return possible_restriction->operator;
+}
+
+char* oval_variable_possible_restriction_get_hint(struct oval_variable_possible_restriction* possible_restriction)
+{
+	__attribute__nonnull__(possible_restriction);
+
+	return possible_restriction->hint;
 }
 
 
@@ -216,6 +239,19 @@ void oval_variable_restriction_free(struct oval_variable_restriction *r)
 	}
 }
 
+oval_operation_t oval_variable_restriction_get_operation(struct oval_variable_restriction* restriction)
+{
+    __attribute__nonnull__(restriction);
+
+    return restriction->operation;
+}
+
+char* oval_variable_restriction_get_value(struct oval_variable_restriction* restriction)
+{
+    __attribute__nonnull__(restriction);
+
+    return restriction->value;
+}
 
 bool oval_variable_restriction_iterator_has_more(struct oval_variable_restriction_iterator* iter)
 {
