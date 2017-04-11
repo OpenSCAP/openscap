@@ -338,14 +338,17 @@ struct oval_variable;
  * @struct oval_variable_possible_value
  */
 struct oval_variable_possible_value;
+struct oval_variable_possible_value_iterator;
 /**
  * @struct oval_variable_possible_restriction
  */
 struct oval_variable_possible_restriction;
+struct oval_variable_possible_restriction_iterator;
 /**
  * @struct oval_variable_restriction
  */
 struct oval_variable_restriction;
+struct oval_variable_restriction_iterator;
 /**
  * @struct oval_variable_iterator
  * @see oval_definition_model_get_variables
@@ -1652,6 +1655,29 @@ struct oval_variable_possible_value *oval_variable_possible_value_new(const char
 void oval_variable_possible_value_free(struct oval_variable_possible_value *pv);
 
 /**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @memberof oval_variable_possible_value_iterator
+ */
+bool oval_variable_possible_value_iterator_has_more(struct oval_variable_possible_value_iterator*);
+/**
+ * @memberof oval_variable_possible_value_iterator
+ */
+struct oval_variable_possible_value *oval_variable_possible_value_iterator_next(struct oval_variable_possible_value_iterator*);
+/**
+ * @memberof oval_variable_possible_value_iterator
+ */
+int oval_variable_possible_value_iterator_remaining(struct oval_variable_possible_value_iterator*);
+/**
+ * @memberof oval_variable_possible_value_iterator
+ */
+void oval_variable_possible_value_iterator_free(struct oval_variable_possible_value_iterator*);
+/** @} */
+
+
+/**
  * Construct new instance of possible_restriction element.
  * @param operator Operator to evaluation
  * @param hint A short description of what the value means or represents.
@@ -1666,6 +1692,30 @@ struct oval_variable_possible_restriction *oval_variable_possible_restriction_ne
  */
 void oval_variable_possible_restriction_free(struct oval_variable_possible_restriction *pr);
 
+
+/**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @memberof oval_variable_possible_restriction_iterator
+ */
+bool oval_variable_possible_restriction_iterator_has_more(struct oval_variable_possible_restriction_iterator* iter);
+/**
+ * @memberof oval_variable_possible_restriction_iterator
+ */
+struct oval_variable_possible_restriction *oval_variable_possible_restriction_iterator_next(struct oval_variable_possible_restriction_iterator* iter);
+/**
+ * @memberof oval_variable_possible_restriction_iterator
+ */
+int oval_variable_possible_restriction_iterator_remaining(struct oval_variable_possible_restriction_iterator* iter);
+/**
+ * @memberof oval_variable_possible_restriction_iterator
+ */
+void oval_variable_possible_restriction_iterator_free(struct oval_variable_possible_restriction_iterator* iter);
+/** @} */
+
+
 /**
  * Construct new instance of restriction element.
  * @param operation Operation of restriction.
@@ -1679,6 +1729,29 @@ struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t
  * @memberof oval_variable_restriction
  */
 void oval_variable_restriction_free(struct oval_variable_restriction *r);
+
+/**
+ * @name Iterators
+ * @{
+ */
+/**
+ * @memberof oval_variable_restriction_iterator
+ */
+bool oval_variable_restriction_iterator_has_more(struct oval_variable_restriction_iterator*);
+/**
+ * @memberof oval_variable_restriction_iterator
+ */
+struct oval_variable_restriction *oval_variable_restriction_iterator_next(struct oval_variable_restriction_iterator*);
+/**
+ * @memberof oval_variable_restriction_iterator
+ */
+int oval_variable_restriction_iterator_remaining(struct oval_variable_restriction_iterator*);
+/**
+ * @memberof oval_variable_restriction_iterator
+ */
+void oval_variable_restriction_iterator_free(struct oval_variable_restriction_iterator*);
+/** @} */
+
 
 /**
  * @name Setters
@@ -1828,7 +1901,7 @@ struct oval_component *oval_variable_get_component(struct oval_variable *);	//ty
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable);
+struct oval_variable_possible_value_iterator *oval_variable_get_possible_values(struct oval_variable *variable);
 
 /**
  * Get list of constraints for an external variable.
@@ -1836,7 +1909,7 @@ struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *va
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable);
+struct oval_variable_possible_restriction_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable);
 
 
 /**
@@ -1845,7 +1918,7 @@ struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variab
  * It should be freed after use by the calling application.
  * @memberof oval_variable_possible_restriction
  */
-struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction);
+struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
  * Get operator of possible_restriction element
