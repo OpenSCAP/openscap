@@ -192,7 +192,7 @@ void oval_string_map_free_string(struct oval_string_map *map)
 	oval_string_map_free(map, free);
 }
 #else
-# include <rbt/rbt.h>
+# include "probes/SEAP/generic/rbt/rbt.h"
 # include <assume.h>
 
 struct oval_string_map *oval_string_map_new(void)
