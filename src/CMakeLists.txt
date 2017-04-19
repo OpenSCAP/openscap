@@ -37,6 +37,19 @@ file(GLOB DS_PUBLIC_HEADERS    "DS/public/*.h")
 file(GLOB OVAL_SOURCES           "OVAL/*.c")
 file(GLOB OVAL_PRIV_HEADERS      "OVAL/*.h")
 file(GLOB OVAL_PUBLIC_HEADERS    "OVAL/public/*.h")
+
+# OVAL results
+file(GLOB OVAL_RESULTS_SOURCES           "OVAL/results/*.c")
+file(GLOB OVAL_RESULTS_PRIV_HEADERS      "OVAL/results/*.h")
+
+# OVAL ADT
+file(GLOB OVAL_ADT_SOURCES           "OVAL/adt/*.c")
+file(GLOB OVAL_ADT_PRIV_HEADERS      "OVAL/adt/*.h")
+
+# OVAL RBT
+file (GLOB OVAL_RBT_SOURCES "OVAL/probes/SEAP/generic/rbt/*.c")
+file (GLOB OVAL_RBT_PRIV_HEADERS "OVAL/probes/SEAP/generic/rbt/*.h")
+
 # Check if there are going to be double added during the build if we remove this list()
 list(REMOVE_ITEM OVAL_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/OVAL/oval_probe.c"
                               "${CMAKE_CURRENT_SOURCE_DIR}/OVAL/oval_probe_ext.c"
@@ -90,7 +103,11 @@ add_library(openscap SHARED
             ${CVSS_SOURCES} ${CVSS_PRIV_HEADERS} ${CVSS_PUBLIC_HEADERS}
             ${DS_SOURCES} ${DS_PRIV_HEADERS} ${DS_PUBLIC_HEADERS}
             ${OVAL_SOURCES} ${OVAL_PRIV_HEADERS} ${OVAL_PUBLIC_HEADERS}
+            ${OVAL_ADT_SOURCES} ${OVAL_ADT_PRIV_HEADERS}
+            ${OVAL_RESULTS_SOURCES} ${OVAL_RESULTS_PRIV_HEADERS}
+            ${OVAL_RBT_SOURCES} ${OVAL_RBT_PRIV_HEADERS}
             ${XCCDF_SOURCES} ${XCCDF_PRIV_HEADERS} ${XCCDF_PUBLIC_HEADERS}
             ${XCCDF_POLICY_SOURCES} ${XCCDF_POLICY_PRIV_HEADERS} ${XCCDF_POLICY_PUBLIC_HEADERS}
             
 )
+
