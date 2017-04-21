@@ -26,6 +26,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+#if defined (__SVR4) && defined (__sun)
 
 #include <config.h>
 
@@ -1158,3 +1159,4 @@ bail:
 }
 
 #endif /* HAVE_FTS_OPEN */
+#endif
