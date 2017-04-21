@@ -67,7 +67,6 @@ const char *oscap_string_get_cstr(const struct oscap_string *s);
  */
 char* oscap_string_bequeath(struct oscap_string *s);
 
-OSCAP_HIDDEN_START;
 
 /**
  * Returns true if the string has no characters; otherwise returns false
