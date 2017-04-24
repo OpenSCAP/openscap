@@ -548,6 +548,16 @@ static int _write_fix_footer_to_fd(const char *sys, int output_fd, struct xccdf_
 	}
 }
 
+static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule)
+{
+	if (oscap_streq(sys, "urn:xccdf:fix:script:sh")) {
+		char *fix_footer = oscap_sprintf("# FIX FOR THIS RULE IS MISSING\n");
+		return _write_text_to_fd_and_free(output_fd, fix_footer);
+	} else {
+		return 0;
+	}
+}
+
 static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total)
 {
 	// Ensure that given Rule is selected and applicable (CPE).
@@ -559,8 +569,15 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	// Find the most suitable fix.
 	const struct xccdf_fix *fix = _find_fix_for_template(policy, rule, template);
 	if (fix == NULL) {
+		int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
+		if (ret != 0)
+			return ret;
+		ret = _write_fix_missing_warning_to_fd(template, output_fd, rule);
+		if (ret != 0)
+			return ret;
+		ret = _write_fix_footer_to_fd(template, output_fd, rule);
 		dI("No fix element was found for Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
-		return 0;
+		return ret;
 	}
 	dI("Processing a fix for Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
 
