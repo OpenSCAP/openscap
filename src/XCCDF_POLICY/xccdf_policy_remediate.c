@@ -597,7 +597,7 @@ cleanup:
 	return ret;
 }
 
-static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct xccdf_item *item, const char *template, int output_fd)
+static int _xccdf_item_recursive_gather_rules(struct xccdf_item *item, struct oscap_list *rule_list)
 {
 	int ret = 0;
 	switch (xccdf_item_get_type(item)) {
@@ -605,14 +605,14 @@ static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct x
 		struct xccdf_item_iterator *child_it = xccdf_group_get_content((struct xccdf_group *) item);
 		while (xccdf_item_iterator_has_more(child_it)) {
 			struct xccdf_item *child = xccdf_item_iterator_next(child_it);
-			ret = _xccdf_policy_item_generate_fix(policy, child, template, output_fd);
+			ret = _xccdf_item_recursive_gather_rules(child, rule_list);
 			if (ret != 0)
 				break;
 		}
 		xccdf_item_iterator_free(child_it);
 		} break;
 	case XCCDF_RULE:{
-		ret = _xccdf_policy_rule_generate_fix(policy, (struct xccdf_rule *) item, template, output_fd);
+		oscap_list_add(rule_list, (struct xccdf_rule *) item);
 		} break;
 	default:
 		assert(false);
@@ -643,6 +643,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	__attribute__nonnull__(policy);
 	int ret = 0;
 
+	struct oscap_list *rules_to_fix = oscap_list_new();
 	if (result == NULL) {
 		// No TestResult is available. Generate fix from the stock profile.
 		dI("Generating profile-oriented fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
@@ -658,12 +659,11 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
 			struct xccdf_item *item = xccdf_item_iterator_next(item_it);
-			ret = _xccdf_policy_item_generate_fix(policy, item, sys, output_fd);
+			ret = _xccdf_item_recursive_gather_rules(item, rules_to_fix);
 			if (ret != 0)
 				break;
 		}
 		xccdf_item_iterator_free(item_it);
-		return ret;
 	}
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
@@ -677,12 +677,20 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 			if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
 				continue;
 			struct xccdf_rule *rule = _lookup_rule_by_rule_result(policy, rr);
-			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd);
-			if (ret != 0)
-				break;
+			oscap_list_add(rules_to_fix, rule);
 		}
 		xccdf_rule_result_iterator_free(rr_it);
-
-		return ret;
 	}
+
+	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+	while (oscap_iterator_has_more(rules_to_fix_it)) {
+		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
+		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd);
+		if (ret != 0)
+			break;
+	}
+
+	oscap_iterator_free(rules_to_fix_it);
+	oscap_list_free(rules_to_fix, NULL);
+	return ret;
 }
