@@ -614,15 +614,19 @@ cleanup:
 	return ret;
 }
 
-static int _xccdf_item_recursive_gather_rules(struct xccdf_item *item, struct oscap_list *rule_list)
+static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *policy, struct xccdf_item *item, struct oscap_list *rule_list)
 {
 	int ret = 0;
+	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_item_get_id(item));
+	if (!is_selected) {
+		return ret;
+	}
 	switch (xccdf_item_get_type(item)) {
 	case XCCDF_GROUP:{
 		struct xccdf_item_iterator *child_it = xccdf_group_get_content((struct xccdf_group *) item);
 		while (xccdf_item_iterator_has_more(child_it)) {
 			struct xccdf_item *child = xccdf_item_iterator_next(child_it);
-			ret = _xccdf_item_recursive_gather_rules(child, rule_list);
+			ret = _xccdf_item_recursive_gather_selected_rules(policy, child, rule_list);
 			if (ret != 0)
 				break;
 		}
@@ -676,7 +680,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
 			struct xccdf_item *item = xccdf_item_iterator_next(item_it);
-			ret = _xccdf_item_recursive_gather_rules(item, rules_to_fix);
+			ret = _xccdf_item_recursive_gather_selected_rules(policy, item, rules_to_fix);
 			if (ret != 0)
 				break;
 		}
