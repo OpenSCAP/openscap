@@ -528,6 +528,26 @@ static const struct xccdf_fix *_find_fix_for_template(struct xccdf_policy *polic
 	return fix;
 }
 
+static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule)
+{
+	if (oscap_streq(sys, "urn:xccdf:fix:script:sh")) {
+		char *fix_header = oscap_sprintf("# BEGIN fix for '%s'\n", xccdf_rule_get_id(rule));
+		return _write_text_to_fd_and_free(output_fd, fix_header);
+	} else {
+		return 0;
+	}
+}
+
+static int _write_fix_footer_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule)
+{
+	if (oscap_streq(sys, "urn:xccdf:fix:script:sh")) {
+		char *fix_footer = oscap_sprintf("# END fix for '%s'\n\n", xccdf_rule_get_id(rule));
+		return _write_text_to_fd_and_free(output_fd, fix_footer);
+	} else {
+		return 0;
+	}
+}
+
 static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd)
 {
 	// Ensure that given Rule is selected and applicable (CPE).
@@ -563,12 +583,18 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	}
 	xccdf_fix_free(cfix);
 
-	// Print-out the fix to the output_fd
-	if (_write_remediation_to_fd_and_free(output_fd, template, fix_text) != 0) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "write of the fix to fd=%d failed: %s", output_fd, strerror(errno));
-		return 1;
-	}
-	return 0;
+	int ret = _write_fix_header_to_fd(template, output_fd, rule);
+	if (ret != 0)
+		goto cleanup;
+	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	if (ret != 0)
+		goto cleanup;
+	fix_text = NULL;
+	ret = _write_fix_footer_to_fd(template, output_fd, rule);
+
+cleanup:
+	oscap_free(fix_text);
+	return ret;
 }
 
 static int _xccdf_policy_item_generate_fix(struct xccdf_policy *policy, struct xccdf_item *item, const char *template, int output_fd)
