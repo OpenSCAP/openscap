@@ -528,10 +528,10 @@ static const struct xccdf_fix *_find_fix_for_template(struct xccdf_policy *polic
 	return fix;
 }
 
-static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule)
+static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule, unsigned int current, unsigned int total)
 {
 	if (oscap_streq(sys, "urn:xccdf:fix:script:sh")) {
-		char *fix_header = oscap_sprintf("# BEGIN fix for '%s'\n", xccdf_rule_get_id(rule));
+		char *fix_header = oscap_sprintf("# BEGIN fix for '%s' (%i / %i)\n", xccdf_rule_get_id(rule), current, total);
 		return _write_text_to_fd_and_free(output_fd, fix_header);
 	} else {
 		return 0;
@@ -548,7 +548,7 @@ static int _write_fix_footer_to_fd(const char *sys, int output_fd, struct xccdf_
 	}
 }
 
-static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd)
+static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total)
 {
 	// Ensure that given Rule is selected and applicable (CPE).
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
@@ -583,7 +583,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	}
 	xccdf_fix_free(cfix);
 
-	int ret = _write_fix_header_to_fd(template, output_fd, rule);
+	int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
 	if (ret != 0)
 		goto cleanup;
 	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
@@ -682,10 +682,12 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		xccdf_rule_result_iterator_free(rr_it);
 	}
 
+	const unsigned int total = oscap_list_get_itemcount(rules_to_fix);
+	unsigned int current = 1;
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 	while (oscap_iterator_has_more(rules_to_fix_it)) {
 		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd);
+		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total);
 		if (ret != 0)
 			break;
 	}
