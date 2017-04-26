@@ -215,6 +215,17 @@
 
 %module openscap
 %{
+ #include "../../src/DS/public/ds_rds_session.h"
+ #include "../../src/DS/public/ds_sds_session.h"
+ #include "../../src/DS/public/scap_ds.h"
+%}
+%include "../../src/DS/public/ds_rds_session.h"
+%include "../../src/DS/public/ds_sds_session.h"
+%include "../../src/DS/public/scap_ds.h"
+
+
+%module openscap
+%{
  #include "../../src/XCCDF/public/xccdf_benchmark.h"
  #include "../../src/XCCDF/public/xccdf_session.h"
  #include "../../src/XCCDF_POLICY/public/xccdf_policy.h"
@@ -226,22 +237,32 @@
 
 %module openscap
 %{
+ #include "../../src/OVAL/public/oval_adt.h"
  #include "../../src/OVAL/public/oval_agent_api.h"
  #include "../../src/OVAL/public/oval_definitions.h"
+ #include "../../src/OVAL/public/oval_directives.h"
  #include "../../src/OVAL/public/oval_system_characteristics.h"
  #include "../../src/OVAL/public/oval_results.h"
+ #include "../../src/OVAL/public/oval_schema_version.h"
+ #include "../../src/OVAL/public/oval_session.h"
  #include "../../src/OVAL/public/oval_types.h"
  #include "../../src/OVAL/public/oval_variables.h"
+ #include "../../src/OVAL/public/oval_version.h"
  #include "../../src/OVAL/public/oval_probe.h"
  #include "../../src/OVAL/public/oval_probe_handler.h"
  #include "../../src/OVAL/public/oval_probe_session.h"
 %}
+%include "../../src/OVAL/public/oval_adt.h"
 %include "../../src/OVAL/public/oval_agent_api.h"
 %include "../../src/OVAL/public/oval_definitions.h"
+%include "../../src/OVAL/public/oval_directives.h"
 %include "../../src/OVAL/public/oval_system_characteristics.h"
 %include "../../src/OVAL/public/oval_results.h"
+%include "../../src/OVAL/public/oval_schema_version.h"
+%include "../../src/OVAL/public/oval_session.h"
 %include "../../src/OVAL/public/oval_types.h"
 %include "../../src/OVAL/public/oval_variables.h"
+%include "../../src/OVAL/public/oval_version.h"
 %include "../../src/OVAL/public/oval_probe.h"
 %include "../../src/OVAL/public/oval_probe_handler.h"
 %include "../../src/OVAL/public/oval_probe_session.h"
@@ -251,6 +272,12 @@
  #include "../../src/OVAL/public/oval_agent_xccdf_api.h"
 %}
 %include "../../src/OVAL/public/oval_agent_xccdf_api.h"
+
+%module openscap
+%{
+ #include "../../src/source/public/oscap_source.h"
+%}
+%include "../../src/source/public/oscap_source.h"
 
 /*%typemap(in) value[ANY] {
 
