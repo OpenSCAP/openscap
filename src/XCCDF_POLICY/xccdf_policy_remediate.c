@@ -531,7 +531,11 @@ static const struct xccdf_fix *_find_fix_for_template(struct xccdf_policy *polic
 static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule, unsigned int current, unsigned int total)
 {
 	if (oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands")) {
-		char *fix_header = oscap_sprintf("# BEGIN fix for '%s' (%i / %i)\n", xccdf_rule_get_id(rule), current, total);
+		char *fix_header = oscap_sprintf(
+				"###############################################################################\n"
+				"# BEGIN fix for '%s' (%i / %i)\n"
+				"###############################################################################\n",
+				xccdf_rule_get_id(rule), current, total);
 		return _write_text_to_fd_and_free(output_fd, fix_header);
 	} else {
 		return 0;
