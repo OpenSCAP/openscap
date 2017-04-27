@@ -10,6 +10,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I${top_srcdir}/src/common/public \
 		-I${top_srcdir}/src/source/public \
 		-I$(top_srcdir)/src/CVE/public \
+		-I$(top_srcdir)/src/DS/public \
 		-I/usr/include -include "sys/types.h" \
 		-D_LARGEFILE64_SOURCE \
 		-D_LARGEFILE_SOURCE=1
