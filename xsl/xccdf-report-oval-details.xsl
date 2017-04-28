@@ -79,7 +79,7 @@ Authors:
                 </span><!-- #160 is nbsp -->&#160;
                 <xsl:choose>
                     <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because of these items:</xsl:when>
-                    <xsl:otherwise><span class="label label-danger">failed</span> because these items were missing:</xsl:otherwise>
+                    <xsl:otherwise><span class="label label-danger">failed</span> because of these items:</xsl:otherwise>
                 </xsl:choose>
             </h4>
 
