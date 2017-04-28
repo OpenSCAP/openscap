@@ -533,9 +533,9 @@ static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_
 	if (oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands")) {
 		char *fix_header = oscap_sprintf(
 				"###############################################################################\n"
-				"# BEGIN fix for '%s' (%i / %i)\n"
+				"# BEGIN fix (%i / %i) for '%s'\n"
 				"###############################################################################\n",
-				xccdf_rule_get_id(rule), current, total);
+				current, total, xccdf_rule_get_id(rule));
 		return _write_text_to_fd_and_free(output_fd, fix_header);
 	} else {
 		return 0;
