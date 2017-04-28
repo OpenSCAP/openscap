@@ -535,7 +535,7 @@ static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_
 				"###############################################################################\n"
 				"# BEGIN fix (%i / %i) for '%s'\n"
 				"###############################################################################\n"
-				"(>&2 echo \"Remediating rule %i/%i: '%s'\")",
+				"(>&2 echo \"Remediating rule %i/%i: '%s'\")\n",
 				current, total, xccdf_rule_get_id(rule), current, total, xccdf_rule_get_id(rule));
 		return _write_text_to_fd_and_free(output_fd, fix_header);
 	} else {
