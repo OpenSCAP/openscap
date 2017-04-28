@@ -71,16 +71,16 @@ Authors:
         <!-- if there are items to display, go ahead -->
         <xsl:when test='$items'>
             <h4>
-                <xsl:choose>
-                    <xsl:when test='$result="pass"'>Items found satisfying </xsl:when>
-                    <xsl:otherwise>Items found violating </xsl:otherwise>
-                </xsl:choose>
                 <span class="label label-primary">
                     <xsl:choose>
                         <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
                         <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
                     </xsl:choose>
-                </span>:
+                </span><!-- #160 is nbsp -->&#160;
+                <xsl:choose>
+                    <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because of these items:</xsl:when>
+                    <xsl:otherwise><span class="label label-danger">failed</span> because these items were missing:</xsl:otherwise>
+                </xsl:choose>
             </h4>
 
             <table class="table table-striped table-bordered">
@@ -115,11 +115,11 @@ Authors:
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
                 <h4>
+                    <span class="label label-primary"><xsl:value-of select="$title"/></span><!-- #160 is nbsp -->&#160;
                     <xsl:choose>
-                        <xsl:when test='$result="pass"'>Items not found satisfying </xsl:when>
-                        <xsl:otherwise>Items not found violating </xsl:otherwise>
+                        <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because these items were not found:</xsl:when>
+                        <xsl:otherwise><span class="label label-danger">failed</span> because these items were missing:</xsl:otherwise>
                     </xsl:choose>
-                    <span class="label label-primary"><xsl:value-of select="$title"/></span>:
                 </h4>
                 <h5>Object <strong><abbr>
                 <xsl:if test='$comment'>
