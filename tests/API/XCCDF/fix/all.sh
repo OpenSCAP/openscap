@@ -12,7 +12,9 @@ function test_generate_fix {
     local TESTRESULT_ID=$2
     local EXPECTED_FIX=$3
 
-    local GENERATED_FIX=$($OSCAP xccdf generate fix --result-id "$TESTRESULT_ID" "$INPUT" | grep -v -E "^([\t ]*|[\t ]*#.+)$")
+    # grep to strip out whitespace and comments
+    # `tail -n +2` to skip the first line with progress reporting
+    local GENERATED_FIX=$($OSCAP xccdf generate fix --result-id "$TESTRESULT_ID" "$INPUT" | grep -v -E "^([\t ]*|[\t ]*#.+)$" | tail -n +2)
     if [ "$?" != "0" ]; then
         return 1
     fi
