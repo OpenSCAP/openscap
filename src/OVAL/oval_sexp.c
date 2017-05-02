@@ -244,7 +244,7 @@ static int oval_varref_elm_to_sexp(void *sess, struct oval_variable *var, oval_d
 	if (flag == SYSCHAR_FLAG_DOES_NOT_EXIST) {
 		char msg[100];
 		snprintf(msg, sizeof(msg), "Referenced variable has no values (%s).", oval_variable_get_id(var));
-		dW("%s", msg);
+		dI("%s", msg);
 		if (syschar != NULL)  {
 			oval_syschar_add_new_message(syschar, msg, OVAL_MESSAGE_LEVEL_WARNING);
 			oval_syschar_set_flag(syschar, SYSCHAR_FLAG_DOES_NOT_EXIST);

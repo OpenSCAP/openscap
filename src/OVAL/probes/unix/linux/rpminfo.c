@@ -143,7 +143,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 
 	if (regexec(&g_keyid_regex, str, 1, keyid_match, 0) != 0) {
 		sid = NULL;
-		dW("Failed to extract the Key ID value: regex=\"%s\", string=\"%s\"",
+		dD("Failed to extract the Key ID value: regex=\"%s\", string=\"%s\"",
 		   g_keyid_regex_string, str);
 	} else {
 		size_t keyid_start, keyid_length;

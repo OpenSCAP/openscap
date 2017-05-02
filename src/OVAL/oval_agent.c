@@ -508,7 +508,7 @@ int oval_agent_resolve_variables(struct oval_agent_session * session, struct xcc
 			dI("Adding external variable %s.", name);
 		} else {
 			/* Skip this variable (we assume it has same values otherwise conflict was detected) */
-			dW("Skipping external variable %s.", name);
+			dI("Skipping external variable %s.", name);
 		}
         } else {
                 dW("Variable %s does not exist, skipping.", name);
