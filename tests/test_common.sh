@@ -86,6 +86,38 @@ function test_run {
     fi    
 }
 
+# Run failed test multiple times
+# Common usage:
+#	run_multiple_times <tries> test_run <test_run_param_1> .. <test_run_param_n>
+function run_multiple_times {
+
+	local tries="$1"
+	shift
+
+	stderr_file=$(mktemp)
+	for i in $(seq 1 "$tries");
+	do
+		stdout=$("$@" 2> "$stderr_file")
+		ret_val=$?
+
+		# if test passed or skipped
+		if [ "$ret_val" -eq 0 ] || [ "$ret_val" -eq 255 ];
+		then
+			break
+		fi
+	done
+
+	# propagate STDOUT
+	echo "$stdout"
+
+	# propagate STDERR
+	cat "$stderr_file" >&2
+	rm -f "$stderr_file"
+
+	# propagate EXIT CODE
+	return "$ret_val"
+}
+
 # Clean-up testing environment.
 function test_exit {
     echo "--------------------------------------------------"

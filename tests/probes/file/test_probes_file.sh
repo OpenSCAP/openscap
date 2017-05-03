@@ -118,8 +118,8 @@ function test_probes_file_invalid_utf8 {
 
 test_init "test_probes_file.log"
 
-test_run "test_probes_file" test_probes_file
-test_run "test_probes_file_filenames" test_probes_file_filenames
-test_run "test_probes_file_invalid_utf8" test_probes_file_invalid_utf8
+run_multiple_times 5 test_run "test_probes_file" test_probes_file
+run_multiple_times 5 test_run "test_probes_file_filenames" test_probes_file_filenames
+run_multiple_times 5 test_run "test_probes_file_invalid_utf8" test_probes_file_invalid_utf8
 
 test_exit
