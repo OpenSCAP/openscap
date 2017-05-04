@@ -172,7 +172,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 #define OSCAP_IGETTER_GEN(ITYPE,SNAME,MNAME) OSCAP_IGETTER(ITYPE,SNAME,MNAME) OSCAP_ITERATOR_GEN(ITYPE)
 
 /**
- * Generete a geter function from a hash table.
+ * Generate a getter function from a hash table.
  * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
  * @code RTYPE SNAME_MNAME(const struct SNAME* item, const char* key); @endcode
  * @param RTYPE type of the hash table item
@@ -185,7 +185,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 	{ return oscap_htable_get(item->MEXP, key); }
 
 /**
- * Generete a geter function from a hash table.
+ * Generate a getter function from a hash table.
  * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
  * @code RTYPE SNAME_MNAME(const struct SNAME* item, const char* key); @endcode
  * @param RTYPE type of the hash table item
@@ -195,7 +195,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 #define OSCAP_HGETTER(RTYPE,SNAME,MNAME) OSCAP_HGETTER_EXP(RTYPE,SNAME,MNAME,MNAME)
 
 /**
- * Generete a geter function from a hash table.
+ * Generate a getter function from a hash table.
  * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
  * @code struct RTYPE* SNAME_MNAME(const struct SNAME* item, const char* key); @endcode
  * @param RTYPE type of the hash table item
@@ -207,7 +207,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 #define OSCAP_SETTER_HEADER(SNAME, MTYPE, MNAME) bool SNAME##_set_##MNAME(struct SNAME *obj, MTYPE newval)
 
 /**
- * Generete a setter function with a check.
+ * Generate a setter function with a check.
  * Signature of the generated function will be as follows (substitute uppercase strings with actual params):
  * @code bool SNAME_get_MNAME(struct SNAME *obj, MTYPE *item); @endcode
  * @param SNAME Name of the structure.
@@ -222,7 +222,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 	{ if (!(CHECK)) return false; DELETER(obj->MNAME); obj->MNAME = ASSIGNER(newval); return true; }
 
 /**
- * Generete a setter function without a check.
+ * Generate a setter function without a check.
  * @see OSCAP_SETTER_GENERIC_CHECK
  */
 #define OSCAP_SETTER_GENERIC(SNAME, MTYPE, MNAME, DELETER, ASSIGNER) \
@@ -230,7 +230,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 	{ DELETER(obj->MNAME); obj->MNAME = ASSIGNER(newval); return true; }
 
 /**
- * Generete a setter function without a check that does not delete the previous value.
+ * Generate a setter function without a check that does not delete the previous value.
  * @see OSCAP_SETTER_GENERIC_CHECK
  */
 #define OSCAP_SETTER_GENERIC_NODELETE(SNAME, MTYPE, MNAME, ASSIGNER) \
@@ -238,7 +238,7 @@ typedef void (*oscap_consumer_func) (void *, void *);
 	{ obj->MNAME = ASSIGNER(newval); return true; }
 
 /**
- * Generete a setter function using a simple assignment.
+ * Generate a setter function using a simple assignment.
  * @see OSCAP_SETTER_GENERIC_CHECK
  */
 #define OSCAP_SETTER_SIMPLE(SNAME, MTYPE, MNAME) \

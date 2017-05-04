@@ -437,6 +437,12 @@ struct cpe_item_metadata *cpe_item_metadata_new(void);
  */
 
 /// @memberof cpe_item
+bool cpe_item_set_name(struct cpe_item *item, const struct cpe_name *new_name);
+
+/// @memberof cpe_item
+bool cpe_item_set_deprecated_by(struct cpe_item *item, const struct cpe_name *new_deprecated_by);
+
+/// @memberof cpe_item
 bool cpe_item_set_deprecation_date(struct cpe_item *item, const char *new_deprecation_date);
 
 /// @memberof cpe_item_metadata
