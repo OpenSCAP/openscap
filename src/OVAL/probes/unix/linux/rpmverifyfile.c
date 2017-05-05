@@ -330,11 +330,18 @@ void probe_fini (void *ptr)
 {
 	struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
-	rpmtsFree(r->rpmts);
 	rpmFreeCrypto();
 	rpmFreeRpmrc();
 	rpmFreeMacros(NULL);
 	rpmlogClose();
+
+	/*
+	 * If probe_init() failed r->rpmts and r->mutex were not initialized
+	 */
+	if (r == NULL)
+		return;
+
+	rpmtsFree(r->rpmts);
 	pthread_mutex_destroy (&(r->mutex));
 
 	return;
