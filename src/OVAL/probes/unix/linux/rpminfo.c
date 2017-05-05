@@ -275,18 +275,19 @@ void *probe_init (void)
 #ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
-        if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-                dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
-                return (NULL);
-        }
-
-        g_rpm.rpmts = rpmtsCreate();
-        pthread_mutex_init (&(g_rpm.mutex), NULL);
-
 	if (regcomp(&g_keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {
 		dE("regcomp(%s) failed.");
 		return NULL;
 	}
+
+	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
+		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+		g_rpm.rpmts = NULL;
+		return ((void *)&g_rpm);
+        }
+
+        g_rpm.rpmts = rpmtsCreate();
+        pthread_mutex_init (&(g_rpm.mutex), NULL);
 
         return ((void *)&g_rpm);
 }
@@ -378,9 +379,16 @@ int probe_main (probe_ctx *ctx, void *arg)
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
+	/*
+	 * arg is NULL if regex compilation failed
+	 */
 	if (arg == NULL) {
 		return PROBE_EINIT;
 	}
+
+	/*
+	 * There was no rpm config files
+	 */
 	if (g_rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
