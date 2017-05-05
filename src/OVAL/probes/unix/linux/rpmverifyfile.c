@@ -435,11 +435,10 @@ int probe_main (probe_ctx *ctx, void *arg)
 	uint64_t collect_flags = 0;
 	unsigned int i;
 
+	/*
+	 * If probe_init() failed it's because there was no rpm config files
+	 */
 	if (arg == NULL) {
-		return PROBE_EINIT;
-	}
-
-	if (g_rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
 	}
