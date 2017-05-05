@@ -296,13 +296,21 @@ void probe_fini (void *ptr)
 {
         struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
-        rpmtsFree(r->rpmts);
 	rpmFreeCrypto();
-        rpmFreeRpmrc();
-        rpmFreeMacros(NULL);
-        rpmlogClose();
-        pthread_mutex_destroy (&(r->mutex));
+	rpmFreeRpmrc();
+	rpmFreeMacros(NULL);
+	rpmlogClose();
+
+	if (r == NULL)
+		return;
+
 	regfree(&g_keyid_regex);
+
+	if (r->rpmts == NULL)
+		return;
+
+        rpmtsFree(r->rpmts);
+        pthread_mutex_destroy (&(r->mutex));
 
         return;
 }
