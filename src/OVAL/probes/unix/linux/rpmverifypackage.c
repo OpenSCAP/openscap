@@ -360,12 +360,29 @@ void probe_fini (void *ptr)
 {
 	struct verifypackage_global *r = (struct verifypackage_global *)ptr;
 
-	rpmtsFree(r->rpm.rpmts);
-	probe_chroot_free(&(r->chr));
 	rpmFreeCrypto();
 	rpmFreeRpmrc();
 	rpmFreeMacros(NULL);
 	rpmlogClose();
+
+	/*
+	 * This will be always set by probe_init(), lets free it
+	 */
+	probe_chroot_free(&g_rpm.chr);
+
+	/*
+	 * If r is null, probe_init() failed during chroot
+	 */
+	if (r == NULL)
+		return;
+
+	/*
+	 * If r->rpm.rpmts was not initialized the mutex was not as well
+	 */
+	if (r->rpm.rpmts == NULL)
+		return;
+
+	rpmtsFree(r->rpm.rpmts);
 	pthread_mutex_destroy (&(r->rpm.mutex));
 
 	return;
