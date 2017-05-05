@@ -208,7 +208,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 	assume_d(key != NULL, /* void */);
 
 	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), val) != 0) {
-		dW("rbt_str_add: non-zero return code");
+		dD("rbt_str_add: non-zero return code");
                 oscap_free(key_copy);
         }
 }
