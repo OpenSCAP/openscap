@@ -87,7 +87,9 @@ struct cpe_item {		// the node <cpe-item>
 	} export;
 };
 OSCAP_GETTER(struct cpe_name *, cpe_item, name)
+OSCAP_SETTER_GENERIC(cpe_item, const struct cpe_name *, name, cpe_name_free, )
 OSCAP_GETTER(struct cpe_name *, cpe_item, deprecated_by)
+OSCAP_SETTER_GENERIC(cpe_item, const struct cpe_name *, deprecated_by, cpe_name_free, )
 OSCAP_DEPRECATED(
 	struct cpe_name *cpe_item_get_deprecated(const struct cpe_item *item)
 	{
