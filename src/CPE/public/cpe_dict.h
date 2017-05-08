@@ -528,6 +528,9 @@ bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
 OSCAP_DEPRECATED(bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title));
 
 /// @memberof cpe_dict_model
+bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *new_item);
+
+/// @memberof cpe_dict_model
 bool cpe_dict_model_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);
 
 /// @memberof cpe_vendor

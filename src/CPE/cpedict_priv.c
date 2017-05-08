@@ -157,8 +157,7 @@ OSCAP_ACCESSOR_STRING(cpe_generator, product_name)
 
 OSCAP_GETTER(struct cpe_generator *, cpe_dict_model, generator)
 OSCAP_ACCESSOR_SIMPLE(int, cpe_dict_model, base_version)
-OSCAP_IGETTER_GEN(cpe_item, cpe_dict_model, items)
-OSCAP_ITERATOR_REMOVE_F(cpe_item)
+OSCAP_IGETINS_GEN(cpe_item, cpe_dict_model, items, item) OSCAP_ITERATOR_REMOVE_F(cpe_item)
 OSCAP_IGETINS_GEN(cpe_vendor, cpe_dict_model, vendors, vendor) OSCAP_ITERATOR_REMOVE_F(cpe_vendor)
 
 /* ****************************************
@@ -276,8 +275,6 @@ OSCAP_ACCESSOR_STRING(cpe_language, value)
  * These function shoud not be called from outside. For exporting these elements
  * has to call parent element's 
  */
-static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *item);
-
 static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader);
 static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader);
 static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader);
@@ -293,25 +290,9 @@ static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr wri
 
 struct cpe_notes *cpe_notes_new(void);
 void cpe_notes_free(struct cpe_notes *notes);
-/***************************************************************************/
-
-/* Add item to dictionary. Function that just check both variables
- * on NULL value.
- * */
-static bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *item)
-{
-
-	__attribute__nonnull__(dict);
-	__attribute__nonnull__(item);
-
-	if (dict == NULL || item == NULL)
-		return false;
-
-	oscap_list_add(dict->items, item);
-	return true;
-}
 
 /***************************************************************************/
+
 /* Constructors of CPE structures cpe_*<structure>*_new()
  * More info in representive header file.
  * returns the type of <structure>
