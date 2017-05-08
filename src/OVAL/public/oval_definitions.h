@@ -2291,6 +2291,10 @@ void oval_object_content_set_varCheck(struct oval_object_content *, oval_check_t
  * @memberof oval_object_content
  */
 void oval_object_content_set_setobject(struct oval_object_content *, struct oval_setobject *);	//type == OVAL_OBJECTCONTENT_SET
+/**
+ * @memberof oval_object_content
+ */
+void oval_object_content_set_filter(struct oval_object_content *, struct oval_filter *);	//type == OVAL_OBJECTCONTENT_FILTER
 /** @} */
 
 /**
@@ -2325,6 +2329,12 @@ oval_check_t oval_object_content_get_varCheck(struct oval_object_content *);	//t
  * @memberof oval_object_content
  */
 struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
+/**
+ * Get filter of a set object content.
+ * @return A pointer to the filter attribute of the specified @ref oval_object_content.
+ * @memberof oval_object_content
+ */
+struct oval_filter *oval_object_content_get_filter(struct oval_object_content *content); //type == OVAL_OBJECTCONTENT_FILTER
 /** @} */
 
 /**

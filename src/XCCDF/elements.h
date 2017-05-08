@@ -217,6 +217,8 @@ void xccdf_print_textlist(struct oscap_text_iterator *txt, int depth, int max, c
 
 xmlNs *lookup_xccdf_ns(xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info *version_info);
 
+const struct xccdf_version_info *xccdf_version_info_find(const char *version);
+
 OSCAP_HIDDEN_END;
 
 #endif

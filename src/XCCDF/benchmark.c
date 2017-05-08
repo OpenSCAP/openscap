@@ -642,6 +642,11 @@ const char * xccdf_benchmark_supported(void)
     return XCCDF_SUPPORTED;
 }
 
+const struct xccdf_version_info *xccdf_benchmark_supported_schema_version(void)
+{
+	return xccdf_version_info_find(xccdf_benchmark_supported());
+}
+
 struct xccdf_group *xccdf_benchmark_append_new_group(struct xccdf_benchmark *benchmark, const char *id)
 {
 	if (benchmark == NULL) return NULL;

@@ -115,8 +115,6 @@ xmlNode *oval_filter_to_dom(struct oval_filter *, xmlDoc *, xmlNode *);
 typedef void (*oval_object_content_consumer) (struct oval_object_content *, void *);
 xmlNode *oval_object_content_to_dom(struct oval_object_content *, xmlDoc *, xmlNode *);
 int oval_object_content_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oval_object_content_consumer, void *);
-struct oval_filter *oval_object_content_get_filter(struct oval_object_content *);
-void oval_object_content_set_filter(struct oval_object_content *, struct oval_filter *);
 
 int oval_state_content_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, oscap_consumer_func, void *);
 xmlNode *oval_state_content_to_dom(struct oval_state_content *, xmlDoc *, xmlNode *);

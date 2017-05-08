@@ -628,7 +628,7 @@ void *probe_init(void)
 
 int probe_main(probe_ctx *ctx, void *arg)
 {
-	SEXP_t* item;
+	SEXP_t* item = NULL;
 	char* os_name, *architecture, *hname;
 	const char *os_version = NULL;
 	const char unknown[] = "Unknown";
@@ -637,7 +637,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	int ret = 0;
 	(void)arg;
 
-	item = os_name = architecture = hname = NULL;
+	os_name = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
 	if (offline_mode == PROBE_OFFLINE_NONE) {

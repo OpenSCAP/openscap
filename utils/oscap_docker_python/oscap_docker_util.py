@@ -131,6 +131,7 @@ class OscapHelpers(object):
 
             sys.exit(1)
 
+        sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
         return oscap_stdout.decode("utf-8")
 
     def _scan_cve(self, chroot, dist, scan_args):

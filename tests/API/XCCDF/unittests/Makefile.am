@@ -62,6 +62,8 @@ EXTRA_DIST += \
 	test_empty_variable.oval.xml \
 	test_empty_variable.sh \
 	test_empty_variable.xccdf.xml \
+	test_fix_arf.playbook1.yml \
+	test_fix_arf.playbook2.yml \
 	test_fix_arf.xccdf.xml \
 	test_fix_arf.sh \
 	test_fix_instance.oval.xml \

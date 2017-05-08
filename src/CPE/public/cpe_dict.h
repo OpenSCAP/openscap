@@ -437,6 +437,12 @@ struct cpe_item_metadata *cpe_item_metadata_new(void);
  */
 
 /// @memberof cpe_item
+bool cpe_item_set_name(struct cpe_item *item, const struct cpe_name *new_name);
+
+/// @memberof cpe_item
+bool cpe_item_set_deprecated_by(struct cpe_item *item, const struct cpe_name *new_deprecated_by);
+
+/// @memberof cpe_item
 bool cpe_item_set_deprecation_date(struct cpe_item *item, const char *new_deprecation_date);
 
 /// @memberof cpe_item_metadata
@@ -520,6 +526,9 @@ bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
  * versions of the library. (Please see upstream ticket #339 for further details).
  */
 OSCAP_DEPRECATED(bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title));
+
+/// @memberof cpe_dict_model
+bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *new_item);
 
 /// @memberof cpe_dict_model
 bool cpe_dict_model_add_vendor(struct cpe_dict_model *dict, struct cpe_vendor *new_vendor);

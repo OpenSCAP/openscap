@@ -22,7 +22,8 @@ $OSCAP oval eval --results $result $srcdir/test_sysctl_probe_all.oval.xml > /dev
 
 # sysctl has duplicities in output
 # hide permission errors like: "sysctl: permission denied on key 'fs.protected_hardlinks'"
-sysctl -aN --deprecated 2> /dev/null | sort -u > "$sysctlNames"
+# kernel parameters might use "/" and "." separators interchangeably - normalizing
+sysctl -aN --deprecated 2> /dev/null | tr "/" "." | sort -u > "$sysctlNames"
 
 grep unix-sys:name "$result" | sed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
 
