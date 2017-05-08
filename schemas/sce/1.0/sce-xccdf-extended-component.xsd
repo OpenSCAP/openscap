@@ -41,7 +41,7 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  *
  * Authors:
- *      Martin Preisler <mpreisle@redhat.com>
+ *      David Solin <solin@jovalcm.com>
 -->
 <xs:schema targetNamespace="http://open-scap.org/page/SCE_xccdf_stream"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
