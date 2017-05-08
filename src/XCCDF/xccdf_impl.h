@@ -54,8 +54,6 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 
-struct oscap_source *xccdf_benchmark_export_source(struct xccdf_benchmark *benchmark, const char *filename);
-
 OSCAP_HIDDEN_END;
 
 #endif
