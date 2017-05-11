@@ -55,6 +55,12 @@ struct cpe_dict_model;
 struct cpe_item;
 
 /**
+ * @struct cpe_notes
+ * Structure with information about notes
+ */
+struct cpe_notes;
+
+/**
  * @struct cpe_vendor
  * Structure with information about vendor
  */
@@ -231,6 +237,24 @@ struct oscap_text_iterator *cpe_item_get_titles(const struct cpe_item *item);
  */
 OSCAP_DEPRECATED(struct oscap_text_iterator *cpe_item_get_notes(const struct cpe_item *item));
 
+/** cpe_item function to get CPE notes
+ * @memberof cpe_item
+ * @param item CPE item
+ */
+struct cpe_notes_iterator *cpe_item_get_notes2(const struct cpe_item *item);
+
+/** cpe_notes function to get language
+ * @memberof cpe_notes
+ * @param notes object
+ */
+const char *cpe_notes_get_lang(const struct cpe_notes *notes);
+
+/** cpe_notes function to get notes list
+ * @memberof cpe_notes
+ * @param notes object
+ */
+struct oscap_text_iterator *cpe_notes_get_notes(const struct cpe_notes *notes);
+
 /** cpe_generator functions to get product name
  * @memberof cpe_generator
  * @param item document generator
@@ -400,6 +424,8 @@ void cpe_itemmetadata_free(struct cpe_item_metadata *meta);
 void cpe_dict_model_free(struct cpe_dict_model *dict);
 /// @memberof cpe_generator
 void cpe_generator_free(struct cpe_generator *generator);
+/// @memberof cpe_notes
+void cpe_notes_free(struct cpe_notes *notes);
 /// @memberof cpe_item
 void cpe_item_free(struct cpe_item *item);
 
@@ -411,6 +437,8 @@ struct cpe_generator *cpe_generator_new(void);
 struct cpe_check *cpe_check_new(void);
 /// @memberof cpe_reference
 struct cpe_reference *cpe_reference_new(void);
+/// @memberof cpe_notes
+struct cpe_notes *cpe_notes_new(void);
 /// @memberof cpe_item
 struct cpe_item *cpe_item_new(void);
 /// @memberof cpe_vendor
@@ -444,6 +472,9 @@ bool cpe_item_set_deprecated_by(struct cpe_item *item, const struct cpe_name *ne
 
 /// @memberof cpe_item
 bool cpe_item_set_deprecation_date(struct cpe_item *item, const char *new_deprecation_date);
+
+/// @memberof cpe_item
+bool cpe_notes_set_lang(struct cpe_notes *notes, const char *new_lang);
 
 /// @memberof cpe_item_metadata
 bool cpe_item_metadata_set_modification_date(struct cpe_item_metadata *item_metadata,
@@ -527,6 +558,12 @@ bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
  */
 OSCAP_DEPRECATED(bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title));
 
+/// @memberof cpe_item
+bool cpe_item_add_notes(struct cpe_item *item, struct cpe_notes *new_notes);
+
+/// @memberof cpe_notes
+bool cpe_notes_add_note(struct cpe_notes *notes, struct oscap_text * new_note);
+
 /// @memberof cpe_dict_model
 bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *new_item);
 
@@ -589,10 +626,43 @@ bool cpe_item_iterator_has_more(struct cpe_item_iterator *it);
  */
 void cpe_item_iterator_free(struct cpe_item_iterator *it);
 
-/// @memberof cpe_item
+/// @memberof cpe_item_iterator
 void cpe_item_iterator_remove(struct cpe_item_iterator *it);
 /// @memberof cpe_item_iterator
 void cpe_item_iterator_reset(struct cpe_item_iterator *it);
+
+/**
+ * @struct cpe_notes_iterator
+ * Iterator over CPE notes objects.
+ * @see oscap_iterator
+ */
+struct cpe_notes_iterator;
+
+/**
+ * Iterator over CPE notes objects.
+ * @see oscap_iterator
+ * @memberof cpe_notes_iterator
+ */
+struct cpe_notes *cpe_notes_iterator_next(struct cpe_notes_iterator *it);
+
+/**
+ * Iterator over CPE notes objects.
+ * @see oscap_iterator
+ * @memberof cpe_notes_iterator
+ */
+bool cpe_notes_iterator_has_more(struct cpe_notes_iterator *it);
+
+/**
+ * Iterator over CPE notes objects.
+ * @see oscap_iterator
+ * @memberof cpe_notes_iterator
+ */
+void cpe_notes_iterator_free(struct cpe_notes_iterator *it);
+
+/// @memberof cpe_notes_iterator
+void cpe_notes_iterator_remove(struct cpe_notes_iterator *it);
+/// @memberof cpe_notes_iterator
+void cpe_notes_iterator_reset(struct cpe_notes_iterator *it);
 
 /**
  * @struct cpe_reference_iterator
