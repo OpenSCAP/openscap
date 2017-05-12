@@ -106,6 +106,7 @@ check_results() {
 	assert_checked rule-id-unscored
 }
 
+set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
@@ -123,7 +124,7 @@ stdout=$(mktemp -t ${name}.out.XXXXXX)
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 
-$OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr
+$OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr || true #we expect exit code != 0
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
@@ -157,7 +158,7 @@ echo "Tailoring file = $tailoring"
 
 echo "`create_tailoring \"$xccdf\"`" > $tailoring
 
-$OSCAP xccdf eval --tailoring-file $tailoring --profile tailor-child --results $result $xccdf > $stdout 2> $stderr
+$OSCAP xccdf eval --tailoring-file $tailoring --profile tailor-child --results $result $xccdf > $stdout 2> $stderr || true #we expect exit code != 0
 
 check_results $result
 
