@@ -365,20 +365,14 @@ void probe_fini (void *ptr)
 	rpmFreeMacros(NULL);
 	rpmlogClose();
 
-	/*
-	 * This will be always set by probe_init(), lets free it
-	 */
+	// This will be always set by probe_init(), lets free it
 	probe_chroot_free(&g_rpm.chr);
 
-	/*
-	 * If r is null, probe_init() failed during chroot
-	 */
+	// If r is null, probe_init() failed during chroot
 	if (r == NULL)
 		return;
 
-	/*
-	 * If r->rpm.rpmts was not initialized the mutex was not as well
-	 */
+	// If r->rpm.rpmts was not initialized the mutex was not as well
 	if (r->rpm.rpmts == NULL)
 		return;
 
@@ -435,16 +429,12 @@ int probe_main (probe_ctx *ctx, void *arg)
 	uint64_t collect_flags = 0;
 	unsigned int i;
 
-	/*
-	 * arg is NULL if we were not able to chroot during probe_init()
-	 */
+	// arg is NULL if we were not able to chroot during probe_init()
 	if (arg == NULL) {
 		return PROBE_EINIT;
 	}
 
-	/*
-	 * There was no rpm config files
-	 */
+	// There was no rpm config files
 	if (g_rpm.rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;

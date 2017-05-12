@@ -387,16 +387,12 @@ int probe_main (probe_ctx *ctx, void *arg)
         struct rpminfo_req request_st;
         struct rpminfo_rep *reply_st;
 
-	/*
-	 * arg is NULL if regex compilation failed
-	 */
+	// arg is NULL if regex compilation failed
 	if (arg == NULL) {
 		return PROBE_EINIT;
 	}
 
-	/*
-	 * There was no rpm config files
-	 */
+	// There was no rpm config files
 	if (g_rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
