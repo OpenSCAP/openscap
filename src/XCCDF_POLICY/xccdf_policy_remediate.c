@@ -92,11 +92,17 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 	if (oscap_streq(template, "urn:xccdf:fix:script:ansible")) {
 		// Add required indentation in front of every single line
 
-		const char *delim = "\n";
-		const char *indentation = "\n    "; // we add indentation using replacement "\n" => "\n    "
+		const char delim = '\n';
+		const char *indentation = "    ";
 
-		char *token = strtok(text, delim);
-		while (token != NULL) {
+		char *current = text;
+		char *next_delim = NULL;
+
+		do {
+			next_delim = strchr(current, delim);
+			if (next_delim != NULL) {
+				*next_delim = '\0';
+			}
 
 			// write indentation
 			if (_write_text_to_fd(output_fd, indentation) != 0) {
@@ -105,16 +111,24 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 			}
 
 			// write rest of line
-			if (_write_text_to_fd(output_fd, token) != 0) {
+			if (_write_text_to_fd(output_fd, current) != 0) {
+				oscap_free(text);
+				return 1;
+			}
+			if (_write_text_to_fd(output_fd, "\n") != 0) {
 				oscap_free(text);
 				return 1;
 			}
 
-			token = strtok(NULL, delim);
+			if (next_delim != NULL) {
+				// text is NULL terminated to this is guaranteed to point to valid memory
+				current = next_delim + 1;
+			}
 		}
+		while (next_delim != NULL);
 
 		oscap_free(text);
-		return _write_text_to_fd(output_fd, "\n");
+		return 0;
 
 	} else {
 		// no extra processing is needed
