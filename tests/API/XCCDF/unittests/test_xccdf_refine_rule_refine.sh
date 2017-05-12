@@ -104,6 +104,9 @@ check_results() {
 
 	### 16. unscored should be checked
 	assert_checked rule-id-unscored
+	
+	### 17. should keep parent severity
+	assert_exists 1 '//rule-result[ @idref="rule-id-keep-parent-severity" and @severity="low" ]'
 }
 
 set -e
@@ -130,7 +133,7 @@ $OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr 
 
 $OSCAP xccdf validate-xml $result
 
-RULE_COUNT=16
+RULE_COUNT=17
 
 # Same count of results as rules
 assert_exists ${RULE_COUNT} '//Rule'
