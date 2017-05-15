@@ -104,8 +104,12 @@ check_results() {
 
 	### 16. unscored should be checked
 	assert_checked rule-id-unscored
+	
+	### 17. should keep parent severity
+	assert_exists 1 '//rule-result[ @idref="rule-id-keep-parent-severity" and @severity="low" ]'
 }
 
+set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
@@ -123,13 +127,13 @@ stdout=$(mktemp -t ${name}.out.XXXXXX)
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 
-$OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr
+$OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr || true #we expect exit code != 0
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
-RULE_COUNT=16
+RULE_COUNT=17
 
 # Same count of results as rules
 assert_exists ${RULE_COUNT} '//Rule'
@@ -157,7 +161,7 @@ echo "Tailoring file = $tailoring"
 
 echo "`create_tailoring \"$xccdf\"`" > $tailoring
 
-$OSCAP xccdf eval --tailoring-file $tailoring --profile tailor-child --results $result $xccdf > $stdout 2> $stderr
+$OSCAP xccdf eval --tailoring-file $tailoring --profile tailor-child --results $result $xccdf > $stdout 2> $stderr || true #we expect exit code != 0
 
 check_results $result
 

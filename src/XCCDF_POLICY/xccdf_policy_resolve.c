@@ -110,21 +110,18 @@ bool xccdf_weight_defined(xccdf_numeric weight){
 
 float xccdf_get_final_weight(const struct xccdf_rule* rule, const struct xccdf_refine_rule_internal* r_rule)
 {
-	if (r_rule != NULL){
-		if (xccdf_weight_defined(r_rule->weight) ) {
-			return r_rule->weight;
-		}
+	if (r_rule != NULL && xccdf_weight_defined(r_rule->weight)){
+		return r_rule->weight;
 	}
 	return xccdf_rule_get_weight(rule);
 }
 
 xccdf_level_t xccdf_get_final_severity(const struct xccdf_rule* rule, const struct xccdf_refine_rule_internal* r_rule)
 {
-	if (r_rule == NULL){
-		return xccdf_rule_get_severity(rule);
-	} else {
+	if (r_rule != NULL && r_rule->severity != XCCDF_LEVEL_NOT_DEFINED){
 		return r_rule->severity;
 	}
+	return xccdf_rule_get_severity(rule);
 }
 
 /**
