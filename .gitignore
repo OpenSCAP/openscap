@@ -8,6 +8,7 @@ Makefile
 Makefile.in
 tags
 
+CMakeLists.txt.user
 build/
 *~
 

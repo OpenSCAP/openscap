@@ -22,22 +22,5 @@ configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H -DNDEBUG)
 include_directories("${CMAKE_BINARY_DIR}")
 
-include_directories("src/common/public"
-	"src/DS/public"
-	"src/source/public"
-	"src/OVAL/public"
-	"src/XCCDF/public"
-	"src/XCCDF_POLICY/public"
-	"src/CVSS/public"
-	"src/CPE/public"
-	"src/CVE/public"
-	"${LIBXML2_INCLUDE_DIR}"
-	"${LIBXSLT_INCLUDE_DIR}"
-)
-
 add_subdirectory("src")
-
-# build "oscap" tool
-file(GLOB UTILS_SOURCES "utils/*.c")
-add_executable(oscap ${UTILS_SOURCES})
-target_link_libraries(oscap openscap ${LIBXML_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
+add_subdirectory("utils")
