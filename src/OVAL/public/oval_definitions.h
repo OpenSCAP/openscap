@@ -251,6 +251,7 @@ typedef enum {
 oval_family_t oval_subtype_get_family(oval_subtype_t);
 const char *oval_operator_get_text(oval_operator_t);
 const char *oval_subtype_get_text(oval_subtype_t);
+bool oval_subtype_is_valid(oval_subtype_t subtype);
 const char *oval_family_get_text(oval_family_t);
 const char *oval_check_get_text(oval_check_t);
 const char *oval_existence_get_text(oval_existence_t);

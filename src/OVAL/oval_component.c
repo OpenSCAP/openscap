@@ -1359,7 +1359,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_OBJECTREF(oval_ar
 			struct oval_sysitem *sysitem = oval_sysitem_iterator_next(sysitems);
 			struct oval_sysent_iterator *sysent_itr = oval_sysitem_get_sysents(sysitem);
 			const char *oval_sysitem_id = oval_sysitem_get_id(sysitem);
-			const char *oval_sysitem_subtype = oval_subtype_to_str(oval_sysitem_get_subtype(sysitem));
+			const char *oval_sysitem_subtype = oval_subtype_get_text(oval_sysitem_get_subtype(sysitem));
 			bool entity_matched = false;
 			while (oval_sysent_iterator_has_more(sysent_itr)) {
 				oval_datatype_t dt;

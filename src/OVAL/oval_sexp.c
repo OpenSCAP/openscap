@@ -672,13 +672,16 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp)
 	size_t buflen;
 	const char *subtype_name;
 	struct oval_state_content_iterator *contents;
+	oval_subtype_t subtype;
 
-        subtype_name = oval_subtype_to_str(oval_state_get_subtype(state));
+	subtype = oval_state_get_subtype(state);
 
-	if (subtype_name == NULL) {
-		dI("FAIL: unknown subtype: %d", oval_state_get_subtype(state));
+	if (!oval_subtype_is_valid(subtype) && subtype != OVAL_SUBTYPE_SYSINFO) {
+		dI("FAIL: unknown subtype: %d", subtype);
 		return (-1);
 	}
+
+	subtype_name = oval_subtype_get_text(subtype);
 
 	buflen = snprintf(buffer, sizeof buffer, "%s_state", subtype_name);
 	_A(buflen < sizeof buffer);

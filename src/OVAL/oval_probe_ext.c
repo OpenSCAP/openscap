@@ -390,7 +390,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		case SEAP_ETYPE_USER:
 		{
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe at sd=%d (%s) reported an error: %s",
-					pd->sd, oval_subtype_to_str(pd->subtype), _probe_strerror(err->code));
+					pd->sd, oval_subtype_get_text(pd->subtype), _probe_strerror(err->code));
 			break;
 		}
 		case SEAP_ETYPE_INT:
@@ -1059,7 +1059,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	}
 
 	object = oval_syschar_get_object(syschar);
-	ret = oval_object_to_sexp(pext->sess_ptr, oval_subtype_to_str(oval_object_get_subtype(object)), syschar, &s_obj);
+	ret = oval_object_to_sexp(pext->sess_ptr, oval_subtype_get_text(oval_object_get_subtype(object)), syschar, &s_obj);
 
 	if (ret != 0)
 		return (1);
