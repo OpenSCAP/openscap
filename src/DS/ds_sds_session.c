@@ -352,9 +352,9 @@ char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *
 		"profile_id", profile_id,
 		NULL
 	};
-	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, "xccdf.xml");
+	struct oscap_source *xccdf = oscap_htable_get(session->component_sources, session->checklist_id);
 	if (xccdf == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to xccdf.xml source.");
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Internal error: Could not acquire handle to '%s' source.", session->checklist_id);
 		return NULL;
 	}
 	return oscap_source_apply_xslt_path_mem(xccdf, "xccdf-guide.xsl", params, oscap_path_to_xslt());
