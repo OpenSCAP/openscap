@@ -7,13 +7,14 @@ file(GLOB_RECURSE RBT_HEADERS "generic/rbt/*.h")
 file(GLOB_RECURSE SEAP_SOURCES_TO_REMOVE "sexp-handler.c" "sexp-template.c")
 list(REMOVE_ITEM SEAP_SOURCES ${SEAP_SOURCES_TO_REMOVE} ${RBT_SOURCES} ${RBT_HEADERS})
 
-include_directories(
-    "public"
-)
-
 add_definitions(-D__need_IOV_MAX)
 add_library(seap_object OBJECT ${SEAP_SOURCES} ${SEAP_HEADERS})
 add_library(seap $<TARGET_OBJECTS:seap_object>)
+target_include_directories(seap_object PRIVATE
+    "../../../../"
+    "public"
+    ${XML2_INCLUDE_DIRS}
+)
 target_link_libraries(seap rbt)
 
 set_target_properties(seap_object PROPERTIES

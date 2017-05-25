@@ -6,6 +6,62 @@
 #define OPENSCAP_VERSION_MINOR @OPENSCAP_VERSION_MINOR@
 #define OPENSCAP_VERSION_PATCH @OPENSCAP_VERSION_PATCH@
 
+#cmakedefine NDEBUG
+
+#cmakedefine CMAKE_USE_PTHREADS_INIT @CMAKE_USE_PTHREADS_INIT@
+#if defined(CMAKE_USE_PTHREADS_INIT)
+#define OSCAP_THREAD_SAFE
+#endif
+
+#cmakedefine GCRYPT_FOUND
+#if defined(GCRYPT_FOUND)
+#define HAVE_GCRYPT
+#cmakedefine HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG
+#endif
+
+#cmakedefine NSS3_FOUND
+#if defined(NSS3_FOUND)
+#define HAVE_NSS3
+#endif
+
+#cmakedefine HAVE_ATOMIC_BUILTINS
+
+#cmakedefine HAVE_ACL_INIT
+#cmakedefine HAVE_ACL_EXTENDED_FILE
+#cmakedefine HAVE_PKGVERSION
+#cmakedefine HAVE_BLKID_GET_CACHE
+#cmakedefine HAVE_BLKID_GET_TAG_VALUE
+#cmakedefine HAVE_CAP_INIT
+#cmakedefine HAVE_CAP_GET_PID
+#cmakedefine HAVE_CAPGETP
+#cmakedefine HAVE_DBUS_BUS_GET
+#cmakedefine HAVE_GCONF_ENGINE_GET_DEFAULT
+#cmakedefine HAVE_BER_INIT
+#cmakedefine HAVE_LDAP_INIT
+#cmakedefine HAVE_ODBX_INIT
+#cmakedefine HAVE_PCRE_EXEC
+#cmakedefine HAVE_DEV_TO_TTY
+#cmakedefine HAVE_RPMTSCREATE
+#cmakedefine HAVE_RPMREADCONFIGFILES
+#cmakedefine HAVE_HEADERFORMAT
+#cmakedefine HAVE_HEADERSPRINTF
+#cmakedefine HAVE_RPMFREECRYPTO
+#cmakedefine HAVE_RPMFREEFILESYSTEMS
+#cmakedefine HAVE_XMLTEXTREADERREAD
+#cmakedefine HAVE_XSLTDOCUMENTFUNCTION
+
+#cmakedefine HAVE_RPMVERCMP
+#cmakedefine HAVE_RPM46
+#cmakedefine HAVE_RPM47
+
+#cmakedefine HAVE_PTHREAD_TIMEDJOIN_NP
+#cmakedefine HAVE_PTHREAD_SETNAME_NP
+#cmakedefine HAVE_PTHREAD_GETNAME_NP
+#cmakedefine HAVE_CLOCK_GETTIME
+
+#cmakedefine HAVE_POSIX_MEMALIGN
+#cmakedefine HAVE_MEMALIGN
+
 #define LT_CURRENT_MINUS_AGE 8
 #define OVAL_PROBES_ENABLED
 #define HAVE_STDIO_EXT_H
