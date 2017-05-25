@@ -8,6 +8,8 @@ add_library(ovalcmp_object OBJECT
     "oval_cmp_ip_address.c"
     "oval_cmp_ip_address_impl.h"
 )
+target_include_directories(ovalcmp_object PUBLIC ${XML2_INCLUDE_DIRS})
+
 add_library(ovalcmp $<TARGET_OBJECTS:ovalcmp_object>)
 set_target_properties(ovalcmp_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
@@ -27,6 +29,8 @@ add_library(ovalresults_object OBJECT
     "oval_status_counter.c"
     "oval_status_counter.h"
 )
+target_include_directories(ovalresults_object PUBLIC ${XML2_INCLUDE_DIRS})
+
 add_library(ovalresults $<TARGET_OBJECTS:ovalresults_object>)
 target_link_libraries(ovalresults oval)
 set_target_properties(ovalresults_object PROPERTIES

@@ -13,4 +13,4 @@ include_directories(
 # build "oscap" tool
 file(GLOB UTILS_SOURCES "*.c")
 add_executable(oscap ${UTILS_SOURCES})
-target_link_libraries(oscap openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
+target_link_libraries(oscap openscap ${XML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})

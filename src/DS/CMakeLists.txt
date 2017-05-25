@@ -2,6 +2,7 @@ file(GLOB_RECURSE DS_SOURCES "*.c")
 file(GLOB_RECURSE DS_HEADERS "*.h")
 
 add_library(ds_object OBJECT ${DS_SOURCES} ${DS_HEADERS})
+target_include_directories(ds_object PUBLIC ${XML2_INCLUDE_DIRS})
 
 set_target_properties(ds_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.

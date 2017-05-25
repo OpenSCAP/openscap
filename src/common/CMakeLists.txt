@@ -2,6 +2,8 @@ file(GLOB_RECURSE COMMON_SOURCES "*.c")
 file(GLOB_RECURSE COMMON_HEADERS "*.h")
 
 add_library(common_object OBJECT ${COMMON_SOURCES} ${COMMON_HEADERS})
+target_include_directories(common_object PUBLIC ${XML2_INCLUDE_DIRS})
+
 add_library(common $<TARGET_OBJECTS:common_object>)
 target_link_libraries(common ${LIBXSLT_EXSLT_LIBRARIES})
 

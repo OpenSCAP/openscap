@@ -1,3 +1,13 @@
+add_subdirectory("results")
+add_subdirectory("adt")
+add_subdirectory("probes")
+
+include(CheckFunctionExists)
+CHECK_FUNCTION_EXISTS(fts_open HAVE_FTS_OPEN)
+if (HAVE_FTS_OPEN)
+    add_definitions(-DHAVE_FTS_OPEN)
+endif()
+
 set (OVAL_SOURCES
     "collectVarRefs.c"
     "collectVarRefs_impl.h"
@@ -92,6 +102,8 @@ include_directories(
 )
 
 add_library(oval_object OBJECT ${OVAL_SOURCES})
+target_include_directories(oval_object PUBLIC ${XML2_INCLUDE_DIRS})
+
 add_library(oval $<TARGET_OBJECTS:oval_object>)
 target_link_libraries(oval oscapsource ovalresults)
 
@@ -99,7 +111,3 @@ set_target_properties(oval_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
     POSITION_INDEPENDENT_CODE ON	# Compile this object code position independent.
 )
-
-add_subdirectory("results")
-add_subdirectory("adt")
-add_subdirectory("probes")
