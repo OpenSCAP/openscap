@@ -139,6 +139,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+	"   --rule <name>\r\t\t\t\t - The name of a single rule to be evaluated.\n"
         "   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
         "   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
         "   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
@@ -482,6 +483,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
+	xccdf_session_set_rule(session, action->rule);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
@@ -915,6 +917,7 @@ enum oval_opt {
     XCCDF_OPT_XCCDF_ID,
     XCCDF_OPT_BENCHMARK_ID,
     XCCDF_OPT_PROFILE,
+    XCCDF_OPT_RULE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_SHOW,
     XCCDF_OPT_TEMPLATE,
@@ -949,6 +952,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"xccdf-id",		required_argument, NULL, XCCDF_OPT_XCCDF_ID},
 		{"benchmark-id",		required_argument, NULL, XCCDF_OPT_BENCHMARK_ID},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
+		{"rule", 		required_argument, NULL, XCCDF_OPT_RULE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
 		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
@@ -991,6 +995,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case XCCDF_OPT_BENCHMARK_ID:	action->f_benchmark_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
+		case XCCDF_OPT_RULE:		action->rule = optarg;		break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
 		case XCCDF_OPT_SHOW:		action->show = optarg;		break;

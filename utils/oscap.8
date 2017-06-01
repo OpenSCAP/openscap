@@ -75,6 +75,11 @@ You may specify OVAL Definition files as the last parameter, XCCDF evaluation wi
 Select a particular profile from XCCDF document.
 .RE
 .TP
+\fB\-\-rule RULE\fR
+.RS
+Select a particular rule from XCCDF document. Only this rule will be evaluated. Rule will use values according to the selected profile. If no profile is selected, default values are used.
+.RE
+.TP
 \fB\-\-tailoring-file TAILORING_FILE\fR
 .RS
 Use given file for XCCDF tailoring. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority!

@@ -463,6 +463,16 @@ Where *scap-xccdf.xml* is the XCCDF document, *Desktop* is the selected
 profile from the XCCDF document, *xccdf-results.xml* is a file storing
 the scan results, and *cpe-dictionary.xml* is the CPE dictionary.
 
+* You can additionaly add ```--rule``` option to the above command to evaluate
+a specific rule:
+
+----
+$ oscap xccdf eval --profile Desktop --rule ensure_gpgcheck_globally_activated  --results xccdf-results.xml --cpe cpe-dictionary.xml scap-xccdf.xml
+----
+
+Where *ensure_gpgcheck_globally_activated* is the only rule from the *Desktop*
+profile which will be evaluated.
+
 ==== Source DataStream
 Commonly, all required input files are bundled together in Source DataStream.
 Scanning using Source DataStream is also handled by ```oscap xccdf eval``` command,
