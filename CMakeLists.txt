@@ -174,9 +174,14 @@ set(ENABLE_PYTHON3 TRUE CACHE BOOL "enables Python3")
 # ENABLES PERL
 set(ENABLE_PERL FALSE CACHE BOOL "enables Perl")
 
+# ENABLES VALGRIND
+set(ENABLE_VALGRIND FALSE CACHE BOOL "enables Valgrind")
+
 # ENABLES SSP
 set(ENABLE_SSP FALSE CACHE BOOL "enables fstack-protector")
-# Testar se o compilador aceita
+
+# ENABLES SCE
+set(ENABLE_SCE FALSE CACHE BOOL "enables SCE")
 
 # ENABLES PROBES
 set(ENABLE_PROBES TRUE CACHE BOOL "enables probes")
@@ -216,11 +221,6 @@ set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
 
 # ENABLES OSCAP UTIL CHROOT
 set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
-
-# DEBUG E VALGRIND
-# NDEBUG
-
-# RPMS
 
 # HAVE_ATOMIC_BUILTINS
 include(CheckCSourceCompiles)
