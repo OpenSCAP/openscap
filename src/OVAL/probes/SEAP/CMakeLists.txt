@@ -13,7 +13,6 @@ add_library(seap $<TARGET_OBJECTS:seap_object>)
 target_include_directories(seap_object PRIVATE
     "../../../../"
     "public"
-    ${XML2_INCLUDE_DIRS}
 )
 target_link_libraries(seap rbt)
 

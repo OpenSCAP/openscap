@@ -222,7 +222,7 @@ endif()
 
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
-include_directories("${CMAKE_BINARY_DIR}")
+include_directories(${CMAKE_BINARY_DIR} ${XML2_INCLUDE_DIRS})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")

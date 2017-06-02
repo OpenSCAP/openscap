@@ -102,8 +102,6 @@ include_directories(
 )
 
 add_library(oval_object OBJECT ${OVAL_SOURCES})
-target_include_directories(oval_object PUBLIC ${XML2_INCLUDE_DIRS})
-
 add_library(oval $<TARGET_OBJECTS:oval_object>)
 target_link_libraries(oval oscapsource ovalresults)
 
