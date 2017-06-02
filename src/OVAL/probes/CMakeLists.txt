@@ -164,5 +164,4 @@ if(ENABLE_PROBES_LINUX)
     endif()
 endif()
 
-add_subdirectory(./SEAP)
 add_subdirectory(./crapi)

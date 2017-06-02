@@ -68,7 +68,10 @@
 #cmakedefine WANT_BASE64
 #cmakedefine WANT_XBASE64
 
+#cmakedefine ENABLE_PROBES
+#if defined(ENABLE_PROBES)
 #define OVAL_PROBES_ENABLED
+#endif
 #define HAVE_STDIO_EXT_H
 #define HAVE_SYS_CAPABILITY_H
 

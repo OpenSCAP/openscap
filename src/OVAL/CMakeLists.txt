@@ -1,6 +1,6 @@
 add_subdirectory("results")
 add_subdirectory("adt")
-add_subdirectory("probes")
+add_subdirectory("probes/SEAP")
 
 include(CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(fts_open HAVE_FTS_OPEN)
@@ -58,40 +58,40 @@ set (OVAL_SOURCES
     "oval_version.c"
 )
 
-list(APPEND OVAL_SOURCES
-    "oval_probe.c"
-    "oval_probe_hint.c"
-    "oval_probe_session.c"
-    "_oval_probe_session.h"
-    "oval_probe_handler.c"
-    "_oval_probe_handler.h"
-    "fts_sun.c"
-    "fts_sun.h"
-    "oval_probe_meta.h"
-    "probes/probe-api.c"
-    "probes/_probe-api.h"
-    "probes/fsdev.c"
-    "probes/oval_fts.c"
-    "probes/oval_fts.h"
-    "probes/public/probe-api.h"
-    "probes/public/probe-common.h"
-    "probes/public/fsdev.h"
-    "probes/public/findfile.h"
-    "probes/probe/ncache.c"
-    "probes/probe/ncache.h"
-    "probes/probe/rcache.c"
-    "probes/probe/rcache.h"
-    "probes/probe/entcmp.c"
-    "probes/probe/entcmp.h"
-    "oval_sexp.c"
-    "oval_sexp.h"
-    "oval_probe_ext.h"
-    "oval_probe_impl.h"
-)
+if (ENABLE_PROBES)
+    add_subdirectory("probes")
+    
+    list(APPEND OVAL_SOURCES
+	"oval_probe.c"
+	"oval_probe_hint.c"
+	"oval_probe_session.c"
+	"_oval_probe_session.h"
+	"oval_probe_handler.c"
+	"_oval_probe_handler.h"
+	"fts_sun.c"
+	"fts_sun.h"
+	"oval_probe_meta.h"
+	"probes/probe-api.c"
+	"probes/_probe-api.h"
+	"probes/fsdev.c"
+	"probes/oval_fts.c"
+	"probes/oval_fts.h"
+	"probes/probe/ncache.c"
+	"probes/probe/ncache.h"
+	"probes/probe/rcache.c"
+	"probes/probe/rcache.h"
+	"probes/probe/entcmp.c"
+	"probes/probe/entcmp.h"
+	"oval_sexp.c"
+	"oval_sexp.h"
+	"oval_probe_ext.h"
+	"oval_probe_impl.h"
+    )
 
-list(APPEND OVAL_SOURCES
-    "oval_probe_ext.c"
-)
+    list(APPEND OVAL_SOURCES
+	"oval_probe_ext.c"
+    )
+endif()
 
 include_directories(
     "../../"
