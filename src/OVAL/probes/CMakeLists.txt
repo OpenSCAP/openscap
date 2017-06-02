@@ -25,7 +25,7 @@ add_library(probe
 )
 
 target_link_libraries(probe seap oval ${CMAKE_THREAD_LIBS_INIT} ${PCRE_LIBRARIES} ${XML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${RPM_LIBRARIES})
-target_include_directories(probe PUBLIC "." "public" ${XML2_INCLUDE_DIRS})
+target_include_directories(probe PUBLIC "." "public")
 
 include_directories("public")
 
