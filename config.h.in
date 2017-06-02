@@ -72,8 +72,17 @@
 #if defined(ENABLE_PROBES)
 #define OVAL_PROBES_ENABLED
 #endif
-#define HAVE_STDIO_EXT_H
-#define HAVE_SYS_CAPABILITY_H
+
+#cmakedefine HAVE_SYSLOG_H
+#cmakedefine HAVE_FTW_H
+#cmakedefine HAVE_STDIO_EXT_H
+#cmakedefine HAVE_SYS_CAPABILITY_H
+#cmakedefine HAVE_SELINUX_SELINUX_H
+#cmakedefine HAVE_PROC_DEVNAME_H
+#cmakedefine HAVE_SHADOW_H
+#cmakedefine HAVE_SYS_SYSTEMINFO_H
+#cmakedefine HAVE_ACL_LIBACL_H
+#cmakedefine HAVE_SYS_ACL_H
 
 
 #endif
