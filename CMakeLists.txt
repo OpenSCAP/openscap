@@ -220,6 +220,15 @@ if(NOT HAVE_ATOMIC_BUILTINS)
     message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
 endif()
 
+# SEAP_MSGID_BITS
+set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
+
+# WANT BASE64
+set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
+
+# WANT XBASE64
+set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
+
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
 include_directories(${CMAKE_BINARY_DIR} ${XML2_INCLUDE_DIRS})
