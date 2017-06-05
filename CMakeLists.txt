@@ -11,8 +11,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
     set(NDEBUG 1)
 endif()
 
-include(GNUInstallDirs)
+# ---------- DEPENDENCIES
 
+include(GNUInstallDirs)
 include(FindPkgConfig)
 include(CheckLibraryExists)
 
@@ -125,6 +126,18 @@ find_package(BZip2)
 find_package(Threads)
 set(CMAKE_THREAD_PREFER_PTHREAD)
 
+# WITH_CRYPTO
+set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss3")
+if(NOT (${WITH_CRYPTO} EQUAL "nss3"))
+    # gcrypt
+    find_package(GCrypt REQUIRED)
+    include(CheckCSourceCompiles)
+    CHECK_C_SOURCE_COMPILES("#include <gcrypt.h>\nint main() {return GCRYCTL_SET_ENFORCED_FIPS_FLAG;}" HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG)
+else()
+    # nss3
+    pkg_check_modules(NSS3 REQUIRED nss>=3.0)
+endif()
+
 # HAVE FUNCTIONS
 CHECK_LIBRARY_EXISTS(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
 CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
@@ -149,18 +162,19 @@ CHECK_INCLUDE_FILE(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
 CHECK_INCLUDE_FILE(acl/libacl.h HAVE_ACL_LIBACL_H)
 CHECK_INCLUDE_FILE(sys/acl.h HAVE_SYS_ACL_H)
 
-
-# WITH_CRYPTO
-set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss3")
-if(NOT (${WITH_CRYPTO} EQUAL "nss3"))
-    # gcrypt
-    find_package(GCrypt REQUIRED)
-    include(CheckCSourceCompiles)
-    CHECK_C_SOURCE_COMPILES("#include <gcrypt.h>\nint main() {return GCRYCTL_SET_ENFORCED_FIPS_FLAG;}" HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG)
-else()
-    # nss3
-    pkg_check_modules(NSS3 REQUIRED nss>=3.0)
+# HAVE_ATOMIC_BUILTINS
+include(CheckCSourceCompiles)
+CHECK_C_SOURCE_COMPILES("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
+if(NOT HAVE_ATOMIC_BUILTINS)
+    message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
 endif()
+
+# HAVE VALGRIND AND ENV
+mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
+find_program(ENV_PRESENT env)
+find_program(VALGRIND_PRESENT valgrind)
+
+# ---------- SWITCHES
 
 # ENABLES CCE
 set(ENABLE_CCE FALSE CACHE BOOL "enables CCE")
@@ -222,13 +236,6 @@ set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
 # ENABLES OSCAP UTIL CHROOT
 set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
 
-# HAVE_ATOMIC_BUILTINS
-include(CheckCSourceCompiles)
-CHECK_C_SOURCE_COMPILES("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
-if(NOT HAVE_ATOMIC_BUILTINS)
-    message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
-endif()
-
 # SEAP_MSGID_BITS
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 
@@ -238,18 +245,37 @@ set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 # WANT XBASE64
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
+# ---------- CONFIGURATION
+
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
-include_directories(${CMAKE_BINARY_DIR} ${XML2_INCLUDE_DIRS})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
 endif()
 
-mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
-find_program(ENV_PRESENT env)
-find_program(VALGRIND_PRESENT valgrind)
+include_directories(
+    "src/"
+    "src/common/"
+    "src/common/public/"
+    "src/CCE/public/"
+    "src/CPE/public/"
+    "src/CVE/public/"
+    "src/CVSS/public/"
+    "src/DS/public/"
+    "src/OVAL/public/"
+    "src/OVAL/probes/SEAP/"
+    "src/OVAL/probes/SEAP/public/"
+    "src/OVAL/"
+    "src/source/public/"
+    "src/XCCDF/"
+    "src/XCCDF/public/"
+    "src/XCCDF_POLICY/"
+    "src/XCCDF_POLICY/public/"
+    ${CMAKE_BINARY_DIR}
+    ${XML2_INCLUDE_DIRS}
+)
 
 add_subdirectory("src")
 add_subdirectory("utils")
