@@ -1,3 +1,5 @@
+add_subdirectory("crapi")
+
 # PThread
 find_package(Threads REQUIRED)
 set(CMAKE_THREAD_PREFER_PTHREAD)
@@ -163,5 +165,3 @@ if(ENABLE_PROBES_LINUX)
 	target_link_libraries(probe_systemdunitdependency probe ${DBUS_LIBRARIES})
     endif()
 endif()
-
-add_subdirectory(./crapi)

@@ -94,11 +94,8 @@ if (ENABLE_PROBES)
 endif()
 
 include_directories(
-    "../../"
     "probes"
     "probes/public"
-    #"probes/SEAP"
-    #"probes/SEAP/public"
 )
 
 add_library(oval_object OBJECT ${OVAL_SOURCES})

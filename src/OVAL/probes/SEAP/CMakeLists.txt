@@ -1,3 +1,5 @@
+add_subdirectory("generic/rbt")
+
 file(GLOB_RECURSE SEAP_SOURCES "*.c")
 file(GLOB_RECURSE SEAP_HEADERS "*.h")
 
@@ -20,5 +22,3 @@ set_target_properties(seap_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
     POSITION_INDEPENDENT_CODE ON	# Compile this object code position independent.
 )
-
-add_subdirectory("generic/rbt")
