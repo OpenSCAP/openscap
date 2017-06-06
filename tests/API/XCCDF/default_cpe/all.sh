@@ -61,6 +61,9 @@ function test_rhel {
             elif rpm -q --queryformat "%{VERSION}" --whatprovides redhat-release | grep ${RHEL_VERSION}'\.9'; then
                 # Workaround alpha and beta releases of Red Hat Enterprise Linux
                 EXPECTED_NA=0
+            elif rpm -q --queryformat "%{VENDOR}" --whatprovides redhat-release | grep "Oracle"; then
+                # Workaround OL which also has redhat-release package installed
+                EXPECTED_NA=1
             elif echo "$RHEL_RELEASE" | grep "\.el${RHEL_VERSION}[._]"; then
                 EXPECTED_NA=0
             elif echo "$RHEL_RELEASE" | grep "\.ael${RHEL_VERSION}b"; then
