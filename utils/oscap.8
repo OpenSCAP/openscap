@@ -334,6 +334,12 @@ Fixes will be generated for failed rule-results of the specified TestResult.
 .TP
 \fB\-\-template \fIID|FILE\fR\fR
 Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/legacy-fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/legacy-fixtpl-bash.xml\fR.
+.TP
+\fB\-\-xccdf-id ID\fR
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream. If none is given, the first component from the checklists element is used.
+.TP
+\fB\-\-benchmark-id ID\fR
+Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
 .RE
 .TP
 .B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file
