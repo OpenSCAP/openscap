@@ -256,7 +256,11 @@ static struct oscap_module XCCDF_GEN_FIX = {
         "\nFix Options:\n"
         "   --output <file>\r\t\t\t\t - Write the script into file.\n"
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
-        "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
+		"   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n"
+		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -809,6 +813,10 @@ int app_generate_fix(const struct oscap_action *action)
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
+	}
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
