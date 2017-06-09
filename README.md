@@ -26,12 +26,14 @@ cd openscap-${version}
 **OR**
 
 1b) Get fresh sources from git repository and run ./autogen.sh
+
+The autoconf, automake, and libtool tools are required to be installed on your system.
+
 ```
 git clone https://github.com/OpenSCAP/openscap.git
 cd openscap
 ./autogen.sh
 ```
-The autoconf, automake, and libtool tools are required to be installed on your system.
 
 2) Run the following commands to build the library:
 ```
