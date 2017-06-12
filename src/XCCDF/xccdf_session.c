@@ -63,6 +63,7 @@ struct oval_content_resource {
 
 struct xccdf_session {
 	const char *filename;				///< File name of SCAP (SDS or XCCDF) file for this session.
+	const char *rule;				///< Single-rule feature: if not NULL, the session will work only with this one rule.
 	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
@@ -287,6 +288,11 @@ const char *xccdf_session_get_filename(const struct xccdf_session *session)
 bool xccdf_session_is_sds(const struct xccdf_session *session)
 {
 	return oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_SDS;
+}
+
+void xccdf_session_set_rule(struct xccdf_session *session, const char *rule)
+{
+	session->rule = rule;
 }
 
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation)
@@ -1074,6 +1080,7 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot build xccdf_policy.");
 		return 1;
 	}
+	policy->rule = session->rule;
 
 	session->xccdf.result = xccdf_policy_evaluate(policy);
 	if (session->xccdf.result == NULL)

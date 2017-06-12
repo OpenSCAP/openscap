@@ -118,6 +118,7 @@ struct oscap_action {
 	char *f_verbose_log;
 	/* others */
         char *profile;
+	const char *rule;
         char *show;
         char *format;
         const char *tmpl;

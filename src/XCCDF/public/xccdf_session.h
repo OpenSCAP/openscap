@@ -81,6 +81,15 @@ const char *xccdf_session_get_filename(const struct xccdf_session *session);
 bool xccdf_session_is_sds(const struct xccdf_session *session);
 
 /**
+ * Set rule for session - if rule is not NULL, session will use only this
+ * one rule.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule If not NULL, session will use only this rule
+ */
+void xccdf_session_set_rule(struct xccdf_session *session, const char *rule);
+
+/**
  * Set XSD validation level to one of three possibilities:
  *	- None: 	All XSD validations will be skipped.
  *	- Default:	Partial (input) XSD validations will be done.

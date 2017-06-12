@@ -60,9 +60,9 @@ test_run "test xccdf resolve" $srcdir/test_xccdf_resolve.sh
 test_run "Exported arf results from xccdf without reference to oval" $srcdir/test_xccdf_results_arf_no_oval.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 test_run "TestResult element should contain test-system attribute" $srcdir/test_xccdf_test_system.sh
-
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh
 test_run "XCCDF 1.1 to 1.2 transformation" $srcdir/test_xccdf_transformation.sh
+test_run "Test single-rule evaluation" $srcdir/test_single_rule.sh
 
 #
 # Tests for 'oscap xccdf eval --remediate' and substitution

@@ -131,6 +131,11 @@ EXTRA_DIST += \
 	test_report_without_oval_poses_no_errors.sh \
 	test_report_without_oval_poses_no_errors.xccdf.xml.result.xml \
 	test_report_without_xsl_fails_gracefully.sh \
+	test_single_rule.sh \
+	test_single_rule.ds.xml \
+	test_single_rule.oval.xml \
+	test_single_rule-tailoring.xml \
+	test_single_rule.xccdf.xml \
 	test_xccdf_fix_attr_export.sh \
 	test_xccdf_fix_attr_export.xccdf.xml \
 	test_xccdf_complex_check_and_notchecked.sh \
