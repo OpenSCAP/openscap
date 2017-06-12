@@ -79,7 +79,7 @@ struct cpe_item {		// the node <cpe-item>
 
 	struct oscap_list *references;	// list of references
 	struct oscap_list *checks;	// list of checks
-	struct oscap_list *notes;	// list of notes - it's the same structure as titles
+	struct oscap_list *notes;	// list of cpe_notes (which contain lists of oscap_text)
 	struct cpe_item_metadata *metadata;	// element <meta:item-metadata>
 	struct cpe23_item *cpe23_item;		///< element <cpe23-item>
 	struct {
@@ -104,10 +104,22 @@ OSCAP_IGETINS(oscap_text, cpe_item, titles, title)
 OSCAP_IGETINS(oscap_text, cpe_item, notes, note)
 OSCAP_ITERATOR_REMOVE_F(cpe_reference) OSCAP_ITERATOR_REMOVE_F(cpe_check)
 
+struct cpe_notes_iterator *cpe_item_get_notes2(const struct cpe_item *item)
+{
+	return oscap_iterator_new(item->notes);
+}
+OSCAP_INSERTER(cpe_item, notes, cpe_notes, notes)
+
 struct cpe_notes {				///< representation of <notes> element
 	char *lang;				///< xml:lang attribute
 	struct oscap_list *notes;		///< list of inner <note> elements
 };
+
+OSCAP_ACCESSOR_STRING(cpe_notes, lang)
+OSCAP_IGETINS(oscap_text, cpe_notes, notes, note)
+
+OSCAP_ITERATOR_GEN(cpe_notes)
+OSCAP_ITERATOR_REMOVE_F(cpe_notes)
 
 /* <cpe-item><item-metadata>
  * */
@@ -288,9 +300,6 @@ static void cpe_check_export(const struct cpe_check *check, xmlTextWriterPtr wri
 static void cpe_reference_export(const struct cpe_reference *ref, xmlTextWriterPtr writer);
 static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr writer);
 
-struct cpe_notes *cpe_notes_new(void);
-void cpe_notes_free(struct cpe_notes *notes);
-
 /***************************************************************************/
 
 /* Constructors of CPE structures cpe_*<structure>*_new()
@@ -389,6 +398,7 @@ struct cpe_reference *cpe_reference_new()
 struct cpe_notes *cpe_notes_new(void)
 {
 	struct cpe_notes *notes = oscap_calloc(1, sizeof(struct cpe_notes));
+	notes->lang = NULL;
 	notes->notes = oscap_list_new();
 	return notes;
 }
@@ -845,8 +855,7 @@ static struct cpe_notes *cpe_notes_parse(xmlTextReaderPtr reader)
 			}
 
 			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NOTE_STR) == 0) {
-				char *note_text = oscap_element_string_copy(reader);
-				oscap_list_add(notes->notes, note_text);
+				oscap_list_add(notes->notes, oscap_text_new_parse(OSCAP_TEXT_TRAITS_PLAIN, reader));
 			} else {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unexpected element within notes element: '%s'",
 						xmlTextReaderConstLocalName(reader));
@@ -1111,10 +1120,9 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 	if (oscap_iterator_has_more(it)) {
 		cpe_notes_export(oscap_iterator_next(it), writer);
 	}
-
 	oscap_iterator_free(it);
 
-	    if (item->metadata != NULL) {
+	if (item->metadata != NULL) {
 		xmlTextWriterStartElementNS(writer, NS_META_STR, TAG_ITEM_METADATA_STR, NULL);
 		if (item->metadata->modification_date != NULL)
 			xmlTextWriterWriteAttribute(writer, ATTR_MODIFICATION_DATE_STR,
@@ -1283,15 +1291,9 @@ static void cpe_notes_export(const struct cpe_notes *notes, xmlTextWriterPtr wri
 	xmlTextWriterStartElementNS(writer, NULL, TAG_NOTES_STR, NULL);
 	if (notes->lang != NULL)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "xml:lang", BAD_CAST notes->lang);
-	struct oscap_iterator *it = oscap_iterator_new(notes->notes);
-	while (oscap_iterator_has_more(it)) {
-		const char *note_text = oscap_iterator_next(it);
-		xmlTextWriterStartElementNS(writer, NULL, TAG_NOTE_STR, NULL);
-		if (note_text != NULL)
-			xmlTextWriterWriteString(writer, BAD_CAST note_text);
-		xmlTextWriterEndElement(writer);
-	}
-	oscap_iterator_free(it);
+
+	oscap_textlist_export(cpe_notes_get_notes(notes), writer, "note");
+
 	xmlTextWriterEndElement(writer);
 }
 
@@ -1370,7 +1372,7 @@ void cpe_reference_free(struct cpe_reference *ref)
 void cpe_notes_free(struct cpe_notes *notes)
 {
 	if (notes != NULL) {
-		oscap_list_free(notes->notes, (oscap_destruct_func) oscap_free);
+		oscap_list_free(notes->notes, (oscap_destruct_func) oscap_text_free);
 		oscap_free(notes->lang);
 		oscap_free(notes);
 	}
