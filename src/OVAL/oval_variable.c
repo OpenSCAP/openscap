@@ -479,12 +479,43 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
         return 0;
 }
 
+static int _dump_variable_values(struct oval_variable *variable)
+{
+	struct oval_value_iterator *val_itr = oval_variable_get_values(variable);
+	if (!oval_value_iterator_has_more(val_itr)) {
+		oval_value_iterator_free(val_itr);
+		return -1;
+	}
+
+	struct oscap_string *val_dump = oscap_string_new();
+	oscap_string_append_char(val_dump, '\"');
+	while(1) {
+		struct oval_value *val = oval_value_iterator_next(val_itr);
+		if (oval_value_cast(val, variable->datatype) != 0) {
+			oval_value_iterator_free(val_itr);
+			oscap_string_free(val_dump);
+			return -1;
+		}
+		oscap_string_append_string(val_dump, oval_value_get_text(val));
+		if (!oval_value_iterator_has_more(val_itr)) {
+			break;
+		}
+		oscap_string_append_string(val_dump, "\", \"");
+	}
+	oscap_string_append_char(val_dump, '\"');
+
+	dI("Variable '%s' has values %s.", variable->id, oscap_string_get_cstr(val_dump));
+
+	oscap_string_free(val_dump);
+	oval_value_iterator_free(val_itr);
+
+	return 0;
+}
+
 int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable)
 {
 	oval_variable_LOCAL_t *var;
 	struct oval_component *component;
-	struct oval_value_iterator *val_itr;
-	struct oscap_string *val_dump;
 
 	__attribute__nonnull__(variable);
 
@@ -515,36 +546,9 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 		return 0;
 	}
 
-	val_itr = oval_variable_get_values(variable);
-	if (!oval_value_iterator_has_more(val_itr)) {
-		oval_value_iterator_free(val_itr);
+	if (_dump_variable_values(variable) != 0) {
 		var->flag = SYSCHAR_FLAG_ERROR;
-		return 0;
 	}
-
-	val_dump = oscap_string_new();
-	oscap_string_append_char(val_dump, '\"');
-	while(1) {
-		struct oval_value *val;
-
-		val = oval_value_iterator_next(val_itr);
-		if (oval_value_cast(val, var->datatype) != 0) {
-			oval_value_iterator_free(val_itr);
-			var->flag = SYSCHAR_FLAG_ERROR;
-			oscap_string_free(val_dump);
-			return 0;
-		}
-		oscap_string_append_string(val_dump, oval_value_get_text(val));
-		if (!oval_value_iterator_has_more(val_itr)) {
-			break;
-		}
-		oscap_string_append_string(val_dump, "\", \"");
-	}
-	oscap_string_append_char(val_dump, '\"');
-	dI("Variable '%s' has values %s.", var->id, oscap_string_get_cstr(val_dump));
-	oscap_string_free(val_dump);
-	oval_value_iterator_free(val_itr);
-
 	return 0;
 }
 
