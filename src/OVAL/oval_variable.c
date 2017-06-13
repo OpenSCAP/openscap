@@ -524,14 +524,18 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 
 	__attribute__nonnull__(variable);
 
-	if (variable->type != OVAL_VARIABLE_LOCAL)
+	dI("Querying variable '%s'.", variable->id);
+
+	if (variable->type != OVAL_VARIABLE_LOCAL) {
+		dI("Variable '%s' is not local, skipping.", variable->id);
+		_dump_variable_values(variable);
 		return 0;
+	}
 
 	var = (oval_variable_LOCAL_t *) variable;
 	if (var->flag != SYSCHAR_FLAG_UNKNOWN)
 		return 0;
 
-	dI("Querying variable '%s'.", var->id);
 	component = var->component;
         if (component) {
 		if (!var->values)
