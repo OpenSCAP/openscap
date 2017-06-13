@@ -481,6 +481,11 @@ int oval_syschar_model_compute_variable(struct oval_syschar_model *sysmod, struc
 
 static int _dump_variable_values(struct oval_variable *variable)
 {
+	if (variable->flag != SYSCHAR_FLAG_COMPLETE && variable->flag != SYSCHAR_FLAG_INCOMPLETE) {
+		dI("Variable '%s' has no values.", variable->id);
+		return 0;
+	}
+
 	struct oval_value_iterator *val_itr = oval_variable_get_values(variable);
 	if (!oval_value_iterator_has_more(val_itr)) {
 		oval_value_iterator_free(val_itr);
@@ -536,15 +541,6 @@ int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *
 		dW("NULL component bound to a variable, id: %s.", var->id);
 		return -1;
         }
-
-	switch (var->flag) {
-	case SYSCHAR_FLAG_COMPLETE:
-	case SYSCHAR_FLAG_INCOMPLETE:
-		break;
-	default:
-		dI("Variable '%s' has no values.", var->id);
-		return 0;
-	}
 
 	if (_dump_variable_values(variable) != 0) {
 		var->flag = SYSCHAR_FLAG_ERROR;
