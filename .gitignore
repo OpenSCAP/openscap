@@ -13,6 +13,9 @@ Makefile.in
 *.lo
 *.a
 *.la
+*.cproject
+*.project
+.settings/language.settings.xml
 
 oscap_debug.log.*
 

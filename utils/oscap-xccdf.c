@@ -494,11 +494,16 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
-		if (action->profile != NULL)
-			report_missing_profile(action);
-		else
+		if (action->profile != NULL) {
+			if (!xccdf_session_set_profile_id_by_suffix(session, action->profile)) {
+				report_missing_profile(action);
+				goto cleanup;
+			}
+		}
+		else {
 			fprintf(stderr, "No Policy was found for default profile.\n");
-		goto cleanup;
+			goto cleanup;
+		}
 	}
 
 	_register_progress_callback(session, action->progress);
