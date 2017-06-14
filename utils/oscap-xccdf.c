@@ -443,7 +443,7 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 static void report_missing_profile(const struct oscap_action *action)
 {
 	fprintf(stderr,
-		"Profile \"%s\" was not found. Get available profiles using:\n"
+		"No profile matching suffix \"%s\" was found. Get available profiles using:\n"
 		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
 }
 

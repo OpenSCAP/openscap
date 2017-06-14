@@ -469,7 +469,10 @@ bool xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const
 		xccdf_profile_iterator_free(profit_bench);
 	}
 
-	return xccdf_session_set_profile_id(session, full_profile_id);
+	if (full_profile_id == NULL)
+		return false;
+	else
+		return xccdf_session_set_profile_id(session, full_profile_id);
 }
 
 const char *xccdf_session_get_profile_id(struct xccdf_session *session)
