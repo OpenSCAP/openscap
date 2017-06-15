@@ -447,6 +447,14 @@ static void report_missing_profile(const struct oscap_action *action)
 		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
 }
 
+static void report_multiple_profile_matches(const struct oscap_action *action)
+{
+	fprintf(stderr,
+		"At least two profiles matched the given suffix. Use a more specific suffix "
+		"to get an exact match. Get list of profiles using:\n"
+		"$ oscap info \"%s\"\n", action->f_xccdf);
+}
+
 /**
  * XCCDF Processing fucntion
  * @param action OSCAP Action structure
@@ -495,8 +503,13 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
 		if (action->profile != NULL) {
-			if (!xccdf_session_set_profile_id_by_suffix(session, action->profile)) {
+			const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
+			if (suffix_match_result == 1) {
 				report_missing_profile(action);
+				goto cleanup;
+			}
+			else if (suffix_match_result == 2) {
+				report_multiple_profile_matches(action);
 				goto cleanup;
 			}
 		}
