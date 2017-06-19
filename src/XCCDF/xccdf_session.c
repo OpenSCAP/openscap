@@ -491,7 +491,7 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 		return 2;
 	}
 	else {
-		xccdf_session_set_profile_id(session, full_profile_id);
+		assert(xccdf_session_set_profile_id(session, full_profile_id)==0);
 		return 0;
 	}
 }
