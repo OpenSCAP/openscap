@@ -564,6 +564,12 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 						oval_sysent_get_value(item_entity),
 						oval_sysitem_get_id(cur_sysitem), oval_state_get_id(state));
 			}
+			if (ent_val_res == OVAL_RESULT_ERROR) {
+				dI("Comparing entity '%s'='%s' of item '%s' to corresponding entity in state '%s' was not successful.",
+						oval_sysent_get_name(item_entity),
+						oval_sysent_get_value(item_entity),
+						oval_sysitem_get_id(cur_sysitem), oval_state_get_id(state));
+			}
 			if (((signed) ent_val_res) == -1) {
 				oval_sysent_iterator_free(item_entities_itr);
 				goto fail;
