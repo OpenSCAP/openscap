@@ -486,7 +486,8 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 	} else if (multiple) {
 		return 2;
 	} else {
-		assert(xccdf_session_set_profile_id(session, full_profile_id)==0);
+		const bool search_result = xccdf_session_set_profile_id(session, full_profile_id);
+		assert(search_result);
 		return 0;
 	}
 }
