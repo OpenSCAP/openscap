@@ -507,13 +507,11 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 			if (suffix_match_result == 1) {
 				report_missing_profile(action);
 				goto cleanup;
-			}
-			else if (suffix_match_result == 2) {
+			} else if (suffix_match_result == 2) {
 				report_multiple_profile_matches(action);
 				goto cleanup;
 			}
-		}
-		else {
+		} else {
 			fprintf(stderr, "No Policy was found for default profile.\n");
 			goto cleanup;
 		}

@@ -452,12 +452,10 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 						full_profile_id, tailoring_profile_id);
 					multiple = true;
 					break;
-				}
-				else {
+				} else {
 					full_profile_id = tailoring_profile_id;
 				}
 			}
-
 		}
 		xccdf_profile_iterator_free(profit_tailoring);
 	}
@@ -475,8 +473,7 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 						full_profile_id, bench_profile_id);
 					multiple = true;
 					break;
-				}
-				else {
+				} else {
 					full_profile_id = bench_profile_id;
 				}
 			}
@@ -486,11 +483,9 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 
 	if (full_profile_id == NULL) {
 		return 1;
-	}
-	else if (multiple) {
+	} else if (multiple) {
 		return 2;
-	}
-	else {
+	} else {
 		assert(xccdf_session_set_profile_id(session, full_profile_id)==0);
 		return 0;
 	}
