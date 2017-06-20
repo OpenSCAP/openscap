@@ -72,7 +72,7 @@ Third section provides cover advanced topic like validation, signing and
 transformation of SCAP content, generating reports and guides and also some
 information about CPE applicability.
 
-Last section contains information about debuging and compiling oscap on Linux
+Last section contains information about debugging and compiling oscap on Linux
 and Windows which can be useful for developers.
 
 == Basic oscap Usage
@@ -525,7 +525,7 @@ $ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml sca
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
 non-compliant state. For system remediation, an XCCDF file with instructions is
-required. The _scap-security-guide_ package constains certain remediation
+required. The _scap-security-guide_ package contains certain remediation
 instructions.
 
 System remediation consists of the following steps:
@@ -537,7 +537,7 @@ System remediation consists of the following steps:
  environment, and executes the fix script.
  . Any output of the fix script is captured by ```oscap``` and stored within the
  *rule-result* element. The return value of the fix script is stored as well.
- . Whenever ```oscap``` executes a fix script, it immediatelly evaluates the OVAL
+ . Whenever ```oscap``` executes a fix script, it immediately evaluates the OVAL
  definition again (to verify that the fix script has been applied correctly).
  During this second run, if the OVAL evaluation returns success, the result of
  the rule is *fixed*, otherwise it is an *error*.
