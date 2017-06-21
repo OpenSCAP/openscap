@@ -19,6 +19,7 @@ using namespace std;
 
 static int _init_done = 0;
 static pkgCache *cgCache = NULL;
+static MMap *map = NULL;
 
 static int opencache (void) {
         if (pkgInitConfig (*_config) == false) return 0;
@@ -27,7 +28,7 @@ static int opencache (void) {
         FileFd *fd = new FileFd (_config->FindFile ("Dir::Cache::pkgcache"),
                         FileFd::ReadOnly);
 
-        MMap *map = new MMap (*fd, MMap::Public|MMap::ReadOnly);
+        map = new MMap (*fd, MMap::Public|MMap::ReadOnly);
         if (_error->PendingError () == true) {
                 _error->DumpErrors ();
                 return 0;
@@ -130,6 +131,9 @@ int dpkginfo_fini()
 {
         delete cgCache;
         cgCache = NULL;
+
+        delete map;
+        map = NULL;
 
         return 0;
 }
