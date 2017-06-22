@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_scap-workbench_tailoring_default">
+  <xccdf:version time="2017-06-15T12:08:06">1.0</xccdf:version>
+ <xccdf:Profile id="xccdf_org.ssgproject.content_profile_verycommon" extends="xccdf_org.ssgproject.content_profile_common">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">Common Profile for General-Purpose Fedora Systems </xccdf:title>
+    <xccdf:select  idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
+  </xccdf:Profile>
+  <xccdf:Profile id="xccdf_org.ssgproject.content_profile_other" extends="xccdf_org.ssgproject.content_profile_common">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">Other Common Profile for General-Purpose Fedora Systems</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile contains items common to general-purpose Fedora installations.</xccdf:description>
+    <xccdf:select  idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
+  </xccdf:Profile>
+ <xccdf:Profile id="xccdf_org.ssgproject.content_profile_her" extends="xccdf_org.ssgproject.content_profile_common">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">Common Profile for General-Purpose Fedora Systems [CUSTOMIZED]</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile contains items common to general-purpose Fedora installations.</xccdf:description>
+    <xccdf:select  idref="xccdf_moc.elpmaxe.www_rule_1" selected="false"/>
+  </xccdf:Profile>
+</xccdf:Tailoring>

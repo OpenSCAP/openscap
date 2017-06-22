@@ -302,6 +302,16 @@ bool xccdf_session_set_report_export(struct xccdf_session *session, const char *
 bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *profile_id);
 
 /**
+ *Select XCCDF Profile for evaluation with only profile suffix as input. Reports error
+ *if multiple profiles match the suffix.
+ *@memberof xccdf_session
+ *@param session XCCDF Session
+ *@param profile_suffix unique profile ID or suffix of the ID of the profile to set
+ *@returns 0 on success, 1 if profile is not found, and 2 if multiple matches are found.
+ */
+int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix);
+
+/**
  * Retrieves ID of the profile that we will evaluate with, or NULL.
  * @memberof xccdf_session
  * @param session XCCDF Session

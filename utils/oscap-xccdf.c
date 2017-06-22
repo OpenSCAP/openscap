@@ -443,8 +443,16 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 static void report_missing_profile(const struct oscap_action *action)
 {
 	fprintf(stderr,
-		"Profile \"%s\" was not found. Get available profiles using:\n"
+		"No profile matching suffix \"%s\" was found. Get available profiles using:\n"
 		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
+}
+
+static void report_multiple_profile_matches(const struct oscap_action *action)
+{
+	fprintf(stderr,
+		"At least two profiles matched the given suffix. Use a more specific suffix "
+		"to get an exact match. Get list of profiles using:\n"
+		"$ oscap info \"%s\"\n", action->f_xccdf);
 }
 
 /**
@@ -494,11 +502,19 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
-		if (action->profile != NULL)
-			report_missing_profile(action);
-		else
+		if (action->profile != NULL) {
+			const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
+			if (suffix_match_result == 1) {
+				report_missing_profile(action);
+				goto cleanup;
+			} else if (suffix_match_result == 2) {
+				report_multiple_profile_matches(action);
+				goto cleanup;
+			}
+		} else {
 			fprintf(stderr, "No Policy was found for default profile.\n");
-		goto cleanup;
+			goto cleanup;
+		}
 	}
 
 	_register_progress_callback(session, action->progress);

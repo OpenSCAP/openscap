@@ -431,6 +431,67 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
 	return true;
 }
 
+// 0 = no error, 1 = no matches, 2 = multiple matches
+int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix)
+{
+	const char *full_profile_id = NULL;
+	struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
+	bool multiple = false;
+
+	// Tailoring Profiles
+	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(session->xccdf.policy_model);
+	if (tailoring != NULL)   {
+		struct xccdf_profile_iterator *profit_tailoring = xccdf_tailoring_get_profiles(tailoring);
+		while (xccdf_profile_iterator_has_more(profit_tailoring)) {
+			struct xccdf_profile *tailoring_profile = xccdf_profile_iterator_next(profit_tailoring);
+			const char *tailoring_profile_id = xccdf_profile_get_id(tailoring_profile);
+
+			if (oscap_str_endswith(tailoring_profile_id, profile_suffix)) {
+				if (full_profile_id != NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
+						full_profile_id, tailoring_profile_id);
+					multiple = true;
+					break;
+				} else {
+					full_profile_id = tailoring_profile_id;
+				}
+			}
+		}
+		xccdf_profile_iterator_free(profit_tailoring);
+	}
+
+	// Benchmark Profiles
+	if (full_profile_id == NULL) {
+		struct xccdf_profile_iterator *profit_bench = xccdf_benchmark_get_profiles(bench);
+		while (xccdf_profile_iterator_has_more(profit_bench)) {
+			struct xccdf_profile *bench_profile = xccdf_profile_iterator_next(profit_bench);
+			const char *bench_profile_id = xccdf_profile_get_id(bench_profile);
+
+			if(oscap_str_endswith(bench_profile_id, profile_suffix)) {
+				if (full_profile_id != NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
+						full_profile_id, bench_profile_id);
+					multiple = true;
+					break;
+				} else {
+					full_profile_id = bench_profile_id;
+				}
+			}
+		}
+		xccdf_profile_iterator_free(profit_bench);
+	}
+
+	if (full_profile_id == NULL) {
+		return 1;
+	} else if (multiple) {
+		return 2;
+	} else {
+		const bool search_result = xccdf_session_set_profile_id(session, full_profile_id);
+		assert(search_result);
+		return 0;
+	}
+}
+
 const char *xccdf_session_get_profile_id(struct xccdf_session *session)
 {
 	return session->xccdf.profile_id;
