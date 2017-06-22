@@ -661,18 +661,9 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 	return ret;
 }
 
-static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd, struct xccdf_profile *profile)
+static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	const char *oscap_version = oscap_get_version();
-	// Profile Info
-	const char *profile_id = xccdf_profile_get_id(profile);
-	struct oscap_text_iterator *profile_title_iterator = xccdf_profile_get_title(profile);
-	const char *profile_title = oscap_textlist_get_preferred_plaintext(profile_title_iterator, NULL);
-	struct oscap_text_iterator *profile_description_iterator = xccdf_profile_get_description(profile);
-	const char *profile_description = oscap_textlist_get_preferred_plaintext(profile_description_iterator, NULL);
-
-	oscap_text_iterator_free(profile_title_iterator);
-	oscap_text_iterator_free(profile_description_iterator);
 
 	if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
 		// Ansible script
@@ -685,13 +676,23 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		// Bash Script
 		if (result == NULL) {
 			// Profile-based remediation fix
+			struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
+			const char *profile_id = xccdf_profile_get_id(profile);
+			struct oscap_text_iterator *profile_title_iterator = xccdf_profile_get_title(profile);
+			const char *profile_title = oscap_textlist_get_preferred_plaintext(profile_title_iterator, NULL);
+			struct oscap_text_iterator *profile_description_iterator = xccdf_profile_get_description(profile);
+			const char *profile_description = oscap_textlist_get_preferred_plaintext(profile_description_iterator, NULL);
+
+			oscap_text_iterator_free(profile_title_iterator);
+			oscap_text_iterator_free(profile_description_iterator);
+			// Benchmark Info
 			struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 			const char *benchmark_version_info = xccdf_benchmark_get_version(benchmark);
 			const char *benchmark_id = xccdf_benchmark_get_id(benchmark);
-			const char *xccdf_version_info = xccdf_benchmark_get_schema_version(benchmark);
-			const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version_info);
+			const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
+			const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
 
-			const char *fix_header = oscap_sprintf(
+			char *fix_header = oscap_sprintf(
 				"###############################################################################\n#\n"
 				"# Bash remediation role for profile %s\n"
 				"# Profile Title:  %s\n"
@@ -711,10 +712,10 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			return _write_text_to_fd_and_free(output_fd, fix_header);
 		} else {
 			// Results-based remediation fix
-			const char *result_start_time = xccdf_result_get_start_time(result);
-			const char *result_end_time = xccdf_result_get_end_time(result);
+			const char *start_time = xccdf_result_get_start_time(result);
+			const char *end_time = xccdf_result_get_end_time(result);
 
-			const char *fix_header = oscap_sprintf(
+			char *fix_header = oscap_sprintf(
 				"###############################################################################\n#\n"
 				"# Bash remediation role for the results of evaluation of profile %s \n#\n"
 				"# Evaluation Result Start Time:  %s\n"
@@ -724,7 +725,9 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 				"# 	$ oscap xccdf generate fix arf.xml \n"
 				"# \n"
 				"###############################################################################\n\n\n",
-					profile_id, result_start_time, result_end_time, oscap_version);
+					xccdf_result_get_profile(result),
+					start_time != NULL ? start_time : "Unknown",
+					end_time, oscap_version);
 
 			return _write_text_to_fd_and_free(output_fd, fix_header);
 		}
@@ -744,14 +747,13 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		// No TestResult is available. Generate fix from the stock profile.
 		dI("Generating profile-oriented fixes for policy(profile/@id=%s)", xccdf_policy_get_id(policy));
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
-		struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 
 		if (benchmark == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
 			return 1;
 		}
 
-		if (_write_script_header_to_fd(policy, result, sys, output_fd, profile) != 0)
+		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0)
 			return 1;
 
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
@@ -766,9 +768,8 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
-		struct xccdf_policy *profile = xccdf_result_get_profile(result);
 
-		if (_write_script_header_to_fd(policy, result, sys, output_fd, profile) != 0)
+		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0)
 			return 1;
 
 		while (xccdf_rule_result_iterator_has_more(rr_it)) {
