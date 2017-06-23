@@ -742,7 +742,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# - hosts: localhost # set required host\n"
 			"   tasks:\n",
 				fix_header);
-
+		oscap_free(fix_header);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
 	} else {
 		return _write_text_to_fd_and_free(output_fd, fix_header);
