@@ -36,11 +36,14 @@ cmd="clang -cc1 -analyze -disable-free -disable-llvm-verifier \
     -mthread-model posix -fmath-errno -masm-verbose -mconstructor-aliases \
     -munwind-tables -fuse-init-array -target-cpu x86-64 \
     -momit-leaf-frame-pointer -dwarf-column-info -debugger-tuning=gdb \
-    -resource-dir /usr/lib/clang/$clang_version -D HAVE_CONFIG_H -I .. -I ../.. \
-    -I /usr/include/libxml2 -I ./public -I ../../src -I ../../src/common/public \
-    -I ../../src/source/public -I ../../src/XCCDF_POLICY/public \
-    -I ../../src/XCCDF/public -I ../../src/CPE/public -D _GNU_SOURCE \
-    -D OSCAP_THREAD_SAFE -D _POSIX_C_SOURCE=200112L -D PIC \
+    -resource-dir /usr/lib/clang/$clang_version -D HAVE_CONFIG_H \
+    -I.. -I/usr/include/libxml2 -I../src -I../src/common/public \
+    -I../src/source/public -I../src/XCCDF_POLICY/public -I../src/XCCDF/public \
+    -I../src/CPE/public -I../src/OVAL/probes/public \
+    -I../src/OVAL/probes/SEAP/public -I../src/OVAL/public \
+    -I../src/OVAL/probes -I../src/common -I../src/CVSS/public \
+    -I../src/CVE/public \
+    -D _GNU_SOURCE -D OSCAP_THREAD_SAFE -D _POSIX_C_SOURCE=200112L -D PIC \
     -internal-isystem /usr/local/include \
     -internal-isystem /usr/lib/clang/$clang_version/include \
     -internal-externc-isystem /include -internal-externc-isystem /usr/include \
