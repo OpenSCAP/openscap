@@ -663,7 +663,13 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
+
+	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
+		oscap_streq(sys, "urn:xccdf:fix:script:ansible")))
+		return 0; // no header required
+
 	const char *oscap_version = oscap_get_version();
+	char *fix_header;
 
 	// Bash Script
 	if (result == NULL) {
@@ -686,7 +692,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
 
-		char *fix_header = oscap_sprintf(
+		fix_header = oscap_sprintf(
 			"###############################################################################\n#\n"
 			"# Bash remediation role for profile %s\n"
 			"# Profile Title:  %s\n"
@@ -703,18 +709,6 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 				profile_id, profile_title, profile_description, benchmark_id, benchmark_version_info,
 				xccdf_version_name, oscap_version, profile_id, sys);
 
-		if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
-			char *ansible_fix_header = oscap_sprintf(
-				"---\n"
-				"# - hosts: localhost # set required host\n"
-				"%s\n"
-				"   tasks:\n",
-					fix_header);
-
-			return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
-		} else {
-			return _write_text_to_fd_and_free(output_fd, fix_header);
-		}
 	} else {
 		// Results-based remediation fix
 		const char *start_time = xccdf_result_get_start_time(result);
@@ -723,7 +717,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		const struct xccdf_version_info *xccdf_version = xccdf_result_get_schema_version(result);
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
 
-		char *fix_header = oscap_sprintf(
+		fix_header = oscap_sprintf(
 			"###############################################################################\n#\n"
 			"# Bash remediation role for the results of evaluation of profile %s \n"
 			"# XCCDF Version:  %s\n#\n"
@@ -735,25 +729,24 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from the results of a profile evaluation.\n"
 			"# It attempts to remediate all issues from the selected rules that failed the test.\n"
 			"# \n"
-			"###############################################################################\n\n\n",
+			"###############################################################################\n\n",
 				xccdf_result_get_profile(result), xccdf_version_name,
 				start_time != NULL ? start_time : "Unknown",
 				end_time, oscap_version, result_id, sys, result_id, sys);
-
-		if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
-			char *ansible_fix_header = oscap_sprintf(
-				"---\n"
-				"# - hosts: localhost # set required host\n"
-				"%s\n"
-				"   tasks:\n",
-					fix_header);
-
-			return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
-		} else {
-			return _write_text_to_fd_and_free(output_fd, fix_header);
-		}
 	}
-	return 0;
+
+	if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
+		char *ansible_fix_header = oscap_sprintf(
+			"---\n"
+			"%s\n"
+			"# - hosts: localhost # set required host\n"
+			"   tasks:\n",
+				fix_header);
+
+		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
+	} else {
+		return _write_text_to_fd_and_free(output_fd, fix_header);
+	}
 }
 
 int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
