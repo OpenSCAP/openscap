@@ -105,5 +105,6 @@ test_run "generate fix: just as the anaconda does" $srcdir/test_report_anaconda_
 test_run "generate fix: just as the anaconda does + DataStream" $srcdir/test_report_anaconda_fixes_ds.sh
 test_run "generate fix: ensure filtering drop fixes" $srcdir/test_fix_filtering.sh
 test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
+test_run "generate fix: generate header for bash script" $srcdir/test_fix_bash_header.sh
 
 test_exit

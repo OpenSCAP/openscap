@@ -66,6 +66,8 @@ EXTRA_DIST += \
 	test_fix_arf.playbook2.yml \
 	test_fix_arf.xccdf.xml \
 	test_fix_arf.sh \
+	test_fix_bash_header.sh \
+	test_fix_bash_header.xccdf.xml \
 	test_fix_instance.oval.xml \
 	test_fix_instance.sh \
 	test_fix_instance.xccdf.xml \
