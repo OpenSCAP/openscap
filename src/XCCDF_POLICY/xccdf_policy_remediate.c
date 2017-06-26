@@ -728,7 +728,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# 	$ oscap xccdf generate fix --result-id %s --template %s arf.xml \n#\n"
 			"# This script is generated from the results of a profile evaluation.\n"
 			"# It attempts to remediate all issues from the selected rules that failed the test.\n"
-			"# \n"
+			"#\n"
 			"###############################################################################\n\n",
 				xccdf_result_get_profile(result), xccdf_version_name,
 				start_time != NULL ? start_time : "Unknown",

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-set -x
 set -e
 set -o pipefail
 
@@ -13,7 +12,7 @@ ansible_task1a="\- name: ensure everything passes"
 ansible_task1b="shell: /bin/true"
 ansible_task2a="\- name: correct the failing case"
 ansible_task2b="shell: /bin/false"
-regex="^$|[\#]$|^([\#][[:blank:]][[:alnum:]])"
+regex="^$|[\#]$|^([\#][[:blank:]][^\-])"
 
 name=$(basename $0 .sh)
 results_arf=$(mktemp -t ${name}.arf.XXXXXX)
@@ -35,10 +34,10 @@ grep -q "$bash_line1" $script
 grep -q "$bash_line2" $script
 
 # Generate an Ansible playbook from a profile in ARF file
-$OSCAP xccdf generate fix --profile $profile --template $ansible_template $results_arf | grep -Ev $regex >$playbook
+$OSCAP xccdf generate fix --profile $profile --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
 echo "$(cat $playbook)"
 diff -B $playbook $srcdir/$name.playbook1.yml 
-[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
+#[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q "$ansible_task1a" $playbook
 grep -q "$ansible_task1b" $playbook
@@ -53,10 +52,10 @@ grep -q -v "$bash_line1" $script
 grep -q "$bash_line2" $script
 
 # Generate  an Ansible playbook based on scan results stored in ARF file
-#$OSCAP xccdf generate fix --result-id $result_id --template $ansible_template --output $playbook $results_arf >$stdout 2>$stderr
-$OSCAP xccdf generate fix --result-id $result_id --template $ansible_template $results_arf | grep -Ev $regex >$playbook
+$OSCAP xccdf generate fix --result-id $result_id --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
+echo "$(cat $playbook)"
 diff -B $playbook $srcdir/$name.playbook2.yml
-[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
+#[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q -v "$ansible_task1a" $playbook
 grep -q -v "$ansible_task1b" $playbook
