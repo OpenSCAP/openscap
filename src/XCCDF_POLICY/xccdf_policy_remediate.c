@@ -670,8 +670,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 
 	const char *oscap_version = oscap_get_version();
 	char *fix_header;
+	const char *template = sys != NULL ? sys : "urn:xccdf:fix:script:sh";
 
-	// Bash Script
 	if (result == NULL) {
 		// Profile-based remediation fix
 		struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
@@ -707,7 +707,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# It attempts to fix every selected rule, even if the system is already compliant.\n#\n"
 			"###############################################################################\n\n\n",
 				profile_id, profile_title, profile_description, benchmark_id, benchmark_version_info,
-				xccdf_version_name, oscap_version, profile_id, sys);
+				xccdf_version_name, oscap_version, profile_id, template);
 
 	} else {
 		// Results-based remediation fix
@@ -732,7 +732,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"###############################################################################\n\n",
 				xccdf_result_get_profile(result), xccdf_version_name,
 				start_time != NULL ? start_time : "Unknown",
-				end_time, oscap_version, result_id, sys, result_id, sys);
+				end_time, oscap_version, result_id,
+				template, result_id, template);
 	}
 
 	if (oscap_streq(sys, "urn:xccdf:fix:script:ansible")) {
