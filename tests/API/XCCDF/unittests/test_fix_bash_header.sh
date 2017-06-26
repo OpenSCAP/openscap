@@ -11,7 +11,7 @@ title="Standard System Security Profile"
 description="This profile contains rules to ensure standard security baseline of your system."
 benchmark="xccdf_moc.elpmaxe.www_benchmark_test"
 version="1.0"
-xccdf_version="1.2
+xccdf_version="1.2"
 
 name=$(basename $0 .sh)
 results_arf=$(mktemp -t ${name}.out.XXXXXX)
@@ -20,14 +20,14 @@ stderr=$(mktemp -t ${name}.out.XXXXXX)
 script=$(mktemp -t ${name}.sh.XXXXXX)
 playbook=$(mktemp -t ${name}.yml.XXXXXX)
 
-profile_header1="# Bash remediation role for $profile"
+profile_header1="# Bash remediation role for profile $profile"
 profile_header2="# Profile Title:  $title"
 profile_header3="# Profile Description:  $description"
 profile_header4="# Benchmark ID:  $benchmark"
 profile_header5="# Benchmark Version:  $version"
 profile_header6="# XCCDF Version:  $xccdf_version"
 
-result_header1="# Bash remediation role for the results of evaluation of $profile"
+result_header1="# Bash remediation role for the results of evaluation of profile $profile"
 
 # Create an ARF
 $OSCAP xccdf eval --profile $profile --results-arf $results_arf $srcdir/$name.xccdf.xml >$stdout 2>$stderr || [ $? == 2 ]
