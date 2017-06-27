@@ -862,14 +862,14 @@ int app_generate_fix(const struct oscap_action *action)
 				const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
 				if (suffix_match_result == 1) {
 					report_missing_profile(action);
-					goto cleanup;
+					goto cleanup2;
 				} else if (suffix_match_result == 2) {
 					report_multiple_profile_matches(action);
-					goto cleanup;
+					goto cleanup2;
 				}
 			} else {
 				fprintf(stderr, "No Policy was found for default profile.\n");
-				goto cleanup;
+				goto cleanup2;
 			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);

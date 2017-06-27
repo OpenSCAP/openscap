@@ -12,6 +12,9 @@ ansible_task1a="\- name: ensure everything passes"
 ansible_task1b="shell: /bin/true"
 ansible_task2a="\- name: correct the failing case"
 ansible_task2b="shell: /bin/false"
+
+# Regex matches for script header comments, including: line of #, #\n, # Example Comment
+# Avoids matching # - hosts: and required ansible header elements
 regex="^$|[\#]$|^([\#][[:blank:]][^\-])"
 
 name=$(basename $0 .sh)
@@ -35,9 +38,7 @@ grep -q "$bash_line2" $script
 
 # Generate an Ansible playbook from a profile in ARF file
 $OSCAP xccdf generate fix --profile $profile --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
-echo "$(cat $playbook)"
 diff -B $playbook $srcdir/$name.playbook1.yml 
-#[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q "$ansible_task1a" $playbook
 grep -q "$ansible_task1b" $playbook
@@ -53,9 +54,7 @@ grep -q "$bash_line2" $script
 
 # Generate  an Ansible playbook based on scan results stored in ARF file
 $OSCAP xccdf generate fix --result-id $result_id --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
-echo "$(cat $playbook)"
 diff -B $playbook $srcdir/$name.playbook2.yml
-#[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q -v "$ansible_task1a" $playbook
 grep -q -v "$ansible_task1b" $playbook
