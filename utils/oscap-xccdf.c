@@ -835,6 +835,7 @@ int app_generate_fix(const struct oscap_action *action)
 		xccdf_session_set_component_id(session, action->f_xccdf_id);
 		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
+	xccdf_session_set_loading_flags(session, XCCDF_SESSION_LOAD_XCCDF);
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 

@@ -42,6 +42,20 @@
 struct xccdf_session;
 
 /**
+ * Loading flags for XCCDF session
+ * @memberof xccdf_session
+ * The flags set which components will be loaded in XCCDF session.
+ */
+typedef enum {
+	XCCDF_SESSION_LOAD_NONE = 0,
+	XCCDF_SESSION_LOAD_XCCDF = 1 << 0,
+	XCCDF_SESSION_LOAD_CPE = 1 << 1,
+	XCCDF_SESSION_LOAD_OVAL = 1 << 2,
+	XCCDF_SESSION_LOAD_CHECK_ENGINE_PLUGINS = 1 << 3,
+	XCCDF_SESSION_LOAD_ALL = XCCDF_SESSION_LOAD_XCCDF | XCCDF_SESSION_LOAD_CPE | XCCDF_SESSION_LOAD_OVAL | XCCDF_SESSION_LOAD_CHECK_ENGINE_PLUGINS
+} xccdf_session_loading_flags_t;
+
+/**
  * Costructor of xccdf_session. It attempts to recognize type of the filename.
  * @memberof xccdf_session
  * @param filename path to XCCDF or DS file.
@@ -202,6 +216,14 @@ void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const c
  * to NULL -- ignoring user notification.
  */
 void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback);
+
+/**
+ * Disable or allow loading of depending content (OVAL, SCE, CPE)
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param flags Bit mask that sets loading of other content in the session.
+ */
+void xccdf_session_set_loading_flags(struct xccdf_session *session, xccdf_session_loading_flags_t flags);
 
 /**
  * Set custom oval files for this session
