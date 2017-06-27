@@ -1653,35 +1653,6 @@ int xccdf_session_remediate(struct xccdf_session *session)
 	return xccdf_policy_recalculate_score(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }
 
-struct xccdf_result *xccdf_benchmark_get_result_by_id_suffix(struct xccdf_benchmark *benchmark, const char *testresult_suffix)
-{
-	const char *final_result_id = NULL;
-	struct xccdf_result_iterator *result_iterator = xccdf_benchmark_get_results(benchmark);
-
-	while (xccdf_result_iterator_has_more(result_iterator)) {
-		struct xccdf_result *result = xccdf_result_iterator_next(result_iterator);
-		const char *result_full_id = xccdf_result_get_id(result);
-
-		if (oscap_str_endswith(result_full_id, testresult_suffix)) {
-			if (final_result_id != NULL) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
-					final_result_id, result_full_id);
-				break;
-			} else {
-				final_result_id = result_full_id;
-			}
-		}
-	}
-	xccdf_result_iterator_free(result_iterator);
-
-	if (final_result_id == NULL) {
-		return NULL;
-	} else {
-		struct xccdf_result *final_result =  xccdf_benchmark_get_result_by_id(benchmark, final_result_id);
-		return final_result;
-	}
-}
-
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id)
 {
 	if (session->xccdf.result_source == NULL) {
