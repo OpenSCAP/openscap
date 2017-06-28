@@ -531,7 +531,7 @@ int xccdf_session_remediate(struct xccdf_session *session);
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @param testresult_id ID of the TestResult element in the file (the NULL value stands
- * for the last TestResult).
+ * for the last TestResult). Suffix match is attempted if exact match is not found.
  * @returns zero on success.
  */
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id);

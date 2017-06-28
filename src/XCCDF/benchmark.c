@@ -518,6 +518,10 @@ struct xccdf_result *xccdf_benchmark_get_result_by_id(struct xccdf_benchmark *be
 
 struct xccdf_result *xccdf_benchmark_get_result_by_id_suffix(struct xccdf_benchmark *benchmark, const char *testresult_suffix)
 {
+	struct xccdf_result *init_result = xccdf_benchmark_get_result_by_id(benchmark, testresult_suffix);
+	if (init_result != NULL)
+		return init_result;
+
 	const char *final_result_id = NULL;
 	struct xccdf_result_iterator *result_iterator = xccdf_benchmark_get_results(benchmark);
 
@@ -537,12 +541,7 @@ struct xccdf_result *xccdf_benchmark_get_result_by_id_suffix(struct xccdf_benchm
 	}
 	xccdf_result_iterator_free(result_iterator);
 
-	if (final_result_id == NULL) {
-		return NULL;
-	} else {
-		struct xccdf_result *final_result =  xccdf_benchmark_get_result_by_id(benchmark, final_result_id);
-		return final_result;
-	}
+	return xccdf_benchmark_get_result_by_id(benchmark, final_result_id);
 }
 
 bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item)
