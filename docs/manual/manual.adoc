@@ -1723,23 +1723,8 @@ installed on your system. If you use a release taball, you can skip this step.
  $ ./configure
  $ make
 
-Build dependencies may vary in dependency on enabled f element in its body. This
-element references a CPE name or CPE2 platform (defined using
-cpe2:platform-specification) that could be defined in a CPE dictionary file or a
-CPE language file; or it can also be embedded directly in the XCCDF document.
-
-An XCCDF rule can contain multiple *<xccdf:platform>* elements. It is deemed
-applicable if at least one of the listed platforms is applicable. If an XCCDF
-rule contains no *<xccdf:platform>* elements it is considered always applicable.
-
-If the CPE name or CPE2 platform is defined in an external file, use the
- ```--cpe```
-option; oscap auto-detects format of the file. The following command is an
-example of the XCCDF content evaluation using CPE name from an external file:
-
-eatures (by the configure command). By default, you need the following packages
-installed on your system:
-
+Build dependencies may vary in dependency on enabled features (by the configure command).
+By default, you need the following packages installed on your system:
 
 * swig
 * libxml2-devel
