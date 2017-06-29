@@ -1015,9 +1015,14 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	if (!all_requires_met) {
 		dI("Rule '%s' will be unselected because one of its requires element was not met.", rule_id);
 
+		// We need to report result before unselecting rule
+		// This is necessary for the callback to know if a rule result is notselected
+		// because its @selected is false or any requires elemant was not met
+		int report_rule_result = _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, "At least one requires element was not met.");
+
 		// Remove rule from hash table
 		oscap_htable_detach(policy->selected_final, rule_id);
-		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, "At least one requires element was not met.");
+		return report_rule_result;
 	}
 
 	if (role == XCCDF_ROLE_UNCHECKED)
