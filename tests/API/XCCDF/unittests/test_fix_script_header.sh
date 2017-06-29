@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 set -e
 set -o pipefail
 
@@ -20,19 +21,19 @@ stderr=$(mktemp -t ${name}.out.XXXXXX)
 script=$(mktemp -t ${name}.sh.XXXXXX)
 playbook=$(mktemp -t ${name}.yml.XXXXXX)
 
-profile_header1="# Bash remediation role for profile $profile"
+profile_header1a="# Bash remediation role for profile $profile"
+profile_header1b="# Ansible remediation role for profile $profile"
 profile_header2="# Profile Title:  $title"
 profile_header3="# Profile Description:  $description"
 profile_header4="# Benchmark ID:  $benchmark"
 profile_header5="# Benchmark Version:  $version"
 profile_header6="# XCCDF Version:  $xccdf_version"
 
-result_header1="# Bash remediation role for the results of evaluation of profile $profile"
+result_header1a="# Bash remediation role for the results of evaluation of profile $profile"
+result_header1b="# Ansible remediation role for the results of evaluation of profile $profile"
 result_header2="# XCCDF Version:  $xccdf_version"
-result_header3a="# 	$ oscap xccdf generate fix --result-id $result_id --template $ansible_template xccdf-results.xml"
-result_header3b="# 	$ oscap xccdf generate fix --result-id $result_id --template $bash_template xccdf-results.xml"
-result_header4a="# 	$ oscap xccdf generate fix --result-id $result_id --template $ansible_template arf.xml"
-result_header4b="# 	$ oscap xccdf generate fix --result-id $result_id --template $bash_template arf.xml"
+result_header3a="# 	$ oscap xccdf generate fix --result-id $result_id --template $bash_template xccdf-results.xml"
+result_header3b="# 	$ oscap xccdf generate fix --result-id $result_id --template $ansible_template xccdf-results.xml"
 
 
 # Create an ARF
@@ -47,7 +48,7 @@ result_header5="# Evaluation End Time:  $end_time"
 $OSCAP xccdf generate fix --profile $profile --output $script $srcdir/$name.xccdf.xml >$stdout 2>$stderr
 [ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-grep "$profile_header1" $script
+grep "$profile_header1a" $script
 grep "$profile_header2" $script
 grep "$profile_header3" $script
 grep "$profile_header4" $script
@@ -58,11 +59,9 @@ grep "$profile_header6" $script
 $OSCAP xccdf generate fix --result-id $result_id --template $bash_template --output $script $results_arf >$stdout 2>$stderr
 [ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-echo "$(cat $script)"
-grep "$result_header1" $script
+grep "$result_header1a" $script
 grep "$result_header2" $script
-grep "$result_header3b" $script
-grep "$result_header4b" $script
+grep "$result_header3a" $script
 grep "$result_header5" $script
 
 
@@ -70,7 +69,7 @@ grep "$result_header5" $script
 $OSCAP xccdf generate fix --profile $profile --template $ansible_template --output $playbook $srcdir/$name.xccdf.xml >$stdout 2>$stderr
 [ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-grep "$profile_header1" $playbook
+grep "$profile_header1b" $playbook
 grep "$profile_header2" $playbook
 grep "$profile_header3" $playbook
 grep "$profile_header4" $playbook
@@ -81,10 +80,9 @@ grep "$profile_header6" $playbook
 $OSCAP xccdf generate fix --result-id $result_id --template $ansible_template --output $playbook $results_arf >$stdout 2>$stderr
 [ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-grep "$result_header1" $playbook
+grep "$result_header1b" $playbook
 grep "$result_header2" $playbook
-grep "$result_header3a" $playbook
-grep "$result_header4a" $playbook
+grep "$result_header3b" $playbook
 grep "$result_header5" $playbook
 
 rm $results_arf
