@@ -981,6 +981,47 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 	}
 
+	bool all_requires_met = true;
+	// Check if all requires elements are met
+	struct oscap_stringlist_iterator *requires_elements = xccdf_item_get_requires((struct xccdf_item*)rule);
+	while (oscap_stringlist_iterator_has_more(requires_elements) && all_requires_met) {
+
+		struct oscap_stringlist *requires_element = oscap_stringlist_iterator_next(requires_elements);
+		struct oscap_string_iterator *requires_ids = oscap_stringlist_get_strings(requires_element);
+		bool any_require_selected = false;
+		while (oscap_string_iterator_has_more(requires_ids) && !any_require_selected) {
+			const char *requires_id = oscap_string_iterator_next(requires_ids);
+			if (xccdf_policy_is_item_selected(policy, requires_id)){
+				dD("Rule '%s' requires %s, which is selected.", rule_id, requires_id);
+				any_require_selected = true;
+			} else {
+				dD("Rule '%s' requires %s, which is not selected.", rule_id, requires_id);
+			}
+		}
+		oscap_string_iterator_free(requires_ids);
+
+		// One requires element has no idref met
+		if (!any_require_selected) {
+			all_requires_met = false;
+			dI("A requires element from Rule '%s' requires that any of the following XCCDF Items is also selected.", rule_id);
+			requires_ids = oscap_stringlist_get_strings(requires_element);
+			while (oscap_string_iterator_has_more(requires_ids)) {
+				const char *requires_id = oscap_string_iterator_next(requires_ids);
+				dI("%s", requires_id);
+			}
+			oscap_string_iterator_free(requires_ids);
+		}
+	}
+	oscap_stringlist_iterator_free(requires_elements);
+
+	if (!all_requires_met) {
+		dI("Rule '%s' will be unselected because one of its requires element was not met.", rule_id);
+
+		// Remove rule from hash table
+		oscap_htable_detach(policy->selected_final, rule_id);
+		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, "At least one requires element was not met.");
+	}
+
 	if (role == XCCDF_ROLE_UNCHECKED)
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
 
