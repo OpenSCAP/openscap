@@ -1001,11 +1001,11 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 		// One requires element has no idref met
 		if (!any_require_selected) {
 			all_requires_met = false;
-			dI("A requires element from Rule '%s' requires that any of the following XCCDF Items is also selected.", rule_id);
+			dW("A requires element from Rule '%s' requires that any of the following XCCDF Items is also selected.", rule_id);
 			requires_ids = oscap_stringlist_get_strings(requires_element);
 			while (oscap_string_iterator_has_more(requires_ids)) {
 				const char *requires_id = oscap_string_iterator_next(requires_ids);
-				dI("%s", requires_id);
+				dW("%s", requires_id);
 			}
 			oscap_string_iterator_free(requires_ids);
 		}
@@ -1013,7 +1013,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	oscap_stringlist_iterator_free(requires_elements);
 
 	if (!all_requires_met) {
-		dI("Rule '%s' will be unselected because one of its requires element was not met.", rule_id);
+		dW("Rule '%s' will be unselected because one of its requires element was not met.", rule_id);
 
 		// We need to report result before unselecting rule
 		// This is necessary for the callback to know if a rule result is notselected
