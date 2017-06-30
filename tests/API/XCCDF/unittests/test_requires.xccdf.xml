@@ -5,7 +5,7 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_1">
     <title>xccdf_test_requires_1</title>
-    <description>This profile is for testing requires.</description>
+    <description>Tests a forward chain of requires.</description>
     <select idref="xccdf_com.example.www_rule_1" selected="true"/>
     <select idref="xccdf_com.example.www_rule_2" selected="true"/>
     <select idref="xccdf_com.example.www_rule_3" selected="true"/>
@@ -14,7 +14,7 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_2">
     <title>xccdf_test_requires 2</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a forward chain of requires with first rule unselected.</description>
     <select idref="xccdf_com.example.www_rule_1" selected="false"/>
     <select idref="xccdf_com.example.www_rule_2" selected="true"/>
     <select idref="xccdf_com.example.www_rule_3" selected="true"/>
@@ -23,7 +23,7 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_3">
     <title>xccdf_test_requires 3</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a forward chain of requires with third rule unselected.</description>
     <select idref="xccdf_com.example.www_rule_1" selected="true"/>
     <select idref="xccdf_com.example.www_rule_2" selected="true"/>
     <select idref="xccdf_com.example.www_rule_3" selected="false"/>
@@ -32,8 +32,8 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_4">
     <title>xccdf_test_requires_4</title>
-    <description>This profile is for testing requires.</description>
-    <select idref="xccdf_com.example.www_rule_5" selected="false"/>
+    <description>Tests a backward chain of requires.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
     <select idref="xccdf_com.example.www_rule_6" selected="true"/>
     <select idref="xccdf_com.example.www_rule_7" selected="true"/>
     <select idref="xccdf_com.example.www_rule_8" selected="true"/>
@@ -41,25 +41,25 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_5">
     <title>xccdf_test_requires 5</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a backward chain of requires with first rule unselected.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_7" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_8" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_6">
+    <title>xccdf_test_requires 6</title>
+    <description>Tests a backward chain of requires with third rule unselected.</description>
     <select idref="xccdf_com.example.www_rule_5" selected="true"/>
     <select idref="xccdf_com.example.www_rule_6" selected="true"/>
     <select idref="xccdf_com.example.www_rule_7" selected="false"/>
     <select idref="xccdf_com.example.www_rule_8" selected="true"/>
   </Profile>
 
-  <Profile id="xccdf_com.example.www_profile_test_requires_6">
-    <title>xccdf_test_requires 6</title>
-    <description>This profile is for testing.</description>
-    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
-    <select idref="xccdf_com.example.www_rule_6" selected="true"/>
-    <select idref="xccdf_com.example.www_rule_7" selected="true"/>
-    <select idref="xccdf_com.example.www_rule_8" selected="false"/>
-  </Profile>
-
   <Profile id="xccdf_com.example.www_profile_test_requires_7">
     <title>xccdf_test_requires 7</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a rule with two requires met.</description>
     <select idref="xccdf_com.example.www_rule_5" selected="true"/>
     <select idref="xccdf_com.example.www_rule_6" selected="true"/>
     <select idref="xccdf_com.example.www_rule_9" selected="true"/>
@@ -67,7 +67,7 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_8">
     <title>xccdf_test_requires 8</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a rule with two requires, one met and the other not.</description>
     <select idref="xccdf_com.example.www_rule_5" selected="true"/>
     <select idref="xccdf_com.example.www_rule_6" selected="false"/>
     <select idref="xccdf_com.example.www_rule_9" selected="true"/>
@@ -75,17 +75,21 @@
 
   <Profile id="xccdf_com.example.www_profile_test_requires_9">
     <title>xccdf_test_requires 9</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a rule with two lists of requires.</description>
+    <select idref="xccdf_com.example.www_rule_3" selected="false"/>
     <select idref="xccdf_com.example.www_rule_4" selected="true"/>
     <select idref="xccdf_com.example.www_rule_5" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="false"/>
     <select idref="xccdf_com.example.www_rule_10" selected="true"/>
   </Profile>
 
   <Profile id="xccdf_com.example.www_profile_test_requires_10">
     <title>xccdf_test_requires 10</title>
-    <description>This profile is for testing.</description>
+    <description>Tests a rule with two lists of requires, one met and the other not.</description>
     <select idref="xccdf_com.example.www_rule_3" selected="true"/>
     <select idref="xccdf_com.example.www_rule_4" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_5" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="false"/>
     <select idref="xccdf_com.example.www_rule_10" selected="true"/>
   </Profile>
 
