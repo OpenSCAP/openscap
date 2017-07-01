@@ -92,7 +92,14 @@ void rbt_free(rbt_t *rbt, void (*callback)(void *))
                                         callback((void *)&(rbt_walk_top()->_node));
 
                                 n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
+#ifndef _WIN32
                                 free(rbt_walk_top());
+#else
+				// using free for memory allocated through _aligned_malloc is illegal
+				// rbt_str.c -> rbt_str_node_alloc
+				// https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+				_aligned_free(rbt_walk_top());
+#endif
 
                                 if (n != NULL)
                                         rbt_walk_top() = n;
@@ -142,7 +149,14 @@ void rbt_free2(rbt_t *rbt, void (*callback)(void *, void *), void *user)
                                         callback((void *)&(rbt_walk_top()->_node), user);
 
                                 n = rbt_node_ptr(rbt_walk_top()->_chld[RBT_NODE_SR]);
+#ifndef _WIN32
                                 free(rbt_walk_top());
+#else
+				// using free for memory allocated through _aligned_malloc is illegal
+				// rbt_str.c -> rbt_str_node_alloc
+				// https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+				_aligned_free(rbt_walk_top());
+#endif
 
                                 if (n != NULL)
                                         rbt_walk_top() = n;

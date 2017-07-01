@@ -51,7 +51,16 @@ static struct rbt_node *rbt_i64_node_alloc(void)
 static void rbt_i64_node_free(struct rbt_node *n)
 {
         if (n != NULL)
+	{
+#ifndef _WIN32
                 free(rbt_node_ptr(n));
+#else
+		// using free for memory allocated through _aligned_malloc is illegal
+		// rbt_i64.c -> rbt_i64_node_alloc
+		// https://msdn.microsoft.com/en-us/library/8z34s9c6.aspx
+		_aligned_free(rbt_node_ptr(n));
+#endif
+	}
 }
 
 rbt_t *rbt_i64_new (void)
