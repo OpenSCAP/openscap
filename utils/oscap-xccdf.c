@@ -858,8 +858,19 @@ int app_generate_fix(const struct oscap_action *action)
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
 		if (!xccdf_session_set_profile_id(session, action->profile)) {
-			report_missing_profile(action);
-			goto cleanup2;
+			if (action->profile != NULL) {
+				const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
+				if (suffix_match_result == 1) {
+					report_missing_profile(action);
+					goto cleanup2;
+				} else if (suffix_match_result == 2) {
+					report_multiple_profile_matches(action);
+					goto cleanup2;
+				}
+			} else {
+				fprintf(stderr, "No Policy was found for default profile.\n");
+				goto cleanup2;
+			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 		if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
