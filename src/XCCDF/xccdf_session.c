@@ -345,6 +345,11 @@ const char *xccdf_session_get_benchmark_id(struct xccdf_session *session)
 	return session->ds.user_benchmark_id;
 }
 
+const char *xccdf_session_get_result_id(struct xccdf_session *session)
+{
+	return xccdf_result_get_id(session->xccdf.result);
+}
+
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
 {
 	oscap_free(session->user_cpe);
