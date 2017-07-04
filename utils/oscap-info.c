@@ -391,15 +391,24 @@ static int app_info(const struct oscap_action *action)
 
 				struct oscap_source *report_source = ds_rds_session_select_report(session, report_id);
 				if (report_source == NULL) {
+					rds_report_index_iterator_free(report_it);
+					rds_asset_index_iterator_free(asset_it);
+					ds_rds_session_free(session);
 					goto cleanup;
 				}
 				oscap_document_type_t report_source_type = oscap_source_get_scap_type(report_source);
 				if (report_source_type != OSCAP_DOCUMENT_XCCDF) {
+					rds_report_index_iterator_free(report_it);
+					rds_asset_index_iterator_free(asset_it);
+					ds_rds_session_free(session);
 					oscap_source_free(report_source);
 					goto cleanup;
 				}
 				struct xccdf_result *xccdf_result = xccdf_result_import_source(report_source);
 				if (xccdf_result == NULL) {
+					rds_report_index_iterator_free(report_it);
+					rds_asset_index_iterator_free(asset_it);
+					ds_rds_session_free(session);
 					oscap_source_free(report_source);
 					goto cleanup;
 				}
