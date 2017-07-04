@@ -161,6 +161,12 @@ void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *b
 const char *xccdf_session_get_benchmark_id(struct xccdf_session *session);
 
 /**
+ * Retrieves the result id
+ * @memberof xccdf_session
+ */
+const char *xccdf_session_get_result_id(struct xccdf_session *session);
+
+/**
  * Set path to custom CPE dictionary for the session. This function is applicable
  * only before session loads. It has no effect if run afterwards.
  * @memberof xccdf_session
@@ -531,7 +537,7 @@ int xccdf_session_remediate(struct xccdf_session *session);
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @param testresult_id ID of the TestResult element in the file (the NULL value stands
- * for the last TestResult).
+ * for the last TestResult). Suffix match is attempted if exact match is not found.
  * @returns zero on success.
  */
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id);

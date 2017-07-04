@@ -445,6 +445,7 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid);
 char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t type, const char *prefix);
 struct xccdf_profile *xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id);
 struct xccdf_result *xccdf_benchmark_get_result_by_id(struct xccdf_benchmark *benchmark, const char *testresult_id);
+struct xccdf_result *xccdf_benchmark_get_result_by_id_suffix(struct xccdf_benchmark *benchmark, const char *testresult_suffix);
 bool xccdf_add_item(struct oscap_list *list, struct xccdf_item *parent, struct xccdf_item *item, const char *prefix);
 
 struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xccdf_item* benchmark);

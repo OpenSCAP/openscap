@@ -345,6 +345,11 @@ const char *xccdf_session_get_benchmark_id(struct xccdf_session *session)
 	return session->ds.user_benchmark_id;
 }
 
+const char *xccdf_session_get_result_id(struct xccdf_session *session)
+{
+	return xccdf_result_get_id(session->xccdf.result);
+}
+
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
 {
 	oscap_free(session->user_cpe);
@@ -1658,7 +1663,7 @@ int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, co
 	if (session->xccdf.result_source == NULL) {
 		session->xccdf.result = NULL;
 		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
-		struct xccdf_result *result = xccdf_benchmark_get_result_by_id(benchmark, testresult_id);
+		struct xccdf_result *result = xccdf_benchmark_get_result_by_id_suffix(benchmark, testresult_id);
 		if (result == NULL) {
 			if (testresult_id == NULL)
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find latest TestResult element.");
