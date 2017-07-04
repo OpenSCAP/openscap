@@ -846,6 +846,7 @@ int app_generate_fix(const struct oscap_action *action)
 		}
 	}
 
+	const char *template = action->tmpl == NULL ? "urn:xccdf:fix:script:sh" : action->tmpl;
 	if (action->id != NULL) {
 		/* Result-oriented fixes */
 		if (xccdf_session_build_policy_from_testresult(session, action->id) != 0)
@@ -853,7 +854,7 @@ int app_generate_fix(const struct oscap_action *action)
 
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, xccdf_session_get_result_id(session));
-		if (xccdf_policy_generate_fix(policy, result, action->tmpl, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, result, template, output_fd) == 0)
 			ret = OSCAP_OK;
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
@@ -873,7 +874,7 @@ int app_generate_fix(const struct oscap_action *action)
 			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-		if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, NULL, template, output_fd) == 0)
 			ret = OSCAP_OK;
 	}
 cleanup2:
