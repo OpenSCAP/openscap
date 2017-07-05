@@ -91,7 +91,6 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 {
 	if (oscap_streq(template, "urn:xccdf:fix:script:ansible")) {
 		// Add required indentation in front of every single line
-
 		const char delim = '\n';
 		const char *indentation = "    ";
 
@@ -579,6 +578,9 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 
 static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total)
 {
+	if (template == NULL)
+		template = "urn:xccdf:fix:script:sh";
+
 	// Ensure that given Rule is selected and applicable (CPE).
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
 	if (!is_selected) {
