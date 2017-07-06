@@ -1476,6 +1476,9 @@ AC_CONFIG_FILES([Makefile
                  src/CVE/Makefile
                  tests/API/CVE/Makefile
 
+                 src/CVRF/Makefile
+                 tests/API/CVRF/Makefile
+
                  src/CPE/Makefile
                  tests/API/CPE/Makefile
                  tests/API/CPE/name/Makefile
