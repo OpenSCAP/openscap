@@ -726,6 +726,9 @@ static int app_info(const struct oscap_action *action)
 	case OSCAP_DOCUMENT_CVE_FEED:
 		printf("Document type: CVE Feed\n");
 		// TODO: Provide more info about CVE feeds
+	case OSCAP_DOCUMENT_CVRF_FEED:
+		printf("Document type: CVRF Feed\n");
+		// TODO: Provide more info about CVRF feeds
 	break;
 	case OSCAP_DOCUMENT_SCE_RESULT:
 		printf("Document type: SCE Result File\n");

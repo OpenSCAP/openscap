@@ -386,6 +386,9 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 			case OSCAP_DOCUMENT_CVE_FEED:
 				source->origin.version = strdup("2.0");
 				break;
+			case OSCAP_DOCUMENT_CVRF_FEED:
+				source->origin.version = strdup("1.1");
+				break;
 			case OSCAP_DOCUMENT_SCE_RESULT:
 				source->origin.version = strdup("1.0");
 				break;
