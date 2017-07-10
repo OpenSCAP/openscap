@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"  
+	targetNamespace="http://docs.oasis-open.org/cti/ns/stix/extensions/test-mechanism/cvrf-1" 
+	xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:et="http://docs.oasis-open.org/cti/ns/stix/exploit-target-1" 
+	version="1.2.1" xml:lang="en">
+<xs:element name="ProductTree">
+  <xs:annotation>
+    <xs:documentation xml:lang="en">Neutral product tree to streamline product entries that can be referenced elsewhere in the document. The end of each branch ("FullProductName") represents a referrenceable product.</xs:documentation>
+  </xs:annotation>
+  <xs:complexType>
+    <xs:sequence>
+      <xs:complexType name="BranchType">
+        <xs:choice>
+           <xs:element ref="prod:FullProductName"/>
+           <xs:element name="Branch" type="prod:BranchType" maxOccurs="unbounded"/>
+         </xs:choice>
+        <xs:attribute name="Type" type="prod:BranchTypeEnumType" use="required"/>
+        <xs:attribute name="Name" type="xs:string" use="required"/>
+      </xs:complexType>
+      <xs:element ref="prod:FullProductName" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="Relationship" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Defines how this product is related to another product.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="prod:FullProductName" minOccurs="1" maxOccurs="unbounded"/>
+          </xs:sequence>
+          <xs:attribute name="ProductReference" type="xs:token" use="required">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The ProductReference refers to the unique ProductID of the product that is to which another product will be related.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="RelationType" type="prod:RelationTypeEnumType" use="required">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The RelationType attribute defines how the two products are related.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="RelatesToProductReference" type="xs:token" use="required">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">RelatesToProductReference refers to the unique ProductID of the product to which the ProductReference attribute value relates.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="ProductGroups" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Container for grouping products to be used in vulnerabilities.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Group" minOccurs="1" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">A named container to associate two or more product IDs together for use in vulnerabilities.</xs:documentation>
+              </xs:annotation>
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="Description" minOccurs="0" maxOccurs="1">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">Optional textual description for this group.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                      <xs:simpleContent>
+                        <xs:extension base="cvrf-common:localizedString"/>
+                      </xs:simpleContent>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element name="ProductID" type="xs:token" minOccurs="2" maxOccurs="unbounded">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">The ID of an existing product in this tree that is to be a member of this group.</xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+                <xs:attribute name="GroupID" type="xs:token" use="required">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="en">The unique identifier used to reference this group.</xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:unique name="UniqueProductID">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">This is to ensure that each FullProductName uses a unique ProductID value.</xs:documentation>
+    </xs:annotation>
+    <xs:selector xpath=".//prod:FullProductName"/>
+    <xs:field xpath="@ProductID"/>
+  </xs:unique>
+  <xs:unique name="UniqueGroupID">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">This is to ensure that each Group uses a unique GroupID value.</xs:documentation>
+    </xs:annotation>
+    <xs:selector xpath=".//prod:ProductGroups/prod:Group"/>
+    <xs:field xpath="@GroupID"/>
+  </xs:unique>
+  <xs:key name="ProductKey">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">A key to reference a specific product.</xs:documentation>
+    </xs:annotation>
+    <xs:selector xpath=".//prod:FullProductName"/>
+    <xs:field xpath="@ProductID"/>
+  </xs:key>
+  <xs:keyref name="ProductReferenceKeyRef" refer="prod:ProductKey">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">An instance of the ProductKey used to define a relationship product.</xs:documentation>
+    </xs:annotation>
+    <xs:selector xpath=".//prod:Relationship"/>
+    <xs:field xpath="@ProductReference"/>
+  </xs:keyref>
+  <xs:keyref name="RelatesToProductReferenceKeyRef" refer="prod:ProductKey">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">An instance of the ProductKey used to define a related product.</xs:documentation>
+    </xs:annotation>
+    <xs:selector xpath=".//prod:Relationship"/>
+    <xs:field xpath="@RelatesToProductReference"/>
+  </xs:keyref>
+  <xs:keyref name="GroupProductReferenceKeyRef" refer="prod:ProductKey">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">An instance of the ProductKey used to define a product group membership list.</xs:documentation>
+    </xs:annotation>
+    <xs:selector xpath=".//prod:ProductGroups/prod:Group/prod:ProductID"/>
+    <xs:field xpath="."/>
+  </xs:keyref>
+</xs:element>
