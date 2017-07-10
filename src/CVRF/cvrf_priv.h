@@ -23,7 +23,7 @@ struct product_tree;
  * @struct cvrf_branch
  *
  */
-struct cvrf_branch
+struct cvrf_branch;
 
 /**
  * @struct product_name
@@ -37,3 +37,5 @@ struct product_name;
  */
 struct cvrf_vulnerability;
 
+
+#endif				/* _CVRF_PRIV_H_ */
