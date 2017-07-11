@@ -41,12 +41,13 @@ OSCAP_ITERATOR_REMOVE_F(cvrf_vulnerability)
 /***************************************************************************
  * Product tree offshoot of main CVRF model
  */
-struct product_tree {
-	struct product_name *full_name;
-	struct oscap_list *branches;
+
+struct product_name {
+	char *product_id;
+	char *cpe;
 };
-OSCAP_IGETINS_GEN(cvrf_branch, product_tree, branches, branch)
-OSCAP_ITERATOR_REMOVE_F(cvrf_branch)
+OSCAP_ACCESSOR_STRING(product_name, product_id)
+OSCAP_ACCESSOR_STRING(product_name, cpe)
 
 struct cvrf_branch {
 	char *branch_type;
@@ -59,12 +60,12 @@ OSCAP_ACCESSOR_STRING(cvrf_branch, branch_name)
 OSCAP_IGETINS_GEN(cvrf_branch, cvrf_branch, subbranches, subbranch)
 OSCAP_ITERATOR_REMOVE_F(cvrf_branch)
 
-struct product_name {
-	char *product_id;
-	char *cpe;
+struct product_tree {
+	struct product_name *full_name;
+	struct oscap_list *branches;
 };
-OSCAP_ACCESSOR_STRING(product_name, product_id)
-OSCAP_ACCESSOR_STRING(product_name, cpe)
+OSCAP_IGETINS_GEN(cvrf_branch, product_tree, branches, branch)
+OSCAP_ITERATOR_REMOVE_F(cvrf_branch)
 
 
 /***************************************************************************
@@ -212,6 +213,7 @@ struct cvrf_model *cvrf_model_new() {
 
 /***************************************************************************
  * Parsing functions
+ *
  */
 
 struct cvrf_model *cvrf_model_parse_xml(const char *file) {
@@ -363,29 +365,6 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 	return branch;
 }
 
-struct product_status *product_status_parse(xmlTextReaderPtr reader) {
-
-	__attribute__nonnull__(reader);
-
-	struct product_status *stat;
-
-	stat = product_status_new();
-	if (stat == NULL)
-		return NULL;
-
-	stat->status = (char *)xmlTextReaderGetAttribute(reader, ATTR_STATUS_TYPE);
-	xmlTextReaderNextNode(reader);
-
-	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
-		struct oscap_string *product_id = oscap_element_string_copy(reader);
-		if (product_id != NULL)
-			product_status_add_product_id(stat, product_id);
-		xmlTextReaderNextNode(reader);
-	}
-
-	return stat;
-}
-
 struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 
 	__attribute__nonnull__(reader);
@@ -419,7 +398,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUS)) {
 					stat = product_status_parse(reader);
 					if (stat != NULL)
-						cvrf_vulnerability_add_product_status(stat);
+						cvrf_vulnerability_add_product_status(vulnerability, stat);
 					xmlTextReaderNextElement(reader);
 				}
 			}
@@ -427,7 +406,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 		else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUS)) {
 			stat = product_status_parse(reader);
 			if (stat != NULL)
-				cvrf_vulnerability_add_product_status(stat);
+				cvrf_vulnerability_add_product_status(vulnerability, stat);
 		}
 
 		xmlTextReaderNextNode(reader);
@@ -435,6 +414,36 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 
 	return vulnerability;
 }
+
+
+struct product_status *product_status_parse(xmlTextReaderPtr reader) {
+
+	__attribute__nonnull__(reader);
+
+	struct product_status *stat;
+
+	stat = product_status_new();
+	if (stat == NULL)
+		return NULL;
+
+	stat->status = (char *)xmlTextReaderGetAttribute(reader, ATTR_STATUS_TYPE);
+	xmlTextReaderNextNode(reader);
+
+	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
+		struct oscap_string *product_id = oscap_element_string_copy(reader);
+		if (product_id != NULL)
+			product_status_add_product_id(stat, product_id);
+		xmlTextReaderNextNode(reader);
+	}
+
+	return stat;
+}
+
+
+/***************************************************************************
+ * Export functions
+ *
+ */
 
 void cvrf_model_export_xml(struct cvrf_model *cvrf, const char *file) {
 
@@ -477,35 +486,6 @@ void cvrf_export(const struct cvrf_model *cvrf, xmlTextWriterPtr writer) {
 		oscap_setxmlerr(xmlGetLastError());
 }
 
-void cvrf_branch_export(const struct cvrf_branch *branch, xmlTreeWriterPtr writer) {
-	__attribute__nonnull__(branch);
-	__attribute__nonnull__(writer);
-
-	struct product_name *name = branch->full_name;
-	struct cvrf_branch_iterator *iterator = cvrf_branch_get_subbranches(branch);
-	xmlTextWriterStartElementNS(writer, NULL, TAG_BRANCH, NULL);
-	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_TYPE, BAD_CAST branch->branch_type);
-	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_NAME, BAD_CAST branch->branch_name);
-
-	if (name != NULL) {
-		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_NAME, NULL);
-		xmlTextWriterWriteAttribute(writer, BAD_CAST "ProductID", BAD_CAST name->product_id);
-		xmlTextWriterWriteString(writer, BAD_CAST name->cpe);
-		xmlTextWriterEndElement(writer);
-	}
-	if (oscap_list_get_itemcount(branch->subbranches) > 0) {
-		while (cvrf_branch_iterator_has_more(iterator)) {
-			const struct cvrf_branch *subbranch = cvrf_branch_iterator_next(iterator);
-			cvrf_branch_export(subbranch);
-		}
-	}
-
-	xmlTextWriterEndElement(writer);
-	cvrf_branch_iterator_free(iterator);
-
-	if (xmlGetLastError() != NULL)
-		oscap_setxmlerr(xmlGetLastError());
-}
 
 void product_tree_export(const struct product_tree *tree, xmlTextWriterPtr writer) {
 	__attribute__nonnull__(tree);
@@ -527,28 +507,37 @@ void product_tree_export(const struct product_tree *tree, xmlTextWriterPtr write
 		oscap_setxmlerr(xmlGetLastError());
 }
 
-void product_status_export(const struct product_status *stat, xmlTextWriterPtr writer) {
-	__attribute__nonnull__(stat);
+
+void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr writer) {
+	__attribute__nonnull__(branch);
 	__attribute__nonnull__(writer);
 
-	struct oscap_string_iterator *product_ids = product_status_get_product_ids(stat);
-	char *product_id;
+	struct product_name *name = branch->full_name;
+	struct cvrf_branch_iterator *iterator = cvrf_branch_get_subbranches(branch);
+	xmlTextWriterStartElementNS(writer, NULL, TAG_BRANCH, NULL);
+	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_TYPE, BAD_CAST branch->branch_type);
+	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_NAME, BAD_CAST branch->branch_name);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_STATUS, NULL);
-	xmlTextWriterWriteAttribute(writer, ATTR_STATUS_TYPE, BAD_CAST stat->status);
-
-	while (oscap_string_iterator_has_more(product_ids)) {
-		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_ID, NULL);
-		xmlTextWriterWriteString(writer, BAD_CAST oscap_string_iterator_next(product_ids));
+	if (name != NULL) {
+		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_NAME, NULL);
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "ProductID", BAD_CAST name->product_id);
+		xmlTextWriterWriteString(writer, BAD_CAST name->cpe);
 		xmlTextWriterEndElement(writer);
 	}
-
-	oscap_string_iterator_free(product_ids);
+	if (oscap_list_get_itemcount(branch->subbranches) > 0) {
+		while (cvrf_branch_iterator_has_more(iterator)) {
+			const struct cvrf_branch *subbranch = cvrf_branch_iterator_next(iterator);
+			cvrf_branch_export(subbranch, writer);
+		}
+	}
 
 	xmlTextWriterEndElement(writer);
+	cvrf_branch_iterator_free(iterator);
+
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
 }
+
 
 void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWriterPtr writer) {
 	__attribute__nonnull__(vuln);
@@ -583,6 +572,30 @@ void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWri
 	} else {
 		OSCAP_FOREACH(product_status, e, cvrf_vulnerability_get_product_statuses(vuln), product_status_export(e, writer);)
 	}
+
+	xmlTextWriterEndElement(writer);
+	if (xmlGetLastError() != NULL)
+		oscap_setxmlerr(xmlGetLastError());
+}
+
+
+void product_status_export(const struct product_status *stat, xmlTextWriterPtr writer) {
+	__attribute__nonnull__(stat);
+	__attribute__nonnull__(writer);
+
+	struct oscap_string_iterator *product_ids = product_status_get_product_ids(stat);
+	char *product_id;
+
+	xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_STATUS, NULL);
+	xmlTextWriterWriteAttribute(writer, ATTR_STATUS_TYPE, BAD_CAST stat->status);
+
+	while (oscap_string_iterator_has_more(product_ids)) {
+		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_ID, NULL);
+		xmlTextWriterWriteString(writer, BAD_CAST oscap_string_iterator_next(product_ids));
+		xmlTextWriterEndElement(writer);
+	}
+
+	oscap_string_iterator_free(product_ids);
 
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
