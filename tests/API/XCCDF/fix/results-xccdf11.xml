@@ -4,7 +4,7 @@
   <version>1.0</version>
   <model system="urn:xccdf:scoring:default"/>
   <Rule id="xccdf_moc.elpmaxe.www_rule_1" selected="true">
-    <fix>
+    <fix system="urn:xccdf:fix:script:sh">
 echo
     </fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -12,7 +12,7 @@ echo
     </check>
   </Rule>
   <Rule id="xccdf_moc.elpmaxe.www_rule_2" selected="true">
-    <fix>
+    <fix system="urn:xccdf:fix:script:sh">
 bad
     </fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
