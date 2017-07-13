@@ -473,6 +473,9 @@ Authors:
         <xsl:when test="starts-with($href, 'https://benchmarks.cisecurity.org/')">
             <xsl:text>CIS Recommendation</xsl:text>
         </xsl:when>
+        <xsl:when test="starts-with($href, 'https://www.fbi.gov/file-repository/cjis-security-policy')">
+            <xsl:text>FBI CJIS ID</xsl:text>
+        </xsl:when>
         <xsl:otherwise>
             <xsl:value-of select="$href"/>
         </xsl:otherwise>
