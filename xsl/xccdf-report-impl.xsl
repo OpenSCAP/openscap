@@ -301,7 +301,7 @@ Authors:
                 <xsl:text>,</xsl:text>
             </xsl:if>
             <xsl:text>"</xsl:text>
-            <xsl:call-template name="convert-url-to-name">
+            <xsl:call-template name="convert-reference-url-to-name">
                 <xsl:with-param name="href" select="$href"/>
             </xsl:call-template>
             <xsl:text>":[</xsl:text>
@@ -452,7 +452,7 @@ Authors:
     </xsl:for-each>
 </xsl:template>
 
-<xsl:template name="convert-url-to-name">
+<xsl:template name="convert-reference-url-to-name">
     <xsl:param name="href"/>
     <xsl:choose>
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
@@ -486,7 +486,7 @@ Authors:
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
-                    <xsl:call-template name="convert-url-to-name">
+                    <xsl:call-template name="convert-reference-url-to-name">
                         <xsl:with-param name="href" select="@href"/>
                     </xsl:call-template>
                 </xsl:variable>
