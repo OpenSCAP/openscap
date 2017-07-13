@@ -458,6 +458,9 @@ Authors:
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
             <xsl:text>NIST SP 800-53 ID</xsl:text>
         </xsl:when>
+        <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171')">
+            <xsl:text>NIST SP 800-171 ID</xsl:text>
+        </xsl:when>
         <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
             <xsl:text>DISA CCI</xsl:text>
         </xsl:when>
