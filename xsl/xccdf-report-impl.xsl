@@ -456,10 +456,10 @@ Authors:
     <xsl:param name="href"/>
     <xsl:choose>
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
-            <xsl:text>NIST SP 800-53 ID</xsl:text>
+            <xsl:text>NIST SP 800-53</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171')">
-            <xsl:text>NIST SP 800-171 ID</xsl:text>
+            <xsl:text>NIST SP 800-171</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
             <xsl:text>DISA CCI</xsl:text>
@@ -468,16 +468,16 @@ Authors:
             <xsl:text>DISA SRG</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/')">
-            <xsl:text>DISA STIG ID</xsl:text>
+            <xsl:text>DISA STIG</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
-            <xsl:text>PCI DSS Requirement</xsl:text>
+            <xsl:text>PCI-DSS Requirement</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://benchmarks.cisecurity.org/')">
             <xsl:text>CIS Recommendation</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.fbi.gov/file-repository/cjis-security-policy')">
-            <xsl:text>FBI CJIS ID</xsl:text>
+            <xsl:text>FBI CJIS</xsl:text>
         </xsl:when>
         <xsl:otherwise>
             <xsl:value-of select="$href"/>
