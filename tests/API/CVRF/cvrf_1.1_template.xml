@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+  <DocumentTitle xml:lang="en">Red Hat Security Advisory: bind security update</DocumentTitle>
+  <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
+    <Branch Type="Product Family" Name="Red Hat Enterprise Linux">
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Client (v. 7)">
+        <FullProductName ProductID="7Client-7.3.Z">Red Hat Enterprise Linux Client (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Client Optional (v. 7)">
+        <FullProductName ProductID="7Client-optional-7.3.Z">Red Hat Enterprise Linux Client Optional (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux ComputeNode (v. 7)">
+        <FullProductName ProductID="7ComputeNode-7.3.Z">Red Hat Enterprise Linux ComputeNode (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux ComputeNode Optional (v. 7)">
+        <FullProductName ProductID="7ComputeNode-optional-7.3.Z">Red Hat Enterprise Linux ComputeNode Optional (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Server (v. 7)">
+        <FullProductName ProductID="7Server-7.3.Z">Red Hat Enterprise Linux Server (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Server Optional (v. 7)">
+        <FullProductName ProductID="7Server-optional-7.3.Z">Red Hat Enterprise Linux Server Optional (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Workstation (v. 7)">
+        <FullProductName ProductID="7Workstation-7.3.Z">Red Hat Enterprise Linux Workstation (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Workstation Optional (v. 7)">
+        <FullProductName ProductID="7Workstation-optional-7.3.Z">Red Hat Enterprise Linux Workstation Optional (v. 7)</FullProductName>
+      </Branch>
+    </Branch>
+    <Branch Type="Product Version" Name="bind-32:9.9.4-38.el7_3.2">
+      <FullProductName ProductID="bind-32:9.9.4-38.el7_3.2">bind-9.9.4-38.el7_3.2.src.rpm</FullProductName>
+    </Branch>
+  </ProductTree>
+  <Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2017-3135</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>7Client-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
+        <ProductID>7ComputeNode-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
+        <ProductID>7Server-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
+        <ProductID>7Workstation-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
+      </Status>
+    </ProductStatuses>
+  </Vulnerability>
+</cvrfdoc>

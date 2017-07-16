@@ -18,7 +18,7 @@
  * Public function to import CVRF model from OSCAP import source.
  * Function returns CVRF model, need to free source after calling this function
  */
-struct cvrf_model *cve_model_import(const char *file)
+struct cvrf_model *cvrf_model_import(const char *file)
 {
 
 	__attribute__nonnull__(file);

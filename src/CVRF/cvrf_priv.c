@@ -57,16 +57,19 @@ struct cvrf_branch {
 };
 OSCAP_ACCESSOR_STRING(cvrf_branch, branch_type)
 OSCAP_ACCESSOR_STRING(cvrf_branch, branch_name)
-OSCAP_IGETINS_GEN(cvrf_branch, cvrf_branch, subbranches, subbranch)
-OSCAP_ITERATOR_REMOVE_F(cvrf_branch)
+
+struct oscap_list_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch) {
+	return oscap_iterator_new(branch->subbranches);
+}
 
 struct product_tree {
 	struct product_name *full_name;
 	struct oscap_list *branches;
 };
-OSCAP_IGETINS_GEN(cvrf_branch, product_tree, branches, branch)
-OSCAP_ITERATOR_REMOVE_F(cvrf_branch)
 
+struct oscap_list_iterator *product_tree_get_branches(struct product_tree *tree) {
+	return oscap_iterator_new(tree->branches);
+}
 
 /***************************************************************************
  * Vulnerability offshoot of main CVRF model
@@ -90,12 +93,13 @@ OSCAP_ITERATOR_REMOVE_F(product_status)
 
 struct product_status {
 	char *status;
-	struct oscap_list *product_ids;
+	struct oscap_stringlist *product_ids;
 };
 OSCAP_ACCESSOR_STRING(product_status, status)
-OSCAP_IGETINS_GEN(oscap_string, product_status, product_ids, product_id)
-OSCAP_ITERATOR_REMOVE_F(oscap_string)
 
+struct oscap_string_iterator *product_status_get_ids(struct product_status *stat) {
+	return oscap_stringlist_get_strings(stat->product_ids);
+}
 
 /* End of variable definitions
  * */
@@ -104,27 +108,30 @@ OSCAP_ITERATOR_REMOVE_F(oscap_string)
  * */
 
 #define TAG_CVRF_DOC BAD_CAST "cvrfdoc"
-#define TAG_CVRF_DOC_TITLE "DocumentTitle"
+#define TAG_CVRF_DOC_TITLE BAD_CAST "DocumentTitle"
 // Vulnerabilities
-#define TAG_VULNERABILITY "Vulnerability"
-#define ATTR_VULNERABILITY_ORDINAL "Ordinal"
-#define TAG_VULNERABILITY_TITLE "Title"
-#define TAG_VULNERABILITY_ID "ID
-#define TAG_VULNERABILITY_CVE "CVE"
-#define TAG_VULNERABILITY_CWE "CWE"
-#define TAG_PRODUCT_STATUSES "ProductStatuses"
-#define TAG_PRODUCT_STATUS "Status"
-#define TAG_PRODUCT_ID "ProductID"
-#define ATTR_STATUS_TYPE "Type"
+#define TAG_VULNERABILITY BAD_CAST "Vulnerability"
+#define ATTR_VULNERABILITY_ORDINAL BAD_CAST "Ordinal"
+#define TAG_VULNERABILITY_TITLE BAD_CAST "Title"
+#define TAG_VULNERABILITY_ID BAD_CAST "ID
+#define TAG_VULNERABILITY_CVE BAD_CAST "CVE"
+#define TAG_VULNERABILITY_CWE BAD_CAST "CWE"
+#define TAG_PRODUCT_STATUSES BAD_CAST "ProductStatuses"
+#define TAG_PRODUCT_STATUS BAD_CAST "Status"
+#define TAG_PRODUCT_ID BAD_CAST "ProductID"
+#define ATTR_STATUS_TYPE BAD_CAST "Type"
 // Product Tree
-#define TAG_PRODUCT_TREE "ProductTree"
-#define TAG_BRANCH_TYPE "BranchType"
-#define TAG_BRANCH "Branch"
-#define ATTR_BRANCH_TYPE "Type"
-#define ATTR_BRANCH_NAME "Name"
-#define TAG_PRODUCT_NAME "FullProductName"
-#define ATTR_PRODUCT_ID "ProductReference"
-
+#define TAG_PRODUCT_TREE BAD_CAST "ProductTree"
+#define TAG_BRANCH_TYPE BAD_CAST "BranchType"
+#define TAG_BRANCH BAD_CAST "Branch"
+#define ATTR_BRANCH_TYPE BAD_CAST "Type"
+#define ATTR_BRANCH_NAME BAD_CAST "Name"
+#define TAG_PRODUCT_NAME BAD_CAST "FullProductName"
+#define ATTR_PRODUCT_ID BAD_CAST "ProductReference"
+// namespaces
+#define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
+#define PROD_NS BAD_CAST "http://www.icasi.org/CVRF/schema/prod/1.1"
+#define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
 
 /***************************************************************************/
 /* Constructors of CVRF structures cvrf_*<structure>*_new()
@@ -179,7 +186,7 @@ struct product_status *product_status_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->product_ids = oscap_list_new();
+	ret->product_ids = oscap_stringlist_new();
 
 	return ret;
 }
@@ -315,9 +322,9 @@ struct product_tree *product_tree_parse(xmlTextReaderPtr reader) {
 			tree->full_name = full_name;
 		}
 		else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH_TYPE)) {
-			branch = cvrf_parse_branch(reader);
+			branch = cvrf_branch_parse(reader);
 			if (branch)
-				product_tree_add_branch(tree, branch);
+				oscap_list_add(tree->branches, branch);
 		}
 
 		xmlTextReaderNextNode(reader);
@@ -356,7 +363,7 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 	else {
 		subbranch = cvrf_branch_parse(reader);
 		if (subbranch) {
-			cvrf_branch_add_subbranch(branch, subbranch);
+			oscap_list_add(branch->subbranches, subbranch);
 		}
 	}
 
@@ -430,9 +437,9 @@ struct product_status *product_status_parse(xmlTextReaderPtr reader) {
 	xmlTextReaderNextNode(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
-		struct oscap_string *product_id = oscap_element_string_copy(reader);
+		const char *product_id = oscap_element_string_copy(reader);
 		if (product_id != NULL)
-			product_status_add_product_id(stat, product_id);
+			oscap_stringlist_add_string(stat->product_ids, product_id);
 		xmlTextReaderNextNode(reader);
 	}
 
@@ -472,7 +479,8 @@ void cvrf_export(const struct cvrf_model *cvrf, xmlTextWriterPtr writer) {
 	__attribute__nonnull__(cvrf);
 	__attribute__nonnull__(writer);
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_DOC, NULL);
+	xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_DOC, CVRF_NS);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "xmlns:cvrf", BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1");
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_DOC_TITLE, NULL);
 	xmlTextWriterWriteString(writer, BAD_CAST cvrf->doc_title);
@@ -492,7 +500,7 @@ void product_tree_export(const struct product_tree *tree, xmlTextWriterPtr write
 	__attribute__nonnull__(writer);
 
 	struct product_name *name = tree->full_name;
-	xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_TREE, NULL);
+	xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_TREE, PROD_NS);
 
 	if (name != NULL) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_NAME, NULL);
@@ -500,7 +508,13 @@ void product_tree_export(const struct product_tree *tree, xmlTextWriterPtr write
 		xmlTextWriterWriteString(writer, BAD_CAST name->cpe);
 		xmlTextWriterEndElement(writer);
 	}
-	OSCAP_FOREACH(cvrf_branch, e, product_tree_get_branches(tree), cvrf_branch_export(e, writer);)
+
+	struct oscap_list_iterator *branches = product_tree_get_branches(tree);
+	while (oscap_iterator_has_more(branches)) {
+		struct cvrf_branch *branch = oscap_iterator_next(branches);
+		cvrf_branch_export(branch, writer);
+	}
+	oscap_iterator_free(branches);
 
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
@@ -513,7 +527,6 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
 	__attribute__nonnull__(writer);
 
 	struct product_name *name = branch->full_name;
-	struct cvrf_branch_iterator *iterator = cvrf_branch_get_subbranches(branch);
 	xmlTextWriterStartElementNS(writer, NULL, TAG_BRANCH, NULL);
 	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_TYPE, BAD_CAST branch->branch_type);
 	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_NAME, BAD_CAST branch->branch_name);
@@ -525,14 +538,15 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
 		xmlTextWriterEndElement(writer);
 	}
 	if (oscap_list_get_itemcount(branch->subbranches) > 0) {
-		while (cvrf_branch_iterator_has_more(iterator)) {
-			const struct cvrf_branch *subbranch = cvrf_branch_iterator_next(iterator);
+		struct oscap_list_iterator *subbranches = cvrf_branch_get_subbranches(branch);
+		while (oscap_iterator_has_more(subbranches)) {
+			struct cvrf_branch *subbranch = oscap_iterator_next(subbranches);
 			cvrf_branch_export(subbranch, writer);
 		}
+		oscap_iterator_free(subbranches);
 	}
 
 	xmlTextWriterEndElement(writer);
-	cvrf_branch_iterator_free(iterator);
 
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
@@ -546,7 +560,7 @@ void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWri
 	struct product_status_iterator *iterator = cvrf_vulnerability_get_product_statuses(vuln);
 	struct product_status *stat;
 
-	xmlTextWriterStartElementNS(writer, NULL, TAG_VULNERABILITY, NULL);
+	xmlTextWriterStartElementNS(writer, NULL, TAG_VULNERABILITY, VULN_NS);
 	xmlTextWriterWriteAttribute(writer, ATTR_VULNERABILITY_ORDINAL, BAD_CAST vuln->ordinal);
 
 	if ((vuln->vulnerability_title) != NULL) {
@@ -583,15 +597,16 @@ void product_status_export(const struct product_status *stat, xmlTextWriterPtr w
 	__attribute__nonnull__(stat);
 	__attribute__nonnull__(writer);
 
-	struct oscap_string_iterator *product_ids = product_status_get_product_ids(stat);
-	char *product_id;
+	struct oscap_string_iterator *product_ids = product_status_get_ids(stat);
+	const char *product_id;
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_STATUS, NULL);
 	xmlTextWriterWriteAttribute(writer, ATTR_STATUS_TYPE, BAD_CAST stat->status);
 
 	while (oscap_string_iterator_has_more(product_ids)) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_ID, NULL);
-		xmlTextWriterWriteString(writer, BAD_CAST oscap_string_iterator_next(product_ids));
+		product_id = oscap_string_iterator_next(product_ids);
+		xmlTextWriterWriteString(writer, BAD_CAST product_id);
 		xmlTextWriterEndElement(writer);
 	}
 

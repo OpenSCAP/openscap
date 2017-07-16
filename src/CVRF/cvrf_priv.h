@@ -1,3 +1,7 @@
+/**
+ * @file cve_priv.h
+ */
+
 #ifndef CVRF_PRIV_H_
 #define CVRF_PRIV_H_
 
