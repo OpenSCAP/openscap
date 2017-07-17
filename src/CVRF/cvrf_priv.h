@@ -19,6 +19,18 @@
 struct cvrf_model;
 
 /**
+ * @struct cvrf_document
+ *
+ */
+struct cvrf_document;
+
+/**
+ * @struct cvrf_doc_tracking
+ *
+ */
+struct cvrf_doc_tracking;
+
+/**
  *@struct cvrf_product_tree
  * Structure holding CVRF ProductTree data
  * Holds at least one CVRF branch
@@ -68,6 +80,13 @@ struct cvrf_model *cvrf_model_parse_xml(const char *file);
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF DocumentTracking
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF DocumentTracking
+ */
+struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF product tree
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF product tree
@@ -103,6 +122,13 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
  * @param file OSCAP export target
  */
 void cvrf_model_export_xml(struct cvrf_model *cvrf, const char *file);
+
+/**
+ *
+ * @param tracking CVRF DocumentTracking element to export
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_doc_tracking_export(const struct cvrf_doc_tracking *tracking, xmlTextWriterPtr writer);
 
 /**
  *
