@@ -875,7 +875,7 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 struct oscap_htable *
 xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *benchmark, xccdf_type_t type)
 {
-	assert(type & (XCCDF_ITEM | XCCDF_PROFILE | XCCDF_RESULT));
+	assert(type & XCCDF_OBJECT);
 	if (type == XCCDF_PROFILE)
 		return XITEM(benchmark)->sub.benchmark.profiles_dict;
 	if (type == XCCDF_RESULT)
