@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
   <DocumentTitle xml:lang="en">Red Hat Security Advisory: bind security update</DocumentTitle>
+  <DocumentType>Security Advisory</DocumentType>
+  <DocumentTracking>
+    <Identification>
+      <ID>RHSA-2017:0001</ID>
+    </Identification>
+    <Status>Final</Status>
+    <Version>1</Version>
+    <InitialReleaseDate>2017-01-02T10:08:00Z</InitialReleaseDate>
+    <CurrentReleaseDate>2017-01-02T10:08:00Z</CurrentReleaseDate>
+  </DocumentTracking>
   <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
     <Branch Type="Product Family" Name="Red Hat Enterprise Linux">
       <Branch Type="Product Name" Name="Red Hat Enterprise Linux Client (v. 7)">

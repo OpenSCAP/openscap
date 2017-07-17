@@ -21,6 +21,18 @@
 struct cvrf_model;
 
 /**
+ * @struct cvrf_document
+ *
+ */
+struct cvrf_document;
+
+/**
+ * @struct cvrf_doc_tracking
+ *
+ */
+struct cvrf_doc_tracking;
+
+/**
  *@struct cvrf_product_tree
  *
  */
@@ -72,6 +84,20 @@ const char * cvrf_model_supported(void);
 struct cvrf_model *cvrf_model_new(void);
 
 /**
+ *
+ *@memberof cvrf_document
+ *@return New CVRF Document structure
+ */
+struct cvrf_document *cvrf_document_new(void);
+
+/**
+ *
+ *@memberof cvrf_doc_tracking
+ *@return New CVRF DocumentTracking
+ */
+struct cvrf_doc_tracking *cvrf_doc_tracking_new(void);
+
+/**
  * New ProductTree structure
  * @memberof cvrf_product_tree
  * @return New CVRF ProductTree
@@ -111,7 +137,19 @@ struct cvrf_product_status *cvrf_product_status_new(void);
  *
  *
  */
-void cvrf_model_free(struct cvrf_model *cvrf) ;
+void cvrf_model_free(struct cvrf_model *cvrf);
+
+/**
+ *
+ *
+ */
+void cvrf_document_free(struct cvrf_document *doc);
+
+/**
+ *
+ *
+ */
+void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking);
 
 /**
  *
