@@ -19,11 +19,11 @@
 struct cvrf_model;
 
 /**
- *@struct product_tree
+ *@struct cvrf_product_tree
  * Structure holding CVRF ProductTree data
  * Holds at least one CVRF branch
  */
-struct product_tree;
+struct cvrf_product_tree;
 
 /**
  * @struct cvrf_branch
@@ -33,11 +33,11 @@ struct product_tree;
 struct cvrf_branch;
 
 /**
- * @struct product_name
+ * @struct cvrf_product_name
  * Structure holding CVRF product name data
  * ProductID and CPE data for CVRF branches and ProductTrees
  */
-struct product_name;
+struct cvrf_product_name;
 
 /**
  * @struct cvrf_vulnerability
@@ -47,11 +47,11 @@ struct product_name;
 struct cvrf_vulnerability;
 
 /**
- * @struct product_status
+ * @struct cvrf_product_status
  * Structure holding CVRF ProductStatus data (within a Vulnerability)
  * Has status type and list of ProductIDs
  */
-struct product_status;
+struct cvrf_product_status;
 
 /**
  * Parse CVRF model from XML (private function)
@@ -72,7 +72,7 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader);
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF product tree
  */
-struct product_tree *product_tree_parse(xmlTextReaderPtr reader);
+struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse CVRF branch
@@ -93,7 +93,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader);
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF Product Status
  */
-struct product_status *product_status_parse(xmlTextReaderPtr reader);
+struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
 
@@ -115,7 +115,7 @@ void cvrf_export(const struct cvrf_model *cvrf, xmlTextWriterPtr writer);
  * @param tree ProductTree within CVRF model
  * @param writer XML Text Writer representing XML model
  */
-void product_tree_export(const struct product_tree *tree, xmlTextWriterPtr writer);
+void cvrf_product_tree_export(const struct cvrf_product_tree *tree, xmlTextWriterPtr writer);
 
 /**
  *
@@ -128,7 +128,7 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
  * @param stat Product status within CVRF Vulnerability
  * @param writer XML Text Writer representing XML model
  */
-void product_status_export(const struct product_status *stat, xmlTextWriterPtr writer);
+void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextWriterPtr writer);
 
 /**
  *
