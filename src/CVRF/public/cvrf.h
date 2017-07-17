@@ -21,10 +21,10 @@
 struct cvrf_model;
 
 /**
- *@struct product_tree
+ *@struct cvrf_product_tree
  *
  */
-struct product_tree;
+struct cvrf_product_tree;
 
 /**
  * @struct cvrf_branch
@@ -33,10 +33,10 @@ struct product_tree;
 struct cvrf_branch;
 
 /**
- * @struct product_name
+ * @struct cvrf_product_name
  *
  */
-struct product_name;
+struct cvrf_product_name;
 
 /**
  * @struct cvrf_vulnerability
@@ -73,10 +73,10 @@ struct cvrf_model *cvrf_model_new(void);
 
 /**
  * New ProductTree structure
- * @memberof product_tree
+ * @memberof cvrf_product_tree
  * @return New CVRF ProductTree
  */
-struct product_tree *product_tree_new(void);
+struct cvrf_product_tree *cvrf_product_tree_new(void);
 
 /**
  * New CVRF branch of ProductTree or sub-branch
@@ -87,10 +87,10 @@ struct cvrf_branch *cvrf_branch_new(void);
 
 /**
  * New FullProductName of Branch or ProductTree
- * @memberof product_name
+ * @memberof cvrf_product_name
  * @return New FullProductName
  */
-struct product_name *product_name_new(void);
+struct cvrf_product_name *cvrf_product_name_new(void);
 
 /**
  * New CVRF Vulnerability
@@ -101,10 +101,10 @@ struct cvrf_vulnerability *cvrf_vulnerability_new(void);
 
 /**
  * New ProductStatus member of a CVRF Vulnerability
- * @memberof product_status
+ * @memberof cvrf_product_status
  * @return New CVRF ProductStatus
  */
-struct product_status *product_status_new(void);
+struct cvrf_product_status *cvrf_product_status_new(void);
 
 
 /**
@@ -117,7 +117,7 @@ void cvrf_model_free(struct cvrf_model *cvrf) ;
  *
  *
  */
-void product_tree_free(struct product_tree *tree);
+void cvrf_product_tree_free(struct cvrf_product_tree *tree);
 
 /**
  *
@@ -129,7 +129,7 @@ void cvrf_branch_free(struct cvrf_branch *branch);
  *
  *
  */
-void product_name_free(struct product_name *full_name);
+void cvrf_product_name_free(struct cvrf_product_name *full_name);
 
 /**
  *
@@ -141,7 +141,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability);
  *
  *
  */
-void product_status_free(struct product_status *status);
+void cvrf_product_status_free(struct cvrf_product_status *status);
 
 
 

@@ -8,7 +8,7 @@
 int main(int argc, char **argv)
 {
 	struct cvrf_model *model;
-	struct product_tree *tree;
+	struct cvrf_product_tree *tree;
 	struct cvrf_vulnerability_iterator *vuln;
 
 	/* test export */
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
 		"Usage: \n\n"
 		"  %s --help\n"
 		"  %s --export-all input.xml output.xml\n",
-		argv[0], argv[0], argv[0]);
+		argv[0], argv[0]);
 
 	return 0;
 }
