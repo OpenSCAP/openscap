@@ -41,6 +41,11 @@ OSCAP_ACCESSOR_STRING(cvrf_model, doc_type)
 OSCAP_IGETINS_GEN(cvrf_vulnerability, cvrf_model, vulnerabilities, vulnerability)
 OSCAP_ITERATOR_REMOVE_F(cvrf_vulnerability)
 
+struct cvrf_product_tree *cvrf_model_get_product_tree(struct cvrf_model *model) {
+	return model->tree;
+}
+
+
 struct cvrf_document {
 	struct cvrf_doc_tracking *tracking;
 };
@@ -71,12 +76,18 @@ OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, cur_release_date)
  * Product tree offshoot of main CVRF model
  */
 
-struct cvrf_product_name {
-	char *product_id;
-	char *cpe;
+struct cvrf_product_tree {
+	struct cvrf_product_name *full_name;
+	struct oscap_list *branches;
+	struct oscap_list *relationships;
 };
-OSCAP_ACCESSOR_STRING(cvrf_product_name, product_id)
-OSCAP_ACCESSOR_STRING(cvrf_product_name, cpe)
+OSCAP_IGETINS_GEN(cvrf_relationship, cvrf_product_tree, relationships, relationship)
+OSCAP_ITERATOR_REMOVE_F(cvrf_relationship)
+
+struct oscap_list_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree) {
+	return oscap_iterator_new(tree->branches);
+}
+
 
 struct cvrf_branch {
 	char *branch_type;
@@ -91,14 +102,29 @@ struct oscap_list_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *bran
 	return oscap_iterator_new(branch->subbranches);
 }
 
-struct cvrf_product_tree {
-	struct cvrf_product_name *full_name;
-	struct oscap_list *branches;
-};
 
-struct oscap_list_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree) {
-	return oscap_iterator_new(tree->branches);
+struct cvrf_relationship {
+	char *product_reference;
+	char *relation_type;
+	char *relates_to_ref;
+	struct cvrf_product_name *full_name;
+};
+OSCAP_ACCESSOR_STRING(cvrf_relationship, product_reference)
+OSCAP_ACCESSOR_STRING(cvrf_relationship, relation_type)
+OSCAP_ACCESSOR_STRING(cvrf_relationship, relates_to_ref)
+
+struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation) {
+	return relation->full_name;
 }
+
+
+struct cvrf_product_name {
+	char *product_id;
+	char *cpe;
+};
+OSCAP_ACCESSOR_STRING(cvrf_product_name, product_id)
+OSCAP_ACCESSOR_STRING(cvrf_product_name, cpe)
+
 
 /***************************************************************************
  * Vulnerability offshoot of main CVRF model
@@ -168,6 +194,11 @@ struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_st
 #define ATTR_BRANCH_NAME BAD_CAST "Name"
 #define TAG_CVRF_PRODUCT_NAME BAD_CAST "FullProductName"
 #define ATTR_PRODUCT_ID BAD_CAST "ProductID"
+//Relationship
+#define TAG_RELATIONSHIP BAD_CAST "Relationship"
+#define ATTR_PRODUCT_REFERENCE BAD_CAST "ProductReference"
+#define ATTR_RELATION_TYPE BAD_CAST "RelationType"
+#define ATTR_RELATES_TO_REF BAD_CAST "RelatesToProductReference"
 // namespaces
 #define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
 #define PROD_NS BAD_CAST "http://www.icasi.org/CVRF/schema/prod/1.1"
@@ -177,81 +208,6 @@ struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_st
 /* Constructors of CVRF structures cvrf_*<structure>*_new()
  *
  */
-
-struct cvrf_product_name *cvrf_product_name_new() {
-
-	struct cvrf_product_name *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_product_name));
-	if (ret == NULL)
-		return NULL;
-
-	ret->cpe = NULL;
-	ret->product_id = NULL;
-
-	return ret;
-}
-
-
-struct cvrf_branch *cvrf_branch_new() {
-
-	struct cvrf_branch *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_branch));
-	if (ret == NULL)
-		return NULL;
-
-	ret->full_name = cvrf_product_name_new();
-	ret->subbranches = oscap_list_new();
-	ret->branch_name = NULL;
-	ret->branch_type = NULL;
-
-	return ret;
-}
-
-struct cvrf_product_tree *cvrf_product_tree_new() {
-
-	struct cvrf_product_tree *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_product_tree));
-	if (ret == NULL)
-		return NULL;
-
-	ret->branches = oscap_list_new();
-	ret->full_name = cvrf_product_name_new();
-
-	return ret;
-}
-
-struct cvrf_product_status *cvrf_product_status_new() {
-
-	struct cvrf_product_status *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_product_status));
-	if (ret == NULL)
-		return NULL;
-
-	ret->product_ids = oscap_stringlist_new();
-	ret->status = NULL;
-
-	return ret;
-}
-
-struct cvrf_vulnerability *cvrf_vulnerability_new() {
-
-	struct cvrf_vulnerability *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_vulnerability));
-	if (ret == NULL)
-		return NULL;
-
-	ret->cvrf_product_statuses = oscap_list_new();
-	ret->cve_id = NULL;
-	ret->cwe_id = NULL;
-	ret->vulnerability_title = NULL;
-
-	return ret;
-}
 
 struct cvrf_model *cvrf_model_new() {
 
@@ -299,6 +255,98 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 
 	return ret;
 }
+
+struct cvrf_product_tree *cvrf_product_tree_new() {
+
+	struct cvrf_product_tree *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_product_tree));
+	if (ret == NULL)
+		return NULL;
+
+	ret->branches = oscap_list_new();
+	ret->full_name = cvrf_product_name_new();
+	ret->relationships = oscap_list_new();
+
+	return ret;
+}
+
+struct cvrf_branch *cvrf_branch_new() {
+
+	struct cvrf_branch *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_branch));
+	if (ret == NULL)
+		return NULL;
+
+	ret->full_name = cvrf_product_name_new();
+	ret->subbranches = oscap_list_new();
+	ret->branch_name = NULL;
+	ret->branch_type = NULL;
+
+	return ret;
+}
+
+struct cvrf_relationship *cvrf_relationship_new() {
+
+	struct cvrf_relationship *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_relationship));
+	if (ret == NULL)
+		return NULL;
+
+	ret->product_reference = NULL;
+	ret->relation_type = NULL;
+	ret->relates_to_ref = NULL;
+	ret->full_name = cvrf_product_name_new();
+
+	return ret;
+}
+
+struct cvrf_product_name *cvrf_product_name_new() {
+
+	struct cvrf_product_name *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_product_name));
+	if (ret == NULL)
+		return NULL;
+
+	ret->cpe = NULL;
+	ret->product_id = NULL;
+
+	return ret;
+}
+
+struct cvrf_vulnerability *cvrf_vulnerability_new() {
+
+	struct cvrf_vulnerability *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_vulnerability));
+	if (ret == NULL)
+		return NULL;
+
+	ret->cvrf_product_statuses = oscap_list_new();
+	ret->cve_id = NULL;
+	ret->cwe_id = NULL;
+	ret->vulnerability_title = NULL;
+
+	return ret;
+}
+
+struct cvrf_product_status *cvrf_product_status_new() {
+
+	struct cvrf_product_status *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_product_status));
+	if (ret == NULL)
+		return NULL;
+
+	ret->product_ids = oscap_stringlist_new();
+	ret->status = NULL;
+
+	return ret;
+}
+
 
 /***************************************************************************
  * Parsing functions
@@ -432,6 +480,7 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_product_tree *tree;
 	struct cvrf_branch *branch;
+	struct cvrf_relationship *relation;
 	struct cvrf_product_name *full_name;
 
 	/* allocate platform structure here */
@@ -458,11 +507,16 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 			full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
 			full_name->cpe = (char *)oscap_element_string_copy(reader);
 			tree->full_name = full_name;
-		}
-		else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH)) {
-			branch = cvrf_branch_parse(reader);
-			if (branch)
-				oscap_list_add(tree->branches, branch);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH)) {
+			while(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH) == 0) {
+				branch = cvrf_branch_parse(reader);
+				if (branch)
+					oscap_list_add(tree->branches, branch);
+			}
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_RELATIONSHIP)) {
+			relation = cvrf_relationship_parse(reader);
+			if (relation)
+				oscap_list_add(tree->relationships, relation);
 		}
 		xmlTextReaderNextNode(reader);
 	}
@@ -495,6 +549,8 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 		branch->full_name = full_name;
 		xmlTextReaderNextNode(reader);
 		xmlTextReaderNextNode(reader);
+		xmlTextReaderNextNode(reader);
+		xmlTextReaderNextNode(reader);
 	}
 	else {
 		while(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH) == 0) {
@@ -507,12 +563,37 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 				oscap_list_add(branch->subbranches, subbranch);
 			}
 			xmlTextReaderNextNode(reader);
-			xmlTextReaderNextNode(reader);
-			xmlTextReaderNextNode(reader);
 		}
+		xmlTextReaderNextNode(reader);
 	}
-
 	return branch;
+}
+
+struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
+	__attribute__nonnull__(reader);
+
+	struct cvrf_relationship *relation;
+	struct cvrf_product_name *full_name;
+	relation = cvrf_relationship_new();
+
+	if (relation == NULL)
+		return NULL;
+
+	relation->product_reference = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_REFERENCE);
+	relation->relation_type = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATION_TYPE);
+	relation->relates_to_ref = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATES_TO_REF);
+	xmlTextReaderNextElement(reader);
+
+	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
+		full_name = cvrf_product_name_new();
+		full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+		full_name->cpe = (char *)oscap_element_string_copy(reader);
+		relation->full_name = full_name;
+		xmlTextReaderNextNode(reader);
+	}
+	xmlTextReaderNextNode(reader);
+
+	return relation;
 }
 
 struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
@@ -719,6 +800,13 @@ void cvrf_product_tree_export(const struct cvrf_product_tree *tree, xmlTextWrite
 	}
 	oscap_iterator_free(branches);
 
+	struct cvrf_relationship_iterator *relationships = cvrf_product_tree_get_relationships(tree);
+	while (cvrf_relationship_iterator_has_more(relationships)) {
+		struct cvrf_relationship *relation = cvrf_relationship_iterator_next(relationships);
+		cvrf_relationship_export(relation, writer);
+	}
+	cvrf_relationship_iterator_free(relationships);
+
 	xmlTextWriterEndElement(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
@@ -755,6 +843,29 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
 		oscap_setxmlerr(xmlGetLastError());
 }
 
+void cvrf_relationship_export(const struct cvrf_relationship *relation, xmlTextWriterPtr writer) {
+	__attribute__nonnull__(relation);
+	__attribute__nonnull__(writer);
+
+	struct cvrf_product_name *name = relation->full_name;
+
+	xmlTextWriterStartElementNS(writer, NULL, TAG_RELATIONSHIP, NULL);
+	xmlTextWriterWriteAttribute(writer, ATTR_PRODUCT_REFERENCE, BAD_CAST relation->product_reference);
+	xmlTextWriterWriteAttribute(writer, ATTR_RELATION_TYPE, BAD_CAST relation->relation_type);
+	xmlTextWriterWriteAttribute(writer, ATTR_RELATES_TO_REF, BAD_CAST relation->relates_to_ref);
+
+	if (name->cpe != NULL) {
+		xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_PRODUCT_NAME, NULL);
+		xmlTextWriterWriteAttribute(writer, BAD_CAST "ProductID", BAD_CAST name->product_id);
+		xmlTextWriterWriteString(writer, BAD_CAST name->cpe);
+		xmlTextWriterEndElement(writer);
+	}
+
+	xmlTextWriterEndElement(writer);
+	if (xmlGetLastError() != NULL)
+		oscap_setxmlerr(xmlGetLastError());
+
+}
 
 void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWriterPtr writer) {
 	__attribute__nonnull__(vuln);
@@ -823,59 +934,6 @@ void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextW
  * Free functions
  */
 
-void cvrf_product_name_free(struct cvrf_product_name *full_name) {
-	if (full_name == NULL)
-		return;
-
-	oscap_free(full_name->cpe);
-	oscap_free(full_name->product_id);
-	oscap_free(full_name);
-}
-
-void cvrf_branch_free(struct cvrf_branch *branch) {
-
-	if (branch == NULL)
-		return;
-
-	oscap_free(branch->branch_type);
-	oscap_free(branch->branch_name);
-	cvrf_product_name_free(branch->full_name);
-	oscap_list_free(branch->subbranches, (oscap_destruct_func) cvrf_branch_free);
-	oscap_free(branch);
-}
-
-void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
-
-	if (tree == NULL)
-		return;
-
-	oscap_list_free(tree->branches, (oscap_destruct_func) cvrf_branch_free);
-	cvrf_product_name_free(tree->full_name);
-	oscap_free(tree);
-}
-
-void cvrf_product_status_free(struct cvrf_product_status *status) {
-
-	if (status == NULL)
-		return;
-
-	oscap_free(status->status);
-	oscap_stringlist_free(status->product_ids);
-	oscap_free(status);
-}
-
-void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
-
-	if (vulnerability == NULL)
-		return;
-
-	oscap_free(vulnerability->vulnerability_title);
-	oscap_free(vulnerability->cve_id);
-	oscap_free(vulnerability->cwe_id);
-	oscap_list_free(vulnerability->cvrf_product_statuses, (oscap_destruct_func) cvrf_product_status_free);
-	oscap_free(vulnerability);
-}
-
 void cvrf_model_free(struct cvrf_model *cvrf) {
 
 	if (cvrf == NULL)
@@ -911,6 +969,70 @@ void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking) {
 	oscap_free(tracking);
 }
 
+void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
+
+	if (tree == NULL)
+		return;
+
+	cvrf_product_name_free(tree->full_name);
+	oscap_list_free(tree->branches, (oscap_destruct_func) cvrf_branch_free);
+	oscap_list_free(tree->relationships, (oscap_destruct_func) cvrf_relationship_free);
+	oscap_free(tree);
+}
+
+void cvrf_branch_free(struct cvrf_branch *branch) {
+
+	if (branch == NULL)
+		return;
+
+	oscap_free(branch->branch_type);
+	oscap_free(branch->branch_name);
+	cvrf_product_name_free(branch->full_name);
+	oscap_list_free(branch->subbranches, (oscap_destruct_func) cvrf_branch_free);
+	oscap_free(branch);
+}
+
+void cvrf_relationship_free(struct cvrf_relationship *relationship) {
+	if (relationship == NULL)
+		return;
+
+	oscap_free(relationship->product_reference);
+	oscap_free(relationship->relation_type);
+	oscap_free(relationship->relates_to_ref);
+	cvrf_product_name_free(relationship->full_name);
+	oscap_free(relationship);
+}
+
+void cvrf_product_name_free(struct cvrf_product_name *full_name) {
+	if (full_name == NULL)
+		return;
+
+	oscap_free(full_name->cpe);
+	oscap_free(full_name->product_id);
+	oscap_free(full_name);
+}
+
+void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
+
+	if (vulnerability == NULL)
+		return;
+
+	oscap_free(vulnerability->vulnerability_title);
+	oscap_free(vulnerability->cve_id);
+	oscap_free(vulnerability->cwe_id);
+	oscap_list_free(vulnerability->cvrf_product_statuses, (oscap_destruct_func) cvrf_product_status_free);
+	oscap_free(vulnerability);
+}
+
+void cvrf_product_status_free(struct cvrf_product_status *status) {
+
+	if (status == NULL)
+		return;
+
+	oscap_free(status->status);
+	oscap_stringlist_free(status->product_ids);
+	oscap_free(status);
+}
 
 /* End of free functions
  * */

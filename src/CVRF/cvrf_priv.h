@@ -45,6 +45,12 @@ struct cvrf_product_tree;
 struct cvrf_branch;
 
 /**
+ * @struct cvrf_relationship
+ * Structure holding data for Relationships within ProductTree
+ */
+struct cvrf_relationship;
+
+/**
  * @struct cvrf_product_name
  * Structure holding CVRF product name data
  * ProductID and CPE data for CVRF branches and ProductTrees
@@ -101,6 +107,13 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader);
 struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF Relationship item
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Relationship
+ */
+struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF vulnerability
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF vulnerability
@@ -149,6 +162,13 @@ void cvrf_product_tree_export(const struct cvrf_product_tree *tree, xmlTextWrite
  * @param writer XML Text Writer representing XML model
  */
 void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr writer);
+
+/**
+ *
+ * @param relation A CVRF relationship item of ProductTree
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_relationship_export(const struct cvrf_relationship *relation, xmlTextWriterPtr writer);
 
 /**
  * @param stat Product status within CVRF Vulnerability

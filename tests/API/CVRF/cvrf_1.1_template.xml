@@ -41,6 +41,18 @@
     <Branch Type="Product Version" Name="bind-32:9.9.4-38.el7_3.2">
       <FullProductName ProductID="bind-32:9.9.4-38.el7_3.2">bind-9.9.4-38.el7_3.2.src.rpm</FullProductName>
     </Branch>
+    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z">
+      <FullProductName ProductID="7Client-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux Client (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z">
+      <FullProductName ProductID="7ComputeNode-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux ComputeNode (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z">
+      <FullProductName ProductID="7Server-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux Server (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z">
+      <FullProductName ProductID="7Workstation-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux Workstation (v. 7)</FullProductName>
+    </Relationship>
   </ProductTree>
   <Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
     <CVE>CVE-2017-3135</CVE>
