@@ -255,6 +255,7 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nFix Options:\n"
+		"   --fix-type <type>\r\t\t\t\t - Fix type. Should be one of: bash, ansible, puppet, anaconda (default: bash).\n"
         "   --output <file>\r\t\t\t\t - Write the script into file.\n"
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n"
@@ -791,9 +792,41 @@ int app_generate_fix(const struct oscap_action *action)
 {
 	struct xccdf_session *session = NULL;
 	struct ds_rds_session *arf_session = NULL;
+	const char *template = NULL;
 
 	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
 		return OSCAP_ERROR;
+	}
+
+	if (action->fix_type != NULL && action->tmpl != NULL) {
+		/* Avoid undefined situations, eg.:
+		 * oscap xccdf generate fix --fix-type ansible --template urn:xccdf:fix:scipt:sh
+		 */
+		fprintf(stderr,
+				"Option '--fix-type' is mutually exclusive with '--template'.\n"
+				"Please provide only one of them.\n");
+		return OSCAP_ERROR;
+	} else if (action->fix_type != NULL) {
+		if (strcmp(action->fix_type, "bash") == 0) {
+			template = "urn:xccdf:fix:script:sh";
+		} else if (strcmp(action->fix_type, "ansible") == 0) {
+			template = "urn:xccdf:fix:script:ansible";
+		} else if (strcmp(action->fix_type, "puppet") == 0) {
+			template = "urn:xccdf:fix:script:puppet";
+		} else if (strcmp(action->fix_type, "anaconda") == 0) {
+			template = "urn:xccdf:fix:script:anaconda";
+		} else {
+			fprintf(stderr,
+					"Unknown fix type '%s'.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda.\n"
+					"Or provide a custom template using '--template' instead.\n",
+					action->fix_type);
+			return OSCAP_ERROR;
+		}
+	} else if (action->tmpl != NULL) {
+		template = action->tmpl;
+	} else {
+		template = "urn:xccdf:fix:script:sh";
 	}
 
 	int ret = OSCAP_ERROR;
@@ -853,7 +886,7 @@ int app_generate_fix(const struct oscap_action *action)
 
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, xccdf_session_get_result_id(session));
-		if (xccdf_policy_generate_fix(policy, result, action->tmpl, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, result, template, output_fd) == 0)
 			ret = OSCAP_OK;
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
@@ -873,7 +906,7 @@ int app_generate_fix(const struct oscap_action *action)
 			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-		if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, NULL, template, output_fd) == 0)
 			ret = OSCAP_OK;
 	}
 cleanup2:
@@ -968,7 +1001,8 @@ enum oval_opt {
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i',
 	XCCDF_OPT_VERBOSE,
-	XCCDF_OPT_VERBOSE_LOG_FILE
+	XCCDF_OPT_VERBOSE_LOG_FILE,
+	XCCDF_OPT_FIX_TYPE
 };
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
@@ -1001,6 +1035,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 		{ "verbose", required_argument, NULL, XCCDF_OPT_VERBOSE },
 		{ "verbose-log-file", required_argument, NULL, XCCDF_OPT_VERBOSE_LOG_FILE },
+		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -1053,6 +1088,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			break;
 		case XCCDF_OPT_VERBOSE_LOG_FILE:
 			action->f_verbose_log = optarg;
+			break;
+		case XCCDF_OPT_FIX_TYPE:
+			action->fix_type = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
