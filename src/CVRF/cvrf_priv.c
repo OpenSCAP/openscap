@@ -84,7 +84,7 @@ struct cvrf_product_tree {
 OSCAP_IGETINS_GEN(cvrf_relationship, cvrf_product_tree, relationships, relationship)
 OSCAP_ITERATOR_REMOVE_F(cvrf_relationship)
 
-struct oscap_list_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree) {
+struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree) {
 	return oscap_iterator_new(tree->branches);
 }
 
@@ -98,8 +98,12 @@ struct cvrf_branch {
 OSCAP_ACCESSOR_STRING(cvrf_branch, branch_type)
 OSCAP_ACCESSOR_STRING(cvrf_branch, branch_name)
 
-struct oscap_list_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch) {
+struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch) {
 	return oscap_iterator_new(branch->subbranches);
+}
+
+struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch) {
+	return branch->full_name;
 }
 
 
@@ -793,7 +797,7 @@ void cvrf_product_tree_export(const struct cvrf_product_tree *tree, xmlTextWrite
 		xmlTextWriterEndElement(writer);
 	}
 
-	struct oscap_list_iterator *branches = cvrf_product_tree_get_branches(tree);
+	struct oscap_iterator *branches = cvrf_product_tree_get_branches(tree);
 	while (oscap_iterator_has_more(branches)) {
 		struct cvrf_branch *branch = oscap_iterator_next(branches);
 		cvrf_branch_export(branch, writer);
@@ -829,7 +833,7 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
 		xmlTextWriterEndElement(writer);
 	}
 	if (oscap_list_get_itemcount(branch->subbranches) > 0) {
-		struct oscap_list_iterator *subbranches = cvrf_branch_get_subbranches(branch);
+		struct oscap_iterator *subbranches = cvrf_branch_get_subbranches(branch);
 		while (oscap_iterator_has_more(subbranches)) {
 			struct cvrf_branch *subbranch = oscap_iterator_next(subbranches);
 			cvrf_branch_export(subbranch, writer);

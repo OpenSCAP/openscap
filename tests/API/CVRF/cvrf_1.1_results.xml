@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+  <DocumentTitle>Red Hat Security Advisory: bind security update</DocumentTitle>
+  <OS Name>Red Hat Enterprise Linux Server (v. 7)</OS Name>
+  <Product ID>7Client-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1</Product ID>
+  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2017-3135</CVE>
+    <Result>FIXED</Result>
+  </Vulnerability>
+</cvrfdoc>
