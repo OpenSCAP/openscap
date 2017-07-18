@@ -112,6 +112,7 @@ struct xccdf_session {
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 
 	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
+	xccdf_session_loading_flags_t loading_flags; ///< Load referenced files while loading XCCDF
 };
 
 static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *session, const char *original_path);
@@ -148,6 +149,7 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 	session->xccdf.base_score = 0;
 	session->oval.progress = download_progress_empty_calllback;
 	session->check_engine_plugins = oscap_list_new();
+	session->loading_flags = XCCDF_SESSION_LOAD_ALL;
 
 	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
 
@@ -530,6 +532,11 @@ void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allo
 	}
 }
 
+void xccdf_session_set_loading_flags(struct xccdf_session *session, xccdf_session_loading_flags_t flags)
+{
+	session->loading_flags = flags;
+}
+
 /**
  * Get Source DataStream index of the session.
  * @memberof xccdf_session
@@ -552,14 +559,26 @@ int xccdf_session_load(struct xccdf_session *session)
 		ds_sds_session_reset(session->ds.session);
 	}
 
-	if ((ret = xccdf_session_load_xccdf(session)) != 0)
-		return ret;
-	if ((ret = xccdf_session_load_cpe(session)) != 0)
-		return ret;
-	if ((ret = xccdf_session_load_oval(session)) != 0)
-		return ret;
-	if ((ret = xccdf_session_load_check_engine_plugins(session)) != 0)
-		return ret;
+	const xccdf_session_loading_flags_t flags = session->loading_flags;
+	if (flags & XCCDF_SESSION_LOAD_XCCDF) {
+		if ((ret = xccdf_session_load_xccdf(session)) != 0)
+			return ret;
+	}
+	if (flags & XCCDF_SESSION_LOAD_CPE) {
+		if ((ret = xccdf_session_load_cpe(session)) != 0) {
+			return ret;
+		}
+	}
+	if (flags & XCCDF_SESSION_LOAD_OVAL) {
+		if ((ret = xccdf_session_load_oval(session)) != 0) {
+			return ret;
+		}
+	}
+	if (flags & XCCDF_SESSION_LOAD_CHECK_ENGINE_PLUGINS) {
+		if ((ret = xccdf_session_load_check_engine_plugins(session)) != 0) {
+			return ret;
+		}
+	}
 	return xccdf_session_load_tailoring(session);
 }
 
