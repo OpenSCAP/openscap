@@ -8,8 +8,6 @@
 int main(int argc, char **argv)
 {
 	struct cvrf_model *model;
-	struct cvrf_product_tree *tree;
-	struct cvrf_vulnerability_iterator *vuln;
 
 	/* test export */
 	if (argc == 4 && !strcmp(argv[1], "--export-all")) {
@@ -20,13 +18,18 @@ int main(int argc, char **argv)
 		cvrf_model_export(model, argv[3]);
 		cvrf_model_free(model);
 		return 0;
+	} else if (argc == 4 && !strcmp(argv[1], "--eval")) {
+		const char *os_version = "Red Hat Enterprise Linux Server (v. 7)";
+		cvrf_export_results(argv[2], argv[3], os_version);
+		return 0;
 	}
 
 	fprintf(stdout,
 		"Usage: \n\n"
 		"  %s --help\n"
-		"  %s --export-all input.xml output.xml\n",
-		argv[0], argv[0]);
+		"  %s --export-all input.xml output.xml\n"
+		"  %s --eval input.xml results.xml\n",
+		argv[0], argv[0], argv[0]);
 
 	return 0;
 }

@@ -63,12 +63,6 @@
         <ProductID>7Server-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
         <ProductID>7Workstation-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
       </Status>
-      <Status Type="Fixed">
-        <ProductID>7Client-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-        <ProductID>7ComputeNode-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-        <ProductID>7Server-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-        <ProductID>7Workstation-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-      </Status>
     </ProductStatuses>
   </Vulnerability>
 </cvrfdoc>
