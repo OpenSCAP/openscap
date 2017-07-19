@@ -1,10 +1,261 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1">
-  <DocumentTitle>Red Hat Security Advisory: bind security update</DocumentTitle>
-  <OS Name>Red Hat Enterprise Linux Server (v. 7)</OS Name>
-  <Product ID>7Client-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1</Product ID>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
-    <CVE>CVE-2017-3135</CVE>
-    <Result>FIXED</Result>
+  <DocumentTitle>Security update for xen</DocumentTitle>
+  <OS Name>openSUSE 13.1</OS Name>
+  <Identification>
+    <ID>openSUSE-SU-2015:0226-1</ID>
+  </Identification>
+  <Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2013-3495</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="2" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-5146</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="3" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-5149</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="4" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8594</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="5" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8595</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="6" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8866</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="7" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8867</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="8" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-9030</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="9" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-9065</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="10" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-9066</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+  </Vulnerability>
+  <Vulnerability Ordinal="11" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2015-0361</CVE>
+    <Result ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">FIXED</Result>
+    <Result ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">FIXED</Result>
   </Vulnerability>
 </cvrfdoc>

@@ -65,11 +65,26 @@ struct cvrf_product_name;
 struct cvrf_vulnerability;
 
 /**
+ * @struct cvrf_remediation
+ * Structure holding remediation info for a particular vulnerability
+ * May reference URL, ProductID, and/or GroupID
+ */
+struct cvrf_remediation;
+
+/**
  * @struct cvrf_product_status
  * Structure holding CVRF ProductStatus data (within a Vulnerability)
  * Has status type and list of ProductIDs
  */
 struct cvrf_product_status;
+
+/**
+ * @struct cvrf_model_eval
+ *
+ *
+ */
+struct cvrf_model_eval;
+
 
 /**
  * Parse CVRF model from XML (private function)
@@ -119,6 +134,13 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader);
  * @return parsed CVRF vulnerability
  */
 struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader);
+
+/**
+ * Parse CVRF Remediation
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Remediation
+ */
+struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse Product Status within CVRF vulnerability
@@ -171,17 +193,25 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
 void cvrf_relationship_export(const struct cvrf_relationship *relation, xmlTextWriterPtr writer);
 
 /**
- * @param stat Product status within CVRF Vulnerability
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextWriterPtr writer);
-
-/**
  *
  * @param vuln a CVRF Vulnerability item within CVRF model
  * @param writer XML Text Writer representing XML model
  */
 void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWriterPtr writer);
+
+/**
+ *
+ * @param remed a CVRF Remediation for a CVRF Vulnerability item
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_remediation_export(const struct cvrf_remediation *remed, xmlTextWriterPtr writer);
+
+
+/**
+ * @param stat Product status within CVRF Vulnerability
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextWriterPtr writer);
 
 
 
