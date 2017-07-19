@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 		cvrf_model_free(model);
 		return 0;
 	} else if (argc == 4 && !strcmp(argv[1], "--eval")) {
-		const char *os_version = "Red Hat Enterprise Linux Server (v. 7)";
+		const char *os_version = "openSUSE 13.1";
 		cvrf_export_results(argv[2], argv[3], os_version);
 		return 0;
 	}

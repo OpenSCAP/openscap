@@ -1,68 +1,508 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cvrfdoc xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1">
-  <DocumentTitle xml:lang="en">Red Hat Security Advisory: bind security update</DocumentTitle>
-  <DocumentType>Security Advisory</DocumentType>
+  <DocumentTitle xml:lang="en">Security update for xen</DocumentTitle>
+  <DocumentType>SUSE Patch</DocumentType>
   <DocumentTracking>
     <Identification>
-      <ID>RHSA-2017:0001</ID>
+      <ID>openSUSE-SU-2015:0226-1</ID>
     </Identification>
     <Status>Final</Status>
     <Version>1</Version>
-    <InitialReleaseDate>2017-01-02T10:08:00Z</InitialReleaseDate>
-    <CurrentReleaseDate>2017-01-02T10:08:00Z</CurrentReleaseDate>
+    <InitialReleaseDate>2015-01-12T10:54:17Z</InitialReleaseDate>
+    <CurrentReleaseDate>2015-01-12T10:54:17Z</CurrentReleaseDate>
+    <Generator>
+      <Engine>cve-database/bin/generate-cvrf.pl</Engine>
+      <Date>2017-02-24T01:00:00Z</Date>
+    </Generator>
   </DocumentTracking>
   <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
-    <Branch Type="Product Family" Name="Red Hat Enterprise Linux">
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Client (v. 7)">
-        <FullProductName ProductID="7Client-7.3.Z">Red Hat Enterprise Linux Client (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Client Optional (v. 7)">
-        <FullProductName ProductID="7Client-optional-7.3.Z">Red Hat Enterprise Linux Client Optional (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux ComputeNode (v. 7)">
-        <FullProductName ProductID="7ComputeNode-7.3.Z">Red Hat Enterprise Linux ComputeNode (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux ComputeNode Optional (v. 7)">
-        <FullProductName ProductID="7ComputeNode-optional-7.3.Z">Red Hat Enterprise Linux ComputeNode Optional (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Server (v. 7)">
-        <FullProductName ProductID="7Server-7.3.Z">Red Hat Enterprise Linux Server (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Server Optional (v. 7)">
-        <FullProductName ProductID="7Server-optional-7.3.Z">Red Hat Enterprise Linux Server Optional (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Workstation (v. 7)">
-        <FullProductName ProductID="7Workstation-7.3.Z">Red Hat Enterprise Linux Workstation (v. 7)</FullProductName>
-      </Branch>
-      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Workstation Optional (v. 7)">
-        <FullProductName ProductID="7Workstation-optional-7.3.Z">Red Hat Enterprise Linux Workstation Optional (v. 7)</FullProductName>
+    <Branch Type="Product Family" Name="openSUSE 13.1">
+      <Branch Type="Product Name" Name="openSUSE 13.1">
+        <FullProductName ProductID="openSUSE 13.1">openSUSE 13.1</FullProductName>
       </Branch>
     </Branch>
-    <Branch Type="Product Version" Name="bind-32:9.9.4-38.el7_3.2">
-      <FullProductName ProductID="bind-32:9.9.4-38.el7_3.2">bind-9.9.4-38.el7_3.2.src.rpm</FullProductName>
+    <Branch Type="Product Version" Name="xen-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-4.3.3_04-34.1">xen-4.3.3_04-34.1</FullProductName>
     </Branch>
-    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z">
-      <FullProductName ProductID="7Client-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux Client (v. 7)</FullProductName>
+    <Branch Type="Product Version" Name="xen-debugsource-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-debugsource-4.3.3_04-34.1">xen-debugsource-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-devel-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-devel-4.3.3_04-34.1">xen-devel-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-doc-html-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-doc-html-4.3.3_04-34.1">xen-doc-html-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">
+      <FullProductName ProductID="xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">
+      <FullProductName ProductID="xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">
+      <FullProductName ProductID="xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">
+      <FullProductName ProductID="xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">
+      <FullProductName ProductID="xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">
+      <FullProductName ProductID="xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-libs-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-libs-4.3.3_04-34.1">xen-libs-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-libs-32bit-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-libs-32bit-4.3.3_04-34.1">xen-libs-32bit-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-libs-debuginfo-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-libs-debuginfo-4.3.3_04-34.1">xen-libs-debuginfo-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-libs-debuginfo-32bit-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-libs-debuginfo-32bit-4.3.3_04-34.1">xen-libs-debuginfo-32bit-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-tools-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-tools-4.3.3_04-34.1">xen-tools-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-tools-debuginfo-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-tools-debuginfo-4.3.3_04-34.1">xen-tools-debuginfo-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-tools-domU-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-tools-domU-4.3.3_04-34.1">xen-tools-domU-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-tools-domU-debuginfo-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-tools-domU-debuginfo-4.3.3_04-34.1">xen-tools-domU-debuginfo-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-xend-tools-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-xend-tools-4.3.3_04-34.1">xen-xend-tools-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Branch Type="Product Version" Name="xen-xend-tools-debuginfo-4.3.3_04-34.1">
+      <FullProductName ProductID="xen-xend-tools-debuginfo-4.3.3_04-34.1">xen-xend-tools-debuginfo-4.3.3_04-34.1</FullProductName>
+    </Branch>
+    <Relationship ProductReference="xen-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">xen-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
     </Relationship>
-    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z">
-      <FullProductName ProductID="7ComputeNode-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux ComputeNode (v. 7)</FullProductName>
+    <Relationship ProductReference="xen-debugsource-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">xen-debugsource-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
     </Relationship>
-    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z">
-      <FullProductName ProductID="7Server-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux Server (v. 7)</FullProductName>
+    <Relationship ProductReference="xen-devel-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">xen-devel-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
     </Relationship>
-    <Relationship ProductReference="ipa-0:4.4.0-14.el7_3.1.1" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z">
-      <FullProductName ProductID="7Workstation-7.3.Z:ipa-0:4.4.0-14.el7_3.1.1">ipa-0:4.4.0-14.el7_3.1.1 as a component of Red Hat Enterprise Linux Workstation (v. 7)</FullProductName>
+    <Relationship ProductReference="xen-doc-html-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">xen-doc-html-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-kmp-default-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-libs-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">xen-libs-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-libs-32bit-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">xen-libs-32bit-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-libs-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">xen-libs-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-libs-debuginfo-32bit-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">xen-libs-debuginfo-32bit-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-tools-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">xen-tools-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-tools-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">xen-tools-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-tools-domU-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">xen-tools-domU-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-tools-domU-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">xen-tools-domU-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-xend-tools-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">xen-xend-tools-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="xen-xend-tools-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
+      <FullProductName ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">xen-xend-tools-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
     </Relationship>
   </ProductTree>
   <Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
-    <CVE>CVE-2017-3135</CVE>
+    <CVE>CVE-2013-3495</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>7Client-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-        <ProductID>7ComputeNode-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-        <ProductID>7Server-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
-        <ProductID>7Workstation-7.3.Z:bind-32:9.9.4-38.el7_3.2</ProductID>
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
       </Status>
     </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="2" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-5146</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="3" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-5149</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="4" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8594</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="5" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8595</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="6" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8866</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="7" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-8867</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="8" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-9030</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="9" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-9065</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="10" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2014-9066</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
+  </Vulnerability>
+  <Vulnerability Ordinal="11" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <CVE>CVE-2015-0361</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
+        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">Please Install the update.</Description>
+        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+      </Remediation>
+    </Remediations>
   </Vulnerability>
 </cvrfdoc>
