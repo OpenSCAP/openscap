@@ -301,7 +301,7 @@ Authors:
                 <xsl:text>,</xsl:text>
             </xsl:if>
             <xsl:text>"</xsl:text>
-            <xsl:call-template name="convert-url-to-name">
+            <xsl:call-template name="convert-reference-url-to-name">
                 <xsl:with-param name="href" select="$href"/>
             </xsl:call-template>
             <xsl:text>":[</xsl:text>
@@ -452,11 +452,14 @@ Authors:
     </xsl:for-each>
 </xsl:template>
 
-<xsl:template name="convert-url-to-name">
+<xsl:template name="convert-reference-url-to-name">
     <xsl:param name="href"/>
     <xsl:choose>
         <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53')">
-            <xsl:text>NIST SP 800-53 ID</xsl:text>
+            <xsl:text>NIST SP 800-53</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171')">
+            <xsl:text>NIST SP 800-171</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
             <xsl:text>DISA CCI</xsl:text>
@@ -465,13 +468,16 @@ Authors:
             <xsl:text>DISA SRG</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/')">
-            <xsl:text>DISA STIG ID</xsl:text>
+            <xsl:text>DISA STIG</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">
-            <xsl:text>PCI DSS Requirement</xsl:text>
+            <xsl:text>PCI-DSS Requirement</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://benchmarks.cisecurity.org/')">
             <xsl:text>CIS Recommendation</xsl:text>
+        </xsl:when>
+        <xsl:when test="starts-with($href, 'https://www.fbi.gov/file-repository/cjis-security-policy')">
+            <xsl:text>FBI CJIS</xsl:text>
         </xsl:when>
         <xsl:otherwise>
             <xsl:value-of select="$href"/>
@@ -486,7 +492,7 @@ Authors:
         <xsl:if test="normalize-space(@href) and @href != 'https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors'">
             <option>
                 <xsl:variable name="reference">
-                    <xsl:call-template name="convert-url-to-name">
+                    <xsl:call-template name="convert-reference-url-to-name">
                         <xsl:with-param name="href" select="@href"/>
                     </xsl:call-template>
                 </xsl:variable>
