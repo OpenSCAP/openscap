@@ -17,11 +17,15 @@
 #include "common/oscap_string.h"
 
 #include "CPE/cpelang_priv.h"
+#include "CPE/public/cpe_dict.h"
 #include "CVSS/cvss_priv.h"
 #include "CVSS/public/cvss_score.h"
 
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
+
+#include "OVAL/public/oval_system_characteristics.h"
+#include "OVAL/public/oval_definitions.h"
 
 /*****************************************************
  *
@@ -74,6 +78,15 @@ void cvrf_model_eval_free(struct cvrf_model_eval *eval) {
 	oscap_free(eval);
 }
 
+void cvrf_get_os_info(const char *input_file, struct cvrf_model_eval *eval) {
+	struct oscap_source *source = oscap_source_new_from_file("/cpe/openscap-cpe-dict.xml");
+	oscap_source_save_as(source, "oscap_source_export.xml");
+	//struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
+	//cpe_dict_model_export(dict, "cpe_dict_export.xml");
+	oscap_source_free(source);
+	//cpe_dict_model_free(dict);
+}
+
 /*****************************************************
  *
  */
@@ -97,6 +110,7 @@ void cvrf_export_results(const char *input_file, const char *export_file, const 
 	struct cvrf_model *model = cvrf_model_import(input_file);
 	cvrf_eval_set_model(eval, model);
 	cvrf_model_eval_set_os_name(eval, os_name);
+	cvrf_get_os_info(input_file, eval);
 
 	get_cvrf_product_id_by_OS(eval, model);
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
@@ -118,12 +132,6 @@ void cvrf_export_results(const char *input_file, const char *export_file, const 
 	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "OS Name", NULL);
 	xmlTextWriterWriteString(writer, BAD_CAST os_name);
 	xmlTextWriterEndElement(writer);
-
-	/*
-	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "ProductID", NULL);
-	xmlTextWriterWriteString(writer, BAD_CAST product_id);
-	xmlTextWriterEndElement(writer);
-	*/
 
 	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Identification", NULL);
 	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "ID", NULL);

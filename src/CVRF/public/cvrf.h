@@ -462,6 +462,10 @@ void cvrf_model_export(struct cvrf_model *cvrf, const char *file);
  */
 struct cvrf_model *cvrf_model_import(const char *file);
 
+const char * cvrf_model_supported(void);
+
+
+void cvrf_get_os_info(const char *input_file, struct cvrf_model_eval *eval);
 
 void cvrf_export_results(const char *input_file, const char *export_file, const char *os_version);
 

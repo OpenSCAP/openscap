@@ -40,6 +40,7 @@
 #include <cpe_dict.h>
 #include <cpe_name.h>
 #include <cve_nvd.h>
+#include <cvrf.h>
 
 #define OSCAP_PRODUCTNAME "cpe:/a:open-scap:oscap"
 #define OSCAP_ERR_MSG "OpenSCAP Error:"
@@ -98,6 +99,11 @@ struct cve_action {
         char * cve;
 };
 
+struct cvrf_action {
+        char * file;
+        char * cvrf;
+};
+
 struct oscap_action {
         struct oscap_module *module;
 	/* files */
@@ -135,6 +141,7 @@ struct oscap_action {
 	struct ds_action* ds_action;
 	struct cpe_action * cpe_action;
 	struct cve_action * cve_action;
+	struct cvrf_action * cvrf_action;
 	char *file;
 
 	int verbosity;
@@ -174,6 +181,7 @@ extern struct oscap_module OSCAP_XCCDF_MODULE;
 extern struct oscap_module OSCAP_CVSS_MODULE;
 extern struct oscap_module OSCAP_OVAL_MODULE;
 extern struct oscap_module OSCAP_CVE_MODULE;
+extern struct oscap_module OSCAP_CVRF_MODULE;
 extern struct oscap_module OSCAP_CPE_MODULE;
 extern struct oscap_module OSCAP_INFO_MODULE;
 

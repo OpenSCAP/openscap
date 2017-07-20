@@ -33,6 +33,9 @@ oscap_CPPFLAGS  += -I$(top_srcdir)/src/CPE/public
 oscap_SOURCES   += oscap-cve.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVE/public
 
+oscap_SOURCES   += oscap-cvrf.c
+oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVRF/public
+
 oscap_SOURCES   += oscap-info.c
 endif
 
