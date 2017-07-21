@@ -59,17 +59,40 @@ static struct oscap_module* CVRF_SUBMODULES[] = {
 
 static int app_cvrf_evaluate(const struct oscap_action *action)
 {
-	int result = 0;
+	int result = OSCAP_OK;
 
 	const char *os_name = "Fedora";
 	cvrf_export_results(action->cvrf_action->cvrf, action->cvrf_action->file, os_name);
+
+	cleanup:
+	        if (oscap_err())
+	                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
         free(action->cvrf_action);
         return result;
 }
 
 static int app_cvrf_export(const struct oscap_action *action) {
-	return 0;
+
+	int result;
+	struct cvrf_model *model = cvrf_model_import(action->cvrf_action->cvrf);
+
+	if(!model) {
+		result=OSCAP_ERROR;
+		goto cleanup;
+	}
+
+	cvrf_model_export(model, action->cvrf_action->file);
+	result=OSCAP_OK;
+
+	cleanup:
+	        if (oscap_err())
+	                fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+
+	        if (model)
+			cvrf_model_free(model);
+	        free(action->cvrf_action);
+	        return result;
 }
 
 bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)

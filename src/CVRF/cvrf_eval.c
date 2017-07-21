@@ -21,11 +21,17 @@
 #include "CVSS/cvss_priv.h"
 #include "CVSS/public/cvss_score.h"
 
+#include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 
 #include "OVAL/public/oval_system_characteristics.h"
 #include "OVAL/public/oval_definitions.h"
+#include "OVAL/adt/oval_string_map_impl.h"
+#include "OVAL/public/oval_types.h"
+#include "OVAL/public/oval_probe_session.h"
+#include "OVAL/public/oval_probe.h"
+#include "OVAL/oval_definitions_impl.h"
 
 /*****************************************************
  *
@@ -110,7 +116,8 @@ void cvrf_export_results(const char *input_file, const char *export_file, const 
 	struct cvrf_model *model = cvrf_model_import(input_file);
 	cvrf_eval_set_model(eval, model);
 	cvrf_model_eval_set_os_name(eval, os_name);
-	cvrf_get_os_info(input_file, eval);
+	//cvrf_get_os_info(input_file, eval);
+	cvrf_rpm_product_id_rpminfo();
 
 	get_cvrf_product_id_by_OS(eval, model);
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
@@ -279,5 +286,57 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *pro
 	cvrf_product_status_iterator_free(it);
 
 	return false;
+}
+
+int cvrf_rpm_product_id_rpminfo() {
+	/*
+	struct oval_syschar_model *syschar_model;
+	struct oval_probe_session_t *probe_session = oval_probe_session_new(syschar_model);
+	*/
+
+	struct oval_definition_model *def_model = oval_definition_model_new();
+
+	struct oval_object *object = oval_definition_model_get_new_object(def_model, "oval:org.open-scap.cpe.unix:obj:1");
+	struct oval_object_content *object_content = oval_object_content_new(def_model, OVAL_OBJECTCONTENT_ENTITY);
+	struct oval_entity *object_entity = oval_entity_new(def_model);
+	oval_entity_set_name(object_entity, "RPMinfo");
+	oval_entity_set_operation(object_entity, OVAL_OPERATION_PATTERN_MATCH);
+	struct oval_value *object_value = oval_value_new(OVAL_DATATYPE_STRING, "object");
+	oval_entity_set_value(object_entity, object_value);
+	oval_object_content_set_entity(object_content, object_entity);
+	oval_object_add_object_content(object, object_content);
+
+	struct oval_state *state = oval_definition_model_get_new_state(def_model, "oval:org.open-scap.cpe.unix:ste:1");
+	oval_state_set_subtype(state,OVAL_LINUX_RPM_INFO);
+	struct oval_state_content *state_content = oval_state_content_new(def_model);
+	struct oval_entity *state_entity = oval_entity_new(def_model);
+	oval_entity_set_name(state_entity, "RPMinfo");
+	oval_entity_set_operation(state_entity, OVAL_OPERATION_PATTERN_MATCH);
+	oval_entity_set_type(state_entity, OVAL_ENTITY_VARREF_ATTRIBUTE);
+	struct oval_value *state_value = oval_value_new(OVAL_DATATYPE_STRING, "string");
+	oval_entity_set_value(state_entity, state_value);
+	oval_state_content_set_entity(state_content, state_entity);
+	oval_state_add_content(state, state_content);
+
+	struct oval_test *rpm_test = oval_test_new(def_model,"oval:org.open-scap.cpe.wrlinux:tst:1");
+	oval_test_set_subtype(rpm_test,OVAL_LINUX_RPM_INFO);
+	oval_test_set_version(rpm_test, 1);
+	oval_test_set_check(rpm_test, OVAL_CHECK_AT_LEAST_ONE);
+	oval_test_set_existence(rpm_test, OVAL_AT_LEAST_ONE_EXISTS);
+	oval_test_set_object(rpm_test, object);
+	oval_test_add_state(rpm_test, state);
+
+	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, "oval:org.open-scap.cpe.wrlinux:def:1");
+	oval_definition_set_version(definition, 1);
+	oval_definition_set_title(definition, "CVRF RPM Vulnerability Test");
+	struct oval_criteria_node *criteria = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERION);
+	oval_criteria_node_set_test(criteria, rpm_test);
+	oval_definition_set_criteria(definition, criteria);
+
+	oval_definition_model_export(def_model, "cvrf-definition-model-export.xml");
+	oval_definition_model_free(def_model);
+
+
+	return 0;
 }
 
