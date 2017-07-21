@@ -14,6 +14,14 @@
 #include "oscap.h"
 #include "cpe_name.h"
 
+
+/**
+ * @struct cvrf_index
+ * Represents an index of a CVRF feed or directory
+ * Maintains a list of all CVRF files in the form of cvrf_model structures
+ */
+struct cvrf_index;
+
 /**
  * @struct cvrf_model
  * Structure holding CVRF model
@@ -97,6 +105,9 @@ struct cvrf_model_eval;
  * Use remove function otherwise.
  * @{
  * */
+
+const char *cvrf_index_get_source_url(const struct cvrf_index *index);
+
 
 const char *cvrf_model_get_doc_title(const struct cvrf_model *model);
 
@@ -200,6 +211,17 @@ const char *cvrf_model_eval_get_os_version(const struct cvrf_model_eval *eval);
  * @{
  */
 
+bool cvrf_index_set_source_url(struct cvrf_index *index, const char *source_url);
+
+struct cvrf_model_iterator;
+bool cvrf_index_add_model(struct cvrf_index *index, struct cvrf_model *model);
+struct cvrf_model *cvrf_model_iterator_next(struct cvrf_model_iterator *it);
+bool cvrf_model_iterator_has_more(struct cvrf_model_iterator *it);
+void cvrf_model_iterator_free(struct cvrf_model_iterator *it);
+void cvrf_model_iterator_reset(struct cvrf_model_iterator *it);
+void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
+
+
 bool cvrf_model_set_doc_title(struct cvrf_model *model, const char *doc_title);
 
 bool cvrf_model_set_doc_type(struct cvrf_model *model, const char *doc_type);
@@ -298,6 +320,14 @@ bool cvrf_model_eval_set_os_version(struct cvrf_model_eval *eval, const char *os
  */
 const char * cvrf_model_supported(void);
 
+
+/**
+ * New CVRF index
+ * @memberof cvrf_index
+ * @return New CVRF index
+ */
+struct cvrf_index *cvrf_index_new(void);
+
 /**
  * New CVRF model
  * @memberof cvrf_model
@@ -375,6 +405,13 @@ struct cvrf_product_status *cvrf_product_status_new(void);
 struct cvrf_model_eval *cvrf_model_eval_new(void);
 
 
+
+
+/**
+ *
+ *
+ */
+void cvrf_index_free(struct cvrf_index *index);
 
 /**
  *
@@ -474,6 +511,8 @@ void get_cvrf_product_id_by_OS(struct cvrf_model_eval *eval, struct cvrf_model *
 const char *get_cvrf_product_id_from_branch(struct cvrf_model_eval *eval, struct cvrf_branch *branch);
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
+
+int cvrf_rpm_product_id_rpminfo(void);
 
 
 /**@}*/

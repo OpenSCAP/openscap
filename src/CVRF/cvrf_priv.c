@@ -25,6 +25,14 @@
 
 /***************************************************************************/
 
+struct cvrf_index {
+	char *source_url;
+	struct oscap_list *models;
+};
+OSCAP_ACCESSOR_STRING(cvrf_index, source_url)
+OSCAP_IGETINS_GEN(cvrf_model, cvrf_index, models, model)
+OSCAP_ITERATOR_REMOVE_F(cvrf_model)
+
 /**
  * Top-level structure of the CVRF hierarchy
  *
@@ -265,6 +273,19 @@ struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_st
 /* Constructors of CVRF structures cvrf_*<structure>*_new()
  *
  */
+struct cvrf_index *cvrf_index_new() {
+
+	struct cvrf_index *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_index));
+	if (ret == NULL)
+		return NULL;
+
+	ret->source_url = NULL;
+	ret->models = oscap_list_new();
+
+	return ret;
+}
 
 struct cvrf_model *cvrf_model_new() {
 
@@ -1119,6 +1140,16 @@ void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextW
 /***************************************************************************
  * Free functions
  */
+
+void cvrf_index_free(struct cvrf_index *index) {
+
+	if (index == NULL)
+		return;
+
+	oscap_free(index->source_url);
+	oscap_list_free(index->models, (oscap_destruct_func) cvrf_model_free);
+	oscap_free(index);
+}
 
 void cvrf_model_free(struct cvrf_model *cvrf) {
 
