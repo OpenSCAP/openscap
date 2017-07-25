@@ -16,12 +16,72 @@
 #include "oval_definitions.h"
 
 
+typedef enum {
+	CVRF_DOC_STATUS_DRAFT,
+	CVRF_DOC_STATUS_INTERIM,
+	CVRF_DOC_STATUS_FINAL,
+} cvrf_doc_status_type_t;
+
+typedef enum {
+	CVRF_BRANCH_VENDOR,
+	CVRF_BRANCH_PRODUCT_FAMILY,
+	CVRF_BRANCH_PRODUCT_NAME,
+	CVRF_BRANCH_PRODUCT_VERSION,
+	CVRF_BRANCH_PATCH_LEVEL,
+	CVRF_BRANCH_SERVICE_PACK,
+	CVRF_BRANCH_ARCHITECTURE,
+	CVRF_BRANCH_LANGUAGE,
+	CVRF_BRANCH_LEGACY,
+	CVRF_BRANCH_SPECIFICATION,
+} cvrf_branch_type_t;
+
+typedef enum {
+	CVRF_RELATIONSHIP_DEFAULT_COMPONENT,
+	CVRF_RELATIONSHIP_OPTIONAL_COMPONENT,
+	CVRF_RELATIONSHIP_EXTERNAL_COMPONENT,
+	CVRF_RELATIONSHIP_INSTALLED_ON,
+	CVRF_RELATIONSHIP_INSTALLED_WITH,
+} cvrf_relationship_type_t;
+
+typedef enum {
+	CVRF_STATUS_FIRST_AFFECTED,
+	CVRF_STATUS_KNOWN_AFFECTED,
+	CVRF_STATUS_KNOWN_NOT_AFFECTED,
+	CVRF_STATUS_FIXED,
+	CVRF_STATUS_RECOMMENDED,
+	CVRF_STATUS_LAST_AFFECTED,
+} cvrf_status_type_t;
+
+typedef enum {
+	CVRF_REMEDIATION_WORKAROUND,
+	CVRF_REMEDIATION_MITIGATION,
+	CVRF_REMEDIATION_VENDOR_FIX,
+	CVRF_REMEDIATION_NONE_AVAILABLE,
+	CVRF_REMEDIATION_WILL_NOT_FIX,
+} cvrf_remediation_type_t;
+
 /**
  * @struct cvrf_index
  * Represents an index of a CVRF feed or directory
  * Maintains a list of all CVRF files in the form of cvrf_model structures
  */
 struct cvrf_index;
+
+const char *cvrf_index_get_source_url(const struct cvrf_index *index);
+const char *cvrf_index_get_index_file(const struct cvrf_index *index);
+struct cvrf_model_iterator *cvrf_index_get_models(const struct cvrf_index *index);
+
+bool cvrf_index_set_source_url(struct cvrf_index *index, const char *source_url);
+bool cvrf_index_set_index_file(struct cvrf_index *index, const char *index_file);
+
+struct cvrf_model_iterator;
+//bool cvrf_index_add_model(struct cvrf_index *index, struct cvrf_model *model);
+struct cvrf_model *cvrf_model_iterator_next(struct cvrf_model_iterator *it);
+bool cvrf_model_iterator_has_more(struct cvrf_model_iterator *it);
+void cvrf_model_iterator_free(struct cvrf_model_iterator *it);
+void cvrf_model_iterator_reset(struct cvrf_model_iterator *it);
+void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
+
 
 /**
  * @struct cvrf_model
@@ -30,17 +90,58 @@ struct cvrf_index;
  */
 struct cvrf_model;
 
+const char *cvrf_model_get_doc_title(const struct cvrf_model *model);
+const char *cvrf_model_get_doc_type(const struct cvrf_model *model);
+struct cvrf_product_tree *cvrf_model_get_product_tree(struct cvrf_model *model);
+struct cvrf_vulnerability_iterator *cvrf_model_get_vulnerabilities(const struct cvrf_model *model);
+struct cvrf_document *cvrf_model_get_document(struct cvrf_model *model);
+const char *cvrf_model_get_identification(struct cvrf_model *model);
+
+bool cvrf_model_set_doc_title(struct cvrf_model *model, const char *doc_title);
+bool cvrf_model_set_doc_type(struct cvrf_model *model, const char *doc_type);
+
+struct cvrf_vulnerability_iterator;
+//bool cvrf_model_add_vulnerability(struct cvrf_model *model, struct cvrf_vulnerability *vuln);
+struct cvrf_vulnerability *cvrf_vulnerability_iterator_next(struct cvrf_vulnerability_iterator *it);
+bool cvrf_vulnerability_iterator_has_more(struct cvrf_vulnerability_iterator *it);
+void cvrf_vulnerability_iterator_free(struct cvrf_vulnerability_iterator *it);
+void cvrf_vulnerability_iterator_reset(struct cvrf_vulnerability_iterator *it);
+void cvrf_vulnerability_iterator_remove(struct cvrf_vulnerability_iterator *it);
+
+
 /**
  * @struct cvrf_document
  *
  */
 struct cvrf_document;
 
+struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc);
+
+void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track);
+
+
 /**
  * @struct cvrf_doc_tracking
  *
  */
 struct cvrf_doc_tracking;
+
+const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_tracking_alias(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_tracking_status(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_generator_engine(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking *tracking);
+
+bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);
+bool cvrf_doc_tracking_set_tracking_alias(struct cvrf_doc_tracking *tracking, const char *tracking_alias);
+bool cvrf_doc_tracking_set_tracking_status(struct cvrf_doc_tracking *tracking, const char *tracking_status);
+bool cvrf_doc_tracking_set_init_release_date(struct cvrf_doc_tracking *tracking, const char *init_release_date);
+bool cvrf_doc_tracking_set_cur_release_date(struct cvrf_doc_tracking *tracking, const char *cur_release_date);
+bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, const char *generator_engine);
+bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, const char *generator_date);
+
 
 /**
  *@struct cvrf_product_tree
@@ -49,224 +150,8 @@ struct cvrf_doc_tracking;
  */
 struct cvrf_product_tree;
 
-/**
- * @struct cvrf_branch
- * Structure holding CVRF branch data
- * Belongs to a ProductTree; may have its own sub-branches
- */
-struct cvrf_branch;
-
-/**
- * @struct cvrf_relationship
- * Structure holding data for Relationships within ProductTree
- */
-struct cvrf_relationship;
-
-/**
- * @struct cvrf_product_name
- * Structure holding CVRF product name data
- * ProductID and CPE data for CVRF branches and ProductTrees
- */
-struct cvrf_product_name;
-
-/**
- * @struct cvrf_vulnerability
- * Structure holding CVRF Vulnerability data
- * Contains at least one ProductStatus
- */
-struct cvrf_vulnerability;
-
-/**
- * @struct cvrf_remediation
- * Structure holding remediation info for a particular vulnerability
- * May reference URL, ProductID, and/or GroupID
- */
-struct cvrf_remediation;
-
-/**
- * @struct cvrf_product_status
- * Structure holding CVRF ProductStatus data (within a Vulnerability)
- * Has status type and list of ProductIDs
- */
-struct cvrf_product_status;
-
-/**
- * @struct cvrf_model_eval
- *
- *
- */
-struct cvrf_model_eval;
-
-
-struct cvrf_rpm_attributes;
-
-/************************************************************************************/
-/************************************************************************************/
-/**
- * @name Getters
- * Return value is pointer to structure's member. Do not free unless you null the pointer in the structure.
- * Use remove function otherwise.
- * @{
- * */
-
-const char *cvrf_index_get_source_url(const struct cvrf_index *index);
-
-
-const char *cvrf_model_get_doc_title(const struct cvrf_model *model);
-
-const char *cvrf_model_get_doc_type(const struct cvrf_model *model);
-
-struct cvrf_product_tree *cvrf_model_get_product_tree(struct cvrf_model *model);
-
-struct cvrf_vulnerability_iterator *cvrf_model_get_vulnerabilities(const struct cvrf_model *model);
-
-struct cvrf_document *cvrf_model_get_document(struct cvrf_model *model);
-
-const char *cvrf_model_get_identification(struct cvrf_model *model);
-
-
-struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc);
-
-
-const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
-
-const char *cvrf_doc_tracking_get_tracking_alias(const struct cvrf_doc_tracking *tracking);
-
-const char *cvrf_doc_tracking_get_tracking_status(const struct cvrf_doc_tracking *tracking);
-
-const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
-
-const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
-
-const char *cvrf_doc_tracking_get_generator_engine(const struct cvrf_doc_tracking *tracking);
-
-const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking *tracking);
-
-
 struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree);
-
 struct cvrf_relationship_iterator *cvrf_product_tree_get_relationships(const struct cvrf_product_tree *tree);
-
-
-const char *cvrf_branch_get_branch_type(const struct cvrf_branch *branch);
-
-const char *cvrf_branch_get_branch_name(const struct cvrf_branch *branch);
-
-struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch);
-
-struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch);
-
-
-const char *cvrf_relationship_get_product_reference(const struct cvrf_relationship *relation);
-
-const char *cvrf_relationship_get_relation_type(const struct cvrf_relationship *relation);
-
-const char *cvrf_relationship_get_relates_to_ref(const struct cvrf_relationship *relation);
-
-struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation);
-
-
-const char *cvrf_product_name_get_product_id(const struct cvrf_product_name *full_name);
-
-const char *cvrf_product_name_get_cpe(const struct cvrf_product_name *full_name);
-
-
-const char *cvrf_vulnerability_get_vulnerability_title(const struct cvrf_vulnerability *vuln);
-
-int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
-
-const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
-
-const char *cvrf_vulnerability_get_cwe_id(const struct cvrf_vulnerability *vuln);
-
-struct cvrf_product_status_iterator *cvrf_vulnerability_get_cvrf_product_statuses(const struct cvrf_vulnerability *vuln);
-
-struct cvrf_remediation_iterator *cvrf_vulnerability_get_remediations(const struct cvrf_vulnerability *vuln);
-
-int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
-
-
-const char *cvrf_product_status_get_status(const struct cvrf_product_status *stat);
-
-struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_status *stat);
-
-
-struct cvrf_model *cvrf_eval_get_model(struct cvrf_model_eval *eval);
-
-struct oscap_string_iterator *cvrf_model_eval_get_product_ids(struct cvrf_model_eval *eval);
-
-const char *cvrf_model_eval_get_os_name(const struct cvrf_model_eval *eval);
-
-const char *cvrf_model_eval_get_os_version(const struct cvrf_model_eval *eval);
-
-
-const char *cvrf_rpm_attributes_get_full_package_name(const struct cvrf_rpm_attributes *attributes);
-
-const char *cvrf_rpm_attributes_get_rpm_name(const struct cvrf_rpm_attributes *attributes);
-
-const char *cvrf_rpm_attributes_get_rpm_version(const struct cvrf_rpm_attributes *attributes);
-
-const char *cvrf_rpm_attributes_get_rpm_release(const struct cvrf_rpm_attributes *attributes);
-
-const char *cvrf_rpm_attributes_get_rpm_architecture(const struct cvrf_rpm_attributes *attributes);
-
-/************************************************************************************/
-/************************************************************************************/
-/** @} End of Getters group */
-
-
-
-/************************************************************************************/
-/************************************************************************************/
-/**
- * @name Setters
- * For lists use add functions. Parameters of set functions are duplicated in memory and need to
- * be freed by caller.
- * @{
- */
-
-bool cvrf_index_set_source_url(struct cvrf_index *index, const char *source_url);
-
-struct cvrf_model_iterator;
-bool cvrf_index_add_model(struct cvrf_index *index, struct cvrf_model *model);
-struct cvrf_model *cvrf_model_iterator_next(struct cvrf_model_iterator *it);
-bool cvrf_model_iterator_has_more(struct cvrf_model_iterator *it);
-void cvrf_model_iterator_free(struct cvrf_model_iterator *it);
-void cvrf_model_iterator_reset(struct cvrf_model_iterator *it);
-void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
-
-
-bool cvrf_model_set_doc_title(struct cvrf_model *model, const char *doc_title);
-
-bool cvrf_model_set_doc_type(struct cvrf_model *model, const char *doc_type);
-
-
-struct cvrf_vulnerability_iterator;
-bool cvrf_model_add_vulnerability(struct cvrf_model *model, struct cvrf_vulnerability *vuln);
-struct cvrf_vulnerability *cvrf_vulnerability_iterator_next(struct cvrf_vulnerability_iterator *it);
-bool cvrf_vulnerability_iterator_has_more(struct cvrf_vulnerability_iterator *it);
-void cvrf_vulnerability_iterator_free(struct cvrf_vulnerability_iterator *it);
-void cvrf_vulnerability_iterator_reset(struct cvrf_vulnerability_iterator *it);
-void cvrf_vulnerability_iterator_remove(struct cvrf_vulnerability_iterator *it);
-
-
-void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track);
-
-
-bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);
-
-bool cvrf_doc_tracking_set_tracking_alias(struct cvrf_doc_tracking *tracking, const char *tracking_alias);
-
-bool cvrf_doc_tracking_set_tracking_status(struct cvrf_doc_tracking *tracking, const char *tracking_status);
-
-bool cvrf_doc_tracking_set_init_release_date(struct cvrf_doc_tracking *tracking, const char *init_release_date);
-
-bool cvrf_doc_tracking_set_cur_release_date(struct cvrf_doc_tracking *tracking, const char *cur_release_date);
-
-bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, const char *generator_engine);
-
-bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, const char *generator_date);
-
 
 struct cvrf_relationship_iterator;
 struct cvrf_relationship *cvrf_relationship_iterator_next(struct cvrf_relationship_iterator *it);
@@ -275,66 +160,145 @@ void cvrf_relationship_iterator_free(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
 
 
-bool cvrf_branch_set_branch_type(struct cvrf_branch *branch, const char *branch_type);
+/**
+ * @struct cvrf_branch
+ * Structure holding CVRF branch data
+ * Belongs to a ProductTree; may have its own sub-branches
+ */
+struct cvrf_branch;
 
+const char *cvrf_branch_get_branch_type(const struct cvrf_branch *branch);
+const char *cvrf_branch_get_branch_name(const struct cvrf_branch *branch);
+struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch);
+struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch);
+
+bool cvrf_branch_set_branch_type(struct cvrf_branch *branch, const char *branch_type);
 bool cvrf_branch_set_branch_name(struct cvrf_branch *branch, const char *branch_name);
 
 
+/**
+ * @struct cvrf_relationship
+ * Structure holding data for Relationships within ProductTree
+ */
+struct cvrf_relationship;
+
+const char *cvrf_relationship_get_product_reference(const struct cvrf_relationship *relation);
+const char *cvrf_relationship_get_relation_type(const struct cvrf_relationship *relation);
+const char *cvrf_relationship_get_relates_to_ref(const struct cvrf_relationship *relation);
+struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation);
+
 bool cvrf_relationship_set_product_reference(struct cvrf_relationship *relation, const char *product_reference);
-
 bool cvrf_relationship_set_relation_type(struct cvrf_relationship *relation, const char *relation_type);
-
 bool cvrf_relationship_set_relates_to_ref(struct cvrf_relationship *relation, const char *relates_to_ref);
 
+/**
+ * @struct cvrf_product_name
+ * Structure holding CVRF product name data
+ * ProductID and CPE data for CVRF branches and ProductTrees
+ */
+struct cvrf_product_name;
 
+const char *cvrf_product_name_get_product_id(const struct cvrf_product_name *full_name);
+const char *cvrf_product_name_get_cpe(const struct cvrf_product_name *full_name);
 
 bool cvrf_product_name_set_product_id(struct cvrf_product_name *full_name, const char *product_id);
-
 bool cvrf_product_name_set_cpe(struct cvrf_product_name *full_name, const char *cpe);
 
 
+/**
+ * @struct cvrf_vulnerability
+ * Structure holding CVRF Vulnerability data
+ * Contains at least one ProductStatus
+ */
+struct cvrf_vulnerability;
+
+const char *cvrf_vulnerability_get_vulnerability_title(const struct cvrf_vulnerability *vuln);
+int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_cwe_id(const struct cvrf_vulnerability *vuln);
+int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
+
 bool cvrf_vulnerability_set_vulnerability_title(struct cvrf_vulnerability *vuln, const char *vulnerability_title);
-
 bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *cve_id);
-
 bool cvrf_vulnerability_set_cwe_id(struct cvrf_vulnerability *vuln, const char *cwe_id);
 
 struct cvrf_product_status_iterator;
+struct cvrf_product_status_iterator *cvrf_vulnerability_get_cvrf_product_statuses(const struct cvrf_vulnerability *vuln);
 struct cvrf_product_status *cvrf_product_status_iterator_next(struct cvrf_product_status_iterator *it);
 bool cvrf_product_status_iterator_has_more(struct cvrf_product_status_iterator *it);
 void cvrf_product_status_iterator_free(struct cvrf_product_status_iterator *it);
 void cvrf_product_status_iterator_reset(struct cvrf_product_status_iterator *it);
 
 struct cvrf_remediation_iterator;
+struct cvrf_remediation_iterator *cvrf_vulnerability_get_remediations(const struct cvrf_vulnerability *vuln);
 struct cvrf_remediation *cvrf_remediation_iterator_next(struct cvrf_remediation_iterator *it);
 bool cvrf_remediation_iterator_has_more(struct cvrf_remediation_iterator *it);
 void cvrf_remediation_iterator_free(struct cvrf_remediation_iterator *it);
 void cvrf_remediation_iterator_reset(struct cvrf_remediation_iterator *it);
 
 
+
+/**
+ * @struct cvrf_remediation
+ * Structure holding remediation info for a particular vulnerability
+ * May reference URL, ProductID, and/or GroupID
+ */
+struct cvrf_remediation;
+
+
+/**
+ * @struct cvrf_product_status
+ * Structure holding CVRF ProductStatus data (within a Vulnerability)
+ * Has status type and list of ProductIDs
+ */
+struct cvrf_product_status;
+
+const char *cvrf_product_status_get_status(const struct cvrf_product_status *stat);
+struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_status *stat);
+
 bool cvrf_product_status_set_status(struct cvrf_product_status *stat, const char *status);
 
 
+
+/**
+ * @struct cvrf_model_eval
+ *
+ *
+ */
+struct cvrf_model_eval;
+
+struct cvrf_model *cvrf_eval_get_model(struct cvrf_model_eval *eval);
+struct oscap_string_iterator *cvrf_model_eval_get_product_ids(struct cvrf_model_eval *eval);
+const char *cvrf_model_eval_get_os_name(const struct cvrf_model_eval *eval);
+const char *cvrf_model_eval_get_os_version(const struct cvrf_model_eval *eval);
+
+
 void cvrf_eval_set_model(struct cvrf_model_eval *eval, struct cvrf_model *model);
-
 bool cvrf_model_eval_set_os_name(struct cvrf_model_eval *eval, const char *os_name);
-
 bool cvrf_model_eval_set_os_version(struct cvrf_model_eval *eval, const char *os_version);
 
 
+/**
+ * @struct cvrf_rpm_attributes
+ *
+ */
+struct cvrf_rpm_attributes;
+
+const char *cvrf_rpm_attributes_get_full_package_name(const struct cvrf_rpm_attributes *attributes);
+const char *cvrf_rpm_attributes_get_rpm_name(const struct cvrf_rpm_attributes *attributes);
+const char *cvrf_rpm_attributes_get_rpm_version(const struct cvrf_rpm_attributes *attributes);
+const char *cvrf_rpm_attributes_get_rpm_release(const struct cvrf_rpm_attributes *attributes);
+const char *cvrf_rpm_attributes_get_rpm_architecture(const struct cvrf_rpm_attributes *attributes);
+
 bool cvrf_rpm_attributes_set_full_package_name(struct cvrf_rpm_attributes *attributes, const char *full_package);
-
 bool cvrf_rpm_attributes_set_rpm_name(struct cvrf_rpm_attributes *attributes, const char *rpm_name);
-
 bool cvrf_rpm_attributes_set_rpm_version(struct cvrf_rpm_attributes *attributes, const char *rpm_version);
-
 bool cvrf_rpm_attributes_set_rpm_release(struct cvrf_rpm_attributes *attributes, const char *rpm_release);
-
 bool cvrf_rpm_attributes_set_rpm_architecture(struct cvrf_rpm_attributes *attributes, const char *rpm_architecture);
 
 /************************************************************************************/
 /************************************************************************************/
-/** @} End of Setters group */
+
 
 
 
@@ -346,12 +310,6 @@ bool cvrf_rpm_attributes_set_rpm_architecture(struct cvrf_rpm_attributes *attrib
 const char * cvrf_model_supported(void);
 
 
-/**
- * New CVRF index
- * @memberof cvrf_index
- * @return New CVRF index
- */
-struct cvrf_index *cvrf_index_new(void);
 
 /**
  * New CVRF model
@@ -517,13 +475,16 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes);
 
 /************************************************************************************/
 /************************************************************************************/
+
+
 /**
- * Export CVRF model to XML file
- * @memberof cvrf_model
- * @param cvrf CVRF model
- * @param file OSCAP export target
+ * Parses specified text index file and parses each filename in the list
+ * into a CVRF model contained in the CVRF index structure
+ * @memberof cvrf_index
+ * @param index_file filename of the list of CVRF filenames
+ * @return New CVRF index containing all CVRF models
  */
-void cvrf_model_export(struct cvrf_model *cvrf, const char *file);
+struct cvrf_index *cvrf_index_import(const char *index_file);
 
 /**
  * Parses the specified XML file and creates a list of CVRF data structures.
@@ -532,6 +493,23 @@ void cvrf_model_export(struct cvrf_model *cvrf, const char *file);
  * @return New CVRF model structure
  */
 struct cvrf_model *cvrf_model_import(const char *file);
+
+/**
+ * Export all CVRF models in CVRF index to XML file
+ * @memberof cvrf_index
+ * @param index CVRF index structure
+ * @param file OSCAP export target
+ */
+void cvrf_index_export(struct cvrf_index *index, const char *file);
+
+/**
+ * Export CVRF model to XML file
+ * @memberof cvrf_model
+ * @param cvrf CVRF model
+ * @param file OSCAP export target
+ */
+void cvrf_model_export(struct cvrf_model *cvrf, const char *file);
+
 
 const char * cvrf_model_supported(void);
 

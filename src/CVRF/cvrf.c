@@ -11,8 +11,20 @@
 
 #define CVRF_SUPPORTED "1.1"
 
-// use oscap_source to get the xmlTextReaderPtr
-//oscap_source_get_xmlTextReader(source)
+
+
+struct cvrf_index *cvrf_index_import(const char *index_file) {
+
+	__attribute__nonnull__(index_file);
+
+	if (index_file == NULL)
+		return NULL;
+
+	struct cvrf_index *index;
+	index = cvrf_index_parse_xml(index_file);
+
+	return index;
+}
 
 /**
  * Public function to import CVRF model from OSCAP import source.
@@ -44,6 +56,16 @@ void cvrf_model_export(struct cvrf_model *cvrf, const char *file)
 		return;
 
 	cvrf_model_export_xml(cvrf, file);
+}
+
+void cvrf_index_export(struct cvrf_index *index, const char *file) {
+
+	__attribute__nonnull__(file);
+
+	if (file == NULL)
+		return;
+
+	cvrf_index_export_xml(index, file);
 }
 
 
