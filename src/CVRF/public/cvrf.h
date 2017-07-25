@@ -13,6 +13,7 @@
 #include <time.h>
 #include "oscap.h"
 #include "cpe_name.h"
+#include "oval_definitions.h"
 
 
 /**
@@ -96,6 +97,8 @@ struct cvrf_product_status;
  */
 struct cvrf_model_eval;
 
+
+struct cvrf_rpm_attributes;
 
 /************************************************************************************/
 /************************************************************************************/
@@ -195,6 +198,17 @@ struct oscap_string_iterator *cvrf_model_eval_get_product_ids(struct cvrf_model_
 const char *cvrf_model_eval_get_os_name(const struct cvrf_model_eval *eval);
 
 const char *cvrf_model_eval_get_os_version(const struct cvrf_model_eval *eval);
+
+
+const char *cvrf_rpm_attributes_get_full_package_name(const struct cvrf_rpm_attributes *attributes);
+
+const char *cvrf_rpm_attributes_get_rpm_name(const struct cvrf_rpm_attributes *attributes);
+
+const char *cvrf_rpm_attributes_get_rpm_version(const struct cvrf_rpm_attributes *attributes);
+
+const char *cvrf_rpm_attributes_get_rpm_release(const struct cvrf_rpm_attributes *attributes);
+
+const char *cvrf_rpm_attributes_get_rpm_architecture(const struct cvrf_rpm_attributes *attributes);
 
 /************************************************************************************/
 /************************************************************************************/
@@ -307,6 +321,17 @@ bool cvrf_model_eval_set_os_name(struct cvrf_model_eval *eval, const char *os_na
 
 bool cvrf_model_eval_set_os_version(struct cvrf_model_eval *eval, const char *os_version);
 
+
+bool cvrf_rpm_attributes_set_full_package_name(struct cvrf_rpm_attributes *attributes, const char *full_package);
+
+bool cvrf_rpm_attributes_set_rpm_name(struct cvrf_rpm_attributes *attributes, const char *rpm_name);
+
+bool cvrf_rpm_attributes_set_rpm_version(struct cvrf_rpm_attributes *attributes, const char *rpm_version);
+
+bool cvrf_rpm_attributes_set_rpm_release(struct cvrf_rpm_attributes *attributes, const char *rpm_release);
+
+bool cvrf_rpm_attributes_set_rpm_architecture(struct cvrf_rpm_attributes *attributes, const char *rpm_architecture);
+
 /************************************************************************************/
 /************************************************************************************/
 /** @} End of Setters group */
@@ -404,7 +429,11 @@ struct cvrf_product_status *cvrf_product_status_new(void);
  */
 struct cvrf_model_eval *cvrf_model_eval_new(void);
 
-
+/**
+ *
+ *
+ */
+struct cvrf_rpm_attributes *cvrf_rpm_attributes_new(void);
 
 
 /**
@@ -479,6 +508,11 @@ void cvrf_product_status_free(struct cvrf_product_status *status);
  */
 void cvrf_model_eval_free(struct cvrf_model_eval *eval);
 
+/**
+ *
+ *
+ */
+void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes);
 
 
 /************************************************************************************/
@@ -502,7 +536,7 @@ struct cvrf_model *cvrf_model_import(const char *file);
 const char * cvrf_model_supported(void);
 
 
-void cvrf_get_os_info(const char *input_file, struct cvrf_model_eval *eval);
+
 
 void cvrf_export_results(const char *input_file, const char *export_file, const char *os_version);
 
@@ -510,9 +544,25 @@ void get_cvrf_product_id_by_OS(struct cvrf_model_eval *eval, struct cvrf_model *
 
 const char *get_cvrf_product_id_from_branch(struct cvrf_model_eval *eval, struct cvrf_branch *branch);
 
+const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eval, const char *product_id);
+
+struct cvrf_rpm_attributes *parse_rpm_name_into_components(struct cvrf_model_eval *eval, const char *product_id);
+
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
 
-int cvrf_rpm_product_id_rpminfo(void);
+
+
+int cvrf_construct_definition_model(struct cvrf_model_eval *eval);
+
+struct oval_test *cvrf_definition_model_get_new_rpm_test(struct oval_definition_model *def_model, int testNo);
+
+struct oval_object *cvrf_definition_model_get_new_object(struct oval_definition_model *def_model, struct cvrf_rpm_attributes *attributes,
+		int objectNo);
+
+struct oval_state *cvrf_definition_model_get_new_state(struct oval_definition_model *def_model, struct cvrf_rpm_attributes *attributes,
+		int stateNo);
+
+const char *get_oval_id_string(const char *type, int objectNo);
 
 
 /**@}*/
