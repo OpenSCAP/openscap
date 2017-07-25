@@ -72,7 +72,7 @@ static int app_cvrf_evaluate(const struct oscap_action *action)
 		if (oscap_err())
 			fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	oscap_free(action->cvrf_action);
+	free(action->cvrf_action);
 	return result;
 }
 
@@ -95,7 +95,7 @@ static int app_cvrf_export(const struct oscap_action *action) {
 
 	if (model)
 		cvrf_model_free(model);
-	oscap_free(action->cvrf_action);
+	free(action->cvrf_action);
 	return result;
 }
 
@@ -110,7 +110,6 @@ bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 		action->cvrf_action = malloc(sizeof(struct cvrf_action));
 		action->cvrf_action->cvrf=argv[3];
 		action->cvrf_action->file=argv[4];
-
 	}
 	else if (action->module == &CVRF_EXPORT_MODULE) {
 		if( argc < 5 || argc > 6) {

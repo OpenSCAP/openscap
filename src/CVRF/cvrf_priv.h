@@ -11,6 +11,14 @@
 #include "../common/list.h"
 #include "../common/elements.h"
 
+
+/**
+ * @struct cvrf_index
+ * Represents an index of a CVRF feed or directory
+ * Maintains a list of all CVRF files in the form of cvrf_model structures
+ */
+struct cvrf_index;
+
 /**
  * @struct cvrf_model
  * Structure holding CVRF model
@@ -87,6 +95,13 @@ struct cvrf_model_eval;
 
 
 /**
+ * Parse all CVRF models from all files listed in an index file
+ * @param index_file Index file containing list of all CVRF files
+ * @return New CVRF index structure containing all CVRF models
+ */
+struct cvrf_index *cvrf_index_parse_xml(const char *index_file);
+
+/**
  * Parse CVRF model from XML (private function)
  * @param file OSCAP import source
  * @return New parsed CVRF model from source
@@ -150,6 +165,13 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
+
+/**
+ *
+ * @param index CVRF index with all models to export
+ * @param file OSCAP export target
+ */
+void cvrf_index_export_xml(struct cvrf_index *index, const char *file);
 
 /**
  *

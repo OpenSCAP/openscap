@@ -33,9 +33,24 @@
 #include "OVAL/public/oval_probe.h"
 #include "OVAL/oval_definitions_impl.h"
 
-/*****************************************************
- *
+/*****************************************************************************
+ * Structure definitions
  */
+
+const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
+	{CVRF_BRANCH_VENDOR, "Vendor"},
+	{CVRF_BRANCH_PRODUCT_FAMILY, "Product Family"},
+	{CVRF_BRANCH_PRODUCT_NAME, "Product Name"},
+	{CVRF_BRANCH_PRODUCT_VERSION, "Product Version"},
+	{CVRF_BRANCH_PATCH_LEVEL, "Patch Level"},
+	{CVRF_BRANCH_SERVICE_PACK, "Service Pack"},
+	{CVRF_BRANCH_ARCHITECTURE, "Architecture"},
+	{CVRF_BRANCH_LANGUAGE, "Language"},
+	{CVRF_BRANCH_LEGACY, "Legacy"},
+	{CVRF_BRANCH_SPECIFICATION, "Specification"},
+	{0, NULL}
+};
+
 struct cvrf_model_eval {
 	char *os_name;
 	char *os_version;
@@ -49,13 +64,42 @@ OSCAP_ACCESSOR_STRING(cvrf_model_eval, os_version);
 struct oscap_string_iterator *cvrf_model_eval_get_product_ids(struct cvrf_model_eval *eval) {
 	return oscap_stringlist_get_strings(eval->product_ids);
 }
-
 struct cvrf_model *cvrf_eval_get_model(struct cvrf_model_eval *eval) {
 	return eval->model;
 }
 void cvrf_eval_set_model(struct cvrf_model_eval *eval, struct cvrf_model *model) {
 	eval->model = model;
 }
+
+struct cvrf_model_eval *cvrf_model_eval_new() {
+	struct cvrf_model_eval *ret;
+
+	ret = oscap_alloc(sizeof(struct cvrf_model_eval));
+	if (ret == NULL)
+		return NULL;
+
+	ret->os_name = NULL;
+	ret->os_version = NULL;
+	ret->product_ids = oscap_stringlist_new();
+	ret->model = cvrf_model_new();
+	ret->def_model = oval_definition_model_new();
+
+	return ret;
+}
+
+void cvrf_model_eval_free(struct cvrf_model_eval *eval) {
+
+	if (eval == NULL)
+		return;
+
+	oscap_free(eval->os_name);
+	oscap_free(eval->os_version);
+	oscap_stringlist_free(eval->product_ids);
+	cvrf_model_free(eval->model);
+	oval_definition_model_free(eval->def_model);
+	oscap_free(eval);
+}
+
 
 
 struct cvrf_rpm_attributes {
@@ -74,22 +118,6 @@ OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, rpm_architecture)
 OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, evr_format)
 
 
-struct cvrf_model_eval *cvrf_model_eval_new() {
-	struct cvrf_model_eval *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_model_eval));
-	if (ret == NULL)
-		return NULL;
-
-	ret->os_name = NULL;
-	ret->os_version = NULL;
-	ret->product_ids = oscap_stringlist_new();
-	ret->model = cvrf_model_new();
-	ret->def_model = oval_definition_model_new();
-
-	return ret;
-}
-
 struct cvrf_rpm_attributes *cvrf_rpm_attributes_new() {
 	struct cvrf_rpm_attributes *ret;
 
@@ -107,19 +135,6 @@ struct cvrf_rpm_attributes *cvrf_rpm_attributes_new() {
 	return ret;
 }
 
-void cvrf_model_eval_free(struct cvrf_model_eval *eval) {
-
-	if (eval == NULL)
-		return;
-
-	oscap_free(eval->os_name);
-	oscap_free(eval->os_version);
-	oscap_stringlist_free(eval->product_ids);
-	cvrf_model_free(eval->model);
-	oval_definition_model_free(eval->def_model);
-	oscap_free(eval);
-}
-
 void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 
 	if (attributes == NULL)
@@ -134,9 +149,10 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 	oscap_free(attributes);
 }
 
-/*****************************************************
- *
- */
+/*
+ * End of structure definitions
+ *****************************************************************************/
+
 
 #define TAG_CVRF_DOC BAD_CAST "cvrfdoc"
 #define ATTR_PRODUCT_ID "ProductID"
@@ -339,7 +355,8 @@ struct cvrf_rpm_attributes *parse_rpm_name_into_components(struct cvrf_model_eva
 	int dashes_size = 1;
 	int periods_size = 1;
 
-	char **split_by_dashes = oscap_split(strdup(rpm_name), "-");
+	char *rpm_name_dup = strdup(rpm_name);
+	char **split_by_dashes = oscap_split(rpm_name_dup, "-");
 	while (split_by_dashes[dashes_size-1] != NULL)
 		dashes_size++;
 	for (int index = 0; index < dashes_size-3; index++) {
@@ -379,6 +396,9 @@ struct cvrf_rpm_attributes *parse_rpm_name_into_components(struct cvrf_model_eva
 
 	attributes->evr_format = strdup(oscap_string_get_cstr(evr_format));
 
+
+	oscap_free(rpm_name_dup);
+	oscap_free(product_id_dup);
 	oscap_string_free(evr_format);
 	oscap_string_free(rpm_name_suffix);
 	oscap_string_free(rpm_release);
