@@ -33,6 +33,8 @@
 #include <errno.h>
 #include <limits.h>
 
+#include <oscap.h>
+#include <oscap_error.h>
 #include "oscap-tool.h"
 #include "check_engine_plugin.h"
 #include "oscap_source.h"
