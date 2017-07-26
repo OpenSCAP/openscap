@@ -15,6 +15,7 @@
 #include "common/xmltext_priv.h"
 #include "common/elements.h"
 #include "common/oscap_string.h"
+#include "common/util.h"
 
 #include "CPE/cpelang_priv.h"
 #include "CVSS/cvss_priv.h"
@@ -23,6 +24,59 @@
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 
+
+/*****************************************************************************
+ * CVRF enum map definitions
+ */
+
+const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
+	{CVRF_DOC_STATUS_DRAFT, "Draft"},
+	{CVRF_DOC_STATUS_INTERIM, "Interim"},
+	{CVRF_DOC_STATUS_FINAL, "Final"},
+	{0, NULL}
+};
+
+const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
+	{CVRF_BRANCH_VENDOR, "Vendor"},
+	{CVRF_BRANCH_PRODUCT_FAMILY, "Product Family"},
+	{CVRF_BRANCH_PRODUCT_NAME, "Product Name"},
+	{CVRF_BRANCH_PRODUCT_VERSION, "Product Version"},
+	{CVRF_BRANCH_PATCH_LEVEL, "Patch Level"},
+	{CVRF_BRANCH_SERVICE_PACK, "Service Pack"},
+	{CVRF_BRANCH_ARCHITECTURE, "Architecture"},
+	{CVRF_BRANCH_LANGUAGE, "Language"},
+	{CVRF_BRANCH_LEGACY, "Legacy"},
+	{CVRF_BRANCH_SPECIFICATION, "Specification"},
+	{0, NULL}
+};
+
+const struct oscap_string_map CVRF_RELATIONSHIP_TYPE_MAP[] = {
+	{CVRF_RELATIONSHIP_DEFAULT_COMPONENT, "default component of"},
+	{CVRF_RELATIONSHIP_OPTIONAL_COMPONENT, "optional component of"},
+	{CVRF_RELATIONSHIP_EXTERNAL_COMPONENT, "external component of"},
+	{CVRF_RELATIONSHIP_INSTALLED_ON, "installed on"},
+	{CVRF_RELATIONSHIP_INSTALLED_WITH, "installed with"},
+	{0, NULL}
+};
+
+const struct oscap_string_map CVRF_PRODUCT_STATUS_TYPE_MAP[] = {
+	{CVRF_STATUS_FIRST_AFFECTED, "First Affected"},
+	{CVRF_STATUS_KNOWN_AFFECTED, "Known Affected"},
+	{CVRF_STATUS_KNOWN_NOT_AFFECTED, "Known Not Affected"},
+	{CVRF_STATUS_FIXED, "First Fixed"},
+	{CVRF_STATUS_RECOMMENDED, "Recommended"},
+	{CVRF_STATUS_LAST_AFFECTED, "Last Affected"},
+	{0, NULL}
+};
+
+const struct oscap_string_map CVRF_REMEDIATION_TYPE_MAP[] = {
+	{CVRF_REMEDIATION_WORKAROUND, "Workaround"},
+	{CVRF_REMEDIATION_MITIGATION, "Mitigation"},
+	{CVRF_REMEDIATION_VENDOR_FIX, "Vendor Fix"},
+	{CVRF_REMEDIATION_NONE_AVAILABLE, "None Available"},
+	{CVRF_REMEDIATION_WILL_NOT_FIX, "Will Not Fix"},
+	{0, NULL}
+};
 
 /***************************************************************************
  ***************************************************************************
