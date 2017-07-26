@@ -179,7 +179,7 @@ static const char *get_cvrf_product_id_from_branch(struct cvrf_model_eval *eval,
 	return product_id;
 }
 
-static void get_cvrf_product_id_by_OS(struct cvrf_model_eval *eval, struct cvrf_model *model) {
+static void find_all_cvrf_product_ids_by_OS(struct cvrf_model_eval *eval, struct cvrf_model *model) {
 
 	const char *branch_product_id = NULL;
 	const char *relation_product_id = NULL;
@@ -228,8 +228,8 @@ void cvrf_export_results(const char *input_file, const char *export_file, const 
 	struct cvrf_model *model = cvrf_model_import(input_file);
 	cvrf_eval_set_model(eval, model);
 	cvrf_model_eval_set_os_name(eval, os_name);
-	get_cvrf_product_id_by_OS(eval, model);
-	cvrf_construct_definition_model(eval);
+	find_all_cvrf_product_ids_by_OS(eval, model);
+	cvrf_model_eval_construct_definition_model(eval);
 
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
 	struct cvrf_vulnerability *vuln;
@@ -422,11 +422,10 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *pro
 }
 
 
-static const char *get_oval_id_string(const char *type, int objectNo) {
+static const char *get_oval_id_string(const char *type, int object_number) {
 
 	struct oscap_string *string = oscap_string_new();
-	char *oval_id = NULL;
-	char *objectNo_string = oscap_sprintf("%d", objectNo);
+	char *number_as_string = oscap_sprintf("%d", object_number);
 
 	if (!strcmp(type, "object")) {
 			oscap_string_append_string(string, "oval:org.open-scap.cpe.unix:obj:");
@@ -436,15 +435,15 @@ static const char *get_oval_id_string(const char *type, int objectNo) {
 			oscap_string_append_string(string, "oval:org.open-scap.cpe.wrlinux:tst:");
 	}
 
-	oscap_string_append_string(string, objectNo_string);
-	oval_id = strdup(oscap_string_get_cstr(string));
+	oscap_string_append_string(string, number_as_string);
+	char *oval_id = strdup(oscap_string_get_cstr(string));
 	oscap_string_free(string);
-	oscap_free(objectNo_string);
+	oscap_free(number_as_string);
 
 	return oval_id;
 }
 
-static struct oval_test *cvrf_definition_model_get_new_rpm_test(struct oval_definition_model *def_model, int testNo) {
+static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_model *def_model, int testNo) {
 
 	struct oval_test *rpm_test = oval_test_new(def_model, get_oval_id_string("test", testNo));
 	oval_test_set_subtype(rpm_test,OVAL_LINUX_RPM_INFO);
@@ -456,7 +455,7 @@ static struct oval_test *cvrf_definition_model_get_new_rpm_test(struct oval_defi
 
 }
 
-static struct oval_object *cvrf_definition_model_get_new_object(struct oval_definition_model *def_model,
+static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int objectNo) {
 
 	const char *object_id;
@@ -473,7 +472,7 @@ static struct oval_object *cvrf_definition_model_get_new_object(struct oval_defi
 	return object;
 }
 
-static struct oval_state *cvrf_definition_model_get_new_state(struct oval_definition_model *def_model,
+static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int stateNo) {
 
 	const char *state_id;
@@ -513,7 +512,7 @@ static struct oval_state *cvrf_definition_model_get_new_state(struct oval_defini
 }
 
 
-int cvrf_construct_definition_model(struct cvrf_model_eval *eval) {
+int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 
 	struct oval_definition_model *def_model = eval->def_model;
 	struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
@@ -531,10 +530,10 @@ int cvrf_construct_definition_model(struct cvrf_model_eval *eval) {
 		product_id = oscap_string_iterator_next(product_ids);
 		struct cvrf_rpm_attributes *rpm_attr = parse_rpm_name_into_components(eval, product_id);
 
-		struct oval_object *object = cvrf_definition_model_get_new_object(def_model, rpm_attr, index);
-		struct oval_state *state = cvrf_definition_model_get_new_state(def_model, rpm_attr, index);
+		struct oval_object *object = get_new_oval_object_for_cvrf(def_model, rpm_attr, index);
+		struct oval_state *state = get_new_oval_state_for_cvrf(def_model, rpm_attr, index);
 
-		struct oval_test *rpm_test = cvrf_definition_model_get_new_rpm_test(def_model, index);
+		struct oval_test *rpm_test = get_new_rpminfo_test_for_cvrf(def_model, index);
 		oval_test_set_object(rpm_test, object);
 		oval_test_add_state(rpm_test, state);
 
