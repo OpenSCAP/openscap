@@ -22,7 +22,7 @@ typedef enum {
 	CVRF_DOC_STATUS_FINAL,
 } cvrf_doc_status_type_t;
 
-cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader, char *attname);
+cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader);
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
 
 
@@ -78,12 +78,6 @@ typedef enum {
 
 cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_type);
-
-
-//static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map);
-//static const char *cvrf_enumeration_get_text(const struct oscap_string_map *map, int val);
-//static int cvrf_enumeration_from_text(const struct oscap_string_map *map, const char *text);
-
 
 
 /***************************************************************************************************

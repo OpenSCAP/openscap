@@ -21,6 +21,9 @@
 #include "source/public/oscap_source.h"
 
 
+/*****************************************************************************
+ * Static functions
+ */
 
 static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map)
 {
@@ -29,6 +32,16 @@ static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 		return 0;
 	int ret = oscap_string_to_enum(map, attrstr);
 	oscap_free(attrstr);
+	return ret;
+}
+
+static int cvrf_enumeration_node_value(xmlTextReaderPtr reader, const struct oscap_string_map *map)
+{
+	char *valuestr = (char *)oscap_element_string_copy(reader);
+	if (valuestr == NULL)
+		return 0;
+	int ret = oscap_string_to_enum(map, valuestr);
+	oscap_free(valuestr);
 	return ret;
 }
 
@@ -52,9 +65,9 @@ const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
 	{CVRF_DOC_STATUS_FINAL, "Final"},
 	{0, NULL}
 };
-cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader, char *attname)
+cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader)
 {
-	return cvrf_enumeration_attr(reader, attname, CVRF_DOC_STATUS_TYPE_MAP);
+	return cvrf_enumeration_node_value(reader, CVRF_DOC_STATUS_TYPE_MAP);
 }
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type)
 {

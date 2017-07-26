@@ -86,7 +86,7 @@ struct cvrf_doc_tracking;
 
 const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_tracking_alias(const struct cvrf_doc_tracking *tracking);
-const char *cvrf_doc_tracking_get_tracking_status(const struct cvrf_doc_tracking *tracking);
+//const char *cvrf_doc_tracking_get_tracking_status(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_generator_engine(const struct cvrf_doc_tracking *tracking);
@@ -94,7 +94,7 @@ const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking 
 
 bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);
 bool cvrf_doc_tracking_set_tracking_alias(struct cvrf_doc_tracking *tracking, const char *tracking_alias);
-bool cvrf_doc_tracking_set_tracking_status(struct cvrf_doc_tracking *tracking, const char *tracking_status);
+//bool cvrf_doc_tracking_set_tracking_status(struct cvrf_doc_tracking *tracking, const char *tracking_status);
 bool cvrf_doc_tracking_set_init_release_date(struct cvrf_doc_tracking *tracking, const char *init_release_date);
 bool cvrf_doc_tracking_set_cur_release_date(struct cvrf_doc_tracking *tracking, const char *cur_release_date);
 bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, const char *generator_engine);
@@ -125,12 +125,12 @@ void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
  */
 struct cvrf_branch;
 
-const char *cvrf_branch_get_branch_type(const struct cvrf_branch *branch);
+//cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch);
 const char *cvrf_branch_get_branch_name(const struct cvrf_branch *branch);
 struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch);
 struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch);
 
-bool cvrf_branch_set_branch_type(struct cvrf_branch *branch, const char *branch_type);
+//bool cvrf_branch_set_branch_type(struct cvrf_branch *branch, const char *branch_type);
 bool cvrf_branch_set_branch_name(struct cvrf_branch *branch, const char *branch_name);
 
 
@@ -141,12 +141,12 @@ bool cvrf_branch_set_branch_name(struct cvrf_branch *branch, const char *branch_
 struct cvrf_relationship;
 
 const char *cvrf_relationship_get_product_reference(const struct cvrf_relationship *relation);
-const char *cvrf_relationship_get_relation_type(const struct cvrf_relationship *relation);
+//const char *cvrf_relationship_get_relation_type(const struct cvrf_relationship *relation);
 const char *cvrf_relationship_get_relates_to_ref(const struct cvrf_relationship *relation);
 struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation);
 
 bool cvrf_relationship_set_product_reference(struct cvrf_relationship *relation, const char *product_reference);
-bool cvrf_relationship_set_relation_type(struct cvrf_relationship *relation, const char *relation_type);
+//bool cvrf_relationship_set_relation_type(struct cvrf_relationship *relation, const char *relation_type);
 bool cvrf_relationship_set_relates_to_ref(struct cvrf_relationship *relation, const char *relates_to_ref);
 
 /**
@@ -211,10 +211,10 @@ struct cvrf_remediation;
  */
 struct cvrf_product_status;
 
-const char *cvrf_product_status_get_status(const struct cvrf_product_status *stat);
+//const char *cvrf_product_status_get_status(const struct cvrf_product_status *stat);
 struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_status *stat);
 
-bool cvrf_product_status_set_status(struct cvrf_product_status *stat, const char *status);
+//bool cvrf_product_status_set_status(struct cvrf_product_status *stat, const char *status);
 
 
 
