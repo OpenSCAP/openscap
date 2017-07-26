@@ -74,9 +74,23 @@ void cvrf_vulnerability_iterator_remove(struct cvrf_vulnerability_iterator *it);
 struct cvrf_document;
 
 struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc);
+struct cvrf_doc_publisher *cvrf_document_get_publisher(struct cvrf_document *doc);
 
+void cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher);
 void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track);
 
+
+/**
+ * @struct cvrf_doc_publisher
+ *
+ */
+struct cvrf_doc_publisher;
+
+const char *cvrf_doc_publisher_get_contact_details(const struct cvrf_doc_publisher *publisher);
+const char *cvrf_doc_publisher_get_issuing_authority(const struct cvrf_doc_publisher *publisher);
+
+bool cvrf_doc_publisher_set_contact_details(struct cvrf_doc_publisher *publisher, const char *contact_details);
+bool cvrf_doc_publisher_set_issuing_authority(struct cvrf_doc_publisher *publisher, const char *issuing_authority);
 
 /**
  * @struct cvrf_doc_tracking
@@ -285,6 +299,13 @@ struct cvrf_document *cvrf_document_new(void);
 
 /**
  *
+ * @memberof cvrf_doc_publisher
+ * @return New CVRF DocumentPublisher structure
+ */
+struct cvrf_doc_publisher *cvrf_doc_publisher_new(void);
+
+/**
+ *
  *@memberof cvrf_doc_tracking
  *@return New CVRF DocumentTracking
  */
@@ -369,6 +390,12 @@ void cvrf_model_free(struct cvrf_model *cvrf);
  *
  */
 void cvrf_document_free(struct cvrf_document *doc);
+
+/**
+ *
+ *
+ */
+void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher);
 
 /**
  *
