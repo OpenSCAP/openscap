@@ -683,16 +683,16 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
  *
  */
 
-struct cvrf_index *cvrf_index_parse_xml(const char *index_file) {
+struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 
-	__attribute__nonnull__(index_file);
+	__attribute__nonnull__(index_source);
 
 	struct cvrf_index *index = cvrf_index_new();
-	cvrf_index_set_index_file(index, index_file);
+	cvrf_index_set_index_file(index, oscap_source_readable_origin(index_source));
 	struct oscap_stringlist *file_list = oscap_stringlist_new();
 	struct cvrf_model *model;
 
-	FILE* file = fopen(index_file, "r");
+	FILE* file = fopen(oscap_source_get_filepath(index_source), "r");
 	char line[256];
 
 	while (fgets(line, sizeof(line), file)) {
@@ -704,23 +704,24 @@ struct cvrf_index *cvrf_index_parse_xml(const char *index_file) {
 
 	struct oscap_string_iterator *iterator = oscap_stringlist_get_strings(file_list);
 	while (oscap_string_iterator_has_more(iterator)) {
-		model = cvrf_model_parse_xml(oscap_string_iterator_next(iterator));
+		const char *filename = oscap_string_iterator_next(iterator);
+		model = cvrf_model_parse_xml(oscap_source_new_from_file(filename));
 		if (model)
 			oscap_list_add(index->models, model);
 	}
 	oscap_string_iterator_free(iterator);
+	oscap_source_free(index_source);
 
 	return index;
 }
 
-struct cvrf_model *cvrf_model_parse_xml(const char *file) {
+struct cvrf_model *cvrf_model_parse_xml(struct oscap_source *source) {
 
-	__attribute__nonnull__(file);
+	__attribute__nonnull__(source);
 
 	struct cvrf_model *cvrf = NULL;
 	int rc;
 
-	struct oscap_source *source = oscap_source_new_from_file(file);
 	struct xmlTextReaderPtr *reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
 		oscap_source_free(source);
@@ -1135,12 +1136,13 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
  * Export functions
  *
  */
-void cvrf_index_export_xml(struct cvrf_index *index, const char *file) {
+void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source) {
 
 	__attribute__nonnull__(index);
-	__attribute__nonnull__(file);
+	__attribute__nonnull__(export_source);
 
-	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(file, 0);
+	const char *filepath = oscap_source_get_filepath(export_source);
+	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(filepath, 0);
 	if (writer == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return;
@@ -1159,16 +1161,18 @@ void cvrf_index_export_xml(struct cvrf_index *index, const char *file) {
 
 	xmlTextWriterEndDocument(writer);
 	xmlFreeTextWriter(writer);
+	oscap_source_free(export_source);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
 }
 
-void cvrf_model_export_xml(struct cvrf_model *cvrf, const char *file) {
+void cvrf_model_export_xml(struct cvrf_model *cvrf, struct oscap_source *export_source) {
 
 	__attribute__nonnull__(cvrf);
-	__attribute__nonnull__(file);
+	__attribute__nonnull__(export_source);
 
-	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(file, 0);
+	const char *filepath = oscap_source_get_filepath(export_source);
+	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(filepath, 0);
 	if (writer == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return;
@@ -1181,6 +1185,7 @@ void cvrf_model_export_xml(struct cvrf_model *cvrf, const char *file) {
 	cvrf_export(cvrf, writer);
 	xmlTextWriterEndDocument(writer);
 	xmlFreeTextWriter(writer);
+	oscap_source_free(export_source);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
 }

@@ -13,15 +13,15 @@
 
 
 
-struct cvrf_index *cvrf_index_import(const char *index_file) {
+struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
 
-	__attribute__nonnull__(index_file);
+	__attribute__nonnull__(index_source);
 
-	if (index_file == NULL)
+	if (index_source == NULL)
 		return NULL;
 
 	struct cvrf_index *index;
-	index = cvrf_index_parse_xml(index_file);
+	index = cvrf_index_parse_xml(index_source);
 
 	return index;
 }
@@ -30,16 +30,16 @@ struct cvrf_index *cvrf_index_import(const char *index_file) {
  * Public function to import CVRF model from OSCAP import source.
  * Function returns CVRF model, need to free source after calling this function
  */
-struct cvrf_model *cvrf_model_import(const char *file)
+struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 {
 
-	__attribute__nonnull__(file);
+	__attribute__nonnull__(source);
 
-	if (file == NULL)
+	if (source == NULL)
 		return NULL;
 
 	struct cvrf_model *cvrf;
-	cvrf = cvrf_model_parse_xml(file);
+	cvrf = cvrf_model_parse_xml(source);
 
 	return cvrf;
 }
@@ -47,25 +47,25 @@ struct cvrf_model *cvrf_model_import(const char *file)
 /**
  * Public function to export CVRF model to OSCAP export target.
  */
-void cvrf_model_export(struct cvrf_model *cvrf, const char *file)
+void cvrf_model_export(struct cvrf_model *cvrf, struct oscap_source *export_source)
 {
 
-	__attribute__nonnull__(file);
+	__attribute__nonnull__(export_source);
 
-	if (file == NULL)
+	if (export_source == NULL)
 		return;
 
-	cvrf_model_export_xml(cvrf, file);
+	cvrf_model_export_xml(cvrf, export_source);
 }
 
-void cvrf_index_export(struct cvrf_index *index, const char *file) {
+void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source) {
 
-	__attribute__nonnull__(file);
+	__attribute__nonnull__(export_source);
 
-	if (file == NULL)
+	if (export_source == NULL)
 		return;
 
-	cvrf_index_export_xml(index, file);
+	cvrf_index_export_xml(index, export_source);
 }
 
 

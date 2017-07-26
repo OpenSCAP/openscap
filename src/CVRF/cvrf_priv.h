@@ -196,17 +196,17 @@ struct cvrf_model_eval;
 
 /**
  * Parse all CVRF models from all files listed in an index file
- * @param index_file Index file containing list of all CVRF files
+ * @param index_source OSCAP source of index file containing list of all CVRF files
  * @return New CVRF index structure containing all CVRF models
  */
-struct cvrf_index *cvrf_index_parse_xml(const char *index_file);
+struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source);
 
 /**
  * Parse CVRF model from XML (private function)
- * @param file OSCAP import source
+ * @param source OSCAP source representation of import source file
  * @return New parsed CVRF model from source
  */
-struct cvrf_model *cvrf_model_parse_xml(const char *file);
+struct cvrf_model *cvrf_model_parse_xml(struct oscap_source *source);
 
 /**
  * Parse CVRF model
@@ -278,14 +278,14 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
  * @param index CVRF index with all models to export
  * @param file OSCAP export target
  */
-void cvrf_index_export_xml(struct cvrf_index *index, const char *file);
+void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source);
 
 /**
  *
  * @param cvrf CVRF model to export
  * @param file OSCAP export target
  */
-void cvrf_model_export_xml(struct cvrf_model *cvrf, const char *file);
+void cvrf_model_export_xml(struct cvrf_model *cvrf, struct oscap_source *export_source);
 
 /**
  *

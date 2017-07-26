@@ -215,9 +215,10 @@ static void find_all_cvrf_product_ids_by_OS(struct cvrf_model_eval *eval, struct
 	cvrf_relationship_iterator_free(relationships);
 }
 
-void cvrf_export_results(const char *input_file, const char *export_file, const char *os_name) {
-	__attribute__nonnull__(input_file);
+void cvrf_export_results(struct oscap_source *import_source, struct oscap_source *export_source, const char *os_name) {
+	__attribute__nonnull__(import_source);
 
+	const char *export_file = oscap_source_get_filepath(export_source);
 	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(export_file, 0);
 	if (writer == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
@@ -225,7 +226,7 @@ void cvrf_export_results(const char *input_file, const char *export_file, const 
 	}
 
 	struct cvrf_model_eval *eval = cvrf_model_eval_new();
-	struct cvrf_model *model = cvrf_model_import(input_file);
+	struct cvrf_model *model = cvrf_model_import(import_source);
 	cvrf_eval_set_model(eval, model);
 	cvrf_model_eval_set_os_name(eval, os_name);
 	find_all_cvrf_product_ids_by_OS(eval, model);
@@ -300,6 +301,7 @@ void cvrf_export_results(const char *input_file, const char *export_file, const 
 
 	xmlTextWriterEndDocument(writer);
 	cvrf_model_eval_free(eval);
+	oscap_source_free(export_source);
 	xmlFreeTextWriter(writer);
 	if (xmlGetLastError() != NULL)
 		oscap_setxmlerr(xmlGetLastError());
@@ -517,7 +519,6 @@ int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 	struct oval_definition_model *def_model = eval->def_model;
 	struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
 	const char *product_id;
-	char *pattern;
 	int index = 1;
 
 	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, "oval:org.open-scap.cpe.wrlinux:def:1");

@@ -466,34 +466,34 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes);
  * Parses specified text index file and parses each filename in the list
  * into a CVRF model contained in the CVRF index structure
  * @memberof cvrf_index
- * @param index_file filename of the list of CVRF filenames
+ * @param index_source OSCAP source with path to CVRF file
  * @return New CVRF index containing all CVRF models
  */
-struct cvrf_index *cvrf_index_import(const char *index_file);
+struct cvrf_index *cvrf_index_import(struct oscap_source *index_source);
 
 /**
  * Parses the specified XML file and creates a list of CVRF data structures.
  * @memberof cvrf_model
- * @param file filename
+ * @param source OSCAP source with path to CVRF file
  * @return New CVRF model structure
  */
-struct cvrf_model *cvrf_model_import(const char *file);
+struct cvrf_model *cvrf_model_import(struct oscap_source *source);
 
 /**
  * Export all CVRF models in CVRF index to XML file
  * @memberof cvrf_index
  * @param index CVRF index structure
- * @param file OSCAP export target
+ * @param export_source OSCAP export target
  */
-void cvrf_index_export(struct cvrf_index *index, const char *file);
+void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source);
 
 /**
  * Export CVRF model to XML file
  * @memberof cvrf_model
  * @param cvrf CVRF model
- * @param file OSCAP export target
+ * @param export_source OSCAP export target
  */
-void cvrf_model_export(struct cvrf_model *cvrf, const char *file);
+void cvrf_model_export(struct cvrf_model *cvrf, struct oscap_source *export_source);
 
 
 const char * cvrf_model_supported(void);
@@ -501,11 +501,12 @@ const char * cvrf_model_supported(void);
 
 
 
-void cvrf_export_results(const char *input_file, const char *export_file, const char *os_version);
+void cvrf_export_results(struct oscap_source *import_source, struct oscap_source *export_source,
+		const char *os_version);
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
 
-int cvrf_construct_definition_model(struct cvrf_model_eval *eval);
+int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval);
 
 
 /**@}*/
