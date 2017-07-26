@@ -66,7 +66,9 @@ static int app_cvrf_evaluate(const struct oscap_action *action)
 	int result = OSCAP_OK;
 
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
-	cvrf_export_results(action->cvrf_action->cvrf, action->cvrf_action->file, os_name);
+	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf);
+	struct oscap_source *export_source = oscap_source_new_from_file(action->cvrf_action->file);
+	cvrf_export_results(import_source, export_source, os_name);
 
 	cleanup:
 		if (oscap_err())
@@ -79,14 +81,16 @@ static int app_cvrf_evaluate(const struct oscap_action *action)
 static int app_cvrf_export(const struct oscap_action *action) {
 
 	int result;
-	struct cvrf_model *model = cvrf_model_import(action->cvrf_action->cvrf);
+	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf);
+	struct cvrf_model *model = cvrf_model_import(import_source);
 
 	if(!model) {
 		result = OSCAP_ERROR;
 		goto cleanup;
 	}
 
-	cvrf_model_export(model, action->cvrf_action->file);
+	struct oscap_source *export_source = oscap_source_new_from_file(action->cvrf_action->file);
+	cvrf_model_export(model, export_source);
 	result = OSCAP_OK;
 
 	cleanup:
@@ -101,7 +105,7 @@ static int app_cvrf_export(const struct oscap_action *action) {
 
 bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 {
-	if( (action->module == &CVRF_EVALUATE_MODULE)) {
+	if(action->module == &CVRF_EVALUATE_MODULE) {
 		if( argc < 5 || argc > 6) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
