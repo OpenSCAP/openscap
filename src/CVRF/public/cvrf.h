@@ -476,29 +476,9 @@ const char * cvrf_model_supported(void);
 
 void cvrf_export_results(const char *input_file, const char *export_file, const char *os_version);
 
-void get_cvrf_product_id_by_OS(struct cvrf_model_eval *eval, struct cvrf_model *model);
-
-const char *get_cvrf_product_id_from_branch(struct cvrf_model_eval *eval, struct cvrf_branch *branch);
-
-const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eval, const char *product_id);
-
-struct cvrf_rpm_attributes *parse_rpm_name_into_components(struct cvrf_model_eval *eval, const char *product_id);
-
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
 
-
-
 int cvrf_construct_definition_model(struct cvrf_model_eval *eval);
-
-struct oval_test *cvrf_definition_model_get_new_rpm_test(struct oval_definition_model *def_model, int testNo);
-
-struct oval_object *cvrf_definition_model_get_new_object(struct oval_definition_model *def_model, struct cvrf_rpm_attributes *attributes,
-		int objectNo);
-
-struct oval_state *cvrf_definition_model_get_new_state(struct oval_definition_model *def_model, struct cvrf_rpm_attributes *attributes,
-		int stateNo);
-
-const char *get_oval_id_string(const char *type, int objectNo);
 
 
 /**@}*/
