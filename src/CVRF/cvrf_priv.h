@@ -12,6 +12,84 @@
 #include "../common/elements.h"
 
 
+/***************************************************************************************************
+ * CVRF enum definitions
+ */
+
+typedef enum {
+	CVRF_DOC_STATUS_DRAFT,
+	CVRF_DOC_STATUS_INTERIM,
+	CVRF_DOC_STATUS_FINAL,
+} cvrf_doc_status_type_t;
+
+cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
+
+
+typedef enum {
+	CVRF_BRANCH_VENDOR,
+	CVRF_BRANCH_PRODUCT_FAMILY,
+	CVRF_BRANCH_PRODUCT_NAME,
+	CVRF_BRANCH_PRODUCT_VERSION,
+	CVRF_BRANCH_PATCH_LEVEL,
+	CVRF_BRANCH_SERVICE_PACK,
+	CVRF_BRANCH_ARCHITECTURE,
+	CVRF_BRANCH_LANGUAGE,
+	CVRF_BRANCH_LEGACY,
+	CVRF_BRANCH_SPECIFICATION,
+} cvrf_branch_type_t;
+
+cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type);
+
+
+typedef enum {
+	CVRF_RELATIONSHIP_DEFAULT_COMPONENT,
+	CVRF_RELATIONSHIP_OPTIONAL_COMPONENT,
+	CVRF_RELATIONSHIP_EXTERNAL_COMPONENT,
+	CVRF_RELATIONSHIP_INSTALLED_ON,
+	CVRF_RELATIONSHIP_INSTALLED_WITH,
+} cvrf_relationship_type_t;
+
+cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t relationship_type);
+
+
+typedef enum {
+	CVRF_PRODUCT_STATUS_FIRST_AFFECTED,
+	CVRF_PRODUCT_STATUS_KNOWN_AFFECTED,
+	CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED,
+	CVRF_PRODUCT_STATUS_FIXED,
+	CVRF_PRODUCT_STATUS_RECOMMENDED,
+	CVRF_PRODUCT_STATUS_LAST_AFFECTED,
+} cvrf_product_status_type_t;
+
+cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product_status_type);
+
+
+typedef enum {
+	CVRF_REMEDIATION_WORKAROUND,
+	CVRF_REMEDIATION_MITIGATION,
+	CVRF_REMEDIATION_VENDOR_FIX,
+	CVRF_REMEDIATION_NONE_AVAILABLE,
+	CVRF_REMEDIATION_WILL_NOT_FIX,
+} cvrf_remediation_type_t;
+
+cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_type);
+
+
+//static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map);
+//static const char *cvrf_enumeration_get_text(const struct oscap_string_map *map, int val);
+//static int cvrf_enumeration_from_text(const struct oscap_string_map *map, const char *text);
+
+
+
+/***************************************************************************************************
+ * CVRF structures
+ */
+
 /**
  * @struct cvrf_index
  * Represents an index of a CVRF feed or directory
