@@ -17,6 +17,18 @@
  */
 
 typedef enum {
+	CVRF_DOC_PUBLISHER_VENDOR,
+	CVRF_DOC_PUBLISHER_DISCOVERER,
+	CVRF_DOC_PUBLISHER_COORDINATOR,
+	CVRF_DOC_PUBLISHER_USER,
+	CVRF_DOC_PUBLISHER_OTHER,
+} cvrf_doc_publisher_type_t;
+
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type);
+
+
+typedef enum {
 	CVRF_DOC_STATUS_DRAFT,
 	CVRF_DOC_STATUS_INTERIM,
 	CVRF_DOC_STATUS_FINAL,
@@ -59,6 +71,7 @@ typedef enum {
 	CVRF_PRODUCT_STATUS_FIRST_AFFECTED,
 	CVRF_PRODUCT_STATUS_KNOWN_AFFECTED,
 	CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED,
+	CVRF_PRODUCT_STATUS_FIRST_FIXED,
 	CVRF_PRODUCT_STATUS_FIXED,
 	CVRF_PRODUCT_STATUS_RECOMMENDED,
 	CVRF_PRODUCT_STATUS_LAST_AFFECTED,
@@ -66,6 +79,15 @@ typedef enum {
 
 cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product_status_type);
+
+
+typedef enum {
+	CVRF_THREAT_IMPACT,
+	CVRF_THREAT_EXPLOIT_STATUS,
+	CVRF_THREAT_TARGET_SET,
+} cvrf_threat_type_t;
+cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type);
 
 
 typedef enum {
@@ -103,6 +125,12 @@ struct cvrf_model;
  *
  */
 struct cvrf_document;
+
+/**
+ * @struct cvrf_doc_publisher
+ *
+ */
+struct cvrf_doc_publisher;
 
 /**
  * @struct cvrf_doc_tracking
@@ -188,6 +216,13 @@ struct cvrf_model *cvrf_model_parse_xml(const char *file);
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF DocumentPublisher
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF DocumentPublisher
+ */
+struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF DocumentTracking
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF DocumentTracking
@@ -251,6 +286,13 @@ void cvrf_index_export_xml(struct cvrf_index *index, const char *file);
  * @param file OSCAP export target
  */
 void cvrf_model_export_xml(struct cvrf_model *cvrf, const char *file);
+
+/**
+ *
+ * @param publisher CVRF DocumentPublisher structure to export
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_doc_publisher_export(const struct cvrf_doc_publisher *publisher, xmlTextWriterPtr writer);
 
 /**
  *
