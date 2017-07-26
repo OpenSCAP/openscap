@@ -282,7 +282,7 @@ const char *get_cvrf_product_id_from_branch(struct cvrf_model_eval *eval, struct
 	struct cvrf_branch *subbranch;
 	struct cvrf_product_name *full_name;
 
-	if (!strcmp(cvrf_branch_get_branch_type(branch), "Product Family")) {
+	if (cvrf_branch_get_branch_type(branch) == CVRF_BRANCH_PRODUCT_FAMILY) {
 		struct oscap_iterator *subbranches = cvrf_branch_get_subbranches(branch);
 
 		while(oscap_iterator_has_more(subbranches)) {
@@ -317,7 +317,7 @@ const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eval, cons
 	while (oscap_iterator_has_more(branches)) {
 		branch = oscap_iterator_next(branches);
 
-		if (!strcmp(cvrf_branch_get_branch_type(branch), "Product Version")) {
+		if (cvrf_branch_get_branch_type(branch) == CVRF_BRANCH_PRODUCT_VERSION) {
 			full_name = cvrf_branch_get_cvrf_product_name(branch);
 
 			if (oscap_str_endswith(product_id, cvrf_product_name_get_product_id(full_name))) {

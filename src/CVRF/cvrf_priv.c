@@ -171,7 +171,7 @@ void cvrf_document_free(struct cvrf_document *doc) {
 struct cvrf_doc_tracking {
 	char *tracking_id;
 	char *tracking_alias;
-	char *tracking_status;
+	cvrf_doc_status_type_t tracking_status;
 	int tracking_version;
 	char *init_release_date;
 	char *cur_release_date;
@@ -182,12 +182,14 @@ struct cvrf_doc_tracking {
 };
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_id)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_alias)
-OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_status)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, init_release_date)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, cur_release_date)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, generator_engine)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, generator_date)
 
+cvrf_doc_status_type_t cvrf_doc_tracking_get_tracking_status(struct cvrf_doc_tracking *tracking) {
+	return tracking->tracking_status;
+}
 
 struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 
@@ -199,7 +201,6 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 
 	ret->tracking_id = NULL;
 	ret->tracking_alias = NULL;
-	ret->tracking_status = NULL;
 	ret->cur_release_date = NULL;
 	ret->init_release_date = NULL;
 	ret->generator_engine = NULL;
@@ -215,7 +216,6 @@ void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking) {
 
 	oscap_free(tracking->tracking_id);
 	oscap_free(tracking->tracking_alias);
-	oscap_free(tracking->tracking_status);
 	oscap_free(tracking->init_release_date);
 	oscap_free(tracking->cur_release_date);
 	oscap_free(tracking->generator_engine);
@@ -271,20 +271,21 @@ void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
  * CVRF Branch
  */
 struct cvrf_branch {
-	char *branch_type;
+	cvrf_branch_type_t branch_type;
 	char *branch_name;
 	struct cvrf_product_name *full_name;
 	struct oscap_list *subbranches;
 };
-OSCAP_ACCESSOR_STRING(cvrf_branch, branch_type)
 OSCAP_ACCESSOR_STRING(cvrf_branch, branch_name)
 
 struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch) {
 	return oscap_iterator_new(branch->subbranches);
 }
-
 struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch) {
 	return branch->full_name;
+}
+cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch) {
+	return branch->branch_type;
 }
 
 struct cvrf_branch *cvrf_branch_new() {
@@ -298,7 +299,6 @@ struct cvrf_branch *cvrf_branch_new() {
 	ret->full_name = cvrf_product_name_new();
 	ret->subbranches = oscap_list_new();
 	ret->branch_name = NULL;
-	ret->branch_type = NULL;
 
 	return ret;
 }
@@ -308,7 +308,6 @@ void cvrf_branch_free(struct cvrf_branch *branch) {
 	if (branch == NULL)
 		return;
 
-	oscap_free(branch->branch_type);
 	oscap_free(branch->branch_name);
 	cvrf_product_name_free(branch->full_name);
 	oscap_list_free(branch->subbranches, (oscap_destruct_func) cvrf_branch_free);
@@ -321,17 +320,20 @@ void cvrf_branch_free(struct cvrf_branch *branch) {
  */
 struct cvrf_relationship {
 	char *product_reference;
-	char *relation_type;
+	cvrf_relationship_type_t relation_type;
 	char *relates_to_ref;
 	struct cvrf_product_name *full_name;
 };
 OSCAP_ACCESSOR_STRING(cvrf_relationship, product_reference)
-OSCAP_ACCESSOR_STRING(cvrf_relationship, relation_type)
 OSCAP_ACCESSOR_STRING(cvrf_relationship, relates_to_ref)
 
 struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation) {
 	return relation->full_name;
 }
+cvrf_relationship_type_t cvrf_relationship_get_relation_type(struct cvrf_relationship *relation) {
+	return relation->relation_type;
+}
+
 struct cvrf_relationship *cvrf_relationship_new() {
 
 	struct cvrf_relationship *ret;
@@ -341,7 +343,6 @@ struct cvrf_relationship *cvrf_relationship_new() {
 		return NULL;
 
 	ret->product_reference = NULL;
-	ret->relation_type = NULL;
 	ret->relates_to_ref = NULL;
 	ret->full_name = cvrf_product_name_new();
 
@@ -353,7 +354,6 @@ void cvrf_relationship_free(struct cvrf_relationship *relationship) {
 		return;
 
 	oscap_free(relationship->product_reference);
-	oscap_free(relationship->relation_type);
 	oscap_free(relationship->relates_to_ref);
 	cvrf_product_name_free(relationship->full_name);
 	oscap_free(relationship);
@@ -461,7 +461,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
  * CVRF Remediation
  */
 struct cvrf_remediation {
-	char *remed_type;
+	cvrf_remediation_type_t remed_type;
 	char *remed_date;
 	char *remed_description;
 	char *remed_URL;
@@ -469,7 +469,6 @@ struct cvrf_remediation {
 	char *remed_product_id;
 	char *remed_group_id;
 };
-OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_type)
 OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_date)
 OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_description)
 OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_URL)
@@ -477,6 +476,9 @@ OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_entitlement)
 OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_product_id)
 OSCAP_ACCESSOR_STRING(cvrf_remediation, remed_group_id)
 
+cvrf_remediation_type_t cvrf_remediation_get_type(struct cvrf_remediation *remed) {
+	return remed->remed_type;
+}
 
 struct cvrf_remediation *cvrf_remediation_new() {
 
@@ -485,7 +487,6 @@ struct cvrf_remediation *cvrf_remediation_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->remed_type = NULL;
 	ret->remed_date = NULL;
 	ret->remed_description = NULL;
 	ret->remed_URL = NULL;
@@ -501,7 +502,6 @@ void cvrf_remediation_free(struct cvrf_remediation *remed) {
 	if (remed == NULL)
 		return;
 
-	oscap_free(remed->remed_type);
 	oscap_free(remed->remed_date);
 	oscap_free(remed->remed_description);
 	oscap_free(remed->remed_URL);
@@ -516,13 +516,15 @@ void cvrf_remediation_free(struct cvrf_remediation *remed) {
  * CVRF ProductStatus
  */
 struct cvrf_product_status {
-	char *status;
+	cvrf_product_status_type_t status_type;
 	struct oscap_stringlist *product_ids;
 };
-OSCAP_ACCESSOR_STRING(cvrf_product_status, status)
 
 struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_status *stat) {
 	return oscap_stringlist_get_strings(stat->product_ids);
+}
+cvrf_product_status_type_t cvrf_product_status_get_type(struct cvrf_product_status *stat) {
+	return stat->status_type;
 }
 
 struct cvrf_product_status *cvrf_product_status_new() {
@@ -534,7 +536,6 @@ struct cvrf_product_status *cvrf_product_status_new() {
 		return NULL;
 
 	ret->product_ids = oscap_stringlist_new();
-	ret->status = NULL;
 
 	return ret;
 }
@@ -544,7 +545,6 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 	if (status == NULL)
 		return;
 
-	oscap_free(status->status);
 	oscap_stringlist_free(status->product_ids);
 	oscap_free(status);
 }
@@ -575,16 +575,13 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 #define TAG_GENERATOR_DATE BAD_CAST "Date"
 // Product Tree
 #define TAG_CVRF_PRODUCT_TREE BAD_CAST "ProductTree"
-#define TAG_BRANCH_TYPE BAD_CAST "BranchType"
 #define TAG_BRANCH BAD_CAST "Branch"
-#define ATTR_BRANCH_TYPE BAD_CAST "Type"
 #define ATTR_BRANCH_NAME BAD_CAST "Name"
 #define TAG_CVRF_PRODUCT_NAME BAD_CAST "FullProductName"
 #define ATTR_PRODUCT_ID BAD_CAST "ProductID"
 //Relationship
 #define TAG_RELATIONSHIP BAD_CAST "Relationship"
 #define ATTR_PRODUCT_REFERENCE BAD_CAST "ProductReference"
-#define ATTR_RELATION_TYPE BAD_CAST "RelationType"
 #define ATTR_RELATES_TO_REF BAD_CAST "RelatesToProductReference"
 #define TAG_GROUP_ID BAD_CAST "GroupID"
 // Vulnerabilities
@@ -754,7 +751,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 				tracking->tracking_alias = (char *)oscap_element_string_copy(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_STATUS)) {
-			tracking->tracking_status = (char *)oscap_element_string_copy(reader);
+			tracking->tracking_status = cvrf_doc_status_type_parse(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_VERSION)) {
 			tracking->tracking_version = (int)oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_INIT_RELEASE)) {
@@ -842,7 +839,7 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 		return NULL;
 
 	branch->branch_name = (char *)xmlTextReaderGetAttribute(reader, ATTR_BRANCH_NAME);
-	branch->branch_type = (char *)xmlTextReaderGetAttribute(reader, ATTR_BRANCH_TYPE);
+	branch->branch_type = cvrf_branch_type_parse(reader, "Type");
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
@@ -883,7 +880,7 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 		return NULL;
 
 	relation->product_reference = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_REFERENCE);
-	relation->relation_type = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATION_TYPE);
+	relation->relation_type = cvrf_relationship_type_parse(reader, "RelationType");
 	relation->relates_to_ref = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATES_TO_REF);
 	xmlTextReaderNextElement(reader);
 
@@ -964,7 +961,7 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 	if (remed == NULL)
 		return NULL;
 
-	remed->remed_type = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Type");
+	remed->remed_type = cvrf_remediation_type_parse(reader, "Type");
 	remed->remed_date = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
 	xmlTextReaderNextElement(reader);
 
@@ -1005,7 +1002,7 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 	if (stat == NULL)
 		return NULL;
 
-	stat->status = (char *)xmlTextReaderGetAttribute(reader, ATTR_STATUS_TYPE);
+	stat->status_type = cvrf_product_status_type_parse(reader, "Type");
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_STATUS) != 0) {
@@ -1127,9 +1124,9 @@ void cvrf_doc_tracking_export(const struct cvrf_doc_tracking *tracking, xmlTextW
 		}
 		xmlTextWriterEndElement(writer);
 	}
-	if (tracking->tracking_status != NULL) {
+	if (tracking->tracking_status != 0) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_TRACKING_STATUS, NULL);
-		xmlTextWriterWriteString(writer, BAD_CAST tracking->tracking_status);
+		xmlTextWriterWriteString(writer, BAD_CAST cvrf_doc_status_type_get_text(tracking->tracking_status));
 		xmlTextWriterEndElement(writer);
 	}
 	if (tracking->tracking_version != NULL) {
@@ -1204,8 +1201,10 @@ void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr write
 	__attribute__nonnull__(writer);
 
 	struct cvrf_product_name *name = branch->full_name;
+	const char *branch_type = cvrf_branch_type_get_text(branch->branch_type);
+
 	xmlTextWriterStartElementNS(writer, NULL, TAG_BRANCH, NULL);
-	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_TYPE, BAD_CAST branch->branch_type);
+	xmlTextWriterWriteAttribute(writer, "Type", BAD_CAST branch_type);
 	xmlTextWriterWriteAttribute(writer, ATTR_BRANCH_NAME, BAD_CAST branch->branch_name);
 
 	if (name->cpe != NULL) {
@@ -1234,10 +1233,11 @@ void cvrf_relationship_export(const struct cvrf_relationship *relation, xmlTextW
 	__attribute__nonnull__(writer);
 
 	struct cvrf_product_name *name = relation->full_name;
+	const char *relation_type = cvrf_relationship_type_get_text(relation->relation_type);
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_RELATIONSHIP, NULL);
 	xmlTextWriterWriteAttribute(writer, ATTR_PRODUCT_REFERENCE, BAD_CAST relation->product_reference);
-	xmlTextWriterWriteAttribute(writer, ATTR_RELATION_TYPE, BAD_CAST relation->relation_type);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "RelationType", BAD_CAST relation_type);
 	xmlTextWriterWriteAttribute(writer, ATTR_RELATES_TO_REF, BAD_CAST relation->relates_to_ref);
 
 	if (name->cpe != NULL) {
@@ -1299,7 +1299,9 @@ void cvrf_remediation_export(const struct cvrf_remediation *remed, xmlTextWriter
 	__attribute__nonnull__(writer);
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_REMEDIATION, NULL);
-	xmlTextWriterWriteAttribute(writer, BAD_CAST "Type", BAD_CAST remed->remed_type);
+
+	const char *remed_type = cvrf_remediation_type_get_text(remed->remed_type);
+	xmlTextWriterWriteAttribute(writer, BAD_CAST "Type", BAD_CAST remed_type);
 	if (remed->remed_date != NULL)
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "Date", BAD_CAST remed->remed_date);
 
@@ -1340,9 +1342,10 @@ void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextW
 
 	struct oscap_string_iterator *product_ids = cvrf_product_status_get_ids(stat);
 	const char *product_id;
+	const char *status_type = cvrf_product_status_type_get_text(stat->status_type);
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_PRODUCT_STATUS, NULL);
-	xmlTextWriterWriteAttribute(writer, ATTR_STATUS_TYPE, BAD_CAST stat->status);
+	xmlTextWriterWriteAttribute(writer, ATTR_STATUS_TYPE, BAD_CAST status_type);
 
 	while (oscap_string_iterator_has_more(product_ids)) {
 		xmlTextWriterStartElementNS(writer, NULL, TAG_PRODUCT_ID, NULL);
