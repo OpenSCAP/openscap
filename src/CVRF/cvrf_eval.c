@@ -15,6 +15,7 @@
 #include "common/xmltext_priv.h"
 #include "common/elements.h"
 #include "common/oscap_string.h"
+#include "common/util.h"
 
 #include "CPE/cpelang_priv.h"
 #include "CPE/public/cpe_dict.h"
@@ -33,23 +34,10 @@
 #include "OVAL/public/oval_probe.h"
 #include "OVAL/oval_definitions_impl.h"
 
+
 /*****************************************************************************
  * Structure definitions
  */
-
-const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
-	{CVRF_BRANCH_VENDOR, "Vendor"},
-	{CVRF_BRANCH_PRODUCT_FAMILY, "Product Family"},
-	{CVRF_BRANCH_PRODUCT_NAME, "Product Name"},
-	{CVRF_BRANCH_PRODUCT_VERSION, "Product Version"},
-	{CVRF_BRANCH_PATCH_LEVEL, "Patch Level"},
-	{CVRF_BRANCH_SERVICE_PACK, "Service Pack"},
-	{CVRF_BRANCH_ARCHITECTURE, "Architecture"},
-	{CVRF_BRANCH_LANGUAGE, "Language"},
-	{CVRF_BRANCH_LEGACY, "Legacy"},
-	{CVRF_BRANCH_SPECIFICATION, "Specification"},
-	{0, NULL}
-};
 
 struct cvrf_model_eval {
 	char *os_name;
