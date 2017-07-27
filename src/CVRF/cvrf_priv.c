@@ -764,7 +764,7 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 	struct oscap_string_iterator *iterator = oscap_stringlist_get_strings(file_list);
 	while (oscap_string_iterator_has_more(iterator)) {
 		const char *filename = oscap_string_iterator_next(iterator);
-		model = cvrf_model_parse_xml(oscap_source_new_from_file(filename));
+		model = cvrf_model_import(oscap_source_new_from_file(filename));
 		if (model)
 			oscap_list_add(index->models, model);
 	}
@@ -772,34 +772,6 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 	oscap_source_free(index_source);
 
 	return index;
-}
-
-struct cvrf_model *cvrf_model_parse_xml(struct oscap_source *source) {
-
-	__attribute__nonnull__(source);
-
-	struct cvrf_model *cvrf = NULL;
-	int rc;
-
-	struct xmlTextReaderPtr *reader = oscap_source_get_xmlTextReader(source);
-	if (!reader) {
-		oscap_source_free(source);
-		return NULL;
-	}
-
-	rc = xmlTextReaderNextNode(reader);
-	if (rc == -1) {
-		xmlFreeTextReader(reader);
-		oscap_source_free(source);
-		return NULL;
-	}
-
-	cvrf = cvrf_model_parse(reader);
-
-	xmlFreeTextReader(reader);
-	oscap_source_free(source);
-
-	return cvrf;
 }
 
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
@@ -1273,7 +1245,7 @@ void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export
 	struct cvrf_model_iterator *models = cvrf_index_get_models(index);
 	while (cvrf_model_iterator_has_more(models)) {
 		struct cvrf_model *model = cvrf_model_iterator_next(models);
-		cvrf_export(model, writer);
+		cvrf_model_export_xml(model, writer);
 	}
 	cvrf_model_iterator_free(models);
 
@@ -1284,31 +1256,7 @@ void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export
 		oscap_setxmlerr(xmlGetLastError());
 }
 
-void cvrf_model_export_xml(struct cvrf_model *cvrf, struct oscap_source *export_source) {
-
-	__attribute__nonnull__(cvrf);
-	__attribute__nonnull__(export_source);
-
-	const char *filepath = oscap_source_get_filepath(export_source);
-	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(filepath, 0);
-	if (writer == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return;
-	}
-
-	xmlTextWriterSetIndent(writer, 1);
-	xmlTextWriterSetIndentString(writer, BAD_CAST "  ");
-	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
-
-	cvrf_export(cvrf, writer);
-	xmlTextWriterEndDocument(writer);
-	xmlFreeTextWriter(writer);
-	oscap_source_free(export_source);
-	if (xmlGetLastError() != NULL)
-		oscap_setxmlerr(xmlGetLastError());
-}
-
-void cvrf_export(const struct cvrf_model *cvrf, xmlTextWriterPtr writer) {
+void cvrf_model_export_xml(const struct cvrf_model *cvrf, xmlTextWriterPtr writer) {
 
 	__attribute__nonnull__(cvrf);
 	__attribute__nonnull__(writer);

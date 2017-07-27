@@ -115,13 +115,6 @@ const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_t
 struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source);
 
 /**
- * Parse CVRF model from XML (private function)
- * @param source OSCAP source representation of import source file
- * @return New parsed CVRF model from source
- */
-struct cvrf_model *cvrf_model_parse_xml(struct oscap_source *source);
-
-/**
  * Parse CVRF model
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF model
@@ -208,12 +201,6 @@ void cvrf_export_element(const char *element, const char *tag, xmlTextWriterPtr 
  */
 void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source);
 
-/**
- *
- * @param cvrf CVRF model to export
- * @param file OSCAP export target
- */
-void cvrf_model_export_xml(struct cvrf_model *cvrf, struct oscap_source *export_source);
 
 /**
  *
@@ -234,7 +221,7 @@ void cvrf_doc_tracking_export(const struct cvrf_doc_tracking *tracking, xmlTextW
  * @param cvrf CVRF model
  * @param writer XML Text Writer representing XML model
  */
-void cvrf_export(const struct cvrf_model *cvrf, xmlTextWriterPtr writer);
+void cvrf_model_export_xml(const struct cvrf_model *cvrf, xmlTextWriterPtr writer);
 
 /**
  * @param tree ProductTree within CVRF model
