@@ -232,25 +232,14 @@ void cvrf_export_results(struct oscap_source *import_source, struct oscap_source
 	find_all_cvrf_product_ids_by_OS(eval, model);
 	cvrf_model_eval_construct_definition_model(eval);
 
-	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
-	struct cvrf_vulnerability *vuln;
-	const char *product_id = NULL;
-	bool vulnerable = false;
-
-
 	xmlTextWriterSetIndent(writer, 1);
 	xmlTextWriterSetIndentString(writer, BAD_CAST "  ");
 	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
 
 	xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_DOC, CVRF_NS);
 
-	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "DocumentTitle", NULL);
-	xmlTextWriterWriteString(writer, BAD_CAST cvrf_model_get_doc_title(model));
-	xmlTextWriterEndElement(writer);
-
-	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "OS Name", NULL);
-	xmlTextWriterWriteString(writer, BAD_CAST os_name);
-	xmlTextWriterEndElement(writer);
+	cvrf_export_element(cvrf_model_get_doc_title(model), "DocumentTitle", writer);
+	cvrf_export_element(os_name, "OS Name", writer);
 
 	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Identification", NULL);
 	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "ID", NULL);
@@ -258,21 +247,18 @@ void cvrf_export_results(struct oscap_source *import_source, struct oscap_source
 	xmlTextWriterEndElement(writer);
 	xmlTextWriterEndElement(writer);
 
+	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
+	bool vulnerable = false;
 	while (cvrf_vulnerability_iterator_has_more(it)) {
-		vuln = cvrf_vulnerability_iterator_next(it);
+		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
 		struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
 
 		xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Vulnerability", VULN_NS);
 		xmlTextWriterWriteAttribute(writer, BAD_CAST "Ordinal", BAD_CAST (char *)cvrf_vulnerablity_get_ordinal(vuln));
-
-		if (cvrf_vulnerability_get_cve_id(vuln) != NULL) {
-			xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "CVE", NULL);
-			xmlTextWriterWriteString(writer, BAD_CAST cvrf_vulnerability_get_cve_id(vuln));
-			xmlTextWriterEndElement(writer);
-		}
+		cvrf_export_element(cvrf_vulnerability_get_cve_id(vuln), "CVE", writer);
 
 		while (oscap_string_iterator_has_more(product_ids)) {
-			product_id = oscap_string_iterator_next(product_ids);
+			const char *product_id = oscap_string_iterator_next(product_ids);
 
 			xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Result", NULL);
 			xmlTextWriterWriteAttribute(writer, ATTR_PRODUCT_ID, BAD_CAST product_id);
@@ -399,16 +385,12 @@ static struct cvrf_rpm_attributes *parse_rpm_name_into_components(struct cvrf_mo
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product) {
 
 	struct cvrf_product_status_iterator *it = cvrf_vulnerability_get_cvrf_product_statuses(vuln);
-	struct cvrf_product_status *stat;
-	struct oscap_string_iterator *product_ids;
-	const char *product_id;
-
 	while (cvrf_product_status_iterator_has_more(it)) {
-		stat = cvrf_product_status_iterator_next(it);
-		product_ids = cvrf_product_status_get_ids(stat);
+		struct cvrf_product_status *stat = cvrf_product_status_iterator_next(it);
+		struct oscap_string_iterator *product_ids = cvrf_product_status_get_ids(stat);
 
 		while (oscap_string_iterator_has_more(product_ids)) {
-			product_id = oscap_string_iterator_next(product_ids);
+			const char *product_id = oscap_string_iterator_next(product_ids);
 
 			if (strcmp(product_id, product)) {
 				oscap_string_iterator_free(product_ids);
