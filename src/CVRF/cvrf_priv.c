@@ -103,11 +103,11 @@ struct cvrf_model *cvrf_model_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->vulnerabilities = oscap_list_new();
-	ret->tree = cvrf_product_tree_new();
 	ret->doc_title = NULL;
 	ret->doc_type = NULL;
 	ret->document = cvrf_document_new();
+	ret->tree = cvrf_product_tree_new();
+	ret->vulnerabilities = oscap_list_new();
 
 	return ret;
 }
@@ -120,8 +120,8 @@ void cvrf_model_free(struct cvrf_model *cvrf) {
 	oscap_free(cvrf->doc_title);
 	oscap_free(cvrf->doc_type);
 	cvrf_document_free(cvrf->document);
-	oscap_list_free(cvrf->vulnerabilities, (oscap_destruct_func) cvrf_vulnerability_free);
 	cvrf_product_tree_free(cvrf->tree);
+	oscap_list_free(cvrf->vulnerabilities, (oscap_destruct_func) cvrf_vulnerability_free);
 	oscap_free(cvrf);
 }
 
@@ -252,8 +252,8 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 
 	ret->tracking_id = NULL;
 	ret->tracking_alias = NULL;
-	ret->cur_release_date = NULL;
 	ret->init_release_date = NULL;
+	ret->cur_release_date = NULL;
 	ret->generator_engine = NULL;
 	ret->generator_date = NULL;
 
@@ -299,8 +299,8 @@ struct cvrf_product_tree *cvrf_product_tree_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->branches = oscap_list_new();
 	ret->full_name = cvrf_product_name_new();
+	ret->branches = oscap_list_new();
 	ret->relationships = oscap_list_new();
 
 	return ret;
@@ -347,9 +347,9 @@ struct cvrf_branch *cvrf_branch_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->branch_name = NULL;
 	ret->full_name = cvrf_product_name_new();
 	ret->subbranches = oscap_list_new();
-	ret->branch_name = NULL;
 
 	return ret;
 }
@@ -429,8 +429,8 @@ struct cvrf_product_name *cvrf_product_name_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->cpe = NULL;
 	ret->product_id = NULL;
+	ret->cpe = NULL;
 
 	return ret;
 }
@@ -439,8 +439,8 @@ void cvrf_product_name_free(struct cvrf_product_name *full_name) {
 	if (full_name == NULL)
 		return;
 
-	oscap_free(full_name->cpe);
 	oscap_free(full_name->product_id);
+	oscap_free(full_name->cpe);
 	oscap_free(full_name);
 }
 
@@ -693,8 +693,6 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 #define TAG_TRACKING_ALIAS BAD_CAST "Alias"
 #define TAG_TRACKING_STATUS BAD_CAST "Status"
 #define TAG_TRACKING_VERSION BAD_CAST "Version"
-#define TAG_TRACKING_INIT_RELEASE BAD_CAST "InitialReleaseDate"
-#define TAG_TRACKING_CUR_RELEASE BAD_CAST "CurrentReleaseDate"
 #define TAG_GENERATOR BAD_CAST "Generator"
 #define TAG_GENERATOR_ENGINE BAD_CAST "Engine"
 #define TAG_GENERATOR_DATE BAD_CAST "Date"
@@ -902,9 +900,9 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 			tracking->tracking_status = cvrf_doc_status_type_parse(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_VERSION)) {
 			tracking->tracking_version = (int)oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_INIT_RELEASE)) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "InitialReleaseDate")) {
 			tracking->init_release_date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_CUR_RELEASE)) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "CurrentReleaseDate")) {
 			tracking->cur_release_date = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR)) {
 			xmlTextReaderNextElement(reader);
