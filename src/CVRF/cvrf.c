@@ -6,6 +6,7 @@
 #include "public/cvrf.h"
 #include "cvrf_priv.h"
 
+#include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
 
@@ -38,9 +39,23 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 	if (source == NULL)
 		return NULL;
 
-	struct cvrf_model *cvrf;
-	cvrf = cvrf_model_parse_xml(source);
+	struct xmlTextReaderPtr *reader = oscap_source_get_xmlTextReader(source);
+	if (!reader) {
+		oscap_source_free(source);
+		return NULL;
+	}
 
+	int rc = xmlTextReaderNextNode(reader);
+	if (rc == -1) {
+		xmlFreeTextReader(reader);
+		oscap_source_free(source);
+		return NULL;
+	}
+
+	struct cvrf_model *cvrf = cvrf_model_parse(reader);
+
+	xmlFreeTextReader(reader);
+	oscap_source_free(source);
 	return cvrf;
 }
 
@@ -49,13 +64,30 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
  */
 void cvrf_model_export(struct cvrf_model *cvrf, struct oscap_source *export_source)
 {
-
+	__attribute__nonnull__(cvrf);
 	__attribute__nonnull__(export_source);
 
 	if (export_source == NULL)
 		return;
 
-	cvrf_model_export_xml(cvrf, export_source);
+	// TODO: redo this system to use oscap_source_save_as
+	const char *filepath = oscap_source_get_filepath(export_source);
+	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(filepath, 0);
+	if (writer == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return;
+	}
+
+	xmlTextWriterSetIndent(writer, 1);
+	xmlTextWriterSetIndentString(writer, BAD_CAST "  ");
+	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
+
+	cvrf_model_export_xml(cvrf, writer);
+	xmlTextWriterEndDocument(writer);
+	xmlFreeTextWriter(writer);
+	oscap_source_free(export_source);
+	if (xmlGetLastError() != NULL)
+		oscap_setxmlerr(xmlGetLastError());
 }
 
 void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source) {
