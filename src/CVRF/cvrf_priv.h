@@ -10,7 +10,7 @@
 
 #include "../common/list.h"
 #include "../common/elements.h"
-
+#include "cvrf.h"
 
 /***************************************************************************************************
  * CVRF enum definitions
@@ -104,104 +104,8 @@ const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_t
 
 
 /***************************************************************************************************
- * CVRF structures
+ * CVRF parsing functions
  */
-
-/**
- * @struct cvrf_index
- * Represents an index of a CVRF feed or directory
- * Maintains a list of all CVRF files in the form of cvrf_model structures
- */
-struct cvrf_index;
-
-/**
- * @struct cvrf_model
- * Structure holding CVRF model
- * Top level structure; contains ProductTree and list of Vulnerabilities
- */
-struct cvrf_model;
-
-/**
- * @struct cvrf_document
- *
- */
-struct cvrf_document;
-
-/**
- * @struct cvrf_doc_publisher
- *
- */
-struct cvrf_doc_publisher;
-
-/**
- * @struct cvrf_doc_tracking
- *
- */
-struct cvrf_doc_tracking;
-
-/**
- *@struct cvrf_product_tree
- * Structure holding CVRF ProductTree data
- * Holds at least one CVRF branch
- */
-struct cvrf_product_tree;
-
-/**
- * @struct cvrf_branch
- * Structure holding CVRF branch data
- * Belongs to a ProductTree; may have its own sub-branches
- */
-struct cvrf_branch;
-
-/**
- * @struct cvrf_relationship
- * Structure holding data for Relationships within ProductTree
- */
-struct cvrf_relationship;
-
-/**
- * @struct cvrf_product_name
- * Structure holding CVRF product name data
- * ProductID and CPE data for CVRF branches and ProductTrees
- */
-struct cvrf_product_name;
-
-/**
- * @struct cvrf_vulnerability
- * Structure holding CVRF Vulnerability data
- * Contains at least on ProductStatus
- */
-struct cvrf_vulnerability;
-
-/**
- * @struct cvrf_threat
- * Structure holding CVRF Threat data
- * Contained within a list in CVRF Vulnerability structure
- * May contain one or more ProductID(s) and/or GroupID(s)
- */
-struct cvrf_threat;
-
-/**
- * @struct cvrf_remediation
- * Structure holding remediation info for a particular vulnerability
- * May reference URL, ProductID, and/or GroupID
- */
-struct cvrf_remediation;
-
-/**
- * @struct cvrf_product_status
- * Structure holding CVRF ProductStatus data (within a Vulnerability)
- * Has status type and list of ProductIDs
- */
-struct cvrf_product_status;
-
-/**
- * @struct cvrf_model_eval
- *
- *
- */
-struct cvrf_model_eval;
-
 
 /**
  * Parse all CVRF models from all files listed in an index file
