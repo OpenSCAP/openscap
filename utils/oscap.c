@@ -120,9 +120,9 @@ static int print_versions(const struct oscap_action *action)
 	printf("CPE Version: %s\n", cpe_dict_model_supported());
 	printf("CVSS Version: %s\n", cvss_model_supported());
 	printf("CVE Version: %s\n", cve_model_supported());
-	printf("CVRF Version: %s\n", cvrf_model_supported());
 	printf("Asset Identification Version: %s\n", "1.1");
 	printf("Asset Reporting Format Version: %s\n", "1.1");
+	printf("CVRF Version: %s\n", cvrf_model_supported());
 	printf("\n");
 
 	printf("==== Capabilities added by auto-loaded plugins ====\n");
