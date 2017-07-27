@@ -860,11 +860,11 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHER_CONTACT)) {
-		publisher->contact_details = (char *)oscap_element_string_copy(reader);
+		publisher->contact_details = oscap_element_string_copy(reader);
 		xmlTextReaderNextElement(reader);
 	}
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHER_ISSUING_AUTHORITY)) {
-		publisher->issuing_authority = (char *)oscap_element_string_copy(reader);
+		publisher->issuing_authority = oscap_element_string_copy(reader);
 	}
 	xmlTextReaderNextNode(reader);
 
@@ -893,27 +893,27 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_IDENTIFICATION)) {
 			xmlTextReaderNextElement(reader);
 			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_ID)) {
-				tracking->tracking_id = (char *)oscap_element_string_copy(reader);
+				tracking->tracking_id = oscap_element_string_copy(reader);
 			}
 			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_ALIAS)) {
-				tracking->tracking_alias = (char *)oscap_element_string_copy(reader);
+				tracking->tracking_alias = oscap_element_string_copy(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_STATUS)) {
 			tracking->tracking_status = cvrf_doc_status_type_parse(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_VERSION)) {
 			tracking->tracking_version = (int)oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_INIT_RELEASE)) {
-			tracking->init_release_date = (char *)oscap_element_string_copy(reader);
+			tracking->init_release_date = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_CUR_RELEASE)) {
-			tracking->cur_release_date = (char *)oscap_element_string_copy(reader);
+			tracking->cur_release_date = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR)) {
 			xmlTextReaderNextElement(reader);
 			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_ENGINE)) {
-				tracking->generator_engine = (char *)oscap_element_string_copy(reader);
+				tracking->generator_engine = oscap_element_string_copy(reader);
 				xmlTextReaderNextElement(reader);
 			}
 			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_DATE)) {
-				tracking->generator_date = (char *)oscap_element_string_copy(reader);
+				tracking->generator_date = oscap_element_string_copy(reader);
 			}
 		}
 
@@ -952,8 +952,8 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
 			full_name = cvrf_product_name_new();
-			full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
-			full_name->cpe = (char *)oscap_element_string_copy(reader);
+			full_name->product_id = xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+			full_name->cpe = oscap_element_string_copy(reader);
 			tree->full_name = full_name;
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH)) {
 			while(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH) == 0) {
@@ -986,14 +986,14 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 	if (branch == NULL)
 		return NULL;
 
-	branch->branch_name = (char *)xmlTextReaderGetAttribute(reader, ATTR_BRANCH_NAME);
+	branch->branch_name = xmlTextReaderGetAttribute(reader, ATTR_BRANCH_NAME);
 	branch->branch_type = cvrf_branch_type_parse(reader, "Type");
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
 		full_name = cvrf_product_name_new();
-		full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
-		full_name->cpe = (char *)oscap_element_string_copy(reader);
+		full_name->product_id = xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+		full_name->cpe = oscap_element_string_copy(reader);
 		branch->full_name = full_name;
 		xmlTextReaderNextNode(reader);
 		xmlTextReaderNextNode(reader);
@@ -1027,15 +1027,15 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 	if (relation == NULL)
 		return NULL;
 
-	relation->product_reference = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_REFERENCE);
+	relation->product_reference = xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_REFERENCE);
 	relation->relation_type = cvrf_relationship_type_parse(reader, "RelationType");
-	relation->relates_to_ref = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATES_TO_REF);
+	relation->relates_to_ref = xmlTextReaderGetAttribute(reader, ATTR_RELATES_TO_REF);
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
 		full_name = cvrf_product_name_new();
-		full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
-		full_name->cpe = (char *)oscap_element_string_copy(reader);
+		full_name->product_id = xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+		full_name->cpe = oscap_element_string_copy(reader);
 		relation->full_name = full_name;
 		xmlTextReaderNextNode(reader);
 	}
@@ -1124,7 +1124,7 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 		return NULL;
 
 	threat->threat_type = cvrf_threat_type_parse(reader, "Type");
-	threat->threat_date = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
+	threat->threat_date = xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREAT) != 0) {
@@ -1134,7 +1134,7 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Description")) {
-			threat->threat_description = (char *)oscap_element_string_copy(reader);
+			threat->threat_description = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
 			oscap_stringlist_add_string(threat->threat_product_ids, oscap_element_string_copy(reader));
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP_ID)) {
@@ -1156,7 +1156,7 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 		return NULL;
 
 	remed->remed_type = cvrf_remediation_type_parse(reader, "Type");
-	remed->remed_date = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
+	remed->remed_date = xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATION) != 0) {
@@ -1167,15 +1167,15 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATION_DESC)) {
-			remed->remed_description = (char *)oscap_element_string_copy(reader);
+			remed->remed_description = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATION_URL)) {
-			remed->remed_URL = (char *)oscap_element_string_copy(reader);
+			remed->remed_URL = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
-			remed->remed_product_id = (char *)oscap_element_string_copy(reader);
+			remed->remed_product_id = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP_ID)) {
-			remed->remed_group_id = (char *)oscap_element_string_copy(reader);
+			remed->remed_group_id = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Entitlement")) {
-			remed->remed_entitlement = (char *)oscap_element_string_copy(reader);
+			remed->remed_entitlement = oscap_element_string_copy(reader);
 		}
 
 		xmlTextReaderNextNode(reader);
