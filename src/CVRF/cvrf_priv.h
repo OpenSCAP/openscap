@@ -86,6 +86,7 @@ typedef enum {
 	CVRF_THREAT_EXPLOIT_STATUS,
 	CVRF_THREAT_TARGET_SET,
 } cvrf_threat_type_t;
+
 cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type);
 
@@ -173,6 +174,14 @@ struct cvrf_product_name;
 struct cvrf_vulnerability;
 
 /**
+ * @struct cvrf_threat
+ * Structure holding CVRF Threat data
+ * Contained within a list in CVRF Vulnerability structure
+ * May contain one or more ProductID(s) and/or GroupID(s)
+ */
+struct cvrf_threat;
+
+/**
  * @struct cvrf_remediation
  * Structure holding remediation info for a particular vulnerability
  * May reference URL, ProductID, and/or GroupID
@@ -258,6 +267,13 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader);
 struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse a CVRF Threat item
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Threat
+ */
+struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF Remediation
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF Remediation
@@ -272,6 +288,14 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
+
+/**
+ *
+ * @param element Value of the element to be exported
+ * @param tag String representation of the element tag
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_export_element(const char *element, const char *tag, xmlTextWriterPtr writer);
 
 /**
  *
@@ -334,6 +358,13 @@ void cvrf_relationship_export(const struct cvrf_relationship *relation, xmlTextW
  * @param writer XML Text Writer representing XML model
  */
 void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWriterPtr writer);
+
+/**
+ *
+ * @param threat a CVRF Threat item within a CVRF Vulnerability structure
+ * @param writer XML Text Writer representing XML model
+ */
+void cvrf_threat_export(const struct cvrf_threat *threat, xmlTextWriterPtr writer);
 
 /**
  *

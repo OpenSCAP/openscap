@@ -208,6 +208,30 @@ bool cvrf_remediation_iterator_has_more(struct cvrf_remediation_iterator *it);
 void cvrf_remediation_iterator_free(struct cvrf_remediation_iterator *it);
 void cvrf_remediation_iterator_reset(struct cvrf_remediation_iterator *it);
 
+struct cvrf_threat_iterator;
+struct cvrf_threat_iterator *cvrf_vulnerability_get_threats(const struct cvrf_vulnerability *vuln);
+struct cvrf_threat *cvrf_threat_iterator_next(struct cvrf_threat_iterator *it);
+bool cvrf_threat_iterator_has_more(struct cvrf_threat_iterator *it);
+void cvrf_threat_iterator_free(struct cvrf_threat_iterator *it);
+void cvrf_threat_iterator_reset(struct cvrf_threat_iterator *it);
+
+
+/**
+ * @struct cvrf_threat
+ * Structure holding CVRF Threat data
+ * Contained within a list in CVRF Vulnerability structure
+ * May contain one or more ProductID(s) and/or GroupID(s)
+ */
+struct cvrf_threat;
+
+const char *cvrf_threat_get_threat_date(const struct cvrf_threat *threat);
+const char *cvrf_threat_get_threat_description(const struct cvrf_threat *threat);
+//cvrf_threat_type_t cvrf_threat_get_threat_type(struct cvrf_threat *threat);
+struct oscap_string_iterator *cvrf_threat_get_product_ids(struct cvrf_threat *threat);
+struct oscap_string_iterator *cvrf_threat_get_group_ids(struct cvrf_threat *threat);
+
+bool cvrf_threat_set_threat_date(struct cvrf_threat *threat, const char *threat_date);
+bool cvrf_threat_set_threat_description(struct cvrf_threat *threat, const char *threat_description);
 
 
 /**
@@ -351,6 +375,13 @@ struct cvrf_vulnerability *cvrf_vulnerability_new(void);
  *
  *
  */
+struct cvrf_threat *cvrf_threat_new(void);
+
+/**
+ *
+ *
+ *
+ */
 struct cvrf_remediation *cvrf_remediation_new(void);
 
 /**
@@ -432,6 +463,12 @@ void cvrf_product_name_free(struct cvrf_product_name *full_name);
  *
  */
 void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability);
+
+/**
+ *
+ *
+ */
+void cvrf_threat_free(struct cvrf_threat *threat);
 
 /**
  *
