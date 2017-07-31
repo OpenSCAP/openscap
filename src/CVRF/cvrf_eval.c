@@ -409,11 +409,11 @@ static const char *get_oval_id_string(const char *type, int object_number) {
 	char *number_as_string = oscap_sprintf("%d", object_number);
 
 	if (!strcmp(type, "object")) {
-			oscap_string_append_string(string, "oval:org.open-scap.cpe.unix:obj:");
+			oscap_string_append_string(string, "oval:org.open-scap.unix:obj:");
 	} else if (!strcmp(type, "state")) {
-			oscap_string_append_string(string, "oval:org.open-scap.cpe.unix:ste:");
+			oscap_string_append_string(string, "oval:org.open-scap.unix:ste:");
 	} else if (!strcmp(type, "test")) {
-			oscap_string_append_string(string, "oval:org.open-scap.cpe.wrlinux:tst:");
+			oscap_string_append_string(string, "oval:org.open-scap.unix:tst:");
 	}
 
 	oscap_string_append_string(string, number_as_string);
@@ -500,7 +500,7 @@ int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 	const char *product_id;
 	int index = 1;
 
-	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, "oval:org.open-scap.cpe.wrlinux:def:1");
+	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, "oval:org.open-scap.unix:def:1");
 	oval_definition_set_version(definition, 1);
 	oval_definition_set_title(definition, "CVRF RPM Vulnerability Test");
 	struct oval_criteria_node *criteria = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERIA);
