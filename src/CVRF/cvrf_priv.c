@@ -808,8 +808,12 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY) == 0) {
 		struct cvrf_vulnerability *vulnerability = cvrf_vulnerability_parse(reader);
-		if (vulnerability)
+		if (vulnerability) {
 			cvrf_model_add_vulnerability(ret, vulnerability);
+		} else {
+			oscap_setxmlerr("Could not parse CVRF file: Missing or invalid"
+					"Vulnerability element\n");
+		}
 		xmlTextReaderNextElement(reader);
 	}
 
@@ -928,13 +932,21 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH)) {
 			while(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH) == 0) {
 				branch = cvrf_branch_parse(reader);
-				if (branch)
+				if (branch) {
 					oscap_list_add(tree->branches, branch);
+				} else {
+					oscap_setxmlerr("Could not parse CVRF file: Missing or invalid"
+							"Branch element\n");
+				}
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_RELATIONSHIP)) {
 			relation = cvrf_relationship_parse(reader);
-			if (relation)
+			if (relation) {
 				oscap_list_add(tree->relationships, relation);
+			} else {
+				oscap_setxmlerr("Could not parse CVRF file: Missing or invalid "
+						"Relationship element\n");
+			}
 		}
 		xmlTextReaderNextNode(reader);
 	}
@@ -979,6 +991,9 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 			subbranch = cvrf_branch_parse(reader);
 			if (subbranch) {
 				oscap_list_add(branch->subbranches, subbranch);
+			} else {
+				oscap_setxmlerr("Could not parse CVRF file: Missing or invalid"
+						"Branch element\n");
 			}
 			xmlTextReaderNextNode(reader);
 		}
@@ -1054,8 +1069,12 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 			xmlTextReaderNextElement(reader);
 			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_STATUS) == 0) {
 				stat = cvrf_product_status_parse(reader);
-				if (stat != NULL)
+				if (stat) {
 					cvrf_vulnerability_add_cvrf_product_status(vulnerability, stat);
+				} else {
+					oscap_setxmlerr("Could not parse CVRF file: Missing or invalid"
+							"ProductStatus element\n");
+				}
 				xmlTextReaderNextNode(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_STATUS)) {
@@ -1066,16 +1085,24 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 			xmlTextReaderNextElement(reader);
 			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATION) == 0) {
 				remed = cvrf_remediation_parse(reader);
-				if (remed != NULL)
+				if (remed != NULL) {
 					cvrf_vulnerability_add_remediation(vulnerability, remed);
+				} else {
+					oscap_setxmlerr("Could not parse CVRF file: Missing or invalid"
+							"Remediation element\n");
+				}
 				xmlTextReaderNextNode(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREATS)) {
 					xmlTextReaderNextElement(reader);
 					while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREAT) == 0) {
 						threat = cvrf_threat_parse(reader);
-						if (threat != NULL)
+						if (threat != NULL) {
 							cvrf_vulnerability_add_threat(vulnerability, threat);
+						} else {
+							oscap_setxmlerr("Could not parse CVRF file: Missing or invalid"
+									"Threat element\n");
+						}
 						xmlTextReaderNextNode(reader);
 					}
 				}
@@ -1178,7 +1205,6 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
 			const char *product_id = oscap_element_string_copy(reader);
-
 			if (product_id != NULL)
 				oscap_stringlist_add_string(stat->product_ids, product_id);
 
