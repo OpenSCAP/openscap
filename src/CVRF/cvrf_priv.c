@@ -962,7 +962,7 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
 		full_name = cvrf_product_name_new();
-		full_name->product_id = xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+		full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
 		full_name->cpe = oscap_element_string_copy(reader);
 		branch->full_name = full_name;
 		xmlTextReaderNextNode(reader);
@@ -1004,7 +1004,7 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_PRODUCT_NAME)) {
 		full_name = cvrf_product_name_new();
-		full_name->product_id = xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+		full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
 		full_name->cpe = oscap_element_string_copy(reader);
 		relation->full_name = full_name;
 		xmlTextReaderNextNode(reader);
