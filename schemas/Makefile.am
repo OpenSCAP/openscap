@@ -57,7 +57,6 @@ cpe23_DATA = $(wildcard cpe/2.3/*.xsd cpe/2.3/*.dtd)
 
 cve_DATA = $(wildcard cve/*.xsd)
 
-cvrf_DATA = $(wildcard cvrf/*.xsd)
 cvrf11_DATA = $(wildcard cvrf/1.1/*.xsd)
 
 common_DATA = $(wildcard common/*.xsd)
@@ -88,7 +87,6 @@ EXTRA_DIST = \
 	$(cpe23_DATA) \
 	$(common_DATA) \
 	$(cve_DATA) \
-	$(cvrf_DATA) \
 	$(cvrf11_DATA)
 
 CLEANFILES = \
