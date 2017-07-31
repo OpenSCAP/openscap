@@ -5,7 +5,10 @@
 #include <string.h>
 
 #include <libxml/xmlreader.h>
-#include <libxml/xmlwriter.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
+#include <libxml/parser.h>
+#include <libxml/xpathInternals.h>
 
 #include "public/cvrf.h"
 #include "cvrf_priv.h"
@@ -143,6 +146,8 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 
 
 #define TAG_CVRF_DOC BAD_CAST "cvrfdoc"
+#define TAG_DOC_TITLE BAD_CAST "DocumentTitle"
+#define TAG_DOC_TYPE BAD_CAST "DocumentType"
 #define ATTR_PRODUCT_ID "ProductID"
 //namespaces
 #define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
@@ -215,15 +220,9 @@ static void find_all_cvrf_product_ids_by_OS(struct cvrf_model_eval *eval, struct
 	cvrf_relationship_iterator_free(relationships);
 }
 
-void cvrf_export_results(struct oscap_source *import_source, struct oscap_source *export_source, const char *os_name) {
+void cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name) {
 	__attribute__nonnull__(import_source);
-
-	const char *export_file = oscap_source_get_filepath(export_source);
-	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(export_file, 0);
-	if (writer == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return;
-	}
+	__attribute__nonnull__(export_file);
 
 	struct cvrf_model_eval *eval = cvrf_model_eval_new();
 	struct cvrf_model *model = cvrf_model_import(import_source);
@@ -232,65 +231,63 @@ void cvrf_export_results(struct oscap_source *import_source, struct oscap_source
 	find_all_cvrf_product_ids_by_OS(eval, model);
 	cvrf_model_eval_construct_definition_model(eval);
 
-	xmlTextWriterSetIndent(writer, 1);
-	xmlTextWriterSetIndentString(writer, BAD_CAST "  ");
-	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
-
-	xmlTextWriterStartElementNS(writer, NULL, TAG_CVRF_DOC, CVRF_NS);
-
-	cvrf_export_element(cvrf_model_get_doc_title(model), "DocumentTitle", writer);
-	cvrf_export_element(os_name, "OS Name", writer);
-
-	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Identification", NULL);
-	xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "ID", NULL);
-	xmlTextWriterWriteString(writer, BAD_CAST cvrf_model_get_identification(model));
-	xmlTextWriterEndElement(writer);
-	xmlTextWriterEndElement(writer);
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+	}
+	xmlNode *root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
+	xmlDocSetRootElement(doc, root_node);
+	xmlNs *cvrf_ns = xmlNewNs(root_node, CVRF_NS, NULL);
+	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST cvrf_model_get_doc_title(model));
+	xmlNode *type_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TYPE, BAD_CAST cvrf_model_get_doc_type(model));
+	//cvrf_export_element(os_name, "OS Name", writer);
 
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
 	bool vulnerable = false;
 	while (cvrf_vulnerability_iterator_has_more(it)) {
 		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
+		xmlNode *vuln_node = xmlNewTextChild(root_node, NULL, BAD_CAST "Vulnerability", NULL);
+
+		cvrf_element_to_dom("Title", cvrf_vulnerability_get_vulnerability_title(vuln), vuln_node);
+		cvrf_element_to_dom("ID", cvrf_vulnerability_get_vulnerability_id(vuln), vuln_node);
+		cvrf_element_to_dom("DiscoveryDate", cvrf_vulnerability_get_discovery_date(vuln), vuln_node);
+		cvrf_element_to_dom("ReleaseDate", cvrf_vulnerability_get_release_date(vuln), vuln_node);
+		cvrf_element_to_dom("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
+		cvrf_element_to_dom("CWE", cvrf_vulnerability_get_cwe_id(vuln), vuln_node);
+
+		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ProductStatuses", NULL);
 		struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
-
-		xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Vulnerability", VULN_NS);
-		xmlTextWriterWriteAttribute(writer, BAD_CAST "Ordinal", BAD_CAST (char *)cvrf_vulnerablity_get_ordinal(vuln));
-		cvrf_export_element(cvrf_vulnerability_get_cve_id(vuln), "CVE", writer);
-
 		while (oscap_string_iterator_has_more(product_ids)) {
 			const char *product_id = oscap_string_iterator_next(product_ids);
 
-			xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Result", NULL);
-			xmlTextWriterWriteAttribute(writer, ATTR_PRODUCT_ID, BAD_CAST product_id);
 			if (cvrf_product_vulnerability_fixed(vuln, product_id)) {
-				xmlTextWriterWriteString(writer, BAD_CAST "FIXED");
+
 			}
 			else {
-				xmlTextWriterWriteString(writer, BAD_CAST "VULNERABLE");
+
 				vulnerable = true;
 			}
-			xmlTextWriterEndElement(writer);
 		}
 
 		if (vulnerable && cvrf_vulnerability_get_remediation_count(vuln) > 0) {
-			xmlTextWriterStartElementNS(writer, NULL, BAD_CAST "Remediations", NULL);
-			OSCAP_FOREACH(cvrf_remediation, e, cvrf_vulnerability_get_remediations(vuln), cvrf_remediation_export(e, writer);)
-			xmlTextWriterEndElement(writer);
+			xmlNode *remediations_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "Remediations", NULL);
+			struct cvrf_remediation_iterator *remediations = cvrf_vulnerability_get_remediations(vuln);
+			while (cvrf_remediation_iterator_has_more(remediations)) {
+				xmlNode *remediation_node = xmlNewTextChild(remediations_node, NULL, BAD_CAST "Remediation", NULL);
+				cvrf_remediation_to_dom(cvrf_remediation_iterator_next(remediations), remediation_node);
+			}
+			cvrf_remediation_iterator_free(remediations);
 		}
 
 		oscap_string_iterator_free(product_ids);
-		xmlTextWriterEndElement(writer);
 		vulnerable = false;
 	}
 	cvrf_vulnerability_iterator_free(it);
-	xmlTextWriterEndElement(writer);
 
-	xmlTextWriterEndDocument(writer);
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);
 	cvrf_model_eval_free(eval);
-	oscap_source_free(export_source);
-	xmlFreeTextWriter(writer);
-	if (xmlGetLastError() != NULL)
-		oscap_setxmlerr(xmlGetLastError());
 }
 
 

@@ -522,15 +522,15 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source);
  * @param index CVRF index structure
  * @param export_source OSCAP export target
  */
-void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source);
+//void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source);
 
 /**
  * Export CVRF model to XML file
  * @memberof cvrf_model
  * @param cvrf CVRF model
- * @param export_source OSCAP export target
+ * @param export_file OSCAP export target
  */
-void cvrf_model_export(struct cvrf_model *cvrf, struct oscap_source *export_source);
+int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file);
 
 
 const char * cvrf_model_supported(void);
@@ -538,8 +538,7 @@ const char * cvrf_model_supported(void);
 
 
 
-void cvrf_export_results(struct oscap_source *import_source, struct oscap_source *export_source,
-		const char *os_version);
+void cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
 
