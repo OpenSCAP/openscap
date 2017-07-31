@@ -6,6 +6,11 @@
 #include "public/cvrf.h"
 #include "cvrf_priv.h"
 
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
+#include <libxml/parser.h>
+#include <libxml/xpathInternals.h>
+
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
@@ -59,37 +64,32 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 	return cvrf;
 }
 
+
 /**
  * Public function to export CVRF model to OSCAP export target.
  */
-void cvrf_model_export(struct cvrf_model *cvrf, struct oscap_source *export_source)
-{
-	__attribute__nonnull__(cvrf);
-	__attribute__nonnull__(export_source);
 
-	if (export_source == NULL)
-		return;
+int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
+	__attribute__nonnull__(export_file);
 
-	// TODO: redo this system to use oscap_source_save_as
-	const char *filepath = oscap_source_get_filepath(export_source);
-	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(filepath, 0);
-	if (writer == NULL) {
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
+	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		return;
+		return NULL;
 	}
 
-	xmlTextWriterSetIndent(writer, 1);
-	xmlTextWriterSetIndentString(writer, BAD_CAST "  ");
-	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
+	cvrf_model_to_dom(cvrf, doc, NULL, NULL);
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
+	if (source == NULL) {
+		return -1;
+	}
 
-	cvrf_model_export_xml(cvrf, writer);
-	xmlTextWriterEndDocument(writer);
-	xmlFreeTextWriter(writer);
-	oscap_source_free(export_source);
-	if (xmlGetLastError() != NULL)
-		oscap_setxmlerr(xmlGetLastError());
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);
+	return ret;
 }
 
+/*
 void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source) {
 
 	__attribute__nonnull__(export_source);
@@ -99,7 +99,7 @@ void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_sou
 
 	cvrf_index_export_xml(index, export_source);
 }
-
+*/
 
 const char * cvrf_model_supported(void)
 {

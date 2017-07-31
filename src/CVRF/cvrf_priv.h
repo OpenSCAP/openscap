@@ -6,7 +6,10 @@
 #define CVRF_PRIV_H_
 
 #include <libxml/xmlreader.h>
-#include <libxml/xmlwriter.h>
+#include <libxml/tree.h>
+#include <libxml/xpath.h>
+#include <libxml/parser.h>
+#include <libxml/xpathInternals.h>
 
 #include "../common/list.h"
 #include "../common/elements.h"
@@ -185,92 +188,39 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
-
-/**
- *
- * @param element Value of the element to be exported
- * @param tag String representation of the element tag
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_export_element(const char *element, const char *tag, xmlTextWriterPtr writer);
-
 /**
  *
  * @param index CVRF index with all models to export
  * @param file OSCAP export target
  */
-void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source);
+//void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source);
 
 
-/**
- *
- * @param publisher CVRF DocumentPublisher structure to export
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_doc_publisher_export(const struct cvrf_doc_publisher *publisher, xmlTextWriterPtr writer);
+void cvrf_stringlist_to_dom(struct oscap_stringlist *list, const char *tag_name, xmlNode *parent);
 
-/**
- *
- * @param tracking CVRF DocumentTracking element to export
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_doc_tracking_export(const struct cvrf_doc_tracking *tracking, xmlTextWriterPtr writer);
+void cvrf_element_to_dom(const char *elm_name, const char *elm_value, xmlNode *parent);
 
-/**
- *
- * @param cvrf CVRF model
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_model_export_xml(const struct cvrf_model *cvrf, xmlTextWriterPtr writer);
+void cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln, xmlNode *vuln_node);
 
-/**
- * @param tree ProductTree within CVRF model
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_product_tree_export(const struct cvrf_product_tree *tree, xmlTextWriterPtr writer);
+xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args);
 
-/**
- *
- * @param branch a CVRF branch of a ProductTree
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_branch_export(const struct cvrf_branch *branch, xmlTextWriterPtr writer);
+void cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher, xmlNode *pub_node);
 
-/**
- *
- * @param relation A CVRF relationship item of ProductTree
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_relationship_export(const struct cvrf_relationship *relation, xmlTextWriterPtr writer);
+void cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking, xmlNode *tracking_node);
 
-/**
- *
- * @param vuln a CVRF Vulnerability item within CVRF model
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_vulnerability_export(const struct cvrf_vulnerability *vuln, xmlTextWriterPtr writer);
+void cvrf_product_name_to_dom(struct cvrf_product_name *full_name, xmlNode *parent);
 
-/**
- *
- * @param threat a CVRF Threat item within a CVRF Vulnerability structure
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_threat_export(const struct cvrf_threat *threat, xmlTextWriterPtr writer);
+void cvrf_product_tree_to_dom(struct cvrf_product_tree *tree, xmlNode *tree_node);
 
-/**
- *
- * @param remed a CVRF Remediation for a CVRF Vulnerability item
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_remediation_export(const struct cvrf_remediation *remed, xmlTextWriterPtr writer);
+void cvrf_branch_to_dom(struct cvrf_branch *branch, xmlNode *branch_node);
 
+void cvrf_relationship_to_dom(const struct cvrf_relationship *relation, xmlNode *relation_node);
 
-/**
- * @param stat Product status within CVRF Vulnerability
- * @param writer XML Text Writer representing XML model
- */
-void cvrf_product_status_export(const struct cvrf_product_status *stat, xmlTextWriterPtr writer);
+void cvrf_threat_to_dom(const struct cvrf_threat *threat, xmlNode *threat_node);
 
+void cvrf_remediation_to_dom(const struct cvrf_remediation *remed, xmlNode *remed_node);
+
+void cvrf_product_status_to_dom(const struct cvrf_product_status *stat, xmlNode *status_node);
 
 
 #endif				/* _CVRF_PRIV_H_ */
