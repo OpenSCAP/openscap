@@ -26,10 +26,7 @@ struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
 	if (index_source == NULL)
 		return NULL;
 
-	struct cvrf_index *index;
-	index = cvrf_index_parse_xml(index_source);
-
-	return index;
+	return cvrf_index_parse_xml(index_source);
 }
 
 /**
@@ -38,7 +35,6 @@ struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
  */
 struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 {
-
 	__attribute__nonnull__(source);
 
 	if (source == NULL)
@@ -49,7 +45,6 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 		oscap_source_free(source);
 		return NULL;
 	}
-
 	int rc = xmlTextReaderNextNode(reader);
 	if (rc == -1) {
 		xmlFreeTextReader(reader);
@@ -57,11 +52,8 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 		return NULL;
 	}
 
-	struct cvrf_model *cvrf = cvrf_model_parse(reader);
-
-	xmlFreeTextReader(reader);
 	oscap_source_free(source);
-	return cvrf;
+	return cvrf_model_parse(reader);
 }
 
 
