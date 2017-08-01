@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns="http://scap.nist.gov/schema/scap-core/1.0"
+      xmlns:xml="http://www.w3.org/XML/1998/namespace"
+      elementFormDefault="qualified" attributeFormDefault="unqualified"
+      targetNamespace="http://scap.nist.gov/schema/scap-core/1.0"
+      version="0.9">
+      <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../common/xml.xsd"/>
+
+      <xsd:element name="control-mappings" type="controlMappingsType" />
+
+      <!-- ================================================== -->
+      <!-- =====  Complex Type Definitions  -->
+      <!-- ================================================== -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  check  <<complexType>>  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="checkReferenceType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Data type for the check element, a checking system specification URI, string content, and an optional external file reference. The checking system specification should be the URI for a particular version of OVAL or a related system testing language, and the content will be an identifier of a test written in that language. The external file reference could be used to point to the file in which the content test identifier is defined.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexContent>
+                  <xsd:extension base="checkSearchType">
+                        <xsd:attribute name="href" type="xsd:anyURI" use="required"/>
+                  </xsd:extension>
+            </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="assessment-check" type="checkReferenceType"/>
+      
+      <xsd:complexType name="checkSearchType">
+            <xsd:attribute name="system" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="name" type="xsd:token" use="optional"/>
+      </xsd:complexType>
+      
+      <xsd:group name="cpeReferenceGroup">
+            <xsd:choice>
+                  <xsd:element name="cpe-name" type="cpeNamePatternType"/>
+                  <xsd:element name="cpe-searchable-name" type="cpeSearchableNamePatternType"/>
+            </xsd:choice>
+      </xsd:group>
+      
+      <xsd:complexType name="searchableCpeReferencesType">
+            <xsd:sequence>
+                  <xsd:group ref="cpeReferenceGroup" minOccurs="1" maxOccurs="unbounded"/>
+            </xsd:sequence>
+      </xsd:complexType>
+      
+      <xsd:complexType name="controlMappingsType">
+            <xsd:sequence>
+                  <xsd:element name="control-mapping" type="controlMappingType" minOccurs="1" maxOccurs="unbounded" />
+            </xsd:sequence>
+      </xsd:complexType>
+      
+      <xsd:complexType name="controlMappingType">
+            <xsd:sequence>
+                  <xsd:element name="mapping" type="mappingInstanceType" minOccurs="0" maxOccurs="unbounded" />
+            </xsd:sequence>
+            <xsd:attribute name="system-id" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="source" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="last-modified" type="xsd:dateTime" use="required"/>
+      </xsd:complexType>
+      
+      <xsd:complexType name="mappingInstanceType">
+            <xsd:simpleContent>
+                  <xsd:extension base="xsd:token">
+                        <xsd:attribute name="published" type="xsd:dateTime" use="required"/>
+                  </xsd:extension>
+            </xsd:simpleContent>
+      </xsd:complexType>
+
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <!--  Tool_Configuration  -->
+      <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+      <xsd:complexType name="assessmentMethodType">
+            <xsd:annotation>
+                  <xsd:documentation>Denotes a scanner and required configuration that is capable of detecting the referenced vulnerability.  May also be an OVAL definition and omit scanner name.</xsd:documentation>
+                  <xsd:documentation>Identifies a tool and any associated information about the tool, such as signature versions, that indicate the tool is capable or properly detecting and/or remdiating the vulnerability or misconfiguration</xsd:documentation>
+            </xsd:annotation>
+            <xsd:sequence>
+                  <xsd:element name="assessment-check" type="checkReferenceType">
+                        <xsd:annotation>
+                              <xsd:documentation>Identifies a check that can be used to detect the vulnerability or misconfiguration</xsd:documentation>
+                        </xsd:annotation>
+                  </xsd:element>
+                  <xsd:element name="assessment-engine" type="cpeNamePatternType" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:annotation>
+                              <xsd:documentation>The CPE name of the scanning tool.  A value must be supplied for this element.  The CPE name can be used for a CPE from the NVD.  The CPE title attribute can be used for internal naming conventions. (or both, if possible)</xsd:documentation>
+                        </xsd:annotation>
+                  </xsd:element>
+            </xsd:sequence>
+      </xsd:complexType>
+
+      <xsd:complexType name="identifyableAssessmentMethodType">
+            <xsd:complexContent>
+                  <xsd:extension base="assessmentMethodType">
+                        <xsd:attribute name="id" type="xsd:positiveInteger"/>
+                  </xsd:extension>
+            </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="assessment-method" type="identifyableAssessmentMethodType"/>
+      
+      <!-- =============================================================================== -->
+      <!-- ================================  ID PATTERNS  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:simpleType name="cpeNamePatternType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Define the format for acceptable CPE Names. An urn format is used with the id starting with the word oval followed by a unique string, followed by the three letter code 'def', and ending with an integer.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:anyURI">
+                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9._\-~%]*){0,6}"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="cpeNamePVPVPatternType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en-US">Define the format for acceptable CPE Names. A URN format is used with the id starting with the word cpe followed by :/ and then some number of individual  components separated by colons.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="cpeNamePatternType">
+                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9\._\-~%]*){3,6}"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+      
+      <xsd:simpleType name="cpeSearchableNamePatternType">
+            <xsd:annotation>
+                  <xsd:documentation xml:lang="en">Define the format for acceptable
+                        searchableCPE Names.  The URI escaped code '%25' may be used
+                        to represent the character '%' which will be interpreted as a
+                        wildcard.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:anyURI">
+                  <xsd:pattern value="[c][pP][eE]:/[AHOaho]?(:[A-Za-z0-9._\-~%*]*){0,6}"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+      
+      <xsd:simpleType name="cpeComponentPatternType">
+            <xsd:annotation>
+                  <xsd:documentation>The name pattern of a CPE component.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="xsd:token">
+                  <xsd:pattern value="[A-Za-z0-9._\-~]*"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="cpePartComponentPatternType">
+            <xsd:annotation>
+                  <xsd:documentation>The name pattern of the CPE part component.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:restriction base="cpeComponentPatternType">
+                  <xsd:pattern value="[hoaHOA]"/>
+            </xsd:restriction>
+      </xsd:simpleType>
+
+      <xsd:simpleType name="cweNamePatternType">
+            <xsd:restriction base="xsd:token">
+                  <xsd:pattern value="CWE-[1-9]\d{0,5}"></xsd:pattern>
+            </xsd:restriction>
+      </xsd:simpleType>
+      <!-- ================================================== -->
+      <!-- =====  Change History  -->
+      <!-- ================================================== -->
+      <!--
+            v0.1 - Initial public draft
+            v0.1a - Fixed the CPE Name pattern to properly allow '-' characters
+            v0.2
+                  - Refactored some types into the metadata-core schema
+                  - Unified the checkReferenceType with the check type used in the CPE dictionary
+            v0.3
+                  - Added controlMappingsType
+      -->
+</xsd:schema>
