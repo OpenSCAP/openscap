@@ -13,10 +13,10 @@
   <!-- =============================================================================== -->
   <!-- =============================   SCHEMA IMPORTS  =============================== -->
   <!-- =============================================================================== -->
-  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dc.xsd" />
-  <xs:import namespace="http://www.icasi.org/CVRF/schema/vuln/1.1" schemaLocation="http://www.icasi.org/CVRF/schema/vuln/1.1/vuln.xsd" />
-  <xs:import namespace="http://www.icasi.org/CVRF/schema/common/1.1" schemaLocation="http://www.icasi.org/CVRF/schema/common/1.1/common.xsd" />
-  <xs:import namespace="http://www.icasi.org/CVRF/schema/prod/1.1" schemaLocation="http://www.icasi.org/CVRF/schema/prod/1.1/prod.xsd" />
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="dc.xsd" />
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/vuln/1.1" schemaLocation="vuln.xsd" />
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/common/1.1" schemaLocation="common.xsd" />
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/prod/1.1" schemaLocation="prod.xsd" />
   <!-- =============================================================================== -->
   <!-- ============================ SCHEMA INFORMATION =============================== -->
   <!-- =============================================================================== -->
