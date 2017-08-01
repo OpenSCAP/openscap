@@ -114,7 +114,7 @@ inline size_t oscap_fast_iterator_get_itemcount(const struct oscap_fast_iterator
 	return it->list->itemcount;
 }
 inline bool oscap_fast_iterator_has_more(struct oscap_fast_iterator *it) {
-	if (!it->list || !it->list->first)
+	if (!it->list->first)
 		return false;
 	if (it->cur == NULL)
 		return true;
