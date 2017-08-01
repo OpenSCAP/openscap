@@ -337,6 +337,59 @@ void oscap_iterator_reset(struct oscap_iterator * it)
     it->cur = NULL;
 }
 
+void *oscap_fast_iterator_new(struct oscap_list *list)
+{
+	struct oscap_fast_iterator *it = oscap_calloc(1, sizeof(struct oscap_fast_iterator));
+	it->cur = NULL;
+	it->list = list;
+	return it;
+}
+
+void oscap_fast_iterator_free(struct oscap_fast_iterator *it)
+{
+	oscap_free(it);
+}
+
+void *oscap_fast_iterator_detach(struct oscap_fast_iterator *it)
+{
+	__attribute__nonnull__(it);
+
+	if (!it->cur)
+		return NULL;
+
+	struct oscap_list_item *item = it->cur;
+	void *value = item->data;
+
+	assert(it->list->first != NULL && it->list->last != NULL);
+
+	if (it->list->first == it->list->last) {
+		assert(it->list->first == it->list->last);
+		assert(it->list->first == item);
+		it->list->first = it->list->last = NULL;
+		it->cur = NULL;
+	} else if (item == it->list->first) {
+		assert(it->list->first != it->list->last);
+		assert(item->next != NULL);
+		it->list->first = item->next;
+		it->cur = NULL;
+	} else {
+		struct oscap_list_item *cur = it->list->first;
+		while (cur->next != item) {
+			assert(cur->next != NULL);
+			cur = cur->next;
+		}
+		assert(cur->next == item);
+		cur->next = item->next;
+		if (item == it->list->last)
+			it->list->last = cur;
+		it->cur = cur;
+	}
+
+	free(item);
+	--it->list->itemcount;
+	return value;
+}
+
 struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list)
 {
     void *clone = oscap_list_new(); // oscap_stringlist (or oscap_list)
