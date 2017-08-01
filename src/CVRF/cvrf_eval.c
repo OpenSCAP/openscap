@@ -96,16 +96,10 @@ void cvrf_model_eval_free(struct cvrf_model_eval *eval) {
 struct cvrf_rpm_attributes {
 	char *full_package_name;
 	char *rpm_name;
-	char *rpm_version;
-	char *rpm_release;
-	char *rpm_architecture;
 	char *evr_format;
 };
 OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, full_package_name)
 OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, rpm_name)
-OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, rpm_version)
-OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, rpm_release)
-OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, rpm_architecture)
 OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, evr_format)
 
 
@@ -118,9 +112,6 @@ struct cvrf_rpm_attributes *cvrf_rpm_attributes_new() {
 
 	ret->full_package_name = NULL;
 	ret->rpm_name = NULL;
-	ret->rpm_version = NULL;
-	ret->rpm_release = NULL;
-	ret->rpm_architecture = NULL;
 	ret->evr_format = NULL;
 
 	return ret;
@@ -133,9 +124,6 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 
 	oscap_free(attributes->full_package_name);
 	oscap_free(attributes->rpm_name);
-	oscap_free(attributes->rpm_version);
-	oscap_free(attributes->rpm_release);
-	oscap_free(attributes->rpm_architecture);
 	oscap_free(attributes->evr_format);
 	oscap_free(attributes);
 }
@@ -258,14 +246,14 @@ void cvrf_export_results(struct oscap_source *import_source, const char *export_
 		struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
 		while (oscap_string_iterator_has_more(product_ids)) {
 			const char *product_id = oscap_string_iterator_next(product_ids);
-
+			/*
 			if (cvrf_product_vulnerability_fixed(vuln, product_id)) {
 
 			}
 			else {
 
 				vulnerable = true;
-			}
+			}*/
 		}
 
 		if (vulnerable && cvrf_vulnerability_get_remediation_count(vuln) > 0) {
@@ -316,67 +304,26 @@ static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eva
 	return rpm_name;
 }
 
-static struct cvrf_rpm_attributes *parse_rpm_name_into_components(struct cvrf_model_eval *eval, const char *product_id) {
+static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(struct cvrf_model_eval *eval,
+		const char *product_id) {
 
 	struct cvrf_rpm_attributes *attributes = cvrf_rpm_attributes_new();
-	const char *rpm_name = get_rpm_name_from_cvrf_product_id(eval, product_id);
-	attributes->full_package_name = strdup(rpm_name);
-
-	struct oscap_string *rpm_name_suffix = oscap_string_new();
-	struct oscap_string *rpm_release = oscap_string_new();
-	struct oscap_string *evr_format = oscap_string_new();
-	int dashes_size = 1;
-	int periods_size = 1;
-
-	char *rpm_name_dup = strdup(rpm_name);
-	char **split_by_dashes = oscap_split(rpm_name_dup, "-");
-	while (split_by_dashes[dashes_size-1] != NULL)
-		dashes_size++;
-	for (int index = 0; index < dashes_size-3; index++) {
-		oscap_string_append_string(rpm_name_suffix, split_by_dashes[index]);
-		if (index < dashes_size-4)
-			oscap_string_append_char(rpm_name_suffix, '-');
+	attributes->full_package_name = strdup(get_rpm_name_from_cvrf_product_id(eval, product_id));
+	char *package = strdup(strchr(product_id, ':')+1);
+	int index = 0;
+	while (index < strlen(package)) {
+		if (package[index] == ':')
+			break;
+		index++;
 	}
-	attributes->rpm_name = strdup(oscap_string_get_cstr(rpm_name_suffix));
-	attributes->rpm_version = strdup(split_by_dashes[dashes_size-3]);
+	char *evr = &package[index-1];
+	package[index-2] = NULL;
 
-	char **split_by_periods = oscap_split(split_by_dashes[dashes_size-2], ".");
-	while (split_by_periods[periods_size-1] != NULL)
-		periods_size++;
-	for (int index = 0; index < periods_size-3; index++) {
-		oscap_string_append_string(rpm_release, split_by_periods[index]);
-		if (index < periods_size-4)
-			oscap_string_append_char(rpm_release, '.');
-	}
-	attributes->rpm_release = strdup(oscap_string_get_cstr(rpm_release));
-	attributes->rpm_architecture = strdup(split_by_periods[periods_size-3]);
-
-	char *product_id_dup = strdup(product_id);
-	char **split_by_colon = oscap_split(product_id_dup, ":");
-	char *name_with_epoch = oscap_strdup(split_by_colon[1]);
-	int name_length = strlen(attributes->rpm_name);
-
-	if (name_length == strlen(name_with_epoch)) {
-		oscap_string_append_char(evr_format, '0');
-	} else {
-		for (int epoch_index = name_length+1; epoch_index < strlen(name_with_epoch); epoch_index++)
-			oscap_string_append_char(evr_format, name_with_epoch[epoch_index]);
-	}
-	oscap_string_append_char(evr_format, ':');
-	oscap_string_append_string(evr_format, attributes->rpm_version);
-	oscap_string_append_char(evr_format, '-');
-	oscap_string_append_string(evr_format, attributes->rpm_release);
-
-	attributes->evr_format = strdup(oscap_string_get_cstr(evr_format));
-
-
-	oscap_free(rpm_name_dup);
-	oscap_free(product_id_dup);
-	oscap_string_free(evr_format);
-	oscap_string_free(rpm_name_suffix);
-	oscap_string_free(rpm_release);
+	attributes->evr_format = evr;
+	attributes->rpm_name = package;
 	return attributes;
 }
+
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product) {
 
@@ -432,14 +379,12 @@ static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_mo
 	oval_test_set_existence(rpm_test, OVAL_AT_LEAST_ONE_EXISTS);
 
 	return rpm_test;
-
 }
 
 static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int objectNo) {
 
-	const char *object_id;
-	object_id = get_oval_id_string("object", objectNo);
+	const char *object_id = get_oval_id_string("object", objectNo);
 
 	struct oval_object *object = oval_definition_model_get_new_object(def_model, object_id);
 	oval_object_set_subtype(object, OVAL_LINUX_RPM_INFO);
@@ -455,8 +400,7 @@ static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_m
 static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int stateNo) {
 
-	const char *state_id;
-	state_id = get_oval_id_string("state", stateNo);
+	const char *state_id = get_oval_id_string("state", stateNo);
 
 	// Entity (Package name match)
 	struct oval_entity *state_entity = oval_entity_new(def_model);
@@ -467,6 +411,7 @@ static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_mod
 	// Content (Package name match)
 	struct oval_state_content *state_content = oval_state_content_new(def_model);
 	oval_state_content_set_entity(state_content, state_entity);
+
 
 	// Entity (EVR format less than)
 	struct oval_entity *evr_entity = oval_entity_new(def_model);
@@ -496,7 +441,6 @@ int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 
 	struct oval_definition_model *def_model = eval->def_model;
 	struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
-	const char *product_id;
 	int index = 1;
 
 	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, "oval:org.open-scap.unix:def:1");
@@ -506,11 +450,11 @@ int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 	oval_definition_set_criteria(definition, criteria);
 
 	while (oscap_string_iterator_has_more(product_ids)) {
-		product_id = oscap_string_iterator_next(product_ids);
-		struct cvrf_rpm_attributes *rpm_attr = parse_rpm_name_into_components(eval, product_id);
+		const char *product_id = oscap_string_iterator_next(product_ids);
+		struct cvrf_rpm_attributes *attributes = parse_rpm_attributes_from_cvrf_product_id(eval, product_id);
 
-		struct oval_object *object = get_new_oval_object_for_cvrf(def_model, rpm_attr, index);
-		struct oval_state *state = get_new_oval_state_for_cvrf(def_model, rpm_attr, index);
+		struct oval_object *object = get_new_oval_object_for_cvrf(def_model, attributes, index);
+		struct oval_state *state = get_new_oval_state_for_cvrf(def_model, attributes, index);
 
 		struct oval_test *rpm_test = get_new_rpminfo_test_for_cvrf(def_model, index);
 		oval_test_set_object(rpm_test, object);
@@ -518,11 +462,10 @@ int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 
 		struct oval_criteria_node *criterion = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERION);
 		oval_criteria_node_set_test(criterion, rpm_test);
-		char *comment = oscap_sprintf("Check for vulnerability of package %s", rpm_attr->rpm_name);
+		char *comment = oscap_sprintf("Check for vulnerability of package %s", attributes->rpm_name);
 		oval_criteria_node_set_comment(criterion, comment);
 		oval_criteria_node_add_subnode(criteria, criterion);
 
-		cvrf_rpm_attributes_free(rpm_attr);
 		index++;
 	}
 	oscap_string_iterator_free(product_ids);
