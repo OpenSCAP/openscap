@@ -100,8 +100,8 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 		printf("%s\tTitle: %s\n", prefix, profile_title);
 		free(profile_title);
 		printf("%s\t\tId: %s%s\n", prefix,
-			xccdf_profile_get_abstract(prof) ? "(abstract) " : "",
-			xccdf_profile_get_id(prof));
+			xccdf_profile_get_id(prof),
+			xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
 	}
 	xccdf_profile_iterator_free(prof_it);
 }
