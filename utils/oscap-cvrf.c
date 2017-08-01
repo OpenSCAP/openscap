@@ -32,7 +32,7 @@ struct oscap_module OSCAP_CVRF_MODULE = {
 };
 
 static struct oscap_module CVRF_EVALUATE_MODULE = {
-	.name = "evaluate",
+	.name = "eval",
 	.parent = &OSCAP_CVRF_MODULE,
 	.summary = "Evaluate system for vulnerabilities",
 	.usage = "[options] <cvrf file> <results file>",
