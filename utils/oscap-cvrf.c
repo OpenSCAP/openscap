@@ -113,6 +113,7 @@ static int app_cvrf_export(const struct oscap_action *action) {
 
 	if (model)
 		cvrf_model_free(model);
+	oscap_source_free(import_source);
 	free(action->cvrf_action);
 	return result;
 }

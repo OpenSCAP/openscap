@@ -460,7 +460,7 @@ struct cvrf_vulnerability {
 	char *discovery_date;
 	char *release_date;
 	char *cve_id;
-	char *cwe_id;
+	struct oscap_stringlist *cwe_ids;
 
 	// Product Status
 	struct oscap_list *cvrf_product_statuses;
@@ -475,7 +475,6 @@ OSCAP_ACCESSOR_STRING(cvrf_vulnerability, vulnerability_id)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, discovery_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, release_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, cve_id)
-OSCAP_ACCESSOR_STRING(cvrf_vulnerability, cwe_id)
 OSCAP_IGETINS_GEN(cvrf_product_status, cvrf_vulnerability, cvrf_product_statuses, cvrf_product_status)
 OSCAP_ITERATOR_REMOVE_F(cvrf_product_status)
 OSCAP_IGETINS_GEN(cvrf_remediation, cvrf_vulnerability, remediations, remediation)
@@ -488,6 +487,9 @@ int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln) {
 }
 int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln) {
 	return vuln->ordinal;
+}
+struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln) {
+	return oscap_stringlist_get_strings(vuln->cwe_ids);
 }
 
 struct cvrf_vulnerability *cvrf_vulnerability_new() {
@@ -503,7 +505,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_new() {
 	ret->discovery_date = NULL;
 	ret->release_date = NULL;
 	ret->cve_id = NULL;
-	ret->cwe_id = NULL;
+	ret->cwe_ids = oscap_stringlist_new();
 	ret->cvrf_product_statuses = oscap_list_new();
 	ret->remediations = oscap_list_new();
 	ret->threats = oscap_list_new();
@@ -521,7 +523,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 	oscap_free(vulnerability->discovery_date);
 	oscap_free(vulnerability->release_date);
 	oscap_free(vulnerability->cve_id);
-	oscap_free(vulnerability->cwe_id);
+	oscap_stringlist_free(vulnerability->cwe_ids);
 	oscap_list_free(vulnerability->cvrf_product_statuses, (oscap_destruct_func) cvrf_product_status_free);
 	oscap_list_free(vulnerability->remediations, (oscap_destruct_func) cvrf_remediation_free);
 	oscap_list_free(vulnerability->threats, (oscap_destruct_func) cvrf_threat_free);
@@ -825,6 +827,7 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 		xmlTextReaderNextElement(reader);
 	}
 
+	xmlFreeTextReader(reader);
 	return ret;
 }
 
@@ -1072,7 +1075,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CVE)) {
 			vulnerability->cve_id = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CWE)) {
-			vulnerability->cwe_id = oscap_element_string_copy(reader);
+			oscap_stringlist_add_string(vulnerability->cwe_ids, oscap_element_string_copy(reader));
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUSES)) {
 			xmlTextReaderNextElement(reader);
 			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUS) == 0) {
@@ -1249,108 +1252,24 @@ void cvrf_element_to_dom(const char *elm_name, const char *elm_value, xmlNode *p
 	xmlNode *elm_node = xmlNewTextChild(parent, NULL, BAD_CAST elm_name, BAD_CAST elm_value);
 }
 
-/*
-void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source) {
+xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args) {
 
-	__attribute__nonnull__(index);
-	__attribute__nonnull__(export_source);
-
-	const char *filepath = oscap_source_get_filepath(export_source);
-	struct xmlTextWriterPtr *writer = xmlNewTextWriterFilename(filepath, 0);
-	if (writer == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return;
+	xmlNode *index_node = NULL;
+	if (parent == NULL) {
+		index_node = xmlNewNode(NULL, BAD_CAST "Index");
+		xmlDocSetRootElement(doc, index_node);
+	} else {
+		index_node = xmlNewTextChild(parent, NULL, BAD_CAST "Index", NULL);
 	}
-
-	xmlTextWriterSetIndent(writer, 1);
-	xmlTextWriterSetIndentString(writer, BAD_CAST "  ");
-	xmlTextWriterStartDocument(writer, NULL, "UTF-8", NULL);
 
 	struct cvrf_model_iterator *models = cvrf_index_get_models(index);
 	while (cvrf_model_iterator_has_more(models)) {
 		struct cvrf_model *model = cvrf_model_iterator_next(models);
-		cvrf_model_export_xml(model, writer);
+		cvrf_model_to_dom(model, doc, index_node, user_args);
 	}
 	cvrf_model_iterator_free(models);
 
-	xmlTextWriterEndDocument(writer);
-	xmlFreeTextWriter(writer);
-	oscap_source_free(export_source);
-	if (xmlGetLastError() != NULL)
-		oscap_setxmlerr(xmlGetLastError());
-}*/
-
-
-void cvrf_product_status_to_dom(const struct cvrf_product_status *stat, xmlNode *status_node) {
-	const char *status_type = cvrf_product_status_type_get_text(stat->status_type);
-	xmlNewProp(status_node, BAD_CAST "Type", BAD_CAST status_type);
-
-	cvrf_stringlist_to_dom(stat->product_ids, "ProductID", status_node);
-}
-
-void cvrf_remediation_to_dom(const struct cvrf_remediation *remed, xmlNode *remed_node) {
-
-	const char *remed_type = cvrf_remediation_type_get_text(remed->remed_type);
-	xmlNewProp(remed_node, BAD_CAST "Type", BAD_CAST remed_type);
-
-	cvrf_element_to_dom("Description", remed->remed_description, remed_node);
-	cvrf_element_to_dom("URL", remed->remed_URL, remed_node);
-	cvrf_element_to_dom("Entitlement", remed->remed_entitlement, remed_node);
-	cvrf_stringlist_to_dom(remed->remed_product_ids, "ProductID", remed_node);
-	cvrf_stringlist_to_dom(remed->remed_group_ids, "GroupID", remed_node);
-}
-
-void cvrf_threat_to_dom(const struct cvrf_threat *threat, xmlNode *threat_node) {
-
-	const char *threat_type = cvrf_threat_type_get_text(threat->threat_type);
-	xmlNewProp(threat_node, BAD_CAST "Type", BAD_CAST threat_type);
-	if (threat->threat_date)
-		xmlNewProp(threat_node, BAD_CAST "Date", BAD_CAST threat->threat_date);
-
-	cvrf_element_to_dom("Description", threat->threat_description, threat_node);
-	cvrf_stringlist_to_dom(threat->threat_product_ids, "ProductID", threat_node);
-	cvrf_stringlist_to_dom(threat->threat_group_ids, "GroupID", threat_node);
-}
-
-void cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln, xmlNode *vuln_node) {
-
-	//xmlNewProp(vuln_node, ATTR_VULNERABILITY_ORDINAL, BAD_CAST vuln->ordinal);
-
-	cvrf_element_to_dom("Title", vuln->vulnerability_title, vuln_node);
-	cvrf_element_to_dom("ID", vuln->vulnerability_id, vuln_node);
-	cvrf_element_to_dom("DiscoveryDate", vuln->discovery_date, vuln_node);
-	cvrf_element_to_dom("ReleaseDate", vuln->release_date, vuln_node);
-	cvrf_element_to_dom("CVE", vuln->cve_id, vuln_node);
-	cvrf_element_to_dom("CWE", vuln->cwe_id, vuln_node);
-
-	if (oscap_list_get_itemcount(vuln->cvrf_product_statuses) > 0) {
-		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, TAG_PRODUCT_STATUSES, NULL);
-		struct cvrf_product_status_iterator *statuses = cvrf_vulnerability_get_cvrf_product_statuses(vuln);
-		while (cvrf_product_status_iterator_has_more(statuses)) {
-			xmlNode *status_node = xmlNewTextChild(statuses_node, NULL, TAG_PRODUCT_STATUS, NULL);
-			cvrf_product_status_to_dom(cvrf_product_status_iterator_next(statuses), status_node);
-		}
-		cvrf_product_status_iterator_free(statuses);
-	}
-	if (oscap_list_get_itemcount(vuln->threats) > 0) {
-		xmlNode *threats_node = xmlNewTextChild(vuln_node, NULL, TAG_THREATS, NULL);
-		struct cvrf_threat_iterator *threats = cvrf_vulnerability_get_threats(vuln);
-		while (cvrf_threat_iterator_has_more(threats)) {
-			xmlNode *threat_node = xmlNewTextChild(threats_node, NULL, TAG_THREAT, NULL);
-			cvrf_threat_to_dom(cvrf_threat_iterator_next(threats), threat_node);
-		}
-		cvrf_threat_iterator_free(threats);
-
-	}
-	if (oscap_list_get_itemcount(vuln->remediations) > 0) {
-		xmlNode *remediations_node = xmlNewTextChild(vuln_node, NULL, TAG_REMEDIATIONS, NULL);
-		struct cvrf_remediation_iterator *remediations = cvrf_vulnerability_get_remediations(vuln);
-		while (cvrf_remediation_iterator_has_more(remediations)) {
-			xmlNode *remediation_node = xmlNewTextChild(remediations_node, NULL, TAG_REMEDIATION, NULL);
-			cvrf_remediation_to_dom(cvrf_remediation_iterator_next(remediations), remediation_node);
-		}
-		cvrf_remediation_iterator_free(remediations);
-	}
+	return index_node;
 }
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args) {
@@ -1365,6 +1284,7 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 	xmlNs *cvrf_ns = xmlNewNs(root_node, CVRF_NS, NULL);
 
 	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST model->doc_title);
+	xmlNewProp(title_node, BAD_CAST "xml:lang", BAD_CAST "en");
 	xmlNode *type_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TYPE, BAD_CAST model->doc_type);
 
 	xmlNode *doc_publisher = xmlNewTextChild(root_node, NULL, TAG_PUBLISHER, NULL);
@@ -1431,6 +1351,7 @@ void cvrf_product_name_to_dom(struct cvrf_product_name *full_name, xmlNode *pare
 
 void cvrf_product_tree_to_dom(struct cvrf_product_tree *tree, xmlNode *tree_node) {
 
+	xmlNs *tree_ns = xmlNewNs(tree_node, PROD_NS, NULL);
 	cvrf_product_name_to_dom(tree->full_name, tree_node);
 
 	struct oscap_iterator *branches = cvrf_product_tree_get_branches(tree);
@@ -1476,10 +1397,78 @@ void cvrf_relationship_to_dom(const struct cvrf_relationship *relation, xmlNode 
 	cvrf_product_name_to_dom(relation->full_name, relation_node);
 }
 
+void cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln, xmlNode *vuln_node) {
 
+	//xmlNewProp(vuln_node, ATTR_VULNERABILITY_ORDINAL, BAD_CAST vuln->ordinal);
 
+	xmlNs *vuln_ns = xmlNewNs(vuln_node, VULN_NS, NULL);
+	cvrf_element_to_dom("Title", vuln->vulnerability_title, vuln_node);
+	cvrf_element_to_dom("ID", vuln->vulnerability_id, vuln_node);
+	cvrf_element_to_dom("DiscoveryDate", vuln->discovery_date, vuln_node);
+	cvrf_element_to_dom("ReleaseDate", vuln->release_date, vuln_node);
+	cvrf_element_to_dom("CVE", vuln->cve_id, vuln_node);
+	cvrf_stringlist_to_dom(vuln->cwe_ids, "CWE", vuln_node);
 
+	if (oscap_list_get_itemcount(vuln->cvrf_product_statuses) > 0) {
+		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, TAG_PRODUCT_STATUSES, NULL);
+		struct cvrf_product_status_iterator *statuses = cvrf_vulnerability_get_cvrf_product_statuses(vuln);
+		while (cvrf_product_status_iterator_has_more(statuses)) {
+			xmlNode *status_node = xmlNewTextChild(statuses_node, NULL, TAG_PRODUCT_STATUS, NULL);
+			cvrf_product_status_to_dom(cvrf_product_status_iterator_next(statuses), status_node);
+		}
+		cvrf_product_status_iterator_free(statuses);
+	}
+	if (oscap_list_get_itemcount(vuln->threats) > 0) {
+		xmlNode *threats_node = xmlNewTextChild(vuln_node, NULL, TAG_THREATS, NULL);
+		struct cvrf_threat_iterator *threats = cvrf_vulnerability_get_threats(vuln);
+		while (cvrf_threat_iterator_has_more(threats)) {
+			xmlNode *threat_node = xmlNewTextChild(threats_node, NULL, TAG_THREAT, NULL);
+			cvrf_threat_to_dom(cvrf_threat_iterator_next(threats), threat_node);
+		}
+		cvrf_threat_iterator_free(threats);
 
+	}
+	if (oscap_list_get_itemcount(vuln->remediations) > 0) {
+		xmlNode *remediations_node = xmlNewTextChild(vuln_node, NULL, TAG_REMEDIATIONS, NULL);
+		struct cvrf_remediation_iterator *remediations = cvrf_vulnerability_get_remediations(vuln);
+		while (cvrf_remediation_iterator_has_more(remediations)) {
+			xmlNode *remediation_node = xmlNewTextChild(remediations_node, NULL, TAG_REMEDIATION, NULL);
+			cvrf_remediation_to_dom(cvrf_remediation_iterator_next(remediations), remediation_node);
+		}
+		cvrf_remediation_iterator_free(remediations);
+	}
+}
+
+void cvrf_product_status_to_dom(const struct cvrf_product_status *stat, xmlNode *status_node) {
+	const char *status_type = cvrf_product_status_type_get_text(stat->status_type);
+	xmlNewProp(status_node, BAD_CAST "Type", BAD_CAST status_type);
+
+	cvrf_stringlist_to_dom(stat->product_ids, "ProductID", status_node);
+}
+
+void cvrf_remediation_to_dom(const struct cvrf_remediation *remed, xmlNode *remed_node) {
+
+	const char *remed_type = cvrf_remediation_type_get_text(remed->remed_type);
+	xmlNewProp(remed_node, BAD_CAST "Type", BAD_CAST remed_type);
+
+	cvrf_element_to_dom("Description", remed->remed_description, remed_node);
+	cvrf_element_to_dom("URL", remed->remed_URL, remed_node);
+	cvrf_element_to_dom("Entitlement", remed->remed_entitlement, remed_node);
+	cvrf_stringlist_to_dom(remed->remed_product_ids, "ProductID", remed_node);
+	cvrf_stringlist_to_dom(remed->remed_group_ids, "GroupID", remed_node);
+}
+
+void cvrf_threat_to_dom(const struct cvrf_threat *threat, xmlNode *threat_node) {
+
+	const char *threat_type = cvrf_threat_type_get_text(threat->threat_type);
+	xmlNewProp(threat_node, BAD_CAST "Type", BAD_CAST threat_type);
+	if (threat->threat_date)
+		xmlNewProp(threat_node, BAD_CAST "Date", BAD_CAST threat->threat_date);
+
+	cvrf_element_to_dom("Description", threat->threat_description, threat_node);
+	cvrf_stringlist_to_dom(threat->threat_product_ids, "ProductID", threat_node);
+	cvrf_stringlist_to_dom(threat->threat_group_ids, "GroupID", threat_node);
+}
 
 
 /* End of export functions

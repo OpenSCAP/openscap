@@ -253,7 +253,6 @@ void cvrf_export_results(struct oscap_source *import_source, const char *export_
 		cvrf_element_to_dom("DiscoveryDate", cvrf_vulnerability_get_discovery_date(vuln), vuln_node);
 		cvrf_element_to_dom("ReleaseDate", cvrf_vulnerability_get_release_date(vuln), vuln_node);
 		cvrf_element_to_dom("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
-		cvrf_element_to_dom("CWE", cvrf_vulnerability_get_cwe_id(vuln), vuln_node);
 
 		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ProductStatuses", NULL);
 		struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);

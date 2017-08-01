@@ -188,19 +188,11 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
-/**
- *
- * @param index CVRF index with all models to export
- * @param file OSCAP export target
- */
-//void cvrf_index_export_xml(struct cvrf_index *index, struct oscap_source *export_source);
-
-
 void cvrf_stringlist_to_dom(struct oscap_stringlist *list, const char *tag_name, xmlNode *parent);
 
 void cvrf_element_to_dom(const char *elm_name, const char *elm_value, xmlNode *parent);
 
-void cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln, xmlNode *vuln_node);
+xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args);
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args);
 
@@ -215,6 +207,8 @@ void cvrf_product_tree_to_dom(struct cvrf_product_tree *tree, xmlNode *tree_node
 void cvrf_branch_to_dom(struct cvrf_branch *branch, xmlNode *branch_node);
 
 void cvrf_relationship_to_dom(const struct cvrf_relationship *relation, xmlNode *relation_node);
+
+void cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln, xmlNode *vuln_node);
 
 void cvrf_threat_to_dom(const struct cvrf_threat *threat, xmlNode *threat_node);
 
