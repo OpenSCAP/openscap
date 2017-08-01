@@ -80,9 +80,9 @@ static int app_cvrf_evaluate(const struct oscap_action *action)
 	int result = OSCAP_OK;
 
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
-	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf);
+	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
 	//struct oscap_source *export_source = oscap_source_new_from_file(action->cvrf_action->file);
-	cvrf_export_results(import_source, action->cvrf_action->file, os_name);
+	cvrf_export_results(import_source, action->cvrf_action->export_file, os_name);
 
 	cleanup:
 		if (oscap_err())
@@ -95,7 +95,7 @@ static int app_cvrf_evaluate(const struct oscap_action *action)
 static int app_cvrf_export(const struct oscap_action *action) {
 
 	int result;
-	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf);
+	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
 	struct cvrf_model *model = cvrf_model_import(import_source);
 
 	if(!model) {
@@ -104,7 +104,7 @@ static int app_cvrf_export(const struct oscap_action *action) {
 	}
 
 	//struct oscap_source *export_source = oscap_source_new_from_file(action->cvrf_action->file);
-	cvrf_model_export(model, action->cvrf_action->file);
+	cvrf_model_export(model, action->cvrf_action->export_file);
 	result = OSCAP_OK;
 
 	cleanup:
@@ -122,7 +122,7 @@ static int app_cvrf_validate(const struct oscap_action *action) {
 	int ret;
 	int result;
 
-	struct oscap_source *source = oscap_source_new_from_file(action->cvrf_action->cvrf);
+	struct oscap_source *source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
 	ret = oscap_source_validate(source, reporter, (void *) action);
 
 	if (ret==-1) {
@@ -147,8 +147,8 @@ bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 		}
 		action->doctype = OSCAP_DOCUMENT_CVRF_FEED;
 		action->cvrf_action = malloc(sizeof(struct cvrf_action));
-		action->cvrf_action->cvrf=argv[3];
-		action->cvrf_action->file=argv[4];
+		action->cvrf_action->cvrf_file=argv[3];
+		action->cvrf_action->export_file=argv[4];
 	}
 	else if (action->module == &CVRF_EXPORT_MODULE) {
 		if( argc < 5 || argc > 6) {
@@ -157,8 +157,8 @@ bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 		}
 		action->doctype = OSCAP_DOCUMENT_CVRF_FEED;
 		action->cvrf_action = malloc(sizeof(struct cvrf_action));
-		action->cvrf_action->cvrf=argv[3];
-		action->cvrf_action->file=argv[4];
+		action->cvrf_action->cvrf_file=argv[3];
+		action->cvrf_action->export_file=argv[4];
 	}
 	else if (action->module == &CVRF_VALIDATE_MODULE) {
 		if( argc < 4 || argc > 5) {
@@ -167,7 +167,7 @@ bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 		}
 		action->doctype = OSCAP_DOCUMENT_CVRF_FEED;
 		action->cvrf_action = malloc(sizeof(struct cvrf_action));
-		action->cvrf_action->cvrf=argv[3];
+		action->cvrf_action->cvrf_file=argv[3];
 	}
 
 	return true;

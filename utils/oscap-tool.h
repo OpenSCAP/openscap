@@ -100,8 +100,9 @@ struct cve_action {
 };
 
 struct cvrf_action {
-        char * file;
-        char * cvrf;
+	char *index_file;
+	char *cvrf_file;
+	char *export_file;
 };
 
 struct oscap_action {
