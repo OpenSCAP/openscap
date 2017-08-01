@@ -94,9 +94,14 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 	printf("%sProfiles:\n", prefix);
 	while (xccdf_profile_iterator_has_more(prof_it)) {
 		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
-		printf("%s\t%s%s\n", prefix,
-			xccdf_profile_get_abstract(prof) ? "(abstract) " : "",
-			xccdf_profile_get_id(prof));
+		struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
+		char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
+		oscap_text_iterator_free(title_it);
+		printf("%s\tTitle: %s\n", prefix, profile_title);
+		free(profile_title);
+		printf("%s\t\tId: %s%s\n", prefix,
+			xccdf_profile_get_id(prof),
+			xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
 	}
 	xccdf_profile_iterator_free(prof_it);
 }
