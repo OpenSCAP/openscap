@@ -14,6 +14,7 @@
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"
+#include "source/public/oscap_source.h"
 
 #define CVRF_SUPPORTED "1.1"
 
@@ -52,7 +53,6 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 		return NULL;
 	}
 
-	oscap_source_free(source);
 	return cvrf_model_parse(reader);
 }
 
@@ -81,17 +81,28 @@ int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
 	return ret;
 }
 
-/*
-void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source) {
 
-	__attribute__nonnull__(export_source);
+int cvrf_index_export(struct cvrf_index *index, const char *export_file) {
+	__attribute__nonnull__(export_file);
 
-	if (export_source == NULL)
-		return;
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
 
-	cvrf_index_export_xml(index, export_source);
+
+	cvrf_index_to_dom(index, doc, NULL, NULL);
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
+	if (source == NULL) {
+		return -1;
+	}
+
+	int ret = oscap_source_save_as(source, NULL);
+	oscap_source_free(source);
+	return ret;
 }
-*/
+
 
 const char * cvrf_model_supported(void)
 {

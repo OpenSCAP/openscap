@@ -520,15 +520,17 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source);
  * Export all CVRF models in CVRF index to XML file
  * @memberof cvrf_index
  * @param index CVRF index structure
- * @param export_source OSCAP export target
+ * @param export_file OSCAP export target
+ * @return exit code of export
  */
-//void cvrf_index_export(struct cvrf_index *index, struct oscap_source *export_source);
+int cvrf_index_export(struct cvrf_index *index, const char *export_file);
 
 /**
  * Export CVRF model to XML file
  * @memberof cvrf_model
  * @param cvrf CVRF model
  * @param export_file OSCAP export target
+ * @return exit code of export
  */
 int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file);
 
