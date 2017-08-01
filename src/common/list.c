@@ -189,17 +189,17 @@ void* oscap_list_find(struct oscap_list *list, void *what, oscap_cmp_func compar
 	if (list == NULL) return false;
 	if (compare == NULL) compare = oscap_ptr_cmp;
 
-	struct oscap_iterator *it = oscap_iterator_new(list);
+	struct oscap_fast_iterator *it = oscap_fast_iterator_new(list);
 
-	while (_oscap_iterator_has_more_internal(it)) {
-		void *item = oscap_iterator_next(it);
+	while (oscap_fast_iterator_has_more(it)) {
+		void *item = oscap_fast_iterator_next(it);
 		if (compare(item, what)) {
-			oscap_iterator_free(it);
+			oscap_fast_iterator_free(it);
 			return item;
 		}
 	}
 
-	oscap_iterator_free(it);
+	oscap_fast_iterator_free(it);
 	return NULL;
 }
 
