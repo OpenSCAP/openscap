@@ -186,6 +186,16 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
                         fclose(fp);
 
+			/* Skip empty values as sysctl tool does.
+			 * If this behavior of sysctl will be indentified as a bug,
+			 * we will have to remove this block.
+			 * See https://bugzilla.redhat.com/show_bug.cgi?id=1473207
+			 */
+			if (l == 0) {
+				dI("Skipping file '%s' because it has no value.", mibpath);
+				continue;
+			}
+
                         /*
                          * sanitize the value
                          *  - only printable and whitespace chars allowed
