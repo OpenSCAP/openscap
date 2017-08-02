@@ -172,7 +172,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 				 */
 				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
 						strcmp(ofts_ent->file, "stable_secret") == 0) {
-					dI("Skippping file %s", mibpath);
+					dI("Skipping file %s", mibpath);
 					oval_ftsent_free(ofts_ent);
 					SEXP_free(se_mib);
 					fclose(fp);
