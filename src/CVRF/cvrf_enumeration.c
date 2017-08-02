@@ -54,6 +54,43 @@ static int cvrf_enumeration_from_text(const struct oscap_string_map *map, const 
 /*****************************************************************************
  * CVRF enum map definitions
  */
+struct cvrf_item_spec {
+	cvrf_item_type_t type;
+	const char *tag_name;
+	const char *container_name;
+};
+
+static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
+	{CVRF_DOCUMENT_PUBLISHER, "DocumentPublisher", NULL},
+	{CVRF_DOCUMENT_TRACKING, "DocumentTracking", NULL},
+	{CVRF_DOCUMENT_REFERENCE, "Reference", "DocumentReferences"},
+	{CVRF_PRODUCT_TREE, "ProductTree", NULL},
+	{CVRF_BRANCH, "Branch", NULL},
+	{CVRF_RELATIONSHIP, "Relationship", NULL},
+	{CVRF_PRODUCT_NAME, "FullProductName", NULL},
+	{CVRF_VULNERABILITY, "Vulnerability", NULL},
+	{CVRF_PRODUCT_STATUS, "Status", "ProductStatuses"},
+	{CVRF_THREAT, "Threat", "Threats"},
+	{CVRF_REMEDIATION, "Remediation", "Remediations"},
+	{CVRF_REFERENCE, "Reference", "References"},
+	{0, NULL, NULL}
+};
+
+const char *cvrf_item_type_get_text(cvrf_item_type_t item_type) {
+	for (const struct cvrf_item_spec *mapptr = CVRF_ITEM_TYPE_MAP; mapptr->tag_name != NULL; ++mapptr) {
+		if (item_type == mapptr->type)
+			return mapptr->tag_name;
+	}
+	return NULL;
+}
+const char *cvrf_item_type_get_container(cvrf_item_type_t item_type) {
+	for (const struct cvrf_item_spec *mapptr = CVRF_ITEM_TYPE_MAP; mapptr->tag_name != NULL; ++mapptr) {
+		if (item_type == mapptr->type)
+			return mapptr->container_name;
+	}
+	return NULL;
+}
+
 
 const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
 	{CVRF_DOC_PUBLISHER_VENDOR, "Vendor"},
@@ -71,7 +108,6 @@ const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publi
 	return cvrf_enumeration_get_text(CVRF_DOC_PUBLISHER_TYPE_MAP, doc_publisher_type);
 }
 
-
 const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
 	{CVRF_DOC_STATUS_DRAFT, "Draft"},
 	{CVRF_DOC_STATUS_INTERIM, "Interim"},
@@ -86,6 +122,18 @@ const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type
 	return cvrf_enumeration_get_text(CVRF_DOC_STATUS_TYPE_MAP, doc_status_type);
 }
 
+const struct oscap_string_map CVRF_REFERENCE_TYPE_MAP[] = {
+	{CVRF_REFERENCE_EXTERNAL, "External"},
+	{CVRF_REFERENCE_SELF, "Self"},
+	{0, NULL}
+};
+
+cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader, char *attname) {
+	return cvrf_enumeration_attr(reader, attname, CVRF_REFERENCE_TYPE_MAP);
+}
+const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type) {
+	return cvrf_enumeration_get_text(CVRF_REFERENCE_TYPE_MAP, reference_type);
+}
 
 const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
 	{CVRF_BRANCH_VENDOR, "Vendor"},

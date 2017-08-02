@@ -19,6 +19,27 @@
  * CVRF enum definitions
  */
 
+struct cvrf_item_spec;
+
+typedef enum {
+	CVRF_DOCUMENT_PUBLISHER,
+	CVRF_DOCUMENT_TRACKING,
+	CVRF_DOCUMENT_REFERENCE,
+	CVRF_PRODUCT_TREE,
+	CVRF_BRANCH,
+	CVRF_RELATIONSHIP,
+	CVRF_PRODUCT_NAME,
+	CVRF_VULNERABILITY,
+	CVRF_PRODUCT_STATUS,
+	CVRF_THREAT,
+	CVRF_REMEDIATION,
+	CVRF_REFERENCE
+} cvrf_item_type_t;
+
+const char *cvrf_item_type_get_text(cvrf_item_type_t item_type);
+const char *cvrf_item_type_get_container(cvrf_item_type_t item_type);
+
+
 typedef enum {
 	CVRF_DOC_PUBLISHER_VENDOR,
 	CVRF_DOC_PUBLISHER_DISCOVERER,
@@ -39,6 +60,14 @@ typedef enum {
 
 cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader);
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
+
+typedef enum {
+	CVRF_REFERENCE_EXTERNAL,
+	CVRF_REFERENCE_SELF
+} cvrf_reference_type_t;
+
+cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader, char *attname);
+const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type);
 
 
 typedef enum {
@@ -139,6 +168,13 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader);
 struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse a CVRF Reference element
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Reference
+ */
+struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF product tree
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF product tree
@@ -158,6 +194,13 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader);
  * @return parsed CVRF Relationship
  */
 struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader);
+
+/**
+ * Parse CVRF FullProductName item
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Relationship
+ */
+struct cvrf_product_name *cvrf_product_name_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse CVRF vulnerability
@@ -188,33 +231,38 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
-void cvrf_stringlist_to_dom(struct oscap_stringlist *list, const char *tag_name, xmlNode *parent);
 
-void cvrf_element_to_dom(const char *elm_name, const char *elm_value, xmlNode *parent);
+void cvrf_element_add_stringlist(struct oscap_stringlist *list, const char *tag_name, xmlNode *parent);
+
+void cvrf_element_add_child(const char *elm_name, const char *elm_value, xmlNode *parent);
+
+xmlNode *cvrf_element_to_dom(const char *elm_name, const char *elm_value);
 
 xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args);
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args);
 
-void cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher, xmlNode *pub_node);
+xmlNode *cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher);
 
-void cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking, xmlNode *tracking_node);
+xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking);
 
-void cvrf_product_name_to_dom(struct cvrf_product_name *full_name, xmlNode *parent);
+xmlNode *cvrf_reference_to_dom(struct cvrf_reference *ref);
 
-void cvrf_product_tree_to_dom(struct cvrf_product_tree *tree, xmlNode *tree_node);
+xmlNode *cvrf_product_name_to_dom(struct cvrf_product_name *full_name);
 
-void cvrf_branch_to_dom(struct cvrf_branch *branch, xmlNode *branch_node);
+xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree);
 
-void cvrf_relationship_to_dom(const struct cvrf_relationship *relation, xmlNode *relation_node);
+xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch);
 
-void cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln, xmlNode *vuln_node);
+xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation);
 
-void cvrf_threat_to_dom(const struct cvrf_threat *threat, xmlNode *threat_node);
+xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln);
 
-void cvrf_remediation_to_dom(const struct cvrf_remediation *remed, xmlNode *remed_node);
+xmlNode *cvrf_threat_to_dom(const struct cvrf_threat *threat);
 
-void cvrf_product_status_to_dom(const struct cvrf_product_status *stat, xmlNode *status_node);
+xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed);
+
+xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat);
 
 
 #endif				/* _CVRF_PRIV_H_ */
