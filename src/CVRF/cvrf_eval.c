@@ -225,9 +225,9 @@ void cvrf_export_results(struct oscap_source *import_source, const char *export_
 	}
 	xmlNode *root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
 	xmlDocSetRootElement(doc, root_node);
-	xmlNs *cvrf_ns = xmlNewNs(root_node, CVRF_NS, NULL);
-	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST cvrf_model_get_doc_title(model));
-	xmlNode *type_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TYPE, BAD_CAST cvrf_model_get_doc_type(model));
+	xmlNewNs(root_node, CVRF_NS, NULL);
+	cvrf_element_add_child("DocumentTitle", cvrf_model_get_doc_title(model), root_node);
+	cvrf_element_add_child("DocumentType", cvrf_model_get_doc_type(model), root_node);
 	//cvrf_export_element(os_name, "OS Name", writer);
 
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
@@ -236,11 +236,11 @@ void cvrf_export_results(struct oscap_source *import_source, const char *export_
 		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
 		xmlNode *vuln_node = xmlNewTextChild(root_node, NULL, BAD_CAST "Vulnerability", NULL);
 
-		cvrf_element_to_dom("Title", cvrf_vulnerability_get_vulnerability_title(vuln), vuln_node);
-		cvrf_element_to_dom("ID", cvrf_vulnerability_get_vulnerability_id(vuln), vuln_node);
-		cvrf_element_to_dom("DiscoveryDate", cvrf_vulnerability_get_discovery_date(vuln), vuln_node);
-		cvrf_element_to_dom("ReleaseDate", cvrf_vulnerability_get_release_date(vuln), vuln_node);
-		cvrf_element_to_dom("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
+		cvrf_element_add_child("Title", cvrf_vulnerability_get_vulnerability_title(vuln), vuln_node);
+		cvrf_element_add_child("ID", cvrf_vulnerability_get_vulnerability_id(vuln), vuln_node);
+		cvrf_element_add_child("DiscoveryDate", cvrf_vulnerability_get_discovery_date(vuln), vuln_node);
+		cvrf_element_add_child("ReleaseDate", cvrf_vulnerability_get_release_date(vuln), vuln_node);
+		cvrf_element_add_child("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
 
 		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ProductStatuses", NULL);
 		struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
@@ -260,8 +260,8 @@ void cvrf_export_results(struct oscap_source *import_source, const char *export_
 			xmlNode *remediations_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "Remediations", NULL);
 			struct cvrf_remediation_iterator *remediations = cvrf_vulnerability_get_remediations(vuln);
 			while (cvrf_remediation_iterator_has_more(remediations)) {
-				xmlNode *remediation_node = xmlNewTextChild(remediations_node, NULL, BAD_CAST "Remediation", NULL);
-				cvrf_remediation_to_dom(cvrf_remediation_iterator_next(remediations), remediation_node);
+				xmlNode *remed_node = cvrf_remediation_to_dom(cvrf_remediation_iterator_next(remediations));
+				xmlAddChild(remediations_node, remed_node);
 			}
 			cvrf_remediation_iterator_free(remediations);
 		}
@@ -310,7 +310,7 @@ static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(str
 	struct cvrf_rpm_attributes *attributes = cvrf_rpm_attributes_new();
 	attributes->full_package_name = strdup(get_rpm_name_from_cvrf_product_id(eval, product_id));
 	char *package = strdup(strchr(product_id, ':')+1);
-	int index = 0;
+	unsigned int index = 0;
 	while (index < strlen(package)) {
 		if (package[index] == ':')
 			break;
@@ -327,7 +327,7 @@ static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(str
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product) {
 
-	struct cvrf_product_status_iterator *it = cvrf_vulnerability_get_cvrf_product_statuses(vuln);
+	struct cvrf_product_status_iterator *it = cvrf_vulnerability_get_product_statuses(vuln);
 	while (cvrf_product_status_iterator_has_more(it)) {
 		struct cvrf_product_status *stat = cvrf_product_status_iterator_next(it);
 		struct oscap_string_iterator *product_ids = cvrf_product_status_get_ids(stat);

@@ -100,6 +100,7 @@ struct cvrf_doc_tracking;
 
 const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_tracking_alias(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_tracking_version(const struct cvrf_doc_tracking *tracking);
 //const char *cvrf_doc_tracking_get_tracking_status(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
@@ -108,11 +109,18 @@ const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking 
 
 bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);
 bool cvrf_doc_tracking_set_tracking_alias(struct cvrf_doc_tracking *tracking, const char *tracking_alias);
+bool cvrf_doc_tracking_set_tracking_version(struct cvrf_doc_tracking *tracking, const char *tracking_version);
 //bool cvrf_doc_tracking_set_tracking_status(struct cvrf_doc_tracking *tracking, const char *tracking_status);
 bool cvrf_doc_tracking_set_init_release_date(struct cvrf_doc_tracking *tracking, const char *init_release_date);
 bool cvrf_doc_tracking_set_cur_release_date(struct cvrf_doc_tracking *tracking, const char *cur_release_date);
 bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, const char *generator_engine);
 bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, const char *generator_date);
+
+/**
+ * @struct cvrf_reference
+ *
+ */
+struct cvrf_reference;
 
 
 /**
@@ -130,6 +138,7 @@ struct cvrf_relationship *cvrf_relationship_iterator_next(struct cvrf_relationsh
 bool cvrf_relationship_iterator_has_more(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_free(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
+void cvrf_relationship_iterator_remove(struct cvrf_relationship_iterator *it);
 
 
 /**
@@ -185,21 +194,28 @@ bool cvrf_product_name_set_cpe(struct cvrf_product_name *full_name, const char *
 struct cvrf_vulnerability;
 
 const char *cvrf_vulnerability_get_vulnerability_title(const struct cvrf_vulnerability *vuln);
-int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_vulnerability_id(const struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_discovery_date(const struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_release_date(const struct cvrf_vulnerability *vuln);
 const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
-const char *cvrf_vulnerability_get_cwe_id(const struct cvrf_vulnerability *vuln);
+int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
 int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
+struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
 
 bool cvrf_vulnerability_set_vulnerability_title(struct cvrf_vulnerability *vuln, const char *vulnerability_title);
+bool cvrf_vulnerability_set_vulnerability_id(struct cvrf_vulnerability *vuln, const char *id);
+bool cvrf_vulnerability_set_discovery_date(struct cvrf_vulnerability *vuln, const char *discovery_date);
+bool cvrf_vulnerability_set_release_date(struct cvrf_vulnerability *vuln, const char *release_date);
 bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *cve_id);
-bool cvrf_vulnerability_set_cwe_id(struct cvrf_vulnerability *vuln, const char *cwe_id);
 
 struct cvrf_product_status_iterator;
-struct cvrf_product_status_iterator *cvrf_vulnerability_get_cvrf_product_statuses(const struct cvrf_vulnerability *vuln);
+struct cvrf_product_status_iterator *cvrf_vulnerability_get_product_statuses(const struct cvrf_vulnerability *vuln);
 struct cvrf_product_status *cvrf_product_status_iterator_next(struct cvrf_product_status_iterator *it);
 bool cvrf_product_status_iterator_has_more(struct cvrf_product_status_iterator *it);
 void cvrf_product_status_iterator_free(struct cvrf_product_status_iterator *it);
 void cvrf_product_status_iterator_reset(struct cvrf_product_status_iterator *it);
+void cvrf_product_status_iterator_remove(struct cvrf_product_status_iterator *it);
 
 struct cvrf_remediation_iterator;
 struct cvrf_remediation_iterator *cvrf_vulnerability_get_remediations(const struct cvrf_vulnerability *vuln);
@@ -207,6 +223,7 @@ struct cvrf_remediation *cvrf_remediation_iterator_next(struct cvrf_remediation_
 bool cvrf_remediation_iterator_has_more(struct cvrf_remediation_iterator *it);
 void cvrf_remediation_iterator_free(struct cvrf_remediation_iterator *it);
 void cvrf_remediation_iterator_reset(struct cvrf_remediation_iterator *it);
+void cvrf_remediation_iterator_remove(struct cvrf_remediation_iterator *it);
 
 struct cvrf_threat_iterator;
 struct cvrf_threat_iterator *cvrf_vulnerability_get_threats(const struct cvrf_vulnerability *vuln);
@@ -214,6 +231,7 @@ struct cvrf_threat *cvrf_threat_iterator_next(struct cvrf_threat_iterator *it);
 bool cvrf_threat_iterator_has_more(struct cvrf_threat_iterator *it);
 void cvrf_threat_iterator_free(struct cvrf_threat_iterator *it);
 void cvrf_threat_iterator_reset(struct cvrf_threat_iterator *it);
+void cvrf_threat_iterator_remove(struct cvrf_threat_iterator *it);
 
 
 /**
@@ -241,6 +259,18 @@ bool cvrf_threat_set_threat_description(struct cvrf_threat *threat, const char *
  */
 struct cvrf_remediation;
 
+//cvrf_remediation_type_t cvrf_remediation_get_type(struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_remed_date(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_remed_description(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_remed_URL(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_remed_entitlement(const struct cvrf_remediation *remed);
+struct oscap_string_iterator *cvrf_remediation_get_product_ids(struct cvrf_remediation *remed);
+struct oscap_string_iterator *cvrf_remediation_get_group_ids(struct cvrf_remediation *remed);
+
+bool cvrf_remediation_set_remed_date(struct cvrf_remediation *remed, const char *date);
+bool cvrf_remediation_set_remed_description(struct cvrf_remediation *remed, const char *description);
+bool cvrf_remediation_set_remed_URL(struct cvrf_remediation *remed, const char *url);
+bool cvrf_remediation_set_remed_entitlement(struct cvrf_remediation *remed, const char *entitlement);
 
 /**
  * @struct cvrf_product_status
@@ -282,15 +312,11 @@ struct cvrf_rpm_attributes;
 
 const char *cvrf_rpm_attributes_get_full_package_name(const struct cvrf_rpm_attributes *attributes);
 const char *cvrf_rpm_attributes_get_rpm_name(const struct cvrf_rpm_attributes *attributes);
-const char *cvrf_rpm_attributes_get_rpm_version(const struct cvrf_rpm_attributes *attributes);
-const char *cvrf_rpm_attributes_get_rpm_release(const struct cvrf_rpm_attributes *attributes);
-const char *cvrf_rpm_attributes_get_rpm_architecture(const struct cvrf_rpm_attributes *attributes);
+const char *cvrf_rpm_attributes_get_evr_format(const struct cvrf_rpm_attributes *attributes);
 
 bool cvrf_rpm_attributes_set_full_package_name(struct cvrf_rpm_attributes *attributes, const char *full_package);
 bool cvrf_rpm_attributes_set_rpm_name(struct cvrf_rpm_attributes *attributes, const char *rpm_name);
-bool cvrf_rpm_attributes_set_rpm_version(struct cvrf_rpm_attributes *attributes, const char *rpm_version);
-bool cvrf_rpm_attributes_set_rpm_release(struct cvrf_rpm_attributes *attributes, const char *rpm_release);
-bool cvrf_rpm_attributes_set_rpm_architecture(struct cvrf_rpm_attributes *attributes, const char *rpm_architecture);
+bool cvrf_rpm_attributes_set_evr_format(struct cvrf_rpm_attributes *attributes, const char *evr_format);
 
 /************************************************************************************/
 /************************************************************************************/
@@ -306,6 +332,12 @@ bool cvrf_rpm_attributes_set_rpm_architecture(struct cvrf_rpm_attributes *attrib
 const char * cvrf_model_supported(void);
 
 
+/**
+ * New index structure holding all CVRF models
+ * @memberof cvrf_index
+ * @return New CVRF index structure
+ */
+struct cvrf_index *cvrf_index_new(void);
 
 /**
  * New CVRF model
@@ -330,10 +362,17 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_new(void);
 
 /**
  *
- *@memberof cvrf_doc_tracking
- *@return New CVRF DocumentTracking
+ *@ memberof cvrf_doc_tracking
+ *@ return New CVRF DocumentTracking
  */
 struct cvrf_doc_tracking *cvrf_doc_tracking_new(void);
+
+/**
+ *
+ * @memberof cvrf_reference
+ * @return New CVRF Reference
+ */
+struct cvrf_reference *cvrf_reference_new(void);
 
 /**
  * New ProductTree structure
@@ -433,6 +472,12 @@ void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher);
  *
  */
 void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking);
+
+/**
+ *
+ *
+ */
+void cvrf_reference_free(struct cvrf_reference *reference);
 
 /**
  *
