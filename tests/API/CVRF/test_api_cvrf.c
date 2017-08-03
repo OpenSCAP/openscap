@@ -21,6 +21,7 @@
 #include <string.h>
 #include <cvss_score.h>
 #include <cvrf.h>
+#include <oscap_source.h>
 
 
 int main(int argc, char **argv)
@@ -30,15 +31,15 @@ int main(int argc, char **argv)
 	/* test export */
 	if (argc == 4 && !strcmp(argv[1], "--export-all")) {
 
-		model = cvrf_model_import(argv[2]);
+		model = cvrf_model_import(oscap_source_new_from_file(argv[2]));
 		if(!model)
 			return 1;
 		cvrf_model_export(model, argv[3]);
 		cvrf_model_free(model);
 		return 0;
 	} else if (argc == 4 && !strcmp(argv[1], "--eval")) {
-		const char *os_version = "openSUSE 13.1";
-		cvrf_export_results(argv[2], argv[3], os_version);
+		const char *os_version = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
+		cvrf_export_results(oscap_source_new_from_file(argv[2]), argv[3], os_version);
 		return 0;
 	}
 
