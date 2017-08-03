@@ -177,11 +177,11 @@ const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type) {
 
 
 const struct oscap_string_map CVRF_RELATIONSHIP_TYPE_MAP[] = {
-	{CVRF_RELATIONSHIP_DEFAULT_COMPONENT, "default component of"},
-	{CVRF_RELATIONSHIP_OPTIONAL_COMPONENT, "optional component of"},
-	{CVRF_RELATIONSHIP_EXTERNAL_COMPONENT, "external component of"},
-	{CVRF_RELATIONSHIP_INSTALLED_ON, "installed on"},
-	{CVRF_RELATIONSHIP_INSTALLED_WITH, "installed with"},
+	{CVRF_RELATIONSHIP_DEFAULT_COMPONENT, "Default Component Of"},
+	{CVRF_RELATIONSHIP_OPTIONAL_COMPONENT, "Optional Component Of"},
+	{CVRF_RELATIONSHIP_EXTERNAL_COMPONENT, "External Component Of"},
+	{CVRF_RELATIONSHIP_INSTALLED_ON, "Installed On"},
+	{CVRF_RELATIONSHIP_INSTALLED_WITH, "Installed With"},
 	{0, NULL}
 };
 
