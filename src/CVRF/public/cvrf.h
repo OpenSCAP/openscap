@@ -217,9 +217,11 @@ bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, co
  */
 struct cvrf_doc_publisher;
 
+const char *cvrf_doc_publisher_get_vendor_id(const struct cvrf_doc_publisher *publisher);
 const char *cvrf_doc_publisher_get_contact_details(const struct cvrf_doc_publisher *publisher);
 const char *cvrf_doc_publisher_get_issuing_authority(const struct cvrf_doc_publisher *publisher);
 
+bool cvrf_doc_publisher_set_vendor_id(struct cvrf_doc_publisher *publisher, const char *vendor_id);
 bool cvrf_doc_publisher_set_contact_details(struct cvrf_doc_publisher *publisher, const char *contact_details);
 bool cvrf_doc_publisher_set_issuing_authority(struct cvrf_doc_publisher *publisher, const char *issuing_authority);
 
@@ -241,10 +243,16 @@ bool cvrf_reference_set_ref_description(struct cvrf_reference *reference, const 
  */
 struct cvrf_document;
 
+const char *cvrf_document_get_doc_distribution(const struct cvrf_document *doc);
+const char *cvrf_document_get_aggregate_severity(const struct cvrf_document *doc);
+const char *cvrf_document_get_namespace(const struct cvrf_document *doc);
 struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc);
 struct cvrf_doc_publisher *cvrf_document_get_publisher(struct cvrf_document *doc);
 struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc);
 
+bool cvrf_document_set_doc_distribution(struct cvrf_document *doc, const char *distribution);
+bool cvrf_document_set_aggregate_severity(struct cvrf_document *doc, const char *severity);
+bool cvrf_document_set_namespace(struct cvrf_document *doc, const char *ns);
 void cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher);
 void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track);
 

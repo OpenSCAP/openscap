@@ -152,10 +152,16 @@ void cvrf_model_free(struct cvrf_model *cvrf) {
  * CVRF Document
  */
 struct cvrf_document {
+	char *doc_distribution;
+	char *aggregate_severity;
+	char *namespace;
 	struct cvrf_doc_tracking *tracking;
 	struct cvrf_doc_publisher *publisher;
 	struct oscap_list *doc_references;
 };
+OSCAP_ACCESSOR_STRING(cvrf_document, doc_distribution)
+OSCAP_ACCESSOR_STRING(cvrf_document, aggregate_severity)
+OSCAP_ACCESSOR_STRING(cvrf_document, namespace)
 
 struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc) {
 	return doc->tracking;
@@ -183,6 +189,9 @@ struct cvrf_document *cvrf_document_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->doc_distribution = NULL;
+	ret->aggregate_severity = NULL;
+	ret->namespace = NULL;
 	ret->tracking = cvrf_doc_tracking_new();
 	ret->publisher = cvrf_doc_publisher_new();
 	ret->doc_references = oscap_list_new();
@@ -195,6 +204,9 @@ void cvrf_document_free(struct cvrf_document *doc) {
 	if (doc == NULL)
 		return;
 
+	oscap_free(doc->doc_distribution);
+	oscap_free(doc->aggregate_severity);
+	oscap_free(doc->namespace);
 	cvrf_doc_tracking_free(doc->tracking);
 	cvrf_doc_publisher_free(doc->publisher);
 	oscap_list_free(doc->doc_references, (oscap_destruct_func) cvrf_reference_free);
@@ -208,9 +220,11 @@ void cvrf_document_free(struct cvrf_document *doc) {
 
 struct cvrf_doc_publisher {
 	cvrf_doc_publisher_type_t publisher_type;
+	char *vendor_id;
 	char *contact_details;
 	char *issuing_authority;
 };
+OSCAP_ACCESSOR_STRING(cvrf_doc_publisher, vendor_id)
 OSCAP_ACCESSOR_STRING(cvrf_doc_publisher, contact_details)
 OSCAP_ACCESSOR_STRING(cvrf_doc_publisher, issuing_authority)
 
@@ -227,6 +241,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->vendor_id = NULL;
 	ret->contact_details = NULL;
 	ret->issuing_authority = NULL;
 
@@ -238,6 +253,7 @@ void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher) {
 	if (publisher == NULL)
 		return;
 
+	oscap_free(publisher->vendor_id);
 	oscap_free(publisher->contact_details);
 	oscap_free(publisher->issuing_authority);
 	oscap_free(publisher);
@@ -759,17 +775,19 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 #define TAG_CVRF_DOC BAD_CAST "cvrfdoc"
 #define TAG_DOC_TITLE BAD_CAST "DocumentTitle"
 #define TAG_DOC_TYPE BAD_CAST "DocumentType"
-#define ATTR_DOC_TITLE_LANG BAD_CAST "xml:lang"
+#define ATTR_LANG BAD_CAST "xml:lang"
+#define TAG_DISTRIBUTION BAD_CAST "DocumentDistribution"
+#define TAG_AGGREGATE_SEVERITY BAD_CAST "AggregateSeverity"
+#define ATTR_NAMESPACE BAD_CAST "Namespace"
 // DocumentPublisher
 #define TAG_PUBLISHER BAD_CAST "DocumentPublisher"
+#define ATTR_VENDOR_ID BAD_CAST "VendorID"
 #define TAG_CONTACT_DETAILS BAD_CAST "ContactDetails"
 #define TAG_ISSUING_AUTHORITY BAD_CAST "IssuingAuthority"
 //Document
 #define TAG_DOCUMENT_TRACKING BAD_CAST "DocumentTracking"
 #define TAG_IDENTIFICATION BAD_CAST "Identification"
 #define TAG_TRACKING_ALIAS BAD_CAST "Alias"
-#define TAG_TRACKING_STATUS BAD_CAST "Status"
-#define TAG_TRACKING_VERSION BAD_CAST "Version"
 #define TAG_GENERATOR BAD_CAST "Generator"
 #define TAG_GENERATOR_ENGINE BAD_CAST "Engine"
 // Reference
@@ -781,7 +799,6 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 #define TAG_BRANCH BAD_CAST "Branch"
 #define ATTR_BRANCH_NAME BAD_CAST "Name"
 #define TAG_PRODUCT_NAME BAD_CAST "FullProductName"
-#define ATTR_PRODUCT_ID BAD_CAST "ProductID"
 //Relationship
 #define TAG_RELATIONSHIP BAD_CAST "Relationship"
 #define ATTR_PRODUCT_REFERENCE BAD_CAST "ProductReference"
@@ -789,12 +806,11 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 // Vulnerabilities
 #define TAG_VULNERABILITY BAD_CAST "Vulnerability"
 #define ATTR_ORDINAL BAD_CAST "Ordinal"
-#define TAG_VULNERABILITY_DISCOVERY BAD_CAST "DiscoveryDate"
-#define TAG_VULNERABILITY_RELEASE BAD_CAST "ReleaseDate"
+#define TAG_DISCOVERY_DATE BAD_CAST "DiscoveryDate"
+#define TAG_RELEASE_DATE BAD_CAST "ReleaseDate"
 #define TAG_VULNERABILITY_CVE BAD_CAST "CVE"
 #define TAG_VULNERABILITY_CWE BAD_CAST "CWE"
 #define TAG_PRODUCT_STATUSES BAD_CAST "ProductStatuses"
-#define ATTR_STATUS_TYPE BAD_CAST "Type"
 // Remediations
 #define TAG_REMEDIATIONS BAD_CAST "Remediations"
 #define TAG_REMEDIATION BAD_CAST "Remediation"
@@ -809,7 +825,9 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 #define TAG_PRODUCT_ID BAD_CAST "ProductID"
 #define TAG_STATUS BAD_CAST "Status"
 #define TAG_TITLE BAD_CAST "Title"
+#define ATTR_TYPE BAD_CAST "Type"
 #define TAG_URL BAD_CAST "URL"
+#define TAG_VERSION BAD_CAST "Version"
 // namespaces
 #define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
 #define PROD_NS BAD_CAST "http://www.icasi.org/CVRF/schema/prod/1.1"
@@ -836,14 +854,16 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 	const char *tag = cvrf_item_type_get_text(item_type);
 	bool no_err;
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tag) == 0) {
-		if (item_type == CVRF_PRODUCT_STATUS) {
+		if (item_type == CVRF_REFERENCE || item_type == CVRF_DOCUMENT_REFERENCE) {
+			no_err = oscap_list_add(list, cvrf_reference_parse(reader));
+		} else if (item_type == CVRF_PRODUCT_STATUS) {
 			no_err = oscap_list_add(list, cvrf_product_status_parse(reader));
 		} else if (item_type ==  CVRF_REMEDIATION) {
 			no_err = oscap_list_add(list, cvrf_remediation_parse(reader));
 		} else if (item_type == CVRF_THREAT) {
 			no_err = oscap_list_add(list, cvrf_threat_parse(reader));
-		} else if (item_type == CVRF_REFERENCE || item_type == CVRF_DOCUMENT_REFERENCE) {
-			no_err = oscap_list_add(list, cvrf_reference_parse(reader));
+		} else if (item_type == CVRF_VULNERABILITY) {
+			no_err = oscap_list_add(list, cvrf_vulnerability_parse(reader));
 		}
 		xmlTextReaderNextNode(reader);
 
@@ -852,6 +872,17 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 			break;
 		}
 	}
+}
+
+static char *cvrf_parse_element(xmlTextReaderPtr reader, const char *tagname, bool next_elm) {
+	char *elm_value = NULL;
+	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tagname)) {
+		elm_value = oscap_element_string_copy(reader);
+	}
+	if (next_elm)
+		xmlTextReaderNextElement(reader);
+
+	return elm_value;
 }
 
 struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
@@ -897,14 +928,8 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	struct cvrf_document *doc = ret->document;
 	xmlTextReaderNextElement(reader);
 
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOC_TITLE)) {
-		ret->doc_title = oscap_element_string_copy(reader);
-		xmlTextReaderNextElement(reader);
-	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOC_TYPE)) {
-		ret->doc_type = oscap_element_string_copy(reader);
-		xmlTextReaderNextElement(reader);
-	}
+	ret->doc_title = cvrf_parse_element(reader, "DocumentTitle", true);
+	ret->doc_type = cvrf_parse_element(reader, "DocumentType", true);
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHER)) {
 		struct cvrf_doc_publisher *publisher = cvrf_doc_publisher_parse(reader);
 		cvrf_document_set_publisher(doc, publisher);
@@ -915,23 +940,22 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 		cvrf_document_set_tracking(doc, tracking);
 		xmlTextReaderNextElement(reader);
 	}
+	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISTRIBUTION)) {
+		doc->doc_distribution = oscap_element_string_copy(reader);
+		xmlTextReaderNextElement(reader);
+	}
+	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_AGGREGATE_SEVERITY)) {
+		doc->namespace = (char *)xmlTextReaderGetAttribute(reader, ATTR_NAMESPACE);
+		doc->aggregate_severity = oscap_element_string_copy(reader);
+		xmlTextReaderNextElement(reader);
+	}
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_REFERENCES)) {
 		cvrf_parse_container(reader, doc->doc_references, CVRF_DOCUMENT_REFERENCE);
 		xmlTextReaderNextElement(reader);
 	}
 
-	struct cvrf_product_tree *tree = cvrf_product_tree_parse(reader);
-	ret->tree = tree;
-
-	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY) == 0) {
-		struct cvrf_vulnerability *vulnerability = cvrf_vulnerability_parse(reader);
-		if (vulnerability) {
-			cvrf_model_add_vulnerability(ret, vulnerability);
-		} else {
-
-		}
-		xmlTextReaderNextElement(reader);
-	}
+	ret->tree = cvrf_product_tree_parse(reader);
+	cvrf_parse_container(reader, ret->vulnerabilities, CVRF_VULNERABILITY);
 
 	xmlFreeTextReader(reader);
 	return ret;
@@ -945,15 +969,11 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 		return publisher;
 
 	publisher->publisher_type = cvrf_doc_publisher_type_parse(reader, "Type");
+	publisher->vendor_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_VENDOR_ID);
 	xmlTextReaderNextElement(reader);
 
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CONTACT_DETAILS)) {
-		publisher->contact_details = oscap_element_string_copy(reader);
-		xmlTextReaderNextElement(reader);
-	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ISSUING_AUTHORITY)) {
-		publisher->issuing_authority = oscap_element_string_copy(reader);
-	}
+	publisher->contact_details = cvrf_parse_element(reader, "ContactDetails", true);
+	publisher->issuing_authority = cvrf_parse_element(reader, "IssuingAuthority", false);
 	xmlTextReaderNextNode(reader);
 
 	return publisher;
@@ -983,9 +1003,9 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_ALIAS)) {
 				tracking->tracking_alias = oscap_element_string_copy(reader);
 			}
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_STATUS)) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS)) {
 			tracking->tracking_status = cvrf_doc_status_type_parse(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_VERSION)) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION)) {
 			tracking->tracking_version = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "InitialReleaseDate")) {
 			tracking->init_release_date = oscap_element_string_copy(reader);
@@ -1063,9 +1083,6 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 		}
 		xmlTextReaderNextNode(reader);
 	}
-
-	xmlTextReaderNextElement(reader);
-
 	return tree;
 }
 
@@ -1117,7 +1134,7 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 
 struct cvrf_product_name *cvrf_product_name_parse(xmlTextReaderPtr reader) {
 	struct cvrf_product_name *full_name = cvrf_product_name_new();
-	full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_ID);
+	full_name->product_id = (char *)xmlTextReaderGetAttribute(reader, TAG_PRODUCT_ID);
 	full_name->cpe = oscap_element_string_copy(reader);
 	xmlTextReaderNextNode(reader);
 	return full_name;
@@ -1142,9 +1159,9 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 			vuln->vulnerability_title = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ID)) {
 			vuln->vulnerability_id = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_DISCOVERY)) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISCOVERY_DATE)) {
 			vuln->discovery_date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_RELEASE)) {
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_RELEASE_DATE)) {
 			vuln->release_date = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CVE)) {
 			vuln->cve_id = oscap_element_string_copy(reader);
@@ -1165,7 +1182,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 		}
 		xmlTextReaderNextNode(reader);
 	}
-
+	xmlTextReaderNextNode(reader);
 	return vuln;
 }
 
@@ -1174,7 +1191,7 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_threat *threat = cvrf_threat_new();
 	threat->threat_type = cvrf_threat_type_parse(reader, "Type");
-	threat->threat_date = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
+	threat->threat_date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREAT) != 0) {
@@ -1183,7 +1200,7 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Description")) {
+		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
 			threat->threat_description = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
 			oscap_stringlist_add_string(threat->threat_product_ids, oscap_element_string_copy(reader));
@@ -1202,7 +1219,7 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_remediation *remed = cvrf_remediation_new();
 	remed->remed_type = cvrf_remediation_type_parse(reader, "Type");
-	remed->remed_date = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Date");
+	remed->remed_date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATION) != 0) {
@@ -1354,17 +1371,21 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "cvrfdoc", NULL);
 	}
 	xmlNewNs(root_node, CVRF_NS, NULL);
+	xmlNewNs(root_node, CVRF_NS, BAD_CAST "cvrf");
+	struct cvrf_document *cvrf_doc = model->document;
 
 	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST model->doc_title);
-	xmlNewProp(title_node, BAD_CAST "xml:lang", BAD_CAST "en");
+	xmlNewProp(title_node, ATTR_LANG, BAD_CAST "en");
 	cvrf_element_add_child("DocumentType", model->doc_type, root_node);
 
-	struct cvrf_doc_publisher *publisher = cvrf_document_get_publisher(model->document);
-	xmlAddChild(root_node, cvrf_doc_publisher_to_dom(publisher));
-	struct cvrf_doc_tracking *tracking = cvrf_document_get_tracking(model->document);
-	xmlAddChild(root_node, cvrf_doc_tracking_to_dom(tracking));
-	xmlNode *refs_node = cvrf_list_to_dom(model->document->doc_references, NULL, CVRF_DOCUMENT_REFERENCE);
-	xmlAddChild(root_node, refs_node);
+	xmlAddChild(root_node, cvrf_doc_publisher_to_dom(cvrf_doc->publisher));
+	xmlAddChild(root_node, cvrf_doc_tracking_to_dom(cvrf_doc->tracking));
+
+	xmlNode *distribution = xmlNewTextChild(root_node, NULL, TAG_DISTRIBUTION, BAD_CAST cvrf_doc->doc_distribution);
+	xmlNewProp(distribution, ATTR_LANG, BAD_CAST "en");
+	xmlNode *severity = xmlNewTextChild(root_node, NULL, TAG_AGGREGATE_SEVERITY, BAD_CAST cvrf_doc->aggregate_severity);
+	xmlNewProp(severity, ATTR_NAMESPACE, BAD_CAST cvrf_doc->namespace);
+	xmlAddChild(root_node, cvrf_list_to_dom(cvrf_doc->doc_references, NULL, CVRF_DOCUMENT_REFERENCE));
 
 	xmlAddChild(root_node, cvrf_product_tree_to_dom(model->tree));
 	struct cvrf_vulnerability_iterator *vulnerabilities = cvrf_model_get_vulnerabilities(model);
@@ -1428,7 +1449,7 @@ xmlNode *cvrf_product_name_to_dom(struct cvrf_product_name *full_name) {
 		return NULL;
 
 	xmlNode *name_node = cvrf_element_to_dom("FullProductName", full_name->cpe);
-	xmlNewProp(name_node, ATTR_PRODUCT_ID, BAD_CAST full_name->product_id);
+	xmlNewProp(name_node, TAG_PRODUCT_ID, BAD_CAST full_name->product_id);
 	return name_node;
 }
 
@@ -1447,7 +1468,7 @@ xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch) {
 
 	xmlNode *branch_node = xmlNewNode(NULL, TAG_BRANCH);
 	const char *branch_type = cvrf_branch_type_get_text(branch->branch_type);
-	xmlNewProp(branch_node, BAD_CAST "Type", BAD_CAST branch_type);
+	xmlNewProp(branch_node, ATTR_TYPE, BAD_CAST branch_type);
 	xmlNewProp(branch_node, BAD_CAST "Name", BAD_CAST branch->branch_name);
 
 	if (branch->branch_type == CVRF_BRANCH_PRODUCT_FAMILY) {
@@ -1473,7 +1494,8 @@ xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation) {
 xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 
 	xmlNode *vuln_node = xmlNewNode(NULL, TAG_VULNERABILITY);
-	//xmlNewProp(vuln_node, ATTR_ORDINAL, BAD_CAST vuln->ordinal);
+	char *ordinal = oscap_sprintf("%d", vuln->ordinal);
+	xmlNewProp(vuln_node, ATTR_ORDINAL, BAD_CAST ordinal);
 	xmlNewNs(vuln_node, VULN_NS, NULL);
 
 	cvrf_element_add_child("Title", vuln->vulnerability_title, vuln_node);
@@ -1492,6 +1514,7 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	xmlNode *refs_node = cvrf_list_to_dom(vuln->references, NULL, CVRF_REFERENCE);
 	xmlAddChild(vuln_node, refs_node);
 
+	oscap_free(ordinal);
 	return vuln_node;
 }
 
@@ -1509,7 +1532,9 @@ xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed) {
 	const char *remed_type = cvrf_remediation_type_get_text(remed->remed_type);
 	xmlNewProp(remed_node, BAD_CAST "Type", BAD_CAST remed_type);
 
-	cvrf_element_add_child("Description", remed->remed_description, remed_node);
+	xmlNode *desc_node = cvrf_element_to_dom("Description", remed->remed_description);
+	xmlNewProp(desc_node, ATTR_LANG, BAD_CAST "en");
+	xmlAddChild(remed_node, desc_node);
 	cvrf_element_add_child("URL", remed->remed_URL, remed_node);
 	cvrf_element_add_child("Entitlement", remed->remed_entitlement, remed_node);
 	cvrf_element_add_stringlist(remed->remed_product_ids, "ProductID", remed_node);

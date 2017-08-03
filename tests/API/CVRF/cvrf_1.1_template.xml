@@ -1,508 +1,1433 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
-  <DocumentTitle xml:lang="en">Security update for xen</DocumentTitle>
-  <DocumentType>SUSE Patch</DocumentType>
+<cvrfdoc xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+  <DocumentTitle xml:lang="en">Red Hat Security Advisory: java-1.8.0-ibm security update</DocumentTitle>
+  <DocumentType>Security Advisory</DocumentType>
+  <DocumentPublisher Type="Vendor">
+    <ContactDetails>secalert@redhat.com</ContactDetails>
+    <IssuingAuthority>Red Hat Product Security</IssuingAuthority>
+  </DocumentPublisher>
   <DocumentTracking>
     <Identification>
-      <ID>openSUSE-SU-2015:0226-1</ID>
+      <ID>RHSA-2017:0263</ID>
     </Identification>
     <Status>Final</Status>
     <Version>1</Version>
-    <InitialReleaseDate>2015-01-12T10:54:17Z</InitialReleaseDate>
-    <CurrentReleaseDate>2015-01-12T10:54:17Z</CurrentReleaseDate>
+    <InitialReleaseDate>2017-02-09T11:51:00Z</InitialReleaseDate>
+    <CurrentReleaseDate>2017-02-09T11:51:00Z</CurrentReleaseDate>
     <Generator>
-      <Engine>cve-database/bin/generate-cvrf.pl</Engine>
-      <Date>2017-02-24T01:00:00Z</Date>
+      <Engine>Red Hat rhsa-to-cvrf 2.1</Engine>
+      <Date>2017-05-11T04:06:48Z</Date>
     </Generator>
   </DocumentTracking>
+  <DocumentDistribution xml:lang="en">Copyright © 2017 Red Hat, Inc. All rights reserved.</DocumentDistribution>
+  <AggregateSeverity Namespace="https://access.redhat.com/security/updates/classification/">Critical</AggregateSeverity>
+  <DocumentReferences>
+    <Reference Type="Self">
+       <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
+       <Description>https://access.redhat.com/errata/RHSA-2017:0263</Description>
+    </Reference>
+    <Reference>
+       <URL>https://access.redhat.com/security/updates/classification/#critical</URL>
+       <Description>https://access.redhat.com/security/updates/classification/#critical</Description>
+    </Reference>
+    <Reference>
+       <URL>https://developer.ibm.com/javasdk/support/security-vulnerabilities/</URL>
+       <Description>https://developer.ibm.com/javasdk/support/security-vulnerabilities/</Description>
+    </Reference>
+  </DocumentReferences>
   <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
-    <Branch Type="Product Family" Name="openSUSE 13.1">
-      <Branch Type="Product Name" Name="openSUSE 13.1">
-        <FullProductName ProductID="openSUSE 13.1">openSUSE 13.1</FullProductName>
+    <Branch Type="Product Family" Name="Red Hat Enterprise Linux Supplementary">
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Desktop Supplementary (v. 6)">
+        <FullProductName ProductID="6Client-Supplementary-6.8.z">Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux HPC Node Supplementary (v. 6)">
+        <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z">Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Server Supplementary (v. 6)">
+        <FullProductName ProductID="6Server-Supplementary-6.8.z">Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Workstation Supplementary (v. 6)">
+        <FullProductName ProductID="6Workstation-Supplementary-6.8.z">Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Client Supplementary (v. 7)">
+        <FullProductName ProductID="7Client-7.3.Z-Client">Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)">
+        <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode">Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Server Supplementary (v. 7)">
+        <FullProductName ProductID="7Server-7.3.Z-Server">Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="Red Hat Enterprise Linux Workstation Supplementary (v. 7)">
+        <FullProductName ProductID="7Workstation-7.3.Z-Workstation">Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
       </Branch>
     </Branch>
-    <Branch Type="Product Version" Name="xen-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-4.3.3_04-34.1">xen-4.3.3_04-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">
+      <FullProductName ProductID="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1.8.0.4.0-1jpp.1.el6_8.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-debugsource-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-debugsource-4.3.3_04-34.1">xen-debugsource-4.3.3_04-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">
+      <FullProductName ProductID="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1.8.0.4.0-1jpp.1.el7.i686.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-devel-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-devel-4.3.3_04-34.1">xen-devel-4.3.3_04-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">
+      <FullProductName ProductID="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1.8.0.4.0-1jpp.1.el6_8.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-doc-html-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-doc-html-4.3.3_04-34.1">xen-doc-html-4.3.3_04-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">
+      <FullProductName ProductID="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1.8.0.4.0-1jpp.1.el7.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">
-      <FullProductName ProductID="xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">
+      <FullProductName ProductID="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1.8.0.4.0-1jpp.1.el6_8.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">
-      <FullProductName ProductID="xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">
+      <FullProductName ProductID="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1.8.0.4.0-1jpp.1.el7.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">
-      <FullProductName ProductID="xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">
+      <FullProductName ProductID="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1.8.0.4.0-1jpp.1.el6_8.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">
-      <FullProductName ProductID="xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">
+      <FullProductName ProductID="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1.8.0.4.0-1jpp.1.el7.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">
-      <FullProductName ProductID="xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">
+      <FullProductName ProductID="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1.8.0.4.0-1jpp.1.el6_8.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">
-      <FullProductName ProductID="xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">
+      <FullProductName ProductID="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1.8.0.4.0-1jpp.1.el7.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-libs-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-libs-4.3.3_04-34.1">xen-libs-4.3.3_04-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">
+      <FullProductName ProductID="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1.8.0.4.0-1jpp.1.el6_8.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-libs-32bit-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-libs-32bit-4.3.3_04-34.1">xen-libs-32bit-4.3.3_04-34.1</FullProductName>
+    <Branch Type="Product Version" Name="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">
+      <FullProductName ProductID="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1.8.0.4.0-1jpp.1.el7.x86_64.rpm</FullProductName>
     </Branch>
-    <Branch Type="Product Version" Name="xen-libs-debuginfo-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-libs-debuginfo-4.3.3_04-34.1">xen-libs-debuginfo-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-libs-debuginfo-32bit-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-libs-debuginfo-32bit-4.3.3_04-34.1">xen-libs-debuginfo-32bit-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-tools-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-tools-4.3.3_04-34.1">xen-tools-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-tools-debuginfo-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-tools-debuginfo-4.3.3_04-34.1">xen-tools-debuginfo-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-tools-domU-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-tools-domU-4.3.3_04-34.1">xen-tools-domU-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-tools-domU-debuginfo-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-tools-domU-debuginfo-4.3.3_04-34.1">xen-tools-domU-debuginfo-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-xend-tools-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-xend-tools-4.3.3_04-34.1">xen-xend-tools-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Branch Type="Product Version" Name="xen-xend-tools-debuginfo-4.3.3_04-34.1">
-      <FullProductName ProductID="xen-xend-tools-debuginfo-4.3.3_04-34.1">xen-xend-tools-debuginfo-4.3.3_04-34.1</FullProductName>
-    </Branch>
-    <Relationship ProductReference="xen-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-4.3.3_04-34.1">xen-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-debugsource-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-debugsource-4.3.3_04-34.1">xen-debugsource-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-devel-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-devel-4.3.3_04-34.1">xen-devel-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-doc-html-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-doc-html-4.3.3_04-34.1">xen-doc-html-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-kmp-default-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1">xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-libs-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-libs-4.3.3_04-34.1">xen-libs-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-libs-32bit-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1">xen-libs-32bit-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+      <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-libs-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1">xen-libs-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+      <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-libs-debuginfo-32bit-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1">xen-libs-debuginfo-32bit-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+      <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-tools-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-tools-4.3.3_04-34.1">xen-tools-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+      <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-tools-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1">xen-tools-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+      <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-tools-domU-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1">xen-tools-domU-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-tools-domU-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1">xen-tools-domU-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-xend-tools-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1">xen-xend-tools-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="xen-xend-tools-debuginfo-4.3.3_04-34.1" RelationType="Default Component Of" RelatesToProductReference="openSUSE 13.1">
-      <FullProductName ProductID="openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1">xen-xend-tools-debuginfo-4.3.3_04-34.1 as a component of openSUSE 13.1</FullProductName>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+      <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+      <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+      <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+      <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+      <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+      <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+      <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+      <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+      <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+      <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+      <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
   </ProductTree>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="1">
-    <CVE>CVE-2013-3495</CVE>
+  <Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2016-5546</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2016-5546</URL>
+        <Description>CVE-2016-5546</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413911</URL>
+        <Description>bz#1413911: CVE-2016-5546 OpenJDK: incorrect ECDSA signature extraction from the DER input (Libraries, 8168714)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="2">
-    <CVE>CVE-2014-5146</CVE>
+  <Vulnerability Ordinal="2" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2016-5547</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2016-5547</URL>
+        <Description>CVE-2016-5547</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413764</URL>
+        <Description>bz#1413764: CVE-2016-5547 OpenJDK: missing ObjectIdentifier length check (Libraries, 8168705)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="3">
-    <CVE>CVE-2014-5149</CVE>
+  <Vulnerability Ordinal="3" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2016-5548</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+	<Threat Type="Impact">
+	    <Description>Important</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2016-5548</URL>
+        <Description>CVE-2016-5548</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413920</URL>
+        <Description>bz#1413920: CVE-2016-5548 OpenJDK: DSA implementation timing attack (Libraries, 8168728)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="4">
-    <CVE>CVE-2014-8594</CVE>
+  <Vulnerability Ordinal="4" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2016-5549</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+	<Threat Type="Impact">
+	    <Description>Important</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2016-5549</URL>
+        <Description>CVE-2016-5549</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413923</URL>
+        <Description>bz#1413923: CVE-2016-5549 OpenJDK: ECDSA implementation timing attack (Libraries, 8168724)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="5">
-    <CVE>CVE-2014-8595</CVE>
+  <Vulnerability Ordinal="5" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2016-5552</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2016-5552</URL>
+        <Description>CVE-2016-5552</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413882</URL>
+        <Description>bz#1413882: CVE-2016-5552 OpenJDK: incorrect URL parsing in URLStreamHandler (Networking, 8167223)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="6">
-    <CVE>CVE-2014-8866</CVE>
+  <Vulnerability Ordinal="6" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3231</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3231</URL>
+        <Description>CVE-2017-3231</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413717</URL>
+        <Description>bz#1413717: CVE-2017-3231 OpenJDK: URLClassLoader insufficient access control checks (Networking, 8151934)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="7">
-    <CVE>CVE-2014-8867</CVE>
+  <Vulnerability Ordinal="7" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3241</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+            <Description>Critical</Description>
+	</Threat>
+    </Threats>	
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3241</URL>
+        <Description>CVE-2017-3241</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413955</URL>
+        <Description>bz#1413955: CVE-2017-3241 OpenJDK: untrusted input deserialization in RMI registry and DCG (RMI, 8156802)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="8">
-    <CVE>CVE-2014-9030</CVE>
+  <Vulnerability Ordinal="8" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3252</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3252</URL>
+        <Description>CVE-2017-3252</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413906</URL>
+        <Description>bz#1413906: CVE-2017-3252 OpenJDK: LdapLoginModule incorrect userDN extraction (JAAS, 8161743)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="9">
-    <CVE>CVE-2014-9065</CVE>
+  <Vulnerability Ordinal="9" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3253</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3253</URL>
+        <Description>CVE-2017-3253</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413583</URL>
+        <Description>bz#1413583: CVE-2017-3253 OpenJDK: imageio PNGImageReader failed to honor ignoreMetadata for iTXt and zTXt chunks (2D, 8166988)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="10">
-    <CVE>CVE-2014-9066</CVE>
+  <Vulnerability Ordinal="10" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-17T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3259</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>http://www.oracle.com/technetwork/security-advisory/cpujan2017-2881727.html#AppendixJAVA</URL>
+        <Description>http://www.oracle.com/technetwork/security-advisory/cpujan2017-2881727.html#AppendixJAVA</Description>
+      </Reference>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3259</URL>
+        <Description>CVE-2017-3259</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1414163</URL>
+        <Description>bz#1414163: CVE-2017-3259 Oracle JDK: unspecified vulnerability fixed in 6u141, 7u131, and 8u121 (Deployment)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
-  <Vulnerability xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1" Ordinal="11">
-    <CVE>CVE-2015-0361</CVE>
+  <Vulnerability Ordinal="11" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3261</CVE>
     <ProductStatuses>
       <Status Type="Fixed">
-        <ProductID>openSUSE 13.1:xen-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-debugsource-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-devel-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-doc-html-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-default-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-desktop-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-kmp-pae-debuginfo-4.3.3_04_k3.11.10_25-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-32bit-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-libs-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-tools-domU-debuginfo-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-4.3.3_04-34.1</ProductID>
-        <ProductID>openSUSE 13.1:xen-xend-tools-debuginfo-4.3.3_04-34.1</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
       </Status>
     </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Moderate</Description>
+	</Threat>
+    </Threats>
     <Remediations>
       <Remediation Type="Vendor Fix">
-        <Description xml:lang="en">Please Install the update.</Description>
-        <URL>http://lists.opensuse.org/opensuse-security-announce/2015-02/msg00005.html</URL>
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
       </Remediation>
     </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3261</URL>
+        <Description>CVE-2017-3261</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413653</URL>
+        <Description>bz#1413653: CVE-2017-3261 OpenJDK: integer overflow in SocketOutputStream boundary check (Networking, 8164147)</Description>
+      </Reference>
+    </References>
+  </Vulnerability>
+  <Vulnerability Ordinal="12" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3272</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Critical</Description>
+	</Threat>
+    </Threats>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
+      </Remediation>
+    </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3272</URL>
+        <Description>CVE-2017-3272</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413554</URL>
+        <Description>bz#1413554: CVE-2017-3272 OpenJDK: insufficient protected field access checks in atomic field updaters (Libraries, 8165344)</Description>
+      </Reference>
+    </References>
+  </Vulnerability>
+  <Vulnerability Ordinal="13" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-01-15T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-01-17T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-3289</CVE>
+    <ProductStatuses>
+      <Status Type="Fixed">
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+        <ProductID>7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7</ProductID>
+      </Status>
+    </ProductStatuses>
+    <Threats>
+        <Threat Type="Impact">
+	    <Description>Critical</Description>
+	</Threat>
+    </Threats>
+    <Remediations>
+      <Remediation Type="Vendor Fix">
+        <Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258
+
+All running instances of IBM Java must be restarted for this update to take effect.    </Description>
+        <URL>https://access.redhat.com/errata/RHSA-2017:0263</URL>
+      </Remediation>
+    </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-3289</URL>
+        <Description>CVE-2017-3289</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1413562</URL>
+        <Description>bz#1413562: CVE-2017-3289 OpenJDK: insecure class construction (Hotspot, 8167104)</Description>
+      </Reference>
+    </References>
   </Vulnerability>
 </cvrfdoc>
