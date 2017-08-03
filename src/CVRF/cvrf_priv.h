@@ -63,6 +63,7 @@ typedef enum {
 	CVRF_DOC_PUBLISHER_OTHER,
 } cvrf_doc_publisher_type_t;
 
+cvrf_doc_publisher_type_t cvrf_doc_publisher_get_type(struct cvrf_doc_publisher *publisher);
 cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type);
 
@@ -73,6 +74,7 @@ typedef enum {
 	CVRF_DOC_STATUS_FINAL,
 } cvrf_doc_status_type_t;
 
+cvrf_doc_status_type_t cvrf_doc_tracking_get_tracking_status(struct cvrf_doc_tracking *tracking);
 cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader);
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
 
@@ -81,6 +83,7 @@ typedef enum {
 	CVRF_REFERENCE_SELF
 } cvrf_reference_type_t;
 
+cvrf_reference_type_t cvrf_reference_get_reference_type(struct cvrf_reference *reference);
 cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type);
 
@@ -98,6 +101,7 @@ typedef enum {
 	CVRF_BRANCH_SPECIFICATION,
 } cvrf_branch_type_t;
 
+cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch);
 cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type);
 
@@ -110,6 +114,7 @@ typedef enum {
 	CVRF_RELATIONSHIP_INSTALLED_WITH,
 } cvrf_relationship_type_t;
 
+cvrf_relationship_type_t cvrf_relationship_get_relation_type(struct cvrf_relationship *relation);
 cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t relationship_type);
 
@@ -124,6 +129,7 @@ typedef enum {
 	CVRF_PRODUCT_STATUS_LAST_AFFECTED,
 } cvrf_product_status_type_t;
 
+cvrf_product_status_type_t cvrf_product_status_get_type(struct cvrf_product_status *stat);
 cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product_status_type);
 
@@ -134,6 +140,7 @@ typedef enum {
 	CVRF_THREAT_TARGET_SET,
 } cvrf_threat_type_t;
 
+cvrf_threat_type_t cvrf_threat_get_threat_type(struct cvrf_threat *threat);
 cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type);
 
@@ -146,6 +153,7 @@ typedef enum {
 	CVRF_REMEDIATION_WILL_NOT_FIX,
 } cvrf_remediation_type_t;
 
+cvrf_remediation_type_t cvrf_remediation_get_type(struct cvrf_remediation *remed);
 cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader, char *attname);
 const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_type);
 

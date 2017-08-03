@@ -24,6 +24,7 @@
 #include "public/cvrf.h"
 #include "cvrf_priv.h"
 
+#include <libxml/xmlreader.h>
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 #include <libxml/parser.h>
@@ -33,6 +34,7 @@
 #include "common/util.h"
 #include "common/list.h"
 #include "source/public/oscap_source.h"
+#include "source/oscap_source_priv.h"
 
 #define CVRF_SUPPORTED "1.1"
 
@@ -64,8 +66,7 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 		oscap_source_free(source);
 		return NULL;
 	}
-	int rc = xmlTextReaderNextNode(reader);
-	if (rc == -1) {
+	if (xmlTextReaderNextNode(reader) == -1) {
 		xmlFreeTextReader(reader);
 		oscap_source_free(source);
 		return NULL;
@@ -85,7 +86,7 @@ int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
+		return -1;
 	}
 
 	cvrf_model_to_dom(cvrf, doc, NULL, NULL);
@@ -106,7 +107,7 @@ int cvrf_index_export(struct cvrf_index *index, const char *export_file) {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
+		return -1;
 	}
 
 

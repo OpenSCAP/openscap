@@ -170,6 +170,9 @@ struct cvrf_doc_publisher *cvrf_document_get_publisher(struct cvrf_document *doc
 void cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher) {
 	doc->publisher = publisher;
 }
+struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc) {
+	return oscap_iterator_new(doc->doc_references);
+}
 
 
 struct cvrf_document *cvrf_document_new() {
@@ -311,10 +314,15 @@ struct cvrf_reference {
 	char *ref_url;
 	char *ref_description;
 };
+OSCAP_ACCESSOR_STRING(cvrf_reference, ref_url)
+OSCAP_ACCESSOR_STRING(cvrf_reference, ref_description)
+
+cvrf_reference_type_t cvrf_reference_get_reference_type(struct cvrf_reference *reference) {
+	return reference->ref_type;
+}
 
 struct cvrf_reference *cvrf_reference_new() {
 	struct cvrf_reference *ret;
-
 	ret = oscap_alloc(sizeof(struct cvrf_reference));
 	if (ret == NULL)
 		return NULL;
