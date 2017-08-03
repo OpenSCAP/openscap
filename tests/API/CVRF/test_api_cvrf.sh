@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Copyright 2017 Red Hat Inc., Durham, North Carolina.
+# All Rights Reserved.
+
 set -x
 
 . ../../test_common.sh
