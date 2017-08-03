@@ -83,7 +83,7 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
 	__attribute__nonnull__(export_file);
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return -1;
@@ -104,7 +104,7 @@ int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
 int cvrf_index_export(struct cvrf_index *index, const char *export_file) {
 	__attribute__nonnull__(export_file);
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 		return -1;
