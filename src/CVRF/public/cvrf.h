@@ -189,6 +189,21 @@ void cvrf_relationship_iterator_free(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_remove(struct cvrf_relationship_iterator *it);
 
+
+/**
+ * @struct cvrf_revision
+ *
+ */
+struct cvrf_revision;
+
+const char *cvrf_revision_get_number(const struct cvrf_revision *revision);
+const char *cvrf_revision_get_date(const struct cvrf_revision *revision);
+const char *cvrf_revision_get_description(const struct cvrf_revision *revision);
+
+bool cvrf_revision_set_number(struct cvrf_revision *revision, const char *number);
+bool cvrf_revision_set_date(struct cvrf_revision *revision, const char *date);
+bool cvrf_revision_set_description(struct cvrf_revision *revision, const char *description);
+
 /**
  * @struct cvrf_doc_tracking
  *
@@ -368,8 +383,8 @@ struct cvrf_model *cvrf_model_new(void);
 
 /**
  *
- *@memberof cvrf_document
- *@return New CVRF Document structure
+ * @memberof cvrf_document
+ * @return New CVRF Document structure
  */
 struct cvrf_document *cvrf_document_new(void);
 
@@ -382,10 +397,17 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_new(void);
 
 /**
  *
- *@ memberof cvrf_doc_tracking
- *@ return New CVRF DocumentTracking
+ * @memberof cvrf_doc_tracking
+ * @return New CVRF DocumentTracking
  */
 struct cvrf_doc_tracking *cvrf_doc_tracking_new(void);
+
+/**
+ *
+ * @memberof cvrf_revision
+ * @return New CVRF Revision
+ */
+struct cvrf_revision *cvrf_revision_new(void);
 
 /**
  *
@@ -492,6 +514,12 @@ void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher);
  *
  */
 void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking);
+
+/**
+ *
+ *
+ */
+void cvrf_revision_free(struct cvrf_revision *revision);
 
 /**
  *

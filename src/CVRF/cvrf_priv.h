@@ -39,6 +39,7 @@ struct cvrf_item_spec;
 typedef enum {
 	CVRF_DOCUMENT_PUBLISHER,
 	CVRF_DOCUMENT_TRACKING,
+	CVRF_REVISION,
 	CVRF_DOCUMENT_REFERENCE,
 	CVRF_PRODUCT_TREE,
 	CVRF_BRANCH,
@@ -191,6 +192,13 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader);
 struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF Revision element
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Revision
+ */
+struct cvrf_revision *cvrf_revision_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse a CVRF Reference element
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF Reference
@@ -268,6 +276,8 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 xmlNode *cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher);
 
 xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking);
+
+xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision);
 
 xmlNode *cvrf_reference_to_dom(struct cvrf_reference *ref);
 
