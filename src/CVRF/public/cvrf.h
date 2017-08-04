@@ -31,6 +31,7 @@
 #include <time.h>
 #include "oscap.h"
 #include "oscap_text.h"
+#include "cvss_score.h"
 #include "cpe_name.h"
 #include "oval_definitions.h"
 
@@ -83,6 +84,24 @@ bool cvrf_remediation_set_remed_URL(struct cvrf_remediation *remed, const char *
 bool cvrf_remediation_set_remed_entitlement(struct cvrf_remediation *remed, const char *entitlement);
 
 /**
+ * @struct cvrf_score_set
+ *
+ *
+ */
+struct cvrf_score_set;
+
+const char *cvrf_score_set_get_vector(const struct cvrf_score_set *score_set);
+struct oscap_string_iterator *cvrf_score_set_get_product_ids(struct cvrf_score_set *score_set);
+struct cvss_impact *cvrf_score_set_get_impact(struct cvrf_score_set *score_set);
+char *cvrf_score_set_get_score(const struct cvrf_score_set *score_set, enum cvss_category category);
+char *cvrf_score_set_get_base_score(const struct cvrf_score_set *score_set);
+char *cvrf_score_set_get_environmental_score(const struct cvrf_score_set *score_set);
+char *cvrf_score_set_get_temporal_score(const struct cvrf_score_set *score_set);
+
+bool cvrf_score_set_set_vector(struct cvrf_score_set *score_set, const char *vector);
+void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_category category, const char *score);
+
+/**
  * @struct cvrf_vulnerability
  * Structure holding CVRF Vulnerability data
  * Contains at least one ProductStatus
@@ -104,6 +123,15 @@ bool cvrf_vulnerability_set_vulnerability_id(struct cvrf_vulnerability *vuln, co
 bool cvrf_vulnerability_set_discovery_date(struct cvrf_vulnerability *vuln, const char *discovery_date);
 bool cvrf_vulnerability_set_release_date(struct cvrf_vulnerability *vuln, const char *release_date);
 bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *cve_id);
+
+struct cvrf_score_set_iterator;
+bool cvrf_vulnerability_add_score_set(struct cvrf_vulnerability *vuln, struct cvrf_score_set *score_set);
+struct cvrf_score_set_iterator *cvrf_vulnerability_get_score_sets(const struct cvrf_vulnerability *vuln);
+struct cvrf_score_set *cvrf_score_set_iterator_next(struct cvrf_score_set_iterator *it);
+bool cvrf_score_set_iterator_has_more(struct cvrf_score_set_iterator *it);
+void cvrf_score_set_iterator_free(struct cvrf_score_set_iterator *it);
+void cvrf_score_set_iterator_reset(struct cvrf_score_set_iterator *it);
+void cvrf_score_set_iterator_remove(struct cvrf_score_set_iterator *it);
 
 struct cvrf_product_status_iterator;
 bool cvrf_vulnerability_add_cvrf_product_status(struct cvrf_vulnerability *vuln, struct cvrf_product_status *stat);
@@ -451,6 +479,13 @@ struct cvrf_product_name *cvrf_product_name_new(void);
 struct cvrf_vulnerability *cvrf_vulnerability_new(void);
 
 /**
+ * New ScoreSet element of CVSSScoreSets container
+ * @memberof cvrf_score_set
+ * @return New ScoreSet element
+ */
+struct cvrf_score_set *cvrf_score_set_new(void);
+
+/**
  *
  *
  *
@@ -555,6 +590,12 @@ void cvrf_product_name_free(struct cvrf_product_name *full_name);
  *
  */
 void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability);
+
+/**
+ *
+ *
+ */
+void cvrf_score_set_free(struct cvrf_score_set *score_set);
 
 /**
  *

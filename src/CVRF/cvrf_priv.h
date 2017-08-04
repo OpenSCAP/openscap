@@ -46,6 +46,7 @@ typedef enum {
 	CVRF_RELATIONSHIP,
 	CVRF_PRODUCT_NAME,
 	CVRF_VULNERABILITY,
+	CVRF_SCORE_SET,
 	CVRF_PRODUCT_STATUS,
 	CVRF_THREAT,
 	CVRF_REMEDIATION,
@@ -241,6 +242,13 @@ struct cvrf_product_name *cvrf_product_name_parse(xmlTextReaderPtr reader);
 struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse a ScoreSet element of CVSSScoreSets container
+ * @param reader XML Text Reader representing XML model
+ * @return parsed ScoreSet element
+ */
+struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse a CVRF Threat item
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF Threat
@@ -290,6 +298,8 @@ xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch);
 xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation);
 
 xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln);
+
+xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set);
 
 xmlNode *cvrf_threat_to_dom(const struct cvrf_threat *threat);
 
