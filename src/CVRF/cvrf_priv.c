@@ -265,7 +265,7 @@ void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher) {
  */
 struct cvrf_doc_tracking {
 	char *tracking_id;
-	char *tracking_alias;
+	struct oscap_stringlist *aliases;
 	cvrf_doc_status_type_t tracking_status;
 	char *tracking_version;
 	struct oscap_list *revision_history;
@@ -276,7 +276,6 @@ struct cvrf_doc_tracking {
 	char *generator_date;
 };
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_id)
-OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_alias)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_version)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, init_release_date)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, cur_release_date)
@@ -285,6 +284,9 @@ OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, generator_date)
 
 cvrf_doc_status_type_t cvrf_doc_tracking_get_tracking_status(struct cvrf_doc_tracking *tracking) {
 	return tracking->tracking_status;
+}
+struct oscap_string_iterator *cvrf_doc_tracking_get_aliases(struct cvrf_doc_tracking *tracking) {
+	return oscap_stringlist_get_strings(tracking->aliases);
 }
 
 struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
@@ -296,7 +298,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 		return NULL;
 
 	ret->tracking_id = NULL;
-	ret->tracking_alias = NULL;
+	ret->aliases = oscap_stringlist_new();
 	ret->tracking_version = NULL;
 	ret->revision_history = oscap_list_new();
 	ret->init_release_date = NULL;
@@ -313,7 +315,7 @@ void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking) {
 		return;
 
 	oscap_free(tracking->tracking_id);
-	oscap_free(tracking->tracking_alias);
+	oscap_stringlist_free(tracking->aliases);
 	oscap_free(tracking->tracking_version);
 	oscap_list_free(tracking->revision_history, (oscap_destruct_func) cvrf_revision_free);
 	oscap_free(tracking->init_release_date);
@@ -1043,11 +1045,9 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_IDENTIFICATION)) {
 			xmlTextReaderNextElement(reader);
-			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ID)) {
-				tracking->tracking_id = oscap_element_string_copy(reader);
-			}
-			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_ALIAS)) {
-				tracking->tracking_alias = oscap_element_string_copy(reader);
+			tracking->tracking_id = cvrf_parse_element(reader, "ID", true);
+			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_ALIAS) == 0) {
+				oscap_stringlist_add_string(tracking->aliases, cvrf_parse_element(reader, "Alias", true));
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS)) {
 			tracking->tracking_status = cvrf_doc_status_type_parse(reader);
@@ -1490,7 +1490,7 @@ xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking) {
 	if (tracking->tracking_id) {
 		xmlNode *ident_node = xmlNewTextChild(tracking_node, NULL, TAG_IDENTIFICATION, NULL);
 		cvrf_element_add_child("ID", tracking->tracking_id, ident_node);
-		cvrf_element_add_child("Alias", tracking->tracking_alias, ident_node);
+		cvrf_element_add_stringlist(tracking->aliases, "Alias", ident_node);
 	}
 
 	const char *tracking_status = cvrf_doc_status_type_get_text(tracking->tracking_status);

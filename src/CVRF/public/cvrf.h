@@ -211,7 +211,7 @@ bool cvrf_revision_set_description(struct cvrf_revision *revision, const char *d
 struct cvrf_doc_tracking;
 
 const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
-const char *cvrf_doc_tracking_get_tracking_alias(const struct cvrf_doc_tracking *tracking);
+struct oscap_string_iterator *cvrf_doc_tracking_get_aliases(struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_tracking_version(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
@@ -219,7 +219,6 @@ const char *cvrf_doc_tracking_get_generator_engine(const struct cvrf_doc_trackin
 const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking *tracking);
 
 bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);
-bool cvrf_doc_tracking_set_tracking_alias(struct cvrf_doc_tracking *tracking, const char *tracking_alias);
 bool cvrf_doc_tracking_set_tracking_version(struct cvrf_doc_tracking *tracking, const char *tracking_version);
 bool cvrf_doc_tracking_set_init_release_date(struct cvrf_doc_tracking *tracking, const char *init_release_date);
 bool cvrf_doc_tracking_set_cur_release_date(struct cvrf_doc_tracking *tracking, const char *cur_release_date);
