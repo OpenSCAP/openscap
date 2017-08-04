@@ -11,6 +11,7 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 		-I$(top_srcdir)/src/OVAL/probes/public \
 		-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 		-I$(top_srcdir)/src \
+		-I$(top_srcdir)/utils \
 		@xml2_CFLAGS@
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@

@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
   <DocumentTitle xml:lang="en">Red Hat Security Advisory: java-1.8.0-ibm security update</DocumentTitle>
   <DocumentType>Security Advisory</DocumentType>
@@ -12,6 +12,13 @@
     </Identification>
     <Status>Final</Status>
     <Version>1</Version>
+    <RevisionHistory>
+      <Revision>
+        <Number>1</Number>
+        <Date>2017-02-09T11:51:00Z</Date>
+        <Description>Current version</Description>
+      </Revision>
+    </RevisionHistory>
     <InitialReleaseDate>2017-02-09T11:51:00Z</InitialReleaseDate>
     <CurrentReleaseDate>2017-02-09T11:51:00Z</CurrentReleaseDate>
     <Generator>
@@ -98,304 +105,304 @@
     <Branch Type="Product Version" Name="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">
       <FullProductName ProductID="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1.8.0.4.0-1jpp.1.el7.x86_64.rpm</FullProductName>
     </Branch>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Client-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Client-Supplementary-6.8.z">
       <FullProductName ProductID="6Client-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Desktop Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
       <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
       <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
       <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6ComputeNode-Supplementary-6.8.z">
       <FullProductName ProductID="6ComputeNode-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux HPC Node Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Server-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Server-Supplementary-6.8.z">
       <FullProductName ProductID="6Server-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Server Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="default component of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8" RelationType="Default Component Of" RelatesToProductReference="6Workstation-Supplementary-6.8.z">
       <FullProductName ProductID="6Workstation-Supplementary-6.8.z:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el6_8 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 6)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Client-7.3.Z-Client">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Client-7.3.Z-Client">
       <FullProductName ProductID="7Client-7.3.Z-Client:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Client Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
       <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
       <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
       <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
       <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
       <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7ComputeNode-7.3.Z-ComputeNode">
       <FullProductName ProductID="7ComputeNode-7.3.Z-ComputeNode:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux ComputeNode Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Server-7.3.Z-Server">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-7.3.Z-Server">
       <FullProductName ProductID="7Server-7.3.Z-Server:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Server Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-demo-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-devel-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-jdbc-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-plugin-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
-    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="default component of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
+    <Relationship ProductReference="java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7" RelationType="Default Component Of" RelatesToProductReference="7Workstation-7.3.Z-Workstation">
       <FullProductName ProductID="7Workstation-7.3.Z-Workstation:java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7">java-1.8.0-ibm-src-1:1.8.0.4.0-1jpp.1.el7 as a component of Red Hat Enterprise Linux Workstation Supplementary (v. 7)</FullProductName>
     </Relationship>
   </ProductTree>
