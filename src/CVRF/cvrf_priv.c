@@ -22,6 +22,7 @@
 #endif
 
 #include <string.h>
+#include <math.h>
 
 #include <libxml/xmlreader.h>
 #include <libxml/tree.h>
@@ -586,6 +587,7 @@ struct cvrf_vulnerability {
 	char *cve_id;
 	struct oscap_stringlist *cwe_ids;
 
+	struct oscap_list *score_sets;
 	struct oscap_list *product_statuses;
 	struct oscap_list *threats;
 	struct oscap_list *remediations;
@@ -597,6 +599,8 @@ OSCAP_ACCESSOR_STRING(cvrf_vulnerability, vulnerability_id)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, discovery_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, release_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, cve_id)
+OSCAP_IGETINS_GEN(cvrf_score_set, cvrf_vulnerability, score_sets, score_set)
+OSCAP_ITERATOR_REMOVE_F(cvrf_score_set)
 OSCAP_IGETINS_GEN(cvrf_product_status, cvrf_vulnerability, product_statuses, cvrf_product_status)
 OSCAP_ITERATOR_REMOVE_F(cvrf_product_status)
 OSCAP_IGETINS_GEN(cvrf_remediation, cvrf_vulnerability, remediations, remediation)
@@ -631,6 +635,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_new() {
 	ret->release_date = NULL;
 	ret->cve_id = NULL;
 	ret->cwe_ids = oscap_stringlist_new();
+	ret->score_sets = oscap_list_new();
 	ret->product_statuses = oscap_list_new();
 	ret->threats = oscap_list_new();
 	ret->remediations = oscap_list_new();
@@ -650,6 +655,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 	oscap_free(vulnerability->release_date);
 	oscap_free(vulnerability->cve_id);
 	oscap_stringlist_free(vulnerability->cwe_ids);
+	oscap_list_free(vulnerability->score_sets, (oscap_destruct_func) cvrf_score_set_free);
 	oscap_list_free(vulnerability->product_statuses, (oscap_destruct_func) cvrf_product_status_free);
 	oscap_list_free(vulnerability->threats, (oscap_destruct_func) cvrf_threat_free);
 	oscap_list_free(vulnerability->remediations, (oscap_destruct_func) cvrf_remediation_free);
@@ -657,6 +663,86 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 	oscap_free(vulnerability);
 }
 
+/***************************************************************************
+ * CVRF Score Set
+ */
+
+struct cvrf_score_set {
+	char *vector;
+	struct cvss_impact *impact;
+	struct oscap_stringlist *product_ids;
+};
+OSCAP_ACCESSOR_STRING(cvrf_score_set, vector)
+
+struct cvss_impact *cvrf_score_set_get_impact(struct cvrf_score_set *score_set) {
+	return score_set->impact;
+}
+
+struct oscap_string_iterator *cvrf_score_set_get_product_ids(struct cvrf_score_set *score_set) {
+	return oscap_stringlist_get_strings(score_set->product_ids);
+}
+
+void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_category category, const char *score) {
+	struct cvss_metrics *metric = cvss_metrics_new(category);
+	cvss_metrics_set_score(metric, oscap_strtol(score, NULL, 10));
+	cvss_impact_set_metrics(score_set->impact, metric);
+}
+
+char *cvrf_score_set_get_score(const struct cvrf_score_set *score_set, enum cvss_category category) {
+	struct cvss_metrics *metric;
+	if (category == CVSS_BASE) {
+		metric = cvss_impact_get_base_metrics(score_set->impact);
+	} else if (category == CVSS_ENVIRONMENTAL) {
+		metric = cvss_impact_get_environmental_metrics(score_set->impact);
+	} else if (category == CVSS_TEMPORAL) {
+		metric = cvss_impact_get_temporal_metrics(score_set->impact);
+	}
+	if (metric == NULL)
+		return NULL;
+
+	float score = cvss_metrics_get_score(metric);
+	if (isnan(score) != 0) {
+		return NULL;
+	} else {
+		return oscap_sprintf("%f", score);
+	}
+}
+
+char *cvrf_score_set_get_base_score(const struct cvrf_score_set *score_set) {
+	return cvrf_score_set_get_score(score_set, CVSS_BASE);
+}
+
+char *cvrf_score_set_get_environmental_score(const struct cvrf_score_set *score_set) {
+	return cvrf_score_set_get_score(score_set, CVSS_ENVIRONMENTAL);
+}
+
+char *cvrf_score_set_get_temporal_score(const struct cvrf_score_set *score_set) {
+	return cvrf_score_set_get_score(score_set, CVSS_TEMPORAL);
+}
+
+struct cvrf_score_set *cvrf_score_set_new() {
+
+	struct cvrf_score_set *ret;
+	ret = oscap_alloc(sizeof(struct cvrf_score_set));
+	if (ret == NULL)
+		return NULL;
+
+	ret->vector = NULL;
+	ret->impact = cvss_impact_new();
+	ret->product_ids = oscap_stringlist_new();
+	return ret;
+}
+
+void cvrf_score_set_free(struct cvrf_score_set *score_set) {
+
+	if (score_set == NULL)
+		return;
+
+	oscap_free(score_set->vector);
+	cvss_impact_free(score_set->impact);
+	oscap_stringlist_free(score_set->product_ids);
+	oscap_free(score_set);
+}
 
 /***************************************************************************
  * CVRF threat
@@ -684,7 +770,6 @@ struct oscap_string_iterator *cvrf_threat_get_group_ids(struct cvrf_threat *thre
 struct cvrf_threat *cvrf_threat_new() {
 
 	struct cvrf_threat *ret;
-
 	ret = oscap_alloc(sizeof(struct cvrf_threat));
 	if (ret == NULL)
 		return NULL;
@@ -856,6 +941,13 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 #define TAG_VULNERABILITY_CVE BAD_CAST "CVE"
 #define TAG_VULNERABILITY_CWE BAD_CAST "CWE"
 #define TAG_PRODUCT_STATUSES BAD_CAST "ProductStatuses"
+// ScoreSets
+#define TAG_CVSS_SCORE_SETS BAD_CAST "CVSSScoreSets"
+#define TAG_SCORE_SET BAD_CAST "ScoreSet"
+#define TAG_VECTOR BAD_CAST "Vector"
+#define TAG_BASE_SCORE BAD_CAST "BaseScore"
+#define TAG_ENVIRONMENTAL_SCORE BAD_CAST "EnvironmentalScore"
+#define TAG_TEMPORAL_SCORE BAD_CAST "TemporalScore"
 // Remediations
 #define TAG_REMEDIATIONS BAD_CAST "Remediations"
 #define TAG_REMEDIATION BAD_CAST "Remediation"
@@ -910,6 +1002,8 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 			no_err = oscap_list_add(list, cvrf_remediation_parse(reader));
 		} else if (item_type == CVRF_THREAT) {
 			no_err = oscap_list_add(list, cvrf_threat_parse(reader));
+		} else if (item_type == CVRF_SCORE_SET) {
+			no_err = oscap_list_add(list, cvrf_score_set_parse(reader));
 		} else if (item_type == CVRF_VULNERABILITY) {
 			no_err = oscap_list_add(list, cvrf_vulnerability_parse(reader));
 		}
@@ -1246,10 +1340,12 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 			struct cvrf_product_status *stat = cvrf_product_status_parse(reader);
 			if (stat != NULL)
 				cvrf_vulnerability_add_cvrf_product_status(vuln, stat);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATIONS)) {
-			cvrf_parse_container(reader, vuln->remediations, CVRF_REMEDIATION);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREATS)) {
 			cvrf_parse_container(reader, vuln->threats, CVRF_THREAT);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_SCORE_SETS)) {
+			cvrf_parse_container(reader, vuln->score_sets, CVRF_SCORE_SET);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATIONS)) {
+			cvrf_parse_container(reader, vuln->remediations, CVRF_REMEDIATION);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES)) {
 			cvrf_parse_container(reader, vuln->references, CVRF_REFERENCE);
 		}
@@ -1257,6 +1353,34 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 	}
 	xmlTextReaderNextNode(reader);
 	return vuln;
+}
+
+struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader) {
+	__attribute__nonnull__(reader);
+
+	struct cvrf_score_set *score_set = cvrf_score_set_new();
+	xmlTextReaderNextElement(reader);
+	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SCORE_SET) != 0) {
+		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+			xmlTextReaderNextNode(reader);
+			continue;
+		}
+
+		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VECTOR)) {
+			score_set->vector = oscap_element_string_copy(reader);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+			oscap_stringlist_add_string(score_set->product_ids, oscap_element_string_copy(reader));
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BASE_SCORE)) {
+			cvrf_score_set_add_metric(score_set, CVSS_BASE, oscap_element_string_copy(reader));
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ENVIRONMENTAL_SCORE)) {
+			cvrf_score_set_add_metric(score_set, CVSS_ENVIRONMENTAL, oscap_element_string_copy(reader));
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TEMPORAL_SCORE)) {
+			cvrf_score_set_add_metric(score_set, CVSS_TEMPORAL, oscap_element_string_copy(reader));
+		}
+		xmlTextReaderNextNode(reader);
+	}
+	xmlTextReaderNextNode(reader);
+	return score_set;
 }
 
 struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
@@ -1374,6 +1498,8 @@ static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_
 			child = cvrf_remediation_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_THREAT) {
 			child = cvrf_threat_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_SCORE_SET) {
+			child = cvrf_score_set_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_PRODUCT_STATUS) {
 			child = cvrf_product_status_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_BRANCH) {
@@ -1595,6 +1721,8 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	xmlAddChild(vuln_node, statuses_node);
 	xmlNode *threat_node = cvrf_list_to_dom(vuln->threats, NULL, CVRF_THREAT);
 	xmlAddChild(vuln_node, threat_node);
+	xmlNode *score_sets_node = cvrf_list_to_dom(vuln->score_sets, NULL, CVRF_SCORE_SET);
+	xmlAddChild(vuln_node, score_sets_node);
 	xmlNode *remed_node = cvrf_list_to_dom(vuln->remediations, NULL, CVRF_REMEDIATION);
 	xmlAddChild(vuln_node, remed_node);
 	xmlNode *refs_node = cvrf_list_to_dom(vuln->references, NULL, CVRF_REFERENCE);
@@ -1602,6 +1730,23 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 
 	oscap_free(ordinal);
 	return vuln_node;
+}
+
+xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set) {
+	xmlNode *score_node = xmlNewNode(NULL, TAG_SCORE_SET);
+	char *base = cvrf_score_set_get_base_score(score_set);
+	cvrf_element_add_child("BaseScore", base, score_node);
+	char *environmental = cvrf_score_set_get_environmental_score(score_set);
+	cvrf_element_add_child("EnvironmentalScore", environmental, score_node);
+	char *temporal = cvrf_score_set_get_temporal_score(score_set);
+	cvrf_element_add_child("TemporalScore", temporal, score_node);
+	cvrf_element_add_child("Vector", score_set->vector, score_node);
+	cvrf_element_add_stringlist(score_set->product_ids, "ProductID", score_node);
+
+	oscap_free(base);
+	oscap_free(temporal);
+	oscap_free(environmental);
+	return score_node;
 }
 
 xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat) {
