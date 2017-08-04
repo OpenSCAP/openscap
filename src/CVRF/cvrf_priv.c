@@ -915,7 +915,7 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 //Document
 #define TAG_DOCUMENT_TRACKING BAD_CAST "DocumentTracking"
 #define TAG_IDENTIFICATION BAD_CAST "Identification"
-#define TAG_TRACKING_ALIAS BAD_CAST "Alias"
+#define TAG_ALIAS BAD_CAST "Alias"
 #define TAG_REVISION_HISTORY BAD_CAST "RevisionHistory"
 #define TAG_REVISION BAD_CAST "Revision"
 #define TAG_GENERATOR BAD_CAST "Generator"
@@ -1139,9 +1139,13 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_IDENTIFICATION)) {
 			xmlTextReaderNextElement(reader);
-			tracking->tracking_id = cvrf_parse_element(reader, "ID", true);
-			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TRACKING_ALIAS) == 0) {
-				oscap_stringlist_add_string(tracking->aliases, cvrf_parse_element(reader, "Alias", true));
+			tracking->tracking_id = cvrf_parse_element(reader, "ID", false);
+			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_IDENTIFICATION) != 0) {
+				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ALIAS)) {
+					oscap_stringlist_add_string(tracking->aliases, cvrf_parse_element(reader, "Alias", false));
+					xmlTextReaderNextNode(reader);
+				}
+				xmlTextReaderNextNode(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS)) {
 			tracking->tracking_status = cvrf_doc_status_type_parse(reader);
