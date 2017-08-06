@@ -29,6 +29,6 @@ check_PROGRAMS = test_api_cvrf
 
 test_api_cvrf_SOURCES = test_api_cvrf.c
 
-EXTRA_DIST = test_api_cvrf.sh        \
-              test_api_cvrf.c         \
-	      test_api_cvrf.xml
+EXTRA_DIST = test_api_cvrf.sh \
+	test_api_cvrf.c \
+	test_api_cvrf.xml
