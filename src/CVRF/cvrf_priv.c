@@ -148,6 +148,14 @@ void cvrf_model_free(struct cvrf_model *cvrf) {
 	oscap_free(cvrf);
 }
 
+void cvrf_model_clone(struct cvrf_model *clone, const struct cvrf_model *model) {
+
+	clone->doc_title = oscap_strdup(model->doc_title);
+	clone->doc_type = oscap_strdup(model->doc_type);
+	clone->document = cvrf_document_clone(model->document);
+	clone->tree = cvrf_product_tree_clone(model->tree);
+	clone->vulnerabilities = oscap_list_clone(model->vulnerabilities, (oscap_clone_func) cvrf_vulnerability_clone);
+}
 
 /***************************************************************************
  * CVRF Document
@@ -181,7 +189,6 @@ struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc) {
 	return oscap_iterator_new(doc->doc_references);
 }
 
-
 struct cvrf_document *cvrf_document_new() {
 
 	struct cvrf_document *ret;
@@ -214,6 +221,17 @@ void cvrf_document_free(struct cvrf_document *doc) {
 	oscap_free(doc);
 }
 
+struct cvrf_document *cvrf_document_clone(const struct cvrf_document *doc) {
+
+	struct cvrf_document *clone = oscap_calloc(1, sizeof(struct cvrf_document));
+	clone->doc_distribution = oscap_strdup(doc->doc_distribution);
+	clone->aggregate_severity = oscap_strdup(doc->aggregate_severity);
+	clone->namespace = oscap_strdup(doc->namespace);
+	clone->tracking = cvrf_doc_tracking_clone(doc->tracking);
+	clone->publisher = cvrf_doc_publisher_clone(doc->publisher);
+	clone->doc_references = oscap_list_clone(doc->doc_references, (oscap_clone_func) cvrf_reference_clone);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF DocumentPublisher
@@ -258,6 +276,16 @@ void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher) {
 	oscap_free(publisher->contact_details);
 	oscap_free(publisher->issuing_authority);
 	oscap_free(publisher);
+}
+
+struct cvrf_doc_publisher *cvrf_doc_publisher_clone(const struct cvrf_doc_publisher *publisher) {
+
+	struct cvrf_doc_publisher *clone = oscap_calloc(1, sizeof(struct cvrf_doc_publisher));
+	clone->publisher_type = publisher->publisher_type;
+	clone->vendor_id = oscap_strdup(publisher->vendor_id);
+	clone->contact_details = oscap_strdup(publisher->contact_details);
+	clone->issuing_authority = oscap_strdup(publisher->issuing_authority);
+	return clone;
 }
 
 
@@ -326,6 +354,20 @@ void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking) {
 	oscap_free(tracking);
 }
 
+struct cvrf_doc_tracking *cvrf_doc_tracking_clone(const struct cvrf_doc_tracking *tracking) {
+
+	struct cvrf_doc_tracking *clone = oscap_calloc(1, sizeof(struct cvrf_doc_tracking));
+	clone->tracking_id = oscap_strdup(tracking->tracking_id);
+	clone->aliases = oscap_stringlist_clone(tracking->aliases);
+	clone->tracking_status = tracking->tracking_status;
+	clone->tracking_version = oscap_strdup(tracking->tracking_version);
+	clone->revision_history = oscap_list_clone(tracking->revision_history, (oscap_clone_func) cvrf_revision_clone);
+	clone->init_release_date = oscap_strdup(tracking->init_release_date);
+	clone->cur_release_date = oscap_strdup(tracking->cur_release_date);
+	clone->generator_engine = oscap_strdup(tracking->generator_engine);
+	clone->generator_date = oscap_strdup(tracking->generator_date);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF Revision
@@ -365,6 +407,15 @@ void cvrf_revision_free(struct cvrf_revision *revision) {
 	oscap_free(revision);
 }
 
+struct cvrf_revision *cvrf_revision_clone(const struct cvrf_revision *revision) {
+
+	struct cvrf_revision *clone = oscap_calloc(1, sizeof(struct cvrf_revision));
+	clone->number = oscap_strdup(revision->number);
+	clone->date = oscap_strdup(revision->date);
+	clone->description = oscap_strdup(revision->description);
+	return clone;
+}
+
 /***************************************************************************
  * CVRF References
  */
@@ -401,6 +452,15 @@ void cvrf_reference_free(struct cvrf_reference *ref) {
 	oscap_free(ref->ref_url);
 	oscap_free(ref->ref_description);
 	oscap_free(ref);
+}
+
+struct cvrf_reference *cvrf_reference_clone(const struct cvrf_reference *ref) {
+
+	struct cvrf_reference *clone = oscap_calloc(1, sizeof(struct cvrf_reference));
+	clone->ref_type = ref->ref_type;
+	clone->ref_url = oscap_strdup(ref->ref_url);
+	clone->ref_description = oscap_strdup(ref->ref_description);
+	return clone;
 }
 
 /***************************************************************************
@@ -445,6 +505,14 @@ void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
 	oscap_free(tree);
 }
 
+struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree *tree) {
+
+	struct cvrf_product_tree *clone = oscap_calloc(1, sizeof(struct cvrf_product_tree));
+	clone->full_name = cvrf_product_name_clone(tree->full_name);
+	clone->branches = oscap_list_clone(tree->branches, (oscap_clone_func) cvrf_branch_clone);
+	clone->relationships = oscap_list_clone(tree->relationships, (oscap_clone_func) cvrf_relationship_clone);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF Branch
@@ -493,6 +561,15 @@ void cvrf_branch_free(struct cvrf_branch *branch) {
 	oscap_free(branch);
 }
 
+struct cvrf_branch *cvrf_branch_clone(const struct cvrf_branch *branch) {
+
+	struct cvrf_branch *clone = oscap_calloc(1, sizeof(struct cvrf_branch));
+	clone->branch_name = oscap_strdup(branch->branch_name);
+	clone->branch_type = branch->branch_type;
+	clone->full_name = cvrf_product_name_clone(branch->full_name);
+	clone->subbranches = oscap_list_clone(branch->subbranches, (oscap_clone_func) cvrf_branch_clone);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF Relationship
@@ -538,6 +615,15 @@ void cvrf_relationship_free(struct cvrf_relationship *relationship) {
 	oscap_free(relationship);
 }
 
+struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship *relation) {
+
+	struct cvrf_relationship *clone = oscap_calloc(1, sizeof(struct cvrf_relationship));
+	clone->relation_type = relation->relation_type;
+	clone->product_reference = oscap_strdup(relation->product_reference);
+	clone->relates_to_ref = oscap_strdup(relation->relates_to_ref);
+	clone->full_name = cvrf_product_name_clone(relation->full_name);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF FullProductName
@@ -572,6 +658,13 @@ void cvrf_product_name_free(struct cvrf_product_name *full_name) {
 	oscap_free(full_name);
 }
 
+struct cvrf_product_name *cvrf_product_name_clone(const struct cvrf_product_name *full_name) {
+
+	struct cvrf_product_name *clone = oscap_calloc(1, sizeof(struct cvrf_product_name));
+	clone->product_id = oscap_strdup(full_name->product_id);
+	clone->cpe = oscap_strdup(full_name->cpe);
+	return clone;
+}
 
 /***************************************************************************
  ***************************************************************************
@@ -663,6 +756,21 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 	oscap_free(vulnerability);
 }
 
+struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerability *vuln) {
+
+	struct cvrf_vulnerability *clone = oscap_calloc(1, sizeof(struct cvrf_vulnerability));
+	clone->vulnerability_title = oscap_strdup(vuln->vulnerability_title);
+	clone->vulnerability_id = oscap_strdup(vuln->vulnerability_id);
+	clone->discovery_date = oscap_strdup(vuln->discovery_date);
+	clone->release_date = oscap_strdup(vuln->release_date);
+	clone->product_statuses = oscap_list_clone(vuln->product_statuses, (oscap_clone_func) cvrf_product_status_clone);
+	clone->threats = oscap_list_clone(vuln->threats, (oscap_clone_func) cvrf_threat_clone);
+	clone->score_sets = oscap_list_clone(vuln->score_sets, (oscap_clone_func) cvrf_score_set_clone);
+	clone->remediations = oscap_list_clone(vuln->remediations, (oscap_clone_func) cvrf_remediation_clone);
+	clone->references = oscap_list_clone(vuln->references, (oscap_clone_func) cvrf_reference_clone);
+	return clone;
+}
+
 /***************************************************************************
  * CVRF Score Set
  */
@@ -744,6 +852,15 @@ void cvrf_score_set_free(struct cvrf_score_set *score_set) {
 	oscap_free(score_set);
 }
 
+struct cvrf_score_set *cvrf_score_set_clone(const struct cvrf_score_set *score_set) {
+
+	struct cvrf_score_set *clone = oscap_calloc(1, sizeof(struct cvrf_score_set));
+	clone->vector = oscap_strdup(score_set->vector);
+	clone->impact= cvss_impact_clone(score_set->impact);
+	clone->product_ids = oscap_stringlist_clone(score_set->product_ids);
+	return clone;
+}
+
 /***************************************************************************
  * CVRF threat
  */
@@ -794,6 +911,16 @@ void cvrf_threat_free(struct cvrf_threat *threat) {
 	oscap_free(threat);
 }
 
+struct cvrf_threat *cvrf_threat_clone(const struct cvrf_threat *threat) {
+
+	struct cvrf_threat *clone = oscap_calloc(1, sizeof(struct cvrf_threat));
+	clone->threat_type = threat->threat_type;
+	clone->threat_date = oscap_strdup(threat->threat_date);
+	clone->threat_description = oscap_strdup(threat->threat_description);
+	clone->threat_product_ids = oscap_stringlist_clone(threat->threat_product_ids);
+	clone->threat_group_ids = oscap_stringlist_clone(threat->threat_group_ids);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF Remediation
@@ -854,6 +981,19 @@ void cvrf_remediation_free(struct cvrf_remediation *remed) {
 	oscap_free(remed);
 }
 
+struct cvrf_remediation *cvrf_remediation_clone(const struct cvrf_remediation *remed) {
+
+	struct cvrf_remediation *clone = oscap_calloc(1, sizeof(struct cvrf_remediation));
+	clone->remed_type = remed->remed_type;
+	clone->remed_date = oscap_strdup(remed->remed_date);
+	clone->remed_description = oscap_strdup(remed->remed_description);
+	clone->remed_URL = oscap_strdup(remed->remed_URL);
+	clone->remed_entitlement = oscap_strdup(remed->remed_entitlement);
+	clone->remed_product_ids = oscap_stringlist_clone(remed->remed_product_ids);
+	clone->remed_group_ids = oscap_stringlist_clone(remed->remed_group_ids);
+	return clone;
+}
+
 
 /***************************************************************************
  * CVRF ProductStatus
@@ -890,6 +1030,14 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 
 	oscap_stringlist_free(status->product_ids);
 	oscap_free(status);
+}
+
+struct cvrf_product_status *cvrf_product_status_clone(const struct cvrf_product_status *stat) {
+
+	struct cvrf_product_status *clone = oscap_calloc(1, sizeof(struct cvrf_product_status));
+	clone->status_type = stat->status_type;
+	clone->product_ids = oscap_stringlist_clone(stat->product_ids);
+	return clone;
 }
 
 /* End of CVRF structure definitions
@@ -1519,6 +1667,12 @@ static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_
 	return parent;
 }
 
+void cvrf_element_add_container(struct oscap_list *list, cvrf_item_type_t cvrf_type, xmlNode *parent) {
+	xmlNode *container = cvrf_list_to_dom(list, NULL, cvrf_type);
+	if (container)
+		xmlAddChild(parent, container);
+}
+
 void cvrf_element_add_stringlist(struct oscap_stringlist *list, const char *tag_name, xmlNode *parent) {
 	if (oscap_list_get_itemcount((struct oscap_list *)list) == 0)
 		return;
@@ -1529,6 +1683,13 @@ void cvrf_element_add_stringlist(struct oscap_stringlist *list, const char *tag_
 		xmlNewTextChild(parent, NULL, BAD_CAST tag_name, BAD_CAST string);
 	}
 	oscap_string_iterator_free(iterator);
+}
+
+void cvrf_element_add_attribute(const char *attr_name, const char *attr_value, xmlNode *element) {
+	if (attr_value == NULL)
+		return;
+
+	xmlNewProp(element, BAD_CAST attr_name, BAD_CAST attr_value);
 }
 
 void cvrf_element_add_child(const char *elm_name, const char *elm_value, xmlNode *parent) {
@@ -1623,8 +1784,8 @@ xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking) {
 	const char *tracking_status = cvrf_doc_status_type_get_text(tracking->tracking_status);
 	cvrf_element_add_child("Status", tracking_status, tracking_node);
 	cvrf_element_add_child("Version", tracking->tracking_version, tracking_node);
-	xmlNode *revisions_node = cvrf_list_to_dom(tracking->revision_history, NULL, CVRF_REVISION);
-	xmlAddChild(tracking_node, revisions_node);
+
+	cvrf_element_add_container(tracking->revision_history, CVRF_REVISION, tracking_node);
 	cvrf_element_add_child("InitialReleaseDate", tracking->init_release_date, tracking_node);
 	cvrf_element_add_child("CurrentReleaseDate", tracking->cur_release_date, tracking_node);
 
@@ -1718,16 +1879,11 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	cvrf_element_add_child("CVE", vuln->cve_id, vuln_node);
 	cvrf_element_add_stringlist(vuln->cwe_ids, "CWE", vuln_node);
 
-	xmlNode *statuses_node = cvrf_list_to_dom(vuln->product_statuses, NULL, CVRF_PRODUCT_STATUS);
-	xmlAddChild(vuln_node, statuses_node);
-	xmlNode *threat_node = cvrf_list_to_dom(vuln->threats, NULL, CVRF_THREAT);
-	xmlAddChild(vuln_node, threat_node);
-	xmlNode *score_sets_node = cvrf_list_to_dom(vuln->score_sets, NULL, CVRF_SCORE_SET);
-	xmlAddChild(vuln_node, score_sets_node);
-	xmlNode *remed_node = cvrf_list_to_dom(vuln->remediations, NULL, CVRF_REMEDIATION);
-	xmlAddChild(vuln_node, remed_node);
-	xmlNode *refs_node = cvrf_list_to_dom(vuln->references, NULL, CVRF_REFERENCE);
-	xmlAddChild(vuln_node, refs_node);
+	cvrf_element_add_container(vuln->product_statuses, CVRF_PRODUCT_STATUS, vuln_node);
+	cvrf_element_add_container(vuln->threats, CVRF_THREAT, vuln_node);
+	cvrf_element_add_container(vuln->score_sets, CVRF_SCORE_SET, vuln_node);
+	cvrf_element_add_container(vuln->remediations, CVRF_REMEDIATION, vuln_node);
+	cvrf_element_add_container(vuln->references, CVRF_REFERENCE, vuln_node);
 
 	oscap_free(ordinal);
 	return vuln_node;
@@ -1753,7 +1909,7 @@ xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set) {
 xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat) {
 	xmlNode *status_node = xmlNewNode(NULL, TAG_STATUS);
 	const char *status_type = cvrf_product_status_type_get_text(stat->status_type);
-	xmlNewProp(status_node, BAD_CAST "Type", BAD_CAST status_type);
+	cvrf_element_add_attribute("Type", status_type, status_node);
 	cvrf_element_add_stringlist(stat->product_ids, "ProductID", status_node);
 	return status_node;
 }
@@ -1762,7 +1918,7 @@ xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed) {
 
 	xmlNode *remed_node = xmlNewNode(NULL, TAG_REMEDIATION);
 	const char *remed_type = cvrf_remediation_type_get_text(remed->remed_type);
-	xmlNewProp(remed_node, BAD_CAST "Type", BAD_CAST remed_type);
+	cvrf_element_add_attribute("Type", remed_type, remed_node);
 
 	xmlNode *desc_node = cvrf_element_to_dom("Description", remed->remed_description);
 	xmlNewProp(desc_node, ATTR_LANG, BAD_CAST "en");
@@ -1778,9 +1934,8 @@ xmlNode *cvrf_threat_to_dom(const struct cvrf_threat *threat) {
 
 	xmlNode *threat_node = xmlNewNode(NULL, TAG_THREAT);
 	const char *threat_type = cvrf_threat_type_get_text(threat->threat_type);
-	xmlNewProp(threat_node, BAD_CAST "Type", BAD_CAST threat_type);
-	if (threat->threat_date)
-		xmlNewProp(threat_node, BAD_CAST "Date", BAD_CAST threat->threat_date);
+	cvrf_element_add_attribute("Type", threat_type, threat_node);
+	cvrf_element_add_attribute("Date", threat->threat_date, threat_node);
 
 	cvrf_element_add_child("Description", threat->threat_description, threat_node);
 	cvrf_element_add_stringlist(threat->threat_product_ids, "ProductID", threat_node);

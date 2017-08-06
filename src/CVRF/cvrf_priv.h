@@ -56,7 +56,6 @@ typedef enum {
 const char *cvrf_item_type_get_text(cvrf_item_type_t item_type);
 const char *cvrf_item_type_get_container(cvrf_item_type_t item_type);
 
-
 typedef enum {
 	CVRF_DOC_PUBLISHER_VENDOR,
 	CVRF_DOC_PUBLISHER_DISCOVERER,
@@ -270,8 +269,11 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader);
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
 
 
+void cvrf_element_add_container(struct oscap_list *list, cvrf_item_type_t cvrf_type, xmlNode *parent);
 
 void cvrf_element_add_stringlist(struct oscap_stringlist *list, const char *tag_name, xmlNode *parent);
+
+void cvrf_element_add_attribute(const char *attr_name, const char *attr_value, xmlNode *element);
 
 void cvrf_element_add_child(const char *elm_name, const char *elm_value, xmlNode *parent);
 
