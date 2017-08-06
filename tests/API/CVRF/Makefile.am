@@ -31,4 +31,4 @@ test_api_cvrf_SOURCES = test_api_cvrf.c
 
 EXTRA_DIST = test_api_cvrf.sh        \
               test_api_cvrf.c         \
-	      cvrf_1.1_template.xml
+	      test_api_cvrf.xml
