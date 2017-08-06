@@ -75,7 +75,7 @@ typedef enum {
 	CVRF_DOC_STATUS_FINAL,
 } cvrf_doc_status_type_t;
 
-cvrf_doc_status_type_t cvrf_doc_tracking_get_tracking_status(struct cvrf_doc_tracking *tracking);
+cvrf_doc_status_type_t cvrf_doc_tracking_get_status(struct cvrf_doc_tracking *tracking);
 cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader);
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
 

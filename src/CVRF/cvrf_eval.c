@@ -241,8 +241,8 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
 		xmlNode *vuln_node = xmlNewTextChild(root_node, NULL, BAD_CAST "Vulnerability", NULL);
 
-		cvrf_element_add_child("Title", cvrf_vulnerability_get_vulnerability_title(vuln), vuln_node);
-		cvrf_element_add_child("ID", cvrf_vulnerability_get_vulnerability_id(vuln), vuln_node);
+		cvrf_element_add_child("Title", cvrf_vulnerability_get_title(vuln), vuln_node);
+		cvrf_element_add_child("ID", cvrf_vulnerability_get_system_id(vuln), vuln_node);
 		cvrf_element_add_child("DiscoveryDate", cvrf_vulnerability_get_discovery_date(vuln), vuln_node);
 		cvrf_element_add_child("ReleaseDate", cvrf_vulnerability_get_release_date(vuln), vuln_node);
 		cvrf_element_add_child("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
