@@ -58,14 +58,13 @@ struct cvrf_threat;
 
 struct cvrf_threat *cvrf_threat_clone(const struct cvrf_threat *threat);
 
-const char *cvrf_threat_get_threat_date(const struct cvrf_threat *threat);
-const char *cvrf_threat_get_threat_description(const struct cvrf_threat *threat);
-//cvrf_threat_type_t cvrf_threat_get_threat_type(struct cvrf_threat *threat);
+const char *cvrf_threat_get_date(const struct cvrf_threat *threat);
+const char *cvrf_threat_get_description(const struct cvrf_threat *threat);
 struct oscap_string_iterator *cvrf_threat_get_product_ids(struct cvrf_threat *threat);
 struct oscap_string_iterator *cvrf_threat_get_group_ids(struct cvrf_threat *threat);
 
-bool cvrf_threat_set_threat_date(struct cvrf_threat *threat, const char *threat_date);
-bool cvrf_threat_set_threat_description(struct cvrf_threat *threat, const char *threat_description);
+bool cvrf_threat_set_date(struct cvrf_threat *threat, const char *threat_date);
+bool cvrf_threat_set_description(struct cvrf_threat *threat, const char *threat_description);
 
 /**
  * @struct cvrf_remediation
@@ -76,17 +75,17 @@ struct cvrf_remediation;
 
 struct cvrf_remediation *cvrf_remediation_clone(const struct cvrf_remediation *remed);
 
-const char *cvrf_remediation_get_remed_date(const struct cvrf_remediation *remed);
-const char *cvrf_remediation_get_remed_description(const struct cvrf_remediation *remed);
-const char *cvrf_remediation_get_remed_URL(const struct cvrf_remediation *remed);
-const char *cvrf_remediation_get_remed_entitlement(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_date(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_description(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_url(const struct cvrf_remediation *remed);
+const char *cvrf_remediation_get_entitlement(const struct cvrf_remediation *remed);
 struct oscap_string_iterator *cvrf_remediation_get_product_ids(struct cvrf_remediation *remed);
 struct oscap_string_iterator *cvrf_remediation_get_group_ids(struct cvrf_remediation *remed);
 
-bool cvrf_remediation_set_remed_date(struct cvrf_remediation *remed, const char *date);
-bool cvrf_remediation_set_remed_description(struct cvrf_remediation *remed, const char *description);
-bool cvrf_remediation_set_remed_URL(struct cvrf_remediation *remed, const char *url);
-bool cvrf_remediation_set_remed_entitlement(struct cvrf_remediation *remed, const char *entitlement);
+bool cvrf_remediation_set_date(struct cvrf_remediation *remed, const char *date);
+bool cvrf_remediation_set_description(struct cvrf_remediation *remed, const char *description);
+bool cvrf_remediation_set_url(struct cvrf_remediation *remed, const char *url);
+bool cvrf_remediation_set_entitlement(struct cvrf_remediation *remed, const char *entitlement);
 
 /**
  * @struct cvrf_score_set
@@ -117,8 +116,8 @@ struct cvrf_vulnerability;
 
 struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerability *vuln);
 
-const char *cvrf_vulnerability_get_vulnerability_title(const struct cvrf_vulnerability *vuln);
-const char *cvrf_vulnerability_get_vulnerability_id(const struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_title(const struct cvrf_vulnerability *vuln);
+const char *cvrf_vulnerability_get_system_id(const struct cvrf_vulnerability *vuln);
 const char *cvrf_vulnerability_get_discovery_date(const struct cvrf_vulnerability *vuln);
 const char *cvrf_vulnerability_get_release_date(const struct cvrf_vulnerability *vuln);
 const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
@@ -127,8 +126,8 @@ int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
 struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
 struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
 
-bool cvrf_vulnerability_set_vulnerability_title(struct cvrf_vulnerability *vuln, const char *vulnerability_title);
-bool cvrf_vulnerability_set_vulnerability_id(struct cvrf_vulnerability *vuln, const char *id);
+bool cvrf_vulnerability_set_title(struct cvrf_vulnerability *vuln, const char *vulnerability_title);
+bool cvrf_vulnerability_set_system_id(struct cvrf_vulnerability *vuln, const char *id);
 bool cvrf_vulnerability_set_discovery_date(struct cvrf_vulnerability *vuln, const char *discovery_date);
 bool cvrf_vulnerability_set_release_date(struct cvrf_vulnerability *vuln, const char *release_date);
 bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *cve_id);
@@ -261,14 +260,14 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_clone(const struct cvrf_doc_tracking
 
 const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
 struct oscap_string_iterator *cvrf_doc_tracking_get_aliases(struct cvrf_doc_tracking *tracking);
-const char *cvrf_doc_tracking_get_tracking_version(const struct cvrf_doc_tracking *tracking);
+const char *cvrf_doc_tracking_get_version(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_generator_engine(const struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking *tracking);
 
 bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);
-bool cvrf_doc_tracking_set_tracking_version(struct cvrf_doc_tracking *tracking, const char *tracking_version);
+bool cvrf_doc_tracking_set_version(struct cvrf_doc_tracking *tracking, const char *version);
 bool cvrf_doc_tracking_set_init_release_date(struct cvrf_doc_tracking *tracking, const char *init_release_date);
 bool cvrf_doc_tracking_set_cur_release_date(struct cvrf_doc_tracking *tracking, const char *cur_release_date);
 bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, const char *generator_engine);
@@ -298,11 +297,11 @@ struct cvrf_reference;
 
 struct cvrf_reference *cvrf_reference_clone(const struct cvrf_reference *ref);
 
-const char *cvrf_reference_get_ref_url(const struct cvrf_reference *reference);
-const char *cvrf_reference_get_ref_description(const struct cvrf_reference *reference);
+const char *cvrf_reference_get_url(const struct cvrf_reference *reference);
+const char *cvrf_reference_get_description(const struct cvrf_reference *reference);
 
-bool cvrf_reference_set_ref_url(struct cvrf_reference *reference, const char *url);
-bool cvrf_reference_set_ref_description(struct cvrf_reference *reference, const char *description);
+bool cvrf_reference_set_url(struct cvrf_reference *reference, const char *url);
+bool cvrf_reference_set_description(struct cvrf_reference *reference, const char *description);
 
 /**
  * @struct cvrf_document
