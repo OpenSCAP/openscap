@@ -689,7 +689,7 @@ void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_categ
 }
 
 char *cvrf_score_set_get_score(const struct cvrf_score_set *score_set, enum cvss_category category) {
-	struct cvss_metrics *metric;
+	struct cvss_metrics *metric = NULL;
 	if (category == CVSS_BASE) {
 		metric = cvss_impact_get_base_metrics(score_set->impact);
 	} else if (category == CVSS_ENVIRONMENTAL) {
@@ -897,7 +897,7 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 
 
 /****************************************************************************
-/* XML string variables definitions
+ * XML string variables definitions
  * */
 
 #define TAG_CVRF_DOC BAD_CAST "cvrfdoc"
@@ -1498,18 +1498,20 @@ static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_
 			child = cvrf_revision_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_REFERENCE || cvrf_type == CVRF_DOCUMENT_REFERENCE) {
 			child = cvrf_reference_to_dom(oscap_iterator_next(it));
-		} else if (cvrf_type == CVRF_REMEDIATION) {
-			child = cvrf_remediation_to_dom(oscap_iterator_next(it));
-		} else if (cvrf_type == CVRF_THREAT) {
-			child = cvrf_threat_to_dom(oscap_iterator_next(it));
-		} else if (cvrf_type == CVRF_SCORE_SET) {
-			child = cvrf_score_set_to_dom(oscap_iterator_next(it));
-		} else if (cvrf_type == CVRF_PRODUCT_STATUS) {
-			child = cvrf_product_status_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_BRANCH) {
 			child = cvrf_branch_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_RELATIONSHIP) {
 			child = cvrf_relationship_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_VULNERABILITY) {
+			child = cvrf_vulnerability_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_PRODUCT_STATUS) {
+			child = cvrf_product_status_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_THREAT) {
+			child = cvrf_threat_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_SCORE_SET) {
+			child = cvrf_score_set_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_REMEDIATION) {
+			child = cvrf_remediation_to_dom(oscap_iterator_next(it));
 		}
 		xmlAddChild(parent, child);
 	}
@@ -1593,12 +1595,7 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 	xmlAddChild(root_node, cvrf_list_to_dom(cvrf_doc->doc_references, NULL, CVRF_DOCUMENT_REFERENCE));
 
 	xmlAddChild(root_node, cvrf_product_tree_to_dom(model->tree));
-	struct cvrf_vulnerability_iterator *vulnerabilities = cvrf_model_get_vulnerabilities(model);
-	while (cvrf_vulnerability_iterator_has_more(vulnerabilities)) {
-		xmlNode *vuln_node = cvrf_vulnerability_to_dom(cvrf_vulnerability_iterator_next(vulnerabilities));
-		xmlAddChild(root_node, vuln_node);
-	}
-	cvrf_vulnerability_iterator_free(vulnerabilities);
+	cvrf_list_to_dom(model->vulnerabilities, root_node, CVRF_VULNERABILITY);
 
 	return root_node;
 }
