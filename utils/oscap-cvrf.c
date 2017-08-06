@@ -97,11 +97,13 @@ static struct oscap_module* CVRF_SUBMODULES[] = {
 static int app_cvrf_evaluate(const struct oscap_action *action)
 {
 	int result = OSCAP_OK;
-
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
-	//struct oscap_source *export_source = oscap_source_new_from_file(action->cvrf_action->file);
-	cvrf_export_results(import_source, action->cvrf_action->export_file, os_name);
+
+	if (cvrf_export_results(import_source, action->cvrf_action->export_file, os_name) == -1) {
+		result = OSCAP_ERROR;
+		goto cleanup;
+	}
 
 	cleanup:
 		if (oscap_err())
@@ -138,11 +140,10 @@ static int app_cvrf_export(const struct oscap_action *action) {
 }
 
 static int app_cvrf_validate(const struct oscap_action *action) {
-	int ret;
-	int result;
 
+	int result;
 	struct oscap_source *source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
-	ret = oscap_source_validate(source, reporter, (void *) action);
+	int ret = oscap_source_validate(source, reporter, (void *) action);
 
 	if (ret==-1) {
 		result=OSCAP_ERROR;

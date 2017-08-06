@@ -673,7 +673,7 @@ const char * cvrf_model_supported(void);
 
 
 
-void cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
+int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
 
