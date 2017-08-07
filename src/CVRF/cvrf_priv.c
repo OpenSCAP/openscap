@@ -1393,19 +1393,27 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 		return NULL;
 
 	struct cvrf_model *ret = cvrf_model_new();
-	struct cvrf_document *doc = ret->document;
 	xmlTextReaderNextElement(reader);
-
 	ret->doc_title = cvrf_parse_element(reader, "DocumentTitle", true);
 	ret->doc_type = cvrf_parse_element(reader, "DocumentType", true);
+	ret->document = cvrf_document_parse(reader);
+	ret->tree = cvrf_product_tree_parse(reader);
+	cvrf_parse_container(reader, ret->vulnerabilities, CVRF_VULNERABILITY);
+
+	xmlFreeTextReader(reader);
+	return ret;
+}
+
+struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
+	__attribute__nonnull__(reader);
+
+	struct cvrf_document *doc = cvrf_document_new();
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHER)) {
-		struct cvrf_doc_publisher *publisher = cvrf_doc_publisher_parse(reader);
-		cvrf_document_set_publisher(doc, publisher);
+		doc->publisher = cvrf_doc_publisher_parse(reader);
 		xmlTextReaderNextElement(reader);
 	}
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_TRACKING)) {
-		struct cvrf_doc_tracking *tracking = cvrf_doc_tracking_parse(reader);
-		cvrf_document_set_tracking(doc, tracking);
+		doc->tracking = cvrf_doc_tracking_parse(reader);
 		xmlTextReaderNextElement(reader);
 	}
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISTRIBUTION)) {
@@ -1422,15 +1430,10 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 		xmlTextReaderNextElement(reader);
 	}
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS)) {
-			cvrf_parse_container(reader, doc->acknowledgments, CVRF_ACKNOWLEDGMENT);
-			xmlTextReaderNextElement(reader);
+		cvrf_parse_container(reader, doc->acknowledgments, CVRF_ACKNOWLEDGMENT);
+		xmlTextReaderNextElement(reader);
 	}
-
-	ret->tree = cvrf_product_tree_parse(reader);
-	cvrf_parse_container(reader, ret->vulnerabilities, CVRF_VULNERABILITY);
-
-	xmlFreeTextReader(reader);
-	return ret;
+	return doc;
 }
 
 struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
@@ -1925,6 +1928,21 @@ xmlNode *cvrf_element_to_dom(const char *elm_name, const char *elm_value) {
 	return elm_node;
 }
 
+struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index) {
+
+	if (index == NULL)
+		return NULL;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	cvrf_index_to_dom(index, doc, NULL, NULL);
+	return oscap_source_new_from_xmlDoc(doc, NULL);
+}
+
 xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args) {
 
 	xmlNode *index_node = NULL;
@@ -1943,6 +1961,20 @@ xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *par
 	cvrf_model_iterator_free(models);
 
 	return index_node;
+}
+
+struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model) {
+
+	if (model == NULL)
+		return NULL;
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	cvrf_model_to_dom(model, doc, NULL, NULL);
+	return oscap_source_new_from_xmlDoc(doc, NULL);
 }
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args) {
