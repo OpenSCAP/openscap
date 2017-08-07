@@ -61,55 +61,59 @@
  * Structure definitions
  */
 
-struct cvrf_model_eval {
-	char *os_name;
-	char *os_version;
-	struct oscap_stringlist *product_ids;
+struct cvrf_session {
 	struct cvrf_model *model;
+	char *os_name;
+	struct oscap_source *source;
+	char *export_file;
+	char *results_file;
+	struct oscap_stringlist *product_ids;
 	struct oval_definition_model *def_model;
 };
-OSCAP_ACCESSOR_STRING(cvrf_model_eval, os_name);
-OSCAP_ACCESSOR_STRING(cvrf_model_eval, os_version);
+OSCAP_ACCESSOR_STRING(cvrf_session, os_name);
+OSCAP_ACCESSOR_STRING(cvrf_session, export_file);
+OSCAP_ACCESSOR_STRING(cvrf_session, results_file);
 
-struct oscap_string_iterator *cvrf_model_eval_get_product_ids(struct cvrf_model_eval *eval) {
-	return oscap_stringlist_get_strings(eval->product_ids);
+struct oscap_string_iterator *cvrf_session_get_product_ids(struct cvrf_session *session) {
+	return oscap_stringlist_get_strings(session->product_ids);
 }
-struct cvrf_model *cvrf_eval_get_model(struct cvrf_model_eval *eval) {
-	return eval->model;
+struct cvrf_model *cvrf_session_get_model(struct cvrf_session *session) {
+	return session->model;
 }
-void cvrf_eval_set_model(struct cvrf_model_eval *eval, struct cvrf_model *model) {
-	eval->model = model;
+void cvrf_session_set_model(struct cvrf_session *session, struct cvrf_model *model) {
+	session->model = model;
 }
 
-struct cvrf_model_eval *cvrf_model_eval_new() {
-	struct cvrf_model_eval *ret;
+struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source) {
 
-	ret = oscap_alloc(sizeof(struct cvrf_model_eval));
-	if (ret == NULL)
+	if (source == NULL)
 		return NULL;
 
+	struct cvrf_session *ret = oscap_alloc(sizeof(struct cvrf_session));
+	ret->source = source;
+	ret->model = cvrf_model_import(source);
 	ret->os_name = NULL;
-	ret->os_version = NULL;
+	ret->export_file = NULL;
+	ret->results_file = NULL;
 	ret->product_ids = oscap_stringlist_new();
-	ret->model = cvrf_model_new();
 	ret->def_model = oval_definition_model_new();
-
 	return ret;
 }
 
-void cvrf_model_eval_free(struct cvrf_model_eval *eval) {
+void cvrf_session_free(struct cvrf_session *session) {
 
-	if (eval == NULL)
+	if (session == NULL)
 		return;
 
-	oscap_free(eval->os_name);
-	oscap_free(eval->os_version);
-	oscap_stringlist_free(eval->product_ids);
-	cvrf_model_free(eval->model);
-	oval_definition_model_free(eval->def_model);
-	oscap_free(eval);
+	cvrf_model_free(session->model);
+	oscap_free(session->os_name);
+	oscap_source_free(session->source);
+	oscap_free(session->export_file);
+	oscap_free(session->results_file);
+	oscap_stringlist_free(session->product_ids);
+	oval_definition_model_free(session->def_model);
+	oscap_free(session);
 }
-
 
 
 struct cvrf_rpm_attributes {
@@ -160,17 +164,17 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 #define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
 #define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
 
-static int find_all_cvrf_product_ids_from_cpe(struct cvrf_model_eval *eval) {
+static int find_all_cvrf_product_ids_from_cpe(struct cvrf_session *session) {
 
-	if (cvrf_model_filter_by_cpe(eval->model, eval->os_name) == -1)
+	if (cvrf_model_filter_by_cpe(session->model, session->os_name) == -1)
 		return -1;
 
-	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(eval->model);
+	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(session->model);
 	struct cvrf_relationship_iterator *relationships = cvrf_product_tree_get_relationships(tree);
 	while (cvrf_relationship_iterator_has_more(relationships)) {
 		struct cvrf_relationship *relation = cvrf_relationship_iterator_next(relationships);
 		struct cvrf_product_name *name = cvrf_relationship_get_product_name(relation);
-		oscap_stringlist_add_string(eval->product_ids, cvrf_product_name_get_product_id(name));
+		oscap_stringlist_add_string(session->product_ids, cvrf_product_name_get_product_id(name));
 	}
 	cvrf_relationship_iterator_free(relationships);
 	return 0;
@@ -180,26 +184,26 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	__attribute__nonnull__(import_source);
 	__attribute__nonnull__(export_file);
 
-	struct cvrf_model_eval *eval = cvrf_model_eval_new();
-	struct cvrf_model *model = cvrf_model_import(import_source);
-	cvrf_eval_set_model(eval, model);
-	cvrf_model_eval_set_os_name(eval, os_name);
-	find_all_cvrf_product_ids_from_cpe(eval);
-	cvrf_model_eval_construct_definition_model(eval);
-	cvrf_model_export(model, "cvrf_model_export.xml");
+	struct cvrf_session *session = cvrf_session_new_from_source(import_source);
+	cvrf_session_set_os_name(session, os_name);
+	cvrf_session_set_results_file(session, export_file);
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
+	find_all_cvrf_product_ids_from_cpe(session);
+	cvrf_session_construct_definition_model(session);
+	cvrf_model_export(session->model, "cvrf_model_export.xml");
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
 	}
 	xmlNode *root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
 	xmlDocSetRootElement(doc, root_node);
 	xmlNewNs(root_node, CVRF_NS, NULL);
-	cvrf_element_add_child("DocumentTitle", cvrf_model_get_doc_title(model), root_node);
-	cvrf_element_add_child("DocumentType", cvrf_model_get_doc_type(model), root_node);
+	cvrf_element_add_child("DocumentTitle", cvrf_model_get_doc_title(session->model), root_node);
+	cvrf_element_add_child("DocumentType", cvrf_model_get_doc_type(session->model), root_node);
 	//cvrf_export_element(os_name, "OS Name", writer);
 
-	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
+	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(session->model);
 	bool vulnerable = false;
 	while (cvrf_vulnerability_iterator_has_more(it)) {
 		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
@@ -212,7 +216,7 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 		cvrf_element_add_child("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
 
 		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ProductStatuses", NULL);
-		struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
+		struct oscap_string_iterator *product_ids = cvrf_session_get_product_ids(session);
 		while (oscap_string_iterator_has_more(product_ids)) {
 			const char *product_id = oscap_string_iterator_next(product_ids);
 			/*
@@ -243,15 +247,15 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
 	int ret = oscap_source_save_as(source, NULL);
 	oscap_source_free(source);
-	cvrf_model_eval_free(eval);
+	cvrf_session_free(session);
 	return ret;
 }
 
 
-static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eval, const char *product_id) {
+static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_session *session, const char *product_id) {
 
 	const char *rpm_name = NULL;
-	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(eval->model);
+	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(session->model);
 
 	struct oscap_iterator *branches = cvrf_product_tree_get_branches(tree);
 	while (oscap_iterator_has_more(branches)) {
@@ -269,11 +273,11 @@ static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eva
 	return rpm_name;
 }
 
-static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(struct cvrf_model_eval *eval,
+static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(struct cvrf_session *session,
 		const char *product_id) {
 
 	struct cvrf_rpm_attributes *attributes = cvrf_rpm_attributes_new();
-	attributes->full_package_name = strdup(get_rpm_name_from_cvrf_product_id(eval, product_id));
+	attributes->full_package_name = strdup(get_rpm_name_from_cvrf_product_id(session, product_id));
 	char *package = strdup(strchr(product_id, ':')+1);
 	unsigned int index = 0;
 	while (index < strlen(package)) {
@@ -428,17 +432,16 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 	return definition;
 }
 
-int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
+int cvrf_session_construct_definition_model(struct cvrf_session *session) {
 
-	struct oval_definition_model *def_model = eval->def_model;
-	struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
+	struct oval_definition_model *def_model = session->def_model;
+	struct oscap_string_iterator *product_ids = cvrf_session_get_product_ids(session);
 	int index = 1;
 
 	while (oscap_string_iterator_has_more(product_ids)) {
 		const char *product_id = oscap_string_iterator_next(product_ids);
-		struct cvrf_rpm_attributes *attributes = parse_rpm_attributes_from_cvrf_product_id(eval, product_id);
+		struct cvrf_rpm_attributes *attributes = parse_rpm_attributes_from_cvrf_product_id(session, product_id);
 		struct oval_definition *definition = get_new_oval_definition_for_cvrf(def_model, attributes, index);
-
 		index++;
 	}
 	oscap_string_iterator_free(product_ids);

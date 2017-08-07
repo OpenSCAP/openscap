@@ -39,7 +39,6 @@
 #define CVRF_SUPPORTED "1.1"
 
 
-
 struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
 
 	__attribute__nonnull__(index_source);
@@ -125,5 +124,5 @@ int cvrf_index_export(struct cvrf_index *index, const char *export_file) {
 
 const char * cvrf_model_supported(void)
 {
-        return CVRF_SUPPORTED;
+	return CVRF_SUPPORTED;
 }
