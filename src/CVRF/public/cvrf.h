@@ -182,6 +182,11 @@ struct cvrf_score_set *cvrf_score_set_new(void);
  */
 void cvrf_score_set_free(struct cvrf_score_set *score_set);
 
+/**
+ * @memberof cvrf_score_set
+ * @param score_set Original ScoreSet structure to be cloned
+ * @return New cloned ScoreSet structure with same data as the original
+ */
 struct cvrf_score_set *cvrf_score_set_clone(const struct cvrf_score_set *score_set);
 
 const char *cvrf_score_set_get_vector(const struct cvrf_score_set *score_set);
@@ -226,8 +231,14 @@ struct cvrf_vulnerability *cvrf_vulnerability_new(void);
  */
 void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability);
 
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln Original Vulnerability structure to be cloned
+ * @return New cloned Vulnerability structure with same data as the original
+ */
 struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerability *vuln);
 void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
+struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
 
 const char *cvrf_vulnerability_get_title(const struct cvrf_vulnerability *vuln);
 const char *cvrf_vulnerability_get_system_id(const struct cvrf_vulnerability *vuln);
@@ -306,6 +317,11 @@ struct cvrf_product_name *cvrf_product_name_new(void);
  */
 void cvrf_product_name_free(struct cvrf_product_name *full_name);
 
+/**
+ * @memberof cvrf_product_name
+ * @param full_name Original FullProductName structure to be cloned
+ * @return New cloned FullProductName structure with same data as the original
+ */
 struct cvrf_product_name *cvrf_product_name_clone(const struct cvrf_product_name *full_name);
 
 const char *cvrf_product_name_get_product_id(const struct cvrf_product_name *full_name);
@@ -340,6 +356,11 @@ struct cvrf_relationship *cvrf_relationship_new(void);
  */
 void cvrf_relationship_free(struct cvrf_relationship *relationship);
 
+/**
+ * @memberof cvrf_relationship
+ * @param relation Original Relationship structure to be cloned
+ * @return New cloned Relationship structure with same data as the original
+ */
 struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship *relation);
 
 const char *cvrf_relationship_get_product_reference(const struct cvrf_relationship *relation);
@@ -375,6 +396,11 @@ struct cvrf_branch *cvrf_branch_new(void);
  */
 void cvrf_branch_free(struct cvrf_branch *branch);
 
+/**
+ * @memberof cvrf_branch
+ * @param branch Original Branch structure to be cloned
+ * @return New cloned Branch structure with same data as the original
+ */
 struct cvrf_branch *cvrf_branch_clone(const struct cvrf_branch *branch);
 
 const char *cvrf_branch_get_branch_name(const struct cvrf_branch *branch);
@@ -410,6 +436,11 @@ struct cvrf_product_tree *cvrf_product_tree_new(void);
  */
 void cvrf_product_tree_free(struct cvrf_product_tree *tree);
 
+/**
+ * @memberof cvrf_product_tree
+ * @param tree Original ProductTree structure to be cloned
+ * @return New cloned ProductTree structure with same data as the original
+ */
 struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree *tree);
 const char *get_cvrf_product_id_from_cpe(struct cvrf_product_tree *tree, const char *cpe);
 int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *cpe);
@@ -433,6 +464,42 @@ bool cvrf_relationship_iterator_has_more(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_free(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_remove(struct cvrf_relationship_iterator *it);
+
+
+/**
+ * @struct cvrf_acknowledgment
+ * Metadata giving recognition of external parties who provided information, suggestions, or
+ * other contributions
+ *
+ * PARENT NODE: Acknowledgments container (in cvrfdoc or in Vulnerability)
+ * OPTIONAL: Name element(s) [min: 0, max: unbounded], Organization(s) element [min: 0, max: unbounded],
+ * 		Description element [min: 0, max: 1], URL element(s) [min: 0, max: unbounded]
+ */
+struct cvrf_acknowledgment;
+
+/**
+ * New CVRF Acknowledgment element within Acknowledgments container
+ * @memberof cvrf_acknowledgment
+ * @return New CVRF Acknowledgment structure
+ */
+struct cvrf_acknowledgment *cvrf_acknowledgment_new(void);
+
+/**
+ * Deallocates memory for an Acknowledgment element of the Acknowledgments container
+ * @memberof cvrf_acknowledgment
+ * @param ack The CVRF Acknowledgment structure to be freed
+ */
+void cvrf_acknowledgment_free(struct cvrf_acknowledgment *ack);
+
+/**
+ * @memberof cvrf_acknowledgment
+ * @param ack Original Acknowledgment structure to be cloned
+ * @return New cloned Acknowledgment structure with same data as the original
+ */
+struct cvrf_acknowledgment *cvrf_acknowledgment_clone(const struct cvrf_acknowledgment *ack);
+
+const char *cvrf_acknowledgment_get_description(const struct cvrf_acknowledgment *ack);
+bool cvrf_acknowledgment_set_description(struct cvrf_acknowledgment *ack, const char *description);
 
 
 /**
@@ -610,6 +677,7 @@ const char *cvrf_document_get_namespace(const struct cvrf_document *doc);
 struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc);
 struct cvrf_doc_publisher *cvrf_document_get_publisher(struct cvrf_document *doc);
 struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc);
+struct oscap_iterator *cvrf_document_get_acknowledgments(struct cvrf_document *doc);
 
 bool cvrf_document_set_doc_distribution(struct cvrf_document *doc, const char *distribution);
 bool cvrf_document_set_aggregate_severity(struct cvrf_document *doc, const char *severity);

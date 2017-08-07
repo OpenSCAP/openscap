@@ -46,6 +46,7 @@ typedef enum {
 	CVRF_DOCUMENT_TRACKING,
 	CVRF_REVISION,
 	CVRF_DOCUMENT_REFERENCE,
+	CVRF_ACKNOWLEDGMENT,
 	CVRF_PRODUCT_TREE,
 	CVRF_BRANCH,
 	CVRF_RELATIONSHIP,
@@ -214,6 +215,13 @@ struct cvrf_revision *cvrf_revision_parse(xmlTextReaderPtr reader);
 struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse a CVRF Acknowledgment element
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Acknowledgment
+ */
+struct cvrf_acknowledgment *cvrf_acknowledgment_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF product tree
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF product tree
@@ -298,6 +306,8 @@ xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking);
 xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision);
 
 xmlNode *cvrf_reference_to_dom(struct cvrf_reference *ref);
+
+xmlNode *cvrf_acknowledgment_to_dom(struct cvrf_acknowledgment *ack);
 
 xmlNode *cvrf_product_name_to_dom(struct cvrf_product_name *full_name);
 

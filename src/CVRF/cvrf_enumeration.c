@@ -85,6 +85,7 @@ static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
 	{CVRF_DOCUMENT_TRACKING, "DocumentTracking", NULL},
 	{CVRF_REVISION, "Revision", "RevisionHistory"},
 	{CVRF_DOCUMENT_REFERENCE, "Reference", "DocumentReferences"},
+	{CVRF_ACKNOWLEDGMENT, "Acknowledgment", "Acknowledgments"},
 	{CVRF_PRODUCT_TREE, "ProductTree", NULL},
 	{CVRF_BRANCH, "Branch", NULL},
 	{CVRF_RELATIONSHIP, "Relationship", NULL},
