@@ -115,6 +115,7 @@ void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_categ
 struct cvrf_vulnerability;
 
 struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerability *vuln);
+void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
 
 const char *cvrf_vulnerability_get_title(const struct cvrf_vulnerability *vuln);
 const char *cvrf_vulnerability_get_system_id(const struct cvrf_vulnerability *vuln);
@@ -221,6 +222,8 @@ bool cvrf_branch_set_branch_name(struct cvrf_branch *branch, const char *branch_
 struct cvrf_product_tree;
 
 struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree *tree);
+const char *get_cvrf_product_id_from_cpe(struct cvrf_product_tree *tree, const char *cpe);
+int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *cpe);
 
 struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree);
 struct cvrf_relationship_iterator *cvrf_product_tree_get_relationships(const struct cvrf_product_tree *tree);
@@ -341,6 +344,7 @@ void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_track
 struct cvrf_model;
 
 void cvrf_model_clone(struct cvrf_model *clone, const struct cvrf_model *model);
+int cvrf_model_filter_by_cpe(struct cvrf_model *model, const char *cpe);
 
 const char *cvrf_model_get_doc_title(const struct cvrf_model *model);
 const char *cvrf_model_get_doc_type(const struct cvrf_model *model);

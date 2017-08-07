@@ -160,57 +160,20 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 #define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
 #define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
 
+static int find_all_cvrf_product_ids_from_cpe(struct cvrf_model_eval *eval) {
 
-static const char *get_cvrf_product_id_from_branch(struct cvrf_model_eval *eval, struct cvrf_branch *branch) {
+	if (cvrf_model_filter_by_cpe(eval->model, eval->os_name) == -1)
+		return -1;
 
-	const char *product_id = NULL;
-	const char *os_name = cvrf_model_eval_get_os_name(eval);
-
-	if (cvrf_branch_get_branch_type(branch) == CVRF_BRANCH_PRODUCT_FAMILY) {
-		struct oscap_iterator *subbranches = cvrf_branch_get_subbranches(branch);
-
-		while(oscap_iterator_has_more(subbranches) && product_id == NULL) {
-			struct cvrf_branch *subbranch = oscap_iterator_next(subbranches);
-			product_id = get_cvrf_product_id_from_branch(eval, subbranch);
-		}
-		oscap_iterator_free(subbranches);
-		return product_id;
-	}
-	else {
-		if (!strcmp(cvrf_branch_get_branch_name(branch), os_name)) {
-			struct cvrf_product_name *full_name = cvrf_branch_get_cvrf_product_name(branch);
-			return cvrf_product_name_get_product_id(full_name);
-		}
-	}
-	return product_id;
-}
-
-static void find_all_cvrf_product_ids_by_OS(struct cvrf_model_eval *eval, struct cvrf_model *model) {
-
-	const char *branch_id = NULL;
-	const char *relation_product_id = NULL;
-	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(model);
-
-	struct oscap_iterator *branches = cvrf_product_tree_get_branches(tree);
-	while (oscap_iterator_has_more(branches) && branch_id == NULL) {
-		branch_id = get_cvrf_product_id_from_branch(eval, oscap_iterator_next(branches));
-	}
-	oscap_iterator_free(branches);
-	printf("Branch Product ID: %s\n", branch_id);
-	if (branch_id == NULL)
-		return;
-
+	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(eval->model);
 	struct cvrf_relationship_iterator *relationships = cvrf_product_tree_get_relationships(tree);
 	while (cvrf_relationship_iterator_has_more(relationships)) {
 		struct cvrf_relationship *relation = cvrf_relationship_iterator_next(relationships);
-		if (!strcmp(branch_id, cvrf_relationship_get_relates_to_ref(relation))) {
-			struct cvrf_product_name *full_name = cvrf_relationship_get_product_name(relation);
-			relation_product_id = cvrf_product_name_get_product_id(full_name);
-			printf("Relation Product ID: %s\n", relation_product_id);
-			oscap_stringlist_add_string(eval->product_ids, relation_product_id);
-		}
+		struct cvrf_product_name *name = cvrf_relationship_get_product_name(relation);
+		oscap_stringlist_add_string(eval->product_ids, cvrf_product_name_get_product_id(name));
 	}
 	cvrf_relationship_iterator_free(relationships);
+	return 0;
 }
 
 int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name) {
@@ -221,8 +184,9 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	struct cvrf_model *model = cvrf_model_import(import_source);
 	cvrf_eval_set_model(eval, model);
 	cvrf_model_eval_set_os_name(eval, os_name);
-	find_all_cvrf_product_ids_by_OS(eval, model);
+	find_all_cvrf_product_ids_from_cpe(eval);
 	cvrf_model_eval_construct_definition_model(eval);
+	cvrf_model_export(model, "cvrf_model_export.xml");
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.1");
 	if (doc == NULL) {
@@ -287,8 +251,7 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_model_eval *eval, const char *product_id) {
 
 	const char *rpm_name = NULL;
-	struct cvrf_model *model = cvrf_eval_get_model(eval);
-	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(model);
+	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(eval->model);
 
 	struct oscap_iterator *branches = cvrf_product_tree_get_branches(tree);
 	while (oscap_iterator_has_more(branches)) {
