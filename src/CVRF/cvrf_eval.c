@@ -318,34 +318,16 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *pro
 }
 
 
-static const char *get_oval_id_string(const char *type, int object_number) {
+static char *get_oval_id_string(const char *type, int object_number) {
 
-	struct oscap_string *string = oscap_string_new();
-	char *number_as_string = oscap_sprintf("%d", object_number);
-
-	if (!strcmp(type, "object")) {
-			oscap_string_append_string(string, "oval:org.open-scap.unix:obj:");
-	} else if (!strcmp(type, "state")) {
-			oscap_string_append_string(string, "oval:org.open-scap.unix:ste:");
-	} else if (!strcmp(type, "test")) {
-			oscap_string_append_string(string, "oval:org.open-scap.unix:tst:");
-	} else if (!strcmp(type, "definition")) {
-		oscap_string_append_string(string, "oval:org.open-scap.unix:def:");
-	}
-
-	oscap_string_append_string(string, number_as_string);
-	char *oval_id = strdup(oscap_string_get_cstr(string));
-	oscap_string_free(string);
-	oscap_free(number_as_string);
-
-	return oval_id;
+	return oscap_sprintf("oval:org.open-scap.unix:%s:%d", type, object_number);
 }
 
 
 static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int objectNo) {
 
-	const char *object_id = get_oval_id_string("object", objectNo);
+	char *object_id = get_oval_id_string("obj", objectNo);
 
 	struct oval_object *object = oval_definition_model_get_new_object(def_model, object_id);
 	oval_object_set_subtype(object, OVAL_LINUX_RPM_INFO);
@@ -355,13 +337,14 @@ static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_m
 	oval_object_content_set_entity(object_content, object_entity);
 	oval_object_add_object_content(object, object_content);
 
+	oscap_free(object_id);
 	return object;
 }
 
 static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int stateNo) {
 
-	const char *state_id = get_oval_id_string("state", stateNo);
+	char *state_id = get_oval_id_string("ste", stateNo);
 
 	// Entity (Package name match)
 	struct oval_entity *state_entity = oval_entity_new(def_model);
@@ -394,13 +377,15 @@ static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_mod
 	oval_state_add_content(state, evr_content);
 
 	//oscap_free(rpm_name_match);
+	oscap_free(state_id);
 	return state;
 }
 
 static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int testNo) {
 
-	struct oval_test *rpm_test = oval_test_new(def_model, get_oval_id_string("test", testNo));
+	char *test_id = get_oval_id_string("tst", testNo);
+	struct oval_test *rpm_test = oval_test_new(def_model, test_id);
 	oval_test_set_subtype(rpm_test,OVAL_LINUX_RPM_INFO);
 	oval_test_set_version(rpm_test, 1);
 	oval_test_set_check(rpm_test, OVAL_CHECK_AT_LEAST_ONE);
@@ -415,7 +400,7 @@ static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_mo
 static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int index) {
 
-	const char *definition_id = get_oval_id_string("definition", index);
+	char *definition_id = get_oval_id_string("def", index);
 	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, definition_id);
 	oval_definition_set_version(definition, 1);
 	oval_definition_set_title(definition, "CVRF RPM Vulnerability Test");
@@ -429,6 +414,7 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 	oval_criteria_node_set_comment(criterion, comment);
 	oval_criteria_node_add_subnode(criteria, criterion);
 
+	oscap_free(definition_id);
 	return definition;
 }
 
