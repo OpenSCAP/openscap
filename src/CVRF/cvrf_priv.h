@@ -34,6 +34,11 @@
  * CVRF enum definitions
  */
 
+/**
+ * @struct cvrf_item_spec
+ * Maps a cvrf_item_type_t enum to its text representation within a CVRF XML file,
+ * as well as the parent container (if one exists)
+ */
 struct cvrf_item_spec;
 
 typedef enum {
