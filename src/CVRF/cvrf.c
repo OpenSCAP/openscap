@@ -70,8 +70,9 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 		oscap_source_free(source);
 		return NULL;
 	}
-
-	return cvrf_model_parse(reader);
+	struct cvrf_model *model = cvrf_model_parse(reader);
+	xmlFreeTextReader(reader);
+	return model;
 }
 
 
