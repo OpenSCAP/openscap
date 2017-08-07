@@ -46,4 +46,4 @@ echo "Testing syschar values."
 [ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:filepath:obj:4"]/@flag)')" == "does not exist" ]
 [ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/collected_objects/object[@id="oval:filepath:obj:5"]/@flag)')" == "complete" ]
 
-#rm -rf $tmpdir
+rm -rf $tmpdir
