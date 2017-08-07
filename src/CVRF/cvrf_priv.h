@@ -54,7 +54,10 @@ typedef enum {
 } cvrf_item_type_t;
 
 const char *cvrf_item_type_get_text(cvrf_item_type_t item_type);
+cvrf_item_type_t cvrf_item_type_from_text(const char *item_name);
+bool cvrf_is_valid_item_type(const char *item_name);
 const char *cvrf_item_type_get_container(cvrf_item_type_t item_type);
+bool cvrf_item_type_has_container(cvrf_item_type_t item_type);
 
 typedef enum {
 	CVRF_DOC_PUBLISHER_VENDOR,

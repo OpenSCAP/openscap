@@ -98,21 +98,41 @@ static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
 	{0, NULL, NULL}
 };
 
-const char *cvrf_item_type_get_text(cvrf_item_type_t item_type) {
+static const struct cvrf_item_spec *cvrf_find_item_from_type(cvrf_item_type_t item_type) {
 	for (const struct cvrf_item_spec *mapptr = CVRF_ITEM_TYPE_MAP; mapptr->tag_name != NULL; ++mapptr) {
 		if (item_type == mapptr->type)
-			return mapptr->tag_name;
-	}
-	return NULL;
-}
-const char *cvrf_item_type_get_container(cvrf_item_type_t item_type) {
-	for (const struct cvrf_item_spec *mapptr = CVRF_ITEM_TYPE_MAP; mapptr->tag_name != NULL; ++mapptr) {
-		if (item_type == mapptr->type)
-			return mapptr->container_name;
+			return mapptr;
 	}
 	return NULL;
 }
 
+static const struct cvrf_item_spec *cvrf_find_item_from_text(const char *item) {
+	for (const struct cvrf_item_spec *mapptr = CVRF_ITEM_TYPE_MAP; mapptr->tag_name != NULL; ++mapptr) {
+		if (oscap_strcmp(item, mapptr->tag_name) || oscap_strcmp(item, mapptr->container_name))
+			return mapptr;
+	}
+	return NULL;
+}
+
+const char *cvrf_item_type_get_text(cvrf_item_type_t type) {
+	return cvrf_find_item_from_type(type) != NULL ? cvrf_find_item_from_type(type)->tag_name : NULL;
+}
+
+cvrf_item_type_t cvrf_item_type_from_text(const char *item) {
+	return cvrf_find_item_from_text(item) != NULL ? cvrf_find_item_from_text(item)->type : 0;
+}
+
+bool cvrf_is_valid_item_type(const char *item_name) {
+	return cvrf_item_type_from_text(item_name) != 0;
+}
+
+const char *cvrf_item_type_get_container(cvrf_item_type_t type) {
+	return cvrf_find_item_from_type(type) != NULL ? cvrf_find_item_from_type(type)->container_name : NULL;
+}
+
+bool cvrf_item_type_has_container(cvrf_item_type_t item_type) {
+	return cvrf_item_type_get_container(item_type) != NULL;
+}
 
 const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
 	{CVRF_DOC_PUBLISHER_VENDOR, "Vendor"},
