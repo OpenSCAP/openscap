@@ -78,45 +78,19 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 /**
  * Public function to export CVRF model to OSCAP export target.
  */
-
 int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
-	__attribute__nonnull__(export_file);
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return -1;
-	}
-
-	cvrf_model_to_dom(cvrf, doc, NULL, NULL);
-	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
-	if (source == NULL) {
-		return -1;
-	}
-
-	int ret = oscap_source_save_as(source, NULL);
+	struct oscap_source *source = cvrf_model_get_export_source(cvrf);
+	int ret = oscap_source_save_as(source, export_file);
 	oscap_source_free(source);
 	return ret;
 }
 
 
 int cvrf_index_export(struct cvrf_index *index, const char *export_file) {
-	__attribute__nonnull__(export_file);
 
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return -1;
-	}
-
-
-	cvrf_index_to_dom(index, doc, NULL, NULL);
-	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
-	if (source == NULL) {
-		return -1;
-	}
-
-	int ret = oscap_source_save_as(source, NULL);
+	struct oscap_source *source = cvrf_index_get_export_source(index);
+	int ret = oscap_source_save_as(source, export_file);
 	oscap_source_free(source);
 	return ret;
 }

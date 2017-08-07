@@ -187,6 +187,14 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source);
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse structures in CVRF file that pertain to the document itself,
+ * such as DocumentTracking, DocumentPublisher, and DocumentDistribution
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF document structure
+ */
+struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF DocumentPublisher
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF DocumentPublisher
@@ -295,7 +303,11 @@ void cvrf_element_add_child(const char *elm_name, const char *elm_value, xmlNode
 
 xmlNode *cvrf_element_to_dom(const char *elm_name, const char *elm_value);
 
+struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index);
+
 xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args);
+
+struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model);
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args);
 

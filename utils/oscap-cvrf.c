@@ -124,7 +124,6 @@ static int app_cvrf_export(const struct oscap_action *action) {
 		goto cleanup;
 	}
 
-	//struct oscap_source *export_source = oscap_source_new_from_file(action->cvrf_action->file);
 	cvrf_model_export(model, action->cvrf_action->export_file);
 	result = OSCAP_OK;
 
