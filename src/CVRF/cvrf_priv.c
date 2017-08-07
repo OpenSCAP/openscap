@@ -1400,7 +1400,6 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	ret->tree = cvrf_product_tree_parse(reader);
 	cvrf_parse_container(reader, ret->vulnerabilities, CVRF_VULNERABILITY);
 
-	xmlFreeTextReader(reader);
 	return ret;
 }
 
