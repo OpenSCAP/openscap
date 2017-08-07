@@ -468,10 +468,12 @@ struct cvrf_reference *cvrf_reference_clone(const struct cvrf_reference *ref) {
  * Product tree offshoot of main CVRF model
  */
 struct cvrf_product_tree {
-	struct cvrf_product_name *full_name;
+	struct oscap_list *product_names;
 	struct oscap_list *branches;
 	struct oscap_list *relationships;
 };
+OSCAP_IGETINS_GEN(cvrf_product_name, cvrf_product_tree, product_names, product_name)
+OSCAP_ITERATOR_REMOVE_F(cvrf_product_name)
 OSCAP_IGETINS_GEN(cvrf_relationship, cvrf_product_tree, relationships, relationship)
 OSCAP_ITERATOR_REMOVE_F(cvrf_relationship)
 
@@ -487,7 +489,7 @@ struct cvrf_product_tree *cvrf_product_tree_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->full_name = cvrf_product_name_new();
+	ret->product_names = oscap_list_new();
 	ret->branches = oscap_list_new();
 	ret->relationships = oscap_list_new();
 
@@ -499,7 +501,7 @@ void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
 	if (tree == NULL)
 		return;
 
-	cvrf_product_name_free(tree->full_name);
+	oscap_list_free(tree->product_names, (oscap_destruct_func) cvrf_product_name_free);
 	oscap_list_free(tree->branches, (oscap_destruct_func) cvrf_branch_free);
 	oscap_list_free(tree->relationships, (oscap_destruct_func) cvrf_relationship_free);
 	oscap_free(tree);
@@ -508,7 +510,7 @@ void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
 struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree *tree) {
 
 	struct cvrf_product_tree *clone = oscap_calloc(1, sizeof(struct cvrf_product_tree));
-	clone->full_name = cvrf_product_name_clone(tree->full_name);
+	clone->product_names = oscap_list_clone(tree->product_names, (oscap_clone_func) cvrf_product_name_clone);
 	clone->branches = oscap_list_clone(tree->branches, (oscap_clone_func) cvrf_branch_clone);
 	clone->relationships = oscap_list_clone(tree->relationships, (oscap_clone_func) cvrf_relationship_clone);
 	return clone;
@@ -1388,7 +1390,9 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME)) {
-			tree->full_name = cvrf_product_name_parse(reader);
+			if (!oscap_list_add(tree->product_names, cvrf_product_name_parse(reader))) {
+				cvrf_set_parsing_error("FullProductName");
+			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH)) {
 			while(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH) == 0) {
 				if (!oscap_list_add(tree->branches, cvrf_branch_parse(reader))) {
@@ -1646,6 +1650,8 @@ static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_
 			child = cvrf_revision_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_REFERENCE || cvrf_type == CVRF_DOCUMENT_REFERENCE) {
 			child = cvrf_reference_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_PRODUCT_NAME) {
+			child = cvrf_product_name_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_BRANCH) {
 			child = cvrf_branch_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_RELATIONSHIP) {
@@ -1832,7 +1838,7 @@ xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree) {
 	xmlNode *tree_node = xmlNewNode(NULL, TAG_PRODUCT_TREE);
 	xmlNewNs(tree_node, PROD_NS, NULL);
 
-	xmlAddChild(tree_node, cvrf_product_name_to_dom(tree->full_name));
+	cvrf_list_to_dom(tree->product_names, tree_node, CVRF_PRODUCT_NAME);
 	cvrf_list_to_dom(tree->branches, tree_node, CVRF_BRANCH);
 	cvrf_list_to_dom(tree->relationships, tree_node, CVRF_RELATIONSHIP);
 	return tree_node;

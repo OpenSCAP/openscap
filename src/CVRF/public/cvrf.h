@@ -225,6 +225,15 @@ struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree
 struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree);
 struct cvrf_relationship_iterator *cvrf_product_tree_get_relationships(const struct cvrf_product_tree *tree);
 
+struct cvrf_product_name_iterator;
+bool cvrf_product_tree_add_product_name(struct cvrf_product_tree *tree, struct cvrf_product_name *full_name);
+struct cvrf_product_name_iterator *cvrf_product_tree_get_product_names(const struct cvrf_product_tree *tree);
+struct cvrf_product_name *cvrf_product_name_iterator_next(struct cvrf_product_name_iterator *it);
+bool cvrf_product_name_iterator_has_more(struct cvrf_product_name_iterator *it);
+void cvrf_product_name_iterator_free(struct cvrf_product_name_iterator *it);
+void cvrf_product_name_iterator_reset(struct cvrf_product_name_iterator *it);
+void cvrf_product_name_iterator_remove(struct cvrf_product_name_iterator *it);
+
 struct cvrf_relationship_iterator;
 bool cvrf_product_tree_add_relationship(struct cvrf_product_tree *tree, struct cvrf_relationship *relation);
 struct cvrf_relationship *cvrf_relationship_iterator_next(struct cvrf_relationship_iterator *it);
