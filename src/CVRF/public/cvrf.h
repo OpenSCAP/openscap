@@ -770,34 +770,33 @@ void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
 
 
 /**
- * @struct cvrf_model_eval
+ * @struct cvrf_session
  *
  *
  */
-struct cvrf_model_eval;
+struct cvrf_session;
 
 /**
  *
  *
  */
-struct cvrf_model_eval *cvrf_model_eval_new(void);
-
+struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source);
 /**
  *
  *
  */
-void cvrf_model_eval_free(struct cvrf_model_eval *eval);
+void cvrf_session_free(struct cvrf_session *session);
 
-struct cvrf_model *cvrf_eval_get_model(struct cvrf_model_eval *eval);
-struct oscap_string_iterator *cvrf_model_eval_get_product_ids(struct cvrf_model_eval *eval);
-const char *cvrf_model_eval_get_os_name(const struct cvrf_model_eval *eval);
-const char *cvrf_model_eval_get_os_version(const struct cvrf_model_eval *eval);
+struct cvrf_model *cvrf_session_get_model(struct cvrf_session *session);
+struct oscap_string_iterator *cvrf_session_get_product_ids(struct cvrf_session *session);
+const char *cvrf_session_get_os_name(const struct cvrf_session *session);
+const char *cvrf_session_get_export_file(const struct cvrf_session *session);
+const char *cvrf_session_get_results_file(const struct cvrf_session *session);
 
-
-void cvrf_eval_set_model(struct cvrf_model_eval *eval, struct cvrf_model *model);
-bool cvrf_model_eval_set_os_name(struct cvrf_model_eval *eval, const char *os_name);
-bool cvrf_model_eval_set_os_version(struct cvrf_model_eval *eval, const char *os_version);
-
+void cvrf_session_set_model(struct cvrf_session *session, struct cvrf_model *model);
+bool cvrf_session_set_os_name(struct cvrf_session *session, const char *os_name);
+bool cvrf_session_set_export_file(struct cvrf_session *session, const char *export_file);
+bool cvrf_session_set_results_file(struct cvrf_session *session, const char *results_file);
 
 /**
  * @struct cvrf_rpm_attributes
@@ -879,7 +878,7 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
 
-int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval);
+int cvrf_session_construct_definition_model(struct cvrf_session *session);
 
 
 /**@}*/
