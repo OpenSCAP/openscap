@@ -362,6 +362,8 @@ static const char *get_oval_id_string(const char *type, int object_number) {
 			oscap_string_append_string(string, "oval:org.open-scap.unix:ste:");
 	} else if (!strcmp(type, "test")) {
 			oscap_string_append_string(string, "oval:org.open-scap.unix:tst:");
+	} else if (!strcmp(type, "definition")) {
+		oscap_string_append_string(string, "oval:org.open-scap.unix:def:");
 	}
 
 	oscap_string_append_string(string, number_as_string);
@@ -372,16 +374,6 @@ static const char *get_oval_id_string(const char *type, int object_number) {
 	return oval_id;
 }
 
-static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_model *def_model, int testNo) {
-
-	struct oval_test *rpm_test = oval_test_new(def_model, get_oval_id_string("test", testNo));
-	oval_test_set_subtype(rpm_test,OVAL_LINUX_RPM_INFO);
-	oval_test_set_version(rpm_test, 1);
-	oval_test_set_check(rpm_test, OVAL_CHECK_AT_LEAST_ONE);
-	oval_test_set_existence(rpm_test, OVAL_AT_LEAST_ONE_EXISTS);
-
-	return rpm_test;
-}
 
 static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int objectNo) {
@@ -438,6 +430,40 @@ static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_mod
 	return state;
 }
 
+static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_model *def_model,
+		struct cvrf_rpm_attributes *attributes, int testNo) {
+
+	struct oval_test *rpm_test = oval_test_new(def_model, get_oval_id_string("test", testNo));
+	oval_test_set_subtype(rpm_test,OVAL_LINUX_RPM_INFO);
+	oval_test_set_version(rpm_test, 1);
+	oval_test_set_check(rpm_test, OVAL_CHECK_AT_LEAST_ONE);
+	oval_test_set_existence(rpm_test, OVAL_AT_LEAST_ONE_EXISTS);
+
+	oval_test_add_state(rpm_test, get_new_oval_state_for_cvrf(def_model, attributes, testNo));
+	oval_test_set_object(rpm_test, get_new_oval_object_for_cvrf(def_model, attributes, testNo));
+
+	return rpm_test;
+}
+
+static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_definition_model *def_model,
+		struct cvrf_rpm_attributes *attributes, int index) {
+
+	const char *definition_id = get_oval_id_string("definition", index);
+	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, definition_id);
+	oval_definition_set_version(definition, 1);
+	oval_definition_set_title(definition, "CVRF RPM Vulnerability Test");
+
+	struct oval_criteria_node *criteria = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERIA);
+	oval_definition_set_criteria(definition, criteria);
+
+	struct oval_criteria_node *criterion = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERION);
+	oval_criteria_node_set_test(criterion, get_new_rpminfo_test_for_cvrf(def_model, attributes, index));
+	char *comment = oscap_sprintf("Check for vulnerability of package %s", attributes->rpm_name);
+	oval_criteria_node_set_comment(criterion, comment);
+	oval_criteria_node_add_subnode(criteria, criterion);
+
+	return definition;
+}
 
 int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 
@@ -445,28 +471,10 @@ int cvrf_model_eval_construct_definition_model(struct cvrf_model_eval *eval) {
 	struct oscap_string_iterator *product_ids = cvrf_model_eval_get_product_ids(eval);
 	int index = 1;
 
-	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, "oval:org.open-scap.unix:def:1");
-	oval_definition_set_version(definition, 1);
-	oval_definition_set_title(definition, "CVRF RPM Vulnerability Test");
-	struct oval_criteria_node *criteria = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERIA);
-	oval_definition_set_criteria(definition, criteria);
-
 	while (oscap_string_iterator_has_more(product_ids)) {
 		const char *product_id = oscap_string_iterator_next(product_ids);
 		struct cvrf_rpm_attributes *attributes = parse_rpm_attributes_from_cvrf_product_id(eval, product_id);
-
-		struct oval_object *object = get_new_oval_object_for_cvrf(def_model, attributes, index);
-		struct oval_state *state = get_new_oval_state_for_cvrf(def_model, attributes, index);
-
-		struct oval_test *rpm_test = get_new_rpminfo_test_for_cvrf(def_model, index);
-		oval_test_set_object(rpm_test, object);
-		oval_test_add_state(rpm_test, state);
-
-		struct oval_criteria_node *criterion = oval_criteria_node_new(def_model, OVAL_NODETYPE_CRITERION);
-		oval_criteria_node_set_test(criterion, rpm_test);
-		char *comment = oscap_sprintf("Check for vulnerability of package %s", attributes->rpm_name);
-		oval_criteria_node_set_comment(criterion, comment);
-		oval_criteria_node_add_subnode(criteria, criterion);
+		struct oval_definition *definition = get_new_oval_definition_for_cvrf(def_model, attributes, index);
 
 		index++;
 	}
