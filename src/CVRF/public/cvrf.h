@@ -483,6 +483,66 @@ const char *cvrf_product_name_get_cpe(const struct cvrf_product_name *full_name)
 bool cvrf_product_name_set_product_id(struct cvrf_product_name *full_name, const char *product_id);
 bool cvrf_product_name_set_cpe(struct cvrf_product_name *full_name, const char *cpe);
 
+/************************************************************************************************
+ * @struct cvrf_group
+ * Structure that categorically groups different products referenced in the document.
+ * One ProductID is used per group member. The GroupID can be used as a reference for
+ * other elements.
+ *
+ * PARENT NODE: ProductGroups container (which is a child of ProductTree)
+ * REQUIRED: GroupID attribute [max: 1], ProductID element [min:2, max: unbounded]
+ * OPTIONAL: Description element [min: 0, max: 1]
+ */
+struct cvrf_group;
+
+/**
+ * New CVRF Group child of ProductGroups container element
+ * @memberof cvrf_group
+ * @return New CVRF Group structure
+ */
+struct cvrf_group *cvrf_group_new(void);
+
+/**
+ * Deallocates memory for a Group element
+ * @memberof cvrf_group
+ * @param group The CVRF Group structure to be freed
+ */
+void cvrf_group_free(struct cvrf_group *group);
+
+/**
+ * @memberof cvrf_group
+ * @param group Original Group structure to be cloned
+ * @return New cloned Group structure with same data as the original
+ */
+struct cvrf_group *cvrf_group_clone(const struct cvrf_group *group);
+
+/**
+ * @memberof cvrf_group
+ * @param group CVRF Group structure
+ * Unique identifier for a Group; used for referencing the Group elsewhere in the document
+ * @return contents of GroupID attribute of a Group element
+ */
+const char *cvrf_group_get_group_id(const struct cvrf_group *group);
+
+/**
+ * @memberof cvrf_group
+ * @param group CVRF Group structure
+ * Short and human-readable description about the Group
+ * @return contents of Description element of a Group element
+ */
+const char *cvrf_group_get_description(const struct cvrf_group *group);
+
+bool cvrf_group_set_group_id(struct cvrf_group *group, const char *group_id);
+bool cvrf_group_set_description(struct cvrf_group *group, const char *description);
+
+/**
+ * @memberof cvrf_group
+ * @param group CVRF Group structure
+ * List of all ProductIDs representing the products that belong to this Group
+ * @return Iterator for the stringlist of ProductIDs
+ */
+struct oscap_string_iterator *cvrf_group_get_product_ids(struct cvrf_group *group);
+
 
 /************************************************************************************************
  * @struct cvrf_relationship
