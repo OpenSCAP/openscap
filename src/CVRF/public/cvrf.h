@@ -36,7 +36,7 @@
 #include "oval_definitions.h"
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_product_status
  * Structure holding CVRF Status element (within a ProductStatuses container)
  * Contains a list of ProductIDs and their status with respect to the parent Vulnerability
@@ -75,7 +75,7 @@ struct cvrf_product_status *cvrf_product_status_clone(const struct cvrf_product_
 struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_status *stat);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_threat
  * Gives context about the type of Vulnerability and how much threat it poses
  * Contained within a list representing a Threats container in Vulnerability structure
@@ -107,16 +107,45 @@ void cvrf_threat_free(struct cvrf_threat *threat);
  */
 struct cvrf_threat *cvrf_threat_clone(const struct cvrf_threat *threat);
 
+/**
+ * @memberof cvrf_threat
+ * @param threat CVRF Threat structure
+ * Datetime that the Threat was identified and documented
+ * @return contents of Date attribute within a Threat element
+ */
 const char *cvrf_threat_get_date(const struct cvrf_threat *threat);
+
+/**
+ * @memberof cvrf_threat
+ * @param threat CVRF Threat structure
+ * Description contains a human-readable explanation of the threat
+ * @return contents of Description element within a Threat element
+ */
 const char *cvrf_threat_get_description(const struct cvrf_threat *threat);
+
+/**
+ * @memberof cvrf_threat
+ * @param threat Threat structure with stringlist of ProductIDs
+ * Stringlist can have from zero to unbounded number of ProductIDs
+ * ProductIDs reference the ProductID of a FullProductName element in the document
+ * @return Iterator for the stringlist of ProductIDs
+ */
 struct oscap_string_iterator *cvrf_threat_get_product_ids(struct cvrf_threat *threat);
+
+/**
+ * @memberof cvrf_threat
+ * @param threat Threat structure with stringlist of GroupIDs
+ * Stringlist can have from zero to unbounded number of GroupIDs
+ * GroupIDs reference the GroupID of a Group element in the document
+ * @return Iterator for the stringlist of GroupIDs
+ */
 struct oscap_string_iterator *cvrf_threat_get_group_ids(struct cvrf_threat *threat);
 
 bool cvrf_threat_set_date(struct cvrf_threat *threat, const char *threat_date);
 bool cvrf_threat_set_description(struct cvrf_threat *threat, const char *threat_description);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_remediation
  * Structure holding info for handling or fixing a particular Vulnerability
  *
@@ -141,13 +170,53 @@ struct cvrf_remediation *cvrf_remediation_new(void);
  */
 void cvrf_remediation_free(struct cvrf_remediation *remed);
 
+/**
+ * @memberof cvrf_remediation
+ * @param remed Original Remediation structure to be cloned
+ * @return New cloned Remediation structure with same data as the original
+ */
 struct cvrf_remediation *cvrf_remediation_clone(const struct cvrf_remediation *remed);
 
-const char *cvrf_remediation_get_date(const struct cvrf_remediation *remed);
+/**
+ * @memberof cvrf_remediation
+ * @param remed CVRF Remediation structure
+ * Description contains a human-readable explanation of Remediation process
+ * @return contents of Description element within a Remediation element
+ */
 const char *cvrf_remediation_get_description(const struct cvrf_remediation *remed);
+
+/**
+ * @memberof cvrf_remediation
+ * @param remed CVRF Remediation structure
+ * Optional URL link to a Remediation for a particular Vulnerability
+ * @return contents of URL element within a Remediation element
+ */
 const char *cvrf_remediation_get_url(const struct cvrf_remediation *remed);
+
+/**
+ * @memberof cvrf_remediation
+ * @param remed CVRF Remediation structure
+ * Contains vendor-defined constraints for products used to resolve the Vulnerability
+ * @return contents of Entitlement element within a Remediation element
+ */
 const char *cvrf_remediation_get_entitlement(const struct cvrf_remediation *remed);
+
+/**
+ * @memberof cvrf_remediation
+ * @param remed CVRF Remediation structure
+ * Stringlist can have from zero to unbounded number of ProductIDs
+ * ProductIDs reference the ProductID of a FullProductName element in the document
+ * @return Iterator for the stringlist of ProductIDs
+ */
 struct oscap_string_iterator *cvrf_remediation_get_product_ids(struct cvrf_remediation *remed);
+
+/**
+ * @memberof cvrf_remediation
+ * @param remed CVRF Remediation structure
+ * Stringlist can have from zero to unbounded number of GroupIDs
+ * GroupIDs reference the GroupID of a Group element in the document
+ * @return Iterator for the stringlist of GroupIDs
+ */
 struct oscap_string_iterator *cvrf_remediation_get_group_ids(struct cvrf_remediation *remed);
 
 bool cvrf_remediation_set_date(struct cvrf_remediation *remed, const char *date);
@@ -156,7 +225,7 @@ bool cvrf_remediation_set_url(struct cvrf_remediation *remed, const char *url);
 bool cvrf_remediation_set_entitlement(struct cvrf_remediation *remed, const char *entitlement);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_score_set
  * Contains CVSS metrics for a given Vulnerability. No ProductID indicates that it pertains to all
  * Products in a given CVRF file
@@ -189,19 +258,60 @@ void cvrf_score_set_free(struct cvrf_score_set *score_set);
  */
 struct cvrf_score_set *cvrf_score_set_clone(const struct cvrf_score_set *score_set);
 
+/**
+ * @memberof cvrf_score_set
+ * @param score_set ScoreSet structure
+ * Contains official CVSS notation of values used to compute all the scores
+ * @return contents of Vector element within a ScoreSet element
+ */
 const char *cvrf_score_set_get_vector(const struct cvrf_score_set *score_set);
+
+/**
+ * @memberof cvrf_score_set
+ * @param score_set ScoreSet structure with stringlist of ProductIDs
+ * Stringlist can have from zero to unbounded number of ProductIDs
+ * ProductIDs reference the ProductID of a FullProductName element in the document
+ * @return Iterator for the stringlist of ProductIDs
+ */
 struct oscap_string_iterator *cvrf_score_set_get_product_ids(struct cvrf_score_set *score_set);
+
+/**
+ * @memberof cvrf_score_set
+ * @param score_set ScoreSet structure
+ * @return CVSS impact structure generated by parsing XML ScoreSet element in CVRF document
+ */
 struct cvss_impact *cvrf_score_set_get_impact(struct cvrf_score_set *score_set);
 char *cvrf_score_set_get_score(const struct cvrf_score_set *score_set, enum cvss_category category);
+
+/**
+ * @memberof cvrf_score_set
+ * @param score_set ScoreSet structure
+ * Range: 0.0 - 10.0
+ * @return string representation of BaseScore element within a ScoreSet element
+ */
 char *cvrf_score_set_get_base_score(const struct cvrf_score_set *score_set);
+
+/**
+ * @memberof cvrf_score_set
+ * @param score_set ScoreSet structure
+ * Range: 0.0 - 10.0
+ * @return string representation of EnvironmentalScore element within a ScoreSet element
+ */
 char *cvrf_score_set_get_environmental_score(const struct cvrf_score_set *score_set);
+
+/**
+ * @memberof cvrf_score_set
+ * @param score_set ScoreSet structure
+ * Range: 0.0 - 10.0
+ * @return string representation of TemporalScore element within a ScoreSet element
+ */
 char *cvrf_score_set_get_temporal_score(const struct cvrf_score_set *score_set);
 
 bool cvrf_score_set_set_vector(struct cvrf_score_set *score_set, const char *vector);
 void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_category category, const char *score);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_vulnerability
  * Provides information about Vulnerabilities for products and packages referenced in
  * ProductTree branches and relationships
@@ -237,18 +347,61 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability);
  * @return New cloned Vulnerability structure with same data as the original
  */
 struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * Index and ordering of a Vulnerability element within a document
+ * @return Ordinal attribute of a Vulnerability element
+ */
+int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * Canonical name of Vulnerability; should match nomenclature of references elsewhere
+ * @return contents of a Title element within a Vulnerability element
+ */
+const char *cvrf_vulnerability_get_title(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * Unique ID of the Vulnerability given by the document producer
+ * @return contents of an ID element within a Vulnerability element
+ */
+const char *cvrf_vulnerability_get_system_id(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * DateTime value of the original discovery time for this Vulnerability
+ * @return contents of DiscoveryDate element within a Vulnerability element
+ */
+const char *cvrf_vulnerability_get_discovery_date(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * DateTime value of the original public release time for this Vulnerability
+ * @return contents of ReleaseDate element within a Vulnerability element
+ */
+const char *cvrf_vulnerability_get_release_date(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * MITRE standard CVE ID used to track Vulnerabilities
+ * @return contents of CVE element within a Vulnerability element
+ */
+const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
+
+struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
+
+int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
 void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
 struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
-
-const char *cvrf_vulnerability_get_title(const struct cvrf_vulnerability *vuln);
-const char *cvrf_vulnerability_get_system_id(const struct cvrf_vulnerability *vuln);
-const char *cvrf_vulnerability_get_discovery_date(const struct cvrf_vulnerability *vuln);
-const char *cvrf_vulnerability_get_release_date(const struct cvrf_vulnerability *vuln);
-const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
-int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
-int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
-struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
-struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
 
 bool cvrf_vulnerability_set_title(struct cvrf_vulnerability *vuln, const char *vulnerability_title);
 bool cvrf_vulnerability_set_system_id(struct cvrf_vulnerability *vuln, const char *id);
@@ -292,7 +445,7 @@ void cvrf_threat_iterator_free(struct cvrf_threat_iterator *it);
 void cvrf_threat_iterator_reset(struct cvrf_threat_iterator *it);
 void cvrf_threat_iterator_remove(struct cvrf_threat_iterator *it);
 
-/**
+/************************************************************************************************
  * @struct cvrf_product_name
  * Represents FullProductName element, which is a child of both Branch and Relationship elements
  * Links a CPE to its ProductID or a package ProductID. No two FullProductName elements can
@@ -331,7 +484,7 @@ bool cvrf_product_name_set_product_id(struct cvrf_product_name *full_name, const
 bool cvrf_product_name_set_cpe(struct cvrf_product_name *full_name, const char *cpe);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_relationship
  * Structure within a parent ProductTree. Establishes a link between two products (FullProductNames)
  * referenced in the document. Thus, at least two FullProductName elements must exist in the document.
@@ -363,15 +516,35 @@ void cvrf_relationship_free(struct cvrf_relationship *relationship);
  */
 struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship *relation);
 
+/**
+ * @memberof cvrf_relationship
+ * @param relation CVRF Relationship structure
+ * Reference to a package ProductID that is a component of the CPE in RelatesToProductReference
+ * @return contents of ProductReference attribute of a Relationship element
+ */
 const char *cvrf_relationship_get_product_reference(const struct cvrf_relationship *relation);
+
+/**
+ * @memberof cvrf_relationship
+ * @param relation CVRF Relationship structure
+ * ProductID for a CPE referenced in preceding Branches in the ProductTree
+ * @return contents of RelatesToProductReference attribute of a Relationship element
+ */
 const char *cvrf_relationship_get_relates_to_ref(const struct cvrf_relationship *relation);
+
+/**
+ * @memberof cvrf_relationship
+ * @param relation CVRF Relationship structure
+ * Typically combines references to the CPE and package ProductID named in Relationship attributes
+ * @return FullProductName child element of a Relationship element
+ */
 struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation);
 
 bool cvrf_relationship_set_product_reference(struct cvrf_relationship *relation, const char *product_reference);
 bool cvrf_relationship_set_relates_to_ref(struct cvrf_relationship *relation, const char *relates_to_ref);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_branch
  * Establishes hierarchy and relationships between different CPEs, products, and packages
  * Can only have one type of child element: a FullProductName or more Branches
@@ -403,14 +576,34 @@ void cvrf_branch_free(struct cvrf_branch *branch);
  */
 struct cvrf_branch *cvrf_branch_clone(const struct cvrf_branch *branch);
 
+/**
+ * @memberof cvrf_branch
+ * @param branch CVRF Branch structure
+ * Canonical description of the Branch; paired with Branch Type
+ * @return contents of Name attribute within a Branch element
+ */
 const char *cvrf_branch_get_branch_name(const struct cvrf_branch *branch);
+
+/**
+ * @memberof cvrf_branch
+ * @param branch CVRF Branch structure
+ * Child element and endpoint of tree for branches not of the type 'Product Family'
+ * @return FullProductName child element of a Branch element
+ */
 struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch);
+
+/**
+ * @memberof cvrf_branch
+ * @param branch CVRF Branch structure
+ * Sub-branch children of 'Product Family'-type Branches
+ * @return Iterator for sub-branch structures for this Branch element
+ */
 struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch);
 
 bool cvrf_branch_set_branch_name(struct cvrf_branch *branch, const char *branch_name);
 
 
-/**
+/************************************************************************************************
  *@struct cvrf_product_tree
  * Relates information about CPEs, their given ProductIDs, packages and their given ProductIDs through
  * Branch and Relationship child elements
@@ -466,7 +659,7 @@ void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
 void cvrf_relationship_iterator_remove(struct cvrf_relationship_iterator *it);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_acknowledgment
  * Metadata giving recognition of external parties who provided information, suggestions, or
  * other contributions
@@ -498,11 +691,18 @@ void cvrf_acknowledgment_free(struct cvrf_acknowledgment *ack);
  */
 struct cvrf_acknowledgment *cvrf_acknowledgment_clone(const struct cvrf_acknowledgment *ack);
 
+/**
+ * @memberof cvrf_acknowledgment
+ * @param ack CVRF Acknowledgment structure
+ * Contextual information about acknowledgers or acknowledged parties
+ * @return contents of Description element within an Acknowledgment element
+ */
 const char *cvrf_acknowledgment_get_description(const struct cvrf_acknowledgment *ack);
+
 bool cvrf_acknowledgment_set_description(struct cvrf_acknowledgment *ack, const char *description);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_revision
  * Metadata for tracking the changes made to a CVRF document
  *
@@ -537,7 +737,7 @@ bool cvrf_revision_set_number(struct cvrf_revision *revision, const char *number
 bool cvrf_revision_set_date(struct cvrf_revision *revision, const char *date);
 bool cvrf_revision_set_description(struct cvrf_revision *revision, const char *description);
 
-/**
+/************************************************************************************************
  * @struct cvrf_doc_tracking
  * Metadata for referencing origin, changes, release dates, IDs, and other information about
  * the document
@@ -582,7 +782,7 @@ bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, 
 bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, const char *generator_date);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_doc_publisher
  * Metadata about the publisher of the CVRF document
  *
@@ -617,7 +817,7 @@ bool cvrf_doc_publisher_set_vendor_id(struct cvrf_doc_publisher *publisher, cons
 bool cvrf_doc_publisher_set_contact_details(struct cvrf_doc_publisher *publisher, const char *contact_details);
 bool cvrf_doc_publisher_set_issuing_authority(struct cvrf_doc_publisher *publisher, const char *issuing_authority);
 
-/**
+/************************************************************************************************
  * @struct cvrf_reference
  * Refers to resources and information outside of the CVRF document itself
  *
@@ -648,7 +848,7 @@ const char *cvrf_reference_get_description(const struct cvrf_reference *referenc
 bool cvrf_reference_set_url(struct cvrf_reference *reference, const char *url);
 bool cvrf_reference_set_description(struct cvrf_reference *reference, const char *description);
 
-/**
+/************************************************************************************************
  * @struct cvrf_document
  *
  */
@@ -685,7 +885,7 @@ bool cvrf_document_set_namespace(struct cvrf_document *doc, const char *ns);
 void cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher);
 void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track);
 
-/**
+/************************************************************************************************
  * @struct cvrf_model
  * Top level structure; organizationally divided into 3 components: Document, ProductTree, and
  * Vulnerability offshoots. This structure contains all information provided by a CVRF file.
@@ -732,7 +932,7 @@ void cvrf_vulnerability_iterator_reset(struct cvrf_vulnerability_iterator *it);
 void cvrf_vulnerability_iterator_remove(struct cvrf_vulnerability_iterator *it);
 
 
-/**
+/************************************************************************************************
  * @struct cvrf_index
  * Represents an index of a CVRF feed or directory
  * Maintains a list of all CVRF files in the form of cvrf_model structures
@@ -768,8 +968,7 @@ void cvrf_model_iterator_reset(struct cvrf_model_iterator *it);
 void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
 
 
-
-/**
+/************************************************************************************************
  * @struct cvrf_session
  *
  *
@@ -777,13 +976,15 @@ void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
 struct cvrf_session;
 
 /**
- *
- *
+ * @memberof cvrf_session
+ * @param source OSCAP import source for a CVRF document or index
+ * @return CVRF session structure generated from this import source
  */
 struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source);
 /**
- *
- *
+ * Deallocates memory for a CVRF Session structure
+ * @memberof cvrf_session
+ * @param session CVRF session structure to be freed
  */
 void cvrf_session_free(struct cvrf_session *session);
 
@@ -798,7 +999,7 @@ bool cvrf_session_set_os_name(struct cvrf_session *session, const char *os_name)
 bool cvrf_session_set_export_file(struct cvrf_session *session, const char *export_file);
 bool cvrf_session_set_results_file(struct cvrf_session *session, const char *results_file);
 
-/**
+/************************************************************************************************
  * @struct cvrf_rpm_attributes
  *
  */
@@ -825,8 +1026,8 @@ bool cvrf_rpm_attributes_set_rpm_name(struct cvrf_rpm_attributes *attributes, co
 bool cvrf_rpm_attributes_set_evr_format(struct cvrf_rpm_attributes *attributes, const char *evr_format);
 
 
-/************************************************************************************/
-/************************************************************************************/
+/************************************************************************************************/
+/************************************************************************************************/
 
 
 /**
