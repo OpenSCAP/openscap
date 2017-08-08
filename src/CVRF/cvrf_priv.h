@@ -49,6 +49,7 @@ typedef enum {
 	CVRF_ACKNOWLEDGMENT,
 	CVRF_PRODUCT_TREE,
 	CVRF_BRANCH,
+	CVRF_GROUP,
 	CVRF_RELATIONSHIP,
 	CVRF_PRODUCT_NAME,
 	CVRF_VULNERABILITY,
@@ -251,6 +252,13 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader);
 struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF Group item
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Group
+ */
+struct cvrf_group *cvrf_group_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse CVRF FullProductName item
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF Relationship
@@ -328,6 +336,8 @@ xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree);
 xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch);
 
 xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation);
+
+xmlNode *cvrf_group_to_dom(const struct cvrf_group *group);
 
 xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln);
 

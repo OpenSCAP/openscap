@@ -477,10 +477,7 @@ OSCAP_ACCESSOR_STRING(cvrf_product_name, product_id)
 OSCAP_ACCESSOR_STRING(cvrf_product_name, cpe)
 
 struct cvrf_product_name *cvrf_product_name_new() {
-
-	struct cvrf_product_name *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_product_name));
+	struct cvrf_product_name *ret = oscap_alloc(sizeof(struct cvrf_product_name));
 	if (ret == NULL)
 		return NULL;
 
@@ -500,14 +497,55 @@ void cvrf_product_name_free(struct cvrf_product_name *full_name) {
 }
 
 struct cvrf_product_name *cvrf_product_name_clone(const struct cvrf_product_name *full_name) {
-
 	struct cvrf_product_name *clone = oscap_calloc(1, sizeof(struct cvrf_product_name));
 	clone->product_id = oscap_strdup(full_name->product_id);
 	clone->cpe = oscap_strdup(full_name->cpe);
 	return clone;
 }
 
+/***************************************************************************
+ * CVRF ProductGroup
+ */
+struct cvrf_group {
+	char *group_id;
+	char *description;
+	struct oscap_stringlist *product_ids;
+};
+OSCAP_ACCESSOR_STRING(cvrf_group, group_id)
+OSCAP_ACCESSOR_STRING(cvrf_group, description)
 
+struct oscap_string_iterator *cvrf_group_get_product_ids(struct cvrf_group *group) {
+	return oscap_stringlist_get_strings(group->product_ids);
+}
+
+struct cvrf_group *cvrf_group_new() {
+	struct cvrf_group *ret = oscap_alloc(sizeof(struct cvrf_group));
+	if (ret == NULL)
+		return NULL;
+
+	ret->group_id = NULL;
+	ret->description = NULL;
+	ret->product_ids = oscap_stringlist_new();
+	return ret;
+}
+
+void cvrf_group_free(struct cvrf_group *group) {
+	if (group == NULL)
+		return;
+
+	oscap_free(group->group_id);
+	oscap_free(group->description);
+	oscap_stringlist_free(group->product_ids);
+	oscap_free(group);
+}
+
+struct cvrf_group *cvrf_group_clone(const struct cvrf_group *group) {
+	struct cvrf_group *clone = oscap_calloc(1, sizeof(struct cvrf_group));
+	clone->group_id = oscap_strdup(group->group_id);
+	clone->description = oscap_strdup(group->description);
+	clone->product_ids = oscap_stringlist_clone(group->product_ids);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF Relationship
@@ -529,10 +567,7 @@ cvrf_relationship_type_t cvrf_relationship_get_relation_type(struct cvrf_relatio
 }
 
 struct cvrf_relationship *cvrf_relationship_new() {
-
-	struct cvrf_relationship *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_relationship));
+	struct cvrf_relationship *ret = oscap_alloc(sizeof(struct cvrf_relationship));
 	if (ret == NULL)
 		return NULL;
 
@@ -554,7 +589,6 @@ void cvrf_relationship_free(struct cvrf_relationship *relationship) {
 }
 
 struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship *relation) {
-
 	struct cvrf_relationship *clone = oscap_calloc(1, sizeof(struct cvrf_relationship));
 	clone->relation_type = relation->relation_type;
 	clone->product_reference = oscap_strdup(relation->product_reference);
@@ -645,6 +679,7 @@ struct cvrf_product_tree {
 	struct oscap_list *product_names;
 	struct oscap_list *branches;
 	struct oscap_list *relationships;
+	struct oscap_list *product_groups;
 };
 OSCAP_IGETINS_GEN(cvrf_product_name, cvrf_product_tree, product_names, product_name)
 OSCAP_ITERATOR_REMOVE_F(cvrf_product_name)
@@ -656,28 +691,25 @@ struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *
 }
 
 struct cvrf_product_tree *cvrf_product_tree_new() {
-
-	struct cvrf_product_tree *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_product_tree));
+	struct cvrf_product_tree *ret = oscap_alloc(sizeof(struct cvrf_product_tree));
 	if (ret == NULL)
 		return NULL;
 
 	ret->product_names = oscap_list_new();
 	ret->branches = oscap_list_new();
 	ret->relationships = oscap_list_new();
-
+	ret->product_groups = oscap_list_new();
 	return ret;
 }
 
 void cvrf_product_tree_free(struct cvrf_product_tree *tree) {
-
 	if (tree == NULL)
 		return;
 
 	oscap_list_free(tree->product_names, (oscap_destruct_func) cvrf_product_name_free);
 	oscap_list_free(tree->branches, (oscap_destruct_func) cvrf_branch_free);
 	oscap_list_free(tree->relationships, (oscap_destruct_func) cvrf_relationship_free);
+	oscap_list_free(tree->product_groups, (oscap_destruct_func) cvrf_group_free);
 	oscap_free(tree);
 }
 
@@ -687,6 +719,7 @@ struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree
 	clone->product_names = oscap_list_clone(tree->product_names, (oscap_clone_func) cvrf_product_name_clone);
 	clone->branches = oscap_list_clone(tree->branches, (oscap_clone_func) cvrf_branch_clone);
 	clone->relationships = oscap_list_clone(tree->relationships, (oscap_clone_func) cvrf_relationship_clone);
+	clone->product_groups = oscap_list_clone(tree->product_groups, (oscap_clone_func) cvrf_group_clone);
 	return clone;
 }
 
@@ -1255,6 +1288,9 @@ void cvrf_index_free(struct cvrf_index *index) {
 #define TAG_RELATIONSHIP BAD_CAST "Relationship"
 #define ATTR_PRODUCT_REFERENCE BAD_CAST "ProductReference"
 #define ATTR_RELATES_TO_REF BAD_CAST "RelatesToProductReference"
+// Group
+#define TAG_PRODUCT_GROUPS BAD_CAST "ProductGroups"
+#define TAG_GROUP BAD_CAST "Group"
 // Vulnerabilities
 #define TAG_VULNERABILITY BAD_CAST "Vulnerability"
 #define ATTR_ORDINAL BAD_CAST "Ordinal"
@@ -1322,6 +1358,8 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 			no_err = oscap_list_add(list, cvrf_reference_parse(reader));
 		} else if (item_type == CVRF_ACKNOWLEDGMENT) {
 			no_err = oscap_list_add(list, cvrf_acknowledgment_parse(reader));
+		} else if (item_type == CVRF_GROUP) {
+			no_err = oscap_list_add(list, cvrf_group_parse(reader));
 		} else if (item_type == CVRF_PRODUCT_STATUS) {
 			no_err = oscap_list_add(list, cvrf_product_status_parse(reader));
 		} else if (item_type ==  CVRF_REMEDIATION) {
@@ -1598,19 +1636,18 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 		}
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME)) {
-			if (!oscap_list_add(tree->product_names, cvrf_product_name_parse(reader))) {
+			if (!oscap_list_add(tree->product_names, cvrf_product_name_parse(reader)))
 				cvrf_set_parsing_error("FullProductName");
-			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH)) {
 			while(xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BRANCH) == 0) {
-				if (!oscap_list_add(tree->branches, cvrf_branch_parse(reader))) {
+				if (!oscap_list_add(tree->branches, cvrf_branch_parse(reader)))
 					cvrf_set_parsing_error("Branch");
-				}
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_RELATIONSHIP)) {
-			if (!oscap_list_add(tree->relationships, cvrf_relationship_parse(reader))) {
+			if (!oscap_list_add(tree->relationships, cvrf_relationship_parse(reader)))
 				cvrf_set_parsing_error("Relationship");
-			}
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_GROUPS)) {
+			cvrf_parse_container(reader, tree->product_groups, CVRF_GROUP);
 		}
 		xmlTextReaderNextNode(reader);
 	}
@@ -1661,6 +1698,29 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 	xmlTextReaderNextNode(reader);
 
 	return relation;
+}
+
+struct cvrf_group *cvrf_group_parse(xmlTextReaderPtr reader) {
+	__attribute__nonnull__(reader);
+
+	struct cvrf_group *group = cvrf_group_new();
+	group->group_id = (char *)xmlTextReaderGetAttribute(reader, TAG_GROUP_ID);
+	xmlTextReaderNextElement(reader);
+
+	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP) != 0) {
+		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
+			xmlTextReaderNextNode(reader);
+			continue;
+		}
+		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+			group->description = oscap_element_string_copy(reader);
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+			oscap_stringlist_add_string(group->product_ids, oscap_element_string_copy(reader));
+		}
+		xmlTextReaderNextNode(reader);
+	}
+	xmlTextReaderNextNode(reader);
+	return group;
 }
 
 struct cvrf_product_name *cvrf_product_name_parse(xmlTextReaderPtr reader) {
@@ -1845,7 +1905,6 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
  */
 
 static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_item_type_t cvrf_type) {
-
 	if (oscap_list_get_itemcount(list) == 0)
 		return NULL;
 
@@ -1868,6 +1927,8 @@ static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_
 			child = cvrf_branch_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_RELATIONSHIP) {
 			child = cvrf_relationship_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_GROUP) {
+			child = cvrf_group_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_VULNERABILITY) {
 			child = cvrf_vulnerability_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_PRODUCT_STATUS) {
@@ -1928,7 +1989,6 @@ xmlNode *cvrf_element_to_dom(const char *elm_name, const char *elm_value) {
 }
 
 struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index) {
-
 	if (index == NULL)
 		return NULL;
 
@@ -1943,7 +2003,6 @@ struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index) {
 }
 
 xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args) {
-
 	xmlNode *index_node = NULL;
 	if (parent == NULL) {
 		index_node = xmlNewNode(NULL, BAD_CAST "Index");
@@ -1963,7 +2022,6 @@ xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *par
 }
 
 struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model) {
-
 	if (model == NULL)
 		return NULL;
 
@@ -1977,7 +2035,6 @@ struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model) {
 }
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args) {
-
 	xmlNode *root_node = NULL;
 	if (parent == NULL) {
 		root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
@@ -2093,6 +2150,7 @@ xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree) {
 	cvrf_list_to_dom(tree->product_names, tree_node, CVRF_PRODUCT_NAME);
 	cvrf_list_to_dom(tree->branches, tree_node, CVRF_BRANCH);
 	cvrf_list_to_dom(tree->relationships, tree_node, CVRF_RELATIONSHIP);
+	cvrf_element_add_container(tree->product_groups, CVRF_GROUP, tree_node);
 	return tree_node;
 }
 
@@ -2121,6 +2179,14 @@ xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation) {
 
 	xmlAddChild(relation_node, cvrf_product_name_to_dom(relation->full_name));
 	return relation_node;
+}
+
+xmlNode *cvrf_group_to_dom(const struct cvrf_group *group) {
+	xmlNode *group_node = xmlNewNode(NULL, TAG_GROUP);
+	xmlNewProp(group_node, TAG_GROUP_ID, BAD_CAST group->group_id);
+	cvrf_element_add_child("Description", group->description, group_node);
+	cvrf_element_add_stringlist(group->product_ids, "ProductID", group_node);
+	return group_node;
 }
 
 xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
