@@ -94,8 +94,7 @@ static struct oscap_module* CVRF_SUBMODULES[] = {
 };
 
 
-static int app_cvrf_evaluate(const struct oscap_action *action)
-{
+static int app_cvrf_evaluate(const struct oscap_action *action) {
 	int result = OSCAP_OK;
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
@@ -114,7 +113,6 @@ static int app_cvrf_evaluate(const struct oscap_action *action)
 }
 
 static int app_cvrf_export(const struct oscap_action *action) {
-
 	int result;
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
 	struct cvrf_model *model = cvrf_model_import(import_source);
@@ -139,7 +137,6 @@ static int app_cvrf_export(const struct oscap_action *action) {
 }
 
 static int app_cvrf_validate(const struct oscap_action *action) {
-
 	int result;
 	struct oscap_source *source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
 	int ret = oscap_source_validate(source, reporter, (void *) action);
@@ -157,8 +154,7 @@ static int app_cvrf_validate(const struct oscap_action *action) {
 	return result;
 }
 
-bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
-{
+bool getopt_cvrf(int argc, char **argv, struct oscap_action *action) {
 	if(action->module == &CVRF_EVALUATE_MODULE) {
 		if( argc < 5 || argc > 6) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
@@ -168,8 +164,7 @@ bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 		action->cvrf_action = malloc(sizeof(struct cvrf_action));
 		action->cvrf_action->cvrf_file=argv[3];
 		action->cvrf_action->export_file=argv[4];
-	}
-	else if (action->module == &CVRF_EXPORT_MODULE) {
+	} else if (action->module == &CVRF_EXPORT_MODULE) {
 		if( argc < 5 || argc > 6) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
@@ -178,8 +173,7 @@ bool getopt_cvrf(int argc, char **argv, struct oscap_action *action)
 		action->cvrf_action = malloc(sizeof(struct cvrf_action));
 		action->cvrf_action->cvrf_file=argv[3];
 		action->cvrf_action->export_file=argv[4];
-	}
-	else if (action->module == &CVRF_VALIDATE_MODULE) {
+	} else if (action->module == &CVRF_VALIDATE_MODULE) {
 		if( argc < 4 || argc > 5) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
