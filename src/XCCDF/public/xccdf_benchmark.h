@@ -49,7 +49,7 @@
  * Type of an XCCDF object.
  *
  * When checking the type, you can use either operator == for type equivalence,
- * or operator &amp; to take a type inheriritance hierarchy into account.
+ * or operator &amp; to take a type inheritance hierarchy into account.
  * For example, XCCDF_ITEM & XCCDF_RULE evaluates to true,
  * as the rule type is a subclass of the xccdf item type.
  */

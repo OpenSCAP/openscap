@@ -72,7 +72,7 @@ Third section provides cover advanced topic like validation, signing and
 transformation of SCAP content, generating reports and guides and also some
 information about CPE applicability.
 
-Last section contains information about debuging and compiling oscap on Linux
+Last section contains information about debugging and compiling oscap on Linux
 and Windows which can be useful for developers.
 
 == Basic oscap Usage
@@ -463,6 +463,16 @@ Where *scap-xccdf.xml* is the XCCDF document, *Desktop* is the selected
 profile from the XCCDF document, *xccdf-results.xml* is a file storing
 the scan results, and *cpe-dictionary.xml* is the CPE dictionary.
 
+* You can additionaly add ```--rule``` option to the above command to evaluate
+a specific rule:
+
+----
+$ oscap xccdf eval --profile Desktop --rule ensure_gpgcheck_globally_activated  --results xccdf-results.xml --cpe cpe-dictionary.xml scap-xccdf.xml
+----
+
+Where *ensure_gpgcheck_globally_activated* is the only rule from the *Desktop*
+profile which will be evaluated.
+
 ==== Source DataStream
 Commonly, all required input files are bundled together in Source DataStream.
 Scanning using Source DataStream is also handled by ```oscap xccdf eval``` command,
@@ -515,7 +525,7 @@ $ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml sca
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
 non-compliant state. For system remediation, an XCCDF file with instructions is
-required. The _scap-security-guide_ package constains certain remediation
+required. The _scap-security-guide_ package contains certain remediation
 instructions.
 
 System remediation consists of the following steps:
@@ -527,7 +537,7 @@ System remediation consists of the following steps:
  environment, and executes the fix script.
  . Any output of the fix script is captured by ```oscap``` and stored within the
  *rule-result* element. The return value of the fix script is stored as well.
- . Whenever ```oscap``` executes a fix script, it immediatelly evaluates the OVAL
+ . Whenever ```oscap``` executes a fix script, it immediately evaluates the OVAL
  definition again (to verify that the fix script has been applied correctly).
  During this second run, if the OVAL evaluation returns success, the result of
  the rule is *fixed*, otherwise it is an *error*.
@@ -1713,23 +1723,8 @@ installed on your system. If you use a release taball, you can skip this step.
  $ ./configure
  $ make
 
-Build dependencies may vary in dependency on enabled f element in its body. This
-element references a CPE name or CPE2 platform (defined using
-cpe2:platform-specification) that could be defined in a CPE dictionary file or a
-CPE language file; or it can also be embedded directly in the XCCDF document.
-
-An XCCDF rule can contain multiple *<xccdf:platform>* elements. It is deemed
-applicable if at least one of the listed platforms is applicable. If an XCCDF
-rule contains no *<xccdf:platform>* elements it is considered always applicable.
-
-If the CPE name or CPE2 platform is defined in an external file, use the
- ```--cpe```
-option; oscap auto-detects format of the file. The following command is an
-example of the XCCDF content evaluation using CPE name from an external file:
-
-eatures (by the configure command). By default, you need the following packages
-installed on your system:
-
+Build dependencies may vary in dependency on enabled features (by the configure command).
+By default, you need the following packages installed on your system:
 
 * swig
 * libxml2-devel

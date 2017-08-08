@@ -571,7 +571,7 @@ AC_SUBST([vgcheck])
 
 if test "x${util_oscap_docker}" = "xyes"; then
 	if test ! "x${HAVE_BZIP2}" = xyes; then
-		AC_MSG_FAILURE(oscap-docker requires bzip2! Either disable oscap-docker or install bzip2.)
+		AC_MSG_FAILURE(oscap-docker requires bzip2! Either disable oscap-docker or install bzip2 development support.)
 	fi
 fi
 

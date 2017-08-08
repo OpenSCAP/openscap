@@ -1471,16 +1471,25 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_
 		return flag;
 	}
 
+	dIndent(1);
+	dI("Variable component references %s '%s'",
+		oval_variable_type_get_text(oval_variable_get_type(variable)),
+		oval_variable_get_id(variable));
+
 	if (argu->mode == OVAL_MODE_QUERY) {
 #if defined(OVAL_PROBES_ENABLED)
-		if (oval_probe_query_variable(argu->u.sess, variable) != 0)
+		if (oval_probe_query_variable(argu->u.sess, variable) != 0) {
+			dIndent(-1);
 			return flag;
+		}
 #else
 		return SYSCHAR_FLAG_ERROR;
 #endif
 	} else {
-		if (oval_syschar_model_compute_variable(argu->u.sysmod, variable) != 0)
+		if (oval_syschar_model_compute_variable(argu->u.sysmod, variable) != 0) {
+			dIndent(-1);
 			return flag;
+		}
 	}
 
 	flag = oval_variable_get_collection_flag(variable);
@@ -1493,6 +1502,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_VARREF(oval_argu_
 		oval_value_iterator_free(values);
 	}
 
+	dIndent(-1);
 	return flag;
 }
 

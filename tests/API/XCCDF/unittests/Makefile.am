@@ -71,6 +71,10 @@ EXTRA_DIST += \
 	test_fix_instance.xccdf.xml \
 	test_fix_filtering.xccdf.xml \
 	test_fix_filtering.sh \
+	test_fix_resultid_by_suffix.sh \
+	test_fix_resultid_by_suffix.xml \
+	test_fix_script_header.sh \
+	test_fix_script_header.xccdf.xml \
 	test_inherit_selector.oval.xml \
 	test_inherit_selector.sh \
 	test_inherit_selector.tailoring.xml \
@@ -82,6 +86,9 @@ EXTRA_DIST += \
 	test_oval_without_definition.oval.xml \
 	test_oval_without_definition.sh \
 	test_oval_without_definition.xccdf.xml \
+	test_profile_selection_by_suffix.sh \
+	test_profile_selection_by_suffix.xccdf.xml \
+	test_profile_selection_by_suffix_tailoring.xccdf.xml \
 	test_remediate_perl.sh \
 	test_remediate_perl.xccdf.xml \
 	test_remediate_python.sh \
@@ -131,6 +138,11 @@ EXTRA_DIST += \
 	test_report_without_oval_poses_no_errors.sh \
 	test_report_without_oval_poses_no_errors.xccdf.xml.result.xml \
 	test_report_without_xsl_fails_gracefully.sh \
+	test_single_rule.sh \
+	test_single_rule.ds.xml \
+	test_single_rule.oval.xml \
+	test_single_rule-tailoring.xml \
+	test_single_rule.xccdf.xml \
 	test_xccdf_fix_attr_export.sh \
 	test_xccdf_fix_attr_export.xccdf.xml \
 	test_xccdf_complex_check_and_notchecked.sh \

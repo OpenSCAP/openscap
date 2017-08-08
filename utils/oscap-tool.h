@@ -118,6 +118,7 @@ struct oscap_action {
 	char *f_verbose_log;
 	/* others */
         char *profile;
+	const char *rule;
         char *show;
         char *format;
         const char *tmpl;
@@ -153,6 +154,7 @@ struct oscap_action {
         int list_dynamic;
 	char *probe_root;
 	char *verbosity_level;
+	char *fix_type;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

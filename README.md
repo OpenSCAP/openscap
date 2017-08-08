@@ -8,14 +8,15 @@ The oscap program is a command line tool that allows users to load, scan,
 validate, edit, and export SCAP documents.
 
  * Homepage of the project: [www.open-scap.org](http://www.open-scap.org)
- * Manual: [Oscap User Manual](https://github.com/OpenSCAP/openscap/blob/maint-1.0/docs/manual/manual.adoc)
- * For new contributors: [How to contribute](https://github.com/OpenSCAP/openscap/blob/maint-1.0/docs/contribute/contribute.adoc)
+ * Manual: [Oscap User Manual](https://github.com/OpenSCAP/openscap/blob/maint-1.2/docs/manual/manual.adoc)
+ * For new contributors: [How to contribute](https://github.com/OpenSCAP/openscap/blob/maint-1.2/docs/contribute/contribute.adoc)
 
 ## Compilation
 
 Choose *1a* or *1b* depending on whether you want sources from a release tarball or the git repository.
 
-1a) Get a release tarball
+
+1) a) Use a release tarball:
 ```
 # replace ${version} with the desired version
 wget https://github.com/OpenSCAP/openscap/releases/download/${version}/openscap-${version}.tar.gz
@@ -25,47 +26,52 @@ cd openscap-${version}
 
 **OR**
 
-1b) Get fresh sources from git repository and run ./autogen.sh
+1) b) Use fresh sources from git repository. You will also need the following
+packages to be installed on your system:
+```
+autoconf automake libtool
+```
+Now get sources from git repository and run ./autogen.sh:
+
 ```
 git clone https://github.com/OpenSCAP/openscap.git
 cd openscap
 ./autogen.sh
 ```
-The autoconf, automake, and libtool tools are required to be installed on your system.
 
-2) Run the following commands to build the library:
+2) To build the library you will need the following build dependencies
+(some of these are optional, if they are not detected, openscap will be compiled
+without respective optional features):
+```
+dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
+libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel make openldap-devel \
+pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
+bzip2-devel
+```
+When you have all the build dependencies installed you can run the following
+commands to build the library:
 ```
 ./configure
 make
 ```
-Build dependencies:
-(some of these are optional, if they are not detected, openscap will be compiled
-without respective optional features)
- * dbus-devel
- * GConf2-devel
- * libacl-devel
- * libblkid-devel
- * libcap-devel
- * libcurl-devel
- * libgcrypt-devel
- * libselinux-devel
- * libxml2-devel
- * libxslt-devel
- * make
- * openldap-devel
- * pcre-devel
- * perl-XML-Parser
- * perl-XML-XPath
- * perl-devel
- * python-devel
- * rpm-devel
- * swig
- * bzip2-devel
 
-3) Run library self-checks by executing the following command:
+3) After building the library you might want to run library self-checks. To do
+that you need to have these additional packages installed:
+```
+wget lua which procps-ng initscripts chkconfig sendmail
+```
+and it is also required to have `sendmail` service running on the system:
+```
+systemctl start sendmail.service
+```
+Now you can execute the following command to run library self-checks:
 ```
 make check
 ```
+Note: If you want to run `make distcheck` you will also need to install
+`asciidoctor`. You can either install `rubygem-asciidoctor` package (available
+on Fedora), or you can install `rubygems` package and then run
+`gem install asciidoctor`.
 
 4) Run the installation procedure by executing the following command:
 ```

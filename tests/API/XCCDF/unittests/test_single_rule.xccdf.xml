@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_com.example.www_benchmark_dummy" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
+  <status>accepted</status>
+  <version>1.0</version>
+
+  <Profile id="xccdf_com.example.www_profile_test_single_rule">
+    <title>xccdf_test_profile</title>
+    <description>This profile is for testing.</description>
+    <select idref="xccdf_com.example.www_rule_test-pass" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_test-fail" selected="true"/>
+    <!-- If value of val1 is bar_2, rule xccdf_test-fail_rule_2 will pass -->
+    <refine-value idref="xccdf_com.example.www_value_val1" selector="bar_2"/>
+  </Profile>
+  <Profile id="xccdf_com.example.www_profile_test_single_rule_2">
+    <title>xccdf_test_profile 2</title>
+    <description>This profile is for testing.</description>
+    <select idref="xccdf_com.example.www_rule_test-pass" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_test-fail" selected="true"/>
+  </Profile>
+
+  <Value id="xccdf_com.example.www_value_val1" type="number" operator="equals" interactive="0">
+    <title>test value</title>
+    <description>foo</description>
+    <value selector="bar_1">50</value>
+    <value selector="bar_2">100</value>
+  </Value>
+  <Rule selected="true" id="xccdf_com.example.www_rule_test-pass">
+    <title>This rule always pass</title>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_single_rule.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="true" id="xccdf_com.example.www_rule_test-fail">
+    <title>This rule fails if profile test_single_rule is not selected</title>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-export export-name="oval:ssg:var:1" value-id="xccdf_com.example.www_value_val1"/>
+      <check-content-ref href="test_single_rule.oval.xml" name="oval:test-fail:def:2"/>
+    </check>
+  </Rule>
+</Benchmark>

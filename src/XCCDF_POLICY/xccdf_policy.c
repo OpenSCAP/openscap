@@ -690,6 +690,13 @@ static int _xccdf_policy_report_rule_result(struct xccdf_policy *policy,
 	} else
 		xccdf_check_free(check);
 
+	/* If policy selects only one rule, skip reporting for the other
+	 * unselected rules - only the selected rule will be reported. */
+	if (policy->rule != NULL) {
+		const char* rule_id = xccdf_rule_get_id(rule);
+		if (strcmp(policy->rule, rule_id) != 0)
+			return ret;
+	}
 	ret = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_END, (void *) rule_result);
 	return ret;
 }
@@ -950,14 +957,25 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	const char* rule_id = xccdf_rule_get_id(rule);
 	const bool is_selected = xccdf_policy_is_item_selected(policy, rule_id);
 	const char *message = NULL;
+	int report = 0;
 
-	int report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
+	/* If policy selects only one rule and the rule currently being
+	 * evaluated is not equal to the selected rule, do not evaluate it and
+	 * mark it as notselected. */
+	if (policy->rule != NULL) {
+		if (strcmp(policy->rule, rule_id) != 0) {
+			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+		}
+		policy->rule_found = 1;
+	}
+	/* Otherwise start reporting */
+	report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule);
 	if (report)
 		return report;
 
 	struct xccdf_refine_rule_internal* r_rule = oscap_htable_get(policy->refine_rules_internal, rule_id);
-
 	xccdf_role_t role = xccdf_get_final_role(rule, r_rule);
+
 	if (!is_selected) {
 		dI("Rule '%s' is not selected.", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
@@ -2037,6 +2055,12 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 			break;
 	}
 	xccdf_item_iterator_free(item_it);
+
+	if (policy->rule != NULL && !policy->rule_found) {
+		oscap_seterr(OSCAP_EFAMILY_XCCDF,
+			"Rule '%s' not found in selected profile.", policy->rule);
+		return NULL;
+	}
 
 	xccdf_policy_add_final_setvalues(policy, xccdf_benchmark_to_item(benchmark), result);
 

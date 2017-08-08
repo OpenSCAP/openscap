@@ -53,6 +53,8 @@
     <refine-rule idref="rule-id-weight-override" weight="4" />
     <!-- 16. -->
     <refine-rule idref="rule-id-unscored" role="unscored" />
+    <!-- 17. -->
+    <refine-rule idref="rule-id-keep-parent-severity" role="unscored" />
   </Profile>
 
   <!-- 1. -->
@@ -156,6 +158,12 @@
   </Rule>
   <!-- 16. -->
   <Rule selected="true" id="rule-id-unscored">
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_xccdf_check_content_ref_without_name_attr.oval.xml" name="oval:moc.elpmaxe.www:def:1" />
+    </check>
+  </Rule>
+  <!-- 17. -->
+  <Rule selected="true" id="rule-id-keep-parent-severity" severity="low">
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref href="test_xccdf_check_content_ref_without_name_attr.oval.xml" name="oval:moc.elpmaxe.www:def:1" />
     </check>

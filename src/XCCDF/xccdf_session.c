@@ -63,6 +63,7 @@ struct oval_content_resource {
 
 struct xccdf_session {
 	const char *filename;				///< File name of SCAP (SDS or XCCDF) file for this session.
+	const char *rule;				///< Single-rule feature: if not NULL, the session will work only with this one rule.
 	struct oscap_source *source;                    ///< Main source assigned with the main file (SDS or XCCDF)
 	char *temp_dir;					///< Temp directory used for decomposed component files.
 	struct {
@@ -111,6 +112,7 @@ struct xccdf_session {
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 
 	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
+	xccdf_session_loading_flags_t loading_flags; ///< Load referenced files while loading XCCDF
 };
 
 static int _xccdf_session_autonegotiate_tailoring_file(struct xccdf_session *session, const char *original_path);
@@ -147,6 +149,7 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 	session->xccdf.base_score = 0;
 	session->oval.progress = download_progress_empty_calllback;
 	session->check_engine_plugins = oscap_list_new();
+	session->loading_flags = XCCDF_SESSION_LOAD_ALL;
 
 	// We now have to switch up the oscap_sources in case we were given XCCDF tailoring
 
@@ -289,6 +292,11 @@ bool xccdf_session_is_sds(const struct xccdf_session *session)
 	return oscap_source_get_scap_type(session->source) == OSCAP_DOCUMENT_SDS;
 }
 
+void xccdf_session_set_rule(struct xccdf_session *session, const char *rule)
+{
+	session->rule = rule;
+}
+
 void xccdf_session_set_validation(struct xccdf_session *session, bool validate, bool full_validation)
 {
 	session->validate = validate;
@@ -337,6 +345,11 @@ void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *b
 const char *xccdf_session_get_benchmark_id(struct xccdf_session *session)
 {
 	return session->ds.user_benchmark_id;
+}
+
+const char *xccdf_session_get_result_id(struct xccdf_session *session)
+{
+	return xccdf_result_get_id(session->xccdf.result);
 }
 
 void xccdf_session_set_user_cpe(struct xccdf_session *session, const char *user_cpe)
@@ -425,6 +438,67 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
 	return true;
 }
 
+// 0 = no error, 1 = no matches, 2 = multiple matches
+int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix)
+{
+	const char *full_profile_id = NULL;
+	struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
+	bool multiple = false;
+
+	// Tailoring Profiles
+	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(session->xccdf.policy_model);
+	if (tailoring != NULL)   {
+		struct xccdf_profile_iterator *profit_tailoring = xccdf_tailoring_get_profiles(tailoring);
+		while (xccdf_profile_iterator_has_more(profit_tailoring)) {
+			struct xccdf_profile *tailoring_profile = xccdf_profile_iterator_next(profit_tailoring);
+			const char *tailoring_profile_id = xccdf_profile_get_id(tailoring_profile);
+
+			if (oscap_str_endswith(tailoring_profile_id, profile_suffix)) {
+				if (full_profile_id != NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
+						full_profile_id, tailoring_profile_id);
+					multiple = true;
+					break;
+				} else {
+					full_profile_id = tailoring_profile_id;
+				}
+			}
+		}
+		xccdf_profile_iterator_free(profit_tailoring);
+	}
+
+	// Benchmark Profiles
+	if (full_profile_id == NULL) {
+		struct xccdf_profile_iterator *profit_bench = xccdf_benchmark_get_profiles(bench);
+		while (xccdf_profile_iterator_has_more(profit_bench)) {
+			struct xccdf_profile *bench_profile = xccdf_profile_iterator_next(profit_bench);
+			const char *bench_profile_id = xccdf_profile_get_id(bench_profile);
+
+			if(oscap_str_endswith(bench_profile_id, profile_suffix)) {
+				if (full_profile_id != NULL) {
+					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
+						full_profile_id, bench_profile_id);
+					multiple = true;
+					break;
+				} else {
+					full_profile_id = bench_profile_id;
+				}
+			}
+		}
+		xccdf_profile_iterator_free(profit_bench);
+	}
+
+	if (full_profile_id == NULL) {
+		return 1;
+	} else if (multiple) {
+		return 2;
+	} else {
+		const bool search_result = xccdf_session_set_profile_id(session, full_profile_id);
+		assert(search_result);
+		return 0;
+	}
+}
+
 const char *xccdf_session_get_profile_id(struct xccdf_session *session)
 {
 	return session->xccdf.profile_id;
@@ -458,6 +532,11 @@ void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allo
 	}
 }
 
+void xccdf_session_set_loading_flags(struct xccdf_session *session, xccdf_session_loading_flags_t flags)
+{
+	session->loading_flags = flags;
+}
+
 /**
  * Get Source DataStream index of the session.
  * @memberof xccdf_session
@@ -480,14 +559,26 @@ int xccdf_session_load(struct xccdf_session *session)
 		ds_sds_session_reset(session->ds.session);
 	}
 
-	if ((ret = xccdf_session_load_xccdf(session)) != 0)
-		return ret;
-	if ((ret = xccdf_session_load_cpe(session)) != 0)
-		return ret;
-	if ((ret = xccdf_session_load_oval(session)) != 0)
-		return ret;
-	if ((ret = xccdf_session_load_check_engine_plugins(session)) != 0)
-		return ret;
+	const xccdf_session_loading_flags_t flags = session->loading_flags;
+	if (flags & XCCDF_SESSION_LOAD_XCCDF) {
+		if ((ret = xccdf_session_load_xccdf(session)) != 0)
+			return ret;
+	}
+	if (flags & XCCDF_SESSION_LOAD_CPE) {
+		if ((ret = xccdf_session_load_cpe(session)) != 0) {
+			return ret;
+		}
+	}
+	if (flags & XCCDF_SESSION_LOAD_OVAL) {
+		if ((ret = xccdf_session_load_oval(session)) != 0) {
+			return ret;
+		}
+	}
+	if (flags & XCCDF_SESSION_LOAD_CHECK_ENGINE_PLUGINS) {
+		if ((ret = xccdf_session_load_check_engine_plugins(session)) != 0) {
+			return ret;
+		}
+	}
 	return xccdf_session_load_tailoring(session);
 }
 
@@ -1074,6 +1165,7 @@ int xccdf_session_evaluate(struct xccdf_session *session)
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot build xccdf_policy.");
 		return 1;
 	}
+	policy->rule = session->rule;
 
 	session->xccdf.result = xccdf_policy_evaluate(policy);
 	if (session->xccdf.result == NULL)
@@ -1590,7 +1682,7 @@ int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, co
 	if (session->xccdf.result_source == NULL) {
 		session->xccdf.result = NULL;
 		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
-		struct xccdf_result *result = xccdf_benchmark_get_result_by_id(benchmark, testresult_id);
+		struct xccdf_result *result = xccdf_benchmark_get_result_by_id_suffix(benchmark, testresult_id);
 		if (result == NULL) {
 			if (testresult_id == NULL)
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find latest TestResult element.");

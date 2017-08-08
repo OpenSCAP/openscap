@@ -60,9 +60,11 @@ test_run "test xccdf resolve" $srcdir/test_xccdf_resolve.sh
 test_run "Exported arf results from xccdf without reference to oval" $srcdir/test_xccdf_results_arf_no_oval.sh
 test_run "XCCDF Substitute within Title" $srcdir/test_xccdf_sub_title.sh
 test_run "TestResult element should contain test-system attribute" $srcdir/test_xccdf_test_system.sh
+test_run "Profile suffix matching" $srcdir/test_profile_selection_by_suffix.sh
 
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh
 test_run "XCCDF 1.1 to 1.2 transformation" $srcdir/test_xccdf_transformation.sh
+test_run "Test single-rule evaluation" $srcdir/test_single_rule.sh
 
 #
 # Tests for 'oscap xccdf eval --remediate' and substitution
@@ -102,6 +104,9 @@ test_run "generate report: avoid warnings from libxml" $srcdir/test_report_witho
 test_run "generate fix: just as the anaconda does" $srcdir/test_report_anaconda_fixes.sh
 test_run "generate fix: just as the anaconda does + DataStream" $srcdir/test_report_anaconda_fixes_ds.sh
 test_run "generate fix: ensure filtering drop fixes" $srcdir/test_fix_filtering.sh
+test_run "generate fix: generate header for bash script" $srcdir/test_fix_script_header.sh
+test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
+test_run "generate fix: result id selection by suffix" $srcdir/test_fix_resultid_by_suffix.sh
 test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
 
 test_exit

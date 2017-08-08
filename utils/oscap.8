@@ -75,6 +75,11 @@ You may specify OVAL Definition files as the last parameter, XCCDF evaluation wi
 Select a particular profile from XCCDF document.
 .RE
 .TP
+\fB\-\-rule RULE\fR
+.RS
+Select a particular rule from XCCDF document. Only this rule will be evaluated. Rule will use values according to the selected profile. If no profile is selected, default values are used.
+.RE
+.TP
 \fB\-\-tailoring-file TAILORING_FILE\fR
 .RS
 Use given file for XCCDF tailoring. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority!
@@ -326,6 +331,9 @@ Result-oriented fixes are generated using result-id provided to select only the 
 .TP
 Profile-oriented fixes are generated using all rules within the provided profile. If no result-id/profile are provided, (default) profile will be used to generate fixes.
 .TP
+\fB\-\-fix-type TYPE\fR
+Specify fix type. There are multiple programming languages in which the fix script can be generated. TYPE should be one of: bash, ansible, puppet, anaconda. Default is bash. This option is mutually exclusive with --template, because fix type already determines the template URN.
+.TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
 .TP
@@ -334,6 +342,12 @@ Fixes will be generated for failed rule-results of the specified TestResult.
 .TP
 \fB\-\-template \fIID|FILE\fR\fR
 Template to be used to generate the script. If it contains a dot '.' it is interpreted as a location of a file with the template definition. Otherwise it identifies a template from standard set which currently includes: \fIbash\fR (default if no --template switch present). Brief explanation of the process of writing your own templates is in the XSL file \fIxsl/legacy-fix.xsl\fR in the openscap data directory. You can also take a look at the default template \fIxsl/legacy-fixtpl-bash.xml\fR.
+.TP
+\fB\-\-xccdf-id ID\fR
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream. If none is given, the first component from the checklists element is used.
+.TP
+\fB\-\-benchmark-id ID\fR
+Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
 .RE
 .TP
 .B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file
@@ -647,6 +661,7 @@ Evaluate XCCDF content using CPE dictionary and produce html report. In this cas
 .PP
 
 .SH CONTENT
+\fB SCAP Security Guide\fR - \fIhttps://github.com/OpenSCAP/scap-security-guide/\fR
 .TP
 \fB National Vulnerability Database\fR - \fIhttp://web.nvd.nist.gov/view/ncp/repository\fR
 .TP

@@ -172,7 +172,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 				 */
 				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
 						strcmp(ofts_ent->file, "stable_secret") == 0) {
-					dI("Skippping file %s", mibpath);
+					dI("Skipping file %s", mibpath);
 					oval_ftsent_free(ofts_ent);
 					SEXP_free(se_mib);
 					fclose(fp);
@@ -185,6 +185,16 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                         }
 
                         fclose(fp);
+
+			/* Skip empty values as sysctl tool does.
+			 * If this behavior of sysctl will be indentified as a bug,
+			 * we will have to remove this block.
+			 * See https://bugzilla.redhat.com/show_bug.cgi?id=1473207
+			 */
+			if (l == 0) {
+				dI("Skipping file '%s' because it has no value.", mibpath);
+				continue;
+			}
 
                         /*
                          * sanitize the value

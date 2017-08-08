@@ -42,6 +42,20 @@
 struct xccdf_session;
 
 /**
+ * Loading flags for XCCDF session
+ * @memberof xccdf_session
+ * The flags set which components will be loaded in XCCDF session.
+ */
+typedef enum {
+	XCCDF_SESSION_LOAD_NONE = 0,
+	XCCDF_SESSION_LOAD_XCCDF = 1 << 0,
+	XCCDF_SESSION_LOAD_CPE = 1 << 1,
+	XCCDF_SESSION_LOAD_OVAL = 1 << 2,
+	XCCDF_SESSION_LOAD_CHECK_ENGINE_PLUGINS = 1 << 3,
+	XCCDF_SESSION_LOAD_ALL = XCCDF_SESSION_LOAD_XCCDF | XCCDF_SESSION_LOAD_CPE | XCCDF_SESSION_LOAD_OVAL | XCCDF_SESSION_LOAD_CHECK_ENGINE_PLUGINS
+} xccdf_session_loading_flags_t;
+
+/**
  * Costructor of xccdf_session. It attempts to recognize type of the filename.
  * @memberof xccdf_session
  * @param filename path to XCCDF or DS file.
@@ -79,6 +93,15 @@ const char *xccdf_session_get_filename(const struct xccdf_session *session);
  * @returns true if the session is based on Source Datastream
  */
 bool xccdf_session_is_sds(const struct xccdf_session *session);
+
+/**
+ * Set rule for session - if rule is not NULL, session will use only this
+ * one rule.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param rule If not NULL, session will use only this rule
+ */
+void xccdf_session_set_rule(struct xccdf_session *session, const char *rule);
 
 /**
  * Set XSD validation level to one of three possibilities:
@@ -152,6 +175,12 @@ void xccdf_session_set_benchmark_id(struct xccdf_session *session, const char *b
 const char *xccdf_session_get_benchmark_id(struct xccdf_session *session);
 
 /**
+ * Retrieves the result id
+ * @memberof xccdf_session
+ */
+const char *xccdf_session_get_result_id(struct xccdf_session *session);
+
+/**
  * Set path to custom CPE dictionary for the session. This function is applicable
  * only before session loads. It has no effect if run afterwards.
  * @memberof xccdf_session
@@ -187,6 +216,14 @@ void xccdf_session_set_user_tailoring_cid(struct xccdf_session *session, const c
  * to NULL -- ignoring user notification.
  */
 void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback);
+
+/**
+ * Disable or allow loading of depending content (OVAL, SCE, CPE)
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param flags Bit mask that sets loading of other content in the session.
+ */
+void xccdf_session_set_loading_flags(struct xccdf_session *session, xccdf_session_loading_flags_t flags);
 
 /**
  * Set custom oval files for this session
@@ -291,6 +328,16 @@ bool xccdf_session_set_report_export(struct xccdf_session *session, const char *
  * @returns true on success
  */
 bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *profile_id);
+
+/**
+ *Select XCCDF Profile for evaluation with only profile suffix as input. Reports error
+ *if multiple profiles match the suffix.
+ *@memberof xccdf_session
+ *@param session XCCDF Session
+ *@param profile_suffix unique profile ID or suffix of the ID of the profile to set
+ *@returns 0 on success, 1 if profile is not found, and 2 if multiple matches are found.
+ */
+int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix);
 
 /**
  * Retrieves ID of the profile that we will evaluate with, or NULL.
@@ -512,7 +559,7 @@ int xccdf_session_remediate(struct xccdf_session *session);
  * @memberof xccdf_session
  * @param session XCCDF Session
  * @param testresult_id ID of the TestResult element in the file (the NULL value stands
- * for the last TestResult).
+ * for the last TestResult). Suffix match is attempted if exact match is not found.
  * @returns zero on success.
  */
 int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, const char *testresult_id);

@@ -516,6 +516,32 @@ struct xccdf_result *xccdf_benchmark_get_result_by_id(struct xccdf_benchmark *be
 	return result;
 }
 
+struct xccdf_result *xccdf_benchmark_get_result_by_id_suffix(struct xccdf_benchmark *benchmark, const char *testresult_suffix)
+{
+	struct xccdf_result *result = xccdf_benchmark_get_result_by_id(benchmark, testresult_suffix);
+	if (result != NULL)
+		return result;
+
+	struct xccdf_result_iterator *result_iterator = xccdf_benchmark_get_results(benchmark);
+
+	while (xccdf_result_iterator_has_more(result_iterator)) {
+		struct xccdf_result *temp_result = xccdf_result_iterator_next(result_iterator);
+		const char *result_full_id = xccdf_result_get_id(temp_result);
+
+		if (oscap_str_endswith(result_full_id, testresult_suffix)) {
+			if (result != NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
+					xccdf_result_get_id(result), result_full_id);
+				break;
+			} else {
+				result = temp_result;
+			}
+		}
+	}
+	xccdf_result_iterator_free(result_iterator);
+	return result;
+}
+
 bool xccdf_benchmark_add_content(struct xccdf_benchmark *bench, struct xccdf_item *item)
 {
 	if (item == NULL) return false;
@@ -849,7 +875,7 @@ bool xccdf_benchmark_rename_item(struct xccdf_item *item, const char *newid)
 struct oscap_htable *
 xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *benchmark, xccdf_type_t type)
 {
-	assert(type & (XCCDF_ITEM | XCCDF_PROFILE | XCCDF_RESULT));
+	assert(type & XCCDF_OBJECT);
 	if (type == XCCDF_PROFILE)
 		return XITEM(benchmark)->sub.benchmark.profiles_dict;
 	if (type == XCCDF_RESULT)

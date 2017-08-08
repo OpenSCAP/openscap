@@ -94,9 +94,14 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 	printf("%sProfiles:\n", prefix);
 	while (xccdf_profile_iterator_has_more(prof_it)) {
 		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
-		printf("%s\t%s%s\n", prefix,
-			xccdf_profile_get_abstract(prof) ? "(abstract) " : "",
-			xccdf_profile_get_id(prof));
+		struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
+		char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
+		oscap_text_iterator_free(title_it);
+		printf("%s\tTitle: %s\n", prefix, profile_title);
+		free(profile_title);
+		printf("%s\t\tId: %s%s\n", prefix,
+			xccdf_profile_get_id(prof),
+			xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
 	}
 	xccdf_profile_iterator_free(prof_it);
 }
@@ -391,15 +396,24 @@ static int app_info(const struct oscap_action *action)
 
 				struct oscap_source *report_source = ds_rds_session_select_report(session, report_id);
 				if (report_source == NULL) {
+					rds_report_index_iterator_free(report_it);
+					rds_asset_index_iterator_free(asset_it);
+					ds_rds_session_free(session);
 					goto cleanup;
 				}
 				oscap_document_type_t report_source_type = oscap_source_get_scap_type(report_source);
 				if (report_source_type != OSCAP_DOCUMENT_XCCDF) {
+					rds_report_index_iterator_free(report_it);
+					rds_asset_index_iterator_free(asset_it);
+					ds_rds_session_free(session);
 					oscap_source_free(report_source);
 					goto cleanup;
 				}
 				struct xccdf_result *xccdf_result = xccdf_result_import_source(report_source);
 				if (xccdf_result == NULL) {
+					rds_report_index_iterator_free(report_it);
+					rds_asset_index_iterator_free(asset_it);
+					ds_rds_session_free(session);
 					oscap_source_free(report_source);
 					goto cleanup;
 				}

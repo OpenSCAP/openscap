@@ -377,6 +377,12 @@ static int is_solaris (void)
         return (stat ("/etc/release", &st)   == 0);
 }
 
+static int is_oracle (void)
+{
+        struct stat st;
+        return (stat ("/etc/oracle-release", &st)   == 0);
+}
+
 static int is_wrlinux(void)
 {
 	return parse_os_release("cpe:/o:windriver:wrlinux");
@@ -394,6 +400,7 @@ typedef struct {
 
 const distro_tbl_t distro_tbl[] = {
         { &is_debian,   &get_runlevel_debian   },
+        { &is_oracle,   &get_runlevel_redhat   },
         { &is_redhat,   &get_runlevel_redhat   },
         { &is_slack,    &get_runlevel_slack    },
         { &is_gentoo,   &get_runlevel_gentoo   },

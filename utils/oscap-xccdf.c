@@ -145,6 +145,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
         "Options:\n"
         "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
+	"   --rule <name>\r\t\t\t\t - The name of a single rule to be evaluated.\n"
         "   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
         "   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
         "   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
@@ -260,9 +261,14 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nFix Options:\n"
+		"   --fix-type <type>\r\t\t\t\t - Fix type. Should be one of: bash, ansible, puppet, anaconda (default: bash).\n"
         "   --output <file>\r\t\t\t\t - Write the script into file.\n"
         "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
-        "   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n",
+		"   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n"
+		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -478,8 +484,16 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 static void report_missing_profile(const struct oscap_action *action)
 {
 	fprintf(stderr,
-		"Profile \"%s\" was not found. Get available profiles using:\n"
+		"No profile matching suffix \"%s\" was found. Get available profiles using:\n"
 		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
+}
+
+static void report_multiple_profile_matches(const struct oscap_action *action)
+{
+	fprintf(stderr,
+		"At least two profiles matched the given suffix. Use a more specific suffix "
+		"to get an exact match. Get list of profiles using:\n"
+		"$ oscap info \"%s\"\n", action->f_xccdf);
 }
 
 /**
@@ -523,17 +537,26 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
+	xccdf_session_set_rule(session, action->rule);
 
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
-		if (action->profile != NULL)
-			report_missing_profile(action);
-		else
+		if (action->profile != NULL) {
+			const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
+			if (suffix_match_result == 1) {
+				report_missing_profile(action);
+				goto cleanup;
+			} else if (suffix_match_result == 2) {
+				report_multiple_profile_matches(action);
+				goto cleanup;
+			}
+		} else {
 			fprintf(stderr, "No Policy was found for default profile.\n");
-		goto cleanup;
+			goto cleanup;
+		}
 	}
 
 	_register_progress_callback(session, action->progress);
@@ -812,9 +835,41 @@ int app_generate_fix(const struct oscap_action *action)
 {
 	struct xccdf_session *session = NULL;
 	struct ds_rds_session *arf_session = NULL;
+	const char *template = NULL;
 
 	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
 		return OSCAP_ERROR;
+	}
+
+	if (action->fix_type != NULL && action->tmpl != NULL) {
+		/* Avoid undefined situations, eg.:
+		 * oscap xccdf generate fix --fix-type ansible --template urn:xccdf:fix:scipt:sh
+		 */
+		fprintf(stderr,
+				"Option '--fix-type' is mutually exclusive with '--template'.\n"
+				"Please provide only one of them.\n");
+		return OSCAP_ERROR;
+	} else if (action->fix_type != NULL) {
+		if (strcmp(action->fix_type, "bash") == 0) {
+			template = "urn:xccdf:fix:script:sh";
+		} else if (strcmp(action->fix_type, "ansible") == 0) {
+			template = "urn:xccdf:fix:script:ansible";
+		} else if (strcmp(action->fix_type, "puppet") == 0) {
+			template = "urn:xccdf:fix:script:puppet";
+		} else if (strcmp(action->fix_type, "anaconda") == 0) {
+			template = "urn:xccdf:fix:script:anaconda";
+		} else {
+			fprintf(stderr,
+					"Unknown fix type '%s'.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda.\n"
+					"Or provide a custom template using '--template' instead.\n",
+					action->fix_type);
+			return OSCAP_ERROR;
+		}
+	} else if (action->tmpl != NULL) {
+		template = action->tmpl;
+	} else {
+		template = "urn:xccdf:fix:script:sh";
 	}
 
 	int ret = OSCAP_ERROR;
@@ -852,6 +907,11 @@ int app_generate_fix(const struct oscap_action *action)
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
+	}
+	xccdf_session_set_loading_flags(session, XCCDF_SESSION_LOAD_XCCDF);
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
@@ -869,17 +929,28 @@ int app_generate_fix(const struct oscap_action *action)
 			goto cleanup2;
 
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, action->id);
-		if (xccdf_policy_generate_fix(policy, result, action->tmpl, output_fd) == 0)
+		struct xccdf_result *result = xccdf_policy_get_result_by_id(policy, xccdf_session_get_result_id(session));
+		if (xccdf_policy_generate_fix(policy, result, template, output_fd) == 0)
 			ret = OSCAP_OK;
 	} else { // Fallback to profile if result id is missing
 		/* Profile-oriented fixes */
 		if (!xccdf_session_set_profile_id(session, action->profile)) {
-			report_missing_profile(action);
-			goto cleanup2;
+			if (action->profile != NULL) {
+				const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
+				if (suffix_match_result == 1) {
+					report_missing_profile(action);
+					goto cleanup2;
+				} else if (suffix_match_result == 2) {
+					report_multiple_profile_matches(action);
+					goto cleanup2;
+				}
+			} else {
+				fprintf(stderr, "No Policy was found for default profile.\n");
+				goto cleanup2;
+			}
 		}
 		struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
-		if (xccdf_policy_generate_fix(policy, NULL, action->tmpl, output_fd) == 0)
+		if (xccdf_policy_generate_fix(policy, NULL, template, output_fd) == 0)
 			ret = OSCAP_OK;
 	}
 cleanup2:
@@ -958,6 +1029,7 @@ enum oval_opt {
     XCCDF_OPT_XCCDF_ID,
     XCCDF_OPT_BENCHMARK_ID,
     XCCDF_OPT_PROFILE,
+    XCCDF_OPT_RULE,
     XCCDF_OPT_REPORT_FILE,
     XCCDF_OPT_SHOW,
     XCCDF_OPT_TEMPLATE,
@@ -973,7 +1045,8 @@ enum oval_opt {
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i',
 	XCCDF_OPT_VERBOSE,
-	XCCDF_OPT_VERBOSE_LOG_FILE
+	XCCDF_OPT_VERBOSE_LOG_FILE,
+	XCCDF_OPT_FIX_TYPE
 };
 
 bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
@@ -992,6 +1065,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"xccdf-id",		required_argument, NULL, XCCDF_OPT_XCCDF_ID},
 		{"benchmark-id",		required_argument, NULL, XCCDF_OPT_BENCHMARK_ID},
 		{"profile", 		required_argument, NULL, XCCDF_OPT_PROFILE},
+		{"rule", 		required_argument, NULL, XCCDF_OPT_RULE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
 		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
@@ -1005,6 +1079,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
 		{ "verbose", required_argument, NULL, XCCDF_OPT_VERBOSE },
 		{ "verbose-log-file", required_argument, NULL, XCCDF_OPT_VERBOSE_LOG_FILE },
+		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
@@ -1034,6 +1109,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case XCCDF_OPT_BENCHMARK_ID:	action->f_benchmark_id = optarg; break;
 		case XCCDF_OPT_PROFILE:		action->profile = optarg;	break;
+		case XCCDF_OPT_RULE:		action->rule = optarg;		break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
 		case XCCDF_OPT_SHOW:		action->show = optarg;		break;
@@ -1056,6 +1132,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 			break;
 		case XCCDF_OPT_VERBOSE_LOG_FILE:
 			action->f_verbose_log = optarg;
+			break;
+		case XCCDF_OPT_FIX_TYPE:
+			action->fix_type = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
