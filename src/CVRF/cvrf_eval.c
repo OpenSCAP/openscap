@@ -85,7 +85,6 @@ void cvrf_session_set_model(struct cvrf_session *session, struct cvrf_model *mod
 }
 
 struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source) {
-
 	if (source == NULL)
 		return NULL;
 
@@ -101,7 +100,6 @@ struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source) {
 }
 
 void cvrf_session_free(struct cvrf_session *session) {
-
 	if (session == NULL)
 		return;
 
@@ -127,21 +125,17 @@ OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, evr_format)
 
 
 struct cvrf_rpm_attributes *cvrf_rpm_attributes_new() {
-	struct cvrf_rpm_attributes *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_rpm_attributes));
+	struct cvrf_rpm_attributes *ret = oscap_alloc(sizeof(struct cvrf_rpm_attributes));
 	if (ret == NULL)
 		return NULL;
 
 	ret->full_package_name = NULL;
 	ret->rpm_name = NULL;
 	ret->evr_format = NULL;
-
 	return ret;
 }
 
 void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
-
 	if (attributes == NULL)
 		return;
 
@@ -165,7 +159,6 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 #define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
 
 static int find_all_cvrf_product_ids_from_cpe(struct cvrf_session *session) {
-
 	if (cvrf_model_filter_by_cpe(session->model, session->os_name) == -1)
 		return -1;
 
@@ -253,7 +246,6 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 
 
 static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_session *session, const char *product_id) {
-
 	const char *rpm_name = NULL;
 	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(session->model);
 
@@ -295,7 +287,6 @@ static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(str
 
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product) {
-
 	struct cvrf_product_status_iterator *it = cvrf_vulnerability_get_product_statuses(vuln);
 	while (cvrf_product_status_iterator_has_more(it)) {
 		struct cvrf_product_status *stat = cvrf_product_status_iterator_next(it);
@@ -319,10 +310,8 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *pro
 
 
 static char *get_oval_id_string(const char *type, int object_number) {
-
 	return oscap_sprintf("oval:org.open-scap.unix:%s:%d", type, object_number);
 }
-
 
 static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_model *def_model,
 		struct cvrf_rpm_attributes *attributes, int objectNo) {
@@ -419,7 +408,6 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 }
 
 int cvrf_session_construct_definition_model(struct cvrf_session *session) {
-
 	struct oval_definition_model *def_model = session->def_model;
 	struct oscap_string_iterator *product_ids = cvrf_session_get_product_ids(session);
 	int index = 1;
