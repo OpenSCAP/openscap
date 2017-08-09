@@ -2200,8 +2200,10 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	xmlNewNs(vuln_node, VULN_NS, NULL);
 
 	cvrf_element_add_child("Title", vuln->title, vuln_node);
-	xmlNode *id_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ID", BAD_CAST vuln->system_id);
-	xmlNewProp(id_node, BAD_CAST "SystemName", BAD_CAST vuln->system_name);
+	if (vuln->system_id) {
+		xmlNode *id_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ID", BAD_CAST vuln->system_id);
+		xmlNewProp(id_node, BAD_CAST "SystemName", BAD_CAST vuln->system_name);
+	}
 	cvrf_element_add_child("DiscoveryDate", vuln->discovery_date, vuln_node);
 	cvrf_element_add_child("ReleaseDate", vuln->release_date, vuln_node);
 	cvrf_element_add_container(vuln->involvements, CVRF_INVOLVEMENT, vuln_node);
