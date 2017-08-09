@@ -227,7 +227,7 @@ void xccdf_item_release(struct xccdf_item *item)
 	if (item) {
 		oscap_list_free(item->item.statuses, (oscap_destruct_func) xccdf_status_free);
 		oscap_list_free(item->item.dc_statuses, (oscap_destruct_func) oscap_reference_free);
-		oscap_list_free(item->item.platforms, oscap_free);
+		oscap_list_free(item->item.platforms, free);
 		oscap_list_free(item->item.title, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.description, (oscap_destruct_func) oscap_text_free);
 		oscap_list_free(item->item.rationale, (oscap_destruct_func) oscap_text_free);
@@ -235,15 +235,15 @@ void xccdf_item_release(struct xccdf_item *item)
 		oscap_list_free(item->item.warnings, (oscap_destruct_func) xccdf_warning_free);
 		oscap_list_free(item->item.references, (oscap_destruct_func) oscap_reference_free);
 		if (item->type != XCCDF_BENCHMARK) xccdf_benchmark_unregister_item(item);
-		oscap_free(item->item.id);
-		oscap_free(item->item.cluster_id);
-		oscap_free(item->item.version_time);
-		oscap_free(item->item.version_update);
-		oscap_free(item->item.version);
-		oscap_free(item->item.extends);
+		free(item->item.id);
+		free(item->item.cluster_id);
+		free(item->item.version_time);
+		free(item->item.version_update);
+		free(item->item.version);
+		free(item->item.extends);
 		oscap_stringlist_free((struct oscap_stringlist*)(item->item.metadata));
 
-		oscap_free(item);
+		free(item);
 	}
 }
 
@@ -763,7 +763,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
         const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
         char *str = oscap_element_string_copy(reader);
         struct xccdf_status *status = xccdf_status_new_fill(str, date);
-        oscap_free(str);
+        free(str);
         if (status) {
             oscap_list_add(item->item.statuses, status);
             return true;
@@ -781,7 +781,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 		/* content */
 		item->item.version = (char *) xmlNodeGetContent(ver);
 		if (oscap_streq(item->item.version, "")) {
-			oscap_free(item->item.version);
+			free(item->item.version);
 			item->item.version = NULL;
 		}
 		return true;
@@ -798,7 +798,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
 	case XCCDFE_METADATA: {
 		char* xml = oscap_get_xml(reader);
 		xccdf_item_add_metadata(item, xml);
-		oscap_free(xml);
+		free(xml);
 		return true;
 	}
 	default:
@@ -944,7 +944,7 @@ struct xccdf_status *xccdf_status_new_fill(const char *status, const char *date)
 		return NULL;
 	ret = oscap_calloc(1, sizeof(struct xccdf_status));
 	if ((ret->status = oscap_string_to_enum(XCCDF_STATUS_MAP, status)) == XCCDF_STATUS_NOT_SPECIFIED) {
-		oscap_free(ret);
+		free(ret);
 		return NULL;
 	}
 	ret->date = oscap_get_date(date);
@@ -971,7 +971,7 @@ void xccdf_status_dump(struct xccdf_status *status, int depth)
 
 void xccdf_status_free(struct xccdf_status *status)
 {
-	oscap_free(status);
+	free(status);
 }
 
 OSCAP_ACCESSOR_SIMPLE(time_t, xccdf_status, date)
@@ -1029,7 +1029,7 @@ struct xccdf_model *xccdf_model_new_xml(xmlTextReaderPtr reader)
 			const char *name = xccdf_attribute_get(reader, XCCDFA_NAME);
 			char *value = oscap_element_string_copy(reader);
 			if (!name || !value || !oscap_htable_add(model->params, name, value))
-				oscap_free(value);
+				free(value);
 		}
 	}
 
@@ -1041,9 +1041,9 @@ OSCAP_ACCESSOR_STRING(xccdf_model, system)
 void xccdf_model_free(struct xccdf_model *model)
 {
 	if (model) {
-		oscap_free(model->system);
-		oscap_htable_free(model->params, oscap_free);
-		oscap_free(model);
+		free(model->system);
+		oscap_htable_free(model->params, free);
+		free(model);
 	}
 }
 
@@ -1072,7 +1072,7 @@ void xccdf_warning_free(struct xccdf_warning * w)
 {
     if (w != NULL) {
         oscap_text_free(w->text);
-        oscap_free(w);
+        free(w);
     }
 }
 
@@ -1352,7 +1352,7 @@ char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, 
         if (sub) {
             xmlNodePtr sub_node = xmlNewText(BAD_CAST sub);
             xmlReplaceNode(cur, sub_node);
-            oscap_free(sub);
+            free(sub);
         }
     }
 
@@ -1381,8 +1381,8 @@ cleanup:
     xmlXPathFreeObject(xpathObj);
     xmlXPathFreeContext(xpathCtx);
     xmlFreeDoc(doc);
-    oscap_free(input);
-    oscap_free(result_tmp);
+    free(input);
+    free(result_tmp);
     return result;
 }
 

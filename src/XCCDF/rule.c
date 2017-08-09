@@ -116,7 +116,7 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			}
 
 			oscap_list_add(requires, reqs);
-			oscap_free(idsstr);
+			free(idsstr);
 			break;
 		}
 	case XCCDFE_CONFLICTS:
@@ -255,7 +255,7 @@ void xccdf_group_dump(struct xccdf_item *group, int depth)
 
 static void xccdf_free_strlist(struct oscap_list *list)
 {
-	if (list) oscap_list_free(list, oscap_free);
+	if (list) oscap_list_free(list, free);
 }
 
 void xccdf_group_free(struct xccdf_item *group)
@@ -264,7 +264,7 @@ void xccdf_group_free(struct xccdf_item *group)
 		oscap_list_free(group->sub.group.content, (oscap_destruct_func) xccdf_item_free);
 		oscap_list_free(group->sub.group.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_list_free(group->sub.group.requires, (oscap_destruct_func) xccdf_free_strlist);
-		oscap_list_free(group->sub.group.conflicts, oscap_free);
+		oscap_list_free(group->sub.group.conflicts, free);
 		xccdf_item_release(group);
 	}
 }
@@ -392,7 +392,7 @@ void xccdf_rule_free(struct xccdf_item *rule)
 		oscap_list_free(rule->sub.rule.fixes, (oscap_destruct_func) xccdf_fix_free);
 		oscap_list_free(rule->sub.rule.fixtexts, (oscap_destruct_func) xccdf_fixtext_free);
 		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func) xccdf_free_strlist);
-		oscap_list_free(rule->sub.rule.conflicts, oscap_free);
+		oscap_list_free(rule->sub.rule.conflicts, free);
 		xccdf_item_release(rule);
 	}
 }
@@ -485,9 +485,9 @@ void xccdf_ident_dump(struct xccdf_ident *ident, int depth)
 void xccdf_ident_free(struct xccdf_ident *ident)
 {
 	if (ident) {
-		oscap_free(ident->id);
-		oscap_free(ident->system);
-		oscap_free(ident);
+		free(ident->id);
+		free(ident->system);
+		free(ident);
 	}
 }
 
@@ -507,9 +507,9 @@ struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_
 void xccdf_profile_note_free(struct xccdf_profile_note *note)
 {
 	if (note) {
-		oscap_free(note->reftag);
+		free(note->reftag);
 		oscap_text_free(note->text);
-		oscap_free(note);
+		free(note);
 	}
 }
 
@@ -699,11 +699,11 @@ void xccdf_check_free(struct xccdf_check *check)
 		oscap_list_free(check->imports, (oscap_destruct_func) xccdf_check_import_free);
 		oscap_list_free(check->exports, (oscap_destruct_func) xccdf_check_export_free);
 		oscap_list_free(check->children, (oscap_destruct_func) xccdf_check_free);
-		oscap_free(check->id);
-		oscap_free(check->system);
-		oscap_free(check->selector);
-		oscap_free(check->content);
-		oscap_free(check);
+		free(check->id);
+		free(check->system);
+		free(check->selector);
+		free(check->content);
+		free(check);
 	}
 }
 
@@ -721,9 +721,9 @@ struct xccdf_check_content_ref *xccdf_check_content_ref_new(void)
 void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref)
 {
 	if (ref) {
-		oscap_free(ref->name);
-		oscap_free(ref->href);
-		oscap_free(ref);
+		free(ref->name);
+		free(ref->href);
+		free(ref);
 	}
 }
 
@@ -735,10 +735,10 @@ struct xccdf_check_import *xccdf_check_import_new(void)
 void xccdf_check_import_free(struct xccdf_check_import *item)
 {
 	if (item) {
-		oscap_free(item->name);
-		oscap_free(item->xpath);
-		oscap_free(item->content);
-		oscap_free(item);
+		free(item->name);
+		free(item->xpath);
+		free(item->content);
+		free(item);
 	}
 }
 
@@ -750,9 +750,9 @@ struct xccdf_check_export *xccdf_check_export_new(void)
 void xccdf_check_export_free(struct xccdf_check_export *item)
 {
 	if (item) {
-		oscap_free(item->name);
-		oscap_free(item->value);
-		oscap_free(item);
+		free(item->name);
+		free(item->value);
+		free(item);
 	}
 }
 
@@ -840,19 +840,19 @@ void xccdf_fixtext_free(struct xccdf_fixtext *item)
 {
 	if (item) {
 		oscap_text_free(item->text);
-		oscap_free(item->fixref);
-		oscap_free(item);
+		free(item->fixref);
+		free(item);
 	}
 }
 
 void xccdf_fix_free(struct xccdf_fix *item)
 {
 	if (item) {
-		oscap_free(item->id);
-		oscap_free(item->system);
-		oscap_free(item->platform);
-		oscap_free(item->content);
-		oscap_free(item);
+		free(item->id);
+		free(item->system);
+		free(item->platform);
+		free(item->content);
+		free(item);
 	}
 }
 
@@ -946,7 +946,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	if (XITEM(rule)->item.defined_flags.weight) {
 		char *weight_str = oscap_sprintf("%f", xccdf_rule_get_weight(rule));
 		xmlNewProp(rule_node, BAD_CAST "weight", BAD_CAST weight_str);
-		oscap_free(weight_str);
+		free(weight_str);
 	}
 
 	xccdf_role_t role = xccdf_rule_get_role(rule);
@@ -1046,7 +1046,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 		float weight = xccdf_group_get_weight(group);
 		char *weight_str = oscap_sprintf("%f", weight);
 		xmlNewProp(group_node, BAD_CAST "weight", BAD_CAST weight_str);
-        oscap_free(weight_str);
+        free(weight_str);
 	}
 
 	/* Handle Child Nodes */

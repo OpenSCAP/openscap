@@ -124,7 +124,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
 				continue;
 
 			if (ch_score->count == 0) { /* we got item that has no selected items */
-				oscap_free(ch_score);
+				free(ch_score);
 				continue;
 			}
 
@@ -133,7 +133,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
 			score->count++;
 			score->accumulator += xccdf_item_get_weight(child);
 
-			oscap_free(ch_score);
+			free(ch_score);
 		}
 
 		/* Normalize */
@@ -225,7 +225,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 				continue;
 
 			if (ch_score->weight == 0) { /* we got item that has no selected items */
-				oscap_free(ch_score);
+				free(ch_score);
 				continue;
 			}
 
@@ -233,7 +233,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 			score->score += ch_score->score;
 			score->weight += ch_score->weight;
 
-			oscap_free(ch_score);
+			free(ch_score);
 		}
 
 		xccdf_item_iterator_free(child_it);
@@ -255,24 +255,24 @@ struct xccdf_score *xccdf_result_calculate_score(struct xccdf_result *test_resul
 	if (oscap_streq(score_system, "urn:xccdf:scoring:default")) {
 		struct xccdf_default_score * item_score = xccdf_item_get_default_score(benchmark, test_result);
 		xccdf_score_set_score(score, item_score->score);
-		oscap_free(item_score);
+		free(item_score);
 	} else if (oscap_streq(score_system, "urn:xccdf:scoring:flat")) {
 		struct xccdf_flat_score * item_score = xccdf_item_get_flat_score(benchmark, test_result, false);
 		xccdf_score_set_maximum(score, item_score->weight);
 		xccdf_score_set_score(score, item_score->score);
-		oscap_free(item_score);
+		free(item_score);
 	} else if (oscap_streq(score_system, "urn:xccdf:scoring:flat-unweighted")) {
 		struct xccdf_flat_score * item_score = xccdf_item_get_flat_score(benchmark, test_result, true);
 		xccdf_score_set_maximum(score, item_score->weight);
 		xccdf_score_set_score(score, item_score->score);
-		oscap_free(item_score);
+		free(item_score);
 	} else if (oscap_streq(score_system, "urn:xccdf:scoring:absolute")) {
 		int absolute;
 		struct xccdf_flat_score * item_score = xccdf_item_get_flat_score(benchmark, test_result, false);
 		xccdf_score_set_maximum(score, item_score->weight);
 		absolute = (item_score->score == item_score->weight);
 		xccdf_score_set_score(score, absolute);
-		oscap_free(item_score);
+		free(item_score);
 	} else {
 		xccdf_score_free(score);
 		dE("Scoring system \"%s\" is not supported.", score_system);

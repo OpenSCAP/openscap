@@ -61,22 +61,22 @@ struct xccdf_tailoring *xccdf_tailoring_new(void)
 void xccdf_tailoring_free(struct xccdf_tailoring *tailoring)
 {
 	if (tailoring) {
-		oscap_free(tailoring->id);
+		free(tailoring->id);
 
-		oscap_free(tailoring->benchmark_ref);
-		oscap_free(tailoring->benchmark_ref_version);
+		free(tailoring->benchmark_ref);
+		free(tailoring->benchmark_ref_version);
 
 		oscap_list_free(tailoring->statuses, (oscap_destruct_func) xccdf_status_free);
 		oscap_list_free(tailoring->dc_statuses, (oscap_destruct_func) oscap_reference_free);
 
-		oscap_free(tailoring->version);
-		oscap_free(tailoring->version_update);
-		oscap_free(tailoring->version_time);
+		free(tailoring->version);
+		free(tailoring->version_update);
+		free(tailoring->version_time);
 
-		oscap_list_free(tailoring->metadata, (oscap_destruct_func) oscap_free);
+		oscap_list_free(tailoring->metadata, (oscap_destruct_func) free);
 		oscap_list_free(tailoring->profiles, (oscap_destruct_func) xccdf_profile_free);
 
-		oscap_free(tailoring);
+		free(tailoring);
 	}
 }
 
@@ -139,10 +139,10 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 	while (oscap_to_start_element(reader, depth)) {
 		switch (xccdf_element_get(reader)) {
 		case XCCDFE_BENCHMARK_REF: {
-			oscap_free(tailoring->benchmark_ref);
+			free(tailoring->benchmark_ref);
 			tailoring->benchmark_ref = 0;
 
-			oscap_free(tailoring->benchmark_ref_version);
+			free(tailoring->benchmark_ref_version);
 			tailoring->benchmark_ref_version = 0;
 
 			const char *ref = xccdf_attribute_get(reader, XCCDFA_HREF);
@@ -159,7 +159,7 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 			const char *date = xccdf_attribute_get(reader, XCCDFA_DATE);
 			char *str = oscap_element_string_copy(reader);
 			struct xccdf_status *status = xccdf_status_new_fill(str, date);
-			oscap_free(str);
+			free(str);
 			oscap_list_add(tailoring->statuses, status);
 			break;
 		}
@@ -174,7 +174,7 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 			/* content */
 			tailoring->version = (char *) xmlNodeGetContent(ver);
 			if (oscap_streq(tailoring->version, "")) {
-				oscap_free(tailoring->version);
+				free(tailoring->version);
 				tailoring->version = NULL;
 			}
 			break;
@@ -182,7 +182,7 @@ struct xccdf_tailoring *xccdf_tailoring_parse(xmlTextReaderPtr reader, struct xc
 		case XCCDFE_METADATA: {
 			char* xml = oscap_get_xml(reader);
 			oscap_list_add(tailoring->metadata, oscap_strdup(xml));
-			oscap_free(xml);
+			free(xml);
 			break;
 		}
 		case XCCDFE_PROFILE: {
@@ -406,7 +406,7 @@ const char *xccdf_tailoring_get_benchmark_ref_version(const struct xccdf_tailori
 bool xccdf_tailoring_set_id(struct xccdf_tailoring *tailoring, const char* newval)
 {
 	if (tailoring->id)
-		oscap_free(tailoring->id);
+		free(tailoring->id);
 
 	tailoring->id = oscap_strdup(newval);
 	return true;
@@ -415,7 +415,7 @@ bool xccdf_tailoring_set_id(struct xccdf_tailoring *tailoring, const char* newva
 bool xccdf_tailoring_set_version(struct xccdf_tailoring *tailoring, const char *newval)
 {
 	if (tailoring->version)
-		oscap_free(tailoring->version);
+		free(tailoring->version);
 
 	tailoring->version = oscap_strdup(newval);
 	return true;
@@ -424,7 +424,7 @@ bool xccdf_tailoring_set_version(struct xccdf_tailoring *tailoring, const char *
 bool xccdf_tailoring_set_version_update(struct xccdf_tailoring *tailoring, const char *newval)
 {
 	if (tailoring->version_update)
-		oscap_free(tailoring->version_update);
+		free(tailoring->version_update);
 
 	tailoring->version_update = oscap_strdup(newval);
 	return true;
@@ -433,7 +433,7 @@ bool xccdf_tailoring_set_version_update(struct xccdf_tailoring *tailoring, const
 bool xccdf_tailoring_set_version_time(struct xccdf_tailoring *tailoring, const char *newval)
 {
 	if (tailoring->version_time)
-		oscap_free(tailoring->version_time);
+		free(tailoring->version_time);
 
 	tailoring->version_time = oscap_strdup(newval);
 	return true;
@@ -442,7 +442,7 @@ bool xccdf_tailoring_set_version_time(struct xccdf_tailoring *tailoring, const c
 bool xccdf_tailoring_set_benchmark_ref(struct xccdf_tailoring *tailoring, const char *newval)
 {
 	if (tailoring->benchmark_ref)
-		oscap_free(tailoring->benchmark_ref);
+		free(tailoring->benchmark_ref);
 
 	tailoring->benchmark_ref = oscap_strdup(newval);
 	return true;
@@ -451,7 +451,7 @@ bool xccdf_tailoring_set_benchmark_ref(struct xccdf_tailoring *tailoring, const 
 bool xccdf_tailoring_set_benchmark_ref_version(struct xccdf_tailoring *tailoring, const char *newval)
 {
 	if (tailoring->benchmark_ref_version)
-		oscap_free(tailoring->benchmark_ref_version);
+		free(tailoring->benchmark_ref_version);
 
 	tailoring->benchmark_ref_version = oscap_strdup(newval);
 	return true;

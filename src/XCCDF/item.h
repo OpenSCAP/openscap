@@ -397,9 +397,9 @@ struct xccdf_target_identifier {
 
 	xmlNodePtr element;
 
-	const char* system;
-	const char* href;
-	const char* name;
+	char *system;
+	char *href;
+	char *name;
 };
 
 struct xccdf_instance {

@@ -109,7 +109,7 @@
 		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
 		{ XITEM(item)->sub.STYPE.MNAME = (newval); return true; }
 #define XCCDF_SETTER_STRING(STYPE,MNAME) \
-		XCCDF_SETTER_GENERIC(STYPE, MNAME, const char*, oscap_free, oscap_strdup)
+		XCCDF_SETTER_GENERIC(STYPE, MNAME, const char*, free, oscap_strdup)
 #define XCCDF_ACCESSOR_STRING(STYPE,MNAME) \
 		XCCDF_SETTER_STRING(STYPE, MNAME) XCCDF_ABSTRACT_GETTER(const char*, STYPE, MNAME, sub.STYPE.MNAME)
 #define XCCDF_ACCESSOR_SIMPLE(STYPE,MTYPE,MNAME) \
@@ -180,7 +180,7 @@
 #define XCCDF_ITEM_SETTER_ONEF(STYPE,MNAME,MTYPE,FREE,DUP) \
 		bool xccdf_##STYPE##_set_##MNAME(struct xccdf_##STYPE* item, MTYPE newval) \
 		{ FREE(XITEM(item)->item.MNAME); XITEM(item)->item.MNAME = DUP(newval); return true; }
-#define XCCDF_ITEM_SETTER_ONES(STYPE,MNAME) XCCDF_ITEM_SETTER_ONEF(STYPE,MNAME,const char*,oscap_free,oscap_strdup)
+#define XCCDF_ITEM_SETTER_ONES(STYPE,MNAME) XCCDF_ITEM_SETTER_ONEF(STYPE,MNAME,const char*,free,oscap_strdup)
 #define XCCDF_ITEM_SETTER_SIMPLE(MTYPE,MNAME) XCCDF_ITEM_SETTER_ONE(item,MNAME,MTYPE,) \
 		XCCDF_ITEM_SETTER_ONE(benchmark,MNAME,MTYPE,) XCCDF_ITEM_SETTER_ONE(profile,MNAME,MTYPE,) \
 		XCCDF_ITEM_SETTER_ONE(rule,MNAME,MTYPE,) XCCDF_ITEM_SETTER_ONE(value,MNAME,MTYPE,) \

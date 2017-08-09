@@ -70,9 +70,9 @@ xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xml
 void xccdf_setvalue_free(struct xccdf_setvalue *sv)
 {
 	if (sv) {
-		oscap_free(sv->item);
-		oscap_free(sv->value);
-		oscap_free(sv);
+		free(sv->item);
+		free(sv->value);
+		free(sv);
 	}
 }
 
@@ -136,29 +136,29 @@ struct xccdf_select *xccdf_select_clone(const struct xccdf_select * sel)
 void xccdf_refine_value_free(struct xccdf_refine_value *rv)
 {
 	if (rv) {
-		oscap_free(rv->item);
+		free(rv->item);
 		oscap_list_free(rv->remarks, (oscap_destruct_func) oscap_text_free);
-		oscap_free(rv->selector);
-		oscap_free(rv);
+		free(rv->selector);
+		free(rv);
 	}
 }
 
 void xccdf_refine_rule_free(struct xccdf_refine_rule *rr)
 {
 	if (rr) {
-		oscap_free(rr->item);
+		free(rr->item);
 		oscap_list_free(rr->remarks, (oscap_destruct_func) oscap_text_free);
-		oscap_free(rr->selector);
-		oscap_free(rr);
+		free(rr->selector);
+		free(rr);
 	}
 }
 
 void xccdf_select_free(struct xccdf_select *sel)
 {
 	if (sel) {
-		oscap_free(sel->item);
+		free(sel->item);
 		oscap_list_free(sel->remarks, (oscap_destruct_func) oscap_text_free);
-		oscap_free(sel);
+		free(sel);
 	}
 }
 
@@ -446,7 +446,7 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
 			float weight = xccdf_refine_rule_get_weight(refine_rule);
 			char *weight_str = oscap_sprintf("%f", weight);
 			xmlNewProp(refrule_node, BAD_CAST "weight", BAD_CAST weight_str);
-			oscap_free(weight_str);
+			free(weight_str);
 		}
 		
 		xccdf_texts_to_dom(xccdf_refine_rule_get_remarks(refine_rule), refrule_node, "remark");
