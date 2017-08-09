@@ -83,25 +83,19 @@ void sce_check_result_free(struct sce_check_result* v)
 	if (!v)
 		return;
 
-	if (v->href)
-		oscap_free(v->href);
-	if (v->basename)
-		oscap_free(v->basename);
-	if (v->std_out)
-		oscap_free(v->std_out);
-	if (v->std_err)
-		oscap_free(v->std_err);
+	free(v->href);
+	free(v->basename);
+	free(v->std_out);
+	free(v->std_err);
 
 	oscap_stringlist_free(v->environment_variables);
 
-	oscap_free(v);
+	free(v);
 }
 
 void sce_check_result_set_href(struct sce_check_result* v, const char* href)
 {
-	if (v->href)
-		oscap_free(v->href);
-
+	free(v->href);
 	v->href = strdup(href);
 }
 
@@ -112,9 +106,7 @@ const char* sce_check_result_get_href(struct sce_check_result* v)
 
 void sce_check_result_set_basename(struct sce_check_result* v, const char* base_name)
 {
-	if (v->basename)
-		oscap_free(v->basename);
-
+	free(v->basename);
 	v->basename = strdup(base_name);
 }
 
@@ -125,9 +117,7 @@ const char* sce_check_result_get_basename(struct sce_check_result* v)
 
 void sce_check_result_set_stdout(struct sce_check_result* v, const char* _stdout)
 {
-	if (v->std_out)
-		oscap_free(v->std_out);
-
+	free(v->std_out);
 	v->std_out = strdup(_stdout);
 }
 
@@ -138,9 +128,7 @@ const char* sce_check_result_get_stdout(struct sce_check_result* v)
 
 void sce_check_result_set_stderr(struct sce_check_result* v, const char* _stderr)
 {
-	if (v->std_err)
-		oscap_free(v->std_err);
-
+	free(v->std_err);
 	v->std_err = strdup(_stderr);
 }
 
@@ -235,7 +223,7 @@ void sce_session_free(struct sce_session* s)
 		return;
 
 	oscap_list_free(s->results, (oscap_destruct_func) sce_check_result_free);
-	oscap_free(s);
+	free(s);
 }
 
 void sce_session_reset(struct sce_session* s)
@@ -265,7 +253,7 @@ void sce_session_export_to_directory(struct sce_session* s, const char* director
 		struct sce_check_result * result = sce_check_result_iterator_next(it);
 		char* target = oscap_sprintf("%s/%s.result.xml", directory, sce_check_result_get_basename(result));
 		sce_check_result_export(result, target);
-		oscap_free(target);
+		free(target);
 	}
 
 	sce_check_result_iterator_free(it);
@@ -291,18 +279,16 @@ void sce_parameters_free(struct sce_parameters* v)
 	if (!v)
 		return;
 
-	if (v->xccdf_directory)
-		oscap_free(v->xccdf_directory);
-	if (v->session)
-		sce_session_free(v->session);
+	free(v->xccdf_directory);
+	sce_session_free(v->session);
 
-	oscap_free(v);
+	free(v);
 }
 
 void sce_parameters_set_xccdf_directory(struct sce_parameters* v, const char* value)
 {
 	if (v->xccdf_directory)
-		oscap_free(v->xccdf_directory);
+		free(v->xccdf_directory);
 
 	v->xccdf_directory = value == NULL ? NULL : strdup(value);
 }
@@ -314,12 +300,7 @@ const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v)
 
 void sce_parameters_set_session(struct sce_parameters* v, struct sce_session* value)
 {
-	if (v->session)
-	{
-		sce_session_free(v->session);
-		v->session = NULL;
-	}
-
+	sce_session_free(v->session);
 	v->session = value;
 }
 
@@ -385,7 +366,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		// with a different XCCDF directory can find it?
 		oscap_seterr(OSCAP_EFAMILY_SCE, "SCE couldn't find script file '%s'. "
 				"Expected location: '%s'.", href, tmp_href);
-		oscap_free(tmp_href);
+		free(tmp_href);
 		return XCCDF_RESULT_NOT_CHECKED;
 	}
 
@@ -394,7 +375,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		// again, only to provide helpful error message
 		oscap_seterr(OSCAP_EFAMILY_SCE, "SCE has found script file '%s' at '%s' "
 				"but it isn't executable!", href, tmp_href);
-		oscap_free(tmp_href);
+		free(tmp_href);
 		return XCCDF_RESULT_ERROR;
 	}
 
@@ -510,9 +491,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		// the first 9 values (0 to 8) are compiled in
 		for (size_t i = 9; i < env_value_count; ++i)
 		{
-			oscap_free(env_values[i]);
+			free(env_values[i]);
 		}
-		oscap_free(env_values);
+		free(env_values);
 		return XCCDF_RESULT_ERROR;
 	}
 
@@ -652,9 +633,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// the first 10 values (0 to 9) are compiled in
 			for (size_t i = 10; i < env_value_count; ++i)
 			{
-				oscap_free(env_values[i]);
+				free(env_values[i]);
 			}
-			oscap_free(env_values);
+			free(env_values);
 
 			// lets interpret the check imports passed to us
 			xccdf_check_import_iterator_reset(check_import_it);
@@ -673,9 +654,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 				}
 			}
 
-			oscap_free(tmp_href);
-			oscap_free(stdout_buffer);
-			oscap_free(stderr_buffer);
+			free(tmp_href);
+			free(stdout_buffer);
+			free(stderr_buffer);
 
 			return (xccdf_test_result_type_t)raw_result;
 		}
@@ -685,9 +666,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		// the first 9 values (0 to 8) are compiled in
 		for (size_t i = 9; i < env_value_count; ++i)
 		{
-			oscap_free(env_values[i]);
+			free(env_values[i]);
 		}
-		oscap_free(env_values);
+		free(env_values);
 
 		close(stdout_pipefd[0]);
 		close(stdout_pipefd[1]);
