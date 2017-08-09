@@ -354,6 +354,7 @@ struct cvrf_vulnerability {
 	int ordinal;
 	char *title;
 	char *system_id;
+	char *system_name;
 	char *discovery_date;
 	char *release_date;
 	char *cve_id;
@@ -370,6 +371,7 @@ struct cvrf_vulnerability {
 };
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, title)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, system_id)
+OSCAP_ACCESSOR_STRING(cvrf_vulnerability, system_name)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, discovery_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, release_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, cve_id)
@@ -413,6 +415,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_new() {
 
 	ret->title = NULL;
 	ret->system_id = NULL;
+	ret->system_name = NULL;
 	ret->discovery_date = NULL;
 	ret->release_date = NULL;
 	ret->cve_id = NULL;
@@ -433,6 +436,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 
 	oscap_free(vulnerability->title);
 	oscap_free(vulnerability->system_id);
+	oscap_free(vulnerability->system_name);
 	oscap_free(vulnerability->discovery_date);
 	oscap_free(vulnerability->release_date);
 	oscap_free(vulnerability->cve_id);
@@ -451,6 +455,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 	struct cvrf_vulnerability *clone = oscap_calloc(1, sizeof(struct cvrf_vulnerability));
 	clone->title = oscap_strdup(vuln->title);
 	clone->system_id = oscap_strdup(vuln->system_id);
+	clone->system_id = oscap_strdup(vuln->system_name);
 	clone->discovery_date = oscap_strdup(vuln->discovery_date);
 	clone->release_date = oscap_strdup(vuln->release_date);
 	clone->involvements = oscap_list_clone(vuln->involvements, (oscap_clone_func) cvrf_involvement_clone);
@@ -1727,6 +1732,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TITLE)) {
 			vuln->title = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ID)) {
+			vuln->system_name = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "SystemName");
 			vuln->system_id = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISCOVERY_DATE)) {
 			vuln->discovery_date = oscap_element_string_copy(reader);
@@ -2190,7 +2196,8 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	xmlNewNs(vuln_node, VULN_NS, NULL);
 
 	cvrf_element_add_child("Title", vuln->title, vuln_node);
-	cvrf_element_add_child("ID", vuln->system_id, vuln_node);
+	xmlNode *id_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ID", BAD_CAST vuln->system_id);
+	xmlNewProp(id_node, BAD_CAST "SystemName", BAD_CAST vuln->system_name);
 	cvrf_element_add_child("DiscoveryDate", vuln->discovery_date, vuln_node);
 	cvrf_element_add_child("ReleaseDate", vuln->release_date, vuln_node);
 	cvrf_element_add_container(vuln->involvements, CVRF_INVOLVEMENT, vuln_node);
