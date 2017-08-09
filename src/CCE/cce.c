@@ -55,19 +55,19 @@ void cce_free(struct cce *cce)
 	if (cce) {
 		oscap_htable_free0(cce->entry);
 		oscap_list_free(cce->entries, (oscap_destruct_func) cce_entry_free);
-		oscap_free(cce);
+		free(cce);
 	}
 }
 
 void cce_entry_free(struct cce_entry *cce)
 {
 	if (cce) {
-		oscap_free(cce->id);
-		oscap_free(cce->description);
-		oscap_list_free(cce->params, oscap_free);
-		oscap_list_free(cce->tech_mechs, oscap_free);
+		free(cce->id);
+		free(cce->description);
+		oscap_list_free(cce->params, free);
+		oscap_list_free(cce->tech_mechs, free);
 		oscap_list_free(cce->references, (oscap_destruct_func) cce_reference_free);
-		oscap_free(cce);
+		free(cce);
 	}
 }
 

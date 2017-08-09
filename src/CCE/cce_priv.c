@@ -152,8 +152,8 @@ void process_tech_mech(xmlTextReaderPtr reader, struct cce_entry *cce)
 void cce_reference_free(struct cce_reference *ref)
 {
 	if (ref) {
-		oscap_free(ref->source);
-		oscap_free(ref->value);
-		oscap_free(ref);
+		free(ref->source);
+		free(ref->value);
+		free(ref);
 	}
 }
