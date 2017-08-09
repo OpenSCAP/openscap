@@ -567,7 +567,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	}
 
 	xifile->depth = depth;
-	xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
+	xiconf->cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
 	dI("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);
@@ -1146,7 +1146,7 @@ finish_section:
 			dI("adding new strans record to an exiting one: k=%s, cnt=%u+1",
 			   st_key, st->cnt);
 
-			st->srv = oscap_realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
+			st->srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
 			st->srv[st->cnt - 1] = scur;
 		}
 
@@ -1347,7 +1347,7 @@ int op_assign_strl(void *var, char *val)
 			continue;
 		}
 		dI("Adding new member to string array: %s", tok);
-		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1378,7 +1378,7 @@ int op_insert_strl(void *var, char *val)
 			continue;
 		}
 		dI("Adding new member to string array: %s", tok);
-		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1424,7 +1424,7 @@ int op_remove_strl(void *var, char *val)
 			continue;
 		}
 		dI("Adding new member to string array: %s", tok);
-		valstr_array = oscap_realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
 	}
@@ -1457,7 +1457,7 @@ int op_remove_strl(void *var, char *val)
 	newstr_array[newstr_array_size] = NULL;
 	free(string_array);
 	free(valstr_array);
-	newstr_array = oscap_realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
+	newstr_array = realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
 	*aptr = newstr_array;
 	return 0;
 }

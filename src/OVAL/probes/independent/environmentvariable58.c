@@ -79,7 +79,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 		return PROBE_EACCESS;
 	}
 
-	if ((buffer = oscap_realloc(NULL, BUFFER_SIZE)) == NULL) {
+	if ((buffer = realloc(NULL, BUFFER_SIZE)) == NULL) {
 		dE("Can't allocate memory");
 		closedir(d);
 		return PROBE_EFAULT;
@@ -127,7 +127,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 				ssize_t s;
 				if ((size_t)buffer_used >= buffer_size) {
 					buffer_size += BUFFER_SIZE;
-					buffer = oscap_realloc(buffer, buffer_size);
+					buffer = realloc(buffer, buffer_size);
 					if (buffer == NULL) {
 						dE("Can't allocate memory");
 						exit(ENOMEM);

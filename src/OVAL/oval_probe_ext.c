@@ -154,7 +154,7 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 	pd->sd      = sd;
 	pd->uri     = strdup(uri);
 
-	tbl->memb = oscap_realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
+	tbl->memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
 
 	assume_d(tbl->memb != NULL, -1);
 
@@ -1020,7 +1020,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
 		}
 
 		if (r < OSCAP_GSYM(__probe_meta_count))
-			pext->pdsc = oscap_realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
+			pext->pdsc = realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
 
 		pext->pdsc_cnt = r;
 		qsort(pext->pdsc, pext->pdsc_cnt, sizeof(oval_pdsc_t),

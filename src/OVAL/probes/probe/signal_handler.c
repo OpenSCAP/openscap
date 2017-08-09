@@ -52,7 +52,7 @@ static int __abort_cb(void *n, void *u)
 
         pthread_cancel(thr->tid);
 
-	coll->thr = oscap_realloc(coll->thr, sizeof(SEAP_msg_t *) * ++coll->cnt);
+	coll->thr = realloc(coll->thr, sizeof(SEAP_msg_t *) * ++coll->cnt);
 	coll->thr[coll->cnt - 1] = thr;
 
 	return (0);

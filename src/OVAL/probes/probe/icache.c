@@ -122,7 +122,7 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 		*/
 		dI("cache MISS");
 
-		cached->item = oscap_realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
+		cached->item = realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
 		cached->item[cached->count - 1] = pair->p.item;
 
 		/* Assign an unique item ID */

@@ -86,7 +86,7 @@ void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, c
 		 * the memory.
 		 */
 		s->capacity = ((s->capacity + append_length - 1) / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
-		s->data = oscap_realloc(s->data, s->capacity);
+		s->data = realloc(s->data, s->capacity);
 	}
 
 	memcpy(s->data + s->length, data, append_length);

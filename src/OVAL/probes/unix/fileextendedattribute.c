@@ -117,7 +117,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
 		/* allocate space for xattr names */
 		xattr_buflen = xattr_count;
-		xattr_buf    = oscap_realloc(xattr_buf, sizeof(char) * xattr_buflen);
+		xattr_buf    = realloc(xattr_buf, sizeof(char) * xattr_buflen);
 
 		/* fill the buffer */
 		xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
@@ -158,7 +158,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 				}
 
 				// Allocate buffer, '+1' is for trailing '\0'
- 				xattr_val    = oscap_realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+ 				xattr_val    = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
 
 				// we don't want to override space for '\0' by call of 'lgetxattr'
 				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'

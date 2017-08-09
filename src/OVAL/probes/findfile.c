@@ -406,7 +406,7 @@ static void find_paths_recursion(const char *path, regex_t * re, rglob_t * resul
 		result->pathc++;
 		if (result->pathc == result->offs) {
 			result->offs = result->offs * 2;	/* magic constant */
-			result->pathv = oscap_realloc(result->pathv, sizeof(char **) * result->offs);
+			result->pathv = realloc(result->pathv, sizeof(char **) * result->offs);
 		}
 	}
 

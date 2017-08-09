@@ -99,7 +99,7 @@ int oval_probe_handler_set(oval_phtbl_t *phtbl, oval_subtype_t type, oval_probe_
                 }
         }
 
-        phtbl->ph = oscap_realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
+        phtbl->ph = realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
         phrec = phtbl->ph[phtbl->sz - 1] = oscap_talloc(oval_ph_t);
         sort  = true;
 fillrec:

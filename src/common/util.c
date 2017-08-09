@@ -96,7 +96,7 @@ char **oscap_split(char *str, const char *delim)
 		if (i + 2 > alloc) {
 			void *old = fields;
 			alloc *= 2;
-			fields = oscap_realloc(fields, alloc * sizeof(char *));
+			fields = realloc(fields, alloc * sizeof(char *));
 			if (fields == NULL) {
 				free(old);
 				return NULL;

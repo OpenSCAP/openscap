@@ -234,7 +234,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                  * We can allocate all memory needed now because we know the number
                  * of results.
                  */
-                (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ret);
+                (*rep) = realloc (*rep, sizeof (struct rpminfo_rep) * ret);
 
                 for (i = 0; i < ret; ++i) {
                         pkgh = rpmdbNextIterator (match);
@@ -250,7 +250,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                 ret = 0;
 
                 while ((pkgh = rpmdbNextIterator (match)) != NULL) {
-                        (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
+                        (*rep) = realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
                         assume_r (*rep != NULL, -1);
                         pkgh2rep (pkgh, (*rep) + (ret - 1));
                 }

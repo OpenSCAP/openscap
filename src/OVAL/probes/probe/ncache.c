@@ -138,7 +138,7 @@ SEXP_t *probe_ncache_add (probe_ncache_t *cache, const char *name)
 
         if (cache->size <= cache->real) {
                 cache->size += PROBE_NCACHE_ADD_SIZE;
-                cache->name  = oscap_realloc (cache->name, sizeof (SEXP_t *) * cache->size);
+                cache->name  = realloc (cache->name, sizeof (SEXP_t *) * cache->size);
         }
 
         assume_d (cache->name != NULL, NULL);
