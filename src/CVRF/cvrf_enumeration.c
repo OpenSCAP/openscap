@@ -120,6 +120,24 @@ const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type) {
 	return cvrf_enumeration_get_text(CVRF_REFERENCE_TYPE_MAP, reference_type);
 }
 
+const struct oscap_string_map CVRF_NOTE_TYPE_MAP[] = {
+	{CVRF_NOTE_GENERAL, "General"},
+	{CVRF_NOTE_DETAILS, "Details"},
+	{CVRF_NOTE_DESCRIPTION, "Description"},
+	{CVRF_NOTE_SUMMARY, "Summary"},
+	{CVRF_NOTE_FAQ, "FAQ"},
+	{CVRF_NOTE_LEGAL_DISCLAIMER, "Legal Disclaimer"},
+	{CVRF_NOTE_OTHER, "Other"},
+	{0, NULL}
+};
+
+static cvrf_note_type_t cvrf_note_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_NOTE_TYPE_MAP);
+}
+const char *cvrf_note_type_get_text(cvrf_note_type_t note_type) {
+	return cvrf_enumeration_get_text(CVRF_NOTE_TYPE_MAP, note_type);
+}
+
 const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
 	{CVRF_BRANCH_VENDOR, "Vendor"},
 	{CVRF_BRANCH_PRODUCT_FAMILY, "Product Family"},
@@ -240,6 +258,7 @@ static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
 	{CVRF_DOCUMENT_PUBLISHER, "DocumentPublisher", NULL},
 	{CVRF_DOCUMENT_TRACKING, "DocumentTracking", NULL},
 	{CVRF_REVISION, "Revision", "RevisionHistory"},
+	{CVRF_DOCUMENT_NOTE, "Note", "DocumentNotes"},
 	{CVRF_DOCUMENT_REFERENCE, "Reference", "DocumentReferences"},
 	{CVRF_ACKNOWLEDGMENT, "Acknowledgment", "Acknowledgments"},
 	{CVRF_PRODUCT_TREE, "ProductTree", NULL},
@@ -248,6 +267,7 @@ static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
 	{CVRF_RELATIONSHIP, "Relationship", NULL},
 	{CVRF_PRODUCT_NAME, "FullProductName", NULL},
 	{CVRF_VULNERABILITY, "Vulnerability", NULL},
+	{CVRF_NOTE, "Note", "Notes"},
 	{CVRF_INVOLVEMENT, "Involvement", "Involvements"},
 	{CVRF_SCORE_SET, "ScoreSet", "CVSSScoreSet"},
 	{CVRF_PRODUCT_STATUS, "Status", "ProductStatuses"},
@@ -299,6 +319,9 @@ int cvrf_item_parse_type_attribute(xmlTextReaderPtr reader, cvrf_item_type_t ite
 			return cvrf_doc_publisher_type_parse(reader, "Type");
 		case CVRF_DOCUMENT_TRACKING:
 			return cvrf_doc_status_type_parse(reader);
+		case CVRF_DOCUMENT_NOTE:
+		case CVRF_NOTE:
+			return cvrf_note_type_parse(reader);
 		case CVRF_REFERENCE:
 		case CVRF_DOCUMENT_REFERENCE:
 			return cvrf_reference_type_parse(reader);

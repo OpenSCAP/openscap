@@ -364,6 +364,7 @@ struct cvrf_vulnerability {
 	char *cve_id;
 	struct oscap_stringlist *cwe_ids;
 
+	struct oscap_list *notes;
 	struct oscap_list *involvements;
 	struct oscap_list *score_sets;
 	struct oscap_list *product_statuses;
@@ -404,6 +405,11 @@ struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulner
 	return oscap_iterator_new(vuln->acknowledgments);
 }
 
+struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln) {
+	return oscap_iterator_new(vuln->notes);
+}
+
+
 int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln) {
 	return oscap_list_get_itemcount(vuln->remediations);
 }
@@ -424,6 +430,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_new() {
 	ret->release_date = NULL;
 	ret->cve_id = NULL;
 	ret->cwe_ids = oscap_stringlist_new();
+	ret->notes = oscap_list_new();
 	ret->involvements = oscap_list_new();
 	ret->score_sets = oscap_list_new();
 	ret->product_statuses = oscap_list_new();
@@ -445,6 +452,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 	oscap_free(vulnerability->release_date);
 	oscap_free(vulnerability->cve_id);
 	oscap_stringlist_free(vulnerability->cwe_ids);
+	oscap_list_free(vulnerability->notes, (oscap_destruct_func) cvrf_note_free);
 	oscap_list_free(vulnerability->involvements, (oscap_destruct_func) cvrf_involvement_free);
 	oscap_list_free(vulnerability->score_sets, (oscap_destruct_func) cvrf_score_set_free);
 	oscap_list_free(vulnerability->product_statuses, (oscap_destruct_func) cvrf_product_status_free);
@@ -462,6 +470,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 	clone->system_id = oscap_strdup(vuln->system_name);
 	clone->discovery_date = oscap_strdup(vuln->discovery_date);
 	clone->release_date = oscap_strdup(vuln->release_date);
+	clone->notes = oscap_list_clone(vuln->notes, (oscap_clone_func) cvrf_note_clone);
 	clone->involvements = oscap_list_clone(vuln->involvements, (oscap_clone_func) cvrf_involvement_clone);
 	clone->product_statuses = oscap_list_clone(vuln->product_statuses, (oscap_clone_func) cvrf_product_status_clone);
 	clone->threats = oscap_list_clone(vuln->threats, (oscap_clone_func) cvrf_threat_clone);
@@ -784,7 +793,6 @@ int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *
 	}
 }
 
-
 /***************************************************************************
  * CVRF Acknowledgments
  */
@@ -829,6 +837,64 @@ struct cvrf_acknowledgment *cvrf_acknowledgment_clone(const struct cvrf_acknowle
 	return clone;
 }
 
+/***************************************************************************
+ * CVRF Notes
+ */
+struct cvrf_note {
+	cvrf_note_type_t type;
+	int ordinal;
+	char *audience;
+	char *title;
+	char *contents;
+};
+OSCAP_ACCESSOR_STRING(cvrf_note, audience)
+OSCAP_ACCESSOR_STRING(cvrf_note, title)
+OSCAP_ACCESSOR_STRING(cvrf_note, contents)
+
+cvrf_note_type_t cvrf_note_get_note_type(const struct cvrf_note *note) {
+	return note->type;
+}
+
+int cvrf_note_get_ordinal(const struct cvrf_note *note) {
+	return note->ordinal;
+}
+
+bool cvrf_note_set_ordinal(struct cvrf_note *note, int ordinal) {
+	if (ordinal > 0) {
+		note->ordinal = ordinal;
+		return true;
+	}
+	return false;
+}
+
+struct cvrf_note *cvrf_note_new() {
+	struct cvrf_note *ret = oscap_alloc(sizeof(struct cvrf_note));
+	if (ret == NULL)
+		return NULL;
+
+	ret->audience = NULL;
+	ret->title = NULL;
+	ret->contents = NULL;
+	return ret;
+}
+
+void cvrf_note_free(struct cvrf_note *note) {
+	if (note == NULL)
+		return;
+
+	oscap_free(note->audience);
+	oscap_free(note->title);
+	oscap_free(note->contents);
+	oscap_free(note);
+}
+
+struct cvrf_note *cvrf_note_clone(const struct cvrf_note *note) {
+	struct cvrf_note *clone = oscap_calloc(1, sizeof(struct cvrf_note));
+	clone->audience = oscap_strdup(note->audience);
+	clone->title = oscap_strdup(note->title);
+	clone->contents = oscap_strdup(note->contents);
+	return clone;
+}
 
 /***************************************************************************
  * CVRF Revision
@@ -1050,6 +1116,7 @@ struct cvrf_document {
 	char *namespace;
 	struct cvrf_doc_tracking *tracking;
 	struct cvrf_doc_publisher *publisher;
+	struct oscap_list *doc_notes;
 	struct oscap_list *doc_references;
 	struct oscap_list *acknowledgments;
 };
@@ -1094,6 +1161,7 @@ struct cvrf_document *cvrf_document_new() {
 	ret->namespace = NULL;
 	ret->tracking = cvrf_doc_tracking_new();
 	ret->publisher = cvrf_doc_publisher_new();
+	ret->doc_notes = oscap_list_new();
 	ret->doc_references = oscap_list_new();
 	ret->acknowledgments = oscap_list_new();
 	return ret;
@@ -1108,6 +1176,7 @@ void cvrf_document_free(struct cvrf_document *doc) {
 	oscap_free(doc->namespace);
 	cvrf_doc_tracking_free(doc->tracking);
 	cvrf_doc_publisher_free(doc->publisher);
+	oscap_list_free(doc->doc_notes, (oscap_destruct_func) cvrf_note_free);
 	oscap_list_free(doc->doc_references, (oscap_destruct_func) cvrf_reference_free);
 	oscap_list_free(doc->acknowledgments, (oscap_destruct_func) cvrf_acknowledgment_free);
 	oscap_free(doc);
@@ -1120,6 +1189,7 @@ struct cvrf_document *cvrf_document_clone(const struct cvrf_document *doc) {
 	clone->namespace = oscap_strdup(doc->namespace);
 	clone->tracking = cvrf_doc_tracking_clone(doc->tracking);
 	clone->publisher = cvrf_doc_publisher_clone(doc->publisher);
+	clone->doc_notes = oscap_list_clone(doc->doc_notes, (oscap_clone_func) cvrf_note_clone);
 	clone->doc_references = oscap_list_clone(doc->doc_references, (oscap_clone_func) cvrf_reference_clone);
 	clone->acknowledgments = oscap_list_clone(doc->acknowledgments, (oscap_clone_func) cvrf_acknowledgment_clone);
 	return clone;
@@ -1344,6 +1414,8 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tag) == 0) {
 		if (item_type == CVRF_REVISION) {
 			no_err = oscap_list_add(list, cvrf_revision_parse(reader));
+		} else if (item_type == CVRF_NOTE || item_type == CVRF_DOCUMENT_NOTE) {
+			no_err = oscap_list_add(list, cvrf_note_parse(reader));
 		} else if (item_type == CVRF_REFERENCE || item_type == CVRF_DOCUMENT_REFERENCE) {
 			no_err = oscap_list_add(list, cvrf_reference_parse(reader));
 		} else if (item_type == CVRF_ACKNOWLEDGMENT) {
@@ -1363,8 +1435,8 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 		} else if (item_type == CVRF_VULNERABILITY) {
 			no_err = oscap_list_add(list, cvrf_vulnerability_parse(reader));
 		}
-		xmlTextReaderNextNode(reader);
 
+		xmlTextReaderNextNode(reader);
 		if (!no_err) {
 			cvrf_set_parsing_error(tag);
 			break;
@@ -1444,6 +1516,11 @@ struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
 		doc->tracking = cvrf_doc_tracking_parse(reader);
 		xmlTextReaderNextElement(reader);
 	}
+	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "DocumentNotes")) {
+		cvrf_parse_container(reader, doc->doc_notes, CVRF_DOCUMENT_NOTE);
+		xmlTextReaderNextNode(reader);
+		xmlTextReaderNextNode(reader);
+	}
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISTRIBUTION)) {
 		doc->doc_distribution = oscap_element_string_copy(reader);
 		xmlTextReaderNextElement(reader);
@@ -1462,6 +1539,24 @@ struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
 		xmlTextReaderNextElement(reader);
 	}
 	return doc;
+}
+
+struct cvrf_note *cvrf_note_parse(xmlTextReaderPtr reader) {
+	__attribute__nonnull__(reader);
+
+	struct cvrf_note *note = cvrf_note_new();
+	if (xmlTextReaderIsEmptyElement(reader))
+		return NULL;
+
+	note->ordinal = (int)oscap_strtol((char *)xmlTextReaderGetAttribute(reader, ATTR_ORDINAL), NULL, 10);
+	note->type = cvrf_item_parse_type_attribute(reader, CVRF_NOTE);
+	note->audience = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Audience");
+	note->title = (char *)xmlTextReaderGetAttribute(reader, TAG_TITLE);
+	xmlTextReaderNextNode(reader);
+	note->contents =oscap_element_string_copy(reader);
+	xmlTextReaderNextNode(reader);
+	xmlTextReaderNextNode(reader);
+	return note;
 }
 
 struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
@@ -1748,6 +1843,8 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 			vuln->cve_id = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CWE)) {
 			oscap_stringlist_add_string(vuln->cwe_ids, oscap_element_string_copy(reader));
+		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Notes")) {
+			cvrf_parse_container(reader, vuln->notes, CVRF_NOTE);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_INVOLVEMENTS)) {
 			cvrf_parse_container(reader, vuln->involvements, CVRF_INVOLVEMENT);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUSES)) {
@@ -1930,6 +2027,8 @@ static xmlNode *cvrf_list_to_dom(struct oscap_list *list, xmlNode *parent, cvrf_
 	while (oscap_iterator_has_more(it)) {
 		if (cvrf_type == CVRF_REVISION) {
 			child = cvrf_revision_to_dom(oscap_iterator_next(it));
+		} else if (cvrf_type == CVRF_NOTE || cvrf_type == CVRF_DOCUMENT_NOTE) {
+			child = cvrf_note_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_REFERENCE || cvrf_type == CVRF_DOCUMENT_REFERENCE) {
 			child = cvrf_reference_to_dom(oscap_iterator_next(it));
 		} else if (cvrf_type == CVRF_ACKNOWLEDGMENT) {
@@ -1984,6 +2083,12 @@ void cvrf_element_add_attribute(const char *attr_name, const char *attr_value, x
 		return;
 
 	xmlNewProp(element, BAD_CAST attr_name, BAD_CAST attr_value);
+}
+
+static void cvrf_element_add_ordinal(int ordinal, xmlNode *element) {
+	char *ordinal_str = oscap_sprintf("%d", ordinal);
+	xmlNewProp(element, ATTR_ORDINAL, BAD_CAST ordinal_str);
+	oscap_free(ordinal_str);
 }
 
 void cvrf_element_add_child(const char *elm_name, const char *elm_value, xmlNode *parent) {
@@ -2068,6 +2173,7 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 	xmlAddChild(root_node, cvrf_doc_publisher_to_dom(cvrf_doc->publisher));
 	xmlAddChild(root_node, cvrf_doc_tracking_to_dom(cvrf_doc->tracking));
 
+	cvrf_element_add_container(cvrf_doc->doc_notes, CVRF_DOCUMENT_NOTE, root_node);
 	xmlNode *distribution = xmlNewTextChild(root_node, NULL, TAG_DISTRIBUTION, BAD_CAST cvrf_doc->doc_distribution);
 	xmlNewProp(distribution, ATTR_LANG, BAD_CAST "en");
 	xmlNode *severity = xmlNewTextChild(root_node, NULL, TAG_AGGREGATE_SEVERITY, BAD_CAST cvrf_doc->aggregate_severity);
@@ -2115,6 +2221,15 @@ xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking) {
 	return tracking_node;
 }
 
+xmlNode *cvrf_note_to_dom(struct cvrf_note *note) {
+	xmlNode *note_node = cvrf_element_to_dom("Note", note->contents);
+	cvrf_element_add_ordinal(note->ordinal, note_node);
+	cvrf_element_add_attribute("Type", cvrf_note_type_get_text(note->type), note_node);
+	cvrf_element_add_attribute("Title", note->title, note_node);
+	cvrf_element_add_attribute("Audience", note->audience, note_node);
+	return note_node;
+}
+
 xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision) {
 	xmlNode *revision_node = xmlNewNode(NULL, TAG_REVISION);
 	cvrf_element_add_child("Number", revision->number, revision_node);
@@ -2125,9 +2240,7 @@ xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision) {
 
 xmlNode *cvrf_reference_to_dom(struct cvrf_reference *ref) {
 	xmlNode *ref_node = xmlNewNode(NULL, TAG_REFERENCE);
-	const char *ref_type = cvrf_reference_type_get_text(ref->ref_type);
-	if (ref_type)
-		xmlNewProp(ref_node, BAD_CAST "Type", BAD_CAST ref_type);
+	cvrf_element_add_attribute("Type", cvrf_reference_type_get_text(ref->ref_type), ref_node);
 	cvrf_element_add_child("URL", ref->url, ref_node);
 	cvrf_element_add_child("Description", ref->description, ref_node);
 	return ref_node;
@@ -2197,8 +2310,7 @@ xmlNode *cvrf_group_to_dom(const struct cvrf_group *group) {
 
 xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	xmlNode *vuln_node = xmlNewNode(NULL, TAG_VULNERABILITY);
-	char *ordinal = oscap_sprintf("%d", vuln->ordinal);
-	xmlNewProp(vuln_node, ATTR_ORDINAL, BAD_CAST ordinal);
+	cvrf_element_add_ordinal(vuln->ordinal, vuln_node);
 	xmlNewNs(vuln_node, VULN_NS, NULL);
 
 	cvrf_element_add_child("Title", vuln->title, vuln_node);
@@ -2206,6 +2318,7 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 		xmlNode *id_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ID", BAD_CAST vuln->system_id);
 		xmlNewProp(id_node, BAD_CAST "SystemName", BAD_CAST vuln->system_name);
 	}
+	cvrf_element_add_container(vuln->notes, CVRF_NOTE, vuln_node);
 	cvrf_element_add_child("DiscoveryDate", vuln->discovery_date, vuln_node);
 	cvrf_element_add_child("ReleaseDate", vuln->release_date, vuln_node);
 	cvrf_element_add_container(vuln->involvements, CVRF_INVOLVEMENT, vuln_node);
@@ -2219,7 +2332,6 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	cvrf_element_add_container(vuln->references, CVRF_REFERENCE, vuln_node);
 	cvrf_element_add_container(vuln->acknowledgments, CVRF_ACKNOWLEDGMENT, vuln_node);
 
-	oscap_free(ordinal);
 	return vuln_node;
 }
 
