@@ -789,7 +789,7 @@ void cve_summary_free(struct cve_summary *summary)
 		return;
 
 	xmlFree(summary->summary);
-	oscap_free(summary);
+	free(summary);
 }
 
 void cve_model_free(struct cve_model *cve_model)
@@ -799,9 +799,9 @@ void cve_model_free(struct cve_model *cve_model)
 		return;
 
 	oscap_list_free(cve_model->entries, (oscap_destruct_func) cve_entry_free);
-	oscap_free(cve_model->pub_date);
-	oscap_free(cve_model->nvd_xml_version);
-	oscap_free(cve_model);
+	free(cve_model->pub_date);
+	free(cve_model->nvd_xml_version);
+	free(cve_model);
 }
 
 void cve_configuration_free(struct cve_configuration *conf)
@@ -812,7 +812,7 @@ void cve_configuration_free(struct cve_configuration *conf)
 
 	xmlFree(conf->id);
 	cpe_testexpr_free(conf->expr);
-	oscap_free(conf);
+	free(conf);
 }
 
 void cve_product_free(struct cve_product *product)
@@ -822,7 +822,7 @@ void cve_product_free(struct cve_product *product)
 		return;
 
 	xmlFree(product->value);
-	oscap_free(product);
+	free(product);
 }
 
 void cve_reference_free(struct cve_reference *ref)
@@ -836,7 +836,7 @@ void cve_reference_free(struct cve_reference *ref)
 	xmlFree(ref->type);
 	xmlFree(ref->source);
 	xmlFree(ref->lang);
-	oscap_free(ref);
+	free(ref);
 }
 
 void cwe_entry_free(struct cwe_entry *entry)
@@ -846,7 +846,7 @@ void cwe_entry_free(struct cwe_entry *entry)
 		return;
 
 	xmlFree(entry->value);
-	oscap_free(entry);
+	free(entry);
 }
 
 void cve_entry_free(struct cve_entry *entry)
@@ -866,7 +866,7 @@ void cve_entry_free(struct cve_entry *entry)
 	oscap_list_free(entry->references, (oscap_destruct_func) cve_reference_free);
 	oscap_list_free(entry->summaries, (oscap_destruct_func) cve_summary_free);
 	oscap_list_free(entry->configurations, (oscap_destruct_func) cve_configuration_free);
-	oscap_free(entry);
+	free(entry);
 }
 
 /* End of free functions
