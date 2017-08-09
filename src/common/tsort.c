@@ -40,7 +40,7 @@ struct oscap_tsort_context {
 
 static struct oscap_tsort_context *oscap_tsort_context_new(oscap_tsort_edge_func edge_func, oscap_cmp_func cmp_func, void *userdata)
 {
-	struct oscap_tsort_context *ctx = oscap_calloc(1, sizeof(struct oscap_tsort_context));
+	struct oscap_tsort_context *ctx = calloc(1, sizeof(struct oscap_tsort_context));
 	ctx->visited = oscap_list_new();
 	ctx->cur_stack = oscap_list_new();
 	ctx->result = oscap_list_new();

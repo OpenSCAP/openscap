@@ -34,7 +34,7 @@ static inline bool _oscap_iterator_has_more_internal(const struct oscap_iterator
 
 struct oscap_list *oscap_list_new(void)
 {
-	struct oscap_list *list = oscap_calloc(1, sizeof(struct oscap_list));
+	struct oscap_list *list = calloc(1, sizeof(struct oscap_list));
 	return list;
 }
 
@@ -239,7 +239,7 @@ static inline void oscap_iterator_find_nearest(struct oscap_iterator *it)
 
 void *oscap_iterator_new(struct oscap_list *list)
 {
-	struct oscap_iterator *it = oscap_calloc(1, sizeof(struct oscap_iterator));
+	struct oscap_iterator *it = calloc(1, sizeof(struct oscap_iterator));
 	it->cur = NULL;
 	it->filter = oscap_iterator_no_filter;
 	it->list = list;
@@ -393,7 +393,7 @@ struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 		return NULL;
 	t->hsize = hsize;
 	t->itemcount = 0;
-	t->table = oscap_calloc(hsize, sizeof(struct oscap_list_item *));
+	t->table = calloc(hsize, sizeof(struct oscap_list_item *));
 	if (t->table == NULL) {
 		free(t);
 		return NULL;
@@ -554,7 +554,7 @@ struct oscap_htable_iterator {
 struct oscap_htable_iterator *
 oscap_htable_iterator_new(struct oscap_htable *htable)
 {
-	struct oscap_htable_iterator *hit = oscap_calloc(1, sizeof(struct oscap_htable_iterator));
+	struct oscap_htable_iterator *hit = calloc(1, sizeof(struct oscap_htable_iterator));
 	hit->htable = htable;
 	hit->cur = NULL;
 	hit->hpos = 0;

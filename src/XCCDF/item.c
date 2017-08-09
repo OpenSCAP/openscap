@@ -117,7 +117,7 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 		break;
 	}
 
-	item = oscap_calloc(1, size);
+	item = calloc(1, size);
 	item->type = type;
 	item->item.title = oscap_list_new();
 	item->item.description = oscap_list_new();
@@ -138,7 +138,7 @@ struct xccdf_item *xccdf_item_new(xccdf_type_t type, struct xccdf_item *parent)
 
 struct xccdf_item *xccdf_item_clone(const struct xccdf_item *old_item)
 {
-	struct xccdf_item *new_item = oscap_calloc(1, sizeof(struct xccdf_item));
+	struct xccdf_item *new_item = calloc(1, sizeof(struct xccdf_item));
 
     xccdf_item_base_clone(&new_item->item, &(old_item->item));
 	new_item->type = old_item->type;
@@ -206,7 +206,7 @@ void xccdf_item_base_clone(struct xccdf_item_base *new_base, const struct xccdf_
 /* Performs a deep copy of xccdf_status and returns a pointer to that copy */
 struct xccdf_status *xccdf_status_clone(const struct xccdf_status *old_status)
 {
-	struct xccdf_status *new_status = oscap_calloc(1, sizeof(struct xccdf_status));
+	struct xccdf_status *new_status = calloc(1, sizeof(struct xccdf_status));
 	new_status->status = old_status->status;
 	new_status->date = old_status->date;
 	return new_status;
@@ -215,7 +215,7 @@ struct xccdf_status *xccdf_status_clone(const struct xccdf_status *old_status)
 /* Performs a deep copy of xccdf_warning and returns a pointer to that copy */
 struct xccdf_warning *xccdf_warning_clone(const struct xccdf_warning *old_warning)
 {
-	struct xccdf_warning *new_warning = oscap_calloc(1, sizeof(struct xccdf_warning));
+	struct xccdf_warning *new_warning = calloc(1, sizeof(struct xccdf_warning));
 	new_warning->text = oscap_text_clone(old_warning->text);
 	new_warning->category = old_warning->category;
 	return new_warning;
@@ -942,7 +942,7 @@ struct xccdf_status *xccdf_status_new_fill(const char *status, const char *date)
 	struct xccdf_status *ret;
 	if (!status)
 		return NULL;
-	ret = oscap_calloc(1, sizeof(struct xccdf_status));
+	ret = calloc(1, sizeof(struct xccdf_status));
 	if ((ret->status = oscap_string_to_enum(XCCDF_STATUS_MAP, status)) == XCCDF_STATUS_NOT_SPECIFIED) {
 		free(ret);
 		return NULL;
@@ -953,7 +953,7 @@ struct xccdf_status *xccdf_status_new_fill(const char *status, const char *date)
 
 struct xccdf_status *xccdf_status_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_status));
+    return calloc(1, sizeof(struct xccdf_status));
 }
 
 const char *xccdf_status_type_to_text(xccdf_status_type_t id)
@@ -996,7 +996,7 @@ struct xccdf_status * xccdf_item_get_current_status(const struct xccdf_item *ite
 
 struct xccdf_model *xccdf_model_clone(const struct xccdf_model *old_model)
 {
-	struct xccdf_model *new_model = oscap_calloc(1, sizeof(struct xccdf_model));
+	struct xccdf_model *new_model = calloc(1, sizeof(struct xccdf_model));
 	new_model->system = oscap_strdup(old_model->system);
 
 	//params maps char * to char * so we will need to oscap_strdup the items.
@@ -1007,7 +1007,7 @@ struct xccdf_model *xccdf_model_clone(const struct xccdf_model *old_model)
 
 struct xccdf_model *xccdf_model_new(void)
 {
-    struct xccdf_model *model = oscap_calloc(1, sizeof(struct xccdf_model));
+    struct xccdf_model *model = calloc(1, sizeof(struct xccdf_model));
     model->params = oscap_htable_new();
     return model;
 }
@@ -1055,7 +1055,7 @@ void xccdf_cstring_dump(const char *data, int depth)
 
 struct xccdf_warning *xccdf_warning_new(void)
 {
-    struct xccdf_warning *w = oscap_calloc(1, sizeof(struct xccdf_warning));
+    struct xccdf_warning *w = calloc(1, sizeof(struct xccdf_warning));
     w->category = XCCDF_WARNING_GENERAL;
     return w;
 }
@@ -1152,7 +1152,7 @@ void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_
 
 struct xccdf_value_instance * xccdf_value_instance_clone(const struct xccdf_value_instance * val)
 {
-	struct xccdf_value_instance * clone = oscap_calloc(1, sizeof(struct xccdf_value_instance));
+	struct xccdf_value_instance * clone = calloc(1, sizeof(struct xccdf_value_instance));
     clone->type = val->type;
 	
     clone->value = oscap_strdup(val->value);
@@ -1181,7 +1181,7 @@ void xccdf_value_item_clone(struct xccdf_value_item *clone, const struct xccdf_v
 
 struct xccdf_identity * xccdf_identity_clone(const struct xccdf_identity * identity)
 {
-	struct xccdf_identity * clone = oscap_calloc(1, sizeof(struct xccdf_identity));
+	struct xccdf_identity * clone = calloc(1, sizeof(struct xccdf_identity));
 	clone->sub.authenticated = identity->sub.authenticated;
 	clone->sub.privileged = identity->sub.privileged;
 	clone->name = oscap_strdup(identity->name);
@@ -1190,7 +1190,7 @@ struct xccdf_identity * xccdf_identity_clone(const struct xccdf_identity * ident
 
 struct xccdf_target_fact * xccdf_target_fact_clone(const struct xccdf_target_fact * tf)
 {
-	struct xccdf_target_fact * clone = oscap_calloc(1, sizeof(struct xccdf_target_fact));
+	struct xccdf_target_fact * clone = calloc(1, sizeof(struct xccdf_target_fact));
 	clone->type = tf->type;
 	clone->name = oscap_strdup(tf->name);
 	clone->value = oscap_strdup(tf->value);
@@ -1199,7 +1199,7 @@ struct xccdf_target_fact * xccdf_target_fact_clone(const struct xccdf_target_fac
 
 struct xccdf_override * xccdf_override_clone(const struct xccdf_override * override)
 {
-	struct xccdf_override * clone = oscap_calloc(1, sizeof(struct xccdf_override));
+	struct xccdf_override * clone = calloc(1, sizeof(struct xccdf_override));
 	clone->time = override->time;
 	clone->authority = oscap_strdup(clone->authority);
 	clone->old_result = override->old_result;
@@ -1210,7 +1210,7 @@ struct xccdf_override * xccdf_override_clone(const struct xccdf_override * overr
 
 struct xccdf_message * xccdf_message_clone(const struct xccdf_message * message)
 {
-	struct xccdf_message * clone = oscap_calloc(1, sizeof(struct xccdf_message));
+	struct xccdf_message * clone = calloc(1, sizeof(struct xccdf_message));
 	clone->content = oscap_strdup(message->content);
 	clone->severity = message->severity;
 	return clone;
@@ -1218,7 +1218,7 @@ struct xccdf_message * xccdf_message_clone(const struct xccdf_message * message)
 
 struct xccdf_instance * xccdf_instance_clone(const struct xccdf_instance * instance)
 {
-    struct xccdf_instance * clone = oscap_calloc(1, sizeof(struct xccdf_instance));
+    struct xccdf_instance * clone = calloc(1, sizeof(struct xccdf_instance));
     clone->context = oscap_strdup(instance->context);
     clone->parent_context = oscap_strdup(instance->parent_context);
     clone->content = oscap_strdup(instance->content);
@@ -1227,7 +1227,7 @@ struct xccdf_instance * xccdf_instance_clone(const struct xccdf_instance * insta
 
 struct xccdf_rule_result * xccdf_rule_result_clone(const struct xccdf_rule_result * result)
 {
-	struct xccdf_rule_result * clone = oscap_calloc(1, sizeof(struct xccdf_rule_result));
+	struct xccdf_rule_result * clone = calloc(1, sizeof(struct xccdf_rule_result));
 	clone->idref = oscap_strdup(result->idref);
 	clone->role = result->role;
 	clone->time = oscap_strdup(result->time);
@@ -1246,7 +1246,7 @@ struct xccdf_rule_result * xccdf_rule_result_clone(const struct xccdf_rule_resul
 
 struct xccdf_score * xccdf_score_clone(const struct xccdf_score * score)
 {
-	struct xccdf_score * clone = oscap_calloc(1, sizeof(struct xccdf_score));
+	struct xccdf_score * clone = calloc(1, sizeof(struct xccdf_score));
 	clone->maximum = score->maximum;
 	clone->score = score->score;
 	clone->system = oscap_strdup(score->system);

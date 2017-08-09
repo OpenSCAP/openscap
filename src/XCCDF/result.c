@@ -74,7 +74,7 @@ struct xccdf_result *xccdf_result_new(void)
 
 struct xccdf_result * xccdf_result_clone(const struct xccdf_result * result)
 {
-	struct xccdf_item *new_result = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_result_item));
+	struct xccdf_item *new_result = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_result_item));
 	struct xccdf_item *old = XITEM(result);
     xccdf_item_base_clone(&new_result->item, &(old->item));
 	new_result->type = old->type;
@@ -247,7 +247,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 
 struct xccdf_rule_result *xccdf_rule_result_new(void)
 {
-	struct xccdf_rule_result *rr = oscap_calloc(1, sizeof(struct xccdf_rule_result));
+	struct xccdf_rule_result *rr = calloc(1, sizeof(struct xccdf_rule_result));
 	oscap_create_lists(&rr->overrides, &rr->idents, &rr->messages,
 		&rr->instances, &rr->fixes, &rr->checks, NULL);
 	return rr;
@@ -293,7 +293,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_rule_result)
 
 struct xccdf_identity *xccdf_identity_new(void)
 {
-	return oscap_calloc(1, sizeof(struct xccdf_identity));
+	return calloc(1, sizeof(struct xccdf_identity));
 }
 
 void xccdf_identity_free(struct xccdf_identity *identity)
@@ -312,7 +312,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_identity)
 
 struct xccdf_score *xccdf_score_new(void)
 {
-	struct xccdf_score *score = oscap_calloc(1, sizeof(struct xccdf_score));
+	struct xccdf_score *score = calloc(1, sizeof(struct xccdf_score));
 	score->score = NAN;
 	score->maximum = XCCDF_SCORE_MAX_DAFAULT;
 	return score;
@@ -334,7 +334,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_score)
 
 struct xccdf_override *xccdf_override_new(void)
 {
-	return oscap_calloc(1, sizeof(struct xccdf_override));
+	return calloc(1, sizeof(struct xccdf_override));
 }
 
 void xccdf_override_free(struct xccdf_override *oride)
@@ -354,7 +354,7 @@ OSCAP_ACCESSOR_TEXT(xccdf_override, remark)
 
 struct xccdf_message *xccdf_message_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_message));
+    return calloc(1, sizeof(struct xccdf_message));
 }
 
 void xccdf_message_free(struct xccdf_message *msg)
@@ -370,7 +370,7 @@ OSCAP_ACCESSOR_STRING(xccdf_message, content)
 
 struct xccdf_target_fact* xccdf_target_fact_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_target_fact));
+    return calloc(1, sizeof(struct xccdf_target_fact));
 }
 
 void xccdf_target_fact_free(struct xccdf_target_fact *fact)
@@ -416,7 +416,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_target_fact)
 
 struct xccdf_target_identifier* xccdf_target_identifier_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_target_identifier));
+    return calloc(1, sizeof(struct xccdf_target_identifier));
 }
 
 struct xccdf_target_identifier* xccdf_target_identifier_clone(const struct xccdf_target_identifier* ti)
@@ -546,7 +546,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_target_identifier)
 
 struct xccdf_instance *xccdf_instance_new(void)
 {
-    struct xccdf_instance *inst = oscap_calloc(1, sizeof(struct xccdf_instance));
+    struct xccdf_instance *inst = calloc(1, sizeof(struct xccdf_instance));
     inst->context = oscap_strdup(XCCDF_INSTANCE_DEFAULT_CONTEXT);
     return inst;
 }

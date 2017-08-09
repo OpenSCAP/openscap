@@ -129,7 +129,7 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 		return NULL;
 	}
 	const char *filename = oscap_source_get_filepath(source);
-	struct xccdf_session *session = (struct xccdf_session *) oscap_calloc(1, sizeof(struct xccdf_session));
+	struct xccdf_session *session = (struct xccdf_session *) calloc(1, sizeof(struct xccdf_session));
 	session->source = source;
 	oscap_document_type_t document_type = oscap_source_get_scap_type(session->source);
 	if (document_type == OSCAP_DOCUMENT_UNKNOWN) {

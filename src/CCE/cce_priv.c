@@ -116,7 +116,7 @@ void process_refs(xmlTextReaderPtr reader, struct cce_entry *cce)
 	while (xmlTextReaderRead(reader)) {
 		if (xmlTextReaderNodeType(reader) == XML_READER_TYPE_END_ELEMENT &&
 		    !xmlStrcmp(xmlTextReaderConstName(reader), (const xmlChar *)"ref")) {
-			struct cce_reference *ref = oscap_calloc(1, sizeof(struct cce_reference));
+			struct cce_reference *ref = calloc(1, sizeof(struct cce_reference));
 			ref->source = (char *)source;
 			ref->value = (char *)value;
 			oscap_list_add(cce->references, ref);

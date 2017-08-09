@@ -1142,7 +1142,7 @@ struct oscap_file_entry {
 
 struct oscap_file_entry *oscap_file_entry_new(void)
 {
-	struct oscap_file_entry *ret = oscap_calloc(1, sizeof(struct oscap_file_entry));
+	struct oscap_file_entry *ret = calloc(1, sizeof(struct oscap_file_entry));
 	return ret;
 }
 

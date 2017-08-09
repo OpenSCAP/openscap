@@ -346,7 +346,7 @@ struct cve_reference *cve_reference_new()
 {
 
 	struct cve_reference *ret;
-	ret = oscap_calloc(1, sizeof(struct cve_reference));
+	ret = calloc(1, sizeof(struct cve_reference));
 	if (ret == NULL)
 		return NULL;
 

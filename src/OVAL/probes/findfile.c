@@ -107,7 +107,7 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	max_depth = atoi(tmp);
 	free(tmp);
 
-	setting = oscap_calloc(1, sizeof(setting_t));
+	setting = calloc(1, sizeof(setting_t));
 	setting->spath = spath;
 	setting->direction = SEXP_string_cstr(r0 = probe_ent_getattrval(behaviors, "recurse_direction"));
 	SEXP_free(r0);

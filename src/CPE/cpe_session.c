@@ -48,7 +48,7 @@ static inline bool cpe_session_add_default_cpe(struct cpe_session *session)
 
 struct cpe_session *cpe_session_new(void)
 {
-	struct cpe_session *cpe = oscap_calloc(1, sizeof(struct cpe_session));
+	struct cpe_session *cpe = calloc(1, sizeof(struct cpe_session));
 	cpe->dicts = oscap_list_new();
 	cpe->lang_models = oscap_list_new();
 	cpe->oval_sessions = oscap_htable_new();

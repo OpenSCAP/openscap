@@ -126,7 +126,7 @@ struct xccdf_benchmark *xccdf_benchmark_new(void)
 
 struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_benchmark)
 {
-	struct xccdf_item *new_benchmark = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_benchmark_item));
+	struct xccdf_item *new_benchmark = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_benchmark_item));
 	struct xccdf_item *old = XITEM(old_benchmark);
     xccdf_item_base_clone(&new_benchmark->item, &old->item);
 	new_benchmark->type = old->type;
@@ -615,14 +615,14 @@ struct cpe_lang_model *xccdf_benchmark_get_cpe_lang_model(const struct xccdf_ben
 
 struct xccdf_notice *xccdf_notice_new(void)
 {
-    struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
+    struct xccdf_notice *notice = calloc(1, sizeof(struct xccdf_notice));
     notice->text = oscap_text_new_full(XCCDF_TEXT_NOTICE, NULL, NULL);
     return notice;
 }
 
 struct xccdf_notice *xccdf_notice_clone(const struct xccdf_notice * notice)
 {
-	 struct xccdf_notice *new_notice = oscap_calloc(1, sizeof(struct xccdf_notice));
+	 struct xccdf_notice *new_notice = calloc(1, sizeof(struct xccdf_notice));
 	 new_notice->id = oscap_strdup(notice->id);
     new_notice->text = oscap_text_clone(notice->text);
     return new_notice;
@@ -630,7 +630,7 @@ struct xccdf_notice *xccdf_notice_clone(const struct xccdf_notice * notice)
 
 struct xccdf_notice *xccdf_notice_new_parse(xmlTextReaderPtr reader)
 {
-    struct xccdf_notice *notice = oscap_calloc(1, sizeof(struct xccdf_notice));
+    struct xccdf_notice *notice = calloc(1, sizeof(struct xccdf_notice));
     notice->id = xccdf_attribute_copy(reader, XCCDFA_ID);
     notice->text = oscap_text_new_parse(XCCDF_TEXT_NOTICE, reader);
     return notice;
@@ -708,7 +708,7 @@ char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t typ
 	if (length < 0)
 		return NULL;
 	length++;
-	char *buff = (char *) oscap_calloc(length, sizeof(char));
+	char *buff = (char *) calloc(length, sizeof(char));
 	int ret;
 	int i = 0;
 
@@ -886,7 +886,7 @@ xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *benchmark, xccd
 
 struct xccdf_plain_text *xccdf_plain_text_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_plain_text));
+    return calloc(1, sizeof(struct xccdf_plain_text));
 }
 
 struct xccdf_plain_text *xccdf_plain_text_new_fill(const char *id, const char *text)
@@ -909,7 +909,7 @@ static xmlNode *xccdf_plain_text_to_dom(const struct xccdf_plain_text *ptext, xm
 
 struct xccdf_plain_text * xccdf_plain_text_clone(const struct xccdf_plain_text * pt)
 {
-    struct xccdf_plain_text *plain = oscap_calloc(1, sizeof(struct xccdf_plain_text));
+    struct xccdf_plain_text *plain = calloc(1, sizeof(struct xccdf_plain_text));
     plain->id = oscap_strdup(pt->id);
     plain->text = oscap_strdup(pt->text);
     return plain;

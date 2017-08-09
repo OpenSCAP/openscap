@@ -38,7 +38,7 @@
 
 struct xccdf_tailoring *xccdf_tailoring_new(void)
 {
-	struct xccdf_tailoring *tailoring = oscap_calloc(1, sizeof(struct xccdf_tailoring));
+	struct xccdf_tailoring *tailoring = calloc(1, sizeof(struct xccdf_tailoring));
 
 	tailoring->id = NULL;
 

@@ -138,7 +138,7 @@ struct cpe_testexpr *cpe_testexpr_new()
 {
 	struct cpe_testexpr *ret;
 
-	ret = oscap_calloc(1, sizeof(struct cpe_testexpr));
+	ret = calloc(1, sizeof(struct cpe_testexpr));
 	if (ret == NULL)
 		return NULL;
 

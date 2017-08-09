@@ -70,7 +70,7 @@ struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *sourc
 				"session: File is not Source DataStream.");
 		return NULL;
 	}
-	struct ds_sds_session *sds_session = (struct ds_sds_session *) oscap_calloc(1, sizeof(struct ds_sds_session));
+	struct ds_sds_session *sds_session = (struct ds_sds_session *) calloc(1, sizeof(struct ds_sds_session));
 	sds_session->source = source;
 	sds_session->component_sources = oscap_htable_new();
 	sds_session->progress = download_progress_empty_calllback;

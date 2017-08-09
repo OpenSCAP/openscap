@@ -33,12 +33,12 @@
 
 struct xccdf_setvalue *xccdf_setvalue_new(void)
 {
-	return oscap_calloc(1, sizeof(struct xccdf_setvalue));
+	return calloc(1, sizeof(struct xccdf_setvalue));
 }
 
 struct xccdf_setvalue *xccdf_setvalue_clone(const struct xccdf_setvalue * old_value)
 {
-	struct xccdf_setvalue * clone = oscap_calloc(1, sizeof(struct xccdf_setvalue));
+	struct xccdf_setvalue * clone = calloc(1, sizeof(struct xccdf_setvalue));
 	clone->item = oscap_strdup(old_value->item);
 	clone->value = oscap_strdup(old_value->value);
 	return clone;
@@ -49,7 +49,7 @@ struct xccdf_setvalue *xccdf_setvalue_new_parse(xmlTextReaderPtr reader)
 	const char *id = xccdf_attribute_get(reader, XCCDFA_IDREF);
 	if (id == NULL)
 		return NULL;
-	struct xccdf_setvalue *sv = oscap_calloc(1, sizeof(struct xccdf_setvalue));
+	struct xccdf_setvalue *sv = calloc(1, sizeof(struct xccdf_setvalue));
 	sv->item = oscap_strdup(id);
 	sv->value = oscap_element_string_copy(reader);
 	return sv;
@@ -78,14 +78,14 @@ void xccdf_setvalue_free(struct xccdf_setvalue *sv)
 
 struct xccdf_refine_value *xccdf_refine_value_new(void)
 {
-	struct xccdf_refine_value *foo = oscap_calloc(1, sizeof(struct xccdf_refine_value));
+	struct xccdf_refine_value *foo = calloc(1, sizeof(struct xccdf_refine_value));
 	foo->remarks = oscap_list_new();
 	return foo;
 }
 
 struct xccdf_refine_value * xccdf_refine_value_clone(const struct xccdf_refine_value * value)
 {
-	struct xccdf_refine_value *clone = oscap_calloc(1, sizeof(struct xccdf_refine_value));
+	struct xccdf_refine_value *clone = calloc(1, sizeof(struct xccdf_refine_value));
 	clone->item = oscap_strdup(value->item);
 	clone->selector = oscap_strdup(value->selector);
 	clone->oper = value->oper;
@@ -95,14 +95,14 @@ struct xccdf_refine_value * xccdf_refine_value_clone(const struct xccdf_refine_v
 
 struct xccdf_refine_rule *xccdf_refine_rule_new(void)
 {
-	struct xccdf_refine_rule *foo = oscap_calloc(1, sizeof(struct xccdf_refine_rule));
+	struct xccdf_refine_rule *foo = calloc(1, sizeof(struct xccdf_refine_rule));
 	foo->remarks = oscap_list_new();
 	return foo;
 }
 
 struct xccdf_refine_rule * xccdf_refine_rule_clone(const struct xccdf_refine_rule * rule)
 {
-	struct xccdf_refine_rule * clone = oscap_calloc(1, sizeof(struct xccdf_refine_rule));
+	struct xccdf_refine_rule * clone = calloc(1, sizeof(struct xccdf_refine_rule));
 	clone->item = oscap_strdup(rule->item);
 	clone->selector = oscap_strdup(rule->selector);
 	clone->role = rule->role;
@@ -119,14 +119,14 @@ bool xccdf_refine_rule_weight_defined(const struct xccdf_refine_rule *rule)
 
 struct xccdf_select *xccdf_select_new(void)
 {
-	struct xccdf_select *foo = oscap_calloc(1, sizeof(struct xccdf_select));
+	struct xccdf_select *foo = calloc(1, sizeof(struct xccdf_select));
 	foo->remarks = oscap_list_new();
 	return foo;
 }
 
 struct xccdf_select *xccdf_select_clone(const struct xccdf_select * sel)
 {
-	struct xccdf_select *clone = oscap_calloc(1, sizeof(struct xccdf_select));
+	struct xccdf_select *clone = calloc(1, sizeof(struct xccdf_select));
 	clone->item     = oscap_strdup(sel->item);
 	clone->remarks  = oscap_list_clone(sel->remarks, (oscap_clone_func) oscap_text_clone);
 	clone->selected = sel->selected;
@@ -203,7 +203,7 @@ struct xccdf_profile *xccdf_profile_new(void)
 
 struct xccdf_profile *xccdf_profile_clone (const struct xccdf_profile *old_profile)
 {
-	struct xccdf_item *new_profile = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_profile_item));
+	struct xccdf_item *new_profile = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_profile_item));
 	struct xccdf_item *old = XITEM(old_profile);
     xccdf_item_base_clone(&new_profile->item, &(old->item));
 	new_profile->type = old->type;

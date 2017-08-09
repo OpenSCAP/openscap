@@ -47,7 +47,7 @@ struct rds_index
 
 struct rds_index *rds_index_new(void)
 {
-	struct rds_index *ret = oscap_calloc(1, sizeof(struct rds_index));
+	struct rds_index *ret = calloc(1, sizeof(struct rds_index));
 	ret->report_requests = oscap_list_new();
 	ret->assets = oscap_list_new();
 	ret->reports = oscap_list_new();

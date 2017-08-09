@@ -85,7 +85,7 @@ struct oval_session *oval_session_new(const char *filename)
 	oscap_document_type_t scap_type;
 	struct oval_session *session;
 
-	session = (struct oval_session *) oscap_calloc(1, sizeof(struct oval_session));
+	session = (struct oval_session *) calloc(1, sizeof(struct oval_session));
 
 	session->source = oscap_source_new_from_file(filename);
 	if ((scap_type = oscap_source_get_scap_type(session->source)) == OSCAP_DOCUMENT_UNKNOWN) {

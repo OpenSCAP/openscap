@@ -91,19 +91,19 @@ bool cpe23_item_add_deprecation(struct cpe23_item *item, struct cpe_ext_deprecat
 
 static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_new()
 {
-	return oscap_calloc(1, sizeof(struct cpe_ext_deprecatedby));
+	return calloc(1, sizeof(struct cpe_ext_deprecatedby));
 }
 
 static struct cpe_ext_deprecation *cpe_ext_deprecation_new()
 {
-	struct cpe_ext_deprecation *deprecation = oscap_calloc(1, sizeof(struct cpe_ext_deprecation));
+	struct cpe_ext_deprecation *deprecation = calloc(1, sizeof(struct cpe_ext_deprecation));
 	deprecation->deprecatedbys = oscap_list_new();
 	return deprecation;
 }
 
 static struct cpe23_item *cpe23_item_new()
 {
-	struct cpe23_item *item = oscap_calloc(1, sizeof(struct cpe23_item));
+	struct cpe23_item *item = calloc(1, sizeof(struct cpe23_item));
 	item->deprecations = oscap_list_new();
 	return item;
 }

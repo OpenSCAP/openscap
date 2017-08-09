@@ -57,7 +57,7 @@ OSCAP_ITERATOR_GEN(oscap_reference)
 
 struct oscap_reference *oscap_reference_new(void)
 {
-    return oscap_calloc(1, sizeof(struct oscap_reference));
+    return calloc(1, sizeof(struct oscap_reference));
 }
 
 void oscap_reference_free(struct oscap_reference *ref)
@@ -133,7 +133,7 @@ struct oscap_reference *oscap_reference_new_parse(xmlTextReaderPtr reader)
 {
     assert(reader != NULL);
 
-    struct oscap_reference *ref = oscap_calloc(1, sizeof(struct oscap_reference));
+    struct oscap_reference *ref = calloc(1, sizeof(struct oscap_reference));
 
     int depth = oscap_element_depth(reader);
 

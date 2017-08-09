@@ -88,7 +88,7 @@ probe_ncache_t *probe_ncache_new (void)
                 return (NULL);
         }
 
-        cache->name = oscap_calloc (PROBE_NCACHE_INIT_SIZE, sizeof (SEXP_t *));
+        cache->name = calloc (PROBE_NCACHE_INIT_SIZE, sizeof (SEXP_t *));
         cache->size = PROBE_NCACHE_INIT_SIZE;
         cache->real = 0;
 

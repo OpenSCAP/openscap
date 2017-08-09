@@ -193,7 +193,7 @@ struct xccdf_group *xccdf_group_new(void)
 
 struct xccdf_group * xccdf_group_clone(const struct xccdf_group * group)
 {
-	struct xccdf_item *new_group = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_group_item));
+	struct xccdf_item *new_group = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_group_item));
 	struct xccdf_item *old = XITEM(group);
     xccdf_item_base_clone(&new_group->item, &(old->item));
 	new_group->type = old->type;
@@ -293,7 +293,7 @@ struct xccdf_rule *xccdf_rule_new(void)
 
 struct xccdf_rule *xccdf_rule_clone(const struct xccdf_rule * rule)
 {
-	struct xccdf_item *new_rule = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_rule_item));
+	struct xccdf_item *new_rule = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_rule_item));
 	struct xccdf_item *old = XITEM(rule);
     xccdf_item_base_clone(&new_rule->item, &(old->item));
 	new_rule->type = old->type;
@@ -447,7 +447,7 @@ struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident)
 
 struct xccdf_ident *xccdf_ident_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_ident));
+    return calloc(1, sizeof(struct xccdf_ident));
 }
 
 struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)
@@ -493,7 +493,7 @@ void xccdf_ident_free(struct xccdf_ident *ident)
 
 struct xccdf_profile_note *xccdf_profile_note_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_profile_note));
+    return calloc(1, sizeof(struct xccdf_profile_note));
 }
 
 struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note)
@@ -517,7 +517,7 @@ XCCDF_GENERIC_GETTER(const char *, ident, id) XCCDF_GENERIC_GETTER(const char *,
 
 struct xccdf_check *xccdf_check_new(void)
 {
-	struct xccdf_check *check = oscap_calloc(1, sizeof(struct xccdf_check));
+	struct xccdf_check *check = calloc(1, sizeof(struct xccdf_check));
 	check->content_refs = oscap_list_new();
 	check->imports = oscap_list_new();
 	check->exports = oscap_list_new();
@@ -528,7 +528,7 @@ struct xccdf_check *xccdf_check_new(void)
 /* Performs a deep copy of a provided xccdf_check, returns a pointer to that copy */
 struct xccdf_check *xccdf_check_clone(const struct xccdf_check* old_check)
 {
-	struct xccdf_check *new_check = oscap_calloc(1, sizeof(struct xccdf_check));
+	struct xccdf_check *new_check = calloc(1, sizeof(struct xccdf_check));
 
 	new_check->id = oscap_strdup(old_check->id);
 	new_check->system = oscap_strdup(old_check->system);
@@ -715,7 +715,7 @@ void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth
 
 struct xccdf_check_content_ref *xccdf_check_content_ref_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_check_content_ref));
+    return calloc(1, sizeof(struct xccdf_check_content_ref));
 }
 
 void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref)
@@ -729,7 +729,7 @@ void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref)
 
 struct xccdf_check_import *xccdf_check_import_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_check_import));
+    return calloc(1, sizeof(struct xccdf_check_import));
 }
 
 void xccdf_check_import_free(struct xccdf_check_import *item)
@@ -744,7 +744,7 @@ void xccdf_check_import_free(struct xccdf_check_import *item)
 
 struct xccdf_check_export *xccdf_check_export_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_check_export));
+    return calloc(1, sizeof(struct xccdf_check_export));
 }
 
 void xccdf_check_export_free(struct xccdf_check_export *item)
@@ -770,13 +770,13 @@ const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 
 struct xccdf_fix *xccdf_fix_new(void)
 {
-        return oscap_calloc(1, sizeof(struct xccdf_fix));
+        return calloc(1, sizeof(struct xccdf_fix));
 }
 
 /* Creates a deep copy of a provided xccdf_fix, returns a pointer to that copy */
 struct xccdf_fix *xccdf_fix_clone(const struct xccdf_fix *old_fix)
 {
-	struct xccdf_fix *new_fix = oscap_calloc(1, sizeof(struct xccdf_fix));
+	struct xccdf_fix *new_fix = calloc(1, sizeof(struct xccdf_fix));
 
 	new_fix->reboot = old_fix->reboot;
 	new_fix->strategy = old_fix->strategy;
@@ -809,7 +809,7 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
 
 struct xccdf_fixtext *xccdf_fixtext_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_fixtext));
+    return calloc(1, sizeof(struct xccdf_fixtext));
 }
 
 struct xccdf_fixtext * xccdf_fixtext_clone(const struct xccdf_fixtext * fixtext)

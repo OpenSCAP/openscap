@@ -388,7 +388,7 @@ struct cpe_reference *cpe_reference_new()
 
 struct cpe_notes *cpe_notes_new(void)
 {
-	struct cpe_notes *notes = oscap_calloc(1, sizeof(struct cpe_notes));
+	struct cpe_notes *notes = calloc(1, sizeof(struct cpe_notes));
 	notes->notes = oscap_list_new();
 	return notes;
 }

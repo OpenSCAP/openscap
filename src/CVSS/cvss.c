@@ -63,7 +63,7 @@ static struct cvss_metrics **cvss_impact_metricsptr(struct cvss_impact* impact, 
     }
 }
 
-struct cvss_impact *cvss_impact_new(void) { return oscap_calloc(1, sizeof(struct cvss_metrics)); }
+struct cvss_impact *cvss_impact_new(void) { return calloc(1, sizeof(struct cvss_metrics)); }
 
 struct cvss_keytab_entry {
     enum cvss_key key;     // cvss vector component
@@ -332,7 +332,7 @@ char *cvss_impact_to_vector(const struct cvss_impact* impact)
     assert(impact != NULL);
 
     // eight characters per component, 14 components
-    char *result = oscap_calloc(1, sizeof(char) * 8 * 14);
+    char *result = calloc(1, sizeof(char) * 8 * 14);
     char *out = result;
 
     out = cvss_metrics_to_vector(impact->base_metrics, out);
@@ -520,7 +520,7 @@ struct cvss_metrics *cvss_metrics_new(enum cvss_category category)
 {
     assert(category != CVSS_NONE);
 
-    struct cvss_metrics *metrics = oscap_calloc(1, sizeof(struct cvss_metrics));
+    struct cvss_metrics *metrics = calloc(1, sizeof(struct cvss_metrics));
     metrics->category = category;
     metrics->score = NAN;
     return metrics;

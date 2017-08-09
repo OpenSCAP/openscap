@@ -75,7 +75,7 @@ void oscap_text_free(struct oscap_text *text)
 
 struct oscap_text *oscap_text_new_full(struct oscap_text_traits traits, const char *string, const char *lang)
 {
-    struct oscap_text *text = oscap_calloc(1, sizeof(struct oscap_text));
+    struct oscap_text *text = calloc(1, sizeof(struct oscap_text));
     text->traits = traits;
     text->text   = oscap_strdup(string);
     text->lang   = oscap_strdup(lang);

@@ -35,7 +35,7 @@
 
 static struct check_engine_plugin_def *check_engine_plugin_def_new(void)
 {
-	struct check_engine_plugin_def *ret = (struct check_engine_plugin_def*) oscap_calloc(1, sizeof(struct check_engine_plugin_def));
+	struct check_engine_plugin_def *ret = (struct check_engine_plugin_def*) calloc(1, sizeof(struct check_engine_plugin_def));
 	return ret;
 }
 

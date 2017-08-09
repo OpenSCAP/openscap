@@ -57,7 +57,7 @@ struct xccdf_value *xccdf_value_new(xccdf_value_type_t type)
 
 struct xccdf_value * xccdf_value_clone(const struct xccdf_value * value)
 {
-	struct xccdf_item *new_value = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_value_item));
+	struct xccdf_item *new_value = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_value_item));
 	struct xccdf_item *old = XITEM(value);
     xccdf_item_base_clone(&new_value->item, &old->item);
 	new_value->type = old->type;
@@ -385,7 +385,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_value_instance)
 
 struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
 {
-	struct xccdf_value_instance *inst = oscap_calloc(1, sizeof(struct xccdf_value_instance));
+	struct xccdf_value_instance *inst = calloc(1, sizeof(struct xccdf_value_instance));
 	inst->lower_bound = NAN;
 	inst->upper_bound = NAN;
 

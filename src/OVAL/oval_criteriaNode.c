@@ -185,7 +185,7 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *
 	switch (type) {
 	case OVAL_NODETYPE_CRITERIA:{
 			node = (struct oval_criteria_node *)
-			    oscap_calloc(1, sizeof(oval_criteria_node_CRITERIA_t));
+			    calloc(1, sizeof(oval_criteria_node_CRITERIA_t));
 			if (node == NULL)
 				return NULL;
 
@@ -194,7 +194,7 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *
 		} break;
 	case OVAL_NODETYPE_CRITERION:{
 			node = (struct oval_criteria_node *)
-			    oscap_calloc(1, sizeof(oval_criteria_node_CRITERION_t));
+			    calloc(1, sizeof(oval_criteria_node_CRITERION_t));
 			if (node == NULL)
 				return NULL;
 
@@ -202,7 +202,7 @@ struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *
 		} break;
 	case OVAL_NODETYPE_EXTENDDEF:{
 			node = (struct oval_criteria_node *)
-			    oscap_calloc(1, sizeof(oval_criteria_node_EXTENDDEF_t));
+			    calloc(1, sizeof(oval_criteria_node_EXTENDDEF_t));
 			if (node == NULL)
 				return NULL;
 

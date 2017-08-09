@@ -40,7 +40,7 @@ struct cpe_parser_ctx {
 
 static inline struct cpe_parser_ctx *_cpe_parser_ctx_new()
 {
-	return oscap_calloc(1, sizeof(struct cpe_parser_ctx));
+	return calloc(1, sizeof(struct cpe_parser_ctx));
 }
 
 struct cpe_parser_ctx *cpe_parser_ctx_from_reader(xmlTextReaderPtr reader)

@@ -43,7 +43,7 @@ struct rds_report_request_index
 
 struct rds_report_request_index *rds_report_request_index_new(void)
 {
-	struct rds_report_request_index *ret = oscap_calloc(1, sizeof(struct rds_report_request_index));
+	struct rds_report_request_index *ret = calloc(1, sizeof(struct rds_report_request_index));
 	ret->id = NULL;
 
 	return ret;

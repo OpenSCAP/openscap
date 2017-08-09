@@ -76,7 +76,7 @@ static void _merge_refine_rules(struct xccdf_refine_rule_internal* dst, const st
  */
 static inline struct xccdf_refine_rule_internal* _xccdf_refine_rule_internal_new_from_refine_rule(const struct xccdf_refine_rule* rr)
 {
-	struct xccdf_refine_rule_internal* new_rr = oscap_calloc(1, sizeof(struct xccdf_refine_rule_internal));
+	struct xccdf_refine_rule_internal* new_rr = calloc(1, sizeof(struct xccdf_refine_rule_internal));
 	if (new_rr != NULL) {
 		new_rr->selector = oscap_strdup(xccdf_refine_rule_get_selector(rr));
 		new_rr->weight = rr->weight;

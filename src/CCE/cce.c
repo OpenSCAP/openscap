@@ -44,7 +44,7 @@
 
 static struct cce *cce_new_empty(void)
 {
-	struct cce *cce = oscap_calloc(1, sizeof(struct cce));
+	struct cce *cce = calloc(1, sizeof(struct cce));
 	cce->entries = oscap_list_new();
 	cce->entry = oscap_htable_new();
 	return cce;
@@ -73,7 +73,7 @@ void cce_entry_free(struct cce_entry *cce)
 
 struct cce_entry *cce_entry_new_empty(void)
 {
-	struct cce_entry *cce = oscap_calloc(1, sizeof(struct cce_entry));
+	struct cce_entry *cce = calloc(1, sizeof(struct cce_entry));
 	cce->params = oscap_list_new();
 	cce->tech_mechs = oscap_list_new();
 	cce->references = oscap_list_new();
