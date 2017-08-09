@@ -39,6 +39,7 @@
 #define OSCAP_ALLOC_H
 
 #include <stdlib.h>
+#include "public/oscap.h"
 
 /// @cond
 #define __ATTRIB __attribute__ ((unused)) static
@@ -46,20 +47,20 @@
 
 #if defined(NDEBUG)
 /// @cond
-// Do not use, we keep this just for ABI compatibility
-void *__oscap_alloc(size_t s);
+// Do not use, we keep this just for ABI compatibility, use malloc instead
+OSCAP_DEPRECATED(void *__oscap_alloc(size_t s));
 
-// Do not use, we keep this just for ABI compatibility
-void *__oscap_calloc(size_t n, size_t s);
+// Do not use, we keep this just for ABI compatibility, use calloc instead
+OSCAP_DEPRECATED(void *__oscap_calloc(size_t n, size_t s));
 
-// Do not use, we keep this just for ABI compatibility
-void *__oscap_realloc(void *p, size_t s);
+// Do not use, we keep this just for ABI compatibility, use realloc instead
+OSCAP_DEPRECATED(void *__oscap_realloc(void *p, size_t s));
 
-// Do not use, we keep this just for ABI compatibility
-void *__oscap_reallocf(void *p, size_t s);
+// Do not use, we keep this just for ABI compatibility, use realloc instead
+OSCAP_DEPRECATED(void *__oscap_reallocf(void *p, size_t s));
 
-// Do not use, we keep this just for ABI compatibility
-void __oscap_free(void *p);
+// Do not use, we keep this just for ABI compatibility, use free instead
+OSCAP_DEPRECATED(void __oscap_free(void *p));
 /// @endcond
 
 #endif
