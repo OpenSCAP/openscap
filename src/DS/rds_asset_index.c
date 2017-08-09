@@ -57,8 +57,8 @@ void rds_asset_index_free(struct rds_asset_index *s)
 {
 	if (s != NULL) {
 		oscap_list_free0(s->reports);
-		oscap_free(s->id);
-		oscap_free(s);
+		free(s->id);
+		free(s);
 	}
 }
 

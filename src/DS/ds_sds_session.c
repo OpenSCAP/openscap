@@ -85,7 +85,7 @@ void ds_sds_session_free(struct ds_sds_session *sds_session)
 			oscap_acquire_cleanup_dir(&(sds_session->temp_dir));
 		}
 		oscap_htable_free(sds_session->component_sources, (oscap_destruct_func) oscap_source_free);
-		oscap_free(sds_session);
+		free(sds_session);
 	}
 }
 
@@ -236,11 +236,11 @@ xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
 	xmlDoc *doc = oscap_source_get_xmlDoc(session->source);
 	xmlNode *datastream = ds_sds_lookup_datastream_in_collection(doc, session->datastream_id);
 	if (datastream == NULL) {
-		const char* error = session->datastream_id ?
+		char *error = session->datastream_id ?
 			oscap_sprintf("Could not find any datastream of id '%s'", session->datastream_id) :
 			oscap_sprintf("Could not find any datastream inside the file");
 		oscap_seterr(OSCAP_EFAMILY_XML, error);
-		oscap_free(error);
+		free(error);
 	}
 	return datastream;
 }

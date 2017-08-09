@@ -52,8 +52,8 @@ struct rds_report_request_index *rds_report_request_index_new(void)
 void rds_report_request_index_free(struct rds_report_request_index *s)
 {
 	if (s != NULL) {
-		oscap_free(s->id);
-		oscap_free(s);
+		free(s->id);
+		free(s);
 	}
 }
 

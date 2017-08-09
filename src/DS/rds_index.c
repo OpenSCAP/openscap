@@ -61,7 +61,7 @@ void rds_index_free(struct rds_index *s)
 		oscap_list_free(s->report_requests, (oscap_destruct_func)rds_report_request_index_free);
 		oscap_list_free(s->assets, (oscap_destruct_func)rds_asset_index_free);
 		oscap_list_free(s->reports, (oscap_destruct_func)rds_report_index_free);
-		oscap_free(s);
+		free(s);
 	}
 }
 

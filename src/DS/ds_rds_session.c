@@ -65,7 +65,7 @@ void ds_rds_session_free(struct ds_rds_session *rds_session)
 	if (rds_session != NULL) {
 		rds_index_free(rds_session->index);
 		oscap_htable_free(rds_session->component_sources, (oscap_destruct_func) oscap_source_free);
-		oscap_free(rds_session);
+		free(rds_session);
 	}
 }
 
