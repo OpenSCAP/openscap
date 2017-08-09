@@ -10,11 +10,13 @@ set -x
 name=$(basename $0 .sh)
 export=$(mktemp -t ${name}.export.xml.XXXXXX)
 results=$(mktemp -t ${name}.results.xml.XXXXXX)
-#stdout=$(mktemp -t ${name}.out.XXXXXX)
-#stderr=$(mktemp -t ${name}.err.XXXXXX)
+stdout=$(mktemp -t ${name}.out.XXXXXX)
+stderr=$(mktemp -t ${name}.err.XXXXXX)
 
 function test_api_cvrf_eval {
-	./test_api_cvrf --eval $srcdir/$name.xml $results
+	./test_api_cvrf --eval $srcdir/$name.xml $results >$stdout 2>$stderr
+	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
+	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 	
 	rm $results
 }
@@ -22,7 +24,9 @@ function test_api_cvrf_eval {
 function test_api_cvrf_export {
 	local ret_val=0
 
-	./test_api_cvrf --export-all $srcdir/$name.xml $export
+	./test_api_cvrf --export-all $srcdir/$name.xml $export >$stdout 2>$stderr
+	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
+	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 	if [ $? -eq 0 ] && [ -f $export ]; then
 	if ! $XMLDIFF $srcdir/$name.xml $export; then
 		echo "Exported file differs from what is expected!"
@@ -39,7 +43,9 @@ function test_api_cvrf_export {
 function test_api_cvrf_validate {
 	local ret_val=0
 
-	./test_api_cvrf --validate $srcdir/$name.xml
+	./test_api_cvrf --validate $srcdir/$name.xml >$stdout 2>$stderr
+	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
+	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 	if [ $? -eq 0 ]; then
 	echo "Provided CVRF file is valid"
 	ret_val=0

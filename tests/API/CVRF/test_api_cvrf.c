@@ -35,7 +35,6 @@ int main(int argc, char **argv)
 {
 	/* test export */
 	if (argc == 4 && !strcmp(argv[1], "--export-all")) {
-
 		struct cvrf_model *model = cvrf_model_import(oscap_source_new_from_file(argv[2]));
 		if(!model)
 			return 1;
