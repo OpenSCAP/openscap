@@ -321,6 +321,10 @@ struct cvrf_involvement {
 };
 OSCAP_ACCESSOR_STRING(cvrf_involvement, description)
 
+cvrf_involvement_status_type_t cvrf_involvement_get_status_type(struct cvrf_involvement *involve) {
+	return involve->status;
+}
+
 struct cvrf_involvement *cvrf_involvement_new() {
 	struct cvrf_involvement *ret = oscap_alloc(sizeof(struct cvrf_involvement));
 	if (ret == NULL)
@@ -1465,7 +1469,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 	if (xmlTextReaderIsEmptyElement(reader))
 		return publisher;
 
-	publisher->publisher_type = cvrf_doc_publisher_type_parse(reader, "Type");
+	publisher->publisher_type = cvrf_item_parse_type_attribute(reader, CVRF_DOCUMENT_PUBLISHER);
 	publisher->vendor_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_VENDOR_ID);
 	xmlTextReaderNextElement(reader);
 
@@ -1503,7 +1507,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 				xmlTextReaderNextNode(reader);
 			}
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS)) {
-			tracking->status = cvrf_doc_status_type_parse(reader);
+			tracking->status = cvrf_item_parse_type_attribute(reader, CVRF_DOCUMENT_TRACKING);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION)) {
 			tracking->version = oscap_element_string_copy(reader);
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REVISION_HISTORY)) {
@@ -1559,7 +1563,7 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_reference *ref = cvrf_reference_new();
 	if (xmlTextReaderGetAttribute(reader, BAD_CAST "Type") != NULL)
-		ref->ref_type = cvrf_reference_type_parse(reader);
+		ref->ref_type = cvrf_item_parse_type_attribute(reader, CVRF_REFERENCE);
 
 	xmlTextReaderNextElement(reader);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE) != 0) {
@@ -1644,7 +1648,7 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_branch *branch = cvrf_branch_new();
 	branch->branch_name = (char *)xmlTextReaderGetAttribute(reader, TAG_NAME);
-	branch->branch_type = cvrf_branch_type_parse(reader);
+	branch->branch_type = cvrf_item_parse_type_attribute(reader, CVRF_BRANCH);
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME)) {
@@ -1673,7 +1677,7 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_relationship *relation = cvrf_relationship_new();
 	relation->product_reference = (char *)xmlTextReaderGetAttribute(reader, ATTR_PRODUCT_REFERENCE);
-	relation->relation_type = cvrf_relationship_type_parse(reader);
+	relation->relation_type = cvrf_item_parse_type_attribute(reader, CVRF_RELATIONSHIP);
 	relation->relates_to_ref = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATES_TO_REF);
 	xmlTextReaderNextElement(reader);
 
@@ -1799,7 +1803,7 @@ struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_involvement *involve = cvrf_involvement_new();
-	involve->status = cvrf_involvement_status_type_parse(reader);
+	involve->status = cvrf_item_parse_type_attribute(reader, CVRF_INVOLVEMENT);
 	involve->party = cvrf_doc_publisher_type_parse(reader, "Party");
 	xmlTextReaderNextNode(reader);
 
@@ -1821,7 +1825,7 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_threat *threat = cvrf_threat_new();
-	threat->threat_type = cvrf_threat_type_parse(reader);
+	threat->threat_type = cvrf_item_parse_type_attribute(reader, CVRF_THREAT);
 	threat->date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
 	xmlTextReaderNextElement(reader);
 
@@ -1849,7 +1853,7 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_remediation *remed = cvrf_remediation_new();
-	remed->remed_type = cvrf_remediation_type_parse(reader);
+	remed->remed_type = cvrf_item_parse_type_attribute(reader, CVRF_REMEDIATION);
 	remed->date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
 	xmlTextReaderNextElement(reader);
 
@@ -1886,7 +1890,7 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 	if (stat == NULL)
 		return NULL;
 
-	stat->status_type = cvrf_product_status_type_parse(reader);
+	stat->status_type = cvrf_item_parse_type_attribute(reader, CVRF_PRODUCT_STATUS);
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS) != 0) {
