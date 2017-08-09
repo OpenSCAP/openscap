@@ -126,7 +126,7 @@ static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_parse(xmlTextReaderPtr 
 
 	struct cpe_ext_deprecatedby *deprecatedby = cpe_ext_deprecatedby_new();
 	deprecatedby->name = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_NAME_STR);
-	const char *type = (const char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_TYPE_STR);
+	char *type = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_TYPE_STR);
 	if (type == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Compulsory attribute '%s' missing at '%s' element.",
 			ATTR_TYPE_STR, TAG_CPE_EXT_DEPRECATEDBY_STR);

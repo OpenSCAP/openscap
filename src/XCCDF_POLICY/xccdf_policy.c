@@ -151,7 +151,7 @@ char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, st
 		return oscap_strdup("");
 	const char *unresolved = oscap_text_get_text(unresolved_text);
 	/* Resolve <xccdf:sub> elements */
-	const char *resolved = xccdf_policy_substitute(unresolved, policy);
+	char *resolved = xccdf_policy_substitute(unresolved, policy);
 	/* Get a rid of xhtml elements */
 	char *plaintext = _xhtml_to_plaintext(resolved);
 	free(resolved);
@@ -2002,7 +2002,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 	xccdf_result_set_test_system(result, "cpe:/a:redhat:openscap:" VERSION);
 
     /** Set ID of TestResult */
-    const char * id = NULL;
+	char *id = NULL;
 	if ((xccdf_policy_get_profile(policy) != NULL) && (xccdf_profile_get_id(xccdf_policy_get_profile(policy)) != NULL)) {
 		id = oscap_strdup(xccdf_profile_get_id(xccdf_policy_get_profile(policy)));
 		xccdf_result_set_profile(result, id);
