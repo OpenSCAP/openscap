@@ -67,7 +67,6 @@ OSCAP_DEPRECATED(void __oscap_free(void *p));
 
 /// @cond
 #define  oscap_talloc(T) ((T *) malloc(sizeof(T)))
-#define  OSCAP_SALLOC(TYPE, NAME) struct TYPE* NAME = oscap_calloc(1, sizeof(struct TYPE))
 /// @endcond
 
 #endif				/* OSCAP_ALLOC_H */
