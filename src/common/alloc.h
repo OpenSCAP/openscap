@@ -55,34 +55,13 @@ void *__oscap_calloc(size_t n, size_t s);
 // Do not use, we keep this just for ABI compatibility
 void *__oscap_realloc(void *p, size_t s);
 
+// Do not use, we keep this just for ABI compatibility
 void *__oscap_reallocf(void *p, size_t s);
-__ATTRIB void *oscap_reallocf(void *p, size_t s)
-{
-	return __oscap_reallocf(p, s);
-}
 
 // Do not use, we keep this just for ABI compatibility
 void __oscap_free(void *p);
 /// @endcond
 
-/**
- * void *realloc(void *ptr, size_t size) wrapper freeing old memory on failure
- */
-# define oscap_reallocf(p, s) __oscap_reallocf((void *)(p), s)
-
-#else
-
-void *__oscap_reallocf_dbg(void *p, size_t s, const char *f, size_t l);
-__ATTRIB void *oscap_reallocf(void *p, size_t s)
-{
-	return __oscap_reallocf_dbg(p, s, __FUNCTION__, 0);
-}
-
-
-/**
- * realloc wrapper freeing old memory on failure
- */
-# define oscap_reallocf(p, s) __oscap_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
 #endif
 
 /// @cond
