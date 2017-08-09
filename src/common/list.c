@@ -82,7 +82,7 @@ bool oscap_list_pop(struct oscap_list *list, oscap_destruct_func destructor)
 	}
 
 	if (destructor) destructor(cur->data);
-	oscap_free(cur);
+	free(cur);
 
 	list->last = prev;
 	if (prev) prev->next = NULL;
@@ -113,7 +113,7 @@ bool oscap_list_remove(struct oscap_list *list, void *value, oscap_cmp_func comp
 			list->last = prev;
 
 		if (destructor) destructor(cur->data);
-		oscap_free(cur);
+		free(cur);
 
 		--list->itemcount;
 		return true;
@@ -148,7 +148,7 @@ struct oscap_list *oscap_list_destructive_join(struct oscap_list *list1, struct 
 	else list1->last->next = list2->first;
 	if (list2->last != NULL) list1->last = list2->last;
 	list1->itemcount += list2->itemcount;
-	oscap_free(list2);
+	free(list2);
 	return list1;
 }
 
@@ -302,7 +302,7 @@ void *oscap_iterator_detach(struct oscap_iterator *it)
 
 void oscap_iterator_free(struct oscap_iterator *it)
 {
-	oscap_free(it);
+	free(it);
 }
 
 void *oscap_iterator_next(struct oscap_iterator *it)
@@ -362,7 +362,7 @@ struct oscap_stringlist * oscap_stringlist_new(void)
 
 void oscap_stringlist_free(struct oscap_stringlist *list)
 {
-	oscap_list_free((struct oscap_list *) list, oscap_free);
+	oscap_list_free((struct oscap_list *) list, free);
 }
 
 OSCAP_ITERATOR_GEN_T(const char *, oscap_string)
@@ -646,7 +646,7 @@ oscap_htable_iterator_reset(struct oscap_htable_iterator *hit)
 void
 oscap_htable_iterator_free(struct oscap_htable_iterator *hit)
 {
-	oscap_free(hit);
+	free(hit);
 }
 
 void oscap_print_depth(int depth)

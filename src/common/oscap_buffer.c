@@ -64,14 +64,14 @@ void oscap_buffer_clear(struct oscap_buffer *s)
 void oscap_buffer_free(struct oscap_buffer *s)
 {
 	if (s != NULL) {
-		oscap_free(s->data);
-		oscap_free(s);
+		free(s->data);
+		free(s);
 	}
 }
 
 char* oscap_buffer_bequeath(struct oscap_buffer *s){
 	char* str = s->data;
-	oscap_free(s);
+	free(s);
 	return str;
 }
 

@@ -56,7 +56,7 @@ static void oscap_tsort_context_free(struct oscap_tsort_context *ctx)
 		oscap_list_free(ctx->visited, NULL);
 		oscap_list_free(ctx->cur_stack, NULL);
 		oscap_list_free(ctx->result, NULL);
-		oscap_free(ctx);
+		free(ctx);
 	}
 }
 
