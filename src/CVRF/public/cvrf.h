@@ -477,6 +477,14 @@ const char *cvrf_vulnerability_get_system_id(const struct cvrf_vulnerability *vu
 /**
  * @memberof cvrf_vulnerability
  * @param vuln CVRF Vulnerability structure
+ * Gives name or numbering system of the Vulnerability ID
+ * @return contents of SystemName attribute within an ID element
+ */
+const char *cvrf_vulnerability_get_system_name(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
  * DateTime value of the original discovery time for this Vulnerability
  * @return contents of DiscoveryDate element within a Vulnerability element
  */
@@ -502,6 +510,7 @@ struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnera
 
 int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
 struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_involvements(struct cvrf_vulnerability *vuln);
 void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
 struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
 
@@ -520,6 +529,14 @@ bool cvrf_vulnerability_set_title(struct cvrf_vulnerability *vuln, const char *v
  * @return true on success
  */
 bool cvrf_vulnerability_set_system_id(struct cvrf_vulnerability *vuln, const char *id);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param sys_name Name or numbering system of the Vulnerability ID
+ * @return true on success
+ */
+bool cvrf_vulnerability_set_system_name(struct cvrf_vulnerability *vuln, const char *sys_name);
 
 /**
  * @memberof cvrf_vulnerability
