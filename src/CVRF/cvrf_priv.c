@@ -140,13 +140,13 @@ struct oscap_string_iterator *cvrf_score_set_get_product_ids(struct cvrf_score_s
 	return oscap_stringlist_get_strings(score_set->product_ids);
 }
 
-void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_category category, const char *score) {
+bool cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_category category, const char *score) {
 	struct cvss_metrics *metric = cvss_metrics_new(category);
 	cvss_metrics_set_score(metric, oscap_strtol(score, NULL, 10));
-	cvss_impact_set_metrics(score_set->impact, metric);
+	return cvss_impact_set_metrics(score_set->impact, metric);
 }
 
-char *cvrf_score_set_get_score(const struct cvrf_score_set *score_set, enum cvss_category category) {
+static char *cvrf_score_set_get_score(const struct cvrf_score_set *score_set, enum cvss_category category) {
 	struct cvss_metrics *metric = NULL;
 	if (category == CVSS_BASE) {
 		metric = cvss_impact_get_base_metrics(score_set->impact);
@@ -1050,16 +1050,18 @@ struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc) 
 	return doc->tracking;
 }
 
-void cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track) {
+bool cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track) {
 	doc->tracking = track;
+	return doc->tracking != NULL ? true : false;
 }
 
 struct cvrf_doc_publisher *cvrf_document_get_publisher(struct cvrf_document *doc) {
 	return doc->publisher;
 }
 
-void cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher) {
+bool cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher) {
 	doc->publisher = publisher;
+	return doc->publisher != NULL ? true : false;
 }
 
 struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc) {
