@@ -93,7 +93,7 @@ static int bz2_file_close(void *bzfile)
 	int bzerror;
 	BZ2_bzReadClose(&bzerror, ((struct bz2_file *)bzfile)->file);
 	fclose(((struct bz2_file *)bzfile)->f);
-	oscap_free(bzfile);
+	free(bzfile);
 	return bzerror == BZ_OK ? 0 : -1;
 }
 
@@ -113,8 +113,8 @@ struct bz2_mem {
 
 static void bz2_mem_free(struct bz2_mem *bzmem)
 {
-	oscap_free(bzmem->stream);
-	oscap_free(bzmem);
+	free(bzmem->stream);
+	free(bzmem);
 }
 
 static struct bz2_mem *bz2_mem_open(const char *buffer, size_t size)

@@ -139,13 +139,13 @@ struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filep
 void oscap_source_free(struct oscap_source *source)
 {
 	if (source != NULL) {
-		oscap_free(source->origin.filepath);
-		oscap_free(source->origin.memory);
+		free(source->origin.filepath);
+		free(source->origin.memory);
 		if (source->xml.doc != NULL) {
 			xmlFreeDoc(source->xml.doc);
 		}
-		oscap_free(source->origin.version);
-		oscap_free(source);
+		free(source->origin.version);
+		free(source);
 	}
 }
 
@@ -203,7 +203,7 @@ static void xmlErrorCb(struct oscap_string *buffer, const char * format, ...)
 
 	char* error_msg = oscap_vsprintf(format, ap);
 	oscap_string_append_string(buffer, error_msg);
-	oscap_free(error_msg);
+	free(error_msg);
 
 	va_end(ap);
 }
