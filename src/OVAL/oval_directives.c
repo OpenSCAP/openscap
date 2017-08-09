@@ -73,7 +73,7 @@ static int oval_directives_model_parse(xmlTextReaderPtr, struct oval_parser_cont
 struct oval_directives_model *oval_directives_model_new(void) {
 
 	struct oval_directives_model * new_model = (struct oval_directives_model *) 
-		oscap_alloc(sizeof(struct oval_directives_model));
+		malloc(sizeof(struct oval_directives_model));
 
 	new_model->generator = oval_generator_new();
 	new_model->def_directives = oval_result_directives_new();
@@ -204,7 +204,7 @@ struct oval_result_directives *oval_directives_model_get_new_classdir(struct ova
 struct oval_result_directives *oval_result_directives_new(void)
 {
 	struct oval_result_directives *directives = (struct oval_result_directives *)
-	    oscap_alloc(sizeof(struct oval_result_directives));
+	    malloc(sizeof(struct oval_result_directives));
 	if (directives == NULL)
 		return NULL;
 

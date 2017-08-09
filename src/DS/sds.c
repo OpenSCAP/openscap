@@ -604,7 +604,7 @@ static inline int ds_sds_compose_component_add_script_content(xmlNode *component
 	long int length = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	if (length >= 0) {
-		char* buffer = oscap_alloc((length + 1) * sizeof(char));
+		char* buffer = malloc((length + 1) * sizeof(char));
 		if (fread(buffer, length, 1, f) != 1) {
 			oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error while reading from file '%s'.", filepath);
 			fclose(f);
@@ -781,7 +781,7 @@ static char* ds_sds_mangle_filepath(const char* filepath)
 
 	// the string will grow 2x the size in the worst case (every char is /)
 	// TODO: We can do better than this by counting the slashes
-	char* ret = oscap_alloc(strlen(filepath) * sizeof(char) * 2);
+	char* ret = malloc(strlen(filepath) * sizeof(char) * 2);
 
 	const char* src_it = filepath;
 	char* dst_it = ret;

@@ -87,7 +87,7 @@ char **oscap_split(char *str, const char *delim)
 
 	char **stringp = &str;
 	int alloc = CPE_SPLIT_INIT_ALLOC;
-	char **fields = oscap_alloc(alloc * sizeof(char *));
+	char **fields = malloc(alloc * sizeof(char *));
 	if (!fields)
 		return NULL;
 
@@ -181,7 +181,7 @@ char *oscap_vsprintf(const char *fmt, va_list ap)
     int length = vsnprintf(foo, 1, fmt, ap);
     if (length < 0) goto cleanup;
 
-    ret = oscap_alloc(sizeof(char) * (length + 1));
+    ret = malloc(sizeof(char) * (length + 1));
     vsprintf(ret, fmt, args);
     assert(ret[length] == '\0');
 
@@ -238,7 +238,7 @@ char *oscap_expand_ipv6(const char *input)
 	}
 
 	// IPv6 is at most eight 4-tuples of [0-9a-f] with 7 separators, plus \0
-	char* ret = oscap_alloc(8 * 4 * sizeof(char) + 7 + 1);
+	char* ret = malloc(8 * 4 * sizeof(char) + 7 + 1);
 	char* output_it = ret;
 
 	input_it = input;

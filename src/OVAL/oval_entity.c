@@ -160,7 +160,7 @@ struct oval_value *oval_entity_get_value(struct oval_entity *entity)
 
 struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 {
-	struct oval_entity *entity = (struct oval_entity *)oscap_alloc(sizeof(struct oval_entity));
+	struct oval_entity *entity = (struct oval_entity *)malloc(sizeof(struct oval_entity));
 	if (entity == NULL)
 		return NULL;
 

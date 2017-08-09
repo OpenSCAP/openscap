@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 	 */
 #define PROBE_OPTION_INITCOUNT 3
 
-	probe.option = oscap_alloc(sizeof(probe_option_t) * PROBE_OPTION_INITCOUNT);
+	probe.option = malloc(sizeof(probe_option_t) * PROBE_OPTION_INITCOUNT);
 	probe.optcnt = PROBE_OPTION_INITCOUNT;
 
 	probe.option[0].option  = PROBEOPT_VARREF_HANDLING;

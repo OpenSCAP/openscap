@@ -118,7 +118,7 @@ long long oval_value_get_integer(struct oval_value *value)
 
 struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
 {
-	oval_value_t *value = (oval_value_t *) oscap_alloc(sizeof(oval_value_t));
+	oval_value_t *value = (oval_value_t *) malloc(sizeof(oval_value_t));
 	if (value == NULL)
 		return NULL;
 

@@ -116,7 +116,7 @@ oval_existence_t oval_state_content_get_check_existence(struct oval_state_conten
 struct oval_state_content *oval_state_content_new(struct oval_definition_model *model)
 {
 	oval_state_content_t *content = (oval_state_content_t *)
-	    oscap_alloc(sizeof(oval_state_content_t));
+	    malloc(sizeof(oval_state_content_t));
 	if (content == NULL)
 		return NULL;
 

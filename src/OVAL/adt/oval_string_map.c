@@ -58,7 +58,7 @@ typedef struct oval_string_map {
  * */
 struct oval_string_map *oval_string_map_new()
 {
-	struct oval_string_map *map = (struct oval_string_map *)oscap_alloc(sizeof(oval_string_map_t));
+	struct oval_string_map *map = (struct oval_string_map *)malloc(sizeof(oval_string_map_t));
 	if (map == NULL)
 		return NULL;
 
@@ -73,7 +73,7 @@ static struct _oval_string_map_entry *_oval_string_map_entry_new(struct
 								 *before)
 {
 	struct _oval_string_map_entry *entry =
-	    (struct _oval_string_map_entry *)oscap_alloc(sizeof(_oval_string_map_entry_t));
+	    (struct _oval_string_map_entry *)malloc(sizeof(_oval_string_map_entry_t));
 	if (entry == NULL)
 		return NULL;
 
@@ -87,7 +87,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 {
 	__attribute__nonnull__(map);
 
-	char *temp = (char *)oscap_alloc((strlen(key) + 1) * sizeof(char) + 1);
+	char *temp = (char *)malloc((strlen(key) + 1) * sizeof(char) + 1);
 	char *usekey = strcpy(temp, key);
 
 	/* SEARCH FOR INSERTION POINT */
@@ -121,7 +121,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *item)
 {
-	char *temp = (char *)oscap_alloc((strlen(item) + 1) * sizeof(char) + 1);
+	char *temp = (char *)malloc((strlen(item) + 1) * sizeof(char) + 1);
 	char *useval = strcpy(temp, item);
 	oval_string_map_put(map, key, useval);
 }

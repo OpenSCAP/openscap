@@ -193,7 +193,7 @@ struct oval_test *oval_test_new(struct oval_definition_model *model, const char 
 	__attribute__nonnull__(model);
 	oval_test_t *test;
 
-	test = (oval_test_t *) oscap_alloc(sizeof(oval_test_t));
+	test = (oval_test_t *) malloc(sizeof(oval_test_t));
 	if (test == NULL)
 		return NULL;
 

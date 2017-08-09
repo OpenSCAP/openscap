@@ -95,7 +95,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	case OVAL_NODETYPE_CRITERIA:{
 			/*(NODETYPE_CRITERIA, negate, applicability_check, operator); */
 			node = (oval_result_criteria_node_t *)
-			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERIA_t));
+			    malloc(sizeof(oval_result_criteria_node_CRITERIA_t));
 			if (node == NULL) {
 				va_end(ap);
 				return NULL;
@@ -109,7 +109,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	case OVAL_NODETYPE_CRITERION:{
 			/*(NODETYPE_CRITERION, negate, applicability_check, test, variable_instance); */
 			node = (oval_result_criteria_node_t *)
-			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERION_t));
+			    malloc(sizeof(oval_result_criteria_node_CRITERION_t));
 			if (node == NULL) {
 				va_end(ap);
 				return NULL;
@@ -124,7 +124,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	case OVAL_NODETYPE_EXTENDDEF:{
 			/*(NODETYPE_EXTENDDEF, negate, applicability_check, definition, variable_instance); */
 			node = (oval_result_criteria_node_t *)
-			    oscap_alloc(sizeof(oval_result_criteria_node_EXTENDDEF_t));
+			    malloc(sizeof(oval_result_criteria_node_EXTENDDEF_t));
 			if (node == NULL) {
 				va_end(ap);
 				return NULL;

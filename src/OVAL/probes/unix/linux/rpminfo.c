@@ -131,7 +131,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
                strlen (r->release) +
                strlen (r->version) + 2);
 
-        str = oscap_alloc (sizeof (char) * (len + 1));
+        str = malloc (sizeof (char) * (len + 1));
         snprintf (str, len + 1, "%s:%s-%s",
 		epoch_override,
                   r->version,

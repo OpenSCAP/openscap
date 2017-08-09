@@ -111,7 +111,7 @@ void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 
 struct oval_sysint *oval_sysint_new(struct oval_syschar_model *model)
 {
-	oval_sysint_t *sysint = (oval_sysint_t *) oscap_alloc(sizeof(oval_sysint_t));
+	oval_sysint_t *sysint = (oval_sysint_t *) malloc(sizeof(oval_sysint_t));
 	if (sysint == NULL)
 		return NULL;
 

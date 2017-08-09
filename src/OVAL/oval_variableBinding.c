@@ -106,7 +106,7 @@ void oval_variable_binding_add_value(struct oval_variable_binding *binding, char
 
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
 {
-	oval_variable_binding_t *binding = (oval_variable_binding_t *) oscap_alloc(sizeof(oval_variable_binding_t));
+	oval_variable_binding_t *binding = (oval_variable_binding_t *) malloc(sizeof(oval_variable_binding_t));
 	if (binding == NULL)
 		return NULL;
 

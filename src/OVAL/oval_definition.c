@@ -334,7 +334,7 @@ static void _oval_definition_title_consumer(char *string, void *user)
 		title = oscap_strdup(string);
 	else {
 		int newsize = strlen(title) + strlen(string) + 1;
-		char *newtitle = (char *)oscap_alloc(newsize * sizeof(char));
+		char *newtitle = (char *)malloc(newsize * sizeof(char));
 		if (newtitle == NULL)
 			return;
 
@@ -356,7 +356,7 @@ static void _oval_definition_description_consumer(char *string, void *user)
 		description = oscap_strdup(string);
 	else {
 		int newsize = strlen(description) + strlen(string) + 1;
-		char *newdescription = (char *)oscap_alloc(newsize * sizeof(char));
+		char *newdescription = (char *)malloc(newsize * sizeof(char));
 		if (newdescription == NULL)
 			return;
 

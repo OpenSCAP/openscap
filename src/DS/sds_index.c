@@ -52,7 +52,7 @@ struct ds_stream_index
 
 struct ds_stream_index* ds_stream_index_new(void)
 {
-	struct ds_stream_index* ret = oscap_alloc(sizeof(struct ds_stream_index));
+	struct ds_stream_index* ret = malloc(sizeof(struct ds_stream_index));
 
 	ret->id = NULL;
 	ret->timestamp = NULL;
@@ -221,7 +221,7 @@ struct ds_sds_index
 
 struct ds_sds_index* ds_sds_index_new(void)
 {
-	struct ds_sds_index* ret = oscap_alloc(sizeof(struct ds_sds_index));
+	struct ds_sds_index* ret = malloc(sizeof(struct ds_sds_index));
 	ret->streams = oscap_list_new();
 
 	ret->benchmark_id_to_component_id = oscap_htable_new();

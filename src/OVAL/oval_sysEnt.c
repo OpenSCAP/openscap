@@ -57,7 +57,7 @@ typedef struct oval_sysent {
 
 struct oval_sysent *oval_sysent_new(struct oval_syschar_model *model)
 {
-	oval_sysent_t *sysent = (oval_sysent_t *) oscap_alloc(sizeof(oval_sysent_t));
+	oval_sysent_t *sysent = (oval_sysent_t *) malloc(sizeof(oval_sysent_t));
 	if (sysent == NULL)
 		return NULL;
 

@@ -66,7 +66,7 @@ typedef struct oval_syschar_model {
  * */
 struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *definition_model)
 {
-	oval_syschar_model_t *newmodel = (oval_syschar_model_t *) oscap_alloc(sizeof(oval_syschar_model_t));
+	oval_syschar_model_t *newmodel = (oval_syschar_model_t *) malloc(sizeof(oval_syschar_model_t));
 	if (newmodel == NULL)
 		return NULL;
 

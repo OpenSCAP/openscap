@@ -65,7 +65,7 @@ typedef struct oval_definition_model {
  * */
 struct oval_definition_model *oval_definition_model_new()
 {
-	oval_definition_model_t *newmodel = (oval_definition_model_t *) oscap_alloc(sizeof(oval_definition_model_t));
+	oval_definition_model_t *newmodel = (oval_definition_model_t *) malloc(sizeof(oval_definition_model_t));
 	if (newmodel == NULL)
 		return NULL;
 

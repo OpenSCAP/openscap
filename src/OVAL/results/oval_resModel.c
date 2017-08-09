@@ -70,7 +70,7 @@ struct oval_results_model *oval_results_model_new_with_probe_session(struct oval
 						  struct oval_syschar_model **syschar_models,
 						  struct oval_probe_session *probe_session)
 {
-	struct oval_results_model *model = (struct oval_results_model *) oscap_alloc(sizeof(struct oval_results_model));
+	struct oval_results_model *model = (struct oval_results_model *) malloc(sizeof(struct oval_results_model));
 	if (model == NULL)
 		return NULL;
 

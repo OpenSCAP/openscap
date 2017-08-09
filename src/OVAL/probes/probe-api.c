@@ -1455,7 +1455,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         while (value_stra[multiply] != NULL)
                                 ++multiply;
 
-                        value_sexp = oscap_alloc(sizeof(SEXP_t) * multiply);
+                        value_sexp = malloc(sizeof(SEXP_t) * multiply);
 
                         for (value_i = 0; value_i < multiply; ++value_i)
                                 SEXP_string_new_r(value_sexp + value_i, value_stra[value_i], strlen(value_stra[value_i]));

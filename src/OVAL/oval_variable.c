@@ -106,7 +106,7 @@ typedef struct oval_variable_restriction {
 struct oval_variable_possible_value *oval_variable_possible_value_new(const char *hint, const char *value)
 {
 	struct oval_variable_possible_value *pv;
-	pv = oscap_alloc(sizeof(oval_variable_possible_value_t));
+	pv = malloc(sizeof(oval_variable_possible_value_t));
 	pv->hint = oscap_strdup(hint);
 	pv->value = oscap_strdup(value);
 	return pv;
@@ -158,7 +158,7 @@ int oval_variable_possible_value_iterator_remaining(struct oval_variable_possibl
 struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t operator, const char *hint)
 {
 	struct oval_variable_possible_restriction *pr;
-	pr = oscap_alloc(sizeof(oval_variable_possible_restriction_t));
+	pr = malloc(sizeof(oval_variable_possible_restriction_t));
 	pr->operator = operator;
 	pr->hint = oscap_strdup(hint);
 	pr->restrictions = oval_collection_new();
@@ -230,7 +230,7 @@ int oval_variable_possible_restriction_iterator_remaining(struct oval_variable_p
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
 {
 	struct oval_variable_restriction *r;
-	r = oscap_alloc(sizeof(oval_variable_restriction_t));
+	r = malloc(sizeof(oval_variable_restriction_t));
 	r->operation = operation;
 	r->value = oscap_strdup(value);
 	return r;
@@ -576,7 +576,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	case OVAL_VARIABLE_CONSTANT:{
 			oval_variable_CONSTANT_t *cvar;
 
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_CONSTANT_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_CONSTANT_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -588,7 +588,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	case OVAL_VARIABLE_EXTERNAL:{
 			oval_variable_EXTERNAL_t *evar;
 
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_EXTERNAL_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_EXTERNAL_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -602,7 +602,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	case OVAL_VARIABLE_LOCAL:{
 			oval_variable_LOCAL_t *lvar;
 
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_LOCAL_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_LOCAL_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -613,7 +613,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 		}
 		break;
 	case OVAL_VARIABLE_UNKNOWN:{
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_UNKNOWN_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_UNKNOWN_t));
 			if (variable == NULL)
 				return NULL;
 

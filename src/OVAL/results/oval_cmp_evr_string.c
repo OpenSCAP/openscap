@@ -173,7 +173,7 @@ static int rpmvercmp(const char *a, const char *b)
 	if (!strcmp(a, b))
 		return 0;
 
-	/* TODO: make new oscap_alloca */
+	/* TODO: make new malloca */
 	str1 = alloca(strlen(a) + 1);
 	str2 = alloca(strlen(b) + 1);
 

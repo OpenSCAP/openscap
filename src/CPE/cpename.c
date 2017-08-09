@@ -231,7 +231,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 	if (cpestr && format == CPE_FORMAT_UNKNOWN)
 		return NULL;
 
-	cpe = oscap_alloc(sizeof(struct cpe_name));
+	cpe = malloc(sizeof(struct cpe_name));
 	if (cpe == NULL)
 		return NULL;
 	memset(cpe, 0, sizeof(struct cpe_name));	// zero memory
@@ -312,7 +312,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 
 struct cpe_name * cpe_name_clone(struct cpe_name * old_name)
 {
-        struct cpe_name * new_name = oscap_alloc(sizeof(struct cpe_name));
+        struct cpe_name * new_name = malloc(sizeof(struct cpe_name));
         if (new_name == NULL) 
             return NULL;
 
@@ -388,7 +388,7 @@ static char *cpe_urlencode(const char *str)
 	// allocate enough space
 	// in the worst case (all characters need to be replaced), the memory
 	// we will need is 3 times the size of input, + 1 for the terminating \0
-	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
+	char *result = malloc(strlen(str) * 3 * sizeof(char) + 1);
 	char *out = result;
 
 	for (const char *in = str; *in != '\0'; ++in, ++out) {
@@ -452,7 +452,7 @@ static char *cpestring_comp_encode(const char *str)
 	// allocate enough space
 	// in the worst case (all characters need to be replaced), the memory
 	// we will need is 3 times the size of input, + 1 for the terminating \0
-	char *result = oscap_alloc(strlen(str) * 3 * sizeof(char) + 1);
+	char *result = malloc(strlen(str) * 3 * sizeof(char) + 1);
 	char *out = result;
 
 	for (const char *in = str; *in != '\0'; ++in, ++out) {
@@ -666,7 +666,7 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format)
 			len += strlen(part[i]);
 		}
 
-		result = oscap_alloc(len * sizeof(char));
+		result = malloc(len * sizeof(char));
 		if (result == NULL)
 			return NULL;
 
@@ -702,7 +702,7 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format)
 			len += strlen(part[i]);
 		}
 
-		result = oscap_alloc(len * sizeof(char));
+		result = malloc(len * sizeof(char));
 		if (result == NULL)
 			return NULL;
 

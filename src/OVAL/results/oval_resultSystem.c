@@ -108,7 +108,7 @@ struct oval_result_system *oval_result_system_new(struct oval_results_model *mod
 	__attribute__nonnull__(model);
 	oval_result_system_t *sys;
 
-	sys = (oval_result_system_t *) oscap_alloc(sizeof(oval_result_system_t));
+	sys = (oval_result_system_t *) malloc(sizeof(oval_result_system_t));
 	if (sys == NULL)
 		return NULL;
 

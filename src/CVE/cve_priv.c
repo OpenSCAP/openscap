@@ -217,7 +217,7 @@ struct cve_entry *cve_entry_new()
 
 	struct cve_entry *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_entry));
+	ret = malloc(sizeof(struct cve_entry));
 	if (ret == NULL)
 		return NULL;
 
@@ -261,7 +261,7 @@ struct cve_configuration *cve_configuration_new()
 
 	struct cve_configuration *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_configuration));
+	ret = malloc(sizeof(struct cve_configuration));
 	if (ret == NULL)
 		return NULL;
 
@@ -284,7 +284,7 @@ struct cwe_entry *cwe_entry_new()
 
 	struct cwe_entry *ret;
 
-	ret = oscap_alloc(sizeof(struct cwe_entry));
+	ret = malloc(sizeof(struct cwe_entry));
 	if (ret == NULL)
 		return NULL;
 
@@ -305,7 +305,7 @@ struct cve_product *cve_product_new()
 
 	struct cve_product *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_product));
+	ret = malloc(sizeof(struct cve_product));
 	if (ret == NULL)
 		return NULL;
 
@@ -326,7 +326,7 @@ struct cve_summary *cve_summary_new()
 
 	struct cve_summary *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_summary));
+	ret = malloc(sizeof(struct cve_summary));
 	if (ret == NULL)
 		return NULL;
 
@@ -369,7 +369,7 @@ struct cve_model *cve_model_new()
 
 	struct cve_model *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_model));
+	ret = malloc(sizeof(struct cve_model));
 	if (ret == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cve_model));
@@ -502,7 +502,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_CONFIGURATION_STR)) {
 
-			conf = oscap_alloc(sizeof(struct cve_configuration));
+			conf = malloc(sizeof(struct cve_configuration));
 
 			conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
 			xmlTextReaderNextElement(reader);

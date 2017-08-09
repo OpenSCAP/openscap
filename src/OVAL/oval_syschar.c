@@ -146,7 +146,7 @@ struct oval_syschar *oval_syschar_new(struct oval_syschar_model *model, struct o
 	__attribute__nonnull__(model);
 	oval_syschar_t *syschar;
 
-	syschar = (oval_syschar_t *) oscap_alloc(sizeof(oval_syschar_t));
+	syschar = (oval_syschar_t *) malloc(sizeof(oval_syschar_t));
 	if (syschar == NULL)
 		return NULL;
 

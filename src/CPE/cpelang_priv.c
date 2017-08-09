@@ -178,7 +178,7 @@ struct cpe_lang_model *cpe_lang_model_new()
 
 	struct cpe_lang_model *ret;
 
-	ret = oscap_alloc(sizeof(struct cpe_lang_model));
+	ret = malloc(sizeof(struct cpe_lang_model));
 	if (ret == NULL)
 		return NULL;
 
@@ -194,7 +194,7 @@ struct cpe_platform *cpe_platform_new()
 
 	struct cpe_platform *ret;
 
-	ret = oscap_alloc(sizeof(struct cpe_platform));
+	ret = malloc(sizeof(struct cpe_platform));
 	if (ret == NULL)
 		return NULL;
 

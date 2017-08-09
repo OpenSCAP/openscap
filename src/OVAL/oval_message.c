@@ -50,7 +50,7 @@ typedef struct oval_message {
 
 struct oval_message *oval_message_new()
 {
-	oval_message_t *message = (oval_message_t *) oscap_alloc(sizeof(oval_message_t));
+	oval_message_t *message = (oval_message_t *) malloc(sizeof(oval_message_t));
 	if (message == NULL)
 		return NULL;
 

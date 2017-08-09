@@ -53,7 +53,7 @@ struct oval_generator {
 struct oval_generator *oval_generator_new(void)
 {
 	struct oval_generator *gen;
-	gen = oscap_alloc(sizeof(struct oval_generator));
+	gen = malloc(sizeof(struct oval_generator));
 	gen->product_name = NULL;
 	gen->product_version = NULL;
 	gen->core_schema_version = oscap_strdup(OVAL_SUPPORTED);
@@ -80,7 +80,7 @@ struct oval_generator *oval_generator_clone(struct oval_generator *old_generator
 {
 	struct oval_generator *new_gen;
 
-	new_gen = oscap_alloc(sizeof(*new_gen));
+	new_gen = malloc(sizeof(*new_gen));
 	new_gen->product_name = oscap_strdup(old_generator->product_name);
 	new_gen->product_version = oscap_strdup(old_generator->product_version);
 	new_gen->core_schema_version = oscap_strdup(old_generator->core_schema_version);
@@ -201,7 +201,7 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 		xmlNode *sv_node = xmlNewTextChild(gen_node, ns_common,
 			BAD_CAST "schema_version", BAD_CAST version);
 		size_t namespace_uri_length = strlen(namespace_uri) + 1 + strlen(platform) + 1;
-		char *platform_uri = oscap_alloc(namespace_uri_length);
+		char *platform_uri = malloc(namespace_uri_length);
 		snprintf(platform_uri, namespace_uri_length, "%s#%s", namespace_uri, platform);
 		xmlNewProp(sv_node, BAD_CAST "platform", BAD_CAST platform_uri);
 		free(platform_uri);

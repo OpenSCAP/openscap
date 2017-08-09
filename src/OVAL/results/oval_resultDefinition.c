@@ -55,7 +55,7 @@ typedef struct oval_result_definition {
 
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *sys, char *definition_id) {
 	oval_result_definition_t *definition = (oval_result_definition_t *)
-	    oscap_alloc(sizeof(oval_result_definition_t));
+	    malloc(sizeof(oval_result_definition_t));
 	if (definition == NULL)
 		return NULL;
 

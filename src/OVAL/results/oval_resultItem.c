@@ -50,7 +50,7 @@ typedef struct oval_result_item {
 
 struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, char *item_id) {
 	oval_result_item_t *item = (oval_result_item_t *)
-	    oscap_alloc(sizeof(oval_result_item_t));
+	    malloc(sizeof(oval_result_item_t));
 	if (item == NULL)
 		return NULL;
 

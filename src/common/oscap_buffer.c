@@ -47,8 +47,8 @@ struct oscap_buffer {
 struct oscap_buffer *oscap_buffer_new()
 {
 	struct oscap_buffer *s;
-	s = oscap_alloc(sizeof(struct oscap_buffer));
-	s->data = oscap_alloc(INITIAL_CAPACITY);
+	s = malloc(sizeof(struct oscap_buffer));
+	s->data = malloc(INITIAL_CAPACITY);
 	s->data[0] = '\0';
 	s->length = 0;
 	s->capacity = INITIAL_CAPACITY;

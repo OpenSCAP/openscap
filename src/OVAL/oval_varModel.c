@@ -72,7 +72,7 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 
 static _oval_variable_model_frame_t *_oval_variable_model_frame_new(char *id, const char *comm, oval_datatype_t datatype)
 {
-	_oval_variable_model_frame_t *frame = (_oval_variable_model_frame_t *) oscap_alloc(sizeof(_oval_variable_model_frame_t));
+	_oval_variable_model_frame_t *frame = (_oval_variable_model_frame_t *) malloc(sizeof(_oval_variable_model_frame_t));
 	if (frame == NULL)
 		return NULL;
 	frame->id = oscap_strdup(id);
@@ -115,7 +115,7 @@ static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame
 
 struct oval_variable_model *oval_variable_model_new()
 {
-	oval_variable_model_t *model = (oval_variable_model_t *) oscap_alloc(sizeof(oval_variable_model_t));
+	oval_variable_model_t *model = (oval_variable_model_t *) malloc(sizeof(oval_variable_model_t));
 	if (model == NULL)
 		return NULL;
 	model->generator = oval_generator_new();

@@ -46,11 +46,8 @@
 
 #if defined(NDEBUG)
 /// @cond
+// Do not use, we keep this just for ABI compatibility
 void *__oscap_alloc(size_t s);
-__ATTRIB void *oscap_alloc(size_t s)
-{
-	return __oscap_alloc(s);
-}
 
 void *__oscap_calloc(size_t n, size_t s);
 __ATTRIB void *oscap_calloc(size_t n, size_t s)
@@ -75,10 +72,6 @@ void __oscap_free(void *p);
 /// @endcond
 
 /**
- * void *malloc(size_t size)  wrapper
- */
-# define oscap_alloc(s)       __oscap_alloc (s)
-/**
  * void *calloc(size_t nmemb, size_t size) wrapper
  */
 # define oscap_calloc(n, s)   __oscap_calloc (n, s);
@@ -92,11 +85,6 @@ void __oscap_free(void *p);
 # define oscap_reallocf(p, s) __oscap_reallocf((void *)(p), s)
 
 #else
-void *__oscap_alloc_dbg(size_t s, const char *f, size_t l);
-__ATTRIB void *oscap_alloc(size_t s)
-{
-	return __oscap_alloc_dbg(s, __FUNCTION__, 0);
-}
 
 void *__oscap_calloc_dbg(size_t n, size_t s, const char *f, size_t l);
 __ATTRIB void *oscap_calloc(size_t n, size_t s)
@@ -118,10 +106,6 @@ __ATTRIB void *oscap_reallocf(void *p, size_t s)
 
 
 /**
- * malloc wrapper
- */
-# define oscap_alloc(s)       __oscap_alloc_dbg (s, __PRETTY_FUNCTION__, __LINE__)
-/**
  * calloc wrapper
  */
 # define oscap_calloc(n, s)   __oscap_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)
@@ -136,8 +120,8 @@ __ATTRIB void *oscap_reallocf(void *p, size_t s)
 #endif
 
 /// @cond
-#define  oscap_talloc(T) ((T *) oscap_alloc(sizeof(T)))
-#define  oscap_valloc(v) ((typeof(v) *) oscap_alloc(sizeof v))
+#define  oscap_talloc(T) ((T *) malloc(sizeof(T)))
+#define  oscap_valloc(v) ((typeof(v) *) malloc(sizeof v))
 #define  OSCAP_SALLOC(TYPE, NAME) struct TYPE* NAME = oscap_calloc(1, sizeof(struct TYPE))
 /// @endcond
 

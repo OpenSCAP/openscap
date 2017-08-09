@@ -36,7 +36,7 @@ struct reporter {
 
 struct reporter *reporter_new(char *report_type, void *output_func, void *usr)
 {
-	struct reporter *reporter = oscap_alloc(sizeof(struct reporter));
+	struct reporter *reporter = malloc(sizeof(struct reporter));
 	if (reporter != NULL) {
 		reporter->system = report_type;
 		reporter->callback = output_func;

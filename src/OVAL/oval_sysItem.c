@@ -57,7 +57,7 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model, const ch
 	__attribute__nonnull__(model);
 	oval_sysitem_t *sysitem;
 
-	sysitem = (oval_sysitem_t *) oscap_alloc(sizeof(oval_sysitem_t));
+	sysitem = (oval_sysitem_t *) malloc(sizeof(oval_sysitem_t));
 	if (sysitem == NULL)
 		return NULL;
 

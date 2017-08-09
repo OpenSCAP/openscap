@@ -363,7 +363,7 @@ static xiconf_t *xiconf_new(void)
 	xiconf_t *xiconf;
 
 	xiconf = oscap_talloc(xiconf_t);
-	xiconf->cfile = oscap_alloc(sizeof(xiconf_file_t *));
+	xiconf->cfile = malloc(sizeof(xiconf_file_t *));
 	xiconf->count = 0;
 	xiconf->stree = rbt_str_new();
 	xiconf->ttree = rbt_str_new();
@@ -523,7 +523,7 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	{
 		/* fallback method - copy the contents into memory */
 
-		file->inmem = oscap_alloc(file->inlen);
+		file->inmem = malloc(file->inlen);
 
 		if (read (file->fd, file->inmem, file->inlen) != (ssize_t)file->inlen) {
 			/* Can't read the contents of the file */
@@ -576,7 +576,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 }
 
 #define tmpbuf_def(size) char __tmpbuf[size]
-#define tmpbuf_get(size) (((sizeof __tmpbuf)/sizeof(char))<(size)?oscap_alloc(sizeof(char)*(size)):__tmpbuf)
+#define tmpbuf_get(size) (((sizeof __tmpbuf)/sizeof(char))<(size)?malloc(sizeof(char)*(size)):__tmpbuf)
 #define tmpbuf_free(ptr) do { if ((ptr) != __tmpbuf) free(ptr); (ptr) = NULL; } while(0)
 
 xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
@@ -1134,7 +1134,7 @@ finish_section:
 
 			st = oscap_talloc (xiconf_strans_t);
 			st->cnt = 1;
-			st->srv = oscap_alloc (sizeof (xiconf_service_t *));
+			st->srv = malloc (sizeof (xiconf_service_t *));
 			st->srv[0] = scur;
 
 			if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
@@ -1226,7 +1226,7 @@ xiconf_strans_t *xiconf_dump(xiconf_t *xiconf)
 
 	res = oscap_talloc(xiconf_strans_t);
 	res->cnt = rbt_str_size(xiconf->stree);
-	res->srv = oscap_alloc(sizeof(xiconf_service_t *) * res->cnt);
+	res->srv = malloc(sizeof(xiconf_service_t *) * res->cnt);
 
 	rbt_str_walk_inorder2(xiconf->stree, xiconf_dump_cb, (void *)res, 0);
 
@@ -1409,7 +1409,7 @@ int op_remove_strl(void *var, char *val)
 		return 0;
 	} else {
 		// Allocate the new string array
-		newstr_array = oscap_alloc(sizeof(char *) * (string_array_size + 1));
+		newstr_array = malloc(sizeof(char *) * (string_array_size + 1));
 	}
 
 	// Create an array of strings to be removed from the array

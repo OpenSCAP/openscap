@@ -175,7 +175,7 @@ struct oval_object *oval_object_new(struct oval_definition_model *model, const c
 	__attribute__nonnull__(model);
 	oval_object_t *object;
 
-	object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
+	object = (oval_object_t *) malloc(sizeof(oval_object_t));
 	if (object == NULL)
 		return NULL;
 

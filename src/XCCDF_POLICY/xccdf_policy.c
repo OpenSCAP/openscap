@@ -818,7 +818,7 @@ static bool xccdf_policy_model_platforms_are_applicable_dict(struct xccdf_policy
 
 		struct cpe_name* name = cpe_name_new(platform);
 
-		struct cpe_check_cb_usr* usr = oscap_alloc(sizeof(struct cpe_check_cb_usr));
+		struct cpe_check_cb_usr* usr = malloc(sizeof(struct cpe_check_cb_usr));
 		usr->model = model;
 		usr->dict = dict;
 		usr->lang_model = NULL;
@@ -861,7 +861,7 @@ static bool xccdf_policy_model_platforms_are_applicable_lang_model(struct xccdf_
 			platform_shifted++;
 		}
 
-		struct cpe_check_cb_usr* usr = oscap_alloc(sizeof(struct cpe_check_cb_usr));
+		struct cpe_check_cb_usr* usr = malloc(sizeof(struct cpe_check_cb_usr));
 		usr->model = model;
 		usr->dict = NULL;
 		usr->lang_model = lang_model;
@@ -1641,7 +1641,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 
 	struct xccdf_policy_model       * model;
 
-	model = oscap_alloc(sizeof(struct xccdf_policy_model));
+	model = malloc(sizeof(struct xccdf_policy_model));
 	if (model == NULL)
 		return NULL;
 	memset(model, 0, sizeof(struct xccdf_policy_model));
@@ -1776,7 +1776,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	struct xccdf_item_iterator      * item_it;
 	struct xccdf_item               * item;
 
-	policy = oscap_alloc(sizeof(struct xccdf_policy));
+	policy = malloc(sizeof(struct xccdf_policy));
 	if (policy == NULL)
 		return NULL;
 	memset(policy, 0, sizeof(struct xccdf_policy));
@@ -1816,7 +1816,7 @@ struct xccdf_value_binding * xccdf_value_binding_new() {
         struct xccdf_value_binding          * binding;
 
         /* Initialization */
-	binding = oscap_alloc(sizeof(struct xccdf_value_binding));
+	binding = malloc(sizeof(struct xccdf_value_binding));
 	if (binding == NULL)
 		return NULL;
 	memset(binding, 0, sizeof(struct xccdf_value_binding));

@@ -378,7 +378,7 @@ static int rglob(const char *pattern, rglob_t * result)
 	/* allocate memory for result */
 	if (result->offs < 1 || result->offs > 1000)
 		result->offs = 10;
-	result->pathv = oscap_alloc(sizeof(char **) * result->offs);
+	result->pathv = malloc(sizeof(char **) * result->offs);
 	result->pathc = 0;
 
 	/* find paths */

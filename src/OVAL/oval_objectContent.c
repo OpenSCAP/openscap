@@ -163,7 +163,7 @@ struct oval_object_content
 	switch (type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
 			struct oval_object_content_ENTITY *entity =
-			    (oval_object_content_ENTITY_t *) oscap_alloc(sizeof(oval_object_content_ENTITY_t));
+			    (oval_object_content_ENTITY_t *) malloc(sizeof(oval_object_content_ENTITY_t));
 			if (entity == NULL)
 				return NULL;
 
@@ -174,7 +174,7 @@ struct oval_object_content
 		break;
 	case OVAL_OBJECTCONTENT_SET:{
 			struct oval_object_content_SET *set =
-			    (oval_object_content_SET_t *) oscap_alloc(sizeof(oval_object_content_SET_t));
+			    (oval_object_content_SET_t *) malloc(sizeof(oval_object_content_SET_t));
 			if (set == NULL)
 				return NULL;
 
@@ -184,7 +184,7 @@ struct oval_object_content
 		break;
 	case OVAL_OBJECTCONTENT_FILTER:{
 			struct oval_object_content_FILTER *filter =
-			    (oval_object_content_FILTER_t *) oscap_alloc(sizeof(oval_object_content_FILTER_t));
+			    (oval_object_content_FILTER_t *) malloc(sizeof(oval_object_content_FILTER_t));
 			if (filter == NULL)
 				return NULL;
 

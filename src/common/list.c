@@ -52,7 +52,7 @@ bool oscap_list_add(struct oscap_list * list, void *value)
 	__attribute__nonnull__(list);
 	if (value == NULL) return false;
 
-	struct oscap_list_item *item = oscap_alloc(sizeof(struct oscap_list_item));
+	struct oscap_list_item *item = malloc(sizeof(struct oscap_list_item));
 	item->next = NULL;
 	item->data = value;
 	++list->itemcount;
@@ -388,7 +388,7 @@ struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
     
     assert(hsize > 0);
 
-	t = oscap_alloc(sizeof(struct oscap_htable));
+	t = malloc(sizeof(struct oscap_htable));
 	if (t == NULL)
 		return NULL;
 	t->hsize = hsize;
@@ -466,7 +466,7 @@ bool oscap_htable_add(struct oscap_htable * htable, const char *key, void *item)
 		return false;
 	unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
 	struct oscap_htable_item *newhtitem;
-	newhtitem = oscap_alloc(sizeof(struct oscap_htable_item));
+	newhtitem = malloc(sizeof(struct oscap_htable_item));
 	newhtitem->key = strdup(key);
 	newhtitem->value = item;
 	newhtitem->next = htable->table[hashcode];

@@ -302,7 +302,7 @@ struct cpe_dict_model *cpe_dict_model_new()
 
 	struct cpe_dict_model *dict;
 
-	dict = oscap_alloc(sizeof(struct cpe_dict_model));
+	dict = malloc(sizeof(struct cpe_dict_model));
 	if (dict == NULL)
 		return NULL;
 	memset(dict, 0, sizeof(struct cpe_dict_model));
@@ -322,7 +322,7 @@ struct cpe_item_metadata *cpe_item_metadata_new()
 
 	struct cpe_item_metadata *item;
 
-	item = oscap_alloc(sizeof(struct cpe_item_metadata));
+	item = malloc(sizeof(struct cpe_item_metadata));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_item_metadata));
@@ -340,7 +340,7 @@ struct cpe_item *cpe_item_new()
 
 	struct cpe_item *item;
 
-	item = oscap_alloc(sizeof(struct cpe_item));
+	item = malloc(sizeof(struct cpe_item));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_item));
@@ -358,7 +358,7 @@ struct cpe_check *cpe_check_new()
 
 	struct cpe_check *item;
 
-	item = oscap_alloc(sizeof(struct cpe_check));
+	item = malloc(sizeof(struct cpe_check));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_check));
@@ -375,7 +375,7 @@ struct cpe_reference *cpe_reference_new()
 
 	struct cpe_reference *item;
 
-	item = oscap_alloc(sizeof(struct cpe_reference));
+	item = malloc(sizeof(struct cpe_reference));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_reference));
@@ -398,7 +398,7 @@ struct cpe_generator *cpe_generator_new()
 
 	struct cpe_generator *item;
 
-	item = oscap_alloc(sizeof(struct cpe_generator));
+	item = malloc(sizeof(struct cpe_generator));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_generator));
@@ -416,7 +416,7 @@ struct cpe_vendor *cpe_vendor_new()
 
 	struct cpe_vendor *item;
 
-	item = oscap_alloc(sizeof(struct cpe_vendor));
+	item = malloc(sizeof(struct cpe_vendor));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_vendor));
@@ -433,7 +433,7 @@ struct cpe_product *cpe_product_new()
 
 	struct cpe_product *item;
 
-	item = oscap_alloc(sizeof(struct cpe_product));
+	item = malloc(sizeof(struct cpe_product));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_product));
@@ -449,7 +449,7 @@ struct cpe_version *cpe_version_new()
 
 	struct cpe_version *item;
 
-	item = oscap_alloc(sizeof(struct cpe_version));
+	item = malloc(sizeof(struct cpe_version));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_version));
@@ -465,7 +465,7 @@ struct cpe_update *cpe_update_new()
 
 	struct cpe_update *item;
 
-	item = oscap_alloc(sizeof(struct cpe_update));
+	item = malloc(sizeof(struct cpe_update));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_update));
@@ -481,7 +481,7 @@ struct cpe_edition *cpe_edition_new()
 
 	struct cpe_edition *item;
 
-	item = oscap_alloc(sizeof(struct cpe_edition));
+	item = malloc(sizeof(struct cpe_edition));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_edition));
@@ -497,7 +497,7 @@ struct cpe_language *cpe_language_new()
 
 	struct cpe_language *item;
 
-	item = oscap_alloc(sizeof(struct cpe_language));
+	item = malloc(sizeof(struct cpe_language));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_language));
@@ -794,7 +794,7 @@ static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader)
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_STR) != 0)
 		return NULL;
 
-	if ((ret = oscap_alloc(sizeof(struct cpe_check))) == NULL)
+	if ((ret = malloc(sizeof(struct cpe_check))) == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cpe_check));
 
@@ -815,7 +815,7 @@ static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader)
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) != 0)
 		return NULL;
 
-	if ((ret = oscap_alloc(sizeof(struct cpe_reference))) == NULL)
+	if ((ret = malloc(sizeof(struct cpe_reference))) == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cpe_reference));
 

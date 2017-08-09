@@ -54,7 +54,7 @@ typedef struct oval_sysinfo {
 
 struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 {
-	oval_sysinfo_t *sysinfo = (oval_sysinfo_t *) oscap_alloc(sizeof(oval_sysinfo_t));
+	oval_sysinfo_t *sysinfo = (oval_sysinfo_t *) malloc(sizeof(oval_sysinfo_t));
 	if (sysinfo == NULL)
 		return NULL;
 

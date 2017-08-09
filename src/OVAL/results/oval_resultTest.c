@@ -62,7 +62,7 @@ typedef struct oval_result_test {
 struct oval_result_test *oval_result_test_new(struct oval_result_system *sys, char *tstid)
 {
 	oval_result_test_t *test = (oval_result_test_t *)
-	    oscap_alloc(sizeof(oval_result_test_t));
+	    malloc(sizeof(oval_result_test_t));
 	if (test == NULL)
 		return NULL;
 

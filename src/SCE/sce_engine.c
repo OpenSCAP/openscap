@@ -67,7 +67,7 @@ struct sce_check_result
 
 struct sce_check_result* sce_check_result_new(void)
 {
-	struct sce_check_result* ret = oscap_alloc(sizeof(struct sce_check_result));
+	struct sce_check_result* ret = malloc(sizeof(struct sce_check_result));
 	ret->href = NULL;
 	ret->basename = NULL;
 	ret->std_out = NULL;
@@ -211,7 +211,7 @@ struct sce_session
 
 struct sce_session* sce_session_new(void)
 {
-	struct sce_session* ret = oscap_alloc(sizeof(struct sce_session));
+	struct sce_session* ret = malloc(sizeof(struct sce_session));
 	ret->results = oscap_list_new();
 
 	return ret;
@@ -267,7 +267,7 @@ struct sce_parameters
 
 struct sce_parameters* sce_parameters_new(void)
 {
-	struct sce_parameters *ret = oscap_alloc(sizeof(struct sce_parameters));
+	struct sce_parameters *ret = malloc(sizeof(struct sce_parameters));
 	ret->xccdf_directory = NULL;
 	ret->session = NULL;
 
@@ -388,7 +388,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	};
 
 	// bound values in KEY=VALUE form, ready to be passed as environment variables
-	char ** env_values = oscap_alloc(10 * sizeof(char * ));
+	char ** env_values = malloc(10 * sizeof(char * ));
 	size_t env_value_count = 10;
 
 	env_values[0] = "PATH=/bin:/sbin:/usr/bin:/usr/sbin";

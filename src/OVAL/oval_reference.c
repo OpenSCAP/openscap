@@ -92,7 +92,7 @@ char *oval_reference_get_url(struct oval_reference *ref)
 
 struct oval_reference *oval_reference_new(struct oval_definition_model *model)
 {
-	struct oval_reference *ref = (struct oval_reference *)oscap_alloc(sizeof(oval_reference_t));
+	struct oval_reference *ref = (struct oval_reference *)malloc(sizeof(oval_reference_t));
 	if (ref == NULL)
 		return NULL;
 

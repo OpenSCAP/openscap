@@ -992,7 +992,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
                         goto _ret;
 		}
 
-		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
+		pext->pdsc = malloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
 
                 dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
 

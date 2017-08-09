@@ -117,7 +117,7 @@ struct oval_string_iterator *oval_affected_get_products(struct oval_affected *af
 
 struct oval_affected *oval_affected_new(struct oval_definition_model *model)
 {
-	struct oval_affected *affected = (struct oval_affected *)oscap_alloc(sizeof(oval_affected_t));
+	struct oval_affected *affected = (struct oval_affected *)malloc(sizeof(oval_affected_t));
 	if (affected == NULL)
 		return NULL;
 

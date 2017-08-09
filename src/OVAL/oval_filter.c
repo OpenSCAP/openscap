@@ -50,7 +50,7 @@ struct oval_filter *oval_filter_new(struct oval_definition_model *model)
 {
 	struct oval_filter *filter;
 
-	filter = (struct oval_filter *) oscap_alloc(sizeof (struct oval_filter));
+	filter = (struct oval_filter *) malloc(sizeof (struct oval_filter));
 	if (filter == NULL)
 		return NULL;
 

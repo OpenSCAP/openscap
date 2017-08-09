@@ -85,7 +85,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
 				(xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_CHECKED))
 			return NULL;
 
-		score = oscap_alloc(sizeof(struct xccdf_default_score));
+		score = malloc(sizeof(struct xccdf_default_score));
 
 		/* Count with this rule */
 		score->count = 1;
@@ -104,7 +104,7 @@ static struct xccdf_default_score * xccdf_item_get_default_score(struct xccdf_it
 	case XCCDF_BENCHMARK:
 	case XCCDF_GROUP: {
 		/* Init */
-		score = oscap_alloc(sizeof(struct xccdf_default_score));
+		score = malloc(sizeof(struct xccdf_default_score));
 		score->count = 0;
 		score->score = 0.0;
 		score->accumulator = 0.0;
@@ -185,7 +185,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 				(xccdf_rule_result_get_result(rule_result) == XCCDF_RESULT_NOT_CHECKED))
 			return NULL;
 
-		score = oscap_alloc(sizeof(struct xccdf_flat_score));
+		score = malloc(sizeof(struct xccdf_flat_score));
 
 		/* max possible score = sum of weights*/
 		if (unweighted)
@@ -206,7 +206,7 @@ static struct xccdf_flat_score * xccdf_item_get_flat_score(struct xccdf_item * i
 	case XCCDF_BENCHMARK:
 	case XCCDF_GROUP:{
 		/* Init */
-		score = oscap_alloc(sizeof(struct xccdf_flat_score));
+		score = malloc(sizeof(struct xccdf_flat_score));
 		score->score = 0;
 		score->weight = 0.0;
 

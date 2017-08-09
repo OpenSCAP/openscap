@@ -92,7 +92,7 @@ char *oval_behavior_get_key(struct oval_behavior *behavior)
 
 struct oval_behavior *oval_behavior_new(struct oval_definition_model *model)
 {
-	oval_behavior_t *behavior = (oval_behavior_t *) oscap_alloc(sizeof(oval_behavior_t));
+	oval_behavior_t *behavior = (oval_behavior_t *) malloc(sizeof(oval_behavior_t));
 	if (behavior == NULL)
 		return NULL;
 
