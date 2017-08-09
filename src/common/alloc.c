@@ -94,7 +94,7 @@ void *__oscap_reallocf(void *p, size_t s)
 	m = realloc(p, s);
 	__oscap_err_check(m);
 	if (m == NULL && s > 0) {
-		oscap_free(p);
+		free(p);
 #if defined(OSCAP_ALLOC_EXIT)
 		exit(ENOMEM);
 #endif
@@ -166,7 +166,7 @@ void *__oscap_reallocf_dbg(void *p, size_t s, const char *f, size_t l)
 	m = realloc(p, s);
 	__oscap_err_check(m);
 	if (m == NULL && s > 0) {
-		oscap_free(p);
+		free(p);
 #if defined(OSCAP_ALLOC_EXIT)
 		exit(ENOMEM);
 #endif
@@ -174,18 +174,4 @@ void *__oscap_reallocf_dbg(void *p, size_t s, const char *f, size_t l)
 	return (m);
 }
 
-void __oscap_free_dbg(void **p, const char *f, size_t l)
-{
-	assume_d (p != NULL, /* void */);
-#if defined(OSCAP_ALLOC_STRICT)
-	assume_d (*p != NULL, /* void */);
-#endif
-	if (*p != NULL) {
-		free(*p);
-#if defined(OSCAP_ALLOC_RESET)
-		*p = NULL;
-#endif
-	}
-	return;
-}
 #endif

@@ -70,11 +70,8 @@ __ATTRIB void *oscap_reallocf(void *p, size_t s)
 	return __oscap_reallocf(p, s);
 }
 
+// Do not use, we keep this just for ABI compatibility
 void __oscap_free(void *p);
-__ATTRIB void oscap_free(void *p)
-{
-	__oscap_free(p);
-}
 /// @endcond
 
 /**
@@ -93,10 +90,6 @@ __ATTRIB void oscap_free(void *p)
  * void *realloc(void *ptr, size_t size) wrapper freeing old memory on failure
  */
 # define oscap_reallocf(p, s) __oscap_reallocf((void *)(p), s)
-/**
- * void free(void *ptr) wrapper
- */
-# define oscap_free(p)        __oscap_free ((void *)(p))
 
 #else
 void *__oscap_alloc_dbg(size_t s, const char *f, size_t l);
@@ -123,12 +116,6 @@ __ATTRIB void *oscap_reallocf(void *p, size_t s)
 	return __oscap_reallocf_dbg(p, s, __FUNCTION__, 0);
 }
 
-void __oscap_free_dbg(void **p, const char *f, size_t l);
-__ATTRIB void oscap_free(void *p)
-{
-	__oscap_free_dbg(&p, __FUNCTION__, 0);
-}
-
 
 /**
  * malloc wrapper
@@ -146,10 +133,6 @@ __ATTRIB void oscap_free(void *p)
  * realloc wrapper freeing old memory on failure
  */
 # define oscap_reallocf(p, s) __oscap_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
-/**
- * free wrapper
- */
-# define oscap_free(p)        __oscap_free_dbg ((void **)((void *)&(p)), __PRETTY_FUNCTION__, __LINE__)
 #endif
 
 /// @cond
