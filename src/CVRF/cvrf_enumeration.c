@@ -94,6 +94,7 @@ static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
 	{CVRF_RELATIONSHIP, "Relationship", NULL},
 	{CVRF_PRODUCT_NAME, "FullProductName", NULL},
 	{CVRF_VULNERABILITY, "Vulnerability", NULL},
+	{CVRF_INVOLVEMENT, "Involvement", "Involvements"},
 	{CVRF_SCORE_SET, "ScoreSet", "CVSSScoreSet"},
 	{CVRF_PRODUCT_STATUS, "Status", "ProductStatuses"},
 	{CVRF_THREAT, "Threat", "Threats"},
@@ -147,8 +148,8 @@ const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
 	{0, NULL}
 };
 
-cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Type", CVRF_DOC_PUBLISHER_TYPE_MAP);
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name) {
+	return cvrf_enumeration_attr(reader, attr_name, CVRF_DOC_PUBLISHER_TYPE_MAP);
 }
 const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type) {
 	return cvrf_enumeration_get_text(CVRF_DOC_PUBLISHER_TYPE_MAP, doc_publisher_type);

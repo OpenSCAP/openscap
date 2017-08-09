@@ -312,6 +312,26 @@ void cvrf_score_set_add_metric(struct cvrf_score_set *score_set, enum cvss_categ
 
 
 /************************************************************************************************
+ * @struct cvrf_involvement
+ *
+ * PARENT NODE: Involvements container
+ * REQUIRED: Status attribute [max: 1], Party attribute [max: 1]
+ * OPTIONAL: Description element [min: 0, max: 1]
+ */
+struct cvrf_involvement;
+
+const char *cvrf_involvement_get_description(const struct cvrf_involvement *involve);
+
+bool cvrf_involvement_set_description(struct cvrf_involvement *involve, const char *description);
+
+struct cvrf_involvement *cvrf_involvement_new(void);
+
+void cvrf_involvement_free(struct cvrf_involvement *involve);
+
+struct cvrf_involvement *cvrf_involvement_clone(const struct cvrf_involvement *involve);
+
+
+/************************************************************************************************
  * @struct cvrf_vulnerability
  * Provides information about Vulnerabilities for products and packages referenced in
  * ProductTree branches and relationships
@@ -826,12 +846,60 @@ void cvrf_doc_tracking_free(struct cvrf_doc_tracking *tracking);
 
 struct cvrf_doc_tracking *cvrf_doc_tracking_clone(const struct cvrf_doc_tracking *tracking);
 
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return contents of ID element within Identification element
+ */
 const char *cvrf_doc_tracking_get_tracking_id(const struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return Iterator for the stringlist of Alias elements within Identification element
+ */
 struct oscap_string_iterator *cvrf_doc_tracking_get_aliases(struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return contents of @return contents of Version element within DocumentTracking element
+ */
 const char *cvrf_doc_tracking_get_version(const struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return contents of InitialReleaseDate element within DocumentTracking element
+ */
 const char *cvrf_doc_tracking_get_init_release_date(const struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return contents of CurrentReleaseDate element within DocumentTracking element
+ */
 const char *cvrf_doc_tracking_get_cur_release_date(const struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return contents of Engine element within Generator element
+ */
 const char *cvrf_doc_tracking_get_generator_engine(const struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ *
+ * @return contents of Date element within Generator element
+ */
 const char *cvrf_doc_tracking_get_generator_date(const struct cvrf_doc_tracking *tracking);
 
 bool cvrf_doc_tracking_set_tracking_id(struct cvrf_doc_tracking *tracking, const char *tracking_id);

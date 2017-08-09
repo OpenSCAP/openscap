@@ -53,6 +53,7 @@ typedef enum {
 	CVRF_RELATIONSHIP,
 	CVRF_PRODUCT_NAME,
 	CVRF_VULNERABILITY,
+	CVRF_INVOLVEMENT,
 	CVRF_SCORE_SET,
 	CVRF_PRODUCT_STATUS,
 	CVRF_THREAT,
@@ -75,7 +76,7 @@ typedef enum {
 } cvrf_doc_publisher_type_t;
 
 cvrf_doc_publisher_type_t cvrf_doc_publisher_get_type(struct cvrf_doc_publisher *publisher);
-cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader);
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name);
 const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type);
 
 
@@ -284,6 +285,13 @@ struct cvrf_product_name *cvrf_product_name_parse(xmlTextReaderPtr reader);
 struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF Involvement element
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Involvement
+ */
+struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse a ScoreSet element of CVSSScoreSets container
  * @param reader XML Text Reader representing XML model
  * @return parsed ScoreSet element
@@ -351,6 +359,8 @@ xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation);
 xmlNode *cvrf_group_to_dom(const struct cvrf_group *group);
 
 xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln);
+
+xmlNode *cvrf_involvement_to_dom(const struct cvrf_involvement *involve);
 
 xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set);
 
