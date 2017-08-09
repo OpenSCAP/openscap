@@ -242,8 +242,8 @@ struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector)
     }
 
 cleanup:
-    oscap_free(vector_dup);
-    oscap_free(components);
+    free(vector_dup);
+    free(components);
     return impact;
 
 syntax_error:
@@ -365,7 +365,7 @@ void cvss_impact_free(struct cvss_impact* impact)
         cvss_metrics_free(cvss_impact_get_base_metrics(impact));
         cvss_metrics_free(cvss_impact_get_temporal_metrics(impact));
         cvss_metrics_free(cvss_impact_get_environmental_metrics(impact));
-        oscap_free(impact);
+        free(impact);
     }
 }
 
@@ -484,7 +484,7 @@ void cvss_impact_describe(const struct cvss_impact *impact, FILE *f)
     char *vec = cvss_impact_to_vector(impact);
     if (vec) {
         fprintf(f, "CVSS vector: %s\n\n", vec);
-        oscap_free(vec);
+        free(vec);
     }
 
     if (impact->base_metrics) {
@@ -592,7 +592,7 @@ bool cvss_metrics_export(const struct cvss_metrics *m, xmlTextWriterPtr writer)
     if (!isnan(m->score)) {
         char *score_str = oscap_sprintf("%.1f", m->score);
         xmlTextWriterWriteElementNS(writer, NULL, BAD_CAST "score", NULL, BAD_CAST score_str);
-        oscap_free(score_str);
+        free(score_str);
     }
 
     for (size_t i = 0; i < cvss_metrics_component_num(m); ++i) {
@@ -614,10 +614,10 @@ bool cvss_metrics_export(const struct cvss_metrics *m, xmlTextWriterPtr writer)
 void cvss_metrics_free(struct cvss_metrics* metrics)
 {
     if (metrics) {
-        oscap_free(metrics->source);
-        oscap_free(metrics->upgraded_from_version);
-        oscap_free(metrics->generated_on_datetime);
-        oscap_free(metrics);
+        free(metrics->source);
+        free(metrics->upgraded_from_version);
+        free(metrics->generated_on_datetime);
+        free(metrics);
     }
 }
 
