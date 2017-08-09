@@ -134,7 +134,7 @@ static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_parse(xmlTextReaderPtr 
 		return NULL;
 	}
 	deprecatedby->type = oscap_string_to_enum(CPE_EXT_DEPRECATION_MAP, type);
-	oscap_free(type);
+	free(type);
 	return deprecatedby;
 }
 
@@ -293,16 +293,16 @@ int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer)
 
 static void cpe_ext_deprecatedby_free(struct cpe_ext_deprecatedby *deprecatedby)
 {
-	oscap_free(deprecatedby->name);
-	oscap_free(deprecatedby);
+	free(deprecatedby->name);
+	free(deprecatedby);
 }
 
 static void cpe_ext_deprecation_free(struct cpe_ext_deprecation *deprecation)
 {
 	if (deprecation != NULL) {
-		oscap_free(deprecation->date);
+		free(deprecation->date);
 		oscap_list_free(deprecation->deprecatedbys, (oscap_destruct_func) cpe_ext_deprecatedby_free);
-		oscap_free(deprecation);
+		free(deprecation);
 	}
 }
 
@@ -310,8 +310,8 @@ void cpe23_item_free(struct cpe23_item *item)
 {
 	if (item != NULL) {
 		oscap_list_free(item->deprecations, (oscap_destruct_func) cpe_ext_deprecation_free);
-		oscap_free(item->name);
-		oscap_free(item);
+		free(item->name);
+		free(item);
 	}
 }
 

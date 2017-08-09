@@ -351,7 +351,7 @@ struct cpe_testexpr *cpe_testexpr_parse(xmlTextReaderPtr reader)
 		else {
 			// unknown operator problem
 			xmlFree(temp);
-			oscap_free(ret);
+			free(ret);
 			return NULL;
 		}
 		xmlFree(temp);
@@ -531,7 +531,7 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 		xmlTextWriterStartElementNS(writer, NULL, TAG_FACT_REF_STR, NULL);
 		char *cpe_name_str = cpe_name_get_as_str(expr->meta.cpe);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST cpe_name_str);
-		oscap_free(cpe_name_str);
+		free(cpe_name_str);
 		xmlTextWriterEndElement(writer);
 	}
 	else if (expr->oper == CPE_LANG_OPER_CHECK) {
@@ -588,9 +588,9 @@ void cpe_lang_model_free(struct cpe_lang_model *platformspec)
 
 	oscap_htable_free0(platformspec->item);
 	oscap_list_free(platformspec->platforms, (oscap_destruct_func) cpe_platform_free);
-	oscap_free(platformspec->origin_file);
+	free(platformspec->origin_file);
 
-	oscap_free(platformspec);
+	free(platformspec);
 }
 
 void cpe_platform_free(struct cpe_platform *platform)
@@ -602,7 +602,7 @@ void cpe_platform_free(struct cpe_platform *platform)
 	xmlFree(platform->remark);
 	oscap_list_free(platform->titles, (oscap_destruct_func) oscap_text_free);
 	cpe_testexpr_free(platform->expr);
-	oscap_free(platform);
+	free(platform);
 }
 
 static void cpe_testexpr_meta_free(struct cpe_testexpr *expr)
@@ -620,11 +620,11 @@ static void cpe_testexpr_meta_free(struct cpe_testexpr *expr)
 		expr->meta.cpe = NULL;
 		break;
 	case CPE_LANG_OPER_CHECK:
-		oscap_free(expr->meta.check.system);
+		free(expr->meta.check.system);
 		expr->meta.check.system = NULL;
-		oscap_free(expr->meta.check.href);
+		free(expr->meta.check.href);
 		expr->meta.check.href = NULL;
-		oscap_free(expr->meta.check.id);
+		free(expr->meta.check.id);
 		expr->meta.check.id = NULL;
 		break;
 	default:
@@ -639,7 +639,7 @@ void cpe_testexpr_free(struct cpe_testexpr *expr)
 
 	cpe_testexpr_meta_free(expr);
 	expr->oper = 0;
-	oscap_free(expr);
+	free(expr);
 }
 
 /* End of free functions
@@ -755,7 +755,7 @@ bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *e
 
 bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const char* origin_file)
 {
-	oscap_free(lang_model->origin_file);
+	free(lang_model->origin_file);
 	lang_model->origin_file = oscap_strdup(origin_file);
 
 	return true;

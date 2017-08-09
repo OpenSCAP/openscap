@@ -210,7 +210,7 @@ bool cpe_set_field(struct cpe_name * cpe, int idx, const char *newval)
 		return false;
 	}
 
-	oscap_free(*fieldptr);
+	free(*fieldptr);
 	if (newval && strcmp(newval, "") == 0)
 		newval = NULL;
 	if (newval != NULL)
@@ -258,9 +258,9 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 						// the rest are ~-encoded extended attributes
 						for (int j = 0; j < 5 && extended_attribs[1 + j] != NULL; ++j) {
 							if (!cpe_urldecode(extended_attribs[1 + j])) {
-								oscap_free(extended_attribs);
-								oscap_free(data_);
-								oscap_free(fields_);
+								free(extended_attribs);
+								free(data_);
+								free(fields_);
 								cpe_name_free(cpe);
 								return NULL;
 							}
@@ -268,13 +268,13 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 							cpe_set_field(cpe, CPE_BASIC_FIELDNUM + j, extended_attribs[1 + j]);
 						}
 
-						oscap_free(extended_attribs); // we have used all the pointed to data
+						free(extended_attribs); // we have used all the pointed to data
 					}
 				}
 
 				if (!cpe_urldecode(fields_[i])) {
-					oscap_free(data_);
-					oscap_free(fields_);
+					free(data_);
+					free(fields_);
 					cpe_name_free(cpe);
 					return NULL;
 				}
@@ -282,8 +282,8 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 				cpe_set_field(cpe, i, fields_[i]);
 			}
 
-			oscap_free(data_);
-			oscap_free(fields_);
+			free(data_);
+			free(fields_);
 		}
 		else if (format == CPE_FORMAT_STRING) {
 			char *data_ = strdup(cpestr + 8);	// without 'cpe:2.3:'
@@ -291,8 +291,8 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 			for (i = 0; fields_[i] && i < CPE_TOTAL_FIELDNUM; ++i)
 			{
 				if (!cpestring_comp_decode(fields_[i])) {
-					oscap_free(data_);
-					oscap_free(fields_);
+					free(data_);
+					free(fields_);
 					cpe_name_free(cpe);
 					return NULL;
 				}
@@ -300,8 +300,8 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 				cpe_set_field(cpe, i, fields_[i]);
 			}
 
-			oscap_free(data_);
-			oscap_free(fields_);
+			free(data_);
+			free(fields_);
 		}
 		else if (format == CPE_FORMAT_WFN)
 		{
@@ -515,11 +515,11 @@ static char *cpe_pack_extended_attributes(const struct cpe_name *cpe)
 			encoded_other
 	);
 
-	oscap_free(encoded_edition);
-	oscap_free(encoded_sw_edition);
-	oscap_free(encoded_target_sw);
-	oscap_free(encoded_target_hw);
-	oscap_free(encoded_other);
+	free(encoded_edition);
+	free(encoded_sw_edition);
+	free(encoded_target_sw);
+	free(encoded_target_hw);
+	free(encoded_other);
 
 	return ret;
 }
@@ -677,7 +677,7 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format)
 
 		// free individual parts
 		for (int j = 0; j < CPE_BASIC_FIELDNUM; ++j)
-			oscap_free(part[j]);
+			free(part[j]);
 
 		// trim trailing colons
 		while (result[--i] == ':')
@@ -714,7 +714,7 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format)
 
 		// free individual parts
 		for (int j = 0; j < CPE_TOTAL_FIELDNUM; ++j)
-			oscap_free(part[j]);
+			free(part[j]);
 
 		return result;
 	}
@@ -745,7 +745,7 @@ int cpe_name_write(const struct cpe_name *cpe, FILE * f)
 
 	ret = fprintf(f, "%s", uri);
 
-	oscap_free(uri);
+	free(uri);
 	return ret;
 }
 
@@ -757,7 +757,7 @@ void cpe_name_free(struct cpe_name *cpe)
 	int i;
 	for (i = 0; i < CPE_TOTAL_FIELDNUM; ++i)
 		cpe_set_field(cpe, i, NULL);
-	oscap_free(cpe);
+	free(cpe);
 }
 
 const char * cpe_name_supported(void)

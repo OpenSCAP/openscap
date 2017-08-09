@@ -40,7 +40,7 @@ static inline bool cpe_session_add_default_cpe(struct cpe_session *session)
 {
 	char* cpe_dict_path = oscap_sprintf("%s/openscap-cpe-dict.xml", oscap_path_to_cpe());
 	struct oscap_source *source = oscap_source_new_from_file(cpe_dict_path);
-	oscap_free(cpe_dict_path);
+	free(cpe_dict_path);
 	const bool ret = cpe_session_add_cpe_dict_source(session, source);
 	oscap_source_free(source);
 	return ret;
@@ -75,7 +75,7 @@ void cpe_session_free(struct cpe_session *session)
 		oscap_list_free(session->lang_models, (oscap_destruct_func) cpe_lang_model_free);
 		oscap_htable_free(session->oval_sessions, (oscap_destruct_func) _xccdf_policy_destroy_cpe_oval_session);
 		oscap_htable_free(session->applicable_platforms, NULL);
-		oscap_free(session);
+		free(session);
 	}
 }
 
