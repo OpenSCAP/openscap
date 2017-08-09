@@ -513,12 +513,13 @@ struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerabili
 struct oscap_iterator *cvrf_vulnerability_get_involvements(struct cvrf_vulnerability *vuln);
 void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
 struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
 
 /**
  * @memberof cvrf_vulnerability
  * @param vuln CVRF Vulnerability structure
  * @param vulnerability_title Canonical name of Vulnerability
- * @return
+ * @return true on success
  */
 bool cvrf_vulnerability_set_title(struct cvrf_vulnerability *vuln, const char *vulnerability_title);
 
@@ -951,6 +952,100 @@ const char *cvrf_acknowledgment_get_description(const struct cvrf_acknowledgment
  * @return true on success
  */
 bool cvrf_acknowledgment_set_description(struct cvrf_acknowledgment *ack, const char *description);
+
+/************************************************************************************************
+ * @struct cvrf_note
+ *
+ * PARENT NODE: DocumentNotes container or Notes container
+ * REQUIRED: Type attribute [min: 1, max: 1], Ordinal attribute [min: 1, max: 1],
+ * OPTIONAL: Audience attribute [min: 0, max: 1], Title attribute [min: 0, max: 1]
+ */
+struct cvrf_note;
+
+/**
+ * New CVRF Note element within Notes or DocumentNotes container
+ * @memberof cvrf_note
+ * @return New CVRF Note structure
+ */
+struct cvrf_note *cvrf_note_new(void);
+
+/**
+ * Deallocates memory for a Note element of the Notes container
+ * @memberof cvrf_note
+ * @param note The CVRF Note structure to be freed
+ */
+void cvrf_note_free(struct cvrf_note *note);
+
+/**
+ * @memberof cvrf_note
+ * @param note Original Note structure to be cloned
+ * @return New cloned Note structure with same data as the original
+ */
+struct cvrf_note *cvrf_note_clone(const struct cvrf_note *note);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return Ordinal attribute of the Note element
+ */
+int cvrf_note_get_ordinal(const struct cvrf_note *note);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return Contents of Audience attribute of the Note element
+ */
+const char *cvrf_note_get_audience(const struct cvrf_note *note);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return Contents of Title attribute of the Note element
+ */
+const char *cvrf_note_get_title(const struct cvrf_note *note);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return Contents of the Note element itself
+ */
+const char *cvrf_note_get_contents(const struct cvrf_note *note);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return true on success
+ */
+bool cvrf_note_set_ordinal(struct cvrf_note *note, int ordinal);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return true on success
+ */
+bool cvrf_note_set_audience(struct cvrf_note *note, const char *audience);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return true on success
+ */
+bool cvrf_note_set_title(struct cvrf_note *note, const char *title);
+
+/**
+ * @memberof cvrf_note
+ * @param note CVRF Note structure
+ *
+ * @return true on success
+ */
+bool cvrf_note_set_contents(struct cvrf_note *note, const char *contents);
 
 
 /************************************************************************************************
@@ -1675,7 +1770,7 @@ int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file);
 
 int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
 
-bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product);
+bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product);
 
 int cvrf_session_construct_definition_model(struct cvrf_session *session);
 

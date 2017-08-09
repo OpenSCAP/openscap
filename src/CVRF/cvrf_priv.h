@@ -45,6 +45,7 @@ typedef enum {
 	CVRF_DOCUMENT_PUBLISHER,
 	CVRF_DOCUMENT_TRACKING,
 	CVRF_REVISION,
+	CVRF_DOCUMENT_NOTE,
 	CVRF_DOCUMENT_REFERENCE,
 	CVRF_ACKNOWLEDGMENT,
 	CVRF_PRODUCT_TREE,
@@ -53,6 +54,7 @@ typedef enum {
 	CVRF_RELATIONSHIP,
 	CVRF_PRODUCT_NAME,
 	CVRF_VULNERABILITY,
+	CVRF_NOTE,
 	CVRF_INVOLVEMENT,
 	CVRF_SCORE_SET,
 	CVRF_PRODUCT_STATUS,
@@ -90,13 +92,25 @@ cvrf_doc_status_type_t cvrf_doc_tracking_get_status(struct cvrf_doc_tracking *tr
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
 
 typedef enum {
+	CVRF_NOTE_GENERAL,
+	CVRF_NOTE_DETAILS,
+	CVRF_NOTE_DESCRIPTION,
+	CVRF_NOTE_SUMMARY,
+	CVRF_NOTE_FAQ,
+	CVRF_NOTE_LEGAL_DISCLAIMER,
+	CVRF_NOTE_OTHER,
+} cvrf_note_type_t;
+
+cvrf_note_type_t cvrf_note_get_note_type(const struct cvrf_note *note);
+const char *cvrf_note_type_get_text(cvrf_note_type_t note_type);
+
+typedef enum {
 	CVRF_REFERENCE_EXTERNAL,
 	CVRF_REFERENCE_SELF
 } cvrf_reference_type_t;
 
 cvrf_reference_type_t cvrf_reference_get_reference_type(struct cvrf_reference *reference);
 const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type);
-
 
 typedef enum {
 	CVRF_BRANCH_VENDOR,
@@ -222,6 +236,13 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader);
 struct cvrf_revision *cvrf_revision_parse(xmlTextReaderPtr reader);
 
 /**
+ * Parse CVRF Note element
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CVRF Note
+ */
+struct cvrf_note *cvrf_note_parse(xmlTextReaderPtr reader);
+
+/**
  * Parse a CVRF Reference element
  * @param reader XML Text Reader representing XML model
  * @return parsed CVRF Reference
@@ -334,6 +355,8 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 xmlNode *cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher);
 
 xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking);
+
+xmlNode *cvrf_note_to_dom(struct cvrf_note *note);
 
 xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision);
 

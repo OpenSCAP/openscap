@@ -201,12 +201,12 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
 		xmlNode *vuln_node = cvrf_vulnerability_to_dom(vuln);
 		xmlAddChild(root_node, vuln_node);
-		xmlNode *results_node = xmlNewTextChild(vuln_node, NULL, "Results", NULL);
+		xmlNode *results_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "Results", NULL);
 
 		struct oscap_string_iterator *product_ids = cvrf_session_get_product_ids(session);
 		while (oscap_string_iterator_has_more(product_ids)) {
 			const char *product_id = oscap_string_iterator_next(product_ids);
-			xmlNode *result_node = xmlNewTextChild(results_node, NULL, "Result", NULL);
+			xmlNode *result_node = xmlNewTextChild(results_node, NULL, BAD_CAST "Result", NULL);
 			cvrf_element_add_child("ProductID", product_id, result_node);
 
 			if (cvrf_product_vulnerability_fixed(vuln, product_id)) {
@@ -269,7 +269,7 @@ static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(str
 }
 
 
-bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, char *product) {
+bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product) {
 	struct cvrf_product_status_iterator *it = cvrf_vulnerability_get_product_statuses(vuln);
 	while (cvrf_product_status_iterator_has_more(it)) {
 		struct cvrf_product_status *stat = cvrf_product_status_iterator_next(it);
