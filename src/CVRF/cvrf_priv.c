@@ -486,6 +486,7 @@ void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const
 				oscap_stringlist_add_string(filtered_ids, product_id);
 		}
 		oscap_string_iterator_free(products);
+		oscap_stringlist_free(stat->product_ids);
 		stat->product_ids = filtered_ids;
 	}
 	cvrf_product_status_iterator_free(statuses);
@@ -769,7 +770,7 @@ int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *
 	while (cvrf_relationship_iterator_has_more(relationships)) {
 		struct cvrf_relationship *relation = cvrf_relationship_iterator_next(relationships);
 		if (!strcmp(branch_id, cvrf_relationship_get_relates_to_ref(relation)))
-			oscap_list_add(filtered_relation, relation);
+			oscap_list_add(filtered_relation, cvrf_relationship_clone(relation));
 	}
 	cvrf_relationship_iterator_free(relationships);
 
@@ -777,6 +778,7 @@ int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *
 		oscap_free(filtered_relation);
 		return -1;
 	} else {
+		oscap_list_free(tree->relationships, (oscap_destruct_func) cvrf_relationship_free);
 		tree->relationships = filtered_relation;
 		return 0;
 	}

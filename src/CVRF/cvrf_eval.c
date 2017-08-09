@@ -222,16 +222,6 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 			}*/
 		}
 
-		if (vulnerable && cvrf_vulnerability_get_remediation_count(vuln) > 0) {
-			xmlNode *remediations_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "Remediations", NULL);
-			struct cvrf_remediation_iterator *remediations = cvrf_vulnerability_get_remediations(vuln);
-			while (cvrf_remediation_iterator_has_more(remediations)) {
-				xmlNode *remed_node = cvrf_remediation_to_dom(cvrf_remediation_iterator_next(remediations));
-				xmlAddChild(remediations_node, remed_node);
-			}
-			cvrf_remediation_iterator_free(remediations);
-		}
-
 		oscap_string_iterator_free(product_ids);
 		vulnerable = false;
 	}
