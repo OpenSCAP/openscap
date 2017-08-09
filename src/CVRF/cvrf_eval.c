@@ -197,33 +197,26 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	//cvrf_export_element(os_name, "OS Name", writer);
 
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(session->model);
-	bool vulnerable = false;
 	while (cvrf_vulnerability_iterator_has_more(it)) {
 		struct cvrf_vulnerability *vuln = cvrf_vulnerability_iterator_next(it);
-		xmlNode *vuln_node = xmlNewTextChild(root_node, NULL, BAD_CAST "Vulnerability", NULL);
+		xmlNode *vuln_node = cvrf_vulnerability_to_dom(vuln);
+		xmlAddChild(root_node, vuln_node);
+		xmlNode *results_node = xmlNewTextChild(vuln_node, NULL, "Results", NULL);
 
-		cvrf_element_add_child("Title", cvrf_vulnerability_get_title(vuln), vuln_node);
-		cvrf_element_add_child("ID", cvrf_vulnerability_get_system_id(vuln), vuln_node);
-		cvrf_element_add_child("DiscoveryDate", cvrf_vulnerability_get_discovery_date(vuln), vuln_node);
-		cvrf_element_add_child("ReleaseDate", cvrf_vulnerability_get_release_date(vuln), vuln_node);
-		cvrf_element_add_child("CVE", cvrf_vulnerability_get_cve_id(vuln), vuln_node);
-
-		xmlNode *statuses_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ProductStatuses", NULL);
 		struct oscap_string_iterator *product_ids = cvrf_session_get_product_ids(session);
 		while (oscap_string_iterator_has_more(product_ids)) {
 			const char *product_id = oscap_string_iterator_next(product_ids);
-			/*
-			if (cvrf_product_vulnerability_fixed(vuln, product_id)) {
+			xmlNode *result_node = xmlNewTextChild(results_node, NULL, "Result", NULL);
+			cvrf_element_add_child("ProductID", product_id, result_node);
 
+			if (cvrf_product_vulnerability_fixed(vuln, product_id)) {
+				cvrf_element_add_child("VulnerabilityStatus", "FIXED", result_node);
 			}
 			else {
-
-				vulnerable = true;
-			}*/
+				cvrf_element_add_child("VulnerabilityStatus", "VULNERABLE", result_node);
+			}
 		}
-
 		oscap_string_iterator_free(product_ids);
-		vulnerable = false;
 	}
 	cvrf_vulnerability_iterator_free(it);
 
