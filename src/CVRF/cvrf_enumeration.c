@@ -46,7 +46,7 @@
  */
 
 static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map) {
-	int ret = -1;
+	int ret = 0;
 	char *attrstr = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 	if (attrstr) {
 		ret = oscap_string_to_enum(map, attrstr);
@@ -56,7 +56,7 @@ static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 }
 
 static int cvrf_enumeration_node_value(xmlTextReaderPtr reader, const struct oscap_string_map *map) {
-	int ret = -1;
+	int ret = 0;
 	char *valuestr = (char *)oscap_element_string_copy(reader);
 	if (valuestr) {
 		ret = oscap_string_to_enum(map, valuestr);
@@ -76,6 +76,160 @@ static int cvrf_enumeration_from_text(const struct oscap_string_map *map, const 
 /*****************************************************************************
  * CVRF enum map definitions
  */
+
+const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
+	{CVRF_DOC_PUBLISHER_VENDOR, "Vendor"},
+	{CVRF_DOC_PUBLISHER_DISCOVERER, "Discoverer"},
+	{CVRF_DOC_PUBLISHER_COORDINATOR, "Coordinator"},
+	{CVRF_DOC_PUBLISHER_USER, "User"},
+	{CVRF_DOC_PUBLISHER_OTHER, "Other"},
+	{0, NULL}
+};
+
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name) {
+	return cvrf_enumeration_attr(reader, attr_name, CVRF_DOC_PUBLISHER_TYPE_MAP);
+}
+const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type) {
+	return cvrf_enumeration_get_text(CVRF_DOC_PUBLISHER_TYPE_MAP, doc_publisher_type);
+}
+
+const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
+	{CVRF_DOC_STATUS_DRAFT, "Draft"},
+	{CVRF_DOC_STATUS_INTERIM, "Interim"},
+	{CVRF_DOC_STATUS_FINAL, "Final"},
+	{0, NULL}
+};
+
+static cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_node_value(reader, CVRF_DOC_STATUS_TYPE_MAP);
+}
+const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type) {
+	return cvrf_enumeration_get_text(CVRF_DOC_STATUS_TYPE_MAP, doc_status_type);
+}
+
+const struct oscap_string_map CVRF_REFERENCE_TYPE_MAP[] = {
+	{CVRF_REFERENCE_EXTERNAL, "External"},
+	{CVRF_REFERENCE_SELF, "Self"},
+	{0, NULL}
+};
+
+static cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_REFERENCE_TYPE_MAP);
+}
+const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type) {
+	return cvrf_enumeration_get_text(CVRF_REFERENCE_TYPE_MAP, reference_type);
+}
+
+const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
+	{CVRF_BRANCH_VENDOR, "Vendor"},
+	{CVRF_BRANCH_PRODUCT_FAMILY, "Product Family"},
+	{CVRF_BRANCH_PRODUCT_NAME, "Product Name"},
+	{CVRF_BRANCH_PRODUCT_VERSION, "Product Version"},
+	{CVRF_BRANCH_PATCH_LEVEL, "Patch Level"},
+	{CVRF_BRANCH_SERVICE_PACK, "Service Pack"},
+	{CVRF_BRANCH_ARCHITECTURE, "Architecture"},
+	{CVRF_BRANCH_LANGUAGE, "Language"},
+	{CVRF_BRANCH_LEGACY, "Legacy"},
+	{CVRF_BRANCH_SPECIFICATION, "Specification"},
+	{0, NULL}
+};
+static cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_BRANCH_TYPE_MAP);
+}
+const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type) {
+	return cvrf_enumeration_get_text(CVRF_BRANCH_TYPE_MAP, branch_type);
+}
+
+
+const struct oscap_string_map CVRF_RELATIONSHIP_TYPE_MAP[] = {
+	{CVRF_RELATIONSHIP_DEFAULT_COMPONENT, "Default Component Of"},
+	{CVRF_RELATIONSHIP_OPTIONAL_COMPONENT, "Optional Component Of"},
+	{CVRF_RELATIONSHIP_EXTERNAL_COMPONENT, "External Component Of"},
+	{CVRF_RELATIONSHIP_INSTALLED_ON, "Installed On"},
+	{CVRF_RELATIONSHIP_INSTALLED_WITH, "Installed With"},
+	{0, NULL}
+};
+
+static cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "RelationType", CVRF_RELATIONSHIP_TYPE_MAP);
+}
+const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t relationship_type) {
+	return cvrf_enumeration_get_text(CVRF_RELATIONSHIP_TYPE_MAP, relationship_type);
+}
+
+const struct oscap_string_map CVRF_INVOLVEMENT_STATUS_MAP[] = {
+	{CVRF_INVOLVEMENT_OPEN, "Open"},
+	{CVRF_INVOLVEMENT_DISPUTED, "Disputed"},
+	{CVRF_INVOLVEMENT_IN_PROGRESS, "In Progress"},
+	{CVRF_INVOLVEMENT_COMPLETED, "Completed"},
+	{CVRF_INVOLVEMENT_CONTACT_ATTEMPTED, "Contact Attempted"},
+	{CVRF_INVOLVEMENT_NOT_CONTACTED, "Not Contacted"},
+	{0, NULL}
+};
+
+static cvrf_involvement_status_type_t cvrf_involvement_status_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Status", CVRF_INVOLVEMENT_STATUS_MAP);
+}
+
+const char *cvrf_involvement_status_type_get_text(cvrf_involvement_status_type_t involvement_type) {
+	return cvrf_enumeration_get_text(CVRF_INVOLVEMENT_STATUS_MAP, involvement_type);
+}
+
+const struct oscap_string_map CVRF_PRODUCT_STATUS_TYPE_MAP[] = {
+	{CVRF_PRODUCT_STATUS_FIRST_AFFECTED, "First Affected"},
+	{CVRF_PRODUCT_STATUS_KNOWN_AFFECTED, "Known Affected"},
+	{CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED, "Known Not Affected"},
+	{CVRF_PRODUCT_STATUS_FIRST_FIXED, "First Fixed"},
+	{CVRF_PRODUCT_STATUS_FIXED, "Fixed"},
+	{CVRF_PRODUCT_STATUS_RECOMMENDED, "Recommended"},
+	{CVRF_PRODUCT_STATUS_LAST_AFFECTED, "Last Affected"},
+	{0, NULL}
+};
+
+static cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_PRODUCT_STATUS_TYPE_MAP);
+}
+
+const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product_status_type) {
+	return cvrf_enumeration_get_text(CVRF_PRODUCT_STATUS_TYPE_MAP, product_status_type);
+}
+
+
+const struct oscap_string_map CVRF_THREAT_TYPE_MAP[] = {
+	{CVRF_THREAT_IMPACT, "Impact"},
+	{CVRF_THREAT_EXPLOIT_STATUS, "Exploit Status"},
+	{CVRF_THREAT_TARGET_SET, "Target Set"},
+	{0, NULL}
+};
+
+static cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_THREAT_TYPE_MAP);
+}
+const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type) {
+	return cvrf_enumeration_get_text(CVRF_THREAT_TYPE_MAP, threat_type);
+}
+
+
+const struct oscap_string_map CVRF_REMEDIATION_TYPE_MAP[] = {
+	{CVRF_REMEDIATION_WORKAROUND, "Workaround"},
+	{CVRF_REMEDIATION_MITIGATION, "Mitigation"},
+	{CVRF_REMEDIATION_VENDOR_FIX, "Vendor Fix"},
+	{CVRF_REMEDIATION_NONE_AVAILABLE, "None Available"},
+	{CVRF_REMEDIATION_WILL_NOT_FIX, "Will Not Fix"},
+	{0, NULL}
+};
+
+static cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_REMEDIATION_TYPE_MAP);
+}
+const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_type) {
+	return cvrf_enumeration_get_text(CVRF_REMEDIATION_TYPE_MAP, remediation_type);
+}
+
+/*****************************************************************************
+ * CVRF Item Type
+ */
+
 struct cvrf_item_spec {
 	cvrf_item_type_t type;
 	const char *tag_name;
@@ -139,153 +293,29 @@ bool cvrf_item_type_has_container(cvrf_item_type_t item_type) {
 	return cvrf_item_type_get_container(item_type) != NULL;
 }
 
-const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
-	{CVRF_DOC_PUBLISHER_VENDOR, "Vendor"},
-	{CVRF_DOC_PUBLISHER_DISCOVERER, "Discoverer"},
-	{CVRF_DOC_PUBLISHER_COORDINATOR, "Coordinator"},
-	{CVRF_DOC_PUBLISHER_USER, "User"},
-	{CVRF_DOC_PUBLISHER_OTHER, "Other"},
-	{0, NULL}
-};
-
-cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name) {
-	return cvrf_enumeration_attr(reader, attr_name, CVRF_DOC_PUBLISHER_TYPE_MAP);
+int cvrf_item_parse_type_attribute(xmlTextReaderPtr reader, cvrf_item_type_t item) {
+	switch (item) {
+		case CVRF_DOCUMENT_PUBLISHER:
+			return cvrf_doc_publisher_type_parse(reader, "Type");
+		case CVRF_DOCUMENT_TRACKING:
+			return cvrf_doc_status_type_parse(reader);
+		case CVRF_REFERENCE:
+		case CVRF_DOCUMENT_REFERENCE:
+			return cvrf_reference_type_parse(reader);
+		case CVRF_BRANCH:
+			return cvrf_branch_type_parse(reader);
+		case CVRF_RELATIONSHIP:
+			return cvrf_relationship_type_parse(reader);
+		case CVRF_INVOLVEMENT:
+			return cvrf_involvement_status_type_parse(reader);
+		case CVRF_PRODUCT_STATUS:
+			return cvrf_product_status_type_parse(reader);
+		case CVRF_THREAT:
+			return cvrf_threat_type_parse(reader);
+		case CVRF_REMEDIATION:
+			return cvrf_remediation_type_parse(reader);
+		default:
+			return 0;
+	}
 }
-const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type) {
-	return cvrf_enumeration_get_text(CVRF_DOC_PUBLISHER_TYPE_MAP, doc_publisher_type);
-}
-
-const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
-	{CVRF_DOC_STATUS_DRAFT, "Draft"},
-	{CVRF_DOC_STATUS_INTERIM, "Interim"},
-	{CVRF_DOC_STATUS_FINAL, "Final"},
-	{0, NULL}
-};
-
-cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_node_value(reader, CVRF_DOC_STATUS_TYPE_MAP);
-}
-const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type) {
-	return cvrf_enumeration_get_text(CVRF_DOC_STATUS_TYPE_MAP, doc_status_type);
-}
-
-const struct oscap_string_map CVRF_REFERENCE_TYPE_MAP[] = {
-	{CVRF_REFERENCE_EXTERNAL, "External"},
-	{CVRF_REFERENCE_SELF, "Self"},
-	{0, NULL}
-};
-
-cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Type", CVRF_REFERENCE_TYPE_MAP);
-}
-const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type) {
-	return cvrf_enumeration_get_text(CVRF_REFERENCE_TYPE_MAP, reference_type);
-}
-
-const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
-	{CVRF_BRANCH_VENDOR, "Vendor"},
-	{CVRF_BRANCH_PRODUCT_FAMILY, "Product Family"},
-	{CVRF_BRANCH_PRODUCT_NAME, "Product Name"},
-	{CVRF_BRANCH_PRODUCT_VERSION, "Product Version"},
-	{CVRF_BRANCH_PATCH_LEVEL, "Patch Level"},
-	{CVRF_BRANCH_SERVICE_PACK, "Service Pack"},
-	{CVRF_BRANCH_ARCHITECTURE, "Architecture"},
-	{CVRF_BRANCH_LANGUAGE, "Language"},
-	{CVRF_BRANCH_LEGACY, "Legacy"},
-	{CVRF_BRANCH_SPECIFICATION, "Specification"},
-	{0, NULL}
-};
-cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Type", CVRF_BRANCH_TYPE_MAP);
-}
-const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type) {
-	return cvrf_enumeration_get_text(CVRF_BRANCH_TYPE_MAP, branch_type);
-}
-
-
-const struct oscap_string_map CVRF_RELATIONSHIP_TYPE_MAP[] = {
-	{CVRF_RELATIONSHIP_DEFAULT_COMPONENT, "Default Component Of"},
-	{CVRF_RELATIONSHIP_OPTIONAL_COMPONENT, "Optional Component Of"},
-	{CVRF_RELATIONSHIP_EXTERNAL_COMPONENT, "External Component Of"},
-	{CVRF_RELATIONSHIP_INSTALLED_ON, "Installed On"},
-	{CVRF_RELATIONSHIP_INSTALLED_WITH, "Installed With"},
-	{0, NULL}
-};
-
-cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "RelationType", CVRF_RELATIONSHIP_TYPE_MAP);
-}
-const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t relationship_type) {
-	return cvrf_enumeration_get_text(CVRF_RELATIONSHIP_TYPE_MAP, relationship_type);
-}
-
-const struct oscap_string_map CVRF_INVOLVEMENT_STATUS_MAP[] = {
-	{CVRF_INVOLVEMENT_OPEN, "Open"},
-	{CVRF_INVOLVEMENT_DISPUTED, "Disputed"},
-	{CVRF_INVOLVEMENT_IN_PROGRESS, "In Progress"},
-	{CVRF_INVOLVEMENT_COMPLETED, "Completed"},
-	{CVRF_INVOLVEMENT_CONTACT_ATTEMPTED, "Contact Attempted"},
-	{CVRF_INVOLVEMENT_NOT_CONTACTED, "Not Contacted"},
-	{0, NULL}
-};
-
-cvrf_involvement_status_type_t cvrf_involvement_status_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Status", CVRF_INVOLVEMENT_STATUS_MAP);
-}
-
-const char *cvrf_involvement_status_type_get_text(cvrf_involvement_status_type_t involvement_type) {
-	return cvrf_enumeration_get_text(CVRF_INVOLVEMENT_STATUS_MAP, involvement_type);
-}
-
-const struct oscap_string_map CVRF_PRODUCT_STATUS_TYPE_MAP[] = {
-	{CVRF_PRODUCT_STATUS_FIRST_AFFECTED, "First Affected"},
-	{CVRF_PRODUCT_STATUS_KNOWN_AFFECTED, "Known Affected"},
-	{CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED, "Known Not Affected"},
-	{CVRF_PRODUCT_STATUS_FIRST_FIXED, "First Fixed"},
-	{CVRF_PRODUCT_STATUS_FIXED, "Fixed"},
-	{CVRF_PRODUCT_STATUS_RECOMMENDED, "Recommended"},
-	{CVRF_PRODUCT_STATUS_LAST_AFFECTED, "Last Affected"},
-	{0, NULL}
-};
-
-cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Type", CVRF_PRODUCT_STATUS_TYPE_MAP);
-}
-
-const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product_status_type) {
-	return cvrf_enumeration_get_text(CVRF_PRODUCT_STATUS_TYPE_MAP, product_status_type);
-}
-
-
-const struct oscap_string_map CVRF_THREAT_TYPE_MAP[] = {
-	{CVRF_THREAT_IMPACT, "Impact"},
-	{CVRF_THREAT_EXPLOIT_STATUS, "Exploit Status"},
-	{CVRF_THREAT_TARGET_SET, "Target Set"},
-	{0, NULL}
-};
-
-cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Type", CVRF_THREAT_TYPE_MAP);
-}
-const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type) {
-	return cvrf_enumeration_get_text(CVRF_THREAT_TYPE_MAP, threat_type);
-}
-
-
-const struct oscap_string_map CVRF_REMEDIATION_TYPE_MAP[] = {
-	{CVRF_REMEDIATION_WORKAROUND, "Workaround"},
-	{CVRF_REMEDIATION_MITIGATION, "Mitigation"},
-	{CVRF_REMEDIATION_VENDOR_FIX, "Vendor Fix"},
-	{CVRF_REMEDIATION_NONE_AVAILABLE, "None Available"},
-	{CVRF_REMEDIATION_WILL_NOT_FIX, "Will Not Fix"},
-	{0, NULL}
-};
-
-cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_attr(reader, "Type", CVRF_REMEDIATION_TYPE_MAP);
-}
-const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_type) {
-	return cvrf_enumeration_get_text(CVRF_REMEDIATION_TYPE_MAP, remediation_type);
-}
-
 
