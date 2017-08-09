@@ -8,8 +8,8 @@
  * @{
  * Memory allocation wrapper functions used in library.
  *
- * It's recommended to use these wrappers for allocation and freeing dynamic memory
- * for OpenSCAP objects, objects members, ... .
+ * Don't see these wrappers, just use normal C memory allocation functions.
+ * These are here just for compatibility.
  */
 
 /*
@@ -41,10 +41,6 @@
 #include <stdlib.h>
 #include "public/oscap.h"
 
-/// @cond
-#define __ATTRIB __attribute__ ((unused)) static
-/// @endcond
-
 #if defined(NDEBUG)
 /// @cond
 // Do not use, we keep this just for ABI compatibility, use malloc instead
@@ -62,7 +58,6 @@ OSCAP_DEPRECATED(void *__oscap_reallocf(void *p, size_t s));
 // Do not use, we keep this just for ABI compatibility, use free instead
 OSCAP_DEPRECATED(void __oscap_free(void *p));
 /// @endcond
-
 #endif
 
 /// @cond
