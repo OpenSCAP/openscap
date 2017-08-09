@@ -44,7 +44,7 @@ static void check_engine_plugin_def_free(struct check_engine_plugin_def *plugin)
 	//if (plugin->module_handle)
 	// FIXME: Warning?
 
-	oscap_free(plugin);
+	free(plugin);
 }
 
 struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool quiet)
@@ -55,7 +55,7 @@ struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool
 	char *full_path = path_prefix ? oscap_sprintf("%s/%s", path_prefix, path) : oscap_strdup(path);
 	// NB: valgrind reports a leak on the next line, I have confirmed this to be a false positive
 	ret->module_handle = dlopen(full_path, RTLD_LAZY);
-	oscap_free(full_path);
+	free(full_path);
 
 	char *error = NULL;
 	if (!ret->module_handle) {
