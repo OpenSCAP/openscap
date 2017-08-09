@@ -156,10 +156,10 @@ void *probe_signal_handler(void *arg)
 				}
 #endif
 				SEAP_msg_free(coll.thr[coll.cnt - 1]->msg);
-                                oscap_free(coll.thr[coll.cnt - 1]);
+                                free(coll.thr[coll.cnt - 1]);
 			}
 
-			oscap_free(coll.thr);
+			free(coll.thr);
 			goto exitloop;
 		}
                 case SIGUSR2:

@@ -141,9 +141,9 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 		oval_smc_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
 		if (model->sysitem_map)
 			oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
-		oscap_free(model->schema);
+		free(model->schema);
 		oval_generator_free(model->generator);
-		oscap_free(model);
+		free(model);
 	}
 }
 
@@ -256,8 +256,8 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
 		ret = -1;
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	xmlFreeTextReader(context.reader);
 	return ret;
 }

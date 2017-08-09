@@ -105,7 +105,7 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	SEXP_free(r0);
 
 	max_depth = atoi(tmp);
-	oscap_free(tmp);
+	free(tmp);
 
 	setting = oscap_calloc(1, sizeof(setting_t));
 	setting->spath = spath;
@@ -190,12 +190,12 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 
  error:
 	SEXP_free(r1);
-	oscap_free(path);
+	free(path);
 
-	oscap_free(setting->follow);
-	oscap_free(setting->direction);
+	free(setting->follow);
+	free(setting->direction);
 	fsdev_free(setting->dev_list);
-	oscap_free(setting);
+	free(setting);
 
 	return finds;
 }
@@ -365,7 +365,7 @@ static int rglob(const char *pattern, rglob_t * result)
 		} else
 			break;
 	}
-	oscap_free(tmp_ptr);
+	free(tmp_ptr);
 	/* erase last slash, but not the first one! */
 	len = strlen(path);
 	if (len > 1)
@@ -452,9 +452,9 @@ static void rglobfree(rglob_t * result)
 	int i;
 
 	for (i = 0; i < result->pathc; i++) {
-		oscap_free(result->pathv[i]);
+		free(result->pathv[i]);
 	}
-	oscap_free(result->pathv);
+	free(result->pathv);
 
 	result->pathc = 0;
 }

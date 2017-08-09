@@ -98,16 +98,16 @@ void oval_sysent_free(struct oval_sysent *sysent)
 		return;
 
 	if (sysent->name != NULL)
-		oscap_free(sysent->name);
+		free(sysent->name);
 	if (sysent->value != NULL)
-		oscap_free(sysent->value);
+		free(sysent->value);
 	if (sysent->record_fields)
 		oval_collection_free_items(sysent->record_fields, (oscap_destruct_func) oval_record_field_free);
 
 	sysent->name = NULL;
 	sysent->value = NULL;
 
-	oscap_free(sysent);
+	free(sysent);
 }
 
 bool oval_sysent_iterator_has_more(struct oval_sysent_iterator *oc_sysent)
@@ -175,7 +175,7 @@ void oval_sysent_set_name(struct oval_sysent *sysent, char *name)
 {
 	__attribute__nonnull__(sysent);
 	if (sysent->name != NULL)
-		oscap_free(sysent->name);
+		free(sysent->name);
 	sysent->name = name;
 }
 
@@ -201,7 +201,7 @@ void oval_sysent_set_value(struct oval_sysent *sysent, char *value)
 {
 	__attribute__nonnull__(sysent);
 	if (sysent->value != NULL)
-		oscap_free(sysent->value);
+		free(sysent->value);
 	sysent->value = oscap_strdup(value);
 }
 

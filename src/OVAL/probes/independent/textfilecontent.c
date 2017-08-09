@@ -400,7 +400,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	SEXP_free(filename_ent);
 	SEXP_free(behaviors_ent);
 	SEXP_free(filepath_ent);
-	oscap_free(pattern);
+	free(pattern);
 
 	return 0;
 }

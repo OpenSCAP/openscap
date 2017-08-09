@@ -325,7 +325,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		oval_fts_close(ofts);
 	}
 
-        oscap_free(pfd.xpath);
+        free(pfd.xpath);
         SEXP_free (path_ent);
         SEXP_free (filename_ent);
         SEXP_free (xpath_ent);

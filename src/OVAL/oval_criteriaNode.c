@@ -289,10 +289,10 @@ void oval_criteria_node_free(struct oval_criteria_node *node)
 		}
 	}
 	if (node->comment != NULL) {
-		oscap_free(node->comment);
+		free(node->comment);
 	}
 	node->comment = NULL;
-	oscap_free(node);
+	free(node);
 }
 
 void oval_criteria_set_node_type(struct oval_criteria_node *node, oval_criteria_node_type_t type)
@@ -318,7 +318,7 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *node, char *comm)
 {
 	__attribute__nonnull__(node);
 	if (node->comment != NULL)
-		oscap_free(node->comment);
+		free(node->comment);
 	node->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 }
 
@@ -391,7 +391,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 		if (comm != NULL) {
 			oval_criteria_node_set_comment(node, comm);
-			oscap_free(comm);
+			free(comm);
 			comm = NULL;
 		}
 		oval_criteria_node_set_negate(node, oval_parser_boolean_attribute(reader, "negate", 0));
@@ -409,7 +409,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 				char *test_ref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "test_ref");
 				struct oval_definition_model *model = context->definition_model;
 				struct oval_test *test = oval_definition_model_get_new_test(model, test_ref);
-				oscap_free(test_ref);
+				free(test_ref);
 				test_ref = NULL;
 				oval_criteria_node_set_test(node, test);
 			} break;
@@ -418,7 +418,7 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 				struct oval_definition_model *model = context->definition_model;
 				struct oval_definition *definition = oval_definition_model_get_new_definition(model, definition_ref);
 				oval_criteria_node_set_definition(node, definition);
-				oscap_free(definition_ref);
+				free(definition_ref);
 				definition_ref = NULL;
 			}
 		case OVAL_NODETYPE_UNKNOWN:
@@ -431,8 +431,8 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		dW("Invalid node type: OVAL_NODETYPE_UNKNOWN.");
 		oval_parser_skip_tag(reader, context);
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 

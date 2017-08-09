@@ -224,7 +224,7 @@ void oval_syschar_free(struct oval_syschar *syschar)
 	syschar->object = NULL;
 	syschar->sysitem = NULL;
 	syschar->variable_bindings = NULL;
-	oscap_free(syschar);
+	free(syschar);
 }
 
 static void add_oval_syschar_message(struct oval_syschar *syschar, struct oval_message *message) {
@@ -271,7 +271,7 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 	} else if (strcmp("reference", tagname) == 0) {
 		char *itemid = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_ref");
 		struct oval_sysitem *sysitem = oval_syschar_model_get_new_sysitem(context->syschar_model, itemid);
-		oscap_free(itemid);
+		free(itemid);
 		oval_syschar_add_sysitem(syschar, sysitem);
 	}
 
@@ -279,8 +279,8 @@ static int _oval_syschar_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
                 dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 
 	return return_code;
 }
@@ -297,12 +297,12 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	if (is_ovalsys && (strcmp(tagname, "object") == 0)) {
 		char *object_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_object *object = oval_definition_model_get_new_object(context->definition_model, object_id);
-		oscap_free(object_id);
+		free(object_id);
 
 		oval_syschar_t *syschar = oval_syschar_model_get_new_syschar(context->syschar_model, object);
 		char *flag = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "flag");
 		oval_syschar_collection_flag_t flag_enum = oval_syschar_flag_parse(reader, "flag", SYSCHAR_FLAG_UNKNOWN);
-		oscap_free(flag);
+		free(flag);
 		oval_syschar_set_flag(syschar, flag_enum);
 
 		return_code = oval_parser_parse_tag(reader, context, &_oval_syschar_parse_subtag, syschar);
@@ -315,8 +315,8 @@ int oval_syschar_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
                 dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 
 	return return_code;
 }

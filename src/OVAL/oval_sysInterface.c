@@ -77,7 +77,7 @@ void oval_sysint_set_name(struct oval_sysint *sysint, char *name)
 {
 	__attribute__nonnull__(sysint);
 	if (sysint->name != NULL)
-		oscap_free(sysint->name);
+		free(sysint->name);
 	sysint->name = oscap_strdup(name);
 }
 
@@ -92,7 +92,7 @@ void oval_sysint_set_ip_address(struct oval_sysint *sysint, char *ip_address)
 {
 	__attribute__nonnull__(sysint);
 	if (sysint->ipAddress != NULL)
-		oscap_free(sysint->ipAddress);
+		free(sysint->ipAddress);
 	sysint->ipAddress = oscap_strdup(ip_address);
 }
 
@@ -105,7 +105,7 @@ void oval_sysint_set_mac_address(struct oval_sysint *sysint, char *mac_address)
 {
 	__attribute__nonnull__(sysint);
 	if (sysint->macAddress != NULL)
-		oscap_free(sysint->macAddress);
+		free(sysint->macAddress);
 	sysint->macAddress = oscap_strdup(mac_address);
 }
 
@@ -146,17 +146,17 @@ void oval_sysint_free(struct oval_sysint *sysint)
 		return;
 
 	if (sysint->ipAddress != NULL)
-		oscap_free(sysint->ipAddress);
+		free(sysint->ipAddress);
 	if (sysint->macAddress != NULL)
-		oscap_free(sysint->macAddress);
+		free(sysint->macAddress);
 	if (sysint->name != NULL)
-		oscap_free(sysint->name);
+		free(sysint->name);
 
 	sysint->ipAddress = NULL;
 	sysint->macAddress = NULL;
 	sysint->name = NULL;
 
-	oscap_free(sysint);
+	free(sysint);
 }
 
 static void oval_consume_interface_name(char *text, void *sysint)
@@ -193,8 +193,8 @@ static int _oval_sysint_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 		oval_parser_skip_tag(reader, context);
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 
 	return return_code;
 }
@@ -219,8 +219,8 @@ int oval_sysint_parse_tag(xmlTextReaderPtr reader,
 
 	(*consumer) (sysint, user);
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 
 	return return_code;
 }

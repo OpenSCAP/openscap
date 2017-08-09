@@ -193,7 +193,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		    filepath_sexp = SEXP_string_newf("%s", res.file);
 		    if (probe_entobj_cmp(filepath_ent, filepath_sexp) != OVAL_RESULT_TRUE) {
 		      SEXP_free(filepath_sexp);
-		      oscap_free(res.file);
+		      free(res.file);
 		      continue;
 		    }
 		    SEXP_free(filepath_sexp);

@@ -93,9 +93,9 @@ void oval_collection_free_items(struct oval_collection *collection, oscap_destru
 			struct _oval_collection_item_frame *temp = frame;
 			frame = frame->next;
 			temp->next = NULL;
-			oscap_free(temp);
+			free(temp);
 		}
-		oscap_free(collection);
+		free(collection);
 	}
 }
 
@@ -183,7 +183,7 @@ void *oval_collection_iterator_next(struct oval_iterator *iterator)
 		iterator->item_iterator_frame = oc_next->next;
 		oc_next->item = NULL;
 		oc_next->next = NULL;
-		oscap_free(oc_next);
+		free(oc_next);
 	}
 	return next;
 }
@@ -204,10 +204,10 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 			iterator->item_iterator_frame = oc_this->next;
 			oc_this->item = NULL;
 			oc_this->next = NULL;
-			oscap_free(oc_this);
+			free(oc_this);
 		}
 		iterator->item_iterator_frame = NULL;
-		oscap_free(iterator);
+		free(iterator);
 	}
 }
 

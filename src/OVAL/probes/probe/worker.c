@@ -68,7 +68,7 @@ void *probe_worker_runfn(void *arg)
 
                 SEAP_msg_free(pair->pth->msg);
                 SEXP_free(probe_res);
-                oscap_free(pair);
+                free(pair);
 
                 return (NULL);
 	} else {
@@ -130,8 +130,8 @@ void *probe_worker_runfn(void *arg)
 	}
 
         SEAP_msg_free(pair->pth->msg);
-        oscap_free(pair->pth);
-	oscap_free(pair);
+        free(pair->pth);
+	free(pair);
 	pthread_detach(pthread_self());
 
 	return (NULL);

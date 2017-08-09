@@ -868,29 +868,29 @@ void oval_component_free(struct oval_component *component)
 	case OVAL_COMPONENT_OBJECTREF:{
 			oval_component_OBJECTREF_t *objectref = (oval_component_OBJECTREF_t *) component;
 			if (objectref->item_field != NULL)
-				oscap_free(objectref->item_field);
+				free(objectref->item_field);
 			objectref->item_field = NULL;
 			if (objectref->record_field != NULL)
-				oscap_free(objectref->record_field);
+				free(objectref->record_field);
 			objectref->record_field = NULL;
 		}
 		break;
 	case OVAL_FUNCTION_BEGIN:
 	case OVAL_FUNCTION_END:{
 			oval_component_BEGEND_t *begin = (oval_component_BEGEND_t *) component;
-			oscap_free(begin->character);
+			free(begin->character);
 			begin->character = NULL;
 		};
 		break;
 	case OVAL_FUNCTION_SPLIT:{
 			oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
-			oscap_free(split->delimiter);
+			free(split->delimiter);
 			split->delimiter = NULL;
 		};
 		break;
 	case OVAL_FUNCTION_REGEX_CAPTURE:{
 			oval_component_REGEX_CAPTURE_t *regex = (oval_component_REGEX_CAPTURE_t *) component;
-			oscap_free(regex->pattern);
+			free(regex->pattern);
 			regex->pattern = NULL;
 		};
 		break;
@@ -913,7 +913,7 @@ void oval_component_free(struct oval_component *component)
 		oval_collection_free_items(function->function_components, (oscap_destruct_func) oval_component_free);
 		function->function_components = NULL;
 	}
-	oscap_free(component);
+	free(component);
 }
 
 void oval_component_add_function_component(struct oval_component *component, struct oval_component *func_component) 
@@ -959,18 +959,18 @@ static int _oval_component_parse_OBJECTREF_tag(xmlTextReaderPtr reader,
 	struct oval_object *object = oval_definition_model_get_new_object(model, objref);
 	char *field;
 
-	oscap_free(objref);
+	free(objref);
 	objref = NULL;
 	oval_component_set_object(component, object);
 
 	field = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
 	oval_component_set_item_field(component, field);
 	if (field)
-		oscap_free(field);
+		free(field);
 	field = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "record_field");
 	oval_component_set_record_field(component, field);
 	if (field)
-		oscap_free(field);
+		free(field);
 
 	return 0;
 }
@@ -983,7 +983,7 @@ static int _oval_component_parse_VARREF_tag(xmlTextReaderPtr reader,
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_variable *variable = oval_definition_model_get_new_variable(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if (varref != NULL) {
-		oscap_free(varref);
+		free(varref);
 		varref = NULL;
 	}
 	oval_component_set_variable(component, variable);
@@ -1074,9 +1074,9 @@ static int _oval_component_parse_SUBSTRING_tag(xmlTextReaderPtr reader,
 	int start = (start_text == NULL) ? 0 : atoi(start_text);
 	int length = (length_text == NULL) ? 0 : atoi(length_text);
 	if (start_text != NULL)
-		oscap_free(start_text);
+		free(start_text);
 	if (length_text != NULL)
-		oscap_free(length_text);
+		free(length_text);
 	substring->start = start;
 	substring->length = length;
 
@@ -1181,7 +1181,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	if (return_code != 0 ) {
 		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
-	oscap_free(tagname);
+	free(tagname);
 	return return_code;
 }
 
@@ -2166,7 +2166,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_GLOB_TO_REGEX(ova
 				break;
 			}
 			value = oval_value_new(OVAL_DATATYPE_STRING, string);
-			oscap_free(string);
+			free(string);
 			oval_collection_add(value_collection, value);
 		}
 		oval_value_iterator_free(values);
@@ -2255,7 +2255,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 			if (nval != NULL) {
 				value = oval_value_new(OVAL_DATATYPE_STRING, nval);
-				oscap_free(nval);
+				free(nval);
 			} else {
 				value = oval_value_new(OVAL_DATATYPE_STRING, "");
 			}
@@ -2410,7 +2410,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 		oval_collection_free_items(vcl_root->val_col, (oscap_destruct_func) oval_value_free);
 		vcl_elm = vcl_root;
 		vcl_root = vcl_root->next;
-		oscap_free(vcl_elm);
+		free(vcl_elm);
 	}
 
 	return flag;

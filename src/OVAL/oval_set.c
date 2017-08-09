@@ -189,7 +189,7 @@ void oval_setobject_free(struct oval_setobject *set)
 			oval_set_AGGREGATE_t *aggregate = (oval_set_AGGREGATE_t *) set->extension;
 			oval_collection_free_items(aggregate->subsets, (oscap_destruct_func) oval_setobject_free);
 			aggregate->subsets = NULL;
-			oscap_free(set->extension);
+			free(set->extension);
 			set->extension = NULL;
 		}
 		break;
@@ -200,14 +200,14 @@ void oval_setobject_free(struct oval_setobject *set)
 			oval_collection_free_items(collective->objects, NULL);
 			collective->filters = NULL;
 			collective->objects = NULL;
-			oscap_free(set->extension);
+			free(set->extension);
 			set->extension = NULL;
 		}
 		break;
 	case OVAL_SET_UNKNOWN:
 		break;
 	}
-	oscap_free(set);
+	free(set);
 }
 
 void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t type)
@@ -327,8 +327,8 @@ static int _oval_set_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -350,8 +350,8 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 
 	int return_code = oval_parser_parse_tag(reader, context, &_oval_set_parse_tag, set);
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 

@@ -137,7 +137,7 @@ void oval_result_test_free(struct oval_result_test *test)
 	test->items = NULL;
 	test->bindings = NULL;
 	test->instance = 1;
-	oscap_free(test);
+	free(test);
 }
 
 struct oval_result_system *oval_result_test_get_system(struct oval_result_test *rtest)
@@ -638,7 +638,7 @@ static oval_result_t eval_check_state(struct oval_test *test, void **args)
 	if (state_names) {
 		dI("In test '%s' %s of the collected items must satisfy these states: %s.",
 			oval_test_get_id(test), oval_check_get_description(ste_check), state_names);
-		oscap_free(state_names);
+		free(state_names);
 	}
 
 	ritems_itr = oval_result_test_get_items(TEST);
@@ -1185,7 +1185,7 @@ static int _oval_result_test_parse(xmlTextReaderPtr reader, struct oval_parser_c
 		oval_parser_skip_tag(reader, context);
 	}
 
-	oscap_free(localName);
+	free(localName);
 
 	return return_code;
 }
@@ -1242,7 +1242,7 @@ int oval_result_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 	oval_string_map_free(itemmap, NULL);
 	test->bindings_initialized = true;
 
-	oscap_free(test_id);
+	free(test_id);
 	return return_code;
 }
 

@@ -136,10 +136,10 @@ void oval_definition_model_free(struct oval_definition_model *model)
 					   (oscap_destruct_func) oval_variable_model_free);
 
 	        if (model->schema != NULL)
-			oscap_free(model->schema);
+			free(model->schema);
 
 		oval_generator_free(model->generator);
-		oscap_free(model);
+		free(model);
 	}
 }
 

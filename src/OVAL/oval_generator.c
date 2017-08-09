@@ -66,14 +66,14 @@ struct oval_generator *oval_generator_new(void)
 
 void oval_generator_free(struct oval_generator *generator)
 {
-	oscap_free(generator->product_name);
-	oscap_free(generator->product_version);
-	oscap_free(generator->core_schema_version);
+	free(generator->product_name);
+	free(generator->product_version);
+	free(generator->core_schema_version);
 	oscap_htable_free(generator->platform_schema_versions,
-		(oscap_destruct_func) oscap_free);
-	oscap_free(generator->timestamp);
-	oscap_free(generator->anyxml);
-	oscap_free(generator);
+		(oscap_destruct_func) free);
+	free(generator->timestamp);
+	free(generator->anyxml);
+	free(generator);
 }
 
 struct oval_generator *oval_generator_clone(struct oval_generator *old_generator)
@@ -130,13 +130,13 @@ const char *oval_generator_get_platform_schema_version (struct oval_generator *g
 
 void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name)
 {
-	oscap_free(generator->product_name);
+	free(generator->product_name);
 	generator->product_name = oscap_strdup(product_name);
 }
 
 void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version)
 {
-	oscap_free(generator->product_version);
+	free(generator->product_version);
 	generator->product_version = oscap_strdup(product_version);
 }
 
@@ -147,13 +147,13 @@ void oval_generator_set_schema_version(struct oval_generator *generator, const c
 
 void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version)
 {
-	oscap_free(generator->core_schema_version);
+	free(generator->core_schema_version);
 	generator->core_schema_version = oscap_strdup(schema_version);
 }
 
 void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp)
 {
-	oscap_free(generator->timestamp);
+	free(generator->timestamp);
 	generator->timestamp = oscap_strdup(timestamp);
 }
 
@@ -204,7 +204,7 @@ xmlNode *oval_generator_to_dom(struct oval_generator *generator, xmlDocPtr doc, 
 		char *platform_uri = oscap_alloc(namespace_uri_length);
 		snprintf(platform_uri, namespace_uri_length, "%s#%s", namespace_uri, platform);
 		xmlNewProp(sv_node, BAD_CAST "platform", BAD_CAST platform_uri);
-		oscap_free(platform_uri);
+		free(platform_uri);
 	}
 	oscap_htable_iterator_free(sv_itr);
 
@@ -250,7 +250,7 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 				platform_name++;
 				oval_generator_add_platform_schema_version(gen, platform_name, val);
 			}
-			oscap_free(platform);
+			free(platform);
 		} else {
 			oval_generator_set_core_schema_version(gen, val);
 		}
@@ -263,9 +263,9 @@ int oval_generator_parse_tag(xmlTextReader *reader, struct oval_parser_context *
 		ret = oval_parser_skip_tag(reader, context);
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
-	oscap_free(val);
+	free(tagname);
+	free(namespace);
+	free(val);
 
 	return ret;
 }

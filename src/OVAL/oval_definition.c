@@ -219,18 +219,18 @@ void oval_definition_free(struct oval_definition *definition)
 	__attribute__nonnull__(definition);
 
 	if (definition->id != NULL)
-		oscap_free(definition->id);
+		free(definition->id);
 	if (definition->title != NULL)
-		oscap_free(definition->title);
+		free(definition->title);
 	if (definition->description != NULL)
-		oscap_free(definition->description);
+		free(definition->description);
 	if (definition->criteria != NULL)
 		oval_criteria_node_free(definition->criteria);
 	oval_collection_free_items(definition->affected, (oscap_destruct_func) oval_affected_free);
 	oval_collection_free_items(definition->reference, (oscap_destruct_func) oval_reference_free);
-	oval_collection_free_items(definition->notes, (oscap_destruct_func) oscap_free);
+	oval_collection_free_items(definition->notes, (oscap_destruct_func) free);
 
-	oscap_free(definition->anyxml);
+	free(definition->anyxml);
 
 	definition->affected = NULL;
 	definition->criteria = NULL;
@@ -240,7 +240,7 @@ void oval_definition_free(struct oval_definition *definition)
 	definition->notes = NULL;
 	definition->anyxml = NULL;
 	definition->title = NULL;
-	oscap_free(definition);
+	free(definition);
 }
 
 bool oval_definition_iterator_has_more(struct oval_definition_iterator
@@ -289,7 +289,7 @@ void oval_definition_set_title(struct oval_definition *definition, char *title)
 {
 	__attribute__nonnull__(definition);
 	if (definition->title != NULL)
-		oscap_free(definition->title);
+		free(definition->title);
 	definition->title = (title == NULL) ? NULL : oscap_strdup(title);
 }
 
@@ -297,7 +297,7 @@ void oval_definition_set_description(struct oval_definition *definition, char *d
 {
 	__attribute__nonnull__(definition);
 	if (definition->description)
-		oscap_free(definition->description);
+		free(definition->description);
 	definition->description = (description == NULL) ? NULL : oscap_strdup(description);
 }
 
@@ -340,7 +340,7 @@ static void _oval_definition_title_consumer(char *string, void *user)
 
 		strcpy(newtitle, title);
 		strcat(newtitle, string);
-		oscap_free(title);
+		free(title);
 		title = newtitle;
 	}
 	definition->title = title;
@@ -363,7 +363,7 @@ static void _oval_definition_description_consumer(char *string, void *user)
 		*newdescription = '\0';
 		strcpy(newdescription, description);
 		strcat(newdescription, string);
-		oscap_free(description);
+		free(description);
 		description = newdescription;
 	}
 	definition->description = description;
@@ -405,7 +405,7 @@ static int _oval_definition_parse_metadata(xmlTextReaderPtr reader, struct oval_
 		definition->anyxml = (char *) xmlTextReaderReadOuterXml(reader);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	oscap_free(tagname);
+	free(tagname);
 	return return_code;
 }
 
@@ -430,7 +430,7 @@ static int _oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parse
 		dI("Skipping tag: %s.", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
-	oscap_free(tagname);
+	free(tagname);
 	return return_code;
 }
 
@@ -439,17 +439,17 @@ int oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser_contex
 	struct oval_definition_model *model = context->definition_model;
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_definition *definition = oval_definition_model_get_new_definition(model, id);
-	oscap_free(id);
+	free(id);
 	id = NULL;
 
 	char *version = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "version");
 	oval_definition_set_version(definition, atoi(version));
-	oscap_free(version);
+	free(version);
 	version = NULL;
 
 	char *class = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "class");
 	oval_definition_set_class(definition, oval_definition_class_enum(class));
-	oscap_free(class);
+	free(class);
 	class = NULL;
 
 	int deprecated = oval_parser_boolean_attribute(reader, "deprecated", 0);

@@ -84,7 +84,7 @@ probe_ncache_t *probe_ncache_new (void)
         cache = oscap_talloc (probe_ncache_t);
 
         if (pthread_rwlock_init (&cache->lock, NULL) != 0) {
-                oscap_free (cache);
+                free (cache);
                 return (NULL);
         }
 
@@ -105,9 +105,9 @@ void probe_ncache_free (probe_ncache_t *cache)
                 if (cache->name[i] != NULL)
                         SEXP_free (cache->name[i]);
 
-        oscap_free (cache->name);
+        free (cache->name);
         pthread_rwlock_destroy (&cache->lock);
-        oscap_free (cache);
+        free (cache);
 
         return;
 }

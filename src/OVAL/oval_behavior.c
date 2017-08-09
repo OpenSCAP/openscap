@@ -115,12 +115,12 @@ void oval_behavior_free(struct oval_behavior *behavior)
 	__attribute__nonnull__(behavior);
 
 	if (behavior->value)
-		oscap_free(behavior->value);
+		free(behavior->value);
 	if (behavior->key)
-		oscap_free(behavior->key);
+		free(behavior->key);
 	behavior->key = NULL;
 	behavior->value = NULL;
-	oscap_free(behavior);
+	free(behavior);
 }
 
 void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, const char *value)

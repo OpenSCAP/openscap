@@ -180,7 +180,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 		close(fd);
 	}
 	closedir(d);
-	oscap_free(buffer);
+	free(buffer);
 	if (err) {
 		SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 				"Can't find process with requested PID.");

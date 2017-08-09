@@ -64,7 +64,7 @@ void oval_smc_iterator_free(struct oval_smc_iterator *it)
 	oval_collection_free(it->master_col);
 	oval_collection_iterator_free(it->master_it);
 	oval_collection_iterator_free(it->slave_it);
-	oscap_free(it);
+	free(it);
 }
 
 bool oval_smc_iterator_has_more(struct oval_smc_iterator *it)

@@ -97,8 +97,8 @@ static inline int rpmevrcmp(const char *a, const char *b)
 			result = compare_values(a_release, b_release);
 	}
 
-	oscap_free(a_copy);
-	oscap_free(b_copy);
+	free(a_copy);
+	free(b_copy);
 	return result;
 }
 

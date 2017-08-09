@@ -506,9 +506,9 @@ int probe_main (probe_ctx *ctx, void *arg)
                         probe_item_collect(ctx, item);
 
 			next_rep = reply_st->next;
-			oscap_free(reply_st->service_name);
-			oscap_free(reply_st->runlevel);
-			oscap_free(reply_st);
+			free(reply_st->service_name);
+			free(reply_st->runlevel);
+			free(reply_st);
 			reply_st = next_rep;
 		}
         }

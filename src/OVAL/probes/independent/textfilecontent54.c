@@ -331,8 +331,8 @@ static int process_file(const char *path, const char *file, void *arg)
                                 probe_item_collect(pfd->ctx, item);
 
 				for (k = 0; k < substr_cnt; ++k)
-					oscap_free(substrs[k]);
-				oscap_free(substrs);
+					free(substrs[k]);
+				free(substrs);
 			}
 		}
 	} while (substr_cnt > 0 && ofs < buf_used);
@@ -340,9 +340,9 @@ static int process_file(const char *path, const char *file, void *arg)
  cleanup:
 	if (fd != -1)
 		close(fd);
-	oscap_free(buf);
+	free(buf);
 	if (whole_path != NULL)
-		oscap_free(whole_path);
+		free(whole_path);
 
 	return ret;
 }
@@ -503,7 +503,7 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_free(bh_ent);
         SEXP_free(filepath_ent);
 	if (pfd.pattern != NULL)
-		oscap_free(pfd.pattern);
+		free(pfd.pattern);
 #if defined USE_REGEX_PCRE
 	if (pfd.compiled_regex != NULL)
 		pcre_free(pfd.compiled_regex);

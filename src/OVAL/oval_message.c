@@ -74,10 +74,10 @@ void oval_message_free(struct oval_message *message)
 	__attribute__nonnull__(message);
 
 	if (message->text != NULL)
-		oscap_free(message->text);
+		free(message->text);
 
 	message->text = NULL;
-	oscap_free(message);
+	free(message);
 }
 
 bool oval_message_iterator_has_more(struct oval_message_iterator *oc_message)
@@ -119,7 +119,7 @@ void oval_message_set_text(struct oval_message *message, char *text)
 {
 	__attribute__nonnull__(message);
 	if (message->text != NULL)
-		oscap_free(message->text);
+		free(message->text);
 	message->text = (text == NULL) ? NULL : oscap_strdup(text);
 }
 

@@ -233,7 +233,7 @@ void oval_object_content_free(struct oval_object_content *content)
 	__attribute__nonnull__(content);
 
 	if (content->fieldName != NULL)
-		oscap_free(content->fieldName);
+		free(content->fieldName);
 	content->fieldName = NULL;
 	switch (content->type) {
 	case OVAL_OBJECTCONTENT_ENTITY:{
@@ -260,7 +260,7 @@ void oval_object_content_free(struct oval_object_content *content)
 	case OVAL_OBJECTCONTENT_UNKNOWN:
 		break;
 	}
-	oscap_free(content);
+	free(content);
 }
 
 void oval_object_content_set_type(struct oval_object_content *content, oval_object_content_type_t type)
@@ -273,7 +273,7 @@ void oval_object_content_set_field_name(struct oval_object_content *content, cha
 {
 	__attribute__nonnull__(content);
 	if (content->fieldName != NULL)
-		oscap_free(content->fieldName);
+		free(content->fieldName);
 	content->fieldName = (name == NULL) ? NULL : oscap_strdup(name);
 }
 
@@ -391,7 +391,7 @@ int oval_object_content_parse_tag(xmlTextReaderPtr reader,
 	if (return_code != 0)
 		dW("Parsing of <%s> terminated by an error at line %d.",tagname, xmlTextReaderGetParserLineNumber(reader));
 
-	oscap_free(namespace);
+	free(namespace);
 	return return_code;
 }
 //#pragma GCC diagnostic pop

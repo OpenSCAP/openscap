@@ -99,13 +99,13 @@ static regex_t g_keyid_regex;
 
 static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
-        oscap_free (ptr->name);
-        oscap_free (ptr->arch);
-        oscap_free (ptr->epoch);
-        oscap_free (ptr->release);
-        oscap_free (ptr->version);
-        oscap_free (ptr->evr);
-        oscap_free (ptr->signature_keyid);
+        free (ptr->name);
+        free (ptr->arch);
+        free (ptr->epoch);
+        free (ptr->release);
+        free (ptr->version);
+        free (ptr->evr);
+        free (ptr->signature_keyid);
 }
 
 static void pkgh2rep (Header h, struct rpminfo_rep *r)
@@ -159,7 +159,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 	}
 
         r->signature_keyid = strdup(sid != NULL ? sid : "0");
-        oscap_free (str);
+        free (str);
 }
 
 /*
@@ -436,7 +436,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                 default:
                         SEXP_free (val);
                         SEXP_free (ent);
-                        oscap_free (request_st.name);
+                        free (request_st.name);
                         return (PROBE_EOPNOTSUPP);
                 }
 
@@ -540,12 +540,12 @@ int probe_main (probe_ctx *ctx, void *arg)
 				}
                         }
 
-                        oscap_free (reply_st);
+                        free (reply_st);
                 }
         }
 
 	SEXP_vfree(ent, NULL);
-        oscap_free(request_st.name);
+        free(request_st.name);
 
         return 0;
 }

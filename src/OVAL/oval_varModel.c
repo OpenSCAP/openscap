@@ -101,15 +101,15 @@ static void _oval_variable_model_frame_free(_oval_variable_model_frame_t * frame
 {
 	if (frame) {
 		if (frame->id)
-			oscap_free(frame->id);
+			free(frame->id);
 		if (frame->comment)
-			oscap_free(frame->comment);
+			free(frame->comment);
 		oval_collection_free_items(frame->values, (oscap_destruct_func) oval_value_free);
 		frame->id = NULL;
 		frame->comment = NULL;
 		frame->values = NULL;
 		frame->datatype = 0;
-		oscap_free(frame);
+		free(frame);
 	}
 }
 
@@ -151,7 +151,7 @@ void oval_variable_model_free(struct oval_variable_model *model)
 		oval_string_map_free(model->varmap, (oscap_destruct_func) _oval_variable_model_frame_free);
 		model->varmap = NULL;
 		oval_generator_free(model->generator);
-		oscap_free(model);
+		free(model);
 	}
 }
 
@@ -196,14 +196,14 @@ static int _oval_variable_model_parse_variable_values
 		char *value = (char *)xmlTextReaderValue(reader);
 		ov = oval_value_new(frame->datatype, value);
 		oval_collection_add(frame->values, ov);
-		oscap_free(value);
+		free(value);
 	} else {
 		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -228,8 +228,8 @@ static int _oval_variable_model_parse_variable
 	}
 	return_code =
 	    oval_parser_parse_tag(reader, context, (oval_xml_tag_parser) _oval_variable_model_parse_variable_values, frame);
-	oscap_free(id);
-	oscap_free(comm);
+	free(id);
+	free(comm);
 	return return_code;
 }
 
@@ -248,8 +248,8 @@ static int _oval_variable_model_parse_variables
 		/*oscap_seterr */
 		return_code = 0;
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -272,8 +272,8 @@ static int _oval_variable_model_parse_tag
 		oval_parser_skip_tag(reader, context);
 		return_code = 0;
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -294,8 +294,8 @@ static int _oval_variable_model_parse(struct oval_variable_model *model, xmlText
 		dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 		return_code = oval_parser_skip_tag(reader, &context);
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 

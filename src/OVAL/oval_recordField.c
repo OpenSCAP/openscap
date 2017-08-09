@@ -181,12 +181,12 @@ void oval_record_field_free(struct oval_record_field *rf)
 		return;
 
 	if (rf->name != NULL)
-		oscap_free(rf->name);
+		free(rf->name);
 	if (rf->value != NULL)
-		oscap_free(rf->value);
+		free(rf->value);
 
 	rf->name = rf->value = NULL;
-	oscap_free(rf);
+	free(rf);
 }
 
 void oval_record_field_set_name(struct oval_record_field *rf, char *name)

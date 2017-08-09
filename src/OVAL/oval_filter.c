@@ -66,7 +66,7 @@ void oval_filter_free(struct oval_filter *filter)
 
 	filter->model = NULL;
 	filter->state = NULL;
-	oscap_free(filter);
+	free(filter);
 }
 
 struct oval_filter *oval_filter_clone(struct oval_definition_model *new_model,

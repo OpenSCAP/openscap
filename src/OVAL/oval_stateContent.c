@@ -151,7 +151,7 @@ void oval_state_content_free(struct oval_state_content *content)
 		oval_entity_free(content->entity);
 	if (content->record_fields)
 		oval_collection_free_items(content->record_fields, (oscap_destruct_func) oval_record_field_free);
-	oscap_free(content);
+	free(content);
 }
 
 void oval_state_content_set_entity(struct oval_state_content *content, struct oval_entity *entity)

@@ -109,7 +109,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	if (ret != 0) {
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
-		oscap_free(ag_sess);
+		free(ag_sess);
 		return NULL;
 	}
 	oval_syschar_model_set_sysinfo(ag_sess->sys_model, sysinfo);
@@ -298,12 +298,12 @@ const char * oval_agent_get_filename(oval_agent_session_t * ag_sess) {
 
 void oval_agent_destroy_session(oval_agent_session_t * ag_sess) {
 	if (ag_sess != NULL) {
-		oscap_free(ag_sess->product_name);
+		free(ag_sess->product_name);
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
 		oval_results_model_free(ag_sess->res_model);
-	        oscap_free(ag_sess->filename);
-		oscap_free(ag_sess);
+	        free(ag_sess->filename);
+		free(ag_sess);
 	}
 }
 

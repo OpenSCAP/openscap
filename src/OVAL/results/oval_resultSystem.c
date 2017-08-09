@@ -149,7 +149,7 @@ void oval_result_system_free(struct oval_result_system *sys)
 	sys->syschar_model = NULL;
 	sys->tests = NULL;
 
-	oscap_free(sys);
+	free(sys);
 }
 
 bool oval_result_system_iterator_has_more(struct oval_result_system_iterator *sys) {
@@ -293,7 +293,7 @@ static int oval_result_system_parse(xmlTextReaderPtr reader, struct oval_parser_
                 dW("Parsing of <%s> terminated by an error at line %d.", localName, xmlTextReaderGetParserLineNumber(reader));
         }
 
-	oscap_free(localName);
+	free(localName);
 	return return_code;
 }
 
@@ -322,8 +322,8 @@ int oval_result_system_parse_tag(xmlTextReaderPtr reader, struct oval_parser_con
                 dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
-        oscap_free(tagname);
-        oscap_free(namespace);
+        free(tagname);
+        free(namespace);
 
 	return return_code;
 }

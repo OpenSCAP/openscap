@@ -90,18 +90,18 @@ void oval_directives_model_free(struct oval_directives_model *model) {
 
 	for(int i=0; i<NUMBER_OF_CLASSES; i++) {
 		if (model->class_directives[i]) {
-			oscap_free(model->class_directives[i]);
+			free(model->class_directives[i]);
 			model->class_directives[i]=NULL;
 		}
 	}
 
-	oscap_free(model->def_directives);
+	free(model->def_directives);
 	model->def_directives=NULL;
 
 	oval_generator_free(model->generator);
 	model->generator=NULL;
 
-	oscap_free(model);
+	free(model);
 }
 
 int oval_directives_model_import_source(struct oval_directives_model *model, struct oscap_source *source)
@@ -133,8 +133,8 @@ int oval_directives_model_import_source(struct oval_directives_model *model, str
                 ret = -1;
         }
 
-        oscap_free(tagname);
-        oscap_free(namespace);
+        free(tagname);
+        free(namespace);
 	xmlFreeTextReader(context.reader);
 	return ret;
 }
@@ -228,7 +228,7 @@ struct oval_result_directives *oval_result_directives_new(void)
 
 void oval_result_directives_free(struct oval_result_directives *directives)
 {
-	oscap_free(directives);
+	free(directives);
 }
 
 bool oval_result_directives_get_reported(struct oval_result_directives *directives, oval_result_t type) {
@@ -327,14 +327,14 @@ static int oval_directives_model_parse(xmlTextReaderPtr reader, struct oval_pars
 				class_type = oval_definition_class_enum(class_str);
 				class_dir = oval_directives_model_get_new_classdir(context->directives_model, class_type);
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, class_dir);
-				oscap_free(class_str);
+				free(class_str);
 			} else {
 				dW("Unprocessed tag: <%s:%s>.", namespace, tagname);
 				oval_parser_skip_tag(reader, context);
 			}
 
-			oscap_free(tagname);
-			oscap_free(namespace);
+			free(tagname);
+			free(namespace);
 		} else {
 			if (xmlTextReaderRead(reader) != XML_READER_TYPE_ELEMENT) {
 				ret = -1;
@@ -367,7 +367,7 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 		/*reported */
 		xmlChar *boolstr = xmlTextReaderGetAttribute(reader, BAD_CAST "reported");
 		bool reported = (strcmp((const char *)boolstr, "1") == 0) || (strcmp((const char *)boolstr, "true") == 0);
-		oscap_free(boolstr);
+		free(boolstr);
 		oval_result_directives_set_reported(directives, type, reported);
 
 		/*content */
@@ -385,7 +385,7 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 				dW("Cannot resolve @content: \"%s\".", contentstr);
 				retcode = 1;
 			}
-			oscap_free(contentstr);
+			free(contentstr);
 		} else {
 			content = OVAL_DIRECTIVE_CONTENT_FULL;
 		}
@@ -393,7 +393,7 @@ int oval_result_directives_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 		dW("Cannot resolve <%s>.", name);
 		retcode = 1;
 	}
-	oscap_free(name);
+	free(name);
 	return retcode;
 }
 

@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
                 SEAP_close(probe.SEAP_ctx, probe.sd);
 
 	SEAP_CTX_free(probe.SEAP_ctx);
-        oscap_free(probe.option);
+        free(probe.option);
 
 	return (probe.probe_exitcode);
 }

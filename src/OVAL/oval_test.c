@@ -260,10 +260,10 @@ void oval_test_free(struct oval_test *test)
 	__attribute__nonnull__(test);
 
 	if (test->comment != NULL)
-		oscap_free(test->comment);
+		free(test->comment);
 	if (test->id != NULL)
-		oscap_free(test->id);
-	oval_collection_free_items(test->notes, &oscap_free);
+		free(test->id);
+	oval_collection_free_items(test->notes, &free);
 	oval_collection_free(test->states);
 
 	test->comment = NULL;
@@ -272,7 +272,7 @@ void oval_test_free(struct oval_test *test)
 	test->object = NULL;
 	test->states = NULL;
 
-	oscap_free(test);
+	free(test);
 }
 
 void oval_test_set_deprecated(struct oval_test *test, bool deprecated)
@@ -297,7 +297,7 @@ void oval_test_set_comment(struct oval_test *test, char *comm)
 {
 	__attribute__nonnull__(test);
 	if (test->comment != NULL)
-		oscap_free(test->comment);
+		free(test->comment);
 	test->comment = oscap_strdup(comm);
 }
 
@@ -360,7 +360,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 		if (object_ref != NULL) {
 			struct oval_definition_model *model = context->definition_model;
 			struct oval_object *object = oval_definition_model_get_new_object(model, object_ref);
-			oscap_free(object_ref);
+			free(object_ref);
 			object_ref = NULL;
 			oval_test_set_object(test, object);
 		}
@@ -370,7 +370,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 			struct oval_definition_model *model = context->definition_model;
 			struct oval_state *state = oval_definition_model_get_new_state(model, state_ref);
 			oval_test_add_state(test, state);
-			oscap_free(state_ref);
+			free(state_ref);
 			state_ref = NULL;
 		}
 	} else {
@@ -378,7 +378,7 @@ static int _oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_cont
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 
-	oscap_free(tagname);
+	free(tagname);
 	return return_code;
 
 }
@@ -439,9 +439,9 @@ int oval_test_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *con
 	ret = oval_parser_parse_tag(reader, context, &_oval_test_parse_tag, test);
 
 cleanup:
-	oscap_free(version);
-	oscap_free(comm);
-	oscap_free(id);
+	free(version);
+	free(comm);
+	free(id);
 	return ret;
 }
 
