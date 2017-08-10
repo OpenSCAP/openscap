@@ -418,7 +418,7 @@ struct xccdf_value_instance *xccdf_value_new_instance(struct xccdf_value *val)
 	bool xccdf_value_instance_set_##WHAT##_string(struct xccdf_value_instance *inst, const char *newval) { \
 		oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(newval); inst->flags.WHAT##_given = true; return true; }
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_NUM(WHAT) \
-	xccdf_numeric xccdf_value_instance_get_##WHAT##_number(const struct xccdf_value_instance *inst) { return oscap_strtol(inst->WHAT, NULL, 10); } \
+	xccdf_numeric xccdf_value_instance_get_##WHAT##_number(const struct xccdf_value_instance *inst) { return inst->WHAT == NULL ? NAN : strtol(inst->WHAT, NULL, 10); } \
 	bool xccdf_value_instance_set_##WHAT##_number(struct xccdf_value_instance *inst, xccdf_numeric newval) { \
 		oscap_free(inst->WHAT); inst->WHAT = oscap_sprintf("%f", newval); inst->flags.WHAT##_given = true; return true; }
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_BOOL(WHAT) \

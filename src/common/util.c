@@ -54,14 +54,6 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val)
 	return map->string;
 }
 
-float oscap_strtol(const char *str, char **endptr, int base){
-    if (str == NULL) {
-        return NAN;
-    } else
-        return strtol(str, endptr, base);
-}
-
-
 static const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
 char **oscap_split(char *str, const char *delim)

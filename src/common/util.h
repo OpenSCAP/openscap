@@ -344,14 +344,6 @@ static inline char *oscap_strdup(const char *str) {
 }
 
 /**
- * Use strtol on string, if string is NULL, return NaN
- * @param str String we want to duplicate
- * @param endptr see man strtol
- * @param base see man strtol
- */
-float oscap_strtol(const char *str, char **endptr, int base);
-
-/**
  * Split a string.
  * Split string using given delimiter.
  * Produces NULL-terminated array of strings.
