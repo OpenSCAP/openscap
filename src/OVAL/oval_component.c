@@ -855,23 +855,21 @@ struct oval_component *oval_component_clone(struct oval_definition_model *new_mo
 
 void oval_component_free(struct oval_component *component)
 {
-	__attribute__nonnull__(component);
+	if (component == NULL)
+		return;
 
 	switch (component->type) {
 	case OVAL_COMPONENT_LITERAL:{
 			oval_component_LITERAL_t *literal = (oval_component_LITERAL_t *) component;
-			if (literal->value != NULL)
-				oval_value_free(literal->value);
+			oval_value_free(literal->value);
 			literal->value = NULL;
 		}
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
 			oval_component_OBJECTREF_t *objectref = (oval_component_OBJECTREF_t *) component;
-			if (objectref->item_field != NULL)
-				free(objectref->item_field);
+			free(objectref->item_field);
 			objectref->item_field = NULL;
-			if (objectref->record_field != NULL)
-				free(objectref->record_field);
+			free(objectref->record_field);
 			objectref->record_field = NULL;
 		}
 		break;
