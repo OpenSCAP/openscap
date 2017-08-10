@@ -399,9 +399,9 @@ void xccdf_value_instance_free(struct xccdf_value_instance *inst)
 	if (inst != NULL) {
 		oscap_list_free(inst->choices, free);
 		free(inst->selector);
-        free(inst->match);
-        free(inst->value);
-        free(inst->defval);
+		free(inst->match);
+		free(inst->value);
+		free(inst->defval);
 		free(inst);
 	}
 }
