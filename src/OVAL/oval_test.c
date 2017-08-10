@@ -257,20 +257,13 @@ struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struc
 
 void oval_test_free(struct oval_test *test)
 {
-	__attribute__nonnull__(test);
+	if (test == NULL)
+		return;
 
-	if (test->comment != NULL)
-		free(test->comment);
-	if (test->id != NULL)
-		free(test->id);
-	oval_collection_free_items(test->notes, &free);
+	free(test->comment);
+	free(test->id);
+	oval_collection_free_items(test->notes, free);
 	oval_collection_free(test->states);
-
-	test->comment = NULL;
-	test->id = NULL;
-	test->notes = NULL;
-	test->object = NULL;
-	test->states = NULL;
 
 	free(test);
 }
