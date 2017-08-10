@@ -403,15 +403,6 @@ void oscap_strtoupper(char *str);
 bool oscap_ptr_cmp(void *node1, void *node2);
 
 /**
- * find file with given name and mode in given paths
- * @param filename filename to be found
- * @param mode desired file mode (e.g. R_OK for readable files)
- * @param pathvar environment variable to check for path, can be NULL
- * @param path path where to search the file
- */
-char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *path);
-
-/**
  * A helper function to expand given shorthand IPv6
  *
  * example:
