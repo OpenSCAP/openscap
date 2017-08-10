@@ -368,7 +368,7 @@ static inline bool oscap_streq(const char *s1, const char *s2) {
 
 /// Check whether str starts with "prefix"
 static inline bool oscap_str_startswith(const char *str, const char *prefix) {
-	return !strncmp(str, prefix, strlen(prefix));
+	return strncmp(str, prefix, strlen(prefix)) == 0;
 }
 
 /// Check whether str ends with "suffix"
