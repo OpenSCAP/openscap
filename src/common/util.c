@@ -54,22 +54,6 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val)
 	return map->string;
 }
 
-char *oscap_strdup(const char *str)
-{
-
-	char *m;
-
-	if (str == NULL)
-		return NULL;
-
-	m = strdup(str);
-
-	if (m == NULL)
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
-
-	return m;
-}
-
 float oscap_strtol(const char *str, char **endptr, int base){
     if (str == NULL) {
         return NAN;

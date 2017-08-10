@@ -29,6 +29,7 @@
 #include "public/oscap.h"
 #include "alloc.h"
 #include <stdarg.h>
+#include <string.h>
 
 #ifndef __attribute__nonnull__
 #define __attribute__nonnull__(x) assert((x) != NULL)
@@ -331,7 +332,16 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
  * Use strdup on string, if string is NULL, return NULL
  * @param str String we want to duplicate
  */
-char *oscap_strdup(const char *str);
+static inline char *oscap_strdup(const char *str) {
+	if (str == NULL)
+		return NULL;
+
+#ifdef _MSC_VER
+	return _strdup(str);
+#else
+	return strdup(str);
+#endif
+}
 
 /**
  * Use strtol on string, if string is NULL, return NaN
