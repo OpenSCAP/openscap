@@ -138,11 +138,11 @@ struct oval_value *oval_value_clone(struct oval_value *old_value)
 
 void oval_value_free(struct oval_value *value)
 {
-	if (value) {
-		free(value->text);
-		value->text = NULL;
-		free(value);
-	}
+    if (value == NULL)
+        return;
+
+    free(value->text);
+    free(value);
 }
 
 int oval_value_cast(struct oval_value *value, oval_datatype_t new_dt)
