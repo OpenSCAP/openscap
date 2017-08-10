@@ -366,8 +366,19 @@ static inline bool oscap_streq(const char *s1, const char *s2) {
 	return oscap_strcmp(s1, s2) == 0;
 }
 
-bool oscap_str_startswith(const char *str, const char *with);
-bool oscap_str_endswith(const char *str, const char *with);
+/// Check whether str starts with "prefix"
+static inline bool oscap_str_startswith(const char *str, const char *prefix) {
+	return !strncmp(str, prefix, strlen(prefix));
+}
+
+/// Check whether str ends with "suffix"
+static inline bool oscap_str_endswith(const char *str, const char *suffix) {
+	const size_t str_len = strlen(str);
+	const size_t suffix_len = strlen(suffix);
+	if (suffix_len > str_len)
+		return false;
+	return strncmp(str + str_len - suffix_len, suffix, suffix_len) == 0;
+}
 /// Trim whitespace (modifies its argument!)
 char *oscap_trim(char *str);
 /// Print to a newly allocated string using a va_list.
