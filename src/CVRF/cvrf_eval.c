@@ -236,7 +236,7 @@ static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_session *sessio
 	while (oscap_iterator_has_more(branches)) {
 		struct cvrf_branch *branch = oscap_iterator_next(branches);
 		if (cvrf_branch_get_branch_type(branch) == CVRF_BRANCH_PRODUCT_VERSION) {
-			struct cvrf_product_name *full_name = cvrf_branch_get_cvrf_product_name(branch);
+			struct cvrf_product_name *full_name = cvrf_branch_get_product_name(branch);
 
 			if (oscap_str_endswith(product_id, cvrf_product_name_get_product_id(full_name))) {
 				rpm_name = cvrf_product_name_get_cpe(full_name);
