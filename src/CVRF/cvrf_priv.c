@@ -58,7 +58,7 @@
  * CVRF Remediation
  */
 struct cvrf_remediation {
-	cvrf_remediation_type_t remed_type;
+	cvrf_remediation_type_t type;
 	char *date;
 	char *description;
 	char *url;
@@ -72,7 +72,7 @@ OSCAP_ACCESSOR_STRING(cvrf_remediation, url)
 OSCAP_ACCESSOR_STRING(cvrf_remediation, entitlement)
 
 cvrf_remediation_type_t cvrf_remediation_get_type(struct cvrf_remediation *remed) {
-	return remed->remed_type;
+	return remed->type;
 }
 
 struct oscap_string_iterator *cvrf_remediation_get_product_ids(struct cvrf_remediation *remed) {
@@ -87,6 +87,7 @@ struct cvrf_remediation *cvrf_remediation_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->date = NULL;
 	ret->description = NULL;
 	ret->url = NULL;
@@ -111,7 +112,7 @@ void cvrf_remediation_free(struct cvrf_remediation *remed) {
 
 struct cvrf_remediation *cvrf_remediation_clone(const struct cvrf_remediation *remed) {
 	struct cvrf_remediation *clone = oscap_calloc(1, sizeof(struct cvrf_remediation));
-	clone->remed_type = remed->remed_type;
+	clone->type = remed->type;
 	clone->date = oscap_strdup(remed->date);
 	clone->description = oscap_strdup(remed->description);
 	clone->url = oscap_strdup(remed->url);
@@ -213,7 +214,7 @@ struct cvrf_score_set *cvrf_score_set_clone(const struct cvrf_score_set *score_s
  * CVRF threat
  */
 struct cvrf_threat {
-	cvrf_threat_type_t threat_type;
+	cvrf_threat_type_t type;
 	char *date;
 	char *description;
 	struct oscap_stringlist *product_ids;
@@ -223,7 +224,7 @@ OSCAP_ACCESSOR_STRING(cvrf_threat, date)
 OSCAP_ACCESSOR_STRING(cvrf_threat, description)
 
 cvrf_threat_type_t cvrf_threat_get_threat_type(struct cvrf_threat *threat) {
-	return threat->threat_type;
+	return threat->type;
 }
 struct oscap_string_iterator *cvrf_threat_get_product_ids(struct cvrf_threat *threat) {
 	return oscap_stringlist_get_strings(threat->product_ids);
@@ -233,11 +234,11 @@ struct oscap_string_iterator *cvrf_threat_get_group_ids(struct cvrf_threat *thre
 }
 
 struct cvrf_threat *cvrf_threat_new() {
-	struct cvrf_threat *ret;
-	ret = oscap_alloc(sizeof(struct cvrf_threat));
+	struct cvrf_threat *ret = oscap_alloc(sizeof(struct cvrf_threat));
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->date = NULL;
 	ret->description = NULL;
 	ret->product_ids = oscap_stringlist_new();
@@ -259,7 +260,7 @@ void cvrf_threat_free(struct cvrf_threat *threat) {
 
 struct cvrf_threat *cvrf_threat_clone(const struct cvrf_threat *threat) {
 	struct cvrf_threat *clone = oscap_calloc(1, sizeof(struct cvrf_threat));
-	clone->threat_type = threat->threat_type;
+	clone->type = threat->type;
 	clone->date = oscap_strdup(threat->date);
 	clone->description = oscap_strdup(threat->description);
 	clone->product_ids = oscap_stringlist_clone(threat->product_ids);
@@ -272,7 +273,7 @@ struct cvrf_threat *cvrf_threat_clone(const struct cvrf_threat *threat) {
  */
 
 struct cvrf_product_status {
-	cvrf_product_status_type_t status_type;
+	cvrf_product_status_type_t type;
 	struct oscap_stringlist *product_ids;
 };
 
@@ -280,18 +281,16 @@ struct oscap_string_iterator *cvrf_product_status_get_ids(struct cvrf_product_st
 	return oscap_stringlist_get_strings(stat->product_ids);
 }
 cvrf_product_status_type_t cvrf_product_status_get_type(struct cvrf_product_status *stat) {
-	return stat->status_type;
+	return stat->type;
 }
 
 struct cvrf_product_status *cvrf_product_status_new() {
-	struct cvrf_product_status *ret;
-
-	ret = oscap_alloc(sizeof(struct cvrf_product_status));
+	struct cvrf_product_status *ret = oscap_alloc(sizeof(struct cvrf_product_status));
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->product_ids = oscap_stringlist_new();
-
 	return ret;
 }
 
@@ -305,7 +304,7 @@ void cvrf_product_status_free(struct cvrf_product_status *status) {
 
 struct cvrf_product_status *cvrf_product_status_clone(const struct cvrf_product_status *stat) {
 	struct cvrf_product_status *clone = oscap_calloc(1, sizeof(struct cvrf_product_status));
-	clone->status_type = stat->status_type;
+	clone->type = stat->type;
 	clone->product_ids = oscap_stringlist_clone(stat->product_ids);
 	return clone;
 }
@@ -330,6 +329,8 @@ struct cvrf_involvement *cvrf_involvement_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->status = 0;
+	ret->party = 0;
 	ret->description = NULL;
 	return ret;
 }
@@ -414,6 +415,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->ordinal = 0;
 	ret->title = NULL;
 	ret->system_id = NULL;
 	ret->system_name = NULL;
@@ -456,6 +458,7 @@ void cvrf_vulnerability_free(struct cvrf_vulnerability *vulnerability) {
 
 struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerability *vuln) {
 	struct cvrf_vulnerability *clone = oscap_calloc(1, sizeof(struct cvrf_vulnerability));
+	clone->ordinal = vuln->ordinal;
 	clone->title = oscap_strdup(vuln->title);
 	clone->system_id = oscap_strdup(vuln->system_id);
 	clone->system_id = oscap_strdup(vuln->system_name);
@@ -516,7 +519,6 @@ struct cvrf_product_name *cvrf_product_name_new() {
 
 	ret->product_id = NULL;
 	ret->cpe = NULL;
-
 	return ret;
 }
 
@@ -635,7 +637,7 @@ struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship
  * CVRF Branch
  */
 struct cvrf_branch {
-	cvrf_branch_type_t branch_type;
+	cvrf_branch_type_t type;
 	char *branch_name;
 	struct cvrf_product_name *full_name;
 	struct oscap_list *subbranches;
@@ -649,7 +651,7 @@ struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *
 	return branch->full_name;
 }
 cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch) {
-	return branch->branch_type;
+	return branch->type;
 }
 
 struct cvrf_branch *cvrf_branch_new() {
@@ -657,6 +659,7 @@ struct cvrf_branch *cvrf_branch_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->branch_name = NULL;
 	ret->full_name = cvrf_product_name_new();
 	ret->subbranches = oscap_list_new();
@@ -676,7 +679,7 @@ void cvrf_branch_free(struct cvrf_branch *branch) {
 struct cvrf_branch *cvrf_branch_clone(const struct cvrf_branch *branch) {
 	struct cvrf_branch *clone = oscap_calloc(1, sizeof(struct cvrf_branch));
 	clone->branch_name = oscap_strdup(branch->branch_name);
-	clone->branch_type = branch->branch_type;
+	clone->type = branch->type;
 	clone->full_name = cvrf_product_name_clone(branch->full_name);
 	clone->subbranches = oscap_list_clone(branch->subbranches, (oscap_clone_func) cvrf_branch_clone);
 	return clone;
@@ -852,6 +855,7 @@ struct cvrf_note *cvrf_note_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->audience = NULL;
 	ret->title = NULL;
 	ret->contents = NULL;
@@ -897,7 +901,6 @@ struct cvrf_revision *cvrf_revision_new() {
 	ret->number = NULL;
 	ret->date = NULL;
 	ret->description = NULL;
-
 	return ret;
 }
 
@@ -955,6 +958,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 
 	ret->tracking_id = NULL;
 	ret->aliases = oscap_stringlist_new();
+	ret->status = 0;
 	ret->version = NULL;
 	ret->revision_history = oscap_list_new();
 	ret->init_release_date = NULL;
@@ -998,7 +1002,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_clone(const struct cvrf_doc_tracking
  */
 
 struct cvrf_doc_publisher {
-	cvrf_doc_publisher_type_t publisher_type;
+	cvrf_doc_publisher_type_t type;
 	char *vendor_id;
 	char *contact_details;
 	char *issuing_authority;
@@ -1008,7 +1012,7 @@ OSCAP_ACCESSOR_STRING(cvrf_doc_publisher, contact_details)
 OSCAP_ACCESSOR_STRING(cvrf_doc_publisher, issuing_authority)
 
 cvrf_doc_publisher_type_t cvrf_doc_publisher_get_type(struct cvrf_doc_publisher *publisher) {
-	return publisher->publisher_type;
+	return publisher->type;
 }
 
 
@@ -1017,6 +1021,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->vendor_id = NULL;
 	ret->contact_details = NULL;
 	ret->issuing_authority = NULL;
@@ -1035,7 +1040,7 @@ void cvrf_doc_publisher_free(struct cvrf_doc_publisher *publisher) {
 
 struct cvrf_doc_publisher *cvrf_doc_publisher_clone(const struct cvrf_doc_publisher *publisher) {
 	struct cvrf_doc_publisher *clone = oscap_calloc(1, sizeof(struct cvrf_doc_publisher));
-	clone->publisher_type = publisher->publisher_type;
+	clone->type = publisher->type;
 	clone->vendor_id = oscap_strdup(publisher->vendor_id);
 	clone->contact_details = oscap_strdup(publisher->contact_details);
 	clone->issuing_authority = oscap_strdup(publisher->issuing_authority);
@@ -1048,7 +1053,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_clone(const struct cvrf_doc_publis
  */
 
 struct cvrf_reference {
-	cvrf_reference_type_t ref_type;
+	cvrf_reference_type_t type;
 	char *url;
 	char *description;
 };
@@ -1056,7 +1061,7 @@ OSCAP_ACCESSOR_STRING(cvrf_reference, url)
 OSCAP_ACCESSOR_STRING(cvrf_reference, description)
 
 cvrf_reference_type_t cvrf_reference_get_reference_type(struct cvrf_reference *reference) {
-	return reference->ref_type;
+	return reference->type;
 }
 
 struct cvrf_reference *cvrf_reference_new() {
@@ -1064,6 +1069,7 @@ struct cvrf_reference *cvrf_reference_new() {
 	if (ret == NULL)
 		return NULL;
 
+	ret->type = 0;
 	ret->url = NULL;
 	ret->description = NULL;
 
@@ -1081,7 +1087,7 @@ void cvrf_reference_free(struct cvrf_reference *ref) {
 
 struct cvrf_reference *cvrf_reference_clone(const struct cvrf_reference *ref) {
 	struct cvrf_reference *clone = oscap_calloc(1, sizeof(struct cvrf_reference));
-	clone->ref_type = ref->ref_type;
+	clone->type = ref->type;
 	clone->url = oscap_strdup(ref->url);
 	clone->description = oscap_strdup(ref->description);
 	return clone;
@@ -1546,7 +1552,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 	if (xmlTextReaderIsEmptyElement(reader))
 		return publisher;
 
-	publisher->publisher_type = cvrf_item_parse_type_attribute(reader, CVRF_DOCUMENT_PUBLISHER);
+	publisher->type = cvrf_item_parse_type_attribute(reader, CVRF_DOCUMENT_PUBLISHER);
 	publisher->vendor_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_VENDOR_ID);
 	xmlTextReaderNextElement(reader);
 
@@ -1638,7 +1644,7 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_reference *ref = cvrf_reference_new();
 	if (xmlTextReaderGetAttribute(reader, BAD_CAST "Type") != NULL)
-		ref->ref_type = cvrf_item_parse_type_attribute(reader, CVRF_REFERENCE);
+		ref->type = cvrf_item_parse_type_attribute(reader, CVRF_REFERENCE);
 
 	xmlTextReaderNextElement(reader);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE) != 0) {
@@ -1723,7 +1729,7 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 
 	struct cvrf_branch *branch = cvrf_branch_new();
 	branch->branch_name = (char *)xmlTextReaderGetAttribute(reader, TAG_NAME);
-	branch->branch_type = cvrf_item_parse_type_attribute(reader, CVRF_BRANCH);
+	branch->type = cvrf_item_parse_type_attribute(reader, CVRF_BRANCH);
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME)) {
@@ -1901,7 +1907,7 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_threat *threat = cvrf_threat_new();
-	threat->threat_type = cvrf_item_parse_type_attribute(reader, CVRF_THREAT);
+	threat->type = cvrf_item_parse_type_attribute(reader, CVRF_THREAT);
 	threat->date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
 	xmlTextReaderNextElement(reader);
 
@@ -1928,7 +1934,7 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_remediation *remed = cvrf_remediation_new();
-	remed->remed_type = cvrf_item_parse_type_attribute(reader, CVRF_REMEDIATION);
+	remed->type = cvrf_item_parse_type_attribute(reader, CVRF_REMEDIATION);
 	remed->date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
 	xmlTextReaderNextElement(reader);
 
@@ -1965,7 +1971,7 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 	if (stat == NULL)
 		return NULL;
 
-	stat->status_type = cvrf_item_parse_type_attribute(reader, CVRF_PRODUCT_STATUS);
+	stat->type = cvrf_item_parse_type_attribute(reader, CVRF_PRODUCT_STATUS);
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS) != 0) {
@@ -2165,7 +2171,7 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 
 xmlNode *cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher) {
 	xmlNode *pub_node = xmlNewNode(NULL, TAG_PUBLISHER);
-	const char *publisher_type = cvrf_doc_publisher_type_get_text(publisher->publisher_type);
+	const char *publisher_type = cvrf_doc_publisher_type_get_text(publisher->type);
 	xmlNewProp(pub_node, BAD_CAST "Type", BAD_CAST publisher_type);
 
 	cvrf_element_add_child("ContactDetails", publisher->contact_details, pub_node);
@@ -2216,7 +2222,7 @@ xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision) {
 
 xmlNode *cvrf_reference_to_dom(struct cvrf_reference *ref) {
 	xmlNode *ref_node = xmlNewNode(NULL, TAG_REFERENCE);
-	cvrf_element_add_attribute("Type", cvrf_reference_type_get_text(ref->ref_type), ref_node);
+	cvrf_element_add_attribute("Type", cvrf_reference_type_get_text(ref->type), ref_node);
 	cvrf_element_add_child("URL", ref->url, ref_node);
 	cvrf_element_add_child("Description", ref->description, ref_node);
 	return ref_node;
@@ -2253,11 +2259,11 @@ xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree) {
 
 xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch) {
 	xmlNode *branch_node = xmlNewNode(NULL, TAG_BRANCH);
-	const char *branch_type = cvrf_branch_type_get_text(branch->branch_type);
+	const char *branch_type = cvrf_branch_type_get_text(branch->type);
 	xmlNewProp(branch_node, ATTR_TYPE, BAD_CAST branch_type);
 	xmlNewProp(branch_node, BAD_CAST "Name", BAD_CAST branch->branch_name);
 
-	if (branch->branch_type == CVRF_BRANCH_PRODUCT_FAMILY) {
+	if (branch->type == CVRF_BRANCH_PRODUCT_FAMILY) {
 		cvrf_list_to_dom(branch->subbranches, branch_node, CVRF_BRANCH);
 	} else {
 		xmlAddChild(branch_node, cvrf_product_name_to_dom(branch->full_name));
@@ -2338,8 +2344,7 @@ xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set) {
 
 xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat) {
 	xmlNode *status_node = xmlNewNode(NULL, TAG_STATUS);
-	const char *status_type = cvrf_product_status_type_get_text(stat->status_type);
-	cvrf_element_add_attribute("Type", status_type, status_node);
+	cvrf_element_add_attribute("Type", cvrf_product_status_type_get_text(stat->type), status_node);
 	cvrf_element_add_stringlist(stat->product_ids, "ProductID", status_node);
 	return status_node;
 }
@@ -2347,8 +2352,7 @@ xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat) {
 xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed) {
 
 	xmlNode *remed_node = xmlNewNode(NULL, TAG_REMEDIATION);
-	const char *remed_type = cvrf_remediation_type_get_text(remed->remed_type);
-	cvrf_element_add_attribute("Type", remed_type, remed_node);
+	cvrf_element_add_attribute("Type", cvrf_remediation_type_get_text(remed->type), remed_node);
 
 	xmlNode *desc_node = cvrf_element_to_dom("Description", remed->description);
 	xmlNewProp(desc_node, ATTR_LANG, BAD_CAST "en");
@@ -2363,8 +2367,7 @@ xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed) {
 xmlNode *cvrf_threat_to_dom(const struct cvrf_threat *threat) {
 
 	xmlNode *threat_node = xmlNewNode(NULL, TAG_THREAT);
-	const char *threat_type = cvrf_threat_type_get_text(threat->threat_type);
-	cvrf_element_add_attribute("Type", threat_type, threat_node);
+	cvrf_element_add_attribute("Type", cvrf_threat_type_get_text(threat->type), threat_node);
 	cvrf_element_add_attribute("Date", threat->date, threat_node);
 
 	cvrf_element_add_child("Description", threat->description, threat_node);
