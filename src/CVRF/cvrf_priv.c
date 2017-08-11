@@ -1518,7 +1518,7 @@ struct cvrf_note *cvrf_note_parse(xmlTextReaderPtr reader) {
 	if (xmlTextReaderIsEmptyElement(reader))
 		return NULL;
 
-	note->ordinal = (int)oscap_strtol((char *)xmlTextReaderGetAttribute(reader, ATTR_ORDINAL), NULL, 10);
+	note->ordinal = strtol((char *)xmlTextReaderGetAttribute(reader, ATTR_ORDINAL), NULL, 10);
 	note->type = cvrf_item_parse_type_attribute(reader, CVRF_NOTE);
 	note->audience = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "Audience");
 	note->title = (char *)xmlTextReaderGetAttribute(reader, TAG_TITLE);
@@ -1788,7 +1788,7 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_vulnerability *vuln = cvrf_vulnerability_new();
-	vuln->ordinal = (int)oscap_strtol((char *)xmlTextReaderGetAttribute(reader, ATTR_ORDINAL), NULL, 10);
+	vuln->ordinal = strtol((char *)xmlTextReaderGetAttribute(reader, ATTR_ORDINAL), NULL, 10);
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY) != 0) {
