@@ -384,6 +384,7 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 	oval_criteria_node_set_comment(criterion, comment);
 	oval_criteria_node_add_subnode(criteria, criterion);
 
+	oscap_free(comment);
 	return definition;
 }
 
