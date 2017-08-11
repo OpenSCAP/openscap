@@ -1446,7 +1446,7 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 
 static char *cvrf_parse_element(xmlTextReaderPtr reader, const char *tagname, bool next_elm) {
 	char *elm_value = NULL;
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tagname)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tagname) == 0) {
 		elm_value = oscap_element_string_copy(reader);
 	}
 	if (next_elm)
@@ -1489,8 +1489,8 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
-	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_DOC) ||
-			!(xmlTextReaderNodeType(reader) == XML_READER_TYPE_ELEMENT))
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_DOC)  != 0 ||
+			xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
 		return NULL;
 
 	struct cvrf_model *ret = cvrf_model_new();
@@ -1508,33 +1508,33 @@ struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_document *doc = cvrf_document_new();
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHER)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PUBLISHER) == 0) {
 		doc->publisher = cvrf_doc_publisher_parse(reader);
 		xmlTextReaderNextElement(reader);
 	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_TRACKING)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_TRACKING) == 0) {
 		doc->tracking = cvrf_doc_tracking_parse(reader);
 		xmlTextReaderNextElement(reader);
 	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "DocumentNotes")) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "DocumentNotes") == 0) {
 		cvrf_parse_container(reader, doc->doc_notes, CVRF_DOCUMENT_NOTE);
 		xmlTextReaderNextNode(reader);
 		xmlTextReaderNextNode(reader);
 	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISTRIBUTION)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISTRIBUTION) == 0) {
 		doc->doc_distribution = oscap_element_string_copy(reader);
 		xmlTextReaderNextElement(reader);
 	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_AGGREGATE_SEVERITY)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_AGGREGATE_SEVERITY) == 0) {
 		doc->namespace = (char *)xmlTextReaderGetAttribute(reader, ATTR_NAMESPACE);
 		doc->aggregate_severity = oscap_element_string_copy(reader);
 		xmlTextReaderNextElement(reader);
 	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_REFERENCES)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_REFERENCES) == 0) {
 		cvrf_parse_container(reader, doc->doc_references, CVRF_DOCUMENT_REFERENCE);
 		xmlTextReaderNextElement(reader);
 	}
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS) == 0) {
 		cvrf_parse_container(reader, doc->acknowledgments, CVRF_ACKNOWLEDGMENT);
 		xmlTextReaderNextElement(reader);
 	}
@@ -1587,39 +1587,37 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 	xmlTextReaderNextElement(reader);
 
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_TRACKING) != 0) {
-
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
-
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_IDENTIFICATION)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_IDENTIFICATION) == 0) {
 			xmlTextReaderNextElement(reader);
 			tracking->tracking_id = cvrf_parse_element(reader, "ID", false);
 			while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_IDENTIFICATION) != 0) {
-				if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ALIAS)) {
+				if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ALIAS) == 0) {
 					oscap_stringlist_add_string(tracking->aliases, cvrf_parse_element(reader, "Alias", false));
 					xmlTextReaderNextNode(reader);
 				}
 				xmlTextReaderNextNode(reader);
 			}
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS) == 0) {
 			tracking->status = cvrf_item_parse_type_attribute(reader, CVRF_DOCUMENT_TRACKING);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION) == 0) {
 			tracking->version = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REVISION_HISTORY)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REVISION_HISTORY) == 0) {
 			cvrf_parse_container(reader, tracking->revision_history, CVRF_REVISION);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "InitialReleaseDate")) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "InitialReleaseDate") == 0) {
 			tracking->init_release_date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "CurrentReleaseDate")) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "CurrentReleaseDate") == 0) {
 			tracking->cur_release_date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR) == 0) {
 			xmlTextReaderNextElement(reader);
-			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_ENGINE)) {
+			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GENERATOR_ENGINE) == 0) {
 				tracking->generator_engine = oscap_element_string_copy(reader);
 				xmlTextReaderNextElement(reader);
 			}
-			if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DATE)) {
+			if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DATE) == 0) {
 				tracking->generator_date = oscap_element_string_copy(reader);
 			}
 		}
@@ -1642,11 +1640,11 @@ struct cvrf_revision *cvrf_revision_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NUMBER)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NUMBER) == 0) {
 			revision->number = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DATE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DATE) == 0) {
 			revision->date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			revision->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
@@ -1668,9 +1666,9 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL) == 0) {
 			ref->url = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			ref->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
@@ -1691,13 +1689,13 @@ struct cvrf_acknowledgment *cvrf_acknowledgment_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NAME)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_NAME) == 0) {
 			oscap_stringlist_add_string(ack->names, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ORGANIZATION)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ORGANIZATION) == 0) {
 			oscap_stringlist_add_string(ack->organizations, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL) == 0) {
 			oscap_stringlist_add_string(ack->urls, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			ack->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
@@ -1778,11 +1776,10 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 	relation->relates_to_ref = (char *)xmlTextReaderGetAttribute(reader, ATTR_RELATES_TO_REF);
 	xmlTextReaderNextElement(reader);
 
-	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME)) {
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME) == 0) {
 		relation->full_name = cvrf_product_name_parse(reader);
 	}
 	xmlTextReaderNextNode(reader);
-
 	return relation;
 }
 
@@ -1798,9 +1795,9 @@ struct cvrf_group *cvrf_group_parse(xmlTextReaderPtr reader) {
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			group->description = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
 			oscap_stringlist_add_string(group->product_ids, oscap_element_string_copy(reader));
 		}
 		xmlTextReaderNextNode(reader);
@@ -1830,38 +1827,38 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TITLE)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TITLE) == 0) {
 			vuln->title = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ID) == 0) {
 			vuln->system_name = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "SystemName");
 			vuln->system_id = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISCOVERY_DATE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DISCOVERY_DATE) == 0) {
 			vuln->discovery_date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_RELEASE_DATE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_RELEASE_DATE) == 0) {
 			vuln->release_date = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CVE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CVE) == 0) {
 			vuln->cve_id = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CWE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CWE) == 0) {
 			oscap_stringlist_add_string(vuln->cwe_ids, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Notes")) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Notes") == 0) {
 			cvrf_parse_container(reader, vuln->notes, CVRF_NOTE);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_INVOLVEMENTS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_INVOLVEMENTS) == 0) {
 			cvrf_parse_container(reader, vuln->involvements, CVRF_INVOLVEMENT);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUSES)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUSES) == 0) {
 			cvrf_parse_container(reader, vuln->product_statuses, CVRF_PRODUCT_STATUS);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS) == 0) {
 			struct cvrf_product_status *stat = cvrf_product_status_parse(reader);
 			if (stat != NULL)
 				cvrf_vulnerability_add_cvrf_product_status(vuln, stat);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREATS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREATS) == 0) {
 			cvrf_parse_container(reader, vuln->threats, CVRF_THREAT);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_SCORE_SETS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_SCORE_SETS) == 0) {
 			cvrf_parse_container(reader, vuln->score_sets, CVRF_SCORE_SET);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATIONS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATIONS) == 0) {
 			cvrf_parse_container(reader, vuln->remediations, CVRF_REMEDIATION);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES) == 0) {
 			cvrf_parse_container(reader, vuln->references, CVRF_REFERENCE);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS) == 0) {
 			cvrf_parse_container(reader, vuln->acknowledgments, CVRF_ACKNOWLEDGMENT);
 		}
 		xmlTextReaderNextNode(reader);
@@ -1881,15 +1878,15 @@ struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VECTOR)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VECTOR) == 0) {
 			score_set->vector = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
 			oscap_stringlist_add_string(score_set->product_ids, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BASE_SCORE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BASE_SCORE) == 0) {
 			cvrf_score_set_add_metric(score_set, CVSS_BASE, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ENVIRONMENTAL_SCORE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ENVIRONMENTAL_SCORE) == 0) {
 			cvrf_score_set_add_metric(score_set, CVSS_ENVIRONMENTAL, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TEMPORAL_SCORE)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_TEMPORAL_SCORE) == 0) {
 			cvrf_score_set_add_metric(score_set, CVSS_TEMPORAL, oscap_element_string_copy(reader));
 		}
 		xmlTextReaderNextNode(reader);
@@ -1911,7 +1908,7 @@ struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader) {
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			involve->description = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
@@ -1934,17 +1931,16 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			threat->description = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
 			oscap_stringlist_add_string(threat->product_ids, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP_ID) == 0) {
 			oscap_stringlist_add_string(threat->group_ids, oscap_element_string_copy(reader));
 		}
 		xmlTextReaderNextNode(reader);
 	}
 	xmlTextReaderNextNode(reader);
-
 	return threat;
 }
 
@@ -1963,15 +1959,15 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DESCRIPTION) == 0) {
 			remed->description = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_URL) == 0) {
 			remed->url = oscap_element_string_copy(reader);
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
 			oscap_stringlist_add_string(remed->product_ids, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP_ID)) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_GROUP_ID) == 0) {
 			oscap_stringlist_add_string(remed->group_ids, oscap_element_string_copy(reader));
-		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Entitlement")) {
+		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Entitlement") == 0) {
 			remed->entitlement = oscap_element_string_copy(reader);
 		}
 		xmlTextReaderNextNode(reader);
@@ -1997,7 +1993,7 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 			xmlTextReaderNextNode(reader);
 			continue;
 		}
-		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID)) {
+		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
 			const char *product_id = oscap_element_string_copy(reader);
 			if (product_id != NULL)
 				oscap_stringlist_add_string(stat->product_ids, product_id);

@@ -277,8 +277,7 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const cha
 
 		while (oscap_string_iterator_has_more(product_ids)) {
 			const char *product_id = oscap_string_iterator_next(product_ids);
-
-			if (strcmp(product_id, product)) {
+			if (strcmp(product_id, product) == 0) {
 				oscap_string_iterator_free(product_ids);
 				cvrf_product_status_iterator_free(it);
 				return true;
@@ -287,7 +286,6 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const cha
 		oscap_string_iterator_free(product_ids);
 	}
 	cvrf_product_status_iterator_free(it);
-
 	return false;
 }
 
