@@ -255,7 +255,8 @@ static struct cvrf_rpm_attributes *parse_rpm_attributes_from_cvrf_product_id(str
 	attributes->full_package_name = strdup(get_rpm_name_from_cvrf_product_id(session, product_id));
 	char *package = strdup(strchr(product_id, ':')+1);
 	unsigned int index = 0;
-	while (index < strlen(package)) {
+	unsigned int length = strlen(package);
+	while (index < length) {
 		if (package[index] == ':')
 			break;
 		index++;
