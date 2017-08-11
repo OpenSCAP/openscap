@@ -1632,8 +1632,7 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 
 	struct cvrf_reference *ref = cvrf_reference_new();
-	if (xmlTextReaderGetAttribute(reader, BAD_CAST "Type") != NULL)
-		ref->type = cvrf_item_parse_type_attribute(reader, CVRF_REFERENCE);
+	ref->type = cvrf_item_parse_type_attribute(reader, CVRF_REFERENCE);
 
 	xmlTextReaderNextElement(reader);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE) != 0) {
@@ -1964,9 +1963,11 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 			continue;
 		}
 		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
-			const char *product_id = oscap_element_string_copy(reader);
-			if (product_id != NULL)
+			char *product_id = oscap_element_string_copy(reader);
+			if (product_id) {
 				oscap_stringlist_add_string(stat->product_ids, product_id);
+				oscap_free(product_id);
+			}
 		}
 		xmlTextReaderNextNode(reader);
 	}
