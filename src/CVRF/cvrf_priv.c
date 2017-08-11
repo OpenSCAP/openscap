@@ -1380,34 +1380,34 @@ static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *lis
 
 	xmlTextReaderNextElement(reader);
 	const char *tag = cvrf_item_type_get_text(item_type);
-	bool no_err;
+	bool error = false;
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tag) == 0) {
 		if (item_type == CVRF_REVISION) {
-			no_err = oscap_list_add(list, cvrf_revision_parse(reader));
+			error = !oscap_list_add(list, cvrf_revision_parse(reader));
 		} else if (item_type == CVRF_NOTE || item_type == CVRF_DOCUMENT_NOTE) {
-			no_err = oscap_list_add(list, cvrf_note_parse(reader));
+			error = !oscap_list_add(list, cvrf_note_parse(reader));
 		} else if (item_type == CVRF_REFERENCE || item_type == CVRF_DOCUMENT_REFERENCE) {
-			no_err = oscap_list_add(list, cvrf_reference_parse(reader));
+			error = !oscap_list_add(list, cvrf_reference_parse(reader));
 		} else if (item_type == CVRF_ACKNOWLEDGMENT) {
-			no_err = oscap_list_add(list, cvrf_acknowledgment_parse(reader));
+			error = !oscap_list_add(list, cvrf_acknowledgment_parse(reader));
 		} else if (item_type == CVRF_GROUP) {
-			no_err = oscap_list_add(list, cvrf_group_parse(reader));
+			error = !oscap_list_add(list, cvrf_group_parse(reader));
 		} else if (item_type == CVRF_INVOLVEMENT) {
-			no_err = oscap_list_add(list, cvrf_involvement_parse(reader));
+			error = !oscap_list_add(list, cvrf_involvement_parse(reader));
 		} else if (item_type == CVRF_PRODUCT_STATUS) {
-			no_err = oscap_list_add(list, cvrf_product_status_parse(reader));
+			error = !oscap_list_add(list, cvrf_product_status_parse(reader));
 		} else if (item_type ==  CVRF_REMEDIATION) {
-			no_err = oscap_list_add(list, cvrf_remediation_parse(reader));
+			error = !oscap_list_add(list, cvrf_remediation_parse(reader));
 		} else if (item_type == CVRF_THREAT) {
-			no_err = oscap_list_add(list, cvrf_threat_parse(reader));
+			error = !oscap_list_add(list, cvrf_threat_parse(reader));
 		} else if (item_type == CVRF_SCORE_SET) {
-			no_err = oscap_list_add(list, cvrf_score_set_parse(reader));
+			error = !oscap_list_add(list, cvrf_score_set_parse(reader));
 		} else if (item_type == CVRF_VULNERABILITY) {
-			no_err = oscap_list_add(list, cvrf_vulnerability_parse(reader));
+			error = !oscap_list_add(list, cvrf_vulnerability_parse(reader));
 		}
 
 		xmlTextReaderNextNode(reader);
-		if (!no_err) {
+		if (error) {
 			cvrf_set_parsing_error(tag);
 			break;
 		}
