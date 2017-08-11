@@ -772,7 +772,7 @@ int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *
 	cvrf_relationship_iterator_free(relationships);
 
 	if (oscap_list_get_itemcount(filtered_relation) == 0) {
-		oscap_free(filtered_relation);
+		oscap_list_free(filtered_relation, (oscap_destruct_func) cvrf_relationship_free);
 		return -1;
 	} else {
 		oscap_list_free(tree->relationships, (oscap_destruct_func) cvrf_relationship_free);
