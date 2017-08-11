@@ -452,11 +452,18 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 
 /**
  * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure to be filtered
+ * @param prod ProductID of the CPE; this is the prefix of package ProductIDs in Statuses
+ */
+void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
+
+/**
+ * @memberof cvrf_vulnerability
  * @param vuln CVRF Vulnerability structure
  * Index and ordering of a Vulnerability element within a document
  * @return Ordinal attribute of a Vulnerability element
  */
-int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln);
+int cvrf_vulnerability_get_ordinal(const struct cvrf_vulnerability *vuln);
 
 /**
  * @memberof cvrf_vulnerability
@@ -506,14 +513,13 @@ const char *cvrf_vulnerability_get_release_date(const struct cvrf_vulnerability 
  */
 const char *cvrf_vulnerability_get_cve_id(const struct cvrf_vulnerability *vuln);
 
-struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
-
-int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln);
-struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
-struct oscap_iterator *cvrf_vulnerability_get_involvements(struct cvrf_vulnerability *vuln);
-void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
-struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
-struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param ordinal Index of a Vulnerability element within a document
+ * @return true on success
+ */
+bool cvrf_vulnerability_set_ordinal(struct cvrf_vulnerability *vuln, int ordinal);
 
 /**
  * @memberof cvrf_vulnerability
@@ -563,40 +569,299 @@ bool cvrf_vulnerability_set_release_date(struct cvrf_vulnerability *vuln, const 
  */
 bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *cve_id);
 
+
+/*-------------------------------------------------------------------------*\
+|				Iterators of child elements of Vulnerability				|
+\*-------------------------------------------------------------------------*/
+
+struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
+struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
+
+/*******************************************
+ * @struct cvrf_involvement_iterator
+ * Iterator representing all Involvement elements in the Involvements container
+ * Contained as a list within the CVRF Vulnerability structure
+ */
+struct cvrf_involvement_iterator;
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param involvement CVRF Involvement structure to be added to the Vulnerability
+ * @return true on success
+ */
+bool cvrf_vulnerability_add_involvement(struct cvrf_vulnerability *vuln, struct cvrf_involvement *involvement);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator representing list of all Involvements in the Vulnerability
+ */
+struct cvrf_involvement_iterator *cvrf_vulnerability_get_involvements(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_involvement_iterator
+ * @param it CVRF Involvement iterator structure
+ * @return Next CVRF Involvement in list of all Involvements in the Vulnerability
+ */
+struct cvrf_involvement *cvrf_involvement_iterator_next(struct cvrf_involvement_iterator *it);
+
+/**
+ * @memberof cvrf_involvement_iterator
+ * @param it CVRF Involvement iterator structure
+ * @return true if the iterator has another Involvement element left
+ */
+bool cvrf_involvement_iterator_has_more(struct cvrf_involvement_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Involvement Iterator structure
+ * @memberof cvrf_involvement_iterator
+ * @param it CVRF Involvement iterator structure
+ */
+void cvrf_involvement_iterator_free(struct cvrf_involvement_iterator *it);
+
+/**
+ * Restart iterator at the first Involvement in the Vulnerability
+ * @memberof cvrf_involvement_iterator
+ * @param it CVRF Involvement iterator structure
+ */
+void cvrf_involvement_iterator_reset(struct cvrf_involvement_iterator *it);
+
+/**
+ * Detaches and frees the Involvement iterator structure
+ * @memberof cvrf_involvement_iterator
+ * @param it CVRF Involvement iterator structure
+ */
+void cvrf_involvement_iterator_remove(struct cvrf_involvement_iterator *it);
+
+/*******************************************
+ * @struct cvrf_score_set_iterator
+ * Iterator representing all ScoreSet elements in the CVSSScoreSets container
+ * Contained as a list within the CVRF Vulnerability structure
+ */
 struct cvrf_score_set_iterator;
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param vuln CVRF ScoreSet structure to be added to the Vulnerability
+ * @return true on success
+ */
 bool cvrf_vulnerability_add_score_set(struct cvrf_vulnerability *vuln, struct cvrf_score_set *score_set);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator representing list of all ScoreSets in the Vulnerability
+ */
 struct cvrf_score_set_iterator *cvrf_vulnerability_get_score_sets(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_score_set_iterator
+ * @param it CVRF ScoreSet iterator structure
+ * @return Next CVRF ScoreSet in list of all CVSSScoreSets in the Vulnerability
+ */
 struct cvrf_score_set *cvrf_score_set_iterator_next(struct cvrf_score_set_iterator *it);
+
+/**
+ * @memberof cvrf_score_set_iterator
+ * @param it CVRF ScoreSet iterator structure
+ * @return true if the iterator has another ScoreSet element left
+ */
 bool cvrf_score_set_iterator_has_more(struct cvrf_score_set_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF ScoreSet Iterator structure
+ * @memberof cvrf_score_set_iterator
+ * @param it CVRF ScoreSet iterator structure
+ */
 void cvrf_score_set_iterator_free(struct cvrf_score_set_iterator *it);
+
+/**
+ * Restart iterator at the first ScoreSet in the Vulnerability
+ * @memberof cvrf_score_set_iterator
+ * @param it CVRF ScoreSet iterator structure
+ */
 void cvrf_score_set_iterator_reset(struct cvrf_score_set_iterator *it);
+
+/**
+ * Detaches and frees the ScoreSet iterator structure
+ * @memberof cvrf_score_set_iterator
+ * @param it CVRF ScoreSet iterator structure
+ */
 void cvrf_score_set_iterator_remove(struct cvrf_score_set_iterator *it);
 
+/*******************************************
+ * @struct cvrf_product_status_iterator
+ * Iterator representing all Status elements in the ProductStatuses container
+ * Contained as a list within the CVRF Vulnerability structure
+ */
 struct cvrf_product_status_iterator;
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param vuln CVRF Status structure to be added to the Vulnerability
+ * @return true on success
+ */
 bool cvrf_vulnerability_add_cvrf_product_status(struct cvrf_vulnerability *vuln, struct cvrf_product_status *stat);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator representing list of all Statuses in the Vulnerability
+ */
 struct cvrf_product_status_iterator *cvrf_vulnerability_get_product_statuses(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_product_status_iterator
+ * @param it CVRF ProductStatus iterator structure
+ * @return Next CVRF Status in list of all ProductStatuses in the Vulnerability
+ */
 struct cvrf_product_status *cvrf_product_status_iterator_next(struct cvrf_product_status_iterator *it);
+
+/**
+ * @memberof cvrf_product_status_iterator
+ * @param it CVRF Status iterator structure
+ * @return true if the iterator has another Status element left
+ */
 bool cvrf_product_status_iterator_has_more(struct cvrf_product_status_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Status Iterator structure
+ * @memberof cvrf_product_status_iterator
+ * @param it CVRF Status iterator structure
+ */
 void cvrf_product_status_iterator_free(struct cvrf_product_status_iterator *it);
+
+/**
+ * Restart iterator at the first Status in the Vulnerability
+ * @memberof cvrf_product_status_iterator
+ * @param it CVRF Status iterator structure
+ */
 void cvrf_product_status_iterator_reset(struct cvrf_product_status_iterator *it);
+
+/**
+ * Detaches and frees the Status iterator structure
+ * @memberof cvrf_product_status_iterator
+ * @param it CVRF Status iterator structure
+ */
 void cvrf_product_status_iterator_remove(struct cvrf_product_status_iterator *it);
 
+/*******************************************
+ * @struct cvrf_remediation_iterator
+ * Iterator representing all Remediation elements in the Remediations container
+ * Contained as a list within the CVRF Vulnerability structure
+ */
 struct cvrf_remediation_iterator;
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param vuln CVRF Remediation structure to be added to the Vulnerability
+ * @return true on success
+ */
 bool cvrf_vulnerability_add_remediation(struct cvrf_vulnerability *vuln, struct cvrf_remediation *remed);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator representing list of all Remediations in the Vulnerability
+ */
 struct cvrf_remediation_iterator *cvrf_vulnerability_get_remediations(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_remediation_iterator
+ * @param it CVRF Remediation iterator structure
+ * @return Next CVRF Remediation in list of all Remediations in the Vulnerability
+ */
 struct cvrf_remediation *cvrf_remediation_iterator_next(struct cvrf_remediation_iterator *it);
+
+/**
+ * @memberof cvrf_remediation_iterator
+ * @param it CVRF Remediation iterator structure
+ * @return true if the iterator has another Remediation element left
+ */
 bool cvrf_remediation_iterator_has_more(struct cvrf_remediation_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Remediation Iterator structure
+ * @memberof cvrf_remediation_iterator
+ * @param it CVRF Remediation iterator structure
+ */
 void cvrf_remediation_iterator_free(struct cvrf_remediation_iterator *it);
+
+/**
+ * Restart iterator at the first Remediation in the Vulnerability
+ * @memberof cvrf_remediation_iterator
+ * @param it CVRF Remediation iterator structure
+ */
 void cvrf_remediation_iterator_reset(struct cvrf_remediation_iterator *it);
+
+/**
+ * Detaches and frees the Remediation iterator structure
+ * @memberof cvrf_remediation_iterator
+ * @param it CVRF Remediation iterator structure
+ */
 void cvrf_remediation_iterator_remove(struct cvrf_remediation_iterator *it);
 
+/*******************************************
+ * @struct cvrf_threat_iterator
+ * Iterator representing all Threat elements in the Threats container
+ * Contained as a list within the CVRF Vulnerability structure
+ */
 struct cvrf_threat_iterator;
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param vuln CVRF Threat structure to be added to the Vulnerability
+ * @return true on success
+ */
 bool cvrf_vulnerability_add_threat(struct cvrf_vulnerability *vuln, struct cvrf_threat *threat);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator representing list of all Threats in the Vulnerability
+ */
 struct cvrf_threat_iterator *cvrf_vulnerability_get_threats(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_threat_iterator
+ * @param it CVRF Threat iterator structure
+ * @return Next CVRF Threat in list of all Threats in the Vulnerability
+ */
 struct cvrf_threat *cvrf_threat_iterator_next(struct cvrf_threat_iterator *it);
+
+/**
+ * @memberof cvrf_threat_iterator
+ * @param it CVRF Threat iterator structure
+ * @return true if the iterator has another Threat element left
+ */
 bool cvrf_threat_iterator_has_more(struct cvrf_threat_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Threat Iterator structure
+ * @memberof cvrf_threat_iterator
+ * @param it CVRF Threat iterator structure
+ */
 void cvrf_threat_iterator_free(struct cvrf_threat_iterator *it);
+
+/**
+ * Restart iterator at the first Threat in the Vulnerability
+ * @memberof cvrf_threat_iterator
+ * @param it CVRF Threat iterator structure
+ */
 void cvrf_threat_iterator_reset(struct cvrf_threat_iterator *it);
+
+/**
+ * Detaches and frees the Threat iterator structure
+ * @memberof cvrf_threat_iterator
+ * @param it CVRF Threat iterator structure
+ */
 void cvrf_threat_iterator_remove(struct cvrf_threat_iterator *it);
 
 /************************************************************************************************
@@ -631,10 +896,36 @@ void cvrf_product_name_free(struct cvrf_product_name *full_name);
  */
 struct cvrf_product_name *cvrf_product_name_clone(const struct cvrf_product_name *full_name);
 
+/**
+ * @memberof cvrf_product_name
+ * @param full_name CVRF FullProductName structure
+ *
+ * @return ProductID attribute within the FullProductName element
+ */
 const char *cvrf_product_name_get_product_id(const struct cvrf_product_name *full_name);
+
+/**
+ * @memberof cvrf_product_name
+ * @param full_name CVRF FullProductName structure
+ *
+ * @return CPE information contained in the FullProductName element
+ */
 const char *cvrf_product_name_get_cpe(const struct cvrf_product_name *full_name);
 
+/**
+ * @memberof cvrf_product_name
+ * @param full_name CVRF FullProductName structure
+ *
+ * @return true on success
+ */
 bool cvrf_product_name_set_product_id(struct cvrf_product_name *full_name, const char *product_id);
+
+/**
+ * @memberof cvrf_product_name
+ * @param full_name CVRF FullProductName structure
+ *
+ * @return true on success
+ */
 bool cvrf_product_name_set_cpe(struct cvrf_product_name *full_name, const char *cpe);
 
 /************************************************************************************************
@@ -884,24 +1175,124 @@ struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree
 const char *get_cvrf_product_id_from_cpe(struct cvrf_product_tree *tree, const char *cpe);
 int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *cpe);
 
-struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree);
-struct cvrf_relationship_iterator *cvrf_product_tree_get_relationships(const struct cvrf_product_tree *tree);
+/*---------------------------------------------------------------------*\
+|				Iterators of child elements of ProductTree				|
+\*---------------------------------------------------------------------*/
 
+struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree);
+
+/*******************************************
+ * @struct cvrf_product_name_iterator
+ * Iterator representing all FullProductName elements in the ProductTree
+ * Contained as a list within the CVRF ProductTree structure
+ */
 struct cvrf_product_name_iterator;
+
+/**
+ * @memberof cvrf_product_tree
+ * @param tree CVRF ProductTree structure
+ * @param full_name CVRF FullProductName structure to be added to the model
+ * @return true on success
+ */
 bool cvrf_product_tree_add_product_name(struct cvrf_product_tree *tree, struct cvrf_product_name *full_name);
+
+/**
+ * @memberof cvrf_product_tree
+ * @param tree CVRF ProductTree structure
+ * @return Iterator representing list of all FullProductNames in the ProductTree
+ */
 struct cvrf_product_name_iterator *cvrf_product_tree_get_product_names(const struct cvrf_product_tree *tree);
+
+/**
+ * @memberof cvrf_product_name_iterator
+ * @param it CVRF FullProductName iterator structure
+ * @return Next CVRF FullProductName in list of all FullProductNames in the ProductTree
+ */
 struct cvrf_product_name *cvrf_product_name_iterator_next(struct cvrf_product_name_iterator *it);
+
+/**
+ * @memberof cvrf_product_name_iterator
+ * @param it CVRF FullProductName iterator structure
+ * @return true if the Iterator has another FullProductName element left
+ */
 bool cvrf_product_name_iterator_has_more(struct cvrf_product_name_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF FullProductName Iterator structure
+ * @memberof cvrf_product_name_iterator
+ * @param it CVRF FullProductName iterator structure
+ */
 void cvrf_product_name_iterator_free(struct cvrf_product_name_iterator *it);
+
+/**
+ * Restart iterator at the first FullProductName element in the ProductTree
+ * @memberof cvrf_product_name_iterator
+ * @param it CVRF FullProductName iterator structure
+ */
 void cvrf_product_name_iterator_reset(struct cvrf_product_name_iterator *it);
+
+/**
+ * Detaches and frees the FullProductName iterator structure
+ * @memberof cvrf_product_name_iterator
+ * @param it CVRF FullProductName iterator structure
+ */
 void cvrf_product_name_iterator_remove(struct cvrf_product_name_iterator *it);
 
+/*******************************************
+ * @struct cvrf_relationship_iterator
+ * Iterator representing all Relationship elements in the ProductTree
+ * Contained as a list within the CVRF Relationship structure
+ */
 struct cvrf_relationship_iterator;
+
+/**
+ * @memberof cvrf_product_tree
+ * @param tree CVRF ProductTree structure
+ * @param relation CVRF Relationship structure to be added to the model
+ * @return true on success
+ */
 bool cvrf_product_tree_add_relationship(struct cvrf_product_tree *tree, struct cvrf_relationship *relation);
+
+/**
+ * @memberof cvrf_product_tree
+ * @param tree CVRF ProductTree structure
+ * @return Iterator representing list of all Relationships in the ProductTree
+ */
+struct cvrf_relationship_iterator *cvrf_product_tree_get_relationships(const struct cvrf_product_tree *tree);
+
+/**
+ * @memberof cvrf_relationship_iterator
+ * @param it CVRF Relationship iterator structure
+ * @return Next CVRF Relationship in list of all Relationships in the ProductTree
+ */
 struct cvrf_relationship *cvrf_relationship_iterator_next(struct cvrf_relationship_iterator *it);
+
+/**
+ * @memberof cvrf_relationship_iterator
+ * @param it CVRF Relationship iterator structure
+ * @return true if the Iterator has another Relationship element left
+ */
 bool cvrf_relationship_iterator_has_more(struct cvrf_relationship_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Relationship Iterator structure
+ * @memberof cvrf_relationship_iterator
+ * @param it CVRF Relationship iterator structure
+ */
 void cvrf_relationship_iterator_free(struct cvrf_relationship_iterator *it);
+
+/**
+ * Restart iterator at the first Relationship element in the ProductTree
+ * @memberof cvrf_relationship_iterator
+ * @param it CVRF Relationship iterator structure
+ */
 void cvrf_relationship_iterator_reset(struct cvrf_relationship_iterator *it);
+
+/**
+ * Detaches and frees the Relationship iterator structure
+ * @memberof cvrf_relationship_iterator
+ * @param it CVRF Relationship iterator structure
+ */
 void cvrf_relationship_iterator_remove(struct cvrf_relationship_iterator *it);
 
 
@@ -986,7 +1377,7 @@ struct cvrf_note *cvrf_note_clone(const struct cvrf_note *note);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * Index of a Note element within a Notes container
  * @return Ordinal attribute of the Note element
  */
 int cvrf_note_get_ordinal(const struct cvrf_note *note);
@@ -994,7 +1385,7 @@ int cvrf_note_get_ordinal(const struct cvrf_note *note);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * Party to whom the information in this note is directed
  * @return Contents of Audience attribute of the Note element
  */
 const char *cvrf_note_get_audience(const struct cvrf_note *note);
@@ -1002,7 +1393,7 @@ const char *cvrf_note_get_audience(const struct cvrf_note *note);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * Concise description of the contents of the Note
  * @return Contents of Title attribute of the Note element
  */
 const char *cvrf_note_get_title(const struct cvrf_note *note);
@@ -1010,7 +1401,7 @@ const char *cvrf_note_get_title(const struct cvrf_note *note);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * Information relating to the document that is contained in the Note
  * @return Contents of the Note element itself
  */
 const char *cvrf_note_get_contents(const struct cvrf_note *note);
@@ -1018,7 +1409,7 @@ const char *cvrf_note_get_contents(const struct cvrf_note *note);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * @param ordinal Index of a Note element within a Notes container
  * @return true on success
  */
 bool cvrf_note_set_ordinal(struct cvrf_note *note, int ordinal);
@@ -1026,7 +1417,7 @@ bool cvrf_note_set_ordinal(struct cvrf_note *note, int ordinal);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * @param audience Party to whom the information in this note is directed
  * @return true on success
  */
 bool cvrf_note_set_audience(struct cvrf_note *note, const char *audience);
@@ -1034,7 +1425,7 @@ bool cvrf_note_set_audience(struct cvrf_note *note, const char *audience);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * @param title Concise description of the contents of the Note
  * @return true on success
  */
 bool cvrf_note_set_title(struct cvrf_note *note, const char *title);
@@ -1042,7 +1433,7 @@ bool cvrf_note_set_title(struct cvrf_note *note, const char *title);
 /**
  * @memberof cvrf_note
  * @param note CVRF Note structure
- *
+ * @param contents Information that is contained in the Note
  * @return true on success
  */
 bool cvrf_note_set_contents(struct cvrf_note *note, const char *contents);
@@ -1059,7 +1450,7 @@ bool cvrf_note_set_contents(struct cvrf_note *note, const char *contents);
 struct cvrf_revision;
 
 /**
- *
+ * New CVRF Revision structure
  * @memberof cvrf_revision
  * @return New CVRF Revision
  */
@@ -1141,7 +1532,7 @@ bool cvrf_revision_set_description(struct cvrf_revision *revision, const char *d
 struct cvrf_doc_tracking;
 
 /**
- *
+ * New CVRF DocumentTracking structure
  * @memberof cvrf_doc_tracking
  * @return New CVRF DocumentTracking
  */
@@ -1277,7 +1668,7 @@ bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, co
 struct cvrf_doc_publisher;
 
 /**
- *
+ * New CVRF DocumentPublisher structure
  * @memberof cvrf_doc_publisher
  * @return New CVRF DocumentPublisher structure
  */
@@ -1355,7 +1746,7 @@ bool cvrf_doc_publisher_set_issuing_authority(struct cvrf_doc_publisher *publish
 struct cvrf_reference;
 
 /**
- *
+ * New CVRF Reference structure
  * @memberof cvrf_reference
  * @return New CVRF Reference
  */
@@ -1414,7 +1805,7 @@ bool cvrf_reference_set_description(struct cvrf_reference *reference, const char
 struct cvrf_document;
 
 /**
- *
+ * New CVRF Document structure
  * @memberof cvrf_document
  * @return New CVRF Document structure
  */
@@ -1562,6 +1953,14 @@ void cvrf_model_free(struct cvrf_model *cvrf);
  */
 void cvrf_model_clone(struct cvrf_model *clone, const struct cvrf_model *model);
 
+/**
+ * Removes all Branches, Relationships, and ProductIDs within Vulnerabilities that
+ * do no pertain to the provided CPE
+ * @memberof cvrf_model
+ * @param cvrf The CVRF Model structure to be filtered
+ * @param cpe CPE name by which to filter the Model
+ * @return 0 on success, -1 on failure
+ */
 int cvrf_model_filter_by_cpe(struct cvrf_model *model, const char *cpe);
 
 /**
@@ -1613,15 +2012,68 @@ struct cvrf_product_tree *cvrf_model_get_product_tree(struct cvrf_model *model);
  */
 struct cvrf_document *cvrf_model_get_document(struct cvrf_model *model);
 
+/**
+ * @memberof cvrf_model
+ * @param model CVRF Model structure
+ * @return Unique ID used to track this document
+ */
 const char *cvrf_model_get_identification(struct cvrf_model *model);
 
+/*******************************************
+ * @struct cvrf_vulnerability_iterator
+ * Iterator representing all Vulnerabilities in the document
+ * Contained as a list within the CVRF Model structure
+ */
 struct cvrf_vulnerability_iterator;
+
+/**
+ * @memberof cvrf_model
+ * @param model CVRF Model structure
+ * @return Iterator representing list of all Vulnerabilities in the model
+ */
 struct cvrf_vulnerability_iterator *cvrf_model_get_vulnerabilities(const struct cvrf_model *model);
+
+/**
+ * @memberof cvrf_model
+ * @param model CVRF Model structure
+ * @param vuln CVRF Vulnerability structure to be added to the model
+ * @return true on success
+ */
 bool cvrf_model_add_vulnerability(struct cvrf_model *model, struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability_iterator
+ * @param it CVRF Vulnerability iterator structure
+ * @return Next CVRF Vulnerability in list of all Vulnerabilities in the document
+ */
 struct cvrf_vulnerability *cvrf_vulnerability_iterator_next(struct cvrf_vulnerability_iterator *it);
+
+/**
+ * @memberof cvrf_vulnerability_iterator
+ * @param it CVRF Vulnerability iterator structure
+ * @return true if the iterator has another Vulnerability element left
+ */
 bool cvrf_vulnerability_iterator_has_more(struct cvrf_vulnerability_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Vulnerability Iterator structure
+ * @memberof cvrf_vulnerability_iterator
+ * @param it CVRF Vulnerability iterator structure
+ */
 void cvrf_vulnerability_iterator_free(struct cvrf_vulnerability_iterator *it);
+
+/**
+ * Restart iterator at the first Vulnerability in the document
+ * @memberof cvrf_vulnerability_iterator
+ * @param it CVRF Vulnerability iterator structure
+ */
 void cvrf_vulnerability_iterator_reset(struct cvrf_vulnerability_iterator *it);
+
+/**
+ * Detaches and frees the Vulnerability iterator structure
+ * @memberof cvrf_vulnerability_iterator
+ * @param it CVRF Vulnerability iterator structure
+ */
 void cvrf_vulnerability_iterator_remove(struct cvrf_vulnerability_iterator *it);
 
 
@@ -1640,24 +2092,99 @@ struct cvrf_index;
 struct cvrf_index *cvrf_index_new(void);
 
 /**
- *
- *
+ * Deallocates memory for the CVRF Index structure and all the Models it contains
+ * @memberof cvrf_index
+ * @param index The CVRF Index structure to be freed
  */
 void cvrf_index_free(struct cvrf_index *index);
 
+/**
+ * @memberof cvrf_index
+ * @param index CVRF Index structure
+ * Reference to source URL used to find all CVRF files contained in the index
+ * @return String representation of source URL, if one was used
+ */
 const char *cvrf_index_get_source_url(const struct cvrf_index *index);
-const char *cvrf_index_get_index_file(const struct cvrf_index *index);
-struct cvrf_model_iterator *cvrf_index_get_models(const struct cvrf_index *index);
 
-bool cvrf_index_set_source_url(struct cvrf_index *index, const char *source_url);
+/**
+ * @memberof cvrf_index
+ * @param index CVRF Index structure
+ * Reference to path to local index file with list of all CVRF files contained in the index
+ * @return String representation of source filepath
+ */
+const char *cvrf_index_get_index_file(const struct cvrf_index *index);
+
+/**
+ * @memberof cvrf_index
+ * @param index CVRF Index structure
+ * @param url Source URL used to find all CVRF files contained in the index
+ * @return true on success
+ */
+bool cvrf_index_set_source_url(struct cvrf_index *index, const char *url);
+
+/**
+ * @memberof cvrf_index
+ * @param index CVRF Index structure
+ * @param index_file Filepath with list of all CVRF files contained in the index
+ * @return true on success
+ */
 bool cvrf_index_set_index_file(struct cvrf_index *index, const char *index_file);
 
+/*******************************************
+ * @struct cvrf_model_iterator
+ * Iterator representing all CVRF files from an index, feed, or stream
+ * Contained as a list within the CVRF Index structure
+ */
 struct cvrf_model_iterator;
+
+/**
+ * @memberof cvrf_index
+ * @param index CVRF Index structure
+ * @param model CVRF Model structure to be added to the Index structure
+ * @return true on success
+ */
 bool cvrf_index_add_model(struct cvrf_index *index, struct cvrf_model *model);
+
+/**
+ * @memberof cvrf_index
+ * @param index CVRF Index structure
+ * @return Iterator representing list of all Models in the Index
+ */
+struct cvrf_model_iterator *cvrf_index_get_models(const struct cvrf_index *index);
+
+/**
+ * @memberof cvrf_model_iterator
+ * @param it CVRF Model iterator structure
+ * @return Next CVRF Model in list of all Models in the Index
+ */
 struct cvrf_model *cvrf_model_iterator_next(struct cvrf_model_iterator *it);
+
+/**
+ * @memberof cvrf_model_iterator
+ * @param it CVRF Model iterator structure
+ * @return true if the iterator has another Model element left
+ */
 bool cvrf_model_iterator_has_more(struct cvrf_model_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Model Iterator structure
+ * @memberof cvrf_model_iterator
+ * @param it CVRF Model iterator structure
+ */
 void cvrf_model_iterator_free(struct cvrf_model_iterator *it);
+
+/**
+ * Restart iterator at the first Model contained in the Index
+ * @memberof cvrf_model_iterator
+ * @param it CVRF Model iterator structure
+ */
 void cvrf_model_iterator_reset(struct cvrf_model_iterator *it);
+
+/**
+ * Detaches and frees the Model iterator structure
+ * @memberof cvrf_model_iterator
+ * @param it CVRF Model iterator structure
+ */
 void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
 
 

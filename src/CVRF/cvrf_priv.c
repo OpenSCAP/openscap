@@ -374,12 +374,15 @@ struct cvrf_vulnerability {
 	struct oscap_list *acknowledgments;
 
 };
+OSCAP_ACCESSOR_SIMPLE(int, cvrf_vulnerability, ordinal)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, title)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, system_id)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, system_name)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, discovery_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, release_date)
 OSCAP_ACCESSOR_STRING(cvrf_vulnerability, cve_id)
+OSCAP_IGETINS_GEN(cvrf_involvement, cvrf_vulnerability, involvements, involvement)
+OSCAP_ITERATOR_REMOVE_F(cvrf_involvement)
 OSCAP_IGETINS_GEN(cvrf_score_set, cvrf_vulnerability, score_sets, score_set)
 OSCAP_ITERATOR_REMOVE_F(cvrf_score_set)
 OSCAP_IGETINS_GEN(cvrf_product_status, cvrf_vulnerability, product_statuses, cvrf_product_status)
@@ -391,10 +394,6 @@ OSCAP_ITERATOR_REMOVE_F(cvrf_threat)
 
 struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln) {
 	return oscap_stringlist_get_strings(vuln->cwe_ids);
-}
-
-struct oscap_iterator *cvrf_vulnerability_get_involvements(struct cvrf_vulnerability *vuln) {
-	return oscap_iterator_new(vuln->involvements);
 }
 
 struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln) {
@@ -409,14 +408,6 @@ struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *v
 	return oscap_iterator_new(vuln->notes);
 }
 
-
-int cvrf_vulnerability_get_remediation_count(struct cvrf_vulnerability *vuln) {
-	return oscap_list_get_itemcount(vuln->remediations);
-}
-
-int cvrf_vulnerablity_get_ordinal(struct cvrf_vulnerability *vuln) {
-	return vuln->ordinal;
-}
 
 struct cvrf_vulnerability *cvrf_vulnerability_new() {
 	struct cvrf_vulnerability *ret = oscap_alloc(sizeof(struct cvrf_vulnerability));
@@ -847,24 +838,13 @@ struct cvrf_note {
 	char *title;
 	char *contents;
 };
+OSCAP_ACCESSOR_SIMPLE(int, cvrf_note, ordinal)
 OSCAP_ACCESSOR_STRING(cvrf_note, audience)
 OSCAP_ACCESSOR_STRING(cvrf_note, title)
 OSCAP_ACCESSOR_STRING(cvrf_note, contents)
 
 cvrf_note_type_t cvrf_note_get_note_type(const struct cvrf_note *note) {
 	return note->type;
-}
-
-int cvrf_note_get_ordinal(const struct cvrf_note *note) {
-	return note->ordinal;
-}
-
-bool cvrf_note_set_ordinal(struct cvrf_note *note, int ordinal) {
-	if (ordinal > 0) {
-		note->ordinal = ordinal;
-		return true;
-	}
-	return false;
 }
 
 struct cvrf_note *cvrf_note_new() {
