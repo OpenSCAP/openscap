@@ -1458,7 +1458,6 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_DOC)  != 0 ||
 			xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
 		return NULL;
@@ -1555,7 +1554,6 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 		return tracking;
 
 	xmlTextReaderNextElement(reader);
-
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_TRACKING) != 0) {
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
 			xmlTextReaderNextNode(reader);
@@ -1649,7 +1647,7 @@ struct cvrf_reference *cvrf_reference_parse(xmlTextReaderPtr reader) {
 }
 
 struct cvrf_acknowledgment *cvrf_acknowledgment_parse(xmlTextReaderPtr reader) {
-
+	__attribute__nonnull__(reader);
 	struct cvrf_acknowledgment *ack = cvrf_acknowledgment_new();
 	xmlTextReaderNextElement(reader);
 
@@ -1839,7 +1837,6 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 
 struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-
 	struct cvrf_score_set *score_set = cvrf_score_set_new();
 	xmlTextReaderNextElement(reader);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_SCORE_SET) != 0) {
@@ -1867,7 +1864,6 @@ struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader) {
 
 struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-
 	struct cvrf_involvement *involve = cvrf_involvement_new();
 	involve->status = cvrf_item_parse_type_attribute(reader, CVRF_INVOLVEMENT);
 	involve->party = cvrf_doc_publisher_type_parse(reader, "Party");
@@ -1889,7 +1885,6 @@ struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader) {
 
 struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-
 	struct cvrf_threat *threat = cvrf_threat_new();
 	threat->type = cvrf_item_parse_type_attribute(reader, CVRF_THREAT);
 	threat->date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
@@ -1916,7 +1911,6 @@ struct cvrf_threat *cvrf_threat_parse(xmlTextReaderPtr reader) {
 
 struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-
 	struct cvrf_remediation *remed = cvrf_remediation_new();
 	remed->type = cvrf_item_parse_type_attribute(reader, CVRF_REMEDIATION);
 	remed->date = (char *)xmlTextReaderGetAttribute(reader, TAG_DATE);
@@ -1950,7 +1944,6 @@ struct cvrf_remediation *cvrf_remediation_parse(xmlTextReaderPtr reader) {
 
 struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-
 	struct cvrf_product_status *stat = cvrf_product_status_new();
 	if (stat == NULL)
 		return NULL;
@@ -2334,7 +2327,6 @@ xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat) {
 }
 
 xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed) {
-
 	xmlNode *remed_node = xmlNewNode(NULL, TAG_REMEDIATION);
 	cvrf_element_add_attribute("Type", cvrf_remediation_type_get_text(remed->type), remed_node);
 
@@ -2349,7 +2341,6 @@ xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed) {
 }
 
 xmlNode *cvrf_threat_to_dom(const struct cvrf_threat *threat) {
-
 	xmlNode *threat_node = xmlNewNode(NULL, TAG_THREAT);
 	cvrf_element_add_attribute("Type", cvrf_threat_type_get_text(threat->type), threat_node);
 	cvrf_element_add_attribute("Date", threat->date, threat_node);
