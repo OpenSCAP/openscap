@@ -1208,12 +1208,14 @@ void cvrf_model_free(struct cvrf_model *cvrf) {
 	oscap_free(cvrf);
 }
 
-void cvrf_model_clone(struct cvrf_model *clone, const struct cvrf_model *model) {
+struct cvrf_model *cvrf_model_clone(const struct cvrf_model *model) {
+	struct cvrf_model *clone = oscap_alloc(sizeof(struct cvrf_model));
 	clone->doc_title = oscap_strdup(model->doc_title);
 	clone->doc_type = oscap_strdup(model->doc_type);
 	clone->document = cvrf_document_clone(model->document);
 	clone->tree = cvrf_product_tree_clone(model->tree);
 	clone->vulnerabilities = oscap_list_clone(model->vulnerabilities, (oscap_clone_func) cvrf_vulnerability_clone);
+	return clone;
 }
 
 int cvrf_model_filter_by_cpe(struct cvrf_model *model, const char *cpe) {
@@ -1263,6 +1265,13 @@ void cvrf_index_free(struct cvrf_index *index) {
 	oscap_free(index);
 }
 
+struct cvrf_index *cvrf_index_clone(const struct cvrf_index *index) {
+	struct cvrf_index *clone = oscap_alloc(sizeof(struct cvrf_index));
+	clone->source_url = oscap_strdup(index->source_url);
+	clone->index_file = oscap_strdup(index->index_file);
+	clone->models = oscap_list_clone(index->models, (oscap_clone_func) cvrf_model_clone);
+	return clone;
+}
 
 /* End of CVRF structure definitions
  ***************************************************************************/
