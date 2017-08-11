@@ -30,6 +30,8 @@
 #include "../common/elements.h"
 #include "cvrf.h"
 
+OSCAP_HIDDEN_START;
+
 /***************************************************************************************************
  * CVRF enum definitions
  */
@@ -386,5 +388,5 @@ xmlNode *cvrf_remediation_to_dom(const struct cvrf_remediation *remed);
 
 xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat);
 
-
+OSCAP_HIDDEN_END;
 #endif				/* _CVRF_PRIV_H_ */
