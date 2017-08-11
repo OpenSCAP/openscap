@@ -2028,10 +2028,10 @@ void cvrf_model_free(struct cvrf_model *cvrf);
 
 /**
  * @memberof cvrf_model
- * @param revision Original CVRF Model structure to be cloned
+ * @param model Original CVRF Model structure to be cloned
  * @return New cloned CVRF Model structure with same data as the original
  */
-void cvrf_model_clone(struct cvrf_model *clone, const struct cvrf_model *model);
+struct cvrf_model *cvrf_model_clone(const struct cvrf_model *model);
 
 /**
  * Removes all Branches, Relationships, and ProductIDs within Vulnerabilities that
@@ -2185,6 +2185,13 @@ struct cvrf_index *cvrf_index_new(void);
  * @param index The CVRF Index structure to be freed
  */
 void cvrf_index_free(struct cvrf_index *index);
+
+/**
+ * @memberof cvrf_index
+ * @param index Original CVRF Index structure to be cloned
+ * @return New cloned CVRF Index structure with same data as the original
+ */
+struct cvrf_index *cvrf_index_clone(const struct cvrf_index *index);
 
 /**
  * @memberof cvrf_index
