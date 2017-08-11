@@ -132,10 +132,7 @@ struct cvrf_score_set {
 	struct oscap_stringlist *product_ids;
 };
 OSCAP_ACCESSOR_STRING(cvrf_score_set, vector)
-
-struct cvss_impact *cvrf_score_set_get_impact(struct cvrf_score_set *score_set) {
-	return score_set->impact;
-}
+OSCAP_ACCESSOR_SIMPLE(struct cvss_impact*, cvrf_score_set, impact)
 
 struct oscap_string_iterator *cvrf_score_set_get_product_ids(struct cvrf_score_set *score_set) {
 	return oscap_stringlist_get_strings(score_set->product_ids);
@@ -588,14 +585,11 @@ struct cvrf_relationship {
 	char *product_reference;
 	cvrf_relationship_type_t relation_type;
 	char *relates_to_ref;
-	struct cvrf_product_name *full_name;
+	struct cvrf_product_name *product_name;
 };
 OSCAP_ACCESSOR_STRING(cvrf_relationship, product_reference)
 OSCAP_ACCESSOR_STRING(cvrf_relationship, relates_to_ref)
-
-struct cvrf_product_name *cvrf_relationship_get_product_name(struct cvrf_relationship *relation) {
-	return relation->full_name;
-}
+OSCAP_ACCESSOR_SIMPLE(struct cvrf_product_name*, cvrf_relationship, product_name)
 
 cvrf_relationship_type_t cvrf_relationship_get_relation_type(struct cvrf_relationship *relation) {
 	return relation->relation_type;
@@ -608,7 +602,7 @@ struct cvrf_relationship *cvrf_relationship_new() {
 
 	ret->product_reference = NULL;
 	ret->relates_to_ref = NULL;
-	ret->full_name = cvrf_product_name_new();
+	ret->product_name = cvrf_product_name_new();
 
 	return ret;
 }
@@ -619,7 +613,7 @@ void cvrf_relationship_free(struct cvrf_relationship *relationship) {
 
 	oscap_free(relationship->product_reference);
 	oscap_free(relationship->relates_to_ref);
-	cvrf_product_name_free(relationship->full_name);
+	cvrf_product_name_free(relationship->product_name);
 	oscap_free(relationship);
 }
 
@@ -628,7 +622,7 @@ struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship
 	clone->relation_type = relation->relation_type;
 	clone->product_reference = oscap_strdup(relation->product_reference);
 	clone->relates_to_ref = oscap_strdup(relation->relates_to_ref);
-	clone->full_name = cvrf_product_name_clone(relation->full_name);
+	clone->product_name = cvrf_product_name_clone(relation->product_name);
 	return clone;
 }
 
@@ -638,17 +632,16 @@ struct cvrf_relationship *cvrf_relationship_clone(const struct cvrf_relationship
 struct cvrf_branch {
 	cvrf_branch_type_t type;
 	char *branch_name;
-	struct cvrf_product_name *full_name;
+	struct cvrf_product_name *product_name;
 	struct oscap_list *subbranches;
 };
 OSCAP_ACCESSOR_STRING(cvrf_branch, branch_name)
+OSCAP_ACCESSOR_SIMPLE(struct cvrf_product_name*, cvrf_branch, product_name)
 
 struct oscap_iterator *cvrf_branch_get_subbranches(struct cvrf_branch *branch) {
 	return oscap_iterator_new(branch->subbranches);
 }
-struct cvrf_product_name *cvrf_branch_get_cvrf_product_name(struct cvrf_branch *branch) {
-	return branch->full_name;
-}
+
 cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch) {
 	return branch->type;
 }
@@ -660,7 +653,7 @@ struct cvrf_branch *cvrf_branch_new() {
 
 	ret->type = 0;
 	ret->branch_name = NULL;
-	ret->full_name = cvrf_product_name_new();
+	ret->product_name = cvrf_product_name_new();
 	ret->subbranches = oscap_list_new();
 	return ret;
 }
@@ -670,7 +663,7 @@ void cvrf_branch_free(struct cvrf_branch *branch) {
 		return;
 
 	oscap_free(branch->branch_name);
-	cvrf_product_name_free(branch->full_name);
+	cvrf_product_name_free(branch->product_name);
 	oscap_list_free(branch->subbranches, (oscap_destruct_func) cvrf_branch_free);
 	oscap_free(branch);
 }
@@ -679,7 +672,7 @@ struct cvrf_branch *cvrf_branch_clone(const struct cvrf_branch *branch) {
 	struct cvrf_branch *clone = oscap_alloc(sizeof(struct cvrf_branch));
 	clone->branch_name = oscap_strdup(branch->branch_name);
 	clone->type = branch->type;
-	clone->full_name = cvrf_product_name_clone(branch->full_name);
+	clone->product_name = cvrf_product_name_clone(branch->product_name);
 	clone->subbranches = oscap_list_clone(branch->subbranches, (oscap_clone_func) cvrf_branch_clone);
 	return clone;
 }
@@ -695,7 +688,7 @@ static const char *get_cvrf_product_id_from_branch(struct cvrf_branch *branch, c
 	}
 	else {
 		if (!strcmp(cvrf_branch_get_branch_name(branch), cpe))
-			return cvrf_product_name_get_product_id(branch->full_name);
+			return cvrf_product_name_get_product_id(branch->product_name);
 	}
 	return product_id;
 }
@@ -714,6 +707,8 @@ OSCAP_IGETINS_GEN(cvrf_product_name, cvrf_product_tree, product_names, product_n
 OSCAP_ITERATOR_REMOVE_F(cvrf_product_name)
 OSCAP_IGETINS_GEN(cvrf_relationship, cvrf_product_tree, relationships, relationship)
 OSCAP_ITERATOR_REMOVE_F(cvrf_relationship)
+OSCAP_IGETINS_GEN(cvrf_group, cvrf_product_tree, product_groups, group)
+OSCAP_ITERATOR_REMOVE_F(cvrf_group)
 
 struct oscap_iterator *cvrf_product_tree_get_branches(struct cvrf_product_tree *tree) {
 	return oscap_iterator_new(tree->branches);
@@ -1107,24 +1102,8 @@ struct cvrf_document {
 OSCAP_ACCESSOR_STRING(cvrf_document, doc_distribution)
 OSCAP_ACCESSOR_STRING(cvrf_document, aggregate_severity)
 OSCAP_ACCESSOR_STRING(cvrf_document, namespace)
-
-struct cvrf_doc_tracking *cvrf_document_get_tracking(struct cvrf_document *doc) {
-	return doc->tracking;
-}
-
-bool cvrf_document_set_tracking(struct cvrf_document *doc, struct cvrf_doc_tracking *track) {
-	doc->tracking = track;
-	return doc->tracking != NULL ? true : false;
-}
-
-struct cvrf_doc_publisher *cvrf_document_get_publisher(struct cvrf_document *doc) {
-	return doc->publisher;
-}
-
-bool cvrf_document_set_publisher(struct cvrf_document *doc, struct cvrf_doc_publisher *publisher) {
-	doc->publisher = publisher;
-	return doc->publisher != NULL ? true : false;
-}
+OSCAP_ACCESSOR_SIMPLE(struct cvrf_doc_tracking*, cvrf_document, tracking)
+OSCAP_ACCESSOR_SIMPLE(struct cvrf_doc_publisher*, cvrf_document, publisher)
 
 struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc) {
 	return oscap_iterator_new(doc->doc_references);
@@ -1191,15 +1170,14 @@ struct cvrf_model {
 };
 OSCAP_ACCESSOR_STRING(cvrf_model, doc_title)
 OSCAP_ACCESSOR_STRING(cvrf_model, doc_type)
+OSCAP_ACCESSOR_SIMPLE(struct cvrf_document*, cvrf_model, document)
 OSCAP_IGETINS_GEN(cvrf_vulnerability, cvrf_model, vulnerabilities, vulnerability)
 OSCAP_ITERATOR_REMOVE_F(cvrf_vulnerability)
 
 struct cvrf_product_tree *cvrf_model_get_product_tree(struct cvrf_model *model) {
 	return model->tree;
 }
-struct cvrf_document *cvrf_model_get_document(struct cvrf_model *model) {
-	return model->document;
-}
+
 const char *cvrf_model_get_identification(struct cvrf_model *model) {
 	struct cvrf_doc_tracking *tracking = cvrf_document_get_tracking(model->document);
 	return (cvrf_doc_tracking_get_tracking_id(tracking));
@@ -1730,7 +1708,7 @@ struct cvrf_branch *cvrf_branch_parse(xmlTextReaderPtr reader) {
 	xmlTextReaderNextElement(reader);
 
 	if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME)) {
-		branch->full_name = cvrf_product_name_parse(reader);
+		branch->product_name = cvrf_product_name_parse(reader);
 		xmlTextReaderNextNode(reader);
 		xmlTextReaderNextNode(reader);
 	}
@@ -1760,7 +1738,7 @@ struct cvrf_relationship *cvrf_relationship_parse(xmlTextReaderPtr reader) {
 	xmlTextReaderNextElement(reader);
 
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_NAME) == 0) {
-		relation->full_name = cvrf_product_name_parse(reader);
+		relation->product_name = cvrf_product_name_parse(reader);
 	}
 	xmlTextReaderNextNode(reader);
 	return relation;
@@ -2263,7 +2241,7 @@ xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch) {
 	if (branch->type == CVRF_BRANCH_PRODUCT_FAMILY) {
 		cvrf_list_to_dom(branch->subbranches, branch_node, CVRF_BRANCH);
 	} else {
-		xmlAddChild(branch_node, cvrf_product_name_to_dom(branch->full_name));
+		xmlAddChild(branch_node, cvrf_product_name_to_dom(branch->product_name));
 	}
 	return branch_node;
 }
@@ -2275,7 +2253,7 @@ xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation) {
 	xmlNewProp(relation_node, BAD_CAST "RelationType", BAD_CAST relation_type);
 	xmlNewProp(relation_node, ATTR_RELATES_TO_REF, BAD_CAST relation->relates_to_ref);
 
-	xmlAddChild(relation_node, cvrf_product_name_to_dom(relation->full_name));
+	xmlAddChild(relation_node, cvrf_product_name_to_dom(relation->product_name));
 	return relation_node;
 }
 
