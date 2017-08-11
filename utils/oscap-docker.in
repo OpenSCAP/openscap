@@ -55,7 +55,12 @@ class OscapDocker(object):
 
 def ping_docker():
     ''' Simple check if the docker daemon is running '''
-    client = docker.Client()
+    # Class docker.Client was renamed to docker.APIClient in
+    # python-docker-py 2.0.0.
+    try:
+        client = docker.APIClient()
+    except AttributeError:
+        client = docker.Client()
     client.ping()
 
 if __name__ == '__main__':
