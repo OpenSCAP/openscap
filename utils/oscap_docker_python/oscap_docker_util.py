@@ -218,9 +218,12 @@ class OscapScan(object):
             sys.stderr.write(str(e) + "\n")
             return None
 
-        # Remeber actual mounted fs in 'rootfs'
-        chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
-
+        # Remember actual mounted fs in 'rootfs' for devicemapper
+        rootfs_path = os.path.join(_tmp_mnt_dir, 'rootfs')
+        if os.path.exists(rootfs_path):
+            chroot = rootfs_path
+        else:
+            chroot = _tmp_mnt_dir
 
         try:
             # Figure out which RHEL dist is in the chroot
@@ -258,8 +261,12 @@ class OscapScan(object):
             sys.stderr.write(str(e) + "\n")
             return None
 
-        # Remeber actual mounted fs in 'rootfs'
-        chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
+        # Remember actual mounted fs in 'rootfs' for devicemapper
+        rootfs_path = os.path.join(_tmp_mnt_dir, 'rootfs')
+        if os.path.exists(rootfs_path):
+            chroot = rootfs_path
+        else:
+            chroot = _tmp_mnt_dir
 
         # Scan the chroot
         sys.stdout.write(self.helper._scan(chroot, scan_args))
