@@ -394,7 +394,7 @@ int cvrf_session_construct_definition_model(struct cvrf_session *session) {
 	while (oscap_string_iterator_has_more(product_ids)) {
 		const char *product_id = oscap_string_iterator_next(product_ids);
 		struct cvrf_rpm_attributes *attributes = parse_rpm_attributes_from_cvrf_product_id(session, product_id);
-		struct oval_definition *definition = get_new_oval_definition_for_cvrf(def_model, attributes, index);
+		get_new_oval_definition_for_cvrf(def_model, attributes, index);
 		index++;
 	}
 	oscap_string_iterator_free(product_ids);
