@@ -292,12 +292,12 @@ bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const cha
 }
 
 
-static char *get_oval_id_string(const char *type, int object_number) {
+static char *get_oval_id_string(const char *type, unsigned int object_number) {
 	return oscap_sprintf("oval:org.open-scap.unix:%s:%d", type, object_number);
 }
 
 static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_model *def_model,
-		struct cvrf_rpm_attributes *attributes, int objectNo) {
+		struct cvrf_rpm_attributes *attributes, unsigned int objectNo) {
 
 	char *object_id = get_oval_id_string("obj", objectNo);
 
@@ -314,7 +314,7 @@ static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_m
 }
 
 static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_model *def_model,
-		struct cvrf_rpm_attributes *attributes, int stateNo) {
+		struct cvrf_rpm_attributes *attributes, unsigned int stateNo) {
 
 	char *state_id = get_oval_id_string("ste", stateNo);
 
@@ -354,7 +354,7 @@ static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_mod
 }
 
 static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_model *def_model,
-		struct cvrf_rpm_attributes *attributes, int testNo) {
+		struct cvrf_rpm_attributes *attributes, unsigned int testNo) {
 
 	char *test_id = get_oval_id_string("tst", testNo);
 	struct oval_test *rpm_test = oval_test_new(def_model, test_id);
@@ -370,7 +370,7 @@ static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_mo
 }
 
 static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_definition_model *def_model,
-		struct cvrf_rpm_attributes *attributes, int index) {
+		struct cvrf_rpm_attributes *attributes, unsigned int index) {
 
 	char *definition_id = get_oval_id_string("def", index);
 	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, definition_id);
@@ -393,7 +393,7 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 int cvrf_session_construct_definition_model(struct cvrf_session *session) {
 	struct oval_definition_model *def_model = session->def_model;
 	struct oscap_string_iterator *product_ids = cvrf_session_get_product_ids(session);
-	int index = 1;
+	unsigned int index = 1;
 
 	while (oscap_string_iterator_has_more(product_ids)) {
 		const char *product_id = oscap_string_iterator_next(product_ids);
