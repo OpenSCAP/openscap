@@ -87,7 +87,7 @@ struct cvrf_remediation *cvrf_remediation_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->date = NULL;
 	ret->description = NULL;
 	ret->url = NULL;
@@ -234,7 +234,7 @@ struct cvrf_threat *cvrf_threat_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->date = NULL;
 	ret->description = NULL;
 	ret->product_ids = oscap_stringlist_new();
@@ -285,7 +285,7 @@ struct cvrf_product_status *cvrf_product_status_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->product_ids = oscap_stringlist_new();
 	return ret;
 }
@@ -325,8 +325,8 @@ struct cvrf_involvement *cvrf_involvement_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->status = 0;
-	ret->party = 0;
+	ret->status = CVRF_ATTRIBUTE_UNKNOWN;
+	ret->party = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->description = NULL;
 	return ret;
 }
@@ -601,6 +601,7 @@ struct cvrf_relationship *cvrf_relationship_new() {
 		return NULL;
 
 	ret->product_reference = NULL;
+	ret->relation_type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->relates_to_ref = NULL;
 	ret->product_name = cvrf_product_name_new();
 
@@ -651,7 +652,7 @@ struct cvrf_branch *cvrf_branch_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->branch_name = NULL;
 	ret->product_name = cvrf_product_name_new();
 	ret->subbranches = oscap_list_new();
@@ -849,7 +850,8 @@ struct cvrf_note *cvrf_note_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
+	ret->ordinal = 0;
 	ret->audience = NULL;
 	ret->title = NULL;
 	ret->contents = NULL;
@@ -868,6 +870,8 @@ void cvrf_note_free(struct cvrf_note *note) {
 
 struct cvrf_note *cvrf_note_clone(const struct cvrf_note *note) {
 	struct cvrf_note *clone = oscap_alloc(sizeof(struct cvrf_note));
+	clone->type = note->type;
+	clone->ordinal = note->ordinal;
 	clone->audience = oscap_strdup(note->audience);
 	clone->title = oscap_strdup(note->title);
 	clone->contents = oscap_strdup(note->contents);
@@ -952,7 +956,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_new() {
 
 	ret->tracking_id = NULL;
 	ret->aliases = oscap_stringlist_new();
-	ret->status = 0;
+	ret->status = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->version = NULL;
 	ret->revision_history = oscap_list_new();
 	ret->init_release_date = NULL;
@@ -1014,7 +1018,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->vendor_id = NULL;
 	ret->contact_details = NULL;
 	ret->issuing_authority = NULL;
@@ -1062,7 +1066,7 @@ struct cvrf_reference *cvrf_reference_new() {
 	if (ret == NULL)
 		return NULL;
 
-	ret->type = 0;
+	ret->type = CVRF_ATTRIBUTE_UNKNOWN;
 	ret->url = NULL;
 	ret->description = NULL;
 
