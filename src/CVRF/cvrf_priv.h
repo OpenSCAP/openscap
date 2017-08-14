@@ -36,6 +36,8 @@ OSCAP_HIDDEN_START;
  * CVRF enum definitions
  */
 
+#define CVRF_ATTRIBUTE_UNKNOWN (-1)
+
 /**
  * @struct cvrf_item_spec
  * Maps a cvrf_item_type_t enum to its text representation within a CVRF XML file,
@@ -62,7 +64,8 @@ typedef enum {
 	CVRF_PRODUCT_STATUS,
 	CVRF_THREAT,
 	CVRF_REMEDIATION,
-	CVRF_REFERENCE
+	CVRF_REFERENCE,
+	CVRF_ITEM_UNKNOWN
 } cvrf_item_type_t;
 
 const char *cvrf_item_type_get_text(cvrf_item_type_t item_type);
