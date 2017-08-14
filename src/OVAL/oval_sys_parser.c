@@ -73,8 +73,8 @@ int oval_syschar_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
 				oval_parser_skip_tag(reader, context);
 			}
 
-			oscap_free(tagname);
-			oscap_free(namespace);
+			free(tagname);
+			free(namespace);
 		} else {
 			if (xmlTextReaderRead(reader) != 1) {
 				ret = -1;

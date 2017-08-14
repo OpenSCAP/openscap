@@ -52,7 +52,7 @@ struct ds_stream_index
 
 struct ds_stream_index* ds_stream_index_new(void)
 {
-	struct ds_stream_index* ret = oscap_alloc(sizeof(struct ds_stream_index));
+	struct ds_stream_index* ret = malloc(sizeof(struct ds_stream_index));
 
 	ret->id = NULL;
 	ret->timestamp = NULL;
@@ -70,18 +70,18 @@ struct ds_stream_index* ds_stream_index_new(void)
 
 void ds_stream_index_free(struct ds_stream_index* s)
 {
-	oscap_free(s->id);
-	oscap_free(s->timestamp);
-	oscap_free(s->version);
+	free(s->id);
+	free(s->timestamp);
+	free(s->version);
 
 	oscap_stringlist_free(s->check_components);
 	oscap_stringlist_free(s->checklist_components);
 	oscap_stringlist_free(s->dictionary_components);
 	oscap_stringlist_free(s->extended_components);
 
-	oscap_htable_free(s->component_id_to_component_ref_id, (oscap_destruct_func)oscap_free);
+	oscap_htable_free(s->component_id_to_component_ref_id, (oscap_destruct_func)free);
 
-	oscap_free(s);
+	free(s);
 }
 
 const char* ds_stream_index_get_id(struct ds_stream_index* s)
@@ -221,7 +221,7 @@ struct ds_sds_index
 
 struct ds_sds_index* ds_sds_index_new(void)
 {
-	struct ds_sds_index* ret = oscap_alloc(sizeof(struct ds_sds_index));
+	struct ds_sds_index* ret = malloc(sizeof(struct ds_sds_index));
 	ret->streams = oscap_list_new();
 
 	ret->benchmark_id_to_component_id = oscap_htable_new();
@@ -234,9 +234,9 @@ void ds_sds_index_free(struct ds_sds_index* s)
 	if (s != NULL) {
 		oscap_list_free(s->streams, (oscap_destruct_func)ds_stream_index_free);
 
-		oscap_htable_free(s->benchmark_id_to_component_id, (oscap_destruct_func)oscap_free);
+		oscap_htable_free(s->benchmark_id_to_component_id, (oscap_destruct_func)free);
 
-		oscap_free(s);
+		free(s);
 	}
 }
 
@@ -365,7 +365,7 @@ struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 			char *benchmark_id = ds_sds_component_dig_benchmark_id(reader);
 
 			if (benchmark_id == NULL) {
-				oscap_free(component_id);
+				free(component_id);
 			}
 			else {
 				if (!oscap_htable_add(ret->benchmark_id_to_component_id, benchmark_id, component_id)) {
@@ -382,10 +382,10 @@ struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 						"using Benchmark ID will use the first component encountered and ignore "
 						"the subsequent ones with the same ID.", benchmark_id);*/
 
-					oscap_free(component_id);
+					free(component_id);
 				}
 
-				oscap_free(benchmark_id);
+				free(benchmark_id);
 			}
 
 			// we are going to free the component_id string later (in ds_sds_index_free)

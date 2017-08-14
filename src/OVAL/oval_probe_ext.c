@@ -86,14 +86,14 @@ void oval_pext_free(oval_pext_t *pext)
 {
         if (!pext->do_init) {
                 /* free structs */
-		oscap_free(pext->pdsc);
+		free(pext->pdsc);
 		pext->pdsc     = NULL;
 		pext->pdsc_cnt = 0;
                 oval_pdtbl_free(pext->pdtbl);
         }
 
         pthread_mutex_destroy(&pext->lock);
-        oscap_free(pext);
+        free(pext);
 }
 
 /*
@@ -117,13 +117,13 @@ static void oval_pdtbl_free(oval_pdtbl_t *tbl)
 
         for (i = 0; i < tbl->count; ++i) {
                 SEAP_close(tbl->ctx, tbl->memb[i]->sd);
-                oscap_free(tbl->memb[i]->uri);
-		oscap_free(tbl->memb[i]);
+                free(tbl->memb[i]->uri);
+		free(tbl->memb[i]);
         }
 
-        oscap_free(tbl->memb);
+        free(tbl->memb);
         SEAP_CTX_free(tbl->ctx);
-        oscap_free(tbl);
+        free(tbl);
 
 	return;
 }
@@ -154,7 +154,7 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 	pd->sd      = sd;
 	pd->uri     = strdup(uri);
 
-	tbl->memb = oscap_realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
+	tbl->memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
 
 	assume_d(tbl->memb != NULL, -1);
 
@@ -233,7 +233,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 
 	if (obj == NULL) {
 		dE("Can't find obj: id=%s.", id_str);
-		oscap_free(id_str);
+		free(id_str);
                 SEXP_free(ret);
 
 		return (NULL);
@@ -253,13 +253,13 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 		dE("Failed: id: %s, err: %d, %s.",
 			       id_str, oscap_err_family(), oscap_err_desc());
 		oscap_clearerr();
-		oscap_free(id_str);
+		free(id_str);
 		SEXP_free(ret);
 
 		return (NULL);
 	}
 
-	oscap_free(id_str);
+	free(id_str);
 
 	return (ret);
 }
@@ -287,7 +287,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 			if (ste == NULL) {
 				dE("Can't find ste: id: %s.", id_str);
 				SEXP_list_free(ste_list);
-				oscap_free(id_str);
+				free(id_str);
                                 SEXP_free(id);
 
 				return (NULL);
@@ -298,7 +298,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 				dE("Failed to convert OVAL state to SEXP, id: %s.",
 					       id_str);
 				SEXP_list_free(ste_list);
-				oscap_free(id_str);
+				free(id_str);
                                 SEXP_free(id);
 
 				return (NULL);
@@ -307,7 +307,7 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 			SEXP_list_add(ste_list, ste_sexp);
                         SEXP_free(ste_sexp);
 
-			oscap_free(id_str);
+			free(id_str);
 		}
 	}
 
@@ -992,7 +992,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
                         goto _ret;
 		}
 
-		pext->pdsc = oscap_alloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
+		pext->pdsc = malloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
 
                 dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
 
@@ -1020,7 +1020,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
 		}
 
 		if (r < OSCAP_GSYM(__probe_meta_count))
-			pext->pdsc = oscap_realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
+			pext->pdsc = realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
 
 		pext->pdsc_cnt = r;
 		qsort(pext->pdsc, pext->pdsc_cnt, sizeof(oval_pdsc_t),
@@ -1028,7 +1028,7 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
 		if (chdir(curdir) != 0) {
 			dE("Can't chdir back to \"%s\"", curdir);
-			oscap_free(pext->pdsc);
+			free(pext->pdsc);
 			pext->pdsc_cnt = 0;
                         ret = -1;
                         goto _ret;

@@ -91,19 +91,19 @@ bool cpe23_item_add_deprecation(struct cpe23_item *item, struct cpe_ext_deprecat
 
 static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_new()
 {
-	return oscap_calloc(1, sizeof(struct cpe_ext_deprecatedby));
+	return calloc(1, sizeof(struct cpe_ext_deprecatedby));
 }
 
 static struct cpe_ext_deprecation *cpe_ext_deprecation_new()
 {
-	struct cpe_ext_deprecation *deprecation = oscap_calloc(1, sizeof(struct cpe_ext_deprecation));
+	struct cpe_ext_deprecation *deprecation = calloc(1, sizeof(struct cpe_ext_deprecation));
 	deprecation->deprecatedbys = oscap_list_new();
 	return deprecation;
 }
 
 static struct cpe23_item *cpe23_item_new()
 {
-	struct cpe23_item *item = oscap_calloc(1, sizeof(struct cpe23_item));
+	struct cpe23_item *item = calloc(1, sizeof(struct cpe23_item));
 	item->deprecations = oscap_list_new();
 	return item;
 }
@@ -126,7 +126,7 @@ static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_parse(xmlTextReaderPtr 
 
 	struct cpe_ext_deprecatedby *deprecatedby = cpe_ext_deprecatedby_new();
 	deprecatedby->name = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_NAME_STR);
-	const char *type = (const char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_TYPE_STR);
+	char *type = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST ATTR_TYPE_STR);
 	if (type == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Compulsory attribute '%s' missing at '%s' element.",
 			ATTR_TYPE_STR, TAG_CPE_EXT_DEPRECATEDBY_STR);
@@ -134,7 +134,7 @@ static struct cpe_ext_deprecatedby *cpe_ext_deprecatedby_parse(xmlTextReaderPtr 
 		return NULL;
 	}
 	deprecatedby->type = oscap_string_to_enum(CPE_EXT_DEPRECATION_MAP, type);
-	oscap_free(type);
+	free(type);
 	return deprecatedby;
 }
 
@@ -293,16 +293,16 @@ int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer)
 
 static void cpe_ext_deprecatedby_free(struct cpe_ext_deprecatedby *deprecatedby)
 {
-	oscap_free(deprecatedby->name);
-	oscap_free(deprecatedby);
+	free(deprecatedby->name);
+	free(deprecatedby);
 }
 
 static void cpe_ext_deprecation_free(struct cpe_ext_deprecation *deprecation)
 {
 	if (deprecation != NULL) {
-		oscap_free(deprecation->date);
+		free(deprecation->date);
 		oscap_list_free(deprecation->deprecatedbys, (oscap_destruct_func) cpe_ext_deprecatedby_free);
-		oscap_free(deprecation);
+		free(deprecation);
 	}
 }
 
@@ -310,8 +310,8 @@ void cpe23_item_free(struct cpe23_item *item)
 {
 	if (item != NULL) {
 		oscap_list_free(item->deprecations, (oscap_destruct_func) cpe_ext_deprecation_free);
-		oscap_free(item->name);
-		oscap_free(item);
+		free(item->name);
+		free(item);
 	}
 }
 

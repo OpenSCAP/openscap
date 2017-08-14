@@ -79,7 +79,7 @@ struct cpe_dict_model *cpe_dict_model_import(const char *file)
 
 bool cpe_dict_model_set_origin_file(struct cpe_dict_model* dict, const char* origin_file)
 {
-	oscap_free(dict->origin_file);
+	free(dict->origin_file);
 	dict->origin_file = oscap_strdup(origin_file);
 
 	return true;

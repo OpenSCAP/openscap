@@ -107,7 +107,7 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 const char *oval_schema_version_to_cstr(oval_schema_version_t version)
 {
 	size_t buf_len = 32;
-	char *buf = oscap_alloc(buf_len);
+	char *buf = malloc(buf_len);
 	const char *format;
 	if (version.component[OVAL_SCHEMA_VERSION_PLATFORM_MAJOR]) {
 		if (version.component[OVAL_SCHEMA_VERSION_CORE_UPDATE] &&

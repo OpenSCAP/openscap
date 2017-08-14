@@ -140,7 +140,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
                 dI("MIB: %s", mib);
                 se_mib = SEXP_string_new(mib, strlen(mib));
-                oscap_free(mib);
+                free(mib);
 
                 if (probe_entobj_cmp(name_entity, se_mib) == OVAL_RESULT_TRUE) {
                         FILE   *fp;

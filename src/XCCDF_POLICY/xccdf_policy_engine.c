@@ -39,7 +39,7 @@ struct xccdf_policy_engine {
 
 struct xccdf_policy_engine *xccdf_policy_engine_new(char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
-	struct xccdf_policy_engine *engine = oscap_alloc(sizeof(struct xccdf_policy_engine));
+	struct xccdf_policy_engine *engine = malloc(sizeof(struct xccdf_policy_engine));
         if (engine != NULL) {
 		engine->system = sys;
 		engine->callback = eval_fn;

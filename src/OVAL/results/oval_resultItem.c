@@ -50,7 +50,7 @@ typedef struct oval_result_item {
 
 struct oval_result_item *oval_result_item_new(struct oval_result_system *sys, char *item_id) {
 	oval_result_item_t *item = (oval_result_item_t *)
-	    oscap_alloc(sizeof(oval_result_item_t));
+	    malloc(sizeof(oval_result_item_t));
 	if (item == NULL)
 		return NULL;
 
@@ -94,7 +94,7 @@ void oval_result_item_free(struct oval_result_item *item)
 	item->result = OVAL_RESULT_NOT_EVALUATED;
 	item->sysitem = NULL;
 
-	oscap_free(item);
+	free(item);
 }
 
 bool oval_result_item_iterator_has_more(struct oval_result_item_iterator * oc_result_item)
@@ -178,7 +178,7 @@ int oval_result_item_parse_tag
 
 	(*consumer) (item, user);
 
-	oscap_free(item_id);
+	free(item_id);
 	return return_code;
 }
 

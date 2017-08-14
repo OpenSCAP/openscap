@@ -147,7 +147,7 @@ cleanup:
 		xmlSchemaFree(schema);
 	if (parser_ctxt)
 		xmlSchemaFreeParserCtxt(parser_ctxt);
-	oscap_free(schemapath);
+	free(schemapath);
 
 	return result;
 }

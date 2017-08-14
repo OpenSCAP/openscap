@@ -70,7 +70,7 @@ struct oval_results_model *oval_results_model_new_with_probe_session(struct oval
 						  struct oval_syschar_model **syschar_models,
 						  struct oval_probe_session *probe_session)
 {
-	struct oval_results_model *model = (struct oval_results_model *) oscap_alloc(sizeof(struct oval_results_model));
+	struct oval_results_model *model = (struct oval_results_model *) malloc(sizeof(struct oval_results_model));
 	if (model == NULL)
 		return NULL;
 
@@ -132,7 +132,7 @@ void oval_results_model_free(struct oval_results_model *model)
 	oval_directives_model_free(model->directives_model);
 	model->directives_model=NULL;
 
-	oscap_free(model);
+	free(model);
 }
 
 struct oval_generator *oval_results_model_get_generator(struct oval_results_model *model)
@@ -212,8 +212,8 @@ int oval_results_model_import_source(struct oval_results_model *model, struct os
 		ret = -1;
 	}
 
-        oscap_free(tagname);
-        oscap_free(namespace);
+        free(tagname);
+        free(namespace);
 	xmlFreeTextReader(context.reader);
 	return ret;
 }
@@ -358,7 +358,7 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
                                 class_type = oval_definition_class_enum(class_str);
                                 class_dir = oval_directives_model_get_new_classdir(context->results_model->directives_model, class_type);
                                 ret = oval_parser_parse_tag(reader, context, &oval_result_directives_parse_tag, class_dir);
-                                oscap_free(class_str);
+                                free(class_str);
                         } else if (is_ovaldef && (strcmp(tagname, OVAL_ROOT_ELM_DEFINITIONS) == 0)) {
                                 ret = oval_definition_model_parse(reader, context);
                         } else if (is_ovalres && (strcmp(tagname, "results") == 0)) {
@@ -368,8 +368,8 @@ int oval_results_model_parse(xmlTextReaderPtr reader, struct oval_parser_context
                                 oval_parser_skip_tag(reader, context);
                         }
 
-                        oscap_free(tagname);
-                        oscap_free(namespace);
+                        free(tagname);
+                        free(namespace);
                 } else {
                         if (xmlTextReaderRead(reader) != 1) {
                                 ret = -1;

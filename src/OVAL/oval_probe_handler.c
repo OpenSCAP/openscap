@@ -55,11 +55,11 @@ void oval_phtbl_free(oval_phtbl_t *phtbl)
         for (i = 0; i < phtbl->sz; ++i) {
                 if (phtbl->ph[i]->func)
                         phtbl->ph[i]->func(phtbl->ph[i]->type, phtbl->ph[i]->uptr, PROBE_HANDLER_ACT_FREE);
-                oscap_free(phtbl->ph[i]);
+                free(phtbl->ph[i]);
         }
 
-        oscap_free(phtbl->ph);
-        oscap_free(phtbl);
+        free(phtbl->ph);
+        free(phtbl);
 }
 
 static int oval_handler_subtype_cmp(oval_subtype_t *a, oval_ph_t **b)
@@ -99,7 +99,7 @@ int oval_probe_handler_set(oval_phtbl_t *phtbl, oval_subtype_t type, oval_probe_
                 }
         }
 
-        phtbl->ph = oscap_realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
+        phtbl->ph = realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
         phrec = phtbl->ph[phtbl->sz - 1] = oscap_talloc(oval_ph_t);
         sort  = true;
 fillrec:

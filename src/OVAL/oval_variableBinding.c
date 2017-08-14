@@ -106,7 +106,7 @@ void oval_variable_binding_add_value(struct oval_variable_binding *binding, char
 
 struct oval_variable_binding *oval_variable_binding_new(struct oval_variable *variable, char *value)
 {
-	oval_variable_binding_t *binding = (oval_variable_binding_t *) oscap_alloc(sizeof(oval_variable_binding_t));
+	oval_variable_binding_t *binding = (oval_variable_binding_t *) malloc(sizeof(oval_variable_binding_t));
 	if (binding == NULL)
 		return NULL;
 
@@ -146,11 +146,11 @@ struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_b
 void oval_variable_binding_free(struct oval_variable_binding *binding)
 {
 	if (binding) {
-		oval_collection_free_items(binding->values, (oscap_destruct_func) oscap_free);
+		oval_collection_free_items(binding->values, (oscap_destruct_func) free);
 		binding->values = NULL;
 		binding->variable = NULL;
 
-		oscap_free(binding);
+		free(binding);
 	}
 }
 
@@ -174,7 +174,7 @@ int oval_variable_binding_parse_tag(xmlTextReaderPtr reader,
 	char *variableId = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "variable_id");
 	struct oval_variable *variable = oval_definition_model_get_new_variable(context->definition_model, variableId, OVAL_VARIABLE_UNKNOWN);
 	oval_variable_binding_set_variable(binding, variable);
-	oscap_free(variableId);
+	free(variableId);
 
 	/* bound value */
 	return_code = oscap_parser_text_value(reader, &_oval_variable_binding_value_consumer, binding);

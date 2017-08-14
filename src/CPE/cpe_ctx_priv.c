@@ -40,7 +40,7 @@ struct cpe_parser_ctx {
 
 static inline struct cpe_parser_ctx *_cpe_parser_ctx_new()
 {
-	return oscap_calloc(1, sizeof(struct cpe_parser_ctx));
+	return calloc(1, sizeof(struct cpe_parser_ctx));
 }
 
 struct cpe_parser_ctx *cpe_parser_ctx_from_reader(xmlTextReaderPtr reader)
@@ -56,8 +56,8 @@ void cpe_parser_ctx_free(struct cpe_parser_ctx *ctx)
 	if (ctx) {
 		if (ctx->reader != NULL && ctx->owns_reader)
 			xmlFreeTextReader(ctx->reader);
-		oscap_free(ctx->schema_version);
-		oscap_free(ctx);
+		free(ctx->schema_version);
+		free(ctx);
 	}
 }
 
@@ -81,4 +81,4 @@ bool cpe_parser_ctx_version_gt(struct cpe_parser_ctx *ctx, const char *version)
 }
 
 OSCAP_GETTER(xmlTextReaderPtr, cpe_parser_ctx, reader);
-OSCAP_SETTER_GENERIC(cpe_parser_ctx, const char *, schema_version, oscap_free, oscap_strdup);
+OSCAP_SETTER_GENERIC(cpe_parser_ctx, const char *, schema_version, free, oscap_strdup);

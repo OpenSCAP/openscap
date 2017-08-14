@@ -188,8 +188,8 @@ int oval_definition_model_parse(xmlTextReaderPtr reader, struct oval_parser_cont
 				oval_parser_skip_tag(reader, context);
 			}
 
-			oscap_free(tagname);
-			oscap_free(namespace);
+			free(tagname);
+			free(namespace);
 		} else {
 			if (xmlTextReaderRead(reader) != 1) {
 				ret = -1;
@@ -230,7 +230,7 @@ int oval_parser_boolean_attribute(xmlTextReaderPtr reader, char *attname, int de
 			booval = (*string == '1');
 		else
 			booval = (strcmp(string, "true") == 0);
-		oscap_free(string);
+		free(string);
 	}
 	return booval;
 }
@@ -243,7 +243,7 @@ int oval_parser_int_attribute(xmlTextReaderPtr reader, char *attname, int defval
 		value = defval;
 	else {
 		value = atoi(string);
-		oscap_free(string);
+		free(string);
 	}
 	return value;
 }

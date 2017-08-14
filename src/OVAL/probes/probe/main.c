@@ -107,7 +107,7 @@ static int probe_opthandler_varref(int option, int op, va_list args)
 	if (o_temp != NULL)
 		return (0);
 
-	OSCAP_GSYM(no_varref_ents) = oscap_realloc(OSCAP_GSYM(no_varref_ents),
+	OSCAP_GSYM(no_varref_ents) = realloc(OSCAP_GSYM(no_varref_ents),
 						   sizeof (char *) * ++OSCAP_GSYM(no_varref_ents_cnt));
 	OSCAP_GSYM(no_varref_ents)[OSCAP_GSYM(no_varref_ents_cnt) - 1] = strdup(o_name);
 
@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 	 */
 #define PROBE_OPTION_INITCOUNT 3
 
-	probe.option = oscap_alloc(sizeof(probe_option_t) * PROBE_OPTION_INITCOUNT);
+	probe.option = malloc(sizeof(probe_option_t) * PROBE_OPTION_INITCOUNT);
 	probe.optcnt = PROBE_OPTION_INITCOUNT;
 
 	probe.option[0].option  = PROBEOPT_VARREF_HANDLING;
@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
                 SEAP_close(probe.SEAP_ctx, probe.sd);
 
 	SEAP_CTX_free(probe.SEAP_ctx);
-        oscap_free(probe.option);
+        free(probe.option);
 
 	return (probe.probe_exitcode);
 }

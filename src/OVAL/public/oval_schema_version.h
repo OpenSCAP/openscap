@@ -50,7 +50,10 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str);
 /**
  * Converts OVAL schema version from an internal representation to a string.
  * @param version OVAL schema version
- * @return string
+ * @return string that needs to be free
+ *
+ * This function should have been declared to return non-const char*.
+ * You need to free the result despite it being declared as const char*.
  */
 const char *oval_schema_version_to_cstr(oval_schema_version_t version);
 

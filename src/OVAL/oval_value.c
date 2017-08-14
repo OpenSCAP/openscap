@@ -118,7 +118,7 @@ long long oval_value_get_integer(struct oval_value *value)
 
 struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value)
 {
-	oval_value_t *value = (oval_value_t *) oscap_alloc(sizeof(oval_value_t));
+	oval_value_t *value = (oval_value_t *) malloc(sizeof(oval_value_t));
 	if (value == NULL)
 		return NULL;
 
@@ -138,11 +138,11 @@ struct oval_value *oval_value_clone(struct oval_value *old_value)
 
 void oval_value_free(struct oval_value *value)
 {
-	if (value) {
-		oscap_free(value->text);
-		value->text = NULL;
-		oscap_free(value);
-	}
+    if (value == NULL)
+        return;
+
+    free(value->text);
+    free(value);
 }
 
 int oval_value_cast(struct oval_value *value, oval_datatype_t new_dt)
@@ -167,7 +167,7 @@ void oval_value_set_datatype(struct oval_value *value, oval_datatype_t datatype)
 void oval_value_set_text(struct oval_value *value, char *text)
 {
 	if(value->text!=NULL)
-		oscap_free(value->text);
+		free(value->text);
 	value->text = oscap_strdup(text);
 }
 */
@@ -190,7 +190,7 @@ int oval_value_parse_tag(xmlTextReaderPtr reader,
 		return_code = oscap_parser_text_value(reader, &oval_value_parse_tag_consume_text, &text);
 	}
 	struct oval_value *value = oval_value_new(datatype, text ? text : "");
-	oscap_free(text);
+	free(text);
 	(*consumer) (value, user);
 	return return_code;
 }

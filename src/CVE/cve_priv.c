@@ -217,7 +217,7 @@ struct cve_entry *cve_entry_new()
 
 	struct cve_entry *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_entry));
+	ret = malloc(sizeof(struct cve_entry));
 	if (ret == NULL)
 		return NULL;
 
@@ -261,7 +261,7 @@ struct cve_configuration *cve_configuration_new()
 
 	struct cve_configuration *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_configuration));
+	ret = malloc(sizeof(struct cve_configuration));
 	if (ret == NULL)
 		return NULL;
 
@@ -284,7 +284,7 @@ struct cwe_entry *cwe_entry_new()
 
 	struct cwe_entry *ret;
 
-	ret = oscap_alloc(sizeof(struct cwe_entry));
+	ret = malloc(sizeof(struct cwe_entry));
 	if (ret == NULL)
 		return NULL;
 
@@ -305,7 +305,7 @@ struct cve_product *cve_product_new()
 
 	struct cve_product *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_product));
+	ret = malloc(sizeof(struct cve_product));
 	if (ret == NULL)
 		return NULL;
 
@@ -326,7 +326,7 @@ struct cve_summary *cve_summary_new()
 
 	struct cve_summary *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_summary));
+	ret = malloc(sizeof(struct cve_summary));
 	if (ret == NULL)
 		return NULL;
 
@@ -346,7 +346,7 @@ struct cve_reference *cve_reference_new()
 {
 
 	struct cve_reference *ret;
-	ret = oscap_calloc(1, sizeof(struct cve_reference));
+	ret = calloc(1, sizeof(struct cve_reference));
 	if (ret == NULL)
 		return NULL;
 
@@ -369,7 +369,7 @@ struct cve_model *cve_model_new()
 
 	struct cve_model *ret;
 
-	ret = oscap_alloc(sizeof(struct cve_model));
+	ret = malloc(sizeof(struct cve_model));
 	if (ret == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cve_model));
@@ -502,7 +502,7 @@ struct cve_entry *cve_entry_parse(xmlTextReaderPtr reader)
 
 		if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABLE_CONFIGURATION_STR)) {
 
-			conf = oscap_alloc(sizeof(struct cve_configuration));
+			conf = malloc(sizeof(struct cve_configuration));
 
 			conf->id = (char *)xmlTextReaderGetAttribute(reader, ATTR_CVE_ID_STR);
 			xmlTextReaderNextElement(reader);
@@ -789,7 +789,7 @@ void cve_summary_free(struct cve_summary *summary)
 		return;
 
 	xmlFree(summary->summary);
-	oscap_free(summary);
+	free(summary);
 }
 
 void cve_model_free(struct cve_model *cve_model)
@@ -799,9 +799,9 @@ void cve_model_free(struct cve_model *cve_model)
 		return;
 
 	oscap_list_free(cve_model->entries, (oscap_destruct_func) cve_entry_free);
-	oscap_free(cve_model->pub_date);
-	oscap_free(cve_model->nvd_xml_version);
-	oscap_free(cve_model);
+	free(cve_model->pub_date);
+	free(cve_model->nvd_xml_version);
+	free(cve_model);
 }
 
 void cve_configuration_free(struct cve_configuration *conf)
@@ -812,7 +812,7 @@ void cve_configuration_free(struct cve_configuration *conf)
 
 	xmlFree(conf->id);
 	cpe_testexpr_free(conf->expr);
-	oscap_free(conf);
+	free(conf);
 }
 
 void cve_product_free(struct cve_product *product)
@@ -822,7 +822,7 @@ void cve_product_free(struct cve_product *product)
 		return;
 
 	xmlFree(product->value);
-	oscap_free(product);
+	free(product);
 }
 
 void cve_reference_free(struct cve_reference *ref)
@@ -836,7 +836,7 @@ void cve_reference_free(struct cve_reference *ref)
 	xmlFree(ref->type);
 	xmlFree(ref->source);
 	xmlFree(ref->lang);
-	oscap_free(ref);
+	free(ref);
 }
 
 void cwe_entry_free(struct cwe_entry *entry)
@@ -846,7 +846,7 @@ void cwe_entry_free(struct cwe_entry *entry)
 		return;
 
 	xmlFree(entry->value);
-	oscap_free(entry);
+	free(entry);
 }
 
 void cve_entry_free(struct cve_entry *entry)
@@ -866,7 +866,7 @@ void cve_entry_free(struct cve_entry *entry)
 	oscap_list_free(entry->references, (oscap_destruct_func) cve_reference_free);
 	oscap_list_free(entry->summaries, (oscap_destruct_func) cve_summary_free);
 	oscap_list_free(entry->configurations, (oscap_destruct_func) cve_configuration_free);
-	oscap_free(entry);
+	free(entry);
 }
 
 /* End of free functions

@@ -175,7 +175,7 @@ struct oval_object *oval_object_new(struct oval_definition_model *model, const c
 	__attribute__nonnull__(model);
 	oval_object_t *object;
 
-	object = (oval_object_t *) oscap_alloc(sizeof(oval_object_t));
+	object = (oval_object_t *) malloc(sizeof(oval_object_t));
 	if (object == NULL)
 		return NULL;
 
@@ -246,11 +246,11 @@ void oval_object_free(struct oval_object *object)
 		return;
 
 	if (object->comment != NULL)
-		oscap_free(object->comment);
+		free(object->comment);
 	if (object->id != NULL)
-		oscap_free(object->id);
+		free(object->id);
 	oval_collection_free_items(object->behaviors, (oscap_destruct_func) oval_behavior_free);
-	oval_collection_free_items(object->notes, (oscap_destruct_func) oscap_free);
+	oval_collection_free_items(object->notes, (oscap_destruct_func) free);
 	oval_collection_free_items(object->object_content, (oscap_destruct_func) oval_object_content_free);
 
 	object->comment = NULL;
@@ -258,7 +258,7 @@ void oval_object_free(struct oval_object *object)
 	object->behaviors = NULL;
 	object->notes = NULL;
 	object->object_content = NULL;
-	oscap_free(object);
+	free(object);
 }
 
 void oval_object_set_subtype(struct oval_object *object, oval_subtype_t subtype)
@@ -277,7 +277,7 @@ void oval_object_set_comment(struct oval_object *object, char *comm)
 {
 	__attribute__nonnull__(object);
 	if (object->comment != NULL)
-		oscap_free(object->comment);
+		free(object->comment);
 	object->comment = (comm == NULL) ? NULL : oscap_strdup(comm);
 }
 
@@ -344,8 +344,8 @@ static int _oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_co
 		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -382,9 +382,9 @@ int oval_object_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *c
 	ret = oval_parser_parse_tag(reader, context, &_oval_object_parse_tag, object);
 
 cleanup:
-	oscap_free(id);
-	oscap_free(comm);
-	oscap_free(version);
+	free(id);
+	free(comm);
+	free(version);
 	return ret;
 }
 
@@ -476,7 +476,7 @@ struct oval_object *oval_object_create_internal(struct oval_object *obj, char *s
 	new_obj_id[oid_len + sid_len + 1] = '\0';
 	new_obj = oval_object_clone2(obj->model, obj, new_obj_id);
 	new_obj->base_obj_ref = obj;
-	oscap_free(new_obj_id);
+	free(new_obj_id);
 
 	return new_obj;
 }

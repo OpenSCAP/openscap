@@ -47,8 +47,8 @@ struct oscap_buffer {
 struct oscap_buffer *oscap_buffer_new()
 {
 	struct oscap_buffer *s;
-	s = oscap_alloc(sizeof(struct oscap_buffer));
-	s->data = oscap_alloc(INITIAL_CAPACITY);
+	s = malloc(sizeof(struct oscap_buffer));
+	s->data = malloc(INITIAL_CAPACITY);
 	s->data[0] = '\0';
 	s->length = 0;
 	s->capacity = INITIAL_CAPACITY;
@@ -64,14 +64,14 @@ void oscap_buffer_clear(struct oscap_buffer *s)
 void oscap_buffer_free(struct oscap_buffer *s)
 {
 	if (s != NULL) {
-		oscap_free(s->data);
-		oscap_free(s);
+		free(s->data);
+		free(s);
 	}
 }
 
 char* oscap_buffer_bequeath(struct oscap_buffer *s){
 	char* str = s->data;
-	oscap_free(s);
+	free(s);
 	return str;
 }
 
@@ -86,7 +86,7 @@ void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, c
 		 * the memory.
 		 */
 		s->capacity = ((s->capacity + append_length - 1) / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
-		s->data = oscap_realloc(s->data, s->capacity);
+		s->data = realloc(s->data, s->capacity);
 	}
 
 	memcpy(s->data + s->length, data, append_length);

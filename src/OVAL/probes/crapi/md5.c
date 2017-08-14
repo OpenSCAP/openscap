@@ -57,7 +57,7 @@ void *crapi_md5_init (void *dst, void *size)
         if (ctx->ctx != NULL) {
                 HASH_Begin (ctx->ctx);
         } else {
-                oscap_free (ctx);
+                free (ctx);
                 ctx = NULL;
         }
 
@@ -78,7 +78,7 @@ int crapi_md5_fini (void *ctxp)
 
         HASH_End (ctx->ctx, ctx->dst, (unsigned int *)ctx->size, *ctx->size);
         HASH_Destroy (ctx->ctx);
-        oscap_free (ctx);
+        free (ctx);
 
         return (0);
 }
@@ -88,7 +88,7 @@ void crapi_md5_free (void *ctxp)
         struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
 
         HASH_Destroy (ctx->ctx);
-        oscap_free (ctx);
+        free (ctx);
         
         return;
 }
@@ -108,7 +108,7 @@ void *crapi_md5_init (void *dst, void *size)
         struct crapi_md5_ctx *ctx = oscap_talloc (struct crapi_md5_ctx);
 
         if (gcry_md_open (&ctx->ctx, GCRY_MD_MD5, 0) != 0) {
-		oscap_free(ctx);
+		free(ctx);
 		return NULL;
 	}
 
@@ -135,7 +135,7 @@ int crapi_md5_fini (void *ctxp)
         buffer = (void *)gcry_md_read (ctx->ctx, GCRY_MD_MD5);
         memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (GCRY_MD_MD5));
         gcry_md_close (ctx->ctx);
-        oscap_free(ctx);
+        free(ctx);
 
         return (0);
 }
@@ -145,7 +145,7 @@ void crapi_md5_free (void *ctxp)
         struct crapi_md5_ctx *ctx = (struct crapi_md5_ctx *)ctxp;
 
         gcry_md_close (ctx->ctx);
-        oscap_free(ctx);
+        free(ctx);
 
         return;
 }

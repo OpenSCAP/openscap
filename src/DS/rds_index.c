@@ -47,7 +47,7 @@ struct rds_index
 
 struct rds_index *rds_index_new(void)
 {
-	struct rds_index *ret = oscap_calloc(1, sizeof(struct rds_index));
+	struct rds_index *ret = calloc(1, sizeof(struct rds_index));
 	ret->report_requests = oscap_list_new();
 	ret->assets = oscap_list_new();
 	ret->reports = oscap_list_new();
@@ -61,7 +61,7 @@ void rds_index_free(struct rds_index *s)
 		oscap_list_free(s->report_requests, (oscap_destruct_func)rds_report_request_index_free);
 		oscap_list_free(s->assets, (oscap_destruct_func)rds_asset_index_free);
 		oscap_list_free(s->reports, (oscap_destruct_func)rds_report_index_free);
-		oscap_free(s);
+		free(s);
 	}
 }
 

@@ -54,7 +54,7 @@ typedef struct oval_sysinfo {
 
 struct oval_sysinfo *oval_sysinfo_new(struct oval_syschar_model *model)
 {
-	oval_sysinfo_t *sysinfo = (oval_sysinfo_t *) oscap_alloc(sizeof(oval_sysinfo_t));
+	oval_sysinfo_t *sysinfo = (oval_sysinfo_t *) malloc(sizeof(oval_sysinfo_t));
 	if (sysinfo == NULL)
 		return NULL;
 
@@ -101,15 +101,15 @@ void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
 {
 	if (sysinfo) {
 		if (sysinfo->osArchitecture)
-			oscap_free(sysinfo->osArchitecture);
+			free(sysinfo->osArchitecture);
 		if (sysinfo->osName)
-			oscap_free(sysinfo->osName);
+			free(sysinfo->osName);
 		if (sysinfo->osVersion)
-			oscap_free(sysinfo->osVersion);
+			free(sysinfo->osVersion);
 		if (sysinfo->primaryHostName)
-			oscap_free(sysinfo->primaryHostName);
+			free(sysinfo->primaryHostName);
 		if (sysinfo->anyxml)
-			oscap_free(sysinfo->anyxml);
+			free(sysinfo->anyxml);
 
 		oval_collection_free_items(sysinfo->interfaces, (oscap_destruct_func) oval_sysint_free);
 
@@ -120,7 +120,7 @@ void oval_sysinfo_free(struct oval_sysinfo *sysinfo)
 		sysinfo->primaryHostName = NULL;
 		sysinfo->anyxml = NULL;
 
-		oscap_free(sysinfo);
+		free(sysinfo);
 	}
 }
 
@@ -154,7 +154,7 @@ void oval_sysinfo_set_os_name(struct oval_sysinfo *sysinfo, char *osName)
 	__attribute__nonnull__(sysinfo);
 
 	if (sysinfo->osName != NULL)
-		oscap_free(sysinfo->osName);
+		free(sysinfo->osName);
 	sysinfo->osName = oscap_strdup(osName);
 }
 
@@ -167,7 +167,7 @@ void oval_sysinfo_set_os_version(struct oval_sysinfo *sysinfo, char *osVersion)
 {
 	__attribute__nonnull__(sysinfo);
 	if (sysinfo->osVersion != NULL)
-		oscap_free(sysinfo->osVersion);
+		free(sysinfo->osVersion);
 	sysinfo->osVersion = oscap_strdup(osVersion);
 }
 
@@ -180,7 +180,7 @@ void oval_sysinfo_set_os_architecture(struct oval_sysinfo *sysinfo, char *osArch
 {
 	__attribute__nonnull__(sysinfo);
 	if (sysinfo->osArchitecture != NULL)
-		oscap_free(sysinfo->osArchitecture);
+		free(sysinfo->osArchitecture);
 	sysinfo->osArchitecture = oscap_strdup(osArchitecture);
 }
 
@@ -194,7 +194,7 @@ void oval_sysinfo_set_primary_host_name(struct oval_sysinfo *sysinfo, char *prim
 {
 	__attribute__nonnull__(sysinfo);
 	if (sysinfo->primaryHostName != NULL)
-		oscap_free(sysinfo->primaryHostName);
+		free(sysinfo->primaryHostName);
 	sysinfo->primaryHostName = oscap_strdup(primaryHostName);
 }
 
@@ -267,8 +267,8 @@ static int _oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_c
                 return_code = oval_parser_skip_tag(reader, context);
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 
 	return return_code;
 }
@@ -297,8 +297,8 @@ int oval_sysinfo_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	oval_syschar_model_set_sysinfo(context->syschar_model, sysinfo);
 
 	oval_sysinfo_free(sysinfo);
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 
 	return return_code;
 }

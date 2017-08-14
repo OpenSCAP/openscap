@@ -102,7 +102,7 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 		rc = ovector_len / 3;
 	}
 
-	substrs = oscap_alloc(rc * sizeof (char *));
+	substrs = malloc(rc * sizeof (char *));
 	for (i = 0; i < rc; ++i) {
 		int len;
 		char *buf;
@@ -110,7 +110,7 @@ static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char 
 		if (ovector[2 * i] == -1)
 			continue;
 		len = ovector[2 * i + 1] - ovector[2 * i];
-		buf = oscap_alloc(len + 1);
+		buf = malloc(len + 1);
 		memcpy(buf, str + ovector[2 * i], len);
 		buf[len] = '\0';
 		substrs[ret] = buf;
@@ -142,7 +142,7 @@ static int get_substrings(char *str, int *ofs, regex_t *re, int want_substrs, ch
 	}
 
 	ret = 0;
-	substrs = oscap_alloc(pmatch_len * sizeof (char *));
+	substrs = malloc(pmatch_len * sizeof (char *));
 	for (i = 0; i < pmatch_len; ++i) {
 		int len;
 		char *buf;
@@ -150,7 +150,7 @@ static int get_substrings(char *str, int *ofs, regex_t *re, int want_substrs, ch
 		if (pmatch[i].rm_so == -1)
 			continue;
 		len = pmatch[i].rm_eo - pmatch[i].rm_so;
-		buf = oscap_alloc(len + 1);
+		buf = malloc(len + 1);
 		memcpy(buf, str + pmatch[i].rm_so, len);
 		buf[len] = '\0';
 		substrs[ret] = buf;
@@ -234,7 +234,7 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	path_len   = strlen(path);
 	file_len   = strlen(file);
-	whole_path = oscap_alloc(path_len + file_len + 2);
+	whole_path = malloc(path_len + file_len + 2);
 
 	memcpy(whole_path, path, path_len);
 
@@ -273,7 +273,7 @@ static int process_file(const char *path, const char *file, void *arg)
 
 	do {
 		buf_size += buf_inc;
-		buf = oscap_realloc(buf, buf_size);
+		buf = realloc(buf, buf_size);
 		ret = read(fd, buf + buf_used, buf_inc);
 		if (ret == -1) {
 			SEXP_t *msg;
@@ -331,8 +331,8 @@ static int process_file(const char *path, const char *file, void *arg)
                                 probe_item_collect(pfd->ctx, item);
 
 				for (k = 0; k < substr_cnt; ++k)
-					oscap_free(substrs[k]);
-				oscap_free(substrs);
+					free(substrs[k]);
+				free(substrs);
 			}
 		}
 	} while (substr_cnt > 0 && ofs < buf_used);
@@ -340,9 +340,9 @@ static int process_file(const char *path, const char *file, void *arg)
  cleanup:
 	if (fd != -1)
 		close(fd);
-	oscap_free(buf);
+	free(buf);
 	if (whole_path != NULL)
-		oscap_free(whole_path);
+		free(whole_path);
 
 	return ret;
 }
@@ -503,7 +503,7 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_free(bh_ent);
         SEXP_free(filepath_ent);
 	if (pfd.pattern != NULL)
-		oscap_free(pfd.pattern);
+		free(pfd.pattern);
 #if defined USE_REGEX_PCRE
 	if (pfd.compiled_regex != NULL)
 		pcre_free(pfd.compiled_regex);

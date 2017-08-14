@@ -206,7 +206,7 @@ static void xccdf_resolve_textlist(struct oscap_list *child_list, struct oscap_l
 			if (oscap_streq(oscap_text_get_lang(child), oscap_text_get_lang(parent))) {
 				char *text = oscap_sprintf("%s%s", oscap_text_get_text(parent), oscap_text_get_text(child));
 				oscap_text_set_text(child, text);
-				oscap_free(text);
+				free(text);
 				if (more) more(child, parent);
 				break;
 			}
@@ -252,7 +252,7 @@ static void xccdf_resolve_profile(struct xccdf_item *child, struct xccdf_item *p
 	if (child->sub.profile.note_tag != NULL) {
 		char *note_tag = oscap_sprintf("%s %s", xccdf_profile_get_note_tag(XPROFILE(child)), xccdf_profile_get_note_tag(XPROFILE(parent)));
 		xccdf_profile_set_note_tag(XPROFILE(child), note_tag);
-		oscap_free(note_tag);
+		free(note_tag);
 	}
 
 	xccdf_resolve_appendlist(&child->sub.profile.selects,       parent->sub.profile.selects,       xccdf_select_idcmp,       (oscap_clone_func)xccdf_select_clone, false);
@@ -274,7 +274,7 @@ static struct xccdf_item *xccdf_resolve_copy_item(struct xccdf_item *src)
 	char *newid = xccdf_benchmark_gen_id(bench, xccdf_item_get_type(src), prefix);
 	struct xccdf_item *clone = xccdf_item_clone(src);
 	xccdf_item_set_id(clone, newid);
-	oscap_free(newid);
+	free(newid);
 	return clone;
 }
 

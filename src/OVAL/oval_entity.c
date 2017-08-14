@@ -160,7 +160,7 @@ struct oval_value *oval_entity_get_value(struct oval_entity *entity)
 
 struct oval_entity *oval_entity_new(struct oval_definition_model *model)
 {
-	struct oval_entity *entity = (struct oval_entity *)oscap_alloc(sizeof(struct oval_entity));
+	struct oval_entity *entity = (struct oval_entity *)malloc(sizeof(struct oval_entity));
 	if (entity == NULL)
 		return NULL;
 
@@ -210,12 +210,12 @@ void oval_entity_free(struct oval_entity *entity)
 	if (entity->value != NULL)
 		oval_value_free(entity->value);
 	if (entity->name != NULL)
-		oscap_free(entity->name);
+		free(entity->name);
 
 	entity->name = NULL;
 	entity->value = NULL;
 	entity->variable = NULL;
-	oscap_free(entity);
+	free(entity);
 }
 
 void oval_entity_set_type(struct oval_entity *entity, oval_entity_type_t type)
@@ -270,7 +270,7 @@ void oval_entity_set_name(struct oval_entity *entity, char *name)
 {
 	__attribute__nonnull__(entity);
 	if (entity->name != NULL)
-		oscap_free(entity->name);
+		free(entity->name);
 	entity->name = (name == NULL) ? NULL : oscap_strdup(name);
 }
 
@@ -334,7 +334,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 						"Could not found variable '%s' referenced by var_ref element.", varref);
 				return_code = -1;
 			} else {
-				oscap_free(varref);
+				free(varref);
 				varref = NULL;
 				value = NULL;
 			}
@@ -355,7 +355,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		variable = oval_definition_model_get_new_variable(model, varref, OVAL_VARIABLE_UNKNOWN);
 		varref_type = OVAL_ENTITY_VARREF_ATTRIBUTE;
 		value = NULL;
-		oscap_free(varref);
+		free(varref);
 		varref = NULL;
 	}
 	oval_entity_set_name(entity, name);
@@ -373,7 +373,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 		dW("Parsing of <%s> terminated by an error at line %d.", name, xmlTextReaderGetParserLineNumber(reader));
 	}
 
-	oscap_free(name);
+	free(name);
 	return return_code;
 }
 

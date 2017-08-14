@@ -267,7 +267,7 @@ static void *crapi_sha2_init(void *dst, void *size, int alg)
         struct crapi_sha2_ctx *ctx = oscap_talloc (struct crapi_sha2_ctx);
 
         if (gcry_md_open (&ctx->ctx, alg, 0) != 0) {
-		oscap_free(ctx);
+		free(ctx);
 		return NULL;
 	}
 
@@ -294,7 +294,7 @@ static int crapi_sha2_fini (void *ctxp, int alg)
         buffer = (void *)gcry_md_read (ctx->ctx, alg);
         memcpy (ctx->dst, buffer, gcry_md_get_algo_dlen (alg));
         gcry_md_close (ctx->ctx);
-        oscap_free(ctx);
+        free(ctx);
 
         return (0);
 }

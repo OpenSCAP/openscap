@@ -52,7 +52,7 @@ static int __abort_cb(void *n, void *u)
 
         pthread_cancel(thr->tid);
 
-	coll->thr = oscap_realloc(coll->thr, sizeof(SEAP_msg_t *) * ++coll->cnt);
+	coll->thr = realloc(coll->thr, sizeof(SEAP_msg_t *) * ++coll->cnt);
 	coll->thr[coll->cnt - 1] = thr;
 
 	return (0);
@@ -156,10 +156,10 @@ void *probe_signal_handler(void *arg)
 				}
 #endif
 				SEAP_msg_free(coll.thr[coll.cnt - 1]->msg);
-                                oscap_free(coll.thr[coll.cnt - 1]);
+                                free(coll.thr[coll.cnt - 1]);
 			}
 
-			oscap_free(coll.thr);
+			free(coll.thr);
 			goto exitloop;
 		}
                 case SIGUSR2:
