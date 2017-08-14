@@ -43,13 +43,11 @@ int main(int argc, char **argv)
 		return 0;
 	} else if (argc == 4 && !strcmp(argv[1], "--eval")) {
 		const char *os_version = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
-		cvrf_export_results(oscap_source_new_from_file(argv[2]), argv[3], os_version);
-		return 0;
+		return cvrf_export_results(oscap_source_new_from_file(argv[2]), argv[3], os_version);
 	} else if (argc == 3 && !strcmp(argv[1], "--validate")) {
 		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
 		int ret = oscap_source_validate(source, reporter, NULL);
 		oscap_source_free(source);
-		//oscap_print_error();
 		return ret;
 	}
 

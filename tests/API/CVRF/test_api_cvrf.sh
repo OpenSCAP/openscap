@@ -14,11 +14,20 @@ stdout=$(mktemp -t ${name}.out.XXXXXX)
 stderr=$(mktemp -t ${name}.err.XXXXXX)
 
 function test_api_cvrf_eval {
+	local ret_val=0
+	
 	./test_api_cvrf --eval $srcdir/$name.xml $results >$stdout 2>$stderr
 	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-	
+	if [ $? -eq 0] && [ -f $results]; then
+		echo "CVRF Vulnerability checks were generated correctly"
+		ret_val=0
+	else
+		echo "CVRF Vulnerability checks could not be evaluated"
+		ret_val=1
+	fi
 	rm $results
+	return $ret_val
 }
 
 function test_api_cvrf_export {
