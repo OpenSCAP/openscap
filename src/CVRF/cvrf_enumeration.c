@@ -46,7 +46,7 @@
  */
 
 static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map) {
-	int ret = -1;
+	int ret = oscap_string_to_enum(map, NULL);
 	char *attrstr = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 	if (attrstr) {
 		ret = oscap_string_to_enum(map, attrstr);
@@ -56,7 +56,7 @@ static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 }
 
 static int cvrf_enumeration_node_value(xmlTextReaderPtr reader, const struct oscap_string_map *map) {
-	int ret = -1;
+	int ret = oscap_string_to_enum(map, NULL);
 	char *valuestr = oscap_element_string_copy(reader);
 	if (valuestr) {
 		ret = oscap_string_to_enum(map, valuestr);
@@ -75,7 +75,7 @@ const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
 	{CVRF_DOC_PUBLISHER_COORDINATOR, "Coordinator"},
 	{CVRF_DOC_PUBLISHER_USER, "User"},
 	{CVRF_DOC_PUBLISHER_OTHER, "Other"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_DOC_PUBLISHER_UNKNOWN, NULL}
 };
 
 cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name) {
@@ -89,7 +89,7 @@ const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
 	{CVRF_DOC_STATUS_DRAFT, "Draft"},
 	{CVRF_DOC_STATUS_INTERIM, "Interim"},
 	{CVRF_DOC_STATUS_FINAL, "Final"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_DOC_STATUS_UNKNOWN, NULL}
 };
 
 static cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader) {
@@ -102,7 +102,7 @@ const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type
 const struct oscap_string_map CVRF_REFERENCE_TYPE_MAP[] = {
 	{CVRF_REFERENCE_EXTERNAL, "External"},
 	{CVRF_REFERENCE_SELF, "Self"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_REFERENCE_UNKNOWN, NULL}
 };
 
 static cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader) {
@@ -120,7 +120,7 @@ const struct oscap_string_map CVRF_NOTE_TYPE_MAP[] = {
 	{CVRF_NOTE_FAQ, "FAQ"},
 	{CVRF_NOTE_LEGAL_DISCLAIMER, "Legal Disclaimer"},
 	{CVRF_NOTE_OTHER, "Other"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_NOTE_UNKNOWN, NULL}
 };
 
 static cvrf_note_type_t cvrf_note_type_parse(xmlTextReaderPtr reader) {
@@ -141,7 +141,7 @@ const struct oscap_string_map CVRF_BRANCH_TYPE_MAP[] = {
 	{CVRF_BRANCH_LANGUAGE, "Language"},
 	{CVRF_BRANCH_LEGACY, "Legacy"},
 	{CVRF_BRANCH_SPECIFICATION, "Specification"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_BRANCH_UNKNOWN, NULL}
 };
 static cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader) {
 	return cvrf_enumeration_attr(reader, "Type", CVRF_BRANCH_TYPE_MAP);
@@ -157,7 +157,7 @@ const struct oscap_string_map CVRF_RELATIONSHIP_TYPE_MAP[] = {
 	{CVRF_RELATIONSHIP_EXTERNAL_COMPONENT, "External Component Of"},
 	{CVRF_RELATIONSHIP_INSTALLED_ON, "Installed On"},
 	{CVRF_RELATIONSHIP_INSTALLED_WITH, "Installed With"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_RELATIONSHIP_UNKNOWN, NULL}
 };
 
 static cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader) {
@@ -174,7 +174,7 @@ const struct oscap_string_map CVRF_INVOLVEMENT_STATUS_MAP[] = {
 	{CVRF_INVOLVEMENT_COMPLETED, "Completed"},
 	{CVRF_INVOLVEMENT_CONTACT_ATTEMPTED, "Contact Attempted"},
 	{CVRF_INVOLVEMENT_NOT_CONTACTED, "Not Contacted"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_INVOLVEMENT_UNKNOWN, NULL}
 };
 
 static cvrf_involvement_status_type_t cvrf_involvement_status_type_parse(xmlTextReaderPtr reader) {
@@ -193,7 +193,7 @@ const struct oscap_string_map CVRF_PRODUCT_STATUS_TYPE_MAP[] = {
 	{CVRF_PRODUCT_STATUS_FIXED, "Fixed"},
 	{CVRF_PRODUCT_STATUS_RECOMMENDED, "Recommended"},
 	{CVRF_PRODUCT_STATUS_LAST_AFFECTED, "Last Affected"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_PRODUCT_STATUS_UNKNOWN, NULL}
 };
 
 static cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader) {
@@ -208,7 +208,7 @@ const struct oscap_string_map CVRF_THREAT_TYPE_MAP[] = {
 	{CVRF_THREAT_IMPACT, "Impact"},
 	{CVRF_THREAT_EXPLOIT_STATUS, "Exploit Status"},
 	{CVRF_THREAT_TARGET_SET, "Target Set"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_THREAT_UNKNOWN, NULL}
 };
 
 static cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader) {
@@ -225,7 +225,7 @@ const struct oscap_string_map CVRF_REMEDIATION_TYPE_MAP[] = {
 	{CVRF_REMEDIATION_VENDOR_FIX, "Vendor Fix"},
 	{CVRF_REMEDIATION_NONE_AVAILABLE, "None Available"},
 	{CVRF_REMEDIATION_WILL_NOT_FIX, "Will Not Fix"},
-	{CVRF_ATTRIBUTE_UNKNOWN, NULL}
+	{CVRF_REMEDIATION_UNKNOWN, NULL}
 };
 
 static cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader) {
@@ -332,7 +332,7 @@ int cvrf_item_parse_type_attribute(xmlTextReaderPtr reader, cvrf_item_type_t ite
 		case CVRF_REMEDIATION:
 			return cvrf_remediation_type_parse(reader);
 		default:
-			return CVRF_ATTRIBUTE_UNKNOWN;
+			return CVRF_ITEM_UNKNOWN;
 	}
 }
 
