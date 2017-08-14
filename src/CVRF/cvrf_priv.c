@@ -2138,7 +2138,7 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 	struct cvrf_document *cvrf_doc = model->document;
 
 	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST model->doc_title);
-	xmlNewProp(title_node, ATTR_LANG, BAD_CAST "en");
+	cvrf_element_add_attribute("xml:lang", "en", title_node);
 	cvrf_element_add_child("DocumentType", model->doc_type, root_node);
 
 	xmlAddChild(root_node, cvrf_doc_publisher_to_dom(cvrf_doc->publisher));
@@ -2146,23 +2146,20 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 
 	cvrf_element_add_container(cvrf_doc->doc_notes, CVRF_DOCUMENT_NOTE, root_node);
 	xmlNode *distribution = xmlNewTextChild(root_node, NULL, TAG_DISTRIBUTION, BAD_CAST cvrf_doc->doc_distribution);
-	xmlNewProp(distribution, ATTR_LANG, BAD_CAST "en");
+	cvrf_element_add_attribute("xml:lang", "en", distribution);
 	xmlNode *severity = xmlNewTextChild(root_node, NULL, TAG_AGGREGATE_SEVERITY, BAD_CAST cvrf_doc->aggregate_severity);
-	xmlNewProp(severity, ATTR_NAMESPACE, BAD_CAST cvrf_doc->namespace);
+	cvrf_element_add_attribute("Namespace", cvrf_doc->namespace, severity);
 	xmlAddChild(root_node, cvrf_list_to_dom(cvrf_doc->doc_references, NULL, CVRF_DOCUMENT_REFERENCE));
 	xmlAddChild(root_node, cvrf_list_to_dom(cvrf_doc->acknowledgments, NULL, CVRF_ACKNOWLEDGMENT));
 
 	xmlAddChild(root_node, cvrf_product_tree_to_dom(model->tree));
 	cvrf_list_to_dom(model->vulnerabilities, root_node, CVRF_VULNERABILITY);
-
 	return root_node;
 }
 
 xmlNode *cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher) {
 	xmlNode *pub_node = xmlNewNode(NULL, TAG_PUBLISHER);
-	const char *publisher_type = cvrf_doc_publisher_type_get_text(publisher->type);
-	xmlNewProp(pub_node, BAD_CAST "Type", BAD_CAST publisher_type);
-
+	cvrf_element_add_attribute("Type", cvrf_doc_publisher_type_get_text(publisher->type), pub_node);
 	cvrf_element_add_child("ContactDetails", publisher->contact_details, pub_node);
 	cvrf_element_add_child("IssuingAuthority", publisher->issuing_authority, pub_node);
 	return pub_node;
@@ -2231,14 +2228,13 @@ xmlNode *cvrf_product_name_to_dom(struct cvrf_product_name *full_name) {
 		return NULL;
 
 	xmlNode *name_node = cvrf_element_to_dom("FullProductName", full_name->cpe);
-	xmlNewProp(name_node, TAG_PRODUCT_ID, BAD_CAST full_name->product_id);
+	cvrf_element_add_attribute("ProductID", full_name->product_id, name_node);
 	return name_node;
 }
 
 xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree) {
 	xmlNode *tree_node = xmlNewNode(NULL, TAG_PRODUCT_TREE);
 	xmlNewNs(tree_node, PROD_NS, NULL);
-
 	cvrf_list_to_dom(tree->product_names, tree_node, CVRF_PRODUCT_NAME);
 	cvrf_list_to_dom(tree->branches, tree_node, CVRF_BRANCH);
 	cvrf_list_to_dom(tree->relationships, tree_node, CVRF_RELATIONSHIP);
@@ -2248,9 +2244,8 @@ xmlNode *cvrf_product_tree_to_dom(struct cvrf_product_tree *tree) {
 
 xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch) {
 	xmlNode *branch_node = xmlNewNode(NULL, TAG_BRANCH);
-	const char *branch_type = cvrf_branch_type_get_text(branch->type);
-	xmlNewProp(branch_node, ATTR_TYPE, BAD_CAST branch_type);
-	xmlNewProp(branch_node, BAD_CAST "Name", BAD_CAST branch->branch_name);
+	cvrf_element_add_attribute("Type", cvrf_branch_type_get_text(branch->type), branch_node);
+	cvrf_element_add_attribute("Name", branch->branch_name, branch_node);
 
 	if (branch->type == CVRF_BRANCH_PRODUCT_FAMILY) {
 		cvrf_list_to_dom(branch->subbranches, branch_node, CVRF_BRANCH);
@@ -2262,18 +2257,16 @@ xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch) {
 
 xmlNode *cvrf_relationship_to_dom(const struct cvrf_relationship *relation) {
 	xmlNode *relation_node = xmlNewNode(NULL, TAG_RELATIONSHIP);
-	const char *relation_type = cvrf_relationship_type_get_text(relation->relation_type);
-	xmlNewProp(relation_node, ATTR_PRODUCT_REFERENCE, BAD_CAST relation->product_reference);
-	xmlNewProp(relation_node, BAD_CAST "RelationType", BAD_CAST relation_type);
-	xmlNewProp(relation_node, ATTR_RELATES_TO_REF, BAD_CAST relation->relates_to_ref);
-
+	cvrf_element_add_attribute("ProductReference", relation->product_reference, relation_node);
+	cvrf_element_add_attribute("RelationType", cvrf_relationship_type_get_text(relation->relation_type), relation_node);
+	cvrf_element_add_attribute("RelatesToProductReference", relation->relates_to_ref, relation_node);
 	xmlAddChild(relation_node, cvrf_product_name_to_dom(relation->product_name));
 	return relation_node;
 }
 
 xmlNode *cvrf_group_to_dom(const struct cvrf_group *group) {
 	xmlNode *group_node = xmlNewNode(NULL, TAG_GROUP);
-	xmlNewProp(group_node, TAG_GROUP_ID, BAD_CAST group->group_id);
+	cvrf_element_add_attribute("GroupID", group->group_id, group_node);
 	cvrf_element_add_child("Description", group->description, group_node);
 	cvrf_element_add_stringlist(group->product_ids, "ProductID", group_node);
 	return group_node;
@@ -2287,7 +2280,7 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 	cvrf_element_add_child("Title", vuln->title, vuln_node);
 	if (vuln->system_id) {
 		xmlNode *id_node = xmlNewTextChild(vuln_node, NULL, BAD_CAST "ID", BAD_CAST vuln->system_id);
-		xmlNewProp(id_node, BAD_CAST "SystemName", BAD_CAST vuln->system_name);
+		cvrf_element_add_attribute("SystemName", vuln->system_name, id_node);
 	}
 	cvrf_element_add_container(vuln->notes, CVRF_NOTE, vuln_node);
 	cvrf_element_add_child("DiscoveryDate", vuln->discovery_date, vuln_node);
@@ -2308,8 +2301,8 @@ xmlNode *cvrf_vulnerability_to_dom(const struct cvrf_vulnerability *vuln) {
 
 xmlNode *cvrf_involvement_to_dom(const struct cvrf_involvement *involve) {
 	xmlNode *involve_node = xmlNewNode(NULL, TAG_INVOLVEMENT);
-	xmlNewProp(involve_node, TAG_STATUS, BAD_CAST cvrf_involvement_status_type_get_text(involve->status));
-	xmlNewProp(involve_node, BAD_CAST "Party", BAD_CAST cvrf_doc_publisher_type_get_text(involve->party));
+	cvrf_element_add_attribute("Status", cvrf_involvement_status_type_get_text(involve->status), involve_node);
+	cvrf_element_add_attribute("Party",cvrf_doc_publisher_type_get_text(involve->party), involve_node);
 	cvrf_element_add_child("Description", involve->description, involve_node);
 	return involve_node;
 }
