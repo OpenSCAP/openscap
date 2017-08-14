@@ -182,7 +182,7 @@ int probe_main (probe_ctx *ctx, void *arg)
         }
 
         SEXP_vfree(ent, NULL);
-        oscap_free(request_st);
+        free(request_st);
 
         return (0);
 }

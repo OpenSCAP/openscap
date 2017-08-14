@@ -68,7 +68,7 @@ void *probe_worker_runfn(void *arg)
 
                 SEAP_msg_free(pair->pth->msg);
                 SEXP_free(probe_res);
-                oscap_free(pair);
+                free(pair);
 
                 return (NULL);
 	} else {
@@ -130,8 +130,8 @@ void *probe_worker_runfn(void *arg)
 	}
 
         SEAP_msg_free(pair->pth->msg);
-        oscap_free(pair->pth);
-	oscap_free(pair);
+        free(pair->pth);
+	free(pair);
 	pthread_detach(pthread_self());
 
 	return (NULL);
@@ -178,7 +178,7 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 	ctx = oscap_talloc (struct probe_varref_ctx);
 	ctx->pi2 = SEXP_softref((SEXP_t *)probe_in);
 	ctx->ent_cnt = ent_cnt;
-	ctx->ent_lst = oscap_alloc(ent_cnt * sizeof (ctx->ent_lst[0]));
+	ctx->ent_lst = malloc(ent_cnt * sizeof (ctx->ent_lst[0]));
 
 	vidx_name = SEXP_string_new(":val_idx", 8);
 	vidx_val = SEXP_number_newu(0);

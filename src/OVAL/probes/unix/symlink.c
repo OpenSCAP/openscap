@@ -46,12 +46,11 @@
 static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 {
 	SEXP_t *ent_val, *item_sexp, *msg;
-	const char *pathname;
 	struct stat sb;
 	char *linkname;
 
 	ent_val = probe_ent_getval(ent);
-	pathname = SEXP_string_cstr(ent_val);
+	char *pathname = SEXP_string_cstr(ent_val);
 	SEXP_free(ent_val);
 	if (pathname == NULL) {
 		return PROBE_EINVAL;
@@ -70,7 +69,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 		}
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
-		oscap_free(pathname);
+		free(pathname);
 		return 0;
 	}
 
@@ -81,7 +80,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 			"File '%s' is not a symlink.", pathname);
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
-		oscap_free(pathname);
+		free(pathname);
 		return 0;
 	}
 
@@ -99,7 +98,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-		oscap_free(pathname);
+		free(pathname);
 		return 0;
 	}
 
@@ -110,8 +109,8 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 			NULL);
 	probe_item_collect(ctx, item_sexp);
 
-	oscap_free(linkname);
-	oscap_free(pathname);
+	free(linkname);
+	free(pathname);
 	return 0;
 }
 

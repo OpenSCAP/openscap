@@ -392,9 +392,9 @@ fail0:
         SEXP_free(se_relative_dn);
         SEXP_free(se_attribute);
 
-        oscap_free(suffix);
-        oscap_free(relative_dn);
-        oscap_free(attrs[1]); /* attribute */
+        free(suffix);
+        free(relative_dn);
+        free(attrs[1]); /* attribute */
 
         return (0);
 }

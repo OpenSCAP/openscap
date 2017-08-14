@@ -52,7 +52,7 @@ static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
 
 	msg = xccdf_message_new();
 	assume_ex(xccdf_message_set_content(msg, text), 1);
-	oscap_free(text);
+	free(text);
 	assume_ex(xccdf_message_set_severity(msg, XCCDF_MSG_INFO), 1);
 	assume_ex(xccdf_rule_result_add_message(rr, msg), 1);
 	return 0;
@@ -80,10 +80,10 @@ static int _write_text_to_fd(int output_fd, const char* text) {
 
 }
 
-static int _write_text_to_fd_and_free(int output_fd, const char *text)
+static int _write_text_to_fd_and_free(int output_fd, char *text)
 {
 	int ret = _write_text_to_fd(output_fd, text);
-	oscap_free(text);
+	free(text);
 	return ret;
 }
 
@@ -106,17 +106,17 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 
 			// write indentation
 			if (_write_text_to_fd(output_fd, indentation) != 0) {
-				oscap_free(text);
+				free(text);
 				return 1;
 			}
 
 			// write rest of line
 			if (_write_text_to_fd(output_fd, current) != 0) {
-				oscap_free(text);
+				free(text);
 				return 1;
 			}
 			if (_write_text_to_fd(output_fd, "\n") != 0) {
-				oscap_free(text);
+				free(text);
 				return 1;
 			}
 
@@ -127,7 +127,7 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 		}
 		while (next_delim != NULL);
 
-		oscap_free(text);
+		free(text);
 		return 0;
 
 	} else {
@@ -310,7 +310,7 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
         xmlDoc *doc = xmlReadMemory(str, strlen(str), NULL, NULL, XML_PARSE_RECOVER |
 		XML_PARSE_NOERROR | XML_PARSE_NOWARNING | XML_PARSE_NONET | XML_PARSE_NSCLEAN);
 	dI("Following script will be executed: '''%s'''", str);
-	oscap_free(str);
+	free(str);
 
         xmlBuffer *buff = xmlBufferCreate();
 	xmlNodePtr child = xmlDocGetRootElement(doc)->children;
@@ -416,21 +416,21 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 			printf("Error while executing fix script: execve returned: %s\n", strerror(errno));
 			exit(42);
 		} else {
-			oscap_free(temp_file);
+			free(temp_file);
 			close(pipefd[1]);
-			const char *stdout_buff = oscap_acquire_pipe_to_string(pipefd[0]);
+			char *stdout_buff = oscap_acquire_pipe_to_string(pipefd[0]);
 			int wstatus;
 			waitpid(fork_result, &wstatus, 0);
 			_rule_add_info_message(rr, "Fix execution completed and returned: %d", WEXITSTATUS(wstatus));
 			if (stdout_buff != NULL && stdout_buff[0] != '\0')
 				_rule_add_info_message(rr, stdout_buff);
-			oscap_free(stdout_buff);
+			free(stdout_buff);
 			/* We return zero to indicate success. Rather than returning the exit code. */
 			result = 0;
 		}
 	} else {
 		_rule_add_info_message(rr, "Failed to fork. %s", strerror(errno));
-		oscap_free(temp_file);
+		free(temp_file);
 	}
 
 cleanup:
@@ -629,7 +629,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
 
 cleanup:
-	oscap_free(fix_text);
+	free(fix_text);
 	return ret;
 }
 
@@ -711,8 +711,8 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description, benchmark_id,
 				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format);
 
-		oscap_free(profile_title);
-		oscap_free(profile_description);
+		free(profile_title);
+		free(profile_description);
 
 	} else {
 		// Results-based remediation fix
@@ -746,7 +746,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# - hosts: localhost # set required host\n"
 			"   tasks:\n",
 				fix_header);
-		oscap_free(fix_header);
+		free(fix_header);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
 	} else {
 		return _write_text_to_fd_and_free(output_fd, fix_header);

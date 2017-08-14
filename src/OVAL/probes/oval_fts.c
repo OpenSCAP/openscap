@@ -74,7 +74,7 @@ static void OVAL_FTS_free(OVAL_FTS *ofts)
 	if (ofts->ofts_recurse_path_fts != NULL)
 		fts_close(ofts->ofts_recurse_path_fts);
 
-	oscap_free(ofts);
+	free(ofts);
 	return;
 }
 
@@ -102,7 +102,7 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	ofts_ent->fts_info = fts_ent->fts_info;
 	if (ofts->ofts_sfilename || ofts->ofts_sfilepath) {
 		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
-		ofts_ent->path = oscap_alloc(ofts_ent->path_len + 1);
+		ofts_ent->path = malloc(ofts_ent->path_len + 1);
 		strncpy(ofts_ent->path, fts_ent->fts_path, ofts_ent->path_len);
 		ofts_ent->path[ofts_ent->path_len] = '\0';
 
@@ -124,9 +124,9 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 
 static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 {
-	oscap_free(ofts_ent->path);
-	oscap_free(ofts_ent->file);
-	oscap_free(ofts_ent);
+	free(ofts_ent->path);
+	free(ofts_ent->file);
+	free(ofts_ent);
 	return;
 }
 
@@ -1272,7 +1272,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 		}
 
 		if (out_fts_ent == NULL) {
-			oscap_free(ofts->ofts_recurse_path_pthcpy);
+			free(ofts->ofts_recurse_path_pthcpy);
 			ofts->ofts_recurse_path_pthcpy = NULL;
 		}
 
@@ -1329,7 +1329,7 @@ void oval_ftsent_free(OVAL_FTSENT *ofts_ent)
 int oval_fts_close(OVAL_FTS *ofts)
 {
 	if (ofts->ofts_recurse_path_pthcpy != NULL)
-		oscap_free(ofts->ofts_recurse_path_pthcpy);
+		free(ofts->ofts_recurse_path_pthcpy);
 
 	if (ofts->ofts_path_regex)
 		pcre_free(ofts->ofts_path_regex);

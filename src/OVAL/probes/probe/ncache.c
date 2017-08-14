@@ -84,11 +84,11 @@ probe_ncache_t *probe_ncache_new (void)
         cache = oscap_talloc (probe_ncache_t);
 
         if (pthread_rwlock_init (&cache->lock, NULL) != 0) {
-                oscap_free (cache);
+                free (cache);
                 return (NULL);
         }
 
-        cache->name = oscap_calloc (PROBE_NCACHE_INIT_SIZE, sizeof (SEXP_t *));
+        cache->name = calloc (PROBE_NCACHE_INIT_SIZE, sizeof (SEXP_t *));
         cache->size = PROBE_NCACHE_INIT_SIZE;
         cache->real = 0;
 
@@ -105,9 +105,9 @@ void probe_ncache_free (probe_ncache_t *cache)
                 if (cache->name[i] != NULL)
                         SEXP_free (cache->name[i]);
 
-        oscap_free (cache->name);
+        free (cache->name);
         pthread_rwlock_destroy (&cache->lock);
-        oscap_free (cache);
+        free (cache);
 
         return;
 }
@@ -138,7 +138,7 @@ SEXP_t *probe_ncache_add (probe_ncache_t *cache, const char *name)
 
         if (cache->size <= cache->real) {
                 cache->size += PROBE_NCACHE_ADD_SIZE;
-                cache->name  = oscap_realloc (cache->name, sizeof (SEXP_t *) * cache->size);
+                cache->name  = realloc (cache->name, sizeof (SEXP_t *) * cache->size);
         }
 
         assume_d (cache->name != NULL, NULL);

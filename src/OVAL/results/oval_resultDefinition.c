@@ -55,7 +55,7 @@ typedef struct oval_result_definition {
 
 struct oval_result_definition *oval_result_definition_new(struct oval_result_system *sys, char *definition_id) {
 	oval_result_definition_t *definition = (oval_result_definition_t *)
-	    oscap_alloc(sizeof(oval_result_definition_t));
+	    malloc(sizeof(oval_result_definition_t));
 	if (definition == NULL)
 		return NULL;
 
@@ -110,7 +110,7 @@ void oval_result_definition_free(struct oval_result_definition *definition)
 	definition->messages = NULL;
 	definition->result = OVAL_RESULT_NOT_EVALUATED;
 	definition->instance = 1;
-	oscap_free(definition);
+	free(definition);
 }
 
 struct oval_result_definition *make_result_definition_from_oval_definition
@@ -237,7 +237,7 @@ static int oval_result_definition_parse(xmlTextReaderPtr reader, struct oval_par
 		return_code = oval_message_parse_tag
 		    (reader, context, (oscap_consumer_func) _oval_result_definition_consume_message, usr);
 	}
-	oscap_free(localName);
+	free(localName);
 	return return_code;
 }
 
@@ -282,8 +282,8 @@ int oval_result_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parser
 
 	return_code = oval_parser_parse_tag(reader, context, oval_result_definition_parse, definition);
 
-	oscap_free(definition_id);
-	oscap_free(definition_version);
+	free(definition_id);
+	free(definition_version);
 
 	return return_code;
 }

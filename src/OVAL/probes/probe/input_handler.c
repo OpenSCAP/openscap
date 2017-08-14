@@ -177,8 +177,8 @@ void *probe_input_handler(void *arg)
 							   "(ID=%u) " // TODO: 64b IDs
 							   "which is already being evaluated by an other thread.", pair->pth->sid);
 
-							oscap_free(pair->pth);
-							oscap_free(pair);
+							free(pair->pth);
+							free(pair);
 							SEAP_msg_free(seap_request);
 						} else {
 							/* OK */
@@ -191,8 +191,8 @@ void *probe_input_handler(void *arg)
 									dE("rbt_i32_del: failed to remove worker thread (ID=%u)", pair->pth->sid);
 
 								SEAP_msg_free(pair->pth->msg);
-								oscap_free(pair->pth);
-								oscap_free(pair);
+								free(pair->pth);
+								free(pair);
 
 								probe_ret = PROBE_EUNKNOWN;
 								probe_out = NULL;

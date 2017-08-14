@@ -117,7 +117,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
 		/* allocate space for xattr names */
 		xattr_buflen = xattr_count;
-		xattr_buf    = oscap_realloc(xattr_buf, sizeof(char) * xattr_buflen);
+		xattr_buf    = realloc(xattr_buf, sizeof(char) * xattr_buflen);
 
 		/* fill the buffer */
 		xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
@@ -127,7 +127,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
         if (xattr_count < 0) {
                 dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
-                oscap_free(xattr_buf);
+                free(xattr_buf);
         }
 
         /* update lastpath if needed */
@@ -158,7 +158,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 				}
 
 				// Allocate buffer, '+1' is for trailing '\0'
- 				xattr_val    = oscap_realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+ 				xattr_val    = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
 
 				// we don't want to override space for '\0' by call of 'lgetxattr'
 				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'
@@ -177,7 +177,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                                          "value",          OVAL_DATATYPE_STRING, xattr_val,
                                                          NULL);
 
-                                oscap_free(xattr_val);
+                                free(xattr_val);
                         } else {
                                 dI("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
 
@@ -185,7 +185,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                                 probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
 
                                 if (xattr_val != NULL)
-                                        oscap_free(xattr_val);
+                                        free(xattr_val);
                         }
 
                         probe_item_collect(args->ctx, item); /* XXX: handle ENOMEM */
@@ -199,7 +199,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		++i;
         } while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
 
-        oscap_free(xattr_buf);
+        free(xattr_buf);
 
         return (0);
 }

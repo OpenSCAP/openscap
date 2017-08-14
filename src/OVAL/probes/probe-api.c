@@ -258,7 +258,7 @@ bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters)
 			}
 
 			if (SEXP_list_length(elm_res) > 0) {
-				oscap_free(elm_name);
+				free(elm_name);
 				r0 = probe_ent_getattrval(felm, "entity_check");
 
 				if (r0 == NULL)
@@ -472,9 +472,11 @@ int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_
 oval_version_t probe_obj_get_schema_version(const SEXP_t *obj)
 {
 	oval_schema_version_t version = probe_obj_get_platform_schema_version(obj);
-	const char *version_str = oval_schema_version_to_cstr(version);
+	// oval_schema_version_to_cstr result has to be freed despite being
+	// declared as const char* :-(
+	char *version_str = (char*)oval_schema_version_to_cstr(version);
 	oval_version_t old_version_format = oval_version_from_cstr(version_str);
-	oscap_free(version_str);
+	free(version_str);
 	return old_version_format;
 }
 
@@ -494,7 +496,7 @@ oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP_t *obj)
 	char *ver = SEXP_string_cstr(sexp_ver);
 	SEXP_free(sexp_ver);
 	oval_schema_version_t parsed_version = oval_schema_version_from_cstr(ver);
-	oscap_free(ver);
+	free(ver);
 	return parsed_version;
 }
 
@@ -523,7 +525,7 @@ SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 						SEXP_t *val;
 
 						val = SEXP_list_nth(obj_name, i + 1);
-						oscap_free(name_buf);
+						free(name_buf);
 						SEXP_free(attr);
 						SEXP_free(obj_name);
 
@@ -538,7 +540,7 @@ SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name)
 
 			SEXP_free(attr);
 		}
-		oscap_free(name_buf);
+		free(name_buf);
 	}
 
 	SEXP_free(obj_name);
@@ -565,7 +567,7 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 						name_buf = oscap_sprintf(":%s", name);
 					}
 					if (SEXP_strcmp(attr, name_buf) == 0) {
-						oscap_free(name_buf);
+						free(name_buf);
 						SEXP_free(attr);
 						SEXP_free(obj_name);
 
@@ -574,7 +576,7 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 					++i;
 				} else {
 					if (SEXP_strcmp(attr, name) == 0) {
-						oscap_free(name_buf);
+						free(name_buf);
                                         SEXP_free(attr);
                                         SEXP_free(obj_name);
                                         return true;
@@ -585,7 +587,7 @@ bool probe_obj_attrexists(const SEXP_t * obj, const char *name)
 
 			SEXP_free(attr);
 		}
-		oscap_free(name_buf);
+		free(name_buf);
 	}
 
 	SEXP_free(obj_name);
@@ -943,7 +945,7 @@ SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...)
 
 	dI("%s", cstr);
 	str = SEXP_string_new(cstr, len);
-	oscap_free(cstr);
+	free(cstr);
 	lvl = SEXP_number_newu(level);
 	msg = SEXP_list_new(lvl, str, NULL);
 	SEXP_vfree(lvl, str, NULL);
@@ -1453,7 +1455,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         while (value_stra[multiply] != NULL)
                                 ++multiply;
 
-                        value_sexp = oscap_alloc(sizeof(SEXP_t) * multiply);
+                        value_sexp = malloc(sizeof(SEXP_t) * multiply);
 
                         for (value_i = 0; value_i < multiply; ++value_i)
                                 SEXP_string_new_r(value_sexp + value_i, value_stra[value_i], strlen(value_stra[value_i]));
@@ -1522,7 +1524,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                         while(value_i < multiply)
                                                 SEXP_free_r(value_sexp + value_i++);
                                         if (multiplied)
-                                                oscap_free(value_sexp);
+                                                free(value_sexp);
                                 }
 
 				va_end(ap);
@@ -1544,7 +1546,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 SEXP_free(name_sexp);
 
                 if (multiplied)
-                        oscap_free(value_sexp);
+                        free(value_sexp);
         skip:
                 value_name = va_arg(ap, const char *);
 		free_value = true;

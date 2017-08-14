@@ -49,7 +49,7 @@ struct oval_smc_iterator *oval_smc_iterator_new(struct oval_smc *mapping)
 	if (mapping == NULL)
 		return NULL;
 
-	struct oval_smc_iterator *it = oscap_calloc(1, sizeof(struct oval_smc_iterator));
+	struct oval_smc_iterator *it = calloc(1, sizeof(struct oval_smc_iterator));
 
 	it->master_col = oval_string_map_collect_values((struct oval_string_map *) mapping, NULL);
 	it->master_it = oval_collection_iterator(it->master_col);
@@ -64,7 +64,7 @@ void oval_smc_iterator_free(struct oval_smc_iterator *it)
 	oval_collection_free(it->master_col);
 	oval_collection_iterator_free(it->master_it);
 	oval_collection_iterator_free(it->slave_it);
-	oscap_free(it);
+	free(it);
 }
 
 bool oval_smc_iterator_has_more(struct oval_smc_iterator *it)

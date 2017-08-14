@@ -122,7 +122,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 		if (access(xsltpath, R_OK)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found when trying to transform '%s'",
 				xsltfile, oscap_source_readable_origin(source));
-			oscap_free(xsltpath);
+			free(xsltpath);
 			return NULL;
 		}
 	}
@@ -131,7 +131,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 		if (access(xsltpath, R_OK)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found in path '%s' when trying to transform '%s'",
 				xsltfile, path_to_xslt, oscap_source_readable_origin(source));
-			oscap_free(xsltpath);
+			free(xsltpath);
 			return NULL;
 		}
 
@@ -144,7 +144,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 	*stylesheet = xsltParseStylesheetFile(BAD_CAST xsltpath);
 	if (*stylesheet == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not parse XSLT file '%s'", xsltpath);
-		oscap_free(xsltpath);
+		free(xsltpath);
 		return NULL;
 	}
 
@@ -152,7 +152,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 		if (xccdf_ns_xslt_workaround(doc, xmlDocGetRootElement(doc)) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Had problems employing XCCDF XSLT namespace workaround for XML document '%s'",
 				oscap_source_readable_origin(source));
-			oscap_free(xsltpath);
+			free(xsltpath);
 			xsltFreeStylesheet(*stylesheet);
 			*stylesheet = NULL;
 			return NULL;
@@ -166,17 +166,17 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 
 	xmlDoc *transformed = xsltApplyStylesheet(*stylesheet, doc, (const char **) args);
 	for (size_t i = 0; args[i]; i += 2) {
-		oscap_free(args[i+1]);
+		free(args[i+1]);
 	}
 	if (transformed == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT %s to XML file: %s", xsltpath,
 			oscap_source_readable_origin(source));
-		oscap_free(xsltpath);
+		free(xsltpath);
 		xsltFreeStylesheet(*stylesheet);
 		*stylesheet = NULL;
 		return NULL;
 	}
-	oscap_free(xsltpath);
+	free(xsltpath);
 	return transformed;
 
 }
@@ -206,7 +206,7 @@ char *oscap_source_apply_xslt_path_mem(struct oscap_source *source, const char *
 	if (xsltSaveResultToString(&result, &len, transformed, stylesheet) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_XML, "Could not save transformend content to buffer, after applying XSLT %s",
 				xsltfile);
-		oscap_free(result);
+		free(result);
 		result = NULL;
 	}
 	return (char *)result;

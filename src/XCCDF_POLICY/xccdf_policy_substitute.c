@@ -77,13 +77,13 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 		if (value != NULL && xccdf_item_get_type(value) == XCCDF_VALUE) {
 			// When the <xccdf:sub> element's @idref attribute holds the id of an <xccdf:Value>
 			// element, the <xccdf:sub> element's @use attribute MUST be consulted.
-			const char *sub_use = (const char *) xmlGetProp(*node, BAD_CAST "use");
+			char *sub_use = (char *) xmlGetProp(*node, BAD_CAST "use");
 			if (oscap_streq(sub_use, NULL) || oscap_streq(sub_use, "legacy")) {
 				// If the value of the @use attribute is "legacy", then during Tailoring,
 				// process the <xccdf:sub> element as if @use was set to "title". but
 				// during Document Generation or Assessment, process the <xccdf:sub>
 				// element as if @use was set to "value".
-				oscap_free(sub_use);
+				free(sub_use);
 				sub_use = strdup((data->processing_type & _TAILORING_TYPE) ? "title" : "value");
 			}
 
@@ -98,17 +98,17 @@ static int _xccdf_text_substitution_cb(xmlNode **node, void *user_data)
 					dW("xccdf:sub/@idref='%s' has incorrect @use='%s'! Using @use='value' instead.", sub_idref, sub_use);
 				result = xccdf_policy_get_value_of_item(data->policy, value);
 			}
-			oscap_free(sub_use);
+			free(sub_use);
 		} else { // This xccdf:sub probably refers to the xccdf:plain-text
 			result = xccdf_benchmark_get_plain_text(benchmark, sub_idref);
 		}
 
 		if (result == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_XCCDF, "Could not resolve xccdf:sub/@idref='%s'!", sub_idref);
-			oscap_free(sub_idref);
+			free(sub_idref);
 			return 2;
 		}
-		oscap_free(sub_idref);
+		free(sub_idref);
 
 		xmlNode *new_node = xmlNewText(BAD_CAST result);
 		xmlReplaceNode(*node, new_node);
@@ -204,7 +204,7 @@ int xccdf_policy_resolve_fix_substitution(struct xccdf_policy *policy, struct xc
 	int res = xml_iterate_dfs(xccdf_fix_get_content(fix), &result, _xccdf_text_substitution_cb, &data);
 	if (res == 0)
 		xccdf_fix_set_content(fix, result);
-	oscap_free(result);
+	free(result);
 	return res;
 }
 

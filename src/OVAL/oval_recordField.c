@@ -90,7 +90,7 @@ struct oval_record_field *oval_record_field_new(oval_record_field_type_t type)
 	{
 		struct oval_record_field_STATE *rfs;
 
-		rfs = oscap_alloc(sizeof(*rfs));
+		rfs = malloc(sizeof(*rfs));
 		if (rfs == NULL)
 			return NULL;
 
@@ -105,7 +105,7 @@ struct oval_record_field *oval_record_field_new(oval_record_field_type_t type)
 	{
 		struct oval_record_field_ITEM *rfi;
 
-		rfi = oscap_alloc(sizeof(*rfi));
+		rfi = malloc(sizeof(*rfi));
 		if (rfi == NULL)
 			return NULL;
 
@@ -136,7 +136,7 @@ struct oval_record_field *oval_record_field_clone(struct oval_record_field *old_
 	{
 		struct oval_record_field_STATE *new_rfs, *old_rfs;
 
-		new_rfs = oscap_alloc(sizeof(*new_rfs));
+		new_rfs = malloc(sizeof(*new_rfs));
 		if (new_rfs == NULL)
 			return NULL;
 
@@ -152,7 +152,7 @@ struct oval_record_field *oval_record_field_clone(struct oval_record_field *old_
 	{
 		struct oval_record_field_ITEM *new_rfi, *old_rfi;
 
-		new_rfi = oscap_alloc(sizeof(*new_rfi));
+		new_rfi = malloc(sizeof(*new_rfi));
 		if (new_rfi == NULL)
 			return NULL;
 
@@ -181,12 +181,12 @@ void oval_record_field_free(struct oval_record_field *rf)
 		return;
 
 	if (rf->name != NULL)
-		oscap_free(rf->name);
+		free(rf->name);
 	if (rf->value != NULL)
-		oscap_free(rf->value);
+		free(rf->value);
 
 	rf->name = rf->value = NULL;
-	oscap_free(rf);
+	free(rf);
 }
 
 void oval_record_field_set_name(struct oval_record_field *rf, char *name)

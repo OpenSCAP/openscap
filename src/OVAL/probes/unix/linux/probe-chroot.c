@@ -112,6 +112,6 @@ void probe_chroot_free(struct probe_chroot* ch)
 	close(ch->root_fd);
 	ch->root_fd = -1;
 
-	oscap_free(ch->scan_path);
+	free(ch->scan_path);
 	ch->scan_path = NULL;
 }

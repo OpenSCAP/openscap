@@ -78,7 +78,7 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 	/* TODO: At the end of the day, this shall be the only place in
 	 * the library  where a path to filename is set from the outside.
 	 */
-	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	struct oscap_source *source = (struct oscap_source *) calloc(1, sizeof(struct oscap_source));
 	source->origin.filepath = oscap_strdup(filepath);
 	source->origin.type = OSCAP_SRC_FROM_USER_XML_FILE;
 	return source;
@@ -86,7 +86,7 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath)
 
 struct oscap_source *oscap_source_clone(struct oscap_source *old)
 {
-	struct oscap_source *new = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	struct oscap_source *new = (struct oscap_source *) calloc(1, sizeof(struct oscap_source));
 	new->scap_type = old->scap_type;
 	new->origin.type = old->origin.type;
 	new->origin.version = oscap_strdup(old->origin.version);
@@ -105,7 +105,7 @@ struct oscap_source *oscap_source_clone(struct oscap_source *old)
  */
 static struct oscap_source* _create_oscap_source(size_t size, const char* filepath)
 {
-	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	struct oscap_source *source = (struct oscap_source *) calloc(1, sizeof(struct oscap_source));
 	source->origin.memory_size = size;
 	source->origin.type = OSCAP_SRC_FROM_USER_MEMORY;
 	source->origin.filepath = oscap_strdup(filepath ? filepath : "NONEXISTENT");
@@ -115,7 +115,7 @@ static struct oscap_source* _create_oscap_source(size_t size, const char* filepa
 struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath)
 {
 	struct oscap_source *source = _create_oscap_source(size, filepath);
-	source->origin.memory = oscap_calloc(1, size);
+	source->origin.memory = calloc(1, size);
 	memcpy(source->origin.memory, buffer, size);
 	return source;
 }
@@ -129,7 +129,7 @@ struct oscap_source *oscap_source_new_take_memory(char *buffer, size_t size, con
 
 struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath)
 {
-	struct oscap_source *source = (struct oscap_source *) oscap_calloc(1, sizeof(struct oscap_source));
+	struct oscap_source *source = (struct oscap_source *) calloc(1, sizeof(struct oscap_source));
 	source->origin.type = OSCAP_SRC_FROM_XML_DOM;
 	source->origin.filepath = oscap_strdup(filepath ? filepath : "NONEXISTENT");
 	source->xml.doc = doc;
@@ -139,13 +139,13 @@ struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filep
 void oscap_source_free(struct oscap_source *source)
 {
 	if (source != NULL) {
-		oscap_free(source->origin.filepath);
-		oscap_free(source->origin.memory);
+		free(source->origin.filepath);
+		free(source->origin.memory);
 		if (source->xml.doc != NULL) {
 			xmlFreeDoc(source->xml.doc);
 		}
-		oscap_free(source->origin.version);
-		oscap_free(source);
+		free(source->origin.version);
+		free(source);
 	}
 }
 
@@ -203,7 +203,7 @@ static void xmlErrorCb(struct oscap_string *buffer, const char * format, ...)
 
 	char* error_msg = oscap_vsprintf(format, ap);
 	oscap_string_append_string(buffer, error_msg);
-	oscap_free(error_msg);
+	free(error_msg);
 
 	va_end(ap);
 }

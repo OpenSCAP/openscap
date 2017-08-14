@@ -302,7 +302,7 @@ struct cpe_dict_model *cpe_dict_model_new()
 
 	struct cpe_dict_model *dict;
 
-	dict = oscap_alloc(sizeof(struct cpe_dict_model));
+	dict = malloc(sizeof(struct cpe_dict_model));
 	if (dict == NULL)
 		return NULL;
 	memset(dict, 0, sizeof(struct cpe_dict_model));
@@ -322,7 +322,7 @@ struct cpe_item_metadata *cpe_item_metadata_new()
 
 	struct cpe_item_metadata *item;
 
-	item = oscap_alloc(sizeof(struct cpe_item_metadata));
+	item = malloc(sizeof(struct cpe_item_metadata));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_item_metadata));
@@ -340,7 +340,7 @@ struct cpe_item *cpe_item_new()
 
 	struct cpe_item *item;
 
-	item = oscap_alloc(sizeof(struct cpe_item));
+	item = malloc(sizeof(struct cpe_item));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_item));
@@ -358,7 +358,7 @@ struct cpe_check *cpe_check_new()
 
 	struct cpe_check *item;
 
-	item = oscap_alloc(sizeof(struct cpe_check));
+	item = malloc(sizeof(struct cpe_check));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_check));
@@ -375,7 +375,7 @@ struct cpe_reference *cpe_reference_new()
 
 	struct cpe_reference *item;
 
-	item = oscap_alloc(sizeof(struct cpe_reference));
+	item = malloc(sizeof(struct cpe_reference));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_reference));
@@ -388,7 +388,7 @@ struct cpe_reference *cpe_reference_new()
 
 struct cpe_notes *cpe_notes_new(void)
 {
-	struct cpe_notes *notes = oscap_calloc(1, sizeof(struct cpe_notes));
+	struct cpe_notes *notes = calloc(1, sizeof(struct cpe_notes));
 	notes->notes = oscap_list_new();
 	return notes;
 }
@@ -398,7 +398,7 @@ struct cpe_generator *cpe_generator_new()
 
 	struct cpe_generator *item;
 
-	item = oscap_alloc(sizeof(struct cpe_generator));
+	item = malloc(sizeof(struct cpe_generator));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_generator));
@@ -416,7 +416,7 @@ struct cpe_vendor *cpe_vendor_new()
 
 	struct cpe_vendor *item;
 
-	item = oscap_alloc(sizeof(struct cpe_vendor));
+	item = malloc(sizeof(struct cpe_vendor));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_vendor));
@@ -433,7 +433,7 @@ struct cpe_product *cpe_product_new()
 
 	struct cpe_product *item;
 
-	item = oscap_alloc(sizeof(struct cpe_product));
+	item = malloc(sizeof(struct cpe_product));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_product));
@@ -449,7 +449,7 @@ struct cpe_version *cpe_version_new()
 
 	struct cpe_version *item;
 
-	item = oscap_alloc(sizeof(struct cpe_version));
+	item = malloc(sizeof(struct cpe_version));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_version));
@@ -465,7 +465,7 @@ struct cpe_update *cpe_update_new()
 
 	struct cpe_update *item;
 
-	item = oscap_alloc(sizeof(struct cpe_update));
+	item = malloc(sizeof(struct cpe_update));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_update));
@@ -481,7 +481,7 @@ struct cpe_edition *cpe_edition_new()
 
 	struct cpe_edition *item;
 
-	item = oscap_alloc(sizeof(struct cpe_edition));
+	item = malloc(sizeof(struct cpe_edition));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_edition));
@@ -497,7 +497,7 @@ struct cpe_language *cpe_language_new()
 
 	struct cpe_language *item;
 
-	item = oscap_alloc(sizeof(struct cpe_language));
+	item = malloc(sizeof(struct cpe_language));
 	if (item == NULL)
 		return NULL;
 	memset(item, 0, sizeof(struct cpe_language));
@@ -690,7 +690,7 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_NAME_STR);
 		if (data != NULL)
 			ret->name = cpe_name_new(data);
-		oscap_free(data);
+		free(data);
 
 		// if there is "deprecated", "deprecated_by" and "deprecation_date" in cpe-item element
 		// ************************************************************************************
@@ -698,22 +698,22 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 		if (data != NULL) {	// we have a deprecation here !
 			ret->deprecated = oscap_string_to_enum(OSCAP_BOOL_MAP, data);
 			ret->export.deprecated = true;
-			oscap_free(data);
+			free(data);
 		}
 		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATED_BY_STR);
 		if (data != NULL) {
 			if ((ret->deprecated_by = cpe_name_new(data)) == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to initialize CPE name with '%s'", data);
-				oscap_free(data);
-				oscap_free(ret);
+				free(data);
+				free(ret);
 				return NULL;
 			}
 		}
-		oscap_free(data);
+		free(data);
 
 		data = (char *)xmlTextReaderGetAttribute(reader, ATTR_DEPRECATION_DATE_STR);
 		ret->deprecation_date = oscap_strdup(data);
-		oscap_free(data);
+		free(data);
 		// ************************************************************************************
 
 		xmlTextReaderNextElementWE(reader, TAG_CPE_ITEM_STR);
@@ -747,7 +747,7 @@ struct cpe_item *cpe_item_parse(struct cpe_parser_ctx *ctx)
 							"Failed to parse item-metadata element within cpe-item/@name='%s'",
 							cpe_name_get_as_str(ret->name));
 					cpe_item_free(ret);
-					oscap_free(data);
+					free(data);
 					return NULL;
 				}
 				ret->metadata->modification_date = data;
@@ -794,7 +794,7 @@ static struct cpe_check *cpe_check_parse(xmlTextReaderPtr reader)
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CHECK_STR) != 0)
 		return NULL;
 
-	if ((ret = oscap_alloc(sizeof(struct cpe_check))) == NULL)
+	if ((ret = malloc(sizeof(struct cpe_check))) == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cpe_check));
 
@@ -815,7 +815,7 @@ static struct cpe_reference *cpe_reference_parse(xmlTextReaderPtr reader)
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCE_STR) != 0)
 		return NULL;
 
-	if ((ret = oscap_alloc(sizeof(struct cpe_reference))) == NULL)
+	if ((ret = malloc(sizeof(struct cpe_reference))) == NULL)
 		return NULL;
 	memset(ret, 0, sizeof(struct cpe_reference));
 
@@ -910,14 +910,14 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 				    product->part = CPE_PART_APP;
 				else {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown attribute value of vendor/@part='%s'", data);
-				    oscap_free(ret);
-				    oscap_free(data);
+				    free(ret);
+				    free(data);
 				    return NULL;
 				}
 			    } else {
 				product->part = CPE_PART_NONE;
 			    }
-			    oscap_free(data);
+			    free(data);
 			    oscap_list_add(ret->products, product);
 			}
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION_STR) == 0) {
@@ -1090,7 +1090,7 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 	if (item->name != NULL) {
 		temp = cpe_name_get_as_format(item->name, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_NAME_STR, BAD_CAST temp);
-		oscap_free(temp);
+		free(temp);
 	}
 	if (item->export.deprecated == true) {
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_STR,
@@ -1099,7 +1099,7 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 	if (item->deprecated_by != NULL) {
 		temp = cpe_name_get_as_format(item->deprecated_by, CPE_FORMAT_URI);
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATED_BY_STR, BAD_CAST temp);
-		oscap_free(temp);
+		free(temp);
 	}
 	if (item->deprecation_date != NULL) {
 		xmlTextWriterWriteAttribute(writer, ATTR_DEPRECATION_DATE_STR, BAD_CAST item->deprecation_date);
@@ -1310,8 +1310,8 @@ void cpe_dict_model_free(struct cpe_dict_model *dict)
 	oscap_list_free(dict->items, (oscap_destruct_func) cpe_item_free);
 	oscap_list_free(dict->vendors, (oscap_destruct_func) cpe_vendor_free);
 	cpe_generator_free(dict->generator);
-	oscap_free(dict->origin_file);
-	oscap_free(dict);
+	free(dict->origin_file);
+	free(dict);
 }
 
 void cpe_item_free(struct cpe_item *item)
@@ -1321,14 +1321,14 @@ void cpe_item_free(struct cpe_item *item)
 		return;
 	cpe_name_free(item->name);
 	cpe_name_free(item->deprecated_by);
-	oscap_free(item->deprecation_date);
+	free(item->deprecation_date);
 	oscap_list_free(item->references, (oscap_destruct_func) cpe_reference_free);
 	oscap_list_free(item->checks, (oscap_destruct_func) cpe_check_free);
 	oscap_list_free(item->notes, (oscap_destruct_func) cpe_notes_free);
 	oscap_list_free(item->titles, (oscap_destruct_func) oscap_text_free);
 	cpe_itemmetadata_free(item->metadata);
 	cpe23_item_free(item->cpe23_item);
-	oscap_free(item);
+	free(item);
 }
 
 void cpe_generator_free(struct cpe_generator *generator)
@@ -1337,11 +1337,11 @@ void cpe_generator_free(struct cpe_generator *generator)
 	if (generator == NULL)
 		return;
 
-	oscap_free(generator->product_name);
-	oscap_free(generator->product_version);
-	oscap_free(generator->schema_version);
-	oscap_free(generator->timestamp);
-	oscap_free(generator);
+	free(generator->product_name);
+	free(generator->product_version);
+	free(generator->schema_version);
+	free(generator->timestamp);
+	free(generator);
 }
 
 void cpe_check_free(struct cpe_check *check)
@@ -1350,10 +1350,10 @@ void cpe_check_free(struct cpe_check *check)
 	if (check == NULL)
 		return;
 
-	oscap_free(check->identifier);
-	oscap_free(check->system);
-	oscap_free(check->href);
-	oscap_free(check);
+	free(check->identifier);
+	free(check->system);
+	free(check->href);
+	free(check);
 }
 
 void cpe_reference_free(struct cpe_reference *ref)
@@ -1362,17 +1362,17 @@ void cpe_reference_free(struct cpe_reference *ref)
 	if (ref == NULL)
 		return;
 
-	oscap_free(ref->href);
-	oscap_free(ref->content);
-	oscap_free(ref);
+	free(ref->href);
+	free(ref->content);
+	free(ref);
 }
 
 void cpe_notes_free(struct cpe_notes *notes)
 {
 	if (notes != NULL) {
-		oscap_list_free(notes->notes, (oscap_destruct_func) oscap_free);
-		oscap_free(notes->lang);
-		oscap_free(notes);
+		oscap_list_free(notes->notes, (oscap_destruct_func) free);
+		free(notes->lang);
+		free(notes);
 	}
 }
 
@@ -1382,10 +1382,10 @@ void cpe_vendor_free(struct cpe_vendor *vendor)
 	if (vendor == NULL)
 		return;
 
-	oscap_free(vendor->value);
+	free(vendor->value);
 	oscap_list_free(vendor->titles, (oscap_destruct_func) oscap_text_free);
 	oscap_list_free(vendor->products, (oscap_destruct_func) cpe_product_free);
-	oscap_free(vendor);
+	free(vendor);
 }
 
 void cpe_product_free(struct cpe_product *product)
@@ -1394,9 +1394,9 @@ void cpe_product_free(struct cpe_product *product)
 	if (product == NULL)
 		return;
 
-	oscap_free(product->value);
+	free(product->value);
 	oscap_list_free(product->versions, (oscap_destruct_func) cpe_version_free);
-	oscap_free(product);
+	free(product);
 }
 
 void cpe_version_free(struct cpe_version *version)
@@ -1405,9 +1405,9 @@ void cpe_version_free(struct cpe_version *version)
 	if (version == NULL)
 		return;
 
-	oscap_free(version->value);
+	free(version->value);
 	oscap_list_free(version->updates, (oscap_destruct_func) cpe_update_free);
-	oscap_free(version);
+	free(version);
 }
 
 void cpe_update_free(struct cpe_update *update)
@@ -1416,9 +1416,9 @@ void cpe_update_free(struct cpe_update *update)
 	if (update == NULL)
 		return;
 
-	oscap_free(update->value);
+	free(update->value);
 	oscap_list_free(update->editions, (oscap_destruct_func) cpe_edition_free);
-	oscap_free(update);
+	free(update);
 }
 
 void cpe_edition_free(struct cpe_edition *edition)
@@ -1427,9 +1427,9 @@ void cpe_edition_free(struct cpe_edition *edition)
 	if (edition == NULL)
 		return;
 
-	oscap_free(edition->value);
+	free(edition->value);
 	oscap_list_free(edition->languages, (oscap_destruct_func) cpe_language_free);
-	oscap_free(edition);
+	free(edition);
 }
 
 void cpe_language_free(struct cpe_language *language)
@@ -1438,8 +1438,8 @@ void cpe_language_free(struct cpe_language *language)
 	if (language == NULL)
 		return;
 
-	oscap_free(language->value);
-	oscap_free(language);
+	free(language->value);
+	free(language);
 }
 
 void cpe_itemmetadata_free(struct cpe_item_metadata *meta)
@@ -1448,11 +1448,11 @@ void cpe_itemmetadata_free(struct cpe_item_metadata *meta)
 	if (meta == NULL)
 		return;
 
-	oscap_free(meta->modification_date);
-	oscap_free(meta->status);
-	oscap_free(meta->nvd_id);
-	oscap_free(meta->deprecated_by_nvd_id);
-	oscap_free(meta);
+	free(meta->modification_date);
+	free(meta->status);
+	free(meta->nvd_id);
+	free(meta->deprecated_by_nvd_id);
+	free(meta);
 }
 
 /* End of free functions

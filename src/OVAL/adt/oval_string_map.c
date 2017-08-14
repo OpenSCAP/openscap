@@ -58,7 +58,7 @@ typedef struct oval_string_map {
  * */
 struct oval_string_map *oval_string_map_new()
 {
-	struct oval_string_map *map = (struct oval_string_map *)oscap_alloc(sizeof(oval_string_map_t));
+	struct oval_string_map *map = (struct oval_string_map *)malloc(sizeof(oval_string_map_t));
 	if (map == NULL)
 		return NULL;
 
@@ -73,7 +73,7 @@ static struct _oval_string_map_entry *_oval_string_map_entry_new(struct
 								 *before)
 {
 	struct _oval_string_map_entry *entry =
-	    (struct _oval_string_map_entry *)oscap_alloc(sizeof(_oval_string_map_entry_t));
+	    (struct _oval_string_map_entry *)malloc(sizeof(_oval_string_map_entry_t));
 	if (entry == NULL)
 		return NULL;
 
@@ -87,7 +87,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 {
 	__attribute__nonnull__(map);
 
-	char *temp = (char *)oscap_alloc((strlen(key) + 1) * sizeof(char) + 1);
+	char *temp = (char *)malloc((strlen(key) + 1) * sizeof(char) + 1);
 	char *usekey = strcpy(temp, key);
 
 	/* SEARCH FOR INSERTION POINT */
@@ -121,7 +121,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *ite
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *item)
 {
-	char *temp = (char *)oscap_alloc((strlen(item) + 1) * sizeof(char) + 1);
+	char *temp = (char *)malloc((strlen(item) + 1) * sizeof(char) + 1);
 	char *useval = strcpy(temp, item);
 	oval_string_map_put(map, key, useval);
 }
@@ -177,19 +177,19 @@ void oval_string_map_free(struct oval_string_map *map, oscap_destruct_func free_
 			if (entry->item)
 				(*free_func) (entry->item);
 		next = entry->next;
-		oscap_free(entry->key);
+		free(entry->key);
 		entry->item = NULL;
 		entry->key = NULL;
 		entry->next = NULL;
-		oscap_free(entry);
+		free(entry);
 		entry = next;
 	}
-	oscap_free(map);
+	free(map);
 }
 
 void oval_string_map_free_string(struct oval_string_map *map)
 {
-	oval_string_map_free(map, oscap_free);
+	oval_string_map_free(map, free);
 }
 #else
 # include <rbt/rbt.h>
@@ -209,7 +209,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 
 	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), val) != 0) {
 		dD("rbt_str_add: non-zero return code");
-                oscap_free(key_copy);
+                free(key_copy);
         }
 }
 
@@ -223,8 +223,8 @@ void oval_string_map_put_string(struct oval_string_map *map, const char *key, co
 	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), str) == 0)
 		return;
 	else {
-		oscap_free(str);
-                oscap_free(key_copy);
+		free(str);
+                free(key_copy);
         }
 	return;
 }
@@ -246,7 +246,7 @@ static void __oval_string_map_node_free(struct rbt_str_node *n, oscap_destruct_f
 {
 	if (destroy != NULL)
 		destroy(n->data);
-	oscap_free(n->key);
+	free(n->key);
 }
 
 void oval_string_map_free(struct oval_string_map *map, oscap_destruct_func destroy)
@@ -265,7 +265,7 @@ void oval_string_map_free0(struct oval_string_map *map)
 void oval_string_map_free_string(struct oval_string_map *map)
 {
 	assume_d(map != NULL, /* void */);
-	oval_string_map_free(map, oscap_free);
+	oval_string_map_free(map, free);
 }
 
 static int __oval_iterator_addkey(struct rbt_str_node *n, void *u)

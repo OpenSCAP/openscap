@@ -8,8 +8,8 @@
  * @{
  * Memory allocation wrapper functions used in library.
  *
- * It's recommended to use these wrappers for allocation and freeing dynamic memory
- * for OpenSCAP objects, objects members, ... .
+ * Don't see these wrappers, just use normal C memory allocation functions.
+ * These are here just for compatibility.
  */
 
 /*
@@ -39,123 +39,29 @@
 #define OSCAP_ALLOC_H
 
 #include <stdlib.h>
-
-/// @cond
-#define __ATTRIB __attribute__ ((unused)) static
-/// @endcond
+#include "public/oscap.h"
 
 #if defined(NDEBUG)
 /// @cond
-void *__oscap_alloc(size_t s);
-__ATTRIB void *oscap_alloc(size_t s)
-{
-	return __oscap_alloc(s);
-}
+// Do not use, we keep this just for ABI compatibility, use malloc instead
+OSCAP_DEPRECATED(void *__oscap_alloc(size_t s));
 
-void *__oscap_calloc(size_t n, size_t s);
-__ATTRIB void *oscap_calloc(size_t n, size_t s)
-{
-	return __oscap_calloc(n, s);
-}
+// Do not use, we keep this just for ABI compatibility, use calloc instead
+OSCAP_DEPRECATED(void *__oscap_calloc(size_t n, size_t s));
 
-void *__oscap_realloc(void *p, size_t s);
-__ATTRIB void *oscap_realloc(void *p, size_t s)
-{
-	return __oscap_realloc(p, s);
-}
+// Do not use, we keep this just for ABI compatibility, use realloc instead
+OSCAP_DEPRECATED(void *__oscap_realloc(void *p, size_t s));
 
-void *__oscap_reallocf(void *p, size_t s);
-__ATTRIB void *oscap_reallocf(void *p, size_t s)
-{
-	return __oscap_reallocf(p, s);
-}
+// Do not use, we keep this just for ABI compatibility, use realloc instead
+OSCAP_DEPRECATED(void *__oscap_reallocf(void *p, size_t s));
 
-void __oscap_free(void *p);
-__ATTRIB void oscap_free(void *p)
-{
-	__oscap_free(p);
-}
+// Do not use, we keep this just for ABI compatibility, use free instead
+OSCAP_DEPRECATED(void __oscap_free(void *p));
 /// @endcond
-
-/**
- * void *malloc(size_t size)  wrapper
- */
-# define oscap_alloc(s)       __oscap_alloc (s)
-/**
- * void *calloc(size_t nmemb, size_t size) wrapper
- */
-# define oscap_calloc(n, s)   __oscap_calloc (n, s);
-/**
- * void *realloc(void *ptr, size_t size) wrapper
- */
-# define oscap_realloc(p, s)  __oscap_realloc ((void *)(p), s)
-/**
- * void *realloc(void *ptr, size_t size) wrapper freeing old memory on failure
- */
-# define oscap_reallocf(p, s) __oscap_reallocf((void *)(p), s)
-/**
- * void free(void *ptr) wrapper
- */
-# define oscap_free(p)        __oscap_free ((void *)(p))
-
-#else
-void *__oscap_alloc_dbg(size_t s, const char *f, size_t l);
-__ATTRIB void *oscap_alloc(size_t s)
-{
-	return __oscap_alloc_dbg(s, __FUNCTION__, 0);
-}
-
-void *__oscap_calloc_dbg(size_t n, size_t s, const char *f, size_t l);
-__ATTRIB void *oscap_calloc(size_t n, size_t s)
-{
-	return __oscap_calloc_dbg(n, s, __FUNCTION__, 0);
-}
-
-void *__oscap_realloc_dbg(void *p, size_t s, const char *f, size_t l);
-__ATTRIB void *oscap_realloc(void *p, size_t s)
-{
-	return __oscap_realloc_dbg(p, s, __FUNCTION__, 0);
-}
-
-void *__oscap_reallocf_dbg(void *p, size_t s, const char *f, size_t l);
-__ATTRIB void *oscap_reallocf(void *p, size_t s)
-{
-	return __oscap_reallocf_dbg(p, s, __FUNCTION__, 0);
-}
-
-void __oscap_free_dbg(void **p, const char *f, size_t l);
-__ATTRIB void oscap_free(void *p)
-{
-	__oscap_free_dbg(&p, __FUNCTION__, 0);
-}
-
-
-/**
- * malloc wrapper
- */
-# define oscap_alloc(s)       __oscap_alloc_dbg (s, __PRETTY_FUNCTION__, __LINE__)
-/**
- * calloc wrapper
- */
-# define oscap_calloc(n, s)   __oscap_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)
-/**
- * realloc wrapper
- */
-# define oscap_realloc(p, s)  __oscap_realloc_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
-/**
- * realloc wrapper freeing old memory on failure
- */
-# define oscap_reallocf(p, s) __oscap_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
-/**
- * free wrapper
- */
-# define oscap_free(p)        __oscap_free_dbg ((void **)((void *)&(p)), __PRETTY_FUNCTION__, __LINE__)
 #endif
 
 /// @cond
-#define  oscap_talloc(T) ((T *) oscap_alloc(sizeof(T)))
-#define  oscap_valloc(v) ((typeof(v) *) oscap_alloc(sizeof v))
-#define  OSCAP_SALLOC(TYPE, NAME) struct TYPE* NAME = oscap_calloc(1, sizeof(struct TYPE))
+#define  oscap_talloc(T) ((T *) malloc(sizeof(T)))
 /// @endcond
 
 #endif				/* OSCAP_ALLOC_H */
