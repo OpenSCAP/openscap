@@ -1,0 +1,642 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            xmlns:tns="http://scap.nist.gov/schema/asset-identification/1.1"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            elementFormDefault="qualified" version="5.11">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+    <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+    <xsd:annotation>
+        <xsd:documentation>The following is a description of the elements, types, and attributes that compose the core schema for encoding Open Vulnerability and Assessment Language (OVAL) System Characteristics. The Core System Characteristics Schema defines all operating system independent objects. These objects are extended and enhanced by individual family schemas, which are described in separate documents. Each of the elements, types, and attributes that make up the Core System Characteristics Schema are described in detail and should provide the information necessary to understand what each object represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between these objects is not outlined here.</xsd:documentation>
+        <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+        <xsd:appinfo>
+            <schema>Core System Characteristics</schema>
+            <version>5.11.2</version>
+            <date>11/30/2016 09:00:00 AM</date>
+            <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+            <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+            <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <!-- =============================================================================== -->
+    <!-- =============================================================================== -->
+    <!-- =============================================================================== -->
+    <xsd:element name="oval_system_characteristics">
+        <xsd:annotation>
+            <xsd:documentation>The system_characteristics element is the root of an OVAL System Characteristics Document, and must occur exactly once. Its purpose is to bind together the four major sections of a system characteristics file - generator, system_info, collected_objects, and system_data - which are the children of the oval_system_characteristics element.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="generator" type="oval:GeneratorType">
+                    <xsd:annotation>
+                        <xsd:documentation>The generator section must be present and provides information about when the system characteristics file was compiled and under what version.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="system_info" type="oval-sc:SystemInfoType">
+                    <xsd:annotation>
+                        <xsd:documentation>The required system_info element is used to record information about the system being described.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="collected_objects" type="oval-sc:CollectedObjectsType" minOccurs="0" maxOccurs="1">
+                    <xsd:annotation>
+                        <xsd:documentation>The optional collected_objects section is used to associated the ids of the OVAL Objects collected with the system characteristics items that have been defined. The collected_objects section provides a listing of all the objects used to generate this system characteristics file.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="system_data" type="oval-sc:SystemDataType" minOccurs="0" maxOccurs="1">
+                    <xsd:annotation>
+                        <xsd:documentation>The optional system_data section defines the specific characteristics that have been collected from the system.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element ref="ds:Signature" minOccurs="0" maxOccurs="1">
+                    <xsd:annotation>
+                        <xsd:documentation>The optional Signature element allows an XML Signature as defined by the W3C to be attached to the document. This allows authentication and data integrity to be provided to the user. Enveloped signatures are supported. More information about the official W3C Recommendation regarding XML digital signatures can be found at http://www.w3.org/TR/xmldsig-core/.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+        <xsd:key name="objectKey">
+            <xsd:annotation>
+                <xsd:documentation>Enforce uniqueness amongst the individual object ids used in the collected object section.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:selector xpath="oval-sc:collected_objects/oval-sc:object"/>
+            <xsd:field xpath="@id"/>
+            <xsd:field xpath="@version"/>
+            <xsd:field xpath="@variable_instance"/>
+        </xsd:key>
+        <xsd:key name="itemKey">
+            <xsd:annotation>
+                <xsd:documentation>Enforce uniqueness amongst the individual item ids.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:selector xpath="oval-sc:system_data/*"/>
+            <xsd:field xpath="@id"/>
+        </xsd:key>
+        <xsd:keyref name="itemKeyRef" refer="oval-sc:itemKey">
+            <xsd:annotation>
+                <xsd:documentation>Require that each item reference refers to a valid item id.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:selector xpath="oval-sc:collected_objects/oval-sc:object/oval-sc:reference"/>
+            <xsd:field xpath="@item_ref"/>
+        </xsd:keyref>
+    </xsd:element>
+    <!-- =============================================================================== -->
+    <!-- =================================  GENERATOR  ================================= -->
+    <!-- =============================================================================== -->
+    <!--
+		The GeneratorType is defined by the oval-common-schema.  Please refer to
+		that documentation for a description of the complex type.
+	 -->
+    <!-- =============================================================================== -->
+    <!-- ================================  SYSTEM INFO  ================================ -->
+    <!-- =============================================================================== -->
+    <xsd:complexType name="SystemInfoType">
+        <xsd:annotation>
+            <xsd:documentation>The SystemInfoType complex type specifies general information about the system that data was collected from, including information that can be used to identify the system. See the description of the InterfacesType complex type for more information. Note that the high level interfaces is required due to the inclusion of the xsd:any tag that follows it. The interfaces tag can be empty if no single interface is present.</xsd:documentation>
+            <xsd:documentation>Additional system information is also allowed although it is not part of the official OVAL Schema. Individual organizations can place system information that they feel is important and these will be skipped during the validation. All OVAL really cares about is that the required system information items are there.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="os_name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required os_name elements describes the operating system of the machine the data was collected on.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="os_version" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required os_version elements describe the operating system version of the machine the data was collected on.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="architecture" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required architecture element describes the hardware architecture type of the system data was collected on.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="primary_host_name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required primary_host_name element is the primary host name of the machine the data was collected on.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="interfaces" type="oval-sc:InterfacesType">
+                <xsd:annotation>
+                    <xsd:documentation>The required interfaces element outlines the network interfaces that exist on the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:any minOccurs="0" maxOccurs="unbounded" processContents="lax">
+                <xsd:annotation>
+                    <xsd:documentation>The Asset Identification specification (http://scap.nist.gov/specifications/ai/) provides a standardized way of reporting asset information across different organizations.</xsd:documentation>
+                    <xsd:documentation>The information contained within an AI computing-device element is similar to the information collected by OVAL's SystemInfoType.</xsd:documentation> 
+                    <xsd:documentation>To support greater interoperability, an ai:computing-device element describing the system that data was collected from may appear at this point in an OVAL System Characteristics document.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:any>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="InterfacesType">
+        <xsd:annotation>
+            <xsd:documentation>The InterfacesType complex type is a container for zero or more interface elements. Each interface element is used to describe an existing network interface on the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="interface" type="oval-sc:InterfaceType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Please refer to the description of the InterfaceType for more information.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="InterfaceType">
+        <xsd:annotation>
+            <xsd:documentation>The InterfaceType complex type is used to describe an existing network interface on the system. This information can help identify a specific system on a given network.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="interface_name" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required interface_name element is the name of the interface</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ip_address" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required ip_address element holds the IP address for the interface. Note that the IP address can be IPv4 or IPv6.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="mac_address" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>The required mac_address element holds the MAC address for the interface. MAC addresses should be formatted according to the IEEE 802-2001 standard which states that a MAC address is a sequence of six octet values, separated by hyphens, where each octet is represented by two hexadecimal digits. Uppercase letters should also be used to represent the hexadecimal digits A through F.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    <!-- =============================================================================== -->
+    <!-- =============================  COLLECTED OBJECTS  ============================= -->
+    <!-- =============================================================================== -->
+    <xsd:complexType name="CollectedObjectsType">
+        <xsd:annotation>
+            <xsd:documentation>The CollectedObjectsType complex type states all the objects that have been collected by the system characteristics file. The details of each object are defined by the global OVAL object that is identified by the id.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="object" type="oval-sc:ObjectType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="ObjectType">
+        <xsd:annotation>
+            <xsd:documentation>The ObjectType complex type provides a reference between items collected and a related global OVAL Object.</xsd:documentation>
+            <xsd:documentation>If an OVAL Object does not exist on the system, then an object element is still provided but with the flag attribute set to 'does not exist'. For details on how to handle items, when an OVAL Object does not exist on the system, please see the ItemType documentation. This shows that the object was looked for but not found on the system. If no object element is written in this case, users of the system characteristics file will not know whether the object was not found or no attempt was made to collect it.</xsd:documentation>
+            <xsd:documentation>The required id attribute is the id of the global OVAL Object.</xsd:documentation>
+            <xsd:documentation>The required version attribute is the specific version of the global OVAL Object that was used by the data collection engine. The version is necessary so that analysis using a system characteristics file knows exactly what was collected.</xsd:documentation>
+            <xsd:documentation>The optional variable_instance identifier is a unique id that differentiates each unique instance of an object. Capabilities that use OVAL may reference the same definition multiple times and provide different variable values each time the definition is referenced. This will result in multiple instances of an object being included in the OVAL System Characteristics file (definitions that do not use variables can only have one unique instance). The inclusion of this unique instance identifier allows the OVAL Results document to associate the correct objects and items for each combination of supplied values.</xsd:documentation>
+            <xsd:documentation>The optional comment attribute provides a short description of the object.</xsd:documentation>
+            <xsd:documentation>The required flag attribute holds information regarding the outcome of the data collection. For example, if there was an error looking for items that match the object specification, then the flag would be 'error'. Please refer to the description of FlagEnumeration for details about the different flag values.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="message" type="oval:MessageType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>The optional message element holds an error message or some other string that the data collection engine wishes to pass along.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="variable_value" type="oval-sc:VariableValueType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>The optional variable_value elements define the actual value(s) used during data collection of any variable referenced by the object (as well as any object referenced via a set element). An OVAL Object that includes a variable maybe have a different unique set of matching items depending on the value assigned to the variable. A tool that is given an OVAL System Characteristics file in order to analyze an OVAL Definition needs to be able to determine the exact instance of an object to use based on the variable values supplied. If a variable represents a collection of values, then multiple variable_value elements would exist with the same variable_id attribute. </xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="reference" type="oval-sc:ReferenceType" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>The optional reference element links the collected item found by the data collection engine and the global OVAL Object. A global OVAL Object my have multiple matching items on a system. For example a global file object that is a pattern match might match 10 different files on a specific system. In this case, there would be 10 reference elements, one for each of the files found on the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="oval:ObjectIDPattern" use="required"/>
+        <xsd:attribute name="version" type="xsd:nonNegativeInteger" use="required"/>
+        <xsd:attribute name="variable_instance" type="xsd:nonNegativeInteger" use="optional" default="1"/>
+        <xsd:attribute name="comment" type="xsd:string" use="optional"/>
+        <xsd:attribute name="flag" type="oval-sc:FlagEnumeration" use="required"/>
+    </xsd:complexType>
+    <xsd:complexType name="VariableValueType">
+        <xsd:annotation>
+            <xsd:documentation>The VariableValueType complex type holds the value to a variable used during the collection of an object. The required variable_id attribute is the unique id of the variable being identified.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:anySimpleType">
+                <xsd:attribute name="variable_id" type="oval:VariableIDPattern" use="required"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="ReferenceType">
+        <xsd:annotation>
+            <xsd:documentation>The ReferenceType complex type specifies an item in the system characteristics file. This reference is used to link global OVAL Objects to specific items.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="item_ref" type="oval:ItemIDPattern" use="required"/>
+    </xsd:complexType>
+    <!-- =============================================================================== -->
+    <!-- ================================  SYSTEM DATA  ================================ -->
+    <!-- =============================================================================== -->
+    <xsd:complexType name="SystemDataType">
+        <xsd:annotation>
+            <xsd:documentation>The SystemDataType complex type is a container for one or more item elements. Each item defines a specific piece of data on the system.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element ref="oval-sc:item" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="item" type="oval-sc:ItemType" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>The abstract item element holds information about a specific item on a system. An item might be a file, a rpm, a process, etc. This element is extended by the different component schemas through substitution groups. Each item represents a unique instance of an object as specified by an OVAL Object. For example, a single file or a single user. Each item may be referenced by more than one object in the collected object section. Please refer to the description of ItemType for more details about the information stored in items.</xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+    <xsd:complexType name="ItemType">
+        <xsd:annotation>
+            <xsd:documentation>The ItemType complex type specifies an optional message element that is used to pass things like error messages during data collection to a tool that will utilize the information.</xsd:documentation>
+            <xsd:documentation>The required id attribute is a unique (to the file) identifier that allows the specific item to be referenced.</xsd:documentation>
+            <xsd:documentation>The required status attribute holds information regarding the success of the data collection. For example, if an item exists on the system then the status would reflect this with a value of 'exists'. If an error occurs which is not associated with any item entities, or if an error occurs that is associated with an item entity matching an associated object entity, then the status would be 'error'. An error specific to any particular entity should be addressed at the entity level and, for item entities not associated with an object entity, not the item level. When creating items, any entities that can successfully be collected should be reported.</xsd:documentation>
+            <xsd:documentation>In some cases, when an item for a specified object does not exist, it may be beneficial to report a partial match of an item showing what entities did exist and what entities did not exist for debugging purposes. This is especially true when considering items that are collected by objects with hierarchical object entities. An example of such a case is when a file_object has a path entity equal to 'C:\' and a filename entity equal to 'test.txt' where 'test.txt' does not exist in the 'C:\' directory. This would result in the creation of a partially matching file_item with a status of 'does not exist' where the path entity equals 'C:\' and the filename entity equals 'test.txt' with a status of 'does not exist'. By showing the partial match, someone reading a system-characteristics document can quickly see that a matching file_item did not exist because the specified filename did not exist and not that the specified path did not exist. Again, please note that the implementation of partial matches, when an item for a specified object does not exist,  is completely optional.  </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="message" type="oval:MessageType" minOccurs="0" maxOccurs="50"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="oval:ItemIDPattern" use="required"/>
+        <xsd:attribute name="status" type="oval-sc:StatusEnumeration" use="optional" default="exists"/>
+    </xsd:complexType>
+    <!-- =============================================================================== -->
+    <!-- =================================  SIGNATURE  ================================= -->
+    <!-- =============================================================================== -->
+    <!--
+		The signature element is defined by the xmldsig schema.  Please refer to that
+		documentation for a description of the valid elements and types.  More
+		information about the official W3C Recommendation regarding XML digital
+		signatures can be found at http://www.w3.org/TR/xmldsig-core/.
+	-->
+    <!-- =============================================================================== -->
+    <!-- ===============================  ENUMERATIONS  ================================ -->
+    <!-- =============================================================================== -->
+    <xsd:simpleType name="FlagEnumeration">
+        <xsd:annotation>
+            <xsd:documentation>The FlagEnumeration simple type defines the valid flags associated with a collected object. These flags are meant to provide information about how the specified object was handled by the data collector. In order to evaluate an OVAL Definition, information about the defined objects needs to be available. The flags help detail the outcome of attempting to collect information related to these objects..</xsd:documentation>
+            <xsd:appinfo>
+                <evaluation_documentation>Below is a table that outlines how each FlagEnumeration value effects evaluation of a given test. Note that this is related to the existence of a unique set of items identified by an object and not each item's compliance with a state. The left column identifies the FlagEnumeration value in question. The right column specifies the ResultEnumeration value that should be used when evaluating the collected object.</evaluation_documentation>
+                <evaluation_chart xml:space="preserve">
+                 ||
+  flag value     ||      test result is
+                 ||  
+-----------------||----------------------------
+  error          ||  error
+  complete       ||    (test result depends on
+  incomplete     ||     check_existence and
+  does not exist ||     check attributes)
+  not collected  ||  unknown
+  not applicable ||  not applicable
+-----------------||-----------------------------
+                  </evaluation_chart>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="error">
+                <xsd:annotation>
+                    <xsd:documentation>A flag of 'error' indicates that there was an error trying to identify items on the system that match the specified object declaration. This flag is not meant to be used when there was an error retrieving a specific entity, but rather when it could not be determined if an item exists or not. Any error in retrieving a specific entity should be represented by setting the status of that specific entity to 'error'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="complete">
+                <xsd:annotation>
+                    <xsd:documentation>A flag of 'complete' indicates that every matching item on the system has been identified and is represented in the system characteristics file. It can be assumed that no additional matching items exist on the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="incomplete">
+                <xsd:annotation>
+                    <xsd:documentation>A flag of 'incomplete' indicates that a matching item exists on the system, but only some of the matching items have been identified and are represented in the system characteristics file. It is unknown if additional matching items also exist. Note that with a flag of 'incomplete', each item that has been identified  matches the object declaration, but additional items might also exist on the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="does not exist">
+                <xsd:annotation>
+                    <xsd:documentation>A flag of 'does not exist' indicates that the underlying structure is installed on the system but no matching item was found. For example, the Windows metabase is installed but there were no items that matched the metabase_object. In this example, if the metabase itself was not installed, then the flag would have been 'not applicable'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="not collected">
+                <xsd:annotation>
+                    <xsd:documentation>A flag of 'not collected' indicates that no attempt was made to collect items on the system. An object with this flag will produce an 'unknown' result during analysis since it is unknown if matching items exists on the system or not. This is different from an 'error' flag because an 'error' flag indicates that an attempt was made to collect items on system whereas a 'not collected' flag indicates that an attempt was not made to collect items on the system.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="not applicable">
+                <xsd:annotation>
+                    <xsd:documentation>A flag of 'not applicable' indicates that the specified object is not applicable to the system being characterized. This could be because the data repository is not installed or that the object structure is for a different flavor of systems. An example would be trying to collect objects related to a Red Hat system off of a Windows system. Another example would be trying to collect an rpminfo_object on a Linux system if the rpm packaging system is not installed. If the rpm packaging system is installed and the specified rpminfo_object could not be found, then the flag would be 'does not exist'.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <xsd:simpleType name="StatusEnumeration">
+        <xsd:annotation>
+            <xsd:documentation>The StatusEnumeration simple type defines the valid status messages associated with collection of specific information associated with an item.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="error">
+                <xsd:annotation>
+                    <xsd:documentation>A status of 'error' says that there was an error collecting information associated with an item as a whole or any specific entity. An item would have a status of 'error' if a problem occurred that prevented the item from being collected. For example, a file_item would have a status of 'error' if a handle to the file could not be opened because the handle was already in use by another program. See the documentation for ItemType for information about when an item entity status of 'error' should propagate up to the item status level.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="exists">
+                <xsd:annotation>
+                    <xsd:documentation>A status of 'exists' says that the item or specific piece of information exists on the system and has been collected.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="does not exist">
+                <xsd:annotation>
+                    <xsd:documentation>A status of 'does not exist' says that the item or specific piece of information does not exist and therefore has not been collected. This status assumes that an attempt was made to collect the information, but the information just does not exist. This can happen when a certain entity is only pertinent to particular instances or if the information for that entity is not set.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+            <xsd:enumeration value="not collected">
+                <xsd:annotation>
+                    <xsd:documentation>A status of 'not collected' says that no attempt was made to collect the item or specific piece of information so it is unknown what the value is and if it even exists.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:enumeration>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!-- =============================================================================== -->
+    <!-- ===============================  ENTITY TYPES  ================================ -->
+    <!-- =============================================================================== -->
+    
+    <xsd:attributeGroup name="EntityAttributeGroup">
+        <xsd:annotation>
+            <xsd:documentation>The EntityAttributeGroup is a collection of attributes that are common to all entities. This group defines these attributes and their default values. Individual entities may limit allowed values for these attributes, but all entities will support these attributes.</xsd:documentation>
+            <xsd:appinfo>
+                <sch:pattern id="oval-sc_entity_rules">
+                    <sch:rule context="oval-sc:system_data/*/*|oval-sc:system_data/*/*/*">
+                        <sch:assert flag="WARNING" test="not(@status) or @status='exists' or .=''">Warning: item <sch:value-of select="../@id"/> - a value for the <sch:value-of select="name()"/> entity should only be supplied if the status attribute is 'exists'</sch:assert>
+                        <!--<sch:assert test="if (@datatype='binary') then (matches(., '^[0-9a-fA-F]*$')) else (1=1)"><sch:value-of select="../@id"/> - A value of '<sch:value-of select="."/>' for the <sch:value-of select="name()"/> entity is not valid given a datatype of binary.</sch:assert>-->
+                        <!--<sch:assert test="if (@datatype='boolean') then (matches(., '^true$|^false$|^1$|^0$')) else (1=1)"><sch:value-of select="../@id"/> - A value of '<sch:value-of select="."/>' for the <sch:value-of select="name()"/> entity is not valid given a datatype of boolean.</sch:assert>-->
+                        <!--<sch:assert test="if (@datatype='evr_string') then (matches(., '^[^:\-]*:[^:\-]*-[^:\-]*$')) else (1=1)"><sch:value-of select="../@id"/> - A value of '<sch:value-of select="."/>' for the <sch:value-of select="name()"/> entity is not valid given a datatype of evr_string.</sch:assert>-->
+                        <!--<sch:assert test="if (@datatype='float') then (matches(., '^[+\-]?[0-9]+([\.][0-9]+)?([eE][+\-]?[0-9]+)?$|^NaN$|^INF$|^\-INF$')) else (1=1)"><sch:value-of select="../@id"/> - A value of '<sch:value-of select="."/>' for the <sch:value-of select="name()"/> entity is not valid given a datatype of float.</sch:assert>-->
+                        <!--<sch:assert test="if (@datatype='int') then (matches(., '^[+\-]?[0-9]+$')) else (1=1)"><sch:value-of select="../@id"/> - A value of '<sch:value-of select="."/>' for the <sch:value-of select="name()"/> entity is not valid given a datatype of int.</sch:assert>-->
+                    </sch:rule>
+                    <sch:rule context="oval-sc:system_data/*/*[not((@xsi:nil='1' or @xsi:nil='true')) and @datatype='int']|oval-sc:system_data/*/*/*[not((@xsi:nil='1' or @xsi:nil='true')) and @datatype='int']">
+                        <sch:assert test="(not(contains(.,'.'))) and (number(.) = floor(.))"><sch:value-of select="../@id"/> - The datatype for the <sch:value-of select="name()"/> entity is 'int' but the value is not an integer.</sch:assert>
+                        <!--  Must test for decimal point because number(x.0) = floor(x.0) is true -->                        
+                    </sch:rule>
+                </sch:pattern>
+            </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:attribute name="datatype" type="oval:DatatypeEnumeration" use="optional" default="string">
+            <xsd:annotation>
+                <xsd:documentation>The optional datatype attribute determines the type of data expected (the default datatype is 'string'). Note that the datatype attribute simply defines the type of data as found on the system, it is not used during evaluation. An OVAL Definition defines how the data should be interpreted during analysis. If the definition states a datatype that is different than what the system characteristics presents, then a type cast must be made.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="mask" type="xsd:boolean" use="optional" default="false">
+            <xsd:annotation>
+                <xsd:documentation>The optional mask attribute is used to identify values that have been hidden for sensitivity concerns.
+                    This is used by the Result document which uses the System Characteristics schema to format the information found on a specific system.
+                    When the mask attribute is set to 'true' on an OVAL Entity or an OVAL Field, the corresponding collected value of that OVAL Entity or OVAL Field MUST NOT be present in the "results" section of the OVAL Results document; the "oval_definitions" section must not be altered and must be an exact copy of the definitions evaluated.
+                    Values MUST NOT be masked in OVAL System Characteristics documents that are not contained within an OVAL Results document.
+                    It is possible for masking conflicts to occur where one entity has mask set to true and another entity has mask set to false.
+                    A conflict will occur when the mask attribute is set differently on an OVAL Object and matching OVAL State or when more than one OVAL Objects identify the same OVAL Item(s).
+                    When such a conflict occurs the result is always to mask the entity.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="status" type="oval-sc:StatusEnumeration" use="optional" default="exists">
+            <xsd:annotation>
+                <xsd:documentation>The optional status attribute holds information regarding the success of the data collection. For example, if there was an error collecting a particular piece of data, then the status would be 'error'.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>        
+    </xsd:attributeGroup>
+        
+    <xsd:complexType name="EntityItemSimpleBaseType" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemSimpleBaseType complex type is an abstract type that serves as the base type for all simple item entities.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:anySimpleType">
+                <xsd:attributeGroup ref="oval-sc:EntityAttributeGroup"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="EntityItemComplexBaseType" abstract="true">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemComplexBaseType complex type is an abstract type that serves as the base type for all complex item entities.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:attributeGroup ref="oval-sc:EntityAttributeGroup"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="EntityItemIPAddressType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemIPAddressType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes any IPv4/IPv6 address or address prefix.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" use="required">
+                    <xsd:simpleType>
+                        <xsd:restriction base="oval:SimpleDatatypeEnumeration">
+                            <xsd:enumeration value="ipv4_address"/>
+                            <xsd:enumeration value="ipv6_address"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemIPAddressStringType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemIPAddressStringType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes any IPv4/IPv6 address, address prefix, or its string representation.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" use="optional" default="string">
+                    <xsd:simpleType>
+                        <xsd:restriction base="oval:SimpleDatatypeEnumeration">
+                            <xsd:enumeration value="ipv4_address"/>
+                            <xsd:enumeration value="ipv6_address"/>
+                            <xsd:enumeration value="string"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>    
+    <xsd:complexType name="EntityItemAnySimpleType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemAnySimpleType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes any simple data.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="optional" default="string"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemBinaryType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemBinaryType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes simple binary data. The empty string is also allowed for cases where there was an error in the data collection of an entity and a status needs to be reported.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="binary"/>                                                
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemBoolType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemBoolType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes simple boolean data. The empty string is also allowed for cases where there was an error in the data collection of an entity and a status needs to be reported.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="boolean"/>                                                
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemFloatType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemFloatType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes simple float data. The empty string is also allowed for cases where there was an error in the data collection of an entity and a status needs to be reported.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="float"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemIntType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemIntType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes simple integer data. The empty string is also allowed for cases where there was an error in the data collection of an entity and a status needs to be reported.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="int"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemStringType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemStringType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes simple string data.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="optional" fixed="string"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemRecordType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemRecordType defines an entity that consists of a number of named fields. This structure is used for representing a record from a database query and other similar structures where multiple related fields must be collected at once. Note that for all entities of this type, the only allowed datatype is 'record'.</xsd:documentation>
+            <xsd:documentation>Note the datatype attribute must be set to 'record'.</xsd:documentation>
+            <!-- 
+                NOTE: The restriction that the only allowed datatype is 'record' is enforced by scheamtron rules placed on each entity that uses this type. 
+                This is due to the fact that this type is developed as an xsd:extension of the oval-sc:EntityItemFieldType. This base type declares a datatype attribute. To restrict the 
+                datatype attribute to only allow 'record' would need an xsd:restriction. We cannot do both and xsd:extension and an xsd:restriction at the same time.
+            -->
+            <xsd:documentation>Note that when the mask attribute is set to 'true', all child field elements must be masked regardless of the child field's mask attribute value.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexContent>
+            <xsd:extension base="oval-sc:EntityItemComplexBaseType">
+                <xsd:sequence>
+                    <xsd:element name="field" type="oval-sc:EntityItemFieldType" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemFieldType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemFieldType defines an element with simple content that represents a named field in a record that may contain any number of named fields. The EntityItemFieldType is much like all other entities with one significant difference, the EntityItemFieldType has a name attribute.</xsd:documentation>
+            <xsd:documentation>The required name attribute specifies a name for the field. Field names are lowercase and may occur more than once to allow for a field to have multiple values.</xsd:documentation>
+            <xsd:documentation>Note that when the mask attribute is set to 'true' on a field's parent element the field must be masked regardless of the field's mask attribute value.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:anySimpleType">
+                <xsd:attribute name="name" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>A string restricted to disallow upper case characters.</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[^A-Z]+"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attributeGroup ref="oval-sc:EntityAttributeGroup"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemVersionType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemVersionType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type describes version data.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="version"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>    
+    <xsd:complexType name="EntityItemFilesetRevisionType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemFilesetRevisionType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type represents the version string related to filesets in HP-UX.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="fileset_revision"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>    
+    <xsd:complexType name="EntityItemIOSVersionType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemIOSVersionType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This specific type represents the version string for IOS.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="ios_version"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>    
+    <xsd:complexType name="EntityItemEVRStringType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemEVRStringType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType.
+                This type represents the epoch, version, and release fields, for an RPM package, as a single version string. It has the form "EPOCH:VERSION-RELEASE". Note that a null epoch (or '(none)' as returned by rpm) is equivalent to '0' and would hence have the form 0:VERSION-RELEASE. Comparisons involving this datatype should follow the algorithm of librpm's rpmvercmp() function.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                    <!-- TODO: Should there be a pattern restriction here to enforce the pattern mentioned above? -->
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="evr_string"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="EntityItemDebianEVRStringType">
+        <xsd:annotation>
+            <xsd:documentation>The EntityItemDebianEVRStringType type is extended by the entities of an individual item. This type provides uniformity to each entity by including the attributes found in the EntityItemSimpleBaseType. This type represents the epoch, upstream_version, and debian_revision fields, for a Debian package, as a single version string. It has the form "EPOCH:UPSTREAM_VERSION-DEBIAN_REVISION". Note that a null epoch (or '(none)' as returned by dpkg) is equivalent to '0' and would hence have the form 0:UPSTREAM_VERSION-DEBIAN_REVISION. Comparisons involving this datatype should follow the algorithm outlined in Chapter 5 of the "Debian Policy Manual" (https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-f-Version). An implementation of this is the cmpversions() function in dpkg's enquiry.c.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleContent>
+            <xsd:restriction base="oval-sc:EntityItemSimpleBaseType">
+                <xsd:simpleType>
+                    <xsd:restriction base="xsd:string"/>
+                    <!-- TODO: Should there be a pattern restriction here to enforce the pattern mentioned above? -->
+                </xsd:simpleType>
+                <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="debian_evr_string"/>
+            </xsd:restriction>
+        </xsd:simpleContent>
+    </xsd:complexType>
+</xsd:schema>
