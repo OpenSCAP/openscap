@@ -19,7 +19,7 @@ function test_api_cvrf_eval {
 	./test_api_cvrf --eval $srcdir/$name.xml $results >$stdout 2>$stderr
 	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
-	if [ $? -eq 0] && [ -f $results]; then
+	if [ $? -eq 0 ] && [ -f $results ]; then
 		echo "CVRF Vulnerability checks were generated correctly"
 		ret_val=0
 	else
@@ -37,13 +37,13 @@ function test_api_cvrf_export {
 	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 	if [ $? -eq 0 ] && [ -f $export ]; then
-	if ! $XMLDIFF $srcdir/$name.xml $export; then
-		echo "Exported file differs from what is expected!"
-		ret_val=1
-	fi
+		if ! $XMLDIFF $srcdir/$name.xml $export; then
+			echo "Exported file differs from what is expected!"
+			ret_val=1
+		fi
 	else
-	echo "Cannot export!"
-	ret_val=1
+		echo "Cannot export!"
+		ret_val=1
 	fi
 	rm $export
 	return $ret_val
@@ -56,11 +56,11 @@ function test_api_cvrf_validate {
 	[ -f $stdout ]; [ ! -s $stdout ]; rm $stdout
 	[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 	if [ $? -eq 0 ]; then
-	echo "Provided CVRF file is valid"
-	ret_val=0
+		echo "Provided CVRF file is valid"
+		ret_val=0
 	else
-	echo "Provided CVRF file does not adhere to specifications"
-	ret_val=1
+		echo "Provided CVRF file does not adhere to specifications"
+		ret_val=1
 	fi
 	return $ret_val
 }
