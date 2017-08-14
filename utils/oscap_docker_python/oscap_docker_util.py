@@ -203,6 +203,17 @@ class OscapScan(object):
         if self.mnt_dir is None:
             os.rmdir(mnt_dir)
 
+    def _find_chroot_path(self, mnt_dir):
+        '''
+        Remember actual mounted fs in 'rootfs' for devicemapper
+        '''
+        rootfs_path = os.path.join(mnt_dir, 'rootfs')
+        if os.path.exists(rootfs_path):
+            chroot = rootfs_path
+        else:
+            chroot = mnt_dir
+        return chroot
+
     def scan_cve(self, image, scan_args):
         '''
         Wrapper function for scanning a container or image
@@ -218,9 +229,7 @@ class OscapScan(object):
             sys.stderr.write(str(e) + "\n")
             return None
 
-        # Remeber actual mounted fs in 'rootfs'
-        chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
-
+        chroot = self._find_chroot_path(_tmp_mnt_dir)
 
         try:
             # Figure out which RHEL dist is in the chroot
@@ -258,8 +267,7 @@ class OscapScan(object):
             sys.stderr.write(str(e) + "\n")
             return None
 
-        # Remeber actual mounted fs in 'rootfs'
-        chroot = os.path.join(_tmp_mnt_dir, 'rootfs')
+        chroot = self._find_chroot_path(_tmp_mnt_dir)
 
         # Scan the chroot
         sys.stdout.write(self.helper._scan(chroot, scan_args))
