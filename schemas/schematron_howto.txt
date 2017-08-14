@@ -5,7 +5,7 @@ Prerequisities
   $ yum install libxslt
 
 2. ISO schematron XSLT v1 files
-  $ wget http://www.schematron.com/tmp/iso-schematron-xslt1.zip
+  $ wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/schematron/iso-schematron-xslt1.zip
   $ unzip iso-schematron-xslt1.zip
 
 
@@ -32,7 +32,7 @@ Validating an document without oscap tool
 
 version="$1"
 
-wget -N http://www.schematron.com/tmp/iso-schematron-xslt1.zip
+wget -N https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/schematron/iso-schematron-xslt1.zip
 unzip -o iso-schematron-xslt1.zip
 
 wget -N "http://oval.mitre.org/language/version$version/ovaldefinition/schematron/oval-definitions-schematron.zip"
