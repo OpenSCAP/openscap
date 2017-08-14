@@ -181,7 +181,10 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	cvrf_session_set_os_name(session, os_name);
 	cvrf_session_set_results_file(session, export_file);
 
-	find_all_cvrf_product_ids_from_cpe(session);
+	if (find_all_cvrf_product_ids_from_cpe(session) != 0) {
+		cvrf_session_free(session);
+		return -1;
+	}
 	cvrf_session_construct_definition_model(session);
 	cvrf_model_export(session->model, "cvrf_model_export.xml");
 
