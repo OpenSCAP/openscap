@@ -113,17 +113,17 @@ static int app_cvrf_evaluate(const struct oscap_action *action) {
 }
 
 static int app_cvrf_export(const struct oscap_action *action) {
-	int result;
+	int result = OSCAP_OK;
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->cvrf_file);
 	struct cvrf_model *model = cvrf_model_import(import_source);
-
 	if(!model) {
 		result = OSCAP_ERROR;
 		goto cleanup;
 	}
-
-	cvrf_model_export(model, action->cvrf_action->export_file);
-	result = OSCAP_OK;
+	struct oscap_source *export_source = cvrf_model_get_export_source(model);
+	if (oscap_source_save_as(export_source, action->cvrf_action->export_file) != 0)
+		result = OSCAP_ERROR;
+	oscap_source_free(export_source);
 
 	cleanup:
 		if (oscap_err())

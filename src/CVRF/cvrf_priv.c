@@ -1535,33 +1535,6 @@ xmlNode *cvrf_element_to_dom(const char *elm_name, const char *elm_value) {
 	return elm_node;
 }
 
-struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index) {
-	if (index == NULL)
-		return NULL;
-
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
-	}
-
-	cvrf_index_to_dom(index, doc, NULL, NULL);
-	return oscap_source_new_from_xmlDoc(doc, NULL);
-}
-
-
-struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model) {
-	if (model == NULL)
-		return NULL;
-
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-		return NULL;
-	}
-	cvrf_model_to_dom(model, doc, NULL, NULL);
-	return oscap_source_new_from_xmlDoc(doc, NULL);
-}
 
 /*---------------------------------------------------------------------------------------------*\
 |							CVRF Parsing and Serialization Functions							|

@@ -2373,24 +2373,20 @@ struct cvrf_index *cvrf_index_import(struct oscap_source *index_source);
 struct cvrf_model *cvrf_model_import(struct oscap_source *source);
 
 /**
- * Export all CVRF models in CVRF index to XML file
+ * Export CVRF Index to the export source as an XML doc
  * @memberof cvrf_index
  * @param index CVRF index structure
- * @param export_file OSCAP export target
- * @return exit code of export
+ * @return Export target source for the Index, NULL on failure
  */
-int cvrf_index_export(struct cvrf_index *index, const char *export_file);
+struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index);
 
 /**
- * Export CVRF model to XML file
+ * Export CVRF Model to the export source as an XML doc
  * @memberof cvrf_model
- * @param cvrf CVRF model
- * @param export_file OSCAP export target
- * @return exit code of export
+ * @param model CVRF Model structure
+ * @return Export target source for the Model, NULL on failure
  */
-int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file);
-
-
+struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model);
 
 
 int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
