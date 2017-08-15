@@ -71,9 +71,14 @@ const struct oscap_string_map CVRF_DOC_PUBLISHER_TYPE_MAP[] = {
 	{CVRF_DOC_PUBLISHER_UNKNOWN, NULL}
 };
 
-cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name) {
-	return cvrf_enumeration_attr(reader, attr_name, CVRF_DOC_PUBLISHER_TYPE_MAP);
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Type", CVRF_DOC_PUBLISHER_TYPE_MAP);
 }
+
+cvrf_doc_publisher_type_t cvrf_involvement_party_parse(xmlTextReaderPtr reader) {
+	return cvrf_enumeration_attr(reader, "Party", CVRF_DOC_PUBLISHER_TYPE_MAP);
+}
+
 const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type) {
 	return oscap_enum_to_string(CVRF_DOC_PUBLISHER_TYPE_MAP, doc_publisher_type);
 }

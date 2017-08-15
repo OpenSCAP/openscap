@@ -323,6 +323,10 @@ cvrf_involvement_status_type_t cvrf_involvement_get_status_type(struct cvrf_invo
 	return involve->status;
 }
 
+cvrf_doc_publisher_type_t cvrf_involvement_get_party(struct cvrf_involvement *involve) {
+	return involve->party;
+}
+
 struct cvrf_involvement *cvrf_involvement_new() {
 	struct cvrf_involvement *ret = malloc(sizeof(struct cvrf_involvement));
 	if (ret == NULL)
@@ -1716,7 +1720,7 @@ struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 	struct cvrf_involvement *involve = cvrf_involvement_new();
 	involve->status = cvrf_involvement_status_type_parse(reader);
-	involve->party = cvrf_doc_publisher_type_parse(reader, "Party");
+	involve->party = cvrf_involvement_party_parse(reader);
 	xmlTextReaderNextElementWE(reader, TAG_INVOLVEMENT);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_INVOLVEMENT) != 0) {
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
@@ -2160,7 +2164,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 	if (xmlTextReaderIsEmptyElement(reader))
 		return publisher;
 
-	publisher->type = cvrf_doc_publisher_type_parse(reader, "Type");
+	publisher->type = cvrf_doc_publisher_type_parse(reader);
 	publisher->vendor_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_VENDOR_ID);
 	xmlTextReaderNextElementWE(reader, TAG_PUBLISHER);
 	publisher->contact_details = cvrf_parse_element(reader, "ContactDetails", true);
