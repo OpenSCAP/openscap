@@ -61,11 +61,27 @@ typedef enum {
 cvrf_doc_publisher_type_t cvrf_doc_publisher_get_type(struct cvrf_doc_publisher *publisher);
 
 /**
+ * @memberof cvrf_involvement
+ * Retrieve type of publisher for the CVRF document
+ * @param involve CVRF Involvement structure
+ * @return Enum representing Party attribute of the Involvement element
+ */
+cvrf_doc_publisher_type_t cvrf_involvement_get_party(struct cvrf_involvement *involve);
+
+/**
  * Parses text value of the attribute and finds the appropriate DocumentPublisher type
  * @param reader XML text reader
  * @return Enum representation of the Type attribute of the DocumentPublisher element
  */
-cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name);
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Parses text value of the attribute and finds the appropriate DocumentPublisher type
+ * Involvement 'Party' attribute uses the same enumerated list as DocumentPublisher type
+ * @param reader XML text reader
+ * @return Enum representation of the Party attribute of the Involvement element
+ */
+cvrf_doc_publisher_type_t cvrf_involvement_party_parse(xmlTextReaderPtr reader);
 
 /**
  * Find the string value of the DocumentPublisher type mapped to the provided enum value
