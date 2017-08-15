@@ -1,0 +1,995 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
+            xmlns:android-sc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#android"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#android"
+            elementFormDefault="qualified" version="5.11">
+  <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5" schemaLocation="oval-system-characteristics-schema.xsd"/>
+  <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+  <xsd:annotation>
+    <xsd:documentation>The following is a description of the elements, types, and attributes that compose the Android specific system characteristic items found in Open Vulnerability and Assessment Language (OVAL). Each item is an extension of the standard item element defined in the Core System Characteristic Schema. Through extension, each item inherits a set of elements and attributes that are shared amongst all OVAL Items. Each item is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core System Characteristic Schema is not outlined here.</xsd:documentation>
+    <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+    <xsd:appinfo>
+      <schema>Android System Characteristics</schema>
+      <version>5.11.1:1.1</version>
+      <date>11/30/2016 09:00:00 AM</date>
+      <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+      <sch:ns prefix="oval-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"/>
+      <sch:ns prefix="android-sc" uri="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#android"/>
+      <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+    </xsd:appinfo>
+  </xsd:annotation>
+  <!-- =============================================================================== -->
+  <!-- =======================  APPLICATION MANAGER ITEM  ============================ -->
+  <!-- =============================================================================== -->
+  <xsd:element name="appmanager_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This item stores information about applications installed on the device.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="application_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Name of the application.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="uid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Linux userid assigned to the application. (In some cases multiple applications can share a userid.)</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="gid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>One element for each group id that the application belongs to.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="package_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Name of the package.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="data_directory" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Data directory assigned to the application.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="version" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Application version.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="current_status" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if the application is enabled.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="permission" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>One element for each permission granted to the application.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="native_lib_dir" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Directory where the application's native libraries (if any) have been installed.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="signing_certificate" type="oval-sc:EntityItemBinaryType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>Hexadecimal string of the signing certificate corresponding with the key used to sign the application package. Only the actual signing certificate should be included, not CA certificates in the chain (if applicable).</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="first_install_time" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Time at which the app was first installed, expressed in milliseconds since January 1, 1970 00:00:00 UTC.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="last_update_time" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Time at which the app was last updated, expressed in milliseconds since January 1, 1970 00:00:00 UTC.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="package_file_location" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>From ApplicationInfo.sourceDir, the full path to the location of the publicly available parts of the application package.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ==============================  BLUETOOTH ITEM  =============================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="bluetooth_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This holds information about device Bluetooth settings.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="discoverable" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if device Bluetooth is currently in discoverable mode.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="current_status" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if device Bluetooth is currently enabled.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ==============================  CAMERA ITEM  ================================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="camera_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This item is used to check camera-related information.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="camera_disabled_policy" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>If true, then a policy is being enforced disabling use of the camera.  The policy is only available in Android 4.0 and up (and potentially on older Android devices if specifically added by the device vendor).</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- =========================  CERTIFICATE ITEM  ================================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="certificate_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This item stores information about the certificates installed on the device.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="trusted_certificate" type="oval-sc:EntityItemBinaryType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>Hexadecimal string of each certificate in the OS's trusted certificate store, including both certificates installed by the system and by users. System trusted certificates that were disabled by the user are not included here.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ========================== DEVICE SETTINGS ITEM =============================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="devicesettings_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This holds information about miscellaneous device settings.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="adb_enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if Android Debug Bridge (USB debugging) is enabled.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="allow_mock_location" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if mock locations and location provider status can be injected into Android's Location Manager.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="install_non_market_apps" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if applications can be installed from "unknown sources".</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="device_admin" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>One element per application that holds device administrator access.  Contains the application's package name.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="auto_time" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if the user prefers the date and time to be automatically fetched from the network.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="auto_time_zone" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if the user prefers the time zone to be automatically fetched from the network.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="usb_mass_storage_enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if USB mass storage is enabled on the device, otherwise false.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- =======================  ENCRYPTION SETTING ITEM  ============================= -->
+  <!-- =============================================================================== -->
+  <xsd:element name="encryption_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>Device encryption information.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="encryption_policy_enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if a policy is in place requiring the device storage to be encrypted. (android.app.admin.DevicePolicyManager.getStorageEncryption())</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="encryption_status" type="android-sc:EntityItemEncryptionStatusType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The current status of device encryption. (android.app.admin.DevicePolicyManager.getStorageEncryptionStatus()) Either ENCRYPTION_STATUS_UNSUPPORTED, ENCRYPTION_STATUS_INACTIVE, ENCRYPTION_STATUS_ACTIVATING, or ENCRYPTION_STATUS_ACTIVE as documented in the Android SDK's DevicePolicyManager class.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ============================  LOCATION SERVICE ITEM  ========================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="locationservice_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This holds information about location based service status.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="gps_enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>A boolean value indicating whether the GPS location provider is enabled.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="network_enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>A boolean value indicating whether the network location provider is enabled.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ================================  NETWORK ITEM  =============================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="network_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This holds information about networks configured and their preference.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="airplane_mode" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if airplane mode is enabled.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nfc_enabled" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if NFC is enabled on the device.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ==========================  PASSWORD ITEM  ==================================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="password_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>Specific policy items associated with passwords and the device screen lock.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="max_num_failed_user_auth" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Maximum number of failed user authentications before device wipe. Zero means there is no policy in place.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_hist" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Specifies the length of password history maintained (passwords in the history cannot be reused). Zero means there is no policy in place.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_quality" type="android-sc:EntityItemPasswordQualityType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The current minimum required password quality required by device policy. Represented as a string corresponding with a valid Android password quality, currently one of: PASSWORD_QUALITY_ALPHABETIC PASSWORD_QUALITY_ALPHANUMERIC PASSWORD_QUALITY_BIOMETRIC_WEAK PASSWORD_QUALITY_COMPLEX PASSWORD_QUALITY_NUMERIC PASSWORD_QUALITY_SOMETHING PASSWORD_QUALITY_UNSPECIFIED</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_length" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum length of characters password must have. This constraint is only imposed if the password quality is one of PASSWORD_QUALITY_NUMERIC, PASSWORD_QUALITY_ALPHABETIC, PASSWORD_QUALITY_ALPHANUMERIC, or PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_letters" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum number of letters password must have. This constraint is only imposed if the password quality is PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_lower_case_letters" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum number of lower case letters password must have. This constraint is only imposed if the password quality is PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_non_letters" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum number of non-letter characters password must have. This constraint is only imposed if the password quality is PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_numeric" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum number of numeric characters password must have. This constraint is only imposed if the password quality is PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_symbols" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum number of symbol characters password must have. This constraint is only imposed if the password quality is PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_min_upper_case_letters" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Minimum number of upper case letters password must have. This constraint is only imposed if the password quality is PASSWORD_QUALITY_COMPLEX.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_expiration_timeout" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Gets the current password expiration timeout policy, in milliseconds. Zero means there is no policy in place.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="password_visible" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>When true, the most recently keyed in password character is shown to the user on the screen (the previously entered characters are masked out). When false, all keyed in password characters are immediately masked out. This setting is manageable by the device user through the device settings.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="active_password_sufficient" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>When true, the current device password is compliant with the password policy. (If the policy was recently established, it is possible that a password compliant with the policy may not yet be in place.)</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="current_failed_password_attempts" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The number of times the user has failed at entering a password since the last successful password entry.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="screen_lock_timeout" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The current policy for the highest screen lock timeout the user is allowed to specify. 0 indicates no restriction. (The user may still specify lower values in the device settings.)</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="keyguard_disabled_features" type="android-sc:EntityItemKeyguardDisabledFeaturesType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The current policy for lockscreen widgets as retrieved by DevicePolicyManager.getKeyguardDisabledFeatures. May be set to one of KEYGUARD_DISABLE_FEATURES_ALL, KEYGUARD_DISABLED_FEATURES_NONE, KEYGUARD_DISABLE_SECURE_CAMERA, or KEYGUARD_DISABLE_WIDGETS_ALL. Only available in Android 4.2 and up.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- =========================  SYSTEM DETAILS ITEM  =============================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="systemdetails_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This item stores information about the Operating System and hardware.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="hardware" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The hardware model, as provided by android.os.Build.HARDWARE using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="manufacturer" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The device manufacturer, as provided by android.os.Build.MANUFACTURER using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="model" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The device model identifier, as provided by android.os.Build.MODEL using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="product" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The product name, as provided by android.os.Build.PRODUCT using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="cpu_abi" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The name of the instruction set of native code, as provided by android.os.Build.CPU_ABI using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="cpu_abi2" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The name of the second instruction set of native code, as provided by android.os.Build.CPU_ABI2 using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>            
+            <xsd:element name="build_fingerprint" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Build fingerprint, as provided by android.os.Build.FINGERPRINT using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="os_version_code_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Operating system version code, as provided by android.os.Build.VERSION.CODENAME using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="os_version_build_number" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Operating system build number, as provided by android.os.Build.VERSION.INCREMENTAL using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="os_version_release_name" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Operating system release name, as provided by android.os.Build.VERSION.RELEASE using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="os_version_sdk_number" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Operating system SDK number, as provided by android.os.Build.VERSION.SDK_INT using the Android SDK.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="hardware_keystore" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if the device provides a hardware backed cryptographic keystore (a hardware keystore prevents exporting private keys or directly exposing private keys to the OS), otherwise false.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ===========================  WIFI ITEM  ======================================= -->
+  <!-- =============================================================================== -->
+  <xsd:element name="wifi_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This item holds information about general Wi-Fi settings.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="wifi_status" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if Wi-Fi is currently enabled on the device.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="network_availability_notification" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>True if the Wi-Fi network availability notification setting is currently enabled on the device.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- ===========================  WIFI SECURITY ITEM  ============================== -->
+  <!-- =============================================================================== -->
+  <xsd:element name="wifinetwork_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>This item holds information about the configured Wi-Fi networks on the device.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="bssid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>BSSID. The value is a string in the format of an Ethernet MAC address.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="ssid" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The network's SSID.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="auth_algorithms" type="android-sc:EntityItemWifiAuthAlgorithmType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>The set of authentication protocols supported by this configuration.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="group_ciphers" type="android-sc:EntityItemWifiGroupCipherType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>The set of group ciphers supported by this configuration.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="key_management" type="android-sc:EntityItemWifiKeyMgmtType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>The set of key management protocols supported by this configuration.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="pairwise_ciphers" type="android-sc:EntityItemWifiPairwiseCipherType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>The set of pairwise ciphers for WPA supported by this configuration.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="protocols" type="android-sc:EntityItemWifiProtocolType" minOccurs="0" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>The set of security protocols supported by this configuration.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="hidden_ssid" type="oval-sc:EntityItemBoolType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>This is a network that does not broadcast its SSID.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="network_id" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The ID number that the supplicant uses to identify this network configuration entry.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="priority" type="oval-sc:EntityItemIntType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>Priority determines the preference given to a network by wpa_supplicant when choosing an access point with which to associate.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="current_status" type="android-sc:EntityItemWifiCurrentStatusType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The current status of this network configuration entry, either CURRENT, DISABLED, or ENABLED per android.net.wifi.WifiConfiguration.Status.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- =============================  TELEPHONY ITEM  ================================ -->
+  <!-- =============================================================================== -->
+  <xsd:element name="telephony_item" substitutionGroup="oval-sc:item">
+    <xsd:annotation>
+      <xsd:documentation>The telephony_item element contains a single entity that is used to check the status of the telephony manager Item. </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:complexContent>
+        <xsd:extension base="oval-sc:ItemType">
+          <xsd:sequence>
+            <xsd:element name="network_type" type="android-sc:EntityItemNetworkType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>A constant String value indicating the radio technology (network type) currently in use on the device for data transmission.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="sim_country_iso" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>The ISO country code equivalent for the SIM provider's country code.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="sim_operator_code" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+              <xsd:annotation>
+                <xsd:documentation>the MCC+MNC (mobile country code + mobile network code) of the provider of the SIM. It contains 5 or 6 decimal digits.</xsd:documentation>
+              </xsd:annotation>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:extension>
+      </xsd:complexContent>
+    </xsd:complexType>
+  </xsd:element>
+  <!-- =============================================================================== -->
+  <!-- =============================================================================== -->
+  <!-- =============================================================================== -->
+  <xsd:complexType name="EntityItemEncryptionStatusType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemEncryptionStatusType complex type restricts a string value to a specific set of values. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="ENCRYPTION_STATUS_UNSUPPORTED">
+          <xsd:annotation>
+            <xsd:documentation>Encryption is not supported</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="ENCRYPTION_STATUS_ACTIVE">
+          <xsd:annotation>
+            <xsd:documentation>Encryption is active.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="ENCRYPTION_STATUS_INACTIVE">
+          <xsd:annotation>
+            <xsd:documentation>Encryption is supported but is not currently active.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="ENCRYPTION_STATUS_ACTIVATING">
+          <xsd:annotation>
+            <xsd:documentation>Encryption is not currently active, but is currently being activated.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemKeyguardDisabledFeaturesType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemKeyguardDisabledFeaturesType complex type restricts a string value to a specific set of values. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="KEYGUARD_DISABLE_FEATURES_NONE">
+          <xsd:annotation>
+            <xsd:documentation>Widgets are enabled in keyguard</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="KEYGUARD_DISABLE_WIDGETS_ALL">
+          <xsd:annotation>
+            <xsd:documentation>Disable all keyguard widgets</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="KEYGUARD_DISABLE_SECURE_CAMERA">
+          <xsd:annotation>
+            <xsd:documentation>Disable the camera on secure keyguard screens (e.g. PIN/Pattern/Password)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="KEYGUARD_DISABLE_FEATURES_ALL">
+          <xsd:annotation>
+            <xsd:documentation>Disable all current and future keyguard customizations</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemNetworkType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemNetworkType complex type restricts a string value to a specific set of values. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="UNKNOWN">
+          <xsd:annotation>
+            <xsd:documentation>The network type is unknown</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="GPRS">
+          <xsd:annotation>
+            <xsd:documentation>Current network is GPRS </xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="EDGE">
+          <xsd:annotation>
+            <xsd:documentation>Current network is EDGE </xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="UMTS">
+          <xsd:annotation>
+            <xsd:documentation>Current network is UMTS </xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="CDMA">
+          <xsd:annotation>
+            <xsd:documentation>Current network is CDMA</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="EVDO-0">
+          <xsd:annotation>
+            <xsd:documentation>Current network is EVDO-0</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="EVDO-A">
+          <xsd:annotation>
+            <xsd:documentation>Current network is EVDO-A</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="1xRTT">
+          <xsd:annotation>
+            <xsd:documentation>Current network is 1xRTT</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="HSDPA">
+          <xsd:annotation>
+            <xsd:documentation>Current network is HSDPA</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="HSUPA">
+          <xsd:annotation>
+            <xsd:documentation>Current network is HSUPA</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="HSPA">
+          <xsd:annotation>
+            <xsd:documentation>Current network is HSPA</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="IDEN">
+          <xsd:annotation>
+            <xsd:documentation>Current network is IDEN</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="EVDO-B">
+          <xsd:annotation>
+            <xsd:documentation>Current network is EVDO-B</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="LTE">
+          <xsd:annotation>
+            <xsd:documentation>Current network is LTE</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="EHRPD">
+          <xsd:annotation>
+            <xsd:documentation>Current network is EHRPD</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="HSPAP">
+          <xsd:annotation>
+            <xsd:documentation>Current network is HSPAP</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemPasswordQualityType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemPasswordQualityType complex type restricts a string value to a specific set of values. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="PASSWORD_QUALITY_ALPHABETIC">
+          <xsd:annotation>
+            <xsd:documentation>The password must contain alphabetic (or other symbol) characters</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="PASSWORD_QUALITY_ALPHANUMERIC">
+          <xsd:annotation>
+            <xsd:documentation>The password must contain both numeric and alphabetic (or other symbol) characters</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="PASSWORD_QUALITY_BIOMETRIC_WEAK">
+          <xsd:annotation>
+            <xsd:documentation>This policy allows for low-security biometric recognition technology</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="PASSWORD_QUALITY_COMPLEX">
+          <xsd:annotation>
+            <xsd:documentation>The password must contain at least a letter, a numerical digit, and a special symbol</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="PASSWORD_QUALITY_NUMERIC">
+          <xsd:annotation>
+            <xsd:documentation>The password must contain at least numeric characters</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="PASSWORD_QUALITY_SOMETHING">
+          <xsd:annotation>
+            <xsd:documentation>This policy requires some kind of password, but doesn't care what it is</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="PASSWORD_QUALITY_UNSPECIFIED">
+          <xsd:annotation>
+            <xsd:documentation>There are no password policy requirements</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemWifiAuthAlgorithmType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemWifiAuthAlgorithmType complex type restricts a string value to a specific set of values that name WiFi authentication algorithms. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="LEAP">
+          <xsd:annotation>
+            <xsd:documentation>LEAP/Network EAP (only used with LEAP)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="OPEN">
+          <xsd:annotation>
+            <xsd:documentation>Open System authentication (required for WPA/WPA2)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="SHARED">
+          <xsd:annotation>
+            <xsd:documentation>Shared Key authentication (requires static WEP keys)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemWifiCurrentStatusType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemWifiCurrentStatusType complex type restricts a string value to a specific set of values. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="CURRENT">
+          <xsd:annotation>
+            <xsd:documentation>The network we are currently connected to</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="ENABLED">
+          <xsd:annotation>
+            <xsd:documentation>Supplicant will not attempt to use this network</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="DISABLED">
+          <xsd:annotation>
+            <xsd:documentation>Supplicant will consider this network available for association</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemWifiGroupCipherType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemWifiGroupCipherType complex type restricts a string value to a specific set of values that name Wi-Fi group ciphers. The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="CCMP">
+          <xsd:annotation>
+            <xsd:documentation>AES in Counter mode with CBC-MAC [RFC 3610, IEEE 802.11i/D7.0]; Constant Value: 3 (0x00000003)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="TKIP">
+          <xsd:annotation>
+            <xsd:documentation>Temporal Key Integrity Protocol [IEEE 802.11i/D7.0]; Constant Value: 2 (0x00000002)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="WEP104">
+          <xsd:annotation>
+            <xsd:documentation>WEP (Wired Equivalent Privacy) with 104-bit key; Constant Value: 1 (0x00000001)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="WEP40">
+          <xsd:annotation>
+            <xsd:documentation>WEP (Wired Equivalent Privacy) with 40-bit key (original 802.11); Constant Value: 0 (0x00000000)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemWifiKeyMgmtType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemWifiKeyMgmtType complex type restricts a string value to a specific set of values that name Wi-Fi key management schemes (from android.net.wifi.WifiConfiguration.KeyMgmt). The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="IEEE8021X">
+          <xsd:annotation>
+            <xsd:documentation>IEEE 802.1X using EAP authentication and (optionally) dynamically generated WEP keys.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="NONE">
+          <xsd:annotation>
+            <xsd:documentation>WPA is not used; plaintext or static WEP could be used.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="WPA_EAP">
+          <xsd:annotation>
+            <xsd:documentation>WPA using EAP authentication.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="WPA_PSK">
+          <xsd:annotation>
+            <xsd:documentation>WPA pre-shared key.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemWifiPairwiseCipherType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemWifiPairwiseCipherType complex type restricts a string value to a specific set of values that name Wi-Fi recognized pairwise ciphers for WPA (from android.net.wifi.WifiConfiguration.PairwiseCipher). The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="CCMP">
+          <xsd:annotation>
+            <xsd:documentation>AES in Counter mode with CBC-MAC [RFC 3610, IEEE 802.11i/D7.0]</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="NONE">
+          <xsd:annotation>
+            <xsd:documentation>Use only Group keys (deprecated)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="TKIP">
+          <xsd:annotation>
+            <xsd:documentation>Temporal Key Integrity Protocol [IEEE802.11i/D7.0]</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EntityItemWifiProtocolType">
+    <xsd:annotation>
+      <xsd:documentation>The EntityItemWifiProtocolType complex type restricts a string value to a specific set of values that name Wi-Fi recognized security protocols (from android.net.wifi.WifiConfiguration.Protocol). The empty string is also allowed to support empty elements associated with error conditions.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:restriction base="oval-sc:EntityItemStringType">
+        <xsd:enumeration value="RSN">
+          <xsd:annotation>
+            <xsd:documentation>WPA2/IEEE 802.11i</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="WPA">
+          <xsd:annotation>
+            <xsd:documentation>WPA/IEEE 802.11i/D3.0</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+        <xsd:enumeration value="">
+          <xsd:annotation>
+            <xsd:documentation>The empty string value is permitted here to allow for detailed error reporting.</xsd:documentation>
+          </xsd:annotation>
+        </xsd:enumeration>
+      </xsd:restriction>
+    </xsd:simpleContent>
+  </xsd:complexType>
+</xsd:schema>

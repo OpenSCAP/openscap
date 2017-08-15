@@ -1,0 +1,859 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5"
+            xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+            xmlns:hpux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux"
+            xmlns:sch="http://purl.oclc.org/dsdl/schematron"
+            targetNamespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux"
+            elementFormDefault="qualified" version="5.11">
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
+      <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="oval-definitions-schema.xsd"/>
+      <xsd:annotation>
+            <xsd:documentation>The following is a description of the elements, types, and attributes that compose the HP-UX specific tests found in Open Vulnerability and Assessment Language (OVAL). Each test is an extension of the standard test element defined in the Core Definition Schema. Through extension, each test inherits a set of elements and attributes that are shared amongst all OVAL tests. Each test is described in detail and should provide the information necessary to understand what each element and attribute represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between the different tests and their relationship to the Core Definition Schema is not outlined here.</xsd:documentation>
+            <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
+            <xsd:appinfo>
+                  <schema>HP-UX Definition</schema>
+                  <version>5.11.1:1.1</version>
+                  <date>11/30/2016 09:00:00 AM</date>
+                  <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+                  <sch:ns prefix="oval-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5"/>
+                  <sch:ns prefix="hpux-def" uri="http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux"/>
+                  <sch:ns prefix="xsi" uri="http://www.w3.org/2001/XMLSchema-instance"/>
+            </xsd:appinfo>
+      </xsd:annotation>
+      <!-- =============================================================================== -->
+      <!-- ===============================  GETCONF TEST  ================================ -->
+      <!-- =============================================================================== -->
+      <xsd:element name="getconf_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>From /usr/bin/getconf. See getconf manpage for specific fields</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>getconf_test</oval:test>
+                              <oval:object>getconf_object</oval:object>
+                              <oval:state>getconf_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux">getconf_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_getconf_test">
+                              <sch:rule context="hpux-def:getconf_test/hpux-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/hpux-def:getconf_object/@id"><sch:value-of select="../@id"/> - the object child element of an getconf_test must reference an getconf_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="hpux-def:getconf_test/hpux-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/hpux-def:getconf_state/@id"><sch:value-of select="../@id"/> - the state child element of an getconf_test must reference an getconf_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getconf_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation/>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_getconf_object_verify_filter_state">
+                              <sch:rule context="hpux-def:getconf_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::hpux-def:getconf_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux') and ($state_name='getconf_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="parameter_name" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>This is the parameter name to check.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element name="pathname" type="oval-def:EntityObjectStringType" nillable="true">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>This is the pathname to check. Note that pathname is optional in the getconf call. A nil pathname ( empty wth attribute xsi:nil='true') in OVAL should be interpreted as if it was not supplied to the getconf call.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="getconf_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="parameter_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the parameter name to check</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pathname" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the pathname to check. Note that pathname is optional in the getconf call. A nil pathname in OVAL should be interpreted as if it was not supplied to the getconf call.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="output" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The output produced by the getconf command.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ===============================  NDD TEST  ==================================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="ndd_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>From /usr/bin/ndd. See ndd manpage for specific fields</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>ndd_test</oval:test>
+                              <oval:object>ndd_object</oval:object>
+                              <oval:state>ndd_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux">ndd_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_ndd_test">
+                              <sch:rule context="hpux-def:ndd_test/hpux-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/hpux-def:ndd_object/@id"><sch:value-of select="../@id"/> - the object child element of an ndd_test must reference an ndd_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="hpux-def:ndd_test/hpux-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/hpux-def:ndd_state/@id"><sch:value-of select="../@id"/> - the state child element of an ndd_test must reference an ndd_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ndd_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation/>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_ndd_object_verify_filter_state">
+                              <sch:rule context="hpux-def:ndd_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::hpux-def:ndd_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux') and ($state_name='ndd_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="device" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The name of the device to examine.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element name="parameter" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The name of the parameter, For example, ip_forwarding.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ndd_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="device" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the device to examine.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="parameter" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The name of the parameter, For example, ip_forwarding.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="value" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value of the named parameter.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ==============================  PATCH TEST (53) =============================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="patch53_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>From /usr/sbin/swlist -l patch PHxx_yyyyy. See swlist manpage for specific fields</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>patch53_test</oval:test>
+                              <oval:object>patch53_object</oval:object>
+                              <oval:state>patch53_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux">patch_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_patch53_test">
+                              <sch:rule context="hpux-def:patch53_test/hpux-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/hpux-def:patch53_object/@id"><sch:value-of select="../@id"/> - the object child element of an patch53_test must reference an patch53_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="hpux-def:patch53_test/hpux-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/hpux-def:patch53_state/@id"><sch:value-of select="../@id"/> - the state child element of an patch53_test must reference an patch53_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch53_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation/>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_patch53_object_verify_filter_state">
+                              <sch:rule context="hpux-def:patch53_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::hpux-def:patch53_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux') and ($state_name='patch53_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="behaviors" type="hpux-def:Patch53Behaviors" minOccurs="0" maxOccurs="1"/>
+                                                <xsd:element name="swtype" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>HP-UX patch names begin with 'PH'</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element name="area_patched" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The third and fourth characters in HP-UX patch names indicate the area of software being patched. CO - General HP-UX commands KL - Kernel patches NE - Network specific patches SS - All other subsystems (X11, starbase, etc.) </xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element name="patch_base" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>The sixth through tenth characters in HP-UX patch names represent a unique numeric identifier for the patch</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch53_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="swtype" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>HP-UX patch names begin with 'PH'</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="area_patched" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The third and fourth characters in HP-UX patch names indicate the area of software being patched. CO - General HP-UX commands KL - Kernel patches NE - Network specific patches SS - All other subsystems (X11, starbase, etc.)</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="patch_base" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The sixth through tenth characters in HP-UX patch names represent a unique numeric identifier for the patch</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="Patch53Behaviors">
+            <xsd:annotation>
+                  <xsd:documentation>The Patch53Behaviors complex type defines a number of behaviors that allow a more detailed definition of the patch53_object being specified.  Note that using these behaviors may result in some unique results.  For example, a double negative type condition might be created where an object entity says include everything except a specific item, but a behavior is used that might then add that item back in.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:attribute name="supersedence" use="optional" default="false">
+                  <xsd:annotation>
+                        <xsd:documentation>'supersedence' specifies that the object should also match any superseding patches to the one being specified. In other words, if set to True the resulting object set would be the original patch specified plus any superseding patches. The default value is 'false' meaning the object should only match the specified patch.</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                        <xsd:restriction base="xsd:boolean"/>
+                  </xsd:simpleType>
+            </xsd:attribute>
+      </xsd:complexType>
+      <!-- =============================================================================== -->
+      <!-- ==========================  PATCH TEST (deprecated)  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="patch_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>From /usr/sbin/swlist -l patch PHxx_yyyyy. See swlist manpage for specific fields</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>patch_test</oval:test>
+                              <oval:object>patch_object</oval:object>
+                              <oval:state>patch_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux">patch_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.3</oval:version>
+                              <oval:reason>Replaced by the patch53_test. The patch_name entity was removed from the patch_object element, and replaced with the swtype, area_patched, and patch_base entities, because the patch_name element can be constructed from the swtype, area_patched, and patch_base entities. Likewise, the patch_name entity was removed from the patch_state element for the same reason. Also, a behaviors entity was added to the patch_object to allow the object to match both the original patch and any superseding patches. A new test was created to reflect these changes. See the patch53_test.</oval:reason>
+                              <oval:comment>This test has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="hpux-def_patch_test_dep">
+                              <sch:rule context="hpux-def:patch_test">
+                                    <sch:report test="true()">DEPRECATED TEST: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_patch_test">
+                              <sch:rule context="hpux-def:patch_test/hpux-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/hpux-def:patch_object/@id"><sch:value-of select="../@id"/> - the object child element of an patch_test must reference an patch_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="hpux-def:patch_test/hpux-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/hpux-def:patch_state/@id"><sch:value-of select="../@id"/> - the state child element of an patch_test must reference an patch_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.3</oval:version>
+                              <oval:reason>Replaced by the patch53_object. The patch_name entity was removed from the patch_object element, and replaced with the swtype, area_patched, and patch_base entities, because the patch_name element can be constructed from the swtype, area_patched, and patch_base entities. Also, a behaviors entity was added to the patch_object to allow the object to match both the original patch and any superseding patches. A new object was created to reflect these changes. See the patch53_object.</oval:reason>
+                              <oval:comment>This object has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="hpux-def_patch_object_dep">
+                              <sch:rule context="hpux-def:patch_object">
+                                    <sch:report test="true()">DEPRECATED OBJECT: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>                        
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:element name="patch_name" type="oval-def:EntityObjectStringType">
+                                                <xsd:annotation>
+                                                      <xsd:documentation>This is the patch name to check.</xsd:documentation>
+                                                </xsd:annotation>
+                                          </xsd:element>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="patch_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:appinfo>
+                        <oval:deprecated_info>
+                              <oval:version>5.3</oval:version>
+                              <oval:reason>Replaced by the patch53_state. The patch_name entity was removed from the patch_state element, and replaced with the swtype, area_patched, and patch_base entities, because the patch_name element can be constructed from the swtype, area_patched, and patch_base entities. A new state was created to reflect these changes. See the patch53_state.</oval:reason>
+                              <oval:comment>This state has been deprecated and will be removed in version 6.0 of the language.</oval:comment>
+                        </oval:deprecated_info>
+                        <sch:pattern id="hpux-def_patch_state_dep">
+                              <sch:rule context="hpux-def:patch_state">
+                                    <sch:report test="true()">DEPRECATED STATE: <sch:value-of select="name()"/> ID: <sch:value-of select="@id"/></sch:report>
+                              </sch:rule>
+                        </sch:pattern>                        
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="patch_name" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the patch name to check</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="swtype" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>HP-UX patch names begin with 'PH'</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="area_patched" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The third and fourth characters in HP-UX patch names indicate the area of software being patched. CO - General HP-UX commands KL - Kernel patches NE - Network specific patches SS - All other subsystems (X11, starbase, etc.) </xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="patch_base" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The sixth through tenth characters in HP-UX patch names represent a unique numeric identifier for the patch</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ============================  SOFTWARE LIST TEST  ============================= -->
+      <!-- =============================================================================== -->
+      <xsd:element name="swlist_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>Output of /usr/sbin/swlist command. Note: A quick way to check for the installation of a specific fileset is to use the command 'swlist -a version -l fileset filesetname'. See manpage for swlist for explanation of additional command options.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>swlist_test</oval:test>
+                              <oval:object>swlist_object</oval:object>
+                              <oval:state>swlist_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux">swlist_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_swlist_test">
+                              <sch:rule context="hpux-def:swlist_test/hpux-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/hpux-def:swlist_object/@id"><sch:value-of select="../@id"/> - the object child element of an swlist_test must reference an swlist_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="hpux-def:swlist_test/hpux-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/hpux-def:swlist_state/@id"><sch:value-of select="../@id"/> - the state child element of an swlist_test must reference an swlist_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="swlist_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation/>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_swlist_object_verify_filter_state">
+                              <sch:rule context="hpux-def:swlist_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::hpux-def:swlist_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux') and ($state_name='swlist_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="swlist" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>This is the name of the bundle or fileset to check.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="swlist_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="swlist" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the name of the bundle or fileset to check.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="bundle" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="fileset" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="version" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                          <xsd:complexType>
+                                                <xsd:simpleContent>
+                                                      <xsd:restriction base="oval-def:EntityStateAnySimpleType">
+                                                            <xsd:attribute name="datatype" use="optional" default="string">
+                                                                  <xsd:simpleType>
+                                                                        <xsd:restriction base="oval:SimpleDatatypeEnumeration">
+                                                                              <xsd:enumeration value="string"/>
+                                                                              <xsd:enumeration value="fileset_revision"/>
+                                                                        </xsd:restriction>
+                                                                  </xsd:simpleType>
+                                                            </xsd:attribute>                                                  
+                                                      </xsd:restriction>
+                                                </xsd:simpleContent>                                        
+                                          </xsd:complexType>                                          
+                                    </xsd:element>
+                                    <xsd:element name="title" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="vendor" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- ===========================  TRUSTED ACCOUNTS TEST  =========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="trusted_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>This test allows for analysis of account settings in trusted HP-UX installations</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>trusted_test</oval:test>
+                              <oval:object>trusted_object</oval:object>
+                              <oval:state>trusted_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux">trusted_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_trusted_test">
+                              <sch:rule context="hpux-def:trusted_test/hpux-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/hpux-def:trusted_object/@id"><sch:value-of select="../@id"/> - the object child element of an trusted_test must reference an trusted_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="hpux-def:trusted_test/hpux-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/hpux-def:trusted_state/@id"><sch:value-of select="../@id"/> - the state child element of an trusted_test must reference an trusted_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="trusted_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation/>
+                  <xsd:appinfo>
+                        <sch:pattern id="hpux-def_trusted_object_verify_filter_state">
+                              <sch:rule context="hpux-def:trusted_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::hpux-def:trusted_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux') and ($state_name='trusted_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="username" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>This is the name of the user being checked.</xsd:documentation>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="trusted_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation/>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="username" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the name of the user being checked</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="uid" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The user's ID</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="password" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>This is the encrypted version of the user's password</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="account_owner" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The Account owner for pseudo-users</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="boot_auth" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Boot authorization</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="audit_id" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>getprpwaid uses the audit ID rather than the UID</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="audit_flag" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation/>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_change_min" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Minimum time between password changes</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_max_size" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Maximum password length in characters</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_expiration" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Password expiration time in seconds</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_life" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Trusted lifetime, after which the account is locked</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_change_s" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Time of last successful password change</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_change_u" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Time of last unsuccessful password change</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="acct_expire" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Absolute account lifetime in seconds</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="max_llogin" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Maximum time allowed between logins before the account is locked</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="exp_warning" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The time in seconds before expiration when a warning will appear</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="usr_chg_pw" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Who can change this user's password</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="gen_pw" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Allows user to use system-generated passwords</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_restrict" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Whether a triviality check is performed on user-generated passwords</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_null" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Determines if null passwords are allowed for this account</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_gen_char" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Allows password generator to use random printable ASCII characters</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_gen_let" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Allows password generator to use random letters</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="login_time" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies the times when the user may login to this account</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="pw_changer" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The user ID of the user who last changed the password on the user's account, if it was not the account owner</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="login_time_s" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The time of the last successful login using this account</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="login_time_u" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The time of the last unsuccessful login using this account</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="login_tty_s" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The terminal or remote host associated with the last successful login to the account</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="login_tty_u" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The terminal or remote hosts associated with the last unsuccessful login to the account</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="num_u_logins" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The number of unsuccessful login attempts since that last successful login</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="max_u_logins" type="oval-def:EntityStateIntType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The maximum number of unsuccessful login attempts before the account is locked</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="lock_flag" type="oval-def:EntityStateBoolType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Indicates whether the administrative lock on the account is set</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+      <!-- =============================================================================== -->
+</xsd:schema>
