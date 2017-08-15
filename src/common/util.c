@@ -54,30 +54,6 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val)
 	return map->string;
 }
 
-char *oscap_strdup(const char *str)
-{
-
-	char *m;
-
-	if (str == NULL)
-		return NULL;
-
-	m = strdup(str);
-
-	if (m == NULL)
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, strerror(errno));
-
-	return m;
-}
-
-float oscap_strtol(const char *str, char **endptr, int base){
-    if (str == NULL) {
-        return NAN;
-    } else
-        return strtol(str, endptr, base);
-}
-
-
 static const size_t CPE_SPLIT_INIT_ALLOC = 8;
 
 char **oscap_split(char *str, const char *delim)
@@ -107,33 +83,6 @@ char **oscap_split(char *str, const char *delim)
 	fields[i] = NULL;
 
 	return fields;
-}
-
-
-int oscap_strcmp(const char *s1, const char *s2)
-{
-	if (s1 == NULL) s1 = "";
-	if (s2 == NULL) s2 = "";
-	return strcmp(s1, s2);
-}
-
-bool oscap_streq(const char *s1, const char *s2)
-{
-	return (oscap_strcmp(s1, s2) == 0);
-}
-
-bool oscap_str_startswith(const char *str, const char *with)
-{
-	return !strncmp(str, with, strlen(with));
-}
-
-bool oscap_str_endswith(const char *str, const char *with)
-{
-	size_t str_len = strlen(str);
-	size_t with_len = strlen(with);
-	if (with_len > str_len)
-		return false;
-	return strncmp(str + str_len - with_len, with, with_len) == 0;
 }
 
 char *oscap_trim(char *str)
