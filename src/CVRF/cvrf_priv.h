@@ -35,144 +35,368 @@
 
 OSCAP_HIDDEN_START;
 
-/***************************************************************************************************
- * CVRF enum definitions
- */
+/*-----------------------------------------------------------------------------------------*\
+|									CVRF Enum Definitions									|
+\*-----------------------------------------------------------------------------------------*/
 
+/************************************************************************************************
+ * Type attribute of a DocumentPublisher element and Party attribute of an Involvement element
+ * (these must match in the same document)
+ */
 typedef enum {
-	CVRF_DOC_PUBLISHER_UNKNOWN = 0,
-	CVRF_DOC_PUBLISHER_VENDOR,
-	CVRF_DOC_PUBLISHER_DISCOVERER,
-	CVRF_DOC_PUBLISHER_COORDINATOR,
-	CVRF_DOC_PUBLISHER_USER,
-	CVRF_DOC_PUBLISHER_OTHER,
+	CVRF_DOC_PUBLISHER_UNKNOWN = 0, ///< Missing or invalid DocumentPublisher type
+	CVRF_DOC_PUBLISHER_VENDOR,		///< Developers of information system products and services
+	CVRF_DOC_PUBLISHER_DISCOVERER,  ///< Individuals or organizations that find vulnerabilities
+	CVRF_DOC_PUBLISHER_COORDINATOR, ///< Entities that manage response to Vendors' vulnerabilities
+	CVRF_DOC_PUBLISHER_USER,		///< Users of the Vendors' products
+	CVRF_DOC_PUBLISHER_OTHER,		///< Includes translators, forwarders, misc. contributors, etc.
 } cvrf_doc_publisher_type_t;
 
+/**
+ * @memberof cvrf_doc_publisher
+ * Retrieve type of publisher for the CVRF document
+ * @param publisher CVRF DocumentPublisher structure
+ * @return Enum representing Type attribute of the DocumentPublisher element
+ */
 cvrf_doc_publisher_type_t cvrf_doc_publisher_get_type(struct cvrf_doc_publisher *publisher);
-cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name);
-const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type);
 
+/**
+ * Parses text value of the attribute and finds the appropriate DocumentPublisher type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the DocumentPublisher element
+ */
+cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader, char *attr_name);
+
+/**
+ * Find the string value of the DocumentPublisher type mapped to the provided enum value
+ * @param type Enum representation of DocumentPublisher's Type attribute
+ * @return String representation of DocumentPublisher's Type attribute
+ */
+const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t type);
+
+/************************************************************************************************
+ * Type represented as a child node of the DocumentTracking element
+ * Refers to stage of completeness of the document and likelihood of it changing
+ */
 typedef enum {
-	CVRF_DOC_STATUS_UNKNOWN = 0,
-	CVRF_DOC_STATUS_DRAFT,
-	CVRF_DOC_STATUS_INTERIM,
-	CVRF_DOC_STATUS_FINAL,
+	CVRF_DOC_STATUS_UNKNOWN = 0, 	///< Missing or invalid Status type
+	CVRF_DOC_STATUS_DRAFT,			///< Pre-release or for internal use only
+	CVRF_DOC_STATUS_INTERIM,		///< Issuer considers document subject to change
+	CVRF_DOC_STATUS_FINAL,			///< Issuer considers document unlikely to change
 } cvrf_doc_status_type_t;
 
-cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_doc_tracking
+ * Retrieve completeness status of the CVRF document
+ * @param tracking CVRF DocumentTracking structure
+ * @return Enum representing Status child element of the DocumentTracking element
+ */
 cvrf_doc_status_type_t cvrf_doc_tracking_get_status(struct cvrf_doc_tracking *tracking);
-const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
 
+/**
+ * Parses text value of the Status element and finds the appropriate Status type
+ * @param reader XML text reader
+ * @return Enum representation of DocumentTracking's Status element
+ */
+cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the DocumentTracking Status type mapped to the provided enum value
+ * @param type Enum representation of DocumentTracking's Status element
+ * @return String representation ofDocumentTracking's Status element
+ */
+const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t type);
+
+/************************************************************************************************
+ * Type attribute of the Note element
+ * Category of information provided by a Note element
+ */
 typedef enum {
-	CVRF_NOTE_UNKNOWN = 0,
-	CVRF_NOTE_GENERAL,
-	CVRF_NOTE_DETAILS,
-	CVRF_NOTE_DESCRIPTION,
-	CVRF_NOTE_SUMMARY,
-	CVRF_NOTE_FAQ,
-	CVRF_NOTE_LEGAL_DISCLAIMER,
-	CVRF_NOTE_OTHER,
+	CVRF_NOTE_UNKNOWN = 0,		///< Missing or invalid Note type
+	CVRF_NOTE_GENERAL,			///< Note is a high-level, general discussion of something
+	CVRF_NOTE_DETAILS,			///< Note is a low-level detailed discussion of something
+	CVRF_NOTE_DESCRIPTION,		///< Note is a description of something
+	CVRF_NOTE_SUMMARY,			///< Note is a summary of something
+	CVRF_NOTE_FAQ,				///< Note is a list of frequently asked questions
+	CVRF_NOTE_LEGAL_DISCLAIMER, ///< Note gives legal constraints and info about the document
+	CVRF_NOTE_OTHER,			///< Note falls into a misc. category
 } cvrf_note_type_t;
 
-cvrf_note_type_t cvrf_note_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_note
+ * Category of information provided by a Note element
+ * @param note CVRF Note structure
+ * @return Enum representing Type attribute of the Note element
+ */
 cvrf_note_type_t cvrf_note_get_note_type(const struct cvrf_note *note);
-const char *cvrf_note_type_get_text(cvrf_note_type_t note_type);
 
+/**
+ * Parses text value of the attribute and finds the appropriate Note type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the Note element
+ */
+cvrf_note_type_t cvrf_note_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the Note type mapped to the provided enum value
+ * @param type Enum representation of the Note's Type attribute
+ * @return String representation of the Note's Type attribute
+ */
+const char *cvrf_note_type_get_text(cvrf_note_type_t type);
+
+/************************************************************************************************
+ * Type attribute of the Reference element
+ * Indicates whether the reference refers to a document or to an external source
+ */
 typedef enum {
-	CVRF_REFERENCE_UNKNOWN = 0,
-	CVRF_REFERENCE_EXTERNAL,
-	CVRF_REFERENCE_SELF,
+	CVRF_REFERENCE_UNKNOWN = 0,		///< Missing or invalid Reference type
+	CVRF_REFERENCE_EXTERNAL,		///< Reference is external to the document
+	CVRF_REFERENCE_SELF,			///< Related document is a direct reference to itself
 } cvrf_reference_type_t;
 
-cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_reference
+ * Indicates whether reference refers to the document itself or to an external source
+ * @param reference CVRF Reference structure
+ * @return Enum representing Type attribute of the Reference element
+ */
 cvrf_reference_type_t cvrf_reference_get_reference_type(struct cvrf_reference *reference);
-const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type);
 
+/**
+ * Parses text value of the attribute and finds the appropriate Reference type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the Reference element
+ */
+cvrf_reference_type_t cvrf_reference_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the Reference type mapped to the provided enum value
+ * @param type Enum representation of the Reference's Type attribute
+ * @return String representation of the Reference's Type attribute
+ */
+const char *cvrf_reference_type_get_text(cvrf_reference_type_t type);
+
+/************************************************************************************************
+ * Type attribute of the Branch element
+ * Category and context for the information provided in the Name attribute
+ */
 typedef enum {
-	CVRF_BRANCH_UNKNOWN = 0,
-	CVRF_BRANCH_VENDOR,
-	CVRF_BRANCH_PRODUCT_FAMILY,
-	CVRF_BRANCH_PRODUCT_NAME,
-	CVRF_BRANCH_PRODUCT_VERSION,
-	CVRF_BRANCH_PATCH_LEVEL,
-	CVRF_BRANCH_SERVICE_PACK,
-	CVRF_BRANCH_ARCHITECTURE,
-	CVRF_BRANCH_LANGUAGE,
-	CVRF_BRANCH_LEGACY,
-	CVRF_BRANCH_SPECIFICATION,
+	CVRF_BRANCH_UNKNOWN = 0,		///< Missing or invalid Branch type
+	CVRF_BRANCH_VENDOR,				///< Vendor who makes the product
+	CVRF_BRANCH_PRODUCT_FAMILY,		///< Family that child products belong to
+	CVRF_BRANCH_PRODUCT_NAME,		///< Name of the product
+	CVRF_BRANCH_PRODUCT_VERSION,	///< Version of the product
+	CVRF_BRANCH_PATCH_LEVEL,		///< Patch level of the product
+	CVRF_BRANCH_SERVICE_PACK,		///< Service pack of the product
+	CVRF_BRANCH_ARCHITECTURE,		///< Architecture for the product
+	CVRF_BRANCH_LANGUAGE,			///< Language of the product
+	CVRF_BRANCH_LEGACY,				///< Nonspecific legacy entry
+	CVRF_BRANCH_SPECIFICATION,		///< Specification for the product
 } cvrf_branch_type_t;
 
-cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_branch
+ * Category of information given in the Name attribute of the Branch
+ * @param branch CVRF Branch structure
+ * @return Enum representing Type attribute of the Branch element
+ */
 cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch);
-const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type);
 
+/**
+ * Parses text value of the attribute and finds the appropriate Branch type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the Branch element
+ */
+cvrf_branch_type_t cvrf_branch_type_parse(xmlTextReaderPtr reader);
 
+/**
+ * Find the string value of the Branch type mapped to the provided enum value
+ * @param type Enum representation of the Branch's Type attribute
+ * @return String representation of the Branch's Type attribute
+ */
+const char *cvrf_branch_type_get_text(cvrf_branch_type_t type);
+
+/************************************************************************************************
+ * RelationType attribute of the Relationship element
+ * Defines how the products named in the ProductReference and RelatesToProductReference attributes
+ * are related
+ * EX:
+ * <Relationship ProductReference="A" RelationType="?" RelatesToProductReference="B">
+ */
 typedef enum {
-	CVRF_RELATIONSHIP_UNKNOWN = 0,
-	CVRF_RELATIONSHIP_DEFAULT_COMPONENT,
-	CVRF_RELATIONSHIP_OPTIONAL_COMPONENT,
-	CVRF_RELATIONSHIP_EXTERNAL_COMPONENT,
-	CVRF_RELATIONSHIP_INSTALLED_ON,
-	CVRF_RELATIONSHIP_INSTALLED_WITH,
+	CVRF_RELATIONSHIP_UNKNOWN = 0,			///< Missing or invalid RelationType
+	CVRF_RELATIONSHIP_DEFAULT_COMPONENT,	///< A is a default component of B
+	CVRF_RELATIONSHIP_OPTIONAL_COMPONENT,	///< A is an optional component of B
+	CVRF_RELATIONSHIP_EXTERNAL_COMPONENT,	///< A is an external component of B
+	CVRF_RELATIONSHIP_INSTALLED_ON,			///< A is installed on B
+	CVRF_RELATIONSHIP_INSTALLED_WITH,		///< A is installed with B
 } cvrf_relationship_type_t;
 
-cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_relationship
+ * Defines how items in ProductReference and RelatesToProductReference are related
+ * @param relation CVRF Relationship structure
+ * @return Enum representing RelationType attribute of the Relationship element
+ */
 cvrf_relationship_type_t cvrf_relationship_get_relation_type(struct cvrf_relationship *relation);
-const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t relationship_type);
 
+/**
+ * Parses text value of the attribute and finds the appropriate RelationType
+ * @param reader XML text reader
+ * @return Enum representation of the RelationType attribute of the Relationship element
+ */
+cvrf_relationship_type_t cvrf_relationship_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the RelationType mapped to the provided enum value
+ * @param type Enum representation of the Relationship's RelationType attribute
+ * @return String representation of the Relationship's RelationType attribute
+ */
+const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t type);
+
+/************************************************************************************************
+ * Status attribute of the Involvement element
+ * Indicates level of involvement of the Party referenced in the Involvement's Party attribute
+ */
 typedef enum {
-	CVRF_INVOLVEMENT_UNKNOWN = 0,
-	CVRF_INVOLVEMENT_OPEN,
-	CVRF_INVOLVEMENT_DISPUTED,
-	CVRF_INVOLVEMENT_IN_PROGRESS,
-	CVRF_INVOLVEMENT_COMPLETED,
-	CVRF_INVOLVEMENT_CONTACT_ATTEMPTED,
-	CVRF_INVOLVEMENT_NOT_CONTACTED,
+	CVRF_INVOLVEMENT_UNKNOWN = 0,		///< Missing or invalid Status attribute
+	CVRF_INVOLVEMENT_OPEN,				///< Vendor acknowledges awareness of Vulnerability
+	CVRF_INVOLVEMENT_DISPUTED,			///< Vendor disputes entire Vulnerability report
+	CVRF_INVOLVEMENT_IN_PROGRESS,		///< Some remediations from Vendor may be available
+	CVRF_INVOLVEMENT_COMPLETED,			///< Vendor believes investigation of Vulnerability is done
+	CVRF_INVOLVEMENT_CONTACT_ATTEMPTED, ///< Document producer attempted to contact Vendor
+	CVRF_INVOLVEMENT_NOT_CONTACTED,		///< Document producer has not attempted to contact Vendor
 } cvrf_involvement_status_type_t;
 
-cvrf_involvement_status_type_t cvrf_involvement_status_type_parse(xmlTextReaderPtr reader);
-const char *cvrf_involvement_status_type_get_text(cvrf_involvement_status_type_t involvement_type);
+/**
+ * @memberof cvrf_involvement
+ * Level of involvement of the Party
+ * @param involve CVRF Involvement structure
+ * @return Enum representing Status attribute of the Involvement element
+ */
 cvrf_involvement_status_type_t cvrf_involvement_get_status_type(struct cvrf_involvement *involve);
 
+/**
+ * Parses text value of the attribute and finds the appropriate Involvement Status type
+ * @param reader XML text reader
+ * @return Enum representation of the Status attribute of the Involvement element
+ */
+cvrf_involvement_status_type_t cvrf_involvement_status_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the Involvement Status type mapped to the provided enum value
+ * @param type Enum representation of the Involvement's Status attribute
+ * @return String representation of the Involvement's Status attribute
+ */
+const char *cvrf_involvement_status_type_get_text(cvrf_involvement_status_type_t type);
+
+
+/************************************************************************************************
+ * Type attribute of the Status element
+ * Indicates the status of products with regards to a Vulnerability: whether this Vulnerability
+ * is known to affect the product, whether a fix exists for the version in the release, etc.
+ */
 typedef enum {
-	CVRF_PRODUCT_STATUS_UNKNOWN = 0,
-	CVRF_PRODUCT_STATUS_FIRST_AFFECTED,
-	CVRF_PRODUCT_STATUS_KNOWN_AFFECTED,
-	CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED,
-	CVRF_PRODUCT_STATUS_FIRST_FIXED,
-	CVRF_PRODUCT_STATUS_FIXED,
-	CVRF_PRODUCT_STATUS_RECOMMENDED,
-	CVRF_PRODUCT_STATUS_LAST_AFFECTED,
+	CVRF_PRODUCT_STATUS_UNKNOWN = 0,		///< Missing or invalid Status type
+	CVRF_PRODUCT_STATUS_FIRST_AFFECTED,		///< First version in release is affected by Vulnerability
+	CVRF_PRODUCT_STATUS_KNOWN_AFFECTED,		///< Version is known to be affected by the Vulnerability
+	CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED, ///< Version is not known to be affected by the Vulnerability
+	CVRF_PRODUCT_STATUS_FIRST_FIXED,		///< Version contains the first fix for the Vulnerability
+	CVRF_PRODUCT_STATUS_FIXED,				///< Version contains a fix for the Vulnerability
+	CVRF_PRODUCT_STATUS_RECOMMENDED,		///< Version contains vendor-recommended fix for the Vulnerability
+	CVRF_PRODUCT_STATUS_LAST_AFFECTED,		///< Last version in the release affected by the Vulnerability
 } cvrf_product_status_type_t;
 
-cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * @memberof cvrf_product_status
+ * Indicates the status of products with regards to a Vulnerability
+ * @param stat CVRF Status structure
+ * @return Enum representing Type attribute of the Status element
+ */
 cvrf_product_status_type_t cvrf_product_status_get_type(struct cvrf_product_status *stat);
+
+/**
+ * Parses text value of the attribute and finds the appropriate Status type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the Status element
+ */
+cvrf_product_status_type_t cvrf_product_status_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the ProductStatus type mapped to the provided enum value
+ * @param type Enum representation of the Status' Type attribute
+ * @return String representation of the Status' Type attribute
+ */
 const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product_status_type);
 
-
+/************************************************************************************************
+ * Type attribute of the Threat element
+ * Category of information the Threat provides about the Vulnerability; gives context about
+ * impact and damage done by the Vulnerability
+ */
 typedef enum {
-	CVRF_THREAT_UNKNOWN = 0,
-	CVRF_THREAT_IMPACT,
-	CVRF_THREAT_EXPLOIT_STATUS,
-	CVRF_THREAT_TARGET_SET,
+	CVRF_THREAT_UNKNOWN = 0,	///< Missing or invalid Threat type
+	CVRF_THREAT_IMPACT,			///< Estimation of impact on user if the Vulnerability were exploited
+	CVRF_THREAT_EXPLOIT_STATUS, ///< Degree to which exploit for the Vulnerability is known
+	CVRF_THREAT_TARGET_SET,		///< Description of known victim population for the Vulnerability
 } cvrf_threat_type_t;
 
-cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_threat
+ * Category of information provided by the Threat about the Vulnerability
+ * @param threat CVRF Threat structure
+ * @return Enum representing Type attribute of the Threat element
+ */
 cvrf_threat_type_t cvrf_threat_get_threat_type(struct cvrf_threat *threat);
+
+/**
+ * Parses text value of the attribute and finds the appropriate Threat type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the Threat element
+ */
+cvrf_threat_type_t cvrf_threat_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the Threat type mapped to the provided enum value
+ * @param type Enum representation of the Threat's Type attribute
+ * @return String representation of the Threat's Type attribute
+ */
 const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type);
 
-
+/************************************************************************************************
+ * Type attribute of the Remediation element
+ * Category of and status about ways to avoid, mitigate, or resolve a Vulnerability
+ */
 typedef enum {
-	CVRF_REMEDIATION_UNKNOWN = 0,
-	CVRF_REMEDIATION_WORKAROUND,
-	CVRF_REMEDIATION_MITIGATION,
-	CVRF_REMEDIATION_VENDOR_FIX,
-	CVRF_REMEDIATION_NONE_AVAILABLE,
-	CVRF_REMEDIATION_WILL_NOT_FIX,
+	CVRF_REMEDIATION_UNKNOWN = 0,		///< Missing or invalid Remediation type
+	CVRF_REMEDIATION_WORKAROUND,		///< Info about configuration/deployment to avoid exposure
+	CVRF_REMEDIATION_MITIGATION,		///< Info about configuration/deployment to reduce risk
+	CVRF_REMEDIATION_VENDOR_FIX,		///< Info about official fix issued by author of the product
+	CVRF_REMEDIATION_NONE_AVAILABLE,	///< No fix is available for this Vulnerability
+	CVRF_REMEDIATION_WILL_NOT_FIX,		///< No fix is or will ever be available for this Vulnerability
 } cvrf_remediation_type_t;
 
-cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader);
+/**
+ * @memberof cvrf_remediation
+ * Level of resolution currently obtainable for this Vulnerability
+ * @param remed CVRF Remediation structure
+ * @return Enum representing Type attribute of the Remediation element
+ */
 cvrf_remediation_type_t cvrf_remediation_get_type(struct cvrf_remediation *remed);
+
+/**
+ * Parses text value of the attribute and finds the appropriate Remediation type
+ * @param reader XML text reader
+ * @return Enum representation of the Type attribute of the Remediation element
+ */
+cvrf_remediation_type_t cvrf_remediation_type_parse(xmlTextReaderPtr reader);
+
+/**
+ * Find the string value of the Remediation type mapped to the provided enum value
+ * @param type Enum representation of the Remediation's Type attribute
+ * @return String representation of the Remediation's Type attribute
+ */
 const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_type);
 
 
@@ -206,16 +430,38 @@ typedef enum {
 	CVRF_REFERENCE,
 } cvrf_item_type_t;
 
-const char *cvrf_item_type_get_text(cvrf_item_type_t item_type);
-cvrf_item_type_t cvrf_item_type_from_text(const char *item_name);
-bool cvrf_is_valid_item_type(const char *item_name);
-const char *cvrf_item_type_get_container(cvrf_item_type_t item_type);
-bool cvrf_item_type_has_container(cvrf_item_type_t item_type);
-
-
-/***************************************************************************************************
- * CVRF parsing functions
+/**
+ * Find the string representation of the item's name mapped to the provided enum value
+ * @param type CVRF enumerated item type
+ * @return String representation of the item's tag name
  */
+const char *cvrf_item_type_get_text(cvrf_item_type_t type);
+
+/**
+ * @param item String representation of the item's name
+ * @return true if the input maps to a valid item type
+ */
+bool cvrf_is_valid_item_type(const char *item);
+
+/**
+ * Find the string representation of the container name mapped to the provided enum value
+ * @param type CVRF enumerated item type
+ * @return String representation of the item's container name; NULL if it has no container
+ */
+const char *cvrf_item_type_get_container(cvrf_item_type_t type);
+
+/**
+ * Indicates whether the given type  has a unique parent node that contains only elements
+ * of the given type (a container)
+ * @param type CVRF enumerated item type
+ * @return true if the given type has a container
+ */
+bool cvrf_item_type_has_container(cvrf_item_type_t type);
+
+
+/*-----------------------------------------------------------------------------------------*\
+|							CVRF Parsing & Serialization Functions							|
+\*-----------------------------------------------------------------------------------------*/
 
 /**
  * Parse CVRF Remediation
