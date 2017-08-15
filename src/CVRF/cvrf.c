@@ -61,12 +61,10 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source) {
 
 	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
 	if (!reader) {
-		oscap_source_free(source);
 		return NULL;
 	}
 	if (xmlTextReaderNextNode(reader) == -1) {
 		xmlFreeTextReader(reader);
-		oscap_source_free(source);
 		return NULL;
 	}
 	struct cvrf_model *model = cvrf_model_parse(reader);
