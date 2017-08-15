@@ -278,7 +278,7 @@ static const struct cvrf_item_spec *cvrf_find_item_from_type(cvrf_item_type_t it
 
 static const struct cvrf_item_spec *cvrf_find_item_from_text(const char *item) {
 	for (const struct cvrf_item_spec *mapptr = CVRF_ITEM_TYPE_MAP; mapptr->tag_name != NULL; ++mapptr) {
-		if (oscap_strcmp(item, mapptr->tag_name) || oscap_strcmp(item, mapptr->container_name))
+		if (oscap_strcmp(item, mapptr->tag_name) == 0 || oscap_strcmp(item, mapptr->container_name) == 0)
 			return mapptr;
 	}
 	return NULL;
