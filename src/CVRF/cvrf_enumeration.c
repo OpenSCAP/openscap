@@ -55,16 +55,6 @@ static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 	return ret;
 }
 
-static int cvrf_enumeration_node_value(xmlTextReaderPtr reader, const struct oscap_string_map *map) {
-	int ret = oscap_string_to_enum(map, NULL);
-	char *valuestr = oscap_element_string_copy(reader);
-	if (valuestr) {
-		ret = oscap_string_to_enum(map, valuestr);
-		free(valuestr);
-	}
-	return ret;
-}
-
 /*****************************************************************************
  * CVRF enum map definitions
  */
@@ -93,7 +83,11 @@ const struct oscap_string_map CVRF_DOC_STATUS_TYPE_MAP[] = {
 };
 
 cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader) {
-	return cvrf_enumeration_node_value(reader, CVRF_DOC_STATUS_TYPE_MAP);
+	const char *valuestr = oscap_element_string_get(reader);
+	if (valuestr) {
+		return oscap_string_to_enum(CVRF_DOC_STATUS_TYPE_MAP, valuestr);
+	}
+	return CVRF_DOC_PUBLISHER_UNKNOWN;
 }
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type) {
 	return oscap_enum_to_string(CVRF_DOC_STATUS_TYPE_MAP, doc_status_type);
