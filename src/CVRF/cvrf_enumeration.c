@@ -50,7 +50,7 @@ static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 	char *attrstr = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST attname);
 	if (attrstr) {
 		ret = oscap_string_to_enum(map, attrstr);
-		oscap_free(attrstr);
+		free(attrstr);
 	}
 	return ret;
 }
@@ -60,7 +60,7 @@ static int cvrf_enumeration_node_value(xmlTextReaderPtr reader, const struct osc
 	char *valuestr = oscap_element_string_copy(reader);
 	if (valuestr) {
 		ret = oscap_string_to_enum(map, valuestr);
-		oscap_free(valuestr);
+		free(valuestr);
 	}
 	return ret;
 }
