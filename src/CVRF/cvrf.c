@@ -16,6 +16,9 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
+ * Authors:
+ * 		Katarina Jankov <kj226@cornell.edu>
+ *
  */
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -56,7 +59,6 @@ struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
 struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 {
 	__attribute__nonnull__(source);
-
 	if (source == NULL)
 		return NULL;
 
