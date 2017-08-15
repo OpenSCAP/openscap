@@ -1379,11 +1379,11 @@ static void cvrf_set_parsing_error(const char *element) {
 		"%s element\n", element);
 }
 
-static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *list,
-		cvrf_item_type_t item_type) {
-
-	xmlTextReaderNextElement(reader);
+static void cvrf_parse_container(xmlTextReaderPtr reader, struct oscap_list *list) {
+	cvrf_item_type_t item_type = cvrf_item_type_from_text((char *)xmlTextReaderConstLocalName(reader));
 	const char *tag = cvrf_item_type_get_text(item_type);
+	if (item_type != CVRF_VULNERABILITY)
+		xmlTextReaderNextElement(reader);
 	bool error = false;
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tag) == 0) {
 		if (item_type == CVRF_REVISION) {
@@ -1479,7 +1479,7 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	ret->doc_type = cvrf_parse_element(reader, "DocumentType", true);
 	ret->document = cvrf_document_parse(reader);
 	ret->tree = cvrf_product_tree_parse(reader);
-	cvrf_parse_container(reader, ret->vulnerabilities, CVRF_VULNERABILITY);
+	cvrf_parse_container(reader, ret->vulnerabilities);
 
 	return ret;
 }
@@ -1497,7 +1497,7 @@ struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
 		xmlTextReaderNextElement(reader);
 	}
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "DocumentNotes") == 0) {
-		cvrf_parse_container(reader, doc->doc_notes, CVRF_DOCUMENT_NOTE);
+		cvrf_parse_container(reader, doc->doc_notes);
 		xmlTextReaderNextNode(reader);
 		xmlTextReaderNextNode(reader);
 	}
@@ -1511,11 +1511,11 @@ struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
 		xmlTextReaderNextElement(reader);
 	}
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_REFERENCES) == 0) {
-		cvrf_parse_container(reader, doc->doc_references, CVRF_DOCUMENT_REFERENCE);
+		cvrf_parse_container(reader, doc->doc_references);
 		xmlTextReaderNextElement(reader);
 	}
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS) == 0) {
-		cvrf_parse_container(reader, doc->acknowledgments, CVRF_ACKNOWLEDGMENT);
+		cvrf_parse_container(reader, doc->acknowledgments);
 		xmlTextReaderNextElement(reader);
 	}
 	return doc;
@@ -1585,7 +1585,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VERSION) == 0) {
 			tracking->version = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REVISION_HISTORY) == 0) {
-			cvrf_parse_container(reader, tracking->revision_history, CVRF_REVISION);
+			cvrf_parse_container(reader, tracking->revision_history);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "InitialReleaseDate") == 0) {
 			tracking->init_release_date = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "CurrentReleaseDate") == 0) {
@@ -1709,10 +1709,11 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 			if (!oscap_list_add(tree->relationships, cvrf_relationship_parse(reader)))
 				cvrf_set_parsing_error("Relationship");
 		} else if (!xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_GROUPS)) {
-			cvrf_parse_container(reader, tree->product_groups, CVRF_GROUP);
+			cvrf_parse_container(reader, tree->product_groups);
 		}
 		xmlTextReaderNextNode(reader);
 	}
+	xmlTextReaderNextElement(reader);
 	return tree;
 }
 
@@ -1819,25 +1820,25 @@ struct cvrf_vulnerability *cvrf_vulnerability_parse(xmlTextReaderPtr reader) {
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VULNERABILITY_CWE) == 0) {
 			oscap_stringlist_add_string(vuln->cwe_ids, oscap_element_string_copy(reader));
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST "Notes") == 0) {
-			cvrf_parse_container(reader, vuln->notes, CVRF_NOTE);
+			cvrf_parse_container(reader, vuln->notes);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_INVOLVEMENTS) == 0) {
-			cvrf_parse_container(reader, vuln->involvements, CVRF_INVOLVEMENT);
+			cvrf_parse_container(reader, vuln->involvements);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_STATUSES) == 0) {
-			cvrf_parse_container(reader, vuln->product_statuses, CVRF_PRODUCT_STATUS);
+			cvrf_parse_container(reader, vuln->product_statuses);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_STATUS) == 0) {
 			struct cvrf_product_status *stat = cvrf_product_status_parse(reader);
 			if (stat != NULL)
 				cvrf_vulnerability_add_cvrf_product_status(vuln, stat);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_THREATS) == 0) {
-			cvrf_parse_container(reader, vuln->threats, CVRF_THREAT);
+			cvrf_parse_container(reader, vuln->threats);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVSS_SCORE_SETS) == 0) {
-			cvrf_parse_container(reader, vuln->score_sets, CVRF_SCORE_SET);
+			cvrf_parse_container(reader, vuln->score_sets);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REMEDIATIONS) == 0) {
-			cvrf_parse_container(reader, vuln->remediations, CVRF_REMEDIATION);
+			cvrf_parse_container(reader, vuln->remediations);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_REFERENCES) == 0) {
-			cvrf_parse_container(reader, vuln->references, CVRF_REFERENCE);
+			cvrf_parse_container(reader, vuln->references);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ACKNOWLEDGMENTS) == 0) {
-			cvrf_parse_container(reader, vuln->acknowledgments, CVRF_ACKNOWLEDGMENT);
+			cvrf_parse_container(reader, vuln->acknowledgments);
 		}
 		xmlTextReaderNextNode(reader);
 	}
