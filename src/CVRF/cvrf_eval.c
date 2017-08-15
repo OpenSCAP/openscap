@@ -88,7 +88,7 @@ struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source) {
 	if (source == NULL)
 		return NULL;
 
-	struct cvrf_session *ret = oscap_alloc(sizeof(struct cvrf_session));
+	struct cvrf_session *ret = malloc(sizeof(struct cvrf_session));
 	ret->source = source;
 	ret->model = cvrf_model_import(source);
 	ret->os_name = NULL;
@@ -104,13 +104,13 @@ void cvrf_session_free(struct cvrf_session *session) {
 		return;
 
 	cvrf_model_free(session->model);
-	oscap_free(session->os_name);
+	free(session->os_name);
 	oscap_source_free(session->source);
-	oscap_free(session->export_file);
-	oscap_free(session->results_file);
+	free(session->export_file);
+	free(session->results_file);
 	oscap_stringlist_free(session->product_ids);
 	oval_definition_model_free(session->def_model);
-	oscap_free(session);
+	free(session);
 }
 
 
@@ -125,7 +125,7 @@ OSCAP_ACCESSOR_STRING(cvrf_rpm_attributes, evr_format)
 
 
 struct cvrf_rpm_attributes *cvrf_rpm_attributes_new() {
-	struct cvrf_rpm_attributes *ret = oscap_alloc(sizeof(struct cvrf_rpm_attributes));
+	struct cvrf_rpm_attributes *ret = malloc(sizeof(struct cvrf_rpm_attributes));
 	if (ret == NULL)
 		return NULL;
 
@@ -139,10 +139,10 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 	if (attributes == NULL)
 		return;
 
-	oscap_free(attributes->full_package_name);
-	oscap_free(attributes->rpm_name);
-	oscap_free(attributes->evr_format);
-	oscap_free(attributes);
+	free(attributes->full_package_name);
+	free(attributes->rpm_name);
+	free(attributes->evr_format);
+	free(attributes);
 }
 
 /*
@@ -303,7 +303,7 @@ static struct oval_object *get_new_oval_object_for_cvrf(struct oval_definition_m
 
 	char *object_id = get_oval_id_string("obj", objectNo);
 	struct oval_object *object = oval_definition_model_get_new_object(def_model, object_id);
-	oscap_free(object_id);
+	free(object_id);
 	oval_object_set_subtype(object, OVAL_LINUX_RPM_INFO);
 	struct oval_object_content *object_content = oval_object_content_new(def_model, OVAL_OBJECTCONTENT_ENTITY);
 	struct oval_entity *object_entity = oval_entity_new(def_model);
@@ -341,7 +341,7 @@ static struct oval_state *get_new_oval_state_for_cvrf(struct oval_definition_mod
 
 	char *state_id = get_oval_id_string("ste", stateNo);
 	struct oval_state *state = oval_definition_model_get_new_state(def_model, state_id);
-	oscap_free(state_id);
+	free(state_id);
 	oval_state_set_comment(state, attributes->full_package_name);
 	oval_state_set_subtype(state, OVAL_LINUX_RPM_INFO);
 	oval_state_set_operator(state, OVAL_OPERATOR_AND);
@@ -357,7 +357,7 @@ static struct oval_test *get_new_rpminfo_test_for_cvrf(struct oval_definition_mo
 
 	char *test_id = get_oval_id_string("tst", testNo);
 	struct oval_test *rpm_test = oval_test_new(def_model, test_id);
-	oscap_free(test_id);
+	free(test_id);
 	oval_test_set_subtype(rpm_test,OVAL_LINUX_RPM_INFO);
 	oval_test_set_version(rpm_test, 1);
 	oval_test_set_check(rpm_test, OVAL_CHECK_AT_LEAST_ONE);
@@ -374,7 +374,7 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 
 	char *definition_id = get_oval_id_string("def", index);
 	struct oval_definition *definition = oval_definition_model_get_new_definition(def_model, definition_id);
-	oscap_free(definition_id);
+	free(definition_id);
 	oval_definition_set_version(definition, 1);
 	oval_definition_set_title(definition, "CVRF RPM Vulnerability Test");
 
@@ -387,7 +387,6 @@ static struct oval_definition *get_new_oval_definition_for_cvrf(struct oval_defi
 	oval_criteria_node_set_comment(criterion, comment);
 	oval_criteria_node_add_subnode(criteria, criterion);
 
-	oscap_free(comment);
 	return definition;
 }
 
