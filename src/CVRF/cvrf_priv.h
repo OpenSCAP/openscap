@@ -438,6 +438,13 @@ typedef enum {
 const char *cvrf_item_type_get_text(cvrf_item_type_t type);
 
 /**
+ * Find the enum representation of the item's name mapped to the provided string
+ * @param item String representation of the item's name
+ * @return CVRF enumerated item type corresponding to the input
+ */
+cvrf_item_type_t cvrf_item_type_from_text(const char *item);
+
+/**
  * @param item String representation of the item's name
  * @return true if the input maps to a valid item type
  */
