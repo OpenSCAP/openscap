@@ -9,6 +9,27 @@
             elementFormDefault="qualified" version="5.11">
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
     <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#aix" schemaLocation="aix-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#android" schemaLocation="android-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apache" schemaLocation="apache-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#apple_ios" schemaLocation="apple-ios-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#asa" schemaLocation="asa-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#catos" schemaLocation="catos-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#esx" schemaLocation="esx-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#freebsd" schemaLocation="freebsd-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#hpux" schemaLocation="hpux-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent" schemaLocation="independent-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#ios" schemaLocation="ios-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#iosxe" schemaLocation="iosxe-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#junos" schemaLocation="junos-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#linux" schemaLocation="linux-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#macos" schemaLocation="macos-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#netconf" schemaLocation="netconf-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#pixos" schemaLocation="pixos-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#sharepoint" schemaLocation="sharepoint-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#solaris" schemaLocation="solaris-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix" schemaLocation="unix-system-characteristics-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#windows" schemaLocation="windows-system-characteristics-schema.xsd"/>
     <xsd:annotation>
         <xsd:documentation>The following is a description of the elements, types, and attributes that compose the core schema for encoding Open Vulnerability and Assessment Language (OVAL) System Characteristics. The Core System Characteristics Schema defines all operating system independent objects. These objects are extended and enhanced by individual family schemas, which are described in separate documents. Each of the elements, types, and attributes that make up the Core System Characteristics Schema are described in detail and should provide the information necessary to understand what each object represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between these objects is not outlined here.</xsd:documentation>
         <xsd:documentation>The OVAL Schema is maintained by the OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>

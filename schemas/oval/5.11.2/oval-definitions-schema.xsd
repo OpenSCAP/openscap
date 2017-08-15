@@ -8,6 +8,27 @@
             elementFormDefault="qualified" version="5.11">
     <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5" schemaLocation="oval-common-schema.xsd"/>
     <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#aix" schemaLocation="aix-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#android" schemaLocation="android-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#apache" schemaLocation="apache-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#apple_ios" schemaLocation="apple-ios-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#asa" schemaLocation="asa-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#catos" schemaLocation="catos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#esx" schemaLocation="esx-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#freebsd" schemaLocation="freebsd-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#hpux" schemaLocation="hpux-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" schemaLocation="independent-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#ios" schemaLocation="ios-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#iosxe" schemaLocation="iosxe-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#junos" schemaLocation="junos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" schemaLocation="linux-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#macos" schemaLocation="macos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#netconf" schemaLocation="netconf-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#pixos" schemaLocation="pixos-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#sharepoint" schemaLocation="sharepoint-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#solaris" schemaLocation="solaris-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" schemaLocation="unix-definitions-schema.xsd"/>
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" schemaLocation="windows-definitions-schema.xsd"/>
     <xsd:annotation>
         <xsd:documentation>The following is a description of the elements, types, and attributes that compose the core schema for encoding Open Vulnerability and Assessment Language (OVAL) Definitions. Some of the objects defined here are extended and enhanced by individual component schemas, which are described in separate documents. Each of the elements, types, and attributes that make up the Core Definition Schema are described in detail and should provide the information necessary to understand what each represents. This document is intended for developers and assumes some familiarity with XML. A high level description of the interaction between these objects is not outlined here.</xsd:documentation>
         <xsd:documentation>The OVAL Schema is maintained by OVAL Community. For more information, including how to get involved in the project and how to submit change requests, please visit the OVAL website at http://oval.cisecurity.org.</xsd:documentation>
