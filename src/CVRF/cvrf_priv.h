@@ -37,12 +37,12 @@ OSCAP_HIDDEN_START;
  */
 
 typedef enum {
+	CVRF_DOC_PUBLISHER_UNKNOWN = 0,
 	CVRF_DOC_PUBLISHER_VENDOR,
 	CVRF_DOC_PUBLISHER_DISCOVERER,
 	CVRF_DOC_PUBLISHER_COORDINATOR,
 	CVRF_DOC_PUBLISHER_USER,
 	CVRF_DOC_PUBLISHER_OTHER,
-	CVRF_DOC_PUBLISHER_UNKNOWN,
 } cvrf_doc_publisher_type_t;
 
 cvrf_doc_publisher_type_t cvrf_doc_publisher_get_type(struct cvrf_doc_publisher *publisher);
@@ -50,16 +50,17 @@ cvrf_doc_publisher_type_t cvrf_doc_publisher_type_parse(xmlTextReaderPtr reader,
 const char *cvrf_doc_publisher_type_get_text(cvrf_doc_publisher_type_t doc_publisher_type);
 
 typedef enum {
+	CVRF_DOC_STATUS_UNKNOWN = 0,
 	CVRF_DOC_STATUS_DRAFT,
 	CVRF_DOC_STATUS_INTERIM,
 	CVRF_DOC_STATUS_FINAL,
-	CVRF_DOC_STATUS_UNKNOWN,
 } cvrf_doc_status_type_t;
 
 cvrf_doc_status_type_t cvrf_doc_tracking_get_status(struct cvrf_doc_tracking *tracking);
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type);
 
 typedef enum {
+	CVRF_NOTE_UNKNOWN = 0,
 	CVRF_NOTE_GENERAL,
 	CVRF_NOTE_DETAILS,
 	CVRF_NOTE_DESCRIPTION,
@@ -67,22 +68,22 @@ typedef enum {
 	CVRF_NOTE_FAQ,
 	CVRF_NOTE_LEGAL_DISCLAIMER,
 	CVRF_NOTE_OTHER,
-	CVRF_NOTE_UNKNOWN,
 } cvrf_note_type_t;
 
 cvrf_note_type_t cvrf_note_get_note_type(const struct cvrf_note *note);
 const char *cvrf_note_type_get_text(cvrf_note_type_t note_type);
 
 typedef enum {
+	CVRF_REFERENCE_UNKNOWN = 0,
 	CVRF_REFERENCE_EXTERNAL,
 	CVRF_REFERENCE_SELF,
-	CVRF_REFERENCE_UNKNOWN,
 } cvrf_reference_type_t;
 
 cvrf_reference_type_t cvrf_reference_get_reference_type(struct cvrf_reference *reference);
 const char *cvrf_reference_type_get_text(cvrf_reference_type_t reference_type);
 
 typedef enum {
+	CVRF_BRANCH_UNKNOWN = 0,
 	CVRF_BRANCH_VENDOR,
 	CVRF_BRANCH_PRODUCT_FAMILY,
 	CVRF_BRANCH_PRODUCT_NAME,
@@ -93,7 +94,6 @@ typedef enum {
 	CVRF_BRANCH_LANGUAGE,
 	CVRF_BRANCH_LEGACY,
 	CVRF_BRANCH_SPECIFICATION,
-	CVRF_BRANCH_UNKNOWN,
 } cvrf_branch_type_t;
 
 cvrf_branch_type_t cvrf_branch_get_branch_type(struct cvrf_branch *branch);
@@ -101,31 +101,32 @@ const char *cvrf_branch_type_get_text(cvrf_branch_type_t branch_type);
 
 
 typedef enum {
+	CVRF_RELATIONSHIP_UNKNOWN = 0,
 	CVRF_RELATIONSHIP_DEFAULT_COMPONENT,
 	CVRF_RELATIONSHIP_OPTIONAL_COMPONENT,
 	CVRF_RELATIONSHIP_EXTERNAL_COMPONENT,
 	CVRF_RELATIONSHIP_INSTALLED_ON,
 	CVRF_RELATIONSHIP_INSTALLED_WITH,
-	CVRF_RELATIONSHIP_UNKNOWN,
 } cvrf_relationship_type_t;
 
 cvrf_relationship_type_t cvrf_relationship_get_relation_type(struct cvrf_relationship *relation);
 const char *cvrf_relationship_type_get_text(cvrf_relationship_type_t relationship_type);
 
 typedef enum {
+	CVRF_INVOLVEMENT_UNKNOWN = 0,
 	CVRF_INVOLVEMENT_OPEN,
 	CVRF_INVOLVEMENT_DISPUTED,
 	CVRF_INVOLVEMENT_IN_PROGRESS,
 	CVRF_INVOLVEMENT_COMPLETED,
 	CVRF_INVOLVEMENT_CONTACT_ATTEMPTED,
 	CVRF_INVOLVEMENT_NOT_CONTACTED,
-	CVRF_INVOLVEMENT_UNKNOWN,
 } cvrf_involvement_status_type_t;
 
 const char *cvrf_involvement_status_type_get_text(cvrf_involvement_status_type_t involvement_type);
 cvrf_involvement_status_type_t cvrf_involvement_get_status_type(struct cvrf_involvement *involve);
 
 typedef enum {
+	CVRF_PRODUCT_STATUS_UNKNOWN = 0,
 	CVRF_PRODUCT_STATUS_FIRST_AFFECTED,
 	CVRF_PRODUCT_STATUS_KNOWN_AFFECTED,
 	CVRF_PRODUCT_STATUS_KNOWN_NOT_AFFECTED,
@@ -133,7 +134,6 @@ typedef enum {
 	CVRF_PRODUCT_STATUS_FIXED,
 	CVRF_PRODUCT_STATUS_RECOMMENDED,
 	CVRF_PRODUCT_STATUS_LAST_AFFECTED,
-	CVRF_PRODUCT_STATUS_UNKNOWN,
 } cvrf_product_status_type_t;
 
 cvrf_product_status_type_t cvrf_product_status_get_type(struct cvrf_product_status *stat);
@@ -141,10 +141,10 @@ const char *cvrf_product_status_type_get_text(cvrf_product_status_type_t product
 
 
 typedef enum {
+	CVRF_THREAT_UNKNOWN = 0,
 	CVRF_THREAT_IMPACT,
 	CVRF_THREAT_EXPLOIT_STATUS,
 	CVRF_THREAT_TARGET_SET,
-	CVRF_THREAT_UNKNOWN,
 } cvrf_threat_type_t;
 
 cvrf_threat_type_t cvrf_threat_get_threat_type(struct cvrf_threat *threat);
@@ -152,12 +152,12 @@ const char *cvrf_threat_type_get_text(cvrf_threat_type_t threat_type);
 
 
 typedef enum {
+	CVRF_REMEDIATION_UNKNOWN = 0,
 	CVRF_REMEDIATION_WORKAROUND,
 	CVRF_REMEDIATION_MITIGATION,
 	CVRF_REMEDIATION_VENDOR_FIX,
 	CVRF_REMEDIATION_NONE_AVAILABLE,
 	CVRF_REMEDIATION_WILL_NOT_FIX,
-	CVRF_REMEDIATION_UNKNOWN,
 } cvrf_remediation_type_t;
 
 cvrf_remediation_type_t cvrf_remediation_get_type(struct cvrf_remediation *remed);
@@ -172,6 +172,7 @@ const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_t
 struct cvrf_item_spec;
 
 typedef enum {
+	CVRF_ITEM_UNKNOWN = 0,
 	CVRF_DOCUMENT_PUBLISHER,
 	CVRF_DOCUMENT_TRACKING,
 	CVRF_REVISION,
@@ -191,7 +192,6 @@ typedef enum {
 	CVRF_THREAT,
 	CVRF_REMEDIATION,
 	CVRF_REFERENCE,
-	CVRF_ITEM_UNKNOWN
 } cvrf_item_type_t;
 
 const char *cvrf_item_type_get_text(cvrf_item_type_t item_type);
