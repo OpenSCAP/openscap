@@ -189,7 +189,6 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 		return -1;
 	}
 	cvrf_session_construct_definition_model(session);
-	cvrf_model_export(session->model, "cvrf_model_export.xml");
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
@@ -405,8 +404,6 @@ int cvrf_session_construct_definition_model(struct cvrf_session *session) {
 		index++;
 	}
 	oscap_string_iterator_free(product_ids);
-
-	oval_definition_model_export(def_model, "cvrf-definition-model-export.xml");
 
 	/*
 	struct oval_syschar_model *syschar_model = oval_syschar_model_new(def_model);
