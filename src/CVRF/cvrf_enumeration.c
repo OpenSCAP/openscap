@@ -237,7 +237,7 @@ const char *cvrf_remediation_type_get_text(cvrf_remediation_type_t remediation_t
  */
 
 struct cvrf_item_spec {
-	cvrf_item_type_t type;
+	const cvrf_item_type_t type;
 	const char *tag_name;
 	const char *container_name;
 };
