@@ -38,9 +38,11 @@ int main(int argc, char **argv)
 		struct cvrf_model *model = cvrf_model_import(oscap_source_new_from_file(argv[2]));
 		if(!model)
 			return 1;
-		cvrf_model_export(model, argv[3]);
+		struct oscap_source *export_source = cvrf_model_get_export_source(model);
+		int ret = oscap_source_save_as(export_source, argv[3]);
 		cvrf_model_free(model);
-		return 0;
+		oscap_source_free(export_source);
+		return ret;
 	} else if (argc == 4 && !strcmp(argv[1], "--eval")) {
 		const char *os_version = "Managment Agent for RHEL 7 Hosts";
 		return cvrf_export_results(oscap_source_new_from_file(argv[2]), argv[3], os_version);

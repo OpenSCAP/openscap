@@ -672,10 +672,6 @@ void cvrf_element_add_child(const char *elm_name, const char *elm_value, xmlNode
  */
 xmlNode *cvrf_element_to_dom(const char *elm_name, const char *elm_value);
 
-struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index);
-
-struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model);
-
 /**
  * Parent: Remediations container in a CVRF Vulnerability element
  * @memberof cvrf_remediation

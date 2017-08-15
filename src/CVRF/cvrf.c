@@ -43,9 +43,7 @@
 
 
 struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
-
 	__attribute__nonnull__(index_source);
-
 	if (index_source == NULL)
 		return NULL;
 
@@ -56,8 +54,7 @@ struct cvrf_index *cvrf_index_import(struct oscap_source *index_source) {
  * Public function to import CVRF model from OSCAP import source.
  * Function returns CVRF model, need to free source after calling this function
  */
-struct cvrf_model *cvrf_model_import(struct oscap_source *source)
-{
+struct cvrf_model *cvrf_model_import(struct oscap_source *source) {
 	__attribute__nonnull__(source);
 	if (source == NULL)
 		return NULL;
@@ -77,27 +74,31 @@ struct cvrf_model *cvrf_model_import(struct oscap_source *source)
 	return model;
 }
 
+struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index) {
+	if (index == NULL)
+		return NULL;
 
-/**
- * Public function to export CVRF model to OSCAP export target.
- */
-int cvrf_model_export(struct cvrf_model *cvrf, const char *export_file) {
-
-	struct oscap_source *source = cvrf_model_get_export_source(cvrf);
-	int ret = oscap_source_save_as(source, export_file);
-	oscap_source_free(source);
-	return ret;
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	cvrf_index_to_dom(index, doc, NULL, NULL);
+	return oscap_source_new_from_xmlDoc(doc, NULL);
 }
 
+struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model) {
+	if (model == NULL)
+		return NULL;
 
-int cvrf_index_export(struct cvrf_index *index, const char *export_file) {
-
-	struct oscap_source *source = cvrf_index_get_export_source(index);
-	int ret = oscap_source_save_as(source, export_file);
-	oscap_source_free(source);
-	return ret;
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	cvrf_model_to_dom(model, doc, NULL, NULL);
+	return oscap_source_new_from_xmlDoc(doc, NULL);
 }
-
 
 const char * cvrf_model_supported(void)
 {
