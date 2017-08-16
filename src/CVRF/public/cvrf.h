@@ -33,9 +33,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "oscap.h"
-#include "oscap_text.h"
 #include "cvss_score.h"
-#include "cpe_name.h"
 #include "oval_definitions.h"
 
 
