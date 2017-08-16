@@ -337,6 +337,7 @@ Authors:
     <xsl:variable name="ruleresult" select="key('testresult_ruleresults', concat($testresult/@id, '|', $item/@id))"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
+    <xsl:if test="$result != 'notselected'">
     <tr data-tt-id="{$item/@id}" class="rule-overview-leaf rule-overview-leaf-{$result} rule-overview-leaf-id-{$item/@id}" id="rule-overview-leaf-{generate-id($ruleresult)}">
         <xsl:attribute name="data-tt-parent-id">
             <xsl:value-of select="$item/parent::cdf:*/@id"/>
@@ -373,6 +374,7 @@ Authors:
             </div>
         </td>
     </tr>
+    </xsl:if>
 </xsl:template>
 
 <xsl:template name="rule-overview-inner-node">
@@ -385,6 +387,7 @@ Authors:
     <xsl:param name="error_rule_results"/>
     <xsl:param name="unknown_rule_results"/>
     <xsl:param name="notchecked_rule_results"/>
+    <xsl:param name="notselected_rule_results"/>
 
     <xsl:variable name="descendant_rules" select="$item/descendant::cdf:Rule"/>
 
@@ -392,8 +395,10 @@ Authors:
     <xsl:variable name="contained_rules_error" select="count($descendant_rules[@id = $error_rule_results/@idref])"/>
     <xsl:variable name="contained_rules_unknown" select="count($descendant_rules[@id = $unknown_rule_results/@idref])"/>
     <xsl:variable name="contained_rules_notchecked" select="count($descendant_rules[@id = $notchecked_rule_results/@idref])"/>
+    <xsl:variable name="contained_rules_notselected" select="count($descendant_rules[@id = $notselected_rule_results/@idref])"/>
     <xsl:variable name="contained_rules_need_attention" select="$contained_rules_fail + $contained_rules_error + $contained_rules_unknown + $contained_rules_notchecked"/>
 
+    <xsl:if test="$contained_rules_notselected &lt; count($descendant_rules)">
     <tr data-tt-id="{$item/@id}" class="rule-overview-inner-node rule-overview-inner-node-id-{$item/@id}">
         <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
             <xsl:attribute name="data-tt-parent-id">
@@ -439,6 +444,7 @@ Authors:
             <xsl:with-param name="error_rule_results" select="$error_rule_results"/>
             <xsl:with-param name="unknown_rule_results" select="$unknown_rule_results"/>
             <xsl:with-param name="notchecked_rule_results" select="$notchecked_rule_results"/>
+            <xsl:with-param name="notselected_rule_results" select="$notselected_rule_results"/>
         </xsl:call-template>
     </xsl:for-each>
 
@@ -450,6 +456,7 @@ Authors:
             <xsl:with-param name="indent" select="$indent + 1"/>
         </xsl:call-template>
     </xsl:for-each>
+    </xsl:if>
 </xsl:template>
 
 <xsl:template name="convert-reference-url-to-name">
@@ -545,9 +552,6 @@ Authors:
                             <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="notchecked"/>notchecked</label>
                         </div>
                         <div class="checkbox">
-                            <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" value="notselected"/>notselected</label>
-                        </div>
-                        <div class="checkbox">
                             <label><input class="toggle-rule-display" type="checkbox" onclick="toggleRuleDisplay(this)" checked="checked" value="notapplicable"/>notapplicable</label>
                         </div>
                     </div>
@@ -588,6 +592,7 @@ Authors:
                 <xsl:variable name="error_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'error']"/>
                 <xsl:variable name="unknown_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'unknown']"/>
                 <xsl:variable name="notchecked_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'notchecked']"/>
+                <xsl:variable name="notselected_rule_results" select="$testresult/cdf:rule-result[cdf:result/text() = 'notselected']"/>
 
                 <xsl:call-template name="rule-overview-inner-node">
                     <xsl:with-param name="testresult" select="$testresult"/>
@@ -599,6 +604,7 @@ Authors:
                     <xsl:with-param name="error_rule_results" select="$error_rule_results"/>
                     <xsl:with-param name="unknown_rule_results" select="$unknown_rule_results"/>
                     <xsl:with-param name="notchecked_rule_results" select="$notchecked_rule_results"/>
+                    <xsl:with-param name="notselected_rule_results" select="$notselected_rule_results"/>
                 </xsl:call-template>
             </tbody>
         </table>
@@ -753,6 +759,7 @@ Authors:
     <xsl:variable name="ruleresult" select="key('testresult_ruleresults', concat($testresult/@id, '|', $item/@id))"/>
     <xsl:variable name="result" select="$ruleresult/cdf:result/text()"/>
 
+    <xsl:if test="$result != 'notselected'">
     <div class="panel panel-default rule-detail rule-detail-{$result} rule-detail-id-{$item/@id}" id="rule-detail-{generate-id($ruleresult)}">
         <div class="keywords sr-only">
             <xsl:call-template name="item-title">
@@ -915,6 +922,7 @@ Authors:
             </table>
         </div>
     </div>
+    </xsl:if>
 </xsl:template>
 
 <xsl:template name="result-details-inner-node">
