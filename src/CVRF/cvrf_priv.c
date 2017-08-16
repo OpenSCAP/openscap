@@ -801,6 +801,18 @@ struct cvrf_acknowledgment {
 };
 OSCAP_ACCESSOR_STRING(cvrf_acknowledgment, description)
 
+struct oscap_string_iterator *cvrf_acknowledgment_get_names(const struct cvrf_acknowledgment *ack) {
+	return oscap_stringlist_get_strings(ack->names);
+}
+
+struct oscap_string_iterator *cvrf_acknowledgment_get_organizations(const struct cvrf_acknowledgment *ack) {
+	return oscap_stringlist_get_strings(ack->organizations);
+}
+
+struct oscap_string_iterator *cvrf_acknowledgment_get_urls(const struct cvrf_acknowledgment *ack) {
+	return oscap_stringlist_get_strings(ack->urls);
+}
+
 struct cvrf_acknowledgment *cvrf_acknowledgment_new() {
 	struct cvrf_acknowledgment *ret = malloc(sizeof(struct cvrf_acknowledgment));
 	if (ret == NULL)
@@ -944,6 +956,8 @@ struct cvrf_doc_tracking {
 };
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, tracking_id)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, version)
+OSCAP_IGETINS_GEN(cvrf_revision, cvrf_doc_tracking, revision_history, revision)
+OSCAP_ITERATOR_REMOVE_F(cvrf_revision)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, init_release_date)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, cur_release_date)
 OSCAP_ACCESSOR_STRING(cvrf_doc_tracking, generator_engine)
@@ -1115,6 +1129,10 @@ OSCAP_ACCESSOR_STRING(cvrf_document, aggregate_severity)
 OSCAP_ACCESSOR_STRING(cvrf_document, namespace)
 OSCAP_ACCESSOR_SIMPLE(struct cvrf_doc_tracking*, cvrf_document, tracking)
 OSCAP_ACCESSOR_SIMPLE(struct cvrf_doc_publisher*, cvrf_document, publisher)
+
+struct oscap_iterator *cvrf_document_get_notes(struct cvrf_document *doc) {
+	return oscap_iterator_new(doc->doc_notes);
+}
 
 struct oscap_iterator *cvrf_document_get_references(struct cvrf_document *doc) {
 	return oscap_iterator_new(doc->doc_references);
