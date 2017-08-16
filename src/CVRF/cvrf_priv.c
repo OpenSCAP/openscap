@@ -2265,31 +2265,23 @@ xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *par
 struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 	__attribute__nonnull__(index_source);
 
+	char *buffer = "";
+	char **buffer_ptr = &buffer;
+	size_t *size = 0;
+	if (oscap_source_get_raw_memory(index_source, buffer_ptr, size) == 1) {
+		return NULL;
+	}
 	struct cvrf_index *index = cvrf_index_new();
 	cvrf_index_set_index_file(index, oscap_source_readable_origin(index_source));
-	struct oscap_stringlist *file_list = oscap_stringlist_new();
-	struct cvrf_model *model;
 
-	FILE* file = fopen(oscap_source_get_filepath(index_source), "r");
-	char line[256];
-
-	while (fgets(line, sizeof(line), file)) {
-		printf("%s", line);
-		oscap_trim(line);
-		oscap_stringlist_add_string(file_list, line);
-	}
-	fclose(file);
-
-	struct oscap_string_iterator *iterator = oscap_stringlist_get_strings(file_list);
-	while (oscap_string_iterator_has_more(iterator)) {
-		const char *filename = oscap_string_iterator_next(iterator);
-		model = cvrf_model_import(oscap_source_new_from_file(filename));
-		if (model)
-			oscap_list_add(index->models, model);
-	}
-	oscap_string_iterator_free(iterator);
+	/*
+	 *
+	const char *filename;
+	struct cvrf_model *model = cvrf_model_import(oscap_source_new_from_file(filename));
+	if (model)
+		oscap_list_add(index->models, model);
+	 */
 	oscap_source_free(index_source);
-
 	return index;
 }
 
