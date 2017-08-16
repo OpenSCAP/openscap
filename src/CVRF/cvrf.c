@@ -35,6 +35,7 @@
 
 #include "common/_error.h"
 #include "common/util.h"
+#include "common/xmltext_priv.h"
 #include "common/list.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
