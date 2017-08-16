@@ -2191,9 +2191,27 @@ struct cvrf_document *cvrf_document_parse(xmlTextReaderPtr reader) {
 	return doc;
 }
 
+xmlNode *cvrf_document_to_dom(struct cvrf_document *document) {
+	xmlNode *pub_node = cvrf_doc_publisher_to_dom(document->publisher);
+	xmlAddNextSibling(pub_node, cvrf_doc_tracking_to_dom(document->tracking));
+	xmlAddSibling(pub_node, cvrf_list_to_dom(document->doc_notes, NULL, CVRF_DOCUMENT_NOTE));
+
+	xmlNode *distribution = cvrf_element_to_dom("DocumentDistribution", document->doc_distribution);
+	cvrf_element_add_attribute("xml:lang", "en", distribution);
+	xmlAddSibling(pub_node, distribution);
+
+	xmlNode *severity = cvrf_element_to_dom("AggregateSeverity", document->aggregate_severity);
+	cvrf_element_add_attribute("Namespace", document->namespace, severity);
+	xmlAddSibling(distribution, severity);
+
+	xmlAddSibling(pub_node, cvrf_list_to_dom(document->doc_references, NULL, CVRF_DOCUMENT_REFERENCE));
+	xmlAddSibling(pub_node, cvrf_list_to_dom(document->acknowledgments, NULL, CVRF_ACKNOWLEDGMENT));
+	return pub_node;
+}
+
 struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
-	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_DOC)  != 0 ||
+	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_CVRF_DOC) != 0 ||
 			xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
 		return NULL;
 
@@ -2204,36 +2222,22 @@ struct cvrf_model *cvrf_model_parse(xmlTextReaderPtr reader) {
 	ret->document = cvrf_document_parse(reader);
 	ret->tree = cvrf_product_tree_parse(reader);
 	cvrf_parse_container(reader, ret->vulnerabilities);
-
 	return ret;
 }
 
 xmlNode *cvrf_model_to_dom(struct cvrf_model *model, xmlDocPtr doc, xmlNode *parent, void *user_args) {
-	xmlNode *root_node = NULL;
+	xmlNode *root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
 	if (parent == NULL) {
-		root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
 		xmlDocSetRootElement(doc, root_node);
 	} else {
-		root_node = xmlNewTextChild(parent, NULL, BAD_CAST "cvrfdoc", NULL);
+		xmlAddChild(parent, root_node);
 	}
 	xmlNewNs(root_node, CVRF_NS, NULL);
 	xmlNewNs(root_node, CVRF_NS, BAD_CAST "cvrf");
-	struct cvrf_document *cvrf_doc = model->document;
-
 	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST model->doc_title);
 	cvrf_element_add_attribute("xml:lang", "en", title_node);
 	cvrf_element_add_child("DocumentType", model->doc_type, root_node);
-
-	xmlAddChild(root_node, cvrf_doc_publisher_to_dom(cvrf_doc->publisher));
-	xmlAddChild(root_node, cvrf_doc_tracking_to_dom(cvrf_doc->tracking));
-
-	cvrf_element_add_container(cvrf_doc->doc_notes, CVRF_DOCUMENT_NOTE, root_node);
-	xmlNode *distribution = xmlNewTextChild(root_node, NULL, TAG_DISTRIBUTION, BAD_CAST cvrf_doc->doc_distribution);
-	cvrf_element_add_attribute("xml:lang", "en", distribution);
-	xmlNode *severity = xmlNewTextChild(root_node, NULL, TAG_AGGREGATE_SEVERITY, BAD_CAST cvrf_doc->aggregate_severity);
-	cvrf_element_add_attribute("Namespace", cvrf_doc->namespace, severity);
-	xmlAddChild(root_node, cvrf_list_to_dom(cvrf_doc->doc_references, NULL, CVRF_DOCUMENT_REFERENCE));
-	xmlAddChild(root_node, cvrf_list_to_dom(cvrf_doc->acknowledgments, NULL, CVRF_ACKNOWLEDGMENT));
+	xmlAddChildList(root_node, cvrf_document_to_dom(model->document));
 
 	xmlAddChild(root_node, cvrf_product_tree_to_dom(model->tree));
 	cvrf_list_to_dom(model->vulnerabilities, root_node, CVRF_VULNERABILITY);
