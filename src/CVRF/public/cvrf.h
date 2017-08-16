@@ -2394,10 +2394,18 @@ struct cvrf_session;
 
 /**
  * @memberof cvrf_session
- * @param source OSCAP import source for a CVRF document or index
+ * @param source OSCAP import source for a CVRF document
  * @return CVRF session structure generated from this import source
  */
-struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source);
+struct cvrf_session *cvrf_session_new_from_source_model(struct oscap_source *source);
+
+/**
+ * @memberof cvrf_session
+ * @param source OSCAP import source for an index of CVRF files
+ * @return CVRF session structure generated from this import source
+ */
+struct cvrf_session *cvrf_session_new_from_source_index(struct oscap_source *source);
+
 /**
  * Deallocates memory for a CVRF Session structure
  * @memberof cvrf_session
@@ -2406,12 +2414,14 @@ struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source);
 void cvrf_session_free(struct cvrf_session *session);
 
 struct cvrf_model *cvrf_session_get_model(struct cvrf_session *session);
+struct cvrf_index *cvrf_session_get_index(const struct cvrf_session *session);
 struct oscap_string_iterator *cvrf_session_get_product_ids(struct cvrf_session *session);
 const char *cvrf_session_get_os_name(const struct cvrf_session *session);
 const char *cvrf_session_get_export_file(const struct cvrf_session *session);
 const char *cvrf_session_get_results_file(const struct cvrf_session *session);
 
 void cvrf_session_set_model(struct cvrf_session *session, struct cvrf_model *model);
+bool cvrf_session_set_index(struct cvrf_session *session, struct cvrf_index *index);
 bool cvrf_session_set_os_name(struct cvrf_session *session, const char *os_name);
 bool cvrf_session_set_export_file(struct cvrf_session *session, const char *export_file);
 bool cvrf_session_set_results_file(struct cvrf_session *session, const char *results_file);
@@ -2489,6 +2499,8 @@ struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model);
 
 
 int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
+
+struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_source, const char *os_name);
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product);
 
