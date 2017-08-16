@@ -1674,6 +1674,7 @@ int xccdf_session_remediate(struct xccdf_session *session)
 	if ((res = xccdf_policy_remediate(xccdf_session_get_xccdf_policy(session), session->xccdf.result)) != 0)
 		return res;
 
+	xccdf_result_set_start_time_current(session->xccdf.result);
 	return xccdf_policy_recalculate_score(xccdf_session_get_xccdf_policy(session), session->xccdf.result);
 }
 
@@ -1703,7 +1704,6 @@ int xccdf_session_build_policy_from_testresult(struct xccdf_session *session, co
 	struct xccdf_policy *xccdf_policy = xccdf_session_get_xccdf_policy(session);
 	if (xccdf_policy == NULL)
 		return 1;
-	xccdf_result_set_start_time_current(session->xccdf.result);
 	xccdf_policy_add_result(xccdf_policy, session->xccdf.result);
 	return 0;
 }
