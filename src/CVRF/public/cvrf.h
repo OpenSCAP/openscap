@@ -196,6 +196,14 @@ struct cvrf_remediation *cvrf_remediation_clone(const struct cvrf_remediation *r
 /**
  * @memberof cvrf_remediation
  * @param remed CVRF Remediation structure
+ * Date that the Remediation was created
+ * @return contents of Date attribute of the Remediation attribute
+ */
+const char *cvrf_remediation_get_date(const struct cvrf_remediation *remed);
+
+/**
+ * @memberof cvrf_remediation
+ * @param remed CVRF Remediation structure
  * Description contains a human-readable explanation of Remediation process
  * @return contents of Description element within a Remediation element
  */
@@ -1427,6 +1435,30 @@ const char *cvrf_acknowledgment_get_description(const struct cvrf_acknowledgment
  */
 bool cvrf_acknowledgment_set_description(struct cvrf_acknowledgment *ack, const char *description);
 
+/**
+ * @memberof cvrf_acknowledgment
+ * @param ack CVRF Acknowledgment structure
+ * List of names of all parties who are being acknowledged
+ * @return String iterator representing list of all names
+ */
+struct oscap_string_iterator *cvrf_acknowledgment_get_names(const struct cvrf_acknowledgment *ack);
+
+/**
+ * @memberof cvrf_acknowledgment
+ * @param ack CVRF Acknowledgment structure
+ * Organizations of parties and/or organization(s) itself being acknowledged
+ * @return String iterator representing list of all organizations
+ */
+struct oscap_string_iterator *cvrf_acknowledgment_get_organizations(const struct cvrf_acknowledgment *ack);
+
+/**
+ * @memberof cvrf_acknowledgment
+ * @param ack CVRF Acknowledgment structure
+ * URLs to people or parties being acknowledged
+ * @return String iterator representing list of all URLs
+ */
+struct oscap_string_iterator *cvrf_acknowledgment_get_urls(const struct cvrf_acknowledgment *ack);
+
 /************************************************************************************************
  * @struct cvrf_note
  *
@@ -1739,6 +1771,65 @@ bool cvrf_doc_tracking_set_generator_engine(struct cvrf_doc_tracking *tracking, 
  */
 bool cvrf_doc_tracking_set_generator_date(struct cvrf_doc_tracking *tracking, const char *generator_date);
 
+
+/*******************************************
+ * @struct cvrf_revision_iterator
+ * Iterator representing all Revision elements in the RevisionHistory container
+ * Contained as a list within the CVRF DocumentTracking structure
+ */
+struct cvrf_revision_iterator;
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ * @param revision CVRF Revision structure to be added to the DocumentTracking
+ * @return true on success
+ */
+bool cvrf_doc_tracking_add_revision(struct cvrf_doc_tracking *tracking, struct cvrf_revision *revision);
+
+/**
+ * @memberof cvrf_doc_tracking
+ * @param tracking CVRF DocumentTracking structure
+ * @return Iterator representing list of all Revisions in the DocumentTracking
+ */
+struct cvrf_revision_iterator *cvrf_doc_tracking_get_revision_history(const struct cvrf_doc_tracking *tracking);
+
+/**
+ * @memberof cvrf_revision_iterator
+ * @param it CVRF Revision iterator structure
+ * @return Next CVRF Revision in list of all Revisions in the DocumentTracking
+ */
+struct cvrf_revision *cvrf_revision_iterator_next(struct cvrf_revision_iterator *it);
+
+/**
+ * @memberof cvrf_revision_iterator
+ * @param it CVRF Revision iterator structure
+ * @return true if the iterator has another Revision element left
+ */
+bool cvrf_revision_iterator_has_more(struct cvrf_revision_iterator *it);
+
+/**
+ * Deallocate memory for the CVRF Revision Iterator structure
+ * @memberof cvrf_revision_iterator
+ * @param it CVRF Revision iterator structure
+ */
+void cvrf_revision_iterator_free(struct cvrf_revision_iterator *it);
+
+/**
+ * Restart iterator at the first Revision in the DocumentTracking
+ * @memberof cvrf_revision_iterator
+ * @param it CVRF Revision iterator structure
+ */
+void cvrf_revision_iterator_reset(struct cvrf_revision_iterator *it);
+
+/**
+ * Detaches and frees the Revision iterator structure
+ * @memberof cvrf_revision_iterator
+ * @param it CVRF Revision iterator structure
+ */
+void cvrf_revision_iterator_remove(struct cvrf_revision_iterator *it);
+
+
 /************************************************************************************************
  * @struct cvrf_doc_publisher
  * Metadata about the publisher of the CVRF document
@@ -1948,6 +2039,14 @@ struct cvrf_doc_tracking *cvrf_document_get_tracking(const struct cvrf_document 
  * @return DocumentPublisher structure of the cvrfdoc root element
  */
 struct cvrf_doc_publisher *cvrf_document_get_publisher(const struct cvrf_document *doc);
+
+/**
+ * @memberof cvrf_document
+ * @param doc CVRF Document structure
+ * Represents the DocumentNotes container that holds all Note elements
+ * @return Iterator for the list of Notes within the DocumentNotes container
+ */
+struct oscap_iterator *cvrf_document_get_notes(struct cvrf_document *doc);
 
 /**
  * @memberof cvrf_document
