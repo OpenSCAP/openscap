@@ -65,6 +65,7 @@
  */
 
 struct cvrf_session {
+	struct cvrf_index *index;
 	struct cvrf_model *model;
 	char *os_name;
 	struct oscap_source *source;
@@ -73,6 +74,7 @@ struct cvrf_session {
 	struct oscap_stringlist *product_ids;
 	struct oval_definition_model *def_model;
 };
+OSCAP_ACCESSOR_SIMPLE(struct cvrf_index*, cvrf_session, index)
 OSCAP_ACCESSOR_STRING(cvrf_session, os_name);
 OSCAP_ACCESSOR_STRING(cvrf_session, export_file);
 OSCAP_ACCESSOR_STRING(cvrf_session, results_file);
@@ -87,13 +89,30 @@ void cvrf_session_set_model(struct cvrf_session *session, struct cvrf_model *mod
 	session->model = model;
 }
 
-struct cvrf_session *cvrf_session_new_from_source(struct oscap_source *source) {
+struct cvrf_session *cvrf_session_new_from_source_model(struct oscap_source *source) {
 	if (source == NULL)
 		return NULL;
 
 	struct cvrf_session *ret = malloc(sizeof(struct cvrf_session));
 	ret->source = source;
+	ret->index = NULL;
 	ret->model = cvrf_model_import(source);
+	ret->os_name = NULL;
+	ret->export_file = NULL;
+	ret->results_file = NULL;
+	ret->product_ids = oscap_stringlist_new();
+	ret->def_model = oval_definition_model_new();
+	return ret;
+}
+
+struct cvrf_session *cvrf_session_new_from_source_index(struct oscap_source *source) {
+	if (source == NULL)
+		return NULL;
+
+	struct cvrf_session *ret = malloc(sizeof(struct cvrf_session));
+	ret->source = source;
+	ret->index = cvrf_index_import(source);
+	ret->model = NULL;
 	ret->os_name = NULL;
 	ret->export_file = NULL;
 	ret->results_file = NULL;
@@ -106,6 +125,7 @@ void cvrf_session_free(struct cvrf_session *session) {
 	if (session == NULL)
 		return;
 
+	cvrf_index_free(session->index);
 	cvrf_model_free(session->model);
 	free(session->os_name);
 	oscap_source_free(session->source);
@@ -176,30 +196,14 @@ static int find_all_cvrf_product_ids_from_cpe(struct cvrf_session *session) {
 	return 0;
 }
 
-int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name) {
-	__attribute__nonnull__(import_source);
-	__attribute__nonnull__(export_file);
-
-	struct cvrf_session *session = cvrf_session_new_from_source(import_source);
-	cvrf_session_set_os_name(session, os_name);
-	cvrf_session_set_results_file(session, export_file);
-
-	if (find_all_cvrf_product_ids_from_cpe(session) != 0) {
-		cvrf_session_free(session);
-		return -1;
-	}
-	cvrf_session_construct_definition_model(session);
-
-	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
-	if (doc == NULL) {
-		oscap_setxmlerr(xmlGetLastError());
-	}
+static xmlNode *cvrf_model_results_to_dom(struct cvrf_session *session) {
 	xmlNode *root_node = xmlNewNode(NULL, BAD_CAST "cvrfdoc");
-	xmlDocSetRootElement(doc, root_node);
 	xmlNewNs(root_node, CVRF_NS, NULL);
-	cvrf_element_add_child("DocumentTitle", cvrf_model_get_doc_title(session->model), root_node);
+	xmlNewNs(root_node, CVRF_NS, BAD_CAST "cvrf");
+	xmlNode *title_node = xmlNewTextChild(root_node, NULL, TAG_DOC_TITLE, BAD_CAST cvrf_model_get_doc_title(session->model));
+	cvrf_element_add_attribute("xml:lang", "en", title_node);
 	cvrf_element_add_child("DocumentType", cvrf_model_get_doc_type(session->model), root_node);
-	//cvrf_export_element(os_name, "OS Name", writer);
+	xmlAddChildList(root_node, cvrf_document_to_dom(cvrf_model_get_document(session->model)));
 
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(session->model);
 	while (cvrf_vulnerability_iterator_has_more(it)) {
@@ -224,6 +228,29 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 		oscap_string_iterator_free(product_ids);
 	}
 	cvrf_vulnerability_iterator_free(it);
+	return root_node;
+}
+
+int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name) {
+	__attribute__nonnull__(import_source);
+	__attribute__nonnull__(export_file);
+
+	struct cvrf_session *session = cvrf_session_new_from_source_model(import_source);
+	cvrf_session_set_os_name(session, os_name);
+	cvrf_session_set_results_file(session, export_file);
+
+	if (find_all_cvrf_product_ids_from_cpe(session) != 0) {
+		cvrf_session_free(session);
+		return -1;
+	}
+	cvrf_session_construct_definition_model(session);
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+	}
+	xmlNode *model_node = cvrf_model_results_to_dom(session);
+	xmlDocSetRootElement(doc, model_node);
 
 	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
 	int ret = oscap_source_save_as(source, NULL);
@@ -232,6 +259,33 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	return ret;
 }
 
+struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_source, const char *os_name) {
+	struct cvrf_session *session = cvrf_session_new_from_source_index(import_source);
+	cvrf_session_set_os_name(session, os_name);
+
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+	}
+	xmlNode *index_node = xmlNewNode(NULL, BAD_CAST "Index");
+	xmlDocSetRootElement(doc, index_node);
+
+	struct cvrf_model_iterator *it = cvrf_index_get_models(session->index);
+	while (cvrf_model_iterator_has_more(it)) {
+		struct cvrf_model *model = cvrf_model_iterator_next(it);
+		session->model = model;
+		find_all_cvrf_product_ids_from_cpe(session);
+		cvrf_session_construct_definition_model(session);
+
+		xmlNode *model_node = cvrf_model_results_to_dom(session);
+		xmlAddChild(index_node, model_node);
+	}
+	cvrf_model_iterator_free(it);
+
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, NULL);
+	cvrf_session_free(session);
+	return source;
+}
 
 static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_session *session, const char *product_id) {
 	const char *rpm_name = NULL;
