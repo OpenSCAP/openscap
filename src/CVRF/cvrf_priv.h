@@ -810,6 +810,15 @@ xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking);
 xmlNode *cvrf_doc_publisher_to_dom(struct cvrf_doc_publisher *publisher);
 
 /**
+ * Creates a list of xmlNode siblings of all document elements, all of
+ * which will be added as a child list to the root node
+ * @memberof cvrf_document
+ * @param document CVRF Document structure
+ * @return xmlNode with list of siblings to be added to root node
+ */
+xmlNode *cvrf_document_to_dom(struct cvrf_document *document);
+
+/**
  * @memberof cvrf_mode
  * @param model CVRF Model structure to be exported to DOM
  * @param doc XML document to which to export the model
