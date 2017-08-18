@@ -69,15 +69,11 @@ struct cvrf_session {
 	struct cvrf_model *model;
 	char *os_name;
 	struct oscap_source *source;
-	char *export_file;
-	char *results_file;
 	struct oscap_stringlist *product_ids;
 	struct oval_definition_model *def_model;
 };
 OSCAP_ACCESSOR_SIMPLE(struct cvrf_index*, cvrf_session, index)
 OSCAP_ACCESSOR_STRING(cvrf_session, os_name);
-OSCAP_ACCESSOR_STRING(cvrf_session, export_file);
-OSCAP_ACCESSOR_STRING(cvrf_session, results_file);
 
 struct oscap_string_iterator *cvrf_session_get_product_ids(struct cvrf_session *session) {
 	return oscap_stringlist_get_strings(session->product_ids);
@@ -98,8 +94,6 @@ struct cvrf_session *cvrf_session_new_from_source_model(struct oscap_source *sou
 	ret->index = NULL;
 	ret->model = cvrf_model_import(source);
 	ret->os_name = NULL;
-	ret->export_file = NULL;
-	ret->results_file = NULL;
 	ret->product_ids = oscap_stringlist_new();
 	ret->def_model = oval_definition_model_new();
 	return ret;
@@ -114,8 +108,6 @@ struct cvrf_session *cvrf_session_new_from_source_index(struct oscap_source *sou
 	ret->index = cvrf_index_import(source);
 	ret->model = NULL;
 	ret->os_name = NULL;
-	ret->export_file = NULL;
-	ret->results_file = NULL;
 	ret->product_ids = oscap_stringlist_new();
 	ret->def_model = oval_definition_model_new();
 	return ret;
@@ -129,8 +121,6 @@ void cvrf_session_free(struct cvrf_session *session) {
 	cvrf_model_free(session->model);
 	free(session->os_name);
 	oscap_source_free(session->source);
-	free(session->export_file);
-	free(session->results_file);
 	oscap_stringlist_free(session->product_ids);
 	oval_definition_model_free(session->def_model);
 	free(session);

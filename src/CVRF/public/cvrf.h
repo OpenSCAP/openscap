@@ -2596,20 +2596,6 @@ struct oscap_string_iterator *cvrf_session_get_product_ids(struct cvrf_session *
 const char *cvrf_session_get_os_name(const struct cvrf_session *session);
 
 /**
- * @memberof cvrf_session
- * @param session CVRF session structure
- * @return Export filepath used to export the CVRF model(s), if any
- */
-const char *cvrf_session_get_export_file(const struct cvrf_session *session);
-
-/**
- * @memberof cvrf_session
- * @param session CVRF session structure
- * @return Result filepath used to export the CVRF model(s), if any
- */
-const char *cvrf_session_get_results_file(const struct cvrf_session *session);
-
-/**
  * Add the CVRF model to be evaluated to the Session structure
  * @memberof cvrf_session
  * @param session CVRF session structure
@@ -2634,24 +2620,6 @@ bool cvrf_session_set_index(struct cvrf_session *session, struct cvrf_index *ind
  * @return true on success
  */
 bool cvrf_session_set_os_name(struct cvrf_session *session, const char *os_name);
-
-/**
- * Add the export path to which the CVRF model will be exported
- * @memberof cvrf_session
- * @param session CVRF session structure
- * @param export_file Path to export destination
- * @return true on success
- */
-bool cvrf_session_set_export_file(struct cvrf_session *session, const char *export_file);
-
-/**
- * Add the path to which the CVRF model's evaluation results will be exported
- * @memberof cvrf_session
- * @param session CVRF session structure
- * @param results_file Path to evaluation results destination
- * @return true on success
- */
-bool cvrf_session_set_results_file(struct cvrf_session *session, const char *results_file);
 
 /************************************************************************************************
  * @struct cvrf_rpm_attributes
