@@ -82,8 +82,7 @@ static struct oscap_module CVRF_VALIDATE_MODULE = {
 	.opt_parser = getopt_cvrf,
 	.func = app_cvrf_validate,
 	.help = "Options:\n"
-		"   --index\r\t\t\t\t - Use index file to validate a directory of CVRF files \n"
-	,
+		"   --index\r\t\t\t\t - Use index file to validate a directory of CVRF files \n",
 };
 
 static struct oscap_module* CVRF_SUBMODULES[] = {
