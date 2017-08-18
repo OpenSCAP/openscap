@@ -592,8 +592,26 @@ bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *
 \*-------------------------------------------------------------------------*/
 
 struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator for the list of Reference elements in the References container
+ */
 struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator for the list of Acknowledgment elements in the Acknowledgments container
+ */
 struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator for the list of Note elements in the Notes container
+ */
 struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
 
 /*******************************************
@@ -1203,7 +1221,26 @@ void cvrf_product_tree_free(struct cvrf_product_tree *tree);
  * @return New cloned ProductTree structure with same data as the original
  */
 struct cvrf_product_tree *cvrf_product_tree_clone(const struct cvrf_product_tree *tree);
+
+/**
+ * Find the unique ProductID for the given CPE by searching the branches of the
+ * ProductTree: find the ProductID attribute for the FullProductName element with
+ * the appropriate CPE
+ * @memberof cvrf_product_tree
+ * @param tree ProductTree structure to be searched
+ * @param cpe CPE string in the FullProductName element used to get the ProductID
+ * @return ProductID for the given CPE
+ */
 const char *get_cvrf_product_id_from_cpe(struct cvrf_product_tree *tree, const char *cpe);
+
+/**
+ * Use the CPE name to find the matching ProductID, then filter the tree by removing
+ * branches and relationship elements not related to that ProductID
+ * @memberof cvrf_product_tree
+ * @param tree ProductTree structure to be filtered
+ * @param cpe CPE name used to filter all unrelated elements
+ * @return 0 on success, -1 on failure
+ */
 int cvrf_product_tree_filter_by_cpe(struct cvrf_product_tree *tree, const char *cpe);
 
 /*---------------------------------------------------------------------*\
@@ -2385,8 +2422,9 @@ void cvrf_model_iterator_remove(struct cvrf_model_iterator *it);
 
 /************************************************************************************************
  * @struct cvrf_session
- *
- *
+ * Structure that holds and processes import source and import for CVRF models or indices
+ * for later use during evaluation. Has OVAL definition structure that is used for
+ * evaluation
  */
 struct cvrf_session;
 
@@ -2411,43 +2449,162 @@ struct cvrf_session *cvrf_session_new_from_source_index(struct oscap_source *sou
  */
 void cvrf_session_free(struct cvrf_session *session);
 
+/**
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @return CVRF model structure imported into the session, if any
+ */
 struct cvrf_model *cvrf_session_get_model(struct cvrf_session *session);
+
+/**
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @return CVRF index structure imported into the session, if any
+ */
 struct cvrf_index *cvrf_session_get_index(const struct cvrf_session *session);
+
+/**
+ * After filtering the CVRF model structure by the CPE, all the ProductIDs related
+ * to that operating system should be held in this stringlist
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @return Iterator for the list of ProductIDs maintained by the session structure
+ */
 struct oscap_string_iterator *cvrf_session_get_product_ids(struct cvrf_session *session);
+
+/**
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @return CPE used to evaluate the CVRF model(s)
+ */
 const char *cvrf_session_get_os_name(const struct cvrf_session *session);
+
+/**
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @return Export filepath used to export the CVRF model(s), if any
+ */
 const char *cvrf_session_get_export_file(const struct cvrf_session *session);
+
+/**
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @return Result filepath used to export the CVRF model(s), if any
+ */
 const char *cvrf_session_get_results_file(const struct cvrf_session *session);
 
+/**
+ * Add the CVRF model to be evaluated to the Session structure
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @param model CVRF model to be added to the CVRF session structure
+ */
 void cvrf_session_set_model(struct cvrf_session *session, struct cvrf_model *model);
+
+/**
+ * Add the CVRF index to be evaluated to the Session structure
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @param index CVRF index to be added to the CVRF session structure
+ * @return true on success
+ */
 bool cvrf_session_set_index(struct cvrf_session *session, struct cvrf_index *index);
+
+/**
+ * Add the CPE name for filtering of relevant ProductIDs and CVRF elements
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @param os_name CPE name to be added to the Session structure
+ * @return true on success
+ */
 bool cvrf_session_set_os_name(struct cvrf_session *session, const char *os_name);
+
+/**
+ * Add the export path to which the CVRF model will be exported
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @param export_file Path to export destination
+ * @return true on success
+ */
 bool cvrf_session_set_export_file(struct cvrf_session *session, const char *export_file);
+
+/**
+ * Add the path to which the CVRF model's evaluation results will be exported
+ * @memberof cvrf_session
+ * @param session CVRF session structure
+ * @param results_file Path to evaluation results destination
+ * @return true on success
+ */
 bool cvrf_session_set_results_file(struct cvrf_session *session, const char *results_file);
 
 /************************************************************************************************
  * @struct cvrf_rpm_attributes
- *
+ * Stores dissected information about RPM package names from CVRF files- the EVR format and
+ * package name. These are used to check the vulnerability of the system by comparing the
+ * EVR in the CVRF file to the EVR on the system
  */
 struct cvrf_rpm_attributes;
 
 /**
- *
- *
+ * Create a new CVRF RPM attributes structure
+ * @memberof cvrf_rpm_attributes
+ * @return New CVRF RPM attributes structure
  */
 struct cvrf_rpm_attributes *cvrf_rpm_attributes_new(void);
 
 /**
- *
- *
+ * Deallocate memory for the CVRF RPM attributes structure
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM attributes structure to be freed
  */
 void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes);
 
+/**
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM Attributes structure
+ * @return Entire RPM package name
+ */
 const char *cvrf_rpm_attributes_get_full_package_name(const struct cvrf_rpm_attributes *attributes);
+
+/**
+ * Used to check if the RPM file exists on the system during evaluation
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM Attributes structure
+ * @return RPM package name (without release or version)
+ */
 const char *cvrf_rpm_attributes_get_rpm_name(const struct cvrf_rpm_attributes *attributes);
+
+/**
+ * Used to check if the system is vulnerable by comparing EVR from the system to EVR in the
+ * CVRF file
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM Attributes structure
+ * @return EVR format of the RPM package
+ */
 const char *cvrf_rpm_attributes_get_evr_format(const struct cvrf_rpm_attributes *attributes);
 
+/**
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM Attributes structure
+ * @param full_package Full length RPM package name
+ * @return true on success
+ */
 bool cvrf_rpm_attributes_set_full_package_name(struct cvrf_rpm_attributes *attributes, const char *full_package);
+
+/**
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM Attributes structure
+ * @param rpm_name Package name (without version or release) of an RPM package
+ * @return true on success
+ */
 bool cvrf_rpm_attributes_set_rpm_name(struct cvrf_rpm_attributes *attributes, const char *rpm_name);
+
+/**
+ * @memberof cvrf_rpm_attributes
+ * @param attributes CVRF RPM Attributes structure
+ * @param evr_format String representation of the EVR of an RPM package
+ * @return true on success
+ */
 bool cvrf_rpm_attributes_set_evr_format(struct cvrf_rpm_attributes *attributes, const char *evr_format);
 
 
@@ -2495,7 +2652,11 @@ struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index);
  */
 struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model);
 
-
+/**
+ *
+ *
+ *
+ */
 int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
 
 struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_source, const char *os_name);
