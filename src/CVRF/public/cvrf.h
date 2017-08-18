@@ -532,8 +532,9 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
  * @memberof cvrf_vulnerability
  * @param vuln CVRF Vulnerability structure to be filtered
  * @param prod ProductID of the CPE; this is the prefix of package ProductIDs in Statuses
+ * @return 0 on success, -1 on failure
  */
-void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
+int cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod);
 
 /**
  * @memberof cvrf_vulnerability
