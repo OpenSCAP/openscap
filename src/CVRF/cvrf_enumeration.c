@@ -260,6 +260,7 @@ static const struct cvrf_item_spec CVRF_ITEM_TYPE_MAP[] = {
 	{CVRF_RELATIONSHIP, "Relationship", NULL},
 	{CVRF_PRODUCT_NAME, "FullProductName", NULL},
 	{CVRF_VULNERABILITY, "Vulnerability", NULL},
+	{CVRF_VULNERABILITY_CWE, "CWE", NULL},
 	{CVRF_NOTE, "Note", "Notes"},
 	{CVRF_INVOLVEMENT, "Involvement", "Involvements"},
 	{CVRF_SCORE_SET, "ScoreSet", "CVSSScoreSet"},

@@ -429,6 +429,67 @@ const char *cvrf_involvement_get_description(const struct cvrf_involvement *invo
  */
 bool cvrf_involvement_set_description(struct cvrf_involvement *involve, const char *description);
 
+/************************************************************************************************
+ * @struct cvrf_vulnerability_cwe
+ *
+ * PARENT NODE: Vulnerability
+ * REQUIRED: ID attribute [max: 1], CWE string content [max: 1]
+ */
+struct cvrf_vulnerability_cwe;
+
+/**
+ * New CVRF CWE structure
+ * @memberof cvrf_vulnerability_cwe
+ * @return New CWE structure
+ */
+struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_new(void);
+
+/**
+ * Deallocates memory for a CWE element
+ * @memberof cvrf_vulnerability_cwe
+ * @param cwe The CWE structure to be freed
+ */
+void cvrf_vulnerability_cwe_free(struct cvrf_vulnerability_cwe *cwe);
+
+/**
+ * @memberof cvrf_vulnerability_cwe
+ * @param cwe Original CWE structure to be cloned
+ * @return New cloned CWE structure with same data as the original
+ */
+struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_clone(const struct cvrf_vulnerability_cwe *cwe);
+
+/**
+ * @memberof cvrf_vulnerability_cwe
+ * @param vuln_cwe CWE structure
+ *
+ * @return contents of a the CWE element
+ */
+const char *cvrf_vulnerability_cwe_get_cwe(const struct cvrf_vulnerability_cwe *vuln_cwe);
+
+/**
+ * @memberof cvrf_vulnerability_cwe
+ * @param vuln_cwe CWE structure
+ *
+ * @return ID attribute of a CWE element
+ */
+const char *cvrf_vulnerability_cwe_get_id(const struct cvrf_vulnerability_cwe *vuln_cwe);
+
+
+/**
+ * @memberof cvrf_vulnerability_cwe
+ * @param vuln_cwe CWE structure
+ * @param cwe CWE name and content of the CWE element
+ * @return true on success
+ */
+bool cvrf_vulnerability_cwe_set_cwe(struct cvrf_vulnerability_cwe *vuln_cwe, const char *cwe);
+
+/**
+ * @memberof cvrf_vulnerability_cwe
+ * @param vuln_cwe CWE structure
+ * @param id Unique identifier for a CWE
+ * @return true on success
+ */
+bool cvrf_vulnerability_cwe_set_id(struct cvrf_vulnerability_cwe *vuln_cwe, const char *id);
 
 /************************************************************************************************
  * @struct cvrf_vulnerability
@@ -591,8 +652,6 @@ bool cvrf_vulnerability_set_cve_id(struct cvrf_vulnerability *vuln, const char *
 |				Iterators of child elements of Vulnerability				|
 \*-------------------------------------------------------------------------*/
 
-struct oscap_string_iterator *cvrf_vulnerability_get_cwe_ids(struct cvrf_vulnerability *vuln);
-
 /**
  * @memberof cvrf_vulnerability
  * @param vuln CVRF Vulnerability structure
@@ -613,6 +672,63 @@ struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct cvrf_vulner
  * @return Iterator for the list of Note elements in the Notes container
  */
 struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
+
+/*******************************************
+ * @struct cvrf_vulnerability_cwe_iterator
+ * Iterator representing all CWE elements in the Vulnerability
+ * Contained as a list within the CVRF Vulnerability structure
+ */
+struct cvrf_vulnerability_cwe_iterator;
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @param vulnerability_cwe CWE structure to be added to the Vulnerability
+ * @return true on success
+ */
+bool cvrf_vulnerability_add_vulnerability_cwe(struct cvrf_vulnerability *vuln, struct cvrf_vulnerability_cwe *vulnerability_cwe);
+
+/**
+ * @memberof cvrf_vulnerability
+ * @param vuln CVRF Vulnerability structure
+ * @return Iterator representing list of all CWEs in the Vulnerability
+ */
+struct cvrf_vulnerability_cwe_iterator *cvrf_vulnerability_get_vulnerability_cwes(const struct cvrf_vulnerability *vuln);
+
+/**
+ * @memberof cvrf_vulnerability_cwe_iterator
+ * @param it CWE iterator structure
+ * @return Next CWE in list of all CWEs in the Vulnerability
+ */
+struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_iterator_next(struct cvrf_vulnerability_cwe_iterator *it);
+
+/**
+ * @memberof cvrf_vulnerability_cwe_iterator
+ * @param it CWE iterator structure
+ * @return true if the iterator has another CWE element left
+ */
+bool cvrf_vulnerability_cwe_iterator_has_more(struct cvrf_vulnerability_cwe_iterator *it);
+
+/**
+ * Deallocate memory for the CWE Iterator structure
+ * @memberof cvrf_vulnerability_cwe_iterator
+ * @param it CWE iterator structure
+ */
+void cvrf_vulnerability_cwe_iterator_free(struct cvrf_vulnerability_cwe_iterator *it);
+
+/**
+ * Restart iterator at the first CWE in the Vulnerability
+ * @memberof cvrf_vulnerability_cwe_iterator
+ * @param it CWE iterator structure
+ */
+void cvrf_vulnerability_cwe_iterator_reset(struct cvrf_vulnerability_cwe_iterator *it);
+
+/**
+ * Detaches and frees the CWE iterator structure
+ * @memberof cvrf_vulnerability_cwe_iterator
+ * @param it CWE iterator structure
+ */
+void cvrf_vulnerability_cwe_iterator_remove(struct cvrf_vulnerability_cwe_iterator *it);
 
 /*******************************************
  * @struct cvrf_involvement_iterator
