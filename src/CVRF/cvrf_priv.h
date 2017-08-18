@@ -437,6 +437,7 @@ typedef enum {
 	CVRF_RELATIONSHIP,
 	CVRF_PRODUCT_NAME,
 	CVRF_VULNERABILITY,
+	CVRF_VULNERABILITY_CWE,
 	CVRF_NOTE,
 	CVRF_INVOLVEMENT,
 	CVRF_SCORE_SET,
@@ -520,6 +521,13 @@ struct cvrf_product_status *cvrf_product_status_parse(xmlTextReaderPtr reader);
  * @return parsed CVRF Involvement
  */
 struct cvrf_involvement *cvrf_involvement_parse(xmlTextReaderPtr reader);
+
+/**
+ * Parse CWE element
+ * @param reader XML Text Reader representing XML model
+ * @return parsed CWE structure
+ */
+struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_parse(xmlTextReaderPtr reader);
 
 /**
  * Parse CVRF vulnerability
@@ -711,6 +719,14 @@ xmlNode *cvrf_product_status_to_dom(const struct cvrf_product_status *stat);
  * @return xmlNode representing Involvement element
  */
 xmlNode *cvrf_involvement_to_dom(const struct cvrf_involvement *involve);
+
+/**
+ * Parent: Vulnerability element
+ * @memberof cvrf_vulnerability_cwe
+ * @param vuln_cwe CWE structure to be exported to XML
+ * @return xmlNode representing CWE element
+ */
+xmlNode *cvrf_vulnerability_cwe_to_dom(const struct cvrf_vulnerability_cwe *vuln_cwe);
 
 /**
  * Parent: CVRF Model root node
