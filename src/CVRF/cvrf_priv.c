@@ -2340,12 +2340,11 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 }
 
 xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *parent, void *user_args) {
-	xmlNode *index_node = NULL;
+	xmlNode *index_node = xmlNewNode(NULL, BAD_CAST "Index");
 	if (parent == NULL) {
-		index_node = xmlNewNode(NULL, BAD_CAST "Index");
 		xmlDocSetRootElement(doc, index_node);
 	} else {
-		index_node = xmlNewTextChild(parent, NULL, BAD_CAST "Index", NULL);
+		xmlAddChild(parent, index_node);
 	}
 
 	struct cvrf_model_iterator *models = cvrf_index_get_models(index);
