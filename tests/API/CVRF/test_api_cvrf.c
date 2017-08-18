@@ -44,8 +44,12 @@ int main(int argc, char **argv)
 		oscap_source_free(export_source);
 		return ret;
 	} else if (argc == 4 && !strcmp(argv[1], "--eval")) {
-		const char *os_version = "Managment Agent for RHEL 7 Hosts";
-		return cvrf_export_results(oscap_source_new_from_file(argv[2]), argv[3], os_version);
+		const char *cpe = "Managment Agent for RHEL 7 Hosts";
+		struct oscap_source *import_source = oscap_source_new_from_file(argv[2]);
+		struct oscap_source *export_source = cvrf_model_get_results_source(import_source, cpe);
+		int ret = oscap_source_save_as(export_source, argv[3]);
+		oscap_source_free(export_source);
+		return ret;
 	} else if (argc == 3 && !strcmp(argv[1], "--validate")) {
 		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
 		int ret = oscap_source_validate(source, reporter, NULL);

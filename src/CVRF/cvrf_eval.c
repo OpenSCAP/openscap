@@ -231,17 +231,18 @@ static xmlNode *cvrf_model_results_to_dom(struct cvrf_session *session) {
 	return root_node;
 }
 
-int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name) {
+struct oscap_source *cvrf_model_get_results_source(struct oscap_source *import_source, const char *os_name) {
 	__attribute__nonnull__(import_source);
-	__attribute__nonnull__(export_file);
+	__attribute__nonnull__(os_name);
 
+	if (import_source == NULL)
+		return NULL;
 	struct cvrf_session *session = cvrf_session_new_from_source_model(import_source);
 	cvrf_session_set_os_name(session, os_name);
-	cvrf_session_set_results_file(session, export_file);
 
 	if (find_all_cvrf_product_ids_from_cpe(session) != 0) {
 		cvrf_session_free(session);
-		return -1;
+		return NULL;
 	}
 	cvrf_session_construct_definition_model(session);
 
@@ -252,11 +253,9 @@ int cvrf_export_results(struct oscap_source *import_source, const char *export_f
 	xmlNode *model_node = cvrf_model_results_to_dom(session);
 	xmlDocSetRootElement(doc, model_node);
 
-	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, export_file);
-	int ret = oscap_source_save_as(source, NULL);
-	oscap_source_free(source);
+	struct oscap_source *source = oscap_source_new_from_xmlDoc(doc, NULL);
 	cvrf_session_free(session);
-	return ret;
+	return source;
 }
 
 struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_source, const char *os_name) {

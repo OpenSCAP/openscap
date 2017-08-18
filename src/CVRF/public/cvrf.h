@@ -2653,12 +2653,23 @@ struct oscap_source *cvrf_index_get_export_source(struct cvrf_index *index);
 struct oscap_source *cvrf_model_get_export_source(struct cvrf_model *model);
 
 /**
- *
- *
- *
+ * Import and parse the CVRF Model from the provided source, filter it by CPE to find
+ * appropriate packages, check these for vulnerabilities, and generate an XML document of the results
+ * @memberof cvrf_session
+ * @param import_source OSCAP source used to import the CVRF Model into the session
+ * @param os_name CPE name used to find relevant RPM packages to check for vulnerabilities
+ * @return OSCAP source export target for the results XML file
  */
-int cvrf_export_results(struct oscap_source *import_source, const char *export_file, const char *os_name);
+struct oscap_source *cvrf_model_get_results_source(struct oscap_source *import_source, const char *os_name);
 
+/**
+ * Import and parse the CVRF Index from the provided source, filter it by CPE to find
+ * appropriate packages, check these for vulnerabilities, and generate an XML document of the results
+ * @memberof cvrf_session
+ * @param import_source OSCAP source used to import the CVRF Index into the session
+ * @param os_name CPE name used to find relevant RPM packages to check for vulnerabilities
+ * @return OSCAP source export target for the results XML file
+ */
 struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_source, const char *os_name);
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product);
