@@ -95,6 +95,8 @@ static struct oscap_module* CVRF_SUBMODULES[] = {
 
 static int app_cvrf_evaluate(const struct oscap_action *action) {
 	int result = OSCAP_OK;
+	// Temporary hardcoded CPE until CPE name can be found without input by CVRF functions
+	// themselves
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->f_cvrf);
 	struct oscap_source *export_source = cvrf_model_get_results_source(import_source, os_name);
