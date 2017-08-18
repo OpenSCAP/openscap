@@ -511,8 +511,9 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 	return clone;
 }
 
-void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod) {
+int cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod) {
 	struct oscap_stringlist *filtered_ids = oscap_stringlist_new();
+	int ret = 0;
 
 	struct cvrf_product_status_iterator *statuses = cvrf_vulnerability_get_product_statuses(vuln);
 	while (cvrf_product_status_iterator_has_more(statuses)) {
@@ -525,10 +526,18 @@ void cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const
 				oscap_stringlist_add_string(filtered_ids, product_id);
 		}
 		oscap_string_iterator_free(products);
-		oscap_stringlist_free(stat->product_ids);
-		stat->product_ids = filtered_ids;
+
+		if (oscap_list_get_itemcount((struct oscap_list *)filtered_ids) == 0) {
+			oscap_stringlist_free(filtered_ids);
+			ret = -1;
+			break;
+		} else {
+			oscap_stringlist_free(stat->product_ids);
+			stat->product_ids = filtered_ids;
+		}
 	}
 	cvrf_product_status_iterator_free(statuses);
+	return ret;
 }
 
 
@@ -1282,14 +1291,15 @@ struct cvrf_model *cvrf_model_clone(const struct cvrf_model *model) {
 
 int cvrf_model_filter_by_cpe(struct cvrf_model *model, const char *cpe) {
 	const char *product = get_cvrf_product_id_from_cpe(model->tree, cpe);
-	int ret = cvrf_product_tree_filter_by_cpe(model->tree, cpe);
+	if (cvrf_product_tree_filter_by_cpe(model->tree, cpe) == -1)
+		return -1;
 
 	struct cvrf_vulnerability_iterator *it = cvrf_model_get_vulnerabilities(model);
 	while (cvrf_vulnerability_iterator_has_more(it)) {
 		cvrf_vulnerability_filter_by_product(cvrf_vulnerability_iterator_next(it), product);
 	}
 	cvrf_vulnerability_iterator_free(it);
-	return ret;
+	return 0;
 }
 
 /***************************************************************************
