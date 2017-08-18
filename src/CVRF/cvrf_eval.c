@@ -239,6 +239,8 @@ struct oscap_source *cvrf_model_get_results_source(struct oscap_source *import_s
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
+		cvrf_session_free(session);
+		return NULL;
 	}
 	xmlNode *model_node = cvrf_model_results_to_dom(session);
 	xmlDocSetRootElement(doc, model_node);
@@ -255,6 +257,8 @@ struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_s
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
 		oscap_setxmlerr(xmlGetLastError());
+		cvrf_session_free(session);
+		return NULL;
 	}
 	xmlNode *index_node = xmlNewNode(NULL, BAD_CAST "Index");
 	xmlDocSetRootElement(doc, index_node);
