@@ -1487,9 +1487,9 @@ static char *cvrf_parse_element(xmlTextReaderPtr reader, const char *tagname, bo
 	char *elm_value = NULL;
 	if (xmlStrcmp(xmlTextReaderConstLocalName(reader), BAD_CAST tagname) == 0) {
 		elm_value = oscap_element_string_copy(reader);
+		if (next_elm)
+			xmlTextReaderNextElement(reader);
 	}
-	if (next_elm)
-		xmlTextReaderNextElement(reader);
 	return elm_value;
 }
 
@@ -1985,8 +1985,10 @@ xmlNode *cvrf_branch_to_dom(struct cvrf_branch *branch) {
 struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 	struct cvrf_product_tree *tree = cvrf_product_tree_new();
-	if (xmlTextReaderIsEmptyElement(reader))
-		return tree;
+	if (xmlTextReaderIsEmptyElement(reader) == 1) {
+		cvrf_set_parsing_error("ProductTree");
+		return NULL;
+	}
 	xmlTextReaderNextElementWE(reader, TAG_PRODUCT_TREE);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_TREE) != 0) {
 		if (xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT) {
@@ -2088,8 +2090,10 @@ xmlNode *cvrf_reference_to_dom(struct cvrf_reference *ref) {
 struct cvrf_note *cvrf_note_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 	struct cvrf_note *note = cvrf_note_new();
-	if (xmlTextReaderIsEmptyElement(reader))
+	if (xmlTextReaderIsEmptyElement(reader) == 1) {
+		cvrf_set_parsing_error("Note");
 		return NULL;
+	}
 
 	note->ordinal = cvrf_parse_ordinal(reader);
 	note->type = cvrf_note_type_parse(reader);
@@ -2144,8 +2148,10 @@ xmlNode *cvrf_revision_to_dom(struct cvrf_revision *revision) {
 struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 	struct cvrf_doc_tracking *tracking = cvrf_doc_tracking_new();
-	if (xmlTextReaderIsEmptyElement(reader))
-		return tracking;
+	if (xmlTextReaderIsEmptyElement(reader) == 1) {
+		cvrf_set_parsing_error("DocumentTracking");
+		return NULL;
+	}
 
 	xmlTextReaderNextElement(reader);
 	while (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_DOCUMENT_TRACKING) != 0) {
@@ -2212,10 +2218,11 @@ xmlNode *cvrf_doc_tracking_to_dom(struct cvrf_doc_tracking *tracking) {
 struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 	__attribute__nonnull__(reader);
 	struct cvrf_doc_publisher *publisher = cvrf_doc_publisher_new();
-	if (xmlTextReaderIsEmptyElement(reader))
-		return publisher;
-
 	publisher->type = cvrf_doc_publisher_type_parse(reader);
+	if (publisher->type == CVRF_DOC_PUBLISHER_UNKNOWN && xmlTextReaderIsEmptyElement(reader) == 1) {
+		cvrf_set_parsing_error("DocumentPublisher");
+		return NULL;
+	}
 	publisher->vendor_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_VENDOR_ID);
 	xmlTextReaderNextElementWE(reader, TAG_PUBLISHER);
 	publisher->contact_details = cvrf_parse_element(reader, "ContactDetails", true);
