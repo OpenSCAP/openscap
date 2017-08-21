@@ -1214,7 +1214,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions2(variable);
 	while (oval_variable_possible_restriction_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_variable_possible_restriction_iterator_next(possible_restrictions);
-		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions2(pr);
 		/* Create "possible_restriction" node only if there will be some
 		 * "restriction" children, because each "possible_restriction"
 		 * node must have at least one "restriction" child.
