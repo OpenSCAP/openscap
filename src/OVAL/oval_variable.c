@@ -933,7 +933,7 @@ static int oval_value_satisfies_possible_restriction(struct oval_value *value, s
 	oval_operator_t operator = pr->operator;
 	struct oresults results;
 	ores_clear(&results);
-	struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+	struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions2(pr);
 	while (oval_variable_restriction_iterator_has_more(restrictions)) {
 		struct oval_variable_restriction *r = oval_variable_restriction_iterator_next(restrictions);
 		oval_result_t result = oval_str_cmp_str(r->value, datatype, text, r->operation);
