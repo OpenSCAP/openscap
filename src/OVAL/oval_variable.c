@@ -676,7 +676,7 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			old_evar = (oval_variable_EXTERNAL_t *) old_variable;
 
 			struct oval_variable_possible_value_iterator *old_pv_itr;
-			old_pv_itr = oval_variable_get_possible_values(old_variable);
+			old_pv_itr = oval_variable_get_possible_values2(old_variable);
 			while (oval_variable_possible_value_iterator_has_more(old_pv_itr)) {
 				struct oval_variable_possible_value *old_pv, *new_pv;
 				old_pv = oval_variable_possible_value_iterator_next(old_pv_itr);
