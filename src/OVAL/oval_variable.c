@@ -1201,7 +1201,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "external_variable", NULL);
 
-	struct oval_variable_possible_value_iterator *possible_values = oval_variable_get_possible_values(variable);
+	struct oval_variable_possible_value_iterator *possible_values = oval_variable_get_possible_values2(variable);
 	while (oval_variable_possible_value_iterator_has_more(possible_values)) {
 		struct oval_variable_possible_value *pv = oval_variable_possible_value_iterator_next(possible_values);
 		xmlNode *possible_value_node = xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "possible_value", BAD_CAST pv->value);
