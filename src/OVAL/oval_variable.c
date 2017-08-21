@@ -686,7 +686,7 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			oval_variable_possible_value_iterator_free(old_pv_itr);
 
 			struct oval_variable_possible_restriction_iterator *old_pr_itr;
-			old_pr_itr = oval_variable_get_possible_restrictions(old_variable);
+			old_pr_itr = oval_variable_get_possible_restrictions2(old_variable);
 			while (oval_variable_possible_restriction_iterator_has_more(old_pr_itr)) {
 				struct oval_variable_possible_restriction *old_pr, *new_pr;
 				old_pr = oval_variable_possible_restriction_iterator_next(old_pr_itr);
