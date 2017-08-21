@@ -1211,7 +1211,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 
 	oval_schema_version_t schema_version = oval_definition_model_get_core_schema_version(variable->model);
 	bool serialize_operator = oval_schema_version_cmp(schema_version, OVAL_SCHEMA_VERSION(5.11)) >= 0;
-	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions(variable);
+	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions2(variable);
 	while (oval_variable_possible_restriction_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_variable_possible_restriction_iterator_next(possible_restrictions);
 		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
