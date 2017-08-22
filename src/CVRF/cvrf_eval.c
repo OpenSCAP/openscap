@@ -167,9 +167,6 @@ void cvrf_rpm_attributes_free(struct cvrf_rpm_attributes *attributes) {
 #define TAG_DOC_TITLE BAD_CAST "DocumentTitle"
 #define TAG_DOC_TYPE BAD_CAST "DocumentType"
 #define ATTR_PRODUCT_ID "ProductID"
-//namespaces
-#define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
-#define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
 
 static int find_all_cvrf_product_ids_from_cpe(struct cvrf_session *session) {
 	if (cvrf_model_filter_by_cpe(session->model, session->os_name) == -1)
