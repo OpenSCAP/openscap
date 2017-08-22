@@ -35,6 +35,11 @@
 
 OSCAP_HIDDEN_START;
 
+// namespaces
+#define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
+#define PROD_NS BAD_CAST "http://www.icasi.org/CVRF/schema/prod/1.1"
+#define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
+
 /*-----------------------------------------------------------------------------------------*\
 |									CVRF Enum Definitions									|
 \*-----------------------------------------------------------------------------------------*/

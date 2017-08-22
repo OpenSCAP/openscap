@@ -1428,10 +1428,6 @@ struct cvrf_index *cvrf_index_clone(const struct cvrf_index *index) {
 #define ATTR_TYPE BAD_CAST "Type"
 #define TAG_URL BAD_CAST "URL"
 #define TAG_VERSION BAD_CAST "Version"
-// namespaces
-#define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
-#define PROD_NS BAD_CAST "http://www.icasi.org/CVRF/schema/prod/1.1"
-#define VULN_NS BAD_CAST "http://www.icasi.org/CVRF/schema/vuln/1.1"
 
 /*---------------------------------------------------------------------------------*\
 |							CVRF Parsing Helper Functions							|
