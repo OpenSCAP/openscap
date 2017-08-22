@@ -308,8 +308,8 @@ typedef void (*oscap_consumer_func) (void *, void *);
  * the default value for strings not defined elsewhere.
  */
 struct oscap_string_map {
-	int value;		/* integer/enum value */
-	const char *string;	/* string representation of the value */
+	const int value;    /* integer/enum value */
+	const char *string; /* string representation of the value */
 };
 
 /**
