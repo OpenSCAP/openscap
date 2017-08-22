@@ -855,8 +855,6 @@ xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *par
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product);
 
-int cvrf_session_construct_definition_model(struct cvrf_session *session);
-
 OSCAP_HIDDEN_END;
 
 #endif				/* _CVRF_PRIV_H_ */
