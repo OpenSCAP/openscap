@@ -2755,8 +2755,6 @@ struct oscap_source *cvrf_model_get_results_source(struct oscap_source *import_s
  */
 struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_source, const char *os_name);
 
-int cvrf_session_construct_definition_model(struct cvrf_session *session);
-
 
 /**@}*/
 
