@@ -49,12 +49,9 @@
  */
 
 static int cvrf_enumeration_attr(xmlTextReaderPtr reader, char *attname, const struct oscap_string_map *map) {
-	int ret = oscap_string_to_enum(map, NULL);
 	char *attrstr = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST attname);
-	if (attrstr) {
-		ret = oscap_string_to_enum(map, attrstr);
-		free(attrstr);
-	}
+	const int ret = oscap_string_to_enum(map, attrstr);
+	free(attrstr);
 	return ret;
 }
 
