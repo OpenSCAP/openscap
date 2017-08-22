@@ -29,12 +29,10 @@
 #ifndef _CVRF_H_
 #define _CVRF_H_
 
-
 #include <stdbool.h>
-#include <time.h>
 #include "oscap.h"
+#include "oscap_source.h"
 #include "cvss_score.h"
-#include "oval_definitions.h"
 
 
 /************************************************************************************************
