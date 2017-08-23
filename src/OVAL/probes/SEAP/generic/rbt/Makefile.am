@@ -3,8 +3,6 @@ noinst_LTLIBRARIES= librbt.la
 
 librbt_la_SOURCES=	rbt_common.c	\
 			rbt_common.h	\
-			rbt_gen.c	\
-			rbt_gen.h	\
 			rbt.h		\
 			rbt_i32.c	\
 			rbt_i32.h	\
