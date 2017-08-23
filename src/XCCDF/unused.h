@@ -20,6 +20,11 @@
  *      Lukas Kuklinek <lkuklinek@redhat.com>
  */
 
+#pragma once
+
+#ifndef OPENSCAP_XCCDF_UNUSED_H_
+#define OPENSCAP_XCCDF_UNUSED_H_
+
 OSCAP_HIDDEN_START;
 
 // Prototypes to supress compiler warnings
@@ -137,3 +142,5 @@ bool xccdf_item_get_interactive(const struct xccdf_item *item);
 bool xccdf_item_set_interactive(struct xccdf_item *item, bool newval);
 
 OSCAP_HIDDEN_END;
+
+#endif
