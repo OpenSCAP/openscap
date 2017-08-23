@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef OPENSCAP_OVAL_PROBES_IFLISTENERS_PROTO_H_
+#define OPENSCAP_OVAL_PROBES_IFLISTENERS_PROTO_H_
+
 /* map based on /usr/include/linux/if_ether.h */ 
 static const struct oscap_string_map ProtocolType[] = {
 {0x0060, "ETH_P_LOOP"}, 
@@ -65,3 +70,5 @@ static const struct oscap_string_map ProtocolType[] = {
 {0x00F6, "ETH_P_IEEE802154"}, 
 {0x00F7, "ETH_P_CAIF"}
 };
+
+#endif
