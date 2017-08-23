@@ -676,7 +676,7 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			old_evar = (oval_variable_EXTERNAL_t *) old_variable;
 
 			struct oval_variable_possible_value_iterator *old_pv_itr;
-			old_pv_itr = oval_variable_get_possible_values(old_variable);
+			old_pv_itr = oval_variable_get_possible_values2(old_variable);
 			while (oval_variable_possible_value_iterator_has_more(old_pv_itr)) {
 				struct oval_variable_possible_value *old_pv, *new_pv;
 				old_pv = oval_variable_possible_value_iterator_next(old_pv_itr);
@@ -686,13 +686,13 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			oval_variable_possible_value_iterator_free(old_pv_itr);
 
 			struct oval_variable_possible_restriction_iterator *old_pr_itr;
-			old_pr_itr = oval_variable_get_possible_restrictions(old_variable);
+			old_pr_itr = oval_variable_get_possible_restrictions2(old_variable);
 			while (oval_variable_possible_restriction_iterator_has_more(old_pr_itr)) {
 				struct oval_variable_possible_restriction *old_pr, *new_pr;
 				old_pr = oval_variable_possible_restriction_iterator_next(old_pr_itr);
 				new_pr = oval_variable_possible_restriction_new(old_pr->operator, old_pr->hint);
 				struct oval_variable_restriction_iterator *old_r_itr;
-				old_r_itr = oval_variable_possible_restriction_get_restrictions(old_pr);
+				old_r_itr = oval_variable_possible_restriction_get_restrictions2(old_pr);
 				while (oval_variable_restriction_iterator_has_more(old_r_itr)) {
 					struct oval_variable_restriction *old_r, *new_r;
 					old_r = oval_variable_restriction_iterator_next(old_r_itr);
@@ -933,7 +933,7 @@ static int oval_value_satisfies_possible_restriction(struct oval_value *value, s
 	oval_operator_t operator = pr->operator;
 	struct oresults results;
 	ores_clear(&results);
-	struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+	struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions2(pr);
 	while (oval_variable_restriction_iterator_has_more(restrictions)) {
 		struct oval_variable_restriction *r = oval_variable_restriction_iterator_next(restrictions);
 		oval_result_t result = oval_str_cmp_str(r->value, datatype, text, r->operation);
@@ -1201,7 +1201,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "external_variable", NULL);
 
-	struct oval_variable_possible_value_iterator *possible_values = oval_variable_get_possible_values(variable);
+	struct oval_variable_possible_value_iterator *possible_values = oval_variable_get_possible_values2(variable);
 	while (oval_variable_possible_value_iterator_has_more(possible_values)) {
 		struct oval_variable_possible_value *pv = oval_variable_possible_value_iterator_next(possible_values);
 		xmlNode *possible_value_node = xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "possible_value", BAD_CAST pv->value);
@@ -1211,10 +1211,10 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 
 	oval_schema_version_t schema_version = oval_definition_model_get_core_schema_version(variable->model);
 	bool serialize_operator = oval_schema_version_cmp(schema_version, OVAL_SCHEMA_VERSION(5.11)) >= 0;
-	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions(variable);
+	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions2(variable);
 	while (oval_variable_possible_restriction_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_variable_possible_restriction_iterator_next(possible_restrictions);
-		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions2(pr);
 		/* Create "possible_restriction" node only if there will be some
 		 * "restriction" children, because each "possible_restriction"
 		 * node must have at least one "restriction" child.
