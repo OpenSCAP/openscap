@@ -26,6 +26,11 @@
  *
  */
 
+#pragma once
+
+#ifndef OPENSCAP_OVAL_PROBES_SYSTEMDSHARED_H_
+#define OPENSCAP_OVAL_PROBES_SYSTEMDSHARED_H_
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -352,3 +357,5 @@ static void disconnect_dbus(DBusConnection *conn)
 	// Connections retrieved via dbus_bus_get shall not be destroyed,
 	// these connections are shared.
 }
+
+#endif
