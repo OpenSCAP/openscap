@@ -1,3 +1,8 @@
+#pragma once
+
+#ifndef OPENSCAP_OVAL_PROBE_PROCESS58_CAPABILITY_H_
+#define OPENSCAP_OVAL_PROBE_PROCESS58_CAPABILITY_H_
+
 /* map based on OVAL and /usr/include/linux/capability.h
  * not all capabilities from capability.h are allowed in OVAL */
 #define OVAL_5_8_MAX_CAP_ID 33
@@ -44,3 +49,5 @@ static const struct oscap_string_map CapabilityType[] = {
 {38, "CAP_AUDIT_READ"},
 {-1, NULL}
 };
+
+#endif
