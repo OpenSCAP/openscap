@@ -270,7 +270,6 @@ void probe_preload ()
 void *probe_init (void)
 {
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT|PROBE_OFFLINE_RPMDB);
-	addMacro(NULL, "_dbpath", NULL, getenv("OSCAP_PROBE_RPMDB_PATH"), 0);
 
 #ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
@@ -288,6 +287,11 @@ void *probe_init (void)
 
         g_rpm.rpmts = rpmtsCreate();
         pthread_mutex_init (&(g_rpm.mutex), NULL);
+
+	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
+	if (dbpath) {
+		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
+	}
 
         return ((void *)&g_rpm);
 }
