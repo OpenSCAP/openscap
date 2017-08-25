@@ -1,3 +1,37 @@
+openscap-1.2.15                                                 25-08-2017
+  - New features
+    - short profile names can be used instead of long IDs
+    - new option --rule allows to evaluate only a single rule
+    - new option --fix-type in "oscap xccdf generate fix" allows choosing
+      remediation script type without typing long URL
+    - "oscap info" shows profile titles
+    - OVAL details in HTML report are easier to read
+    - HTML report is smaller because unselected rules are removed
+    - HTML report supports NIST 800-171 and CJIS
+    - remediation scripts contain headers with useful information
+    - remediation scripts report progress when they run
+    - basic support for Oracle Linux (CPEs, runlevels)
+    - remediation scripts can be generated from datastreams that contain
+      multiple XCCDF benchmarks (issue #772)
+    - basic support for OVAL 5.11.2 (only schemas, no features)
+    - enabled offline RPM database in rpminfo probe (issue #778)
+    - added Fedora 28 CPE
+  - Maintenance
+    - fixed oscap-docker with Docker >= 2.0 (issue #794)
+    - fixed behavior of sysctl probe to be consistent with sysctl tool
+    - fixed generating remediation scripts (issue #723, #773)
+    - severity of tailored rules is not discarded (issue #739)
+    - fixed errors in RPM probes initialization
+    - oscap-docker shows all warnings reported by oscap (issue #713)
+    - small improvements in verbose mode
+    - standard C operations are used instead of custom OpenSCAP operations
+    - fixed compiler warnings
+    - fixed missing header files
+    - fixed resource leaks (issue #715)
+    - fixed pkgconfig file (RHBZ #1414777)
+    - refactoring
+    - documentation fixes and improvements
+
 openscap-1.2.14                                                 21-03-2017
   - New features
     - Detailed information about ARF files in 'oscap info' (issue #664)
