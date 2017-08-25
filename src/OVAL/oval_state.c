@@ -145,7 +145,7 @@ struct oval_state *oval_state_new(struct oval_definition_model *model, const cha
 	__attribute__nonnull__(model);
 	oval_state_t *state;
 
-	state = (oval_state_t *) oscap_alloc(sizeof(oval_state_t));
+	state = (oval_state_t *) malloc(sizeof(oval_state_t));
 	if (state == NULL)
 		return NULL;
 

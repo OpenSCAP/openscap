@@ -26,6 +26,5 @@
 #include "rbt_str.h"
 #include "rbt_i32.h"
 #include "rbt_i64.h"
-#include "rbt_gen.h"
 
 #endif /* RBT_H */

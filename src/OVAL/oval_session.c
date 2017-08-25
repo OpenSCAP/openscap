@@ -60,13 +60,13 @@ struct oval_session {
 		struct oscap_source *directives;
 	} oval;
 
-	const char *datastream_id;
+	char *datastream_id;
 	/* particular OVAL component if there are two OVALs in one datastream */
-	const char *component_id;
+	char *component_id;
 
 	struct {
-		const char *results;
-		const char *report;
+		char *results;
+		char *report;
 	} export;
 
 	struct {
@@ -86,7 +86,7 @@ struct oval_session *oval_session_new(const char *filename)
 	oscap_document_type_t scap_type;
 	struct oval_session *session;
 
-	session = (struct oval_session *) oscap_calloc(1, sizeof(struct oval_session));
+	session = (struct oval_session *) calloc(1, sizeof(struct oval_session));
 
 	session->source = oscap_source_new_from_file(filename);
 	if ((scap_type = oscap_source_get_scap_type(session->source)) == OSCAP_DOCUMENT_UNKNOWN) {
@@ -143,7 +143,7 @@ void oval_session_set_datastream_id(struct oval_session *session, const char *id
 {
 	__attribute__nonnull__(session);
 
-	oscap_free(session->datastream_id);
+	free(session->datastream_id);
 	session->datastream_id = oscap_strdup(id);
 }
 
@@ -151,7 +151,7 @@ void oval_session_set_component_id(struct oval_session *session, const char *id)
 {
 	__attribute__nonnull__(session);
 
-	oscap_free(session->component_id);
+	free(session->component_id);
 	session->component_id = oscap_strdup(id);
 }
 
@@ -159,7 +159,7 @@ void oval_session_set_results_export(struct oval_session *session, const char *f
 {
 	__attribute__nonnull__(session);
 
-	oscap_free(session->export.results);
+	free(session->export.results);
 	session->export.results = oscap_strdup(filename);
 }
 
@@ -167,7 +167,7 @@ void oval_session_set_report_export(struct oval_session *session, const char *fi
 {
 	__attribute__nonnull__(session);
 
-	oscap_free(session->export.report);
+	free(session->export.report);
 	session->export.report = oscap_strdup(filename);
 }
 
@@ -319,10 +319,10 @@ static int oval_session_setup_agent(struct oval_session *session)
 	session->sess = oval_agent_new_session(session->def_model, basename(path_clone));
 	if (session->sess == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to create a new agent session.");
-		oscap_free(path_clone);
+		free(path_clone);
 		return 1;
 	}
-	oscap_free(path_clone);
+	free(path_clone);
 
 	oval_agent_set_product_name(session->sess, (char *)oscap_productname);
 	return 0;
@@ -477,14 +477,14 @@ void oval_session_free(struct oval_session *session)
 	oscap_source_free(session->oval.directives);
 	oscap_source_free(session->oval.variables);
 	oscap_source_free(session->source);
-	oscap_free(session->datastream_id);
-	oscap_free(session->component_id);
-	oscap_free(session->export.results);
-	oscap_free(session->export.report);
+	free(session->datastream_id);
+	free(session->component_id);
+	free(session->export.results);
+	free(session->export.report);
 	if (session->sess)
 		oval_agent_destroy_session(session->sess);
 	if (session->def_model)
 		oval_definition_model_free(session->def_model);
 	ds_sds_session_free(session->sds_session);
-	oscap_free(session);
+	free(session);
 }

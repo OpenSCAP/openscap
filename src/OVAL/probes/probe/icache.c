@@ -122,7 +122,7 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 		*/
 		dI("cache MISS");
 
-		cached->item = oscap_realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
+		cached->item = realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
 		cached->item[cached->count - 1] = pair->p.item;
 
 		/* Assign an unique item ID */
@@ -151,8 +151,8 @@ static void icache_add_to_tree(rbt_t *tree, int64_t item_id, probe_iqpair_t *pai
 	if (rbt_i64_add(tree, (int64_t)item_id, (void **)cached, NULL) != 0) {
 		dE("Can't add item (k=%"PRIi64" to the cache (%p)", item_id, tree);
 
-		oscap_free(cached->item);
-		oscap_free(cached);
+		free(cached->item);
+		free(cached);
 
 		/* now what? */
 		abort();
@@ -327,7 +327,7 @@ fail:
 
         pthread_mutex_destroy(&cache->queue_mutex);
         pthread_cond_destroy(&cache->queue_notempty);
-        oscap_free(cache);
+        free(cache);
 
         return (NULL);
 }
@@ -579,8 +579,8 @@ static void probe_icache_free_node(struct rbt_i64_node *n)
 		SEXP_free(ci->item[ci->count - 1]);
 	}
 
-        oscap_free(ci->item);
-        oscap_free(ci);
+        free(ci->item);
+        free(ci);
         return;
 }
 
@@ -595,6 +595,6 @@ void probe_icache_free(probe_icache_t *cache)
         pthread_cond_destroy(&cache->queue_notfull);
 
         rbt_i64_free_cb(cache->tree, &probe_icache_free_node);
-        oscap_free(cache);
+        free(cache);
         return;
 }

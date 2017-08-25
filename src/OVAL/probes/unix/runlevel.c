@@ -207,9 +207,9 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 			closedir(rc_dir);
 
 			if (rep_lst == NULL) {
-				rep_lst = *rep = oscap_alloc(sizeof (struct runlevel_rep));
+				rep_lst = *rep = malloc(sizeof (struct runlevel_rep));
 			} else {
-				rep_lst->next = oscap_alloc(sizeof (struct runlevel_rep));
+				rep_lst->next = malloc(sizeof (struct runlevel_rep));
 				rep_lst = rep_lst->next;
 			}
 
@@ -506,9 +506,9 @@ int probe_main (probe_ctx *ctx, void *arg)
                         probe_item_collect(ctx, item);
 
 			next_rep = reply_st->next;
-			oscap_free(reply_st->service_name);
-			oscap_free(reply_st->runlevel);
-			oscap_free(reply_st);
+			free(reply_st->service_name);
+			free(reply_st->runlevel);
+			free(reply_st);
 			reply_st = next_rep;
 		}
         }

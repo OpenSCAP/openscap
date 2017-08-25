@@ -50,7 +50,7 @@ static int oval_enumeration_attr(xmlTextReaderPtr reader, char *attname, const s
 	if (attrstr == NULL)
 		return defval;
 	int ret = oscap_string_to_enum(map, attrstr);
-	oscap_free(attrstr);
+	free(attrstr);
 	return ret == OVAL_ENUMERATION_INVALID ? defval : ret;
 }
 
@@ -393,7 +393,7 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 	char *family_text = strrchr(namespace, '#');
 	if (family_text == NULL) {
 		dW("No OVAL family for namespace: %s", namespace);
-		oscap_free(namespace);
+		free(namespace);
 		return OVAL_FAMILY_UNKNOWN;
 	}
 
@@ -404,7 +404,7 @@ oval_family_t oval_family_parse(xmlTextReaderPtr reader)
 		ret = OVAL_FAMILY_UNKNOWN;
 	}
 
-	oscap_free(namespace);
+	free(namespace);
 	return ret;
 }
 
@@ -687,7 +687,7 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 	}
 
  cleanup:
-	oscap_free(tagname);
+	free(tagname);
 	return subtype;
 }
 

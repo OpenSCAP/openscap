@@ -108,7 +108,7 @@ static int get_substrings(char *str, pcre *re, int want_substrs, char ***substri
 		rc = ovector_len / 3;
 	}
 
-	substrs = oscap_alloc(rc * sizeof (char *));
+	substrs = malloc(rc * sizeof (char *));
 	for (i = 0; i < rc; ++i) {
 		int len;
 		char *buf;
@@ -116,7 +116,7 @@ static int get_substrings(char *str, pcre *re, int want_substrs, char ***substri
 		if (ovector[2 * i] == -1)
 			continue;
 		len = ovector[2 * i + 1] - ovector[2 * i];
-		buf = oscap_alloc(len + 1);
+		buf = malloc(len + 1);
 		memcpy(buf, str + ovector[2 * i], len);
 		buf[len] = '\0';
 		substrs[ret] = buf;
@@ -205,7 +205,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 	path_len = strlen(path);
 	filename_len = strlen(filename);
-	whole_path = oscap_alloc(path_len + filename_len + 2);
+	whole_path = malloc(path_len + filename_len + 2);
 	memcpy(whole_path, path, path_len);
 	if (whole_path[path_len - 1] != FILE_SEPARATOR) {
 		whole_path[path_len] = FILE_SEPARATOR;
@@ -341,7 +341,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	SEXP_free(filename_ent);
 	SEXP_free(behaviors_ent);
 	SEXP_free(filepath_ent);
-	oscap_free(pattern);
+	free(pattern);
 
 	return 0;
 }

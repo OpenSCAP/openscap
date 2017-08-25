@@ -220,7 +220,7 @@ static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask
 	else
 		result = 0;
 
-	oscap_free(s);
+	free(s);
 	return result;
 }
 
@@ -248,7 +248,7 @@ static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out
 	else
 		result = 0;
 
-	oscap_free(s);
+	free(s);
 	return result;
 }
 

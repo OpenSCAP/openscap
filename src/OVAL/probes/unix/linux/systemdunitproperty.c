@@ -108,13 +108,13 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 
 		if (dbus_message_iter_next(&dict_entry) == false) {
 			dW("Expected another field in dict_entry.");
-			oscap_free(property_name);
+			free(property_name);
 			goto cleanup;
 		}
 
 		if (dbus_message_iter_get_arg_type(&dict_entry) != DBUS_TYPE_VARIANT) {
 			dI("Expected variant as value in dict_entry. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&dict_entry)));
-			oscap_free(property_name);
+			free(property_name);
 			goto cleanup;
 		}
 
@@ -136,17 +136,17 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 				if (elementcbret > cbret)
 					cbret = elementcbret;
 
-				oscap_free(element);
+				free(element);
 			}
 			while (dbus_message_iter_next(&array));
 		}
 		else {
 			char *property_value = dbus_value_to_string(&value_variant);
 			cbret = callback(property_name, property_value, cbarg);
-			oscap_free(property_value);
+			free(property_value);
 		}
 
-		oscap_free(property_name);
+		free(property_name);
 		if (cbret != 0) {
 			goto cleanup;
 		}

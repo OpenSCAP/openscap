@@ -95,7 +95,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	case OVAL_NODETYPE_CRITERIA:{
 			/*(NODETYPE_CRITERIA, negate, applicability_check, operator); */
 			node = (oval_result_criteria_node_t *)
-			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERIA_t));
+			    malloc(sizeof(oval_result_criteria_node_CRITERIA_t));
 			if (node == NULL) {
 				va_end(ap);
 				return NULL;
@@ -109,7 +109,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	case OVAL_NODETYPE_CRITERION:{
 			/*(NODETYPE_CRITERION, negate, applicability_check, test, variable_instance); */
 			node = (oval_result_criteria_node_t *)
-			    oscap_alloc(sizeof(oval_result_criteria_node_CRITERION_t));
+			    malloc(sizeof(oval_result_criteria_node_CRITERION_t));
 			if (node == NULL) {
 				va_end(ap);
 				return NULL;
@@ -124,7 +124,7 @@ struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_resu
 	case OVAL_NODETYPE_EXTENDDEF:{
 			/*(NODETYPE_EXTENDDEF, negate, applicability_check, definition, variable_instance); */
 			node = (oval_result_criteria_node_t *)
-			    oscap_alloc(sizeof(oval_result_criteria_node_EXTENDDEF_t));
+			    malloc(sizeof(oval_result_criteria_node_EXTENDDEF_t));
 			if (node == NULL) {
 				va_end(ap);
 				return NULL;
@@ -231,7 +231,7 @@ void oval_result_criteria_node_free(struct oval_result_criteria_node *node)
 	}
 	node->result = OVAL_RESULT_UNKNOWN;
 	node->type = OVAL_NODETYPE_UNKNOWN;
-	oscap_free(node);
+	free(node);
 }
 
 struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node
@@ -547,7 +547,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
 						     applicability_check,
 						     rslt_test,
 						     variable_instance);
-		oscap_free(test_ref);
+		free(test_ref);
 	} else if (strcmp((const char *)localName, "extend_definition") == 0) {
 		xmlChar *definition_ref = xmlTextReaderGetAttribute(reader, BAD_CAST "definition_ref");
 		int variable_instance = oval_parser_int_attribute(reader, "variable_instance", 1);
@@ -563,7 +563,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
 						     applicability_check,
 						     rslt_definition,
 						     variable_instance);
-		oscap_free(definition_ref);
+		free(definition_ref);
 	} else {
 		dW("unhandled criteria node: <%s>.",(char *)localName);
 		oval_parser_skip_tag(reader, context);
@@ -580,7 +580,7 @@ int oval_result_criteria_node_parse(xmlTextReaderPtr reader,
 	(*consumer) (node, client);
 
 
-	oscap_free(localName);
+	free(localName);
 	return rc;
 }
 

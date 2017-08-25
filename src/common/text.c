@@ -67,15 +67,15 @@ bool oscap_text_set_overrides(struct oscap_text *text, bool overrides)
 void oscap_text_free(struct oscap_text *text)
 {
     if (text != NULL) {
-        oscap_free(text->lang);
-        oscap_free(text->text);
+        free(text->lang);
+        free(text->text);
         free(text);
     }
 }
 
 struct oscap_text *oscap_text_new_full(struct oscap_text_traits traits, const char *string, const char *lang)
 {
-    struct oscap_text *text = oscap_calloc(1, sizeof(struct oscap_text));
+    struct oscap_text *text = calloc(1, sizeof(struct oscap_text));
     text->traits = traits;
     text->text   = oscap_strdup(string);
     text->lang   = oscap_strdup(lang);
@@ -179,12 +179,12 @@ char *_xhtml_to_plaintext(const char *xhtml_in)
 	char *str = oscap_sprintf("<x xmlns='http://www.w3.org/1999/xhtml'>%s</x>", xhtml_in);
 	xmlDoc *doc = xmlParseMemory(str, strlen(str));
 	if (doc == NULL) {
-		oscap_free(str);
+		free(str);
 		return NULL;
 	}
 	xmlNode *root = xmlDocGetRootElement(doc);
 	if (root == NULL) {
-		oscap_free(str);
+		free(str);
 		return out;
 	}
 
@@ -192,7 +192,7 @@ char *_xhtml_to_plaintext(const char *xhtml_in)
 	// (perhaps use xml_iterate)
 	out = (char*) xmlNodeGetContent(root);
 	xmlFreeDoc(doc);
-	oscap_free(str);
+	free(str);
 	return out;
 }
 

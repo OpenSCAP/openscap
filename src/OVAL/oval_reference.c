@@ -92,7 +92,7 @@ char *oval_reference_get_url(struct oval_reference *ref)
 
 struct oval_reference *oval_reference_new(struct oval_definition_model *model)
 {
-	struct oval_reference *ref = (struct oval_reference *)oscap_alloc(sizeof(oval_reference_t));
+	struct oval_reference *ref = (struct oval_reference *)malloc(sizeof(oval_reference_t));
 	if (ref == NULL)
 		return NULL;
 
@@ -120,22 +120,22 @@ void oval_reference_free(struct oval_reference *ref)
 	__attribute__nonnull__(ref);
 
 	if (ref->id != NULL)
-		oscap_free(ref->id);
+		free(ref->id);
 	if (ref->source != NULL)
-		oscap_free(ref->source);
+		free(ref->source);
 	if (ref->url != NULL)
-		oscap_free(ref->url);
+		free(ref->url);
 	ref->id = NULL;
 	ref->source = NULL;
 	ref->url = NULL;
-	oscap_free(ref);
+	free(ref);
 }
 
 void oval_reference_set_source(struct oval_reference *ref, char *source)
 {
 	__attribute__nonnull__(ref);
 	if (ref->source != NULL)
-		oscap_free(ref->source);
+		free(ref->source);
 	ref->source = (source == NULL) ? NULL : oscap_strdup(source);
 }
 
@@ -164,19 +164,19 @@ int oval_reference_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context
 	char *ref_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "ref_id");
 	if (ref_id != NULL) {
 		oval_reference_set_id(ref, ref_id);
-		oscap_free(ref_id);
+		free(ref_id);
 		ref_id = NULL;
 	}
 	char *ref_url = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "ref_url");
 	if (ref_url != NULL) {
 		oval_reference_set_url(ref, ref_url);
-		oscap_free(ref_url);
+		free(ref_url);
 		ref_url = NULL;
 	}
 	char *source = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "source");
 	if (source != NULL) {
 		oval_reference_set_source(ref, source);
-		oscap_free(source);
+		free(source);
 		source = NULL;
 	}
 	(*consumer) (ref, user);

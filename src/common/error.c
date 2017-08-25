@@ -60,8 +60,8 @@ static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, const char *d
 static void oscap_err_free(struct oscap_err_t *err)
 {
 	if (err->desc != NULL)
-		oscap_free(err->desc);
-	oscap_free(err);
+		free(err->desc);
+	free(err);
 }
 
 static inline void _push_err(struct oscap_err_t *err)
@@ -92,7 +92,7 @@ void __oscap_setxmlerr(const char *file, uint32_t line, const char *func, xmlErr
 		char *msg = oscap_sprintf("%s [%s:%d]", error->message, error->file, error->line);
 		if (msg != NULL) {
 			err = oscap_err_new(OSCAP_EFAMILY_XML, msg, func, line, file);
-			oscap_free(msg);
+			free(msg);
 			_push_err(err);
 			return;
 		}
@@ -118,7 +118,7 @@ void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_err
 
 	err = oscap_err_new(family, msg, func, line, file);
 
-	oscap_free(msg);
+	free(msg);
 	_push_err(err);
 }
 

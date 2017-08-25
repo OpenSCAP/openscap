@@ -146,22 +146,22 @@ static void dbURIInfo_clear(dbURIInfo_t *ui)
 
 	if (ui->host != NULL) {
 		__clearmem(ui->host, strlen(ui->host));
-		oscap_free(ui->host);
+		free(ui->host);
 	}
 
 	if (ui->user != NULL) {
 		__clearmem(ui->user, strlen(ui->user));
-		oscap_free(ui->user);
+		free(ui->user);
 	}
 
 	if (ui->pass != NULL) {
 		__clearmem(ui->pass, strlen(ui->pass));
-		oscap_free(ui->pass);
+		free(ui->pass);
 	}
 
 	if (ui->db != NULL) {
 		__clearmem(ui->db, strlen(ui->db));
-		oscap_free(ui->db);
+		free(ui->db);
 	}
 
 	ui->host = NULL;
@@ -233,7 +233,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 				if (errno == ERANGE || errno == EINVAL)
 					info->conn_timeout = SQLPROBE_DEFAULT_CONNTIMEOUT;
 
-				oscap_free(tmp);
+				free(tmp);
 			}
 			break;
 
@@ -245,11 +245,11 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 		}
 	}
 
-	oscap_free(conn_copy);
+	free(conn_copy);
 	return (0);
 __fail:
 	dE("Parsing failed.");
-	oscap_free(conn_copy);
+	free(conn_copy);
 	return (-1);
 }
 
@@ -439,22 +439,22 @@ int probe_main(probe_ctx *ctx, void *arg)
 __exit:
 	if (engine != NULL) {
 		__clearmem(conn, strlen(engine));
-		oscap_free(engine);
+		free(engine);
 	}
 
 	if (sqlexp != NULL) {
 		__clearmem(sqlexp, strlen(sqlexp));
-		oscap_free(sqlexp);
+		free(sqlexp);
 	}
 
 	if (conn != NULL) {
 		__clearmem(conn, strlen(conn));
-		oscap_free(conn);
+		free(conn);
 	}
 
 	if (version != NULL) {
 		__clearmem(version, strlen(version));
-		oscap_free(version);
+		free(version);
 	}
 
 	return (err);

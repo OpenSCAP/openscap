@@ -170,7 +170,7 @@ int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *containe
 	xmlDoc *new_doc = ds_doc_from_foreign_node(inner_root, ds_rds_session_get_xmlDoc(session));
 	char *target_file = oscap_sprintf("%s/%s.xml", ds_rds_session_get_target_dir(session), component_name);
 	struct oscap_source *source = oscap_source_new_from_xmlDoc(new_doc, target_file);
-	oscap_free(target_file);
+	free(target_file);
 	return ds_rds_session_register_component_source(session, content_id, source);
 }
 
@@ -281,12 +281,12 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 			suffix++;
 		}
 		xmlFree(id);
-		oscap_free(id_candidate);
+		free(id_candidate);
 	}
 
 	char* id = oscap_sprintf("asset%i", suffix);
 	xmlSetProp(asset, BAD_CAST "id", BAD_CAST id);
-	oscap_free(id);
+	free(id);
 
 	xmlAddChild(assets, asset);
 
@@ -352,7 +352,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 				// lets expand the IPv6 to conform to the AI XSD and specification
 				char *expanded_ipv6 = oscap_expand_ipv6((const char*)content);
 				xmlNewTextChild(ip_address, ai_ns, BAD_CAST "ip-v6", BAD_CAST expanded_ipv6);
-				oscap_free(expanded_ipv6);
+				free(expanded_ipv6);
 			}
 			xmlFree(content);
 		}
@@ -466,13 +466,13 @@ static void ds_rds_report_inject_check_content_ref(xmlNodePtr check_content_ref,
 			}
 			char *report_id = oscap_htable_get(arf_report_mapping, oval_filename);
 			if (report_id == NULL) {
-				oscap_free(oval_filename);
+				free(oval_filename);
 				return;
 			}
 			char *desired_href = oscap_sprintf("#%s", report_id);
 			xmlSetProp(check_content_ref, BAD_CAST "href", BAD_CAST desired_href);
-			oscap_free(desired_href);
-			oscap_free(oval_filename);
+			free(desired_href);
+			free(oval_filename);
 		}
 	}
 }
@@ -676,7 +676,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 
 			xmlFree(asset_id);
 
-			oscap_free(report_id);
+			free(report_id);
 
 			xmlFreeDoc(wrap_doc);
 		}
@@ -689,7 +689,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 				(const char*)root_element->name);
 
 		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
-		oscap_free(error);
+		free(error);
 	}
 }
 
@@ -811,8 +811,8 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		oscap_source_free(target_rds);
 	}
 	oscap_htable_free(oval_result_sources, (oscap_destruct_func) oscap_source_free);
-	oscap_htable_free(oval_result_mapping, (oscap_destruct_func) oscap_free);
-	oscap_htable_free(arf_report_mapping, (oscap_destruct_func) oscap_free);
+	oscap_htable_free(oval_result_mapping, (oscap_destruct_func) free);
+	oscap_htable_free(arf_report_mapping, (oscap_destruct_func) free);
 	oscap_source_free(sds_source);
 	oscap_source_free(xccdf_result_source);
 

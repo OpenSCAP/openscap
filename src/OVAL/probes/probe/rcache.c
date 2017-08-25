@@ -45,14 +45,14 @@ probe_rcache_t *probe_rcache_new(void)
 
 static void probe_rcache_free_node(struct rbt_str_node *n)
 {
-        oscap_free(n->key);
+        free(n->key);
         SEXP_free(n->data);
 }
 
 void probe_rcache_free(probe_rcache_t *cache)
 {
         rbt_str_free_cb(cache->tree, &probe_rcache_free_node);
-	oscap_free(cache);
+	free(cache);
 	return;
 }
 
@@ -70,7 +70,7 @@ int probe_rcache_sexp_add(probe_rcache_t *cache, const SEXP_t *id, SEXP_t *item)
 
         if (rbt_str_add(cache->tree, k, (void *)r) != 0) {
                 SEXP_free(r);
-                oscap_free(k);
+                free(k);
                 return (-1);
         }
 
@@ -106,7 +106,7 @@ SEXP_t *probe_rcache_sexp_get(probe_rcache_t *cache, const SEXP_t * id)
         rbt_str_get(cache->tree, k, (void *)&r);
 
         if (k != b)
-                oscap_free(k);
+                free(k);
 
         return (r != NULL ? SEXP_ref(r) : NULL);
 }

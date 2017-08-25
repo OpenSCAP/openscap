@@ -57,7 +57,7 @@ struct xccdf_value *xccdf_value_new(xccdf_value_type_t type)
 
 struct xccdf_value * xccdf_value_clone(const struct xccdf_value * value)
 {
-	struct xccdf_item *new_value = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_value_item));
+	struct xccdf_item *new_value = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_value_item));
 	struct xccdf_item *old = XITEM(value);
     xccdf_item_base_clone(&new_value->item, &old->item);
 	new_value->type = old->type;
@@ -264,7 +264,7 @@ void xccdf_value_free(struct xccdf_item *val)
 {
     if (val) {
         oscap_list_free(val->sub.value.instances, (oscap_destruct_func)xccdf_value_instance_free);
-        oscap_list_free(val->sub.value.sources, oscap_free);
+        oscap_list_free(val->sub.value.sources, free);
         xccdf_item_release(val);
     }
 }
@@ -385,7 +385,7 @@ OSCAP_ITERATOR_REMOVE_F(xccdf_value_instance)
 
 struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
 {
-	struct xccdf_value_instance *inst = oscap_calloc(1, sizeof(struct xccdf_value_instance));
+	struct xccdf_value_instance *inst = calloc(1, sizeof(struct xccdf_value_instance));
 	inst->lower_bound = NAN;
 	inst->upper_bound = NAN;
 
@@ -397,12 +397,12 @@ struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type)
 void xccdf_value_instance_free(struct xccdf_value_instance *inst)
 {
 	if (inst != NULL) {
-		oscap_list_free(inst->choices, oscap_free);
-		oscap_free(inst->selector);
-        oscap_free(inst->match);
-        oscap_free(inst->value);
-        oscap_free(inst->defval);
-		oscap_free(inst);
+		oscap_list_free(inst->choices, free);
+		free(inst->selector);
+		free(inst->match);
+		free(inst->value);
+		free(inst->defval);
+		free(inst);
 	}
 }
 
@@ -416,16 +416,17 @@ struct xccdf_value_instance *xccdf_value_new_instance(struct xccdf_value *val)
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_STR(WHAT) \
 	const char *xccdf_value_instance_get_##WHAT##_string(const struct xccdf_value_instance *inst) { return inst->WHAT; } \
 	bool xccdf_value_instance_set_##WHAT##_string(struct xccdf_value_instance *inst, const char *newval) { \
-		oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(newval); inst->flags.WHAT##_given = true; return true; }
+		free(inst->WHAT); inst->WHAT = oscap_strdup(newval); inst->flags.WHAT##_given = true; return true; }
+// TODO: Parse floats correctly instead of converting long to float
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_NUM(WHAT) \
-	xccdf_numeric xccdf_value_instance_get_##WHAT##_number(const struct xccdf_value_instance *inst) { return oscap_strtol(inst->WHAT, NULL, 10); } \
+	xccdf_numeric xccdf_value_instance_get_##WHAT##_number(const struct xccdf_value_instance *inst) { return inst->WHAT == NULL ? NAN : (float)strtol(inst->WHAT, NULL, 10); } \
 	bool xccdf_value_instance_set_##WHAT##_number(struct xccdf_value_instance *inst, xccdf_numeric newval) { \
-		oscap_free(inst->WHAT); inst->WHAT = oscap_sprintf("%f", newval); inst->flags.WHAT##_given = true; return true; }
+		free(inst->WHAT); inst->WHAT = oscap_sprintf("%f", newval); inst->flags.WHAT##_given = true; return true; }
 #define XCCDF_VALUE_INSTANCE_VALUE_ACCESSOR_BOOL(WHAT) \
 	bool xccdf_value_instance_get_##WHAT##_boolean(const struct xccdf_value_instance *inst) \
         { return oscap_string_to_enum(OSCAP_BOOL_MAP, inst->WHAT); } \
 	bool xccdf_value_instance_set_##WHAT##_boolean(struct xccdf_value_instance *inst, bool newval) \
-		{ oscap_free(inst->WHAT); inst->WHAT = oscap_strdup(oscap_enum_to_string(OSCAP_BOOL_MAP, newval)); inst->flags.WHAT##_given = true; return true; }
+		{ free(inst->WHAT); inst->WHAT = oscap_strdup(oscap_enum_to_string(OSCAP_BOOL_MAP, newval)); inst->flags.WHAT##_given = true; return true; }
 
 OSCAP_ACCESSOR_STRING(xccdf_value_instance, selector)
 OSCAP_GETTER(xccdf_value_type_t, xccdf_value_instance, type)

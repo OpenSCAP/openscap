@@ -68,7 +68,7 @@ typedef struct oval_syschar_model {
  * */
 struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *definition_model)
 {
-	oval_syschar_model_t *newmodel = (oval_syschar_model_t *) oscap_alloc(sizeof(oval_syschar_model_t));
+	oval_syschar_model_t *newmodel = (oval_syschar_model_t *) malloc(sizeof(oval_syschar_model_t));
 	if (newmodel == NULL)
 		return NULL;
 
@@ -143,9 +143,9 @@ void oval_syschar_model_free(struct oval_syschar_model *model)
 		oval_smc_free(model->syschar_map, (oscap_destruct_func) oval_syschar_free);
 		if (model->sysitem_map)
 			oval_string_map_free(model->sysitem_map, (oscap_destruct_func) oval_sysitem_free);
-		oscap_free(model->schema);
+		free(model->schema);
 		oval_generator_free(model->generator);
-		oscap_free(model);
+		free(model);
 	}
 }
 
@@ -258,8 +258,8 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
 		ret = -1;
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	xmlFreeTextReader(context.reader);
 	return ret;
 }

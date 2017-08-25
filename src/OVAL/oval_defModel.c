@@ -67,7 +67,7 @@ typedef struct oval_definition_model {
  * */
 struct oval_definition_model *oval_definition_model_new()
 {
-	oval_definition_model_t *newmodel = (oval_definition_model_t *) oscap_alloc(sizeof(oval_definition_model_t));
+	oval_definition_model_t *newmodel = (oval_definition_model_t *) malloc(sizeof(oval_definition_model_t));
 	if (newmodel == NULL)
 		return NULL;
 
@@ -138,10 +138,10 @@ void oval_definition_model_free(struct oval_definition_model *model)
 					   (oscap_destruct_func) oval_variable_model_free);
 
 	        if (model->schema != NULL)
-			oscap_free(model->schema);
+			free(model->schema);
 
 		oval_generator_free(model->generator);
-		oscap_free(model);
+		free(model);
 	}
 }
 

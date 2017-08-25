@@ -46,7 +46,7 @@ struct rds_asset_index
 
 struct rds_asset_index *rds_asset_index_new(void)
 {
-	struct rds_asset_index *ret = oscap_calloc(1, sizeof(struct rds_asset_index));
+	struct rds_asset_index *ret = calloc(1, sizeof(struct rds_asset_index));
 	ret->id = NULL;
 	ret->reports = oscap_list_new();
 
@@ -57,8 +57,8 @@ void rds_asset_index_free(struct rds_asset_index *s)
 {
 	if (s != NULL) {
 		oscap_list_free0(s->reports);
-		oscap_free(s->id);
-		oscap_free(s);
+		free(s->id);
+		free(s);
 	}
 }
 

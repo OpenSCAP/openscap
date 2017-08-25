@@ -132,7 +132,7 @@ struct oval_filter_iterator *oval_setobject_get_filters(struct oval_setobject *s
 
 struct oval_setobject *oval_setobject_new(struct oval_definition_model *model)
 {
-	oval_set_t *set = (oval_set_t *) oscap_alloc(sizeof(oval_set_t));
+	oval_set_t *set = (oval_set_t *) malloc(sizeof(oval_set_t));
 	if (set == NULL)
 		return NULL;
 
@@ -189,7 +189,7 @@ void oval_setobject_free(struct oval_setobject *set)
 			oval_set_AGGREGATE_t *aggregate = (oval_set_AGGREGATE_t *) set->extension;
 			oval_collection_free_items(aggregate->subsets, (oscap_destruct_func) oval_setobject_free);
 			aggregate->subsets = NULL;
-			oscap_free(set->extension);
+			free(set->extension);
 			set->extension = NULL;
 		}
 		break;
@@ -200,14 +200,14 @@ void oval_setobject_free(struct oval_setobject *set)
 			oval_collection_free_items(collective->objects, NULL);
 			collective->filters = NULL;
 			collective->objects = NULL;
-			oscap_free(set->extension);
+			free(set->extension);
 			set->extension = NULL;
 		}
 		break;
 	case OVAL_SET_UNKNOWN:
 		break;
 	}
-	oscap_free(set);
+	free(set);
 }
 
 void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t type)
@@ -219,14 +219,14 @@ void oval_setobject_set_type(struct oval_setobject *set, oval_setobject_type_t t
 	case OVAL_SET_AGGREGATE:{
 			oval_set_AGGREGATE_t *aggregate =
 			    (oval_set_AGGREGATE_t *) (set->extension =
-						      oscap_alloc(sizeof(oval_set_AGGREGATE_t)));
+						      malloc(sizeof(oval_set_AGGREGATE_t)));
 			aggregate->subsets = oval_collection_new();
 		}
 		break;
 	case OVAL_SET_COLLECTIVE:{
 			oval_set_COLLECTIVE_t *collective =
 			    (oval_set_COLLECTIVE_t *) (set->extension =
-						       oscap_alloc(sizeof(oval_set_COLLECTIVE_t)));
+						       malloc(sizeof(oval_set_COLLECTIVE_t)));
 			collective->filters = oval_collection_new();
 			collective->objects = oval_collection_new();
 		}
@@ -327,8 +327,8 @@ static int _oval_set_parse_tag(xmlTextReaderPtr reader, struct oval_parser_conte
 		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -350,8 +350,8 @@ int oval_set_parse_tag(xmlTextReaderPtr reader,
 
 	int return_code = oval_parser_parse_tag(reader, context, &_oval_set_parse_tag, set);
 
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 

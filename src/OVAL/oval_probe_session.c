@@ -176,7 +176,7 @@ void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval_syschar_m
 void oval_probe_session_destroy(oval_probe_session_t *sess)
 {
 	oval_probe_session_free(sess);
-	oscap_free(sess);
+	free(sess);
 }
 
 int oval_probe_session_close(oval_probe_session_t *sess)

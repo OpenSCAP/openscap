@@ -26,6 +26,11 @@
  *
  */
 
+#pragma once
+
+#ifndef OPENSCAP_OVAL_PROBES_SYSTEMDSHARED_H_
+#define OPENSCAP_OVAL_PROBES_SYSTEMDSHARED_H_
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -205,7 +210,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 		dbus_message_iter_get_basic(&unit_name, &value);
 		char *unit_name_s = oscap_strdup(value.str);
 		int cbret = callback(unit_name_s, cbarg);
-		oscap_free(unit_name_s);
+		free(unit_name_s);
 		if (cbret != 0) {
 			goto cleanup;
 		}
@@ -300,8 +305,8 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 			else
 				ret = oscap_sprintf("%s, %s", old_ret, element);
 
-			oscap_free(old_ret);
-			oscap_free(element);
+			free(old_ret);
+			free(element);
 		}
 		while (dbus_message_iter_next(&array));
 
@@ -352,3 +357,5 @@ static void disconnect_dbus(DBusConnection *conn)
 	// Connections retrieved via dbus_bus_get shall not be destroyed,
 	// these connections are shared.
 }
+
+#endif

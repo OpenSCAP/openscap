@@ -99,13 +99,13 @@ static regex_t g_keyid_regex;
 
 static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
-        oscap_free (ptr->name);
-        oscap_free (ptr->arch);
-        oscap_free (ptr->epoch);
-        oscap_free (ptr->release);
-        oscap_free (ptr->version);
-        oscap_free (ptr->evr);
-        oscap_free (ptr->signature_keyid);
+        free (ptr->name);
+        free (ptr->arch);
+        free (ptr->epoch);
+        free (ptr->release);
+        free (ptr->version);
+        free (ptr->evr);
+        free (ptr->signature_keyid);
 }
 
 static void pkgh2rep (Header h, struct rpminfo_rep *r)
@@ -131,7 +131,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
                strlen (r->release) +
                strlen (r->version) + 2);
 
-        str = oscap_alloc (sizeof (char) * (len + 1));
+        str = malloc (sizeof (char) * (len + 1));
         snprintf (str, len + 1, "%s:%s-%s",
 		epoch_override,
                   r->version,
@@ -159,7 +159,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 	}
 
         r->signature_keyid = strdup(sid != NULL ? sid : "0");
-        oscap_free (str);
+        free (str);
 }
 
 /*
@@ -234,7 +234,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                  * We can allocate all memory needed now because we know the number
                  * of results.
                  */
-                (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ret);
+                (*rep) = realloc (*rep, sizeof (struct rpminfo_rep) * ret);
 
                 for (i = 0; i < ret; ++i) {
                         pkgh = rpmdbNextIterator (match);
@@ -250,7 +250,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                 ret = 0;
 
                 while ((pkgh = rpmdbNextIterator (match)) != NULL) {
-                        (*rep) = oscap_realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
+                        (*rep) = realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
                         assume_r (*rep != NULL, -1);
                         pkgh2rep (pkgh, (*rep) + (ret - 1));
                 }
@@ -270,7 +270,6 @@ void probe_preload ()
 void *probe_init (void)
 {
 	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT|PROBE_OFFLINE_RPMDB);
-	addMacro(NULL, "_dbpath", NULL, getenv("OSCAP_PROBE_RPMDB_PATH"), 0);
 
 #ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
@@ -288,6 +287,11 @@ void *probe_init (void)
 
         g_rpm.rpmts = rpmtsCreate();
         pthread_mutex_init (&(g_rpm.mutex), NULL);
+
+	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
+	if (dbpath) {
+		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
+	}
 
         return ((void *)&g_rpm);
 }
@@ -436,7 +440,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                 default:
                         SEXP_free (val);
                         SEXP_free (ent);
-                        oscap_free (request_st.name);
+                        free (request_st.name);
                         return (PROBE_EOPNOTSUPP);
                 }
 
@@ -540,12 +544,12 @@ int probe_main (probe_ctx *ctx, void *arg)
 				}
                         }
 
-                        oscap_free (reply_st);
+                        free (reply_st);
                 }
         }
 
 	SEXP_vfree(ent, NULL);
-        oscap_free(request_st.name);
+        free(request_st.name);
 
         return 0;
 }

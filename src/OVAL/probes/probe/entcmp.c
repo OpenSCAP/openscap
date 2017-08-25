@@ -55,8 +55,8 @@ oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_
 
 	result = oval_binary_cmp(s1, s2, op);
 
-        oscap_free(s1);
-        oscap_free(s2);
+        free(s1);
+        free(s2);
 
 	return result;
 }
@@ -79,8 +79,8 @@ oval_result_t probe_ent_cmp_evr(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 
 	result = oval_evr_string_cmp(s1, s2, op);
 
-	oscap_free(s1);
-	oscap_free(s2);
+	free(s1);
+	free(s2);
 	return result;
 }
 
@@ -135,13 +135,13 @@ oval_result_t probe_ent_cmp_ios(SEXP_t * val1, SEXP_t * val2, oval_operation_t o
 
 oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
-	const char *state_version = SEXP_string_cstr(val1);
-	const char *sys_version = SEXP_string_cstr(val2);
+	char *state_version = SEXP_string_cstr(val1);
+	char *sys_version = SEXP_string_cstr(val2);
 
 	oval_result_t result = oval_versiontype_cmp(state_version, sys_version, op);
 
-	oscap_free(state_version);
-	oscap_free(sys_version);
+	free(state_version);
+	free(sys_version);
 	return result;
 }
 
@@ -155,8 +155,8 @@ oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_
 
 	result = oval_string_cmp(s1, s2, op);
 
-        oscap_free(s1);
-        oscap_free(s2);
+        free(s1);
+        free(s2);
 
 	return result;
 }
@@ -169,8 +169,8 @@ static oval_result_t probe_ent_cmp_ipaddr(int af, SEXP_t *val1, SEXP_t *val2, ov
 
 	result = oval_ipaddr_cmp(af, addr1, addr2, op);
 
-	oscap_free(addr1);
-	oscap_free(addr2);
+	free(addr1);
+	free(addr2);
 	return result;
 }
 
@@ -318,22 +318,19 @@ static oval_result_t _probe_entste_cmp_record(SEXP_t *ent_ste, SEXP_t *ent_itm)
 
 	SEXP_list_foreach(ste_rf, ste_record_fields) {
 		SEXP_t *itm_rf, *itm_res;
-		const char *sname;
 		bool matched;
 
-		sname = probe_ent_getname(ste_rf);
+		char *sname = probe_ent_getname(ste_rf);
 		itm_res = SEXP_list_new(NULL);
 		matched = false;
 
 		SEXP_list_foreach(itm_rf, itm_record_fields) {
-			const char *iname;
-
-			iname = probe_ent_getname(itm_rf);
+			char *iname = probe_ent_getname(itm_rf);
 			if (strcmp(sname, iname)) {
-				oscap_free(iname);
+				free(iname);
 				continue;
 			}
-			oscap_free(iname);
+			free(iname);
 			matched = true;
 
 			res = probe_entste_cmp(ste_rf, itm_rf);
@@ -343,7 +340,7 @@ static oval_result_t _probe_entste_cmp_record(SEXP_t *ent_ste, SEXP_t *ent_itm)
 			SEXP_free(stmp);
 		}
 
-		oscap_free(sname);
+		free(sname);
 
 		if (!matched) {
 			stmp = SEXP_number_newu(OVAL_RESULT_ERROR);

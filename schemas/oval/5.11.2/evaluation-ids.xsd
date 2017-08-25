@@ -1,0 +1,36 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" 
+    xmlns:evalids="http://oval.mitre.org/XMLSchema/ovaldi/evalids" targetNamespace="http://oval.mitre.org/XMLSchema/ovaldi/evalids" elementFormDefault="qualified">
+    <xsd:import namespace="http://oval.mitre.org/XMLSchema/oval-common-5"/>
+    <xsd:annotation>
+        <xsd:documentation>This schema defines an xml format for inputing a set of OVAL Definition ids into the reference OVAL Interpreter for evaluation.</xsd:documentation>
+        <xsd:appinfo>
+            <schema>OVAL Definition Interpreter - Evaluation Id Schema</schema>
+            <version>5.11.2</version>
+            <date>11/30/2016 09:00:00 AM</date>
+            <terms_of_use>Copyright (c) 2016, Center for Internet Security. All rights reserved.  The contents of this file are subject to the terms of the OVAL License located at https://oval.cisecurity.org/terms. See the OVAL License for the specific language governing permissions and limitations for use of this schema.  When distributing copies of the OVAL Schema, this license header must be included.</terms_of_use>
+        </xsd:appinfo>
+    </xsd:annotation>
+    
+    <xsd:element name="evalutation-definition-ids">
+        <xsd:annotation>
+            <xsd:documentation>The evaluation-definition-ids element is the root the Document. Its purpose is to bind together the a set of definition elements.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="definition" type="oval:DefinitionIDPattern" minOccurs="1" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation>Each definition represents the id of a definition to be evaluated.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+        <xsd:unique name="UniqueDefinitionId">
+            <xsd:annotation>
+                <xsd:documentation>Enforce uniqueness amongst the definition ids found in the document.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:selector xpath="evalids:definition"/>
+            <xsd:field xpath="."/>
+        </xsd:unique>
+    </xsd:element>
+</xsd:schema>

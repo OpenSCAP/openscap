@@ -5,8 +5,7 @@ includedir=@includedir@/openscap
 
 Name: libopenscap
 Description: An open source library enabling integration of the SCAP line of standards
-URL: http://www.open-scap.org
+URL: https://www.open-scap.org
 Version: @VERSION@
-Requires: libxml-2.0 libxslt libpcre
 Libs: -L${libdir} -lopenscap
 Cflags: -I${includedir}

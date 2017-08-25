@@ -106,7 +106,7 @@ typedef struct oval_variable_restriction {
 struct oval_variable_possible_value *oval_variable_possible_value_new(const char *hint, const char *value)
 {
 	struct oval_variable_possible_value *pv;
-	pv = oscap_alloc(sizeof(oval_variable_possible_value_t));
+	pv = malloc(sizeof(oval_variable_possible_value_t));
 	pv->hint = oscap_strdup(hint);
 	pv->value = oscap_strdup(value);
 	return pv;
@@ -115,9 +115,9 @@ struct oval_variable_possible_value *oval_variable_possible_value_new(const char
 void oval_variable_possible_value_free(struct oval_variable_possible_value *pv)
 {
 	if (pv != NULL) {
-		oscap_free(pv->hint);
-		oscap_free(pv->value);
-		oscap_free(pv);
+		free(pv->hint);
+		free(pv->value);
+		free(pv);
 	}
 }
 
@@ -158,7 +158,7 @@ int oval_variable_possible_value_iterator_remaining(struct oval_variable_possibl
 struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t operator, const char *hint)
 {
 	struct oval_variable_possible_restriction *pr;
-	pr = oscap_alloc(sizeof(oval_variable_possible_restriction_t));
+	pr = malloc(sizeof(oval_variable_possible_restriction_t));
 	pr->operator = operator;
 	pr->hint = oscap_strdup(hint);
 	pr->restrictions = oval_collection_new();
@@ -168,9 +168,9 @@ struct oval_variable_possible_restriction *oval_variable_possible_restriction_ne
 void oval_variable_possible_restriction_free(struct oval_variable_possible_restriction *pr)
 {
 	if (pr != NULL) {
-		oscap_free(pr->hint);
+		free(pr->hint);
 		oval_collection_free_items(pr->restrictions, (oscap_destruct_func) oval_variable_restriction_free);
-		oscap_free(pr);
+		free(pr);
 	}
 }
 
@@ -230,7 +230,7 @@ int oval_variable_possible_restriction_iterator_remaining(struct oval_variable_p
 struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value)
 {
 	struct oval_variable_restriction *r;
-	r = oscap_alloc(sizeof(oval_variable_restriction_t));
+	r = malloc(sizeof(oval_variable_restriction_t));
 	r->operation = operation;
 	r->value = oscap_strdup(value);
 	return r;
@@ -239,8 +239,8 @@ struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t
 void oval_variable_restriction_free(struct oval_variable_restriction *r)
 {
 	if (r != NULL) {
-		oscap_free(r->value);
-		oscap_free(r);
+		free(r->value);
+		free(r);
 	}
 }
 
@@ -578,7 +578,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	case OVAL_VARIABLE_CONSTANT:{
 			oval_variable_CONSTANT_t *cvar;
 
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_CONSTANT_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_CONSTANT_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -590,7 +590,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	case OVAL_VARIABLE_EXTERNAL:{
 			oval_variable_EXTERNAL_t *evar;
 
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_EXTERNAL_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_EXTERNAL_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -604,7 +604,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 	case OVAL_VARIABLE_LOCAL:{
 			oval_variable_LOCAL_t *lvar;
 
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_LOCAL_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_LOCAL_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -615,7 +615,7 @@ struct oval_variable *oval_variable_new(struct oval_definition_model *model, con
 		}
 		break;
 	case OVAL_VARIABLE_UNKNOWN:{
-			variable = (oval_variable_t *) oscap_alloc(sizeof(oval_variable_UNKNOWN_t));
+			variable = (oval_variable_t *) malloc(sizeof(oval_variable_UNKNOWN_t));
 			if (variable == NULL)
 				return NULL;
 
@@ -678,7 +678,7 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			old_evar = (oval_variable_EXTERNAL_t *) old_variable;
 
 			struct oval_variable_possible_value_iterator *old_pv_itr;
-			old_pv_itr = oval_variable_get_possible_values(old_variable);
+			old_pv_itr = oval_variable_get_possible_values2(old_variable);
 			while (oval_variable_possible_value_iterator_has_more(old_pv_itr)) {
 				struct oval_variable_possible_value *old_pv, *new_pv;
 				old_pv = oval_variable_possible_value_iterator_next(old_pv_itr);
@@ -688,13 +688,13 @@ struct oval_variable *oval_variable_clone(struct oval_definition_model *new_mode
 			oval_variable_possible_value_iterator_free(old_pv_itr);
 
 			struct oval_variable_possible_restriction_iterator *old_pr_itr;
-			old_pr_itr = oval_variable_get_possible_restrictions(old_variable);
+			old_pr_itr = oval_variable_get_possible_restrictions2(old_variable);
 			while (oval_variable_possible_restriction_iterator_has_more(old_pr_itr)) {
 				struct oval_variable_possible_restriction *old_pr, *new_pr;
 				old_pr = oval_variable_possible_restriction_iterator_next(old_pr_itr);
 				new_pr = oval_variable_possible_restriction_new(old_pr->operator, old_pr->hint);
 				struct oval_variable_restriction_iterator *old_r_itr;
-				old_r_itr = oval_variable_possible_restriction_get_restrictions(old_pr);
+				old_r_itr = oval_variable_possible_restriction_get_restrictions2(old_pr);
 				while (oval_variable_restriction_iterator_has_more(old_r_itr)) {
 					struct oval_variable_restriction *old_r, *new_r;
 					old_r = oval_variable_restriction_iterator_next(old_r_itr);
@@ -743,9 +743,9 @@ void oval_variable_free(struct oval_variable *variable)
 {
 	if (variable) {
 		if (variable->id)
-			oscap_free(variable->id);
+			free(variable->id);
 		if (variable->comment)
-			oscap_free(variable->comment);
+			free(variable->comment);
 		variable->id = variable->comment = NULL;
 
 		switch (variable->type) {
@@ -784,7 +784,7 @@ void oval_variable_free(struct oval_variable *variable)
 			break;
 		}
 
-		oscap_free(variable);
+		free(variable);
 	}
 }
 
@@ -844,7 +844,7 @@ void oval_variable_set_comment(struct oval_variable *variable, char *comm)
 	__attribute__nonnull__(variable);
 
 	if (variable->comment != NULL)
-		oscap_free(variable->comment);
+		free(variable->comment);
 	variable->comment = oscap_strdup(comm);
 
 }
@@ -935,7 +935,7 @@ static int oval_value_satisfies_possible_restriction(struct oval_value *value, s
 	oval_operator_t operator = pr->operator;
 	struct oresults results;
 	ores_clear(&results);
-	struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+	struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions2(pr);
 	while (oval_variable_restriction_iterator_has_more(restrictions)) {
 		struct oval_variable_restriction *r = oval_variable_restriction_iterator_next(restrictions);
 		oval_result_t result = oval_str_cmp_str(r->value, datatype, text, r->operation);
@@ -1030,8 +1030,8 @@ static int _oval_variable_parse_local_tag(xmlTextReaderPtr reader, struct oval_p
 	if (return_code != 0) {
 		dW("Parsing of %s terminated by an error at <%s>, line %d.", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -1046,7 +1046,7 @@ static int _oval_variable_parse_restriction_tag(xmlTextReaderPtr reader, struct 
 		struct oval_variable_restriction *restriction = oval_variable_restriction_new(operation, value);
 		oval_variable_possible_restriction_add_restriction(pr, restriction);
 		return_code = 0;
-		oscap_free(value);
+		free(value);
 	} else {
 		return_code = 1;
 	}
@@ -1065,27 +1065,27 @@ static int _oval_variable_parse_external_tag(xmlTextReaderPtr reader, struct ova
 			char *value = (char *)xmlTextReaderValue(reader);
 			struct oval_variable_possible_value *pv = oval_variable_possible_value_new(hint, value);
 			oval_variable_add_possible_value(variable, pv);
-			oscap_free(value);
+			free(value);
 			return_code = 0;
 		} else {
 			return_code = 1;
 		}
-		oscap_free(hint);
+		free(hint);
 	} else if (strcmp(tagname, "possible_restriction") == 0) {
 		oval_operator_t operator = oval_operator_parse(reader, "operator", OVAL_OPERATOR_AND);
 		char *hint = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "hint");
 		struct oval_variable_possible_restriction *pr = oval_variable_possible_restriction_new(operator, hint);
 		oval_variable_add_possible_restriction(variable, pr);
 		return_code = oval_parser_parse_tag(reader, context, _oval_variable_parse_restriction_tag, pr);
-		oscap_free(hint);
+		free(hint);
 	} else {
 		return_code = 1;
 	}
 	if (return_code != 0) {
 		dW("Parsing of %s terminated by an error at <%s>, line %d.", variable->id, tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -1115,8 +1115,8 @@ static int _oval_variable_parse_constant_tag(xmlTextReaderPtr reader, struct ova
 	oval_value_parse_tag(reader, context, _const_tag_consumer, variable);
 
  out:
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return 0;
 }
 
@@ -1175,10 +1175,10 @@ int oval_variable_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		return_code = 1;
 	}
 
-	oscap_free(tagname);
-	oscap_free(id);
-	oscap_free(comm);
-	oscap_free(version);
+	free(tagname);
+	free(id);
+	free(comm);
+	free(version);
 
 	return return_code;
 }
@@ -1203,7 +1203,7 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 	xmlNs *ns_definitions = xmlSearchNsByHref(doc, parent, OVAL_DEFINITIONS_NAMESPACE);
 	xmlNode *variable_node = xmlNewTextChild(parent, ns_definitions, BAD_CAST "external_variable", NULL);
 
-	struct oval_variable_possible_value_iterator *possible_values = oval_variable_get_possible_values(variable);
+	struct oval_variable_possible_value_iterator *possible_values = oval_variable_get_possible_values2(variable);
 	while (oval_variable_possible_value_iterator_has_more(possible_values)) {
 		struct oval_variable_possible_value *pv = oval_variable_possible_value_iterator_next(possible_values);
 		xmlNode *possible_value_node = xmlNewTextChild(variable_node, ns_definitions, BAD_CAST "possible_value", BAD_CAST pv->value);
@@ -1213,10 +1213,10 @@ static xmlNode *_oval_VARIABLE_EXTERNAL_to_dom(struct oval_variable *variable, x
 
 	oval_schema_version_t schema_version = oval_definition_model_get_core_schema_version(variable->model);
 	bool serialize_operator = oval_schema_version_cmp(schema_version, OVAL_SCHEMA_VERSION(5.11)) >= 0;
-	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions(variable);
+	struct oval_variable_possible_restriction_iterator *possible_restrictions = oval_variable_get_possible_restrictions2(variable);
 	while (oval_variable_possible_restriction_iterator_has_more(possible_restrictions)) {
 		struct oval_variable_possible_restriction *pr = oval_variable_possible_restriction_iterator_next(possible_restrictions);
-		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions(pr);
+		struct oval_variable_restriction_iterator *restrictions = oval_variable_possible_restriction_get_restrictions2(pr);
 		/* Create "possible_restriction" node only if there will be some
 		 * "restriction" children, because each "possible_restriction"
 		 * node must have at least one "restriction" child.

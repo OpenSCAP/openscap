@@ -2036,6 +2036,8 @@ static int __SEXP_sizeof_lmemb (const SEXP_t *s_exp, size_t *sz)
                 }
 
                 ret = SEXP_rawval_lblk_cb ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, (int(*)(SEXP_t *, void *))__SEXP_sizeof_lmemb, sz, 1);
+                (*sz) += sizeof (SEXP_valhdr_t) + v_dsc.hdr->size;
+                break;
         }
         case SEXP_VALTYPE_NUMBER:
         case SEXP_VALTYPE_STRING:

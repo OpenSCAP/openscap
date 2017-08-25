@@ -158,15 +158,15 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 									callback, cbarg,
 									include_requires, include_wants);
 				} else {
-					oscap_free(requires);
-					oscap_free(requires_s);
-					oscap_free(path);
+					free(requires);
+					free(requires_s);
+					free(path);
 					return;
 				}
 			}
-			oscap_free(requires);
+			free(requires);
 		}
-		oscap_free(requires_s);
+		free(requires_s);
 	}
 
 	if (include_wants) {
@@ -183,18 +183,18 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 									callback, cbarg,
 									include_requires, include_wants);
 				} else {
-					oscap_free(wants);
-					oscap_free(wants_s);
-					oscap_free(path);
+					free(wants);
+					free(wants_s);
+					free(path);
 					return;
 				}
 			}
-			oscap_free(wants);
+			free(wants);
 		}
-		oscap_free(wants_s);
+		free(wants_s);
 	}
 
-	oscap_free(path);
+	free(path);
 }
 
 static int dependency_callback(const char *dependency, void *cbarg)

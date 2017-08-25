@@ -137,7 +137,7 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
 	if (!unresolved)
 		return oscap_strdup("");
 	char *resolved = xccdf_policy_substitute(unresolved, policy);
-	oscap_free(unresolved);
+	free(unresolved);
 	return resolved;
 }
 
@@ -151,10 +151,10 @@ char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, st
 		return oscap_strdup("");
 	const char *unresolved = oscap_text_get_text(unresolved_text);
 	/* Resolve <xccdf:sub> elements */
-	const char *resolved = xccdf_policy_substitute(unresolved, policy);
+	char *resolved = xccdf_policy_substitute(unresolved, policy);
 	/* Get a rid of xhtml elements */
 	char *plaintext = _xhtml_to_plaintext(resolved);
-	oscap_free(resolved);
+	free(resolved);
 	return plaintext;
 }
 
@@ -437,7 +437,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             value = (struct xccdf_value *) xccdf_benchmark_get_item(benchmark, xccdf_check_export_get_value(check));
             if (value == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_XCCDF, "Value \"%s\" does not exist in benchmark", xccdf_check_export_get_value(check));
-		oscap_list_free(list, oscap_free);
+		oscap_list_free(list, free);
                 return NULL;
             }
             binding = xccdf_value_binding_new();
@@ -461,7 +461,7 @@ static struct oscap_list * xccdf_policy_check_get_value_bindings(struct xccdf_po
             const struct xccdf_value_instance * val = xccdf_value_get_instance_by_selector(value, selector);
             if (val == NULL) {
                 oscap_seterr(OSCAP_EFAMILY_XCCDF, "Attempt to get non-existent selector \"%s\" from variable \"%s\"", selector, xccdf_value_get_id(value));
-		oscap_list_free(list, oscap_free);
+		oscap_list_free(list, free);
 		xccdf_value_binding_free(binding);
                 return NULL;
             }
@@ -745,7 +745,7 @@ static char *_cpe_get_oval_href(struct cpe_dict_model *dict, struct cpe_lang_mod
 		} else {
 			oval_href = oscap_sprintf("%s/%s", prefix_dirname, oval_relative_href);
 		}
-		oscap_free(origin_file);
+		free(origin_file);
 	}
 	return oval_href;
 }
@@ -760,7 +760,7 @@ static bool _xccdf_policy_cpe_check_cb(const char* sys, const char* href, const 
 
 	char* prefixed_href = _cpe_get_oval_href(cb_usr->dict, cb_usr->lang_model, href);
 	struct oval_agent_session *session = cpe_session_lookup_oval_session(model->cpe, prefixed_href);
-	oscap_free(prefixed_href);
+	free(prefixed_href);
 	if (session == NULL) {
 		return false;
 	}
@@ -818,12 +818,12 @@ static bool xccdf_policy_model_platforms_are_applicable_dict(struct xccdf_policy
 
 		struct cpe_name* name = cpe_name_new(platform);
 
-		struct cpe_check_cb_usr* usr = oscap_alloc(sizeof(struct cpe_check_cb_usr));
+		struct cpe_check_cb_usr* usr = malloc(sizeof(struct cpe_check_cb_usr));
 		usr->model = model;
 		usr->dict = dict;
 		usr->lang_model = NULL;
 		const bool applicable = cpe_name_applicable_dict(name, dict, (cpe_check_fn) _xccdf_policy_cpe_check_cb, usr);
-		oscap_free(usr);
+		free(usr);
 
 		cpe_name_free(name);
 
@@ -861,12 +861,12 @@ static bool xccdf_policy_model_platforms_are_applicable_lang_model(struct xccdf_
 			platform_shifted++;
 		}
 
-		struct cpe_check_cb_usr* usr = oscap_alloc(sizeof(struct cpe_check_cb_usr));
+		struct cpe_check_cb_usr* usr = malloc(sizeof(struct cpe_check_cb_usr));
 		usr->model = model;
 		usr->dict = NULL;
 		usr->lang_model = lang_model;
 		const bool applicable = cpe_platform_applicable_lang_model(platform_shifted, lang_model, (cpe_check_fn)_xccdf_policy_cpe_check_cb, (cpe_dict_fn)_xccdf_policy_cpe_dict_cb, usr);
-		oscap_free(usr);
+		free(usr);
 
 		if (applicable)
 		{
@@ -1142,7 +1142,7 @@ struct oscap_file_entry {
 
 struct oscap_file_entry *oscap_file_entry_new(void)
 {
-	struct oscap_file_entry *ret = oscap_calloc(1, sizeof(struct oscap_file_entry));
+	struct oscap_file_entry *ret = calloc(1, sizeof(struct oscap_file_entry));
 	return ret;
 }
 
@@ -1159,9 +1159,9 @@ struct oscap_file_entry *oscap_file_entry_dup(struct oscap_file_entry * file_ent
 
 void oscap_file_entry_free(struct oscap_file_entry * entry)
 {
-	oscap_free(entry->system_name);
-	oscap_free(entry->file);
-	oscap_free(entry);
+	free(entry->system_name);
+	free(entry->file);
+	free(entry);
 }
 
 const char* oscap_file_entry_get_system(struct oscap_file_entry* entry)
@@ -1574,14 +1574,14 @@ void xccdf_policy_model_unregister_engines(struct xccdf_policy_model *model, con
 {
 	__attribute__nonnull__(model);
 	if (sys == NULL)
-		oscap_list_free(model->engines, (oscap_destruct_func) oscap_free);
+		oscap_list_free(model->engines, (oscap_destruct_func) free);
 	else {
 		struct oscap_list *rest = oscap_list_new();
 		struct oscap_iterator *cb_it = oscap_iterator_new(model->engines);
 		while (oscap_iterator_has_more(cb_it)) {
 			struct xccdf_policy_engine *engine = oscap_iterator_next(cb_it);
 			if (xccdf_policy_engine_filter(engine, sys))
-				oscap_free(engine);
+				free(engine);
 			else
 				oscap_list_add(rest, engine);
 		}
@@ -1641,7 +1641,7 @@ struct xccdf_policy_model * xccdf_policy_model_new(struct xccdf_benchmark * benc
 
 	struct xccdf_policy_model       * model;
 
-	model = oscap_alloc(sizeof(struct xccdf_policy_model));
+	model = malloc(sizeof(struct xccdf_policy_model));
 	if (model == NULL)
 		return NULL;
 	memset(model, 0, sizeof(struct xccdf_policy_model));
@@ -1776,7 +1776,7 @@ struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct
 	struct xccdf_item_iterator      * item_it;
 	struct xccdf_item               * item;
 
-	policy = oscap_alloc(sizeof(struct xccdf_policy));
+	policy = malloc(sizeof(struct xccdf_policy));
 	if (policy == NULL)
 		return NULL;
 	memset(policy, 0, sizeof(struct xccdf_policy));
@@ -1816,7 +1816,7 @@ struct xccdf_value_binding * xccdf_value_binding_new() {
         struct xccdf_value_binding          * binding;
 
         /* Initialization */
-	binding = oscap_alloc(sizeof(struct xccdf_value_binding));
+	binding = malloc(sizeof(struct xccdf_value_binding));
 	if (binding == NULL)
 		return NULL;
 	memset(binding, 0, sizeof(struct xccdf_value_binding));
@@ -2002,7 +2002,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 	xccdf_result_set_test_system(result, "cpe:/a:redhat:openscap:" VERSION);
 
     /** Set ID of TestResult */
-    const char * id = NULL;
+	char *id = NULL;
 	if ((xccdf_policy_get_profile(policy) != NULL) && (xccdf_profile_get_id(xccdf_policy_get_profile(policy)) != NULL)) {
 		id = oscap_strdup(xccdf_profile_get_id(xccdf_policy_get_profile(policy)));
 		xccdf_result_set_profile(result, id);
@@ -2038,7 +2038,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
         xccdf_result_set_id(result, rid);
     }
 
-    oscap_free(id);
+    free(id);
 
 	/** We need to process document top-down order.
 	 * See conflicts/requires and Item Processing Algorithm */
@@ -2247,11 +2247,11 @@ void xccdf_policy_model_free(struct xccdf_policy_model * model) {
 
 	oscap_list_free(model->policies, (oscap_destruct_func) xccdf_policy_free);
 	xccdf_policy_model_unregister_engines(model, NULL);
-	oscap_list_free(model->callbacks, (oscap_destruct_func) oscap_free);
+	oscap_list_free(model->callbacks, (oscap_destruct_func) free);
 	xccdf_tailoring_free(model->tailoring);
         xccdf_benchmark_free(model->benchmark);
 	cpe_session_free(model->cpe);
-        oscap_free(model);
+        free(model);
 }
 
 
@@ -2274,15 +2274,15 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	oscap_htable_free0(policy->selected_internal);
 	oscap_htable_free0(policy->selected_final);
 	oscap_htable_free(policy->refine_rules_internal, (oscap_destruct_func) xccdf_refine_rule_internal_free);
-        oscap_free(policy);
+        free(policy);
 }
 
 void xccdf_value_binding_free(struct xccdf_value_binding * binding) {
 
-        oscap_free(binding->name);
-        oscap_free(binding->value);
-        oscap_free(binding->setvalue);
-        oscap_free(binding);
+        free(binding->name);
+        free(binding->value);
+        free(binding->setvalue);
+        free(binding);
 }
 
 

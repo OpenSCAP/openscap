@@ -65,7 +65,7 @@ struct rpmverify_res {
 	const char *version;
 	const char *release;
 	const char *arch;
-	const char *file;  /**< filepath */
+	char *file;  /**< filepath */
 	char extended_name[1024];
 	rpmVerifyAttrs vflags; /**< rpm verify flags */
 	rpmVerifyAttrs oflags; /**< rpm verify omit flags */
@@ -237,20 +237,20 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 		    if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
 					((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
-					oscap_free(res.file);
+					free(res.file);
 					continue;
 				}
 
 		    switch(file_op) {
 		    case OVAL_OPERATION_EQUALS:
 					if (strcmp(res.file, file) != 0) {
-						oscap_free(res.file);
+						free(res.file);
 						continue;
 					}
 		      break;
 		    case OVAL_OPERATION_NOT_EQUAL:
 					if (strcmp(res.file, file) == 0) {
-						oscap_free(res.file);
+						free(res.file);
 						continue;
 					}
 		      break;
@@ -262,12 +262,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 			break;
 		      case -1:
 			/* mismatch */
-			oscap_free(res.file);
+			free(res.file);
 			continue;
 		      default:
 			dE("pcre_exec() failed!");
 			ret = -1;
-			oscap_free(res.file);
+			free(res.file);
 			goto ret;
 		      }
 		      break;
@@ -275,7 +275,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      /* unsupported operation */
 		      dE("Operation \"%d\" on `filepath' not supported", file_op);
 		      ret = -1;
-					oscap_free(res.file);
+					free(res.file);
 		      goto ret;
 		    }
 
@@ -284,10 +284,10 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 		    if (callback(ctx, &res) != 0) {
 			    ret = 0;
-					oscap_free(res.file);
+					free(res.file);
 			    goto ret;
 		    }
-			oscap_free(res.file);
+			free(res.file);
 		  }
 
 		  rpmfiFree(fi);

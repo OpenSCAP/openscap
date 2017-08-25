@@ -29,6 +29,7 @@
 #include "public/oscap.h"
 #include "alloc.h"
 #include <stdarg.h>
+#include <string.h>
 
 #ifndef __attribute__nonnull__
 #define __attribute__nonnull__(x) assert((x) != NULL)
@@ -307,8 +308,8 @@ typedef void (*oscap_consumer_func) (void *, void *);
  * the default value for strings not defined elsewhere.
  */
 struct oscap_string_map {
-	int value;		/* integer/enum value */
-	const char *string;	/* string representation of the value */
+	const int value;    /* integer/enum value */
+	const char *string; /* string representation of the value */
 };
 
 /**
@@ -331,15 +332,16 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
  * Use strdup on string, if string is NULL, return NULL
  * @param str String we want to duplicate
  */
-char *oscap_strdup(const char *str);
+static inline char *oscap_strdup(const char *str) {
+	if (str == NULL)
+		return NULL;
 
-/**
- * Use strtol on string, if string is NULL, return NaN
- * @param str String we want to duplicate
- * @param endptr see man strtol
- * @param base see man strtol
- */
-float oscap_strtol(const char *str, char **endptr, int base);
+#ifdef _MSC_VER
+	return _strdup(str);
+#else
+	return strdup(str);
+#endif
+}
 
 /**
  * Split a string.
@@ -352,12 +354,31 @@ float oscap_strtol(const char *str, char **endptr, int base);
 char **oscap_split(char *str, const char *delim);
 
 
-/// Use strcmp on strings, NULL safe
-int oscap_strcmp(const char *s1, const char *s2);
-/// Check for string equality
-bool oscap_streq(const char *s1, const char *s2);
-bool oscap_str_startswith(const char *str, const char *with);
-bool oscap_str_endswith(const char *str, const char *with);
+/// Just like strcmp except it's NULL-safe. Use the standard strcmp directly if possible.
+static inline int oscap_strcmp(const char *s1, const char *s2) {
+	if (s1 == NULL) s1 = "";
+	if (s2 == NULL) s2 = "";
+	return strcmp(s1, s2);
+}
+
+/// Check for string equality. Use the standard strcmp directly if possible.
+static inline bool oscap_streq(const char *s1, const char *s2) {
+	return oscap_strcmp(s1, s2) == 0;
+}
+
+/// Check whether str starts with "prefix"
+static inline bool oscap_str_startswith(const char *str, const char *prefix) {
+	return strncmp(str, prefix, strlen(prefix)) == 0;
+}
+
+/// Check whether str ends with "suffix"
+static inline bool oscap_str_endswith(const char *str, const char *suffix) {
+	const size_t str_len = strlen(str);
+	const size_t suffix_len = strlen(suffix);
+	if (suffix_len > str_len)
+		return false;
+	return strncmp(str + str_len - suffix_len, suffix, suffix_len) == 0;
+}
 /// Trim whitespace (modifies its argument!)
 char *oscap_trim(char *str);
 /// Print to a newly allocated string using a va_list.
@@ -380,15 +401,6 @@ void oscap_strtoupper(char *str);
 
 // check pointer equality
 bool oscap_ptr_cmp(void *node1, void *node2);
-
-/**
- * find file with given name and mode in given paths
- * @param filename filename to be found
- * @param mode desired file mode (e.g. R_OK for readable files)
- * @param pathvar environment variable to check for path, can be NULL
- * @param path path where to search the file
- */
-char *oscap_find_file(const char *filename, int mode, const char *pathvar, const char *path);
 
 /**
  * A helper function to expand given shorthand IPv6

@@ -66,7 +66,7 @@ static int iterator_count;
 
 struct oval_collection *oval_collection_new()
 {
-	struct oval_collection *collection = (struct oval_collection *)oscap_alloc(sizeof(oval_collection_t));
+	struct oval_collection *collection = (struct oval_collection *)malloc(sizeof(oval_collection_t));
 	if (collection == NULL)
 		return NULL;
 
@@ -93,9 +93,9 @@ void oval_collection_free_items(struct oval_collection *collection, oscap_destru
 			struct _oval_collection_item_frame *temp = frame;
 			frame = frame->next;
 			temp->next = NULL;
-			oscap_free(temp);
+			free(temp);
 		}
-		oscap_free(collection);
+		free(collection);
 	}
 }
 
@@ -109,7 +109,7 @@ void oval_collection_add(struct oval_collection *collection, void *item)
 {
 	__attribute__nonnull__(collection);
 
-	struct _oval_collection_item_frame *next = oscap_alloc(sizeof(_oval_collection_item_frame_t));
+	struct _oval_collection_item_frame *next = malloc(sizeof(_oval_collection_item_frame_t));
 	if (next == NULL)
 		return;
 
@@ -122,7 +122,7 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection *collectio
 {
 	__attribute__nonnull__(collection);
 
-	struct oval_iterator *iterator = (struct oval_iterator *)oscap_alloc(sizeof(oval_iterator_t));
+	struct oval_iterator *iterator = (struct oval_iterator *)malloc(sizeof(oval_iterator_t));
 	if (iterator == NULL)
 		return NULL;
 
@@ -136,7 +136,7 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection *collectio
 
 	while (collection_frame != NULL) {
 		struct _oval_collection_item_frame *iterator_frame =
-		    (struct _oval_collection_item_frame *)oscap_alloc(sizeof(_oval_collection_item_frame_t));
+		    (struct _oval_collection_item_frame *)malloc(sizeof(_oval_collection_item_frame_t));
 		if (iterator_frame == NULL)
 			return NULL;
 
@@ -183,7 +183,7 @@ void *oval_collection_iterator_next(struct oval_iterator *iterator)
 		iterator->item_iterator_frame = oc_next->next;
 		oc_next->item = NULL;
 		oc_next->next = NULL;
-		oscap_free(oc_next);
+		free(oc_next);
 	}
 	return next;
 }
@@ -204,16 +204,16 @@ void oval_collection_iterator_free(struct oval_iterator *iterator)
 			iterator->item_iterator_frame = oc_this->next;
 			oc_this->item = NULL;
 			oc_this->next = NULL;
-			oscap_free(oc_this);
+			free(oc_this);
 		}
 		iterator->item_iterator_frame = NULL;
-		oscap_free(iterator);
+		free(iterator);
 	}
 }
 
 struct oval_iterator *oval_collection_iterator_new()
 {
-	struct oval_iterator *iterator = (struct oval_iterator *)oscap_alloc(sizeof(oval_iterator_t));
+	struct oval_iterator *iterator = (struct oval_iterator *)malloc(sizeof(oval_iterator_t));
 	if (iterator == NULL)
 		return NULL;
 
@@ -230,7 +230,7 @@ void oval_collection_iterator_add(struct oval_iterator *iterator, void *item)
 	__attribute__nonnull__(iterator);
 
 	struct _oval_collection_item_frame *newframe =
-	    (struct _oval_collection_item_frame *)oscap_alloc(sizeof(_oval_collection_item_frame_t));
+	    (struct _oval_collection_item_frame *)malloc(sizeof(_oval_collection_item_frame_t));
 	if (newframe == NULL)	/* We don't have any information that error occured ! */
 		return;
 

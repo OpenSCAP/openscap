@@ -363,7 +363,7 @@ static xiconf_t *xiconf_new(void)
 	xiconf_t *xiconf;
 
 	xiconf = oscap_talloc(xiconf_t);
-	xiconf->cfile = oscap_alloc(sizeof(xiconf_file_t *));
+	xiconf->cfile = malloc(sizeof(xiconf_file_t *));
 	xiconf->count = 0;
 	xiconf->stree = rbt_str_new();
 	xiconf->ttree = rbt_str_new();
@@ -409,7 +409,7 @@ static void xiconf_service_free(xiconf_service_t *service)
         if (service == NULL)
                 return;
 
-#define NONNULL_FREE(p) if (service->p != NULL) oscap_free(service->p)
+#define NONNULL_FREE(p) if (service->p != NULL) free(service->p)
 
         if (service->id != service->name)
                 NONNULL_FREE(id);
@@ -429,7 +429,7 @@ static void xiconf_service_free(xiconf_service_t *service)
 		xiconf_service_free(service->next);
 	}
 
-	oscap_free(service);
+	free(service);
 }
 
 static void xiconf_stree_free_cb(struct rbt_str_node *n)
@@ -440,7 +440,7 @@ static void xiconf_stree_free_cb(struct rbt_str_node *n)
 static void xiconf_ttree_free_cb(struct rbt_str_node *n)
 {
         xiconf_strans_free(n->data);
-	oscap_free(n->key);
+	free(n->key);
 }
 
 void xiconf_free(xiconf_t *xiconf)
@@ -453,24 +453,24 @@ void xiconf_free(xiconf_t *xiconf)
 	for (i = 0; i < xiconf->count; ++i) {
 		if (xiconf->cfile[i]) {
 			if (xiconf->cfile[i]->cpath)
-				oscap_free(xiconf->cfile[i]->cpath);
+				free(xiconf->cfile[i]->cpath);
 			if (xiconf->cfile[i]->inmem)
-				oscap_free(xiconf->cfile[i]->inmem);
-			oscap_free(xiconf->cfile[i]);
+				free(xiconf->cfile[i]->inmem);
+			free(xiconf->cfile[i]);
 		}
 	}
 
-	oscap_free(xiconf->cfile);
+	free(xiconf->cfile);
 
         rbt_str_free_cb(xiconf->stree, xiconf_stree_free_cb);
         rbt_str_free_cb(xiconf->ttree, xiconf_ttree_free_cb);
 
         if (xiconf->defaults != NULL) {
-	        oscap_free(xiconf->defaults->name);
-	        oscap_free(xiconf->defaults);
+	        free(xiconf->defaults->name);
+	        free(xiconf->defaults);
         }
 
-	oscap_free(xiconf);
+	free(xiconf);
 
 	return;
 }
@@ -523,12 +523,12 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	{
 		/* fallback method - copy the contents into memory */
 
-		file->inmem = oscap_alloc(file->inlen);
+		file->inmem = malloc(file->inlen);
 
 		if (read (file->fd, file->inmem, file->inlen) != (ssize_t)file->inlen) {
 			/* Can't read the contents of the file */
 			close (fd);
-			oscap_free(file);
+			free(file);
 			return (NULL);
 		}
 
@@ -567,7 +567,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	}
 
 	xifile->depth = depth;
-	xiconf->cfile = oscap_realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
+	xiconf->cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
 	dI("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);
@@ -576,8 +576,8 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 }
 
 #define tmpbuf_def(size) char __tmpbuf[size]
-#define tmpbuf_get(size) (((sizeof __tmpbuf)/sizeof(char))<(size)?oscap_alloc(sizeof(char)*(size)):__tmpbuf)
-#define tmpbuf_free(ptr) do { if ((ptr) != __tmpbuf) oscap_free(ptr); (ptr) = NULL; } while(0)
+#define tmpbuf_get(size) (((sizeof __tmpbuf)/sizeof(char))<(size)?malloc(sizeof(char)*(size)):__tmpbuf)
+#define tmpbuf_free(ptr) do { if ((ptr) != __tmpbuf) free(ptr); (ptr) = NULL; } while(0)
 
 xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 {
@@ -1134,7 +1134,7 @@ finish_section:
 
 			st = oscap_talloc (xiconf_strans_t);
 			st->cnt = 1;
-			st->srv = oscap_alloc (sizeof (xiconf_service_t *));
+			st->srv = malloc (sizeof (xiconf_service_t *));
 			st->srv[0] = scur;
 
 			if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
@@ -1146,7 +1146,7 @@ finish_section:
 			dI("adding new strans record to an exiting one: k=%s, cnt=%u+1",
 			   st_key, st->cnt);
 
-			st->srv = oscap_realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
+			st->srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
 			st->srv[st->cnt - 1] = scur;
 		}
 
@@ -1226,7 +1226,7 @@ xiconf_strans_t *xiconf_dump(xiconf_t *xiconf)
 
 	res = oscap_talloc(xiconf_strans_t);
 	res->cnt = rbt_str_size(xiconf->stree);
-	res->srv = oscap_alloc(sizeof(xiconf_service_t *) * res->cnt);
+	res->srv = malloc(sizeof(xiconf_service_t *) * res->cnt);
 
 	rbt_str_walk_inorder2(xiconf->stree, xiconf_dump_cb, (void *)res, 0);
 
@@ -1240,8 +1240,8 @@ void xiconf_strans_free(xiconf_strans_t *strans)
         if (strans == NULL)
                 return;
 
-        oscap_free(strans->srv);
-        oscap_free(strans);
+        free(strans->srv);
+        free(strans);
         return;
 }
 
@@ -1331,10 +1331,10 @@ int op_assign_strl(void *var, char *val)
 	if (string_array != NULL) {
 		// Destroy previous array state
 		while(string_array[string_array_size]) {
-			oscap_free(string_array[string_array_size]);
+			free(string_array[string_array_size]);
 			++string_array_size;
 		}
-		oscap_free(string_array);
+		free(string_array);
 		string_array = NULL;
 		string_array_size = 0;
 	}
@@ -1347,7 +1347,7 @@ int op_assign_strl(void *var, char *val)
 			continue;
 		}
 		dI("Adding new member to string array: %s", tok);
-		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1378,7 +1378,7 @@ int op_insert_strl(void *var, char *val)
 			continue;
 		}
 		dI("Adding new member to string array: %s", tok);
-		string_array = oscap_realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1409,7 +1409,7 @@ int op_remove_strl(void *var, char *val)
 		return 0;
 	} else {
 		// Allocate the new string array
-		newstr_array = oscap_alloc(sizeof(char *) * (string_array_size + 1));
+		newstr_array = malloc(sizeof(char *) * (string_array_size + 1));
 	}
 
 	// Create an array of strings to be removed from the array
@@ -1424,7 +1424,7 @@ int op_remove_strl(void *var, char *val)
 			continue;
 		}
 		dI("Adding new member to string array: %s", tok);
-		valstr_array = oscap_realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
 	}
@@ -1441,7 +1441,7 @@ int op_remove_strl(void *var, char *val)
 			// Otherwise move it to the new string array
 			dI("cmp: %s ?= %s", string_array_val, delete_val);
 			if (strcmp(string_array_val, delete_val) == 0) {
-				oscap_free(string_array_val);
+				free(string_array_val);
 				string_array_val = NULL;
 				break;
 			}
@@ -1455,9 +1455,9 @@ int op_remove_strl(void *var, char *val)
 	}
 
 	newstr_array[newstr_array_size] = NULL;
-	oscap_free(string_array);
-	oscap_free(valstr_array);
-	newstr_array = oscap_realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
+	free(string_array);
+	free(valstr_array);
+	newstr_array = realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
 	*aptr = newstr_array;
 	return 0;
 }
@@ -1675,8 +1675,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 				xsrv = xsrv->next;
 			}
 		}
-		oscap_free(xres->srv);
-		oscap_free(xres);
+		free(xres->srv);
+		free(xres);
 
 	}
 	SEXP_vfree(service_name, protocol, NULL);

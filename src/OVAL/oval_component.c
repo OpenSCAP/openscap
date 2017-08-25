@@ -624,7 +624,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 	switch (type) {
 	case OVAL_COMPONENT_LITERAL:{
 			oval_component_LITERAL_t *literal =
-			    (oval_component_LITERAL_t *) oscap_alloc(sizeof(oval_component_LITERAL_t));
+			    (oval_component_LITERAL_t *) malloc(sizeof(oval_component_LITERAL_t));
 			if (literal == NULL)
 				return NULL;
 
@@ -634,7 +634,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
 			oval_component_OBJECTREF_t *objectref =
-			    (oval_component_OBJECTREF_t *) oscap_alloc(sizeof(oval_component_OBJECTREF_t));
+			    (oval_component_OBJECTREF_t *) malloc(sizeof(oval_component_OBJECTREF_t));
 			if (objectref == NULL)
 				return NULL;
 
@@ -646,7 +646,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 		break;
 	case OVAL_COMPONENT_VARREF:{
 			oval_component_VARREF_t *varref =
-			    (oval_component_VARREF_t *) oscap_alloc(sizeof(oval_component_VARREF_t));
+			    (oval_component_VARREF_t *) malloc(sizeof(oval_component_VARREF_t));
 			if (varref == NULL)
 				return NULL;
 
@@ -661,7 +661,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_ARITHMETIC:{
 					oval_component_ARITHMETIC_t *arithmetic = (oval_component_ARITHMETIC_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_ARITHMETIC_t)));
+					     malloc(sizeof(oval_component_ARITHMETIC_t)));
 					if (arithmetic == NULL)
 						return NULL;
 
@@ -672,7 +672,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_END:{
 					oval_component_BEGEND_t *begin = (oval_component_BEGEND_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_BEGEND_t)));
+					     malloc(sizeof(oval_component_BEGEND_t)));
 					if (begin == NULL)
 						return NULL;
 
@@ -682,7 +682,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_SPLIT:{
 					oval_component_SPLIT_t *split = (oval_component_SPLIT_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_SPLIT_t)));
+					     malloc(sizeof(oval_component_SPLIT_t)));
 					if (split == NULL)
 						return NULL;
 
@@ -692,7 +692,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_GLOB_TO_REGEX:{
 					oval_component_GLOB_t *glob_to_regex = (oval_component_GLOB_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_GLOB_t)));
+					     malloc(sizeof(oval_component_GLOB_t)));
 					if (glob_to_regex == NULL)
 						return NULL;
 					glob_to_regex->glob_noescape = false;
@@ -701,7 +701,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_SUBSTRING:{
 					oval_component_SUBSTRING_t *substring = (oval_component_SUBSTRING_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_SUBSTRING_t)));
+					     malloc(sizeof(oval_component_SUBSTRING_t)));
 					if (substring == NULL)
 						return NULL;
 
@@ -712,7 +712,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_TIMEDIF:{
 					oval_component_TIMEDIF_t *timedif = (oval_component_TIMEDIF_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_TIMEDIF_t)));
+					     malloc(sizeof(oval_component_TIMEDIF_t)));
 					if (timedif == NULL)
 						return NULL;
 
@@ -723,7 +723,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 			case OVAL_FUNCTION_REGEX_CAPTURE:{
 					oval_component_REGEX_CAPTURE_t *regex = (oval_component_REGEX_CAPTURE_t *)
 					    (function = (oval_component_FUNCTION_t *)
-					     oscap_alloc(sizeof(oval_component_REGEX_CAPTURE_t)));
+					     malloc(sizeof(oval_component_REGEX_CAPTURE_t)));
 					if (regex == NULL)
 						return NULL;
 
@@ -732,7 +732,7 @@ struct oval_component *oval_component_new(struct oval_definition_model *model, o
 				break;
 			default:{
 					function = (oval_component_FUNCTION_t *)
-					    oscap_alloc(sizeof(oval_component_FUNCTION_t));
+					    malloc(sizeof(oval_component_FUNCTION_t));
 					if (function == NULL)
 						return NULL;
 				}
@@ -860,42 +860,40 @@ struct oval_component *oval_component_clone(struct oval_definition_model *new_mo
 
 void oval_component_free(struct oval_component *component)
 {
-	__attribute__nonnull__(component);
+	if (component == NULL)
+		return;
 
 	switch (component->type) {
 	case OVAL_COMPONENT_LITERAL:{
 			oval_component_LITERAL_t *literal = (oval_component_LITERAL_t *) component;
-			if (literal->value != NULL)
-				oval_value_free(literal->value);
+			oval_value_free(literal->value);
 			literal->value = NULL;
 		}
 		break;
 	case OVAL_COMPONENT_OBJECTREF:{
 			oval_component_OBJECTREF_t *objectref = (oval_component_OBJECTREF_t *) component;
-			if (objectref->item_field != NULL)
-				oscap_free(objectref->item_field);
+			free(objectref->item_field);
 			objectref->item_field = NULL;
-			if (objectref->record_field != NULL)
-				oscap_free(objectref->record_field);
+			free(objectref->record_field);
 			objectref->record_field = NULL;
 		}
 		break;
 	case OVAL_FUNCTION_BEGIN:
 	case OVAL_FUNCTION_END:{
 			oval_component_BEGEND_t *begin = (oval_component_BEGEND_t *) component;
-			oscap_free(begin->character);
+			free(begin->character);
 			begin->character = NULL;
 		};
 		break;
 	case OVAL_FUNCTION_SPLIT:{
 			oval_component_SPLIT_t *split = (oval_component_SPLIT_t *) component;
-			oscap_free(split->delimiter);
+			free(split->delimiter);
 			split->delimiter = NULL;
 		};
 		break;
 	case OVAL_FUNCTION_REGEX_CAPTURE:{
 			oval_component_REGEX_CAPTURE_t *regex = (oval_component_REGEX_CAPTURE_t *) component;
-			oscap_free(regex->pattern);
+			free(regex->pattern);
 			regex->pattern = NULL;
 		};
 		break;
@@ -918,7 +916,7 @@ void oval_component_free(struct oval_component *component)
 		oval_collection_free_items(function->function_components, (oscap_destruct_func) oval_component_free);
 		function->function_components = NULL;
 	}
-	oscap_free(component);
+	free(component);
 }
 
 void oval_component_add_function_component(struct oval_component *component, struct oval_component *func_component) 
@@ -964,18 +962,18 @@ static int _oval_component_parse_OBJECTREF_tag(xmlTextReaderPtr reader,
 	struct oval_object *object = oval_definition_model_get_new_object(model, objref);
 	char *field;
 
-	oscap_free(objref);
+	free(objref);
 	objref = NULL;
 	oval_component_set_object(component, object);
 
 	field = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "item_field");
 	oval_component_set_item_field(component, field);
 	if (field)
-		oscap_free(field);
+		free(field);
 	field = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "record_field");
 	oval_component_set_record_field(component, field);
 	if (field)
-		oscap_free(field);
+		free(field);
 
 	return 0;
 }
@@ -988,7 +986,7 @@ static int _oval_component_parse_VARREF_tag(xmlTextReaderPtr reader,
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_variable *variable = oval_definition_model_get_new_variable(model, varref, OVAL_VARIABLE_UNKNOWN);
 	if (varref != NULL) {
-		oscap_free(varref);
+		free(varref);
 		varref = NULL;
 	}
 	oval_component_set_variable(component, variable);
@@ -1079,9 +1077,9 @@ static int _oval_component_parse_SUBSTRING_tag(xmlTextReaderPtr reader,
 	int start = (start_text == NULL) ? 0 : atoi(start_text);
 	int length = (length_text == NULL) ? 0 : atoi(length_text);
 	if (start_text != NULL)
-		oscap_free(start_text);
+		free(start_text);
 	if (length_text != NULL)
-		oscap_free(length_text);
+		free(length_text);
 	substring->start = start;
 	substring->length = length;
 
@@ -1186,7 +1184,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 	if (return_code != 0 ) {
 		dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
 	}
-	oscap_free(tagname);
+	free(tagname);
 	return return_code;
 }
 
@@ -2172,7 +2170,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_GLOB_TO_REGEX(ova
 				break;
 			}
 			value = oval_value_new(OVAL_DATATYPE_STRING, string);
-			oscap_free(string);
+			free(string);
 			oval_collection_add(value_collection, value);
 		}
 		oval_value_iterator_free(values);
@@ -2225,7 +2223,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 			if (rc > 1 && ovector[2] != -1) {
 				int substr_len = ovector[3] - ovector[2];
 
-				nval = oscap_alloc(substr_len + 1);
+				nval = malloc(substr_len + 1);
 				memcpy(nval, text + ovector[2], substr_len);
 				nval[substr_len] = '\0';
 			} else {
@@ -2235,7 +2233,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 
 			if (nval != NULL) {
 				value = oval_value_new(OVAL_DATATYPE_STRING, nval);
-				oscap_free(nval);
+				free(nval);
 			} else {
 				value = oval_value_new(OVAL_DATATYPE_STRING, "");
 			}
@@ -2346,7 +2344,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 		val_col = oval_collection_new();
 		// todo: combine flags
 		flag = oval_component_eval_common(argu, subcomp, val_col);
-		vcl_elm = oscap_alloc(sizeof (struct val_col_lst_s));
+		vcl_elm = malloc(sizeof (struct val_col_lst_s));
 		vcl_elm->val_col = val_col;
 		vcl_elm->next = vcl_root;
 		vcl_root = vcl_elm;
@@ -2388,7 +2386,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 		oval_collection_free_items(vcl_root->val_col, (oscap_destruct_func) oval_value_free);
 		vcl_elm = vcl_root;
 		vcl_root = vcl_root->next;
-		oscap_free(vcl_elm);
+		free(vcl_elm);
 	}
 
 	return flag;

@@ -116,7 +116,7 @@ static bool xccdf_item_parse_deps(xmlTextReaderPtr reader, struct xccdf_item *it
 			}
 
 			oscap_list_add(requires, reqs);
-			oscap_free(idsstr);
+			free(idsstr);
 			break;
 		}
 	case XCCDFE_CONFLICTS:
@@ -193,7 +193,7 @@ struct xccdf_group *xccdf_group_new(void)
 
 struct xccdf_group * xccdf_group_clone(const struct xccdf_group * group)
 {
-	struct xccdf_item *new_group = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_group_item));
+	struct xccdf_item *new_group = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_group_item));
 	struct xccdf_item *old = XITEM(group);
     xccdf_item_base_clone(&new_group->item, &(old->item));
 	new_group->type = old->type;
@@ -255,7 +255,7 @@ void xccdf_group_dump(struct xccdf_item *group, int depth)
 
 static void xccdf_free_strlist(struct oscap_list *list)
 {
-	if (list) oscap_list_free(list, oscap_free);
+	if (list) oscap_list_free(list, free);
 }
 
 void xccdf_group_free(struct xccdf_item *group)
@@ -264,7 +264,7 @@ void xccdf_group_free(struct xccdf_item *group)
 		oscap_list_free(group->sub.group.content, (oscap_destruct_func) xccdf_item_free);
 		oscap_list_free(group->sub.group.values, (oscap_destruct_func) xccdf_value_free);
 		oscap_list_free(group->sub.group.requires, (oscap_destruct_func) xccdf_free_strlist);
-		oscap_list_free(group->sub.group.conflicts, oscap_free);
+		oscap_list_free(group->sub.group.conflicts, free);
 		xccdf_item_release(group);
 	}
 }
@@ -293,7 +293,7 @@ struct xccdf_rule *xccdf_rule_new(void)
 
 struct xccdf_rule *xccdf_rule_clone(const struct xccdf_rule * rule)
 {
-	struct xccdf_item *new_rule = oscap_calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_rule_item));
+	struct xccdf_item *new_rule = calloc(1, sizeof(struct xccdf_item) + sizeof(struct xccdf_rule_item));
 	struct xccdf_item *old = XITEM(rule);
     xccdf_item_base_clone(&new_rule->item, &(old->item));
 	new_rule->type = old->type;
@@ -392,7 +392,7 @@ void xccdf_rule_free(struct xccdf_item *rule)
 		oscap_list_free(rule->sub.rule.fixes, (oscap_destruct_func) xccdf_fix_free);
 		oscap_list_free(rule->sub.rule.fixtexts, (oscap_destruct_func) xccdf_fixtext_free);
 		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func) xccdf_free_strlist);
-		oscap_list_free(rule->sub.rule.conflicts, oscap_free);
+		oscap_list_free(rule->sub.rule.conflicts, free);
 		xccdf_item_release(rule);
 	}
 }
@@ -447,7 +447,7 @@ struct xccdf_ident * xccdf_ident_clone(const struct xccdf_ident * ident)
 
 struct xccdf_ident *xccdf_ident_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_ident));
+    return calloc(1, sizeof(struct xccdf_ident));
 }
 
 struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)
@@ -485,15 +485,15 @@ void xccdf_ident_dump(struct xccdf_ident *ident, int depth)
 void xccdf_ident_free(struct xccdf_ident *ident)
 {
 	if (ident) {
-		oscap_free(ident->id);
-		oscap_free(ident->system);
-		oscap_free(ident);
+		free(ident->id);
+		free(ident->system);
+		free(ident);
 	}
 }
 
 struct xccdf_profile_note *xccdf_profile_note_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_profile_note));
+    return calloc(1, sizeof(struct xccdf_profile_note));
 }
 
 struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_note * note)
@@ -507,9 +507,9 @@ struct xccdf_profile_note * xccdf_profile_note_clone(const struct xccdf_profile_
 void xccdf_profile_note_free(struct xccdf_profile_note *note)
 {
 	if (note) {
-		oscap_free(note->reftag);
+		free(note->reftag);
 		oscap_text_free(note->text);
-		oscap_free(note);
+		free(note);
 	}
 }
 
@@ -517,7 +517,7 @@ XCCDF_GENERIC_GETTER(const char *, ident, id) XCCDF_GENERIC_GETTER(const char *,
 
 struct xccdf_check *xccdf_check_new(void)
 {
-	struct xccdf_check *check = oscap_calloc(1, sizeof(struct xccdf_check));
+	struct xccdf_check *check = calloc(1, sizeof(struct xccdf_check));
 	check->content_refs = oscap_list_new();
 	check->imports = oscap_list_new();
 	check->exports = oscap_list_new();
@@ -528,7 +528,7 @@ struct xccdf_check *xccdf_check_new(void)
 /* Performs a deep copy of a provided xccdf_check, returns a pointer to that copy */
 struct xccdf_check *xccdf_check_clone(const struct xccdf_check* old_check)
 {
-	struct xccdf_check *new_check = oscap_calloc(1, sizeof(struct xccdf_check));
+	struct xccdf_check *new_check = calloc(1, sizeof(struct xccdf_check));
 
 	new_check->id = oscap_strdup(old_check->id);
 	new_check->system = oscap_strdup(old_check->system);
@@ -699,11 +699,11 @@ void xccdf_check_free(struct xccdf_check *check)
 		oscap_list_free(check->imports, (oscap_destruct_func) xccdf_check_import_free);
 		oscap_list_free(check->exports, (oscap_destruct_func) xccdf_check_export_free);
 		oscap_list_free(check->children, (oscap_destruct_func) xccdf_check_free);
-		oscap_free(check->id);
-		oscap_free(check->system);
-		oscap_free(check->selector);
-		oscap_free(check->content);
-		oscap_free(check);
+		free(check->id);
+		free(check->system);
+		free(check->selector);
+		free(check->content);
+		free(check);
 	}
 }
 
@@ -715,44 +715,44 @@ void xccdf_check_content_ref_dump(struct xccdf_check_content_ref *ref, int depth
 
 struct xccdf_check_content_ref *xccdf_check_content_ref_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_check_content_ref));
+    return calloc(1, sizeof(struct xccdf_check_content_ref));
 }
 
 void xccdf_check_content_ref_free(struct xccdf_check_content_ref *ref)
 {
 	if (ref) {
-		oscap_free(ref->name);
-		oscap_free(ref->href);
-		oscap_free(ref);
+		free(ref->name);
+		free(ref->href);
+		free(ref);
 	}
 }
 
 struct xccdf_check_import *xccdf_check_import_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_check_import));
+    return calloc(1, sizeof(struct xccdf_check_import));
 }
 
 void xccdf_check_import_free(struct xccdf_check_import *item)
 {
 	if (item) {
-		oscap_free(item->name);
-		oscap_free(item->xpath);
-		oscap_free(item->content);
-		oscap_free(item);
+		free(item->name);
+		free(item->xpath);
+		free(item->content);
+		free(item);
 	}
 }
 
 struct xccdf_check_export *xccdf_check_export_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_check_export));
+    return calloc(1, sizeof(struct xccdf_check_export));
 }
 
 void xccdf_check_export_free(struct xccdf_check_export *item)
 {
 	if (item) {
-		oscap_free(item->name);
-		oscap_free(item->value);
-		oscap_free(item);
+		free(item->name);
+		free(item->value);
+		free(item);
 	}
 }
 
@@ -770,13 +770,13 @@ const struct oscap_string_map XCCDF_STRATEGY_MAP[] = {
 
 struct xccdf_fix *xccdf_fix_new(void)
 {
-        return oscap_calloc(1, sizeof(struct xccdf_fix));
+        return calloc(1, sizeof(struct xccdf_fix));
 }
 
 /* Creates a deep copy of a provided xccdf_fix, returns a pointer to that copy */
 struct xccdf_fix *xccdf_fix_clone(const struct xccdf_fix *old_fix)
 {
-	struct xccdf_fix *new_fix = oscap_calloc(1, sizeof(struct xccdf_fix));
+	struct xccdf_fix *new_fix = calloc(1, sizeof(struct xccdf_fix));
 
 	new_fix->reboot = old_fix->reboot;
 	new_fix->strategy = old_fix->strategy;
@@ -809,7 +809,7 @@ struct xccdf_fix *xccdf_fix_parse(xmlTextReaderPtr reader)
 
 struct xccdf_fixtext *xccdf_fixtext_new(void)
 {
-    return oscap_calloc(1, sizeof(struct xccdf_fixtext));
+    return calloc(1, sizeof(struct xccdf_fixtext));
 }
 
 struct xccdf_fixtext * xccdf_fixtext_clone(const struct xccdf_fixtext * fixtext)
@@ -840,19 +840,19 @@ void xccdf_fixtext_free(struct xccdf_fixtext *item)
 {
 	if (item) {
 		oscap_text_free(item->text);
-		oscap_free(item->fixref);
-		oscap_free(item);
+		free(item->fixref);
+		free(item);
 	}
 }
 
 void xccdf_fix_free(struct xccdf_fix *item)
 {
 	if (item) {
-		oscap_free(item->id);
-		oscap_free(item->system);
-		oscap_free(item->platform);
-		oscap_free(item->content);
-		oscap_free(item);
+		free(item->id);
+		free(item->system);
+		free(item->platform);
+		free(item->content);
+		free(item);
 	}
 }
 
@@ -946,7 +946,7 @@ void xccdf_rule_to_dom(struct xccdf_rule *rule, xmlNode *rule_node, xmlDoc *doc,
 	if (XITEM(rule)->item.defined_flags.weight) {
 		char *weight_str = oscap_sprintf("%f", xccdf_rule_get_weight(rule));
 		xmlNewProp(rule_node, BAD_CAST "weight", BAD_CAST weight_str);
-		oscap_free(weight_str);
+		free(weight_str);
 	}
 
 	xccdf_role_t role = xccdf_rule_get_role(rule);
@@ -1046,7 +1046,7 @@ void xccdf_group_to_dom(struct xccdf_group *group, xmlNode *group_node, xmlDoc *
 		float weight = xccdf_group_get_weight(group);
 		char *weight_str = oscap_sprintf("%f", weight);
 		xmlNewProp(group_node, BAD_CAST "weight", BAD_CAST weight_str);
-        oscap_free(weight_str);
+        free(weight_str);
 	}
 
 	/* Handle Child Nodes */

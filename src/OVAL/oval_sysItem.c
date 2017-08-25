@@ -57,7 +57,7 @@ struct oval_sysitem *oval_sysitem_new(struct oval_syschar_model *model, const ch
 	__attribute__nonnull__(model);
 	oval_sysitem_t *sysitem;
 
-	sysitem = (oval_sysitem_t *) oscap_alloc(sizeof(oval_sysitem_t));
+	sysitem = (oval_sysitem_t *) malloc(sizeof(oval_sysitem_t));
 	if (sysitem == NULL)
 		return NULL;
 
@@ -106,12 +106,12 @@ void oval_sysitem_free(struct oval_sysitem *sysitem)
 
 	oval_collection_free_items(sysitem->messages, (oscap_destruct_func) oval_message_free);
 	oval_collection_free_items(sysitem->sysents, (oscap_destruct_func) oval_sysent_free);
-	oscap_free(sysitem->id);
+	free(sysitem->id);
 
 	sysitem->id = NULL;
 	sysitem->sysents = NULL;
 	sysitem->messages = NULL;
-	oscap_free(sysitem);
+	free(sysitem);
 }
 
 bool oval_sysitem_iterator_has_more(struct oval_sysitem_iterator *oc_sysitem)
@@ -212,8 +212,8 @@ static int _oval_sysitem_parse_subtag(xmlTextReaderPtr reader, struct oval_parse
 		/*typedef *(oval_sysent_consumer)(struct oval_sysent *, void* client); */
 		return_code = oval_sysent_parse_tag(reader, context, _oval_sysitem_parse_subtag_sysent_consumer, sysitem);
 	}
-	oscap_free(tagname);
-	oscap_free(namespace);
+	free(tagname);
+	free(namespace);
 	return return_code;
 }
 
@@ -227,7 +227,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
 	if (subtype != OVAL_SUBTYPE_UNKNOWN) {
 		char *item_id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 		struct oval_sysitem *sysitem = oval_syschar_model_get_new_sysitem(context->syschar_model, item_id);
-		oscap_free(item_id);
+		free(item_id);
 
 		oval_sysitem_set_subtype(sysitem, subtype);
 
@@ -244,7 +244,7 @@ int oval_sysitem_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *
                 dW("Parsing of <%s> terminated by an error at line %d.", tagname, xmlTextReaderGetParserLineNumber(reader));
         }
 
-	oscap_free(tagname);
+	free(tagname);
 
 	return return_code;
 }
