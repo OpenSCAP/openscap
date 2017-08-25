@@ -6,7 +6,8 @@
 .*.swp
 Makefile
 Makefile.in
-
+CMakeLists.txt.user
+build/
 *~
 
 *.o
@@ -25,7 +26,6 @@ oscap_debug.log.*
 /config/compile
 /config/config.guess
 /config.h
-/config.h.in
 /config.log
 /config.status
 /config/config.sub

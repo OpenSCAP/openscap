@@ -31,7 +31,7 @@
 #include <config.h>
 #endif
 
-#if defined(PROC_CHECK) && defined(__linux__)
+#if defined(__linux__)
 #define _XOPEN_SOURCE /* for fdopen */
 #include <sys/vfs.h>
 #include <sys/types.h>
