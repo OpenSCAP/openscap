@@ -12,17 +12,21 @@ TESTS_ENVIRONMENT = \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
-TESTS = all.sh
+TESTS = all.sh test_filecontent_non_utf.sh
 
 EXTRA_DIST = \
 	all.sh \
+	test_behavior_multiline.sh \
+	test_behavior_multiline.xml.tpl \
+	test_filecontent_non_utf.iso8859 \
+	test_filecontent_non_utf.oval.xml \
+	test_filecontent_non_utf.sh \
+	test_filecontent_non_utf.utf8 \
 	test_probes_textfilecontent54.sh \
 	test_probes_textfilecontent54.xml \
 	test_validation_of_various_oval_versions.sh \
 	test_symlinks.sh \
 	test_symlinks.xml.tpl \
-	test_behavior_multiline.sh \
-	test_behavior_multiline.xml.tpl \
 	tfc54-def-5.4-invalid.xml \
 	tfc54-def-5.4-valid.xml \
 	tfc54-def-5.5-valid.xml \
