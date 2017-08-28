@@ -45,6 +45,7 @@
 #include "DS/public/ds_sds_session.h"
 #include "DS/ds_sds_session_priv.h"
 #include "DS/rds_priv.h"
+#include "DS/sds_priv.h"
 #include "OVAL/results/oval_results_impl.h"
 #include "source/xslt_priv.h"
 #include "XCCDF/xccdf_impl.h"
@@ -227,18 +228,10 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 
 	if (xccdf_session_is_sds(session)) {
 		sds_source = session->source;
-	}
-	else {
-		if (!session->temp_dir)
-			session->temp_dir = oscap_acquire_temp_dir();
-		if (session->temp_dir == NULL)
-			return NULL;
-
-		char *sds_path = malloc(PATH_MAX * sizeof(char));
-		snprintf(sds_path, PATH_MAX, "%s/sds.xml", session->temp_dir);
-		ds_sds_compose_from_xccdf(oscap_source_readable_origin(session->source), sds_path);
-		sds_source = oscap_source_new_from_file(sds_path);
-		free(sds_path);
+	} else {
+		const char *xccdf_file = oscap_source_readable_origin(session->source);
+		xmlDoc *sds_doc = ds_sds_compose_xmlDoc_from_xccdf(xccdf_file);
+		sds_source = oscap_source_new_from_xmlDoc(sds_doc, NULL);
 	}
 
 	session->oval.arf_report = ds_rds_create_source(sds_source, session->xccdf.result_source, session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping, session->export.arf_file);
