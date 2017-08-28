@@ -6,8 +6,15 @@
     <model system="urn:xccdf:scoring:default"/>
 
     <Profile id="default">
-        <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Fedora defaults</title>
-        <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">This profile conform to default Fedora setting.</description>
+        <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Default selections</title>
+        <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">This profile contains rules based on default selections.</description>
+        <refine-value idref="value" selector="off"/>
+    </Profile>
+    <Profile id="alternative">
+        <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">Profile selections</title>
+        <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">This profile contains rules based on profile selections.</description>
+        <select idref="rule_1" selected="false"/>
+        <select idref="rule_2" selected="true"/>
         <refine-value idref="value" selector="off"/>
     </Profile>
 
@@ -26,9 +33,15 @@
             <value selector="off">off_value</value>
         </Value>
 
-        <Rule id="rule" selected="true" severity="low">
-            <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">rule_description</title>
-            <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">rule_description</description>
+        <Rule id="rule_1" selected="true" severity="low">
+            <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">rule_1_title</title>
+            <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">rule_1_description</description>
+            <fix system="urn:xccdf:fix:script:sh">substituted value = "<sub idref="value"/>"
+            </fix>
+        </Rule>
+        <Rule id="rule_2" selected="false" severity="low">
+            <title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">rule_2_title</title>
+            <description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US">rule_2_description</description>
             <fix system="urn:xccdf:fix:script:sh">substituted value = "<sub idref="value"/>"
             </fix>
         </Rule>
