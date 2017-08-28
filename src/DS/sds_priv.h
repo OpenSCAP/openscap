@@ -42,5 +42,7 @@ int ds_sds_dump_component_ref(const xmlNodePtr component_ref, struct ds_sds_sess
 
 int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char *sub_dir, const char *relative_filepath);
 
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file);
+
 OSCAP_HIDDEN_END;
 #endif

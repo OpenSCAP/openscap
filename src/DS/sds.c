@@ -1142,7 +1142,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	return 0;
 }
 
-int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream)
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
 {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
@@ -1195,7 +1195,8 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 		// oscap_seterr already called
 		free(cref_id);
 		free(mangled_xccdf_file);
-		return -1;
+		xmlFreeDoc(doc);
+		return NULL;
 	}
 	free(cref_id);
 
@@ -1226,6 +1227,15 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
 
 	free(mangled_xccdf_file);
 
+	return doc;
+}
+
+int ds_sds_compose_from_xccdf(const char *xccdf_file, const char *target_datastream)
+{
+	xmlDocPtr doc = ds_sds_compose_xmlDoc_from_xccdf(xccdf_file);
+	if (doc == NULL) {
+		return -1;
+	}
 	if (xmlSaveFileEnc(target_datastream, doc, "utf-8") == -1)
 	{
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error saving source datastream to '%s'.", target_datastream);
