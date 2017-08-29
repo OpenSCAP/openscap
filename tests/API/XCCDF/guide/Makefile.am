@@ -6,11 +6,13 @@ TESTS_ENVIRONMENT = \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
-TESTS = all.sh
+TESTS = benchmark.sh guide.sh profile.sh
 
 EXTRA_DIST = \
-	all.sh \
+	benchmark.sh \
+	guide.sh \
+	profile.sh \
 	content-xccdf11.xml \
 	content-xccdf12.xml \
-	content-value-xccdf11.xml \
+	content-profile-xccdf11.xml \
 	benchmark_id_test-ds.xml
