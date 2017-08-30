@@ -624,7 +624,7 @@ static inline int ds_sds_compose_component_add_script_content(xmlNode *component
 	}
 }
 
-static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* comp_id, bool extended)
+static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datastream, struct oscap_source *component_source, const char* comp_id, bool extended)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 	if (!ds_ns)
@@ -639,6 +639,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 	char file_timestamp[32];
 	strcpy(file_timestamp, "0000-00-00T00:00:00");
 
+	const char *filepath = oscap_source_get_filepath(component_source);
 	struct stat file_stat;
 	if (stat(filepath, &file_stat) == 0)
 		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
@@ -665,12 +666,10 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		// extended components always go at the end
 		xmlAddChild(doc_root, component);
 	} else {
-		struct oscap_source *component_source = oscap_source_new_from_file(filepath);
 		xmlDoc *component_doc = oscap_source_get_xmlDoc(component_source);
 		if (!component_doc) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Could not read/parse XML of given input file at path '%s'.", filepath);
 			xmlFreeNode(component);
-			oscap_source_free(component_source);
 			return -1;
 		}
 
@@ -686,7 +685,6 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 					"creating source datastream.", filepath, comp_id);
 
 			xmlDOMWrapFreeCtxt(wrap_ctxt);
-			oscap_source_free(component_source);
 			xmlFreeNode(component);
 
 			return -1;
@@ -698,7 +696,6 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 					"creating source datastream.", filepath, comp_id);
 
 			xmlDOMWrapFreeCtxt(wrap_ctxt);
-			oscap_source_free(component_source);
 			xmlFreeNode(component);
 
 			return -1;
@@ -722,7 +719,6 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 		{
 			xmlAddPrevSibling(first_extended_component, component);
 		}
-		oscap_source_free(component_source);
 	}
 
 	return 0;
@@ -1072,7 +1068,7 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 
 	free(mangled_filepath);
 
-	result = ds_sds_compose_add_component_internal(doc, datastream, filepath, comp_id, extended_component);
+	result = ds_sds_compose_add_component_internal(doc, datastream, component_source, comp_id, extended_component);
 	if (result == 0) {
 		xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 		xmlAddChild(cref, cref_catalog);
