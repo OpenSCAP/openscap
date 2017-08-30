@@ -988,11 +988,12 @@ static int ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream
 	return result;
 }
 
-int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePtr datastream, struct oscap_source *component_source, const char* cref_id)
 {
 	xmlNsPtr ds_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST datastream_ns_uri);
 	xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST xlink_ns_uri);
 	xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
+	const char *filepath = oscap_source_get_filepath(component_source);
 
 	// In case we already have this component we just return, no need to add
 	// it twice. We will typically have many references to OVAL files, adding
@@ -1015,7 +1016,6 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 
 	bool extended_component = false;
 
-	struct oscap_source *component_source = oscap_source_new_from_file(filepath);
 	oscap_document_type_t doc_type = oscap_source_get_scap_type(component_source);
 	if (doc_type == OSCAP_DOCUMENT_XCCDF)
 	{
@@ -1023,7 +1023,6 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		if (ds_sds_compose_add_component_dependencies(doc, datastream, component_source, cref_catalog, doc_type) != 0)
 		{
 			// oscap_seterr has already been called
-			oscap_source_free(component_source);
 			return -1;
 		}
 	}
@@ -1043,7 +1042,6 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 			}
 		}
 		if (ds_sds_compose_add_component_dependencies(doc, datastream, component_source, cref_catalog, doc_type) != 0) {
-			oscap_source_free(component_source);
 			return -1;
 		}
 	}
@@ -1057,7 +1055,6 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 		extended_component = true;
 		cref_parent = node_get_child_element(datastream, "extended-components");
 	}
-	oscap_source_free(component_source);
 
 	char* mangled_filepath = ds_sds_mangle_filepath(filepath);
 	// extended components (sadly :-/) use a different ID scheme and have
@@ -1100,6 +1097,14 @@ int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, 
 	}
 
 	return result;
+}
+
+int ds_sds_compose_add_component_with_ref(xmlDocPtr doc, xmlNodePtr datastream, const char* filepath, const char* cref_id)
+{
+	struct oscap_source *component_source = oscap_source_new_from_file(filepath);
+	int ret = ds_sds_compose_add_component_source_with_ref(doc, datastream, component_source, cref_id);
+	oscap_source_free(component_source);
+	return ret;
 }
 
 int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended)
