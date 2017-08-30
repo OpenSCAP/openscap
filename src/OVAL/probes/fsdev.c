@@ -243,7 +243,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	FILE *fp;
 	size_t i;
 
-	struct mnttab *ment;
+	struct mnttab mentbuf, *ment = &mentbuf;
 	struct stat st;
 
 	fp = fopen(MNTTAB, "r");
@@ -268,7 +268,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	i = 0;
 
 	if (fs == NULL) {
-		while ((getmntent(fp, ment)) != 0) {
+		while ((getmntent(fp, ment)) == 0) {
                         /* TODO: Is this check reliable? */
                         if (stat (ment->mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
 
@@ -281,7 +281,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 			}
 		}
 	} else {
-		while ((getmntent(fp, ment)) != 0) {
+		while ((getmntent(fp, ment)) == 0) {
 
 			if (match_fs(ment->mnt_fstype, fs, fs_cnt)) {
 
