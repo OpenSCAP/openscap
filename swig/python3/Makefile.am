@@ -19,7 +19,7 @@ CFLAGS+= -Wno-missing-prototypes
 
 if WANT_PYTHON3
 AM_CPPFLAGS += $(PYTHON3_INCLUDES)
-nodist_py3exec_PYTHON = openscap.py
+nodist_py3exec_PYTHON = openscap.py ${srcdir}/../src/openscap_api.py
 py3exec_LTLIBRARIES = _openscap_py.la
 _openscap_py_la_LDFLAGS = -module -avoid-version
 _openscap_py_la_LIBADD = ${top_builddir}/src/libopenscap.la
@@ -51,4 +51,4 @@ CLEANFILES = \
 	openscap.py \
 	openscap_py_wrap.c \
 	openscap.pyc
-
+EXTRA_DIST = ${srcdir}/../src/openscap_api.py
