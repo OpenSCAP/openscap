@@ -20,7 +20,7 @@ CFLAGS+= -Wno-missing-prototypes
 
 if WANT_PYTHON
 AM_CPPFLAGS += $(PYTHON_INCLUDES)
-nodist_pyexec_PYTHON = openscap.py openscap_api.py
+nodist_pyexec_PYTHON = openscap.py ${srcdir}/../src/openscap_api.py
 pyexec_LTLIBRARIES = _openscap_py.la
 _openscap_py_la_LDFLAGS = -module -avoid-version
 _openscap_py_la_LIBADD  = ${top_builddir}/src/libopenscap.la
@@ -48,4 +48,4 @@ openscap.py: openscap_py_wrap.c
 endif
 
 CLEANFILES = openscap.py openscap_py_wrap.c openscap.pyc
-EXTRA_DIST = openscap_api.py
+EXTRA_DIST = ${srcdir}/../src/openscap_api.py
