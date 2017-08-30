@@ -1143,7 +1143,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	return 0;
 }
 
-xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_source)
 {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
@@ -1156,6 +1156,7 @@ xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
 	// component-ref
 	xmlNewNs(root, BAD_CAST xlink_ns_uri, BAD_CAST "xlink");
 
+	const char *xccdf_file = oscap_source_get_filepath(xccdf_source);
 	char* mangled_xccdf_file = ds_sds_mangle_filepath(xccdf_file);
 	char* collection_id = oscap_sprintf("scap_org.open-scap_collection_from_xccdf_%s", mangled_xccdf_file);
 	xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
@@ -1191,7 +1192,7 @@ xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
 	xmlAddChild(datastream, extended_components);
 
 	char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_xccdf_file);
-	if (ds_sds_compose_add_component_with_ref(doc, datastream, xccdf_file, cref_id) != 0)
+	if (ds_sds_compose_add_component_source_with_ref(doc, datastream, xccdf_source, cref_id) != 0)
 	{
 		// oscap_seterr already called
 		free(cref_id);
@@ -1228,6 +1229,14 @@ xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
 
 	free(mangled_xccdf_file);
 
+	return doc;
+}
+
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
+{
+	struct oscap_source *xccdf_source = oscap_source_new_from_file(xccdf_file);
+	xmlDocPtr doc = ds_sds_compose_xmlDoc_from_xccdf_source(xccdf_source);
+	oscap_source_free(xccdf_source);
 	return doc;
 }
 
