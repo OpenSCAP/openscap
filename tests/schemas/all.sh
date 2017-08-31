@@ -31,5 +31,9 @@ function test_no_external_imports {
 
 # Testing.
 test_init "test_schemas.log"
-test_run "no_external_imports" test_no_external_imports
+
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "no_external_imports" test_no_external_imports
+fi
+
 test_exit

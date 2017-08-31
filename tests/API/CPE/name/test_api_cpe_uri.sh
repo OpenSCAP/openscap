@@ -127,9 +127,11 @@ function test_api_cpe_uri_match {
 
 test_init "test_api_cpe_uri.log"
 
-test_run "test_api_cpe_uri_smoke"  test_api_cpe_uri_smoke
-test_run "test_api_cpe_uri_parse"  test_api_cpe_uri_parse
-test_run "test_api_cpe_uri_create" test_api_cpe_uri_create
-test_run "test_api_cpe_uri_match"  test_api_cpe_uri_match
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_api_cpe_uri_smoke"  test_api_cpe_uri_smoke
+    test_run "test_api_cpe_uri_parse"  test_api_cpe_uri_parse
+    test_run "test_api_cpe_uri_create" test_api_cpe_uri_create
+    test_run "test_api_cpe_uri_match"  test_api_cpe_uri_match
+fi
 
 test_exit

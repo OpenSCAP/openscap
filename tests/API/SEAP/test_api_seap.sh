@@ -484,15 +484,17 @@ function test_api_strto {
 
 test_init "test_api_seap.log"
 
-test_run "test_api_seap_incorrect_expression"   test_api_seap_incorrect_expression
-test_run "test_api_seap_correct_expression"     test_api_seap_correct_expression
-test_run "test_api_seap_split"                  test_api_seap_split
-test_run "test_api_seap_concurency"             test_api_seap_concurency
-test_run "test_api_seap_spb"                  ./test_api_seap_spb
-test_run "test_api_seap_list"                 ./test_api_seap_list
-test_run "test_api_seap_number_expression"    ./test_api_seap_number
-test_run "test_api_seap_string_expression"    ./test_api_seap_string
-test_run "test_api_SEXP_deepcmp"              ./test_api_SEXP_deepcmp
-test_run "test_api_strto"                     ./test_api_strto
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_api_seap_incorrect_expression"   test_api_seap_incorrect_expression
+    test_run "test_api_seap_correct_expression"     test_api_seap_correct_expression
+    test_run "test_api_seap_split"                  test_api_seap_split
+    test_run "test_api_seap_concurency"             test_api_seap_concurency
+    test_run "test_api_seap_spb"                  ./test_api_seap_spb
+    test_run "test_api_seap_list"                 ./test_api_seap_list
+    test_run "test_api_seap_number_expression"    ./test_api_seap_number
+    test_run "test_api_seap_string_expression"    ./test_api_seap_string
+    test_run "test_api_SEXP_deepcmp"              ./test_api_SEXP_deepcmp
+    test_run "test_api_strto"                     ./test_api_strto
+fi
 
 test_exit
