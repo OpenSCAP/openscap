@@ -72,6 +72,8 @@ function test_probes_sysinfo {
 
 test_init "test_probes_sysinfo.log"
 
-test_run "test_probes_sysinfo" test_probes_sysinfo
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_probes_sysinfo" test_probes_sysinfo
+fi
 
 test_exit

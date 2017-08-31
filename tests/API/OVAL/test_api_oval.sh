@@ -39,9 +39,11 @@ function test_api_oval_directives {
 
 test_init "test_api_oval.log"
 
-test_run "test_api_oval_definition" test_api_oval_definition
-test_run "test_api_oval_syschar" test_api_oval_syschar
-test_run "test_api_oval_results" test_api_oval_results
-test_run "test_api_oval_directives" test_api_oval_directives
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_api_oval_definition" test_api_oval_definition
+    test_run "test_api_oval_syschar" test_api_oval_syschar
+    test_run "test_api_oval_results" test_api_oval_results
+    test_run "test_api_oval_directives" test_api_oval_directives
+fi
 
 test_exit

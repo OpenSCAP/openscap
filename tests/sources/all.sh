@@ -25,5 +25,8 @@ function test_config_h(){
 
 test_init "test_config_h.log"
 
-test_run "Check existence including config.h in every .c file" test_config_h
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "Check existence including config.h in every .c file" test_config_h
+fi
+
 test_exit
