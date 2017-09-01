@@ -27,7 +27,9 @@
 #include <libgen.h>
 #include <unistd.h>
 #include <string.h>
+#if defined(__linux__)
 #include <linux/limits.h>
+#endif
 
 #include "common/alloc.h"
 #include "common/debug_priv.h"
