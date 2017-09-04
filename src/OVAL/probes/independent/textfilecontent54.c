@@ -347,9 +347,13 @@ static int process_file(const char *path, const char *file, void *arg)
 	return ret;
 }
 
+void probe_offline_mode ()
+{
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN);
+}
+
 void *probe_init(void)
 {
-  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
   return NULL;
 }
 
@@ -371,6 +375,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 #endif
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
+	char path_with_root[PATH_MAX + 1];
+	unsigned int root_len = 0;
 
         (void)arg;
 
@@ -498,12 +504,23 @@ int probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 #endif
+
+	path_with_root[PATH_MAX] = '\0';
+	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
+		strncpy(path_with_root, getenv("OSCAP_PROBE_ROOT"), PATH_MAX);
+		root_len = strlen(path_with_root);
+
+		if (path_with_root[root_len - 1] == FILE_SEPARATOR)
+			--root_len;
+	}
+
 	if ((ofts = oval_fts_open(path_ent, file_ent, filepath_ent, bh_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
+				strncpy(path_with_root + root_len, ofts_ent->path, PATH_MAX - root_len);
 				// todo: handle return code
-				process_file(ofts_ent->path, ofts_ent->file, &pfd);
+				process_file(path_with_root, ofts_ent->file, &pfd);
 			}
 			oval_ftsent_free(ofts_ent);
 		}
