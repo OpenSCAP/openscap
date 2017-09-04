@@ -37,7 +37,6 @@
 #include "oval_adt.h"
 #include "oval_collection_impl.h"
 #include "common/util.h"
-#include "common/debug_priv.h"
 
 /***************************************************************************/
 /* Variable definitions
@@ -55,10 +54,6 @@ typedef struct oval_collection {
 typedef struct oval_iterator {
 	struct _oval_collection_item_frame *item_iterator_frame;
 } oval_iterator_t;
-
-static bool debug = true;
-static struct oval_iterator *_debugStack[0];
-static int iterator_count;
 
 /* End of variable definitions
  * */
@@ -126,11 +121,6 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection *collectio
 	if (iterator == NULL)
 		return NULL;
 
-	if ((iterator_count++) < 0) {
-		_debugStack[iterator_count - 1] = iterator;
-		dW("iterator_count: %d.", iterator_count);
-	}
-
 	iterator->item_iterator_frame = NULL;
 	struct _oval_collection_item_frame *collection_frame = collection->item_collection_frame;
 
@@ -157,7 +147,6 @@ bool oval_collection_iterator_has_more(struct oval_iterator * iterator)
 
 int oval_collection_iterator_remaining(struct oval_iterator *iterator)
 {
-
 	__attribute__nonnull__(iterator);
 
 	int remaining;
@@ -191,13 +180,6 @@ void *oval_collection_iterator_next(struct oval_iterator *iterator)
 void oval_collection_iterator_free(struct oval_iterator *iterator)
 {
 	if (iterator) {		//NOOP if iterator is NULL
-		if ((--iterator_count) < 0) {
-			dW("iterator_count: %d.", iterator_count);
-			if (iterator != _debugStack[iterator_count]) {
-				debug = false;
-			}
-		}
-
 		while (iterator->item_iterator_frame) {
 			struct _oval_collection_item_frame *oc_this;
 			oc_this = iterator->item_iterator_frame;
@@ -217,10 +199,6 @@ struct oval_iterator *oval_collection_iterator_new()
 	if (iterator == NULL)
 		return NULL;
 
-	if ((iterator_count++) < 0) {
-		_debugStack[iterator_count - 1] = iterator;
-		dW("iterator_count: %d.", iterator_count);
-	}
 	iterator->item_iterator_frame = NULL;
 	return iterator;
 }
