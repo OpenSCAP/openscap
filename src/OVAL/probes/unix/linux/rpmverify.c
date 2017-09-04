@@ -224,9 +224,13 @@ void probe_preload ()
 	rpmLibsPreload();
 }
 
+void probe_offline_mode ()
+{
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN);
+}
+
 void *probe_init (void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 #ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
@@ -238,6 +242,11 @@ void *probe_init (void)
         g_rpm.rpmts = rpmtsCreate();
 
         pthread_mutex_init(&(g_rpm.mutex), NULL);
+
+	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
+		const char* root = getenv("OSCAP_PROBE_ROOT");
+		rpmtsSetRootDir(g_rpm.rpmts, root);
+	}
 
         return ((void *)&g_rpm);
 }

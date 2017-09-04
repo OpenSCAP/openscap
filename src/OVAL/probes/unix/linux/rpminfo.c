@@ -267,10 +267,13 @@ void probe_preload ()
 	rpmLibsPreload();
 }
 
+void probe_offline_mode ()
+{
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN|PROBE_OFFLINE_RPMDB);
+}
+
 void *probe_init (void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT|PROBE_OFFLINE_RPMDB);
-
 #ifdef HAVE_RPM46
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
@@ -291,6 +294,11 @@ void *probe_init (void)
 	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
 	if (dbpath) {
 		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
+	}
+
+	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
+		const char* root = getenv("OSCAP_PROBE_ROOT");
+		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
 
         return ((void *)&g_rpm);
