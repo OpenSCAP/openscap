@@ -358,7 +358,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	}
 
 	/* set validation level */
-	oval_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION"));
+	oval_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
 	/* set source DS related IDs */
 	oval_session_set_datastream_id(session, action->f_datastream_id);
