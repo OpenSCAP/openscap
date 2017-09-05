@@ -70,7 +70,7 @@ int main (int argc, char *argv[])
                                 }
                 
                                 memset (iov[i].iov_base, (int)(i % 256), iov[i].iov_len);
-                                memset (r_buf + r_len,   (int)(i % 256), iov[i].iov_len);
+                                memset (((char *)r_buf) + r_len,   (int)(i % 256), iov[i].iov_len);
                                 r_len += iov[i].iov_len;
                         }
         }
@@ -233,7 +233,7 @@ int main (int argc, char *argv[])
                                 
                                 o = 0;
                                 for (o = 0; o < pick_size; ++o) {
-                                        if (*(uint8_t *)(p_buf + o) != *(uint8_t *)(r_buf + pick_start + o))
+                                        if (*(uint8_t *)(((char *)p_buf) + o) != *(uint8_t *)(((char *)r_buf) + pick_start + o))
                                                 abort ();
                                 }
                         }
