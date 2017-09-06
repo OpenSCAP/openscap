@@ -149,13 +149,15 @@ function test_api_cpe_lang_match {
 
 test_init "test_api_cpe_lang.log"
 
-test_run "test_api_cpe_lang_smoke" test_api_cpe_lang_smoke
-test_run "test_api_cpe_lang_import" test_api_cpe_lang_import
-test_run "test_api_cpe_lang_import_damaged" test_api_cpe_lang_import_damaged    
-test_run "test_api_cpe_lang_import_key" test_api_cpe_lang_import_key
-# test_run "test_api_cpe_lang_export_empty" test_api_cpe_lang_export_empty
-# test_run "test_api_cpe_lang_export_ecoding" test_api_cpe_lang_export_encoding
-# test_run "test_api_cpe_lang_export_namespace" test_api_cpe_lang_export_namespace
-test_run "test_api_cpe_lang_match" test_api_cpe_lang_match
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_api_cpe_lang_smoke" test_api_cpe_lang_smoke
+    test_run "test_api_cpe_lang_import" test_api_cpe_lang_import
+    test_run "test_api_cpe_lang_import_damaged" test_api_cpe_lang_import_damaged    
+    test_run "test_api_cpe_lang_import_key" test_api_cpe_lang_import_key
+    # test_run "test_api_cpe_lang_export_empty" test_api_cpe_lang_export_empty
+    # test_run "test_api_cpe_lang_export_ecoding" test_api_cpe_lang_export_encoding
+    # test_run "test_api_cpe_lang_export_namespace" test_api_cpe_lang_export_namespace
+    test_run "test_api_cpe_lang_match" test_api_cpe_lang_match
+fi
 
 test_exit 

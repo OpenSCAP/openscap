@@ -19,5 +19,9 @@ function test_oscap_string {
 # Testing.
 
 test_init "test_oscap_string.log"
-test_run "test_oscap_string" test_oscap_string
+
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_oscap_string" test_oscap_string
+fi
+
 test_exit

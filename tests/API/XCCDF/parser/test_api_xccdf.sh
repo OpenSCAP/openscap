@@ -49,10 +49,12 @@ function test_api_xccdf_validate {
 
 test_init "test_api_xccdf.log"
 
-test_run "export xccdf 1.1" test_api_xccdf_export xccdf11.xml
-test_run "validate xccdf 1.1" test_api_xccdf_validate xccdf11.xml "1.1"
-test_run "export xccdf 1.2" test_api_xccdf_export xccdf12.xml
-test_run "validate xccdf 1.2" test_api_xccdf_validate xccdf12.xml "1.2"
-test_run "export xccdf results 1.1" test_api_xccdf_export xccdf11-results.xml
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "export xccdf 1.1" test_api_xccdf_export xccdf11.xml
+    test_run "validate xccdf 1.1" test_api_xccdf_validate xccdf11.xml "1.1"
+    test_run "export xccdf 1.2" test_api_xccdf_export xccdf12.xml
+    test_run "validate xccdf 1.2" test_api_xccdf_validate xccdf12.xml "1.2"
+    test_run "export xccdf results 1.1" test_api_xccdf_export xccdf11-results.xml
+fi
 
 test_exit

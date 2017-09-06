@@ -46,15 +46,16 @@ function test_api_cce_search_non_existing {
 }
 
 # Testing.
-
 test_init "test_api_cce.log" 
 
-test_run "test_api_cce_smoke" test_api_cce_smoke
-test_run "test_api_cce_validate_valid_xml" test_api_cce_validate_valid_xml
-test_run "test_api_cce_validate_invalid_xml" test_api_cce_validate_invalid_xml
-test_run "test_api_cce_validate_damaged_xml" test_api_cce_validate_damaged_xml
-test_run "test_api_cce_parse_xml" test_api_cce_parse_xml
-test_run "test_api_cce_search_existing" test_api_cce_search_existing
-test_run "test_api_cce_search_non_existing" test_api_cce_search_non_existing
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_api_cce_smoke" test_api_cce_smoke
+    test_run "test_api_cce_validate_valid_xml" test_api_cce_validate_valid_xml
+    test_run "test_api_cce_validate_invalid_xml" test_api_cce_validate_invalid_xml
+    test_run "test_api_cce_validate_damaged_xml" test_api_cce_validate_damaged_xml
+    test_run "test_api_cce_parse_xml" test_api_cce_parse_xml
+    test_run "test_api_cce_search_existing" test_api_cce_search_existing
+    test_run "test_api_cce_search_non_existing" test_api_cce_search_non_existing
+fi
 
 test_exit

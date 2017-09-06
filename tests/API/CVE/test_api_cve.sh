@@ -32,7 +32,11 @@ function test_api_cve_export {
 }
 
 test_init "test_api_cve.log"
-test_run "test_api_cve_cvss" test_api_cve_cvss
-test_run "test_api_cve_export" test_api_cve_export
+
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    test_run "test_api_cve_cvss" test_api_cve_cvss
+    test_run "test_api_cve_export" test_api_cve_export
+fi
+
 test_exit
 
