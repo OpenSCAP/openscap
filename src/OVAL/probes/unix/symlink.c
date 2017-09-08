@@ -48,6 +48,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	SEXP_t *ent_val, *item_sexp, *msg;
 	struct stat sb;
 	char *linkname;
+	char resolved_name[PATH_MAX];
 
 	ent_val = probe_ent_getval(ent);
 	char *pathname = SEXP_string_cstr(ent_val);
@@ -84,7 +85,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 		return 0;
 	}
 
-	linkname = realpath(pathname, NULL);
+	linkname = realpath(pathname, resolved_name);
 	if (linkname == NULL) {
 		if (errno == ENOENT) {
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
@@ -109,7 +110,6 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 			NULL);
 	probe_item_collect(ctx, item_sexp);
 
-	free(linkname);
 	free(pathname);
 	return 0;
 }
