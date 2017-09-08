@@ -248,6 +248,10 @@ static char *get_selinux_label(int pid) {
 		return NULL;
 	}
 	context = context_new(pid_context);
+	if (context == NULL) {
+		/* Another LSM is in use */
+		return NULL;
+	}
 	selinux_label = strdup(context_type_get(context));
 	context_free(context);
 	freecon(pid_context);
