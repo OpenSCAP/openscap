@@ -685,7 +685,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		// Description
 		struct oscap_text_iterator *description_iterator = xccdf_profile_get_description(profile);
 		char *profile_description = description_iterator != NULL ?
-				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : "Not available";
+				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : NULL;
 		oscap_text_iterator_free(description_iterator);
 
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
@@ -708,7 +708,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from an OpenSCAP profile without preliminary evaluation.\n"
 			"# It attempts to fix every selected rule, even if the system is already compliant.\n#\n"
 			"###############################################################################\n\n",
-				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description, benchmark_id,
+				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
 				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format);
 
 		free(profile_title);
