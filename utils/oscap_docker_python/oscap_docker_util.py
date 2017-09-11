@@ -24,6 +24,7 @@ import platform
 import shutil
 from oscap_docker_python.get_cve_input import getInputCVE
 import sys
+import docker
 
 try:
     from Atomic.mount import DockerMount
@@ -107,6 +108,31 @@ class OscapHelpers(object):
             if "{0}{1}: true".format(self.CPE, dist) in output:
                 return dist
 
+    def _get_target_name(self, target):
+        '''
+        Determines if target is image or container. For images returns full
+        image name if exists or image ID otherwise. For containers returns
+        container name if exists or container ID otherwise.
+        '''
+        client = docker.from_env()
+        try:
+            image = client.images.get(target)
+            if image.tags:
+                name = ", ".join(image.tags)
+            else:
+                name = image.short_id[len("sha256:"):]
+            return "docker-image://{}".format(name)
+        except docker.errors.ImageNotFound:
+            try:
+                container = client.containers.get(target)
+                if container.name:
+                    name = container.name
+                else:
+                    name = container.short_id
+                return "docker-container://{}".format(name)
+            except docker.errors.NotFound:
+                return "unknown"
+
     def oscap_chroot(self, chroot_path, target, *oscap_args):
         '''
         Wrapper function for executing oscap in a subprocess
@@ -116,7 +142,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
         os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-        os.environ["OSCAP_PROBE_PRIMARY_HOST_NAME"] = target
+        os.environ["OSCAP_PROBE_PRIMARY_HOST_NAME"] = self._get_target_name(target)
         cmd = ['oscap'] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
