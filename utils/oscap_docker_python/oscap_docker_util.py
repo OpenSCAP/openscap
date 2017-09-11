@@ -92,7 +92,7 @@ class OscapHelpers(object):
         '''
         shutil.rmtree(tmp_dir)
 
-    def _get_dist(self, chroot):
+    def _get_dist(self, chroot, target):
         '''
         Test the chroot and determine what RHEL dist it is; returns
         an integer representing the dist
@@ -101,13 +101,13 @@ class OscapHelpers(object):
         if not os.path.exists(cpe_dict):
             raise OscapError()
         for dist in self.DISTS:
-            output = self.oscap_chroot('foo', 'bar', chroot, 'oval', 'eval',
+            output = self.oscap_chroot(chroot, target, 'oval', 'eval',
                                        '--id', self.CPE + dist, cpe_dict,
                                        '2>&1', '>', '/dev/null')
             if "{0}{1}: true".format(self.CPE, dist) in output:
                 return dist
 
-    def oscap_chroot(self, target, image, chroot_path, *oscap_args):
+    def oscap_chroot(self, chroot_path, target, *oscap_args):
         '''
         Wrapper function for executing oscap in a subprocess
         '''
@@ -116,8 +116,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
         os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-        os.environ["OSCAP_PROBE_"
-                   "PRIMARY_HOST_NAME"] = "{0}-{1}".format(target, image)
+        os.environ["OSCAP_PROBE_PRIMARY_HOST_NAME"] = target
         cmd = ['oscap'] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
@@ -134,21 +133,21 @@ class OscapHelpers(object):
         sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
         return oscap_stdout.decode("utf-8")
 
-    def _scan_cve(self, chroot, dist, scan_args):
+    def _scan_cve(self, chroot, target, dist, scan_args):
         '''
         Scan a chroot for cves
         '''
         cve_input = getInputCVE.dist_cve_name.format(dist)
         tmp_tuple = ('oval', 'eval') + tuple(scan_args) + \
             (os.path.join(self.cve_input_dir, cve_input),)
-        return self.oscap_chroot("foo", "bar", chroot, *tmp_tuple)
+        return self.oscap_chroot(chroot, target, *tmp_tuple)
 
-    def _scan(self, chroot, scan_args):
+    def _scan(self, chroot, target, scan_args):
         '''
         Scan a container or image
         '''
         tmp_tuple = tuple(scan_args)
-        return self.oscap_chroot("foo", "bar", chroot, *tmp_tuple)
+        return self.oscap_chroot(chroot, target, *tmp_tuple)
 
     def resolve_image(self, image):
         '''
@@ -233,7 +232,7 @@ class OscapScan(object):
 
         try:
             # Figure out which RHEL dist is in the chroot
-            dist = self.helper._get_dist(chroot)
+            dist = self.helper._get_dist(chroot, image)
 
             if dist is None:
                 sys.stderr.write("{0} is not based on RHEL\n".format(image))
@@ -244,7 +243,7 @@ class OscapScan(object):
             fetch._fetch_single(dist)
 
             # Scan the chroot
-            sys.stdout.write(self.helper._scan_cve(chroot, dist, scan_args))
+            sys.stdout.write(self.helper._scan_cve(chroot, image, dist, scan_args))
 
         finally:
             # Clean up
@@ -270,7 +269,7 @@ class OscapScan(object):
         chroot = self._find_chroot_path(_tmp_mnt_dir)
 
         # Scan the chroot
-        sys.stdout.write(self.helper._scan(chroot, scan_args))
+        sys.stdout.write(self.helper._scan(chroot, image, scan_args))
 
         # Clean up
         self.helper._cleanup_by_path(_tmp_mnt_dir)
