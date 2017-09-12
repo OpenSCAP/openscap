@@ -694,11 +694,34 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
 
+		if (NULL != profile_description) {
+			size_t new_lines = 0;
+			size_t description_length = 1;
+			for (const char *c = profile_description; *c != '\0'; ++c, ++description_length)
+				if (*c == '\n')
+					++new_lines;
+			
+			if (new_lines > 0) {
+				const char filler[] = "# ";
+				char *commented_description = malloc(description_length + new_lines * (sizeof filler - 1));
+				for (size_t i = 0, j = 0; j < description_length; ++i, ++j) {
+					commented_description[i] = profile_description[j];
+					if (profile_description[j] == '\n') {
+						for (size_t k = 0; k < (sizeof filler - 1); ++k)
+  						commented_description[++i] = filler[k];
+					}
+				}
+				free(profile_description);
+				profile_description = commented_description;
+			}
+		}
+
 		fix_header = oscap_sprintf(
 			"###############################################################################\n#\n"
 			"# %s remediation role for profile %s\n"
 			"# Profile Title:  %s\n"
-			"# Profile Description:  %s\n"
+			"# Profile Description:\n"
+			"# %s\n"
 			"#\n"
 			"# Benchmark ID:  %s\n"
 			"# Benchmark Version:  %s\n#\n"
