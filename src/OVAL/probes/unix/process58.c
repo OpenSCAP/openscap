@@ -236,31 +236,39 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 	return tbuf;
 }
 
-static char *get_selinux_label(int pid) {
 #ifdef HAVE_SELINUX_SELINUX_H
+static char *get_selinux_label(int pid) {
 	char *selinux_label;
 	security_context_t pid_context;
 	context_t context;
 
-	if (getpidcon(pid, &pid_context) == -1) {
-		/* error getting pid selinux context */
-		dW("Can't get selinux context for process %d", pid);
+	if (is_selinux_enabled() == 1) {
+		if (getpidcon(pid, &pid_context) == -1) {
+			/* error getting pid selinux context */
+			dW("Can't get selinux context for process %d", pid);
+			return NULL;
+		}
+		context = context_new(pid_context);
+		if (context == NULL) {
+			// There must be 3 or 4 colon-separated components and no
+			// whitespace in any component other than the MLS
+			// component.
+			freecon(pid_context);
+			return NULL;
+		}
+		selinux_label = strdup(context_type_get(context));
+		context_free(context);
+		freecon(pid_context);
+		return selinux_label;
+	} else {
 		return NULL;
 	}
-	context = context_new(pid_context);
-	if (context == NULL) {
-		/* Another LSM is in use */
-		return NULL;
-	}
-	selinux_label = strdup(context_type_get(context));
-	context_free(context);
-	freecon(pid_context);
-	return selinux_label;
-
-#else
-	return NULL;
-#endif /* HAVE_SELINUX_SELINUX_H */
 }
+#else
+static char *get_selinux_label(int pid) {
+	return NULL;
+}
+#endif /* HAVE_SELINUX_SELINUX_H */
 
 static char **get_posix_capability(int pid, int max_cap_id) {
 #ifdef HAVE_SYS_CAPABILITY_H
