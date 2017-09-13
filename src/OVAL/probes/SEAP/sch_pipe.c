@@ -65,6 +65,12 @@ extern char **environ;
 # endif
 #endif /* PATH_MAX */
 
+#ifndef WCOREDUMP
+# if defined(_AIX)
+# define WCOREDUMP(x) ((x) & 0x80)
+# endif
+#endif /* WCOREDUMP */
+
 static char *get_exec_path (const char *uri, uint32_t flags)
 {
         char  *path;
@@ -172,10 +178,11 @@ static int check_child (pid_t pid, int waitf)
 		if (WIFSIGNALED(status)) {
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe with PID=%ld has been killed with signal %d", (long)pid, WTERMSIG(status));
 			errno = EINTR;
-		}
-		if (WCOREDUMP(status)) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe with PID=%ld has core dumped.", (long)pid);
-			errno = EINTR;
+#if defined(WCOREDUMP)
+			if (WCOREDUMP(status)) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "Probe with PID=%ld has core dumped.", (long)pid);
+			}
+#endif /* WCOREDUMP */
 		}
                 if (WIFEXITED(status)) {
                         errno = WEXITSTATUS(status);
