@@ -25,6 +25,11 @@ pre
 
 div.check-system-details, div.remediation, div.description { display: inline-block; width: 0; min-width: 100%; overflow-x: auto }
 
+div.profile-description
+{
+    white-space: pre-wrap;
+}
+
 div.modal-body
 {
     margin: 50px;
