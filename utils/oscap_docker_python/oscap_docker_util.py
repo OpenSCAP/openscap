@@ -114,21 +114,24 @@ class OscapHelpers(object):
         image name if exists or image ID otherwise. For containers returns
         container name if exists or container ID otherwise.
         '''
-        client = docker.from_env()
         try:
-            image = client.images.get(target)
-            if image.tags:
-                name = ", ".join(image.tags)
+            client = docker.APIClient()
+        except AttributeError:
+            client = docker.Client()
+        try:
+            image = client.inspect_image(target)
+            if image["RepoTags"]:
+                name = ", ".join(image["RepoTags"])
             else:
-                name = image.short_id[len("sha256:"):]
+                name = image["Id"][len("sha256:"):][:10]
             return "docker-image://{}".format(name)
-        except docker.errors.ImageNotFound:
+        except docker.errors.NotFound:
             try:
-                container = client.containers.get(target)
-                if container.name:
-                    name = container.name
+                container = client.inspect_container(target)
+                if container["Name"]:
+                    name = container["Name"].lstrip("/")
                 else:
-                    name = container.short_id
+                    name = container["Id"][:10]
                 return "docker-container://{}".format(name)
             except docker.errors.NotFound:
                 return "unknown"
