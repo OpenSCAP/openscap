@@ -180,7 +180,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	_xccdf_result_clear_metadata(XITEM(result));
 
 	/* override target name by environment variable */
-	const char *target_hostname = getenv("OSCAP_PROBE_PRIMARY_HOST_NAME");
+	const char *target_hostname = getenv("OSCAP_EVALUATION_TARGET");
 	if (target_hostname == NULL) {
 		target_hostname = sname.nodename;
 	}

@@ -142,7 +142,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
         os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-        os.environ["OSCAP_PROBE_PRIMARY_HOST_NAME"] = self._get_target_name(target)
+        os.environ["OSCAP_EVALUATION_TARGET"] = self._get_target_name(target)
         cmd = ['oscap'] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
