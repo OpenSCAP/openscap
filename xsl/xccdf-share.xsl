@@ -358,7 +358,7 @@ Authors:
             </xsl:choose></mark>
             <xsl:if test="$profile/cdf:description">
                 <div class="col-md-12 well well-lg horizontal-scroll">
-                    <div class="description"><small>
+                    <div class="description profile-description"><small>
                         <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:description[1]">
                             <xsl:with-param name="benchmark" select="$benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
