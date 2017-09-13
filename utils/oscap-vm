@@ -131,7 +131,7 @@ export OSCAP_PROBE_OS_VERSION
 OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)" # TODO
 export OSCAP_PROBE_ARCHITECTURE
 OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)" # TODO
-export OSCAP_PROBE_PRIMARY_HOST_NAME="oscap-vm $1 $2"
+export OSCAP_EVALUATION_TARGET="oscap-vm $1 $2"
 shift 2
 
 oscap "$@"
