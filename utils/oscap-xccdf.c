@@ -60,8 +60,8 @@ static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int app_xccdf_xslt(const struct oscap_action *action);
 static int app_generate_fix(const struct oscap_action *action);
 
-static struct oscap_module* XCCDF_SUBMODULES[];
-static struct oscap_module* XCCDF_GEN_SUBMODULES[];
+static struct oscap_module* XCCDF_SUBMODULES[8];
+static struct oscap_module* XCCDF_GEN_SUBMODULES[5];
 
 struct oscap_module OSCAP_XCCDF_MODULE = {
     .name = "xccdf",
@@ -297,7 +297,7 @@ static struct oscap_module* XCCDF_SUBMODULES[] = {
     &XCCDF_VALIDATE_XML,
     &XCCDF_EXPORT_OVAL_VARIABLES,
     &XCCDF_GENERATE,
-	&XCCDF_REMEDIATE,
+    &XCCDF_REMEDIATE,
     NULL
 };
 
