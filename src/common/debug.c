@@ -34,6 +34,7 @@
 # include <unistd.h>
 # include <time.h>
 # include <errno.h>
+# include <fcntl.h>
 
 # include <sexp.h>
 # include <sexp-output.h>
@@ -144,7 +145,7 @@ static void debug_message_start(int level, int indent)
 	char  l;
 
 	__LOCK_FP;
-#if defined(__SVR4) && defined (__sun)
+#if (defined(__SVR4) && defined (__sun)) || defined(_AIX)
 	if (lockf(fileno(__debuglog_fp), F_LOCK, 0L) == -1) {
 #else
 	if (flock(fileno(__debuglog_fp), LOCK_EX) == -1) {
@@ -199,7 +200,7 @@ static void debug_message_devel_metadata(const char *file, const char *fn, size_
 static void debug_message_end()
 {
 	fputc('\n', __debuglog_fp);
-#if defined(__SVR4) && defined (__sun)
+#if (defined(__SVR4) && defined (__sun)) || defined(_AIX)
 	if (lockf(fileno(__debuglog_fp), F_ULOCK, 0L) == -1) {
 #else
 	if (flock(fileno(__debuglog_fp), LOCK_UN) == -1) {
