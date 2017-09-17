@@ -38,6 +38,7 @@
 #include <errno.h>
 #include <arpa/inet.h> /* inet_pton() in probe_ent_from_cstr() */
 #include <netinet/in.h>
+#include <sys/socket.h>
 
 #include "debug_priv.h"
 #include "_probe-api.h"
