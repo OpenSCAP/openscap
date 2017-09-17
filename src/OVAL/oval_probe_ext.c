@@ -46,7 +46,7 @@
 
 #define __ERRBUF_SIZE 128
 
-#if defined(__SVR4) && defined (__sun)
+#if (defined(__SVR4) && defined (__sun)) || defined(_AIX)
 #define __STRING(x)     #x
 #endif
 
