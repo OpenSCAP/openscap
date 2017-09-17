@@ -47,6 +47,8 @@
 #include <sys/mntent.h>
 #include <libzonecfg.h>
 #include <sys/avl.h>
+#elif defined(_AIX)
+#include "fts_sun.h"
 #else
 #include <fts.h>
 #endif
