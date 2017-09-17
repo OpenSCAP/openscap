@@ -23,7 +23,7 @@
 #define OVAL_FTS_H
 
 #include <sexp.h>
-#if defined(__SVR4) && defined(__sun)
+#if (defined(__SVR4) && defined(__sun)) || defined(_AIX)
 #include "fts_sun.h"
 #else
 #include <fts.h>
