@@ -42,6 +42,7 @@
 #include <regex.h>
 #endif
 #include <arpa/inet.h>
+#include <sys/socket.h>
 
 #include "common/debug_priv.h"
 #include "entcmp.h"
