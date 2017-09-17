@@ -31,9 +31,6 @@
 #include <limits.h>
 #include <sys/stat.h>
 #include <sys/uio.h>
-#if !defined(_AIX)
-#include <sys/unistd.h>
-#endif
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <sys/select.h>
