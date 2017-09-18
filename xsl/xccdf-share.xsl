@@ -346,7 +346,7 @@ Authors:
     <xsl:if test="$profile">
         <blockquote>with profile <mark>
             <xsl:choose>
-                <xsl:when test="$profile/cdf:title">
+                <xsl:when test="$profile/cdf:title/text()">
                     <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
                         <xsl:with-param name="benchmark" select="$benchmark"/>
                         <xsl:with-param name="profile" select="$profile"/>
@@ -356,7 +356,7 @@ Authors:
                     <xsl:value-of select="$profile/@id"/>
                 </xsl:otherwise>
             </xsl:choose></mark>
-            <xsl:if test="$profile/cdf:description">
+            <xsl:if test="$profile/cdf:description/text()">
                 <div class="col-md-12 well well-lg horizontal-scroll">
                     <div class="description profile-description"><small>
                         <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:description[1]">
@@ -378,7 +378,7 @@ Authors:
                 </xsl:apply-templates>
             </div>
         </xsl:if>
-        <xsl:if test="$benchmark/cdf:description">
+        <xsl:if test="$benchmark/cdf:description/text()">
             <div class="description">
                 <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
                     <xsl:with-param name="benchmark" select="$benchmark"/>
@@ -386,7 +386,7 @@ Authors:
                 </xsl:apply-templates>
             </div>
         </xsl:if>
-        <xsl:if test="$benchmark/cdf:notice">
+        <xsl:if test="$benchmark/cdf:notice/text()">
             <div class="top-spacer-10">
                 <xsl:for-each select="$benchmark/cdf:notice">
                     <div class="alert alert-info">
