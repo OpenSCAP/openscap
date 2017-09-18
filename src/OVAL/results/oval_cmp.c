@@ -31,6 +31,7 @@
 #include <string.h>
 #include <inttypes.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 
 #include "oval_types.h"
 #include "oval_system_characteristics.h"
