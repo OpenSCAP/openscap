@@ -48,6 +48,23 @@
 #define NS_VULN_URI BAD_CAST "http://scap.nist.gov/schema/vulnerability/0.4"
 #define NS_CVSS_URI BAD_CAST "http://scap.nist.gov/schema/cvss-v2/0.2"
 
+/*
+ * Some versions of AIX define NAN like this in math.h:
+ * static  const unsigned int _SQNAN = 0x7fc00000;
+ * #define NAN       (*((float *)(&_SQNAN)))
+ *
+ * However, this makes NAN unusable as an initializer in expressions such as:
+ * static const float F = NAN;
+ *
+ * raising a "Initializer must be a valid constant expression" compiler error.
+ */
+#if defined(_AIX)
+#define NAN_INIT (0.0f/0.0f)
+
+#else  /* Platforms with non broken NAN */
+#define NAN_INIT NAN
+#endif
+
 const char *cvss_model_supported(void) { return CVSS_SUPPORTED; }
 
 
@@ -117,32 +134,32 @@ static const struct cvss_valtab_entry CVSS_VALTAB[] = {
 
     // Base metrics:
 
-    { CVSS_KEY_access_vector, CVSS_AV_NOT_SET,          "Not Set",          "AV:-", NULL,                 NAN },
+    { CVSS_KEY_access_vector, CVSS_AV_NOT_SET,          "Not Set",          "AV:-", NULL,                 NAN_INIT },
     { CVSS_KEY_access_vector, CVSS_AV_LOCAL,            "Local",            "AV:L", "LOCAL",            0.395 },
     { CVSS_KEY_access_vector, CVSS_AV_ADJACENT_NETWORK, "Adjacent Network", "AV:A", "ADJACENT_NETWORK", 0.646 },
     { CVSS_KEY_access_vector, CVSS_AV_NETWORK,          "Network",          "AV:N", "NETWORK",          1.000 },
 
-    { CVSS_KEY_access_complexity, CVSS_AC_NOT_SET, "Not Set", "AC:-", NULL,       NAN },
+    { CVSS_KEY_access_complexity, CVSS_AC_NOT_SET, "Not Set", "AC:-", NULL,       NAN_INIT },
     { CVSS_KEY_access_complexity, CVSS_AC_HIGH,    "High",    "AC:H", "HIGH",   0.350 },
     { CVSS_KEY_access_complexity, CVSS_AC_MEDIUM,  "Medium",  "AC:M", "MEDIUM", 0.610 },
     { CVSS_KEY_access_complexity, CVSS_AC_LOW,     "Low",     "AC:L", "LOW",    0.710 },
 
-    { CVSS_KEY_authentication, CVSS_AU_NOT_SET,  "Not Set",            "AU:-", NULL,                   NAN },
+    { CVSS_KEY_authentication, CVSS_AU_NOT_SET,  "Not Set",            "AU:-", NULL,                   NAN_INIT },
     { CVSS_KEY_authentication, CVSS_AU_MULTIPLE, "Multiple Instances", "AU:M", "MULTIPLE_INSTANCES", 0.450 },
     { CVSS_KEY_authentication, CVSS_AU_SINGLE,   "Single Instance",    "AU:S", "SINGLE_INSTANCE",    0.560 },
     { CVSS_KEY_authentication, CVSS_AU_NONE,     "None",               "AU:N", "NONE",               0.704 },
 
-    { CVSS_KEY_confidentiality_impact, CVSS_IMP_NOT_SET,  "Not Set",  "C:-", NULL,         NAN },
+    { CVSS_KEY_confidentiality_impact, CVSS_IMP_NOT_SET,  "Not Set",  "C:-", NULL,         NAN_INIT },
     { CVSS_KEY_confidentiality_impact, CVSS_IMP_NONE,     "None",     "C:N", "NONE",     0.000 },
     { CVSS_KEY_confidentiality_impact, CVSS_IMP_PARTIAL,  "Partial",  "C:P", "PARTIAL",  0.275 },
     { CVSS_KEY_confidentiality_impact, CVSS_IMP_COMPLETE, "Complete", "C:C", "COMPLETE", 0.660 },
 
-    { CVSS_KEY_integrity_impact, CVSS_IMP_NOT_SET,  "Not Set",  "I:-", NULL,         NAN },
+    { CVSS_KEY_integrity_impact, CVSS_IMP_NOT_SET,  "Not Set",  "I:-", NULL,         NAN_INIT },
     { CVSS_KEY_integrity_impact, CVSS_IMP_NONE,     "None",     "I:N", "NONE",     0.000 },
     { CVSS_KEY_integrity_impact, CVSS_IMP_PARTIAL,  "Partial",  "I:P", "PARTIAL",  0.275 },
     { CVSS_KEY_integrity_impact, CVSS_IMP_COMPLETE, "Complete", "I:C", "COMPLETE", 0.660 },
 
-    { CVSS_KEY_availability_impact, CVSS_IMP_NOT_SET,  "Not Set",  "A:-", NULL,         NAN },
+    { CVSS_KEY_availability_impact, CVSS_IMP_NOT_SET,  "Not Set",  "A:-", NULL,         NAN_INIT },
     { CVSS_KEY_availability_impact, CVSS_IMP_NONE,     "None",     "A:N", "NONE",     0.000 },
     { CVSS_KEY_availability_impact, CVSS_IMP_PARTIAL,  "Partial",  "A:P", "PARTIAL",  0.275 },
     { CVSS_KEY_availability_impact, CVSS_IMP_COMPLETE, "Complete", "A:C", "COMPLETE", 0.660 },
@@ -197,7 +214,7 @@ static const struct cvss_valtab_entry CVSS_VALTAB[] = {
     { CVSS_KEY_availability_requirement, CVSS_REQ_HIGH,        "High",        "AR:H",  "HIGH",        1.510 },
 
     // End-of-list
-    { CVSS_KEY_NONE, 0, "Invalid value", "!", NULL, NAN }
+    { CVSS_KEY_NONE, 0, "Invalid value", "!", NULL, NAN_INIT }
 };
 
 // valtab lookup: either by key&value or by vector string or by key+XMLvalue (pass exactly one of key+val or vec_str or key+xmlval)
