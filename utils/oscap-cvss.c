@@ -40,7 +40,7 @@ static bool getopt_cvss(int argc, char **argv, struct oscap_action *action);
 static int app_cvss_score(const struct oscap_action *action);
 static int app_cvss_describe(const struct oscap_action *action);
 
-static struct oscap_module* CVSS_SUBMODULES[];
+static struct oscap_module* CVSS_SUBMODULES[3];
 
 struct oscap_module OSCAP_CVSS_MODULE = {
     .name = "cvss",
