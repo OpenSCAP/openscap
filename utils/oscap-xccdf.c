@@ -50,6 +50,10 @@
 #include "oscap_source.h"
 #include <oscap_debug.h>
 
+#ifndef O_NOFOLLOW
+#define O_NOFOLLOW 0
+#endif
+
 static int app_evaluate_xccdf(const struct oscap_action *action);
 static int app_xccdf_validate(const struct oscap_action *action);
 static int app_xccdf_resolve(const struct oscap_action *action);
