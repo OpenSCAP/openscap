@@ -62,6 +62,10 @@
 #   define MAXPATHLEN 1024
 #endif
 
+#ifndef O_NOFOLLOW
+#define O_NOFOLLOW 0
+#endif
+
 static const char* datastream_ns_uri = "http://scap.nist.gov/schema/scap/source/1.2";
 static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 static const char* cat_ns_uri = "urn:oasis:names:tc:entity:xmlns:xml:catalog";
