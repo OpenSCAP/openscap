@@ -44,6 +44,10 @@ SUBDIRS += CVSS
 libopenscap_la_LIBADD += CVSS/libcvss.la
 libopenscap_testing_la_LIBADD += CVSS/libcvss.la
 
+SUBDIRS += CVRF
+libopenscap_la_LIBADD += CVRF/libcvrf.la
+libopenscap_testing_la_LIBADD += CVRF/libcvrf.la
+
 SUBDIRS += XCCDF
 libopenscap_la_LIBADD += XCCDF/libxccdf.la
 libopenscap_testing_la_LIBADD += XCCDF/libxccdf.la
