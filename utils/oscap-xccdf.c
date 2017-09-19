@@ -262,6 +262,10 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
 		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
 		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
 		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
