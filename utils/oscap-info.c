@@ -60,7 +60,9 @@ struct oscap_module OSCAP_INFO_MODULE = {
     .help = "Print information about a file\n"
     "\n"
     "Options:\n"
-    "   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by DataStream.\n",
+    "   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by DataStream.\n"
+    "   --profile <id>\r\t\t\t\t - Show profile info when displaying a DataStream.\n"
+    "   --profiles\r\t\t\t\t - Only show profiles when displaying a DataStream. Outputs them in a <id>:<title> format, one profile per line.\n",
     .opt_parser = getopt_info,
     .func = app_info
 };
@@ -89,11 +91,8 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 	}
 }
 
-static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix)
+static void _print_xccdf_profile_default(const struct xccdf_profile *prof, const char *prefix)
 {
-	printf("%sProfiles:\n", prefix);
-	while (xccdf_profile_iterator_has_more(prof_it)) {
-		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
 		struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
 		char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
 		oscap_text_iterator_free(title_it);
@@ -102,6 +101,28 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 		printf("%s\t\tId: %s%s\n", prefix,
 			xccdf_profile_get_id(prof),
 			xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
+}
+
+static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const char *prefix)
+{
+		struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
+		char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
+		oscap_text_iterator_free(title_it);
+		printf("%s:%s\n",
+			xccdf_profile_get_id(prof),
+			profile_title);
+		free(profile_title);
+}
+
+static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
+{
+	if (prefix)
+		printf("%sProfiles:\n", prefix);
+	if (print_one_profile == 0)
+		print_one_profile = & _print_xccdf_profile_default;
+	while (xccdf_profile_iterator_has_more(prof_it)) {
+		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
+		print_one_profile(prof, prefix);
 	}
 	xccdf_profile_iterator_free(prof_it);
 }
@@ -160,11 +181,11 @@ static inline void _print_xccdf_testresults(struct xccdf_benchmark *bench, const
 	xccdf_result_iterator_free(res_it);
 }
 
-static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix)
+static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
 {
 	_print_xccdf_status(xccdf_benchmark_get_status_current(bench), prefix);
 	printf("%sResolved: %s\n", prefix, xccdf_benchmark_get_resolved(bench) ? "true" : "false");
-	_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), prefix);
+	_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), prefix, print_one_profile);
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	_print_xccdf_referenced_files(policy_model, prefix);
@@ -174,15 +195,154 @@ static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const c
 	// xccdf_benchmark_free not needed, it si already freed by the policy!
 }
 
-static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix)
+static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
 {
 	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, NULL);
 	if (tailoring == NULL) {
 		return;
 	}
 	printf("%sBenchmark Hint: %s\n", prefix, xccdf_tailoring_get_benchmark_ref(tailoring));
-	_print_xccdf_profiles(xccdf_tailoring_get_profiles(tailoring), prefix);
+	_print_xccdf_profiles(xccdf_tailoring_get_profiles(tailoring), prefix, print_one_profile);
 	xccdf_tailoring_free(tailoring);
+}
+
+static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
+{
+	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
+	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
+
+	while (oscap_string_iterator_has_more(checklist_it)) {
+		const char * id = oscap_string_iterator_next(checklist_it);
+		/* decompose */
+		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
+		if (xccdf_source == NULL) {
+			oscap_string_iterator_free(checklist_it);
+			ds_stream_index_iterator_free(sds_it);
+			ds_sds_session_free(session);
+			return 1;
+		}
+
+		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
+			struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+			if(!bench) {
+				oscap_string_iterator_free(checklist_it);
+				ds_stream_index_iterator_free(sds_it);
+				ds_sds_session_free(session);
+				return 1;
+			}
+			_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), 0, _print_xccdf_profile_terse);
+		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+			_print_xccdf_tailoring(xccdf_source, 0, _print_xccdf_profile_terse);
+		}
+		ds_sds_session_reset(session);
+	}
+	oscap_string_iterator_free(checklist_it);
+	return 0;
+}
+
+static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
+{
+	const char *prefix = "\t\t";
+	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
+	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
+
+	if (action->profile != 0)
+		printf("\n*** Profile ***: %s\n", action->profile);
+	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
+	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
+	printf("Version: %s\n", ds_stream_index_get_version(stream));
+
+	printf("Checklists:\n");
+	while (oscap_string_iterator_has_more(checklist_it)) {
+		const char * id = oscap_string_iterator_next(checklist_it);
+		printf("\tRef-Id: %s\n", id);
+
+		/* decompose */
+		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
+		if (xccdf_source == NULL) {
+			oscap_string_iterator_free(checklist_it);
+			ds_stream_index_iterator_free(sds_it);
+			ds_sds_session_free(session);
+			return 1;
+		}
+
+		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
+			struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+			if(!bench) {
+				oscap_string_iterator_free(checklist_it);
+				ds_stream_index_iterator_free(sds_it);
+				ds_sds_session_free(session);
+				return 1;
+			}
+			_print_xccdf_benchmark(bench, prefix, 0);
+		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+			_print_xccdf_tailoring(xccdf_source, prefix, 0);
+		}
+		ds_sds_session_reset(session);
+	}
+	oscap_string_iterator_free(checklist_it);
+
+	printf("Checks:\n");
+	struct oscap_string_iterator* checks_it = ds_stream_index_get_checks(stream);
+	while (oscap_string_iterator_has_more(checks_it)) {
+		const char * id = oscap_string_iterator_next(checks_it);
+		printf("\tRef-Id: %s\n", id);
+	}
+	oscap_string_iterator_free(checks_it);
+
+	struct oscap_string_iterator* dict_it = ds_stream_index_get_dictionaries(stream);
+	if (oscap_string_iterator_has_more(dict_it))
+		printf("Dictionaries:\n");
+	else
+		printf("No dictionaries.\n");
+	while (oscap_string_iterator_has_more(dict_it)) {
+		const char * id = oscap_string_iterator_next(dict_it);
+		printf("\tRef-Id: %s\n", id);
+	}
+	oscap_string_iterator_free(dict_it);
+	return 0;
+}
+
+static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
+{
+	int return_value;
+	if (action->show_profiles_only)
+		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
+	else
+		return_value = app_info_single_ds_all(sds_it, session, action);
+	return return_value;
+}
+
+static int app_info_sds(struct oscap_source *source, const struct oscap_action *action)
+{
+	if (action->show_profiles_only)
+		; // Don't print anything, we want only profiles printed.
+	else {
+		printf("Document type: Source Data Stream\n");
+		print_time(action->file);
+	}
+
+	struct ds_sds_session *session = ds_sds_session_new_from_source(source);
+	if (session == NULL) {
+		return 1;
+	}
+
+	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+
+	/* get collection */
+	struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
+	if (!sds) {
+		ds_sds_session_free(session);
+		return 1;
+	}
+	/* iterate over streams */
+	struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
+	while (ds_stream_index_iterator_has_more(sds_it)) {
+		app_info_single_ds(sds_it, session, action);
+	}
+	ds_stream_index_iterator_free(sds_it);
+	ds_sds_session_free(session);
+	return 0;
 }
 
 static int app_info(const struct oscap_action *action)
@@ -267,7 +427,7 @@ static int app_info(const struct oscap_action *action)
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
 
-		_print_xccdf_benchmark(bench, "");
+		_print_xccdf_benchmark(bench, "", 0);
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
@@ -290,83 +450,8 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_SDS: {
-		printf("Document type: Source Data Stream\n");
-		print_time(action->file);
-		struct ds_sds_session *session = ds_sds_session_new_from_source(source);
-		if (session == NULL) {
+		if (app_info_sds(source, action) != 0)
 			goto cleanup;
-		}
-
-		ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
-
-		/* get collection */
-		struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
-		if (!sds) {
-			ds_sds_session_free(session);
-			goto cleanup;
-		}
-		/* iterate over streams */
-		struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
-		while (ds_stream_index_iterator_has_more(sds_it)) {
-			struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
-
-			printf("\nStream: %s\n", ds_stream_index_get_id(stream));
-			printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
-			printf("Version: %s\n", ds_stream_index_get_version(stream));
-
-			printf("Checklists:\n");
-			struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
-			while (oscap_string_iterator_has_more(checklist_it)) {
-				const char * id = oscap_string_iterator_next(checklist_it);
-				printf("\tRef-Id: %s\n", id);
-
-				/* decompose */
-				struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
-				if (xccdf_source == NULL) {
-					oscap_string_iterator_free(checklist_it);
-					ds_stream_index_iterator_free(sds_it);
-					ds_sds_session_free(session);
-					goto cleanup;
-				}
-
-				const char *prefix = "\t\t";
-				if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
-					struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
-					if(!bench) {
-						oscap_string_iterator_free(checklist_it);
-						ds_stream_index_iterator_free(sds_it);
-						ds_sds_session_free(session);
-						goto cleanup;
-					}
-					_print_xccdf_benchmark(bench, prefix);
-				} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
-					_print_xccdf_tailoring(xccdf_source, prefix);
-				}
-				ds_sds_session_reset(session);
-			}
-			oscap_string_iterator_free(checklist_it);
-
-			printf("Checks:\n");
-			struct oscap_string_iterator* checks_it = ds_stream_index_get_checks(stream);
-			while (oscap_string_iterator_has_more(checks_it)) {
-				const char * id = oscap_string_iterator_next(checks_it);
-				printf("\tRef-Id: %s\n", id);
-			}
-			oscap_string_iterator_free(checks_it);
-
-			struct oscap_string_iterator* dict_it = ds_stream_index_get_dictionaries(stream);
-			if (oscap_string_iterator_has_more(dict_it))
-				printf("Dictionaries:\n");
-			else
-				printf("No dictionaries.\n");
-			while (oscap_string_iterator_has_more(dict_it)) {
-				const char * id = oscap_string_iterator_next(dict_it);
-				printf("\tRef-Id: %s\n", id);
-			}
-			oscap_string_iterator_free(dict_it);
-		}
-		ds_stream_index_iterator_free(sds_it);
-		ds_sds_session_free(session);
 	}
 	break;
 	case OSCAP_DOCUMENT_ARF: {
@@ -433,7 +518,7 @@ static int app_info(const struct oscap_action *action)
 	case OSCAP_DOCUMENT_XCCDF_TAILORING:
 		printf("Document type: XCCDF Tailoring\n");
 		print_time(action->file);
-		_print_xccdf_tailoring(source, "");
+		_print_xccdf_tailoring(source, "", 0);
 	break;
 	case OSCAP_DOCUMENT_CVE_FEED:
 		printf("Document type: CVE Feed\n");
@@ -469,14 +554,22 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 	/* Command-options */
 	const struct option long_options[] = {
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"profile", required_argument, 0, 'p'},
+		{"profiles", no_argument, 0, 'n'},
 		// end
 		{0, 0, 0, 0}
 	};
 
 	int c;
-	while ((c = getopt_long(argc, argv, "o:i:", long_options, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "o:i:p:", long_options, NULL)) != -1) {
 		switch(c) {
 			case 0: break;
+			case 'p':
+				action->profile = optarg;
+				break;
+			case 'n':
+				action->show_profiles_only = 1;
+				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}
 	}

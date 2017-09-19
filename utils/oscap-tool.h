@@ -138,7 +138,8 @@ struct oscap_action {
 	char *file;
 
 	int verbosity;
-        int doctype;
+	int show_profiles_only;
+	int doctype;
 	int force;
 	int validate;
 	int schematron;
