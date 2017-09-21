@@ -93,35 +93,35 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 
 static void _print_xccdf_profile_default(const struct xccdf_profile *prof, const char *prefix)
 {
-		struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
-		char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
-		oscap_text_iterator_free(title_it);
-		printf("%s\tTitle: %s\n", prefix, profile_title);
-		free(profile_title);
-		printf("%s\t\tId: %s%s\n", prefix,
-			xccdf_profile_get_id(prof),
-			xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
+	struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
+	char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
+	oscap_text_iterator_free(title_it);
+	printf("%s\tTitle: %s\n", prefix, profile_title);
+	free(profile_title);
+	printf("%s\t\tId: %s%s\n", prefix,
+		xccdf_profile_get_id(prof),
+		xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
 }
 
 static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const char *prefix)
 {
-		struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
-		char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
-		oscap_text_iterator_free(title_it);
-		printf("%s:%s\n",
-			xccdf_profile_get_id(prof),
-			profile_title);
-		free(profile_title);
+	struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
+	char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
+	oscap_text_iterator_free(title_it);
+	printf("%s:%s\n",
+		xccdf_profile_get_id(prof),
+		profile_title);
+	free(profile_title);
 }
 
 static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
 {
 	if (prefix)
 		printf("%sProfiles:\n", prefix);
-	if (print_one_profile == 0)
-		print_one_profile = & _print_xccdf_profile_default;
+	if (print_one_profile == NULL)
+		print_one_profile = &_print_xccdf_profile_default;
 	while (xccdf_profile_iterator_has_more(prof_it)) {
-		struct xccdf_profile * prof = xccdf_profile_iterator_next(prof_it);
+		struct xccdf_profile *prof = xccdf_profile_iterator_next(prof_it);
 		print_one_profile(prof, prefix);
 	}
 	xccdf_profile_iterator_free(prof_it);
@@ -246,7 +246,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
 	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 
-	if (action->profile != 0)
+	if (action->profile != NULL)
 		printf("\n*** Profile ***: %s\n", action->profile);
 	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
 	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
