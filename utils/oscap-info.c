@@ -124,7 +124,6 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 		struct xccdf_profile *prof = xccdf_profile_iterator_next(prof_it);
 		print_one_profile(prof, prefix);
 	}
-	xccdf_profile_iterator_free(prof_it);
 }
 
 static inline void _print_xccdf_referenced_files(struct xccdf_policy_model *policy_model, const char *prefix)
@@ -185,7 +184,10 @@ static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const c
 {
 	_print_xccdf_status(xccdf_benchmark_get_status_current(bench), prefix);
 	printf("%sResolved: %s\n", prefix, xccdf_benchmark_get_resolved(bench) ? "true" : "false");
-	_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), prefix, print_one_profile);
+
+	struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
+	_print_xccdf_profiles(prof_it, prefix, print_one_profile);
+	xccdf_profile_iterator_free(prof_it);
 
 	struct xccdf_policy_model *policy_model = xccdf_policy_model_new(bench);
 	_print_xccdf_referenced_files(policy_model, prefix);
@@ -202,7 +204,11 @@ static inline void _print_xccdf_tailoring(struct oscap_source *source, const cha
 		return;
 	}
 	printf("%sBenchmark Hint: %s\n", prefix, xccdf_tailoring_get_benchmark_ref(tailoring));
-	_print_xccdf_profiles(xccdf_tailoring_get_profiles(tailoring), prefix, print_one_profile);
+
+	struct xccdf_profile_iterator *prof_it = xccdf_tailoring_get_profiles(tailoring);
+	_print_xccdf_profiles(prof_it, prefix, print_one_profile);
+	xccdf_profile_iterator_free(prof_it);
+
 	xccdf_tailoring_free(tailoring);
 }
 
@@ -230,7 +236,11 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 				ds_sds_session_free(session);
 				return 1;
 			}
-			_print_xccdf_profiles(xccdf_benchmark_get_profiles(bench), 0, _print_xccdf_profile_terse);
+
+			struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
+			_print_xccdf_profiles(prof_it, 0, _print_xccdf_profile_terse);
+			xccdf_profile_iterator_free(prof_it);
+
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			_print_xccdf_tailoring(xccdf_source, 0, _print_xccdf_profile_terse);
 		}
