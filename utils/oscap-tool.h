@@ -139,6 +139,7 @@ struct oscap_action {
 
 	int verbosity;
 	int show_profiles_only;
+	int provide_machine_readable_output;
 	int doctype;
 	int force;
 	int validate;

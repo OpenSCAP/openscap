@@ -225,7 +225,7 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 			oscap_string_iterator_free(checklist_it);
 			ds_stream_index_iterator_free(sds_it);
 			ds_sds_session_free(session);
-			return 1;
+			return OSCAP_ERROR;
 		}
 
 		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
@@ -234,7 +234,7 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 				oscap_string_iterator_free(checklist_it);
 				ds_stream_index_iterator_free(sds_it);
 				ds_sds_session_free(session);
-				return 1;
+				return OSCAP_ERROR;
 			}
 
 			struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
@@ -247,7 +247,7 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 		ds_sds_session_reset(session);
 	}
 	oscap_string_iterator_free(checklist_it);
-	return 0;
+	return OSCAP_OK;
 }
 
 static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -273,7 +273,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 			oscap_string_iterator_free(checklist_it);
 			ds_stream_index_iterator_free(sds_it);
 			ds_sds_session_free(session);
-			return 1;
+			return OSCAP_ERROR;
 		}
 
 		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
@@ -282,7 +282,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 				oscap_string_iterator_free(checklist_it);
 				ds_stream_index_iterator_free(sds_it);
 				ds_sds_session_free(session);
-				return 1;
+				return OSCAP_ERROR;
 			}
 			_print_xccdf_benchmark(bench, prefix, 0);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
@@ -310,7 +310,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 		printf("\tRef-Id: %s\n", id);
 	}
 	oscap_string_iterator_free(dict_it);
-	return 0;
+	return OSCAP_OK;
 }
 
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -323,18 +323,22 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 	return return_value;
 }
 
-static int app_info_sds(struct oscap_source *source, const struct oscap_action *action)
+static void _print_sds_header(const struct oscap_action *action)
 {
-	if (action->show_profiles_only)
-		; // Don't print anything, we want only profiles printed.
-	else {
+	if (! action->provide_machine_readable_output)
+	{
 		printf("Document type: Source Data Stream\n");
 		print_time(action->file);
 	}
+}
+
+static int app_info_sds(struct oscap_source *source, const struct oscap_action *action)
+{
+	_print_sds_header(action);
 
 	struct ds_sds_session *session = ds_sds_session_new_from_source(source);
 	if (session == NULL) {
-		return 1;
+		return OSCAP_ERROR;
 	}
 
 	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
@@ -343,7 +347,7 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 	struct ds_sds_index *sds = ds_sds_session_get_sds_idx(session);
 	if (!sds) {
 		ds_sds_session_free(session);
-		return 1;
+		return OSCAP_ERROR;
 	}
 	/* iterate over streams */
 	struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
@@ -352,7 +356,7 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 	}
 	ds_stream_index_iterator_free(sds_it);
 	ds_sds_session_free(session);
-	return 0;
+	return OSCAP_OK;
 }
 
 static int app_info(const struct oscap_action *action)
@@ -460,7 +464,7 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_SDS: {
-		if (app_info_sds(source, action) != 0)
+		if (app_info_sds(source, action) == OSCAP_ERROR)
 			goto cleanup;
 	}
 	break;
@@ -548,7 +552,7 @@ static int app_info(const struct oscap_action *action)
 		break;
 	}
 
-	result=OSCAP_OK;
+	result = OSCAP_OK;
 
 cleanup:
 	oscap_source_free(source);
@@ -579,6 +583,7 @@ bool getopt_info(int argc, char **argv, struct oscap_action *action)
 				break;
 			case 'n':
 				action->show_profiles_only = 1;
+				action->provide_machine_readable_output = 1;
 				break;
 			default: return oscap_module_usage(action->module, stderr, NULL);
 		}
