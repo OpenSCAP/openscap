@@ -103,6 +103,39 @@ static void _print_xccdf_profile_default(const struct xccdf_profile *prof, const
 		xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
 }
 
+static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const char *prefix)
+{
+	struct oscap_text_iterator *text_it;
+	struct oscap_string_iterator *str_it;
+
+	printf("%sProfile\n", prefix);
+
+	text_it = xccdf_profile_get_title(prof);
+	char *profile_title = oscap_textlist_get_preferred_plaintext(text_it, NULL);
+	oscap_text_iterator_free(text_it);
+	printf("%s\tTitle: %s\n", prefix, profile_title);
+	free(profile_title);
+
+	printf("%s\tId: %s%s\n", prefix,
+		xccdf_profile_get_id(prof),
+		xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
+
+	text_it = xccdf_profile_get_description(prof);
+	char *profile_description = oscap_textlist_get_preferred_plaintext(text_it, NULL);
+	printf("%s\tDescription: %s\n", prefix, profile_description);
+	free(profile_description);
+	oscap_text_iterator_free(text_it);
+
+	str_it = xccdf_profile_get_platforms(prof);
+	printf("%s\tPlatforms: ", prefix);
+	while (oscap_string_iterator_has_more(str_it)) {
+		const char *platform = oscap_string_iterator_next(str_it);
+		printf("%s,", platform);
+	}
+	printf("\n");
+	oscap_string_iterator_free(str_it);
+}
+
 static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const char *prefix)
 {
 	struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
@@ -112,6 +145,17 @@ static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const c
 		xccdf_profile_get_id(prof),
 		profile_title);
 	free(profile_title);
+}
+
+static void _print_xccdf_profile_with_id(struct xccdf_profile_iterator *prof_it, const char *profile_id, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
+{
+	if (print_one_profile == NULL)
+		print_one_profile = &_print_xccdf_profile_default;
+	while (xccdf_profile_iterator_has_more(prof_it)) {
+		struct xccdf_profile *prof = xccdf_profile_iterator_next(prof_it);
+		if (strncmp(xccdf_profile_get_id(prof), profile_id, 1024) == 0)
+			print_one_profile(prof, prefix);
+	}
 }
 
 static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
@@ -197,13 +241,18 @@ static inline void _print_xccdf_benchmark(struct xccdf_benchmark *bench, const c
 	// xccdf_benchmark_free not needed, it si already freed by the policy!
 }
 
-static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
+static inline void _print_xccdf_tailoring_header(struct xccdf_tailoring *tailoring, const char *prefix)
 {
-	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, NULL);
 	if (tailoring == NULL) {
 		return;
 	}
 	printf("%sBenchmark Hint: %s\n", prefix, xccdf_tailoring_get_benchmark_ref(tailoring));
+}
+
+static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
+{
+	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, NULL);
+	_print_xccdf_tailoring_header(tailoring, prefix);
 
 	struct xccdf_profile_iterator *prof_it = xccdf_tailoring_get_profiles(tailoring);
 	_print_xccdf_profiles(prof_it, prefix, print_one_profile);
@@ -250,14 +299,61 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 	return OSCAP_OK;
 }
 
+static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const char *profile_id)
+{
+	const char *prefix = "";
+	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
+	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
+
+	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
+	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
+	printf("Version: %s\n", ds_stream_index_get_version(stream));
+
+	while (oscap_string_iterator_has_more(checklist_it)) {
+		const char * id = oscap_string_iterator_next(checklist_it);
+		// printf("\tRef-Id: %s\n", id);
+
+		/* decompose */
+		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
+		if (xccdf_source == NULL) {
+			oscap_string_iterator_free(checklist_it);
+			ds_stream_index_iterator_free(sds_it);
+			ds_sds_session_free(session);
+			return OSCAP_ERROR;
+		}
+
+		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
+			struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+			if(!bench) {
+				oscap_string_iterator_free(checklist_it);
+				ds_stream_index_iterator_free(sds_it);
+				ds_sds_session_free(session);
+				return OSCAP_ERROR;
+			}
+			struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
+			_print_xccdf_profile_with_id(prof_it, profile_id, prefix, &_print_xccdf_profile_verbose);
+			xccdf_profile_iterator_free(prof_it);
+		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
+			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
+
+			struct xccdf_profile_iterator *prof_it = xccdf_tailoring_get_profiles(tailoring);
+			_print_xccdf_profile_with_id(prof_it, profile_id, prefix, &_print_xccdf_profile_verbose);
+			xccdf_profile_iterator_free(prof_it);
+
+			xccdf_tailoring_free(tailoring);
+		}
+		ds_sds_session_reset(session);
+	}
+	oscap_string_iterator_free(checklist_it);
+	return OSCAP_OK;
+}
+
 static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
 {
 	const char *prefix = "\t\t";
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
 	struct oscap_string_iterator* checklist_it = ds_stream_index_get_checklists(stream);
 
-	if (action->profile != NULL)
-		printf("\n*** Profile ***: %s\n", action->profile);
 	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
 	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
 	printf("Version: %s\n", ds_stream_index_get_version(stream));
@@ -319,6 +415,9 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 	if (action->show_profiles_only)
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	else
+	if (action->profile)
+		return_value = app_info_single_ds_one_profile(sds_it, session, action->profile);
+	else
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	return return_value;
 }
@@ -352,7 +451,8 @@ static int app_info_sds(struct oscap_source *source, const struct oscap_action *
 	/* iterate over streams */
 	struct ds_stream_index_iterator* sds_it = ds_sds_index_get_streams(sds);
 	while (ds_stream_index_iterator_has_more(sds_it)) {
-		app_info_single_ds(sds_it, session, action);
+		if (app_info_single_ds(sds_it, session, action) == OSCAP_ERROR)
+			return OSCAP_ERROR;
 	}
 	ds_stream_index_iterator_free(sds_it);
 	ds_sds_session_free(session);
