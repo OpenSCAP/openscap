@@ -40,7 +40,9 @@ static bool getopt_cvss(int argc, char **argv, struct oscap_action *action);
 static int app_cvss_score(const struct oscap_action *action);
 static int app_cvss_describe(const struct oscap_action *action);
 
-static struct oscap_module* CVSS_SUBMODULES[3];
+#define CVSS_SUBMODULES_NUM 3 /* See actual CVSS_SUBMODULES array
+				initialization below. */
+static struct oscap_module* CVSS_SUBMODULES[CVSS_SUBMODULES_NUM];
 
 struct oscap_module OSCAP_CVSS_MODULE = {
     .name = "cvss",
@@ -70,7 +72,7 @@ static struct oscap_module CVSS_DESCRIBE_MODULE = {
     .func = app_cvss_describe
 };
 
-static struct oscap_module* CVSS_SUBMODULES[] = {
+static struct oscap_module* CVSS_SUBMODULES[CVSS_SUBMODULES_NUM] = {
     &CVSS_SCORE_MODULE,
     &CVSS_DESCRIBE_MODULE,
     NULL
