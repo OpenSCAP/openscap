@@ -38,7 +38,9 @@
 
 #include "oscap-tool.h"
 
-static struct oscap_module* CPE_SUBMODULES[5];
+#define CPE_SUBMODULES_NUM 5 /* See actual CPE_SUBMODULES array
+				initialization below. */
+static struct oscap_module* CPE_SUBMODULES[CPE_SUBMODULES_NUM];
 bool getopt_cpe(int argc, char **argv, struct oscap_action *action);
 int app_cpe_check(const struct oscap_action *action);
 int app_cpe_match(const struct oscap_action *action);
@@ -91,7 +93,7 @@ static struct oscap_module CPE_VALIDATE = {
     .func = app_cpe_validate
 };
 
-static struct oscap_module* CPE_SUBMODULES[] = {
+static struct oscap_module* CPE_SUBMODULES[CPE_SUBMODULES_NUM] = {
     &CPE_MATCH_MODULE,
     &CPE_CHECK_MODULE,
     &CPE_VALIDATE,
