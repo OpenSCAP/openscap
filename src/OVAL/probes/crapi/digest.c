@@ -145,7 +145,6 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         va_end (ap);
 
         while ((ret = read (fd, fd_buf, sizeof fd_buf)) == sizeof fd_buf) {
-#pragma omp parallel for
                 for (i = 0; i < num; ++i) {
 			if (ctbl[i].ctx == NULL)
 				continue;
