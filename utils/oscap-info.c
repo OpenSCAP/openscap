@@ -91,11 +91,24 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 	}
 }
 
+static void _remove_occurence_of_character_from_string(char *string, char c)
+{
+	char *reading_ptr = string, *writing_ptr = string;
+	while (*reading_ptr) {
+		*writing_ptr = *reading_ptr;
+		if (*reading_ptr != c)
+			writing_ptr++;
+		reading_ptr++;
+	}
+	*writing_ptr = '\0';
+}
+
 static void _print_xccdf_profile_default(const struct xccdf_profile *prof, const char *prefix)
 {
 	struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
 	char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
 	oscap_text_iterator_free(title_it);
+	_remove_occurence_of_character_from_string(profile_title, '\n');
 	printf("%s\tTitle: %s\n", prefix, profile_title);
 	free(profile_title);
 	printf("%s\t\tId: %s%s\n", prefix,
@@ -113,6 +126,7 @@ static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const
 	text_it = xccdf_profile_get_title(prof);
 	char *profile_title = oscap_textlist_get_preferred_plaintext(text_it, NULL);
 	oscap_text_iterator_free(text_it);
+	_remove_occurence_of_character_from_string(profile_title, '\n');
 	printf("%s\tTitle: %s\n", prefix, profile_title);
 	free(profile_title);
 
@@ -122,9 +136,10 @@ static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const
 
 	text_it = xccdf_profile_get_description(prof);
 	char *profile_description = oscap_textlist_get_preferred_plaintext(text_it, NULL);
+	oscap_text_iterator_free(text_it);
+	_remove_occurence_of_character_from_string(profile_description, '\n');
 	printf("%s\tDescription: %s\n", prefix, profile_description);
 	free(profile_description);
-	oscap_text_iterator_free(text_it);
 
 	str_it = xccdf_profile_get_platforms(prof);
 	printf("%s\tPlatforms: ", prefix);
@@ -140,9 +155,12 @@ static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const c
 {
 	struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
 	char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
+	_remove_occurence_of_character_from_string(profile_title, '\n');
 	oscap_text_iterator_free(title_it);
+	char *profile_id = xccdf_profile_get_id(prof);
+	_remove_occurence_of_character_from_string(profile_id, '\n');
 	printf("%s:%s\n",
-		xccdf_profile_get_id(prof),
+		profile_id,
 		profile_title);
 	free(profile_title);
 }
