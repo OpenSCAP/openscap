@@ -620,16 +620,15 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	xccdf_fix_free(cfix);
 
 	int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
-	if (ret != 0)
-		goto cleanup;
+	if (ret != 0) {
+		free(fix_text);
+		return ret;
+	}
 	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
-	if (ret != 0)
-		goto cleanup;
-	fix_text = NULL;
+	if (ret != 0) {
+		return ret;
+	}
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
-
-cleanup:
-	free(fix_text);
 	return ret;
 }
 
