@@ -80,7 +80,7 @@ static struct cvss_metrics **cvss_impact_metricsptr(struct cvss_impact* impact, 
     }
 }
 
-struct cvss_impact *cvss_impact_new(void) { return calloc(1, sizeof(struct cvss_metrics)); }
+struct cvss_impact *cvss_impact_new(void) { return calloc(1, sizeof(struct cvss_impact)); }
 
 struct cvss_keytab_entry {
     enum cvss_key key;     // cvss vector component
