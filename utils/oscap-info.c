@@ -157,10 +157,12 @@ static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const c
 	char *profile_title = oscap_textlist_get_preferred_plaintext(title_it, NULL);
 	_remove_occurence_of_character_from_string(profile_title, '\n');
 	oscap_text_iterator_free(title_it);
-	char *profile_id = xccdf_profile_get_id(prof);
-	_remove_occurence_of_character_from_string(profile_id, '\n');
+	const char *profile_id = xccdf_profile_get_id(prof);
+	char cleaned_profile_id[1024];
+	strncpy(cleaned_profile_id, profile_id, sizeof(cleaned_profile_id) - 1);
+	_remove_occurence_of_character_from_string(cleaned_profile_id, '\n');
 	printf("%s:%s\n",
-		profile_id,
+		cleaned_profile_id,
 		profile_title);
 	free(profile_title);
 }
@@ -279,6 +281,25 @@ static inline void _print_xccdf_tailoring(struct oscap_source *source, const cha
 	xccdf_tailoring_free(tailoring);
 }
 
+static void _print_single_benchmark_profiles_only(struct xccdf_benchmark *bench)
+{
+	struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
+	_print_xccdf_profiles(prof_it, 0, _print_xccdf_profile_terse);
+	xccdf_profile_iterator_free(prof_it);
+}
+
+static void _print_single_benchmark_one_profile(struct xccdf_benchmark *bench, const char *profile_id)
+{
+	struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
+	_print_xccdf_profile_with_id(prof_it, profile_id, "", &_print_xccdf_profile_verbose);
+	xccdf_profile_iterator_free(prof_it);
+}
+
+static void _print_single_benchmark_all(struct xccdf_benchmark *bench, const char *prefix)
+{
+	_print_xccdf_benchmark(bench, prefix, 0);
+}
+
 static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
 {
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
@@ -303,10 +324,7 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 				ds_sds_session_free(session);
 				return OSCAP_ERROR;
 			}
-
-			struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
-			_print_xccdf_profiles(prof_it, 0, _print_xccdf_profile_terse);
-			xccdf_profile_iterator_free(prof_it);
+			_print_single_benchmark_profiles_only(bench);
 
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			_print_xccdf_tailoring(xccdf_source, 0, _print_xccdf_profile_terse);
@@ -341,16 +359,14 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 		}
 
 		if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF) {
-			struct xccdf_benchmark* bench = xccdf_benchmark_import_source(xccdf_source);
+			struct xccdf_benchmark *bench = xccdf_benchmark_import_source(xccdf_source);
 			if(!bench) {
 				oscap_string_iterator_free(checklist_it);
 				ds_stream_index_iterator_free(sds_it);
 				ds_sds_session_free(session);
 				return OSCAP_ERROR;
 			}
-			struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
-			_print_xccdf_profile_with_id(prof_it, profile_id, prefix, &_print_xccdf_profile_verbose);
-			xccdf_profile_iterator_free(prof_it);
+			_print_single_benchmark_one_profile(bench, profile_id);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
 
@@ -425,6 +441,22 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	}
 	oscap_string_iterator_free(dict_it);
 	return OSCAP_OK;
+}
+
+static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
+{
+	if (action->show_profiles_only)
+		_print_single_benchmark_profiles_only(bench);
+	else
+	if (action->profile)
+		_print_single_benchmark_one_profile(bench, action->profile);
+	else
+	{
+		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
+		print_time(action->file);
+
+		_print_single_benchmark_all(bench, "");
+	}
 }
 
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -552,14 +584,12 @@ static int app_info(const struct oscap_action *action)
 	}
 	break;
 	case OSCAP_DOCUMENT_XCCDF: {
-		printf("Document type: XCCDF Checklist\n");
+                if (!action->provide_machine_readable_output)
+			printf("Document type: XCCDF Checklist\n");
 		struct xccdf_benchmark* bench = xccdf_benchmark_import_source(source);
 		if(!bench)
 			goto cleanup;
-		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
-		print_time(action->file);
-
-		_print_xccdf_benchmark(bench, "", 0);
+		app_info_single_benchmark(bench, action, source);
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
