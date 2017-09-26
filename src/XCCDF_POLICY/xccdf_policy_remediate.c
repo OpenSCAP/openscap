@@ -620,16 +620,15 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	xccdf_fix_free(cfix);
 
 	int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
-	if (ret != 0)
-		goto cleanup;
+	if (ret != 0) {
+		free(fix_text);
+		return ret;
+	}
 	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
-	if (ret != 0)
-		goto cleanup;
-	fix_text = NULL;
+	if (ret != 0) {
+		return ret;
+	}
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
-
-cleanup:
-	free(fix_text);
 	return ret;
 }
 
@@ -789,11 +788,14 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 		if (benchmark == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
+			oscap_list_free(rules_to_fix, NULL);
 			return 1;
 		}
 
-		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0)
+		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0) {
+			oscap_list_free(rules_to_fix, NULL);
 			return 1;
+		}
 
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
@@ -807,8 +809,10 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 
-		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0)
+		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0) {
+			oscap_list_free(rules_to_fix, NULL);
 			return 1;
+		}
 
 		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
 		while (xccdf_rule_result_iterator_has_more(rr_it)) {
