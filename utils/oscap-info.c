@@ -119,7 +119,6 @@ static void _print_xccdf_profile_default(const struct xccdf_profile *prof, const
 static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const char *prefix)
 {
 	struct oscap_text_iterator *text_it;
-	struct oscap_string_iterator *str_it;
 
 	printf("%sProfile\n", prefix);
 
@@ -140,15 +139,6 @@ static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const
 	_remove_occurence_of_character_from_string(profile_description, '\n');
 	printf("%s\tDescription: %s\n", prefix, profile_description);
 	free(profile_description);
-
-	str_it = xccdf_profile_get_platforms(prof);
-	printf("%s\tPlatforms: ", prefix);
-	while (oscap_string_iterator_has_more(str_it)) {
-		const char *platform = oscap_string_iterator_next(str_it);
-		printf("%s,", platform);
-	}
-	printf("\n");
-	oscap_string_iterator_free(str_it);
 }
 
 static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const char *prefix)
