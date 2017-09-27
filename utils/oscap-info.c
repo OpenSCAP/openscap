@@ -590,6 +590,7 @@ static int app_info(const struct oscap_action *action)
 		if(!bench)
 			goto cleanup;
 		app_info_single_benchmark(bench, action, source);
+		xccdf_benchmark_free(bench);
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
