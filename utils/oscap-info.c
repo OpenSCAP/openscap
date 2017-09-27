@@ -61,8 +61,8 @@ struct oscap_module OSCAP_INFO_MODULE = {
     "\n"
     "Options:\n"
     "   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by DataStream.\n"
-    "   --profile <id>\r\t\t\t\t - Show profile info when displaying a DataStream.\n"
-    "   --profiles\r\t\t\t\t - Only show profiles when displaying a DataStream. Outputs them in a <id>:<title> format, one profile per line.\n",
+    "   --profile <id>\r\t\t\t\t - Show info of the profile with the given ID..\n"
+    "   --profiles\r\t\t\t\t - Show profiles from the input file in the <id>:<title> format, one line per profile.\n",
     .opt_parser = getopt_info,
     .func = app_info
 };
