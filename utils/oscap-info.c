@@ -171,6 +171,7 @@ static void _print_xccdf_profile_with_id(struct xccdf_profile_iterator *prof_it,
 {
 	if (print_one_profile == NULL)
 		print_one_profile = &_print_xccdf_profile_default;
+
 	while (xccdf_profile_iterator_has_more(prof_it)) {
 		struct xccdf_profile *prof = xccdf_profile_iterator_next(prof_it);
 		if (strncmp(xccdf_profile_get_id(prof), profile_id, 1024) == 0)
@@ -182,8 +183,10 @@ static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it,
 {
 	if (prefix)
 		printf("%sProfiles:\n", prefix);
+
 	if (print_one_profile == NULL)
 		print_one_profile = &_print_xccdf_profile_default;
+
 	while (xccdf_profile_iterator_has_more(prof_it)) {
 		struct xccdf_profile *prof = xccdf_profile_iterator_next(prof_it);
 		print_one_profile(prof, prefix);
@@ -347,7 +350,6 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 
 	while (oscap_string_iterator_has_more(checklist_it)) {
 		const char * id = oscap_string_iterator_next(checklist_it);
-		// printf("\tRef-Id: %s\n", id);
 
 		/* decompose */
 		struct oscap_source *xccdf_source = ds_sds_session_select_checklist(session, ds_stream_index_get_id(stream), id, NULL);
@@ -431,10 +433,11 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	oscap_string_iterator_free(checks_it);
 
 	struct oscap_string_iterator* dict_it = ds_stream_index_get_dictionaries(stream);
-	if (oscap_string_iterator_has_more(dict_it))
+	if (oscap_string_iterator_has_more(dict_it)) {
 		printf("Dictionaries:\n");
-	else
+	} else {
 		printf("No dictionaries.\n");
+	}
 	while (oscap_string_iterator_has_more(dict_it)) {
 		const char * id = oscap_string_iterator_next(dict_it);
 		printf("\tRef-Id: %s\n", id);
@@ -445,13 +448,11 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 
 static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
 {
-	if (action->show_profiles_only)
+	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
-	else
-	if (action->profile)
+	} else if (action->profile) {
 		_print_single_benchmark_one_profile(bench, action->profile);
-	else
-	{
+	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
 
@@ -462,20 +463,19 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
 {
 	int return_value;
-	if (action->show_profiles_only)
+	if (action->show_profiles_only) {
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
-	else
-	if (action->profile)
+	} else if (action->profile) {
 		return_value = app_info_single_ds_one_profile(sds_it, session, action->profile);
-	else
+	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
+	}
 	return return_value;
 }
 
 static void _print_sds_header(const struct oscap_action *action)
 {
-	if (! action->provide_machine_readable_output)
-	{
+	if (! action->provide_machine_readable_output) {
 		printf("Document type: Source Data Stream\n");
 		print_time(action->file);
 	}
