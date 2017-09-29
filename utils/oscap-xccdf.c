@@ -445,19 +445,33 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }
 
-static void report_missing_profile(const struct oscap_action *action)
+// static void report_missing_profile(const struct oscap_action *action)
+void report_missing_profile(const char *profile_id, const char *source_file)
 {
 	fprintf(stderr,
 		"No profile matching suffix \"%s\" was found. Get available profiles using:\n"
-		"$ oscap info \"%s\"\n", action->profile, action->f_xccdf);
+		"$ oscap info \"%s\"\n", profile_id, source_file);
 }
 
-static void report_multiple_profile_matches(const struct oscap_action *action)
+void report_multiple_profile_matches(const char *source_file)
 {
 	fprintf(stderr,
 		"At least two profiles matched the given suffix. Use a more specific suffix "
 		"to get an exact match. Get list of profiles using:\n"
-		"$ oscap info \"%s\"\n", action->f_xccdf);
+		"$ oscap info \"%s\"\n", source_file);
+}
+
+int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file)
+{
+	const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, profile_id);
+	if (suffix_match_result == 1) {
+		report_missing_profile(profile_id, source_file);
+		return OSCAP_ERROR;
+	} else if (suffix_match_result == 2) {
+		report_multiple_profile_matches(profile_id);
+		return OSCAP_ERROR;
+	}
+	return OSCAP_OK;
 }
 
 /**
@@ -505,17 +519,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
+
 	/* Select profile */
 	if (!xccdf_session_set_profile_id(session, action->profile)) {
 		if (action->profile != NULL) {
-			const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
-			if (suffix_match_result == 1) {
-				report_missing_profile(action);
+			if (xccdf_set_profile_or_report_bad_id(session, action->profile, action->f_xccdf) == OSCAP_ERROR)
 				goto cleanup;
-			} else if (suffix_match_result == 2) {
-				report_multiple_profile_matches(action);
-				goto cleanup;
-			}
 		} else {
 			fprintf(stderr, "No Policy was found for default profile.\n");
 			goto cleanup;
@@ -618,7 +627,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 	policy = xccdf_policy_model_get_policy_by_id(xccdf_session_get_policy_model(session), action->profile);
 	if (policy == NULL) {
 		if (action->profile != NULL)
-			report_missing_profile(action);
+			report_missing_profile(action->profile, action->f_xccdf);
 		else
 			fprintf(stderr, "No Policy was found for default profile.\n");
 		goto cleanup;
@@ -897,14 +906,8 @@ int app_generate_fix(const struct oscap_action *action)
 		/* Profile-oriented fixes */
 		if (!xccdf_session_set_profile_id(session, action->profile)) {
 			if (action->profile != NULL) {
-				const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, action->profile);
-				if (suffix_match_result == 1) {
-					report_missing_profile(action);
+				if (xccdf_set_profile_or_report_bad_id(session, action->profile, action->f_xccdf) == OSCAP_ERROR)
 					goto cleanup2;
-				} else if (suffix_match_result == 2) {
-					report_multiple_profile_matches(action);
-					goto cleanup2;
-				}
 			} else {
 				fprintf(stderr, "No Policy was found for default profile.\n");
 				goto cleanup2;

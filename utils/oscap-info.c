@@ -49,6 +49,27 @@
 
 #include "oscap-tool.h"
 
+// COPIED from src/XCCDF/benchmark.c
+struct xccdf_profile * xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id)
+{
+	struct xccdf_profile_iterator *profit = xccdf_benchmark_get_profiles(benchmark);
+	while (xccdf_profile_iterator_has_more(profit)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profit);
+		if (profile == NULL) {
+			assert(profile != NULL);
+			continue;
+		}
+		if (strcmp(xccdf_profile_get_id(profile), profile_id)) {
+			xccdf_profile_iterator_free(profit);
+			return profile;
+		}
+	}
+	xccdf_profile_iterator_free(profit);
+	return NULL;
+}
+
+
+
 static bool getopt_info(int argc, char **argv, struct oscap_action *action);
 static int app_info(const struct oscap_action *action);
 
@@ -103,6 +124,16 @@ static void _remove_occurence_of_character_from_string(char *string, char c)
 	*writing_ptr = '\0';
 }
 
+static void _translate_character_in_string(char *string, char to_replace, char replace_with)
+{
+	char *string_iterator = string;
+	while (*string_iterator) {
+		if (*string_iterator == to_replace)
+			*string_iterator = replace_with;
+		string_iterator++;
+	}
+}
+
 static void _print_xccdf_profile_default(const struct xccdf_profile *prof, const char *prefix)
 {
 	struct oscap_text_iterator *title_it = xccdf_profile_get_title(prof);
@@ -136,7 +167,7 @@ static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const
 	text_it = xccdf_profile_get_description(prof);
 	char *profile_description = oscap_textlist_get_preferred_plaintext(text_it, NULL);
 	oscap_text_iterator_free(text_it);
-	_remove_occurence_of_character_from_string(profile_description, '\n');
+	_translate_character_in_string(profile_description, '\n', ' ');
 	printf("%s\tDescription: %s\n", prefix, profile_description);
 	free(profile_description);
 }
@@ -157,16 +188,12 @@ static void _print_xccdf_profile_terse(const struct xccdf_profile *prof, const c
 	free(profile_title);
 }
 
-static void _print_xccdf_profile_with_id(struct xccdf_profile_iterator *prof_it, const char *profile_id, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
+static void _print_xccdf_profile_with_id(struct xccdf_profile *profile, const char *prefix)
 {
-	if (print_one_profile == NULL)
-		print_one_profile = &_print_xccdf_profile_default;
+	if (profile == NULL)
+		return;
 
-	while (xccdf_profile_iterator_has_more(prof_it)) {
-		struct xccdf_profile *prof = xccdf_profile_iterator_next(prof_it);
-		if (strncmp(xccdf_profile_get_id(prof), profile_id, 1024) == 0)
-			print_one_profile(prof, prefix);
-	}
+	_print_xccdf_profile_verbose(profile, prefix);
 }
 
 static inline void _print_xccdf_profiles(struct xccdf_profile_iterator *prof_it, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
@@ -283,9 +310,9 @@ static void _print_single_benchmark_profiles_only(struct xccdf_benchmark *bench)
 
 static void _print_single_benchmark_one_profile(struct xccdf_benchmark *bench, const char *profile_id)
 {
-	struct xccdf_profile_iterator *prof_it = xccdf_benchmark_get_profiles(bench);
-	_print_xccdf_profile_with_id(prof_it, profile_id, "", &_print_xccdf_profile_verbose);
-	xccdf_profile_iterator_free(prof_it);
+	struct xccdf_profile *profile = xccdf_benchmark_get_profile_by_id(bench, profile_id);
+	if (profile != NULL)
+		_print_xccdf_profile_with_id(profile, "");
 }
 
 static void _print_single_benchmark_all(struct xccdf_benchmark *bench, const char *prefix)
@@ -362,9 +389,8 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
 
-			struct xccdf_profile_iterator *prof_it = xccdf_tailoring_get_profiles(tailoring);
-			_print_xccdf_profile_with_id(prof_it, profile_id, prefix, &_print_xccdf_profile_verbose);
-			xccdf_profile_iterator_free(prof_it);
+			struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
+			_print_xccdf_profile_with_id(profile, prefix);
 
 			xccdf_tailoring_free(tailoring);
 		}
@@ -441,7 +467,12 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
 	} else if (action->profile) {
-		_print_single_benchmark_one_profile(bench, action->profile);
+		struct xccdf_session *session = xccdf_session_new_from_source(source);
+		// vvv The session_load causes the application to come up with an error: E: lt-probe_system_info: An error ocured while receiving SEAP message. errno=103, Software caused connection abort.
+		xccdf_session_load(session);
+		if (xccdf_set_profile_or_report_bad_id(session, action->profile, action->file) == OSCAP_OK) {
+			_print_single_benchmark_one_profile(bench, xccdf_session_get_profile_id(session));
+		}
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
@@ -580,6 +611,7 @@ static int app_info(const struct oscap_action *action)
 		if(!bench)
 			goto cleanup;
 		app_info_single_benchmark(bench, action, source);
+		// vvv This sometimes crashes the application when the info module is not given --profile/s argument
 		xccdf_benchmark_free(bench);
 	}
 	break;

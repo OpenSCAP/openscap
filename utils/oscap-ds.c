@@ -545,3 +545,18 @@ cleanup:
 	free(action->ds_action);
 	return ret;
 }
+
+/*
+int ds_sds_set_profile_or_report_bad_id(struct ds_sds_session *session, const char *profile_id, const char *source_file)
+{
+	const int suffix_match_result = ds_sds_session_set_profile_id_by_suffix(session, profile_id);
+	if (suffix_match_result == 1) {
+		report_missing_profile(profile_id, source_file);
+		return OSCAP_ERROR;
+	} else if (suffix_match_result == 2) {
+		report_multiple_profile_matches(profile_id);
+		return OSCAP_ERROR;
+	}
+	return OSCAP_OK;
+}
+*/
