@@ -191,6 +191,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 			 */
 			if (l == 0) {
 				dI("Skipping file '%s' because it has no value.", mibpath);
+				oval_ftsent_free(ofts_ent);
 				SEXP_free(se_mib);
 				continue;
 			}
