@@ -1817,6 +1817,10 @@ struct oscap_string_iterator *xccdf_item_get_metadata(const struct xccdf_item *i
 /**
  * @memberof xccdf_benchmark
  */
+struct xccdf_profile *xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id);
+/**
+ * @memberof xccdf_benchmark
+ */
 const char *xccdf_benchmark_get_id(const struct xccdf_benchmark *benchmark);
 /**
  * @memberof xccdf_benchmark

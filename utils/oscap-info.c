@@ -49,26 +49,6 @@
 
 #include "oscap-tool.h"
 
-// COPIED from src/XCCDF/benchmark.c
-struct xccdf_profile * xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id)
-{
-	struct xccdf_profile_iterator *profit = xccdf_benchmark_get_profiles(benchmark);
-	while (xccdf_profile_iterator_has_more(profit)) {
-		struct xccdf_profile *profile = xccdf_profile_iterator_next(profit);
-		if (profile == NULL) {
-			assert(profile != NULL);
-			continue;
-		}
-		if (strcmp(xccdf_profile_get_id(profile), profile_id)) {
-			xccdf_profile_iterator_free(profit);
-			return profile;
-		}
-	}
-	xccdf_profile_iterator_free(profit);
-	return NULL;
-}
-
-
 
 static bool getopt_info(int argc, char **argv, struct oscap_action *action);
 static int app_info(const struct oscap_action *action);
