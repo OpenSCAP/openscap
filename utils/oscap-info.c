@@ -325,6 +325,7 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 				return OSCAP_ERROR;
 			}
 			_print_single_benchmark_profiles_only(bench);
+			xccdf_benchmark_free(bench);
 
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			_print_xccdf_tailoring(xccdf_source, 0, _print_xccdf_profile_terse);
@@ -366,6 +367,7 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 				return OSCAP_ERROR;
 			}
 			_print_single_benchmark_one_profile(bench, profile_id);
+			xccdf_benchmark_free(bench);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
 
@@ -592,6 +594,7 @@ static int app_info(const struct oscap_action *action)
 			goto cleanup;
 		app_info_single_benchmark(bench, action, source);
 		// vvv This sometimes crashes the application when the info module is not given --profile/s argument
+		// vvv doesn't play nicely with xccdf_policy_model_free(policy_model);
 		xccdf_benchmark_free(bench);
 	}
 	break;
