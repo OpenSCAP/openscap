@@ -802,6 +802,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 			default:
 				dE("Don't know how to parse the line: %s", buffer);
 				tmpbuf_free(buffer);
+				xiconf_free(xiconf);
 
 				return (NULL);
 			}
