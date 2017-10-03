@@ -298,6 +298,7 @@ static void _print_single_benchmark_one_profile(struct xccdf_benchmark *bench, c
 static void _print_single_benchmark_all(struct xccdf_benchmark *bench, const char *prefix)
 {
 	_print_xccdf_benchmark(bench, prefix, 0);
+	// bench is freed as a side-effect of the function above
 }
 
 static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const struct oscap_action *action)
@@ -415,6 +416,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 				return OSCAP_ERROR;
 			}
 			_print_xccdf_benchmark(bench, prefix, 0);
+			// bench is freed as a side-effect of the function above
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			_print_xccdf_tailoring(xccdf_source, prefix, 0);
 		}
@@ -456,16 +458,19 @@ static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struc
 {
 	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
+		xccdf_benchmark_free(bench);
 	} else if (action->profile) {
 		const char *profile_id = benchmark_get_profile_or_report_bad_id(bench, action->profile, action->file);
 		if (profile_id != NULL) {
 			_print_single_benchmark_one_profile(bench, profile_id);
 		}
+		xccdf_benchmark_free(bench);
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
 		print_time(action->file);
 
 		_print_single_benchmark_all(bench, "");
+		// bench is freed as a side-effect of the function above
 	}
 }
 
@@ -599,9 +604,7 @@ static int app_info(const struct oscap_action *action)
 		if(!bench)
 			goto cleanup;
 		app_info_single_benchmark(bench, action, source);
-		// vvv This sometimes crashes the application when the info module is not given --profile/s argument
-		// vvv doesn't play nicely with xccdf_policy_model_free(policy_model);
-		xccdf_benchmark_free(bench);
+		// bench is freed as a side-effect of the function above
 	}
 	break;
 	case OSCAP_DOCUMENT_CPE_LANGUAGE: {
