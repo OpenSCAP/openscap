@@ -638,6 +638,7 @@ static SEXP_t *oval_record_field_STATE_to_sexp(struct oval_record_field *rf)
 		SEXP_free(r0);
 	}
 
+	oval_entity_free(rf_ent);
 	return rf_sexp;
 }
 

@@ -423,8 +423,10 @@ static void _oval_agent_resolve_variables_conflict(struct oval_agent_session *se
 				// set of tests. These tests might have same @id but differ in @variable_instance
 				// attribute. Further, some of these tests will differ in tested_variable element.
 				struct oval_result_system *r_system = _oval_agent_get_first_result_system(session);
-				if (r_system == NULL)
+				if (r_system == NULL) {
+					oval_value_iterator_free(value_it);
 					continue;
+				}
 
 				struct oval_string_iterator *def_it =
 					oval_definition_model_get_definitions_dependent_on_variable(def_model, variable);

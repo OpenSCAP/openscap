@@ -737,8 +737,10 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				case XICONF_INCTYPE_FILE:
 					dI("includefile: %s", pathbuf);
 
-					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
+					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0) {
+						tmpbuf_free(buffer);
 						continue;
+					}
 					else
 						break;
 				case XICONF_INCTYPE_DIR:
@@ -800,6 +802,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 			default:
 				dE("Don't know how to parse the line: %s", buffer);
 				tmpbuf_free(buffer);
+				xiconf_free(xiconf);
 
 				return (NULL);
 			}
