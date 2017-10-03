@@ -487,17 +487,12 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 	return return_value;
 }
 
-static void _print_sds_header(const struct oscap_action *action)
+static int app_info_sds(struct oscap_source *source, const struct oscap_action *action)
 {
 	if (! action->provide_machine_readable_output) {
 		printf("Document type: Source Data Stream\n");
 		print_time(action->file);
 	}
-}
-
-static int app_info_sds(struct oscap_source *source, const struct oscap_action *action)
-{
-	_print_sds_header(action);
 
 	struct ds_sds_session *session = ds_sds_session_new_from_source(source);
 	if (session == NULL) {
