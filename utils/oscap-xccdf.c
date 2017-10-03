@@ -461,17 +461,23 @@ void report_multiple_profile_matches(const char *source_file)
 		"$ oscap info \"%s\"\n", source_file);
 }
 
-int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file)
+int evaluate_suffix_match_result(oscap_profile_match_t suffix_match_result, const char *profile_id, const char *source_file)
 {
-	const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, profile_id);
-	if (suffix_match_result == 1) {
+	if (suffix_match_result == OSCAP_PROFILE_NO_MATCH) {
 		report_missing_profile(profile_id, source_file);
 		return OSCAP_ERROR;
-	} else if (suffix_match_result == 2) {
-		report_multiple_profile_matches(profile_id);
+	} else if (suffix_match_result == OSCAP_PROFILE_MULTIPLE_MATCHES) {
+		report_multiple_profile_matches(source_file);
 		return OSCAP_ERROR;
 	}
 	return OSCAP_OK;
+}
+
+int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file)
+{
+	const oscap_profile_match_t suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, profile_id);
+	int return_code = evaluate_suffix_match_result(suffix_match_result, profile_id, source_file);
+	return return_code;
 }
 
 /**

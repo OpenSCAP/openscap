@@ -337,7 +337,7 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
  *@param profile_suffix unique profile ID or suffix of the ID of the profile to set
  *@returns 0 on success, 1 if profile is not found, and 2 if multiple matches are found.
  */
-int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix);
+oscap_profile_match_t xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix);
 
 /**
  * Retrieves ID of the profile that we will evaluate with, or NULL.

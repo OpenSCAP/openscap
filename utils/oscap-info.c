@@ -444,16 +444,22 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
+const char *benchmark_get_profile_or_report_bad_id(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
+{
+	oscap_profile_match_t match_status;
+	const char *result = xccdf_benchmark_match_profile_id(bench, profile_suffix, &match_status);
+	evaluate_suffix_match_result(match_status, profile_suffix, source_file);
+	return result;
+}
+
 static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
 {
 	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
 	} else if (action->profile) {
-		struct xccdf_session *session = xccdf_session_new_from_source(source);
-		// vvv The session_load causes the application to come up with an error: E: lt-probe_system_info: An error ocured while receiving SEAP message. errno=103, Software caused connection abort.
-		xccdf_session_load(session);
-		if (xccdf_set_profile_or_report_bad_id(session, action->profile, action->file) == OSCAP_OK) {
-			_print_single_benchmark_one_profile(bench, xccdf_session_get_profile_id(session));
+		const char *profile_id = benchmark_get_profile_or_report_bad_id(bench, action->profile, action->file);
+		if (profile_id != NULL) {
+			_print_single_benchmark_one_profile(bench, profile_id);
 		}
 	} else {
 		printf("Checklist version: %s\n", oscap_source_get_schema_version(source));
