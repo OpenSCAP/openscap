@@ -430,27 +430,26 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
 	return true;
 }
 
-const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status)
+static const char *xccdf_profiles_match_profile_id(struct xccdf_profile_iterator *profile_it, const char *profile_suffix, int *match_status)
 {
-	struct xccdf_profile_iterator *profit_bench = xccdf_benchmark_get_profiles(bench);
 	const char *full_profile_id = NULL;
 	bool multiple = false;
-	while (xccdf_profile_iterator_has_more(profit_bench)) {
-		struct xccdf_profile *bench_profile = xccdf_profile_iterator_next(profit_bench);
-		const char *bench_profile_id = xccdf_profile_get_id(bench_profile);
+	while (xccdf_profile_iterator_has_more(profile_it)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profile_it);
+		const char *profile_id = xccdf_profile_get_id(profile);
 
-		if(oscap_str_endswith(bench_profile_id, profile_suffix)) {
+		if(oscap_str_endswith(profile_id, profile_suffix)) {
 			if (full_profile_id != NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
-					full_profile_id, bench_profile_id);
+					full_profile_id, profile_id);
 				multiple = true;
 				break;
 			} else {
-				full_profile_id = bench_profile_id;
+				full_profile_id = profile_id;
 			}
 		}
 	}
-	xccdf_profile_iterator_free(profit_bench);
+	xccdf_profile_iterator_free(profile_it);
 	if (match_status != NULL) {
 		if (multiple) {
 			*match_status = OSCAP_PROFILE_MULTIPLE_MATCHES;
@@ -462,6 +461,18 @@ const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, cons
 		}
 	}
 	return full_profile_id;
+}
+
+const char *xccdf_tailoring_match_profile_id(struct xccdf_tailoring *tailoring, const char *profile_suffix, int *match_status)
+{
+	struct xccdf_profile_iterator *profile_it = xccdf_tailoring_get_profiles(tailoring);
+	return xccdf_profiles_match_profile_id(profile_it, profile_suffix, match_status);
+}
+
+const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status)
+{
+	struct xccdf_profile_iterator *profile_it = xccdf_benchmark_get_profiles(bench);
+	return xccdf_profiles_match_profile_id(profile_it, profile_suffix, match_status);
 }
 
 int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix)

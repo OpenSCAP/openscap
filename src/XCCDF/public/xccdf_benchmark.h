@@ -982,6 +982,17 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *, con
  */
 const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status);
 
+/**
+ * Match a profile suffix agains profiles present in the given benchmark.
+ * @memberof xccdf_benchmark
+ * @param tailoring The tailoring where to search for profiles.
+ * @param profile_suffix The profile suffix we match against.
+ * @param match_status Tells us what exactly went wrong.
+ * @returns The complete profile ID.
+ * @retval NULL is returned in case of error. Details might be found through match_status
+ */
+const char *xccdf_tailoring_match_profile_id(struct xccdf_tailoring *tailoring, const char *profile_suffix, int *match_status);
+
 /// @memberof xccdf_plain_text
 struct xccdf_plain_text *xccdf_plain_text_new(void);
 /// @memberof xccdf_plain_text

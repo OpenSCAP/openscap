@@ -337,7 +337,34 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 	return OSCAP_OK;
 }
 
-static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const char *profile_id)
+void report_multiple_profile_matches(const char *profile_suffix, const char *source_file);
+void report_missing_profile(const char *profile_suffix, const char *source_file);
+
+const char *tailoring_get_profile_or_report_multiple_ids(struct xccdf_tailoring *tailoring, const char *profile_suffix, const char *source_file)
+{
+	int match_status;
+	const char *result = xccdf_tailoring_match_profile_id(tailoring, profile_suffix, &match_status);
+	evaluate_suffix_match_result_with_custom_reports(match_status, profile_suffix, source_file, NULL, &report_multiple_profile_matches);
+	return result;
+}
+
+const char *benchmark_get_profile_or_report_multiple_ids(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
+{
+	int match_status;
+	const char *result = xccdf_benchmark_match_profile_id(bench, profile_suffix, &match_status);
+	evaluate_suffix_match_result_with_custom_reports(match_status, profile_suffix, source_file, NULL, &report_multiple_profile_matches);
+	return result;
+}
+
+const char *benchmark_get_profile_or_report_id_issues(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
+{
+	int match_status;
+	const char *result = xccdf_benchmark_match_profile_id(bench, profile_suffix, &match_status);
+	evaluate_suffix_match_result(match_status, profile_suffix, source_file);
+	return result;
+}
+
+static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_it, struct ds_sds_session *session, const char *profile_suffix, const char *filename)
 {
 	const char *prefix = "";
 	struct ds_stream_index * stream = ds_stream_index_iterator_next(sds_it);
@@ -346,8 +373,9 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 	printf("\nStream: %s\n", ds_stream_index_get_id(stream));
 	printf("Generated: %s\n", ds_stream_index_get_timestamp(stream));
 	printf("Version: %s\n", ds_stream_index_get_version(stream));
+	bool profile_not_found = true;
 
-	while (oscap_string_iterator_has_more(checklist_it)) {
+	while (oscap_string_iterator_has_more(checklist_it) && profile_not_found) {
 		const char * id = oscap_string_iterator_next(checklist_it);
 
 		/* decompose */
@@ -367,19 +395,30 @@ static int app_info_single_ds_one_profile(struct ds_stream_index_iterator* sds_i
 				ds_sds_session_free(session);
 				return OSCAP_ERROR;
 			}
-			_print_single_benchmark_one_profile(bench, profile_id);
+			const char *profile_id = benchmark_get_profile_or_report_multiple_ids(bench, profile_suffix, filename);
+			if (profile_id != NULL) {
+				_print_single_benchmark_one_profile(bench, profile_id);
+				profile_not_found = false;
+			}
 			xccdf_benchmark_free(bench);
 		} else if (oscap_source_get_scap_type(xccdf_source) == OSCAP_DOCUMENT_XCCDF_TAILORING) {
 			struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(xccdf_source, NULL);
 
-			struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
-			_print_xccdf_profile_with_id(profile, prefix);
+			const char *profile_id = tailoring_get_profile_or_report_multiple_ids(tailoring, profile_suffix, filename);
+			if (profile_id != NULL) {
+				struct xccdf_profile *profile = xccdf_tailoring_get_profile_by_id(tailoring, profile_id);
+				_print_xccdf_profile_with_id(profile, prefix);
+				profile_not_found = false;
+			}
 
 			xccdf_tailoring_free(tailoring);
 		}
 		ds_sds_session_reset(session);
 	}
 	oscap_string_iterator_free(checklist_it);
+	if (profile_not_found) {
+		report_missing_profile(profile_suffix, filename);
+	}
 	return OSCAP_OK;
 }
 
@@ -446,21 +485,13 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 	return OSCAP_OK;
 }
 
-const char *benchmark_get_profile_or_report_bad_id(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
-{
-	int match_status;
-	const char *result = xccdf_benchmark_match_profile_id(bench, profile_suffix, &match_status);
-	evaluate_suffix_match_result(match_status, profile_suffix, source_file);
-	return result;
-}
-
 static void app_info_single_benchmark(struct xccdf_benchmark *bench, const struct oscap_action *action, struct oscap_source *source)
 {
 	if (action->show_profiles_only) {
 		_print_single_benchmark_profiles_only(bench);
 		xccdf_benchmark_free(bench);
 	} else if (action->profile) {
-		const char *profile_id = benchmark_get_profile_or_report_bad_id(bench, action->profile, action->file);
+		const char *profile_id = benchmark_get_profile_or_report_id_issues(bench, action->profile, action->file);
 		if (profile_id != NULL) {
 			_print_single_benchmark_one_profile(bench, profile_id);
 		}
@@ -480,7 +511,7 @@ static int app_info_single_ds(struct ds_stream_index_iterator* sds_it, struct ds
 	if (action->show_profiles_only) {
 		return_value = app_info_single_ds_profiles_only(sds_it, session, action);
 	} else if (action->profile) {
-		return_value = app_info_single_ds_one_profile(sds_it, session, action->profile);
+		return_value = app_info_single_ds_one_profile(sds_it, session, action->profile, action->file);
 	} else {
 		return_value = app_info_single_ds_all(sds_it, session, action);
 	}

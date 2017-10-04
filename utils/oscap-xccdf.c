@@ -445,31 +445,39 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }
 
-static void report_missing_profile(const char *profile_id, const char *source_file)
+void report_missing_profile(const char *profile_suffix, const char *source_file)
 {
 	fprintf(stderr,
 		"No profile matching suffix \"%s\" was found. Get available profiles using:\n"
-		"$ oscap info \"%s\"\n", profile_id, source_file);
+		"$ oscap info \"%s\"\n", profile_suffix, source_file);
 }
 
-static void report_multiple_profile_matches(const char *source_file)
+void report_multiple_profile_matches(const char *profile_suffix, const char *source_file)
 {
 	fprintf(stderr,
-		"At least two profiles matched the given suffix. Use a more specific suffix "
+		"At least two profiles matched suffix \"%s\". Use a more specific suffix "
 		"to get an exact match. Get list of profiles using:\n"
-		"$ oscap info \"%s\"\n", source_file);
+		"$ oscap info \"%s\"\n", profile_suffix, source_file);
 }
 
-int evaluate_suffix_match_result(int suffix_match_result, const char *profile_id, const char *source_file)
+int evaluate_suffix_match_result_with_custom_reports(int suffix_match_result, const char *profile_suffix, const char *source_file,
+		void (* report_missing)(const char *, const char *), void (* report_multiple)(const char *, const char *))
 {
 	if (suffix_match_result == OSCAP_PROFILE_NO_MATCH) {
-		report_missing_profile(profile_id, source_file);
+		if (report_missing)
+			report_missing(profile_suffix, source_file);
 		return OSCAP_ERROR;
 	} else if (suffix_match_result == OSCAP_PROFILE_MULTIPLE_MATCHES) {
-		report_multiple_profile_matches(source_file);
+		if (report_multiple)
+			report_multiple(profile_suffix, source_file);
 		return OSCAP_ERROR;
 	}
 	return OSCAP_OK;
+}
+
+int evaluate_suffix_match_result(int suffix_match_result, const char *profile_suffix, const char *source_file)
+{
+	return evaluate_suffix_match_result_with_custom_reports(suffix_match_result, profile_suffix, source_file, &report_missing_profile, &report_multiple_profile_matches);
 }
 
 int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file)
