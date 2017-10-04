@@ -127,8 +127,6 @@ struct oval_iterator *oval_collection_iterator(struct oval_collection *collectio
 	while (collection_frame != NULL) {
 		struct _oval_collection_item_frame *iterator_frame =
 		    (struct _oval_collection_item_frame *)malloc(sizeof(_oval_collection_item_frame_t));
-		if (iterator_frame == NULL)
-			return NULL;
 
 		iterator_frame->next = iterator->item_iterator_frame;
 		iterator_frame->item = collection_frame->item;

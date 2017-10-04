@@ -510,8 +510,9 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 	}
 
 	if (return_code == OSCAP_PROFILE_MATCH_OK) {
-		const bool search_result = xccdf_session_set_profile_id(session, full_profile_id);
-		assert(search_result);
+		if (!xccdf_session_set_profile_id(session, full_profile_id)) {
+			return_code = OSCAP_PROFILE_NO_MATCH;
+		}
 	}
 	return return_code;
 }
