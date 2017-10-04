@@ -430,15 +430,59 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
 	return true;
 }
 
-// 0 = no error, 1 = no matches, 2 = multiple matches
+static const char *xccdf_profiles_match_profile_id(struct xccdf_profile_iterator *profile_it, const char *profile_suffix, int *match_status)
+{
+	const char *full_profile_id = NULL;
+	bool multiple = false;
+	while (xccdf_profile_iterator_has_more(profile_it)) {
+		struct xccdf_profile *profile = xccdf_profile_iterator_next(profile_it);
+		const char *profile_id = xccdf_profile_get_id(profile);
+
+		if(oscap_str_endswith(profile_id, profile_suffix)) {
+			if (full_profile_id != NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
+					full_profile_id, profile_id);
+				multiple = true;
+				break;
+			} else {
+				full_profile_id = profile_id;
+			}
+		}
+	}
+	xccdf_profile_iterator_free(profile_it);
+	if (match_status != NULL) {
+		if (multiple) {
+			*match_status = OSCAP_PROFILE_MULTIPLE_MATCHES;
+			full_profile_id = NULL;
+		} else if (full_profile_id == NULL) {
+			*match_status = OSCAP_PROFILE_NO_MATCH;
+		} else {
+			*match_status = OSCAP_PROFILE_MATCH_OK;
+		}
+	}
+	return full_profile_id;
+}
+
+const char *xccdf_tailoring_match_profile_id(struct xccdf_tailoring *tailoring, const char *profile_suffix, int *match_status)
+{
+	struct xccdf_profile_iterator *profile_it = xccdf_tailoring_get_profiles(tailoring);
+	return xccdf_profiles_match_profile_id(profile_it, profile_suffix, match_status);
+}
+
+const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status)
+{
+	struct xccdf_profile_iterator *profile_it = xccdf_benchmark_get_profiles(bench);
+	return xccdf_profiles_match_profile_id(profile_it, profile_suffix, match_status);
+}
+
 int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix)
 {
 	const char *full_profile_id = NULL;
 	struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
-	bool multiple = false;
 
 	// Tailoring Profiles
 	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(session->xccdf.policy_model);
+	int return_code = OSCAP_PROFILE_NO_MATCH;
 	if (tailoring != NULL)   {
 		struct xccdf_profile_iterator *profit_tailoring = xccdf_tailoring_get_profiles(tailoring);
 		while (xccdf_profile_iterator_has_more(profit_tailoring)) {
@@ -449,10 +493,11 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 				if (full_profile_id != NULL) {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
 						full_profile_id, tailoring_profile_id);
-					multiple = true;
+					return_code = OSCAP_PROFILE_MULTIPLE_MATCHES;
 					break;
 				} else {
 					full_profile_id = tailoring_profile_id;
+					return_code = OSCAP_PROFILE_MATCH_OK;
 				}
 			}
 		}
@@ -460,35 +505,15 @@ int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const 
 	}
 
 	// Benchmark Profiles
-	if (full_profile_id == NULL) {
-		struct xccdf_profile_iterator *profit_bench = xccdf_benchmark_get_profiles(bench);
-		while (xccdf_profile_iterator_has_more(profit_bench)) {
-			struct xccdf_profile *bench_profile = xccdf_profile_iterator_next(profit_bench);
-			const char *bench_profile_id = xccdf_profile_get_id(bench_profile);
-
-			if(oscap_str_endswith(bench_profile_id, profile_suffix)) {
-				if (full_profile_id != NULL) {
-					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Multiple matches found:\n%s\n%s\n",
-						full_profile_id, bench_profile_id);
-					multiple = true;
-					break;
-				} else {
-					full_profile_id = bench_profile_id;
-				}
-			}
-		}
-		xccdf_profile_iterator_free(profit_bench);
+	if (return_code == OSCAP_PROFILE_NO_MATCH) {
+		full_profile_id = xccdf_benchmark_match_profile_id(bench, profile_suffix, &return_code);
 	}
 
-	if (full_profile_id == NULL) {
-		return 1;
-	} else if (multiple) {
-		return 2;
-	} else {
+	if (return_code == OSCAP_PROFILE_MATCH_OK) {
 		const bool search_result = xccdf_session_set_profile_id(session, full_profile_id);
 		assert(search_result);
-		return 0;
 	}
+	return return_code;
 }
 
 const char *xccdf_session_get_profile_id(struct xccdf_session *session)
