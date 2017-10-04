@@ -180,11 +180,11 @@ typedef enum {
 /**
  * Results of matching profile suffixes against set of profile IDs.
  */
-typedef enum {
+enum {
     OSCAP_PROFILE_MATCH_OK         = 0, // successful profile ID match
     OSCAP_PROFILE_NO_MATCH         = 1, // no profile ID was matched
     OSCAP_PROFILE_MULTIPLE_MATCHES = 2, // multiple profile IDs were matched
-} oscap_profile_match_t;
+};
 
 /*--------------------*\
 |       Typedefs       |
@@ -980,7 +980,7 @@ struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *, con
  * @returns The complete profile ID.
  * @retval NULL is returned in case of error. Details might be found through match_status
  */
-const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, oscap_profile_match_t *match_status);
+const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status);
 
 /// @memberof xccdf_plain_text
 struct xccdf_plain_text *xccdf_plain_text_new(void);

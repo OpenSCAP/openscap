@@ -448,7 +448,7 @@ static int app_info_single_ds_all(struct ds_stream_index_iterator* sds_it, struc
 
 const char *benchmark_get_profile_or_report_bad_id(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
 {
-	oscap_profile_match_t match_status;
+	int match_status;
 	const char *result = xccdf_benchmark_match_profile_id(bench, profile_suffix, &match_status);
 	evaluate_suffix_match_result(match_status, profile_suffix, source_file);
 	return result;

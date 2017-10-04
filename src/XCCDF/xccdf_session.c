@@ -430,7 +430,7 @@ bool xccdf_session_set_profile_id(struct xccdf_session *session, const char *pro
 	return true;
 }
 
-const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, oscap_profile_match_t *match_status)
+const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status)
 {
 	struct xccdf_profile_iterator *profit_bench = xccdf_benchmark_get_profiles(bench);
 	const char *full_profile_id = NULL;
@@ -464,14 +464,14 @@ const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, cons
 	return full_profile_id;
 }
 
-oscap_profile_match_t xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix)
+int xccdf_session_set_profile_id_by_suffix(struct xccdf_session *session, const char *profile_suffix)
 {
 	const char *full_profile_id = NULL;
 	struct xccdf_benchmark *bench = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
 
 	// Tailoring Profiles
 	struct xccdf_tailoring *tailoring = xccdf_policy_model_get_tailoring(session->xccdf.policy_model);
-	oscap_profile_match_t return_code = OSCAP_PROFILE_NO_MATCH;
+	int return_code = OSCAP_PROFILE_NO_MATCH;
 	if (tailoring != NULL)   {
 		struct xccdf_profile_iterator *profit_tailoring = xccdf_tailoring_get_profiles(tailoring);
 		while (xccdf_profile_iterator_has_more(profit_tailoring)) {

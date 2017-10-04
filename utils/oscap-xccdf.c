@@ -445,15 +445,14 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }
 
-// static void report_missing_profile(const struct oscap_action *action)
-void report_missing_profile(const char *profile_id, const char *source_file)
+static void report_missing_profile(const char *profile_id, const char *source_file)
 {
 	fprintf(stderr,
 		"No profile matching suffix \"%s\" was found. Get available profiles using:\n"
 		"$ oscap info \"%s\"\n", profile_id, source_file);
 }
 
-void report_multiple_profile_matches(const char *source_file)
+static void report_multiple_profile_matches(const char *source_file)
 {
 	fprintf(stderr,
 		"At least two profiles matched the given suffix. Use a more specific suffix "
@@ -461,7 +460,7 @@ void report_multiple_profile_matches(const char *source_file)
 		"$ oscap info \"%s\"\n", source_file);
 }
 
-int evaluate_suffix_match_result(oscap_profile_match_t suffix_match_result, const char *profile_id, const char *source_file)
+int evaluate_suffix_match_result(int suffix_match_result, const char *profile_id, const char *source_file)
 {
 	if (suffix_match_result == OSCAP_PROFILE_NO_MATCH) {
 		report_missing_profile(profile_id, source_file);
@@ -475,7 +474,7 @@ int evaluate_suffix_match_result(oscap_profile_match_t suffix_match_result, cons
 
 int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file)
 {
-	const oscap_profile_match_t suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, profile_id);
+	const int suffix_match_result = xccdf_session_set_profile_id_by_suffix(session, profile_id);
 	int return_code = evaluate_suffix_match_result(suffix_match_result, profile_id, source_file);
 	return return_code;
 }
