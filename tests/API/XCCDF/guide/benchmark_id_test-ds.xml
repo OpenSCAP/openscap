@@ -6,7 +6,7 @@
           <cat:uri name="ssg-rhel7-oval.xml" uri="#scap_org.open-scap_cref_ssg-rhel7-oval.xml"/>
         </cat:catalog>
       </ds:component-ref>
-      <ds:component-ref id="scap_org.open-scap_cref_ssg-rhel7_2-xccdf-1.2.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml">
+      <ds:component-ref id="scap_org.open-scap_cref_ssg-rhel7_2-xccdf-1.2.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7_2-xccdf-1.2.xml">
         <cat:catalog>
           <cat:uri name="ssg-rhel7-oval.xml" uri="#scap_org.open-scap_cref_ssg-rhel7-oval.xml"/>
         </cat:catalog>
@@ -14,8 +14,7 @@
     </ds:checklists>
     <ds:checks>
       <ds:component-ref id="scap_org.open-scap_cref_ssg-rhel7-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml"/>
-      <ds:component-ref id="scap_org.open-scap_cref_output--ssg-rhel7-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml"/>
-      <ds:component-ref id="scap_org.open-scap_cref_output--ssg-rhel7-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-rhel7-oval.xml"/></ds:checks>
+    </ds:checks>
   </ds:data-stream>
   <ds:component id="scap_org.open-scap_comp_ssg-rhel7-oval.xml" timestamp="2017-01-03T11:03:27">
     <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
@@ -84,41 +83,6 @@
       </Rule>
     </Group>
 </Benchmark>
-  </ds:component>
-  <ds:component id="scap_org.open-scap_comp_output--ssg-rhel7-oval.xml" timestamp="2017-01-03T11:03:27">
-    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
-  <generator>
-    <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.7.12</oval:product_version>
-    <oval:schema_version>5.11</oval:schema_version>
-    <oval:timestamp>2017-01-03T10:03:20</oval:timestamp>
-  </generator>
-  <definitions>
-    <definition class="compliance" id="oval:ssg-package_bind_removed:def:1" version="1">
-      <metadata>
-        <title>Package bind Removed</title>
-        <affected family="unix">
-          <platform>Red Hat Enterprise Linux 7</platform>
-          <platform>Red Hat Enterprise Linux 6</platform>
-        </affected>
-        <description>The RPM package bind should be removed.</description>
-      <reference ref_id="package_bind_removed" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="package bind is removed" test_ref="oval:ssg-test_fedora_release_rpm:tst:1"/>
-      </criteria>
-    </definition>
-  </definitions>
-  <tests>
-    <linux:rpminfo_test check="all" check_existence="only_one_exists" comment="fedora-release RPM package is installed" id="oval:ssg-test_fedora_release_rpm:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-object_fedora_release_rpm:obj:1"/>
-    </linux:rpminfo_test>
-  </tests>
-  <objects>
-    <linux:rpminfo_object id="oval:ssg-object_fedora_release_rpm:obj:1" version="1">
-      <linux:name>fedora-release</linux:name>
-    </linux:rpminfo_object>
-  </objects>
-</oval_definitions>
   </ds:component>
   <ds:component id="scap_org.open-scap_comp_ssg-rhel7_2-xccdf-1.2.xml" timestamp="2017-01-03T11:03:31">
     <ns0:Benchmark xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://checklists.nist.gov/xccdf/1.2" xmlns:ns2="http://www.w3.org/2000/svg" id="xccdf_org.ssgproject.content_benchmark_2" resolved="1" style="SCAP_1.2" xml:lang="en-US">
