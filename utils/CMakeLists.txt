@@ -5,3 +5,34 @@ target_link_libraries(oscap openscap ${XML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT
 install(TARGETS "oscap"
 	DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+if(ENABLE_OSCAP_UTIL)
+	install(FILES "oscap.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
+endif()
+if(ENABLE_OSCAP_UTIL_CHROOT)
+	install(FILES "oscap-chroot.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
+endif()
+if(ENABLE_OSCAP_UTIL_DOCKER)
+	install(FILES "oscap-docker.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
+endif()
+if(ENABLE_OSCAP_UTIL_SSH)
+	install(FILES "oscap-ssh.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
+endif()
+if(ENABLE_OSCAP_UTIL_VM)
+	install(FILES "oscap-vm.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
+endif()
+if(ENABLE_OSCAP_UTIL_AS_RPM)
+	install(FILES "scap-as-rpm.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
+endif()
