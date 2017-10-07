@@ -29,9 +29,9 @@
 #----------------------------------------------------------------------
 
 # Build directory
-b=@abs_builddir@
+b=@CMAKE_BINARY_DIR@
 # Top source directory
-s=@abs_top_srcdir@
+s=@CMAKE_SOURCE_DIR@
 
 # Preload testing library.
 export LD_PRELOAD=$b/src/.libs/libopenscap_testing.so${LD_PRELOAD:+:$LD_PRELOAD}
