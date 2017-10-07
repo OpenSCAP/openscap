@@ -125,6 +125,7 @@ find_package(BZip2)
 # PThread
 find_package(Threads)
 set(CMAKE_THREAD_PREFER_PTHREAD)
+set(THREADS_PREFER_PTHREAD_FLAG)
 
 # WITH_CRYPTO
 set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss3")
