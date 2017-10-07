@@ -1,3 +1,22 @@
+# libtool versioning
+# See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
+
+## increment if the interface has additions, changes, removals.
+set(LT_CURRENT 21)
+
+## increment any time the source changes; set 0 to if you increment CURRENT
+set(LT_REVISION 0)
+
+## increment if any interfaces have been added; set to 0
+## if any interfaces have been changed or removed. removal has
+## precedence over adding, so set to 0 if both happened.
+set(LT_AGE 13)
+
+math(EXPR LT_CURRENT_MINUS_AGE "${LT_CURRENT} - ${LT_AGE}")
+
+set(SONAME ${LT_CURRENT_MINUS_AGE}.${LT_AGE}.${LT_REVISION})
+set(SOVERSION ${LT_CURRENT_MINUS_AGE})
+
 if (ENABLE_CCE)
     add_subdirectory("CCE")
 endif()
@@ -22,3 +41,4 @@ if (ENABLE_CCE)
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
+set_target_properties(openscap PROPERTIES VERSION ${SONAME} SOVERSION ${SOVERSION})
