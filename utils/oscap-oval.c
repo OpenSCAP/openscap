@@ -67,8 +67,11 @@ static bool getopt_oval_report(int argc, char **argv, struct oscap_action *actio
 
 static bool valid_inputs(const struct oscap_action *action);
 
-static struct oscap_module* OVAL_SUBMODULES[];
-static struct oscap_module* OVAL_GEN_SUBMODULES[];
+#define OVAL_SUBMODULES_NUM	8
+#define OVAL_GEN_SUBMODULES_NUM 2 /* See actual OVAL_GEN_SUBMODULES and
+				OVAL_SUBMODULES arrays initialization below. */
+static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM];
+static struct oscap_module* OVAL_GEN_SUBMODULES[OVAL_GEN_SUBMODULES_NUM];
 
 struct oscap_module OSCAP_OVAL_MODULE = {
     .name = "oval",
@@ -205,12 +208,13 @@ static struct oscap_module OVAL_LIST_PROBES = {
 };
 #endif
 
-static struct oscap_module* OVAL_GEN_SUBMODULES[] = {
+static struct oscap_module* OVAL_GEN_SUBMODULES[OVAL_GEN_SUBMODULES_NUM] = {
     &OVAL_REPORT,
     NULL
 };
-static struct oscap_module* OVAL_SUBMODULES[] = {
+
 #if defined(OVAL_PROBES_ENABLED)
+static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM] = {
     &OVAL_COLLECT,
     &OVAL_EVAL,
 #endif
@@ -377,7 +381,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	}
 
 	/* set validation level */
-	oval_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION"));
+	oval_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 
 	/* set source DS related IDs */
 	oval_session_set_datastream_id(session, action->f_datastream_id);

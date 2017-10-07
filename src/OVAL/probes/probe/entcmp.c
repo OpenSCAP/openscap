@@ -37,6 +37,7 @@
 #include <stdarg.h>
 #include <errno.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 
 #include "common/debug_priv.h"
 #include "entcmp.h"

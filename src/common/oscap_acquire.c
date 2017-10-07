@@ -212,19 +212,28 @@ oscap_acquire_pipe_to_string(int fd)
 
 char *oscap_acquire_guess_realpath(const char *filepath)
 {
-	char *rpath = realpath(filepath, NULL);
-	if (rpath == NULL) {
+	char resolved_name[PATH_MAX];
+
+	char *rpath = realpath(filepath, resolved_name);
+	if (rpath != NULL)
+		rpath = strdup(rpath);
+	else {
 		// file does not exists, let's try to guess realpath
 		// this is not 100% correct, but it is good enough
 		char *copy = strdup(filepath);
-		char *real_dir = realpath(dirname(copy), NULL);
+		if (copy == NULL) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: cannot allocate memory!", filepath);
+			return NULL;
+		}
+
+		char *dir_name = dirname(copy);
+		char *real_dir = realpath(dir_name, resolved_name);
 		if (real_dir == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: %s does not exists!", filepath, real_dir);
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: %s does not exists!", filepath, dir_name);
 			free(copy);
 			return NULL;
 		}
 		rpath = oscap_sprintf("%s/%s", real_dir, basename((char *)filepath));
-		free(real_dir);
 		free(copy);
 	}
 	return rpath;

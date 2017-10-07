@@ -15,13 +15,17 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 LC_ALL=C
 export LC_ALL
 
-enable_valgrind=@vgcheck@
-if [ $enable_valgrind = "yes" ] ; then
-  actualdir=@abs_top_srcdir@
-  export actualdir
-  [ -z "$builddir" ] || export OSCAP="@abs_top_srcdir@/tests/valgrind_test.sh"
+if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    enable_valgrind=@vgcheck@
+    if [ $enable_valgrind = "yes" ] ; then
+        actualdir=@abs_top_srcdir@
+        export actualdir
+        [ -z "$builddir" ] || export OSCAP="@abs_top_srcdir@/tests/valgrind_test.sh"
+    else
+        [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
+    fi
 else
-  [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
+    export OSCAP=${CUSTOM_OSCAP}
 fi
 
 export XMLDIFF="@abs_top_srcdir@/tests/xmldiff.pl"

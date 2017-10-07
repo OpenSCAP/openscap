@@ -48,7 +48,7 @@ struct oval_result_definition_iterator *oval_result_definition_iterator_new(stru
 
 void oval_result_definition_iterator_free(struct oval_result_definition_iterator *it)
 {
-	return oval_smc_iterator_free((struct oval_smc_iterator *) it);
+	oval_smc_iterator_free((struct oval_smc_iterator *) it);
 }
 
 bool oval_result_definition_iterator_has_more(struct oval_result_definition_iterator *it)

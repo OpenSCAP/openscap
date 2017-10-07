@@ -23,14 +23,14 @@
 
 """Python module for openscap implementing openscap API
 """
-__author__ =  'Maros Barabas'
-__version__=  '1.0'
+__author__ = 'Maros Barabas'
+__version__ = '1.0'
 
 import logging                  # Logger for debug/info/error messages
 logger = logging.getLogger("openscap")
 
 from sys import version_info
-if version_info >= (2,6,0):
+if version_info >= (2, 6, 0):
     def _import_helper():
         from os.path import dirname
         import imp
@@ -73,8 +73,8 @@ class OSCAP_List(list):
                     self.iterator.remove()
                     list.remove(self, item)
         except NameError:
-            raise Exception, "Removing %s items throught oscap list is not allowed. Please use appropriate function." \
-                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+            raise Exception("Removing %s items throught oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],))
 
     def __del__(self):
         """Free the list structure"""
@@ -91,28 +91,28 @@ class OSCAP_List(list):
 
     def append(self, item, n=1):
         """This function is not allowed. Please use appropriate function from library."""
-        raise Exception, "Append %s item throught oscap list is not allowed. Please use appropriate function." \
-                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+        raise Exception("Append %s item throught oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],))
 
     def extend(self, item, n=1):
         """This function is not allowed. Please use appropriate function from library."""
-        raise Exception, "Extending %s items throught oscap list is not allowed. Please use appropriate function." \
-                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+        raise Exception("Extending %s items throught oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],))
 
     def insert(self, item, n=1):
         """This function is not allowed. Please use appropriate function from library."""
-        raise Exception, "Inserting %s items to oscap list is not allowed. Please use appropriate function." \
-                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+        raise Exception("Inserting %s items to oscap list is not allowed. Please use appropriate function." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],))
 
     def sort(self, item, n=1):
         """This function is not allowed. Please use appropriate function from library."""
-        raise Exception, "Sorting %s items in oscap list is not allowed." \
-                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+        raise Exception("Sorting %s items in oscap list is not allowed." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],))
 
     def reverse(self, item, n=1):
         """This function is not allowed. Please use appropriate function from library."""
-        raise Exception, "Reversing %s items in oscap list is not allowed." \
-                        % (self.iterator.object[:self.iterator.object.find("_iterator")],)
+        raise Exception("Reversing %s items in oscap list is not allowed." \
+                        % (self.iterator.object[:self.iterator.object.find("_iterator")],))
 
 
 class OSCAP_Object(object):
@@ -138,7 +138,8 @@ class OSCAP_Object(object):
             # Extract the name of structure from "<num>_p_<name>"
             structure = retobj.__str__()[retobj.__str__().find("_p_")+3:]
             return OSCAP_Object(structure, retobj)
-        else: return retobj
+        else:
+            return retobj
 
     def __eq__(self, other):
         """ Two OSCAP Objects are compared by their string representations
@@ -167,26 +168,32 @@ class OSCAP_Object(object):
             for arg in args:
                 if isinstance(arg, OSCAP_Object):
                     newargs += (arg.instance,)
-                else: newargs += (arg,)
+                else:
+                    newargs += (arg,)
 
-            try: retobj = func()
-            except TypeError, err:
-                try: retobj = func(*newargs)
-                except TypeError, err:
+            try:
+                retobj = func()
+            except TypeError as err:
+                try:
+                    retobj = func(*newargs)
+                except TypeError as err:
                     if self.instance:
-                        try: retobj = func(self.instance)
-                        except TypeError, err:
-                            try: retobj = func(self.instance, *newargs)
-                            except TypeError, err:
+                        try:
+                            retobj = func(self.instance)
+                        except TypeError as err:
+                            try:
+                                retobj = func(self.instance, *newargs)
+                            except TypeError as err:
                                 raise TypeError("Wrong number of arguments in function %s" % (func.__name__,))
-                    else: raise TypeError("%s: No instance or wrong number of parameters" % (func.__name__))
+                    else:
+                        raise TypeError("%s: No instance or wrong number of parameters" % (func.__name__))
 
-            if retobj == None:
+            if retobj is None:
                 return None
             elif retobj.__str__().find("iterator") != -1:
                 # We have an iterator here
                 list = OSCAP_List()
-                list.generate( OSCAP_Object.new(retobj) )
+                list.generate(OSCAP_Object.new(retobj))
                 list.object = self.object
                 return list
             return OSCAP_Object.new(retobj)
@@ -198,14 +205,16 @@ class OSCAP_Object(object):
         it is not an instance attribute nor is it found in the class tree for self). name is
         the attribute name."""
 
-        if name == "export" and self.object == "xccdf_policy": return self.policy_export
+        if name == "export" and self.object == "xccdf_policy":
+            return self.policy_export
 
-        if self.__dict__.has_key(name):
+        if name in self.__dict__:
             return self.__dict__[name]
 
         # If attribute is not in a local dictionary, look for it in a library
         func = OSCAP.__dict__.get(name)
-        if func != None: return func
+        if func != None:
+            return func
 
         """ Looking for function object_subject() """
         obj = OSCAP.__dict__.get(self.object+"_"+name)
@@ -216,8 +225,10 @@ class OSCAP_Object(object):
         """ Looking for function object_get_subject() """
         obj = OSCAP.__dict__.get(self.object+"_get_"+name)
         if obj != None:
-            try: return self.__func_wrapper(obj)()
-            except: return self.__func_wrapper(obj)
+            try:
+                return self.__func_wrapper(obj)()
+            except:
+                return self.__func_wrapper(obj)
 
         """ There is not function with the name 'name' let return the OSCAP_Object
         This should return None, why is this here ? TODO
@@ -255,32 +266,34 @@ class OSCAP_Object(object):
         for arg in args:
             if isinstance(arg, OSCAP_Object):
                 newargs += (arg.instance,)
-            else: newargs += (arg,)
+            else:
+                newargs += (arg,)
 
         # It's maybe looking for "new" ?
         obj = OSCAP.__dict__.get(self.object+"_new")
         if obj != None:
             return OSCAP_Object.new(obj(*newargs))
-        else: raise NameError("name '"+self.object+"' is not defined")
+        else:
+            raise NameError("name '"+self.object+"' is not defined")
 
     def __setattr__(self, name, value):
-        if self.__dict__.has_key(name):
+        if name in self.__dict__:
             return self.__dict__[name]
 
         obj = OSCAP.__dict__.get(self.object+"_set_"+name)
-        if obj == None:
+        if obj is None:
             obj = OSCAP.__dict__.get(self.object+"_add_"+name)
-        if obj == None:
+        if obj is None:
             return None
 
         if isinstance(value, OSCAP_Object):
-                    value = value.instance
+            value = value.instance
         return obj(self.instance, value)
 
     """
     def __del__(self):
         #print "Free ", self.object
-        if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
+        if "instance" in self.__dict__ and self.__dict__["instance"] != None:
             # In what situations we need to free objects ?
             if self.object.find("iterator") > -1:
 
@@ -288,15 +301,17 @@ class OSCAP_Object(object):
     """
 
     def free(self):
-        if self.object == "oval_agent_session": return OSCAP.oval_agent_destroy_session(self.instance)
+        if self.object == "oval_agent_session":
+            return OSCAP.oval_agent_destroy_session(self.instance)
         #print "Free on demand ", self.object
-        if self.__dict__.has_key("instance") and self.__dict__["instance"] != None:
+        if "instance" in self.__dict__ and self.__dict__["instance"] != None:
             obj = OSCAP.__dict__.get(self.object+"_free")
             if obj != None:
                 if callable(obj):
                     obj(self.__dict__["instance"])
                     dict.__setattr__(self, "instance", None)
-            else: raise Exception, "Can't free %s" % (self.object,)
+            else:
+                raise Exception("Can't free %s" % (self.object,))
 
     """ ********* Implementation of non-trivial functions ********* """
 
@@ -307,39 +322,48 @@ class OSCAP_Object(object):
         return obj[0](OSCAP_Object("xccdf_rule_result", rule_result), obj[1])
 
     def register_start_callback(self, cb, usr):
-        if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_start_callback function on %s" % (self.object,))
+        if self.object != "xccdf_policy_model":
+            raise TypeError("Wrong call of register_start_callback function on %s" % (self.object,))
         return OSCAP.xccdf_policy_model_register_start_callback_py(self.instance, self.__start_callback, (cb, usr))
 
     def register_output_callback(self, cb, usr):
-        if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_output_callback function on %s" % (self.object,))
+        if self.object != "xccdf_policy_model":
+            raise TypeError("Wrong call of register_output_callback function on %s" % (self.object,))
         return OSCAP.xccdf_policy_model_register_output_callback_py(self.instance, self.__output_callback, (cb, usr))
 
     def register_engine_oval(self, sess):
-        if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_oval function on %s" % (self.object,))
+        if self.object != "xccdf_policy_model":
+            raise TypeError("Wrong call of register_engine_oval function on %s" % (self.object,))
         return OSCAP.xccdf_policy_model_register_engine_oval(self.instance, sess.instance)
 
     def register_engine_sce(self, parameters):
-        if self.object != "xccdf_policy_model": raise TypeError("Wrong call of register_engine_sce function on %s" % (self.object,))
+        if self.object != "xccdf_policy_model":
+            raise TypeError("Wrong call of register_engine_sce function on %s" % (self.object,))
         return OSCAP.xccdf_policy_model_register_engine_sce(self.instance, parameters.instance)
 
     def agent_eval_system(self, sess, cb, usr):
-        if self.object != "oval": raise TypeError("Wrong call of oval_agent_eval_system function on %s" % (self.object,))
+        if self.object != "oval":
+            raise TypeError("Wrong call of oval_agent_eval_system function on %s" % (self.object,))
         return OSCAP.oval_agent_eval_system_py(sess.instance, self.__output_callback, (cb, usr))
 
     def query_sysinfo(self):
-        if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_sysinfo function on %s" % (self.object,))
+        if self.object != "oval_probe_session_t":
+            raise TypeError("Wrong call of oval_probe_session_query_sysinfo function on %s" % (self.object,))
         return OSCAP.oval_probe_session_query_sysinfo(self.instance)
 
     def query_objects(self):
-        if self.object != "oval_probe_session_t": raise TypeError("Wrong call of oval_probe_session_query_objects function on %s" % (self.object,))
+        if self.object != "oval_probe_session_t":
+            raise TypeError("Wrong call of oval_probe_session_query_objects function on %s" % (self.object,))
         return OSCAP.oval_probe_session_query_objects(self.instance)
 
     def validate_document(self, file, doctype, version, cb, usr):
-        if self.object != "oscap": raise TypeError("Wrong call of validate_document function on %s" % (self.object,))
+        if self.object != "oscap":
+            raise TypeError("Wrong call of validate_document function on %s" % (self.object,))
         return OSCAP.oscap_validate_document_py(file, doctype, version, self.__output_callback, (cb, usr))
 
     def text_xccdf_substitute(self, text, cb, usr):
-        if self.object != "oscap": raise TypeError("Wrong call of text_xccdf_substitute function on %s" % (self.object,))
+        if self.object != "oscap":
+            raise TypeError("Wrong call of text_xccdf_substitute function on %s" % (self.object,))
         return OSCAP.oscap_text_xccdf_substitute_py(text, cb, usr)
 
     """ ********* Implementation of required high level functions ********* """
@@ -348,18 +372,21 @@ class OSCAP_Object(object):
 
         if self.object != "xccdf_item":
             item = self.to_item()
-            if item == None: return None
-        else: item = self
+            if item is None:
+                return None
+        else:
+            item = self
         values = []
 
         if item.type == OSCAP.XCCDF_BENCHMARK:
-            values.extend( item.to_benchmark().values )
+            values.extend(item.to_benchmark().values)
         elif item.type == OSCAP.XCCDF_GROUP:
-            values.extend( item.to_group().values )
-        else: return []
+            values.extend(item.to_group().values)
+        else:
+            return []
 
         for content in item.content:
-            values.extend( content.get_all_values() )
+            values.extend(content.get_all_values())
 
         return values
 
@@ -369,7 +396,8 @@ class OSCAP_Object(object):
         If check is not None, then it is (very ugly) recursive call
         """
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_values_by_rule_id\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"get_values_by_rule_id\" function. Should be xccdf_policy (have %s)" %(self.object,))
         items = []
         values = []
 
@@ -386,7 +414,8 @@ class OSCAP_Object(object):
 
         # Case 2: check is None -- this is regular call of function
         item = self.model.benchmark.get_item(id)
-        if item.type != OSCAP.XCCDF_RULE: raise TypeError("Wrong type of item with id \"%s\". Expected XCCDF_RULE, got " % (id, item.type))
+        if item.type != OSCAP.XCCDF_RULE:
+            raise TypeError("Wrong type of item with id \"%s\". Expected XCCDF_RULE, got " % (id, item.type))
         rule = item.to_rule()
         for check in rule.checks:
             if check.complex:
@@ -413,13 +442,18 @@ class OSCAP_Object(object):
         item["descs"] = {}
         # Titles / Questions
         if len(value.question):
-            for question in value.question: item["titles"][question.lang] = question.text
+            for question in value.question:
+                item["titles"][question.lang] = question.text
         else:
-            for title in value.title: item["titles"][title.lang] = title.text
-        if item["lang"] not in item["titles"]: item["titles"][item["lang"]] = ""
+            for title in value.title:
+                item["titles"][title.lang] = title.text
+        if item["lang"] not in item["titles"]:
+            item["titles"][item["lang"]] = ""
         # Descriptions
-        for desc in value.description: item["descs"][desc.lang] = desc.text
-        if item["lang"] not in item["descs"]: item["descs"][item["lang"]] = ""
+        for desc in value.description:
+            item["descs"][desc.lang] = desc.text
+        if item["lang"] not in item["descs"]:
+            item["descs"][item["lang"]] = ""
         # Type
         item["type"] = value.type
         # Values
@@ -427,7 +461,8 @@ class OSCAP_Object(object):
         item["choices"] = {}
         for instance in value.instances:
             item["options"][instance.selector] = instance.value
-            if len(instance.choices): item["choices"][instance.selector] = instance.choices
+            if len(instance.choices):
+                item["choices"][instance.selector] = instance.choices
 
         #Get regexp match from match of elements
 
@@ -447,8 +482,10 @@ class OSCAP_Object(object):
                     item["selected"] = ('', s_value.value)
 
         if "selected" not in item:
-            if "" in item["options"]: item["selected"] = ('', item["options"][""])
-            else: item["selected"] = ('', '')
+            if "" in item["options"]:
+                item["selected"] = ('', item["options"][""])
+            else:
+                item["selected"] = ('', '')
 
         """
         print "ID: \r\t\t", item["id"]
@@ -480,7 +517,8 @@ class OSCAP_Object(object):
             "match"   - Regexp that input must match
             "selected"  - tuple (selector, value) of default or choosen value instance"""
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"get_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
         items = []
 
         for value in self.model.benchmark.get_all_values():
@@ -500,8 +538,10 @@ class OSCAP_Object(object):
           items = [value]
           xccdf_policy.set_tailor_items(items)"""
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"set_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
-        if len(items) == 0: return
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"set_tailor_items\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if len(items) == 0:
+            return
 
         # items = [{id, value}]
         for item in items:
@@ -526,11 +566,13 @@ class OSCAP_Object(object):
                 r_value = xccdf.refine_value()
                 r_value.item = item["id"]
                 r_value.selector = selector
-                if oper != None: r_value.oper = oper
+                if oper != None:
+                    r_value.oper = oper
                 if remarks != None:
-                    for remark in remarks: r_value.add_remark(remark)
+                    for remark in remarks:
+                        r_value.add_remark(remark)
                 self.profile.add_refine_value(r_value)
-            elif selector == None:
+            elif selector is None:
                 s_value = xccdf.setvalue()
                 s_value.item = item["id"]
                 s_value.value = item["value"]
@@ -544,13 +586,17 @@ class OSCAP_Object(object):
           xccdf_policy.set_refine_rule("rul-2.1", severity=oscap.XCCDF_SEVERITY_HIGH)
         """
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"set_refine_rule\" function. Should be xccdf_policy (have %s)" %(self.object,))
-        if id == None: raise AttributeError("Missing ID of rule in xccdf_policy.set_refine_rule function")
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"set_refine_rule\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if id is None:
+            raise AttributeError("Missing ID of rule in xccdf_policy.set_refine_rule function")
 
         rule = self.model.benchmark.item(id).to_rule()
-        if rule == None: raise Exception("Rule \"%s\" not found in benchmark" % (id,))
+        if rule is None:
+            raise Exception("Rule \"%s\" not found in benchmark" % (id,))
 
-        if not weight and not severity and not role: return
+        if not weight and not severity and not role:
+            return
 
         refine = xccdf.refine_rule()
         refine.item = id
@@ -580,7 +626,8 @@ class OSCAP_Object(object):
         """xccdf_policy.get_all_rules() -- Get all rules/selectors and titles from benchmark
         """
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"get_all_rules\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"get_all_rules\" function. Should be xccdf_policy (have %s)" %(self.object,))
         pass #TODO
 
 
@@ -594,7 +641,8 @@ class OSCAP_Object(object):
           # We want to have selected only first rule and second group
           xccdf_policy.set_rules(["id-rule-1", "id-group-2"])"""
 
-        if self.object != "xccdf_policy": raise TypeError("Wrong call of \"set_rules\" function. Should be xccdf_policy (have %s)" %(self.object,))
+        if self.object != "xccdf_policy":
+            raise TypeError("Wrong call of \"set_rules\" function. Should be xccdf_policy (have %s)" %(self.object,))
 
         for select in self.selects:
             if select.item not in rules:
@@ -633,7 +681,7 @@ class OSCAP_Object(object):
                 sess.free()
         """
 
-        if path == None:
+        if path is None:
             return None
 
         OSCAP.oscap_init()
@@ -641,35 +689,43 @@ class OSCAP_Object(object):
         f_XCCDF = path
 
         benchmark = self.benchmark_import(f_XCCDF)
-        if benchmark.instance == None:
-            if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
-            else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+        if benchmark.instance is None:
+            if OSCAP.oscap_err():
+                desc = OSCAP.oscap_err_desc()
+            else:
+                desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
             raise ImportError("Benchmark \"%s\" loading failed: %s" % (f_XCCDF, desc))
         policy_model = self.policy_model(benchmark)
         files = policy_model.get_files()
         def_models = []
         sessions = {}
-        names={}
+        names = {}
         for file in files.strings:
             if file in paths:
                 f_OVAL = paths[file]
-            else: f_OVAL = os.path.join(dirname, file)
+            else:
+                f_OVAL = os.path.join(dirname, file)
             if os.path.exists(f_OVAL):
                 def_model = oval.definition_model_import(f_OVAL)
-                if def_model.instance == None:
-                    if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
-                    else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+                if def_model.instance is None:
+                    if OSCAP.oscap_err():
+                        desc = OSCAP.oscap_err_desc()
+                    else:
+                        desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
                     raise ImportError("Cannot import definition model for \"%s\": %s" % (f_OVAL, desc))
                 def_models.append(def_model)
                 sess = oval.agent_new_session(def_model, file)
-                if sess == None or sess.instance == None:
-                    if OSCAP.oscap_err(): desc = OSCAP.oscap_err_desc()
-                    else: desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
+                if sess is None or sess.instance is None:
+                    if OSCAP.oscap_err():
+                        desc = OSCAP.oscap_err_desc()
+                    else:
+                        desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
                     raise ImportError("Cannot create agent session for \"%s\": %s" % (f_OVAL, desc))
                 sessions[file] = sess
                 names[file] = [sess, def_model]
                 policy_model.register_engine_oval(sess)
-            else: print "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,)
+            else:
+                print("WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,))
         files.free()
         return {"def_models":def_models, "sessions":sessions, "policy_model":policy_model, "xccdf_path":f_XCCDF, "names":names}
 
@@ -810,9 +866,9 @@ class CPE_Class(OSCAP_Object):
     def __init__(self):
         dict.__setattr__(self, "object", "cpe")
         dict.__setattr__(self, "version", "CPE Lang: %s; CPE Dict: %s; CPE Name: %s"
-                % (OSCAP.cpe_lang_model_supported(),
-                    OSCAP.cpe_dict_model_supported(),
-                    OSCAP.cpe_name_supported()))
+                         % (OSCAP.cpe_lang_model_supported(),
+                            OSCAP.cpe_dict_model_supported(),
+                            OSCAP.cpe_name_supported()))
         pass
 
     def __repr__(self):
@@ -877,12 +933,12 @@ using OSCAP functions should look like:
     openscap.common.debug.seterr(err) (this will reflect oscap_debug_seterr() func)
 """
 
-ds    = DS_Class()
+ds = DS_Class()
 xccdf = XCCDF_Class()
-oval  = OVAL_Class()
-cve   = CVE_Class()
-cce   = CCE_Class()
-cpe   = CPE_Class()
-cvss  = CVSS_Class()
-sce   = SCE_Class()
+oval = OVAL_Class()
+cve = CVE_Class()
+cce = CCE_Class()
+cpe = CPE_Class()
+cvss = CVSS_Class()
+sce = SCE_Class()
 common = OSCAP_Object("oscap")

@@ -1,0 +1,32 @@
+<oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <generator>
+    <oval:product_name>python</oval:product_name>
+    <oval:product_version>2.6.6</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2011-09-21T13:44:00</oval:timestamp>
+  </generator>
+  <definitions>
+    <definition class="compliance" id="oval:ssg:def:447" version="1">
+      <metadata>
+        <title>System Accounts Do Not Run a Shell</title>
+        <description>The root account is the only system account that should have a login shell.</description>
+      </metadata>
+      <criteria>
+        <criterion comment="tests for the presence of login shells (not /sbin/nologin) for system accounts in /etc/passwd file" test_ref="oval:ssg:tst:448"/>
+      </criteria>
+    </definition>
+  </definitions>
+  <tests>
+    <ind:textfilecontent54_test check="all" check_existence="none_exist" comment="tests for the presence of login shells (not /sbin/nologin) for system accounts in /etc/passwd file" id="oval:ssg:tst:448" version="1">
+      <ind:object object_ref="oval:ssg:obj:1508"/>
+    </ind:textfilecontent54_test>
+  </tests>
+
+  <objects>
+    <ind:textfilecontent54_object id="oval:ssg:obj:1508" version="1">
+      <ind:filepath>TEST_FILE</ind:filepath>
+      <ind:pattern operation="pattern match">^(?!root).*:x:[\d]*:0*([0-9]{1,2}|[1-4][0-9]{2}):[^:]*:[^:]*:(?!\/sbin\/nologin|\/bin\/sync|\/sbin\/shutdown|\/sbin\/halt).*$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+  </objects>
+</oval_definitions>

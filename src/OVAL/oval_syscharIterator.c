@@ -48,7 +48,7 @@ struct oval_syschar_iterator *oval_syschar_iterator_new(struct oval_smc *mapping
 
 void oval_syschar_iterator_free(struct oval_syschar_iterator *it)
 {
-	return oval_smc_iterator_free((struct oval_smc_iterator *) it);
+	oval_smc_iterator_free((struct oval_smc_iterator *) it);
 }
 
 bool oval_syschar_iterator_has_more(struct oval_syschar_iterator *it)

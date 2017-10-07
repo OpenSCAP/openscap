@@ -47,6 +47,8 @@
 #include <sys/mntent.h>
 #include <libzonecfg.h>
 #include <sys/avl.h>
+#elif defined(_AIX)
+#include "fts_sun.h"
 #else
 #include <fts.h>
 #endif
@@ -133,6 +135,9 @@ static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 #if defined(__SVR4) && defined(__sun)
 #ifndef MNTTYPE_SMB
 #define MNTTYPE_SMB	"smb"
+#endif
+#ifndef MNTTYPE_SMBFS
+#define MNTTYPE_SMBFS	"smbfs"
 #endif
 #ifndef MNTTYPE_PROC
 #define MNTTYPE_PROC	"proc"
@@ -233,7 +238,7 @@ static void free_zones_path_list()
 	avl_destroy(&avl_tree_list);
 }
 
-static bool valid_local_zone(char *path)
+static bool valid_local_zone(const char *path)
 {
 	zone_path_t temp;
 	avl_index_t where;

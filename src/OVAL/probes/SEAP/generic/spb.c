@@ -142,7 +142,7 @@ int spb_pick (spb_t *spb, spb_size_t start, spb_size_t size, void *dst)
                 if (size < l_len)
                         l_len = (size_t)size;
 
-                memcpy (b_dst, spb->buffer[b_idx].base + l_off, l_len);
+                memcpy (b_dst, (char *)(spb->buffer[b_idx].base) + l_off, l_len);
 
                 b_dst += l_len;
                 size  -= l_len;
@@ -200,7 +200,7 @@ int spb_pick_cb (spb_t *spb, spb_size_t start, spb_size_t size, void *cb (void *
                 if (size < l_len)
                         l_len = (size_t)size;
 
-                cbarg = cb (cbarg, spb->buffer[b_idx].base + l_off, l_len);
+                cbarg = cb (cbarg, (char *)(spb->buffer[b_idx].base) + l_off, l_len);
                 size -= l_len;
 
                 while (++b_idx < spb->btotal && size > 0) {

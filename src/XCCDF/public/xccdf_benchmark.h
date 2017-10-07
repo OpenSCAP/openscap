@@ -177,6 +177,15 @@ typedef enum {
 	XCCDF_RESULT_FIXED	        ///< Rule failed, but was later fixed
 } xccdf_test_result_type_t;
 
+/**
+ * Results of matching profile suffixes against set of profile IDs.
+ */
+enum {
+    OSCAP_PROFILE_MATCH_OK         = 0, // successful profile ID match
+    OSCAP_PROFILE_NO_MATCH         = 1, // no profile ID was matched
+    OSCAP_PROFILE_MULTIPLE_MATCHES = 2, // multiple profile IDs were matched
+};
+
 /*--------------------*\
 |       Typedefs       |
 \*--------------------*/
@@ -961,6 +970,28 @@ struct xccdf_value *xccdf_benchmark_append_new_value(struct xccdf_benchmark *, c
  * @return the handle of the new rule.
  */
 struct xccdf_rule *xccdf_benchmark_append_new_rule(struct xccdf_benchmark *, const char *id);
+
+/**
+ * Match a profile suffix agains profiles present in the given benchmark.
+ * @memberof xccdf_benchmark
+ * @param bench The benchmark where to search for profiles.
+ * @param profile_suffix The profile suffix we match against.
+ * @param match_status Tells us what exactly went wrong.
+ * @returns The complete profile ID.
+ * @retval NULL is returned in case of error. Details might be found through match_status
+ */
+const char *xccdf_benchmark_match_profile_id(struct xccdf_benchmark *bench, const char *profile_suffix, int *match_status);
+
+/**
+ * Match a profile suffix agains profiles present in the given benchmark.
+ * @memberof xccdf_benchmark
+ * @param tailoring The tailoring where to search for profiles.
+ * @param profile_suffix The profile suffix we match against.
+ * @param match_status Tells us what exactly went wrong.
+ * @returns The complete profile ID.
+ * @retval NULL is returned in case of error. Details might be found through match_status
+ */
+const char *xccdf_tailoring_match_profile_id(struct xccdf_tailoring *tailoring, const char *profile_suffix, int *match_status);
 
 /// @memberof xccdf_plain_text
 struct xccdf_plain_text *xccdf_plain_text_new(void);
@@ -1814,6 +1845,10 @@ const struct xccdf_version_info* xccdf_item_get_schema_version(struct xccdf_item
  */
 struct oscap_string_iterator *xccdf_item_get_metadata(const struct xccdf_item *item);
 
+/**
+ * @memberof xccdf_benchmark
+ */
+struct xccdf_profile *xccdf_benchmark_get_profile_by_id(struct xccdf_benchmark *benchmark, const char *profile_id);
 /**
  * @memberof xccdf_benchmark
  */

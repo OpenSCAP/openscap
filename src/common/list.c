@@ -393,7 +393,7 @@ struct oscap_htable *oscap_htable_new1(oscap_compare_func cmp, size_t hsize)
 		return NULL;
 	t->hsize = hsize;
 	t->itemcount = 0;
-	t->table = calloc(hsize, sizeof(struct oscap_list_item *));
+	t->table = calloc(hsize, sizeof(struct oscap_htable_item *));
 	if (t->table == NULL) {
 		free(t);
 		return NULL;

@@ -2185,7 +2185,6 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 									     struct oval_collection *value_collection)
 {
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
-	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int rc;
 	char *pattern;
 	int erroffset = -1;
@@ -2199,6 +2198,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_REGEX_CAPTURE(ova
 		return SYSCHAR_FLAG_ERROR;
 	}
 
+	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	if (oval_component_iterator_has_more(subcomps)) {	//Only first component is considered
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
 		struct oval_collection *subcoll = oval_collection_new();

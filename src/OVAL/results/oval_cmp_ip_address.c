@@ -36,6 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 
 #include "oval_definitions.h"
 #include "oval_types.h"

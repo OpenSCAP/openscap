@@ -1,71 +1,159 @@
-.TH oscap-vm "8" "October 2015" "Red Hat, Inc." "System Administration Utilities"
+.TH oscap-vm "8" "September 2017" "Red Hat, Inc." "System Administration Utilities"
+
 .SH NAME
 oscap-vm \- Tool for offline SCAP evaluation of virtual machines.
+
+.SH SYNOPSIS
+\fBoscap-vm domain\fR \fIVM_DOMAIN [OSCAP_OPTIONS] INPUT_CONTENT
+
+\fBoscap-vm image\fR \fIVM_STORAGE_IMAGE [OSCAP_OPTIONS] INPUT_CONTENT
+
 .SH DESCRIPTION
-oscap-vm mounts given virtual machine and runs oscap tool on it.
+\fBoscap-vm\fR performs SCAP evaluation of virtual machine domains or virtual machine images.
 
-The tool requires bash, guestmount, mktemp and umount to perform OVAL and XCCDF
-evaluation of virtual machines.
+The tool mounts the filesystem of given virtual machine and runs \fBoscap(8)\fR to asses the mounted filesystem. The virtual machine is mounted read only, which prevents damaging of the virtual machine during the scan. The evaluation is performed offline which means that it is performed from the host and no additional software is installed in the virtual machine.
 
-Usage of the tool mimics usage and options of oscap(8) tool.
+\fBoscap-vm\fR is a convenience wrapper on the top of the \fBoscap(8)\fR utility. Most of the SCAP capabilities provided by \fBoscap(8)\fR are available in \fBoscap-vm\fR as well.
+
+.SH NOTICE
+To mount the virtual machine filesystem, \fBoscap-vm\fR uses libguestfs to access the filestystem and FUSE (the "filesystem in userspace") to make it a mountable device.
+
+The tool requires bash, guestmount, mktemp and umount to work properly. If \fBguestmount(1)\fR command is not present on your system, the tool will try to use older \fBfusermount(1)\fR utility instead.
 
 .SH USAGE
+Usage of the tool mimics usage and options of \fBoscap(8)\fR tool.
+
+The type of scan target (either \fIdomain\fR or \fIimage\fR) has to be specified first. Then identify the target by the domain name (name of a named libvirt domain) or the image path, respectively.
+Domain UUIDs can be used instead of names. Any domains including the running domains can be scanned.
+
+The rest of the options are passed directly to \fBoscap(8)\fR utility. For the detailed description of its options please refer to \fBoscap(8)\fR manual page. However some of its options are not supported in \fBoscap-vm\fR because offline evaluation is used.
+
+Last argument is SCAP content input file.
+
 .SS Evaluation of XCCDF content
-$ oscap-vm image VM_STORAGE_IMAGE xccdf eval [options] INPUT_CONTENT
 
-$ oscap-vm domain VM_DOMAIN xccdf eval [options] INPUT_CONTENT
+\fBxccdf eval\fR module evaluates XCCDF files or SCAP source datastreams. Result of each rule is printed to standard output, including rule title, rule id and security identifier (CVE, CCE).
 
-supported oscap xccdf eval options are:
-  --profile
-  --tailoring-file
-  --tailoring-id
-  --cpe (external OVAL dependencies are not supported yet!)
-  --oval-results
-  --sce-results
-  --check-engine-results
-  --results
-  --results-arf
-  --report
-  --skip-valid
-  --fetch-remote-resources
-  --progress
-  --datastream-id
-  --xccdf-id
-  --benchmark-id
+.PP
+.nf
+.RS
+\fBoscap-vm image \fIVM_STORAGE_IMAGE \fBxccdf eval \fI[options] INPUT_CONTENT\fR
+\fBoscap-vm domain \fIVM_DOMAIN \fBxccdf eval \fI[options] INPUT_CONTENT\fR
+.RE
+.fi
+.PP
+
+Supported oscap xccdf eval options are:
+  \-\-profile <name>
+  \-\-rule <name>
+  \-\-tailoring-file <file>
+  \-\-tailoring-id <component-id>
+  \-\-cpe <name> (external OVAL dependencies are not supported yet!)
+  \-\-oval-results
+  \-\-sce-results
+  \-\-check-engine-results
+  \-\-results <file>
+  \-\-results-arf <file>
+  \-\-thin-results
+  \-\-without-syschar
+  \-\-report <file>
+  \-\-skip-valid
+  \-\-fetch-remote-resources
+  \-\-progress
+  \-\-datastream-id <id>
+  \-\-xccdf-id <id>
+  \-\-benchmark-id <id>
+  \-\-verbose <verbosity_level>
+  \-\-verbose\-log\-file <file>
+
+Remediation of virtual machines is not supported.
 
 .SS Evaluation of OVAL content
-$ oscap-vm image VM_STORAGE_IMAGE oval eval [options] INPUT_CONTENT
 
-$ oscap-vm domain VM_DOMAIN oval eval [options] INPUT_CONTENT
+\fBoval eval\fR module scans the system and evaluate definitions from given OVAL Definitions file.
 
-supported oscap oval eval options are:
-  --id
-  --variables
-  --directives
-  --results
-  --report
-  --skip-valid
-  --datastream-id
-  --oval-id
-  --probe-root
+.PP
+.nf
+.RS
+\fBoscap-vm image \fIVM_STORAGE_IMAGE \fBoval eval \fI[options] INPUT_CONTENT\fR
+\fBoscap-vm domain \fIVM_DOMAIN \fBoval eval \fI[options] INPUT_CONTENT\fR
+.RE
+.fi
+.PP
+
+Supported oscap oval eval options are:
+  \-\-id <definition-id>
+  \-\-variables <file>
+  \-\-directives <file>
+  \-\-without-syschar
+  \-\-results <file>
+  \-\-report <file>
+  \-\-skip-valid
+  \-\-datastream-id <id>
+  \-\-oval-id <id>
+  \-\-probe-root <dir>
+  \-\-verbose <verbosity_level>
+  \-\-verbose\-log\-file <file>
 
 .SS Collection of OVAL System Characteristic
-$ oscap-vm image VM_STORAGE_IMAGE oval collect [options] INPUT_CONTENT
 
-$ oscap-vm domain VM_DOMAIN oval collect [options] INPUT_CONTENT
+\fBoval collect\fR module scans the system and collects items according to given OVAL Definitions file.
 
-supported oscap oval collect options are:
-  --id
-  --syschar
-  --variables
-  --skip-valid
+.PP
+.nf
+.RS
+\fBoscap-vm image \fIVM_STORAGE_IMAGE \fBoval collect \fI[options] INPUT_CONTENT\fR
+\fBoscap-vm domain \fIVM_DOMAIN \fBoval collect \fI[options] INPUT_CONTENT\fR
+.RE
+.fi
+.PP
 
+Supported oscap oval collect options are:
+  \-\-id <object>
+  \-\-syschar <file>
+  \-\-variables <file>
+  \-\-skip-valid
+  \-\-verbose <verbosity_level>
+  \-\-verbose\-log\-file <file>
+
+.SH EXAMPLES
+
+Evaluate a Red Hat Enterprise Linux 7 virtual domain for compliance with the DISA STIG for Red Hat Enterprise Linux and generate a report.
+.PP
+.nf
+.RS
+oscap-vm domain rhel7 xccdf eval \\
+\-\-report report.html \-\-results results.xml \\
+\-\-profile stig-rhel7-disa \\
+/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+.RE
+.fi
+.PP
+
+Evaluate a Red Hat Enterprise Linux 6 virtual machine image for software vulnerabilities using OVAL definitions and generate a report.
+.PP
+.nf
+.RS
+oscap-vm image /var/lib/libvirt/images/rhel6.qcow2 oval eval \\
+\-\-report report.html \-\-results results.xml \\
+com.redhat.rhsa-RHEL6.xml
+.RE
+.fi
+.PP
+
+.SH EXIT STATUS
+Normally, the exit status is 0 when operation finished successfully and 1 otherwise. In cases when oscap-vm performs evaluation of the system it may return 2 indicating success of the operation but incompliance of the assessed system.
 
 .SH REPORTING BUGS
-.nf
 Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH SEE ALSO
+oscap(8), scap-security-guide(8)
+
+For detailed information please visit OpenSCAP website: https://www.open-scap.org
 
 .SH AUTHORS
 .nf
 Martin Preisler <mpreisle@redhat.com>
+Jan Černý <jcerny@redhat.com>
 .fi

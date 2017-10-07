@@ -52,6 +52,13 @@
 # include <sys/param.h>
 # include <sys/ucred.h>
 # include <sys/mount.h>
+#elif defined(_AIX)
+# include <unistd.h>
+# include <mntent.h>
+# include <fshelp.h>
+# include <sys/vfs.h>
+# include <sys/vmount.h>
+# define _PATH_MOUNTED MOUNTED
 #else
 # error "Sorry, your OS isn't supported."
 #endif
@@ -105,12 +112,12 @@ static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
 	return (0);
 }
 
-#if defined(__linux__)
+#if defined(__linux__) || defined(_AIX)
 
 #define DEVID_ARRAY_SIZE 16
 #define DEVID_ARRAY_ADD  8
 
-
+#if defined(__linux__)
 static int
 is_local_fs(struct mntent *ment)
 {
@@ -147,6 +154,37 @@ is_local_fs(struct mntent *ment)
 #endif
 }
 
+#elif defined(_AIX)
+static int
+is_local_fs(struct mntent *ment)
+{
+	int i;
+	struct vfs_ent *e;
+
+	static const int remote_fs_types[] = {
+		MNT_NFS,
+		MNT_NFS3,
+		MNT_AUTOFS, /* remote? */
+		MNT_NFS4,
+		MNT_RFS4,
+		MNT_CIFS,
+		MNT_BADVFS  /* end mark */
+	};
+
+	for (i = 0; remote_fs_types[i] != MNT_BADVFS; i++) {
+		e = getvfsbytype(remote_fs_types[i]);
+		if (e != NULL
+		    && e->vfsent_name != NULL
+		    && strcmp(ment->mnt_type, e->vfsent_name) == 0) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+#endif /* _AIX */
+
 static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 {
 	int e;
@@ -169,6 +207,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	if (lfs->ids == NULL) {
 		e = errno;
 		free(lfs);
+		endmntent(fp);
 		errno = e;
 		return (NULL);
 	}
@@ -192,7 +231,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 		memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
 	}
 
-	fclose(fp);
+	endmntent(fp);
 
 	lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
 	lfs->cnt = (lfs->ids == NULL ? 0 : i);
@@ -243,7 +282,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	FILE *fp;
 	size_t i;
 
-	struct mnttab *ment;
+	struct mnttab mentbuf;
 	struct stat st;
 
 	fp = fopen(MNTTAB, "r");
@@ -268,9 +307,9 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	i = 0;
 
 	if (fs == NULL) {
-		while ((getmntent(fp, ment)) != 0) {
+		while ((getmntent(fp, &mentbuf)) == 0) {
                         /* TODO: Is this check reliable? */
-                        if (stat (ment->mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
+                        if (stat (mentbuf.mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
 
 				if (i >= lfs->cnt) {
 					lfs->cnt += DEVID_ARRAY_ADD;
@@ -281,9 +320,9 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 			}
 		}
 	} else {
-		while ((getmntent(fp, ment)) != 0) {
+		while ((getmntent(fp, &mentbuf)) == 0) {
 
-			if (match_fs(ment->mnt_fstype, fs, fs_cnt)) {
+			if (match_fs(mentbuf.mnt_fstype, fs, fs_cnt)) {
 
 				if (i >= lfs->cnt) {
 					lfs->cnt += DEVID_ARRAY_ADD;

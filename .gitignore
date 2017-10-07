@@ -6,6 +6,7 @@
 .*.swp
 Makefile
 Makefile.in
+tags
 
 *~
 

@@ -76,7 +76,7 @@ Authors:
             <div class="col-md-5 well well-lg horizontal-scroll">
                 <table class="table table-bordered">
                     <tr>
-                        <th>Target machine</th>
+                        <th>Evaluation target</th>
                         <td>
                             <xsl:value-of select="$testresult/cdf:target/text()"/>
                         </td>

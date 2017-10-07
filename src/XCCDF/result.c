@@ -196,8 +196,14 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 		return;
 
 	_xccdf_result_clear_metadata(XITEM(result));
+
+	/* override target name by environment variable */
+	const char *target_hostname = getenv("OSCAP_EVALUATION_TARGET");
+	if (target_hostname == NULL) {
+		target_hostname = sname.nodename;
+	}
 	/* store target name */
-	xccdf_result_add_target(result, sname.nodename);
+	xccdf_result_add_target(result, target_hostname);
 	_xccdf_result_fill_scanner(result);
 	_xccdf_result_fill_identity(result);
 

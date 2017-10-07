@@ -138,7 +138,9 @@ struct oscap_action {
 	char *file;
 
 	int verbosity;
-        int doctype;
+	int show_profiles_only;
+	int provide_machine_readable_output;
+	int doctype;
 	int force;
 	int validate;
 	int schematron;
@@ -167,6 +169,9 @@ int oscap_module_call(struct oscap_action *action);
 void oscap_print_error(void);
 bool check_verbose_options(struct oscap_action *action);
 void download_reporting_callback(bool warning, const char *format, ...);
+
+
+int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
 extern struct oscap_module OSCAP_DS_MODULE;

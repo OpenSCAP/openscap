@@ -41,7 +41,9 @@ static bool getopt_cve(int argc, char **argv, struct oscap_action *action);
 static int app_cve_validate(const struct oscap_action *action);
 static int app_cve_find(const struct oscap_action *action);
 
-static struct oscap_module* CVE_SUBMODULES[];
+#define CVE_SUBMODULES_NUM 3 /* See actual CVE_SUBMODULES array
+				initialization below. */
+static struct oscap_module* CVE_SUBMODULES[CVE_SUBMODULES_NUM];
 
 struct oscap_module OSCAP_CVE_MODULE = {
     .name = "cve",
@@ -70,7 +72,7 @@ static struct oscap_module CVE_FIND_MODULE = {
     .func = app_cve_find
 };
 
-static struct oscap_module* CVE_SUBMODULES[] = {
+static struct oscap_module* CVE_SUBMODULES[CVE_SUBMODULES_NUM] = {
     &CVE_VALIDATE_MODULE,
     &CVE_FIND_MODULE,
     NULL

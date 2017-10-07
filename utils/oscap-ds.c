@@ -41,7 +41,9 @@
 #include "oscap-tool.h"
 #include <oscap_debug.h>
 
-static struct oscap_module* DS_SUBMODULES[];
+#define DS_SUBMODULES_NUM 8 /* See actual DS_SUBMODULES array
+				initialization below. */
+static struct oscap_module* DS_SUBMODULES[DS_SUBMODULES_NUM];
 bool getopt_ds(int argc, char **argv, struct oscap_action *action);
 int app_ds_sds_split(const struct oscap_action *action);
 int app_ds_sds_compose(const struct oscap_action *action);
@@ -144,7 +146,7 @@ static struct oscap_module DS_RDS_VALIDATE_MODULE = {
 	.func = app_ds_rds_validate
 };
 
-static struct oscap_module* DS_SUBMODULES[] = {
+static struct oscap_module* DS_SUBMODULES[DS_SUBMODULES_NUM] = {
 	&DS_SDS_SPLIT_MODULE,
 	&DS_SDS_COMPOSE_MODULE,
 	&DS_SDS_ADD_MODULE,

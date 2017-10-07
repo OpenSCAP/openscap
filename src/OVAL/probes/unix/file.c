@@ -67,6 +67,7 @@
 #undef OS_SOLARIS
 #undef OS_SUNOS
 #undef OS_WINDOWS
+#undef OS_AIX
 
 #if defined(__FreeBSD__)
 # define OS_FREEBSD
@@ -80,6 +81,8 @@
 # endif
 #elif defined(_WIN32)
 # define OS_WINDOWS
+#elif defined(_AIX)
+# define OS_AIX
 #else
 # error "Sorry, your OS isn't supported."
 #endif
@@ -172,13 +175,11 @@ static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
 {
 	uint64_t t = (
 #if defined(OS_FREEBSD)
-# if (__STDC_VERSION__ >= 199901L)
 		(uint64_t) st->st_atimespec.tv_sec
-# else
-		(uint64_t) st->st_atimespec.tv_sec
-# endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
 		(uint64_t) st->st_atim.tv_sec
+#else /* Use the legacy field */
+		(uint64_t) st->st_atime
 #endif
 		);
 
@@ -193,13 +194,11 @@ static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
 {
 	uint64_t t = (
 #if defined(OS_FREEBSD)
-# if (__STDC_VERSION__ >= 199901L)
 		(uint64_t) st->st_ctimespec.tv_sec
-# else
-		(uint64_t) st->st_ctimespec.tv_sec
-# endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
 		(uint64_t) st->st_ctim.tv_sec
+#else /* Use the legacy field */
+		(uint64_t) st->st_ctime
 #endif
 		);
 
@@ -214,13 +213,11 @@ static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
 {
 	uint64_t t = (
 #if defined(OS_FREEBSD)
-# if (__STDC_VERSION__ >= 199901L)
 		(uint64_t) st->st_mtimespec.tv_sec
-# else
-		(uint64_t) st->st_mtimespec.tv_sec
-# endif
 #elif defined(OS_LINUX) || defined(OS_SOLARIS)
 		(uint64_t) st->st_mtim.tv_sec
+#else /* Use the legacy field */
+		(uint64_t) st->st_mtime
 #endif
 		);
 
@@ -233,20 +230,17 @@ static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
 
 static SEXP_t *get_size(struct stat *st, SEXP_t *sexp)
 {
-#if defined(_FILE_OFFSET_BITS)
-# if   _FILE_OFFSET_BITS == 64
-	return SEXP_number_newu_64_r(sexp, st->st_size);
-# elif _FILE_OFFSET_BITS == 32
-	return SEXP_number_newu_32_r(sexp, st->st_size);
-# else
-#  error "Invalid _FILE_OFFSET_BITS value"
-	return NULL;
-# endif
-#elif defined(LARGE_FILE_SOURCE)
-	return SEXP_number_newu_64_r(sexp, st->st_size);
-#else
-	return SEXP_number_newu_32_r(sexp, st->st_size);
-#endif
+	switch (sizeof(st->st_size)) {
+	case 8:
+		return SEXP_number_newu_64_r(sexp, st->st_size);
+	case 4:
+		return SEXP_number_newu_32_r(sexp, st->st_size);
+	default: /* Should not happen. */
+		abort();
+
+		/* NOTREACHED */
+		return NULL;
+	}
 }
 
 #define MODEP(statp, bit) ((statp)->st_mode & (bit) ? gr_true : gr_false)

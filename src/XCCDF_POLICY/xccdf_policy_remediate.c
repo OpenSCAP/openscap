@@ -631,16 +631,15 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	xccdf_fix_free(cfix);
 
 	int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
-	if (ret != 0)
-		goto cleanup;
+	if (ret != 0) {
+		free(fix_text);
+		return ret;
+	}
 	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
-	if (ret != 0)
-		goto cleanup;
-	fix_text = NULL;
+	if (ret != 0) {
+		return ret;
+	}
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
-
-cleanup:
-	free(fix_text);
 	return ret;
 }
 
@@ -696,7 +695,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		// Description
 		struct oscap_text_iterator *description_iterator = xccdf_profile_get_description(profile);
 		char *profile_description = description_iterator != NULL ?
-				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : "Not available";
+				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : NULL;
 		oscap_text_iterator_free(description_iterator);
 
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
@@ -705,11 +704,34 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
 
+		if (NULL != profile_description) {
+			size_t new_lines = 0;
+			size_t description_length = 1;
+			for (const char *c = profile_description; *c != '\0'; ++c, ++description_length)
+				if (*c == '\n')
+					++new_lines;
+			
+			if (new_lines > 0) {
+				const char filler[] = "# ";
+				char *commented_description = malloc(description_length + new_lines * (sizeof filler - 1));
+				for (size_t i = 0, j = 0; j < description_length; ++i, ++j) {
+					commented_description[i] = profile_description[j];
+					if (profile_description[j] == '\n') {
+						for (size_t k = 0; k < (sizeof filler - 1); ++k)
+  						commented_description[++i] = filler[k];
+					}
+				}
+				free(profile_description);
+				profile_description = commented_description;
+			}
+		}
+
 		fix_header = oscap_sprintf(
 			"###############################################################################\n#\n"
 			"# %s remediation role for profile %s\n"
 			"# Profile Title:  %s\n"
-			"# Profile Description:  %s\n"
+			"# Profile Description:\n"
+			"# %s\n"
 			"#\n"
 			"# Benchmark ID:  %s\n"
 			"# Benchmark Version:  %s\n#\n"
@@ -719,7 +741,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from an OpenSCAP profile without preliminary evaluation.\n"
 			"# It attempts to fix every selected rule, even if the system is already compliant.\n#\n"
 			"###############################################################################\n\n",
-				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description, benchmark_id,
+				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
 				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format);
 
 		free(profile_title);
@@ -777,11 +799,14 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 		if (benchmark == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not find benchmark model for policy id='%s' when generating fixes.", xccdf_policy_get_id(policy));
+			oscap_list_free(rules_to_fix, NULL);
 			return 1;
 		}
 
-		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0)
+		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0) {
+			oscap_list_free(rules_to_fix, NULL);
 			return 1;
+		}
 
 		struct xccdf_item_iterator *item_it = xccdf_benchmark_get_content(benchmark);
 		while (xccdf_item_iterator_has_more(item_it)) {
@@ -795,8 +820,10 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	else {
 		dI("Generating result-oriented fixes for policy(result/@id=%s)", xccdf_result_get_id(result));
 
-		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0)
+		if (_write_script_header_to_fd(policy, result, sys, output_fd) != 0) {
+			oscap_list_free(rules_to_fix, NULL);
 			return 1;
+		}
 
 		struct xccdf_rule_result_iterator *rr_it = xccdf_result_get_rule_results(result);
 		while (xccdf_rule_result_iterator_has_more(rr_it)) {
