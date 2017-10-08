@@ -42,3 +42,6 @@ endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
 set_target_properties(openscap PROPERTIES VERSION ${SONAME} SOVERSION ${SOVERSION})
+
+install(TARGETS openscap
+		LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
