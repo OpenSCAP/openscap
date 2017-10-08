@@ -281,4 +281,5 @@ include_directories(
 add_subdirectory("src")
 add_subdirectory("utils")
 add_subdirectory("docs")
+add_subdirectory("dist")
 configure_file("run.in" "run" @ONLY)

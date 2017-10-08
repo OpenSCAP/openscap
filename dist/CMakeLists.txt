@@ -1,0 +1,1 @@
+install(DIRECTORY "bash_completion.d" DESTINATION ${CMAKE_INSTALL_SYSCONFDIR})
