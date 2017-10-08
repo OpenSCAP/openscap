@@ -1,5 +1,6 @@
 file(GLOB_RECURSE CPE_SOURCES "*.c")
 file(GLOB_RECURSE CPE_HEADERS "*.h")
+file(GLOB_RECURSE PUBLIC_HEADERS "public/*.h")
 
 add_library(cpe_object OBJECT ${CPE_SOURCES} ${CPE_HEADERS})
 add_library(cpe $<TARGET_OBJECTS:cpe_object>)
@@ -9,3 +10,4 @@ set_target_properties(cpe_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
     POSITION_INDEPENDENT_CODE ON	# Compile this object code position independent.
 )
+install(FILES ${PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/openscap)

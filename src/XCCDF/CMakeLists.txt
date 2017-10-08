@@ -1,5 +1,6 @@
 file(GLOB_RECURSE XCCDF_SOURCES "*.c")
 file(GLOB_RECURSE XCCDF_HEADERS "*.h")
+file(GLOB_RECURSE PUBLIC_HEADERS "public/*.h")
 
 add_library(xccdf_object OBJECT ${XCCDF_SOURCES} ${XCCDF_HEADERS})
 add_library(xccdf $<TARGET_OBJECTS:xccdf_object>)
@@ -9,3 +10,4 @@ set_target_properties(xccdf_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
     POSITION_INDEPENDENT_CODE ON	# Compile this object code position independent.
 )
+install(FILES ${PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/openscap)

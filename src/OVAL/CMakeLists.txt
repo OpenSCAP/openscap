@@ -1,6 +1,7 @@
 add_subdirectory("results")
 add_subdirectory("adt")
 add_subdirectory("probes/SEAP")
+file(GLOB_RECURSE PUBLIC_HEADERS "public/*.h")
 
 include(CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(fts_open HAVE_FTS_OPEN)
@@ -106,3 +107,5 @@ set_target_properties(oval_object PROPERTIES
     CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
     POSITION_INDEPENDENT_CODE ON	# Compile this object code position independent.
 )
+
+install(FILES ${PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/openscap)
