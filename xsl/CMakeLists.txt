@@ -1,0 +1,2 @@
+FILE(GLOB XSL_FILES "*.xsl" "*.xml")
+install(FILES ${XSL_FILES} DESTINATION ${CMAKE_INSTALL_DATADIR}/openscap/xsl)
