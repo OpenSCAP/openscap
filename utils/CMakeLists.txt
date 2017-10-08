@@ -12,6 +12,9 @@ if(ENABLE_OSCAP_UTIL)
 	)
 endif()
 if(ENABLE_OSCAP_UTIL_CHROOT)
+	install(PROGRAMS "oscap-chroot"
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
 	install(FILES "oscap-chroot.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
@@ -22,16 +25,25 @@ if(ENABLE_OSCAP_UTIL_DOCKER)
 	)
 endif()
 if(ENABLE_OSCAP_UTIL_SSH)
+	install(PROGRAMS "oscap-ssh"
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
 	install(FILES "oscap-ssh.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
 endif()
 if(ENABLE_OSCAP_UTIL_VM)
+	install(PROGRAMS "oscap-vm"
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
 	install(FILES "oscap-vm.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
 endif()
 if(ENABLE_OSCAP_UTIL_AS_RPM)
+	install(PROGRAMS "scap-as-rpm"
+		DESTINATION ${CMAKE_INSTALL_BINDIR}
+	)
 	install(FILES "scap-as-rpm.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
