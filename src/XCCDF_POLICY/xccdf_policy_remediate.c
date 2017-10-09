@@ -677,6 +677,10 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		// Profile-based remediation fix
 		struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 		const char *profile_id = xccdf_profile_get_id(profile);
+		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
+		if (benchmark == NULL) {
+			return 1;
+		}
 		// Title
 		struct oscap_text_iterator *title_iterator = xccdf_profile_get_title(profile);
 		char *profile_title = oscap_textlist_get_preferred_plaintext(title_iterator, NULL);
@@ -687,7 +691,6 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : NULL;
 		oscap_text_iterator_free(description_iterator);
 
-		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 		const char *benchmark_version_info = xccdf_benchmark_get_version(benchmark);
 		const char *benchmark_id = xccdf_benchmark_get_id(benchmark);
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
