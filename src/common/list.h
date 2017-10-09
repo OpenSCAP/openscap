@@ -88,6 +88,11 @@ struct oscap_iterator {
 	void *user_data;
 };
 
+struct oscap_fast_iterator {
+	struct oscap_list_item *cur;
+	struct oscap_list *list;
+};
+
 // FIXME: SCE engine uses these
 OSCAP_HIDDEN_END;
 
@@ -99,6 +104,27 @@ bool oscap_iterator_has_more(struct oscap_iterator *it);
 void oscap_iterator_reset(struct oscap_iterator *it);
 void *oscap_iterator_detach(struct oscap_iterator *it);
 void oscap_iterator_free(struct oscap_iterator *it);
+
+void *oscap_fast_iterator_new(struct oscap_list *list);
+inline void *oscap_fast_iterator_next(struct oscap_fast_iterator *it) {
+	it->cur = (it->cur ? it->cur->next : it->list->first);
+	return it->cur->data;
+}
+inline size_t oscap_fast_iterator_get_itemcount(const struct oscap_fast_iterator *it) {
+	return it->list->itemcount;
+}
+inline bool oscap_fast_iterator_has_more(struct oscap_fast_iterator *it) {
+	if (!it->list->first)
+		return false;
+	if (it->cur == NULL)
+		return true;
+	return it->cur->next != NULL;
+}
+inline void oscap_fast_iterator_reset(struct oscap_fast_iterator *it) {
+	it->cur = NULL;
+}
+void *oscap_fast_iterator_detach(struct oscap_fast_iterator *it);
+void oscap_fast_iterator_free(struct oscap_fast_iterator *it);
 
 OSCAP_HIDDEN_START;
 
