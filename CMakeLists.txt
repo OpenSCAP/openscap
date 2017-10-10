@@ -299,4 +299,10 @@ add_subdirectory("xsl")
 add_subdirectory("cpe")
 add_subdirectory("swig")
 configure_file("run.in" "run" @ONLY)
+
+# pkgconfig file
 configure_file("libopenscap.pc.in" "libopenscap.pc" @ONLY)
+install(FILES
+	${CMAKE_CURRENT_BINARY_DIR}/libopenscap.pc
+	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
