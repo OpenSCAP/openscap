@@ -30,6 +30,10 @@ target_include_directories(probe PUBLIC "." "public")
 include_directories("public")
 
 if(ENABLE_PROBES_INDEPENDENT)
+    add_executable(probe_system_info "independent/system_info.c")
+    target_link_libraries(probe_system_info probe)
+    install(TARGETS probe_system_info DESTINATION ${PROBE_INSTALL_DIR})
+
     add_executable(probe_family "independent/family.c")
     target_link_libraries(probe_family probe)
     install(TARGETS probe_family DESTINATION ${PROBE_INSTALL_DIR})
