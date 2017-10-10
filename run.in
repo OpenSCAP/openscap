@@ -33,14 +33,11 @@ b=@CMAKE_BINARY_DIR@
 # Top source directory
 s=@CMAKE_SOURCE_DIR@
 
-# Preload testing library.
-export LD_PRELOAD=$b/src/.libs/libopenscap_testing.so${LD_PRELOAD:+:$LD_PRELOAD}
-
 # Set library.
-export LD_LIBRARY_PATH=$b/src/.libs:$b/swig/.libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=$b/src:$b/swig${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # This is used for SCE check engine (if it is built and enabled)
-export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE/.libs
+export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE
 
 # Set paths to probes, schemas, transformations and cpes.
 export OVAL_PROBE_DIR=$b/src/OVAL/probes
@@ -49,8 +46,8 @@ export OSCAP_XSLT_PATH=$s/xsl
 export OSCAP_CPE_PATH=$s/cpe
 
 # For SWIG bindings.
-export PERL5LIB=$b/swig/perl:$b/swig/perl/.libs${PERL5LIB:+:$PERL5LIB}
-export PYTHONPATH=$s/swig/python2:$s/swig/src:$b/swig/python2:$b/swig/python2/.libs${PYTHONPATH:+:$PYTHONPATH}
+export PERL5LIB=$b/swig/perl:$b/swig/perl${PERL5LIB:+:$PERL5LIB}
+export PYTHONPATH=$s/swig/python2:$s/swig/src:$b/swig/python2:$b/swig/python2${PYTHONPATH:+:$PYTHONPATH}
 
 # This is a cheap way to find some use-after-free and uninitialized
 # read problems when using glibc.
