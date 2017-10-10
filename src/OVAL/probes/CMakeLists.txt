@@ -1,6 +1,6 @@
 add_subdirectory("crapi")
 
-set(PROBE_INSTALL_DIR "${CMAKE_INSTALL_LIBEXECDIR}/openscap")
+set(PROBE_INSTALL_DIR ${OVAL_PROBE_DIR})
 
 add_library(probe
     "probe/fini.c"

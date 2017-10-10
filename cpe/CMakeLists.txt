@@ -3,4 +3,4 @@ SET(CPE_FILES
 	"openscap-cpe-oval.xml"
 	"README"
 )
-install(FILES ${CPE_FILES} DESTINATION ${CMAKE_INSTALL_DATADIR}/openscap/cpe)
+install(FILES ${CPE_FILES} DESTINATION ${OSCAP_DEFAULT_CPE_PATH})

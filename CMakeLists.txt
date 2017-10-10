@@ -260,6 +260,12 @@ set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 # WANT XBASE64
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
+# ---------- PATHS
+set(OSCAP_DEFAULT_SCHEMA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/schemas")
+set(OSCAP_DEFAULT_XSLT_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/xsl")
+set(OSCAP_DEFAULT_CPE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/cpe")
+set(OVAL_PROBE_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/openscap")
+
 # ---------- CONFIGURATION
 
 configure_file("config.h.in" "config.h")

@@ -1,2 +1,2 @@
 install(DIRECTORY arf common cpe cve ocil oval sce sds xccdf
-	DESTINATION ${CMAKE_INSTALL_DATADIR}/openscap/schemas)
+	DESTINATION ${OSCAP_DEFAULT_SCHEMA_PATH})
