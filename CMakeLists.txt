@@ -77,6 +77,9 @@ if(PCRE_FOUND)
     CHECK_LIBRARY_EXISTS(pcre pcre_exec "" HAVE_PCRE_EXEC)
 endif()
 
+# PERL
+find_package(PerlLibs)
+
 # POPT
 pkg_check_modules(POPT REQUIRED popt)
 
@@ -85,6 +88,9 @@ pkg_check_modules(PROCPS libprocps)
 if(PROCPS_FOUND)
     CHECK_LIBRARY_EXISTS(procps dev_to_tty "" HAVE_DEV_TO_TTY)
 endif()
+
+# PYTHON
+find_package(PythonLibs)
 
 # RPM
 pkg_check_modules(RPM rpm>=4.4)
@@ -109,6 +115,9 @@ endif()
 
 # SELINUX
 pkg_check_modules(SELINUX REQUIRED libselinux)
+
+# SWIG
+find_package(SWIG)
 
 # XML2
 pkg_check_modules(XML2 REQUIRED libxml-2.0>=2.0)
@@ -288,4 +297,5 @@ add_subdirectory("dist")
 add_subdirectory("schemas")
 add_subdirectory("xsl")
 add_subdirectory("cpe")
+add_subdirectory("swig")
 configure_file("run.in" "run" @ONLY)
