@@ -50,6 +50,9 @@ if(DBUS_FOUND)
     CHECK_LIBRARY_EXISTS(${DBUS_LIBRARIES} dbus_bus_get "" HAVE_DBUS_BUS_GET)
 endif()
 
+# DOXYGEN
+find_package(Doxygen)
+
 # EXSLT
 pkg_check_modules(EXSLT REQUIRED libexslt>=0.8)
 

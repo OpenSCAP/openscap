@@ -2,10 +2,6 @@ add_subdirectory("crapi")
 
 set(PROBE_INSTALL_DIR "${CMAKE_INSTALL_LIBEXECDIR}/openscap")
 
-# PThread
-find_package(Threads REQUIRED)
-set(CMAKE_THREAD_PREFER_PTHREAD)
-
 add_library(probe
     "probe/fini.c"
     "probe/offline_mode.c"
