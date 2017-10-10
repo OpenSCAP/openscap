@@ -37,6 +37,7 @@
 #include <oval_probe.h>
 #include <cvss_score.h>
 #include <xccdf_benchmark.h>
+#include <xccdf_session.h>
 #include <cpe_dict.h>
 #include <cpe_name.h>
 #include <cve_nvd.h>

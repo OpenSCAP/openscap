@@ -34,6 +34,7 @@
 
 #include <cve_nvd.h>
 #include <oscap_source.h>
+#include <xccdf_session.h>
 
 #include "oscap-tool.h"
 
