@@ -91,6 +91,7 @@ endif()
 
 # PYTHON
 find_package(PythonLibs)
+find_package(PythonInterp)
 
 # RPM
 pkg_check_modules(RPM rpm>=4.4)
@@ -234,6 +235,7 @@ set(ENABLE_OSCAP_UTIL TRUE CACHE BOOL "enables oscap util")
 set(ENABLE_OSCAP_UTIL_AS_RPM TRUE CACHE BOOL "enables oscap util as RPM")
 
 # ENABLES OSCAP UTIL DOCKER
+set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "Path to the Python interpreter for oscap-docker")
 set(ENABLE_OSCAP_UTIL_DOCKER TRUE CACHE BOOL "enables oscap util Docker")
 if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
     set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
