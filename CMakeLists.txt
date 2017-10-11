@@ -315,3 +315,18 @@ install(FILES
 	${CMAKE_CURRENT_BINARY_DIR}/libopenscap.pc
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
+
+# CPack
+set(CPACK_SOURCE_PACKAGE_FILE_NAME "openscap-${OPENSCAP_VERSION}")
+set(CPACK_SOURCE_GENERATOR "TGZ")
+# TODO: remove ac_probes, config and m4 directories after automake will be removed
+set(CPACK_SOURCE_IGNORE_FILES
+	"\\\\.git.*"
+	"ac_probes/"
+	"config/"
+	"build/"
+	"m4/"
+	"~$"
+	"\\\\CMakeLists.txt.user"
+)
+include(CPack)
