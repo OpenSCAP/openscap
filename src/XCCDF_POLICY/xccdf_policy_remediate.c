@@ -667,7 +667,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		oscap_streq(sys, "urn:xccdf:fix:script:ansible")))
 		return 0; // no header required
 
-	bool script = oscap_streq(sys, "urn:xccdf:fix:script:ansible");
+	bool ansible_script = oscap_streq(sys, "urn:xccdf:fix:script:ansible");
 	const char *oscap_version = oscap_get_version();
 	char *fix_header;
 	const char *format = sys != NULL ? sys : "";
@@ -733,7 +733,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from an OpenSCAP profile without preliminary evaluation.\n"
 			"# It attempts to fix every selected rule, even if the system is already compliant.\n#\n"
 			"###############################################################################\n\n",
-				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
+				ansible_script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
 				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format);
 
 		free(profile_title);
@@ -759,12 +759,12 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# It attempts to remediate all issues from the selected rules that failed the test.\n"
 			"#\n"
 			"###############################################################################\n\n",
-				script ? "Ansible" : "Bash", xccdf_result_get_profile(result), xccdf_version_name,
+				ansible_script ? "Ansible" : "Bash", xccdf_result_get_profile(result), xccdf_version_name,
 				start_time != NULL ? start_time : "Unknown",
 				end_time, oscap_version, result_id, template, format);
 	}
 
-	if (script) {
+	if (ansible_script) {
 		char *ansible_fix_header = oscap_sprintf(
 			"---\n"
 			"%s\n"
