@@ -773,6 +773,13 @@ OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char
 struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
 
 /**
+ * Export TestResult to oscap_source structure
+ * @memberof xccdf_result
+ * @returns newly created oscap_source or NULL on error
+ */
+struct oscap_source *stig_rule_id_xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
+
+/**
  * Resolve an benchmark.
  * @returns whether the resolving process has been successful
  * @retval true on success
@@ -2169,6 +2176,10 @@ const char *xccdf_rule_get_impact_metric(const struct xccdf_rule *rule);
 /**
  * @memberof xccdf_rule
  */
+const char *xccdf_rule_get_stig_rule_id(const struct xccdf_rule *rule);
+/**
+ * @memberof xccdf_rule
+ */
 xccdf_role_t xccdf_rule_get_role(const struct xccdf_rule *rule);
 /**
  * @memberof xccdf_rule
@@ -2864,6 +2875,8 @@ bool xccdf_rule_set_multiple(struct xccdf_rule *item, bool newval);
 //bool xccdf_rule_set_selector(struct xccdf_rule *item, const char * selector);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_impact_metric(struct xccdf_rule *item, const char *newval);
+/// @memberof xccdf_rule
+bool xccdf_rule_set_stig_rule_id(struct xccdf_rule *item, const char *newval);
 /// @memberof xccdf_rule
 bool xccdf_rule_set_role(struct xccdf_rule *item, xccdf_role_t newval);
 /// @memberof xccdf_rule

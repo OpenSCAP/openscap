@@ -522,6 +522,16 @@ command-line argument. You can use `--results-arf` to generate a Result DataStre
 $ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml scap-ds.xml
 --------------------------------------------------------------------------------------
 
+==== Result STIG Viewer
+
+You can also generate XCCDF result files that uses the DISA STIG Rule IDs using the 
+`--stig-viewer` command-line argument. Note that the XCCDF input must contain references
+with the STIG Rule ID for each Rule.
+
+--------------------------------------------------------------------------------------
+$ oscap xccdf eval --benchmark-id benchmark_id --stig-viewer stig-viewer-result.xml scap-ds.xml
+--------------------------------------------------------------------------------------
+
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
 non-compliant state. For system remediation, an XCCDF file with instructions is

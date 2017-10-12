@@ -716,7 +716,19 @@ struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, con
 		return NULL;
 	}
 
-	xccdf_result_to_dom(result, NULL, doc, NULL);
+	xccdf_result_to_dom(result, NULL, doc, NULL, false);
+	return oscap_source_new_from_xmlDoc(doc, filepath);
+}
+
+struct oscap_source *stig_rule_id_xccdf_result_export_source(struct xccdf_result *result, const char *filepath)
+{
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	xccdf_result_to_dom(result, NULL, doc, NULL, true);
 	return oscap_source_new_from_xmlDoc(doc, filepath);
 }
 
@@ -735,9 +747,10 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 	return ret;
 }
 
-void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
+void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent, bool use_stig_rule_id)
 {
         xmlNs *ns_xccdf = NULL;
+	struct xccdf_benchmark *associated_benchmark = xccdf_result_get_benchmark(result);
 	const char *benchmark_ref_uri = xccdf_result_get_benchmark_uri(result);
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(result));
 	if (parent) {
@@ -785,11 +798,8 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 			xmlNewProp(benchmark_ref, BAD_CAST "href", BAD_CAST benchmark_ref_uri);
 
 			// @id is disallowed in XCCDF 1.1 and optional in XCCDF 1.2
-			if (xccdf_version_cmp(xccdf_item_get_schema_version(XITEM(result)), "1.2") >= 0) {
-				struct xccdf_benchmark *associated_benchmark = xccdf_result_get_benchmark(result);
-				if (associated_benchmark) {
-					xmlNewProp(benchmark_ref, BAD_CAST "id", BAD_CAST xccdf_benchmark_get_id(associated_benchmark));
-				}
+			if (xccdf_version_cmp(xccdf_item_get_schema_version(XITEM(result)), "1.2") >= 0 && associated_benchmark) {
+				xmlNewProp(benchmark_ref, BAD_CAST "id", BAD_CAST xccdf_benchmark_get_id(associated_benchmark));
 			}
 
 			xmlAddPrevSibling(title_node, benchmark_ref);
@@ -913,7 +923,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {
 		struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
-		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info);
+		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info, associated_benchmark, use_stig_rule_id);
 	}
 	xccdf_rule_result_iterator_free(rule_results);
 
@@ -1067,7 +1077,7 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 	}
 }
 
-xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
+xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, bool use_stig_rule_id)
 {
 	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
@@ -1075,8 +1085,13 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 
 	/* Handle attributes */
 	const char *idref = xccdf_rule_result_get_idref(result);
-	if (idref)
-		xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
+	if (benchmark && use_stig_rule_id) {
+		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
+		const char *stig_rule_id = xccdf_rule_get_stig_rule_id(XRULE(item));
+		if (stig_rule_id)
+			idref = stig_rule_id;
+	}
+	xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
 
 	xccdf_role_t role = xccdf_rule_result_get_role(result);
 	if (role != 0)

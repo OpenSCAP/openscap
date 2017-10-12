@@ -480,7 +480,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_RESULT:
 			xmlNodeSetName(item_node,BAD_CAST "TestResult");
-			if (parent) xccdf_result_to_dom(XRESULT(item), item_node, doc, parent);
+			if (parent) xccdf_result_to_dom(XRESULT(item), item_node, doc, parent, false);
 			break;
 		case XCCDF_GROUP:
 			xmlNodeSetName(item_node,BAD_CAST "Group");
@@ -1135,6 +1135,7 @@ void xccdf_rule_item_clone(struct xccdf_rule_item *clone, const struct xccdf_rul
 	clone->profile_notes = oscap_list_clone(item->profile_notes, (oscap_clone_func) xccdf_profile_note_clone);
 	clone->fixes = oscap_list_clone(item->fixes, (oscap_clone_func) xccdf_fix_clone);
 	clone->fixtexts = oscap_list_clone(item->fixtexts, (oscap_clone_func) xccdf_fixtext_clone);
+	clone->stig_rule_id = oscap_strdup(item->stig_rule_id);
 }
 
 void xccdf_group_item_clone(struct xccdf_item *parent, const struct xccdf_group_item * item)

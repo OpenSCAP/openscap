@@ -101,6 +101,8 @@ struct xccdf_rule_item {
 	struct oscap_list *checks;
 	struct oscap_list *fixes;
 	struct oscap_list *fixtexts;
+	
+	char *stig_rule_id;
 };
 
 struct xccdf_group_item {

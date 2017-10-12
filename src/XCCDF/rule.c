@@ -37,6 +37,9 @@
 #include "common/assume.h"
 #include "common/debug_priv.h"
 
+//SSG constant <xsl:variable name="disa-stigs-viewer">http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx</xsl:variable>
+const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
+
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {
 	assert(parent != NULL);
@@ -282,6 +285,7 @@ struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent)
 	rule->sub.rule.profile_notes = oscap_list_new();
 	rule->sub.rule.fixes = oscap_list_new();
 	rule->sub.rule.fixtexts = oscap_list_new();
+	rule->sub.rule.stig_rule_id = NULL;
 
 	return rule;
 }
@@ -364,6 +368,14 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 		xmlTextReaderRead(reader);
 	}
 
+	struct oscap_reference_iterator *references = xccdf_item_get_references(rule);
+	while (oscap_reference_iterator_has_more(references)) {
+		struct oscap_reference *ref = oscap_reference_iterator_next(references);
+		if (strcmp(ref->href, DISA_STIG_VIEWER_HREF) == 0)
+			xccdf_rule_set_stig_rule_id(rule, ref->title);
+	}
+	oscap_reference_iterator_free(references);
+
 	return rule;
 }
 
@@ -393,6 +405,7 @@ void xccdf_rule_free(struct xccdf_item *rule)
 		oscap_list_free(rule->sub.rule.fixtexts, (oscap_destruct_func) xccdf_fixtext_free);
 		oscap_list_free(rule->sub.rule.requires, (oscap_destruct_func) xccdf_free_strlist);
 		oscap_list_free(rule->sub.rule.conflicts, free);
+		free(rule->sub.rule.stig_rule_id);
 		xccdf_item_release(rule);
 	}
 }
@@ -1122,6 +1135,7 @@ bool xccdf_group_add_content(struct xccdf_group *rule, struct xccdf_item *item)
 }
 
 XCCDF_ACCESSOR_STRING(rule, impact_metric)
+XCCDF_ACCESSOR_STRING(rule, stig_rule_id)
 XCCDF_ACCESSOR_SIMPLE(rule, xccdf_role_t, role)
 XCCDF_ACCESSOR_SIMPLE(rule, xccdf_level_t, severity)
 XCCDF_LISTMANIP(rule, ident, idents)
