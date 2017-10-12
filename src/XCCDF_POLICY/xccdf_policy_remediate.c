@@ -768,7 +768,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		char *ansible_fix_header = oscap_sprintf(
 			"---\n"
 			"%s\n"
-			"# - hosts: localhost # set required host\n"
+			" - hosts: all\n"
 			"   tasks:\n",
 				fix_header);
 		free(fix_header);
