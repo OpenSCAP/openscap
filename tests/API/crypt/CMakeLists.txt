@@ -1,0 +1,8 @@
+set(PROBE_HEADERS "${CMAKE_SOURCE_DIR}/src/OVAL/probes/")
+add_executable(test_crapi_digest "test_crapi_digest.c")
+add_executable(test_crapi_mdigest "test_crapi_mdigest.c")
+target_include_directories(test_crapi_digest PUBLIC ${PROBE_HEADERS})
+target_include_directories(test_crapi_mdigest PUBLIC ${PROBE_HEADERS})
+target_link_libraries(test_crapi_digest crapi)
+target_link_libraries(test_crapi_mdigest crapi)
+add_oscap_test("test_api_crypt.sh")
