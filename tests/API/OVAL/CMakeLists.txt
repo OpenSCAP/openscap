@@ -10,3 +10,4 @@ target_link_libraries(test_api_directives ${TEST_API_OVAL_LIBRARIES})
 add_oscap_test("test_api_oval.sh")
 
 add_subdirectory("glob_to_regex")
+add_subdirectory("report_variable_values")
