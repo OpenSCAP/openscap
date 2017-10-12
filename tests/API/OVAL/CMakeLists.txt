@@ -11,3 +11,4 @@ add_oscap_test("test_api_oval.sh")
 
 add_subdirectory("glob_to_regex")
 add_subdirectory("report_variable_values")
+add_subdirectory("schema_version")
