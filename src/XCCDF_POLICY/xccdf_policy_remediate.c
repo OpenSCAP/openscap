@@ -702,7 +702,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			for (const char *c = profile_description; *c != '\0'; ++c, ++description_length)
 				if (*c == '\n')
 					++new_lines;
-			
+
 			if (new_lines > 0) {
 				const char filler[] = "# ";
 				char *commented_description = malloc(description_length + new_lines * (sizeof filler - 1));
@@ -710,7 +710,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 					commented_description[i] = profile_description[j];
 					if (profile_description[j] == '\n') {
 						for (size_t k = 0; k < (sizeof filler - 1); ++k)
-  						commented_description[++i] = filler[k];
+							commented_description[++i] = filler[k];
 					}
 				}
 				free(profile_description);
