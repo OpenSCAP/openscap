@@ -1,0 +1,7 @@
+add_executable(test_api_probes_smoke "test_api_probes_smoke.c")
+add_executable(oval_fts_list "oval_fts_list.c")
+target_link_libraries(test_api_probes_smoke openscap ${XML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+target_link_libraries(oval_fts_list openscap ${XML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+target_include_directories(test_api_probes_smoke PUBLIC ${CMAKE_SOURCE_DIR}/src/OVAL/probes ${CMAKE_SOURCE_DIR}/src/OVAL/probes/public)
+target_include_directories(oval_fts_list PUBLIC ${CMAKE_SOURCE_DIR}/src/OVAL/probes ${CMAKE_SOURCE_DIR}/src/OVAL/probes/public)
+add_oscap_test("all.sh")
