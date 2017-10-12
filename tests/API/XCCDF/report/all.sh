@@ -32,7 +32,7 @@ function test_generate_report_custom {
     local INPUT=$srcdir/$1
     local EXPECTED_CONTENT=$2
 
-    local GENERATED_CONTENT=$($OSCAP xccdf generate custom --stylesheet $OSCAP_XSLT_PATH/xccdf-report.xsl "$INPUT")
+    local GENERATED_CONTENT=$($OSCAP xccdf generate custom --stylesheet $top_srcdir/xsl/xccdf-report.xsl "$INPUT")
     if [ "$?" != "0" ]; then
         return 1
     fi
