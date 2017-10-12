@@ -40,10 +40,19 @@ export LD_LIBRARY_PATH=$b/src:$b/swig${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE
 
 # Set paths to probes, schemas, transformations and cpes.
-export OVAL_PROBE_DIR=$b/src/OVAL/probes
-export OSCAP_SCHEMA_PATH=$s/schemas
-export OSCAP_XSLT_PATH=$s/xsl
-export OSCAP_CPE_PATH=$s/cpe
+# If those variables are already set, don't change their values.
+if [ -z ${OVAL_PROBE_DIR+x} ] ; then
+    export OVAL_PROBE_DIR=$b/src/OVAL/probes
+fi
+if [ -z ${OSCAP_SCHEMA_PATH+x} ] ; then
+    export OSCAP_SCHEMA_PATH=$s/schemas
+fi
+if [ -z ${OSCAP_XSLT_PATH+x} ] ; then
+    export OSCAP_XSLT_PATH=$s/xsl
+fi
+if [ -z ${OSCAP_CPE_PATH+x} ] ; then
+    export OSCAP_CPE_PATH=$s/cpe
+fi
 
 # For SWIG bindings.
 export PERL5LIB=$b/swig/perl:$b/swig/perl${PERL5LIB:+:$PERL5LIB}
