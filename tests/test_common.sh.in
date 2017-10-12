@@ -15,6 +15,9 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 LC_ALL=C
 export LC_ALL
 
+OSCAP_FULL_VALIDATION=1
+export OSCAP_FULL_VALIDATION
+
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     enable_valgrind="@ENABLE_VALGRIND@"
     if [ $enable_valgrind != "FALSE" ] ; then
