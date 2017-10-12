@@ -16,19 +16,19 @@ LC_ALL=C
 export LC_ALL
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
-    enable_valgrind=@vgcheck@
-    if [ $enable_valgrind = "yes" ] ; then
-        actualdir=@abs_top_srcdir@
+    enable_valgrind="@ENABLE_VALGRIND@"
+    if [ $enable_valgrind != "FALSE" ] ; then
+        actualdir=@CMAKE_BINARY_DIR@
         export actualdir
-        [ -z "$builddir" ] || export OSCAP="@abs_top_srcdir@/tests/valgrind_test.sh"
+        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="@CMAKE_SOURCE_DIR@/tests/valgrind_test.sh"
     else
-        [ -z "$builddir" ] || export OSCAP=$(cd $builddir/utils/.libs; pwd)/oscap
+        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash @CMAKE_BINARY_DIR@/run @CMAKE_BINARY_DIR@/utils/oscap"
     fi
 else
     export OSCAP=${CUSTOM_OSCAP}
 fi
 
-export XMLDIFF="@abs_top_srcdir@/tests/xmldiff.pl"
+export XMLDIFF="@CMAKE_SOURCE_DIR@/tests/xmldiff.pl"
 
 if ! XPATH_ORIG=`command -v xpath 2>&1`; then
   echo "I require xpath tool but it's not installed. Aborting." >&2

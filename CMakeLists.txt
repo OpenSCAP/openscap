@@ -330,3 +330,7 @@ set(CPACK_SOURCE_IGNORE_FILES
 	"\\\\CMakeLists.txt.user"
 )
 include(CPack)
+
+# Ctest
+enable_testing()
+add_subdirectory("tests")
