@@ -8,3 +8,5 @@ function(add_oscap_test test_script)
 endfunction()
 
 configure_file("test_common.sh.in" "test_common.sh" @ONLY)
+
+add_subdirectory("API")
