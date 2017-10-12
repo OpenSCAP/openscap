@@ -5,6 +5,9 @@ set -e -o pipefail
 . $builddir/tests/test_common.sh
 
 test_init test_api_xccdf_unittests.log
+
+touch not_executable
+
 #
 # API C Tests
 #
@@ -109,5 +112,7 @@ test_run "generate fix: generate header for bash script" $srcdir/test_fix_script
 test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
 test_run "generate fix: result id selection by suffix" $srcdir/test_fix_resultid_by_suffix.sh
 test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
+
+rm not_executable
 
 test_exit
