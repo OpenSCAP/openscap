@@ -666,7 +666,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		oscap_streq(sys, "urn:xccdf:fix:script:ansible")))
 		return 0; // no header required
 
-	const bool ansible_script = oscap_streq(sys, "urn:xccdf:fix:script:ansible");
+	const bool ansible_script = strcmp(sys, "urn:xccdf:fix:script:ansible") == 0;
 	const char *how_to_apply = ansible_script ?
 		"# $ ansible-playbook -i \"192.168.1.155,\" playbook.yml\n"
 		"# $ ansible-playbook -i inventory.ini playbook.yml" :
