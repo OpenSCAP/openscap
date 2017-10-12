@@ -1,5 +1,5 @@
 ---
-# - hosts: localhost # set required host
+ - hosts: all
    tasks:
     - name: ensure everything passes
         shell: /bin/true
