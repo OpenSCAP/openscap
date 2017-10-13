@@ -11,3 +11,4 @@ configure_file("test_common.sh.in" "test_common.sh" @ONLY)
 
 add_subdirectory("API")
 add_subdirectory("bz2")
+add_subdirectory("codestyle")
