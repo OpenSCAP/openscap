@@ -63,11 +63,5 @@ export PYTHONPATH=$s/swig/python2:$s/swig/src:$b/swig/python2:$b/swig/python2${P
 random_val="$(awk 'BEGIN{srand(); print 1+int(255*rand())}' < /dev/null)"
 export MALLOC_PERTURB_=$random_val
 
-# Do we have libtool?  If we have it then we can use it to make
-# running valgrind simpler.  However don't depend on it.
-if libtool --help >/dev/null 2>&1; then
-    libtool="libtool --mode=execute"
-fi
-
 # Run the program.
-exec $libtool "$@"
+exec "$@"
