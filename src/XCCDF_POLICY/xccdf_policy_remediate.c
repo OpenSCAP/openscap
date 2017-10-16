@@ -67,7 +67,7 @@ static inline bool _file_exists(const char *file)
 static int _write_text_to_fd(int output_fd, const char* text) {
 
 	ssize_t written = 0;
-	ssize_t length = strlen(text);
+	const ssize_t length = strlen(text);
 
 	while (written < length) {
 		ssize_t w = write(output_fd, text + written, length - written);
@@ -82,7 +82,7 @@ static int _write_text_to_fd(int output_fd, const char* text) {
 
 static int _write_text_to_fd_and_free(int output_fd, char *text)
 {
-	int ret = _write_text_to_fd(output_fd, text);
+	const int ret = _write_text_to_fd(output_fd, text);
 	free(text);
 	return ret;
 }
@@ -341,33 +341,32 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	const char *interpret = NULL;
-	char *temp_dir = NULL;
-	char *temp_file = NULL;
-	char *fix_text = NULL;
-	int fd;
-	int result = 1;
 	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
 		return 1;
 
+	const char *interpret = NULL;
 	if ((interpret = _get_supported_interpret(xccdf_fix_get_system(fix), NULL)) == NULL) {
 		_rule_add_info_message(rr, "Not supported xccdf:fix/@system='%s' or missing interpreter.",
 				xccdf_fix_get_system(fix) == NULL ? "" : xccdf_fix_get_system(fix));
 		return 1;
 	}
 
+	char *fix_text = NULL;
 	if (_xccdf_fix_decode_xml(fix, &fix_text) != 0) {
 		_rule_add_info_message(rr, "Fix element contains unresolved child elements.");
 		return 1;
 	}
 
-	temp_dir = oscap_acquire_temp_dir();
+	int result = 1;
+
+	char *temp_dir = oscap_acquire_temp_dir();
 	if (temp_dir == NULL)
 		goto cleanup;
 	// TODO: Directory and files shall be labeled with SELinux to prevent
 	// confined processes with less priviledges to transit to oscap domain
 	// and become basically unconfined.
-	fd = oscap_acquire_temp_file(temp_dir, "fix-XXXXXXXX", &temp_file);
+	char *temp_file = NULL;
+	int fd = oscap_acquire_temp_file(temp_dir, "fix-XXXXXXXX", &temp_file);
 	if (fd == -1) {
 		_rule_add_info_message(rr, "mkstemp failed: %s", strerror(errno));
 		goto cleanup;
