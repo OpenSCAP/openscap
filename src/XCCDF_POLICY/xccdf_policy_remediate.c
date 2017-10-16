@@ -665,16 +665,20 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 				return 1;
 			}
 
-			char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
-			memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
-			variable_name[ovector[3] - ovector[2]] = '\0';
-
-			char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
-			memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
-			variable_value[ovector[5] - ovector[4]] = '\0';
-
 			if (ansible_variable_mode) {
+				char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
+				memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
+				variable_name[ovector[3] - ovector[2]] = '\0';
+
+				char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
+				memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
+				variable_value[ovector[5] - ovector[4]] = '\0';
+
 				char *var_line = oscap_sprintf("  %s: %s", variable_name, variable_value);
+
+				free(variable_name);
+				free(variable_value);
+
 				_write_remediation_to_fd_and_free(output_fd, template, var_line);
 			}
 			else {
@@ -685,8 +689,6 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 			}
 
 			start_offset = ovector[1]; // next time start after the entire pattern
-			free(variable_name);
-			free(variable_value);
 		}
 
 		if (!ansible_variable_mode && fix_text_len - start_offset > 0) {
