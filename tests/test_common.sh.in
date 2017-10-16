@@ -133,7 +133,7 @@ function require {
 # Check if probe exists, use it as follows:
 # probecheck 'probe' || return 255
 function probecheck {
-    if [ ! -f ${OVAL_PROBE_DIR}/probe_${1} ]; then
+    if [ ! -f @CMAKE_BINARY_DIR@/src/OVAL/probes/probe_${1} ]; then
 	echo -e "Probe $1 does not exist!\n"
 	return 255; # Test is not applicable.
     fi
