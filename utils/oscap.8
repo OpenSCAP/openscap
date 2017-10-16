@@ -82,12 +82,12 @@ Select a particular rule from XCCDF document. Only this rule will be evaluated. 
 .TP
 \fB\-\-tailoring-file TAILORING_FILE\fR
 .RS
-Use given file for XCCDF tailoring. Needs to specify customized profile ID using --profile to take effect. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
 \fB\-\-tailoring-id COMPONENT_ID\fR
 .RS
-Use component of given ID (in input source datastream) for XCCDF tailoring. Needs to specify customized profile ID using --profile to take effect. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+Use component of given ID (in input source datastream) for XCCDF tailoring. Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
 \fB\-\-cpe CPE_FILE\fR
@@ -350,10 +350,10 @@ Takes component ref with given ID from checklists. This allows to select a parti
 Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
 .TP
 \fB\-\-tailoring-file TAILORING_FILE\fR
-Use given file for XCCDF tailoring. Needs to specify customized profile ID using --profile to take effect. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .TP
 \fB\-\-tailoring-id COMPONENT_ID\fR
-Use component of given ID (in input source datastream) for XCCDF tailoring. Needs to specify customized profile ID using --profile to take effect. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+Use component of given ID (in input source datastream) for XCCDF tailoring. Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
 .B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file
