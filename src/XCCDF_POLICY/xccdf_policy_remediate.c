@@ -696,6 +696,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 			_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
 		}
 
+		free(fix_text);
 		pcre_free(re);
 #else
 		// TODO: Implement the post-process for posix regex as well
