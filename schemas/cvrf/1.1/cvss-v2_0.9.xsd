@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+== Package: cvss-v2
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://scap.nist.gov/schema/cvss-v2/1.0"
+	targetNamespace="http://scap.nist.gov/schema/cvss-v2/1.0"
+	elementFormDefault="qualified" attributeFormDefault="unqualified"
+	version="0.9">
+	<!-- ================================================== -->
+	<!-- =====  Simple Type Definitions  -->
+	<!-- ================================================== -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  Zero_To_Ten  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="zeroToTenDecimalType">
+		<xsd:annotation>
+			<xsd:documentation>Value restriction to single decimal values from 0.0 to 10.0, as used in CVSS scores</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:decimal">
+			<xsd:minInclusive value="0"/>
+			<xsd:maxInclusive value="10"/>
+			<xsd:fractionDigits value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  HML_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="accessComplexityEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="HIGH"/>
+			<xsd:enumeration value="MEDIUM"/>
+			<xsd:enumeration value="LOW"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  LAN_Enumerations  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="accessVectorEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="LOCAL"/>
+			<xsd:enumeration value="ADJACENT_NETWORK"/>
+			<xsd:enumeration value="NETWORK"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  LMHN_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="ciaRequirementEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="LOW"/>
+			<xsd:enumeration value="MEDIUM"/>
+			<xsd:enumeration value="HIGH"/>
+			<xsd:enumeration value="NOT_DEFINED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  NLLMMHHN_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="collateralDamagePotentialEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="NONE"/>
+			<xsd:enumeration value="LOW"/>
+			<xsd:enumeration value="LOW_MEDIUM"/>
+			<xsd:enumeration value="MEDIUM_HIGH"/>
+			<xsd:enumeration value="HIGH"/>
+			<xsd:enumeration value="NOT_DEFINED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  NLMHN_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="targetDistributionEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="NONE"/>
+			<xsd:enumeration value="LOW"/>
+			<xsd:enumeration value="MEDIUM"/>
+			<xsd:enumeration value="HIGH"/>
+			<xsd:enumeration value="NOT_DEFINED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  NPC_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="ciaEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="NONE"/>
+			<xsd:enumeration value="PARTIAL"/>
+			<xsd:enumeration value="COMPLETE"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  NSM_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="authenticationEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="MULTIPLE_INSTANCES"/>
+			<xsd:enumeration value="SINGLE_INSTANCE"/>
+			<xsd:enumeration value="NONE"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  OTWU_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="remediationLevelEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="OFFICIAL_FIX"/>
+			<xsd:enumeration value="TEMPORARY_FIX"/>
+			<xsd:enumeration value="WORKAROUND"/>
+			<xsd:enumeration value="UNAVAILABLE"/>
+			<xsd:enumeration value="NOT_DEFINED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  UUCN_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="confidenceEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="UNCONFIRMED"/>
+			<xsd:enumeration value="UNCORROBORATED"/>
+			<xsd:enumeration value="CONFIRMED"/>
+			<xsd:enumeration value="NOT_DEFINED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  UPFH_Enumeration  <<simpleType>>  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:simpleType name="exploitabilityEnumType">
+		<xsd:restriction base="xsd:token">
+			<xsd:enumeration value="UNPROVEN"/>
+			<xsd:enumeration value="PROOF_OF_CONCEPT"/>
+			<xsd:enumeration value="FUNCTIONAL"/>
+			<xsd:enumeration value="HIGH"/>
+			<xsd:enumeration value="NOT_DEFINED"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<!-- ================================================== -->
+	<!-- =====  Group Definitions  -->
+	<!-- ================================================== -->
+	<xsd:group name="baseVectorsGroup">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="access-vector" type="accessVectorType"/>
+			<xsd:element minOccurs="0" name="access-complexity" type="accessComplexityType"/>
+			<xsd:element minOccurs="0" name="authentication" type="authenticationType"/>
+			<xsd:element minOccurs="0" name="confidentiality-impact" type="ciaType"/>
+			<xsd:element minOccurs="0" name="integrity-impact" type="ciaType"/>
+			<xsd:element minOccurs="0" name="availability-impact" type="ciaType"/>
+		</xsd:sequence>
+	</xsd:group>
+	<xsd:group name="environmentalVectorsGroup">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="collateral-damage-potential" type="collateralDamagePotentialType"/>
+			<xsd:element minOccurs="0" name="target-distribution" type="targetDistributionType"/>
+			<xsd:element minOccurs="0" name="confidentiality-requirement" type="ciaRequirementType"/>
+			<xsd:element minOccurs="0" name="integrity-requirement" type="ciaRequirementType"/>
+			<xsd:element minOccurs="0" name="availability-requirement" type="ciaRequirementType"/>
+		</xsd:sequence>
+	</xsd:group>
+	<xsd:group name="temporalVectorsGroup">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="exploitability" type="exploitabilityType"/>
+			<xsd:element minOccurs="0" name="remediation-level" type="remediationLevelType"/>
+			<xsd:element minOccurs="0" name="report-confidence" type="confidenceType"/>
+		</xsd:sequence>
+	</xsd:group>
+	<xsd:group name="baseVectorsCriteriaGroup">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="access-vector" type="accessVectorEnumType"/>
+			<xsd:element minOccurs="0" name="access-complexity" type="accessComplexityEnumType"/>
+			<xsd:element minOccurs="0" name="authentication" type="authenticationEnumType"/>
+			<xsd:element minOccurs="0" name="confidentiality-impact" type="ciaEnumType"/>
+			<xsd:element minOccurs="0" name="integrity-impact" type="ciaEnumType"/>
+			<xsd:element minOccurs="0" name="availability-impact" type="ciaEnumType"/>
+		</xsd:sequence>
+	</xsd:group>
+	<xsd:group name="environmentalVectorsCriteriaGroup">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="collateral-damage-potential" type="collateralDamagePotentialEnumType"/>
+			<xsd:element minOccurs="0" name="target-distribution" type="targetDistributionEnumType"/>
+			<xsd:element minOccurs="0" name="confidentiality-requirement" type="ciaRequirementEnumType"/>
+			<xsd:element minOccurs="0" name="integrity-requirement" type="ciaRequirementEnumType"/>
+			<xsd:element minOccurs="0" name="availability-requirement" type="ciaRequirementEnumType"/>
+		</xsd:sequence>
+	</xsd:group>
+	<xsd:group name="temporalVectorsCriteriaGroup">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="exploitability" type="exploitabilityEnumType"/>
+			<xsd:element minOccurs="0" name="remediation-level" type="remediationLevelEnumType"/>
+			<xsd:element minOccurs="0" name="report-confidence" type="confidenceEnumType"/>
+		</xsd:sequence>
+	</xsd:group>
+	<xsd:attributeGroup name="vectorAttributeGroup">
+		<xsd:attribute name="approximated" type="xsd:boolean" default="false">
+			<xsd:annotation>
+				<xsd:documentation>Indicates if the vector has been approximated as the result of an upgrade from a previous CVSS version</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:attributeGroup>
+
+	<!-- ================================================== -->
+	<!-- =====  Complex Type Definitions  -->
+	<!-- ================================================== -->
+	<xsd:complexType name="accessComplexityType">
+		<xsd:simpleContent>
+			<xsd:extension base="accessComplexityEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="accessVectorType">
+		<xsd:simpleContent>
+			<xsd:extension base="accessVectorEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="ciaRequirementType">
+		<xsd:simpleContent>
+			<xsd:extension base="ciaRequirementEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="collateralDamagePotentialType">
+		<xsd:simpleContent>
+			<xsd:extension base="collateralDamagePotentialEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="targetDistributionType">
+		<xsd:simpleContent>
+			<xsd:extension base="targetDistributionEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="ciaType">
+		<xsd:simpleContent>
+			<xsd:extension base="ciaEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="authenticationType">
+		<xsd:simpleContent>
+			<xsd:extension base="authenticationEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="remediationLevelType">
+		<xsd:simpleContent>
+			<xsd:extension base="remediationLevelEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="confidenceType">
+		<xsd:simpleContent>
+			<xsd:extension base="confidenceEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	<xsd:complexType name="exploitabilityType">
+		<xsd:simpleContent>
+			<xsd:extension base="exploitabilityEnumType">
+				<xsd:attributeGroup ref="vectorAttributeGroup"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  CVSS_V2  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:complexType name="cvssType">
+		<xsd:annotation>
+			<xsd:documentation>"This schema was intentionally designed to avoid mixing classes and attributes between CVSS version 1, CVSS version 2, and future versions. Scores in the CVSS system are interdependent.  The temporal score is a multiplier of the base score.  The environmental score, in turn, is a multiplier of the temporal score.  The ability to transfer these scores independently is provided on the assumption that the user understands the business logic. For any given metric, it is preferred that the score, as a minimum is provided, however the score can be re-created from the metrics or the multiplier and any scores they are dependent on."</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element minOccurs="0" maxOccurs="unbounded" name="base_metrics" type="baseMetricsType"/>
+			<xsd:element minOccurs="0" maxOccurs="unbounded" name="environmental_metrics" type="environmentalMetricsType"/>
+			<xsd:element minOccurs="0" maxOccurs="unbounded" name="temporal_metrics" type="temporalMetricsType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="cvssImpactType">
+		<xsd:complexContent>
+			<xsd:restriction base="cvssType">
+				<xsd:sequence>
+					<xsd:element minOccurs="1" maxOccurs="1" name="base_metrics" type="baseMetricsType"/>
+					<xsd:element minOccurs="0" maxOccurs="1" name="environmental_metrics" type="environmentalMetricsType"/>
+					<xsd:element minOccurs="0" maxOccurs="1" name="temporal_metrics" type="temporalMetricsType"/>
+				</xsd:sequence>
+			</xsd:restriction>
+		</xsd:complexContent>            
+	</xsd:complexType>
+
+	<xsd:complexType name="cvssImpactBaseType">
+		<xsd:sequence>
+			<xsd:element name="base_metrics" type="baseMetricsType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="cvssImpactTemporalType">
+		<xsd:complexContent>
+			<xsd:extension base="cvssImpactBaseType">
+				<xsd:sequence>
+					<xsd:element name="temporal_metrics" type="temporalMetricsType" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="cvssImpactEnvironmentalType">
+		<xsd:complexContent>
+			<xsd:extension base="cvssImpactTemporalType">
+				<xsd:sequence>
+					<xsd:element name="environmental_metrics" type="environmentalMetricsType" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  Metrics  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:complexType name="metricsType" abstract="true">
+		<xsd:annotation>
+			<xsd:documentation>Base type for metrics that defines common attributes of all metrics.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:attribute name="upgraded-from-version" type="xsd:decimal">
+			<xsd:annotation>
+				<xsd:documentation>Indicates if the metrics have been upgraded from a previous version of CVSS.  If fields that were approximated will have an approximated attribute set to 'true'.</xsd:documentation>
+			</xsd:annotation>
+		</xsd:attribute>
+	</xsd:complexType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  Base_Metrics  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:complexType name="baseMetricsType">
+		<xsd:complexContent>
+			<xsd:extension base="metricsType">
+				<xsd:sequence>
+					<xsd:element minOccurs="0" name="score" type="zeroToTenDecimalType">
+						<xsd:annotation>
+							<xsd:documentation>Base severity score assigned to a vulnerability by a source</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="exploit-subscore" type="zeroToTenDecimalType">
+						<xsd:annotation>
+							<xsd:documentation>Base exploit sub-score assigned to a vulnerability by a source</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="impact-subscore" type="zeroToTenDecimalType">
+						<xsd:annotation>
+							<xsd:documentation>Base impact sub-score assigned to a vulnerability by a source</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:group ref="baseVectorsGroup"/>
+					<xsd:element name="source" type="xsd:anyURI">
+						<xsd:annotation>
+							<xsd:documentation>Data source the vector was obtained from.  Example:  http://nvd.nist.gov or com.symantec.deepsight</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="generated-on-datetime" type="xsd:dateTime"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  Environmental_Metrics  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:complexType name="environmentalMetricsType">
+		<xsd:complexContent>
+			<xsd:extension base="metricsType">
+				<xsd:sequence>
+					<xsd:element minOccurs="0" name="score" type="zeroToTenDecimalType"/>
+					<xsd:group ref="environmentalVectorsGroup"/>
+					<xsd:element name="source" type="xsd:anyURI">
+						<xsd:annotation>
+							<xsd:documentation>Data source the vector was obtained from.  Example:  gov.nist.nvd or com.symantec.deepsight</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="generated-on-datetime" type="xsd:dateTime"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!--  Temporal_Metrics  -->
+	<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<xsd:complexType name="temporalMetricsType">
+		<xsd:complexContent>
+			<xsd:extension base="metricsType">
+				<xsd:sequence>
+					<xsd:element minOccurs="0" name="score" type="zeroToTenDecimalType">
+						<xsd:annotation>
+							<xsd:documentation>The temporal score is the temporal multiplier times the base score.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element minOccurs="0" name="temporal-multiplier" type="xsd:decimal">
+						<xsd:annotation>
+							<xsd:documentation>The temporal multiplier is a number between zero and one.  Reference the CVSS standard for computation.</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:group ref="temporalVectorsGroup"/>
+					<xsd:element name="source" type="xsd:anyURI"/>
+					<xsd:element name="generated-on-datetime" type="xsd:dateTime"/>
+				</xsd:sequence>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+</xsd:schema>

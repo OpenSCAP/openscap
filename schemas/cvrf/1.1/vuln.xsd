@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+ xmlns:vuln="http://www.icasi.org/CVRF/schema/vuln/1.1"
+ xmlns:prod="http://www.icasi.org/CVRF/schema/prod/1.1"
+ xmlns:cvrf-common="http://www.icasi.org/CVRF/schema/common/1.1"
+ xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:cpe-lang="http://cpe.mitre.org/language/2.0"
+ xmlns:cvssv2="http://scap.nist.gov/schema/cvss-v2/1.0"
+ xmlns:scap-core="http://scap.nist.gov/schema/scap-core/1.0"
+ id="CVRFVulnerabilityDictionary"
+ targetNamespace="http://www.icasi.org/CVRF/schema/vuln/1.1"
+ elementFormDefault="qualified"
+ attributeFormDefault="unqualified"
+ version="1.1">
+  <!-- =============================================================================== -->
+  <!-- =============================   SCHEMA IMPORTS  =============================== -->
+  <!-- =============================================================================== -->
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="dc.xsd"/>
+  <xs:import namespace="http://cpe.mitre.org/language/2.0" schemaLocation="cpe-language_2.2a.xsd"/>
+  <xs:import namespace="http://scap.nist.gov/schema/scap-core/1.0" schemaLocation="scap-core_0.9.xsd"/>
+  <xs:import namespace="http://scap.nist.gov/schema/cvss-v2/1.0" schemaLocation="cvss-v2_0.9.xsd"/>
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/common/1.1" schemaLocation="common.xsd"/>
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/prod/1.1" schemaLocation="prod.xsd"/>
+  <!-- =============================================================================== -->
+  <!-- ============================ SCHEMA INFORMATION =============================== -->
+  <!-- =============================================================================== -->
+  <xs:annotation>
+    <xs:documentation xml:lang="en">This is the XML schema for the Common Vulnerability Reporting Framework's Vulnerability model.  For more information, see the CVRF whitepaper.</xs:documentation>
+    <xs:appinfo>
+      <dc:creator>Brian Schafer &lt;bschafer@microsoft.com&gt;</dc:creator>
+      <dc:contributor>Joe Clarke &lt;jclarke@cisco.com&gt;</dc:contributor>
+      <dc:contributor>Joe Hemmerlein &lt;Joe.Hemmerlein@microsoft.com&gt;</dc:contributor>
+      <dc:date>2012-05-07</dc:date>
+      <dc:subject>CVRF Vulnerability Dictionary</dc:subject>
+      <version>1.1</version>
+    </xs:appinfo>
+  </xs:annotation>
+  <!-- =============================================================================== -->
+  <!-- =================================== DATA TYPES ================================ -->
+  <!-- =============================================================================== -->
+  <xs:simpleType name="InvolvementStatusEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating a party's current engagement status for this vulnerability.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Open">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The party has acknowledged that they are aware of the vulnerability report.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Disputed">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The party disputes the vulnerability report in its entirety</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="In Progress">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Some hot-fixes, permanent fixes, or patches have been made available by the party, but more fixes or patches are going to be released in the future.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Completed">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The party asserts that they have completed remediation of the vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Contact Attempted">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The party has been contacted, but was unresponsive or unavailable.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Not Contacted">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">No contact has been attempted with the party.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cvePattern">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">String type to match CVE IDs</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="CVE-[0-9\-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cwePattern">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">String type to match CWE IDs</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="CWE-[1-9]\d{0,5}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cvssVector">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">String representing the components needed to compute the various CVSS scores</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:maxLength value="76"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="AffectedStatusEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the affected statuses described by a vulnerability</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="First Affected">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The first version known to be affected by this vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="First Fixed">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This version is the first fixed version for the vulnerability but may not be the recommended fixed version.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Fixed">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This version is contains a fix for the vulnerability but may not be the recommended fixed version.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Known Affected">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This version is known to be affected by the vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Known Not Affected">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This version is known NOT to be affected by the vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Last Affected">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This is the last version in a train known to be affected.  Versions released after this would contain a fix for this vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Recommended">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This version has a fix for the vulnerability and is the vendor-recommended version for fixing the vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ThreatTypeEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the Threat type described by the vulnerability</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Impact">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Impact contains an assessment of the impact on the user or the target set if the vulnerability is successful exploited.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Exploit Status">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Exploit Status contains a description of the degree to which an exploit for the vulnerability is known.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Target Set">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Target Set contains a description of the currently known victim population in whatever terms are appropriate.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RemedyTypeEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the Remedy type described by the vulnerability.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Workaround">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Workaround contains information about a configuration or specific deployment scenario that can be used to avoid exposure to the vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Mitigation">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Mitigation contains information about a configuration or deployment scenario that helps to reduce the risk of the vulnerability but that does not resolve the vulnerability on the affected product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Vendor Fix">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Vendor Fix contains information about an official fix that is issued by the original author of the affected product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="None Available">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Currently there is no fix available.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Will Not Fix">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">There is no fix for the vulnerability and there never will be one.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="ProductID" type="xs:token">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Existing product ID from the product tree.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="GroupID" type="xs:token">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Existing product group ID from the product tree.</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <!-- =============================================================================== -->
+  <!-- ============================= DOCUMENT DEFINITION ============================= -->
+  <!-- =============================================================================== -->
+  <xs:element name="Vulnerability">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">This is a meta-container for the aggregation of all fields that are related to a single vulnerability within the document.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Title" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Vulnerability Title gives the document producer the ability to apply a canonical name or title to the vulnerability.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="cvrf-common:localizedString"/>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ID" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Vulnerability ID gives the document producer a place to publish a unique label or tracking ID for the vulnerability (if such information exists).</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="xs:token">
+                <xs:attribute name="SystemName" type="xs:token" use="required">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="en">System Name indicates the name of the vulnerability tracking or numbering system that this vulnerability ID comes from.</xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Notes" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Notes container holds all individual notes concerning this vulnerability.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Note" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The Notes text contains all of the content necessary to provide different types of low-level discussions of a given vulnerability to various audiences.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="cvrf-common:localizedString">
+                      <xs:attribute name="Title" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Title should be a concise description of what is contained in Vulnerability Notes.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Audience" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Audience will indicate who is intended to read the note.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Type" type="cvrf-common:NoteTypeEnumType" use="required">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Type of content within this note.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Ordinal" type="xs:positiveInteger" use="required">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Ordinal is a locally significant integral counter indexed from 1 used to track notes.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DiscoveryDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Date vulnerability was initially discovered by its original discoverer.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="ReleaseDate" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Date vulnerability was initially released to the public.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="Involvements" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Involvements container lists any number of vendor or third party interactions related to this vulnerability.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Involvement" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Involvement contains a specific set of interaction details.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Description" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The description of the Involvement.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString"/>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="Party" type="cvrf-common:PublisherEnumType" use="required">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">Type of party with whom the involvement is taking place.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Status" type="vuln:InvolvementStatusEnumType" use="required">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">Status of the involvement with the specified party.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="CVE" type="vuln:cvePattern" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The CVE string refers to the MITRE standard Common Vulnerabilities Enumeration (CVE) tracking number for the vulnerability.</xs:documentation>
+          </xs:annotation>
+        </xs:element>
+        <xs:element name="CWE" minOccurs="0" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Detailed description of the referrenced Common Weakness Enumeration (CWE) identifier.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="cvrf-common:localizedString">
+                <xs:attribute name="ID" type="vuln:cwePattern" use="required">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="en">The MITRE-assigned CWE identifier.</xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ProductStatuses" minOccurs="0" maxOccurs="1">
+	      <xs:annotation>
+	        <xs:documentation xml:lang="en">The ProductStatuses container holds the list of all the products affected by the vulnerability in question.</xs:documentation>
+	      </xs:annotation>
+	      <xs:complexType>
+	        <xs:sequence>
+	          <xs:element name="Status" minOccurs="1" maxOccurs="unbounded">
+	            <xs:annotation>
+	              <xs:documentation xml:lang="en">The Status element holds an enumerated value based on available Product Name Entry items as constructed from the Product Tree container.</xs:documentation>
+	            </xs:annotation>
+	            <xs:complexType>
+	              <xs:sequence>
+	                <xs:element ref="vuln:ProductID" minOccurs="1" maxOccurs="unbounded" />
+	              </xs:sequence>
+	              <xs:attribute name="Type" type="vuln:AffectedStatusEnumType" use="required">
+	                <xs:annotation>
+	                  <xs:documentation xml:lang="en">Affected status for the product or products defined in this container.</xs:documentation>
+	                </xs:annotation>
+	              </xs:attribute>
+	            </xs:complexType>
+	          </xs:element>
+	        </xs:sequence>
+	      </xs:complexType>
+	    </xs:element>
+        <xs:element name="Threats" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Contains all Threat containers</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Threat" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Threat contains the "kinetic" information associated with a vulnerability.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Description" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The description of the Threat.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString"/>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element ref="vuln:ProductID" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element ref="vuln:GroupID" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+                  <xs:attribute name="Type" type="vuln:ThreatTypeEnumType" use="required">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">The type of the Threat.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Date" type="xs:dateTime">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">The date this Threat item was last updated; if omitted it is deemed to be unknown, irrelevant, or unimportant.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="CVSSScoreSets" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The CVSS Score Set meta-container holds one or more CVSS score sets to describe vulnerable products.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ScoreSet" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">CVSS scores for a given product ID.  If the ProductID attribute is omitted, the score applies to all vulnerable products.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="BaseScore" type="cvssv2:zeroToTenDecimalType" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The CVSS Base Score is the numeric value of the computed CVSS Base Score which should be a float from 0 – 10.0.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="TemporalScore" type="cvssv2:zeroToTenDecimalType" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The CVSS Base Score is the numeric value of the computed CVSS Temporal Score which should be a float from 0 – 10.0.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="EnvironmentalScore" type="cvssv2:zeroToTenDecimalType" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The CVSS Base Score is the numeric value of the computed CVSS Environmental Score which should be a float from 0 – 10.0.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Vector" type="vuln:cvssVector" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The CVSS Vector string is the official notation that contains all of the values used to compute the Base, Temporal, and Environmental scores.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element ref="vuln:ProductID" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Remediations" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Remediation meta-container tag holds all related Workaround, Mitigation, Vendor Fix, and Entitlement entries that are associated with the specific vulnerability.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Remediation" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Holds all of the specific details on how to handle (and presumably, fix) the vulnerability, tied to Product ID.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Description" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">Textual description of this remedy.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString"/>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Entitlement" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The Entitlement string will contain any possible vendor-defined constraints for obtaining fixed software or hardware that fully resolves the vulnerability.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString"/>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="URL" type="xs:anyURI" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">URL from which the remedy can be obtained.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element ref="vuln:ProductID" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element ref="vuln:GroupID" minOccurs="0" maxOccurs="unbounded" />
+                  </xs:sequence>
+                  <xs:attribute name="Type" type="vuln:RemedyTypeEnumType" use="required">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">Specific type of remedy.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                  <xs:attribute name="Date" type="xs:dateTime">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">The date Remedy was last updated, if omitted it is deemed to be unknown, unimportant, or irrelevant.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="References" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">This meta-container should include references to any conferences, papers, advisories, and other resources that are related to this vulnerability.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Reference" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">This meta-container contains an orthogonally related document, background info, whitepaper, etc. to the specific vulnerability.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="URL" type="xs:anyURI" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The URL of the related document.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Description" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The description of the related document.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString"/>
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="Type" type="cvrf-common:ReferenceTypeEnum" default="External">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">Enumerated type value of reference relative to this document.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Acknowledgments" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Acknowledgments container holds one or more Acknowledgement containers for vulnerability-level acknowledgements.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Acknowledgment" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The Acknowledgment container holds recognition for external parties who were instrumental in the discovery of, reporting of, and response to the vulnerability.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Name" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The name (i.e., individual name) of the party being acknowledged.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Organization" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The organization of the party being acknowledged or the organization itself being acknowledged.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Description" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The details of the acknowledgment that address the recognition of external parties who were instrumental in the discovery, reporting and response of this document.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="URL" type="xs:anyURI"  minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The optional URL to the person, place, or thing being acknowledged.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="Ordinal" type="xs:positiveInteger" use="required">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Locally significant numeric value to track vulnerabilities within a CVRF document.  This enables vulnerabilities to be referenced from elsewhere inside the document (often at the document-level)</xs:documentation>
+        </xs:annotation>
+      </xs:attribute>
+    </xs:complexType>
+    <xs:unique name="UniqueProductProductID">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each product mentions a given ProductID only one.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:ProductStatuses/vuln:Status/vuln:ProductID"/>
+      <xs:field xpath="."/>
+    </xs:unique>
+    <xs:unique name="UniqueScoreSetProductID">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each CVSS score set mentions a given ProductID only one.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:CVSSScoreSets/vuln:ScoreSet/vuln:ProductID"/>
+      <xs:field xpath="."/>
+    </xs:unique>
+    <xs:unique name="UniqueNotesOrdinal">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each note has a unique ordinal value.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:Notes/vuln:Note"/>
+      <xs:field xpath="@Ordinal"/>
+    </xs:unique>
+  </xs:element>
+</xs:schema>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cvrfdoc xmlns="http://www.icasi.org/CVRF/schema/cvrf/1.1" xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1">
+  <DocumentTitle xml:lang="en">Red Hat Security Advisory: collectd security, bug fix, and enhancement update</DocumentTitle>
+  <DocumentType>Security Advisory</DocumentType>
+  <DocumentPublisher Type="Vendor">
+    <ContactDetails>secalert@redhat.com</ContactDetails>
+    <IssuingAuthority>Red Hat Product Security</IssuingAuthority>
+  </DocumentPublisher>
+  <DocumentTracking>
+    <Identification><ID>RHSA-2017:1285</ID></Identification>
+    <Status>Final</Status>
+    <Version>2</Version>
+    <RevisionHistory>
+       <Revision>
+         <Number>2</Number>
+         <Date>2017-07-17T19:02:00Z</Date>
+         <Description>Current version</Description>
+       </Revision>
+    </RevisionHistory>
+    <InitialReleaseDate>2017-05-24T09:19:00Z</InitialReleaseDate>
+    <CurrentReleaseDate>2017-07-17T19:02:00Z</CurrentReleaseDate>
+    <Generator>
+      <Engine>Red Hat rhsa-to-cvrf 2.1</Engine>
+      <Date>2017-07-17T19:20:02Z</Date>
+    </Generator>
+  </DocumentTracking>
+  <DocumentDistribution xml:lang="en">Copyright © 2017 Red Hat, Inc. All rights reserved.</DocumentDistribution>
+  <AggregateSeverity Namespace="https://access.redhat.com/security/updates/classification/">Moderate</AggregateSeverity>
+  <DocumentReferences>
+    <Reference Type="Self">
+       <URL>https://access.redhat.com/errata/RHSA-2017:1285</URL>
+       <Description>https://access.redhat.com/errata/RHSA-2017:1285</Description>
+    </Reference>
+    <Reference>
+       <URL>https://access.redhat.com/security/updates/classification/#moderate</URL>
+       <Description>https://access.redhat.com/security/updates/classification/#moderate</Description>
+    </Reference>
+    <Reference>
+       <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1446472</URL>
+       <Description>https://bugzilla.redhat.com/show_bug.cgi?id=1446472</Description>
+    </Reference>
+  </DocumentReferences>
+  <ProductTree xmlns="http://www.icasi.org/CVRF/schema/prod/1.1">
+    <Branch Type="Product Family" Name="Red Hat Virtualization">
+      <Branch Type="Product Name" Name="Managment Agent for RHEL 7 Hosts">
+        <FullProductName ProductID="7Server-RHEV-4-Agents-7">Managment Agent for RHEL 7 Hosts</FullProductName>
+      </Branch>
+      <Branch Type="Product Name" Name="RHV-M 4.1">
+        <FullProductName ProductID="7Server-RHV-S-4.1">RHV-M 4.1</FullProductName>
+      </Branch>
+    </Branch>
+    <Branch Type="Product Version" Name="collectd-0:5.7.1-4.el7">
+      <FullProductName ProductID="collectd-0:5.7.1-4.el7">collectd-5.7.1-4.el7.src.rpm</FullProductName>
+    </Branch>
+    <Relationship ProductReference="collectd-0:5.7.1-4.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-RHEV-4-Agents-7">
+      <FullProductName ProductID="7Server-RHEV-4-Agents-7:collectd-0:5.7.1-4.el7">collectd-0:5.7.1-4.el7 as a component of Managment Agent for RHEL 7 Hosts</FullProductName>
+    </Relationship>
+    <Relationship ProductReference="collectd-0:5.7.1-4.el7" RelationType="Default Component Of" RelatesToProductReference="7Server-RHV-S-4.1">
+      <FullProductName ProductID="7Server-RHV-S-4.1:collectd-0:5.7.1-4.el7">collectd-0:5.7.1-4.el7 as a component of RHV-M 4.1</FullProductName>
+    </Relationship>
+  </ProductTree>
+
+  <Vulnerability Ordinal="1" xmlns="http://www.icasi.org/CVRF/schema/vuln/1.1">
+    <DiscoveryDate>2017-04-03T00:00:00Z</DiscoveryDate>
+    <ReleaseDate>2017-02-13T00:00:00Z</ReleaseDate>
+    <CVE>CVE-2017-7401</CVE>
+    <ProductStatuses><Status Type="Fixed">
+      <ProductID>7Server-RHEV-4-Agents-7:collectd-0:5.7.1-4.el7</ProductID>
+      <ProductID>7Server-RHV-S-4.1:collectd-0:5.7.1-4.el7</ProductID>
+    </Status></ProductStatuses>
+    <Threats><Threat Type="Impact"><Description>Moderate</Description></Threat></Threats>
+    <Remediations>
+      <Remediation Type="Vendor Fix"><Description xml:lang="en">
+For details on how to apply this update, which includes the changes described in this advisory, refer to:
+
+https://access.redhat.com/articles/11258    </Description>
+      <URL>https://access.redhat.com/errata/RHSA-2017:1285</URL></Remediation>
+    </Remediations>
+    <References>
+      <Reference>
+        <URL>https://access.redhat.com/security/cve/CVE-2017-7401</URL>
+        <Description>CVE-2017-7401</Description>
+      </Reference>
+      <Reference>
+        <URL>https://bugzilla.redhat.com/show_bug.cgi?id=1439674</URL>
+        <Description>bz#1439674: CVE-2017-7401 collectd: Infinite loop due to incorrect interaction of parse_packet() and parse_part_sign_sha256() functions</Description>
+      </Reference>
+    </References>
+  </Vulnerability>
+</cvrfdoc>

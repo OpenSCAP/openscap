@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+ xmlns:cvrf-common="http://www.icasi.org/CVRF/schema/common/1.1"
+ xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ id="CVRFCommonDictionary"
+ targetNamespace="http://www.icasi.org/CVRF/schema/common/1.1"
+ elementFormDefault="qualified"
+ attributeFormDefault="unqualified"
+ version="1.1">
+  <!-- =============================================================================== -->
+  <!-- =============================   SCHEMA IMPORTS  =============================== -->
+  <!-- =============================================================================== -->
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="dc.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../../common/xml.xsd"/>
+  <!-- =============================================================================== -->
+  <!-- ============================ SCHEMA INFORMATION =============================== -->
+  <!-- =============================================================================== -->
+  <xs:annotation>
+    <xs:documentation xml:lang="en">This is the XML schema for the Common Vulerability Reporting Framework's common data types.</xs:documentation>
+    <xs:appinfo>
+      <dc:creator>Brian Schafer &lt;bschafer@microsoft.com&gt;</dc:creator>
+      <dc:contributor>Joe Clarke &lt;jclarke@cisco.com&gt;</dc:contributor>
+      <dc:contributor>Joe Hemmerlein &lt;Joe.Hemmerlein@microsoft.com&gt;</dc:contributor>
+      <dc:date>2012-05-07</dc:date>
+      <dc:subject>CVRF Common Data Types</dc:subject>
+      <version>1.1</version>
+    </xs:appinfo>
+  </xs:annotation>
+  <!-- =============================================================================== -->
+  <!-- =================================== DATA TYPES ================================ -->
+  <!-- =============================================================================== -->
+  <xs:simpleType name="nonEmptyNormalizedString">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">A normalized string type that cannot be empty.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:normalizedString">
+      <xs:minLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="nonEmptyString">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">A string type that cannot be empty.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="localizedString">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">String type with an optional language attribute.  The default language is English.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="cvrf-common:nonEmptyString">
+        <xs:attribute ref="xml:lang" default="en">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Locale code used for the string value.  The default is &quot;en&quot;.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="localizedNormalizedString">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Normalized string type with an optional language attribute.  The default language is English.  This string cannot be empty.</xs:documentation>
+    </xs:annotation>
+    <xs:simpleContent>
+      <xs:extension base="cvrf-common:nonEmptyNormalizedString">
+        <xs:attribute ref="xml:lang" default="en">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Locale code used for the string value.  The default is &quot;en&quot;.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="revisionNumber">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Dotted string representing the document revision</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:pattern value="(0|[1-9][0-9]*)(\.(0|[1-9][0-9]*)){0,3}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="ReferenceTypeEnum">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the type of reference document</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="External">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This document is an external reference to the current vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Self">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This document is a reference to this same vulnerability.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PublisherEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the various publishers of a document.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Vendor">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Developers or maintainers of information system products or services.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Discoverer">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Individuals or organizations that find vulnerabilities or security weaknesses.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Coordinator">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Individuals or organizations that manage a single vendor's response or multiple vendors' responses to a vulnerability, a security flaw, or an incident.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="User">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Everyone using a vendor's product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Other">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Catchall for everyone else. Currently this includes forwarders, re-publishers, language translators and miscellaneous contributors.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NoteTypeEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Allowed type values for CVRF notes.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="General">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A general, high-level note (Title may have more information).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Details">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A low-level detailed discussion (Title may have more information).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Description">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A description of something (Title may have more information).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Summary">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A summary of something (Title may have more information).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="FAQ">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A list of frequently asked questions.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Legal Disclaimer">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Any possible legal discussion, including constraints, surrounding the document.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Other">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Something that doesn’t fit (Title should have more information).</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

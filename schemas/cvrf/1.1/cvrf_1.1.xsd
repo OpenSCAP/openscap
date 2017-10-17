@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema id="CVRFDictionary"
+  targetNamespace="http://www.icasi.org/CVRF/schema/cvrf/1.1"
+  xmlns:cvrf="http://www.icasi.org/CVRF/schema/cvrf/1.1"
+  xmlns:vuln="http://www.icasi.org/CVRF/schema/vuln/1.1"
+  xmlns:prod="http://www.icasi.org/CVRF/schema/prod/1.1"
+  xmlns:cvrf-common="http://www.icasi.org/CVRF/schema/common/1.1"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  version="1.1">
+  <!-- =============================================================================== -->
+  <!-- =============================   SCHEMA IMPORTS  =============================== -->
+  <!-- =============================================================================== -->
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="dc.xsd" />
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/vuln/1.1" schemaLocation="vuln.xsd" />
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/common/1.1" schemaLocation="common.xsd" />
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/prod/1.1" schemaLocation="prod.xsd" />
+  <!-- =============================================================================== -->
+  <!-- ============================ SCHEMA INFORMATION =============================== -->
+  <!-- =============================================================================== -->
+  <xs:annotation>
+    <xs:documentation xml:lang="en">This is the XML schema for the Common Vulnerability Reporting Framework.  For more information, see the CVRF whitepaper.</xs:documentation>
+    <xs:appinfo>
+      <dc:creator>Brian Schafer &lt;bschafer@microsoft.com&gt;</dc:creator>
+      <dc:contributor>Joe Clarke &lt;jclarke@cisco.com&gt;</dc:contributor>
+      <dc:contributor>Joe Hemmerlein &lt;Joe.Hemmerlein@microsoft.com&gt;</dc:contributor>
+      <dc:date>2012-05-07</dc:date>
+      <dc:subject>CVRF Dictionary</dc:subject>
+      <version>1.1</version>
+    </xs:appinfo>
+  </xs:annotation>
+  <!-- =============================================================================== -->
+  <!-- =================================== DATA TYPES ================================ -->
+  <!-- =============================================================================== -->
+  <xs:simpleType name="DocumentStatusEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the status of the document.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:normalizedString">
+      <xs:enumeration value="Draft">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">Pre-release, intended for issuing party’s internal use only, or possibly used externally when the party is seeking feedback or indicating its intentions regarding a specific issue.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Interim">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The issuing party believes the content is subject to change.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Final">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The issuing party asserts the content is unlikely to change.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="cvrfVersion">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Floating point number representing the CVRF specification version</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:float">
+      <xs:pattern value="[0-9]+\.[0-9]{1,3}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <!-- =============================================================================== -->
+  <!-- ============================= DOCUMENT DEFINITION ============================= -->
+  <!-- =============================================================================== -->
+  <xs:element name="cvrfdoc">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Root element of a CVRF document.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="DocumentTitle" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">A definitive canonical name for the document, providing enough descriptive content to differentiate from other similar documents, ideally providing a unique “handle”.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="cvrf-common:localizedNormalizedString" />
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DocumentType" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">A short canonical name, chosen by the document producer, which will inform the consumer about the type of the document.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="cvrf-common:localizedNormalizedString" />
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DocumentPublisher" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">A container holding all information about the publisher of the CVRF document.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ContactDetails" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Author contact information such as address, phone number, email, etc.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="cvrf-common:localizedString" />
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="IssuingAuthority" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The name of the issuing party and their authority to release the document, in particular, the party's constituency and responsibilities or other obligations.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="cvrf-common:localizedString" />
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="Type" type="cvrf-common:PublisherEnumType" use="required">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">Type is an enumerated list containing an array of different document publisher types.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="VendorID" type="xs:string">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">Vendor ID is a unique identifier (OID) that a vendor uses as issued by FIRST under the auspices of IETF.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType> 
+        </xs:element>
+        <xs:element name="DocumentTracking" minOccurs="1" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Document Tracking meta-container contains all of the attributes necessary to track a CVRF document.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Identification" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Contains document ID and optional document aliases</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="ID" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">Short unique identifier used to refer to the document unambiguously in any context.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Alias" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">Optional alternative ID for document</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Status" type="cvrf:DocumentStatusEnumType" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The condition of the document with regard to completeness and the likelihood of future editions.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Version" type="cvrf-common:revisionNumber" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Document Version is a simple counter to track the version of the document.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="RevisionHistory" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The Document Revision History contains one entry for each substantive version of the document, including the initial version and entries for each subsequent update.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Revision" minOccurs="1" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">A set of Version, Date, and Description elements describing one iteration of this document</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="Number" type="cvrf-common:revisionNumber" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                              <xs:documentation xml:lang="en">Revision number of this iteration of the document.</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="Date" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                              <xs:documentation xml:lang="en">Date when this iteration of the document was released.</xs:documentation>
+                            </xs:annotation>
+                          </xs:element>
+                          <xs:element name="Description" minOccurs="1" maxOccurs="1">
+                            <xs:annotation>
+                              <xs:documentation xml:lang="en">Description of this iteration of the document.</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                              <xs:simpleContent>
+                                <xs:extension base="cvrf-common:localizedString" />
+                              </xs:simpleContent>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="InitialReleaseDate" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The initial date (and time, optionally) that the document was initially released by the issuing party.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="CurrentReleaseDate" type="xs:dateTime" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The current date (and time, optionally) that the document was released by the issuing party.</xs:documentation>
+                </xs:annotation>
+              </xs:element>
+              <xs:element name="Generator" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The Document Generator meta-container contains all of the elements related to the generation of the document.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Engine" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The name and version of the engine that generated the CVRF document.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Date" type="xs:dateTime" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The date the CVRF document was generated.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DocumentNotes" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Document Notes text contains all of the individual notes necessary to provide different types of low-level discussions of a CVRF document to various audiences.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Note" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">A individual note in freeform text.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="cvrf-common:localizedString">
+                      <xs:attribute name="Title" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Title should be a concise description of what is contained in this specific note.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Audience" type="xs:string">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Audience will indicate who is intended to read the note.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Type" type="cvrf-common:NoteTypeEnumType" use="required">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Type of content within this note.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                      <xs:attribute name="Ordinal" type="xs:positiveInteger" use="required">
+                        <xs:annotation>
+                          <xs:documentation xml:lang="en">Ordinal is a locally significant integral counter indexed from 1 used to track notes.</xs:documentation>
+                        </xs:annotation>
+                      </xs:attribute>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DocumentDistribution" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Document Distribution string should contain details on constraints, if any, about sharing this CVRF Document with additional recipients.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="cvrf-common:localizedString" />
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="AggregateSeverity" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Aggregate Severity is provided by the producer of the document to convey the urgency and criticality with which the vulnerability or vulnerabilities should be addressed.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="cvrf-common:localizedString">
+                <xs:attribute name="Namespace" type="xs:anyURI">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="en">URL of the namespace from which the Aggregate Severity is taken.</xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="DocumentReferences" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">This meta-container should include references to any conferences, papers, advisories, and other resources that are related and considered to be of value to the document consumer.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Reference" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">Related documents to the CVRF document.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="URL" type="xs:anyURI" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The URL of the related document.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Description" minOccurs="1" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The description of the related document.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="Type" type="cvrf-common:ReferenceTypeEnum" default="External">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">Enumerated type value of reference relative to this document.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Acknowledgments" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">The Acknowledgments container holds one or more Acknowledgement containers for document-level acknowledgements.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Acknowledgment" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">The Acknowledgment container holds recognition details for external parties, specific to the document as a whole rather than individual vulnerabilities.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Name" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The name (i.e., individual name) of the party being acknowledged.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Organization" minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The organization of the party being acknowledged or the organization itself being acknowledged.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Description" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The details of the acknowledgment that address the recognition of external parties who were instrumental in the discovery, reporting and response of this document.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="URL" type="xs:anyURI"  minOccurs="0" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The optional URL to the person, place, or thing being acknowledged.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element ref="prod:ProductTree" minOccurs="0" maxOccurs="1" />
+        <xs:element ref="vuln:Vulnerability" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+    <xs:unique name="UniqueOrdinal">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each Vulnerability's Ordinal uses a unique value.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:Vulnerability"/>
+      <xs:field xpath="@Ordinal"/>
+    </xs:unique>
+     <xs:unique name="UniqueNotesOrdinal">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each note has a unique ordinal value.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//cvrf:DocumentNotes/cvrf:Note"/>
+      <xs:field xpath="@Ordinal"/>
+    </xs:unique>
+    <xs:key name="ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">A key to reference a specific product defined in a referenced product schema.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:FullProductName" />
+      <xs:field xpath="@ProductID" />
+    </xs:key>
+    <xs:keyref name="AffectedProductKeyRef" refer="cvrf:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey to be used in the ProductID element for affected products.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:ProductStatuses/vuln:Status/vuln:ProductID"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+    <xs:keyref name="ScoreSetProductKeyRef" refer="cvrf:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey to be used in the CVSS ScoreSet product references.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:CVSSScoreSets/vuln:ScoreSet/vuln:ProductID"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+    <xs:keyref name="ThreatProductKeyRef" refer="cvrf:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey to be used in the Threat product references.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:Threats/vuln:Threat/vuln:ProductID"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+    <xs:keyref name="RemediationProductKeyRef" refer="cvrf:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey to be used in the Remediation product references.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:Remediations/vuln:Remediation/vuln:ProductID"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+    <xs:key name="GroupKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">A key to reference a specific product group defined in a referenced product schema.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:ProductGroups/prod:Group" />
+      <xs:field xpath="@GroupID" />
+    </xs:key>
+    <xs:keyref name="ThreatGroupKeyRef" refer="cvrf:GroupKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the GroupKey to be used in the Threat product references.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:Threats/vuln:Threat/vuln:GroupID"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+    <xs:keyref name="RemediationGroupKeyRef" refer="cvrf:GroupKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the GroupKey to be used in the Remediation product references.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//vuln:Remediations/vuln:Remediation/vuln:GroupID"/>
+      <xs:field xpath="."/>
+    </xs:keyref>
+  </xs:element>
+</xs:schema>

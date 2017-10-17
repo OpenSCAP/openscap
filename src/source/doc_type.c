@@ -76,6 +76,9 @@ int oscap_determine_document_type_reader(xmlTextReader *reader, oscap_document_t
         else if (!strcmp("nvd", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_CVE_FEED;
         }
+        else if (!strcmp("cvrfdoc", elm_name)) {
+                *doc_type = OSCAP_DOCUMENT_CVRF_FEED;
+        }
         else if (!strcmp("data-stream-collection", elm_name)) {
                 *doc_type = OSCAP_DOCUMENT_SDS;
         }
