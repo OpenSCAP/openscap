@@ -231,7 +231,6 @@ struct oscap_source *cvrf_model_get_results_source(struct oscap_source *import_s
 		cvrf_session_free(session);
 		return NULL;
 	}
-	//cvrf_session_construct_definition_model(session);
 
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
@@ -265,7 +264,6 @@ struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_s
 		struct cvrf_model *model = cvrf_model_iterator_next(it);
 		session->model = model;
 		find_all_cvrf_product_ids_from_cpe(session);
-		//cvrf_session_construct_definition_model(session);
 
 		xmlNode *model_node = cvrf_model_results_to_dom(session);
 		xmlAddChild(index_node, model_node);

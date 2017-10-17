@@ -1672,11 +1672,11 @@ struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader) {
 
 xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set) {
 	xmlNode *score_node = xmlNewNode(NULL, TAG_SCORE_SET);
-	char *base = cvrf_score_set_get_base_score(score_set);
+	const char *base = cvrf_score_set_get_base_score(score_set);
 	cvrf_element_add_child("BaseScore", base, score_node);
-	char *environmental = cvrf_score_set_get_environmental_score(score_set);
+	const char *environmental = cvrf_score_set_get_environmental_score(score_set);
 	cvrf_element_add_child("EnvironmentalScore", environmental, score_node);
-	char *temporal = cvrf_score_set_get_temporal_score(score_set);
+	const char *temporal = cvrf_score_set_get_temporal_score(score_set);
 	cvrf_element_add_child("TemporalScore", temporal, score_node);
 	cvrf_element_add_child("Vector", score_set->vector, score_node);
 	cvrf_element_add_stringlist(score_set->product_ids, "ProductID", score_node);
@@ -2331,14 +2331,6 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 	}
 	struct cvrf_index *index = cvrf_index_new();
 	cvrf_index_set_index_file(index, oscap_source_readable_origin(index_source));
-
-	/*
-	 *
-	const char *filename;
-	struct cvrf_model *model = cvrf_model_import(oscap_source_new_from_file(filename));
-	if (model)
-		oscap_list_add(index->models, model);
-	 */
 	oscap_source_free(index_source);
 	return index;
 }
