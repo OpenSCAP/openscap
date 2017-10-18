@@ -419,7 +419,7 @@ bool xccdf_session_set_xccdf_export(struct xccdf_session *session, const char *x
 bool xccdf_session_set_stigviewer_export(struct xccdf_session *session, const char *stig_rule_id_file)
 {
 	free(session->export.stig_rule_id_file);
-	session->export.stig_rule_id_file = oscap_strdup(stig_rule_id_file);
+	session->export.stig_rule_id_file = strdup(stig_rule_id_file);
 	return true;
 }
 

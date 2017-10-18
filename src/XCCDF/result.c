@@ -46,7 +46,7 @@
 #include "common/debug_priv.h"
 #include "source/oscap_source_priv.h"
 
-//References containing STIG Rule IDs can be found by their href, that must be "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx"
+// References containing STIG Rule IDs can be found by their href attribute, it must match the following url
 static const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
 
 // constants
@@ -1082,30 +1082,40 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 
 xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, bool use_stig_rule_id)
 {
-	/* Handle attributes */
 	const char *idref = xccdf_rule_result_get_idref(result);
-	if (benchmark && use_stig_rule_id) {
-		const char *stig_rule_id = NULL;
+	if (use_stig_rule_id) {
+		// Don't output rules with no stig ids
+		if (!idref || !benchmark)
+			return;
+
 		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
+		if (!item)
+			return;
+
+		const char *stig_rule_id = NULL;		
 		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
 		while (oscap_reference_iterator_has_more(references)) {
 			struct oscap_reference *ref = oscap_reference_iterator_next(references);
-			if (strcmp(ref->href, DISA_STIG_VIEWER_HREF) == 0)
+			if (strcmp(ref->href, DISA_STIG_VIEWER_HREF) == 0) {
 				stig_rule_id = ref->title;
+				break;
+			}
 		}
 		oscap_reference_iterator_free(references);
 
-		if (stig_rule_id)
-			idref = stig_rule_id;
-		else
+		if (!stig_rule_id)
 			return;
+
+		idref = stig_rule_id;
 	}
-	
+
 	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
 
-	xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
+	/* Handle attributes */
+	if (idref)
+		xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
 
 	xccdf_role_t role = xccdf_rule_result_get_role(result);
 	if (role != 0)
