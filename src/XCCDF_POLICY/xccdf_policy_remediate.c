@@ -603,7 +603,7 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 	// 4 elements are used for the 2 capture groups
 	// pcre documentation says we should allocate a third extra for additional
 	// workspace.
-	// (3 * 2) * (3 / 2) = 9
+	// (2 + 4) * (3 / 2) = 9
 	int ovector[9];
 
 	const size_t fix_text_len = strlen(fix_text);
