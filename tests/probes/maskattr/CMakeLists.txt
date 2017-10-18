@@ -1,0 +1,5 @@
+if(ENABLE_PROBES_INDEPENDENT)
+	add_oscap_test("test_object_entity_mask.sh")
+	add_oscap_test("test_object_entity_mask_oval_5_9.sh")
+	add_oscap_test("test_object_entity_nomask.sh")
+endif()
