@@ -704,7 +704,7 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 		// TODO: Implement the post-process for posix regex as well
 		if (ansible_variable_mode) {
 			free(fix_text);
-			fix_text = strdup("");
+			fix_text = oscap_strdup("");
 		}
 #endif
 	}
