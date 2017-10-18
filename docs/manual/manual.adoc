@@ -524,12 +524,12 @@ $ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml sca
 
 ==== Result STIG Viewer
 
-You can also generate XCCDF result files that uses the DISA STIG Rule IDs using the 
+You can also generate XCCDF result files readable by DISA STIG Viewer using the 
 `--stig-viewer` command-line argument. Note that the XCCDF input must contain references
-with the STIG Rule ID for each Rule.
+to the STIG Rule ID for each Rule. See link:http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx[DISA STIG Viewer]
 
 --------------------------------------------------------------------------------------
-$ oscap xccdf eval --benchmark-id benchmark_id --stig-viewer stig-viewer-result.xml scap-ds.xml
+$ oscap xccdf eval --profile stig-rhel7-disa --stig-viewer results-stig.xml ssg-rhel7-ds.xml
 --------------------------------------------------------------------------------------
 
 === Remediate System
