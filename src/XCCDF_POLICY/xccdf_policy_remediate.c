@@ -581,6 +581,81 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 	}
 }
 
+static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, int output_fd, const char *fix_text, bool ansible_variable_mode)
+{
+#if defined USE_REGEX_PCRE
+	// TODO: Tolerate different indentation styles in this regex
+	const char *pattern =
+		"- name: XCCDF Value [^ ]+ # promote to variable\n  set_fact:\n"
+		"    ([^:]+): (.+)\n  tags:\n    - always\n";
+	const char *err;
+	int errofs;
+
+	pcre *re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
+	if (re == NULL) {
+		dE("Unable to compile regex pattern, "
+				"pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
+		return 1;
+	}
+
+	const size_t fix_text_len = strlen(fix_text);
+	int start_offset = 0;
+	while (true) {
+		int ovector[30];
+		const int match = pcre_exec(re, NULL, fix_text, fix_text_len, start_offset,
+				0, ovector, sizeof(ovector) / sizeof(ovector[0]));
+		if (match == -1)
+			break;
+		if (match != 3) {
+			dE("Expected 2 capture group matches per XCCDF variable. Found %i!",
+				match - 1);
+			pcre_free(re);
+			return 1;
+		}
+
+		if (ansible_variable_mode) {
+			char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
+			memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
+			variable_name[ovector[3] - ovector[2]] = '\0';
+
+			char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
+			memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
+			variable_value[ovector[5] - ovector[4]] = '\0';
+
+			char *var_line = oscap_sprintf("  %s: %s", variable_name, variable_value);
+
+			free(variable_name);
+			free(variable_value);
+
+			_write_remediation_to_fd_and_free(output_fd, template, var_line);
+		}
+		else {
+			char *remediation_part = malloc((ovector[0] + 1) * sizeof(char));
+			memcpy(remediation_part, &fix_text[start_offset], ovector[0]);
+			remediation_part[ovector[0]] = '\0';
+			_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
+		}
+
+		start_offset = ovector[1]; // next time start after the entire pattern
+	}
+
+	if (!ansible_variable_mode && fix_text_len - start_offset > 0) {
+		char *remediation_part = malloc((fix_text_len - start_offset + 1) * sizeof(char));
+		memcpy(remediation_part, &fix_text[start_offset], fix_text_len - start_offset);
+		remediation_part[fix_text_len - start_offset] = '\0';
+		_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
+	}
+
+	pcre_free(re);
+	return 0;
+#else
+	// TODO: Implement the post-process for posix regex as well
+	if (!ansible_variable_mode) {
+		return _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	}
+#endif
+}
+
 static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total, bool ansible_variable_mode)
 {
 	// Ensure that given Rule is selected and applicable (CPE).
@@ -633,80 +708,8 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 		// Ansible is special because we have two output modes, variable and
 		// task mode. In both cases we have to do post processing. 
 
-#if defined USE_REGEX_PCRE
-		// TODO: Tolerate different indentation styles in this regex
-		const char *pattern =
-			"- name: XCCDF Value [^ ]+ # promote to variable\n  set_fact:\n"
-			"    ([^:]+): (.+)\n  tags:\n    - always\n";
-		const char *err;
-		int errofs;
-
-		pcre *re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
-		if (re == NULL) {
-			dE("Unable to compile regex pattern, "
-					"pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
-			free(fix_text);
-			return 1;
-		}
-
-		const size_t fix_text_len = strlen(fix_text);
-		int start_offset = 0;
-		while (true) {
-			int ovector[30];
-			const int match = pcre_exec(re, NULL, fix_text, fix_text_len, start_offset,
-					0, ovector, sizeof(ovector) / sizeof(ovector[0]));
-			if (match == -1)
-				break;
-			if (match != 3) {
-				dE("Expected 2 capture group matches per XCCDF variable. Found %i!",
-					match - 1);
-				free(fix_text);
-				pcre_free(re);
-				return 1;
-			}
-
-			if (ansible_variable_mode) {
-				char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
-				memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
-				variable_name[ovector[3] - ovector[2]] = '\0';
-
-				char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
-				memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
-				variable_value[ovector[5] - ovector[4]] = '\0';
-
-				char *var_line = oscap_sprintf("  %s: %s", variable_name, variable_value);
-
-				free(variable_name);
-				free(variable_value);
-
-				_write_remediation_to_fd_and_free(output_fd, template, var_line);
-			}
-			else {
-				char *remediation_part = malloc((ovector[0] + 1) * sizeof(char));
-				memcpy(remediation_part, &fix_text[start_offset], ovector[0]);
-				remediation_part[ovector[0]] = '\0';
-				_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
-			}
-
-			start_offset = ovector[1]; // next time start after the entire pattern
-		}
-
-		if (!ansible_variable_mode && fix_text_len - start_offset > 0) {
-			char *remediation_part = malloc((fix_text_len - start_offset + 1) * sizeof(char));
-			memcpy(remediation_part, &fix_text[start_offset], fix_text_len - start_offset);
-			remediation_part[fix_text_len - start_offset] = '\0';
-			_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
-		}
-
+		ret = _xccdf_policy_rule_generate_fix_ansible(template, output_fd, fix_text, ansible_variable_mode);
 		free(fix_text);
-		pcre_free(re);
-#else
-		// TODO: Implement the post-process for posix regex as well
-		if (ansible_variable_mode) {
-			free(fix_text);
-			fix_text = oscap_strdup("");
-		}
-#endif
 	}
 	else {
 		ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
