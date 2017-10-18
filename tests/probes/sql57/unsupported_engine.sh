@@ -11,7 +11,7 @@ echo "stderr file: $stderr"
 echo "Evaluating content."
 $OSCAP oval eval --results $result $srcdir/${name}.oval.xml 2> $stderr
 # filter out the expected error in stderr
-sed -i -E "/^E: lt-probe_sql57: DB engine not supported: sqlserver/d" "$stderr"
+sed -i -E "/^E: probe_sql57: DB engine not supported: sqlserver/d" "$stderr"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 echo "Validating results."
 #$OSCAP oval validate-xml --results --schematron $result
