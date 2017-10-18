@@ -1082,10 +1082,6 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 
 xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, bool use_stig_rule_id)
 {
-	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
-
-	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
-
 	/* Handle attributes */
 	const char *idref = xccdf_rule_result_get_idref(result);
 	if (benchmark && use_stig_rule_id) {
@@ -1101,7 +1097,14 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 
 		if (stig_rule_id)
 			idref = stig_rule_id;
+		else
+			return;
 	}
+	
+	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
+
+	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
+
 	xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
 
 	xccdf_role_t role = xccdf_rule_result_get_role(result);
