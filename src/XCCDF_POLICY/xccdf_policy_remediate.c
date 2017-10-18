@@ -614,6 +614,9 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 		}
 
 		if (ansible_variable_mode) {
+			// ovector[0] and [1] hold the start and end of the whole needle match
+			// ovector[2] and [3] hold the start and end of the first capture group
+			// ovector[4] and [5] hold the start and end of the second capture group
 			char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
 			memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
 			variable_name[ovector[3] - ovector[2]] = '\0';
