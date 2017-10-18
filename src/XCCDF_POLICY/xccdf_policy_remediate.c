@@ -660,9 +660,12 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 	return 0;
 #else
 	// TODO: Implement the post-process for posix regex as well
-	if (!ansible_variable_mode) {
-		return _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	if (ansible_variable_mode) {
+		// this is not implemented so we don't write anything out for variables
+		return 0;
 	}
+	else
+		return _write_remediation_to_fd_and_free(output_fd, template, fix_text);
 #endif
 }
 
