@@ -1280,7 +1280,7 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "No XCCDF results to export.");
 			return 1;
 		}
-		
+
 		struct xccdf_result *benchmarks_result = xccdf_result_clone(session->xccdf.result);
 		xccdf_benchmark_add_result(xccdf_policy_model_get_benchmark(session->xccdf.policy_model),	benchmarks_result);
 		session->xccdf.result_source = xccdf_benchmark_export_source(

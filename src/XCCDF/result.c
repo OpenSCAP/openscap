@@ -46,6 +46,9 @@
 #include "common/debug_priv.h"
 #include "source/oscap_source_priv.h"
 
+//References containing STIG Rule IDs can be found by their href, that must be "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx"
+static const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
+
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
 static const char *XCCDF_INSTANCE_DEFAULT_CONTEXT = "undefined";
@@ -1086,8 +1089,16 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	/* Handle attributes */
 	const char *idref = xccdf_rule_result_get_idref(result);
 	if (benchmark && use_stig_rule_id) {
+		const char *stig_rule_id = NULL;
 		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
-		const char *stig_rule_id = xccdf_rule_get_stig_rule_id(XRULE(item));
+		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
+		while (oscap_reference_iterator_has_more(references)) {
+			struct oscap_reference *ref = oscap_reference_iterator_next(references);
+			if (strcmp(ref->href, DISA_STIG_VIEWER_HREF) == 0)
+				stig_rule_id = ref->title;
+		}
+		oscap_reference_iterator_free(references);
+
 		if (stig_rule_id)
 			idref = stig_rule_id;
 	}
