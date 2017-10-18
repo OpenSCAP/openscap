@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ../../../test_common.sh
+. $builddir/tests/test_common.sh
 
 test_init test_api_oval_unittests.log
 test_run "comment before root element" $srcdir/test_comment.sh

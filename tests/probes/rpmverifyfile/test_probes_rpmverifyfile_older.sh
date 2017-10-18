@@ -5,7 +5,7 @@
 #
 # OpenScap Probes Test Suite.
 
-. ../../test_common.sh
+. $builddir/tests/test_common.sh
 
 set -e -o pipefail
 
