@@ -8,6 +8,7 @@
 #include "oval_agent_api.h"
 #include "oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
+#include "oval_probe.h"
 
 int main (void)
 {
