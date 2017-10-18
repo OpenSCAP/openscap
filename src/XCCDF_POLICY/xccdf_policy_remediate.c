@@ -637,13 +637,19 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 			free(variable_name);
 			free(variable_value);
 
-			_write_remediation_to_fd_and_free(output_fd, template, var_line);
+			if (_write_remediation_to_fd_and_free(output_fd, template, var_line) != 0) {
+				pcre_free(re);
+				return 1;
+			}
 		}
 		else {
 			char *remediation_part = malloc((ovector[0] + 1) * sizeof(char));
 			memcpy(remediation_part, &fix_text[start_offset], ovector[0]);
 			remediation_part[ovector[0]] = '\0';
-			_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
+			if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
+				pcre_free(re);
+				return 1;
+			}
 		}
 
 		start_offset = ovector[1]; // next time start after the entire pattern
@@ -653,7 +659,11 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 		char *remediation_part = malloc((fix_text_len - start_offset + 1) * sizeof(char));
 		memcpy(remediation_part, &fix_text[start_offset], fix_text_len - start_offset);
 		remediation_part[fix_text_len - start_offset] = '\0';
-		_write_remediation_to_fd_and_free(output_fd, template, remediation_part);
+
+		if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
+			pcre_free(re);
+			return 1;
+		}
 	}
 
 	pcre_free(re);
