@@ -598,10 +598,17 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 		return 1;
 	}
 
+	// ovector sizing:
+	// 2 elements are used for the whole needle,
+	// 4 elements are used for the 2 capture groups
+	// pcre documentation says we should allocate a third extra for additional
+	// workspace.
+	// (3 * 2) * (3 / 2) = 9
+	int ovector[9];
+
 	const size_t fix_text_len = strlen(fix_text);
 	int start_offset = 0;
 	while (true) {
-		int ovector[30];
 		const int match = pcre_exec(re, NULL, fix_text, fix_text_len, start_offset,
 				0, ovector, sizeof(ovector) / sizeof(ovector[0]));
 		if (match == -1)
