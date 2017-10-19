@@ -1,5 +1,7 @@
 function(add_oscap_test test_script)
-	add_test(${CMAKE_CURRENT_SOURCE_DIR}/${test_script} ${CMAKE_CURRENT_SOURCE_DIR}/${test_script})
+	add_test(NAME ${CMAKE_CURRENT_SOURCE_DIR}/${test_script}
+		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${test_script}
+	)
 	set_tests_properties(${CMAKE_CURRENT_SOURCE_DIR}/${test_script}
 		PROPERTIES
 			SKIP_RETURN_CODE 255
