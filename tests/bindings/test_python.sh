@@ -4,11 +4,12 @@
 #   Martin Preisler <mpreisle@redhat.com>
 
 . $builddir/tests/test_common.sh
+set -x
 
 # Test Cases.
 
 function test_python_import {
-    python -c "import openscap_api"
+    bash $builddir/run python -c "import openscap_api"
 }
 
 # Testing.
