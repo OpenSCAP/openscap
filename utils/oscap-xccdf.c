@@ -157,7 +157,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
-        "   --stig-viewer <file>\r\t\t\t\t - Write XCCDF Results with DISA STIG Rule IDs into file.\n"
+        "   --stig-viewer <file>\r\t\t\t\t - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
         "   --thin-results\r\t\t\t\t - Thin Results provides only minimal amount of information in OVAL/ARF results.\n"
         "                 \r\t\t\t\t   The option --without-syschar is automatically enabled when you use Thin Results.\n"
         "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in OVAL/ARF result files.\n"
@@ -195,7 +195,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
 			"  --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
-			"  --stig-viewer <file>\r\t\t\t\t - Write XCCDF Results with DISA STIG Rule IDs into file.\n"
+			"  --stig-viewer <file>\r\t\t\t\t - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
 			"  --report <file>\r\t\t\t\t - Write HTML report into file.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
@@ -577,7 +577,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	xccdf_session_set_xccdf_export(session, action->f_results);
-	xccdf_session_set_stigviewer_export(session, action->f_results_stig);
+	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
 	xccdf_session_set_report_export(session, action->f_report);
 	if (xccdf_session_export_xccdf(session) != 0)
 		goto cleanup;
@@ -699,7 +699,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	xccdf_session_set_oval_variables_export(session, action->export_variables);
 	xccdf_session_set_arf_export(session, action->f_results_arf);
 	xccdf_session_set_xccdf_export(session, action->f_results);
-	xccdf_session_set_stigviewer_export(session, action->f_results_stig);
+	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
 	xccdf_session_set_report_export(session, action->f_report);
 
 	if (xccdf_session_export_oval(session) != 0)

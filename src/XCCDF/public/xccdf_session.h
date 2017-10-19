@@ -309,7 +309,7 @@ bool xccdf_session_set_xccdf_export(struct xccdf_session *session, const char *x
  * @param xccdf_file path to STIG Viewer file
  * @returns true on success
  */
-bool xccdf_session_set_stigviewer_export(struct xccdf_session *session, const char *stigviewer_file);
+bool xccdf_session_set_xccdf_stig_viewer_export(struct xccdf_session *session, const char *xccdf_stig_viewer_file);
 
 /**
  * Set where to export ARF file. NULL value means to not export at all.

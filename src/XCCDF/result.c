@@ -723,7 +723,7 @@ struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, con
 	return oscap_source_new_from_xmlDoc(doc, filepath);
 }
 
-struct oscap_source *stig_rule_id_xccdf_result_export_source(struct xccdf_result *result, const char *filepath)
+struct oscap_source *xccdf_result_stig_viewer_export_source(struct xccdf_result *result, const char *filepath)
 {
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	if (doc == NULL) {
@@ -1086,11 +1086,11 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 	if (use_stig_rule_id) {
 		// Don't output rules with no stig ids
 		if (!idref || !benchmark)
-			return;
+			return NULL;
 
 		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
 		if (!item)
-			return;
+			return NULL;
 
 		const char *stig_rule_id = NULL;		
 		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
@@ -1104,7 +1104,7 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		oscap_reference_iterator_free(references);
 
 		if (!stig_rule_id)
-			return;
+			return NULL;
 
 		idref = stig_rule_id;
 	}

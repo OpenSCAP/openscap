@@ -773,11 +773,11 @@ OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char
 struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
 
 /**
- * Export TestResult to oscap_source structure
+ * Export TestResult to oscap_source structure using STIG Rule IDs instead of the actual rule ids
  * @memberof xccdf_result
  * @returns newly created oscap_source or NULL on error
  */
-struct oscap_source *stig_rule_id_xccdf_result_export_source(struct xccdf_result *result, const char *filepath);
+struct oscap_source *xccdf_result_stig_viewer_export_source(struct xccdf_result *result, const char *filepath);
 
 /**
  * Resolve an benchmark.
