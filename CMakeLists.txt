@@ -23,10 +23,7 @@ CHECK_LIBRARY_EXISTS(acl acl_init "" HAVE_ACL_INIT)
 CHECK_LIBRARY_EXISTS(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
 
 # APTPKG
-pkg_check_modules(APTPKG libapt-pkg)
-if(APTPKG_FOUND)
-    CHECK_LIBRARY_EXISTS(${APTPKG_LIBRARIES} pkgVersion "" HAVE_PKGVERSION)
-endif()
+find_package(AptPkg)
 
 # BLKID
 pkg_check_modules(BLKID REQUIRED blkid)
