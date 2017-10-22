@@ -60,10 +60,7 @@ find_package(Ldap)
 find_package(OpenDbx)
 
 # PCRE
-pkg_check_modules(PCRE REQUIRED libpcre)
-if(PCRE_FOUND)
-    CHECK_LIBRARY_EXISTS(pcre pcre_exec "" HAVE_PCRE_EXEC)
-endif()
+find_package(PCRE REQUIRED)
 
 # PERL
 find_package(PerlLibs)
