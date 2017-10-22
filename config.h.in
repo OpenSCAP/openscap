@@ -35,7 +35,6 @@
 
 #cmakedefine HAVE_ATOMIC_BUILTINS
 
-#cmakedefine HAVE_ACL_INIT
 #cmakedefine HAVE_ACL_EXTENDED_FILE
 #cmakedefine HAVE_BLKID_GET_TAG_VALUE
 #cmakedefine HAVE_CAP_GET_PID

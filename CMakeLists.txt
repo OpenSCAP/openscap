@@ -18,8 +18,7 @@ include(FindPkgConfig)
 include(CheckLibraryExists)
 
 # ACL
-#pkg_check_modules(ACL REQUIRED acl)
-CHECK_LIBRARY_EXISTS(acl acl_init "" HAVE_ACL_INIT)
+find_package(ACL)
 CHECK_LIBRARY_EXISTS(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
 
 # APTPKG
