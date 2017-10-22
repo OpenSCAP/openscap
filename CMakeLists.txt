@@ -33,10 +33,10 @@ if(BLKID_FOUND)
 endif()
 
 # CAP
-pkg_check_modules(CAP REQUIRED libcap)
-CHECK_LIBRARY_EXISTS(cap cap_init "" HAVE_CAP_INIT)
-CHECK_LIBRARY_EXISTS(cap cap_get_pid "" HAVE_CAP_GET_PID)
-CHECK_LIBRARY_EXISTS(cap capgetp "" HAVE_CAPGETP)
+find_package(Cap)
+if(CAP_FOUND)
+	CHECK_LIBRARY_EXISTS(cap cap_get_pid "" HAVE_CAP_GET_PID)
+endif()
 
 # CURL
 pkg_check_modules(CURL REQUIRED libcurl>=7.12.0)
