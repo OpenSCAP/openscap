@@ -26,9 +26,8 @@ CHECK_LIBRARY_EXISTS(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
 find_package(AptPkg)
 
 # BLKID
-pkg_check_modules(BLKID REQUIRED blkid)
+find_package(Blkid)
 if(BLKID_FOUND)
-    CHECK_LIBRARY_EXISTS(blkid blkid_get_cache "" HAVE_BLKID_GET_CACHE)
     CHECK_LIBRARY_EXISTS(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
 endif()
 
