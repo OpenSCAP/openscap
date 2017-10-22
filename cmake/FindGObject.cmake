@@ -1,4 +1,4 @@
-# - Try to find 
+# - Try to find GObject
 # Once done, this will define
 #
 # GObject_FOUND - system has GObject
