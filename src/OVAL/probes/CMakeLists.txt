@@ -24,7 +24,7 @@ add_library(probe
     "probe/option.h"
 )
 
-target_link_libraries(probe seap oval ${CMAKE_THREAD_LIBS_INIT} ${PCRE_LIBRARIES} ${LIBXML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${RPM_LIBRARIES})
+target_link_libraries(probe seap oval ${CMAKE_THREAD_LIBS_INIT} ${PCRE_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${RPM_LIBRARIES})
 target_include_directories(probe PUBLIC "." "public")
 
 include_directories("public")

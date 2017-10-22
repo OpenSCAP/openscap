@@ -1,5 +1,5 @@
 if(ENABLE_PROBES_UNIX)
 	add_executable(test_probe_xinetd "test_probe_xinetd.c")
-	target_link_libraries(test_probe_xinetd openscap probe ${LIBXML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+	target_link_libraries(test_probe_xinetd openscap probe ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
 	add_oscap_test("test_xinetd_probe.sh")
 endif()

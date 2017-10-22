@@ -47,9 +47,6 @@ find_package(DBus)
 # DOXYGEN
 find_package(Doxygen)
 
-# EXSLT
-pkg_check_modules(EXSLT REQUIRED libexslt>=0.8)
-
 # GCONF2
 find_package(GConf)
 
@@ -106,11 +103,8 @@ find_package(SWIG)
 # XML2
 find_package(LibXml2 REQUIRED)
 
-# XSTL
-pkg_check_modules(XSLT REQUIRED libxslt>=1.1)
-if (XSLT_FOUND)
-    CHECK_LIBRARY_EXISTS(xslt xsltDocumentFunction "" HAVE_XSLTDOCUMENTFUNCTION)
-endif()
+# XSLT
+find_package(LibXslt REQUIRED)
 
 # BZip2
 find_package(BZip2)

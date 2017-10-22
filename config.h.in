@@ -47,7 +47,6 @@
 #cmakedefine HAVE_HEADERSPRINTF
 #cmakedefine HAVE_RPMFREECRYPTO
 #cmakedefine HAVE_RPMFREEFILESYSTEMS
-#cmakedefine HAVE_XSLTDOCUMENTFUNCTION
 
 #cmakedefine HAVE_RPMVERCMP
 #cmakedefine HAVE_RPM46

@@ -1,4 +1,4 @@
-set(LIBRARIES openscap ${LIBXML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+set(LIBRARIES openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
 add_executable(test_api_seap_concurency test_api_seap_concurency.c)
 target_link_libraries(test_api_seap_concurency ${LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 add_executable(test_api_seap_list test_api_seap_list.c)
