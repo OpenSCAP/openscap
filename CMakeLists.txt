@@ -39,7 +39,7 @@ if(CAP_FOUND)
 endif()
 
 # CURL
-pkg_check_modules(CURL REQUIRED libcurl>=7.12.0)
+find_package(CURL)
 
 # DBUS
 pkg_check_modules(DBUS REQUIRED dbus-1)
