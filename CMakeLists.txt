@@ -120,13 +120,11 @@ set(THREADS_PREFER_PTHREAD_FLAG)
 # WITH_CRYPTO
 set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss3")
 if(NOT (${WITH_CRYPTO} EQUAL "nss3"))
-    # gcrypt
-    find_package(GCrypt REQUIRED)
-    include(CheckCSourceCompiles)
-    CHECK_C_SOURCE_COMPILES("#include <gcrypt.h>\nint main() {return GCRYCTL_SET_ENFORCED_FIPS_FLAG;}" HAVE_GCRYCTL_SET_ENFORCED_FIPS_FLAG)
+	# gcrypt
+	find_package(GCrypt)
 else()
-    # nss3
-    pkg_check_modules(NSS3 REQUIRED nss>=3.0)
+	# nss3
+	find_package(NSS)
 endif()
 
 # HAVE FUNCTIONS
