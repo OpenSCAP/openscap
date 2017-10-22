@@ -57,8 +57,7 @@ find_package(GConf)
 find_package(Ldap)
 
 # OpenDbx
-pkg_check_modules(OPENDBX REQUIRED opendbx)
-CHECK_LIBRARY_EXISTS(opendbx odbx_init "" HAVE_ODBX_INIT)
+find_package(OpenDbx)
 
 # PCRE
 pkg_check_modules(PCRE REQUIRED libpcre)
