@@ -98,7 +98,7 @@ if (RPM47_FOUND)
 endif()
 
 # SELINUX
-pkg_check_modules(SELINUX REQUIRED libselinux)
+find_package(SELinux)
 
 # SWIG
 find_package(SWIG)
