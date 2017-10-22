@@ -113,13 +113,13 @@ if(ENABLE_PROBES_UNIX)
     install(TARGETS probe_password DESTINATION ${PROBE_INSTALL_DIR})
 
     add_executable(probe_process "unix/process.c" "unix/process58-devname.c" "unix/process58-devname.h")
-    target_link_libraries(probe_process probe ${SELINUX_LIBRARIES})
+    target_link_libraries(probe_process probe ${SELINUX_LIBRARIES} ${PROCPS_LIBRARIES})
     install(TARGETS probe_process DESTINATION ${PROBE_INSTALL_DIR})
 
     if(CAP_FOUND)
 	add_executable(probe_process58 "unix/process58.c" "unix/process58-capability.h" "unix/process58-devname.c" "unix/process58-devname.h")
 	target_include_directories(probe_process58 PRIVATE ${CAP_INCLUDE_DIR})
-	target_link_libraries(probe_process58 probe ${CAP_LIBRARIES} ${SELINUX_LIBRARIES})
+	target_link_libraries(probe_process58 probe ${CAP_LIBRARIES} ${SELINUX_LIBRARIES} ${PROCPS_LIBRARIES})
 	install(TARGETS probe_process58 DESTINATION ${PROBE_INSTALL_DIR})
     endif()
 

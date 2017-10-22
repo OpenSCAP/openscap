@@ -69,7 +69,7 @@ find_package(PerlLibs)
 pkg_check_modules(POPT REQUIRED popt)
 
 # PROCPS
-pkg_check_modules(PROCPS libprocps)
+find_package(Procps)
 if(PROCPS_FOUND)
     CHECK_LIBRARY_EXISTS(procps dev_to_tty "" HAVE_DEV_TO_TTY)
 endif()
