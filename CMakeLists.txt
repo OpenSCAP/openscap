@@ -42,10 +42,7 @@ endif()
 find_package(CURL)
 
 # DBUS
-pkg_check_modules(DBUS REQUIRED dbus-1)
-if(DBUS_FOUND)
-    CHECK_LIBRARY_EXISTS(${DBUS_LIBRARIES} dbus_bus_get "" HAVE_DBUS_BUS_GET)
-endif()
+find_package(DBus)
 
 # DOXYGEN
 find_package(Doxygen)
