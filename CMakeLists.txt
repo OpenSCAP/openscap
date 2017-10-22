@@ -51,10 +51,10 @@ find_package(Doxygen)
 pkg_check_modules(EXSLT REQUIRED libexslt>=0.8)
 
 # GCONF2
-find_package(GConf REQUIRED)
+find_package(GConf)
 
 # LDAP
-find_package(Ldap REQUIRED)
+find_package(Ldap)
 
 # OpenDbx
 pkg_check_modules(OPENDBX REQUIRED opendbx)
