@@ -51,10 +51,7 @@ find_package(Doxygen)
 pkg_check_modules(EXSLT REQUIRED libexslt>=0.8)
 
 # GCONF2
-pkg_check_modules(GCONF2 REQUIRED gconf-2.0)
-if(GCONF2_FOUND)
-    CHECK_LIBRARY_EXISTS(gconf-2 gconf_engine_get_default "" HAVE_GCONF_ENGINE_GET_DEFAULT)
-endif()
+find_package(GConf REQUIRED)
 
 # LDAP
 find_package(Ldap REQUIRED)
