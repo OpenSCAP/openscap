@@ -33,7 +33,7 @@
 #include "bz2_priv.h"
 #include "common/_error.h"
 
-#ifdef HAVE_BZ2
+#ifdef BZIP2_FOUND
 
 #include <bzlib.h>
 

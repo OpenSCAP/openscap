@@ -106,9 +106,6 @@ find_package(LibXslt REQUIRED)
 
 # BZip2
 find_package(BZip2)
-if(BZIP2_FOUND)
-	set(HAVE_BZ2 1)
-endif()
 
 # PThread
 find_package(Threads)

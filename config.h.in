@@ -50,7 +50,7 @@
 #cmakedefine HAVE_RPM46
 #cmakedefine HAVE_RPM47
 
-#cmakedefine HAVE_BZ2
+#cmakedefine BZIP2_FOUND
 
 #cmakedefine HAVE_PTHREAD_TIMEDJOIN_NP
 #cmakedefine HAVE_PTHREAD_SETNAME_NP

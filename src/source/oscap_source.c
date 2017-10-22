@@ -256,7 +256,7 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 	if (source->xml.doc == NULL) {
 		if (source->origin.memory != NULL) {
 			if (bz2_memory_is_bzip(source->origin.memory, source->origin.memory_size)) {
-#ifdef HAVE_BZ2
+#ifdef BZIP2_FOUND
 				source->xml.doc = bz2_mem_read_doc(source->origin.memory, source->origin.memory_size);
 #else
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unable to unpack bz2 from buffer memory '%s'. Please compile OpenSCAP with bz2 support.", oscap_source_readable_origin(source));
@@ -284,7 +284,7 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 				oscap_seterr(OSCAP_EFAMILY_GLIBC, "Unable to open file: '%s'", oscap_source_readable_origin(source));
 			} else {
 				if (bz2_fd_is_bzip(fd)) {
-#ifdef HAVE_BZ2
+#ifdef BZIP2_FOUND
 					source->xml.doc = bz2_fd_read_doc(fd);
 #else
 					source->xml.doc = NULL;
