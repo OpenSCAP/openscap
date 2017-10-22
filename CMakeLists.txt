@@ -104,10 +104,7 @@ find_package(SELinux)
 find_package(SWIG)
 
 # XML2
-pkg_check_modules(XML2 REQUIRED libxml-2.0>=2.0)
-if (XML2_FOUND)
-    CHECK_LIBRARY_EXISTS(xml2 xmlTextReaderRead "" HAVE_XMLTEXTREADERREAD)
-endif()
+find_package(LibXml2 REQUIRED)
 
 # XSTL
 pkg_check_modules(XSLT REQUIRED libxslt>=1.1)
@@ -282,7 +279,7 @@ include_directories(
     "src/XCCDF_POLICY/"
     "src/XCCDF_POLICY/public/"
     ${CMAKE_BINARY_DIR}
-    ${XML2_INCLUDE_DIRS}
+	${LIBXML2_INCLUDE_DIR}
 )
 
 add_subdirectory("src")

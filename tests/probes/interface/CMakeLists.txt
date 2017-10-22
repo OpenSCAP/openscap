@@ -1,5 +1,5 @@
 if(ENABLE_PROBES_UNIX)
 	add_executable(test_probes_interface "test_probes_interface.c")
-	target_link_libraries(test_probes_interface openscap ${XML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+	target_link_libraries(test_probes_interface openscap ${LIBXML2_LIBRARIES} ${XSLT_LIBRARIES} ${EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
 	add_oscap_test("test_probes_interface.sh")
 endif()
