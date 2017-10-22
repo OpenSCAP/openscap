@@ -3,12 +3,6 @@ add_subdirectory("adt")
 add_subdirectory("probes/SEAP")
 file(GLOB_RECURSE PUBLIC_HEADERS "public/*.h")
 
-include(CheckFunctionExists)
-CHECK_FUNCTION_EXISTS(fts_open HAVE_FTS_OPEN)
-if (HAVE_FTS_OPEN)
-    add_definitions(-DHAVE_FTS_OPEN)
-endif()
-
 set (OVAL_SOURCES
     "collectVarRefs.c"
     "collectVarRefs_impl.h"

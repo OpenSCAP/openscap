@@ -57,6 +57,7 @@
 
 #cmakedefine HAVE_POSIX_MEMALIGN
 #cmakedefine HAVE_MEMALIGN
+#cmakedefine HAVE_FTS_OPEN
 
 #cmakedefine SEAP_MSGID_BITS @SEAP_MSGID_BITS@
 #cmakedefine WANT_BASE64
