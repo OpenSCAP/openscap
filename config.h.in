@@ -41,7 +41,6 @@
 #cmakedefine HAVE_DEV_TO_TTY
 #cmakedefine HAVE_RPMREADCONFIGFILES
 #cmakedefine HAVE_HEADERFORMAT
-#cmakedefine HAVE_HEADERSPRINTF
 #cmakedefine HAVE_RPMFREECRYPTO
 #cmakedefine HAVE_RPMFREEFILESYSTEMS
 
