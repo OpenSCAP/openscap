@@ -55,8 +55,6 @@ find_package(GConf REQUIRED)
 
 # LDAP
 find_package(Ldap REQUIRED)
-CHECK_LIBRARY_EXISTS(ldap ldap_init "" HAVE_LDAP_INIT)
-CHECK_LIBRARY_EXISTS(lber ber_init "" HAVE_BER_INIT)
 
 # OpenDbx
 pkg_check_modules(OPENDBX REQUIRED opendbx)

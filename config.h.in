@@ -40,9 +40,6 @@
 #cmakedefine HAVE_BLKID_GET_CACHE
 #cmakedefine HAVE_BLKID_GET_TAG_VALUE
 #cmakedefine HAVE_CAP_GET_PID
-#cmakedefine HAVE_GCONF_ENGINE_GET_DEFAULT
-#cmakedefine HAVE_BER_INIT
-#cmakedefine HAVE_LDAP_INIT
 #cmakedefine HAVE_ODBX_INIT
 #cmakedefine HAVE_PCRE_EXEC
 #cmakedefine HAVE_DEV_TO_TTY
