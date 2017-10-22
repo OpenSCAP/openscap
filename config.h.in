@@ -39,7 +39,6 @@
 #cmakedefine HAVE_BLKID_GET_TAG_VALUE
 #cmakedefine HAVE_CAP_GET_PID
 #cmakedefine HAVE_DEV_TO_TTY
-#cmakedefine HAVE_RPMTSCREATE
 #cmakedefine HAVE_RPMREADCONFIGFILES
 #cmakedefine HAVE_HEADERFORMAT
 #cmakedefine HAVE_HEADERSPRINTF

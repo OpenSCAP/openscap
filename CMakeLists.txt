@@ -88,7 +88,6 @@ find_package(PythonInterp)
 # RPM
 find_package(RPM)
 if(RPM_FOUND)
-    CHECK_LIBRARY_EXISTS(rpm rpmtsCreate "" HAVE_RPMTSCREATE)
     CHECK_LIBRARY_EXISTS(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
     CHECK_LIBRARY_EXISTS(rpm headerFormat "" HAVE_HEADERFORMAT)
     CHECK_LIBRARY_EXISTS(rpm headerSprintf "" HAVE_HEADERSPRINTF)
