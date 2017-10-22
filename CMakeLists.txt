@@ -66,7 +66,7 @@ find_package(PCRE REQUIRED)
 find_package(PerlLibs)
 
 # POPT
-pkg_check_modules(POPT REQUIRED popt)
+find_package(Popt)
 
 # PROCPS
 find_package(Procps)
