@@ -68,7 +68,6 @@
 #endif
 
 #cmakedefine HAVE_SYSLOG_H
-#cmakedefine HAVE_FTW_H
 #cmakedefine HAVE_STDIO_EXT_H
 #cmakedefine HAVE_SYS_CAPABILITY_H
 #cmakedefine HAVE_SELINUX_SELINUX_H
