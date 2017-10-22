@@ -79,9 +79,7 @@ find_package(PythonLibs)
 find_package(PythonInterp)
 
 # RPM
-pkg_check_modules(RPM rpm>=4.4)
-pkg_check_modules(RPM46 rpm>=4.6)
-pkg_check_modules(RPM47 rpm>=4.7)
+find_package(RPM)
 if(RPM_FOUND)
     CHECK_LIBRARY_EXISTS(rpm rpmtsCreate "" HAVE_RPMTSCREATE)
     CHECK_LIBRARY_EXISTS(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
