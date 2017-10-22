@@ -11,15 +11,25 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
     set(NDEBUG 1)
 endif()
 
-# ---------- DEPENDENCIES
+# ---------- INCLUDES CMAKE MODULES
 
 include(GNUInstallDirs)
 include(FindPkgConfig)
 include(CheckLibraryExists)
+include(CheckFunctionExists)
+include(CheckIncludeFile)
+include(CheckCSourceCompiles)
+include(CPack)
+
+# ---------- DEPENDENCIES
 
 # ACL
 find_package(ACL)
-CHECK_LIBRARY_EXISTS(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
+if(ACL_FOUND)
+	CHECK_LIBRARY_EXISTS(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
+	CHECK_INCLUDE_FILE(acl/libacl.h HAVE_ACL_LIBACL_H)
+	CHECK_INCLUDE_FILE(sys/acl.h HAVE_SYS_ACL_H)
+endif()
 
 # APTPKG
 find_package(AptPkg)
@@ -34,6 +44,7 @@ endif()
 find_package(Cap)
 if(CAP_FOUND)
 	CHECK_LIBRARY_EXISTS(cap cap_get_pid "" HAVE_CAP_GET_PID)
+	CHECK_INCLUDE_FILE(sys/capability.h HAVE_SYS_CAPABILITY_H)
 endif()
 
 # CURL
@@ -67,6 +78,7 @@ find_package(Popt)
 find_package(Procps)
 if(PROCPS_FOUND)
     CHECK_LIBRARY_EXISTS(procps dev_to_tty "" HAVE_DEV_TO_TTY)
+	CHECK_INCLUDE_FILE(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
 # PYTHON
@@ -94,6 +106,9 @@ endif()
 
 # SELINUX
 find_package(SELinux)
+if(SELINUX_FOUND)
+	CHECK_INCLUDE_FILE(selinux/selinux.h HAVE_SELINUX_SELINUX_H)
+endif()
 
 # SWIG
 find_package(SWIG)
@@ -111,6 +126,9 @@ find_package(BZip2)
 find_package(Threads)
 set(CMAKE_THREAD_PREFER_PTHREAD)
 set(THREADS_PREFER_PTHREAD_FLAG)
+CHECK_LIBRARY_EXISTS(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
+CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
+CHECK_LIBRARY_EXISTS(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
 
 # WITH_CRYPTO
 set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss3")
@@ -123,31 +141,19 @@ else()
 endif()
 
 # HAVE FUNCTIONS
-CHECK_LIBRARY_EXISTS(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
-CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
-CHECK_LIBRARY_EXISTS(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
 CHECK_LIBRARY_EXISTS(rt clock_gettime "" HAVE_CLOCK_GETTIME)
-
-include(CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(fts_open have_fts_open)
 CHECK_FUNCTION_EXISTS(posix_memalign HAVE_POSIX_MEMALIGN)
 CHECK_FUNCTION_EXISTS(memalign HAVE_MEMALIGN)
 
 # HAVE HEADERS
-include(CheckIncludeFile)
 CHECK_INCLUDE_FILE(syslog.h HAVE_SYSLOG_H)
 CHECK_INCLUDE_FILE(ftw.h HAVE_FTW_H)
 CHECK_INCLUDE_FILE(stdio_ext.h HAVE_STDIO_EXT_H)
-CHECK_INCLUDE_FILE(sys/capability.h HAVE_SYS_CAPABILITY_H)
-CHECK_INCLUDE_FILE(selinux/selinux.h HAVE_SELINUX_SELINUX_H)
-CHECK_INCLUDE_FILE(proc/devname.h HAVE_PROC_DEVNAME_H)
 CHECK_INCLUDE_FILE(shadow.h HAVE_SHADOW_H)
 CHECK_INCLUDE_FILE(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
-CHECK_INCLUDE_FILE(acl/libacl.h HAVE_ACL_LIBACL_H)
-CHECK_INCLUDE_FILE(sys/acl.h HAVE_SYS_ACL_H)
 
 # HAVE_ATOMIC_BUILTINS
-include(CheckCSourceCompiles)
 CHECK_C_SOURCE_COMPILES("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
 if(NOT HAVE_ATOMIC_BUILTINS)
     message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
@@ -231,6 +237,7 @@ set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
 # ---------- PATHS
+
 set(OSCAP_DEFAULT_SCHEMA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/schemas")
 set(OSCAP_DEFAULT_XSLT_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/xsl")
 set(OSCAP_DEFAULT_CPE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/cpe")
@@ -299,7 +306,6 @@ set(CPACK_SOURCE_IGNORE_FILES
 	"~$"
 	"\\\\CMakeLists.txt.user"
 )
-include(CPack)
 
 # Ctest
 enable_testing()
