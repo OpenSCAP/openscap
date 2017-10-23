@@ -56,7 +56,7 @@ fi
 
 # For SWIG bindings.
 export PERL5LIB=$b/swig/perl:$b/swig/perl${PERL5LIB:+:$PERL5LIB}
-export PYTHONPATH=$s/swig/python2:$s/swig/src:$b/swig/python2:$b/swig/python2${PYTHONPATH:+:$PYTHONPATH}
+export PYTHONPATH=$s/swig/python2:$b/swig/src:$b/swig/python2:$b/swig/python2${PYTHONPATH:+:$PYTHONPATH}
 
 # This is a cheap way to find some use-after-free and uninitialized
 # read problems when using glibc.

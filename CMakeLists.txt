@@ -82,7 +82,7 @@ if(PROCPS_FOUND)
 endif()
 
 # PYTHON
-find_package(PythonLibs)
+find_package(PythonLibs 2 EXACT)
 find_package(PythonInterp)
 
 # RPM
