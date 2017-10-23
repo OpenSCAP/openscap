@@ -26,23 +26,18 @@ cd openscap-${version}
 
 **OR**
 
-1) b) Use fresh sources from git repository. You will also need the following
-packages to be installed on your system:
-```
-autoconf automake libtool
-```
-Now get sources from git repository and run ./autogen.sh:
+1) b) Use fresh sources from git repository.
 
 ```
 git clone https://github.com/OpenSCAP/openscap.git
 cd openscap
-./autogen.sh
 ```
 
-2) To build the library you will need the following build dependencies
+2) To build the library you will also need the following build dependencies
 (some of these are optional, if they are not detected, openscap will be compiled
 without respective optional features):
 ```
+cmake \
 dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
@@ -51,7 +46,8 @@ bzip2-devel
 When you have all the build dependencies installed you can run the following
 commands to build the library:
 ```
-./configure
+cd build/
+cmake ..
 make
 ```
 
@@ -66,7 +62,7 @@ systemctl start sendmail.service
 ```
 Now you can execute the following command to run library self-checks:
 ```
-make check
+make test
 ```
 Note: If you want to run `make distcheck` you will also need to install
 `asciidoctor`. You can either install `rubygem-asciidoctor` package (available
@@ -75,7 +71,7 @@ on Fedora), or you can install `rubygems` package and then run
 
 It's also possible to use the make check to test any other oscap binary present in the system. You just have to set the path of the binary to the CUSTOM_OSCAP variable:
 ```
-export CUSTOM_OSCAP=/usr/bin/oscap; make check
+export CUSTOM_OSCAP=/usr/bin/oscap; make test
 ```
 Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
 
