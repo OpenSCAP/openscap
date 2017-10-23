@@ -23,7 +23,7 @@ function test_probes_sysinfo {
     local ret_val=0;
     local LOGFILE="test_probes_sysinfo.log"
 
-    ./test_probes_sysinfo >> "$LOGFILE"
+    bash $builddir/run ./test_probes_sysinfo >> "$LOGFILE"
 
     if [ $? -eq 0 ] && [ -f $RF ]; then
 	
