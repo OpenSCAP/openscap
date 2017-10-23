@@ -8,7 +8,7 @@ set(OPENSCAP_VERSION "${OPENSCAP_VERSION_MAJOR}.${OPENSCAP_VERSION_MINOR}.${OPEN
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    set(NDEBUG 1)
+	set(NDEBUG 1)
 endif()
 
 # ---------- INCLUDES CMAKE MODULES
@@ -37,7 +37,7 @@ find_package(AptPkg)
 # BLKID
 find_package(Blkid)
 if(BLKID_FOUND)
-    CHECK_LIBRARY_EXISTS(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
+	CHECK_LIBRARY_EXISTS(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
 endif()
 
 # CAP
@@ -77,7 +77,7 @@ find_package(Popt)
 # PROCPS
 find_package(Procps)
 if(PROCPS_FOUND)
-    CHECK_LIBRARY_EXISTS(procps dev_to_tty "" HAVE_DEV_TO_TTY)
+	CHECK_LIBRARY_EXISTS(procps dev_to_tty "" HAVE_DEV_TO_TTY)
 	CHECK_INCLUDE_FILE(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
@@ -88,18 +88,17 @@ find_package(PythonInterp)
 # RPM
 find_package(RPM)
 if(RPM_FOUND)
-    CHECK_LIBRARY_EXISTS(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
-    CHECK_LIBRARY_EXISTS(rpm headerFormat "" HAVE_HEADERFORMAT)
-    CHECK_LIBRARY_EXISTS(rpmio rpmFreeCrypto "" HAVE_RPMFREECRYPTO)
-    CHECK_LIBRARY_EXISTS(rpm rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
-
-    set(HAVE_RPMVERCMP 1)
+	CHECK_LIBRARY_EXISTS(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
+	CHECK_LIBRARY_EXISTS(rpm headerFormat "" HAVE_HEADERFORMAT)
+	CHECK_LIBRARY_EXISTS(rpmio rpmFreeCrypto "" HAVE_RPMFREECRYPTO)
+	CHECK_LIBRARY_EXISTS(rpm rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
+	set(HAVE_RPMVERCMP 1)
 endif()
 if (RPM46_FOUND)
-    set(HAVE_RPM46 1)
+	set(HAVE_RPM46 1)
 endif()
 if (RPM47_FOUND)
-    set(HAVE_RPM47 1)
+	set(HAVE_RPM47 1)
 endif()
 
 # SELINUX
@@ -153,7 +152,7 @@ CHECK_INCLUDE_FILE(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
 # HAVE_ATOMIC_BUILTINS
 CHECK_C_SOURCE_COMPILES("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
 if(NOT HAVE_ATOMIC_BUILTINS)
-    message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
+	message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
 endif()
 
 # HAVE VALGRIND AND ENV
@@ -211,8 +210,8 @@ set(ENABLE_OSCAP_UTIL_AS_RPM TRUE CACHE BOOL "enables oscap util as RPM")
 set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "Path to the Python interpreter for oscap-docker")
 set(ENABLE_OSCAP_UTIL_DOCKER TRUE CACHE BOOL "enables oscap util Docker")
 if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
-    set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
-    message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
+	set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
+	message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
 endif()
 
 # ENABLES OSCAP UTIL SSH
@@ -248,28 +247,28 @@ add_definitions(-DHAVE_CONFIG_H)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
 endif()
 
 include_directories(
-    "src/"
-    "src/common/"
-    "src/common/public/"
-    "src/CCE/public/"
-    "src/CPE/public/"
-    "src/CVE/public/"
-    "src/CVSS/public/"
-    "src/DS/public/"
-    "src/OVAL/public/"
-    "src/OVAL/probes/SEAP/"
-    "src/OVAL/probes/SEAP/public/"
-    "src/OVAL/"
-    "src/source/public/"
-    "src/XCCDF/"
-    "src/XCCDF/public/"
-    "src/XCCDF_POLICY/"
-    "src/XCCDF_POLICY/public/"
-    ${CMAKE_BINARY_DIR}
+	"src/"
+	"src/common/"
+	"src/common/public/"
+	"src/CCE/public/"
+	"src/CPE/public/"
+	"src/CVE/public/"
+	"src/CVSS/public/"
+	"src/DS/public/"
+	"src/OVAL/public/"
+	"src/OVAL/probes/SEAP/"
+	"src/OVAL/probes/SEAP/public/"
+	"src/OVAL/"
+	"src/source/public/"
+	"src/XCCDF/"
+	"src/XCCDF/public/"
+	"src/XCCDF_POLICY/"
+	"src/XCCDF_POLICY/public/"
+${CMAKE_BINARY_DIR}
 	${LIBXML2_INCLUDE_DIR}
 )
 
