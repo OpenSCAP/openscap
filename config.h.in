@@ -45,8 +45,8 @@
 #cmakedefine HAVE_RPMFREEFILESYSTEMS
 
 #cmakedefine HAVE_RPMVERCMP
-#cmakedefine HAVE_RPM46
-#cmakedefine HAVE_RPM47
+#cmakedefine RPM46_FOUND
+#cmakedefine RPM47_FOUND
 
 #cmakedefine BZIP2_FOUND
 

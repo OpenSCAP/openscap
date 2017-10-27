@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_RPM46
+#ifdef RPM46_FOUND
 int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
 {
 	dE("RPM: %s", rpmlogRecMessage(rec));

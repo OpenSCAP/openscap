@@ -94,12 +94,6 @@ if(RPM_FOUND)
 	CHECK_LIBRARY_EXISTS(rpm rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
 	set(HAVE_RPMVERCMP 1)
 endif()
-if (RPM46_FOUND)
-	set(HAVE_RPM46 1)
-endif()
-if (RPM47_FOUND)
-	set(HAVE_RPM47 1)
-endif()
 
 # SELINUX
 find_package(SELinux)
