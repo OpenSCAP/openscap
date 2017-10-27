@@ -110,9 +110,9 @@ find_package(LibXslt REQUIRED)
 find_package(BZip2)
 
 # PThread
-find_package(Threads)
 set(CMAKE_THREAD_PREFER_PTHREAD)
 set(THREADS_PREFER_PTHREAD_FLAG)
+find_package(Threads)
 CHECK_LIBRARY_EXISTS(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
 CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
 CHECK_LIBRARY_EXISTS(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
