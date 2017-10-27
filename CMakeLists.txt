@@ -44,7 +44,6 @@ endif()
 find_package(Cap)
 if(CAP_FOUND)
 	CHECK_LIBRARY_EXISTS(cap cap_get_pid "" HAVE_CAP_GET_PID)
-	CHECK_INCLUDE_FILE(sys/capability.h HAVE_SYS_CAPABILITY_H)
 endif()
 
 # CURL
