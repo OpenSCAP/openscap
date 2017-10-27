@@ -74,7 +74,7 @@
  #include "process58-devname.h"
 #endif
 
-#ifdef HAVE_SELINUX_SELINUX_H
+#ifdef SELINUX_FOUND
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #endif
@@ -236,7 +236,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 	return tbuf;
 }
 
-#ifdef HAVE_SELINUX_SELINUX_H
+#ifdef SELINUX_FOUND
 static char *get_selinux_label(int pid) {
 	char *selinux_label;
 	security_context_t pid_context;
@@ -268,7 +268,7 @@ static char *get_selinux_label(int pid) {
 static char *get_selinux_label(int pid) {
 	return NULL;
 }
-#endif /* HAVE_SELINUX_SELINUX_H */
+#endif /* SELINUX_FOUND */
 
 static char **get_posix_capability(int pid, int max_cap_id) {
 #ifdef HAVE_SYS_CAPABILITY_H

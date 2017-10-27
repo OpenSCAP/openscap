@@ -97,9 +97,6 @@ endif()
 
 # SELINUX
 find_package(SELinux)
-if(SELINUX_FOUND)
-	CHECK_INCLUDE_FILE(selinux/selinux.h HAVE_SELINUX_SELINUX_H)
-endif()
 
 # SWIG
 find_package(SWIG)

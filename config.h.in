@@ -71,7 +71,7 @@
 #cmakedefine HAVE_SYSLOG_H
 #cmakedefine HAVE_STDIO_EXT_H
 #cmakedefine HAVE_SYS_CAPABILITY_H
-#cmakedefine HAVE_SELINUX_SELINUX_H
+#cmakedefine SELINUX_FOUND
 #cmakedefine HAVE_PROC_DEVNAME_H
 #cmakedefine HAVE_SHADOW_H
 #cmakedefine HAVE_SYS_SYSTEMINFO_H
