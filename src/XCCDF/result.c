@@ -1096,8 +1096,8 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
 		while (oscap_reference_iterator_has_more(references)) {
 			struct oscap_reference *ref = oscap_reference_iterator_next(references);
-			if (strcmp(ref->href, DISA_STIG_VIEWER_HREF) == 0) {
-				stig_rule_id = ref->title;
+			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
+				stig_rule_id = oscap_reference_get_title(ref);
 				break;
 			}
 		}
