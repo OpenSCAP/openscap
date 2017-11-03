@@ -44,7 +44,7 @@ struct rpm_probe_global {
 
 #ifndef HAVE_HEADERFORMAT
 # define HAVE_LIBRPM44 1 /* hack */
-//# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
+# define headerFormat(_h, _fmt, _emsg) headerSprintf((_h),( _fmt), rpmTagTable, rpmHeaderFormats, (_emsg))
 #endif
 
 #ifndef HAVE_RPMFREECRYPTO
