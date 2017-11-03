@@ -26,9 +26,9 @@ include(CPack)
 # ACL
 find_package(ACL)
 if(ACL_FOUND)
-	CHECK_LIBRARY_EXISTS(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
-	CHECK_INCLUDE_FILE(acl/libacl.h HAVE_ACL_LIBACL_H)
-	CHECK_INCLUDE_FILE(sys/acl.h HAVE_SYS_ACL_H)
+	check_library_exists(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
+	check_include_file(acl/libacl.h HAVE_ACL_LIBACL_H)
+	check_include_file(sys/acl.h HAVE_SYS_ACL_H)
 endif()
 
 # APTPKG
@@ -37,13 +37,13 @@ find_package(AptPkg)
 # BLKID
 find_package(Blkid)
 if(BLKID_FOUND)
-	CHECK_LIBRARY_EXISTS(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
+	check_library_exists(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
 endif()
 
 # CAP
 find_package(Cap)
 if(CAP_FOUND)
-	CHECK_LIBRARY_EXISTS(cap cap_get_pid "" HAVE_CAP_GET_PID)
+	check_library_exists(cap cap_get_pid "" HAVE_CAP_GET_PID)
 endif()
 
 # CURL
@@ -76,8 +76,8 @@ find_package(Popt)
 # PROCPS
 find_package(Procps)
 if(PROCPS_FOUND)
-	CHECK_LIBRARY_EXISTS(procps dev_to_tty "" HAVE_DEV_TO_TTY)
-	CHECK_INCLUDE_FILE(proc/devname.h HAVE_PROC_DEVNAME_H)
+	check_library_exists(procps dev_to_tty "" HAVE_DEV_TO_TTY)
+	check_include_file(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
 # PYTHON
@@ -87,10 +87,10 @@ find_package(PythonInterp)
 # RPM
 find_package(RPM)
 if(RPM_FOUND)
-	CHECK_LIBRARY_EXISTS(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
-	CHECK_LIBRARY_EXISTS(rpm headerFormat "" HAVE_HEADERFORMAT)
-	CHECK_LIBRARY_EXISTS(rpmio rpmFreeCrypto "" HAVE_RPMFREECRYPTO)
-	CHECK_LIBRARY_EXISTS(rpm rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
+	check_library_exists(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
+	check_library_exists(rpm headerFormat "" HAVE_HEADERFORMAT)
+	check_library_exists(rpmio rpmFreeCrypto "" HAVE_RPMFREECRYPTO)
+	check_library_exists(rpm rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
 	set(HAVE_RPMVERCMP 1)
 endif()
 
@@ -113,9 +113,9 @@ find_package(BZip2)
 set(CMAKE_THREAD_PREFER_PTHREAD)
 set(THREADS_PREFER_PTHREAD_FLAG)
 find_package(Threads)
-CHECK_LIBRARY_EXISTS(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
-CHECK_LIBRARY_EXISTS(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
-CHECK_LIBRARY_EXISTS(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
+check_library_exists(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
+check_library_exists(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
+check_library_exists(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
 
 # WITH_CRYPTO
 set(WITH_CRYPTO "gcrypt" CACHE STRING "gcrypt|nss3")
@@ -128,19 +128,19 @@ else()
 endif()
 
 # HAVE FUNCTIONS
-CHECK_LIBRARY_EXISTS(rt clock_gettime "" HAVE_CLOCK_GETTIME)
-CHECK_FUNCTION_EXISTS(posix_memalign HAVE_POSIX_MEMALIGN)
-CHECK_FUNCTION_EXISTS(memalign HAVE_MEMALIGN)
-CHECK_FUNCTION_EXISTS(fts_open HAVE_FTS_OPEN)
+check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
+check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
+check_function_exists(memalign HAVE_MEMALIGN)
+check_function_exists(fts_open HAVE_FTS_OPEN)
 
 # HAVE HEADERS
-CHECK_INCLUDE_FILE(syslog.h HAVE_SYSLOG_H)
-CHECK_INCLUDE_FILE(stdio_ext.h HAVE_STDIO_EXT_H)
-CHECK_INCLUDE_FILE(shadow.h HAVE_SHADOW_H)
-CHECK_INCLUDE_FILE(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
+check_include_file(syslog.h HAVE_SYSLOG_H)
+check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
+check_include_file(shadow.h HAVE_SHADOW_H)
+check_include_file(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
 
 # HAVE_ATOMIC_BUILTINS
-CHECK_C_SOURCE_COMPILES("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
+check_c_source_compiles("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
 if(NOT HAVE_ATOMIC_BUILTINS)
 	message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
 endif()
@@ -183,11 +183,11 @@ set(ENABLE_PROBES_INDEPENDENT TRUE CACHE BOOL "enables independent probes")
 set(ENABLE_PROBES_UNIX TRUE CACHE BOOL "enables unix probes")
 
 # ENABLES LINUX PROBES
-STRING(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
+string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
 set(ENABLE_PROBES_LINUX ${IS_LINUX} CACHE BOOL "enables linux probes")
 
 # ENABLES SOLARIS PROBES
-STRING(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
+string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
 set(ENABLE_PROBES_SOLARIS ${IS_SOLARIS} CACHE BOOL "enables solaris probes")
 
 # ENABLES OSCAP UTIL
