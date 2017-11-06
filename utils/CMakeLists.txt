@@ -3,7 +3,7 @@ file(GLOB UTILS_SOURCES "*.c")
 # see https://cmake.org/Wiki/CMake_RPATH_handling
 
 # use, i.e. don't skip the full RPATH for the build tree
-set(CMAKE_SKIP_BUILD_RPATH  FALSE)
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
 
 # when building, don't use the install RPATH already
 # (but later on when installing)
