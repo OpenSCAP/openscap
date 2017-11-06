@@ -7,5 +7,5 @@ if(ENABLE_SCE)
 	target_link_libraries(openscap_sce PRIVATE openscap)
 
 	install(TARGETS openscap_sce
-		LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
