@@ -20,7 +20,7 @@ if(ENABLE_PYTHON3)
 	install(TARGETS ${SWIG_MODULE_openscap_py3_REAL_NAME}
 		DESTINATION ${PYTHON_SITE_PACKAGES_INSTALL_DIR}
 	)
-	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap.py ../src/openscap_api.py
+	install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_py.py ../src/openscap_api.py
 		DESTINATION ${PYTHON_SITE_PACKAGES_INSTALL_DIR}
 	)
 endif()
