@@ -524,13 +524,28 @@ $ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml sca
 
 ==== Result STIG Viewer
 
-You can also generate XCCDF result files readable by DISA STIG Viewer using the 
-`--stig-viewer` command-line argument. Note that the XCCDF input must contain references
-to the STIG Rule ID for each Rule. See link:http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx[DISA STIG Viewer]
+If you want to import the XCCDF scan results to DISA STIG Viewer but your Rule IDs don't
+match the DISA's ones, you can use the `--stig-viewer` command-line argument along with
+a special reference in your Rules to generate XCCDF result files that can be imported by
+DISA STIG Viewer.
 
 --------------------------------------------------------------------------------------
 $ oscap xccdf eval --profile stig-rhel7-disa --stig-viewer results-stig.xml ssg-rhel7-ds.xml
 --------------------------------------------------------------------------------------
+
+Each rule in the input XCCDF must contain a reference to its STIG Rule ID, and its 
+href attribute must be exactly "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx".
+
+For example:
+----
+<Rule id="rpm_verify_permissions">
+  ...
+  <reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-86473r2_rule</reference>
+  ...
+</Rule>
+----
+
+For more information on DISA STIG Viewer click link:http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx[here].
 
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
