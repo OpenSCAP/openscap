@@ -120,6 +120,7 @@ struct oscap_action {
 	char *f_syschar;
 	char *f_directives;
         char *f_results;
+	char *f_results_stig;
 	char *f_results_arf;
         char *f_report;
 	char *f_variables;
