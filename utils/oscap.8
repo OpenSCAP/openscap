@@ -93,12 +93,12 @@ Select a particular rule from XCCDF document. Only this rule will be evaluated. 
 .TP
 \fB\-\-tailoring-file TAILORING_FILE\fR
 .RS
-Use given file for XCCDF tailoring. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority!
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
-\fB\-\-tailoring-id COMPONENT_ID\fR
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
 .RS
-Use component of given ID (in input source datastream) for XCCDF tailoring. If both --tailoring-file and --tailoring-id are specified, --tailoring files takes priority!
+Use tailoring component in input source datastream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source datastream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
 \fB\-\-cpe CPE_FILE\fR
@@ -114,6 +114,11 @@ Write XCCDF results into FILE.
 \fB\-\-results-arf FILE\fR
 .RS
 Writes results to a given FILE in Asset Reporting Format. It is recommended to use this option instead of --results when dealing with datastreams.
+.RE
+.TP
+\fB\-\-stig-viewer FILE\fR
+.RS
+Writes XCCDF results into FILE in a format readable by DISA STIG Viewer. See \fIhttp://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx\f.
 .RE
 .TP
 \fB\-\-thin-results\fR
@@ -219,6 +224,11 @@ Write XCCDF results into FILE.
 \fB\-\-results-arf FILE\fR
 .RS
 Writes results to a given FILE in Asset Reporting Format. It is recommended to use this option instead of --results when dealing with datastreams.
+.RE
+.TP
+\fB\-\-stig-viewer FILE\fR
+.RS
+Writes XCCDF results into FILE in a format readable by DISA STIG Viewer. See \fIhttp://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx\f.
 .RE
 .TP
 \fB\-\-report FILE\fR
@@ -359,6 +369,12 @@ Takes component ref with given ID from checklists. This allows to select a parti
 .TP
 \fB\-\-benchmark-id ID\fR
 Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+Use tailoring component in input source datastream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source datastream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
 .B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file

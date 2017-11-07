@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+ xmlns:prod="http://www.icasi.org/CVRF/schema/prod/1.1"
+ xmlns:vuln="http://www.icasi.org/CVRF/schema/vuln/1.1"
+ xmlns:cvrf-common="http://www.icasi.org/CVRF/schema/common/1.1"
+ xmlns:xs="http://www.w3.org/2001/XMLSchema"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:cpe-lang="http://cpe.mitre.org/language/2.0"
+ xmlns:cvssv2="http://scap.nist.gov/schema/cvss-v2/1.0"
+ xmlns:scap-core="http://scap.nist.gov/schema/scap-core/1.0"
+ id="CVRFProductDictionary"
+ targetNamespace="http://www.icasi.org/CVRF/schema/prod/1.1"
+ elementFormDefault="qualified"
+ attributeFormDefault="unqualified"
+ version="1.1">
+  <!-- =============================================================================== -->
+  <!-- =============================   SCHEMA IMPORTS  =============================== -->
+  <!-- =============================================================================== -->
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="dc.xsd"/>
+  <xs:import namespace="http://cpe.mitre.org/language/2.0" schemaLocation="cpe-language_2.2a.xsd"/>
+  <xs:import namespace="http://scap.nist.gov/schema/scap-core/1.0" schemaLocation="scap-core_0.9.xsd"/>
+  <xs:import namespace="http://scap.nist.gov/schema/cvss-v2/1.0" schemaLocation="cvss-v2_0.9.xsd"/>
+  <xs:import namespace="http://www.icasi.org/CVRF/schema/common/1.1" schemaLocation="common.xsd"/>
+  <!-- =============================================================================== -->
+  <!-- ============================ SCHEMA INFORMATION =============================== -->
+  <!-- =============================================================================== -->
+  <xs:annotation>
+    <xs:documentation xml:lang="en">This is the XML schema for the Common Vulnerability Reporting Framework's Product model.  For more information, see the CVRF whitepaper.</xs:documentation>
+    <xs:appinfo>
+      <dc:creator>Joe Hemmerlein &lt;joe.hemmerlein@microsoft.com&gt;</dc:creator>
+      <dc:contributor>Joe Clarke &lt;jclarke@cisco.com&gt;</dc:contributor>
+      <dc:date>2012-05-07</dc:date>
+      <dc:subject>CVRF Product Dictionary</dc:subject>
+      <version>1.1</version>
+    </xs:appinfo>
+  </xs:annotation>
+  <!-- =============================================================================== -->
+  <!-- =================================== DATA TYPES ================================ -->
+  <!-- =============================================================================== -->
+  <xs:simpleType name="BranchTypeEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the individual parts (stubs) that comprise a product name.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Vendor">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The name of the vendor or manufacturer that makes the product .</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Product Family">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The product family that the product falls into.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Product Name">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The name of the product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Product Version">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The version of the product. This can be a numeric or other descriptor.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Patch Level">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The patch level of the product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Service Pack">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The service pack of the product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Architecture">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The architecture for which the product is intended.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Language">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The language of the product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Legacy">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A non-specific legacy entry.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Specification">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">A specification such as a standard, best common practice, etc.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Host Name">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The host name of a system/service.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Realm">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The URI component of a system/service.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Resource">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">The file name component of a system/service.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="RelationTypeEnumType">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Types enumerating the ways products can be related to each other.</xs:documentation>
+    </xs:annotation>
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="Default Component Of">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This product is a default component of the referenced product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Optional Component Of">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This product is an optional component of the referenced product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="External Component Of">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This product is an external component of the referenced product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Installed On">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This product is installed on the referenced product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="Installed With">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">This product is installed with the referenced product.</xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="BranchType">
+    <xs:choice>
+      <xs:element ref="prod:FullProductName" />
+      <xs:element name="Branch" type="prod:BranchType" maxOccurs="unbounded"/>
+    </xs:choice>
+    <xs:attribute name="Type" type="prod:BranchTypeEnumType" use="required"/>
+    <xs:attribute name="Name" type="xs:string" use="required"/>
+  </xs:complexType>
+  <!-- =============================================================================== -->
+  <!-- ============================= DOCUMENT DEFINITION ============================= -->
+  <!-- =============================================================================== -->
+  <xs:element name="ProductTree">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Neutral product tree to streamline product entries that can be referenced elsewhere in the document. The end of each branch ("FullProductName") represents a referrenceable product.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Branch" minOccurs="0" maxOccurs="unbounded" type="prod:BranchType"/>
+        <xs:element ref="prod:FullProductName" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="Relationship" minOccurs="0" maxOccurs="unbounded">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Defines how this product is related to another product.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="prod:FullProductName" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="ProductReference" type="xs:token" use="required">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">The ProductReference refers to the unique ProductID of the product that is to which another product will be related.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="RelationType" type="prod:RelationTypeEnumType" use="required">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">The RelationType attribute defines how the two products are related.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="RelatesToProductReference" type="xs:token" use="required">
+              <xs:annotation>
+                <xs:documentation xml:lang="en">RelatesToProductReference refers to the unique ProductID of the product to which the ProductReference attribute value relates.</xs:documentation>
+              </xs:annotation>
+            </xs:attribute>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="ProductGroups" minOccurs="0" maxOccurs="1">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">Container for grouping products to be used in vulnerabilities.</xs:documentation>
+          </xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Group" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                  <xs:documentation xml:lang="en">A named container to associate two or more product IDs together for use in vulnerabilities.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="Description" minOccurs="0" maxOccurs="1">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">Optional textual description for this group.</xs:documentation>
+                      </xs:annotation>
+                      <xs:complexType>
+                        <xs:simpleContent>
+                          <xs:extension base="cvrf-common:localizedString" />
+                        </xs:simpleContent>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element name="ProductID" type="xs:token" minOccurs="2" maxOccurs="unbounded">
+                      <xs:annotation>
+                        <xs:documentation xml:lang="en">The ID of an existing product in this tree that is to be a member of this group.</xs:documentation>
+                      </xs:annotation>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute name="GroupID" type="xs:token" use="required">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="en">The unique identifier used to reference this group.</xs:documentation>
+                    </xs:annotation>
+                  </xs:attribute>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+    <xs:unique name="UniqueProductID">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each FullProductName uses a unique ProductID value.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:FullProductName"/>
+      <xs:field xpath="@ProductID"/>
+    </xs:unique>
+    <xs:unique name="UniqueGroupID">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">This is to ensure that each Group uses a unique GroupID value.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:ProductGroups/prod:Group"/>
+      <xs:field xpath="@GroupID"/>
+    </xs:unique>
+    <xs:key name="ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">A key to reference a specific product.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:FullProductName" />
+      <xs:field xpath="@ProductID" />
+    </xs:key>
+    <xs:keyref name="ProductReferenceKeyRef" refer="prod:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey used to define a relationship product.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:Relationship" />
+      <xs:field xpath="@ProductReference" />
+    </xs:keyref>
+    <xs:keyref name="RelatesToProductReferenceKeyRef" refer="prod:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey used to define a related product.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:Relationship" />
+      <xs:field xpath="@RelatesToProductReference" />
+    </xs:keyref>
+    <xs:keyref name="GroupProductReferenceKeyRef" refer="prod:ProductKey">
+      <xs:annotation>
+        <xs:documentation xml:lang="en">An instance of the ProductKey used to define a product group membership list.</xs:documentation>
+      </xs:annotation>
+      <xs:selector xpath=".//prod:ProductGroups/prod:Group/prod:ProductID" />
+      <xs:field xpath="." />
+    </xs:keyref>
+  </xs:element>
+  <xs:element name="FullProductName">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">Endpoint of product tree - this is an actual product entry. The string represents the friendly product name (i.e. the way it would be printed in other publications)</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:simpleContent>
+        <xs:extension base="cvrf-common:nonEmptyNormalizedString">
+          <xs:attribute name="ProductID" type="xs:token" use="required">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">A value that uniquely identifies this Product entry in the scope of this document. Whenever a reference to this Product entry is needed anywhere in this document, its unique ID will be referenced.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+          <xs:attribute name="CPE" type="cpe-lang:namePattern">
+            <xs:annotation>
+              <xs:documentation xml:lang="en">The Common Platform Enumeration (CPE) attribute refers to a method for naming platforms. The structure for CPE is described at http://cpe.mitre.org.</xs:documentation>
+            </xs:annotation>
+          </xs:attribute>
+	    </xs:extension>
+      </xs:simpleContent>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

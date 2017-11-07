@@ -480,7 +480,7 @@ xmlNode *xccdf_item_to_dom(struct xccdf_item *item, xmlDoc *doc, xmlNode *parent
 			break;
 		case XCCDF_RESULT:
 			xmlNodeSetName(item_node,BAD_CAST "TestResult");
-			if (parent) xccdf_result_to_dom(XRESULT(item), item_node, doc, parent);
+			if (parent) xccdf_result_to_dom(XRESULT(item), item_node, doc, parent, false);
 			break;
 		case XCCDF_GROUP:
 			xmlNodeSetName(item_node,BAD_CAST "Group");

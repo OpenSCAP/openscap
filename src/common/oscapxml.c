@@ -186,6 +186,8 @@ const char *oscap_document_type_to_string(oscap_document_type_t type)
 		return "ARF Result Datastream";
 	case OSCAP_DOCUMENT_CVE_FEED:
 		return "CVE NVD Feed";
+	case OSCAP_DOCUMENT_CVRF_FEED:
+		return "CVRF Feed";
 	default:
 		return NULL;
 	}

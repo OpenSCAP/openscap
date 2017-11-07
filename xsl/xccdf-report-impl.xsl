@@ -471,10 +471,15 @@ Authors:
         <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/cci/')">
             <xsl:text>DISA CCI</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/srgs/')">
+        <!-- SRG weblinks can be subject to change. Keep the old ones for compatibility and add any new ones -->
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/srgs/') or 
+                starts-with($href, 'http://iase.disa.mil/stigs/os/general/Pages/index.aspx') or
+                starts-with($href, 'http://iase.disa.mil/stigs/app-security/app-servers/Pages/general.aspx')">
             <xsl:text>DISA SRG</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/')">
+        <!-- STIG weblinks can be subject to change. Keep the old ones for compatibility and add any new ones -->
+        <xsl:when test="starts-with($href, 'http://iase.disa.mil/stigs/os/') or
+                starts-with($href, 'http://iase.disa.mil/stigs/app-security/')">
             <xsl:text>DISA STIG</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://www.pcisecuritystandards.org/')">

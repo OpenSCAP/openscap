@@ -38,7 +38,7 @@ grep -q "$bash_line2" $script
 
 # Generate an Ansible playbook from a profile in ARF file
 $OSCAP xccdf generate fix --profile $profile --template $ansible_template $results_arf | grep -Ev $regex >$playbook 2>$stderr
-diff -B $playbook $srcdir/$name.playbook1.yml 
+diff -B $playbook $srcdir/$name.playbook1.yml
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep -q "$ansible_task1a" $playbook
 grep -q "$ansible_task1b" $playbook

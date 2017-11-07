@@ -51,6 +51,9 @@
 #include "common/debug_priv.h"
 #include "source/oscap_source_priv.h"
 
+// References containing STIG Rule IDs can be found by their href attribute, it must match the following url
+static const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
+
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
 static const char *XCCDF_INSTANCE_DEFAULT_CONTEXT = "undefined";
@@ -734,7 +737,19 @@ struct oscap_source *xccdf_result_export_source(struct xccdf_result *result, con
 		return NULL;
 	}
 
-	xccdf_result_to_dom(result, NULL, doc, NULL);
+	xccdf_result_to_dom(result, NULL, doc, NULL, false);
+	return oscap_source_new_from_xmlDoc(doc, filepath);
+}
+
+struct oscap_source *xccdf_result_stig_viewer_export_source(struct xccdf_result *result, const char *filepath)
+{
+	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
+	if (doc == NULL) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+
+	xccdf_result_to_dom(result, NULL, doc, NULL, true);
 	return oscap_source_new_from_xmlDoc(doc, filepath);
 }
 
@@ -753,9 +768,10 @@ int xccdf_result_export(struct xccdf_result *result, const char *file)
 	return ret;
 }
 
-void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent)
+void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent, bool use_stig_rule_id)
 {
         xmlNs *ns_xccdf = NULL;
+	struct xccdf_benchmark *associated_benchmark = xccdf_result_get_benchmark(result);
 	const char *benchmark_ref_uri = xccdf_result_get_benchmark_uri(result);
 	const struct xccdf_version_info* version_info = xccdf_item_get_schema_version(XITEM(result));
 	if (parent) {
@@ -803,11 +819,8 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 			xmlNewProp(benchmark_ref, BAD_CAST "href", BAD_CAST benchmark_ref_uri);
 
 			// @id is disallowed in XCCDF 1.1 and optional in XCCDF 1.2
-			if (xccdf_version_cmp(xccdf_item_get_schema_version(XITEM(result)), "1.2") >= 0) {
-				struct xccdf_benchmark *associated_benchmark = xccdf_result_get_benchmark(result);
-				if (associated_benchmark) {
-					xmlNewProp(benchmark_ref, BAD_CAST "id", BAD_CAST xccdf_benchmark_get_id(associated_benchmark));
-				}
+			if (xccdf_version_cmp(xccdf_item_get_schema_version(XITEM(result)), "1.2") >= 0 && associated_benchmark) {
+				xmlNewProp(benchmark_ref, BAD_CAST "id", BAD_CAST xccdf_benchmark_get_id(associated_benchmark));
 			}
 
 			xmlAddPrevSibling(title_node, benchmark_ref);
@@ -931,7 +944,7 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {
 		struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
-		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info);
+		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info, associated_benchmark, use_stig_rule_id);
 	}
 	xccdf_rule_result_iterator_free(rule_results);
 
@@ -1085,14 +1098,40 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 	}
 }
 
-xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info)
+xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, bool use_stig_rule_id)
 {
+	const char *idref = xccdf_rule_result_get_idref(result);
+	if (use_stig_rule_id) {
+		// Don't output rules with no stig ids
+		if (!idref || !benchmark)
+			return NULL;
+
+		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
+		if (!item)
+			return NULL;
+
+		const char *stig_rule_id = NULL;		
+		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
+		while (oscap_reference_iterator_has_more(references)) {
+			struct oscap_reference *ref = oscap_reference_iterator_next(references);
+			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
+				stig_rule_id = oscap_reference_get_title(ref);
+				break;
+			}
+		}
+		oscap_reference_iterator_free(references);
+
+		if (!stig_rule_id)
+			return NULL;
+
+		idref = stig_rule_id;
+	}
+
 	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
 
 	/* Handle attributes */
-	const char *idref = xccdf_rule_result_get_idref(result);
 	if (idref)
 		xmlNewProp(result_node, BAD_CAST "idref", BAD_CAST idref);
 

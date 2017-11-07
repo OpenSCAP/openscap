@@ -163,6 +163,7 @@ static struct oscap_module XCCDF_EVAL = {
         "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
         "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
         "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
+        "   --stig-viewer <file>\r\t\t\t\t - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
         "   --thin-results\r\t\t\t\t - Thin Results provides only minimal amount of information in OVAL/ARF results.\n"
         "                 \r\t\t\t\t   The option --without-syschar is automatically enabled when you use Thin Results.\n"
         "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in OVAL/ARF result files.\n"
@@ -200,6 +201,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
 			"  --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
 			"  --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
+			"  --stig-viewer <file>\r\t\t\t\t - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
 			"  --report <file>\r\t\t\t\t - Write HTML report into file.\n"
 			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
 			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
@@ -216,7 +218,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 
 #define GEN_OPTS \
         "Generate options:\n" \
-        "   --profile <profile-id>\r\t\t\t\t - Tailor XCCDF file with respect to a profile.\n"
+        "   --profile <profile-id>\r\t\t\t\t - Apply profile with given ID to the Benchmark before further processing takes place.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",
@@ -275,6 +277,10 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
 		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
 		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
+		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
+		"   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
 		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
@@ -616,11 +622,12 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	}
 
 	xccdf_session_set_xccdf_export(session, action->f_results);
+	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
 	xccdf_session_set_report_export(session, action->f_report);
 	if (xccdf_session_export_xccdf(session) != 0)
 		goto cleanup;
 	else if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
-		(action->f_results || action->f_report || action->f_results_arf))
+		(action->f_results || action->f_report || action->f_results_arf || action->f_results_stig))
 		fprintf(stdout, "XCCDF Results are exported correctly.\n");
 
 	if (xccdf_session_export_arf(session) != 0)
@@ -739,6 +746,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	xccdf_session_set_oval_variables_export(session, action->export_variables);
 	xccdf_session_set_arf_export(session, action->f_results_arf);
 	xccdf_session_set_xccdf_export(session, action->f_results);
+	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
 	xccdf_session_set_report_export(session, action->f_report);
 
 	if (xccdf_session_export_oval(session) != 0)
@@ -1047,6 +1055,7 @@ bool getopt_generate(int argc, char **argv, struct oscap_action *action)
 
 enum oval_opt {
     XCCDF_OPT_RESULT_FILE = 1,
+    XCCDF_OPT_RESULT_FILE_STIG,
     XCCDF_OPT_RESULT_FILE_ARF,
     XCCDF_OPT_DATASTREAM_ID,
     XCCDF_OPT_XCCDF_ID,
@@ -1084,6 +1093,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"output",		required_argument, NULL, XCCDF_OPT_OUTPUT},
 		{"results", 		required_argument, NULL, XCCDF_OPT_RESULT_FILE},
 		{"results-arf",		required_argument, NULL, XCCDF_OPT_RESULT_FILE_ARF},
+		{"stig-viewer", 	required_argument, NULL, XCCDF_OPT_RESULT_FILE_STIG},
 		{"datastream-id",		required_argument, NULL, XCCDF_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, XCCDF_OPT_XCCDF_ID},
 		{"benchmark-id",		required_argument, NULL, XCCDF_OPT_BENCHMARK_ID},
@@ -1127,6 +1137,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		switch (c) {
 		case XCCDF_OPT_OUTPUT:
 		case XCCDF_OPT_RESULT_FILE:	action->f_results = optarg;	break;
+		case XCCDF_OPT_RESULT_FILE_STIG: action->f_results_stig = optarg;	break;
 		case XCCDF_OPT_RESULT_FILE_ARF:	action->f_results_arf = optarg;	break;
 		case XCCDF_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
 		case XCCDF_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;

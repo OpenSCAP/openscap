@@ -29,6 +29,11 @@
 
 #include <libxml/tree.h>
 
+
+#if defined USE_REGEX_PCRE
+#include <pcre.h>
+#endif
+
 #include "XCCDF/item.h"
 #include "common/_error.h"
 #include "common/assume.h"
@@ -67,7 +72,7 @@ static inline bool _file_exists(const char *file)
 static int _write_text_to_fd(int output_fd, const char* text) {
 
 	ssize_t written = 0;
-	ssize_t length = strlen(text);
+	const ssize_t length = strlen(text);
 
 	while (written < length) {
 		ssize_t w = write(output_fd, text + written, length - written);
@@ -82,7 +87,7 @@ static int _write_text_to_fd(int output_fd, const char* text) {
 
 static int _write_text_to_fd_and_free(int output_fd, char *text)
 {
-	int ret = _write_text_to_fd(output_fd, text);
+	const int ret = _write_text_to_fd(output_fd, text);
 	free(text);
 	return ret;
 }
@@ -342,33 +347,32 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 #if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	const char *interpret = NULL;
-	char *temp_dir = NULL;
-	char *temp_file = NULL;
-	char *fix_text = NULL;
-	int fd;
-	int result = 1;
 	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
 		return 1;
 
+	const char *interpret = NULL;
 	if ((interpret = _get_supported_interpret(xccdf_fix_get_system(fix), NULL)) == NULL) {
 		_rule_add_info_message(rr, "Not supported xccdf:fix/@system='%s' or missing interpreter.",
 				xccdf_fix_get_system(fix) == NULL ? "" : xccdf_fix_get_system(fix));
 		return 1;
 	}
 
+	char *fix_text = NULL;
 	if (_xccdf_fix_decode_xml(fix, &fix_text) != 0) {
 		_rule_add_info_message(rr, "Fix element contains unresolved child elements.");
 		return 1;
 	}
 
-	temp_dir = oscap_acquire_temp_dir();
+	int result = 1;
+
+	char *temp_dir = oscap_acquire_temp_dir();
 	if (temp_dir == NULL)
 		goto cleanup;
 	// TODO: Directory and files shall be labeled with SELinux to prevent
 	// confined processes with less priviledges to transit to oscap domain
 	// and become basically unconfined.
-	fd = oscap_acquire_temp_file(temp_dir, "fix-XXXXXXXX", &temp_file);
+	char *temp_file = NULL;
+	int fd = oscap_acquire_temp_file(temp_dir, "fix-XXXXXXXX", &temp_file);
 	if (fd == -1) {
 		_rule_add_info_message(rr, "mkstemp failed: %s", strerror(errno));
 		goto cleanup;
@@ -588,7 +592,105 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 	}
 }
 
-static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total)
+static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, int output_fd, const char *fix_text, bool ansible_variable_mode)
+{
+#if defined USE_REGEX_PCRE
+	// TODO: Tolerate different indentation styles in this regex
+	const char *pattern =
+		"- name: XCCDF Value [^ ]+ # promote to variable\n  set_fact:\n"
+		"    ([^:]+): (.+)\n  tags:\n    - always\n";
+	const char *err;
+	int errofs;
+
+	pcre *re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
+	if (re == NULL) {
+		dE("Unable to compile regex pattern, "
+				"pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
+		return 1;
+	}
+
+	// ovector sizing:
+	// 2 elements are used for the whole needle,
+	// 4 elements are used for the 2 capture groups
+	// pcre documentation says we should allocate a third extra for additional
+	// workspace.
+	// (2 + 4) * (3 / 2) = 9
+	int ovector[9];
+
+	const size_t fix_text_len = strlen(fix_text);
+	int start_offset = 0;
+	while (true) {
+		const int match = pcre_exec(re, NULL, fix_text, fix_text_len, start_offset,
+				0, ovector, sizeof(ovector) / sizeof(ovector[0]));
+		if (match == -1)
+			break;
+		if (match != 3) {
+			dE("Expected 2 capture group matches per XCCDF variable. Found %i!",
+				match - 1);
+			pcre_free(re);
+			return 1;
+		}
+
+		if (ansible_variable_mode) {
+			// ovector[0] and [1] hold the start and end of the whole needle match
+			// ovector[2] and [3] hold the start and end of the first capture group
+			// ovector[4] and [5] hold the start and end of the second capture group
+			char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
+			memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
+			variable_name[ovector[3] - ovector[2]] = '\0';
+
+			char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
+			memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
+			variable_value[ovector[5] - ovector[4]] = '\0';
+
+			char *var_line = oscap_sprintf("  %s: %s", variable_name, variable_value);
+
+			free(variable_name);
+			free(variable_value);
+
+			if (_write_remediation_to_fd_and_free(output_fd, template, var_line) != 0) {
+				pcre_free(re);
+				return 1;
+			}
+		}
+		else {
+			char *remediation_part = malloc((ovector[0] + 1) * sizeof(char));
+			memcpy(remediation_part, &fix_text[start_offset], ovector[0]);
+			remediation_part[ovector[0]] = '\0';
+			if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
+				pcre_free(re);
+				return 1;
+			}
+		}
+
+		start_offset = ovector[1]; // next time start after the entire pattern
+	}
+
+	if (!ansible_variable_mode && fix_text_len - start_offset > 0) {
+		char *remediation_part = malloc((fix_text_len - start_offset + 1) * sizeof(char));
+		memcpy(remediation_part, &fix_text[start_offset], fix_text_len - start_offset);
+		remediation_part[fix_text_len - start_offset] = '\0';
+
+		if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
+			pcre_free(re);
+			return 1;
+		}
+	}
+
+	pcre_free(re);
+	return 0;
+#else
+	// TODO: Implement the post-process for posix regex as well
+	if (ansible_variable_mode) {
+		// this is not implemented so we don't write anything out for variables
+		return 0;
+	}
+	else
+		return _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+#endif
+}
+
+static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total, bool ansible_variable_mode)
 {
 	// Ensure that given Rule is selected and applicable (CPE).
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
@@ -635,10 +737,21 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 		free(fix_text);
 		return ret;
 	}
-	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
-	if (ret != 0) {
-		return ret;
+
+	if (oscap_streq(template, "urn:xccdf:fix:script:ansible")) {
+		// Ansible is special because we have two output modes, variable and
+		// task mode. In both cases we have to do post processing. 
+
+		ret = _xccdf_policy_rule_generate_fix_ansible(template, output_fd, fix_text, ansible_variable_mode);
+		free(fix_text);
 	}
+	else {
+		ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+		if (ret != 0) {
+			return ret;
+		}
+	}
+
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
 	return ret;
 }
@@ -673,21 +786,28 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
-
 	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
 		oscap_streq(sys, "urn:xccdf:fix:script:ansible")))
 		return 0; // no header required
 
-	bool script = oscap_streq(sys, "urn:xccdf:fix:script:ansible");
+	const bool ansible_script = strcmp(sys, "urn:xccdf:fix:script:ansible") == 0;
+	const char *how_to_apply = ansible_script ?
+		"# $ ansible-playbook -i \"192.168.1.155,\" playbook.yml\n"
+		"# $ ansible-playbook -i inventory.ini playbook.yml" :
+		"# $ sudo ./remediation-role.sh";
 	const char *oscap_version = oscap_get_version();
-	char *fix_header;
 	const char *format = sys != NULL ? sys : "";
 	const char *template = sys != NULL ? " --template " : "";
 
+	char *fix_header;
 	if (result == NULL) {
 		// Profile-based remediation fix
 		struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 		const char *profile_id = xccdf_profile_get_id(profile);
+		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
+		if (benchmark == NULL) {
+			return 1;
+		}
 		// Title
 		struct oscap_text_iterator *title_iterator = xccdf_profile_get_title(profile);
 		char *profile_title = oscap_textlist_get_preferred_plaintext(title_iterator, NULL);
@@ -698,7 +818,6 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : NULL;
 		oscap_text_iterator_free(description_iterator);
 
-		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 		const char *benchmark_version_info = xccdf_benchmark_get_version(benchmark);
 		const char *benchmark_id = xccdf_benchmark_get_id(benchmark);
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
@@ -710,7 +829,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			for (const char *c = profile_description; *c != '\0'; ++c, ++description_length)
 				if (*c == '\n')
 					++new_lines;
-			
+
 			if (new_lines > 0) {
 				const char filler[] = "# ";
 				char *commented_description = malloc(description_length + new_lines * (sizeof filler - 1));
@@ -718,7 +837,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 					commented_description[i] = profile_description[j];
 					if (profile_description[j] == '\n') {
 						for (size_t k = 0; k < (sizeof filler - 1); ++k)
-  						commented_description[++i] = filler[k];
+							commented_description[++i] = filler[k];
 					}
 				}
 				free(profile_description);
@@ -739,10 +858,14 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This file was generated by OpenSCAP %s using:\n"
 			"# 	$ oscap xccdf generate fix --profile %s%s%s sds.xml \n#\n"
 			"# This script is generated from an OpenSCAP profile without preliminary evaluation.\n"
-			"# It attempts to fix every selected rule, even if the system is already compliant.\n#\n"
+			"# It attempts to fix every selected rule, even if the system is already compliant.\n"
+			"#\n"
+			"# How to apply this remediation role:\n"
+			"%s\n"
+			"#\n"
 			"###############################################################################\n\n",
-				script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
-				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format);
+				ansible_script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
+				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format, how_to_apply);
 
 		free(profile_title);
 		free(profile_description);
@@ -766,19 +889,21 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from the results of a profile evaluation.\n"
 			"# It attempts to remediate all issues from the selected rules that failed the test.\n"
 			"#\n"
+			"# How to apply this remediation role:\n"
+			"%s\n"
+			"#\n"
 			"###############################################################################\n\n",
-				script ? "Ansible" : "Bash", xccdf_result_get_profile(result), xccdf_version_name,
+				ansible_script ? "Ansible" : "Bash", xccdf_result_get_profile(result), xccdf_version_name,
 				start_time != NULL ? start_time : "Unknown",
-				end_time, oscap_version, result_id, template, format);
+				end_time, oscap_version, result_id, template, format, how_to_apply);
 	}
 
-	if (script) {
+	if (ansible_script) {
 		char *ansible_fix_header = oscap_sprintf(
 			"---\n"
 			"%s\n"
-			"# - hosts: localhost # set required host\n"
-			"   tasks:\n",
-				fix_header);
+			" - hosts: all\n",
+			fix_header);
 		free(fix_header);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
 	} else {
@@ -837,16 +962,35 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 	}
 
 	const unsigned int total = oscap_list_get_itemcount(rules_to_fix);
+
+	// In Ansible we have to generate variables first and then tasks
+	if (strcmp(sys, "urn:xccdf:fix:script:ansible") == 0) {
+		_write_text_to_fd(output_fd, "   vars:\n");
+
+		unsigned int current = 1;
+		struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+		while (oscap_iterator_has_more(rules_to_fix_it)) {
+			struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
+			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total, true);
+			if (ret != 0)
+				break;
+		}
+		oscap_iterator_free(rules_to_fix_it);
+
+		_write_text_to_fd(output_fd, "   tasks:\n");
+	}
+
 	unsigned int current = 1;
 	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 	while (oscap_iterator_has_more(rules_to_fix_it)) {
 		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total);
+		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total, false);
 		if (ret != 0)
 			break;
 	}
-
 	oscap_iterator_free(rules_to_fix_it);
+
 	oscap_list_free(rules_to_fix, NULL);
+
 	return ret;
 }

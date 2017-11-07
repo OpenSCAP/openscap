@@ -303,6 +303,15 @@ void xccdf_session_set_oval_variables_export(struct xccdf_session *session, bool
 bool xccdf_session_set_xccdf_export(struct xccdf_session *session, const char *xccdf_file);
 
 /**
+ * Set where to export STIG Viewer XCCDF file. NULL value means to not export at all.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param xccdf_file path to STIG Viewer file
+ * @returns true on success
+ */
+bool xccdf_session_set_xccdf_stig_viewer_export(struct xccdf_session *session, const char *xccdf_stig_viewer_file);
+
+/**
  * Set where to export ARF file. NULL value means to not export at all.
  * @memberof xccdf_session
  * @param session XCCDF Session

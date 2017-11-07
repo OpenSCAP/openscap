@@ -727,6 +727,10 @@ static int app_info(const struct oscap_action *action)
 		printf("Document type: CVE Feed\n");
 		// TODO: Provide more info about CVE feeds
 	break;
+	case OSCAP_DOCUMENT_CVRF_FEED:
+		printf("Document type: CVRF Feed\n");
+		// TODO: Provide more info about CVRF feeds
+	break;
 	case OSCAP_DOCUMENT_SCE_RESULT:
 		printf("Document type: SCE Result File\n");
 		// Currently, we do not have any SCE result file parsing capabilities.
