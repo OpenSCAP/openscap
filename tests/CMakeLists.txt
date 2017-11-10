@@ -1,8 +1,8 @@
-function(add_oscap_test test_script)
-	add_test(NAME ${CMAKE_CURRENT_SOURCE_DIR}/${test_script}
-		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${test_script}
+function(add_oscap_test TEST_SCRIPT)
+	add_test(NAME ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}
+		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}
 	)
-	set_tests_properties(${CMAKE_CURRENT_SOURCE_DIR}/${test_script}
+	set_tests_properties(${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}
 		PROPERTIES
 			SKIP_RETURN_CODE 255
 			ENVIRONMENT "srcdir=${CMAKE_CURRENT_SOURCE_DIR};top_srcdir=${CMAKE_SOURCE_DIR};builddir=${CMAKE_BINARY_DIR}"
