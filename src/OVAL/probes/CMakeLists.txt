@@ -101,7 +101,7 @@ if(ENABLE_PROBES_UNIX)
     install(TARGETS probe_runlevel DESTINATION ${PROBE_INSTALL_DIR})
 
     add_executable(probe_file "unix/file.c")
-    target_link_libraries(probe_file probe acl)
+    target_link_libraries(probe_file probe ${ACL_LIBRARIES})
     install(TARGETS probe_file DESTINATION ${PROBE_INSTALL_DIR})
 
     add_executable(probe_fileextendedattribute "unix/fileextendedattribute.c")
