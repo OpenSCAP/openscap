@@ -9,6 +9,15 @@ function(add_oscap_test TEST_SCRIPT)
 	)
 endfunction()
 
+# builds a binary from a C source that will be used in a test
+# EXECUTABLE_NAME - name of the binary executable to be build
+# SOURCE_FILE - C program with a test
+function(add_oscap_test_executable EXECUTABLE_NAME SOURCE_FILE)
+	set(TEST_EXECUTABLE_LIBRARIES openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+	add_executable(${EXECUTABLE_NAME} ${SOURCE_FILE} ${ARGN})
+	target_link_libraries(${EXECUTABLE_NAME} ${TEST_EXECUTABLE_LIBRARIES})
+endfunction()
+
 configure_file("test_common.sh.in" "test_common.sh" @ONLY)
 
 add_subdirectory("API")

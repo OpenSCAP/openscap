@@ -1,5 +1,4 @@
 if(ENABLE_PROBES_INDEPENDENT)
-	add_executable(test_probes_sysinfo "test_probes_sysinfo.c")
-	target_link_libraries(test_probes_sysinfo openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
+	add_oscap_test_executable(test_probes_sysinfo "test_probes_sysinfo.c")
 	add_oscap_test("test_probes_sysinfo.sh")
 endif()

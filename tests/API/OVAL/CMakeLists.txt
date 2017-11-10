@@ -1,12 +1,8 @@
-add_executable(test_api_oval test_api_oval.c)
-add_executable(test_api_syschar test_api_syschar.c)
-add_executable(test_api_results test_api_results.c)
-add_executable(test_api_directives test_api_directives.c)
-set(TEST_API_OVAL_LIBRARIES openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
-target_link_libraries(test_api_oval ${TEST_API_OVAL_LIBRARIES})
-target_link_libraries(test_api_syschar ${TEST_API_OVAL_LIBRARIES})
-target_link_libraries(test_api_results ${TEST_API_OVAL_LIBRARIES})
-target_link_libraries(test_api_directives ${TEST_API_OVAL_LIBRARIES})
+add_oscap_test_executable(test_api_oval "test_api_oval.c")
+add_oscap_test_executable(test_api_syschar "test_api_syschar.c")
+add_oscap_test_executable(test_api_results "test_api_results.c")
+add_oscap_test_executable(test_api_directives "test_api_directives.c")
+
 add_oscap_test("test_api_oval.sh")
 
 add_subdirectory("glob_to_regex")
