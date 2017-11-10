@@ -17,6 +17,13 @@ math(EXPR LT_CURRENT_MINUS_AGE "${LT_CURRENT} - ${LT_AGE}")
 set(SONAME ${LT_CURRENT_MINUS_AGE}.${LT_AGE}.${LT_REVISION})
 set(SOVERSION ${LT_CURRENT_MINUS_AGE})
 
+function(set_oscap_generic_properties TARGET_OBJECT)
+	set_target_properties(${TARGET_OBJECT} PROPERTIES
+		CXX_VISIBILITY_PRESET hidden    # Make global variables and functions HIDDEN by default.
+		POSITION_INDEPENDENT_CODE ON    # Compile this object code position independent.
+	)
+endfunction()
+
 if(ENABLE_CCE)
 	add_subdirectory("CCE")
 endif()

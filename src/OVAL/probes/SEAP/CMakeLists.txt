@@ -18,7 +18,4 @@ target_include_directories(seap_object PRIVATE
 )
 target_link_libraries(seap rbt)
 
-set_target_properties(seap_object PROPERTIES
-    CXX_VISIBILITY_PRESET hidden	# Make global variables and functions HIDDEN by default.
-    POSITION_INDEPENDENT_CODE ON	# Compile this object code position independent.
-)
+set_oscap_generic_properties(seap_object)
