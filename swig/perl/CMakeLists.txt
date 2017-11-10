@@ -1,6 +1,6 @@
 include(${SWIG_USE_FILE})
 
-set_source_files_properties(openscap_pm PROPERTIES SWIG_FLAGS "-module openscap_pm")
+set(CMAKE_SWIG_FLAGS "-module" "openscap_pm")
 swig_add_library(openscap_pm
 	LANGUAGE perl5
 	SOURCES ../src/openscap.i)
