@@ -4,7 +4,6 @@
 #   Martin Preisler <mpreisle@redhat.com>
 
 . $builddir/tests/test_common.sh
-set -x
 
 # Test Cases.
 
