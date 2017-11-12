@@ -8,7 +8,6 @@ add_library(ovalcmp_object OBJECT
     "oval_cmp_ip_address.c"
     "oval_cmp_ip_address_impl.h"
 )
-add_library(ovalcmp $<TARGET_OBJECTS:ovalcmp_object>)
 set_oscap_generic_properties(ovalcmp_object)
 
 add_library(ovalresults_object OBJECT
@@ -24,6 +23,4 @@ add_library(ovalresults_object OBJECT
     "oval_status_counter.c"
     "oval_status_counter.h"
 )
-add_library(ovalresults $<TARGET_OBJECTS:ovalresults_object>)
-target_link_libraries(ovalresults oval)
 set_oscap_generic_properties(ovalresults_object)

@@ -90,7 +90,4 @@ include_directories(
 add_library(oval_object OBJECT ${OVAL_SOURCES})
 set_oscap_generic_properties(oval_object)
 
-add_library(oval $<TARGET_OBJECTS:oval_object>)
-target_link_libraries(oval oscapsource ovalresults)
-
 install(FILES ${PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/openscap)
