@@ -2,15 +2,14 @@ add_subdirectory("crapi")
 
 file(GLOB_RECURSE PROBE_SOURCES "probe/*.c")
 file(GLOB_RECURSE PROBE_HEADERS "probe/*.h")
-add_library(probe ${PROBE_SOURCES} ${PROBE_HEADERS})
-target_link_libraries(probe seap oval ${CMAKE_THREAD_LIBS_INIT} ${PCRE_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${RPM_LIBRARIES})
-target_include_directories(probe PUBLIC "." "public")
-
-include_directories("public")
+add_library(probe_object OBJECT ${PROBE_SOURCES} ${PROBE_HEADERS})
+target_include_directories(probe_object PUBLIC "public" ".")
+set_oscap_generic_properties(probe_object)
 
 function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 	add_executable(${PROBE_NAME} ${PROBE_SOURCE_FILE} ${ARGN})
-	target_link_libraries(${PROBE_NAME} probe)
+	target_include_directories(${PROBE_NAME} PRIVATE "." "public")
+	target_link_libraries(${PROBE_NAME} openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES} ${BZIP2_LIBRARIES})
 	install(TARGETS ${PROBE_NAME} DESTINATION ${OVAL_PROBE_DIR})
 endfunction()
 
