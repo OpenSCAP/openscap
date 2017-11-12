@@ -24,7 +24,6 @@
 #define OSCAP_BUFFER_H_
 #include "util.h"
 
-OSCAP_HIDDEN_START;
 
 struct oscap_buffer;
 
@@ -89,6 +88,5 @@ char *oscap_buffer_get_raw(const struct oscap_buffer *s);
  */
 size_t oscap_buffer_get_length(const struct oscap_buffer *s);
 
-OSCAP_HIDDEN_END;
 
 #endif
