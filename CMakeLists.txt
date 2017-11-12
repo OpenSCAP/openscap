@@ -258,7 +258,7 @@ include_directories(
 	"src/XCCDF/public/"
 	"src/XCCDF_POLICY/"
 	"src/XCCDF_POLICY/public/"
-${CMAKE_BINARY_DIR}
+	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
 )
 
