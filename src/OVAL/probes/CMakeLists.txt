@@ -2,28 +2,9 @@ add_subdirectory("crapi")
 
 set(PROBE_INSTALL_DIR ${OVAL_PROBE_DIR})
 
-add_library(probe
-    "probe/fini.c"
-    "probe/offline_mode.c"
-    "probe/preload.c"
-    "probe/init.c"
-    "probe/main.c"
-    "probe/input_handler.c"
-    "probe/input_handler.h"
-    "probe/worker.c"
-    "probe/worker.h"
-    "probe/signal_handler.c"
-    "probe/signal_handler.h"
-    "probe/probe.h"
-    "probe/probe.c"
-    "probe/entcmp.c"
-    "probe/entcmp.h"
-    "probe/icache.c"
-    "probe/icache.h"
-    "probe/option.c"
-    "probe/option.h"
-)
-
+file(GLOB_RECURSE PROBE_SOURCES "probe/*.c")
+file(GLOB_RECURSE PROBE_HEADERS "probe/*.h")
+add_library(probe ${PROBE_SOURCES} ${PROBE_HEADERS})
 target_link_libraries(probe seap oval ${CMAKE_THREAD_LIBS_INIT} ${PCRE_LIBRARIES} ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${RPM_LIBRARIES})
 target_include_directories(probe PUBLIC "." "public")
 
