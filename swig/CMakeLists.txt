@@ -1,7 +1,7 @@
 if(ENABLE_PERL)
 	add_subdirectory("perl")
 endif()
-if(ENABLE_PYTHON)
+if(ENABLE_PYTHON2)
 	add_subdirectory("python2")
 endif()
 if(ENABLE_PYTHON3)
