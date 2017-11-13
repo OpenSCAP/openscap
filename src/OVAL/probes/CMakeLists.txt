@@ -1,5 +1,6 @@
 add_subdirectory("crapi")
 add_subdirectory("probe")
+add_subdirectory("SEAP")
 
 function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 	add_executable(${PROBE_NAME} ${PROBE_SOURCE_FILE} ${ARGN})

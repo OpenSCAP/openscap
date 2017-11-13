@@ -1,6 +1,5 @@
 add_subdirectory("results")
 add_subdirectory("adt")
-add_subdirectory("probes/SEAP")
 file(GLOB_RECURSE PUBLIC_HEADERS "public/*.h")
 
 set (OVAL_SOURCES
