@@ -1,6 +1,7 @@
 add_subdirectory("CPE")
 add_subdirectory("crypt")
 add_subdirectory("CVE")
+add_subdirectory("CVRF")
 add_subdirectory("CVSS")
 add_subdirectory("OVAL")
 add_subdirectory("probes")
