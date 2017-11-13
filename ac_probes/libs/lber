@@ -1,6 +1,0 @@
-name=lber
-pkgconfig=no
-functions_req=(ber_init)
-functions_opt=
-probes_req=(ldap57)
-probes_opt=

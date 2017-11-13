@@ -1,6 +1,0 @@
-name=cap
-pkgconfig=no
-functions_req=(cap_init)
-functions_opt=(cap_get_pid capgetp)
-probes_req=(process58)
-probes_opt=

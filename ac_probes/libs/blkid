@@ -1,7 +1,0 @@
-name=blkid
-pkgconfig=yes
-pkgconfig_name=blkid
-functions_req=(blkid_get_cache blkid_get_tag_value)
-functions_opt=
-probes_req=
-probes_opt=(partition)

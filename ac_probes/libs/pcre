@@ -1,7 +1,0 @@
-name=pcre
-pkgconfig=yes
-pkgconfig_name=libpcre
-functions_req=(pcre_exec)
-functions_opt=
-probes_req=(textfilecontent54 textfilecontent partition)
-probes_opt=
