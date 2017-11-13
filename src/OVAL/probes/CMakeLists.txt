@@ -1,10 +1,5 @@
 add_subdirectory("crapi")
-
-file(GLOB_RECURSE PROBE_SOURCES "probe/*.c")
-file(GLOB_RECURSE PROBE_HEADERS "probe/*.h")
-add_library(probe_object OBJECT ${PROBE_SOURCES} ${PROBE_HEADERS})
-target_include_directories(probe_object PUBLIC "public" ".")
-set_oscap_generic_properties(probe_object)
+add_subdirectory("probe")
 
 function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 	add_executable(${PROBE_NAME} ${PROBE_SOURCE_FILE} ${ARGN})
