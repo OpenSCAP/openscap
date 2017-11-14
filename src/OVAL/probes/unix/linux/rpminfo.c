@@ -274,7 +274,7 @@ void probe_offline_mode ()
 
 void *probe_init (void)
 {
-#ifdef HAVE_RPM46
+#ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
 	if (regcomp(&g_keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {

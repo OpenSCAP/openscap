@@ -74,11 +74,11 @@
  #include "process58-devname.h"
 #endif
 
-#ifdef HAVE_SELINUX_SELINUX_H
+#ifdef SELINUX_FOUND
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #endif
-#ifdef HAVE_SYS_CAPABILITY_H
+#ifdef CAP_FOUND
 #include <ctype.h>
 #include <sys/types.h>
 
@@ -95,7 +95,7 @@ extern char const *_cap_names[];
 
 #include "util.h"
 #include "process58-capability.h"
-#endif /* HAVE_SYS_CAPABILITY_H */
+#endif /* CAP_FOUND */
 
 #include "seap.h"
 #include "probe-api.h"
@@ -236,7 +236,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 	return tbuf;
 }
 
-#ifdef HAVE_SELINUX_SELINUX_H
+#ifdef SELINUX_FOUND
 static char *get_selinux_label(int pid) {
 	char *selinux_label;
 	security_context_t pid_context;
@@ -268,10 +268,10 @@ static char *get_selinux_label(int pid) {
 static char *get_selinux_label(int pid) {
 	return NULL;
 }
-#endif /* HAVE_SELINUX_SELINUX_H */
+#endif /* SELINUX_FOUND */
 
 static char **get_posix_capability(int pid, int max_cap_id) {
-#ifdef HAVE_SYS_CAPABILITY_H
+#ifdef CAP_FOUND
 	cap_t pid_caps;
 	char *cap_name, **ret = NULL;
 	unsigned cap_value, ret_index = 0;

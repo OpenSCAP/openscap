@@ -21,23 +21,24 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include <oscap_error.h>
 #include <oscap_source.h>
-#include <../assume.h>
 
 static unsigned long read_file(char *filename, char **buffer)
 {
 	FILE *file = fopen(filename, "rb");
-	assume(file != NULL);
+	assert(file != NULL);
 
 	fseek(file, 0, SEEK_END);
 	unsigned long len = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
-	assume(buffer != NULL);
+	assert(buffer != NULL);
 	*buffer = malloc(len + 1);
-	assume(*buffer != NULL);
+	assert(*buffer != NULL);
 
 	fread(*buffer, len, 1, file);
 	fclose(file);
@@ -48,21 +49,21 @@ static unsigned long read_file(char *filename, char **buffer)
 int main(int argc, char *argv[])
 {
 	oscap_init();
-	assume(argc == 2);
+	assert(argc == 2);
 	char *buffer;
 	unsigned long buff_size = read_file(argv[1], &buffer);
-	assume(buff_size != 0);
+	assert(buff_size != 0);
 
 	struct oscap_source *src = oscap_source_new_from_memory(buffer, buff_size, "file.xml.bz2");
 	printf("SCAP TYPE: %s\n", oscap_document_type_to_string(oscap_source_get_scap_type(src)));
-	assume(oscap_source_validate(src, NULL, NULL) == 0);
+	assert(oscap_source_validate(src, NULL, NULL) == 0);
 	oscap_source_free(src);
 	free(buffer);
 
 	if (oscap_err()) {
 		char *err = oscap_err_get_full_error();
 		fprintf(stderr, "%s", err);
-		assume(strlen(err)==0);
+		assert(strlen(err)==0);
 		free(err);
 	}
 

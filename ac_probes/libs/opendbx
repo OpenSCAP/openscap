@@ -1,6 +1,0 @@
-name=opendbx
-pkgconfig=no
-functions_req=(odbx_init)
-functions_opt=
-probes_req=(sql sql57)
-probes_opt=

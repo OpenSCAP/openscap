@@ -323,7 +323,7 @@ void *probe_init (void)
 	}
 	probe_chroot_init(&g_rpm.chr, root);
 
-#ifdef HAVE_RPM46
+#ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
 

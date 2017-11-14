@@ -13,7 +13,7 @@
 #      Ondrej Moris, <omoris@redhat.com>
 #      Petr Lautrbach <plautrba@redhat.com>
 
-. ../../test_common.sh
+. $builddir/tests/test_common.sh
 
 # Test Cases.
 

@@ -1,7 +1,0 @@
-name=xml2
-pkgconfig=yes
-pkgconfig_name=libxml-2.0
-functions_req=(xmlTextReaderRead)
-functions_opt=
-probes_req=(xmlfilecontent)
-probes_opt=

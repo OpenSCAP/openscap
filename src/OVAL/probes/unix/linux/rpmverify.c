@@ -231,7 +231,7 @@ void probe_offline_mode ()
 
 void *probe_init (void)
 {
-#ifdef HAVE_RPM46
+#ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {

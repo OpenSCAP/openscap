@@ -1,4 +1,4 @@
-#!@preferred_python@
+#!@OSCAP_DOCKER_PYTHON@
 
 # Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
 #

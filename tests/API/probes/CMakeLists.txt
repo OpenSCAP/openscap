@@ -1,0 +1,5 @@
+add_oscap_test_executable(test_api_probes_smoke "test_api_probes_smoke.c")
+add_oscap_test_executable(oval_fts_list "oval_fts_list.c")
+target_include_directories(test_api_probes_smoke PUBLIC ${CMAKE_SOURCE_DIR}/src/OVAL/probes ${CMAKE_SOURCE_DIR}/src/OVAL/probes/public)
+target_include_directories(oval_fts_list PUBLIC ${CMAKE_SOURCE_DIR}/src/OVAL/probes ${CMAKE_SOURCE_DIR}/src/OVAL/probes/public)
+add_oscap_test("all.sh")

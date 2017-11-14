@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-. ../../../test_common.sh
+. $builddir/tests/test_common.sh
 
 # if xsltproc is not installed we will skip the test
 require xsltproc || return 255

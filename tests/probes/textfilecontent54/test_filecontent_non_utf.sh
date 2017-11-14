@@ -1,7 +1,7 @@
 #!/bin/bash
 set -o pipefail
 
-. ../../test_common.sh
+. $builddir/tests/test_common.sh
 
 function test_filecontent_non_utf {
     RESULT=$1

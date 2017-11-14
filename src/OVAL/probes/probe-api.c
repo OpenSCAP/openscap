@@ -1782,4 +1782,10 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     return (mask);
 }
 
+/* Empty implementation of probe_main is used in libopenscap.so shared library
+ * to avoid undefined symbol errors. Probes have their own implementation. */
+int probe_main(probe_ctx *ctx, void *arg)
+{
+	return 0;
+}
 /// @}

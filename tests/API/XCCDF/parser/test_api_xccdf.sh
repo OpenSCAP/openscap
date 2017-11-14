@@ -10,7 +10,7 @@
 
 set -e -o pipefail
 
-. ../../../test_common.sh
+. $builddir/tests/test_common.sh
 
 # Test cases.
 
@@ -41,7 +41,7 @@ function test_api_xccdf_validate {
 	local INPUT=$1
 	local VER=$2
 
-	./test_api_xccdf --validate $VER $srcdir/$INPUT
+	bash $builddir/run ./test_api_xccdf --validate $VER $srcdir/$INPUT
 	return $([ $? -eq 0 ])
 }
 

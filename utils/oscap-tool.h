@@ -183,6 +183,8 @@ void download_reporting_callback(bool warning, const char *format, ...);
 
 
 int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file);
+int evaluate_suffix_match_result_with_custom_reports(int suffix_match_result, const char *profile_suffix, const char *source_file, void (* report_missing)(const char *, const char *), void (* report_multiple)(const char *, const char *));
+int evaluate_suffix_match_result(int suffix_match_result, const char *profile_suffix, const char *source_file);
 
 extern struct oscap_module OSCAP_ROOT_MODULE;
 extern struct oscap_module OSCAP_DS_MODULE;

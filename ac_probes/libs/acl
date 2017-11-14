@@ -1,6 +1,0 @@
-name=acl
-pkgconfig=no
-functions_req=(acl_init)
-functions_opt=(acl_extended_file)
-probes_req=
-probes_opt=(file)

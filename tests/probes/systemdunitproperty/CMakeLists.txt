@@ -1,0 +1,5 @@
+if(ENABLE_PROBES_LINUX)
+	if(DBUS_FOUND)
+		add_oscap_test("all.sh")
+	endif()
+endif()

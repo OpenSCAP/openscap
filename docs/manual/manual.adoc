@@ -1736,16 +1736,12 @@ the {oscap_git}[source code] then follow these instructions:
 
  $ git clone https://github.com/OpenSCAP/openscap.git
 
-2) Run the follwoing script.
+NOTE: The *cmake* tools are required to be installed on your system.
 
- $ ./autogen.sh
+2) Run the following commands to build the library.
 
-NOTE: The *autoconf*, *automake*, and *libtool* tools are required to be
-installed on your system. If you use a release taball, you can skip this step.
-
-3) Run the following commands to build the library.
-
- $ ./configure
+ $ cd build/
+ $ cmake ../
  $ make
 
 Build dependencies may vary in dependency on enabled features (by the configure command).
@@ -1763,7 +1759,7 @@ By default, you need the following packages installed on your system:
 * libtool
 * perl-XML-XPath
 
-. Run library self-checks by executing the following command: # make check
+. Run library self-checks by executing the following command: # make test
 
 . Run the installation procedure by executing the following command: # make install
 
@@ -1814,7 +1810,7 @@ Debug mode is useful for programmers. You need to build OpenSCAP from source cod
 with a custom configuration to enable the debug mode. Use this command:
 
 ------------------------------------
-$ ./configure --enable-debug && make
+$ cmake -DCMAKE_BUILD_TYPE=Debug .. && make
 ------------------------------------
 
 Debug mode provides:
@@ -1832,7 +1828,7 @@ achieve that without need to install libopenscap, is to use shell
 script called *run* in the OpenSCAP directory.
 
 -------------------------------------------------
-$ ./run utils/.libs/oscap xccdf eval ... whatever
+$ ./run utils/oscap xccdf eval ... whatever
 -------------------------------------------------
 
 The *run* script is generated at configure time and it sets:
@@ -1846,7 +1842,7 @@ to generate html documents from xml)
 
 ==== Example
 
- $ ./run gdb --args utils/.libs/oscap xccdf eval --profile hard --results xccdf-results.xml --oval-results my-favourite-xccdf-checklist.xml
+ $ ./run gdb --args utils/oscap xccdf eval --profile hard --results xccdf-results.xml --oval-results my-favourite-xccdf-checklist.xml
 
 
 The ```--oval-results``` option force ```oscap``` tool to generate OVAL Result file
@@ -1865,7 +1861,7 @@ sources.
 
 Then you can run gdb with probe binary:
 --------------------------------------------------------
-$ ./run gdb src/OVAL/probes/.libs/probe_rpmverifypackage
+$ ./run gdb src/OVAL/probes/probe_rpmverifypackage
 --------------------------------------------------------
 
 An input for the probe can be found in the log file created by

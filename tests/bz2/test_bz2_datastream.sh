@@ -25,7 +25,7 @@ $OSCAP info "${xccdf}.bz2" 2> $stderr
 
 $OSCAP xccdf validate-xml "${xccdf}.bz2" > $stderr
 [ ! -s $stderr ]
-./test_bz2_memory_source "${xccdf}.bz2" | grep 'XCCDF Checklist'
+bash $builddir/run ./test_bz2_memory_source "${xccdf}.bz2" | grep 'XCCDF Checklist'
 
 #
 # Compose DataStream
@@ -40,7 +40,7 @@ $OSCAP info "${sds}.bz2" 2> $stderr
 
 $OSCAP ds sds-validate "${sds}.bz2" > $stderr
 [ ! -s $stderr ]
-./test_bz2_memory_source "${sds}.bz2" | grep 'SCAP Source Datastream'
+bash $builddir/run ./test_bz2_memory_source "${sds}.bz2" | grep 'SCAP Source Datastream'
 
 #
 # Evaluate
@@ -64,7 +64,7 @@ report=$dir/report.html
 $OSCAP xccdf generate report --output $report "${arf}.bz2" 2> $stderr
 [ ! -s $stderr ]
 [ -f $report ]
-./test_bz2_memory_source "${arf}.bz2" | grep 'ARF Result Datastream'
+bash $builddir/run ./test_bz2_memory_source "${arf}.bz2" | grep 'ARF Result Datastream'
 
 grep 'OVAL details' $report
 rm $stderr

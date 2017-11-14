@@ -5,7 +5,7 @@
 # referenced from various OVAL elements are recorded in the
 # 'tested_variable' and 'variable_value' elements.
 
-. ../../../test_common.sh
+. $builddir/tests/test_common.sh
 
 set -e -o pipefail
 

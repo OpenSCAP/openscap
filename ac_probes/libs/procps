@@ -1,7 +1,0 @@
-name=procps-ng
-pkgconfig=yes
-pkgconfig_name=libprocps
-functions_req=(dev_to_tty)
-functions_opt=
-probes_req=
-probes_opt=(process58 process)

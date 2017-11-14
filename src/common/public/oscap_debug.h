@@ -32,6 +32,19 @@ typedef enum {
 } oscap_verbosity_levels;
 
 /**
+ * Version of the oscap_dprintf function with support for debug level.
+ * Uses logic similar to the debug() macro described above.
+ * @param level debug level
+ * @param file  name of the source file
+ * @param fn    name of the function
+ * @param line  current line
+ * @param delta_indent changes indentation
+ * @param fmt   printf-line format string
+ * @param ...   __oscap_dlprintf parameters
+ */
+void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, int delta_indent, const char *fmt, ...);
+
+/**
  * Turn on debugging information
  * @param verbosity_level Verbosity level
  * @param filename Name of file used as output file for store debugging

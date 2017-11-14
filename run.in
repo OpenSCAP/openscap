@@ -29,39 +29,39 @@
 #----------------------------------------------------------------------
 
 # Build directory
-b=@abs_builddir@
+b=@CMAKE_BINARY_DIR@
 # Top source directory
-s=@abs_top_srcdir@
-
-# Preload testing library.
-export LD_PRELOAD=$b/src/.libs/libopenscap_testing.so${LD_PRELOAD:+:$LD_PRELOAD}
+s=@CMAKE_SOURCE_DIR@
 
 # Set library.
-export LD_LIBRARY_PATH=$b/src/.libs:$b/swig/.libs${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=$b/src:$b/swig${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 # This is used for SCE check engine (if it is built and enabled)
-export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE/.libs
+export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE
 
 # Set paths to probes, schemas, transformations and cpes.
-export OVAL_PROBE_DIR=$b/src/OVAL/probes
-export OSCAP_SCHEMA_PATH=$s/schemas
-export OSCAP_XSLT_PATH=$s/xsl
-export OSCAP_CPE_PATH=$s/cpe
+# If those variables are already set, don't change their values.
+if [ -z ${OVAL_PROBE_DIR+x} ] ; then
+    export OVAL_PROBE_DIR=$b/src/OVAL/probes
+fi
+if [ -z ${OSCAP_SCHEMA_PATH+x} ] ; then
+    export OSCAP_SCHEMA_PATH=$s/schemas
+fi
+if [ -z ${OSCAP_XSLT_PATH+x} ] ; then
+    export OSCAP_XSLT_PATH=$s/xsl
+fi
+if [ -z ${OSCAP_CPE_PATH+x} ] ; then
+    export OSCAP_CPE_PATH=$s/cpe
+fi
 
 # For SWIG bindings.
-export PERL5LIB=$b/swig/perl:$b/swig/perl/.libs${PERL5LIB:+:$PERL5LIB}
-export PYTHONPATH=$s/swig/python2:$s/swig/src:$b/swig/python2:$b/swig/python2/.libs${PYTHONPATH:+:$PYTHONPATH}
+export PERL5LIB=$b/swig/perl:$b/swig/perl${PERL5LIB:+:$PERL5LIB}
+export PYTHONPATH=$s/swig/python2:$b/swig/src:$b/swig/python2:$b/swig/python2${PYTHONPATH:+:$PYTHONPATH}
 
 # This is a cheap way to find some use-after-free and uninitialized
 # read problems when using glibc.
 random_val="$(awk 'BEGIN{srand(); print 1+int(255*rand())}' < /dev/null)"
 export MALLOC_PERTURB_=$random_val
 
-# Do we have libtool?  If we have it then we can use it to make
-# running valgrind simpler.  However don't depend on it.
-if libtool --help >/dev/null 2>&1; then
-    libtool="libtool --mode=execute"
-fi
-
 # Run the program.
-exec $libtool "$@"
+exec "$@"

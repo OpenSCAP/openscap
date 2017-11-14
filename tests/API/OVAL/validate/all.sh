@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ../../../test_common.sh
+. $builddir/tests/test_common.sh
 
 function good-ok {
 	$OSCAP oval validate-xml ${srcdir}/oval-ok.xml

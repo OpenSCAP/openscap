@@ -12,7 +12,7 @@
 #      David Niemoller
 #      Ondrej Moris, <omoris@redhat.com>
 
-. ../../test_common.sh
+. $builddir/tests/test_common.sh
 
 # Test Cases.
 
@@ -23,7 +23,7 @@ function test_probes_sysinfo {
     local ret_val=0;
     local LOGFILE="test_probes_sysinfo.log"
 
-    ./test_probes_sysinfo >> "$LOGFILE"
+    bash $builddir/run ./test_probes_sysinfo >> "$LOGFILE"
 
     if [ $? -eq 0 ] && [ -f $RF ]; then
 	

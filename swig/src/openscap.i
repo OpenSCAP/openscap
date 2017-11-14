@@ -68,7 +68,7 @@
 }
 
 
-%module argv
+%module openscap
 
 %typemap(in) char ** {
   if (PyList_Check($input)) {

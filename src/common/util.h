@@ -313,22 +313,6 @@ struct oscap_string_map {
 };
 
 /**
- * Convert a string to an enumeration constant.
- * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
- * @param str string to be converted
- * @memberof oscap_string_map
- */
-int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
-
-/**
- * Convert an enumeration constant to its corresponding string representation.
- * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
- * @param val value to be converted
- * @memberof oscap_string_map
- */
-const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
-
-/**
  * Use strdup on string, if string is NULL, return NULL
  * @param str String we want to duplicate
  */
@@ -342,17 +326,6 @@ static inline char *oscap_strdup(const char *str) {
 	return strdup(str);
 #endif
 }
-
-/**
- * Split a string.
- * Split string using given delimiter.
- * Produces NULL-terminated array of strings.
- * Modifies its first argument!
- * @param str String we want to split
- * @param delim Delimiter of string parts
- */
-char **oscap_split(char *str, const char *delim);
-
 
 /// Just like strcmp except it's NULL-safe. Use the standard strcmp directly if possible.
 static inline int oscap_strcmp(const char *s1, const char *s2) {
@@ -426,5 +399,33 @@ char *oscap_expand_ipv6(const char *input);
         for (int OSCAP_CONCAT(__e,__LINE__)=errno, OSCAP_CONCAT(__s,__LINE__)=1; OSCAP_CONCAT(__s,__LINE__)--; errno=OSCAP_CONCAT(__e,__LINE__))
 
 OSCAP_HIDDEN_END;
+
+/* The following functions aren't hidden, because they're used by some probes. */
+
+/**
+ * Convert a string to an enumeration constant.
+ * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
+ * @param str string to be converted
+ * @memberof oscap_string_map
+ */
+int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
+
+/**
+ * Convert an enumeration constant to its corresponding string representation.
+ * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
+ * @param val value to be converted
+ * @memberof oscap_string_map
+ */
+const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
+
+/**
+ * Split a string.
+ * Split string using given delimiter.
+ * Produces NULL-terminated array of strings.
+ * Modifies its first argument!
+ * @param str String we want to split
+ * @param delim Delimiter of string parts
+ */
+char **oscap_split(char *str, const char *delim);
 
 #endif				/* OSCAP_UTIL_H_ */

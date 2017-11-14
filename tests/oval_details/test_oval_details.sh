@@ -4,7 +4,7 @@
 # Tests OVAL details in OpenSCAP reports
 # Author: Jan Černý <jcerny@redhat.com>
 
-. ${srcdir}/../test_common.sh
+. $builddir/tests/test_common.sh
 
 output_dir=`mktemp -d -t oval_details_XXXXXX`
 

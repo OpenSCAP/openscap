@@ -114,7 +114,7 @@ void oscap_cleanup(void)
 	xmlCleanupParser();
 }
 
-const char *oscap_get_version(void) { return VERSION; }
+const char *oscap_get_version(void) { return OPENSCAP_VERSION; }
 
 int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg)
 {

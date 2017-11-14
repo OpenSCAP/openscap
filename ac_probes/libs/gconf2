@@ -1,7 +1,0 @@
-name=gconf-2
-pkgconfig=yes
-pkgconfig_name=gconf-2.0
-functions_req=(gconf_engine_get_default)
-functions_opt=
-probes_req=(gconf)
-probes_opt=

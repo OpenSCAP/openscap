@@ -79,7 +79,7 @@ struct rpmverify_res {
 /* In rmplib older than 4.7 some of the enum values aren't defined.
  * We need to provide fallback definitions.
  */
-#ifndef HAVE_RPM47
+#ifndef RPM47_FOUND
 	/* *VERIFY_FILEDIGEST were introduced as aliases to *VERIFY_MD5
 	 * They all have the same value (1) - see 'rpm/rpmvf.h'.
 	 */
@@ -316,7 +316,7 @@ void probe_offline_mode ()
 
 void *probe_init (void)
 {
-#ifdef HAVE_RPM46
+#ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {

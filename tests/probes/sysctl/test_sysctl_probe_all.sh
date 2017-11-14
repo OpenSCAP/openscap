@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. $srcdir/../../test_common.sh
+. $builddir/tests/test_common.sh
 
 set -e -o pipefail
 
@@ -30,7 +30,7 @@ grep unix-sys:name "$result" | sed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
 diff "$sysctlNames" "$ourNames"
 
 # remove oscap error message related to permissions from stderr
-sed -i -E "/^E: lt-probe_sysctl: Can't read sysctl value from /d" "$stderr"
+sed -i -E "/^E: probe_sysctl: Can't read sysctl value from /d" "$stderr"
 [ ! -s $stderr ]
 
 rm $stderr $result $ourNames $sysctlNames

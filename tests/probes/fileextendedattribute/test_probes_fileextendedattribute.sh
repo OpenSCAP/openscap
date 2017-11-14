@@ -3,7 +3,7 @@
 # Copyright 2011 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 
-. ../../test_common.sh
+. $builddir/tests/test_common.sh
 
 # Test Cases.
 

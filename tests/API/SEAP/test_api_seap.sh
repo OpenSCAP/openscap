@@ -11,7 +11,7 @@
 #      David Niemoller
 #      Ondrej Moris <omoris@redhat.com>
 
-. ../../test_common.sh
+. $builddir/tests/test_common.sh
 
 # Test cases.
 

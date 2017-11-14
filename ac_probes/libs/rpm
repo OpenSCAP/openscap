@@ -1,7 +1,0 @@
-name=rpm
-pkgconfig=yes
-pkgconfig_name=rpm
-functions_req=(rpmtsCreate rpmReadConfigFiles)
-functions_opt=(headerFormat headerSprintf rpmFreeCrypto rpmFreeFilesystems)
-probes_req=(rpminfo rpmverify rpmverifyfile rpmverifypackage)
-probes_opt=

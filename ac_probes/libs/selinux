@@ -1,7 +1,0 @@
-name=selinux
-pkgconfig=yes
-pkgconfig_name=libselinux
-functions_req=(security_get_boolean_names)
-functions_opt=
-probes_req=(process58 selinuxboolean selinuxsecuritycontext)
-probes_opt=
