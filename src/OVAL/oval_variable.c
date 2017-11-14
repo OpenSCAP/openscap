@@ -45,6 +45,7 @@
 #include "common/oscap_string.h"
 #include "results/oval_cmp_impl.h"
 #include "results/oval_results_impl.h"
+#include "public/oval_probe.h"
 
 typedef struct oval_variable {
 #define VAR_BASE				\

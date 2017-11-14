@@ -30,6 +30,7 @@
 #include "public/sm_alloc.h"
 #include "_seap-command.h"
 #include "seap-command-backendS.h"
+#include "seap-command-backendL.h"
 
 typedef struct {
         SEAP_cmdrec_t **c_recs;

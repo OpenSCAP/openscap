@@ -33,6 +33,7 @@
 #include <math.h>
 
 #include <cvss_score.h>
+#include <xccdf_session.h>
 
 #include "oscap-tool.h"
 
