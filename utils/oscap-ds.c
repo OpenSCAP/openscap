@@ -37,6 +37,7 @@
 #include <oscap_source.h>
 #include <ds_rds_session.h>
 #include <ds_sds_session.h>
+#include <xccdf_session.h>
 
 #include "oscap-tool.h"
 #include <oscap_debug.h>
