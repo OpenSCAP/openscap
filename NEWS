@@ -1,3 +1,22 @@
+openscap-1.2.16                                                 13-11-2017
+  - Stats
+    - Over 350 commits from 12 distinct persons
+    - 3 new contributors.
+    - 66 Github issues fixed, 59 PRs merged.
+  - New features
+    - oscap can generate output that is compatible with STIG Viewer.
+    - CVRF parsing and export has been implemented.
+    - oscap info command has been expanded.
+    - The AIX platform is supported.
+    - Many documentation improvements.
+    - Numerous other improvements of existing features.
+  - Maintenance
+    - Huge cross-platform improvements.
+    - Memory leaks fixed (RHBZ#1485876).
+    - SELinux fixes.
+    - Many coverity fixes.
+    - Numerous other bugfixes.
+
 openscap-1.2.15                                                 25-08-2017
   - New features
     - short profile names can be used instead of long IDs
