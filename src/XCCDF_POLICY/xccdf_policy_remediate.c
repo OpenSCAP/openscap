@@ -28,11 +28,7 @@
 #include <unistd.h>
 
 #include <libxml/tree.h>
-
-
-#if defined USE_REGEX_PCRE
 #include <pcre.h>
-#endif
 
 #include "XCCDF/item.h"
 #include "common/_error.h"
@@ -594,7 +590,6 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 
 static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, int output_fd, const char *fix_text, bool ansible_variable_mode)
 {
-#if defined USE_REGEX_PCRE
 	// TODO: Tolerate different indentation styles in this regex
 	const char *pattern =
 		"- name: XCCDF Value [^ ]+ # promote to variable\n  set_fact:\n"
@@ -679,15 +674,6 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 
 	pcre_free(re);
 	return 0;
-#else
-	// TODO: Implement the post-process for posix regex as well
-	if (ansible_variable_mode) {
-		// this is not implemented so we don't write anything out for variables
-		return 0;
-	}
-	else
-		return _write_remediation_to_fd_and_free(output_fd, template, fix_text);
-#endif
 }
 
 static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total, bool ansible_variable_mode)
