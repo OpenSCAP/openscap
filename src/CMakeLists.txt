@@ -74,4 +74,4 @@ if(RPM_FOUND)
 	target_link_libraries(openscap ${RPM_LIBRARIES})
 endif()
 
-install(TARGETS openscap LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})
