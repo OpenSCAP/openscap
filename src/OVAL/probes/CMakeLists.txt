@@ -5,7 +5,7 @@ add_subdirectory("SEAP")
 function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 	add_executable(${PROBE_NAME} ${PROBE_SOURCE_FILE} ${ARGN})
 	target_include_directories(${PROBE_NAME} PRIVATE "." "public")
-	target_link_libraries(${PROBE_NAME} openscap ${LIBXML2_LIBRARIES} ${PCRE_LIBRARIES})
+	target_link_libraries(${PROBE_NAME} openscap ${PCRE_LIBRARIES})
 	install(TARGETS ${PROBE_NAME} DESTINATION ${OVAL_PROBE_DIR})
 endfunction()
 
@@ -21,6 +21,7 @@ if(ENABLE_PROBES_INDEPENDENT)
 	add_oscap_probe(probe_variable "independent/variable.c")
 
 	add_oscap_probe(probe_xmlfilecontent "independent/xmlfilecontent.c")
+	target_link_libraries(probe_xmlfilecontent ${LIBXML2_LIBRARIES})
 
 	add_oscap_probe(probe_filehash "independent/filehash.c")
 	target_link_libraries(probe_filehash crapi)
