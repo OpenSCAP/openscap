@@ -590,10 +590,8 @@ xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id)
 {
 	const bool *tmp = (const bool*) oscap_htable_get(policy->selected_final, id);
 	if (tmp	== NULL) {
-		/* This shall really never happen. All valid IDs of any
-		 * xccdf:Item shall be stored in the dictionery. However,
-		 * we shall not to segfault. */
-		assert(false);
+		// This can happen when a Rule is changed to 'notselected' because it contains
+		// requires or conflicts elements not met.
 		return false;
 	}
 	return *tmp;
@@ -979,6 +977,52 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	if (!is_selected) {
 		dI("Rule '%s' is not selected.", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
+	}
+
+	bool all_requires_met = true;
+	// Check if all requires elements are met
+	struct oscap_stringlist_iterator *requires_elements = xccdf_item_get_requires((struct xccdf_item*)rule);
+	while (oscap_stringlist_iterator_has_more(requires_elements) && all_requires_met) {
+
+		struct oscap_stringlist *requires_element = oscap_stringlist_iterator_next(requires_elements);
+		struct oscap_string_iterator *requires_ids = oscap_stringlist_get_strings(requires_element);
+		bool any_require_selected = false;
+		while (oscap_string_iterator_has_more(requires_ids) && !any_require_selected) {
+			const char *requires_id = oscap_string_iterator_next(requires_ids);
+			if (xccdf_policy_is_item_selected(policy, requires_id)){
+				dD("Rule '%s' requires %s, which is selected.", rule_id, requires_id);
+				any_require_selected = true;
+			} else {
+				dD("Rule '%s' requires %s, which is not selected.", rule_id, requires_id);
+			}
+		}
+		oscap_string_iterator_free(requires_ids);
+
+		// One requires element has no idref met
+		if (!any_require_selected) {
+			all_requires_met = false;
+			dW("A requires element from Rule '%s' requires that any of the following XCCDF Items is also selected.", rule_id);
+			requires_ids = oscap_stringlist_get_strings(requires_element);
+			while (oscap_string_iterator_has_more(requires_ids)) {
+				const char *requires_id = oscap_string_iterator_next(requires_ids);
+				dW("%s", requires_id);
+			}
+			oscap_string_iterator_free(requires_ids);
+		}
+	}
+	oscap_stringlist_iterator_free(requires_elements);
+
+	if (!all_requires_met) {
+		dW("Rule '%s' will be unselected because one of its requires element was not met.", rule_id);
+
+		// We need to report result before unselecting rule
+		// This is necessary for the callback to know if a rule result is notselected
+		// because its @selected is false or any requires elemant was not met
+		int report_rule_result = _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, "At least one requires element was not met.");
+
+		// Remove rule from hash table
+		oscap_htable_detach(policy->selected_final, rule_id);
+		return report_rule_result;
 	}
 
 	if (role == XCCDF_ROLE_UNCHECKED)

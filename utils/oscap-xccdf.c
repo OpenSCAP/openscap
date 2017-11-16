@@ -359,8 +359,10 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 {
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
 
-	/* is result from selected rule? we print only selected rules */
-	if (result == XCCDF_RESULT_NOT_SELECTED)
+	const bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, xccdf_rule_result_get_idref(rule_result));
+	// Is result from selected rule? We print only selected rules
+	// Even when result from a selected rule is 'notselected'
+	if (!selected)
 		return 0;
 
 	/* print result */
@@ -393,8 +395,10 @@ static int callback_scr_result_progress(struct xccdf_rule_result *rule_result, v
 {
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
 
-	/* is result from selected rule? we print only selected rules */
-	if (result == XCCDF_RESULT_NOT_SELECTED)
+	const bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, xccdf_rule_result_get_idref(rule_result));
+	// Is result from selected rule? We print only selected rules
+	// Even when result from a selected rule is 'notselected'
+	if (!selected)
 		return 0;
 
 	/* print result */
@@ -444,12 +448,14 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 	if (progress) {
 		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress,
 				(void *) xccdf_session_get_xccdf_policy(session));
-		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress,
+				(void *) xccdf_session_get_xccdf_policy(session));
 	}
 	else {
 		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
 				(void *) xccdf_session_get_xccdf_policy(session));
-		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result,
+				(void *) xccdf_session_get_xccdf_policy(session));
 	}
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }

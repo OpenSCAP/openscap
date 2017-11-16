@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_com.example.www_benchmark_dummy" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
+  <status>accepted</status>
+  <version>1.0</version>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_1">
+    <title>xccdf_test_requires_1</title>
+    <description>Tests a forward chain of requires.</description>
+    <select idref="xccdf_com.example.www_rule_1" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_2" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_3" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_4" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_2">
+    <title>xccdf_test_requires 2</title>
+    <description>Tests a forward chain of requires with first rule unselected.</description>
+    <select idref="xccdf_com.example.www_rule_1" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_2" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_3" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_4" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_3">
+    <title>xccdf_test_requires 3</title>
+    <description>Tests a forward chain of requires with third rule unselected.</description>
+    <select idref="xccdf_com.example.www_rule_1" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_2" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_3" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_4" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_4">
+    <title>xccdf_test_requires_4</title>
+    <description>Tests a backward chain of requires.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_7" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_8" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_5">
+    <title>xccdf_test_requires 5</title>
+    <description>Tests a backward chain of requires with first rule unselected.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_7" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_8" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_6">
+    <title>xccdf_test_requires 6</title>
+    <description>Tests a backward chain of requires with third rule unselected.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_7" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_8" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_7">
+    <title>xccdf_test_requires 7</title>
+    <description>Tests a rule with two requires met.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_9" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_8">
+    <title>xccdf_test_requires 8</title>
+    <description>Tests a rule with two requires, one met and the other not.</description>
+    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_9" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_9">
+    <title>xccdf_test_requires 9</title>
+    <description>Tests a rule with two lists of requires.</description>
+    <select idref="xccdf_com.example.www_rule_3" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_4" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_5" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_10" selected="true"/>
+  </Profile>
+
+  <Profile id="xccdf_com.example.www_profile_test_requires_10">
+    <title>xccdf_test_requires 10</title>
+    <description>Tests a rule with two lists of requires, one met and the other not.</description>
+    <select idref="xccdf_com.example.www_rule_3" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_4" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_5" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_6" selected="false"/>
+    <select idref="xccdf_com.example.www_rule_10" selected="true"/>
+  </Profile>
+
+  <Rule selected="false" id="xccdf_com.example.www_rule_1">
+    <title>Rule number 1</title>
+    <requires idref="xccdf_com.example.www_rule_2"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="false" id="xccdf_com.example.www_rule_2">
+    <title>Rule number 2</title>
+    <requires idref="xccdf_com.example.www_rule_3"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="false" id="xccdf_com.example.www_rule_3">
+    <title>Rule number 3</title>
+    <requires idref="xccdf_com.example.www_rule_4"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="false" id="xccdf_com.example.www_rule_4">
+    <title>Rule number 4</title>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+
+  <Rule selected="false" id="xccdf_com.example.www_rule_5">
+    <title>Rule number 5</title>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="false" id="xccdf_com.example.www_rule_6">
+    <title>Rule number 6</title>
+    <requires idref="xccdf_com.example.www_rule_5"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="false" id="xccdf_com.example.www_rule_7">
+    <title>Rule number 7</title>
+    <requires idref="xccdf_com.example.www_rule_6"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  <Rule selected="false" id="xccdf_com.example.www_rule_8">
+    <title>Rule number 8</title>
+    <requires idref="xccdf_com.example.www_rule_7"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+
+  <Rule selected="false" id="xccdf_com.example.www_rule_9">
+    <title>Rule number 9</title>
+    <requires idref="xccdf_com.example.www_rule_5"/>
+    <requires idref="xccdf_com.example.www_rule_6"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+  
+  <Rule selected="false" id="xccdf_com.example.www_rule_10">
+    <title>Rule number 10</title>
+    <requires idref="xccdf_com.example.www_rule_3 xccdf_com.example.www_rule_4"/>
+    <requires idref="xccdf_com.example.www_rule_5 xccdf_com.example.www_rule_6"/>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref href="test_requires.oval.xml" name="oval:test-pass:def:1"/>
+    </check>
+  </Rule>
+
+</Benchmark>
