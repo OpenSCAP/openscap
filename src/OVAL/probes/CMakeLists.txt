@@ -5,7 +5,7 @@ add_subdirectory("SEAP")
 function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 	add_executable(${PROBE_NAME} ${PROBE_SOURCE_FILE} ${ARGN})
 	target_include_directories(${PROBE_NAME} PRIVATE "." "public")
-	target_link_libraries(${PROBE_NAME} openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
+	target_link_libraries(${PROBE_NAME} openscap ${LIBXML2_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
 	install(TARGETS ${PROBE_NAME} DESTINATION ${OVAL_PROBE_DIR})
 endfunction()
 
