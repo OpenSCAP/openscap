@@ -65,5 +65,13 @@ endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
 set_target_properties(openscap PROPERTIES VERSION ${SONAME} SOVERSION ${SOVERSION})
+target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
+if (BZIP2_FOUND)
+	target_link_libraries(openscap ${BZIP2_LIBRARIES})
+endif()
+if(RPM_FOUND)
+	# just because of rpmvercmp
+	target_link_libraries(openscap ${RPM_LIBRARIES})
+endif()
 
 install(TARGETS openscap LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
