@@ -53,17 +53,29 @@ set(OBJECTS_TO_LINK_AGAINST
 	$<TARGET_OBJECTS:ovaladt_object>
 	$<TARGET_OBJECTS:ovalcmp_object>
 	$<TARGET_OBJECTS:ovalresults_object>
-	$<TARGET_OBJECTS:probe_object>
-	$<TARGET_OBJECTS:rbt_object>
-	$<TARGET_OBJECTS:seap_object>
 	$<TARGET_OBJECTS:xccdf_object>
 	$<TARGET_OBJECTS:xccdfPolicy_object>
 )
 if (ENABLE_CCE)
 	list(APPEND OBJECTS_TO_LINK_AGAINST $<TARGET_OBJECTS:cce_object>)
 endif()
+if (ENABLE_PROBES)
+	list(APPEND OBJECTS_TO_LINK_AGAINST
+		$<TARGET_OBJECTS:probe_object>
+		$<TARGET_OBJECTS:rbt_object>
+		$<TARGET_OBJECTS:seap_object>
+	)
+endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
 set_target_properties(openscap PROPERTIES VERSION ${SONAME} SOVERSION ${SOVERSION})
+target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
+if (BZIP2_FOUND)
+	target_link_libraries(openscap ${BZIP2_LIBRARIES})
+endif()
+if(RPM_FOUND)
+	# just because of rpmvercmp
+	target_link_libraries(openscap ${RPM_LIBRARIES})
+endif()
 
-install(TARGETS openscap LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})

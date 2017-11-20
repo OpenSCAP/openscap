@@ -5,7 +5,7 @@ add_subdirectory("SEAP")
 function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 	add_executable(${PROBE_NAME} ${PROBE_SOURCE_FILE} ${ARGN})
 	target_include_directories(${PROBE_NAME} PRIVATE "." "public")
-	target_link_libraries(${PROBE_NAME} openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES} ${BZIP2_LIBRARIES})
+	target_link_libraries(${PROBE_NAME} openscap ${PCRE_LIBRARIES})
 	install(TARGETS ${PROBE_NAME} DESTINATION ${OVAL_PROBE_DIR})
 endfunction()
 
@@ -21,6 +21,7 @@ if(ENABLE_PROBES_INDEPENDENT)
 	add_oscap_probe(probe_variable "independent/variable.c")
 
 	add_oscap_probe(probe_xmlfilecontent "independent/xmlfilecontent.c")
+	target_link_libraries(probe_xmlfilecontent ${LIBXML2_LIBRARIES})
 
 	add_oscap_probe(probe_filehash "independent/filehash.c")
 	target_link_libraries(probe_filehash crapi)
@@ -121,13 +122,16 @@ if(ENABLE_PROBES_LINUX)
 
 	if(RPM_FOUND)
 		add_oscap_probe(probe_rpminfo "unix/linux/rpminfo.c" "unix/linux/rpm-helper.h" "unix/linux/rpm-helper.c")
+		target_link_libraries(probe_rpminfo ${RPM_LIBRARIES})
 
 		add_oscap_probe(probe_rpmverify "unix/linux/rpmverify.c" "unix/linux/rpm-helper.h" "unix/linux/rpm-helper.c")
+		target_link_libraries(probe_rpmverify ${RPM_LIBRARIES})
 
 		add_oscap_probe(probe_rpmverifyfile "unix/linux/rpmverifyfile.c" "unix/linux/rpm-helper.h" "unix/linux/rpm-helper.c")
+		target_link_libraries(probe_rpmverifyfile ${RPM_LIBRARIES})
 
 		add_oscap_probe(probe_rpmverifypackage "unix/linux/rpmverifypackage.c" "unix/linux/rpm-helper.h" "unix/linux/rpm-helper.c" "unix/linux/probe-chroot.h" "unix/linux/probe-chroot.c")
-		target_link_libraries(probe_rpmverifypackage ${POPT_LIBRARIES})
+		target_link_libraries(probe_rpmverifypackage ${RPM_LIBRARIES} ${POPT_LIBRARIES})
 	endif()
 
 	if (APTPKG_FOUND)
