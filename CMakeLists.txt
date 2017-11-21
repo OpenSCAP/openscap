@@ -19,7 +19,6 @@ include(CheckLibraryExists)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
 include(CheckCSourceCompiles)
-include(CPack)
 
 # ---------- DEPENDENCIES
 
@@ -297,6 +296,10 @@ install(FILES
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
+# Ctest
+enable_testing()
+add_subdirectory("tests")
+
 # CPack
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "openscap-${OPENSCAP_VERSION}")
 set(CPACK_SOURCE_GENERATOR "TGZ")
@@ -306,7 +309,4 @@ set(CPACK_SOURCE_IGNORE_FILES
 	"~$"
 	"\\\\CMakeLists.txt.user"
 )
-
-# Ctest
-enable_testing()
-add_subdirectory("tests")
+include(CPack)
