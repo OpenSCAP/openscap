@@ -10,7 +10,8 @@ GITHUB_ROOT='https://github.com/OpenSCAP/openscap'
 
 test -f .env && . .env
 
-OSCAP_REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd ../.. && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OSCAP_REPO_ROOT="$(cd "$SCRIPT_DIR" && cd ../.. && pwd)"
 LIBRARY_STASH="/tmp/library-stash"
 BUILDDIR="$OSCAP_REPO_ROOT"
 
@@ -161,7 +162,6 @@ get_lt_triplet_from_file()
 	echo
 }
 
-
 #
 # $1, $2, ... Files to probe
 get_lt_triplet_from_files()
@@ -206,7 +206,10 @@ increment_on_breaking_change()
 	printf "%s %s %s \n" "${triplet[@]}"
 }
 
-
+# Args:
+# $1: Triplet to be replaced
+# $2: The replacement
+# $3,$4, ...: Concerned files
 apply_triplets_to_files()
 {
 	local _previous="$1" _replacement="$2" _fname
@@ -217,7 +220,10 @@ apply_triplets_to_files()
 	done
 }
 
-
+# Args:
+# $1: Triplet to be replaced
+# $2: The replacement
+# $3: The concerned file
 apply_triplets_to_file()
 {
 	local _previous=( $1 ) _replacement=( $2 ) _file="$3" _varnames=(LT_CURRENT LT_REVISION LT_AGE)
@@ -263,6 +269,8 @@ increment_ltversions()
 }
 
 
+# Args:
+# $1: The string in form of "LT_CURRENT LT_REVISION LT_AGE"
 get_soname_from_triplet()
 {
 	local _triplet=( $1 )
@@ -293,7 +301,8 @@ stash_library()
 	cp "$BUILDDIR/src/.libs/"libopenscap.so.* "$LIBRARY_STASH/"
 }
 
-
+# Args:
+# $1: The soname to check for (e.g. 1.2.3)
 check_stash_for_soname()
 {
     local _regex
@@ -314,8 +323,8 @@ check_that_bump_is_appropriate()
 	check_for_clean_repo
 	# check that there is the tag
 	git tag | grep -q "$version" || die "The version '$version' doesn't have a tag, so I refuse to bump version that would make it the 'old' version."
-	# check that tarball with current version is on GitHub.
-	# curl --output /dev/null --silent --head --fail "$GITHUB_ROOT/releases/download/$version/openscap-$version.tar.gz" || die "There is not the tarball with '$version' available for download from GitHub."
+	# check that tarball with current version is already on GitHub.
+	curl --output /dev/null --silent --head --fail "$GITHUB_ROOT/releases/download/$version/openscap-$version.tar.gz" || die "There is not the tarball with '$version' available for download from GitHub."
 }
 
 
@@ -368,29 +377,31 @@ bump_release()
 upload_to_git()
 {
 	local _username="$1" _repo_owner="$2"
-	make_dist
-	curl --user "$_username" --data '{"tag_name":"'$version'"}' "$GITHUB_ROOT/repos/$_repo_owner/openscap/releases"
+	make_dist > /dev/null 2> /dev/null
+    curl -u ":$GITHUB_TOKEN"  --data '{"tag_name":"'$version'"}' "https://api.github.com/repos/$_repo_owner/openscap/releases"
 	
     xdg-open "$GITHUB_ROOT/$_repo_owner/openscap/releases/$version"
 }
 
 # Args:
-# $1: Username
+# $1: Token
 # $2: Repository owner
 # $3: The new version
 flip_milestones()
 {
-	local _username="$1" _repo_owner="$2" _new_version="$3"
-	curl --user "$_username" --data '{"title":"'$_new_version'"}' "$GITHUB_ROOT/repos/$_repo_owner/openscap/milestones"
-	# curl --user "$_username" --data '{"state":"closed"}' "$GITHUB_ROOT/repos/$_repo_owner/openscap/milestones/<number>"
+    "./$SCRIPT_DIR" --owner "$2" --api-token "$1" "$version" "$3"
 }
 
 
+# Args:
+# $1: New version number
 release_to_git_and_bump_release()
 {
     local _new_version="$1"
+    test -n "$GITHUB_TOKEN" || die "We don't know your GitHub token, so we can't proceed. Get one on https://github.com/settings/tokens and put it in the .env file, so it contains the line GITHUB_TOKEN='<your token here>'"
     test "$1" = "$version" && die "The new version is the same as current version, I am not doing anything."
-	#release_to_git
-	# upload_to_git
+	release_to_git
+	# upload_to_git  # to be done when https://github.com/PyGithub/PyGithub/pull/525 is merged.
+    flip_milestones "$GITHUB_TOKEN" openscap "$_new_version"
 	bump_release "$_new_version"
 }
