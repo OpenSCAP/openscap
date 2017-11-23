@@ -3,6 +3,7 @@
 # Created by argbash-init v2.5.0
 # ARG_POSITIONAL_SINGLE([strategy],[<strategy's help message goes here>],[])
 # ARGBASH_SET_DELIM([ ])
+# ARGBASH_SET_INDENT([    ])
 # ARG_OPTION_STACKING([none])
 # ARG_RESTRICT_VALUES([none])
 # ARG_TYPE_GROUP_SET([strategy],[STRATEGY],[strategy],[bugfix,backwards_compatible,breaking_change])
@@ -16,23 +17,23 @@
 
 die()
 {
-	local _ret=$2
-	test -n "$_ret" || _ret=1
-	test "$_PRINT_HELP" = yes && print_help >&2
-	echo "$1" >&2
-	exit ${_ret}
+    local _ret=$2
+    test -n "$_ret" || _ret=1
+    test "$_PRINT_HELP" = yes && print_help >&2
+    echo "$1" >&2
+    exit ${_ret}
 }
 
 # validators
 strategy()
 {
-	local _allowed=("bugfix" "backwards_compatible" "breaking_change")
-	local _seeking="$1"
-	for element in "${_allowed[@]}"
-	do
-		test "$element" = "$_seeking" && echo "$element" && return 0
-	done
-	die "Value '$_seeking' (of argument '$2') doesn't match the list of allowed values: 'bugfix', 'backwards_compatible' and 'breaking_change'" 4
+    local _allowed=("bugfix" "backwards_compatible" "breaking_change")
+    local _seeking="$1"
+    for element in "${_allowed[@]}"
+    do
+        test "$element" = "$_seeking" && echo "$element" && return 0
+    done
+    die "Value '$_seeking' (of argument '$2') doesn't match the list of allowed values: 'bugfix', 'backwards_compatible' and 'breaking_change'" 4
 }
 
 # THE DEFAULTS INITIALIZATION - POSITIONALS
@@ -41,48 +42,48 @@ _positionals=()
 
 print_help ()
 {
-	printf "%s\n" "<The general help message of my script>"
-	printf 'Usage: %s [-h|--help] <strategy>\n' "$0"
-	printf "\t%s\n" "<strategy>: <strategy's help message goes here>"
-	printf "\t%s\n" "-h,--help: Prints help"
-	echo
-	echo 'Short options stacking mode is not supported.'
+    printf "%s\n" "Increment Libtool library versions in configure scripts and check that it works."
+    printf 'Usage: %s [-h|--help] <strategy>\n' "$0"
+    printf "\t%s\n" "<strategy>: <strategy's help message goes here>"
+    printf "\t%s\n" "-h,--help: Prints help"
+    echo
+    echo 'Short options stacking mode is not supported.'
 }
 
 parse_commandline ()
 {
-	while test $# -gt 0
-	do
-		_key="$1"
-		case "$_key" in
-			-h|--help)
-				print_help
-				exit 0
-				;;
-			*)
-				_positionals+=("$1")
-				;;
-		esac
-		shift
-	done
+    while test $# -gt 0
+    do
+        _key="$1"
+        case "$_key" in
+            -h|--help)
+                print_help
+                exit 0
+                ;;
+            *)
+                _positionals+=("$1")
+                ;;
+        esac
+        shift
+    done
 }
 
 
 handle_passed_args_count ()
 {
-	_required_args_string="'strategy'"
-	test ${#_positionals[@]} -lt 1 && _PRINT_HELP=yes die "FATAL ERROR: Not enough positional arguments - we require exactly 1 (namely: $_required_args_string), but got only ${#_positionals[@]}." 1
-	test ${#_positionals[@]} -gt 1 && _PRINT_HELP=yes die "FATAL ERROR: There were spurious positional arguments --- we expect exactly 1 (namely: $_required_args_string), but got ${#_positionals[@]} (the last one was: '${_positionals[*]: -1}')." 1
+    _required_args_string="'strategy'"
+    test ${#_positionals[@]} -lt 1 && _PRINT_HELP=yes die "FATAL ERROR: Not enough positional arguments - we require exactly 1 (namely: $_required_args_string), but got only ${#_positionals[@]}." 1
+    test ${#_positionals[@]} -gt 1 && _PRINT_HELP=yes die "FATAL ERROR: There were spurious positional arguments --- we expect exactly 1 (namely: $_required_args_string), but got ${#_positionals[@]} (the last one was: '${_positionals[*]: -1}')." 1
 }
 
 assign_positional_args ()
 {
-	_positional_names=('_arg_strategy' )
+    _positional_names=('_arg_strategy' )
 
-	for (( ii = 0; ii < ${#_positionals[@]}; ii++))
-	do
-		eval "${_positional_names[ii]}=\${_positionals[ii]}" || die "Error during argument parsing, possibly an Argbash bug." 1
-	done
+    for (( ii = 0; ii < ${#_positionals[@]}; ii++))
+    do
+        eval "${_positional_names[ii]}=\${_positionals[ii]}" || die "Error during argument parsing, possibly an Argbash bug." 1
+    done
 }
 
 parse_commandline "$@"
