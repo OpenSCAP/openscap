@@ -15,34 +15,34 @@
 
 1. Clone a clean `openscap` repository:
 
-```
-git clone https://github.com/OpenSCAP/openscap.git
-```
+   git clone https://github.com/OpenSCAP/openscap.git
 
 2. Check out that the information within `versions.sh` is accurate.
-   Openscap versions are supposed to have correct values from the previous build, but the `latest_fedora` and `latest_rhel` may need to be updated.
++
+Openscap versions are supposed to have correct values from the previous build, but the `latest_fedora` and `latest_rhel` may need to be updated.
 
 3. Run `up_to_compliance_check.sh`.
-   In the ideal case, the script ends after the ABI compatiblity check finishes.
-
-   Review the check results and act accordingly to them.
++
+In the ideal case, the script ends after the ABI compatiblity check finishes.
+Review the check results and act accordingly to them.
 
 4. Run `handle_ltversions.sh`.
-
-   According to the result from the compliance check (and the decision what to do about possible API/ABI changes), you run the script with an argument `bugfix`, `backwards_compatible` or `breaking_change`.
-   This changes the libtool library version number so it reflects the API/ABI change.
++
+According to the result from the compliance check (and the decision what to do about possible API/ABI changes), you run the script with an argument `bugfix`, `backwards_compatible` or `breaking_change`.
++
+This changes the libtool library version number so it reflects the API/ABI change.
 
 5. Update the NEWS and make the release commit.
-
-   Use the `news_template.sh` script to generate a starting point for your NEWS file.
-
-   Use it to update the `NEWS` file and commit it.
-   The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.2.17`).
++
+Use the `news_template.sh` script to generate a starting point for your NEWS file.
+Use it to update the `NEWS` file and commit it.
++
+The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.2.17`).
 
 6. Run `new-release.sh`.
-
-   This will create and push version tags, create new GitHub release and handle milestones swap.
-   Finally, it will bump version numbers to be ready for the next upstream release.
++
+This will create and push version tags, create new GitHub release and handle milestones swap.
+Finally, it will bump version numbers to be ready for the next upstream release.
 
 
 == To be done ==
