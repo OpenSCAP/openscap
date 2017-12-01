@@ -1998,8 +1998,9 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
 3) Prepare the build
 
 ----------------------------------------------------------------------------------
- $ ./autogen.sh
- $ mingw32-configure --disable-probes --disable-python --disable-util-oscap-docker
+ $ mkdir build-win32
+ $ cd build-win32
+ $ mingw32-cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
 ----------------------------------------------------------------------------------
 
 4) Build!
