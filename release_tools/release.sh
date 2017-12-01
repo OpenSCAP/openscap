@@ -1,10 +1,3 @@
-version=1.2.17
-previous_version=1.2.16
-latest_fedora=28
-latest_rhel=7
-build_for_rhel=('rhel-7.5')
-version_major_minor="${version%.*}"
-
 JENKINS_SITE='https://jenkins.open-scap.org'
 GITHUB_ROOT='https://github.com/OpenSCAP/openscap'
 
@@ -14,6 +7,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OSCAP_REPO_ROOT="$(cd "$SCRIPT_DIR" && cd ../.. && pwd)"
 LIBRARY_STASH="/tmp/library-stash"
 BUILDDIR="$OSCAP_REPO_ROOT"
+
+FILE_WITH_VERSIONS="$SCRIPT_DIR/versions.sh"
+
+. "$FILE_WITH_VERSIONS"
 
 
 die()
@@ -33,7 +30,7 @@ clean_repository()
 clean_repository_aggressively()
 {
     git reset --hard
-    git clean -x -f
+    git clean -x -f -d
 }
 
 
@@ -263,14 +260,31 @@ get_soname_from_triplet()
 }
 
 
+# Args:
+# $1: Filename that contains possible duplications.
+resolve_name_duplication()
+{
+    . "$SCRIPT_DIR/naming.sh"
+    local _tempfile=/tmp/names-dedup
+    cp "$1" "$_tempfile"
+    for bad_name in "${!name_mapping[@]}"
+    do
+        sed -i "s/$bad_name/${name_mapping[$bad_name]}/" "$_tempfile"
+    done
+    cat "$_tempfile" | sort | uniq > "$1"
+    rm -- "$_tempfile"
+}
+
+
 get_new_authors()
 {
-    git log | grep Author | sort | uniq > all_time_authors
-    git log "$previous_version" | grep Author | sort | uniq > recent_authors
-    diff -U 0 all_time_authors recent_authors | grep -e -Author | cut -f 1 --complement -d ' ' > new_authors
-    rm all_time_authors recent_authors
-    cat new_authors | sort
-    rm new_authors
+    local _all_time_authors="/tmp/all_time_authors" _recent_authors="$1" _new_authors="$2"
+    git log | grep '^Author' | cut -f 1 --complement -d ' ' | sort | uniq > "$_all_time_authors"
+    resolve_name_duplication "$_all_time_authors"
+    git log "$previous_version".. | grep '^Author' | sort | cut -f 1 --complement -d ' ' | uniq > "$_recent_authors"
+    resolve_name_duplication "$_recent_authors"
+    diff -U 0 all_time_authors recent_authors | grep -e '^+Author' | sort > "$_new_authors"
+    rm "$_all_time_authors"
 }
 
 
@@ -316,7 +330,6 @@ check_that_bump_is_appropriate()
 release_to_git()
 {
     git tag | grep -q "$version" && die "Something is wrong - there already is a tag $version"
-    git commit -m "openscap-$version"
     git tag "$version"
     git push
     git push --tags
@@ -350,9 +363,9 @@ bump_release()
     check_that_bump_is_appropriate
     bump_release_in_configure "$OSCAP_REPO_ROOT/configure.ac" "$1"
     bump_release_in_configure "$OSCAP_REPO_ROOT/ac_probes/configure.ac.tpl" "$1"
-    bump_release_in_release_script "${BASH_SOURCE[0]}" "$1"
+    bump_release_in_release_script "$FILE_WITH_VERSIONS" "$1"
     git diff
-    git add "$OSCAP_REPO_ROOT/configure.ac" "$OSCAP_REPO_ROOT/ac_probes/configure.ac.tpl" "${BASH_SOURCE[0]}"
+    git add "$OSCAP_REPO_ROOT/configure.ac" "$OSCAP_REPO_ROOT/ac_probes/configure.ac.tpl" "$FILE_WITH_VERSIONS"
     printf "Commit with this message:\n%s\n\n%s\n" "Version bump after release." "Next release from the maint-${1%.*} branch will be $1"
 }
 
@@ -374,19 +387,65 @@ upload_to_git()
 # $3: The new version
 flip_milestones()
 {
-    "./$SCRIPT_DIR" --owner "$2" --api-token "$1" "$version" "$3"
+    "./$SCRIPT_DIR/move-milestones.py" --owner "$2" --api-token "$1" "$version" "$3"
+}
+
+
+make_news_template()
+{
+    local _right_boundary=75 _oscap_version_string _oscap_version_length _news_template=NEWS.template _recent_authors="/tmp/recent_authors" _new_authors="/tmp/new_authors"
+
+    get_new_authors "$_recent_authors" "$_new_authors"
+
+    _oscap_version_string="openscap-$version"
+    _oscap_version_length="$(echo "$_oscap_version_string" | wc -m)"
+    printf "%s%$((_right_boundary - _oscap_version_length))s\n" "$_oscap_version_string" "$(date +%d-%m-%Y)" > "$_news_template"
+
+    printf "  - %s\n" "Stats@STATS@" "New features" "Maintenance" >> "$_news_template"
+    stats=
+    stats="$stats\n    - $(git log "$previous_version".. | grep '^Author' | wc -l) commits from $(cat "$_recent_authors" | wc -l) distinct persons."
+    stats="$stats\n    - $(cat "$_new_authors" | wc -l) new contributors."
+    stats="$stats\n    - $("$SCRIPT_DIR/query-milestones.py" --auth-token "$GITHUB_TOKEN" "$version" issues-closed | wc -l) issues closed, $("$SCRIPT_DIR/query-milestones.py" --auth-token "$GITHUB_TOKEN" "$version" prs-merged | wc -l) PRs merged."
+    sed -i "s/@STATS@/$stats/" "$_news_template"
+
+    echo >> "$_news_template"
+    echo >> "$_news_template"
+    echo "####################### Summaries #######################" >> "$_news_template"
+    echo >> "$_news_template"
+
+    echo "Closed issues:" >> "$_news_template"
+    "$SCRIPT_DIR/query-milestones.py" --auth-token "$GITHUB_TOKEN" "$version" issues-closed | sed -e 's/^/  - /' >> "$_news_template"
+
+    echo "Merged PRs:" >> "$_news_template"
+    "$SCRIPT_DIR/query-milestones.py" --auth-token "$GITHUB_TOKEN" "$version" prs-merged | sed -e 's/^/  - /' >> "$_news_template"
+
+    echo "New authors:" >> "$_news_template"
+    sed -e 's/^/  - /' "$_new_authors" >> "$_news_template"
+
+    echo "Recent authors:" >> "$_news_template"
+    sed -e 's/^/  - /' "$_recent_authors" >> "$_news_template"
+
+    rm -- "$_recent_authors" "$_new_authors"
+}
+
+
+check_release_is_ok()
+{
+    grep -q "^openscap-$version" "$OSCAP_REPO_ROOT/NEWS" || die "The version '$version' isn't mentioned in the NEWS file."
+    git log -1 | grep -q "^\s*openscap-$version$" || die "The openscap release commit is not the previous commit."
 }
 
 
 # Args:
-# $1: New version number
+# $1: The future version number
 release_to_git_and_bump_release()
 {
     local _new_version="$1"
     test -n "$GITHUB_TOKEN" || die "We don't know your GitHub token, so we can't proceed. Get one on https://github.com/settings/tokens and put it in the .env file, so it contains the line GITHUB_TOKEN='<your token here>'"
     test "$1" = "$version" && die "The new version is the same as current version, I am not doing anything."
+    check_release_is_ok
     release_to_git
     # upload_to_git  # to be done when https://github.com/PyGithub/PyGithub/pull/525 is merged.
-    flip_milestones "$GITHUB_TOKEN" openscap "$_new_version"
+    flip_milestones --auth-token "$GITHUB_TOKEN" openscap "$_new_version"
     bump_release "$_new_version"
 }
