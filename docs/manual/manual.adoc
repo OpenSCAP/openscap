@@ -1985,7 +1985,7 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
  # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
  mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
  mingw32-curl mingw32-pcre \
- automake autoconf libtool
+ mingw32-filesystem
 -------------------------------------------------------------
 
 2) Checkout the master branch of the OpenSCAP repository
