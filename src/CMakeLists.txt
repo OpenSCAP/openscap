@@ -54,6 +54,7 @@ set(OBJECTS_TO_LINK_AGAINST
 	$<TARGET_OBJECTS:ovaladt_object>
 	$<TARGET_OBJECTS:ovalcmp_object>
 	$<TARGET_OBJECTS:ovalresults_object>
+	$<TARGET_OBJECTS:rbt_object>
 	$<TARGET_OBJECTS:xccdf_object>
 	$<TARGET_OBJECTS:xccdfPolicy_object>
 )
@@ -63,7 +64,6 @@ endif()
 if (ENABLE_PROBES)
 	list(APPEND OBJECTS_TO_LINK_AGAINST
 		$<TARGET_OBJECTS:probe_object>
-		$<TARGET_OBJECTS:rbt_object>
 		$<TARGET_OBJECTS:seap_object>
 	)
 endif()
