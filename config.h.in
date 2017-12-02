@@ -80,6 +80,7 @@
 
 #cmakedefine HAVE_STRSEP
 #cmakedefine HAVE_FLOCK
+#cmakedefine HAVE_STRPTIME
 
 #include "compat.h"
 

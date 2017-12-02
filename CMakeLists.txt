@@ -133,6 +133,7 @@ check_function_exists(memalign HAVE_MEMALIGN)
 check_function_exists(fts_open HAVE_FTS_OPEN)
 check_function_exists(strsep HAVE_STRSEP)
 check_function_exists(flock HAVE_FLOCK)
+check_function_exists(strptime HAVE_STRPTIME)
 
 # HAVE HEADERS
 check_include_file(syslog.h HAVE_SYSLOG_H)

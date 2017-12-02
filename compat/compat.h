@@ -37,6 +37,11 @@ char *strsep(char **stringp, const char *delim);
 int flock (int fd, int operation);
 #endif
 
+#ifndef HAVE_STRPTIME
+#include <time.h>
+char *strptime(const char *buf, const char *format, struct tm *tm);
+#endif
+
 #if defined(unix) || defined(__unix__) || defined(__unix)
 #define OSCAP_UNIX
 #endif
