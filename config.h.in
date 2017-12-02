@@ -79,6 +79,7 @@
 #cmakedefine HAVE_SYS_ACL_H
 
 #cmakedefine HAVE_STRSEP
+#cmakedefine HAVE_FLOCK
 
 #include "compat.h"
 

@@ -29,6 +29,14 @@
 char *strsep(char **stringp, const char *delim);
 #endif
 
+#ifndef HAVE_FLOCK
+#define LOCK_SH 1   /* Shared lock.  */
+#define LOCK_EX 2   /* Exclusive lock.  */
+#define LOCK_UN 8   /* Unlock.  */
+#define LOCK_NB 4   /* Don't block when locking.  */
+int flock (int fd, int operation);
+#endif
+
 #if defined(unix) || defined(__unix__) || defined(__unix)
 #define OSCAP_UNIX
 #endif
