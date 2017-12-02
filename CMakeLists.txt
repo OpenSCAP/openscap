@@ -215,6 +215,11 @@ set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
 # ENABLES OSCAP UTIL CHROOT
 set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
 
+# ENABLES TESTS
+# Tests will be turned on only on Linux, because the test suite uses bash
+# and other Linux-specific tools.
+set(ENABLE_TESTS ${IS_LINUX} CACHE BOOL "enables tests")
+
 # SEAP_MSGID_BITS
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 
@@ -307,8 +312,10 @@ install(FILES
 )
 
 # Ctest
-enable_testing()
-add_subdirectory("tests")
+if(ENABLE_TESTS)
+	enable_testing()
+	add_subdirectory("tests")
+endif()
 
 # CPack
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "openscap-${OPENSCAP_VERSION}")
