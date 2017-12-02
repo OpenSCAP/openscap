@@ -52,7 +52,7 @@
 #endif
 
 #if defined(_WIN32)
-# include "flock.h"
+# include <windows.h>
 # define GET_PROGRAM_NAME get_program_name()
 #elif defined(__APPLE__)
 # define GET_PROGRAM_NAME getprogname()
