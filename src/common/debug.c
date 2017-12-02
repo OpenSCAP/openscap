@@ -35,6 +35,7 @@
 # include <time.h>
 # include <errno.h>
 # include <fcntl.h>
+# include <sys/stat.h>
 
 #if defined(OVAL_PROBES_ENABLED)
 # include <sexp.h>

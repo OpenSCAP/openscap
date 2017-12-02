@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sys/stat.h>
 
 #include <curl/curl.h>
 #include <curl/easy.h>
