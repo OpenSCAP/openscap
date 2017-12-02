@@ -78,5 +78,8 @@ if(RPM_FOUND)
 	# just because of rpmvercmp
 	target_link_libraries(openscap ${RPM_LIBRARIES})
 endif()
+if(WIN32)
+	target_link_libraries(openscap wsock32 ws2_32)
+endif()
 
 install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})
