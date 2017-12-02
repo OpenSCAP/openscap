@@ -258,6 +258,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wvla -Wnonnull -Wsh
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
 endif()
+if(WIN32)
+	# expose new WinAPI function appearing on Windows 7
+	# eg. inet_pton
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_WIN32_WINNT=0x0600")
+endif()
 
 include_directories(
 	"compat/"
