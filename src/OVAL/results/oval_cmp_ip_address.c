@@ -35,8 +35,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#endif
 
 #include "oval_definitions.h"
 #include "oval_types.h"
