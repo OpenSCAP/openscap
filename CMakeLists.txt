@@ -131,6 +131,7 @@ check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
 check_function_exists(memalign HAVE_MEMALIGN)
 check_function_exists(fts_open HAVE_FTS_OPEN)
+check_function_exists(strsep HAVE_STRSEP)
 
 # HAVE HEADERS
 check_include_file(syslog.h HAVE_SYSLOG_H)
@@ -257,6 +258,7 @@ if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
 endif()
 
 include_directories(
+	"compat/"
 	"src/"
 	"src/common/"
 	"src/common/public/"
@@ -279,6 +281,7 @@ include_directories(
 	${LIBXML2_INCLUDE_DIR}
 )
 
+add_subdirectory("compat")
 add_subdirectory("src")
 add_subdirectory("utils")
 add_subdirectory("docs")

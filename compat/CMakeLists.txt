@@ -1,0 +1,7 @@
+file(GLOB_RECURSE COMPAT_SOURCES "*.h")
+
+if(NOT HAVE_STRSEP)
+	list(APPEND COMPAT_SOURCES "strsep.c")
+endif()
+
+add_library(compat_object OBJECT ${COMPAT_SOURCES})

@@ -42,6 +42,7 @@ add_subdirectory("XCCDF")
 add_subdirectory("XCCDF_POLICY")
 
 set(OBJECTS_TO_LINK_AGAINST
+	$<TARGET_OBJECTS:compat_object>
 	$<TARGET_OBJECTS:common_object>
 	$<TARGET_OBJECTS:cpe_object>
 	$<TARGET_OBJECTS:cve_object>
