@@ -25,7 +25,14 @@
 #endif
 
 #include <math.h>
+#include <string.h>
+#include <unistd.h>
+
+#ifdef OSCAP_UNIX
 #include <sys/utsname.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#endif
 
 #if defined(__linux__)
 #include <ifaddrs.h>
@@ -33,10 +40,6 @@
 #include <netdb.h>
 #include <sys/ioctl.h>
 #endif
-#include <arpa/inet.h>
-#include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
 
 #if defined(_WIN32)
 # include <windows.h>
@@ -163,7 +166,7 @@ static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 	// nor it grants she any additional privileges
 	xccdf_identity_set_authenticated(id, 0);
 	xccdf_identity_set_privileged(id, 0);
-#if defined(unix) || defined(__unix__) || defined(__unix)
+#ifdef OSCAP_UNIX
 	xccdf_identity_set_name(id, getlogin());
 #elif defined(_WIN32)
 	GetUserName((TCHAR *) w32_username, &w32_usernamesize); /* XXX: Check the return value? */
@@ -194,6 +197,8 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	struct ifaddrs *ifaddr, *ifa;
 	int fd;
 #endif
+
+#ifdef OSCAP_UNIX
 	struct utsname sname;
 
 	if (uname(&sname) == -1)
@@ -206,8 +211,17 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	if (target_hostname == NULL) {
 		target_hostname = sname.nodename;
 	}
+
 	/* store target name */
 	xccdf_result_add_target(result, target_hostname);
+#elif defined(_WIN32)
+	TCHAR computer_name[MAX_COMPUTERNAME_LENGTH + 1];
+	DWORD computer_name_size = MAX_COMPUTERNAME_LENGTH + 1;
+	GetComputerName(computer_name, &computer_name_size);
+	/* store target name */
+	xccdf_result_add_target(result, computer_name);
+#endif
+
 	_xccdf_result_fill_scanner(result);
 	_xccdf_result_fill_identity(result);
 
