@@ -60,6 +60,7 @@ typedef uint16_t oscap_errfamily_t;
 #define OSCAP_EFAMILY_XCCDF    5	/**< XCCDF errors */
 #define OSCAP_EFAMILY_SCE      6	/**< SCE errors */
 #define OSCAP_EFAMILY_NET	7	/**< Errors from network communication. Presumably from libcurl. */
+#define OSCAP_EFAMILY_WINDOWS	8	/**< Windows API Errors */
 /** @} */
 
 /**
