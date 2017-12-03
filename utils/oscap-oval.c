@@ -213,8 +213,8 @@ static struct oscap_module* OVAL_GEN_SUBMODULES[OVAL_GEN_SUBMODULES_NUM] = {
     NULL
 };
 
-#if defined(OVAL_PROBES_ENABLED)
 static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM] = {
+#if defined(OVAL_PROBES_ENABLED)
     &OVAL_COLLECT,
     &OVAL_EVAL,
 #endif
