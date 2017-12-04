@@ -283,7 +283,7 @@ get_new_authors()
     resolve_name_duplication "$_all_time_authors"
     git log "$previous_version".. | grep '^Author' | sort | cut -f 1 --complement -d ' ' | uniq > "$_recent_authors"
     resolve_name_duplication "$_recent_authors"
-    diff -U 0 all_time_authors recent_authors | grep -e '^+Author' | sort > "$_new_authors"
+    diff -U 0 "$_all_time_authors" "$_recent_authors" | grep -e '^+Author' | sort > "$_new_authors"
     rm "$_all_time_authors"
 }
 
