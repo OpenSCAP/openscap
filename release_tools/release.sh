@@ -4,7 +4,7 @@ GITHUB_ROOT='https://github.com/OpenSCAP/openscap'
 test -f .env && . .env
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-OSCAP_REPO_ROOT="$(cd "$SCRIPT_DIR" && cd ../.. && pwd)"
+OSCAP_REPO_ROOT="$(cd "$SCRIPT_DIR" && cd .. && pwd)"
 LIBRARY_STASH="/tmp/library-stash"
 BUILDDIR="$OSCAP_REPO_ROOT"
 
