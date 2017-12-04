@@ -8,3 +8,4 @@ declare -A name_mapping
 # name_mapping['root@localhost']=
 
 name_mapping['Martin Preisler <martin@preisler.me>']='Martin Preisler <mpreisle@redhat.com>'
+name_mapping['Matěj Týč <matej.tyc@gmail.com>']='Matěj Týč <matyc@redhat.com>'
