@@ -1971,11 +1971,10 @@ If we want to generate new statistics, we should remove the old ones.
  $ lcov --directory ./ --zerocounters ; find ./ -name "*.gcno" | xargs rm
  $ rm -rf ./coverage
 
-=== Building OpenSCAP for Windows (cross-compilation)
-Building OpenSCAP for Windows without a POSIX emulation layer is currently not
-possible. However, we are close to a native port of OpenSCAP for Windows. If you
-want to help us solve the remaining problems. Instructions for cross-compiling
-OpenSCAP for Windows:
+=== Building OpenSCAP for Windows on a Linux box (cross-compilation)
+Currently it is possible to build OpenSCAP for Windows only without probes.
+The resulting binary is not able to perform scanning.
+Instructions for cross-compiling OpenSCAP for Windows:
 
 1) Install the cross-compiler & dependencies
 
