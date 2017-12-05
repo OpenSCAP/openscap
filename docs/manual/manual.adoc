@@ -2006,18 +2006,8 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
 4) Build!
 
 ------------------------------
- $ make -k 2> build-errors.log
+ $ make
 ------------------------------
-
-5) Inspect build-errors.log for problems
-
------------------------------------------------
- $ grep -E '(error:|implicit)' build-errors.log
------------------------------------------------
-
------------------------------------------------------------------------------
-oval_resModel.c:70:28: error: conflicting types for 'oval_results_model_new_with_probe_session'
------------------------------------------------------------------------------
 
 If you would like to send us a patch fixing any Windows
 compiling issues, please consult the page about
