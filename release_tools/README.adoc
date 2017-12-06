@@ -9,7 +9,7 @@
 
 * Github automation
  * System with `python3.6` or greater, installed https://pypi.python.org/pypi/PyGithub/1.35[PyGithub] module.
- * A Github token - get one on https://github.com/settings/tokens and put it in the `.env` file, so it contains the line `GITHUB_TOKEN='<your token here>'`"
+ * A Github token - get one on https://github.com/settings/tokens and put it in the `.env` file, so it contains the line `GITHUB_TOKEN='<your token here>'`.
 
 == Process ==
 
@@ -35,6 +35,7 @@ Use this guideline to decide:
 * `bugfix`: No changes of API/ABI, the code got just some improvements under the hood.
 * `backwards_compatible`: API/ABI is backwards compatible - the API was expanded, new symbols were introduced.
 * `breaking_change`: API/ABI is not backwards compatible - the API was modified, symbols were removed, types have changed... If this happens, think about dropping symbols marked with openscap `OSCAP_DEPRECATED()` macro.
+
 +
 This changes the libtool library version number so it reflects the API/ABI change.
 
@@ -43,7 +44,7 @@ This changes the libtool library version number so it reflects the API/ABI chang
 Make sure that everything in the repository is in place, and that the only thing missing is the `NEWS` file and tags.
 Use the `news_template.sh` script to generate a starting point for your `NEWS` file.
 Update the `AUTHORS` file for missing authors and the `naming.sh` file if there are duplicate author entries.
-
++
 Use it to update the `NEWS` file and commit it.
 +
 The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.2.17`).
@@ -51,7 +52,7 @@ The last commit before the release has to have the `openscap-<version>` message 
 6. Run `new-release.sh`.
 +
 This will create and push version tags, create new GitHub release and handle milestones swap.
-Finally, it will bump version numbers to be ready for the next upstream release.
+Finally, it will bump version numbers in `versions.sh` to be ready for the next upstream release.
 
 
 == To be done ==
