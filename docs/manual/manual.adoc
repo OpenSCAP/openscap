@@ -2008,6 +2008,8 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
  $ make
 ------------------------------
 
+Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
+
 If you would like to send us a patch fixing any Windows
 compiling issues, please consult the page about
 http://open-scap.org/page/Contribute[contributing to the OpenSCAP
