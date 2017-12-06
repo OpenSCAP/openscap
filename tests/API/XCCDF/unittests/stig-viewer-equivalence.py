@@ -14,15 +14,19 @@ class RuleResult(object):
     def __init__(self, element):
         self.idref = element.attrib["idref"]
         self.weight = element.attrib["weight"]
+
         result_element = element.find("{%s}result" % NAMESPACES["profile_ns"])
         self.result_text = result_element.text
+
         check_element = element.find("{%s}check" % NAMESPACES["profile_ns"])
         self.check_system = check_element.attrib["system"]
         self.check_system = check_element.attrib["system"]
+
         check_content_ref_element = check_element.find(
             "{%s}check-content-ref" % NAMESPACES["profile_ns"])
         self.content_ref_href = check_content_ref_element.attrib["href"]
         self.content_ref_name = check_content_ref_element.attrib["name"]
+
         check_export_element = check_element.find(
             "{%s}check-export" % NAMESPACES["profile_ns"])
         self.check_export_name = None
@@ -43,7 +47,7 @@ def fname_to_etree(fname):
     return input_tree
 
 
-def query_something(tree):
+def get_rule_results_from_etree(tree):
     xpath_expr =  ".//{%s}rule-result" % NAMESPACES["profile_ns"]
     xccdfs = tree.findall(xpath_expr)
     return xccdfs
@@ -51,7 +55,7 @@ def query_something(tree):
 
 def extract_results_from_file(fname):
     tree = fname_to_etree(fname)
-    results = query_something(tree)
+    results = get_rule_results_from_etree(tree)
     results = {RuleResult(r) for r in results}
     return results
 
