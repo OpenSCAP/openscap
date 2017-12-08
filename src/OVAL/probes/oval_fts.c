@@ -109,10 +109,10 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 		ofts_ent->path[ofts_ent->path_len] = '\0';
 
 		ofts_ent->file_len = fts_ent->fts_namelen;
-		ofts_ent->file = strdup(fts_ent->fts_name);
+		ofts_ent->file = oscap_strdup(fts_ent->fts_name);
 	} else {
 		ofts_ent->path_len = fts_ent->fts_pathlen;
-		ofts_ent->path = strdup(fts_ent->fts_path);
+		ofts_ent->path = oscap_strdup(fts_ent->fts_path);
 
 		ofts_ent->file_len = -1;
 		ofts_ent->file = NULL;
@@ -366,7 +366,7 @@ static char *extract_fixed_path_prefix(char *path)
 		}
 	}
 
-	return strdup("/");
+	return oscap_strdup("/");
 }
 
 static int badpartial_check_slash(const char *pattern)
@@ -527,7 +527,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		   "All paths with the 'pattern match' operation must begin "
 		   "with a caret.", path);
 	} else {
-		pattern = strdup(path);
+		pattern = oscap_strdup(path);
 	}
 
 	regex = pcre_compile(pattern, 0, &errptr, &errofs, NULL);
@@ -801,14 +801,14 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	*/
 
 	if (path_op == OVAL_OPERATION_EQUALS) {
-		paths[0] = strdup(cstr_path);
+		paths[0] = oscap_strdup(cstr_path);
 	} else if (path_op == OVAL_OPERATION_PATTERN_MATCH) {
 		if (process_pattern_match(cstr_path, &regex) != 0)
 			return NULL;
 		paths[0] = extract_fixed_path_prefix(cstr_path);
 		dI("Extracted fixed path: '%s'.", paths[0]);
 	} else {
-		paths[0] = strdup("/");
+		paths[0] = oscap_strdup("/");
 	}
 
 	/* Fail if the provided path doensn't actually exist. Symlinks
@@ -1169,7 +1169,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 	case OVAL_RECURSE_DIRECTION_UP:
 		if (ofts->ofts_recurse_path_pthcpy == NULL) {
 			ofts->ofts_recurse_path_pthcpy = \
-			ofts->ofts_recurse_path_curpth = strdup(ofts->ofts_match_path_fts_ent->fts_path);
+			ofts->ofts_recurse_path_curpth = oscap_strdup(ofts->ofts_match_path_fts_ent->fts_path);
 			ofts->ofts_recurse_path_curdepth = 0;
 		}
 
