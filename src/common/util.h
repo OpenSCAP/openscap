@@ -428,4 +428,12 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
  */
 char **oscap_split(char *str, const char *delim);
 
+/**
+ * Return the canonicalized absolute pathname.
+ * @param path path
+ * @param resolved_path pointer to a buffer
+ * @return resolved_path or NULL in case of error
+ */
+char *oscap_realpath(const char *path, char *resolved_path);
+
 #endif				/* OSCAP_UTIL_H_ */

@@ -55,6 +55,7 @@
 #include "oscap.h"
 #include "oscap_source.h"
 #include <oscap_debug.h>
+#include "util.h"
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0
@@ -1151,7 +1152,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking
 		   into /usr/share/openscap/xsl instead of CWD */
-		case XCCDF_OPT_STYLESHEET_FILE: realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
+		case XCCDF_OPT_STYLESHEET_FILE: oscap_realpath(optarg, custom_stylesheet_path); action->stylesheet = custom_stylesheet_path; break;
 		case XCCDF_OPT_TAILORING_FILE:	action->tailoring_file = optarg; break;
 		case XCCDF_OPT_TAILORING_ID:	action->tailoring_id = optarg; break;
 		case XCCDF_OPT_CPE:			action->cpe = optarg; break;
