@@ -96,7 +96,7 @@ void sce_check_result_free(struct sce_check_result* v)
 void sce_check_result_set_href(struct sce_check_result* v, const char* href)
 {
 	free(v->href);
-	v->href = strdup(href);
+	v->href = oscap_strdup(href);
 }
 
 const char* sce_check_result_get_href(struct sce_check_result* v)
@@ -107,7 +107,7 @@ const char* sce_check_result_get_href(struct sce_check_result* v)
 void sce_check_result_set_basename(struct sce_check_result* v, const char* base_name)
 {
 	free(v->basename);
-	v->basename = strdup(base_name);
+	v->basename = oscap_strdup(base_name);
 }
 
 const char* sce_check_result_get_basename(struct sce_check_result* v)
@@ -118,7 +118,7 @@ const char* sce_check_result_get_basename(struct sce_check_result* v)
 void sce_check_result_set_stdout(struct sce_check_result* v, const char* _stdout)
 {
 	free(v->std_out);
-	v->std_out = strdup(_stdout);
+	v->std_out = oscap_strdup(_stdout);
 }
 
 const char* sce_check_result_get_stdout(struct sce_check_result* v)
@@ -129,7 +129,7 @@ const char* sce_check_result_get_stdout(struct sce_check_result* v)
 void sce_check_result_set_stderr(struct sce_check_result* v, const char* _stderr)
 {
 	free(v->std_err);
-	v->std_err = strdup(_stderr);
+	v->std_err = oscap_strdup(_stderr);
 }
 
 const char* sce_check_result_get_stderr(struct sce_check_result* v)
@@ -290,7 +290,7 @@ void sce_parameters_set_xccdf_directory(struct sce_parameters* v, const char* va
 	if (v->xccdf_directory)
 		free(v->xccdf_directory);
 
-	v->xccdf_directory = value == NULL ? NULL : strdup(value);
+	v->xccdf_directory = value == NULL ? NULL : oscap_strdup(value);
 }
 
 const char* sce_parameters_get_xccdf_directory(struct sce_parameters* v)
