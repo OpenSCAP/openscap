@@ -214,7 +214,7 @@ bool cpe_set_field(struct cpe_name * cpe, int idx, const char *newval)
 	if (newval && strcmp(newval, "") == 0)
 		newval = NULL;
 	if (newval != NULL)
-		*fieldptr = strdup(newval);
+		*fieldptr = oscap_strdup(newval);
 	else
 		*fieldptr = NULL;
 
@@ -241,7 +241,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 
 	if (cpestr) {
 		if (format == CPE_FORMAT_URI) {
-			char *data_ = strdup(cpestr + 5);	// without 'cpe:/'
+			char *data_ = oscap_strdup(cpestr + 5);	// without 'cpe:/'
 			char **fields_ = oscap_split(data_, ":");
 			for (i = 0; fields_[i]; ++i)
 			{
@@ -286,7 +286,7 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 			free(fields_);
 		}
 		else if (format == CPE_FORMAT_STRING) {
-			char *data_ = strdup(cpestr + 8);	// without 'cpe:2.3:'
+			char *data_ = oscap_strdup(cpestr + 8);	// without 'cpe:2.3:'
 			char **fields_ = oscap_split(data_, ":");
 			for (i = 0; fields_[i] && i < CPE_TOTAL_FIELDNUM; ++i)
 			{
