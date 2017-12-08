@@ -207,7 +207,7 @@ struct oval_definition *oval_definition_clone
 		}
 		oval_string_iterator_free(notes);
 
-		new_definition->anyxml = strdup(old_definition->anyxml);
+		new_definition->anyxml = oscap_strdup(old_definition->anyxml);
 
 		oval_definition_set_criteria(new_definition, oval_criteria_node_clone(new_model, old_definition->criteria));
 	}
