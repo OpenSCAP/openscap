@@ -219,7 +219,7 @@ int load_zones_path_list()
 				    name);
 				continue;
 			}
-			if (realpath(rpath, temp->zpath) != NULL)
+			if (oscap_realpath(rpath, temp->zpath) != NULL)
 				avl_add(&avl_tree_list, temp);
 		}
 	}

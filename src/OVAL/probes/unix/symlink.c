@@ -85,7 +85,7 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 		return 0;
 	}
 
-	linkname = realpath(pathname, resolved_name);
+	linkname = oscap_realpath(pathname, resolved_name);
 	if (linkname == NULL) {
 		if (errno == ENOENT) {
 			msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
