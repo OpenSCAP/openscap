@@ -213,8 +213,8 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 				rep_lst = rep_lst->next;
 			}
 
-			rep_lst->service_name = strdup(service_name);
-			rep_lst->runlevel = strdup(runlevel);
+			rep_lst->service_name = oscap_strdup(service_name);
+			rep_lst->runlevel = oscap_strdup(runlevel);
 			rep_lst->start = start;
 			rep_lst->kill = kill;
 			rep_lst->next = NULL;
