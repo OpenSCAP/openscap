@@ -55,7 +55,7 @@ SEAP_msg_t *SEAP_msg_clone (SEAP_msg_t *msg)
         new->attrs = sm_alloc (sizeof (SEAP_attr_t) * new->attrs_cnt);
 
         for (i = 0; i < new->attrs_cnt; ++i) {
-                new->attrs[i].name  = strdup (msg->attrs[i].name);
+                new->attrs[i].name = oscap_strdup(msg->attrs[i].name);
                 new->attrs[i].value = SEXP_ref (msg->attrs[i].value);
         }
 
@@ -122,7 +122,7 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
                 SEXP_VALIDATE(value);
 #endif
         msg->attrs = sm_realloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
-        msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
+        msg->attrs[msg->attrs_cnt - 1].name = oscap_strdup(attr);
         msg->attrs[msg->attrs_cnt - 1].value = (value != NULL ? SEXP_ref (value) : NULL);
 
         return (0);
