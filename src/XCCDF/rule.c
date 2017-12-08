@@ -334,7 +334,7 @@ struct xccdf_item *xccdf_rule_parse(xmlTextReaderPtr reader, struct xccdf_item *
 				if (tag == NULL)
 					break;
 				struct xccdf_profile_note *note = xccdf_profile_note_new();
-				note->reftag = strdup(tag);
+				note->reftag = oscap_strdup(tag);
 				note->text = oscap_text_new_parse(XCCDF_TEXT_PROFNOTE, reader);
 				oscap_list_add(rule->sub.rule.profile_notes, note);
 				break;
@@ -453,8 +453,8 @@ struct xccdf_ident *xccdf_ident_new(void)
 struct xccdf_ident *xccdf_ident_new_fill(const char *id, const char *sys)
 {
 	struct xccdf_ident *ident = xccdf_ident_new();
-	ident->id = strdup(id);
-	ident->system = strdup(sys);
+	ident->id = oscap_strdup(id);
+	ident->system = oscap_strdup(sys);
 	return ident;
 }
 
@@ -608,7 +608,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 					break;
 				struct xccdf_check_content_ref *ref = xccdf_check_content_ref_new();
 				ref->name = xccdf_attribute_copy(reader, XCCDFA_NAME);
-				ref->href = strdup(href);
+				ref->href = oscap_strdup(href);
 				oscap_list_add(check->content_refs, ref);
 				break;
 			}
@@ -622,9 +622,9 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 				if (name == NULL) // @import-name is a required attribute
 					break;
 				struct xccdf_check_import *imp = xccdf_check_import_new();
-				imp->name = strdup(name);
+				imp->name = oscap_strdup(name);
 				if (xpath) // @import-xpath is just optional
-					imp->xpath = strdup(xpath);
+					imp->xpath = oscap_strdup(xpath);
 				imp->content = oscap_element_string_copy(reader);
 				oscap_list_add(check->imports, imp);
 				break;
@@ -634,7 +634,7 @@ struct xccdf_check *xccdf_check_parse(xmlTextReaderPtr reader)
 				if (name == NULL)
 					break;
 				struct xccdf_check_export *exp = xccdf_check_export_new();
-				exp->name = strdup(name);
+				exp->name = oscap_strdup(name);
 				exp->value = xccdf_attribute_copy(reader, XCCDFA_VALUE_ID);
 				oscap_list_add(check->exports, exp);
 				break;

@@ -152,7 +152,7 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 	pd = oscap_talloc(oval_pd_t);
 	pd->subtype = type;
 	pd->sd      = sd;
-	pd->uri     = strdup(uri);
+	pd->uri = oscap_strdup(uri);
 
 	tbl->memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
 

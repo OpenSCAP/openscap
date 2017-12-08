@@ -256,7 +256,7 @@ static char *get_selinux_label(int pid) {
 			freecon(pid_context);
 			return NULL;
 		}
-		selinux_label = strdup(context_type_get(context));
+		selinux_label = oscap_strdup(context_type_get(context));
 		context_free(context);
 		freecon(pid_context);
 		return selinux_label;
@@ -304,7 +304,7 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 #if LIBCAP_VERSION == 2
 			cap_name = cap_to_name(cap_value);
 #else
-			cap_name = strdup(_cap_names[cap_value]);
+			cap_name = oscap_strdup(_cap_names[cap_value]);
 #endif
 			if (cap_name != NULL) {
 				char *cap_name_p = cap_name;
@@ -316,7 +316,7 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 				cap_id = oscap_string_to_enum(CapabilityType, cap_name);
 				if (cap_id > -1 && cap_id <= max_cap_id) {
 					ret = realloc(ret, (ret_index + 1) * sizeof(char *));
-					ret[ret_index] = strdup(cap_name);
+					ret[ret_index] = oscap_strdup(cap_name);
 					ret_index++;
 				}
 				cap_free(cap_name);

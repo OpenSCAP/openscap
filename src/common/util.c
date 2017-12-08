@@ -229,3 +229,15 @@ char *oscap_expand_ipv6(const char *input)
 
 	return ret;
 }
+
+char *oscap_strdup(const char *str)
+{
+	if (str == NULL)
+		return NULL;
+
+#ifdef _MSC_VER
+	return _strdup(str);
+#else
+	return strdup(str);
+#endif
+}

@@ -1922,7 +1922,7 @@ int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
         t = SEXP_datatype_get (&g_datatypes, name);
 
         if (t == NULL) {
-                char *k = strdup(name);
+                char *k = oscap_strdup(name);
 
                 t = SEXP_datatype_add (&g_datatypes, k, NULL, NULL);
 
@@ -1951,7 +1951,7 @@ int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
         t = SEXP_datatype_get (&g_datatypes, name);
 
         if (t == NULL) {
-                char *k = strdup(name);
+                char *k = oscap_strdup(name);
 
                 t = SEXP_datatype_add (&g_datatypes, k, NULL, NULL);
 

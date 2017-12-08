@@ -1870,7 +1870,7 @@ found:
 
                 if (dsc->s_exp->s_type == NULL) {
                         if (name == name_static)
-                                name = strdup(name);
+                                name = oscap_strdup(name);
 
                         dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, name, NULL, NULL);
 
@@ -1911,7 +1911,7 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
 
         if (dsc->s_exp->s_type == NULL) {
                 if (name == name_static)
-                        name = strdup(name);
+                        name = oscap_strdup(name);
 
                 dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, name, NULL, NULL);
 

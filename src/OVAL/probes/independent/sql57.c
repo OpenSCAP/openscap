@@ -176,7 +176,7 @@ static void dbURIInfo_clear(dbURIInfo_t *ui)
 static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 {
 	char *tmp, *tok, *copy;
-	char *conn_copy = strdup(conn);
+	char *conn_copy = oscap_strdup(conn);
 	copy = conn_copy;
 	if (copy == NULL)
 		return (-1);
@@ -189,7 +189,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			tok += strlen(rest);			\
 			skipspace(tok);				\
 			if (*(tok) != '=') goto __fail;		\
-			else (dst) = strdup((tok) + 1);		\
+			else (dst) = oscap_strdup((tok) + 1);		\
 		}						\
 		else dE("Unrecognized token: '%s'", (tok)-1);		\
 	while(0)
@@ -200,13 +200,13 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			tok += 1+strlen(rest1);				\
 			skipspace(tok);					\
 			if (*(tok) != '=') goto __fail;			\
-			else (dst1) = strdup((tok) + 1);		\
+			else (dst1) = oscap_strdup((tok) + 1);		\
 		}							\
 		else if (strncasecmp((rest2), (tok)+1, strlen(rest2)) == 0) {	\
 			tok += 1+strlen(rest2);				\
 			skipspace(tok);					\
 			if (*(tok) != '=') goto __fail;			\
-			else (dst2) = strdup((tok) + 1);		\
+			else (dst2) = oscap_strdup((tok) + 1);		\
 		}							\
 		else dE("Unrecognized token: '%s'", (tok));		\
 		while(0)

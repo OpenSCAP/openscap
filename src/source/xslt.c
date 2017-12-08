@@ -118,7 +118,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 	/* is it an absolute path? */
 	char *xsltpath;
 	if (strstr(xsltfile, "/") == xsltfile) {
-		xsltpath = strdup(xsltfile);
+		xsltpath = oscap_strdup(xsltfile);
 		if (access(xsltpath, R_OK)) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "XSLT file '%s' not found when trying to transform '%s'",
 				xsltfile, oscap_source_readable_origin(source));

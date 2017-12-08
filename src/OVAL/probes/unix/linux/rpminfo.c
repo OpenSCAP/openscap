@@ -158,7 +158,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 		}
 	}
 
-        r->signature_keyid = strdup(sid != NULL ? sid : "0");
+        r->signature_keyid = oscap_strdup(sid != NULL ? sid : "0");
         free (str);
 }
 

@@ -207,7 +207,7 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 	assume_d(map != NULL, /* void */);
 	assume_d(key != NULL, /* void */);
 
-	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), val) != 0) {
+	if (rbt_str_add((rbt_t *)map, key_copy = oscap_strdup(key), val) != 0) {
 		dD("rbt_str_add: non-zero return code");
                 free(key_copy);
         }
@@ -215,12 +215,12 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *val)
 {
-	char *str = strdup(val), *key_copy;
+	char *str = oscap_strdup(val), *key_copy;
 
 	assume_d(map != NULL, /* void */);
 	assume_d(key != NULL, /* void */);
 
-	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), str) == 0)
+	if (rbt_str_add((rbt_t *)map, key_copy = oscap_strdup(key), str) == 0)
 		return;
 	else {
 		free(str);

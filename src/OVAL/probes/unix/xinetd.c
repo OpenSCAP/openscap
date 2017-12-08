@@ -544,7 +544,7 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 	}
 
 	/* now initialize item that do need extra memory to be allocated */
-	file->cpath = strdup(path);
+	file->cpath = oscap_strdup(path);
 
 	return (file);
 }
@@ -887,7 +887,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 	 * blank lines or a right brace which signals and of the section.
 	 */
 	snew = xiconf_service_new();
-	snew->name = strdup(name);
+	snew->name = oscap_strdup(name);
 
 	for (;;) {
 		/*
@@ -923,7 +923,7 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 		 * now there should be a attribute name, comment
 		 * or the end-of-line.
 		 */
-		key = strdup(buffer + bufidx);
+		key = oscap_strdup(buffer + bufidx);
 		if (key == NULL)
 			exit(ENOMEM);
 
@@ -1073,11 +1073,11 @@ finish_section:
 			if (scur->socket_type != NULL) {
 				// dgram => udp
 				if (strcmp(scur->socket_type, "dgram") == 0) {
-					scur->protocol = strdup("udp");
+					scur->protocol = oscap_strdup("udp");
 				}
 				// stream => tcp
 				else if (strcmp(scur->socket_type, "stream") == 0) {
-					scur->protocol = strdup("tcp");
+					scur->protocol = oscap_strdup("tcp");
 				}
 			}
 			// If we still don't know the protocol, then get the default from /etc/services
@@ -1085,7 +1085,7 @@ finish_section:
 				struct servent *service = getservbyname(scur->name, NULL);
 				dI("protocol is empty, trying to guess from /etc/services for %s", scur->name);
 				if (service != NULL) {
-					scur->protocol = strdup(service->s_proto);
+					scur->protocol = oscap_strdup(service->s_proto);
 					dI("service %s has default protocol=%s", scur->name, scur->protocol);
 				}
 				endservent();
@@ -1140,7 +1140,7 @@ finish_section:
 			st->srv = malloc (sizeof (xiconf_service_t *));
 			st->srv[0] = scur;
 
-			if (rbt_str_add (xiconf->ttree, strdup(st_key), st) != 0) {
+			if (rbt_str_add (xiconf->ttree, oscap_strdup(st_key), st) != 0) {
 				dE("Can't add strans record (k=%s) into the strans tree (%p)",
 				   st_key, xiconf->ttree);
 				return (-1);
@@ -1304,7 +1304,7 @@ int op_assign_str(void *var, char *val)
 	while(isspace(*val)) ++val;
 
 	if (*val != '\0') {
-		*((char **)(var)) = strdup(val);
+		*((char **)(var)) = oscap_strdup(val);
 		return (0);
 	} else
 		return (-1);
@@ -1351,7 +1351,7 @@ int op_assign_strl(void *var, char *val)
 		}
 		dI("Adding new member to string array: %s", tok);
 		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
-		string_array[string_array_size-1] = strdup(tok);
+		string_array[string_array_size-1] = oscap_strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
 	*aptr = string_array;
@@ -1382,7 +1382,7 @@ int op_insert_strl(void *var, char *val)
 		}
 		dI("Adding new member to string array: %s", tok);
 		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
-		string_array[string_array_size-1] = strdup(tok);
+		string_array[string_array_size-1] = oscap_strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
 	*aptr = string_array;
@@ -1485,7 +1485,7 @@ int op_assign_disabled(void *var, char *val)
 
 		if (srv == NULL) {
 			srv = xiconf_service_new();
-			srv->id = strdup (tok);
+			srv->id = oscap_strdup(tok);
 			srv->def_disabled = 1;
 
 			dI("new: def_disabled: = 1: %s", srv->id);
@@ -1526,7 +1526,7 @@ int op_assign_enabled(void *var, char *val)
 
 		if (srv == NULL) {
 			srv = xiconf_service_new();
-			srv->id = strdup (tok);
+			srv->id = oscap_strdup(tok);
 			srv->def_enabled = 1;
 
 			dI("new: def_enabled: = 1: %s", srv->id);

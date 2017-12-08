@@ -154,7 +154,7 @@ struct oval_state *oval_state_new(struct oval_definition_model *model, const cha
 	state->operator = OVAL_OPERATOR_UNKNOWN;
 	state->subtype = OVAL_SUBTYPE_UNKNOWN;
 	state->comment = NULL;
-	state->id = strdup(id);
+	state->id = oscap_strdup(id);
 	state->notes = oval_collection_new();
 	state->contents = oval_collection_new();
 	state->model = model;
@@ -219,7 +219,7 @@ void oval_state_set_subtype(struct oval_state *state, oval_subtype_t subtype)
 void oval_state_add_note(struct oval_state *state, char *notes)
 {
 	__attribute__nonnull__(state);
-	oval_collection_add(state->notes, (void *)strdup(notes));
+	oval_collection_add(state->notes, (void *)oscap_strdup(notes));
 }
 
 void oval_state_set_comment(struct oval_state *state, char *comm)
@@ -227,7 +227,7 @@ void oval_state_set_comment(struct oval_state *state, char *comm)
 	__attribute__nonnull__(state);
 	if (state->comment != NULL)
 		free(state->comment);
-	state->comment = comm == NULL ? NULL : strdup(comm);
+	state->comment = comm == NULL ? NULL : oscap_strdup(comm);
 }
 
 void oval_state_set_deprecated(struct oval_state *state, bool deprecated)

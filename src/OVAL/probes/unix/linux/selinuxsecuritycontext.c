@@ -61,12 +61,12 @@ static void split_level(const char *level, char **sensitivity, char **category) 
 
 	level_split = strchr(level, ':');
 	if (level_split == NULL) {
-		*sensitivity = strdup(level);
+		*sensitivity = oscap_strdup(level);
 		*category = NULL;
 	}
 	else {
 		*sensitivity = strndup(level, level_split - level);
-		*category = strdup(level_split + 1);
+		*category = oscap_strdup(level_split + 1);
 	}
 }
 
@@ -96,7 +96,7 @@ static void split_range(const char *range, char **l_s, char **l_c, char **h_s, c
 		free(level);
 
 		/* high level */
-		level = strdup(range_split + 1);
+		level = oscap_strdup(range_split + 1);
 		split_level(level, h_s, h_c);
 		free(level);
 	}

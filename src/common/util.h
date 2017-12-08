@@ -312,20 +312,15 @@ struct oscap_string_map {
 	const char *string; /* string representation of the value */
 };
 
+OSCAP_HIDDEN_END;
+
 /**
  * Use strdup on string, if string is NULL, return NULL
  * @param str String we want to duplicate
  */
-static inline char *oscap_strdup(const char *str) {
-	if (str == NULL)
-		return NULL;
+char *oscap_strdup(const char *str);
 
-#ifdef _MSC_VER
-	return _strdup(str);
-#else
-	return strdup(str);
-#endif
-}
+OSCAP_HIDDEN_START;
 
 /// Just like strcmp except it's NULL-safe. Use the standard strcmp directly if possible.
 static inline int oscap_strcmp(const char *s1, const char *s2) {

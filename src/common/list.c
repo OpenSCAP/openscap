@@ -352,7 +352,7 @@ struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_st
 
 bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str)
 {
-	return oscap_list_add((struct oscap_list *) list, strdup(str));
+	return oscap_list_add((struct oscap_list *) list, oscap_strdup(str));
 }
 
 struct oscap_stringlist * oscap_stringlist_new(void)
@@ -467,7 +467,7 @@ bool oscap_htable_add(struct oscap_htable * htable, const char *key, void *item)
 	unsigned int hashcode = oscap_htable_hash(key, htable->hsize);
 	struct oscap_htable_item *newhtitem;
 	newhtitem = malloc(sizeof(struct oscap_htable_item));
-	newhtitem->key = strdup(key);
+	newhtitem->key = oscap_strdup(key);
 	newhtitem->value = item;
 	newhtitem->next = htable->table[hashcode];
 	htable->table[hashcode] = newhtitem;

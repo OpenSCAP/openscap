@@ -18,7 +18,7 @@ static char *string_array_cstr(char **string_array)
 			bufpos += snprintf(buf + bufpos, sizeof(buf) - bufpos - 1, "%s ", string_array[string_array_pos]);
 		}
 	}
-	return strdup(buf);
+	return oscap_strdup(buf);
 }
 
 int main (int argc, char *argv[])

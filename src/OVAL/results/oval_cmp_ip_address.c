@@ -199,7 +199,7 @@ static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask
 	char *s, *pfx;
 	int result = -1;
 
-	s = strdup(oval_ipv4_string);
+	s = oscap_strdup(oval_ipv4_string);
 	pfx = strchr(s, '/');
 	if (pfx) {
 		int cnt;
@@ -235,7 +235,7 @@ static inline int ipv6addr_parse(const char *oval_ipv6_string, uint32_t *len_out
 	char *s, *pfx;
 	int result = -1;
 
-	s = strdup(oval_ipv6_string);
+	s = oscap_strdup(oval_ipv6_string);
 	pfx = strchr(s, '/');
 	if (pfx) {
 		*pfx++ = '\0';
