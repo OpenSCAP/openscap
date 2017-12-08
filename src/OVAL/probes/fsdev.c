@@ -64,6 +64,7 @@
 #endif
 
 #include "fsdev.h"
+#include "util.h"
 
 /**
  * Compare two dev_t variables.
@@ -373,7 +374,7 @@ fsdev_t *fsdev_strinit(const char *fs_names)
 	size_t fs_cnt;
 	int state, e;
 
-	pstr = strdup(fs_names);
+	pstr = oscap_strdup(fs_names);
 	state = 0;
 	fs_arr = NULL;
 	fs_cnt = 0;
