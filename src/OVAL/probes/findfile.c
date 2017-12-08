@@ -351,7 +351,7 @@ static int rglob(const char *pattern, rglob_t * result)
 		return 1;
 
 	/* get no regexp portion from pattern to path */
-	tmp_ptr = tmp = strdup(pattern);
+	tmp_ptr = tmp = oscap_strdup(pattern);
 	if (tmp[0] == '^')
 		tmp++;
 
@@ -402,7 +402,7 @@ static void find_paths_recursion(const char *path, regex_t * re, rglob_t * resul
 		return;
 
 	if (regexec(re, path, 0, NULL, 0) == 0) {	/* catch? */
-		result->pathv[result->pathc] = strdup(path);
+		result->pathv[result->pathc] = oscap_strdup(path);
 		result->pathc++;
 		if (result->pathc == result->offs) {
 			result->offs = result->offs * 2;	/* magic constant */
