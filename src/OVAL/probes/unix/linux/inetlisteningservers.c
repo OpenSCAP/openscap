@@ -286,7 +286,7 @@ static int collect_process_info(llist *l)
 				continue;
 			node.pid = pid;
 			node.uid = euid;
-			node.cmd = strdup(cmd);
+			node.cmd = oscap_strdup(cmd);
 			node.inode = inode;
 			// We make one entry for each socket inode
 			list_append(l, &node);
