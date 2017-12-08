@@ -161,9 +161,9 @@ int probe_main(probe_ctx *ctx, void *mutex)
         attrs[0] = "objectClass";
 
         if (xattribute == NULL)
-                attrs[1] = strdup("1.1"); /* no attibutes */
+                attrs[1] = oscap_strdup("1.1"); /* no attibutes */
         else if (a_pattern_match)
-                attrs[1] = strdup("*");   /* collect all, we'll filter them afterwards */
+                attrs[1] = oscap_strdup("*");   /* collect all, we'll filter them afterwards */
         else
                 attrs[1] = xattribute;     /* no pattern match, use the string directly */
 
