@@ -36,6 +36,7 @@
 #include <limits.h>
 #include <cvss_score.h>
 #include <oscap_debug.h>
+#include "util.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024
@@ -281,12 +282,12 @@ static void getopt_parse_env(struct oscap_module *module, int *argc, char ***arg
 	/* parse the args supplied from the env var */
 	eargv = NULL;
 	eargc = 0;
-	opts = strdup(opts);
+	opts = oscap_strdup(opts);
 	opt = strtok_r(opts, delim, &state);
 	while (opt != NULL) {
 		eargc++;
 		eargv = realloc(eargv, eargc * sizeof(char *));
-		eargv[eargc - 1] = strdup(opt);
+		eargv[eargc - 1] = oscap_strdup(opt);
 		opt = strtok_r(NULL, delim, &state);
 	}
 
