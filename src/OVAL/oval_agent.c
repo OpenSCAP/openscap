@@ -137,7 +137,7 @@ struct oval_definition_model* oval_agent_get_definition_model(oval_agent_session
 void oval_agent_set_product_name(oval_agent_session_t *ag_sess, char * product_name)
 {
 	struct oval_generator *generator;
-	ag_sess->product_name = strdup(product_name);
+	ag_sess->product_name = oscap_strdup(product_name);
 
 	generator = oval_syschar_model_get_generator(ag_sess->sys_models[0]);
 	oval_generator_set_product_name(generator, product_name);

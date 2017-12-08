@@ -76,7 +76,7 @@ struct oval_definition_model *oval_definition_model_new()
 	newmodel->test_map = oval_string_map_new();
 	newmodel->variable_map = oval_string_map_new();
 	newmodel->bound_variable_models = NULL;
-        newmodel->schema = strdup(OVAL_DEF_SCHEMA_LOCATION);
+	newmodel->schema = oscap_strdup(OVAL_DEF_SCHEMA_LOCATION);
 	newmodel->vardef_map = NULL;
 
 	return newmodel;
