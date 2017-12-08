@@ -229,3 +229,12 @@ char *oscap_expand_ipv6(const char *input)
 
 	return ret;
 }
+
+char *oscap_realpath(const char *path, char *resolved_path)
+{
+#ifdef _WIN32
+	return _fullpath(resolved_path, path, MAX_PATH);
+#else
+	return realpath(path, resolved_path);
+#endif
+}
