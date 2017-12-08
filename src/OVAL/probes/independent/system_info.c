@@ -387,7 +387,7 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 		goto fail2;
 
 	grubcfg[ovec[1]] = '\0';
-	ret = strdup(grubcfg + ovec[0]);
+	ret = oscap_strdup(grubcfg + ovec[0]);
 fail2:
 	fclose(fp);
 fail:
@@ -484,7 +484,7 @@ static char * _offline_chroot_get_os_name(void)
 	if (rc > 0) {
 		saved_entry[ovec[1]] = '\0';
 		ptr = saved_entry + ovec[0];
-		ret = strdup(ptr);
+		ret = oscap_strdup(ptr);
 		pcre_free(re);
 		goto finish;
 	}
@@ -511,7 +511,7 @@ static char * _offline_chroot_get_hname(void)
 		goto finish;
 
 	hname[strcspn(hname, "\n")] = '\0';
-	ret = strdup(hname);
+	ret = oscap_strdup(hname);
 
 finish:
 	fclose(fp);
@@ -541,10 +541,10 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	if (offline_mode == PROBE_OFFLINE_NONE) {
 		if (uname(&sname) == 0) {
-			os_name = strdup(sname.sysname);
+			os_name = oscap_strdup(sname.sysname);
 			os_version = sname.version;
-			architecture = strdup(sname.machine);
-			hname = strdup(sname.nodename);
+			architecture = oscap_strdup(sname.machine);
+			hname = oscap_strdup(sname.nodename);
 		}
 	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
 		os_name = _offline_chroot_get_os_name();
@@ -555,17 +555,17 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	/* All four elements are required */
 	if (!os_name)
-		os_name = strdup(unknown);
+		os_name = oscap_strdup(unknown);
 
 	// os_version kept static as it shared memory with os_name if os_name exists
 	if (!os_version)
 		os_version = unknown;
 
 	if (!architecture)
-		architecture = strdup(unknown);
+		architecture = oscap_strdup(unknown);
 
 	if (!hname)
-		hname = strdup(unknown);
+		hname = oscap_strdup(unknown);
 
 	if (__sysinfo_saneval(os_name) < 1 ||
 		__sysinfo_saneval(os_version) < 1 ||
