@@ -360,10 +360,10 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 		}
 		switch (oscap_source_get_scap_type(source)) {
 			case OSCAP_DOCUMENT_SDS:
-				source->origin.version = strdup("1.2");
+				source->origin.version = oscap_strdup("1.2");
 				break;
 			case OSCAP_DOCUMENT_ARF:
-				source->origin.version = strdup("1.1");
+				source->origin.version = oscap_strdup("1.1");
 				break;
 			case OSCAP_DOCUMENT_OVAL_DEFINITIONS:
 			case OSCAP_DOCUMENT_OVAL_VARIABLES:
@@ -384,13 +384,13 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 				source->origin.version = cpe_lang_model_detect_version_priv(reader);
 				break;
 			case OSCAP_DOCUMENT_CVE_FEED:
-				source->origin.version = strdup("2.0");
+				source->origin.version = oscap_strdup("2.0");
 				break;
 			case OSCAP_DOCUMENT_CVRF_FEED:
-				source->origin.version = strdup("1.1");
+				source->origin.version = oscap_strdup("1.1");
 				break;
 			case OSCAP_DOCUMENT_SCE_RESULT:
-				source->origin.version = strdup("1.0");
+				source->origin.version = oscap_strdup("1.0");
 				break;
 			default:
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not determine origin.version for document %s: Unknown type: %s",
