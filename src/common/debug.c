@@ -94,7 +94,7 @@ static char * get_program_name()
                 return NULL;
         if(path_size == sizeof(path) - 1)
                 path[path_size] = '\0';
-        return strdup(path);
+        return oscap_strdup(path);
 }
 
 int setenv(const char *name, const char *value, int overwrite)
