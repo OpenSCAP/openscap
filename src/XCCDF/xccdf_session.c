@@ -860,7 +860,7 @@ void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **o
 
 	for (int i = 0; oval_filenames[i];) {
 		resources[i] = malloc(sizeof(struct oval_content_resource));
-		resources[i]->href = strdup(basename(oval_filenames[i]));
+		resources[i]->href = oscap_strdup(basename(oval_filenames[i]));
 		resources[i]->source = oscap_source_new_from_file(oval_filenames[i]);
 		resources[i]->source_owned = true;
 		i++;
@@ -884,7 +884,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 
 	_oval_content_resources_free(session->oval.resources);
 
-	xccdf_path_cpy = strdup(oscap_source_readable_origin(session->xccdf.source));
+	xccdf_path_cpy = oscap_strdup(oscap_source_readable_origin(session->xccdf.source));
 	dir_path = dirname(xccdf_path_cpy);
 
 	resources = malloc(sizeof(struct oval_content_resource *));
@@ -921,7 +921,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 
 		if (source != NULL || stat(tmp_path, &sb) == 0) {
 			resources[idx] = malloc(sizeof(struct oval_content_resource));
-			resources[idx]->href = strdup(oscap_file_entry_get_file(file_entry));
+			resources[idx]->href = oscap_strdup(oscap_file_entry_get_file(file_entry));
 			if (source == NULL) {
 				source = oscap_source_new_from_file(tmp_path);
 				resources[idx]->source_owned = true;
@@ -950,7 +950,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 						session->oval.progress(false, "ok\n");
 
 						resources[idx] = malloc(sizeof(struct oval_content_resource));
-						resources[idx]->href = strdup(printable_path);
+						resources[idx]->href = oscap_strdup(printable_path);
 						resources[idx]->source = oscap_source_new_take_memory(data, data_size, printable_path);
 						resources[idx]->source_owned = true;
 						idx++;
