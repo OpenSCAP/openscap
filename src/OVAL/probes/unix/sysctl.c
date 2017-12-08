@@ -129,7 +129,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 			continue;
 		}
 
-                mib    = strdup(mibpath + strlen(PROC_SYS_DIR) + 1);
+                mib = oscap_strdup(mibpath + strlen(PROC_SYS_DIR) + 1);
                 miblen = strlen(mib);
 
                 while (miblen > 0) {
