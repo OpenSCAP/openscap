@@ -139,6 +139,7 @@ EXTRA_DIST += \
 	test_report_without_oval_poses_no_errors.xccdf.xml.result.xml \
 	test_report_without_xsl_fails_gracefully.sh \
 	test_single_rule.sh \
+	test_single_rule_stigw.sh correct_stigw_result.xml stig-viewer-equivalence.py \
 	test_single_rule.ds.xml \
 	test_single_rule.oval.xml \
 	test_single_rule-tailoring.xml \

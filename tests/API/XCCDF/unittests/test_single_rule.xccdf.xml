@@ -26,12 +26,16 @@
   </Value>
   <Rule selected="true" id="xccdf_com.example.www_rule_test-pass">
     <title>This rule always pass</title>
+    <reference href="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">RHEL-07-040800</reference>
+    <reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-86937r1_rule</reference>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref href="test_single_rule.oval.xml" name="oval:test-pass:def:1"/>
     </check>
   </Rule>
   <Rule selected="true" id="xccdf_com.example.www_rule_test-fail">
     <title>This rule fails if profile test_single_rule is not selected</title>
+    <reference href="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">RHEL-07-020050</reference>
+    <reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-86601r1_rule</reference>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-export export-name="oval:ssg:var:1" value-id="xccdf_com.example.www_value_val1"/>
       <check-content-ref href="test_single_rule.oval.xml" name="oval:test-fail:def:2"/>
