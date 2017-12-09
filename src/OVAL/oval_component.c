@@ -1723,7 +1723,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int len_subcomps = oval_component_iterator_remaining(subcomps);
-	struct oval_collection *component_colls[len_subcomps];
+	struct oval_collection **component_colls = malloc(len_subcomps * sizeof(struct oval_collection *));
 
 	for (idx0 = 0; oval_component_iterator_has_more(subcomps); idx0++) {
 		struct oval_collection *subcoll = oval_collection_new();
@@ -1762,6 +1762,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 	for (idx0 = 0; idx0 < len_subcomps; ++idx0)
 	  oval_collection_free_items(component_colls[idx0], (oscap_destruct_func) oval_value_free);
 
+	free(component_colls);
 	return flag;
 }
 
