@@ -216,7 +216,7 @@ int main(int argc, char *argv[])
 
 	probe.flags = 0;
 	probe.pid   = getpid();
-	probe.name  = basename(argv[0]);
+	probe.name = oscap_basename(argv[0]);
         probe.probe_exitcode = 0;
 
 	/*
@@ -365,6 +365,6 @@ int main(int argc, char *argv[])
 
 	SEAP_CTX_free(probe.SEAP_ctx);
         free(probe.option);
-
+	free(probe.name);
 	return (probe.probe_exitcode);
 }
