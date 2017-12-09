@@ -107,9 +107,6 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 	size_t argc = 0;
 	while(params[argc]) argc += 2;
 
-	char *args[argc+1];
-	memset(args, 0, sizeof(char*) * (argc + 1));
-
 	// Should we change all XCCDF namespaces (versioned) to one?
 	// This is a workaround needed to make XSLTs work with multiple versions.
 	// (currently 1.1 and 1.2)
@@ -159,6 +156,9 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 		}
 	}
 
+	char **args = malloc(sizeof(char *) * (argc + 1));
+	memset(args, 0, sizeof(char *) * (argc + 1));
+
 	for (size_t i = 0; i < argc; i += 2) {
 		args[i] = (char*) params[i];
 		if (params[i+1]) args[i+1] = oscap_sprintf("'%s'", params[i+1]);
@@ -168,6 +168,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 	for (size_t i = 0; args[i]; i += 2) {
 		free(args[i+1]);
 	}
+	free(args);
 	if (transformed == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT %s to XML file: %s", xsltpath,
 			oscap_source_readable_origin(source));
