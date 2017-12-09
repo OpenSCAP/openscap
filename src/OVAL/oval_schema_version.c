@@ -34,6 +34,8 @@
 
 #include <pcre.h>
 
+#define OVECTOR_LEN 30 // must be a multiple of 30
+
 static int _parse_int(const char *substring, size_t substring_length)
 {
 	/* Pay attention that substring_length != strlen(substring) */
@@ -60,8 +62,8 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 		dE("Regular expression compilation failed with %s", pattern);
 		return version;
 	}
-	const int ovector_size = 30; // must be a multiple of 30
-	int ovector[ovector_size];
+	const int ovector_size = OVECTOR_LEN;
+	int ovector[OVECTOR_LEN];
 	int rc = pcre_exec(re, NULL, ver_str, strlen(ver_str), 0, 0, ovector, ovector_size);
 	pcre_free(re);
 	if (rc < 0) {
