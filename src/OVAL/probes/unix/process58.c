@@ -105,6 +105,8 @@ extern char const *_cap_names[];
 #include <ctype.h>
 #include "common/oscap_buffer.h"
 
+#define CHUNK_SIZE 1024
+
 /* Convenience structure for the results being reported */
 struct result_info {
         const char *command_line;
@@ -387,10 +389,9 @@ static inline bool get_process_cmdline(const char* filepath, struct oscap_buffer
 
 
 	for(;;) {
-		static const int chunk_size = 1024;
-		char chunk[chunk_size];
+		char chunk[CHUNK_SIZE];
 		// Read data, store to buffer
-		ssize_t read_size = read(fd, chunk, chunk_size );
+		ssize_t read_size = read(fd, chunk, CHUNK_SIZE);
 		if (read_size < 0) {
 			close(fd);
 			return false;
@@ -398,7 +399,7 @@ static inline bool get_process_cmdline(const char* filepath, struct oscap_buffer
 		oscap_buffer_append_binary_data(buffer, chunk, read_size);
 
 		// If reach end of file, then end the loop
-		if (chunk_size != read_size) {
+		if (CHUNK_SIZE != read_size) {
 			break;
 		}
 	}
