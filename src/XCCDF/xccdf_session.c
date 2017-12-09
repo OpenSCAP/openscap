@@ -1569,7 +1569,7 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 			j = 0;
 			varmod_itr = oval_definition_model_get_variable_models(defmod);
 			while (oval_variable_model_iterator_has_more(varmod_itr)) {
-				size_t fname_len = strlen(sname) + 32;
+				const size_t fname_len = strlen(sname) + 32;
 				char *fname = malloc(fname_len);
 				struct oval_variable_model *varmod;
 
