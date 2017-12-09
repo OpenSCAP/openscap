@@ -2030,7 +2030,7 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 		// previous behaviour for backwards compatibility
 		rid_prefix = "OSCAP-Test-";
 	}
-	size_t rid_len = strlen(rid_prefix) + strlen(id) + 1; // + 1 for terminating '\0'
+	const size_t rid_len = strlen(rid_prefix) + strlen(id) + 1; // + 1 for terminating '\0'
 	char *rid = malloc(rid_len);
 	snprintf(rid, rid_len, "%s%s", rid_prefix, id);
 	xccdf_result_set_id(result, rid);
