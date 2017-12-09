@@ -1245,7 +1245,7 @@ static int _app_xslt(struct oscap_source *infile, const char *xsltfile, const ch
 
 	/* add params oscap-version & pwd */
 	const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
-	size_t par_cnt = _paramlist_size(params) + _paramlist_size(stdparams) + 1;
+	const size_t par_cnt = _paramlist_size(params) + _paramlist_size(stdparams) + 1;
 	const char **par = malloc(par_cnt * sizeof(const char *));
 	size_t s = _paramlist_cpy(par, params);
 	s += _paramlist_cpy(par + s, stdparams);
