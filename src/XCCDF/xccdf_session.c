@@ -1245,11 +1245,14 @@ static int _app_xslt(struct oscap_source *infile, const char *xsltfile, const ch
 
 	/* add params oscap-version & pwd */
 	const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
-	const char *par[_paramlist_size(params) + _paramlist_size(stdparams) + 1];
+	size_t par_cnt = _paramlist_size(params) + _paramlist_size(stdparams) + 1;
+	const char **par = malloc(par_cnt * sizeof(const char *));
 	size_t s = _paramlist_cpy(par, params);
 	s += _paramlist_cpy(par + s, stdparams);
 
-	return oscap_source_apply_xslt_path(infile, xsltfile, outfile, par, oscap_path_to_xslt()) == -1;
+	int ret = oscap_source_apply_xslt_path(infile, xsltfile, outfile, par, oscap_path_to_xslt());
+	free(par);
+	return ret == -1;
 }
 
 static inline int _xccdf_gen_report(struct oscap_source *infile, const char *id, const char *outfile, const char *show, const char* sce_template, const char* profile)
