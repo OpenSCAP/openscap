@@ -41,6 +41,7 @@
 
 #include "oscap-tool.h"
 #include <oscap_debug.h>
+#include "util.h"
 
 #define DS_SUBMODULES_NUM 8 /* See actual DS_SUBMODULES array
 				initialization below. */
@@ -359,7 +360,9 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 	free(temp_cwd);
 
 	char* source_xccdf = strdup(action->ds_action->file);
-	ds_sds_compose_from_xccdf(basename(source_xccdf), target_abs_path);
+	char *base_name = oscap_basename(source_xccdf);
+	ds_sds_compose_from_xccdf(base_name, target_abs_path);
+	free(base_name);
 	free(source_xccdf);
 
 	chdir(previous_cwd);
