@@ -1628,12 +1628,13 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 			for (idx0 = 0; idx0 < len_subcomps; idx0++)
 				if (texts[idx0])
 					len_cat += strlen(texts[idx0]);
-			char concat[len_cat];
+			char *concat = malloc(len_cat);
 			*concat = '\0';
 			for (idx0 = 0; idx0 < len_subcomps; idx0++)
 				if (texts[idx0])
 					strcat(concat, texts[idx0]);
 			struct oval_value *value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+			free(concat);
 			oval_collection_add(value_collection, value);
 			bool rotate = true;
 			if (passnum < catnum) {
