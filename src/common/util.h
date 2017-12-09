@@ -436,4 +436,11 @@ char **oscap_split(char *str, const char *delim);
  */
 char *oscap_realpath(const char *path, char *resolved_path);
 
+/**
+ * Return filename component of a path
+ * @param path path
+ * @return filename component of path
+ */
+char *oscap_basename(char *path);
+
 #endif				/* OSCAP_UTIL_H_ */
