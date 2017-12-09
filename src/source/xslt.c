@@ -156,8 +156,7 @@ static xmlDoc *apply_xslt_path_internal(struct oscap_source *source, const char 
 		}
 	}
 
-	char **args = malloc(sizeof(char *) * (argc + 1));
-	memset(args, 0, sizeof(char *) * (argc + 1));
+	char **args = calloc(argc + 1, sizeof(char *));
 
 	for (size_t i = 0; i < argc; i += 2) {
 		args[i] = (char*) params[i];
