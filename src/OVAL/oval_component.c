@@ -1603,7 +1603,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 		/* bool has_some[len_subcomps]; <-- unused variable */
 		not_finished = false;
 		char **texts = malloc(len_subcomps * sizeof(char *));
-		int counts[len_subcomps];
+		int *counts = malloc(len_subcomps * sizeof(int));
 		int catnum = 1;
 		for (idx0 = 0; idx0 < len_subcomps; idx0++) {
 			struct oval_value_iterator *comp_values =
@@ -1660,6 +1660,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 							   (oscap_destruct_func) oval_value_free);
 			}
 		}
+		free(counts);
 		free(texts);
 		free(values);
 	}
