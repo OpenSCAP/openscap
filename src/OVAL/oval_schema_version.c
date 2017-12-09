@@ -62,9 +62,8 @@ oval_schema_version_t oval_schema_version_from_cstr(const char *ver_str)
 		dE("Regular expression compilation failed with %s", pattern);
 		return version;
 	}
-	const int ovector_size = OVECTOR_LEN;
 	int ovector[OVECTOR_LEN];
-	int rc = pcre_exec(re, NULL, ver_str, strlen(ver_str), 0, 0, ovector, ovector_size);
+	int rc = pcre_exec(re, NULL, ver_str, strlen(ver_str), 0, 0, ovector, OVECTOR_LEN);
 	pcre_free(re);
 	if (rc < 0) {
 		dE("Regular expression %s did not match string %s", pattern, ver_str);
