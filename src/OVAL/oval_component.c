@@ -1784,7 +1784,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(oval_argu_t
 		while (oval_value_iterator_has_more(values)) {
 			char *text = oval_value_get_text(oval_value_iterator_next(values));
 			if (len_delim) {
-				char split[strlen(text) + 2], *split0 = split;
+				char *split = malloc(strlen(text) + 2);
+				char *split0 = split;
 				*split0 = '\0';
 				strcat(split0, text);
 				split0[strlen(text) + 1] = '\0';	/*last two characters are EOS */
@@ -1797,6 +1798,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(oval_argu_t
 				}
 				value = oval_value_new(OVAL_DATATYPE_STRING, split0);
 				oval_collection_add(value_collection, value);
+				free(split);
 			} else {	/*Empty delimiter, Split at every character */
 				char split[] = { '\0', '\0' };
 				int idx;
