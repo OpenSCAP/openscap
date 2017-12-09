@@ -233,7 +233,9 @@ char *oscap_acquire_guess_realpath(const char *filepath)
 			free(copy);
 			return NULL;
 		}
-		rpath = oscap_sprintf("%s/%s", real_dir, basename((char *)filepath));
+		char *base_name = oscap_basename((char *)filepath);
+		rpath = oscap_sprintf("%s/%s", real_dir, base_name);
+		free(base_name);
 		free(copy);
 	}
 	return rpath;
