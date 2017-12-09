@@ -318,7 +318,9 @@ static int oval_session_setup_agent(struct oval_session *session)
 	if (session->sess)
 		oval_agent_destroy_session(session->sess);
 
-	session->sess = oval_agent_new_session(session->def_model, basename(path_clone));
+	char *base_name = oscap_basename(path_clone);
+	session->sess = oval_agent_new_session(session->def_model, base_name);
+	free(base_name);
 	if (session->sess == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to create a new agent session.");
 		free(path_clone);

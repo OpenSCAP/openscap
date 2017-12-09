@@ -228,8 +228,9 @@ static int ds_sds_register_sce(struct ds_sds_session *session, xmlNodePtr compon
 {
 	// the cast is safe to do because we are using the GNU basename, it doesn't
 	// modify the string
-	const char* file_basename = basename((char*)relative_filepath);
+	char *file_basename = oscap_basename((char*)relative_filepath);
 	char *sce_filename = oscap_sprintf("%s/%s/%s",ds_sds_session_get_target_dir(session), target_filename_dirname, file_basename);
+	free(file_basename);
 	const int ret = ds_sds_dump_component_sce(component_inner_root->children, component_id, sce_filename);
 	free(sce_filename);
 	return ret;

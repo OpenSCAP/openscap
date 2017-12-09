@@ -860,7 +860,7 @@ void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **o
 
 	for (int i = 0; oval_filenames[i];) {
 		resources[i] = malloc(sizeof(struct oval_content_resource));
-		resources[i]->href = strdup(basename(oval_filenames[i]));
+		resources[i]->href = oscap_basename(oval_filenames[i]);
 		resources[i]->source = oscap_source_new_from_file(oval_filenames[i]);
 		resources[i]->source_owned = true;
 		i++;

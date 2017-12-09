@@ -616,7 +616,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			{
 				struct sce_check_result* check_result = sce_check_result_new();
 				sce_check_result_set_href(check_result, tmp_href);
-				sce_check_result_set_basename(check_result, basename(tmp_href));
+				char *base_name = oscap_basename(tmp_href);
+				sce_check_result_set_basename(check_result, base_name);
+				free(base_name);
 				sce_check_result_set_stdout(check_result, stdout_buffer);
 				sce_check_result_set_stderr(check_result, stderr_buffer);
 				sce_check_result_set_exit_code(check_result, WEXITSTATUS(wstatus));
