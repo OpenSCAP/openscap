@@ -87,15 +87,18 @@ int app_xslt(const char *infile, const char *xsltfile, const char *outfile, cons
 
 	/* add params oscap-version & pwd */
 	const char *stdparams[] = { "oscap-version", oscap_get_version(), "pwd", pwd, NULL };
-	const char *par[paramlist_size(params) + paramlist_size(stdparams) + 1];
+	size_t par_size = paramlist_size(params) + paramlist_size(stdparams) + 1;
+	const char **par = malloc(par_size * sizeof(const char *));
 	size_t s  = paramlist_cpy(par    , params);
         paramlist_cpy(par + s, stdparams);
 
 	if (oscap_apply_xslt(infile, xsltfile, outfile, par)==-1) {
 		fprintf(stderr, "%s: %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+		free(par);
 		return OSCAP_ERROR;
 	}
 
+	free(par);
 	return OSCAP_OK;
 }
 
