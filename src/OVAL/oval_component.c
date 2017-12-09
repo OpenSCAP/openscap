@@ -1521,7 +1521,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(oval_argu_t
 			    (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 			while (oval_value_iterator_has_more(values)) {
 				char *key = oval_value_get_text(oval_value_iterator_next(values));
-				size_t concat_len = len_prefix + strlen(key) + 1;
+				const size_t concat_len = len_prefix + strlen(key) + 1;
 				char *concat = malloc(concat_len);
 				if (strncmp(prefix, key, len_prefix)) {
 					snprintf(concat, concat_len, "%s%s", prefix, key);
