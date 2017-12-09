@@ -1569,12 +1569,14 @@ int xccdf_session_export_oval(struct xccdf_session *session)
 			j = 0;
 			varmod_itr = oval_definition_model_get_variable_models(defmod);
 			while (oval_variable_model_iterator_has_more(varmod_itr)) {
-				char fname[strlen(sname) + 32];
+				size_t fname_len = strlen(sname) + 32;
+				char *fname = malloc(fname_len);
 				struct oval_variable_model *varmod;
 
 				varmod = oval_variable_model_iterator_next(varmod_itr);
-				snprintf(fname, sizeof(fname), "%s-%d.variables-%d.xml", sname, i, j++);
+				snprintf(fname, fname_len, "%s-%d.variables-%d.xml", sname, i, j++);
 				oval_variable_model_export(varmod, fname);
+				free(fname);
 			}
 			if (escaped_url != NULL)
 				free(escaped_url);
