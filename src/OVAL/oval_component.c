@@ -2142,7 +2142,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 			struct oval_value *value = oval_value_iterator_next(values);
 			char *text = oval_value_get_text(value);
 			int len = strlen(text);
-			char string[2 * len + 1], *insert = string;
+			char *string = malloc(2 * len + 1);
+			char *insert = string;
 			while (*text) {
 				if (_isEscape(*text))
 					*insert++ = '\\';
@@ -2150,6 +2151,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 			}
 			*insert = '\0';
 			value = oval_value_new(OVAL_DATATYPE_STRING, string);
+			free(string);
 			oval_collection_add(value_collection, value);
 		}
 		oval_value_iterator_free(values);
