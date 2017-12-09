@@ -1841,12 +1841,13 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 			txtlen = strlen(text);
 			sublen = (len < 0 || (size_t) len > txtlen) ? txtlen : (size_t) len;
 			if ((size_t) beg < txtlen) {
-				char substr[sublen + 1];
+				char *substr = malloc(sublen + 1);
 
 				strncpy(substr, text + beg, sublen);
 				substr[sublen] = '\0';
 
 				value = oval_value_new(OVAL_DATATYPE_STRING, substr);
+				free(substr);
 				oval_collection_add(value_collection, value);
 			} else {
 				flag = SYSCHAR_FLAG_ERROR;
