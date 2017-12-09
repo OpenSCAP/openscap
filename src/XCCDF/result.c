@@ -51,13 +51,14 @@
 #include "common/debug_priv.h"
 #include "source/oscap_source_priv.h"
 
+#define XCCDF_NUMERIC_SIZE 32
+
 // References containing STIG Rule IDs can be found by their href attribute, it must match the following url
 static const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
 
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
 static const char *XCCDF_INSTANCE_DEFAULT_CONTEXT = "undefined";
-const size_t XCCDF_NUMERIC_SIZE = 32;
 const char *XCCDF_NUMERIC_FORMAT = "%f";
 
 // prototypes
