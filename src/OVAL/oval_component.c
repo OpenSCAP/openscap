@@ -1521,13 +1521,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_BEGIN(oval_argu_t
 			    (struct oval_value_iterator *)oval_collection_iterator(subcoll);
 			while (oval_value_iterator_has_more(values)) {
 				char *key = oval_value_get_text(oval_value_iterator_next(values));
-				char concat[len_prefix + strlen(key) + 1];
+				const size_t concat_len = len_prefix + strlen(key) + 1;
+				char *concat = malloc(concat_len);
 				if (strncmp(prefix, key, len_prefix)) {
-					snprintf(concat, sizeof(concat), "%s%s", prefix, key);
+					snprintf(concat, concat_len, "%s%s", prefix, key);
 				} else {
-					snprintf(concat, sizeof(concat), "%s", key);
+					snprintf(concat, concat_len, "%s", key);
 				}
 				struct oval_value *concat_value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+				free(concat);
 				oval_collection_add(value_collection, concat_value);
 			}
 			oval_value_iterator_free(values);
@@ -1557,13 +1559,15 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_END(oval_argu_t *
 			while (oval_value_iterator_has_more(values)) {
 				char *key = oval_value_get_text(oval_value_iterator_next(values));
 				int len_key = strlen(key);
-				char concat[len_suffix + len_key + 1];
+				const size_t concat_len = len_suffix + len_key + 1;
+				char *concat = malloc(concat_len);
 				if ((len_suffix > len_key) || strncmp(suffix, key + len_key - len_suffix, len_suffix)) {
-					snprintf(concat, sizeof(concat), "%s%s", key, suffix);
+					snprintf(concat, concat_len, "%s%s", key, suffix);
 				} else {
-					snprintf(concat, sizeof(concat), "%s", key);
+					snprintf(concat, concat_len, "%s", key);
 				}
 				struct oval_value *concat_value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+				free(concat);
 				oval_collection_add(value_collection, concat_value);
 			}
 			oval_value_iterator_free(values);
@@ -1585,7 +1589,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int len_subcomps = oval_component_iterator_remaining(subcomps);
-	struct oval_collection *component_colls[len_subcomps];
+	struct oval_collection **component_colls = malloc(len_subcomps * sizeof(struct oval_collection *));
 	for (idx0 = 0; oval_component_iterator_has_more(subcomps); idx0++) {
 		struct oval_collection *subcoll = oval_collection_new();
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
@@ -1595,11 +1599,11 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 	}
 	bool not_finished = (len_subcomps > 0) && _HAS_VALUES(flag);
 	if (not_finished) {
-		struct oval_value_iterator *values[len_subcomps];
+		struct oval_value_iterator **values = malloc(len_subcomps * sizeof(struct oval_value_iterator *));
 		/* bool has_some[len_subcomps]; <-- unused variable */
 		not_finished = false;
-		char *texts[len_subcomps];
-		int counts[len_subcomps];
+		char **texts = malloc(len_subcomps * sizeof(char *));
+		int *counts = malloc(len_subcomps * sizeof(int));
 		int catnum = 1;
 		for (idx0 = 0; idx0 < len_subcomps; idx0++) {
 			struct oval_value_iterator *comp_values =
@@ -1624,12 +1628,13 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 			for (idx0 = 0; idx0 < len_subcomps; idx0++)
 				if (texts[idx0])
 					len_cat += strlen(texts[idx0]);
-			char concat[len_cat];
+			char *concat = malloc(len_cat);
 			*concat = '\0';
 			for (idx0 = 0; idx0 < len_subcomps; idx0++)
 				if (texts[idx0])
 					strcat(concat, texts[idx0]);
 			struct oval_value *value = oval_value_new(OVAL_DATATYPE_STRING, concat);
+			free(concat);
 			oval_collection_add(value_collection, value);
 			bool rotate = true;
 			if (passnum < catnum) {
@@ -1656,7 +1661,11 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_CONCAT(oval_argu_
 							   (oscap_destruct_func) oval_value_free);
 			}
 		}
+		free(counts);
+		free(texts);
+		free(values);
 	}
+	free(component_colls);
 	oval_component_iterator_free(subcomps);
 	return flag;
 }
@@ -1671,7 +1680,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_COUNT(oval_argu_t
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int len_subcomps = oval_component_iterator_remaining(subcomps);
-	struct oval_collection *component_colls[len_subcomps];
+	struct oval_collection **component_colls = malloc(len_subcomps * sizeof(struct oval_collection *));
 	for (idx0 = 0; oval_component_iterator_has_more(subcomps); idx0++) {
 		struct oval_collection *subcoll = oval_collection_new();
 		struct oval_component *subcomp = oval_component_iterator_next(subcomps);
@@ -1702,6 +1711,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_COUNT(oval_argu_t
 	for (idx0 = 0; idx0 < len_subcomps; ++idx0)
 	  oval_collection_free_items(component_colls[idx0], (oscap_destruct_func) oval_value_free);
 
+	free(component_colls);
 	return flag;
 }
 
@@ -1713,7 +1723,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 	oval_syschar_collection_flag_t flag = SYSCHAR_FLAG_UNKNOWN;
 	struct oval_component_iterator *subcomps = oval_component_get_function_components(component);
 	int len_subcomps = oval_component_iterator_remaining(subcomps);
-	struct oval_collection *component_colls[len_subcomps];
+	struct oval_collection **component_colls = malloc(len_subcomps * sizeof(struct oval_collection *));
 
 	for (idx0 = 0; oval_component_iterator_has_more(subcomps); idx0++) {
 		struct oval_collection *subcoll = oval_collection_new();
@@ -1752,6 +1762,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_UNIQUE(oval_argu_
 	for (idx0 = 0; idx0 < len_subcomps; ++idx0)
 	  oval_collection_free_items(component_colls[idx0], (oscap_destruct_func) oval_value_free);
 
+	free(component_colls);
 	return flag;
 }
 
@@ -1773,7 +1784,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(oval_argu_t
 		while (oval_value_iterator_has_more(values)) {
 			char *text = oval_value_get_text(oval_value_iterator_next(values));
 			if (len_delim) {
-				char split[strlen(text) + 2], *split0 = split;
+				char *split = malloc(strlen(text) + 2);
+				char *split0 = split;
 				*split0 = '\0';
 				strcat(split0, text);
 				split0[strlen(text) + 1] = '\0';	/*last two characters are EOS */
@@ -1786,6 +1798,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SPLIT(oval_argu_t
 				}
 				value = oval_value_new(OVAL_DATATYPE_STRING, split0);
 				oval_collection_add(value_collection, value);
+				free(split);
 			} else {	/*Empty delimiter, Split at every character */
 				char split[] = { '\0', '\0' };
 				int idx;
@@ -1828,12 +1841,13 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_SUBSTRING(oval_ar
 			txtlen = strlen(text);
 			sublen = (len < 0 || (size_t) len > txtlen) ? txtlen : (size_t) len;
 			if ((size_t) beg < txtlen) {
-				char substr[sublen + 1];
+				char *substr = malloc(sublen + 1);
 
 				strncpy(substr, text + beg, sublen);
 				substr[sublen] = '\0';
 
 				value = oval_value_new(OVAL_DATATYPE_STRING, substr);
+				free(substr);
 				oval_collection_add(value_collection, value);
 			} else {
 				flag = SYSCHAR_FLAG_ERROR;
@@ -2128,7 +2142,8 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 			struct oval_value *value = oval_value_iterator_next(values);
 			char *text = oval_value_get_text(value);
 			int len = strlen(text);
-			char string[2 * len + 1], *insert = string;
+			char *string = malloc(2 * len + 1);
+			char *insert = string;
 			while (*text) {
 				if (_isEscape(*text))
 					*insert++ = '\\';
@@ -2136,6 +2151,7 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ESCAPE_REGEX(oval
 			}
 			*insert = '\0';
 			value = oval_value_new(OVAL_DATATYPE_STRING, string);
+			free(string);
 			oval_collection_add(value_collection, value);
 		}
 		oval_value_iterator_free(values);

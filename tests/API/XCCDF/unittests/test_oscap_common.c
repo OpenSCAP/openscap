@@ -26,6 +26,8 @@
 #include "common/util.h"
 #include "../../../assume.h"
 
+#define SEEN_LEN 9
+
 static bool _simple_string_filter(void *first, void *second)
 {
 	return !oscap_strcmp((char *)first, (char *)second);
@@ -133,10 +135,9 @@ static void _test_hit_single_item(void)
 
 static void _test_hit_multiple_items(void)
 {
-	static const int n = 9;
-	bool seen[n];
+	bool seen[SEEN_LEN];
 	struct oscap_htable *h = oscap_htable_new();
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < SEEN_LEN; i++) {
 		char key[10];
 		snprintf(key, 10, "%d", i);
 		assume(oscap_htable_add(h, key, NULL));
@@ -153,9 +154,9 @@ static void _test_hit_multiple_items(void)
 		seen[key[0] - '0'] = true;
 		i++;
 	}
-	assume(i == n);
+	assume(i == SEEN_LEN);
 	oscap_htable_iterator_free(hit);
-	for (i = 0; i < n; i++) {
+	for (i = 0; i < SEEN_LEN; i++) {
 		assume(seen[i]);
 	}
 	oscap_htable_free0(h);
@@ -201,10 +202,9 @@ static void _test_hit_single_item1(void)
 
 static void _test_hit_multiple_items1(void)
 {
-	static const int n = 9;
-	bool seen[n];
+	bool seen[SEEN_LEN];
 	struct oscap_htable *h = oscap_htable_new1(_htable_cmp, 1);
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < SEEN_LEN; i++) {
 		char key[10];
 		snprintf(key, 10, "%d", i);
 		assume(oscap_htable_add(h, key, NULL));
@@ -221,9 +221,9 @@ static void _test_hit_multiple_items1(void)
 		seen[key[0] - '0'] = true;
 		i++;
 	}
-	assume(i == n);
+	assume(i == SEEN_LEN);
 	oscap_htable_iterator_free(hit);
-	for (i = 0; i < n; i++) {
+	for (i = 0; i < SEEN_LEN; i++) {
 		assume(seen[i]);
 	}
 	oscap_htable_free0(h);

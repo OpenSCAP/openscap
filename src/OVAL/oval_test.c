@@ -452,7 +452,7 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 
 	/* get test name */
 	const char *subtype_text = oval_subtype_get_text(subtype);
-	char test_name[strlen(subtype_text) + 6];
+	char *test_name = malloc(strlen(subtype_text) + 6);
 	sprintf(test_name, "%s_test", subtype_text);
 
 	oval_family_t family = oval_test_get_family(test);
@@ -460,6 +460,7 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 	/* search namespace & create child */
 	xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_DEFINITIONS_NAMESPACE, doc, parent);
 	test_node = xmlNewTextChild(parent, ns_family, BAD_CAST test_name, NULL);
+	free(test_name);
 
 	char *id = oval_test_get_id(test);
 	xmlNewProp(test_node, BAD_CAST "id", BAD_CAST id);

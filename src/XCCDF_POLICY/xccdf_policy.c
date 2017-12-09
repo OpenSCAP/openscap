@@ -2017,26 +2017,24 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
     const struct xccdf_version_info* version_info = xccdf_benchmark_get_schema_version(benchmark);
     doc_version = xccdf_version_info_get_version(version_info);
 
+	const char *rid_prefix;
 #ifdef __USE_GNU
-    if (strverscmp("1.2", doc_version) >= 0)
+	if (strverscmp("1.2", doc_version) >= 0)
 #else
-    if (strcmp("1.2", doc_version) >= 0)
+	if (strcmp("1.2", doc_version) >= 0)
 #endif
-    {
-        // we have to enforce a certain type of ids for XCCDF 1.2+
-
-        char rid[32+strlen(id)];
-        sprintf(rid, "xccdf_org.open-scap_testresult_%s", id);
-        xccdf_result_set_id(result, rid);
-    }
-    else {
-
-    	// previous behaviour for backwards compatibility
-
-        char rid[11+strlen(id)];
-        sprintf(rid, "OSCAP-Test-%s", id);
-        xccdf_result_set_id(result, rid);
-    }
+	{
+		// we have to enforce a certain type of ids for XCCDF 1.2+
+		rid_prefix = "xccdf_org.open-scap_testresult_";
+	} else {
+		// previous behaviour for backwards compatibility
+		rid_prefix = "OSCAP-Test-";
+	}
+	const size_t rid_len = strlen(rid_prefix) + strlen(id) + 1; // + 1 for terminating '\0'
+	char *rid = malloc(rid_len);
+	snprintf(rid, rid_len, "%s%s", rid_prefix, id);
+	xccdf_result_set_id(result, rid);
+	free(rid);
 
     free(id);
 

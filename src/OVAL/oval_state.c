@@ -335,7 +335,7 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	/* get state name */
 	oval_subtype_t subtype = oval_state_get_subtype(state);
 	const char *subtype_text = oval_subtype_get_text(subtype);
-	char state_name[strlen(subtype_text) + 7];
+	char *state_name = malloc(strlen(subtype_text) + 7);
 	sprintf(state_name, "%s_state", subtype_text);
 
 	oval_family_t family = oval_state_get_family(state);
@@ -343,6 +343,7 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 	/* search namespace & create child */ 
 	xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_DEFINITIONS_NAMESPACE, doc, parent);
 	xmlNode *state_node = xmlNewTextChild(parent, ns_family, BAD_CAST state_name, NULL);
+	free(state_name);
 
 	char *id = oval_state_get_id(state);
 	xmlNewProp(state_node, BAD_CAST "id", BAD_CAST id);

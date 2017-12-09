@@ -257,7 +257,7 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * p
 		if (subtype) {
 			/* get item subtype */
 			const char *subtype_text = oval_subtype_get_text(subtype);
-			char tagname[strlen(subtype_text) + 6];
+			char *tagname = malloc(strlen(subtype_text) + 6);
 			sprintf(tagname, "%s_item", subtype_text);
 
 			oval_family_t family = oval_subtype_get_family(subtype);
@@ -265,6 +265,7 @@ void oval_sysitem_to_dom(struct oval_sysitem *sysitem, xmlDoc * doc, xmlNode * p
 			/* search namespace & create child */
 			xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_SYSCHAR_NAMESPACE, doc, parent);
 			xmlNode *tag_sysitem = xmlNewTextChild(parent, ns_family, BAD_CAST tagname, NULL);
+			free(tagname);
 
 			/* attributes */
 			xmlNewProp(tag_sysitem, BAD_CAST "id", BAD_CAST oval_sysitem_get_id(sysitem));

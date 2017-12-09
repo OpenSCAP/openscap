@@ -401,7 +401,7 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 
 	/* get object name */
 	const char *subtype_text = oval_subtype_get_text(subtype);
-	char object_name[strlen(subtype_text) + 8];
+	char *object_name = malloc(strlen(subtype_text) + 8);
 	sprintf(object_name, "%s_object", subtype_text);
 
 	oval_family_t family = oval_object_get_family(object);
@@ -409,6 +409,7 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 	/* search namespace & create child */
 	xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_DEFINITIONS_NAMESPACE, doc, parent);
 	object_node = xmlNewTextChild(parent, ns_family, BAD_CAST object_name, NULL);
+	free(object_name);
 
 	char *id = oval_object_get_id(object);
 	xmlNewProp(object_node, BAD_CAST "id", BAD_CAST id);
