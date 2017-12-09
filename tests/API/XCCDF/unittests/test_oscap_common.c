@@ -135,8 +135,8 @@ static void _test_hit_single_item(void)
 
 static void _test_hit_multiple_items(void)
 {
-	static const int n = 9;
-	bool seen[n];
+	static const int n = SEEN_LEN;
+	bool seen[SEEN_LEN];
 	struct oscap_htable *h = oscap_htable_new();
 	for (int i = 0; i < n; i++) {
 		char key[10];
