@@ -46,4 +46,8 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 #define OSCAP_UNIX
 #endif
 
+#ifdef _WIN32
+#define PATH_MAX _MAX_PATH
+#endif
+
 #endif

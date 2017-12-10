@@ -237,7 +237,7 @@ char *oscap_expand_ipv6(const char *input)
 char *oscap_realpath(const char *path, char *resolved_path)
 {
 #ifdef _WIN32
-	return _fullpath(resolved_path, path, MAX_PATH);
+	return _fullpath(resolved_path, path, PATH_MAX);
 #else
 	return realpath(path, resolved_path);
 #endif
@@ -248,7 +248,7 @@ char *oscap_basename(char *path)
 #ifdef _WIN32
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
-	_splitpath_s(path_buffer, NULL, 0, NULL, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
+	_splitpath_s(path, NULL, 0, NULL, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
 	size_t base_len = strlen(fname) + strlen(ext) + 1;
 	char *base = malloc(base_len);
 	strncpy(base, fname, base_len);

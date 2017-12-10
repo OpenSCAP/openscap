@@ -57,11 +57,11 @@ oscap_acquire_temp_dir()
 #ifdef _WIN32
 	DWORD dwRetVal = 0;
 	UINT uRetVal = 0;
-	TCHAR lpTempPathBuffer[MAX_PATH];
-	TCHAR szTempFileName[MAX_PATH];
+	TCHAR lpTempPathBuffer[PATH_MAX];
+	TCHAR szTempFileName[PATH_MAX];
 
-	dwRetVal = GetTempPath(MAX_PATH, lpTempPathBuffer);
-	if (dwRetVal > MAX_PATH || dwRetVal == 0) {
+	dwRetVal = GetTempPath(PATH_MAX, lpTempPathBuffer);
+	if (dwRetVal > PATH_MAX || dwRetVal == 0) {
 		oscap_seterr(OSCAP_EFAMILY_WINDOWS, "Could not retrieve the path of the directory for temporary files.");
 		return NULL;
 	}

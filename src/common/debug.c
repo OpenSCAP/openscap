@@ -88,7 +88,7 @@ oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
 #if defined(_WIN32)
 static char * get_program_name()
 {
-        char path[MAX_PATH + 1];
+        char path[PATH_MAX + 1];
         int path_size = GetModuleFileName(NULL, path, sizeof(path) - 1);
 
         if(path_size < 0)
