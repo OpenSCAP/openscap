@@ -74,7 +74,7 @@ oscap_acquire_temp_dir()
 		oscap_seterr(OSCAP_EFAMILY_WINDOWS, "Could not create temp directory '%s'.", szTempFileName);
 		return NULL;
 	}
-	return strdup(szTempFileName);
+	return oscap_strdup(szTempFileName);
 #else
 	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
 	if (mkdtemp(temp_dir) == NULL) {
