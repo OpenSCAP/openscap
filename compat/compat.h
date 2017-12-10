@@ -29,4 +29,8 @@
 char *strsep(char **stringp, const char *delim);
 #endif
 
+#if defined(unix) || defined(__unix__) || defined(__unix)
+#define OSCAP_UNIX
+#endif
+
 #endif
