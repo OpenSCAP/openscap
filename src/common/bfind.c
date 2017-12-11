@@ -26,7 +26,11 @@
 #endif
 
 #include <stddef.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdint.h>
 #include <assert.h>
 
