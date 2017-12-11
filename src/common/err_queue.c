@@ -127,10 +127,9 @@ int err_queue_to_string(struct err_queue *q, char **result)
 	char *pos = *result;
 	pos[0] = '\0';
 	err = q->first;
-	size_t desc_len;
 	while (err != NULL) {
 		if (err->desc != NULL) {
-			desc_len = strlen(err->desc);
+			const size_t desc_len = strlen(err->desc);
 			strncpy(pos, err->desc, desc_len);
 			pos += desc_len;
 			*pos = '\n';
