@@ -54,6 +54,7 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
 #define __PRETTY_FUNCTION__ __FUNCTION__
+#define __attribute__(x)
 #endif
 
 #endif
