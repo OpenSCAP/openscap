@@ -737,7 +737,7 @@ static char *_cpe_get_oval_href(struct cpe_dict_model *dict, struct cpe_lang_mod
 
 		// we need to strdup because dirname potentially alters the string
 		origin_file = oscap_strdup(origin_file_c ? origin_file_c : "");
-		const char* prefix_dirname = dirname(origin_file);
+		char *prefix_dirname = oscap_dirname(origin_file);
 		if (is_path_relative_subdir(prefix_dirname)) {
 			// The path is relative. Do not overide it.
 			// Chances are that ds_sds_session expects the very same href
@@ -745,6 +745,7 @@ static char *_cpe_get_oval_href(struct cpe_dict_model *dict, struct cpe_lang_mod
 		} else {
 			oval_href = oscap_sprintf("%s/%s", prefix_dirname, oval_relative_href);
 		}
+		free(prefix_dirname);
 		free(origin_file);
 	}
 	return oval_href;
