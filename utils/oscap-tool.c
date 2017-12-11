@@ -30,7 +30,11 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
