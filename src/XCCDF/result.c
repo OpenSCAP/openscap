@@ -26,7 +26,14 @@
 
 #include <math.h>
 #include <string.h>
+
+#ifdef _WIN32
+#include <io.h>
+#include <windows.h>
+#include <lmcons.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifdef OSCAP_UNIX
 #include <sys/utsname.h>
@@ -39,11 +46,6 @@
 #include <net/if.h>
 #include <netdb.h>
 #include <sys/ioctl.h>
-#endif
-
-#if defined(_WIN32)
-# include <windows.h>
-# include <lmcons.h>
 #endif
 
 #include "item.h"
