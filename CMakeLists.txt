@@ -216,9 +216,14 @@ set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
 set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
 
 # ENABLES TESTS
-# Tests will be turned on only on Linux, because the test suite uses bash
+# Tests will be turned off on Windows, because the test suite uses bash
 # and other Linux-specific tools.
-set(ENABLE_TESTS ${IS_LINUX} CACHE BOOL "enables tests")
+if(WIN32)
+	set(ENABLE_TESTS FALSE CACHE BOOL "enables tests")
+else()
+	set(ENABLE_TESTS TRUE CACHE BOOL "enables tests")
+endif()
+
 
 # SEAP_MSGID_BITS
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
