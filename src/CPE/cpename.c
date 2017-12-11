@@ -537,7 +537,7 @@ bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * aga
 
 	for (i = 0; i < cpefn; ++i) {
 		const char *cpefield = cpe_get_field(cpe, i);
-		if (cpefield && strcasecmp(cpefield, as_str(cpe_get_field(against, i))) != 0)
+		if (cpefield && oscap_strcasecmp(cpefield, as_str(cpe_get_field(against, i))) != 0)
 			return false;
 	}
 
