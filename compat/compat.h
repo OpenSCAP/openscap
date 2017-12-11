@@ -50,4 +50,9 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 #define PATH_MAX _MAX_PATH
 #endif
 
+#ifdef _MSC_VER
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 #endif
