@@ -479,4 +479,13 @@ int oscap_strcasecmp(const char *s1, const char *s2);
 */
 int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
 
+/**
+ * Extract tokens from strings
+ * @param str string
+ * @param delim st of delimiters
+ * @param saveptr Used to store position information between calls to strtok_s
+ * @return token
+ */
+char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
+
 #endif				/* OSCAP_UTIL_H_ */

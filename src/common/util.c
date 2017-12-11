@@ -291,3 +291,12 @@ int oscap_strncasecmp(const char *s1, const char *s2, size_t n)
 	return strncasecmp(s1, s2, n);
 #endif
 }
+
+char *oscap_strtok_r(char *str, const char *delim, char **saveptr)
+{
+#ifdef _WIN32
+	return strtok_s(str, delim, saveptr);
+#else
+	return strtok_r(str, delim, saveptr);
+#endif
+}
