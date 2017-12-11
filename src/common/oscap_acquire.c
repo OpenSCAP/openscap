@@ -26,17 +26,18 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#include <ftw.h>
+#endif
 #include <limits.h>
 #include <sys/stat.h>
 
 #include <curl/curl.h>
 #include <curl/easy.h>
 #include <libgen.h>
-
-#ifndef _WIN32
-#include <ftw.h>
-#endif
 
 #include "oscap_acquire.h"
 #include "common/util.h"
