@@ -193,7 +193,6 @@ void oval_string_map_free_string(struct oval_string_map *map)
 }
 #else
 # include "probes/SEAP/generic/rbt/rbt.h"
-# include <assume.h>
 
 struct oval_string_map *oval_string_map_new(void)
 {
@@ -204,8 +203,9 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 {
         char *key_copy;
 
-	assume_d(map != NULL, /* void */);
-	assume_d(key != NULL, /* void */);
+	if (map == NULL || key == NULL) {
+		return;
+	}
 
 	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), val) != 0) {
 		dD("rbt_str_add: non-zero return code");
@@ -215,10 +215,10 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
 
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *val)
 {
+	if (map == NULL || key == NULL) {
+		return;
+	}
 	char *str = strdup(val), *key_copy;
-
-	assume_d(map != NULL, /* void */);
-	assume_d(key != NULL, /* void */);
 
 	if (rbt_str_add((rbt_t *)map, key_copy = strdup(key), str) == 0)
 		return;
@@ -233,8 +233,9 @@ void *oval_string_map_get_value(struct oval_string_map *map, const char *key)
 {
 	void *val = NULL;
 
-	assume_d(map != NULL, NULL);
-	assume_d(key != NULL, NULL);
+	if (map == NULL || key == NULL) {
+		return;
+	}
 
 	if (rbt_str_get((rbt_t *)map, key, &val) != 0)
 		return (NULL);
@@ -251,7 +252,9 @@ static void __oval_string_map_node_free(struct rbt_str_node *n, oscap_destruct_f
 
 void oval_string_map_free(struct oval_string_map *map, oscap_destruct_func destroy)
 {
-	assume_d(map != NULL, /* void */);
+	if (map == NULL) {
+		return;
+	}
 	rbt_str_free_cb2((rbt_t *)map,
 			 (void(*)(struct rbt_str_node *, void *))__oval_string_map_node_free,
 			 (void *)destroy);
@@ -264,7 +267,9 @@ void oval_string_map_free0(struct oval_string_map *map)
 
 void oval_string_map_free_string(struct oval_string_map *map)
 {
-	assume_d(map != NULL, /* void */);
+	if (map == NULL) {
+		return;
+	}
 	oval_string_map_free(map, free);
 }
 
@@ -299,7 +304,9 @@ struct oval_iterator *oval_string_map_keys(struct oval_string_map *map)
 {
 	struct oval_iterator *it;
 
-	assume_d(map != NULL, NULL);
+	if (map == NULL) {
+		return NULL;
+	}
 
 	it = oval_collection_iterator_new();
 	rbt_str_walk_inorder2((rbt_t *)map, __oval_iterator_addkey, it, 0);
@@ -311,7 +318,9 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 {
 	struct oval_iterator *it;
 
-	assume_d(map != NULL, NULL);
+	if (map == NULL) {
+		return NULL;
+	}
 
 	it = oval_collection_iterator_new();
 	rbt_str_walk_inorder2((rbt_t *)map, __oval_iterator_addval, it, 0);
@@ -321,7 +330,9 @@ struct oval_iterator *oval_string_map_values(struct oval_string_map *map)
 
 struct oval_collection *oval_string_map_collect_values(struct oval_string_map *map, struct oval_collection *collection)
 {
-	assume_d(map != NULL, NULL);
+	if (map == NULL) {
+		return NULL;
+	}
 
 	if (collection == NULL)
 		collection = oval_collection_new();
