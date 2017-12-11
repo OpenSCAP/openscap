@@ -43,7 +43,6 @@
 
 #include <sys/stat.h>
 #include <time.h>
-#include <libgen.h>
 #include <string.h>
 
 #include <libxml/parser.h>

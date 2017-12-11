@@ -26,7 +26,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
-#include <libgen.h>
 
 /* openscap common */
 #include <oscap.h>

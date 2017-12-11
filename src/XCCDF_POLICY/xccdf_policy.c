@@ -29,7 +29,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <libgen.h>
 
 #include "xccdf_policy_priv.h"
 #include "xccdf_policy_model_priv.h"

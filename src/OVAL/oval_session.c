@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 
-#include <libgen.h>
 #ifdef _WIN32
 #include <io.h>
 #else
