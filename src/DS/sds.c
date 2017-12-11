@@ -56,7 +56,11 @@
 
 #include <string.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024
