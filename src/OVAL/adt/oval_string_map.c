@@ -234,7 +234,7 @@ void *oval_string_map_get_value(struct oval_string_map *map, const char *key)
 	void *val = NULL;
 
 	if (map == NULL || key == NULL) {
-		return;
+		return NULL;
 	}
 
 	if (rbt_str_get((rbt_t *)map, key, &val) != 0)
