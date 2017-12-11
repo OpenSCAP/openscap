@@ -157,8 +157,12 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool i
 		 * Every process using the log file must open it in append mode,
 		 * because otherwise some data may be missing on output.
 		 */
+#ifdef _WIN32
+		fd = open(filename, O_APPEND | O_CREAT | O_TRUNC | O_WRONLY, S_IREAD | S_IWRITE);
+#else
 		fd = open(filename, O_APPEND | O_CREAT | O_TRUNC | O_WRONLY,
 			S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+#endif
 	}
 	if (fd == -1) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Failed to open file %s: %s.", filename, strerror(errno));
