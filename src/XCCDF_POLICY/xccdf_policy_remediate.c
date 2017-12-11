@@ -29,7 +29,11 @@
 #include <sys/wait.h>
 #endif
 
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include <libxml/tree.h>
 #include <pcre.h>
