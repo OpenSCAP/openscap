@@ -119,7 +119,11 @@ oscap_acquire_cleanup_dir(char **dir_path)
 int
 oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 {
+#ifdef _WIN32
+	int old_mode;
+#else
 	mode_t old_mode;
+#endif
 	int fd;
 
 	if (dir == NULL || template == NULL || filename == NULL)
