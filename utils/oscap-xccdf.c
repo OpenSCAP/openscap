@@ -954,7 +954,11 @@ int app_generate_fix(const struct oscap_action *action)
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
+#ifdef _WIN32
+	int output_fd = _fileno(stdout);
+#else
 	int output_fd = STDOUT_FILENO;
+#endif
 	if (action->f_results != NULL) {
 		if ((output_fd = open(action->f_results, O_CREAT|O_TRUNC|O_NOFOLLOW|O_WRONLY, 0700)) < 0) {
 			fprintf(stderr, "Could not open %s: %s", action->f_results, strerror(errno));
@@ -987,7 +991,11 @@ int app_generate_fix(const struct oscap_action *action)
 			ret = OSCAP_OK;
 	}
 cleanup2:
+#ifdef _WIN32
+	if (output_fd != _fileno(stdout))
+#else
 	if (output_fd != STDOUT_FILENO)
+#endif
 		close(output_fd);
 cleanup:
 	ds_rds_session_free(arf_session);
