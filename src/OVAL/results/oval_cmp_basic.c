@@ -117,7 +117,7 @@ static int istrcmp(const char *st1, const char *st2)
 		st1 = "";
 	if (st2 == NULL)
 		st2 = "";
-	return strcasecmp(st1, st2);
+	return oscap_strcasecmp(st1, st2);
 }
 
 static oval_result_t strregcomp(const char *pattern, const char *test_str)
