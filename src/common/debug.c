@@ -31,7 +31,11 @@
 # include <stdlib.h>
 # include <sys/types.h>
 # include <sys/file.h>
-# include <unistd.h>
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <unistd.h>
+#endif
 # include <time.h>
 # include <errno.h>
 # include <fcntl.h>
