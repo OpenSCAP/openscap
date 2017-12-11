@@ -55,6 +55,12 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 typedef SSIZE_T ssize_t;
 #define __PRETTY_FUNCTION__ __FUNCTION__
 #define __attribute__(x)
+
+/* Definitions for access() */
+#define F_OK 0
+#define W_OK 2
+#define R_OK 4
+
 #endif
 
 #endif
