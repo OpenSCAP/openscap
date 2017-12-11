@@ -31,6 +31,7 @@
 #include <direct.h>
 #else
 #include <unistd.h>
+#include <libgen.h>
 #include <ftw.h>
 #endif
 #include <limits.h>
@@ -38,7 +39,6 @@
 
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <libgen.h>
 
 #include "oscap_acquire.h"
 #include "common/util.h"
