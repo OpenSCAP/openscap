@@ -30,7 +30,9 @@
 # include <string.h>
 # include <stdlib.h>
 # include <sys/types.h>
+#ifdef HAVE_FLOCK
 # include <sys/file.h>
+#endif
 #ifdef _WIN32
 #include <io.h>
 #else
