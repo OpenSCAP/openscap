@@ -41,7 +41,7 @@ static int app_cvrf_evaluate(const struct oscap_action *action);
 static int app_cvrf_export(const struct oscap_action *action);
 static int app_cvrf_validate(const struct oscap_action *action);
 
-static struct oscap_module* CVRF_SUBMODULES[];
+static struct oscap_module* CVRF_SUBMODULES[4];
 
 struct oscap_module OSCAP_CVRF_MODULE = {
 	.name = "cvrf",
