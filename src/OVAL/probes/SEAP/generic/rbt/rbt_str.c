@@ -88,7 +88,7 @@ void rbt_str_free_cb2 (rbt_t *rbt, void (*callback)(struct rbt_str_node *, void 
 int rbt_str_add(rbt_t *rbt, char *key, void *data)
 {
         struct rbt_node fake;
-        register struct rbt_node *h[4];
+        struct rbt_node *h[4];
         register uint8_t dvec;
         register char *n_key, *u_key;
         register int  cmp;

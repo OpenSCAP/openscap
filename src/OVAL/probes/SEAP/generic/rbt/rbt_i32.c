@@ -95,7 +95,7 @@ void rbt_i32_free_cb (rbt_t *rbt, void (*callback)(rbt_i32_node_t *))
 int rbt_i32_add(rbt_t *rbt, int32_t key, void *data, void **coll)
 {
         struct rbt_node fake;
-        register struct rbt_node *h[4];
+        struct rbt_node *h[4];
         register uint8_t dvec;
         register int32_t n_key, u_key;
 

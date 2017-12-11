@@ -94,7 +94,7 @@ void rbt_i64_free_cb (rbt_t *rbt, void (*callback)(rbt_i64_node_t *))
 int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll)
 {
         struct rbt_node fake;
-        register struct rbt_node *h[4];
+        struct rbt_node *h[4];
         register uint8_t dvec;
         register int64_t n_key, u_key;
 
