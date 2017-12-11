@@ -731,7 +731,8 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 		// Ansible is special because we have two output modes, variable and
 		// task mode. In both cases we have to do post processing. 
 
-		ret = _xccdf_policy_rule_generate_fix_ansible(template, output_fd, fix_text, ansible_variable_mode);
+		// We can't recover the return value (it is rewritten by a later call) to _write_fix_footer_to_fd
+		_xccdf_policy_rule_generate_fix_ansible(template, output_fd, fix_text, ansible_variable_mode);
 		free(fix_text);
 	}
 	else {

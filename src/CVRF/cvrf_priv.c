@@ -2325,8 +2325,9 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 
 	char *buffer = "";
 	char **buffer_ptr = &buffer;
-	size_t *size = 0;
-	if (oscap_source_get_raw_memory(index_source, buffer_ptr, size) == 1) {
+	/* oscap_source_get_raw_memory doesn't check for null pointers s.a. null size */
+	size_t size = 0;
+	if (oscap_source_get_raw_memory(index_source, buffer_ptr, &size) == 1) {
 		return NULL;
 	}
 	struct cvrf_index *index = cvrf_index_new();
