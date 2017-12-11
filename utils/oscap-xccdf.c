@@ -42,13 +42,14 @@
 #include <errno.h>
 #include <assert.h>
 #include <limits.h>
+#ifdef _WIN32
+#include <io.h>
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 #if defined(HAVE_SYSLOG_H)
 #include <syslog.h>
-#endif
-
-#if defined(_WIN32)
-#include <windows.h>
 #endif
 
 #include "oscap-tool.h"
