@@ -33,7 +33,11 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
+#ifndef _WIN32
 #include <unistd.h>
+#else
+#include <io.h>
+#endif
 #include <fcntl.h>
 
 #include "public/oscap.h"
