@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #else
 #include <libgen.h>
+#include <strings.h>
 #endif
 
 
@@ -271,4 +272,22 @@ char *oscap_dirname(char *path)
 	char *dirpath = dirname(path);
 #endif
 	return oscap_strdup(dirpath);
+}
+
+int oscap_strcasecmp(const char *s1, const char *s2)
+{
+#ifdef _WIN32
+	return _stricmp(s1, s2);
+#else
+	return strcasecmp(s1, s2);
+#endif
+}
+
+int oscap_strncasecmp(const char *s1, const char *s2, size_t n)
+{
+#ifdef _WIN32
+	return _strnicmp(s1, s2, n);
+#else
+	return strncasecmp(s1, s2, n);
+#endif
 }

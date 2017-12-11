@@ -458,4 +458,25 @@ OSCAP_API char *oscap_basename(char *path);
  */
 char *oscap_dirname(char *path);
 
+/**
+ * compare two strings ignoring case
+ * @param s1 first string
+ * @param s2 second string
+ * @return an integer less than, equal to, or greater than zero if s1 is,
+ * after ignoring case, found to be less than, to match, or be greater
+ * than s2,  respectively.
+ */
+int oscap_strcasecmp(const char *s1, const char *s2);
+
+/**
+* compare two strings ignoring case
+* @param s1 first string
+* @param s2 second string
+* @param n compare no more than n bytes of s1 and s2
+* @return an integer less than, equal to, or greater than zero if s1 is,
+* after ignoring case, found to be less than, to match, or be greater
+* than s2,  respectively.
+*/
+int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
+
 #endif				/* OSCAP_UTIL_H_ */
