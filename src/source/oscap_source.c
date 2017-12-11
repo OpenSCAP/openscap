@@ -26,7 +26,11 @@
 
 #include <string.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 #include <libxml/xmlerror.h>
