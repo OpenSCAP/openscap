@@ -26,7 +26,11 @@
 
 #include <libgen.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include <oscap.h>
 #include "oscap_source.h"
