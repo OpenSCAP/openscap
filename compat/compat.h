@@ -53,6 +53,7 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 #ifdef _MSC_VER
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
+#define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
 #endif
