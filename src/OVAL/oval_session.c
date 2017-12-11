@@ -25,7 +25,11 @@
 #endif
 
 #include <libgen.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <string.h>
 #if defined(__linux__)
 #include <linux/limits.h>
