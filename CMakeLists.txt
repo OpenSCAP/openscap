@@ -121,6 +121,7 @@ check_include_file(syslog.h HAVE_SYSLOG_H)
 check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
 check_include_file(shadow.h HAVE_SHADOW_H)
 check_include_file(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
+check_include_file(getopt.h HAVE_GETOPT_H)
 
 # HAVE_ATOMIC_BUILTINS
 check_c_source_compiles("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
