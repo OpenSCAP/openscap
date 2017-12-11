@@ -34,7 +34,6 @@
 #include "elements.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
-#include "common/assume.h"
 #include "common/debug_priv.h"
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
@@ -146,8 +145,9 @@ static void xccdf_item_dump_deps(struct xccdf_item *item, int depth)
 	struct oscap_list *conflicts = NULL, *requires = NULL;
 	xccdf_deps_get(item, &conflicts, &requires);
 
-	assume_r(conflicts != NULL &&
-		 requires  != NULL, /* void */);
+	if (conflicts == NULL || requires == NULL) {
+		return;
+	}
 
 	if (requires->itemcount > 0) {
 		struct oscap_list_item *it;
