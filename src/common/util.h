@@ -444,4 +444,11 @@ OSCAP_API char *oscap_realpath(const char *path, char *resolved_path);
  */
 OSCAP_API char *oscap_basename(char *path);
 
+/**
+ * Return directory component of a path
+ * @param path path
+ * @return dirname component of path
+ */
+char *oscap_dirname(char *path);
+
 #endif				/* OSCAP_UTIL_H_ */

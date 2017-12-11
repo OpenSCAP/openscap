@@ -37,6 +37,8 @@
 
 #ifdef _WIN32
 #include <stdlib.h>
+#else
+#include <libgen.h>
 #endif
 
 
@@ -258,4 +260,15 @@ char *oscap_basename(char *path)
 	char *base = basename(path);
 	return oscap_strdup(base);
 #endif
+}
+
+char *oscap_dirname(char *path)
+{
+#ifdef _WIN32
+	char dirpath[_MAX_DIR];
+	_splitpath_s(path, NULL, 0, dirpath, _MAX_DIR, NULL, 0, NULL, 0);
+#else
+	char *dirpath = dirname(path);
+#endif
+	return oscap_strdup(dirpath);
 }
