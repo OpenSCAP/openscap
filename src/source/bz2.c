@@ -28,7 +28,11 @@
 #include <libxml/tree.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "bz2_priv.h"
 #include "common/_error.h"
