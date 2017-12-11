@@ -35,6 +35,7 @@
 #endif
 #include <limits.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include <curl/curl.h>
 #include <curl/easy.h>
@@ -129,10 +130,17 @@ oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 		return -1;
 
 	*filename = malloc(PATH_MAX * sizeof(char));
-	snprintf(*filename, PATH_MAX, "%s/%s", dir, template);
-
 	old_mode = umask(077); /* Override unusual umask. Ensure 0700 permissions. */
+#ifdef _WIN32
+	char *base_name = oscap_strdup(template);
+	_mktemp_s(base_name, strlen(base_name) + 1); // +1 for terminator
+	snprintf(*filename, PATH_MAX, "%s/%s", dir, base_name);
+	free(base_name);
+	fd = open(*filename, _O_RDWR | _O_CREAT, _S_IREAD | _S_IWRITE);
+#else
+	snprintf(*filename, PATH_MAX, "%s/%s", dir, template);
 	fd = mkstemp(*filename);
+#endif
 	(void) umask(old_mode);
 	if (fd < 1) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "mkstemp for %s failed: %s", *filename, strerror(errno));
