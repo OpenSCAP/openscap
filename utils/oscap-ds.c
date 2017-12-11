@@ -26,7 +26,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
