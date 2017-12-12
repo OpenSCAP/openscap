@@ -131,6 +131,9 @@ check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
 check_function_exists(memalign HAVE_MEMALIGN)
 check_function_exists(fts_open HAVE_FTS_OPEN)
+check_function_exists(strsep HAVE_STRSEP)
+check_function_exists(flock HAVE_FLOCK)
+check_function_exists(strptime HAVE_STRPTIME)
 
 # HAVE HEADERS
 check_include_file(syslog.h HAVE_SYSLOG_H)
@@ -212,6 +215,16 @@ set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
 # ENABLES OSCAP UTIL CHROOT
 set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
 
+# ENABLES TESTS
+# Tests will be turned off on Windows, because the test suite uses bash
+# and other Linux-specific tools.
+if(WIN32)
+	set(ENABLE_TESTS FALSE CACHE BOOL "enables tests")
+else()
+	set(ENABLE_TESTS TRUE CACHE BOOL "enables tests")
+endif()
+
+
 # SEAP_MSGID_BITS
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 
@@ -255,8 +268,14 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wvla -Wnonnull -Wsh
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
 endif()
+if(WIN32)
+	# expose new WinAPI function appearing on Windows 7
+	# eg. inet_pton
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_WIN32_WINNT=0x0600")
+endif()
 
 include_directories(
+	"compat/"
 	"src/"
 	"src/common/"
 	"src/common/public/"
@@ -279,6 +298,7 @@ include_directories(
 	${LIBXML2_INCLUDE_DIR}
 )
 
+add_subdirectory("compat")
 add_subdirectory("src")
 add_subdirectory("utils")
 add_subdirectory("docs")
@@ -297,8 +317,10 @@ install(FILES
 )
 
 # Ctest
-enable_testing()
-add_subdirectory("tests")
+if(ENABLE_TESTS)
+	enable_testing()
+	add_subdirectory("tests")
+endif()
 
 # CPack
 set(CPACK_SOURCE_PACKAGE_FILE_NAME "openscap-${OPENSCAP_VERSION}")

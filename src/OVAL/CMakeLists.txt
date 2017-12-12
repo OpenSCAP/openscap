@@ -1,5 +1,6 @@
 add_subdirectory("results")
 add_subdirectory("adt")
+add_subdirectory("probes")
 file(GLOB_RECURSE PUBLIC_HEADERS "public/*.h")
 
 set (OVAL_SOURCES
@@ -53,8 +54,6 @@ set (OVAL_SOURCES
 )
 
 if (ENABLE_PROBES)
-    add_subdirectory("probes")
-    
     list(APPEND OVAL_SOURCES
 	"oval_probe.c"
 	"oval_probe_hint.c"

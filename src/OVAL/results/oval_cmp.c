@@ -30,8 +30,13 @@
 
 #include <string.h>
 #include <inttypes.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#endif
 
 #include "oval_types.h"
 #include "oval_system_characteristics.h"

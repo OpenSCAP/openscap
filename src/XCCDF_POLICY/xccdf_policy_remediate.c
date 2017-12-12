@@ -24,7 +24,11 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+
+#ifdef OSCAP_UNIX
 #include <sys/wait.h>
+#endif
+
 #include <unistd.h>
 
 #include <libxml/tree.h>

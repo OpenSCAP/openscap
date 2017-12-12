@@ -72,7 +72,7 @@ int probe_main(probe_ctx *ctx, void *arg)
         "windows";
 #elif defined(Macintosh) || defined(macintosh) || (defined(__APPLE__) && defined(__MACH__))
         "macos";
-#elif defined(__unix__) || defined(__unix)
+#elif defined(OSCAP_UNIX)
         "unix";
 #elif defined(CISCO_IOS) /* XXX: how to detect IOS? */
         "ios";

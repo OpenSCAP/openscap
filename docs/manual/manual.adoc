@@ -1971,11 +1971,10 @@ If we want to generate new statistics, we should remove the old ones.
  $ lcov --directory ./ --zerocounters ; find ./ -name "*.gcno" | xargs rm
  $ rm -rf ./coverage
 
-=== Building OpenSCAP for Windows (cross-compilation)
-Building OpenSCAP for Windows without a POSIX emulation layer is currently not
-possible. However, we are close to a native port of OpenSCAP for Windows. If you
-want to help us solve the remaining problems. Instructions for cross-compiling
-OpenSCAP for Windows:
+=== Building OpenSCAP for Windows on a Linux box (cross-compilation)
+Currently it is possible to build OpenSCAP for Windows only without probes.
+The resulting binary is not able to perform scanning.
+Instructions for cross-compiling OpenSCAP for Windows:
 
 1) Install the cross-compiler & dependencies
 
@@ -1985,7 +1984,7 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
  # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
  mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
  mingw32-curl mingw32-pcre \
- automake autoconf libtool
+ mingw32-filesystem mingw32-bzip2
 -------------------------------------------------------------
 
 2) Checkout the master branch of the OpenSCAP repository
@@ -1998,25 +1997,18 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
 3) Prepare the build
 
 ----------------------------------------------------------------------------------
- $ ./autogen.sh
- $ mingw32-configure --disable-probes --disable-python --disable-util-oscap-docker
+ $ mkdir build-win32
+ $ cd build-win32
+ $ mingw32-cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
 ----------------------------------------------------------------------------------
 
 4) Build!
 
 ------------------------------
- $ make -k 2> build-errors.log
+ $ make
 ------------------------------
 
-5) Inspect build-errors.log for problems
-
------------------------------------------------
- $ grep -E '(error:|implicit)' build-errors.log
------------------------------------------------
-
------------------------------------------------------------------------------
-oval_resModel.c:70:28: error: conflicting types for 'oval_results_model_new_with_probe_session'
------------------------------------------------------------------------------
+Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
 
 If you would like to send us a patch fixing any Windows
 compiling issues, please consult the page about

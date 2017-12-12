@@ -42,6 +42,7 @@ add_subdirectory("XCCDF")
 add_subdirectory("XCCDF_POLICY")
 
 set(OBJECTS_TO_LINK_AGAINST
+	$<TARGET_OBJECTS:compat_object>
 	$<TARGET_OBJECTS:common_object>
 	$<TARGET_OBJECTS:cpe_object>
 	$<TARGET_OBJECTS:cve_object>
@@ -53,6 +54,7 @@ set(OBJECTS_TO_LINK_AGAINST
 	$<TARGET_OBJECTS:ovaladt_object>
 	$<TARGET_OBJECTS:ovalcmp_object>
 	$<TARGET_OBJECTS:ovalresults_object>
+	$<TARGET_OBJECTS:rbt_object>
 	$<TARGET_OBJECTS:xccdf_object>
 	$<TARGET_OBJECTS:xccdfPolicy_object>
 )
@@ -62,7 +64,6 @@ endif()
 if (ENABLE_PROBES)
 	list(APPEND OBJECTS_TO_LINK_AGAINST
 		$<TARGET_OBJECTS:probe_object>
-		$<TARGET_OBJECTS:rbt_object>
 		$<TARGET_OBJECTS:seap_object>
 	)
 endif()
@@ -76,6 +77,9 @@ endif()
 if(RPM_FOUND)
 	# just because of rpmvercmp
 	target_link_libraries(openscap ${RPM_LIBRARIES})
+endif()
+if(WIN32)
+	target_link_libraries(openscap wsock32 ws2_32)
 endif()
 
 install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})

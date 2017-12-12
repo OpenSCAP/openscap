@@ -35,6 +35,7 @@
 # include <time.h>
 # include <errno.h>
 # include <fcntl.h>
+# include <sys/stat.h>
 
 #if defined(OVAL_PROBES_ENABLED)
 # include <sexp.h>
@@ -51,7 +52,7 @@
 #endif
 
 #if defined(_WIN32)
-# include "flock.h"
+# include <windows.h>
 # define GET_PROGRAM_NAME get_program_name()
 #elif defined(__APPLE__)
 # define GET_PROGRAM_NAME getprogname()
@@ -87,7 +88,7 @@ oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
 #if defined(_WIN32)
 static char * get_program_name()
 {
-        char path[MAX_PATH + 1];
+        char path[PATH_MAX + 1];
         int path_size = GetModuleFileName(NULL, path, sizeof(path) - 1);
 
         if(path_size < 0)

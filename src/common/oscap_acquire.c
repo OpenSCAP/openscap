@@ -28,6 +28,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <limits.h>
+#include <sys/stat.h>
 
 #include <curl/curl.h>
 #include <curl/easy.h>
@@ -53,6 +54,28 @@
 char *
 oscap_acquire_temp_dir()
 {
+#ifdef _WIN32
+	DWORD dwRetVal = 0;
+	UINT uRetVal = 0;
+	TCHAR lpTempPathBuffer[PATH_MAX];
+	TCHAR szTempFileName[PATH_MAX];
+
+	dwRetVal = GetTempPath(PATH_MAX, lpTempPathBuffer);
+	if (dwRetVal > PATH_MAX || dwRetVal == 0) {
+		oscap_seterr(OSCAP_EFAMILY_WINDOWS, "Could not retrieve the path of the directory for temporary files.");
+		return NULL;
+	}
+	uRetVal = GetTempFileName(lpTempPathBuffer, TEXT("oscap"), 0, szTempFileName);
+	if (uRetVal == 0) {
+		oscap_seterr(OSCAP_EFAMILY_WINDOWS, "Could not get a name for new temporary directory.");
+		return NULL;
+	}
+	if (!CreateDirectory(szTempFileName, NULL)) {
+		oscap_seterr(OSCAP_EFAMILY_WINDOWS, "Could not create temp directory '%s'.", szTempFileName);
+		return NULL;
+	}
+	return oscap_strdup(szTempFileName);
+#else
 	char *temp_dir = strdup(TEMP_DIR_TEMPLATE);
 	if (mkdtemp(temp_dir) == NULL) {
 		free(temp_dir);
@@ -60,6 +83,7 @@ oscap_acquire_temp_dir()
 		return NULL;
 	}
 	return temp_dir;
+#endif
 }
 
 #ifndef _WIN32
