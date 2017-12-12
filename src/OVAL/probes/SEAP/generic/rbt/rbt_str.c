@@ -440,8 +440,10 @@ int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), 
 
 int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(struct rbt_str_node *))
 {
-        assume_d (rbt      != NULL, -1, errno = EINVAL;);
-        assume_d (callback != NULL, -1, errno = EINVAL;);
+	if (rbt == NULL || callback == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
 
         switch (type & RBT_WALK_TYPEMASK) {
         case RBT_WALK_PREORDER:   return rbt_str_walk_preorder(rbt, callback, type);
