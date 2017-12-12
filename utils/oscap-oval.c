@@ -37,6 +37,7 @@
 #include <ds_sds_session.h>
 #include <assert.h>
 #include <limits.h>
+#include <getopt.h>
 
 #include "oscap-tool.h"
 #include "scap_ds.h"

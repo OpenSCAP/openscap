@@ -42,6 +42,8 @@
 #include <errno.h>
 #include <assert.h>
 #include <limits.h>
+#include <getopt.h>
+
 #ifdef _WIN32
 #include <io.h>
 #include <windows.h>
