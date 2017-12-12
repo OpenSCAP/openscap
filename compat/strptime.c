@@ -23,6 +23,7 @@
    this is enough information for determining the date.  */
 
 #include <string.h>
+#include <ctype.h>
 #include "compat.h"
 
 #ifndef __P
