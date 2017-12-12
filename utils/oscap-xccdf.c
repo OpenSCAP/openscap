@@ -42,7 +42,9 @@
 #include <errno.h>
 #include <assert.h>
 #include <limits.h>
+#ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#endif
 
 #ifdef _WIN32
 #include <io.h>

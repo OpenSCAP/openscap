@@ -26,7 +26,9 @@
 
 #include "oscap-tool.h"
 #include <assert.h>
+#ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#endif
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
