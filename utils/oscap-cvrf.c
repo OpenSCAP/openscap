@@ -151,7 +151,9 @@ static int app_cvrf_export(const struct oscap_action *action) {
 		if (oscap_err())
 			fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	oscap_source_free(import_source);
+	/* TODO: Refactor, cvrf_index_parse_xml (called by oscap_source_new_from_file) frees its argument as an unexpected side-effect.
+	 * oscap_source_free(import_source);
+	 */
 	free(action->cvrf_action);
 	return result;
 }
