@@ -2010,6 +2010,54 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
 
 Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
 
+=== Building OpenSCAP on Windows using Visual Studio
+
+Prerequisites:
+
+* https://www.visualstudio.com/[Visual Studio]
+* https://git-scm.com/[Git]
+* https://cmake.org/[CMake]
+
+1) Get dependencies
+
+We will use https://github.com/Microsoft/vcpkg[Vcpkg] to download libraries
+that are required to build OpenSCAP.
+
+----
+mkdir c:\devel
+cd c:\devel
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+.\bootstrap-vcpkg.bat
+.\vcpkg install curl libxml2 libxslt bzip2 pcre
+.\vcpkg integrate install
+----
+
+2) Get OpenSCAP
+
+----
+cd c:\devel
+git clone -b master https://github.com/OpenSCAP/openscap.git
+----
+
+3) Generate Visual Studio Solution
+
+----
+cd openscap
+cd build
+cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+----
+
+4) Open in Visual Studio
+
+1. Launch Visual Studio
+2. Click on File -> Open -> Project/Solution...
+3. Locate c:\devel\openscap\build\openscap.sln
+
+5) Build
+
+Unfortunately, the build is not possible at the moment. We have numerous issues.
+
 If you would like to send us a patch fixing any Windows
 compiling issues, please consult the page about
 http://open-scap.org/page/Contribute[contributing to the OpenSCAP
