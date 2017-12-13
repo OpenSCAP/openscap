@@ -456,7 +456,7 @@ OSCAP_API char *oscap_basename(char *path);
  * @param path path
  * @return dirname component of path
  */
-char *oscap_dirname(char *path);
+OSCAP_API char *oscap_dirname(char *path);
 
 /**
  * compare two strings ignoring case
@@ -466,7 +466,7 @@ char *oscap_dirname(char *path);
  * after ignoring case, found to be less than, to match, or be greater
  * than s2,  respectively.
  */
-int oscap_strcasecmp(const char *s1, const char *s2);
+OSCAP_API int oscap_strcasecmp(const char *s1, const char *s2);
 
 /**
 * compare two strings ignoring case
@@ -477,7 +477,7 @@ int oscap_strcasecmp(const char *s1, const char *s2);
 * after ignoring case, found to be less than, to match, or be greater
 * than s2,  respectively.
 */
-int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
+OSCAP_API int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
 
 /**
  * Extract tokens from strings
@@ -486,6 +486,6 @@ int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
  * @param saveptr Used to store position information between calls to strtok_s
  * @return token
  */
-char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
+OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
 
 #endif				/* OSCAP_UTIL_H_ */

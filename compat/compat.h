@@ -22,6 +22,7 @@
 
 #ifndef OSCAP_COMPAT_H_
 #define OSCAP_COMPAT_H_
+#include "oscap_export.h"
 
 /* Fallback functions fixing portability issues */
 
@@ -83,7 +84,7 @@ struct option
 	int val;
 };
 
-int getopt_long(int ___argc, char *__getopt_argv_const *___argv,
+OSCAP_API int getopt_long(int ___argc, char *__getopt_argv_const *___argv,
 	const char *__shortopts,
 	const struct option *__longopts, int *__longind);
 
