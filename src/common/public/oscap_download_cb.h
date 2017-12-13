@@ -22,11 +22,13 @@
 #ifndef OSCAP_DOWNLOAD_CB_H_
 #define OSCAP_DOWNLOAD_CB_H_
 
+#include "oscap_export.h"
+
 /**
  * Type of the function used to report progress of download.
  * @param warning indicates whether the message is rather warning or notice
  * @param format printf-like format string
  */
-typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
+OSCAP_API typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
 
 #endif

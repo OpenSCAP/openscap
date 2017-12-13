@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/stat.h>
+#include "oscap_export.h"
 
 /**
  * Filesystem device structure.
@@ -48,23 +49,23 @@ typedef struct {
  * Initialize the fsdev_t structure from an array of filesystem
  * names.
  */
-fsdev_t *fsdev_init(const char **fs, size_t fs_cnt);
+OSCAP_API fsdev_t *fsdev_init(const char **fs, size_t fs_cnt);
 
 /**
  * Initialize the fsdev_t structure from a string containing filesystem
  * names.
  */
-fsdev_t *fsdev_strinit(const char *fs_names);
+OSCAP_API fsdev_t *fsdev_strinit(const char *fs_names);
 
 /**
  * Free the fsdev_t structure.
  */
-void fsdev_free(fsdev_t * lfs);
+OSCAP_API void fsdev_free(fsdev_t * lfs);
 
 /**
  * Search an id in the fsdev_t structure.
  */
-int fsdev_search(fsdev_t * lfs, void *id);
+OSCAP_API int fsdev_search(fsdev_t * lfs, void *id);
 
 /**
  * Check whether a path points points to a place on any of the devices
@@ -75,7 +76,7 @@ int fsdev_search(fsdev_t * lfs, void *id);
  * @retval 0 otherwise
  * @retval -1 error
  */
-int fsdev_path(fsdev_t * lfs, const char *path);
+OSCAP_API int fsdev_path(fsdev_t * lfs, const char *path);
 
 /**
  * Check whether a file descriptor is associated with a file that resides
@@ -86,7 +87,7 @@ int fsdev_path(fsdev_t * lfs, const char *path);
  * @retval 0 otherwise
  * @retval -1 error
  */
-int fsdev_fd(fsdev_t * lfs, int fd);
+OSCAP_API int fsdev_fd(fsdev_t * lfs, int fd);
 
 #endif				/* FSDEV_H */
 /// @}

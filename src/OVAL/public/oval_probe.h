@@ -37,6 +37,7 @@
 #include "oval_definitions.h"
 #include "oval_system_characteristics.h"
 #include "oval_probe_session.h"
+#include "oscap_export.h"
 
 /*
  * probe session flags
@@ -54,14 +55,14 @@
  * @param sess probe session
  * @param out_sysinfo address of a pointer to hold the result
  */
-int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **out_sysinfo) __attribute__ ((nonnull(1, 2)));
+OSCAP_API int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **out_sysinfo) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Evaluate an object
  * @param sess probe session
  * @param object the object to evaluate
  */
-int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags, struct oval_syschar **out_syschar) __attribute__ ((nonnull(1, 2)));
+OSCAP_API int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *object, int flags, struct oval_syschar **out_syschar) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Probe objects required for the evalatuation of the specified definition and update the system characteristics model associated with the session
@@ -69,7 +70,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
  * @param id definition id
  * @return 0 on success; -1 on error; 1 warning
  */
-OSCAP_DEPRECATED(int oval_probe_query_definition(oval_probe_session_t *sess, const char *id)) __attribute__ ((nonnull(1, 2)));
+OSCAP_API OSCAP_DEPRECATED(int oval_probe_query_definition(oval_probe_session_t *sess, const char *id)) __attribute__ ((nonnull(1, 2)));
 
 /**
  * Query the specified variable and all its dependencies in order to compute the vector of its values
@@ -77,14 +78,14 @@ OSCAP_DEPRECATED(int oval_probe_query_definition(oval_probe_session_t *sess, con
  * @param variable the variable to query
  * @return 0 on success
  */
-int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
+OSCAP_API int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
 
 #define OVAL_PROBEMETA_LIST_VERBOSE 0x00000001 /**< Be verbose when listing supported probes */
 #define OVAL_PROBEMETA_LIST_DYNAMIC 0x00000002 /**< Perform additional checks when listing supported probes (i.e. list only existing external probes) */
 #define OVAL_PROBEMETA_LIST_OTYPE   0x00000004 /**< Show the otype / family type of the probe */
 
-void oval_probe_meta_list(FILE *output, int flags);
+OSCAP_API void oval_probe_meta_list(FILE *output, int flags);
 
-const char *oval_probe_ext_getdir(void);
+OSCAP_API const char *oval_probe_ext_getdir(void);
 #endif				/* OVAL_PROBE_H */
 /// @}

@@ -39,6 +39,7 @@
 #define OSCAP_TEXT_H_
 
 #include <stdbool.h>
+#include "oscap_export.h"
 
 /**
  * @name Common language codes
@@ -70,14 +71,14 @@ struct oscap_stringlist;
  * @param encoding - language encoding (@see oscap_text_encoding)
  * @memberof oscap_text
  */
-struct oscap_text *oscap_text_new(void);
+OSCAP_API struct oscap_text *oscap_text_new(void);
 
 /**
  * Clone an internationalized text field.
  * @param text oscap_text structure to clone
  * @memberof oscap_text
  */
-struct oscap_text *oscap_text_clone(const struct oscap_text * text);
+OSCAP_API struct oscap_text *oscap_text_clone(const struct oscap_text * text);
 
 /**
  * Create an internationalized text field with HTML content.
@@ -85,13 +86,13 @@ struct oscap_text *oscap_text_clone(const struct oscap_text * text);
  * @param encoding - language encoding (@see oscap_text_encoding)
  * @memberof oscap_text
  */
-struct oscap_text *oscap_text_new_html(void);
+OSCAP_API struct oscap_text *oscap_text_new_html(void);
 
 /**
  * Release an internationalized text field.
  * @memberof oscap_text
  */
-void oscap_text_free(struct oscap_text *);
+OSCAP_API void oscap_text_free(struct oscap_text *);
 
 /************************************************************/
 /**
@@ -102,41 +103,41 @@ void oscap_text_free(struct oscap_text *);
  * */
 
 /// @memberof oscap_stringlist
-struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list);
+OSCAP_API struct oscap_string_iterator *oscap_stringlist_get_strings(const struct oscap_stringlist* list);
 /// @memberof oscap_stringlist
-struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list);
+OSCAP_API struct oscap_stringlist *oscap_stringlist_clone(struct oscap_stringlist *list);
 
 /// @memberof oscap_text
-const char *oscap_text_get_text(const struct oscap_text *text);
+OSCAP_API const char *oscap_text_get_text(const struct oscap_text *text);
 /// @memberof oscap_text
-const char *oscap_text_get_lang(const struct oscap_text *text);
+OSCAP_API const char *oscap_text_get_lang(const struct oscap_text *text);
 /**
  * Get plaintext representation of the text.
  * Caller is responsible for freeing returned string.
  * @memberof oscap_text
  */
-char *oscap_text_get_plaintext(const struct oscap_text *text);
+OSCAP_API char *oscap_text_get_plaintext(const struct oscap_text *text);
 
 /**
  * Does this text posses a HTML content?
  * @memberof oscap_text
  */
-bool oscap_text_get_is_html(const struct oscap_text *text);
+OSCAP_API bool oscap_text_get_is_html(const struct oscap_text *text);
 /**
  * Can this text contain substitutions?
  * @memberof oscap_text
  */
-bool oscap_text_get_can_substitute(const struct oscap_text *text);
+OSCAP_API bool oscap_text_get_can_substitute(const struct oscap_text *text);
 /**
  * Can this text override parent content?
  * @memberof oscap_text
  */
-bool oscap_text_get_can_override(const struct oscap_text *text);
+OSCAP_API bool oscap_text_get_can_override(const struct oscap_text *text);
 /**
  * Does this text override parent content?
  * @memberof oscap_text
  */
-bool oscap_text_get_overrides(const struct oscap_text *text);
+OSCAP_API bool oscap_text_get_overrides(const struct oscap_text *text);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -153,19 +154,19 @@ bool oscap_text_get_overrides(const struct oscap_text *text);
  * Set whether this text overrides parent content.
  * @memberof oscap_text
  */
-bool oscap_text_set_overrides(struct oscap_text *text, bool overrides);
+OSCAP_API bool oscap_text_set_overrides(struct oscap_text *text, bool overrides);
 
 /// @memberof oscap_text
-bool oscap_text_set_text(struct oscap_text *text, const char * string);
+OSCAP_API bool oscap_text_set_text(struct oscap_text *text, const char * string);
 /// @memberof oscap_text
-bool oscap_text_set_lang(struct oscap_text *text, const char *string);
+OSCAP_API bool oscap_text_set_lang(struct oscap_text *text, const char *string);
 
 /// @memberof oscap_stringlist
-bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str);
+OSCAP_API bool oscap_stringlist_add_string(struct oscap_stringlist* list, const char *str);
 /// @memberof oscap_stringlist
-struct oscap_stringlist * oscap_stringlist_new(void);
+OSCAP_API struct oscap_stringlist * oscap_stringlist_new(void);
 /// @memberof oscap_stringlist
-void oscap_stringlist_free(struct oscap_stringlist *list);
+OSCAP_API void oscap_stringlist_free(struct oscap_stringlist *list);
 
 
 /************************************************************/
@@ -183,15 +184,15 @@ void oscap_stringlist_free(struct oscap_stringlist *list);
  */
 struct oscap_text_iterator;
 /// @memberof oscap_text_iterator
-struct oscap_text *oscap_text_iterator_next(struct oscap_text_iterator *it);
+OSCAP_API struct oscap_text *oscap_text_iterator_next(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
-bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
+OSCAP_API bool oscap_text_iterator_has_more(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
-void oscap_text_iterator_free(struct oscap_text_iterator *it);
+OSCAP_API void oscap_text_iterator_free(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
-void oscap_text_iterator_remove(struct oscap_text_iterator *it);
+OSCAP_API void oscap_text_iterator_remove(struct oscap_text_iterator *it);
 /// @memberof oscap_text_iterator
-void oscap_text_iterator_reset(struct oscap_text_iterator *it);
+OSCAP_API void oscap_text_iterator_reset(struct oscap_text_iterator *it);
 
 /**
  * @struct oscap_string_iterator
@@ -202,15 +203,15 @@ void oscap_text_iterator_reset(struct oscap_text_iterator *it);
  */
 struct oscap_string_iterator;
 /// @memberof oscap_string_iterator
-const char *oscap_string_iterator_next(struct oscap_string_iterator *it);
+OSCAP_API const char *oscap_string_iterator_next(struct oscap_string_iterator *it);
 /// @memberof oscap_string_iterator
-bool oscap_string_iterator_has_more(struct oscap_string_iterator *it);
+OSCAP_API bool oscap_string_iterator_has_more(struct oscap_string_iterator *it);
 /// @memberof oscap_string_iterator
-void oscap_string_iterator_free(struct oscap_string_iterator *it);
+OSCAP_API void oscap_string_iterator_free(struct oscap_string_iterator *it);
 /// @memberof oscap_string_iterator
-void oscap_string_iterator_remove(struct oscap_string_iterator *it);
+OSCAP_API void oscap_string_iterator_remove(struct oscap_string_iterator *it);
 /// @memberof oscap_string_iterator
-void oscap_string_iterator_reset(struct oscap_string_iterator *it);
+OSCAP_API void oscap_string_iterator_reset(struct oscap_string_iterator *it);
 
 /**
  * @struct oscap_stringlist_iterator
@@ -219,15 +220,15 @@ void oscap_string_iterator_reset(struct oscap_string_iterator *it);
  */
 struct oscap_stringlist_iterator;
 /// @memberof oscap_stringlist_iterator
-struct oscap_stringlist *oscap_stringlist_iterator_next(struct oscap_stringlist_iterator *it);
+OSCAP_API struct oscap_stringlist *oscap_stringlist_iterator_next(struct oscap_stringlist_iterator *it);
 /// @memberof oscap_stringlist_iterator
-bool oscap_stringlist_iterator_has_more(struct oscap_stringlist_iterator *it);
+OSCAP_API bool oscap_stringlist_iterator_has_more(struct oscap_stringlist_iterator *it);
 /// @memberof oscap_stringlist_iterator
-void oscap_stringlist_iterator_free(struct oscap_stringlist_iterator *it);
+OSCAP_API void oscap_stringlist_iterator_free(struct oscap_stringlist_iterator *it);
 /// @memberof oscap_stringlist_iterator
-void oscap_stringlist_iterator_remove(struct oscap_stringlist_iterator *it);
+OSCAP_API void oscap_stringlist_iterator_remove(struct oscap_stringlist_iterator *it);
 /// @memberof oscap_stringlist_iterator
-void oscap_stringlist_iterator_reset(struct oscap_stringlist_iterator *it);
+OSCAP_API void oscap_stringlist_iterator_reset(struct oscap_stringlist_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */
@@ -244,7 +245,7 @@ void oscap_stringlist_iterator_reset(struct oscap_stringlist_iterator *it);
  * returned. If nothing is found, plaintext representation of the first text in
  * the list is returned. If the textlist is empty, NULL is returned.
  */
-char* oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator* texts, const char* preferred_lang);
+OSCAP_API char* oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator* texts, const char* preferred_lang);
 
 /**
  * @brief gets oscap_text representing given textlist
@@ -252,7 +253,7 @@ char* oscap_textlist_get_preferred_plaintext(struct oscap_text_iterator* texts, 
  * Similar to @ref oscap_textlist_get_preferred_plaintext but returns oscap_text
  * instead of just the plaintext.
  */
-struct oscap_text *oscap_textlist_get_preferred_text(struct oscap_text_iterator *texts, const char *preferred_lang);
+OSCAP_API struct oscap_text *oscap_textlist_get_preferred_text(struct oscap_text_iterator *texts, const char *preferred_lang);
 
 
 /** @} */

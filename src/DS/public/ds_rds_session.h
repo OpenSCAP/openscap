@@ -29,6 +29,7 @@
 #include "oscap.h"
 #include "oscap_source.h"
 #include "scap_ds.h"
+#include "oscap_export.h"
 
 /**
  * The ds_rds_session is structure tight closely to oscap_source.
@@ -47,14 +48,14 @@ struct ds_rds_session;
  * @param source The oscap_source representing a result datastream
  * @returns newly created ds_rds_session structure
  */
-struct ds_rds_session *ds_rds_session_new_from_source(struct oscap_source *source);
+OSCAP_API struct ds_rds_session *ds_rds_session_new_from_source(struct oscap_source *source);
 
 /**
  * Dispose ds_rds_session structure.
  * @memberof ds_rds_session
  * @param rds_session The session to dispose
  */
-void ds_rds_session_free(struct ds_rds_session *rds_session);
+OSCAP_API void ds_rds_session_free(struct ds_rds_session *rds_session);
 
 /**
  * Get Result DataStream index
@@ -62,7 +63,7 @@ void ds_rds_session_free(struct ds_rds_session *rds_session);
  * @param session Session to query RDS index from
  * @returns Result DataStream index owned by session
  */
-struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session);
+OSCAP_API struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session);
 
 /**
  * Set target directory for the component files
@@ -71,7 +72,7 @@ struct rds_index *ds_rds_session_get_rds_idx(struct ds_rds_session *session);
  * @param target_dir PAth to the target storage dir
  * @returns 0 on success
  */
-int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *target_dir);
+OSCAP_API int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *target_dir);
 
 /**
  * Store cached component files to the hard drive
@@ -79,7 +80,7 @@ int ds_rds_session_set_target_dir(struct ds_rds_session *session, const char *ta
  * @param session The Result DataStream session
  * @returns zero on success
  */
-int ds_rds_session_dump_component_files(struct ds_rds_session *session);
+OSCAP_API int ds_rds_session_dump_component_files(struct ds_rds_session *session);
 
 /**
  * Select arf:report from result DataStream and return it in form of oscap_source.
@@ -89,7 +90,7 @@ int ds_rds_session_dump_component_files(struct ds_rds_session *session);
  * this arguement is NULL.
  * @returns oscap_source owned by the ds_rds_session or NULL on error
  */
-struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id);
+OSCAP_API struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session, const char *report_id);
 
 /**
  * Select arf:report-request from result DataStream and return it in form of oscap_source.
@@ -100,7 +101,7 @@ struct oscap_source *ds_rds_session_select_report(struct ds_rds_session *session
  * session will error out.
  * @returns oscap_source owned by the ds_rds_session or NULL on error
  */
-struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session *session, const char *report_request_id);
+OSCAP_API struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session *session, const char *report_request_id);
 
 /**
  * Replace currently selected report with the content of the source. The previously
@@ -111,7 +112,7 @@ struct oscap_source *ds_rds_session_select_report_request(struct ds_rds_session 
  * @param source The oscap_source to replase selected report with.
  * @returns 0 on success
  */
-int ds_rds_session_replace_report_with_source(struct ds_rds_session *session, struct oscap_source *source);
+OSCAP_API int ds_rds_session_replace_report_with_source(struct ds_rds_session *session, struct oscap_source *source);
 
 /**
  * Returns HTML representation of the given result datastream
@@ -119,6 +120,6 @@ int ds_rds_session_replace_report_with_source(struct ds_rds_session *session, st
  * @param rds_session The ds_rds_session to build HTML from
  * @returns a buffer of HTML content that should be freed by the caller
  */
-char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session);
+OSCAP_API char *ds_rds_session_get_html_report(struct ds_rds_session *rds_session);
 
 #endif

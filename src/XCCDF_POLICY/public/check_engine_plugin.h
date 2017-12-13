@@ -32,6 +32,7 @@
 #define OPENSCAP_CHECK_ENGINE_PLUGIN_H_
 
 #include "xccdf_policy.h"
+#include "oscap_export.h"
 
 struct check_engine_plugin_def
 {
@@ -43,28 +44,28 @@ struct check_engine_plugin_def
 	// NB: path hint is the input file path, can be used for relative path resolution
 
 	// first arg: policy model to register with, second arg: path hint, third arg: user data
-	int (*register_fn)(struct xccdf_policy_model *, const char*, void**);
+int (*register_fn)(struct xccdf_policy_model *, const char*, void**);
 	// first arg: policy model, second arg: user data
-	int (*cleanup_fn)(struct xccdf_policy_model *, void**);
+int (*cleanup_fn)(struct xccdf_policy_model *, void**);
 	// first arg: policy model, second arg: validate, third arg: path hint, fourth arg: user data
-	int (*export_results_fn)(struct xccdf_policy_model *, bool, const char*, void**);
+int (*export_results_fn)(struct xccdf_policy_model *, bool, const char*, void**);
 	// first arg: user data
-	const char *(*get_capabilities_fn)(void**);
+const char *(*get_capabilities_fn)(void**);
 };
 
-struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool quiet);
-struct check_engine_plugin_def *check_engine_plugin_load(const char* path);
-void check_engine_plugin_unload(struct check_engine_plugin_def *plugin);
+OSCAP_API struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool quiet);
+OSCAP_API struct check_engine_plugin_def *check_engine_plugin_load(const char* path);
+OSCAP_API void check_engine_plugin_unload(struct check_engine_plugin_def *plugin);
 
-int check_engine_plugin_register(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, const char *path_hint);
-int check_engine_plugin_cleanup(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model);
-int check_engine_plugin_export_results(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, bool validate, const char *path_hint);
-const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def *plugin);
+OSCAP_API int check_engine_plugin_register(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, const char *path_hint);
+OSCAP_API int check_engine_plugin_cleanup(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model);
+OSCAP_API int check_engine_plugin_export_results(struct check_engine_plugin_def *plugin, struct xccdf_policy_model *model, bool validate, const char *path_hint);
+OSCAP_API const char *check_engine_plugin_get_capabilities(struct check_engine_plugin_def *plugin);
 
 /**
  * This is the entry point of shared objects implementing extra check engines
  */
-typedef int (*check_engine_plugin_entry_fn) (struct check_engine_plugin_def*);
+OSCAP_API typedef int (*check_engine_plugin_entry_fn) (struct check_engine_plugin_def*);
 
 #define OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY
 
@@ -73,7 +74,7 @@ typedef int (*check_engine_plugin_entry_fn) (struct check_engine_plugin_def*);
  *
  * Loading of these will be attempted automatically
  */
-const char * const *check_engine_plugin_get_known_plugins(void);
+OSCAP_API const char * const *check_engine_plugin_get_known_plugins(void);
 
 /// @}
 /// @}

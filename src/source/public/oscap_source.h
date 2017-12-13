@@ -29,6 +29,7 @@
 #include <stddef.h>
 
 #include "oscap.h"
+#include "oscap_export.h"
 
 /**
  * The oscap_source is low-level structure. The oscap_source shall hold
@@ -64,7 +65,7 @@ struct oscap_source;
  * @param filepath Path to the file on a disk
  * @returns newly created oscap_source structure
  */
-struct oscap_source *oscap_source_new_from_file(const char *filepath);
+OSCAP_API struct oscap_source *oscap_source_new_from_file(const char *filepath);
 
 /**
  * Create new oscap_source from raw memory. The memory can contain \0 bytes
@@ -79,20 +80,20 @@ struct oscap_source *oscap_source_new_from_file(const char *filepath);
  * @param filepath Suggested filename for the file or NULL
  * @returns newly created oscap_source_structure
  */
-struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath);
+OSCAP_API struct oscap_source *oscap_source_new_from_memory(const char *buffer, size_t size, const char *filepath);
 
 /**
  * Clone oscap_source structure.
  * @param old Resource to clone
  * @returns A clone of the given oscap_source.
  */
-struct oscap_source *oscap_source_clone(struct oscap_source *old);
+OSCAP_API struct oscap_source *oscap_source_clone(struct oscap_source *old);
 
 /**
  * Dispose oscap_source structure.
  * @param source Resource to dispose
  */
-void oscap_source_free(struct oscap_source *source);
+OSCAP_API void oscap_source_free(struct oscap_source *source);
 
 /**
  * Get filepath of the given resource
@@ -100,7 +101,7 @@ void oscap_source_free(struct oscap_source *source);
  * @param source
  * @returns filepath of the original source or NULL
  */
-const char *oscap_source_get_filepath(struct oscap_source *source);
+OSCAP_API const char *oscap_source_get_filepath(struct oscap_source *source);
 
 /**
  * Get SCAP document type of the given resource
@@ -112,7 +113,7 @@ const char *oscap_source_get_filepath(struct oscap_source *source);
  * This function returns OSCAP_DOCUMENT_UNKNOWN to signal an error. Not being
  * able to determine a valid documnent type is treated as an error.
  */
-oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
+OSCAP_API oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
 
 /**
  * Get the version of the schema for the particular document type
@@ -120,7 +121,7 @@ oscap_document_type_t oscap_source_get_scap_type(struct oscap_source *source);
  * @param source The oscap_source to get the schema version from.
  * @returns the schema version
  */
-const char *oscap_source_get_schema_version(struct oscap_source *source);
+OSCAP_API const char *oscap_source_get_schema_version(struct oscap_source *source);
 
 /**
  * Validate the SCAP document against particular XML schema definition.
@@ -129,7 +130,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source);
  * @note The held resource has to be XML for this function to work.
  * @returns 0 on pass; 1 on fail, and -1 on internal error
  */
-int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user);
+OSCAP_API int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user);
 
 /**
  * Validate the SCAP document against schematron assertions
@@ -139,7 +140,7 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
  * @note The held resource has to be XML for this function to work.
  * @returns 0 on pass; 1 on fail, and -1 on internal error
  */
-int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile);
+OSCAP_API int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile);
 
 /**
  * Returns human readable description of oscap_source origin
@@ -147,7 +148,7 @@ int oscap_source_validate_schematron(struct oscap_source *source, const char *ou
  * @param source The oscap_source to get readable source from.
  * @returns human readable description
  */
-const char *oscap_source_readable_origin(const struct oscap_source *source);
+OSCAP_API const char *oscap_source_readable_origin(const struct oscap_source *source);
 
 /**
  * Store the resource represented by oscap_source to the file.
@@ -157,7 +158,7 @@ const char *oscap_source_readable_origin(const struct oscap_source *source);
  * be used if filename is NULL.
  * @returns 0 on success, 1 or -1 to indicate error
  */
-int oscap_source_save_as(struct oscap_source *source, const char *filename);
+OSCAP_API int oscap_source_save_as(struct oscap_source *source, const char *filename);
 
 /**
  * Retrieve contents refered to by oscap_source as raw memory.
@@ -171,6 +172,6 @@ int oscap_source_save_as(struct oscap_source *source, const char *filename);
  * @param size Will be filled with size of the buffer
  * @returns 0 on success, 1 otherwise
  */
-int oscap_source_get_raw_memory(struct oscap_source *source, char **buffer, size_t *size);
+OSCAP_API int oscap_source_get_raw_memory(struct oscap_source *source, char **buffer, size_t *size);
 
 #endif

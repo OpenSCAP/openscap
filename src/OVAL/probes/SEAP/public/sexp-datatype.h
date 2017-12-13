@@ -27,31 +27,32 @@
 #include <stdarg.h>
 #include <stdint.h>
 #include <sexp.h>
+#include "oscap_export.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void (*SEXP_datatypeOP_t) (SEXP_t *, const SEXP_t *, void *);
+OSCAP_API typedef void (*SEXP_datatypeOP_t) (SEXP_t *, const SEXP_t *, void *);
 
 typedef struct SEXP_datatype    SEXP_datatype_t;
 typedef struct SEXP_datatypeTbl SEXP_datatypeTbl_t;
 
 extern SEXP_datatypeTbl_t g_datatypes;
 
-/* const char *SEXP_datatype (const SEXP_t *sexp); */
+OSCAP_API /* const char *SEXP_datatype (const SEXP_t *sexp); */
 
-int SEXP_datatype_register (SEXP_datatypeTbl_t *t, const char *datatype);
-/* int SEXP_datatype_unregister (void); */
+OSCAP_API int SEXP_datatype_register (SEXP_datatypeTbl_t *t, const char *datatype);
+OSCAP_API /* int SEXP_datatype_unregister (void); */
 
-int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
-int SEXP_datatype_op_safe (const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
+OSCAP_API int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
+OSCAP_API int SEXP_datatype_op_safe (const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
 
-SEXP_datatype_t *SEXP_datatype_new(void);
-int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...);
-int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag);
-int SEXP_datatype_addop(SEXP_datatype_t **dp, int opnum, SEXP_datatypeOP_t *op);
-int SEXP_datatype_delop(SEXP_datatype_t **dp, int opnum);
+OSCAP_API SEXP_datatype_t *SEXP_datatype_new(void);
+OSCAP_API int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...);
+OSCAP_API int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag);
+OSCAP_API int SEXP_datatype_addop(SEXP_datatype_t **dp, int opnum, SEXP_datatypeOP_t *op);
+OSCAP_API int SEXP_datatype_delop(SEXP_datatype_t **dp, int opnum);
 
 #ifdef __cplusplus
 }

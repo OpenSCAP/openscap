@@ -31,6 +31,7 @@
 #define OVAL_PROBE_HANDLER
 
 #include "oval_definitions.h"
+#include "oscap_export.h"
 
 typedef struct oval_phtbl oval_phtbl_t;
 typedef struct oval_ph    oval_ph_t;
@@ -41,7 +42,7 @@ typedef struct oval_ph    oval_ph_t;
  * opening, evaluating, reseting and closing (whatever that means in
  * your particular case).
  */
-typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
+OSCAP_API typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
 
 #define PROBE_HANDLER_ACT_INIT  0
 #define PROBE_HANDLER_ACT_FREE  1

@@ -34,18 +34,19 @@ typedef struct oval_probe_session oval_probe_session_t;
 
 #include "oval_probe_handler.h"
 #include "oval_system_characteristics.h"
+#include "oscap_export.h"
 
 /**
  * Create and initialize a new probe session
  * @param model system characteristics model
  */
-oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model);
+OSCAP_API oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model);
 
 /**
  * Reinitialize already allocated probe session inplace
  * @param model system characteristics model
  */
-void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval_syschar_model *model);
+OSCAP_API void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval_syschar_model *model);
 
 /**
  * Destroy probe session. All state information created during the lifetime
@@ -53,14 +54,14 @@ void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval_syschar_m
  * handler API.
  * @param sess pointer to the probe session structure
  */
-void oval_probe_session_destroy(oval_probe_session_t *sess);
+OSCAP_API void oval_probe_session_destroy(oval_probe_session_t *sess);
 
 /**
  * Send a close request to all probes. In case of external probes, the running
  * processes are shutdown - all cached results are lost.
  * @param sess pointer to the probe session structure
  */
-int oval_probe_session_close(oval_probe_session_t *sess);
+OSCAP_API int oval_probe_session_close(oval_probe_session_t *sess);
 
 /**
  * Reset the session. All state information created during the lifetime of the
@@ -68,12 +69,12 @@ int oval_probe_session_close(oval_probe_session_t *sess);
  * @param sess pointer to the probe session structure
  * @param sysch pointer to a new syschar model or NULL
  */
-int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch);
+OSCAP_API int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch);
 
 /**
  * Abort the session.
  */
-int oval_probe_session_abort(oval_probe_session_t *sess);
+OSCAP_API int oval_probe_session_abort(oval_probe_session_t *sess);
 
 /**
  * Set a new handler for an object of the specified type.
@@ -82,13 +83,13 @@ int oval_probe_session_abort(oval_probe_session_t *sess);
  * @param handler
  * @param ptr user pointer that will be passed to the handler on each invocation of the handler
  */
-int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr);
+OSCAP_API int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr);
 
 /**
  * Get system characteristics model from probe session.
  * @param sess pointer to the probe session structure
  */
-struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess);
+OSCAP_API struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess);
 
 #endif /* OVAL_PROBE_SESSION */
 /// @}

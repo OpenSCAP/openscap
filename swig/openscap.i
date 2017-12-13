@@ -26,6 +26,9 @@
  *
  */
 
+/* Define OSCAP_API as an empty string */
+/* Prevents 'Syntax error in input(1).' message */
+#define OSCAP_API
 
 /* Convert a tuple element to a C array */
 /* SWIG can't understand __attribute__(x), so we make it go away */

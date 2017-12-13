@@ -36,6 +36,7 @@
 
 #include "oscap_text.h"
 #include "oscap_reference.h"
+#include "oscap_export.h"
 
 /**
  * This macro will warn, when a deprecated function is used.
@@ -58,7 +59,7 @@
  * However, it is a good practice to call this function
  * always at the beginning of the program execution.
  */
-void oscap_init(void);
+OSCAP_API void oscap_init(void);
 
 /**
  * Release library internal caches.
@@ -67,10 +68,10 @@ void oscap_init(void);
  * any of the libraries included in OpenScap framework.
  * It frees internally allocated memory, e.g. cache of the XML parser.
  */
-void oscap_cleanup(void);
+OSCAP_API void oscap_cleanup(void);
 
 /// Get version of the OpenSCAP library
-const char *oscap_get_version(void);
+OSCAP_API const char *oscap_get_version(void);
 
 
 /**
@@ -109,9 +110,9 @@ typedef enum oscap_document_type {
  * @retval Returned value might be pointer to static memory and must not be modified.
  * @retval NULL in case of unrecognized document type
  */
-const char *oscap_document_type_to_string(oscap_document_type_t type);
+OSCAP_API const char *oscap_document_type_to_string(oscap_document_type_t type);
 
-typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
+OSCAP_API typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
 
 /**
  * Validate a SCAP document file against a XML schema.
@@ -131,7 +132,7 @@ typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *a
  * @deprecated This function has been deprecated and it may be dropped from later
  * OpenSCAP releases. Please use oscap_source_validate instead.
  */
-OSCAP_DEPRECATED(int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg));
+OSCAP_API OSCAP_DEPRECATED(int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg));
 
 /**
  * Validate a SCAP document file against schematron rules.
@@ -147,7 +148,7 @@ OSCAP_DEPRECATED(int oscap_validate_document(const char *xmlfile, oscap_document
  * @deprecated This function has been deprecated and it may be dropped from later
  * OpenSCAP releases. Please use oscap_source_validate_schematron instead.
  */
-OSCAP_DEPRECATED(int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile));
+OSCAP_API OSCAP_DEPRECATED(int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile));
 
 /**
  * Apply a XSLT stylesheet to a XML file.
@@ -161,12 +162,12 @@ OSCAP_DEPRECATED(int oscap_schematron_validate_document(const char *xmlfile, osc
  * @param params list of key-value pairs to pass to the stylesheet.
  * @return the number of bytes written or -1 in case of failure
  */
-int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
+OSCAP_API int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params);
 
 /**
  * Function returns path used to locate OpenSCAP XML schemas
  */
-const char * oscap_path_to_schemas(void);
+OSCAP_API const char * oscap_path_to_schemas(void);
 
 /**
  * Function returns path used to locate OpenSCAP Schematron files
@@ -174,19 +175,19 @@ const char * oscap_path_to_schemas(void);
  * correct path to schematron files. This function may be dropped from
  * the next version of the library.
  */
-OSCAP_DEPRECATED(const char * oscap_path_to_schematron(void));
+OSCAP_API OSCAP_DEPRECATED(const char * oscap_path_to_schematron(void));
 
 /**
  * Function returns path used to locate OpenSCAP Default CPE files
  */
-const char * oscap_path_to_cpe(void);
+OSCAP_API const char * oscap_path_to_cpe(void);
 
 /**
  * Determine document type
  * @deprecated This function has been deprecated and it may be dropped from later
  * OpenSCAP releases. Please use oscap_source_get_scap_type instead.
  */
-OSCAP_DEPRECATED(int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type));
+OSCAP_API OSCAP_DEPRECATED(int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type));
 
 /************************************************************/
 /** @} validation group end */

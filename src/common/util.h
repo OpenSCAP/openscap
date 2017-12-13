@@ -30,6 +30,7 @@
 #include "alloc.h"
 #include <stdarg.h>
 #include <string.h>
+#include "oscap_export.h"
 
 #ifndef __attribute__nonnull__
 #define __attribute__nonnull__(x) assert((x) != NULL)
@@ -361,7 +362,7 @@ char *oscap_vsprintf(const char *fmt, va_list ap);
 OSCAP_HIDDEN_END;
 
 /// Print to a newly allocated string using varialbe arguments.
-char *oscap_sprintf(const char *fmt, ...);
+OSCAP_API char *oscap_sprintf(const char *fmt, ...);
 
 OSCAP_HIDDEN_START;
 
@@ -408,7 +409,7 @@ OSCAP_HIDDEN_END;
  * @param str string to be converted
  * @memberof oscap_string_map
  */
-int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
+OSCAP_API int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
 
 /**
  * Convert an enumeration constant to its corresponding string representation.
@@ -416,7 +417,7 @@ int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
  * @param val value to be converted
  * @memberof oscap_string_map
  */
-const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
+OSCAP_API const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
 
 /**
  * Split a string.
@@ -426,7 +427,7 @@ const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
  * @param str String we want to split
  * @param delim Delimiter of string parts
  */
-char **oscap_split(char *str, const char *delim);
+OSCAP_API char **oscap_split(char *str, const char *delim);
 
 /**
  * Return the canonicalized absolute pathname.
@@ -434,13 +435,13 @@ char **oscap_split(char *str, const char *delim);
  * @param resolved_path pointer to a buffer
  * @return resolved_path or NULL in case of error
  */
-char *oscap_realpath(const char *path, char *resolved_path);
+OSCAP_API char *oscap_realpath(const char *path, char *resolved_path);
 
 /**
  * Return filename component of a path
  * @param path path
  * @return filename component of path
  */
-char *oscap_basename(char *path);
+OSCAP_API char *oscap_basename(char *path);
 
 #endif				/* OSCAP_UTIL_H_ */

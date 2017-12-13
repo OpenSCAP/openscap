@@ -67,6 +67,7 @@
 #include <oval_system_characteristics.h>
 #include <oval_results.h>
 #include <oval_types.h>
+#include "oscap_export.h"
 
 /*
  * items
@@ -76,9 +77,9 @@
  * Build a new item according to the specified format.
  * @param fmt the desired format
  */
-SEXP_t *probe_item_build(const char *fmt, ...);
+OSCAP_API SEXP_t *probe_item_build(const char *fmt, ...);
 
-/* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
+OSCAP_API /* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
 /**
  * Create a new item consisting of a name, optional attributes argument and an arbitrary number of entities.
  * Every entity is a triple:
@@ -90,14 +91,14 @@ SEXP_t *probe_item_build(const char *fmt, ...);
  * @param attrs optional item's attributes argument
  * @param ... arbitrary number of entity arguments
  */
-SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...);
+OSCAP_API SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...);
 
 /**
  * Create a new item with just a name and optional attributes argument.
  * @param name item's name
  * @param attrs optional attributes argument
  */
-SEXP_t *probe_item_new(const char *name, SEXP_t * attrs);
+OSCAP_API SEXP_t *probe_item_new(const char *name, SEXP_t * attrs);
 
 /**
  * Add a new attribute to an item.
@@ -106,7 +107,7 @@ SEXP_t *probe_item_new(const char *name, SEXP_t * attrs);
  * @param name name of the new attribute
  * @param val value of the new attribute
  */
-SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val);
+OSCAP_API SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val);
 
 /**
  * Add a new entity to an item.
@@ -116,14 +117,14 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val);
  * @param attrs optional attributes of the new entity
  * @param val value of the new entity
  */
-SEXP_t *probe_item_ent_add(SEXP_t * item, const char *name, SEXP_t * attrs, SEXP_t * val);
+OSCAP_API SEXP_t *probe_item_ent_add(SEXP_t * item, const char *name, SEXP_t * attrs, SEXP_t * val);
 
 /**
  * Set item's status.
  * @param obj the item to be modified
  * @param status the new status
  */
-int probe_item_setstatus(SEXP_t * obj, oval_syschar_status_t status);
+OSCAP_API int probe_item_setstatus(SEXP_t * obj, oval_syschar_status_t status);
 
 /**
  * Set status of an item's entity.
@@ -132,7 +133,7 @@ int probe_item_setstatus(SEXP_t * obj, oval_syschar_status_t status);
  * @param n select the n-th occurence of an entity with the specified name
  * @param status the new status
  */
-int probe_itement_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
+OSCAP_API int probe_itement_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
 /**
  *
@@ -144,13 +145,13 @@ struct id_desc_t;
  * @param id_desc pointer to a structure holding the global id context
  * @return a new id
  */
-SEXP_t *probe_item_newid(struct id_desc_t *id_desc);
+OSCAP_API SEXP_t *probe_item_newid(struct id_desc_t *id_desc);
 
 /**
  * Reset the item id generator.
  * @param id_desc pointer to a structure holding the global id context
  */
-void probe_item_resetidctr(struct id_desc_t *id_desc);
+OSCAP_API void probe_item_resetidctr(struct id_desc_t *id_desc);
 
 #define probe_item_getent(item, name, n) probe_obj_getent (item, name, n)
 
@@ -165,7 +166,7 @@ void probe_item_resetidctr(struct id_desc_t *id_desc);
  * @param val the value of the attribute
  * @param ... there can be an arbitrary number of name - value pairs
  */
-SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...);
+OSCAP_API SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...);
 
 /*
  * objects
@@ -175,7 +176,7 @@ SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...);
  * Build a new object according to the specified format.
  * @param fmt the desired format
  */
-SEXP_t *probe_obj_build(const char *fmt, ...);
+OSCAP_API SEXP_t *probe_obj_build(const char *fmt, ...);
 
 /**
  * Create a new object consisting of a name, optional attributes argument and an arbitrary number of entities.
@@ -188,7 +189,7 @@ SEXP_t *probe_obj_build(const char *fmt, ...);
  * @param attrs optional object's attributes argument
  * @param ... arbitrary number of entity arguments
  */
-SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...);
+OSCAP_API SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...);
 
 /**
  * Create a new object with just a name and optional attributes argument.
@@ -196,7 +197,7 @@ SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...);
  * @param name object's name
  * @param attrs optional attributes argument
  */
-SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs);
+OSCAP_API SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs);
 
 /**
  * Get an entity from an object.
@@ -204,7 +205,7 @@ SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs);
  * @param name the name of the entity
  * @param n select the n-th occurence of an entity with the specified name
  */
-SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n);
+OSCAP_API SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n);
 
 /**
  * Get the value of an object's entity.
@@ -213,7 +214,7 @@ SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n);
  * @param name the name of the entity
  * @param n select the n-th occurence of an entity with the specified name
  */
-SEXP_t *probe_obj_getentval(const SEXP_t * obj, const char *name, uint32_t n);
+OSCAP_API SEXP_t *probe_obj_getentval(const SEXP_t * obj, const char *name, uint32_t n);
 
 /**
  * Get the list of values of an object's entity.
@@ -224,28 +225,28 @@ SEXP_t *probe_obj_getentval(const SEXP_t * obj, const char *name, uint32_t n);
  * @param res the resulting value list is stored in this argument
  * @return number of values in the list stored in the res argument
  */
-int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_t ** res);
+OSCAP_API int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_t ** res);
 
 /**
  * Get the value of an object's attribute.
  * @param obj the queried object
  * @param name the name of the attribute
  */
-SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name);
+OSCAP_API SEXP_t *probe_obj_getattrval(const SEXP_t * obj, const char *name);
 
 /**
  * Check whether the specified attribute exists.
  * @param obj the queried object
  * @param name the name of the attribute
  */
-bool probe_obj_attrexists(const SEXP_t * obj, const char *name);
+OSCAP_API bool probe_obj_attrexists(const SEXP_t * obj, const char *name);
 
 /**
  * Set objects's status.
  * @param obj the object to be modified
  * @param status the new status
  */
-int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status);
+OSCAP_API int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status);
 
 /**
  * Set status of an object's entity.
@@ -254,13 +255,13 @@ int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status);
  * @param n select the n-th occurence of an entity with the specified name
  * @param status the new status
  */
-int probe_objent_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
+OSCAP_API int probe_objent_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
 
 /**
  * Get the name of an object.
  * @param obj the queried object
  */
-char *probe_obj_getname(const SEXP_t * obj);
+OSCAP_API char *probe_obj_getname(const SEXP_t * obj);
 
 /**
  * Get the name of an object.
@@ -269,24 +270,24 @@ char *probe_obj_getname(const SEXP_t * obj);
  * @param buffer the buffer to store the name in
  * @param buflen the length of the buffer
  */
-size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
+OSCAP_API size_t probe_obj_getname_r(const SEXP_t * obj, char *buffer, size_t buflen);
 
 /*
  * collected objects
  */
 
-SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list, SEXP_t *mask_list);
-int probe_cobj_add_msg(SEXP_t *cobj, const SEXP_t *msg);
-SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj);
-SEXP_t *probe_cobj_get_mask(const SEXP_t *cobj);
-int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item);
-SEXP_t *probe_cobj_get_items(const SEXP_t *cobj);
-void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag);
-oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj);
+OSCAP_API SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SEXP_t *item_list, SEXP_t *mask_list);
+OSCAP_API int probe_cobj_add_msg(SEXP_t *cobj, const SEXP_t *msg);
+OSCAP_API SEXP_t *probe_cobj_get_msgs(const SEXP_t *cobj);
+OSCAP_API SEXP_t *probe_cobj_get_mask(const SEXP_t *cobj);
+OSCAP_API int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item);
+OSCAP_API SEXP_t *probe_cobj_get_items(const SEXP_t *cobj);
+OSCAP_API void probe_cobj_set_flag(SEXP_t *cobj, oval_syschar_collection_flag_t flag);
+OSCAP_API oval_syschar_collection_flag_t probe_cobj_get_flag(const SEXP_t *cobj);
 oval_syschar_collection_flag_t probe_cobj_combine_flags(oval_syschar_collection_flag_t f1,
 							oval_syschar_collection_flag_t f2,
 							oval_setobject_operation_t op);
-oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj);
+OSCAP_API oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj);
 
 /*
  * messages
@@ -297,7 +298,7 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj);
  * @param level the level associated with the new message
  * @param message the text of the new message
  */
-SEXP_t *probe_msg_creat(oval_message_level_t level, char *message);
+OSCAP_API SEXP_t *probe_msg_creat(oval_message_level_t level, char *message);
 
 /**
  * Create a new message that can be added to a collected object.
@@ -305,7 +306,7 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message);
  * @param fmt printf-like format string that produces the text of the new message
  * @param ... arguments for the format
  */
-SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...) __attribute__((format(printf, 2, 3), nonnull(2)));
+OSCAP_API SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...) __attribute__((format(printf, 2, 3), nonnull(2)));
 
 /*
  * entities
@@ -319,7 +320,7 @@ SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...) __att
  * @param val the value of the entity
  * @param ... there can be an arbitrary number of name - attributes - value triples
  */
-SEXP_t *probe_ent_creat(const char *name, SEXP_t * attrs, SEXP_t * val, ...);
+OSCAP_API SEXP_t *probe_ent_creat(const char *name, SEXP_t * attrs, SEXP_t * val, ...);
 
 /**
  * Create a new entity.
@@ -328,7 +329,7 @@ SEXP_t *probe_ent_creat(const char *name, SEXP_t * attrs, SEXP_t * val, ...);
  * @param attrs optional entity's attributes argument
  * @param val the value of the entity
  */
-SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val);
+OSCAP_API SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val);
 
 /**
  * Add a new attribute to an entity.
@@ -337,14 +338,14 @@ SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val);
  * @param name name of the new attribute
  * @param val value of the new attribute
  */
-SEXP_t *probe_ent_attr_add(SEXP_t * ent, const char *name, SEXP_t * val);
+OSCAP_API SEXP_t *probe_ent_attr_add(SEXP_t * ent, const char *name, SEXP_t * val);
 
 /**
  * Get the value of an entity.
  * The function respects the var_ref attribute and returns the currently selected value.
  * @param ent the queried entity
  */
-SEXP_t *probe_ent_getval(const SEXP_t * ent);
+OSCAP_API SEXP_t *probe_ent_getval(const SEXP_t * ent);
 
 /**
  * Get the list of values of an entity.
@@ -353,66 +354,66 @@ SEXP_t *probe_ent_getval(const SEXP_t * ent);
  * @param res the resulting value list is stored in this argument
  * @return number of values in the list stored in the res argument
  */
-int probe_ent_getvals(const SEXP_t * ent, SEXP_t ** res);
+OSCAP_API int probe_ent_getvals(const SEXP_t * ent, SEXP_t ** res);
 
 /**
  * Get the value of an entity's attribute.
  * @param ent the queried entity
  * @param name the name of the attribute
  */
-SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name);
+OSCAP_API SEXP_t *probe_ent_getattrval(const SEXP_t * ent, const char *name);
 
 /**
  * Check whether the specified attribute exists.
  * @param ent the queried entity
  * @param name the name of the attribute
  */
-bool probe_ent_attrexists(const SEXP_t * ent, const char *name);
+OSCAP_API bool probe_ent_attrexists(const SEXP_t * ent, const char *name);
 
 /**
  * Set the OVAL data type of an entity.
  * @param ent the queried entity
  * @param type the new data type
  */
-int probe_ent_setdatatype(SEXP_t * ent, oval_datatype_t type);
+OSCAP_API int probe_ent_setdatatype(SEXP_t * ent, oval_datatype_t type);
 
 /**
  * Get the OVAL data type of an entity.
  * @param ent the queried entity
  */
-oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent);
+OSCAP_API oval_datatype_t probe_ent_getdatatype(const SEXP_t * ent);
 
 /**
  * Set entity's mask.
  * @param ent the queried entity
  * @mask the new mask
  */
-int probe_ent_setmask(SEXP_t * ent, bool mask);
+OSCAP_API int probe_ent_setmask(SEXP_t * ent, bool mask);
 
 /**
  * Get entity's mask.
  * @param ent the queried entity
  */
-bool probe_ent_getmask(const SEXP_t * ent);
+OSCAP_API bool probe_ent_getmask(const SEXP_t * ent);
 
 /**
  * Set entity's status.
  * @param ent the entity to be modified
  * @param status the new status
  */
-int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status);
+OSCAP_API int probe_ent_setstatus(SEXP_t * ent, oval_syschar_status_t status);
 
 /**
  * Get entity status.
  * @param ent the queried entity
  */
-oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent);
+OSCAP_API oval_syschar_status_t probe_ent_getstatus(const SEXP_t * ent);
 
 /**
  * Get the name of an entity.
  * @param ent the queried entity
  */
-char *probe_ent_getname(const SEXP_t * ent);
+OSCAP_API char *probe_ent_getname(const SEXP_t * ent);
 
 /**
  * Get the name of an entity.
@@ -421,13 +422,13 @@ char *probe_ent_getname(const SEXP_t * ent);
  * @param buffer the buffer to store the name in
  * @param buflen the length of the buffer
  */
-size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen);
+OSCAP_API size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen);
 
 /**
  * Free the memory allocated by the probe_* functions.
  * @param obj the object to be freed
  */
-void probe_free(SEXP_t * obj);
+OSCAP_API void probe_free(SEXP_t * obj);
 
 /**
  * Set all of the missing attributes of the 'behaviors' entity
@@ -435,7 +436,7 @@ void probe_free(SEXP_t * obj);
  * a new entity is created and stored in the referenced pointer.
  * @param behaviors address of the pointer to the 'behaviors' entity, must not be NULL
  */
-void probe_filebehaviors_canonicalize(SEXP_t **behaviors);
+OSCAP_API void probe_filebehaviors_canonicalize(SEXP_t **behaviors);
 
 /**
  * Set all of the missing attributes of the 'behaviors' entity
@@ -443,7 +444,7 @@ void probe_filebehaviors_canonicalize(SEXP_t **behaviors);
  * a new entity is created and stored in the referenced pointer.
  * @param behaviors address of the pointer to the 'behaviors' entity, must not be NULL
  */
-void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
+OSCAP_API void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 
 #define PROBE_EINVAL     1	/**< Invalid type/value/format */
 #define PROBE_ENOELM     2	/**< Missing element OBSOLETE: use ENOENT */
@@ -469,18 +470,18 @@ void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 #define PROBECMD_RESET     3 /**< Reset command code */
 
 
-void probe_offline_mode(void);
-void probe_preload(void);
-void *probe_init(void) __attribute__ ((unused));
-void probe_fini(void *) __attribute__ ((unused));
+OSCAP_API void probe_offline_mode(void);
+OSCAP_API void probe_preload(void);
+OSCAP_API void *probe_init(void) __attribute__ ((unused));
+OSCAP_API void probe_fini(void *) __attribute__ ((unused));
 
 typedef struct probe_ctx probe_ctx;
 
-int probe_main(probe_ctx *, void *) __attribute__ ((nonnull(1)));
+OSCAP_API int probe_main(probe_ctx *, void *) __attribute__ ((nonnull(1)));
 
-bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
+OSCAP_API bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
 
-int probe_result_additem(SEXP_t *result, SEXP_t *item);
+OSCAP_API int probe_result_additem(SEXP_t *result, SEXP_t *item);
 
 /**
  * Collect generated item (i.e. add it to the collected object)
@@ -489,7 +490,7 @@ int probe_result_additem(SEXP_t *result, SEXP_t *item);
  * calling this function). The implementation of this function
  * is placed in the `probe/icache.c' file.
  */
-int probe_item_collect(probe_ctx *ctx, SEXP_t *item);
+OSCAP_API int probe_item_collect(probe_ctx *ctx, SEXP_t *item);
 
 /**
  * Return reference to the input object. The reference counter
@@ -497,26 +498,26 @@ int probe_item_collect(probe_ctx *ctx, SEXP_t *item);
  * on the return value of this function). Implementation of this
  * function is placed in the `' file.
  */
-SEXP_t *probe_ctx_getobject(probe_ctx *ctx);
+OSCAP_API SEXP_t *probe_ctx_getobject(probe_ctx *ctx);
 
 /**
  * Return reference to the output object (aka collected object).
  * Reference counter is NOT incremented (see the description of
  * probe_ctx_getobject above).
  */
-SEXP_t *probe_ctx_getresult(probe_ctx *ctx);
+OSCAP_API SEXP_t *probe_ctx_getresult(probe_ctx *ctx);
 
 typedef struct {
         oval_datatype_t type;
         void           *value;
 } probe_elmatr_t;
 
-SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[], ...);
+OSCAP_API SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[], ...);
 
 #define PROBE_ENT_AREF(ent, dst, attr_name, invalid_exp)		\
 	do {								\
 		if (((dst) = probe_ent_getattrval(ent, attr_name)) == NULL) { \
-			dE("Attribute `%s' is missing!", attr_name);	\
+OSCAP_API 			dE("Attribute `%s' is missing!", attr_name);	\
 			invalid_exp					\
 		}               					\
 	} while(0)
@@ -526,20 +527,20 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-			dW("Entity has no value!");		\
+OSCAP_API 			dW("Entity has no value!");		\
 			invalid_exp				\
 		} else {					\
 			if (!SEXP_stringp(___r)) {		\
-				dE("Invalid type");		\
-				SEXP_free(___r);		\
+OSCAP_API 				dE("Invalid type");		\
+OSCAP_API 				SEXP_free(___r);		\
 				invalid_exp			\
 			}					\
 			else if (SEXP_string_length(___r) == 0) { \
-				SEXP_free(___r);		\
+OSCAP_API 				SEXP_free(___r);		\
 				zerolen_exp			\
 			} else {				\
-				SEXP_string_cstr_r(___r, dst, dstlen); \
-				SEXP_free(___r);		\
+OSCAP_API 				SEXP_string_cstr_r(___r, dst, dstlen); \
+OSCAP_API 				SEXP_free(___r);		\
 			}					\
 		}						\
 	} while (0)
@@ -549,36 +550,36 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-			dW("Entity has no value!");		\
+OSCAP_API 			dW("Entity has no value!");		\
 			nil_exp;				\
 		} else {					\
 			if (!SEXP_numberp(___r)) {		\
-				dE("Invalid type");		\
-				SEXP_free(___r);		\
+OSCAP_API 				dE("Invalid type");		\
+OSCAP_API 				SEXP_free(___r);		\
 				invalid_exp;			\
 			} else {				\
-				dst = SEXP_number_geti_32(___r);	\
-				SEXP_free(___r);                	\
+OSCAP_API 				dst = SEXP_number_geti_32(___r);	\
+OSCAP_API 				SEXP_free(___r);                	\
 			}						\
 		}							\
 	} while (0)
 
 #endif				/* PROBE_API_H */
 
-oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t op);
+OSCAP_API oval_operation_t probe_ent_getoperation(SEXP_t *entity, oval_operation_t op);
 
-int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, ...);
+OSCAP_API int probe_item_add_msg(SEXP_t *item, oval_message_level_t msglvl, char *msgfmt, ...);
 
-SEXP_t *probe_entval_from_cstr(oval_datatype_t type, const char *value, size_t vallen);
-SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type, const char *value, size_t vallen);
+OSCAP_API SEXP_t *probe_entval_from_cstr(oval_datatype_t type, const char *value, size_t vallen);
+OSCAP_API SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type, const char *value, size_t vallen);
 
-OSCAP_DEPRECATED(oval_version_t probe_obj_get_schema_version(const SEXP_t *obj));
-oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP_t *obj);
+OSCAP_API OSCAP_DEPRECATED(oval_version_t probe_obj_get_schema_version(const SEXP_t *obj));
+OSCAP_API oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP_t *obj);
 
 /**
  * Get object entity mask
  * @returns a list of masked entities
  */
-SEXP_t *probe_obj_getmask(SEXP_t *obj);
+OSCAP_API SEXP_t *probe_obj_getmask(SEXP_t *obj);
 
 /// @}

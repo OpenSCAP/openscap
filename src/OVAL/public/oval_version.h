@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <oscap.h>
+#include "oscap_export.h"
 
 typedef uint32_t oval_version_t;
 
@@ -16,7 +17,7 @@ typedef uint32_t oval_version_t;
  * OVAL_VERSION_INVALID ... if the string representation
  *                          is not a valid OVAL version
  */
-OSCAP_DEPRECATED(oval_version_t oval_version_from_cstr(const char *version_str));
+OSCAP_API OSCAP_DEPRECATED(oval_version_t oval_version_from_cstr(const char *version_str));
 
 #define OVAL_VERSION(v) oval_version_from_cstr(#v)
 
@@ -28,22 +29,22 @@ OSCAP_DEPRECATED(oval_version_t oval_version_from_cstr(const char *version_str))
  *  1 ... no major component
  * -1 ... insufficient buffer space
  */
-OSCAP_DEPRECATED(int oval_version_to_cstr(oval_version_t version, char *buffer, size_t buflen));
+OSCAP_API OSCAP_DEPRECATED(int oval_version_to_cstr(oval_version_t version, char *buffer, size_t buflen));
 
 /**
  * Get the major component of the version
  */
-OSCAP_DEPRECATED(uint8_t oval_version_major(oval_version_t version));
+OSCAP_API OSCAP_DEPRECATED(uint8_t oval_version_major(oval_version_t version));
 
 /**
  * Get the minor component of the version
  */
-OSCAP_DEPRECATED(uint8_t oval_version_minor(oval_version_t version));
+OSCAP_API OSCAP_DEPRECATED(uint8_t oval_version_minor(oval_version_t version));
 
 /**
  * Get the patch component of the version
  */
-OSCAP_DEPRECATED(uint8_t oval_version_patch(oval_version_t version));
+OSCAP_API OSCAP_DEPRECATED(uint8_t oval_version_patch(oval_version_t version));
 
 /**
  * Compare two versions in the internal representation
@@ -52,6 +53,6 @@ OSCAP_DEPRECATED(uint8_t oval_version_patch(oval_version_t version));
  *  <0 ... if `v1' is older than `v2'
  *  >0 ... if `v1' is newer than `v2'
  */
-OSCAP_DEPRECATED(int oval_version_cmp(oval_version_t v1, oval_version_t v2));
+OSCAP_API OSCAP_DEPRECATED(int oval_version_cmp(oval_version_t v1, oval_version_t v2));
 
 #endif /* OVAL_VERSION_H */
