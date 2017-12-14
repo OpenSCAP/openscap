@@ -27,6 +27,18 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
 	set(NDEBUG 1)
 endif()
 
+# In Microsoft Visual Studio, store built binaries to a single directory.
+# We need to build all the binaries in a single directory on Windows, because
+# vcpkg tool fails to fetch dependent DLLs (libxml, libcurl, etc.) if
+# oscap.exe is build to a different directory than openscap.dll.
+# See the discussion in https://github.com/Microsoft/vcpkg/issues/1002
+if(MSVC)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+	set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
 # ---------- INCLUDES CMAKE MODULES
 
 include(GNUInstallDirs)
@@ -250,7 +262,7 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # ---------- CONFIGURATION
 
 configure_file("config.h.in" "config.h")
-add_definitions(-DHAVE_CONFIG_H)
+add_definitions(-DHAVE_CONFIG_H -DOSCAP_BUILD_SHARED)
 
 if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
