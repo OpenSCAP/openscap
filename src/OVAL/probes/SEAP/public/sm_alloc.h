@@ -36,7 +36,7 @@ extern "C" {
 
 #if !defined(HAVE_POSIX_MEMALIGN)
 # if defined (HAVE_MEMALIGN)
-OSCAP_API extern int posix_memalign (void ** __memptr, size_t __alignment, size_t __size);
+extern int posix_memalign (void ** __memptr, size_t __alignment, size_t __size);
 
 # endif /* HAVE_MEMALIGN */
 #endif /* HAVE_POSIX_MEMALIGN */
