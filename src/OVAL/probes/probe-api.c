@@ -48,11 +48,11 @@
 #include "probe/probe.h"
 #include "SEAP/generic/strto.h"
 
-extern probe_rcache_t  *OSCAP_GSYM(pcache);
-extern probe_ncache_t  *OSCAP_GSYM(ncache);
-extern struct id_desc_t OSCAP_GSYM(id_desc);
-extern probe_option_t *OSCAP_GSYM(probe_optdef);
-extern size_t OSCAP_GSYM(probe_optdef_count);
+extern probe_rcache_t  *pcache;
+extern probe_ncache_t  *ncache;
+extern struct id_desc_t id_desc;
+extern probe_option_t *probe_optdef;
+extern size_t probe_optdef_count;
 
 /*
  * items
@@ -71,7 +71,7 @@ SEXP_t *probe_item_creat(const char *name, SEXP_t * attrs, ...)
 		attrs = va_arg(ap, SEXP_t *);
 		val = va_arg(ap, SEXP_t *);
 
-                ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
+                ns  = probe_ncache_ref (ncache, name);
 		ent = SEXP_list_new(NULL);
 
 		if (attrs != NULL) {
@@ -349,7 +349,7 @@ SEXP_t *probe_obj_creat(const char *name, SEXP_t * attrs, ...)
 		attrs = va_arg(ap, SEXP_t *);
 		val = va_arg(ap, SEXP_t *);
 
-                ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
+                ns  = probe_ncache_ref (ncache, name);
 		ent = SEXP_list_new(NULL);
 
 		if (attrs != NULL) {
@@ -383,7 +383,7 @@ SEXP_t *probe_obj_new(const char *name, SEXP_t * attrs)
 	SEXP_t *obj, *ns;
 
 	obj = SEXP_list_new(NULL);
-	ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
+	ns  = probe_ncache_ref (ncache, name);
 
 	if (attrs != NULL) {
 		SEXP_t *nl, *nj;
@@ -986,7 +986,7 @@ SEXP_t *probe_ent_creat1(const char *name, SEXP_t * attrs, SEXP_t * val)
 	SEXP_t *ent, *ns;
 
 	ent = SEXP_list_new(NULL);
-	ns  = probe_ncache_ref (OSCAP_GSYM(ncache), name);
+	ns  = probe_ncache_ref (ncache, name);
 
 	if (attrs != NULL) {
 		SEXP_t *nl, *nj;
@@ -1511,7 +1511,7 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                         return (NULL);
                 }
 
-                name_sexp = probe_ncache_ref(OSCAP_GSYM(ncache), value_name);
+                name_sexp = probe_ncache_ref(ncache, value_name);
 
                 while(value_i < multiply) {
                         entity = SEXP_list_new_r(&entity_mem, name_sexp, value_sexp + value_i, NULL);

@@ -76,7 +76,7 @@ void *probe_input_handler(void *arg)
 
         pthread_cleanup_push((void(*)(void *))pthread_attr_destroy, (void *)&pth_attr);
         
-        switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
+        switch (errno = pthread_barrier_wait(&th_barrier))
         {
         case 0:
         case PTHREAD_BARRIER_SERIAL_THREAD:
@@ -118,14 +118,14 @@ void *probe_input_handler(void *arg)
 		if (oid != NULL) {
 			SEXP_VALIDATE(oid);
 
-			dD("offline_mode=%08x", OSCAP_GSYM(offline_mode));
-			dD("offline_mode_supported=%08x", OSCAP_GSYM(offline_mode_supported));
+			dD("offline_mode=%08x", offline_mode);
+			dD("offline_mode_supported=%08x", offline_mode_supported);
 
-			if ((OSCAP_GSYM(offline_mode) != PROBE_OFFLINE_NONE) &&
-			    !(OSCAP_GSYM(offline_mode) & OSCAP_GSYM(offline_mode_supported))) {
+			if ((offline_mode != PROBE_OFFLINE_NONE) &&
+			    !(offline_mode & offline_mode_supported)) {
 				dW("Requested offline mode is not supported by %s.", probe->name);
 				/* Return a dummy. */
-				probe_out = probe_cobj_new(OSCAP_GSYM(offline_mode_cobjflag), NULL, NULL, NULL);
+				probe_out = probe_cobj_new(offline_mode_cobjflag, NULL, NULL, NULL);
 				probe_ret = 0;
 				SEXP_free(oid);
 				SEXP_free(probe_in);

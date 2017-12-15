@@ -51,17 +51,17 @@ static int fail(int err, const char *who, int line)
 	exit(err);
 }
 
-void  *OSCAP_GSYM(probe_arg)          = NULL;
-bool   OSCAP_GSYM(varref_handling)    = true;
-char **OSCAP_GSYM(no_varref_ents)     = NULL;
-size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
-probe_offline_flags OSCAP_GSYM(offline_mode) = PROBE_OFFLINE_NONE;
-probe_offline_flags OSCAP_GSYM(offline_mode_supported) = PROBE_OFFLINE_NONE;
-int OSCAP_GSYM(offline_mode_cobjflag) = SYSCHAR_FLAG_NOT_APPLICABLE;
+void  *probe_arg          = NULL;
+bool   varref_handling    = true;
+char **no_varref_ents     = NULL;
+size_t no_varref_ents_cnt = 0;
+probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
+probe_offline_flags offline_mode_supported = PROBE_OFFLINE_NONE;
+int offline_mode_cobjflag = SYSCHAR_FLAG_NOT_APPLICABLE;
 
-pthread_barrier_t OSCAP_GSYM(th_barrier);
+pthread_barrier_t th_barrier;
 
-extern probe_ncache_t *OSCAP_GSYM(ncache);
+extern probe_ncache_t *ncache;
 
 static int probe_optecmp(char **a, char **b)
 {
@@ -97,21 +97,21 @@ static int probe_opthandler_varref(int option, int op, va_list args)
 
 	if (o_name == NULL) {
 		/* switch varref handling on/off globally */
-		OSCAP_GSYM(varref_handling) = o_switch;
+		varref_handling = o_switch;
 		return (0);
 	}
 
-	o_temp = oscap_bfind (OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
+	o_temp = oscap_bfind (no_varref_ents, no_varref_ents_cnt,
 			      sizeof(char *), o_name, (int(*)(void *, void *)) &probe_optecmp);
 
 	if (o_temp != NULL)
 		return (0);
 
-	OSCAP_GSYM(no_varref_ents) = realloc(OSCAP_GSYM(no_varref_ents),
-						   sizeof (char *) * ++OSCAP_GSYM(no_varref_ents_cnt));
-	OSCAP_GSYM(no_varref_ents)[OSCAP_GSYM(no_varref_ents_cnt) - 1] = strdup(o_name);
+	no_varref_ents = realloc(no_varref_ents,
+						   sizeof (char *) * ++no_varref_ents_cnt);
+	no_varref_ents[no_varref_ents_cnt - 1] = strdup(o_name);
 
-	qsort(OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
+	qsort(no_varref_ents, no_varref_ents_cnt,
               sizeof (char *), (int(*)(const void *, const void *))&probe_optecmp);
 
 	return (0);
@@ -126,7 +126,7 @@ static int probe_opthandler_offlinemode(int option, int op, va_list args)
 {
 	if (op == PROBE_OPTION_SET) {
 		probe_offline_flags o_offline_mode;
-		int o_cobjflag = OSCAP_GSYM(offline_mode_cobjflag);
+		int o_cobjflag = offline_mode_cobjflag;
 
 		o_offline_mode = va_arg(args, int);
 		if (o_offline_mode != PROBE_OFFLINE_ALL) {
@@ -145,17 +145,17 @@ static int probe_opthandler_offlinemode(int option, int op, va_list args)
 			 */
 			o_cobjflag = SYSCHAR_FLAG_NOT_COLLECTED;
 		}
-		OSCAP_GSYM(offline_mode_supported) = o_offline_mode;
-		OSCAP_GSYM(offline_mode_cobjflag) = o_cobjflag;
+		offline_mode_supported = o_offline_mode;
+		offline_mode_cobjflag = o_cobjflag;
 	} else if (op == PROBE_OPTION_GET) {
-		int *offline_mode_supported = va_arg(args, int *);
-		int *offline_mode = va_arg(args, int *);
+		int *opt_offline_mode_supported = va_arg(args, int *);
+		int *opt_offline_mode = va_arg(args, int *);
 
-		if (offline_mode_supported != NULL) {
-		  *offline_mode_supported = OSCAP_GSYM(offline_mode_supported);
+		if (opt_offline_mode_supported != NULL) {
+		  *opt_offline_mode_supported = offline_mode_supported;
 		}
-		if (offline_mode != NULL) {
-		  *offline_mode = OSCAP_GSYM(offline_mode);
+		if (opt_offline_mode != NULL) {
+		  *opt_offline_mode = offline_mode;
 		}
 	}
 	return 0;
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 	char *verbose_log_file = getenv("OSCAP_PROBE_VERBOSE_LOG_FILE");
 	oscap_set_verbose(verbosity_level, verbose_log_file, true);
 
-	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
+	if ((errno = pthread_barrier_init(&th_barrier, NULL,
 	                                  1 + // signal thread
 	                                  1 + // input thread
 	                                  1 + // icache thread
@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
 	probe.ncache = probe_ncache_new();
         probe.icache = probe_icache_new();
 
-        OSCAP_GSYM(ncache) = probe.ncache;
+        ncache = probe.ncache;
 
 	/*
 	 * Initialize probe option handlers
@@ -255,8 +255,8 @@ int main(int argc, char *argv[])
 	probe.option[2].option  = PROBEOPT_OFFLINE_MODE_SUPPORTED;
 	probe.option[2].handler = &probe_opthandler_offlinemode;
 
-	OSCAP_GSYM(probe_optdef) = probe.option;
-	OSCAP_GSYM(probe_optdef_count) = probe.optcnt;
+	probe_optdef = probe.option;
+	probe_optdef_count = probe.optcnt;
 
 	/*
 	 * Create signal handler
@@ -280,12 +280,12 @@ int main(int argc, char *argv[])
 	if ((rootdir != NULL) && (strlen(rootdir) > 0)) {
 
 		preload_libraries_before_chroot(); // todo - maybe useless for own mode
-		probe_offline_flags supported_mode = OSCAP_GSYM(offline_mode_supported);
+		probe_offline_flags supported_mode = offline_mode_supported;
 		bool own_mode = (supported_mode & PROBE_OFFLINE_OWN);
 
 		if (own_mode) {
 			dD("Own offline mode selected");
-			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_OWN;
+			offline_mode |= PROBE_OFFLINE_OWN;
 
 		} else {
 			if (chdir(rootdir) != 0) {
@@ -303,12 +303,12 @@ int main(int argc, char *argv[])
 			 * Switch to offline mode. We may add a separate
 			 * mechanism to control this behaviour in the future.
 			 */
-			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_CHROOT;
+			offline_mode |= PROBE_OFFLINE_CHROOT;
 		}
 	}
 
 	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
-		OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_RPMDB;
+		offline_mode |= PROBE_OFFLINE_RPMDB;
 	}
 
 	/*

@@ -63,7 +63,7 @@ static volatile int __oval_probe_session_init_once = 0;
  */
 static void ncache_libfree(void)
 {
-        probe_ncache_free(OSCAP_GSYM(ncache));
+        probe_ncache_free(ncache);
 }
 
 /**
@@ -71,8 +71,8 @@ static void ncache_libfree(void)
  */
 static void ncache_libinit(void)
 {
-        if (OSCAP_GSYM(ncache) == NULL) {
-                OSCAP_GSYM(ncache) = probe_ncache_new();
+        if (ncache == NULL) {
+                ncache = probe_ncache_new();
                 atexit(ncache_libfree);
         }
 }
@@ -132,17 +132,17 @@ static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_sysc
 
         __init_once();
 
-        dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
+        dD("__probe_meta_count = %zu", __probe_meta_count);
 
-        for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
+        for (i = 0; i < __probe_meta_count; ++i) {
                 handler_arg = NULL;
 
-                if (OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)
+                if (__probe_meta[i].flags & OVAL_PROBEMETA_EXTERNAL)
                         handler_arg = sess->pext;
 
                 oval_probe_handler_set(sess->ph,
-				       OSCAP_GSYM(__probe_meta)[i].otype,
-				       OSCAP_GSYM(__probe_meta)[i].handler, handler_arg);
+				       __probe_meta[i].otype,
+				       __probe_meta[i].handler, handler_arg);
         }
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */

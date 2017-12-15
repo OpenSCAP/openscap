@@ -393,8 +393,6 @@ char *oscap_expand_ipv6(const char *input);
 # define OSCAP_CONCAT(a,b) OSCAP_CONCAT1(a,b)
 #endif
 
-#define OSCAP_GSYM(s) OSCAP_CONCAT(___G_, s)
-
 #define protect_errno                                                   \
         for (int OSCAP_CONCAT(__e,__LINE__)=errno, OSCAP_CONCAT(__s,__LINE__)=1; OSCAP_CONCAT(__s,__LINE__)--; errno=OSCAP_CONCAT(__e,__LINE__))
 

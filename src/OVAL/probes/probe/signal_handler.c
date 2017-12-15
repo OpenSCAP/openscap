@@ -88,7 +88,7 @@ void *probe_signal_handler(void *arg)
 #endif
        
 	dD("Signal handler ready");
-	switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
+	switch (errno = pthread_barrier_wait(&th_barrier))
 	{
 	case 0:
 	case PTHREAD_BARRIER_SERIAL_THREAD:

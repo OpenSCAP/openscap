@@ -17,8 +17,8 @@ typedef struct {
   int (*handler)(int, int, va_list);
 } probe_option_t;
 
-extern size_t OSCAP_GSYM(probe_optdef_count);
-extern probe_option_t *OSCAP_GSYM(probe_optdef);
+extern size_t probe_optdef_count;
+extern probe_option_t *probe_optdef;
 
 int probe_setoption(int option, ...);
 int probe_getoption(int option, ...);

@@ -59,7 +59,7 @@ int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test);
 
 OSCAP_HIDDEN_END;
 
-extern probe_ncache_t *OSCAP_GSYM(ncache);
+extern probe_ncache_t *ncache;
 
 typedef struct {
         oval_subtype_t type;
