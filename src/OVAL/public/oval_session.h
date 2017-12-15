@@ -37,6 +37,7 @@
 #ifndef OVAL_SESSION_H_
 #define OVAL_SESSION_H_
 #include "oscap_download_cb.h"
+#include "oscap_export.h"
 
 /**
  * @struct oval_session
@@ -55,7 +56,7 @@ struct oval_session;
  * @retval NULL in case of an error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-struct oval_session *oval_session_new(const char *filename);
+OSCAP_API struct oval_session *oval_session_new(const char *filename);
 
 /**
  * Set OVAL Variables.
@@ -69,7 +70,7 @@ struct oval_session *oval_session_new(const char *filename);
  * @param session an \ref oval_session
  * @param filename a path to an OVAL Variables file
  */
-void oval_session_set_variables(struct oval_session *session, const char *filename);
+OSCAP_API void oval_session_set_variables(struct oval_session *session, const char *filename);
 
 /**
  * Set OVAL Directives
@@ -83,7 +84,7 @@ void oval_session_set_variables(struct oval_session *session, const char *filena
  * @param session an \ref oval_session
  * @param filename a path to an OVAL Directives file
  */
-void oval_session_set_directives(struct oval_session *session, const char *filename);
+OSCAP_API void oval_session_set_directives(struct oval_session *session, const char *filename);
 
 /**
  * Set XSD validation level.
@@ -93,7 +94,7 @@ void oval_session_set_directives(struct oval_session *session, const char *filen
  * @param validate false value indicates to skip any XSD validation
  * @param full_validation true value indicates that every possible step will be validated by XSD
  */
-void oval_session_set_validation(struct oval_session *session, bool validate, bool full_validation);
+OSCAP_API void oval_session_set_validation(struct oval_session *session, bool validate, bool full_validation);
 
 /**
  * Set ID of a specific OVAL Definition in an source datastream.
@@ -105,7 +106,7 @@ void oval_session_set_validation(struct oval_session *session, bool validate, bo
  * @param session an \ref oval_session
  * @param id an id of a definition
  */
-void oval_session_set_datastream_id(struct oval_session *session, const char *id);
+OSCAP_API void oval_session_set_datastream_id(struct oval_session *session, const char *id);
 
 /**
  * Set ID of a particular OVAL component if there are two OVALs in one
@@ -116,7 +117,7 @@ void oval_session_set_datastream_id(struct oval_session *session, const char *id
  * @param session an \ref oval_session
  * @param id an id of a definition
  */
-void oval_session_set_component_id(struct oval_session *session, const char *id);
+OSCAP_API void oval_session_set_component_id(struct oval_session *session, const char *id);
 
 /**
  * Set a name of the file that the the OVAL Results will be written into. If the
@@ -127,7 +128,7 @@ void oval_session_set_component_id(struct oval_session *session, const char *id)
  * @param session an \ref oval_session
  * @param filename a path to a new file
  */
-void oval_session_set_results_export(struct oval_session *session, const char *filename);
+OSCAP_API void oval_session_set_results_export(struct oval_session *session, const char *filename);
 
 /**
  * Set a name of the file that the the OVAL Results, converted to HTML format,
@@ -138,7 +139,7 @@ void oval_session_set_results_export(struct oval_session *session, const char *f
  * @param session an \ref oval_session
  * @param filename a path to a new file
  */
-void oval_session_set_report_export(struct oval_session *session, const char *filename);
+OSCAP_API void oval_session_set_report_export(struct oval_session *session, const char *filename);
 
 /**
  * Set XML validation reporter.
@@ -150,7 +151,7 @@ void oval_session_set_report_export(struct oval_session *session, const char *fi
  * @param session an \ref oval_session
  * @param fn pointer to XML reporter function
  */
-void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn);
+OSCAP_API void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn);
 
 /**
  * Load OVAL Definitions and bind OVAL Variables to it if provided. Validation
@@ -165,7 +166,7 @@ void oval_session_set_xml_reporter(struct oval_session *session, xml_reporter fn
  * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-int oval_session_load(struct oval_session *session);
+OSCAP_API int oval_session_load(struct oval_session *session);
 
 /**
  * Evaluate a specific OVAL Definition. The result of the evaluation will be
@@ -182,7 +183,7 @@ int oval_session_load(struct oval_session *session);
  * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-int oval_session_evaluate_id(struct oval_session *session, char *probe_root, const char *id, oval_result_t *result);
+OSCAP_API int oval_session_evaluate_id(struct oval_session *session, char *probe_root, const char *id, oval_result_t *result);
 
 /**
  * Evaluate OVAL Definitions. Optionally you can set a callback function which
@@ -201,7 +202,7 @@ int oval_session_evaluate_id(struct oval_session *session, char *probe_root, con
  * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_reporter fn, void *arg);
+OSCAP_API int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_reporter fn, void *arg);
 
 /**
  * Export result to a file. Results can be represented as OVAL System
@@ -220,7 +221,7 @@ int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_
  * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-int oval_session_export(struct oval_session *session);
+OSCAP_API int oval_session_export(struct oval_session *session);
 
 /**
  * Set exporting of system characteristics in OVAL results
@@ -230,7 +231,7 @@ int oval_session_export(struct oval_session *session);
  * @param session an \ref oval_session
  * @param export false values indicated no system_characteristics in OVAL Results
  */
-void oval_session_set_export_system_characteristics(struct oval_session *session, bool export);
+OSCAP_API void oval_session_set_export_system_characteristics(struct oval_session *session, bool export);
 
 /**
  * Set property of remote content.
@@ -240,13 +241,13 @@ void oval_session_set_export_system_characteristics(struct oval_session *session
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-void oval_session_set_remote_resources(struct oval_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API void oval_session_set_remote_resources(struct oval_session *session, bool allowed, download_progress_calllback_t callback);
 
 /**
  * Destructor of an \ref oval_session.
  * @memberof oval_session
  * @param session an \ref oval_session to destroy
  */
-void oval_session_free(struct oval_session *session);
+OSCAP_API void oval_session_free(struct oval_session *session);
 
 #endif

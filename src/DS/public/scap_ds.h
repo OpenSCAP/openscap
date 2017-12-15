@@ -33,6 +33,7 @@
 #define OPENSCAP_DS_H
 
 #include "oscap.h"
+#include "oscap_export.h"
 
 /**
  * @brief takes given source data stream and decomposes it into separate files
@@ -69,7 +70,7 @@
  * @deprecated This function has been deprecated. Make a use of ds_sds_session
  *     instread. This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* target_filename));
+OSCAP_API OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* target_filename));
 
 /**
  * @brief same as ds_sds_decompose but works with other components than just XCCDFs
@@ -89,7 +90,7 @@ OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, co
  * @deprecated This function has been deprecated. Make a use of ds_sds_session
  *     instread. This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir, const char* container_name, const char* component_id, const char* target_filename));
+OSCAP_API OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir, const char* container_name, const char* component_id, const char* target_filename));
 
 /**
  * @brief takes given xccdf file and constructs a source datastream
@@ -106,7 +107,7 @@ OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char*
  * 	    0 if no errors were encountered
  * 	   -1 in case of errors
  */
-int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
+OSCAP_API int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
 
 /**
  * @brief append a new given component to the existing source datastream
@@ -124,13 +125,13 @@ int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastr
  *
  * @returns 0 in case of success
  */
-int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
+OSCAP_API int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
 
 /**
  * @deprecated This function has been deprecated. Make a use of ds_rds_session
  * instread. This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir));
+OSCAP_API OSCAP_DEPRECATED(int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir));
 
 /**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream
@@ -154,7 +155,7 @@ OSCAP_DEPRECATED(int ds_rds_decompose(const char* input_file, const char* report
  * 	    0 if no errors were encountered
  * 	   -1 in case of errors
  */
-int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
+OSCAP_API int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
         const char** oval_result_files, const char* target_file);
 
 /**
@@ -176,58 +177,58 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file,
 struct ds_stream_index;
 
 /// @memberof ds_stream_index
-struct ds_stream_index* ds_stream_index_new(void);
+OSCAP_API struct ds_stream_index* ds_stream_index_new(void);
 /// @memberof ds_stream_index
-void ds_stream_index_free(struct ds_stream_index* s);
+OSCAP_API void ds_stream_index_free(struct ds_stream_index* s);
 
 /**
  * @brief Gets ID of the <data-stream> element the index represents.
  *
  * @memberof ds_stream_index
  */
-const char* ds_stream_index_get_id(struct ds_stream_index* s);
+OSCAP_API const char* ds_stream_index_get_id(struct ds_stream_index* s);
 
 /**
  * @brief Timestamp of creation OR modification of the <data-stream> element the index represents.
  *
  * @memberof ds_stream_index
  */
-const char* ds_stream_index_get_timestamp(struct ds_stream_index* s);
+OSCAP_API const char* ds_stream_index_get_timestamp(struct ds_stream_index* s);
 
 /**
  * @brief scap-version of the the <data-stream> element the index represents.
  *
  * @memberof ds_stream_index
  */
-const char* ds_stream_index_get_version(struct ds_stream_index* s);
+OSCAP_API const char* ds_stream_index_get_version(struct ds_stream_index* s);
 
 /**
  * @brief Retrieves iterator over all components inside the <checks> element.
  *
  * @memberof ds_stream_index
  */
-struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s);
+OSCAP_API struct oscap_string_iterator* ds_stream_index_get_checks(struct ds_stream_index* s);
 
 /**
  * @brief Retrieves iterator over all components inside the <checklists> element.
  *
  * @memberof ds_stream_index
  */
-struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_index* s);
+OSCAP_API struct oscap_string_iterator* ds_stream_index_get_checklists(struct ds_stream_index* s);
 
 /**
  * @brief Retrieves iterator over all components inside the <dictionaries> element.
  *
  * @memberof ds_stream_index
  */
-struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s);
+OSCAP_API struct oscap_string_iterator* ds_stream_index_get_dictionaries(struct ds_stream_index* s);
 
 /**
  * @brief Retrieves iterator over all components inside the <extended-components> element.
  *
  * @memberof ds_stream_index
  */
-struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
+OSCAP_API struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_stream_index* s);
 
 /**
  * @struct ds_sds_index
@@ -243,23 +244,23 @@ struct oscap_string_iterator* ds_stream_index_get_extended_components(struct ds_
 struct ds_sds_index;
 
 /// @memberof ds_sds_index
-struct ds_sds_index* ds_sds_index_new(void);
+OSCAP_API struct ds_sds_index* ds_sds_index_new(void);
 /// @memberof ds_sds_index
-void ds_sds_index_free(struct ds_sds_index* s);
+OSCAP_API void ds_sds_index_free(struct ds_sds_index* s);
 
 /**
  * @brief retrieves a stream index by data-stream ID
  *
  * @memberof ds_sds_index
  */
-struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s, const char* stream_id);
+OSCAP_API struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s, const char* stream_id);
 
 /**
  * @brief retrieves all streams indexed inside this structure
  *
  * @memberof ds_sds_index
  */
-struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
+OSCAP_API struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
 
 /**
  * @brief imports given source datastream and indexes it
@@ -269,7 +270,7 @@ struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s
  * @deprecated This function has been deprecated. Make a use of ds_sds_session
  *     instread. This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(struct ds_sds_index *ds_sds_index_import(const char* file));
+OSCAP_API OSCAP_DEPRECATED(struct ds_sds_index *ds_sds_index_import(const char* file));
 
 /**
  * @brief chooses datastream and checklist id combination given the IDs
@@ -283,7 +284,7 @@ OSCAP_DEPRECATED(struct ds_sds_index *ds_sds_index_import(const char* file));
  * component_id is actually a component-ref ID, the reason is that we need the component-ref
  * to know which other components are in the catalog and thus needed when splitting.
  */
-int ds_sds_index_select_checklist(struct ds_sds_index* s,
+OSCAP_API int ds_sds_index_select_checklist(struct ds_sds_index* s,
 		const char** datastream_id, const char** component_id);
 
 /**
@@ -302,7 +303,7 @@ int ds_sds_index_select_checklist(struct ds_sds_index* s,
  * will be overwritten if 0 is returned. The values are never used, unlike with
  * ds_sds_index_select_checklist.
  */
-int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
+OSCAP_API int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
 		const char *benchmark_id, const char **datastream_id, const char **component_ref_id);
 
 /** 
@@ -312,20 +313,20 @@ int ds_sds_index_select_checklist_by_benchmark_id(struct ds_sds_index* s,
 struct ds_stream_index_iterator;
 
 /// @memberof ds_stream_index_iterator
-struct ds_stream_index *ds_stream_index_iterator_next(struct ds_stream_index_iterator *it);
+OSCAP_API struct ds_stream_index *ds_stream_index_iterator_next(struct ds_stream_index_iterator *it);
 /// @memberof ds_stream_index_iterator
-bool ds_stream_index_iterator_has_more(struct ds_stream_index_iterator *it);
+OSCAP_API bool ds_stream_index_iterator_has_more(struct ds_stream_index_iterator *it);
 /// @memberof ds_stream_index_iterator
-void ds_stream_index_iterator_free(struct ds_stream_index_iterator *it);
+OSCAP_API void ds_stream_index_iterator_free(struct ds_stream_index_iterator *it);
 
 /**
  * @struct rds_report_request_index
  */
 struct rds_report_request_index;
 
-struct rds_report_request_index* rds_report_request_index_new(void);
-void rds_report_request_index_free(struct rds_report_request_index* s);
-const char* rds_report_request_index_get_id(struct rds_report_request_index* s);
+OSCAP_API struct rds_report_request_index* rds_report_request_index_new(void);
+OSCAP_API void rds_report_request_index_free(struct rds_report_request_index* s);
+OSCAP_API const char* rds_report_request_index_get_id(struct rds_report_request_index* s);
 
 /**
  * @struct rds_asset_index
@@ -337,17 +338,17 @@ struct rds_asset_index;
  */
 struct rds_report_index;
 
-struct rds_asset_index* rds_asset_index_new(void);
-void rds_asset_index_free(struct rds_asset_index* s);
-const char* rds_asset_index_get_id(struct rds_asset_index* s);
-void rds_asset_index_add_report_ref(struct rds_asset_index* s, struct rds_report_index* report);
-struct rds_report_index_iterator* rds_asset_index_get_reports(struct rds_asset_index* s);
+OSCAP_API struct rds_asset_index* rds_asset_index_new(void);
+OSCAP_API void rds_asset_index_free(struct rds_asset_index* s);
+OSCAP_API const char* rds_asset_index_get_id(struct rds_asset_index* s);
+OSCAP_API void rds_asset_index_add_report_ref(struct rds_asset_index* s, struct rds_report_index* report);
+OSCAP_API struct rds_report_index_iterator* rds_asset_index_get_reports(struct rds_asset_index* s);
 
-struct rds_report_index* rds_report_index_new(void);
-void rds_report_index_free(struct rds_report_index* s);
-const char* rds_report_index_get_id(struct rds_report_index* s);
-void rds_report_index_set_request(struct rds_report_index* s, struct rds_report_request_index *request);
-struct rds_report_request_index *rds_report_index_get_request(struct rds_report_index* s);
+OSCAP_API struct rds_report_index* rds_report_index_new(void);
+OSCAP_API void rds_report_index_free(struct rds_report_index* s);
+OSCAP_API const char* rds_report_index_get_id(struct rds_report_index* s);
+OSCAP_API void rds_report_index_set_request(struct rds_report_index* s, struct rds_report_request_index *request);
+OSCAP_API struct rds_report_request_index *rds_report_index_get_request(struct rds_report_index* s);
 
 /**
  * @struct rds_report_request_index_iterator
@@ -356,11 +357,11 @@ struct rds_report_request_index *rds_report_index_get_request(struct rds_report_
 struct rds_report_request_index_iterator;
 
 /// @memberof rds_report_request_index_iterator
-struct rds_report_request_index *rds_report_request_index_iterator_next(struct rds_report_request_index_iterator *it);
+OSCAP_API struct rds_report_request_index *rds_report_request_index_iterator_next(struct rds_report_request_index_iterator *it);
 /// @memberof rds_report_request_index_iterator
-bool rds_report_request_index_iterator_has_more(struct rds_report_request_index_iterator *it);
+OSCAP_API bool rds_report_request_index_iterator_has_more(struct rds_report_request_index_iterator *it);
 /// @memberof rds_report_request_index_iterator
-void rds_report_request_index_iterator_free(struct rds_report_request_index_iterator *it);
+OSCAP_API void rds_report_request_index_iterator_free(struct rds_report_request_index_iterator *it);
 
 /**
  * @struct rds_asset_index_iterator
@@ -369,11 +370,11 @@ void rds_report_request_index_iterator_free(struct rds_report_request_index_iter
 struct rds_asset_index_iterator;
 
 /// @memberof rds_asset_index_iterator
-struct rds_asset_index *rds_asset_index_iterator_next(struct rds_asset_index_iterator *it);
+OSCAP_API struct rds_asset_index *rds_asset_index_iterator_next(struct rds_asset_index_iterator *it);
 /// @memberof rds_asset_index_iterator
-bool rds_asset_index_iterator_has_more(struct rds_asset_index_iterator *it);
+OSCAP_API bool rds_asset_index_iterator_has_more(struct rds_asset_index_iterator *it);
 /// @memberof rds_asset_index_iterator
-void rds_asset_index_iterator_free(struct rds_asset_index_iterator *it);
+OSCAP_API void rds_asset_index_iterator_free(struct rds_asset_index_iterator *it);
 
 /**
  * @struct rds_report_index_iterator
@@ -382,11 +383,11 @@ void rds_asset_index_iterator_free(struct rds_asset_index_iterator *it);
 struct rds_report_index_iterator;
 
 /// @memberof rds_report_index_iterator
-struct rds_report_index *rds_report_index_iterator_next(struct rds_report_index_iterator *it);
+OSCAP_API struct rds_report_index *rds_report_index_iterator_next(struct rds_report_index_iterator *it);
 /// @memberof rds_report_index_iterator
-bool rds_report_index_iterator_has_more(struct rds_report_index_iterator *it);
+OSCAP_API bool rds_report_index_iterator_has_more(struct rds_report_index_iterator *it);
 /// @memberof rds_report_index_iterator
-void rds_report_index_iterator_free(struct rds_report_index_iterator *it);
+OSCAP_API void rds_report_index_iterator_free(struct rds_report_index_iterator *it);
 
 /**
  * @struct rds_index
@@ -399,33 +400,33 @@ void rds_report_index_iterator_free(struct rds_report_index_iterator *it);
 struct rds_index;
 
 /// @memberof rds_index
-struct rds_index* rds_index_new(void);
+OSCAP_API struct rds_index* rds_index_new(void);
 /// @memberof rds_index
-void rds_index_free(struct rds_index *s);
+OSCAP_API void rds_index_free(struct rds_index *s);
 
 /// @memberof rds_index
-struct rds_report_request_index_iterator *rds_index_get_report_requests(struct rds_index *s);
+OSCAP_API struct rds_report_request_index_iterator *rds_index_get_report_requests(struct rds_index *s);
 /// @memberof rds_index
-struct rds_asset_index_iterator *rds_index_get_assets(struct rds_index *s);
+OSCAP_API struct rds_asset_index_iterator *rds_index_get_assets(struct rds_index *s);
 /// @memberof rds_index
-struct rds_report_index_iterator *rds_index_get_reports(struct rds_index *s);
+OSCAP_API struct rds_report_index_iterator *rds_index_get_reports(struct rds_index *s);
 
 /// @memberof rds_index
-struct rds_report_request_index *rds_index_get_report_request(struct rds_index *rds, const char *id);
+OSCAP_API struct rds_report_request_index *rds_index_get_report_request(struct rds_index *rds, const char *id);
 /// @memberof rds_index
-struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *id);
+OSCAP_API struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *id);
 /// @memberof rds_index
-struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
+OSCAP_API struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
 
 /**
  * @memberof rds_index
  * @deprecated This function has been deprecated. Make a use of ds_rds_session
  * instread. This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
+OSCAP_API OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
 
 /// @memberof rds_index
-int rds_index_select_report(struct rds_index *s, const char **report_id);
+OSCAP_API int rds_index_select_report(struct rds_index *s, const char **report_id);
 
 /************************************************************/
 /** @} End of DS group */

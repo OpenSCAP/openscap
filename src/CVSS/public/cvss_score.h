@@ -38,10 +38,11 @@
 #include <stdbool.h>
 #include <time.h>
 #include <stdio.h>
+#include "oscap_export.h"
 
 
 /// Get supported version of CVSS XML
-const char *cvss_model_supported(void);
+OSCAP_API const char *cvss_model_supported(void);
 
 /// CVSS score category
 enum cvss_category {
@@ -163,37 +164,37 @@ struct cvss_impact;
 struct cvss_metrics;
 
 /// Round @a x to one decimal place as described in CVSS standard
-float cvss_round(float x);
+OSCAP_API float cvss_round(float x);
 
 /// @memberof cvss_impact
-struct cvss_impact *cvss_impact_new(void);
+OSCAP_API struct cvss_impact *cvss_impact_new(void);
 /// @memberof cvss_impact
-struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector);
+OSCAP_API struct cvss_impact *cvss_impact_new_from_vector(const char *cvss_vector);
 /// @memberof cvss_impact
-struct cvss_impact *cvss_impact_clone(const struct cvss_impact* impact);
+OSCAP_API struct cvss_impact *cvss_impact_clone(const struct cvss_impact* impact);
 /// @memberof cvss_impact
 //struct cvss_impact *cvss_impact_new_parse(const char *filename);
 /// @memberof cvss_impact
-void cvss_impact_free(struct cvss_impact* impact);
+OSCAP_API void cvss_impact_free(struct cvss_impact* impact);
 /**
  * Write out a human-readable textual description of CVSS impact contents.
  * @param impact Impact to describe
  * @param f file handle to write the description to
  * @memberof cvss_impact
  */
-void cvss_impact_describe(const struct cvss_impact *impact, FILE *f);
+OSCAP_API void cvss_impact_describe(const struct cvss_impact *impact, FILE *f);
 
 /// @memberof cvss_impact
-struct cvss_metrics *cvss_impact_get_base_metrics(const struct cvss_impact* impact);
+OSCAP_API struct cvss_metrics *cvss_impact_get_base_metrics(const struct cvss_impact* impact);
 /// @memberof cvss_impact
-struct cvss_metrics *cvss_impact_get_temporal_metrics(const struct cvss_impact* impact);
+OSCAP_API struct cvss_metrics *cvss_impact_get_temporal_metrics(const struct cvss_impact* impact);
 /// @memberof cvss_impact
-struct cvss_metrics *cvss_impact_get_environmental_metrics(const struct cvss_impact* impact);
+OSCAP_API struct cvss_metrics *cvss_impact_get_environmental_metrics(const struct cvss_impact* impact);
 /// Set base, temporal, or environmental metrics (type is determined from the metrics itself)
 /// @memberof cvss_impact
-bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *metrics);
+OSCAP_API bool cvss_impact_set_metrics(struct cvss_impact* impact, struct cvss_metrics *metrics);
 /// @memberof cvss_impact
-char *cvss_impact_to_vector(const struct cvss_impact* impact);
+OSCAP_API char *cvss_impact_to_vector(const struct cvss_impact* impact);
 
 /**
  * @name Score calculators
@@ -216,7 +217,7 @@ char *cvss_impact_to_vector(const struct cvss_impact* impact);
  * @see cvss_impact_adjusted_base_score()
  * @memberof cvss_impact
  */
-float cvss_impact_base_exploitability_subscore(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_base_exploitability_subscore(const struct cvss_impact* impact);
 
 /**
  * Calculate impact subscore of base score.
@@ -226,7 +227,7 @@ float cvss_impact_base_exploitability_subscore(const struct cvss_impact* impact)
  * @see cvss_impact_base_score()
  * @memberof cvss_impact
  */
-float cvss_impact_base_impact_subscore(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_base_impact_subscore(const struct cvss_impact* impact);
 
 /**
  * Calculate base score.
@@ -240,7 +241,7 @@ float cvss_impact_base_impact_subscore(const struct cvss_impact* impact);
  * @see cvss_impact_base_adjusted_impact_subscore()
  * @memberof cvss_impact
  */
-float cvss_impact_base_score(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_base_score(const struct cvss_impact* impact);
 
 /**
  * Calculate temporal multiplier.
@@ -255,7 +256,7 @@ float cvss_impact_base_score(const struct cvss_impact* impact);
  * @see cvss_impact_adjusted_temporal_score()
  * @memberof cvss_impact
  */
-float cvss_impact_temporal_multiplier(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_temporal_multiplier(const struct cvss_impact* impact);
 
 /**
  * Calculate temporal score.
@@ -266,7 +267,7 @@ float cvss_impact_temporal_multiplier(const struct cvss_impact* impact);
  * @see cvss_impact_adjusted_temporal_score()
  * @memberof cvss_impact
  */
-float cvss_impact_temporal_score(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_temporal_score(const struct cvss_impact* impact);
 
 /**
  * Calculate impact subscore of base score adjusted to particular environment.
@@ -276,7 +277,7 @@ float cvss_impact_temporal_score(const struct cvss_impact* impact);
  * @see cvss_impact_adjusted_base_score()
  * @memberof cvss_impact
  */
-float cvss_impact_base_adjusted_impact_subscore(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_base_adjusted_impact_subscore(const struct cvss_impact* impact);
 
 /**
  * Calculate base score adjusted to particular environment.
@@ -285,7 +286,7 @@ float cvss_impact_base_adjusted_impact_subscore(const struct cvss_impact* impact
  * @see cvss_impact_base_score()
  * @memberof cvss_impact
  */
-float cvss_impact_adjusted_base_score(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_adjusted_base_score(const struct cvss_impact* impact);
 
 /**
  * Calculate temporal score adjusted to particular environment.
@@ -294,7 +295,7 @@ float cvss_impact_adjusted_base_score(const struct cvss_impact* impact);
  * @see cvss_impact_temporal_score()
  * @memberof cvss_impact
  */
-float cvss_impact_adjusted_temporal_score(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_adjusted_temporal_score(const struct cvss_impact* impact);
 
 /**
  * Calculate environmental score.
@@ -307,39 +308,39 @@ float cvss_impact_adjusted_temporal_score(const struct cvss_impact* impact);
  * @see cvss_impact_adjusted_temporal_score()
  * @memberof cvss_impact
  */
-float cvss_impact_environmental_score(const struct cvss_impact* impact);
+OSCAP_API float cvss_impact_environmental_score(const struct cvss_impact* impact);
 
 /** @} */
 
 /// @memberof cvss_metrics
-struct cvss_metrics *cvss_metrics_new(enum cvss_category category);
+OSCAP_API struct cvss_metrics *cvss_metrics_new(enum cvss_category category);
 /// @memberof cvss_metrics
-struct cvss_metrics *cvss_metrics_clone(const struct cvss_metrics* metrics);
+OSCAP_API struct cvss_metrics *cvss_metrics_clone(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-void cvss_metrics_free(struct cvss_metrics* metrics);
+OSCAP_API void cvss_metrics_free(struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_category cvss_metrics_get_category(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_category cvss_metrics_get_category(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-const char *cvss_metrics_get_source(const struct cvss_metrics* metrics);
+OSCAP_API const char *cvss_metrics_get_source(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_source(struct cvss_metrics* metrics, const char *new_source);
+OSCAP_API bool cvss_metrics_set_source(struct cvss_metrics* metrics, const char *new_source);
 /// @memberof cvss_metrics
-const char *cvss_metrics_get_generated_on_datetime(const struct cvss_metrics* metrics);
+OSCAP_API const char *cvss_metrics_get_generated_on_datetime(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_generated_on_datetime(struct cvss_metrics* metrics, const char *new_datetime);
+OSCAP_API bool cvss_metrics_set_generated_on_datetime(struct cvss_metrics* metrics, const char *new_datetime);
 /// @memberof cvss_metrics
-const char *cvss_metrics_get_upgraded_from_version(const struct cvss_metrics* metrics);
+OSCAP_API const char *cvss_metrics_get_upgraded_from_version(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_upgraded_from_version(struct cvss_metrics* metrics, const char *new_upgraded_from_version);
+OSCAP_API bool cvss_metrics_set_upgraded_from_version(struct cvss_metrics* metrics, const char *new_upgraded_from_version);
 /// @memberof cvss_metrics
-float cvss_metrics_get_score(const struct cvss_metrics* metrics);
+OSCAP_API float cvss_metrics_get_score(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_score(struct cvss_metrics* metrics, float score);
+OSCAP_API bool cvss_metrics_set_score(struct cvss_metrics* metrics, float score);
 /**
  * Validate CVSS metrics completeness
  * @memberof cvss_metrics
  */
-bool cvss_metrics_is_valid(const struct cvss_metrics* metrics);
+OSCAP_API bool cvss_metrics_is_valid(const struct cvss_metrics* metrics);
 
 /**
  * @name Vector values
@@ -352,62 +353,62 @@ bool cvss_metrics_is_valid(const struct cvss_metrics* metrics);
  */
 
 /// @memberof cvss_metrics
-enum cvss_access_vector cvss_metrics_get_access_vector(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_access_vector cvss_metrics_get_access_vector(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_access_complexity cvss_metrics_get_access_complexity(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_access_complexity cvss_metrics_get_access_complexity(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_authentication cvss_metrics_get_authentication(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_authentication cvss_metrics_get_authentication(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_cia_impact cvss_metrics_get_confidentiality_impact(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_cia_impact cvss_metrics_get_confidentiality_impact(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_cia_impact cvss_metrics_get_integrity_impact(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_cia_impact cvss_metrics_get_integrity_impact(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_cia_impact cvss_metrics_get_availability_impact(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_cia_impact cvss_metrics_get_availability_impact(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_exploitability cvss_metrics_get_exploitability(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_exploitability cvss_metrics_get_exploitability(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_remediation_level cvss_metrics_get_remediation_level(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_remediation_level cvss_metrics_get_remediation_level(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_report_confidence cvss_metrics_get_report_confidence(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_report_confidence cvss_metrics_get_report_confidence(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_collateral_damage_potential cvss_metrics_get_collateral_damage_potential(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_collateral_damage_potential cvss_metrics_get_collateral_damage_potential(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_target_distribution cvss_metrics_get_target_distribution(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_target_distribution cvss_metrics_get_target_distribution(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_cia_requirement cvss_metrics_get_confidentiality_requirement(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_cia_requirement cvss_metrics_get_confidentiality_requirement(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_cia_requirement cvss_metrics_get_integrity_requirement(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_cia_requirement cvss_metrics_get_integrity_requirement(const struct cvss_metrics* metrics);
 /// @memberof cvss_metrics
-enum cvss_cia_requirement cvss_metrics_get_availability_requirement(const struct cvss_metrics* metrics);
+OSCAP_API enum cvss_cia_requirement cvss_metrics_get_availability_requirement(const struct cvss_metrics* metrics);
 
 /// @memberof cvss_metrics
-bool cvss_metrics_set_access_vector(struct cvss_metrics* metrics, enum cvss_access_vector);
+OSCAP_API bool cvss_metrics_set_access_vector(struct cvss_metrics* metrics, enum cvss_access_vector);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_access_complexity(struct cvss_metrics* metrics, enum cvss_access_complexity);
+OSCAP_API bool cvss_metrics_set_access_complexity(struct cvss_metrics* metrics, enum cvss_access_complexity);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_authentication(struct cvss_metrics* metrics, enum cvss_authentication);
+OSCAP_API bool cvss_metrics_set_authentication(struct cvss_metrics* metrics, enum cvss_authentication);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_confidentiality_impact(struct cvss_metrics* metrics, enum cvss_cia_impact);
+OSCAP_API bool cvss_metrics_set_confidentiality_impact(struct cvss_metrics* metrics, enum cvss_cia_impact);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_integrity_impact(struct cvss_metrics* metrics, enum cvss_cia_impact);
+OSCAP_API bool cvss_metrics_set_integrity_impact(struct cvss_metrics* metrics, enum cvss_cia_impact);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_availability_impact(struct cvss_metrics* metrics, enum cvss_cia_impact);
+OSCAP_API bool cvss_metrics_set_availability_impact(struct cvss_metrics* metrics, enum cvss_cia_impact);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_exploitability(struct cvss_metrics* metrics, enum cvss_exploitability);
+OSCAP_API bool cvss_metrics_set_exploitability(struct cvss_metrics* metrics, enum cvss_exploitability);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_remediation_level(struct cvss_metrics* metrics, enum cvss_remediation_level);
+OSCAP_API bool cvss_metrics_set_remediation_level(struct cvss_metrics* metrics, enum cvss_remediation_level);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_report_confidence(struct cvss_metrics* metrics, enum cvss_report_confidence);
+OSCAP_API bool cvss_metrics_set_report_confidence(struct cvss_metrics* metrics, enum cvss_report_confidence);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_collateral_damage_potential(struct cvss_metrics* metrics, enum cvss_collateral_damage_potential);
+OSCAP_API bool cvss_metrics_set_collateral_damage_potential(struct cvss_metrics* metrics, enum cvss_collateral_damage_potential);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_target_distribution(struct cvss_metrics* metrics, enum cvss_target_distribution);
+OSCAP_API bool cvss_metrics_set_target_distribution(struct cvss_metrics* metrics, enum cvss_target_distribution);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_confidentiality_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
+OSCAP_API bool cvss_metrics_set_confidentiality_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_integrity_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
+OSCAP_API bool cvss_metrics_set_integrity_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
 /// @memberof cvss_metrics
-bool cvss_metrics_set_availability_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
+OSCAP_API bool cvss_metrics_set_availability_requirement(struct cvss_metrics* metrics, enum cvss_cia_requirement);
 
 
 /** @} */

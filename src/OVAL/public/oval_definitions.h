@@ -46,6 +46,7 @@
 #include "oval_version.h"
 #include "oval_schema_version.h"
 #include <stdbool.h>
+#include "oscap_export.h"
 
 /**
  * Affected family enumeration.
@@ -248,21 +249,21 @@ typedef enum {
 /**
  * Get the family associated with a given subtype.
  */
-oval_family_t oval_subtype_get_family(oval_subtype_t);
-const char *oval_operator_get_text(oval_operator_t);
-const char *oval_subtype_get_text(oval_subtype_t);
-const char *oval_subtype_to_str(oval_subtype_t);
-const char *oval_family_get_text(oval_family_t);
-const char *oval_check_get_text(oval_check_t);
-const char *oval_existence_get_text(oval_existence_t);
-const char *oval_affected_family_get_text(oval_affected_family_t);
-const char *oval_datatype_get_text(oval_datatype_t);
-oval_datatype_t oval_datatype_from_text(const char *);
-const char *oval_operation_get_text(oval_operation_t);
-const char *oval_set_operation_get_text(oval_setobject_operation_t);
-const char *oval_datetime_format_get_text(oval_datetime_format_t);
-const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
-const char *oval_filter_action_get_text(oval_filter_action_t);
+OSCAP_API oval_family_t oval_subtype_get_family(oval_subtype_t);
+OSCAP_API const char *oval_operator_get_text(oval_operator_t);
+OSCAP_API const char *oval_subtype_get_text(oval_subtype_t);
+OSCAP_API const char *oval_subtype_to_str(oval_subtype_t);
+OSCAP_API const char *oval_family_get_text(oval_family_t);
+OSCAP_API const char *oval_check_get_text(oval_check_t);
+OSCAP_API const char *oval_existence_get_text(oval_existence_t);
+OSCAP_API const char *oval_affected_family_get_text(oval_affected_family_t);
+OSCAP_API const char *oval_datatype_get_text(oval_datatype_t);
+OSCAP_API oval_datatype_t oval_datatype_from_text(const char *);
+OSCAP_API const char *oval_operation_get_text(oval_operation_t);
+OSCAP_API const char *oval_set_operation_get_text(oval_setobject_operation_t);
+OSCAP_API const char *oval_datetime_format_get_text(oval_datetime_format_t);
+OSCAP_API const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
+OSCAP_API const char *oval_filter_action_get_text(oval_filter_action_t);
 
 
 /**
@@ -596,28 +597,28 @@ struct oval_component_iterator;
  */
 struct oval_generator;
 
-struct oval_generator *oval_generator_new(void);
-void oval_generator_free(struct oval_generator *generator);
-struct oval_generator *oval_generator_clone(struct oval_generator *old_generator);
-char *oval_generator_get_product_name(struct oval_generator *generator);
-char *oval_generator_get_product_version(struct oval_generator *generator);
-OSCAP_DEPRECATED(char *oval_generator_get_schema_version(struct oval_generator *generator));
-const char *oval_generator_get_core_schema_version(struct oval_generator *generator);
-char *oval_generator_get_timestamp(struct oval_generator *generator);
-const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform);
-void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name);
-void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version);
-OSCAP_DEPRECATED(void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version));
-void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version);
-void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version);
-void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp);
-void oval_generator_update_timestamp(struct oval_generator *generator);
+OSCAP_API struct oval_generator *oval_generator_new(void);
+OSCAP_API void oval_generator_free(struct oval_generator *generator);
+OSCAP_API struct oval_generator *oval_generator_clone(struct oval_generator *old_generator);
+OSCAP_API char *oval_generator_get_product_name(struct oval_generator *generator);
+OSCAP_API char *oval_generator_get_product_version(struct oval_generator *generator);
+OSCAP_API OSCAP_DEPRECATED(char *oval_generator_get_schema_version(struct oval_generator *generator));
+OSCAP_API const char *oval_generator_get_core_schema_version(struct oval_generator *generator);
+OSCAP_API char *oval_generator_get_timestamp(struct oval_generator *generator);
+OSCAP_API const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform);
+OSCAP_API void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name);
+OSCAP_API void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version);
+OSCAP_API OSCAP_DEPRECATED(void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version));
+OSCAP_API void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version);
+OSCAP_API void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version);
+OSCAP_API void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp);
+OSCAP_API void oval_generator_update_timestamp(struct oval_generator *generator);
 
 /**
  * Create an empty oval_definition_model.
  * @memberof oval_definition_model
  */
-struct oval_definition_model *oval_definition_model_new(void);
+OSCAP_API struct oval_definition_model *oval_definition_model_new(void);
 
 /**
  * Import the content of the oscap_source into the oval_definition_model
@@ -625,7 +626,7 @@ struct oval_definition_model *oval_definition_model_new(void);
  * @param source The oscap_source to import from
  * @returns newly build oval_definition_model, or NULL if something went wrong
  */
-struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source);
+OSCAP_API struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source);
 
 /**
  * Import the content from the file into an oval_definition_model.
@@ -635,7 +636,7 @@ struct oval_definition_model *oval_definition_model_import_source(struct oscap_s
  * @deprecated This function has been deprecated and it may be dropped from later
  * OpenSCAP releases. Please use oval_definition_model_import_source instead.
  */
-OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(const char *file));
+OSCAP_API OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(const char *file));
 
 /**
  * Merge the content from the file with specified oval_definition_model.
@@ -647,46 +648,46 @@ OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(cons
  * @deprecated This function has been deprecated and it may be dropped from later
  * OpenSCAP releases.
  */
-OSCAP_DEPRECATED(int oval_definition_model_merge(struct oval_definition_model *model, const char *file));
+OSCAP_API OSCAP_DEPRECATED(int oval_definition_model_merge(struct oval_definition_model *model, const char *file));
 
 /**
  * Copy an oval_definition_model.
  * @return A copy of the specified @ref oval_definition_model.
  * @memberof oval_definition_model
  */
-struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
+OSCAP_API struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
 /**
  * Export an oval_definition_model into file.
  * @memberof oval_definition_model 
  *
  */
-int oval_definition_model_export(struct oval_definition_model *, const char *file);
+OSCAP_API int oval_definition_model_export(struct oval_definition_model *, const char *file);
 /**
  * Free OVAL object model and all binded variable models.
  * @memberof oval_definition_model
  */
-void oval_definition_model_free(struct oval_definition_model *model);
+OSCAP_API void oval_definition_model_free(struct oval_definition_model *model);
 
 /**
  * @name Setters
  * @{
  */
-void oval_definition_model_set_generator(struct oval_definition_model *model, struct oval_generator *generator);
+OSCAP_API void oval_definition_model_set_generator(struct oval_definition_model *model, struct oval_generator *generator);
 /**
  * Bind an oval_variable_model to the specified oval_definition_model.
  * @return zero on success or non zero value if an error occurred
  * @memberof oval_definition_model
  */
-int oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
+OSCAP_API int oval_definition_model_bind_variable_model(struct oval_definition_model *, struct oval_variable_model *);
 
-void oval_definition_model_clear_external_variables(struct oval_definition_model *);
+OSCAP_API void oval_definition_model_clear_external_variables(struct oval_definition_model *);
 /** @} */
 
 /**
  * @name Getters
  * @{
  */
-struct oval_generator *oval_definition_model_get_generator(struct oval_definition_model *model);
+OSCAP_API struct oval_generator *oval_definition_model_get_generator(struct oval_definition_model *model);
 /**
  * Returns the appended @ref oval_definition having the specified id.
  * IF the specified id does not resolve to an appended Oval_definition the method shall return NULL.
@@ -694,7 +695,7 @@ struct oval_generator *oval_definition_model_get_generator(struct oval_definitio
  * @param id the definition id.
  * @memberof oval_definition_model
  */
-struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *, const char *id);
+OSCAP_API struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *, const char *id);
 /**
  * Get oval test by ID.
  * Return a designated oval_test from the specified oval_definition_model.
@@ -703,7 +704,7 @@ struct oval_definition *oval_definition_model_get_definition(struct oval_definit
  * @param id the test id.
  * @memberof oval_definition_model
  */
-struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, const char *id);
+OSCAP_API struct oval_test *oval_definition_model_get_test(struct oval_definition_model *model, const char *id);
 /**
  * Get OVAL object by ID.
  * Return a designated oval_object from the specified oval_definition_model.
@@ -712,7 +713,7 @@ struct oval_test *oval_definition_model_get_test(struct oval_definition_model *m
  * @param id the object id.
  * @memberof oval_definition_model
  */
-struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, const char *id);
+OSCAP_API struct oval_object *oval_definition_model_get_object(struct oval_definition_model *model, const char *id);
 /**
  * Get OVAL state by ID.
  * Return a designated oval_state from the specified oval_definition_model.
@@ -721,7 +722,7 @@ struct oval_object *oval_definition_model_get_object(struct oval_definition_mode
  * @param id the state id.
  * @memberof oval_definition_model
  */
-struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, const char *id);
+OSCAP_API struct oval_state *oval_definition_model_get_state(struct oval_definition_model *model, const char *id);
 /**
  * Get OVAL variable by ID.
  * Return a designated oval_variable from the specified oval_definition_model.
@@ -730,53 +731,53 @@ struct oval_state *oval_definition_model_get_state(struct oval_definition_model 
  * @param id the variable id.
  * @memberof oval_definition_model
  */
-struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, const char *id);
+OSCAP_API struct oval_variable *oval_definition_model_get_variable(struct oval_definition_model *model, const char *id);
 /**
  * Returns all appended @ref oval_definition instances.
  * @memberof oval_definition_model
  */
-struct oval_definition_iterator *oval_definition_model_get_definitions(struct oval_definition_model *model);
+OSCAP_API struct oval_definition_iterator *oval_definition_model_get_definitions(struct oval_definition_model *model);
 /**
  * Get OVAL tests.
  * Return all oval_tests from the specified oval_definition_model.
  * @param model the queried model.
  * @memberof oval_definition_model
  */
-struct oval_test_iterator *oval_definition_model_get_tests(struct oval_definition_model *model);
+OSCAP_API struct oval_test_iterator *oval_definition_model_get_tests(struct oval_definition_model *model);
 /**
  * Get OVAL objects.
  * Return all oval_objects from the specified oval_definition_model.
  * @param model the queried model.
  * @memberof oval_definition_model
  */
-struct oval_object_iterator *oval_definition_model_get_objects(struct oval_definition_model *model);
+OSCAP_API struct oval_object_iterator *oval_definition_model_get_objects(struct oval_definition_model *model);
 /**
  * Get OVAL states.
  * Return all oval_states from the specified oval_definition_model.
  * @param model the queried model.
  * @memberof oval_definition_model
  */
-struct oval_state_iterator *oval_definition_model_get_states(struct oval_definition_model *model);
+OSCAP_API struct oval_state_iterator *oval_definition_model_get_states(struct oval_definition_model *model);
 /**
  * Get OVAL variables.
  * Return all oval_variables from the specified oval_definition_model.
  * @param model the queried model.
  * @memberof oval_definition_model
  */
-struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_definition_model *model);
+OSCAP_API struct oval_variable_iterator *oval_definition_model_get_variables(struct oval_definition_model *model);
 
 /**
  * Get supported version of OVAL XML
  * @return version of XML file format
  * @memberof oval_definition_model
  */
-const char * oval_definition_model_supported(void);
+OSCAP_API const char * oval_definition_model_supported(void);
 /**
  * Return the list of variable models bound to the specified oval_definition_model.
  * @return iterator over oval_variable_model collection
  * @memberof oval_definition_model
  */
-struct oval_variable_model_iterator *oval_definition_model_get_variable_models(struct oval_definition_model *);
+OSCAP_API struct oval_variable_model_iterator *oval_definition_model_get_variable_models(struct oval_definition_model *);
 /** @} */
 
 /**
@@ -802,14 +803,14 @@ struct oval_variable_model_iterator *oval_definition_model_get_variable_models(s
  * @param id - (non-NULL) A copy of this string is bound to the id attribute of the created instance.
  * @memberof oval_definition
  */
-struct oval_definition *oval_definition_new(struct oval_definition_model *, const char *id);
+OSCAP_API struct oval_definition *oval_definition_new(struct oval_definition_model *, const char *id);
 
 /**
  * Clone instance of @ref oval_definition and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_definition.
  * @memberof oval_definition
  */
-struct oval_definition *oval_definition_clone(struct oval_definition_model *new_model, struct oval_definition *old_definition);
+OSCAP_API struct oval_definition *oval_definition_clone(struct oval_definition_model *new_model, struct oval_definition *old_definition);
 
 /**
  * Release an instance of @ref oval_definition.
@@ -820,7 +821,7 @@ struct oval_definition *oval_definition_clone(struct oval_definition_model *new_
  * released.
  * @memberof oval_definition
  */
-void oval_definition_free(struct oval_definition *);
+OSCAP_API void oval_definition_free(struct oval_definition *);
 
 /**
  * @name Setters
@@ -833,7 +834,7 @@ void oval_definition_free(struct oval_definition *);
  * @param version - the required version
  * @memberof oval_definition
  */
-void oval_definition_set_version(struct oval_definition *, int version);
+OSCAP_API void oval_definition_set_version(struct oval_definition *, int version);
 /**
  * Set attribute @ref oval_definition->class.
  * This method shall overwrite a @ref OVAL_CLASS_UNKNOWN class attribute value with the value of the class parameter.
@@ -841,13 +842,13 @@ void oval_definition_set_version(struct oval_definition *, int version);
  * @param class - the required class
  * @memberof oval_definition
  */
-void oval_definition_set_class(struct oval_definition *, oval_definition_class_t);
+OSCAP_API void oval_definition_set_class(struct oval_definition *, oval_definition_class_t);
 /**
  * Set attribute @ref oval_definition->deprecated.
  * @param deprecated - the required deprecation toggle.
  * @memberof oval_definition
  */
-void oval_definition_set_deprecated(struct oval_definition *, bool deprecated);
+OSCAP_API void oval_definition_set_deprecated(struct oval_definition *, bool deprecated);
 /**
  * Set attribute @ref oval_definition->title.
  * This method shall overwrite a NULL title attribute value with a copy of the title parameter.
@@ -855,7 +856,7 @@ void oval_definition_set_deprecated(struct oval_definition *, bool deprecated);
  * @param title - the required title
  * @memberof oval_definition
  */
-void oval_definition_set_title(struct oval_definition *, char *title);
+OSCAP_API void oval_definition_set_title(struct oval_definition *, char *title);
 /**
  * Set attribute @ref oval_definition->description.
  * This method shall overwrite a NULL description attribute value with a copy of the description parameter.
@@ -863,7 +864,7 @@ void oval_definition_set_title(struct oval_definition *, char *title);
  * @param description - the required description
  * @memberof oval_definition
  */
-void oval_definition_set_description(struct oval_definition *, char *description);
+OSCAP_API void oval_definition_set_description(struct oval_definition *, char *description);
 /**
  * Append instance of @ref oval_affected to attribute @ref oval_definition->affected.
  * @note Instances of Oval_affected bound to Oval_definition by this method should not be subsequently freed by
@@ -874,7 +875,7 @@ void oval_definition_set_description(struct oval_definition *, char *description
  * @param affected - appended instance of Oval_affected.
  * @memberof oval_definition
  */
-void oval_definition_add_affected(struct oval_definition *, struct oval_affected *affected);
+OSCAP_API void oval_definition_add_affected(struct oval_definition *, struct oval_affected *affected);
 /**
  * Append instance of @ref oval_reference to attribute @ref oval_definition->references.
  * @note Instances of Oval_reference bound to Oval_definition by this method should not be subsequently freed by
@@ -885,13 +886,13 @@ void oval_definition_add_affected(struct oval_definition *, struct oval_affected
  * @param reference - appended instance of Oval_reference.
  * @memberof oval_definition
  */
-void oval_definition_add_reference(struct oval_definition *, struct oval_reference *reference);
+OSCAP_API void oval_definition_add_reference(struct oval_definition *, struct oval_reference *reference);
 /**
  * Append a copy of the note parameter to attribute @ref Oval_definition->notes.
  * @param note - the note text.
  * @memberof oval_definition
  */
-void oval_definition_add_note(struct oval_definition *, char *note);
+OSCAP_API void oval_definition_add_note(struct oval_definition *, char *note);
 /**
  * Set attribute @ref oval_definition->criteria.
  * This method shall overwrite a NULL criteria attribute value with the criteria parameter only if the criteria parameter is an instance of @ref Oval_criteria
@@ -905,7 +906,7 @@ void oval_definition_add_note(struct oval_definition *, char *note);
  * @param criteria - the required instance of Oval_criteria
  * @memberof oval_definition
  */
-void oval_definition_set_criteria(struct oval_definition *, struct oval_criteria_node *criteria);
+OSCAP_API void oval_definition_set_criteria(struct oval_definition *, struct oval_criteria_node *criteria);
 /** @} */
 
 /**
@@ -916,62 +917,62 @@ void oval_definition_set_criteria(struct oval_definition *, struct oval_criteria
  * Returns attribute @ref oval_definition->id (identifier).
  * @memberof oval_definition
  */
-char *oval_definition_get_id(struct oval_definition *);
+OSCAP_API char *oval_definition_get_id(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->version.
  * @return A pointer to the id attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
-int oval_definition_get_version(struct oval_definition *);
+OSCAP_API int oval_definition_get_version(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->class.
  * @memberof oval_definition
  */
-oval_definition_class_t oval_definition_get_class(struct oval_definition *);
+OSCAP_API oval_definition_class_t oval_definition_get_class(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->deprecated.
  * @memberof oval_definition
  */
-bool oval_definition_get_deprecated(struct oval_definition *);
+OSCAP_API bool oval_definition_get_deprecated(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->title.
  * @return A pointer to the title attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
-char *oval_definition_get_title(struct oval_definition *);
+OSCAP_API char *oval_definition_get_title(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->description.
  * @return A pointer to the description attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
-char *oval_definition_get_description(struct oval_definition *);
+OSCAP_API char *oval_definition_get_description(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->affected.
  * @return A new iterator for the affected attribute of the specified @ref oval_definition.
  * It should be freed after use by the calling application.
  * @memberof oval_definition
  */
-struct oval_affected_iterator *oval_definition_get_affected(struct oval_definition *);
+OSCAP_API struct oval_affected_iterator *oval_definition_get_affected(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->references.
  * @return A new iterator for the reference attribute of the specified @ref oval_definition.
  * It should be freed after use by the calling application.
  * @memberof oval_definition
  */
-struct oval_reference_iterator *oval_definition_get_references(struct oval_definition *);
+OSCAP_API struct oval_reference_iterator *oval_definition_get_references(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->notes.
  * @return A new iterator for the notes attribute of the specified @ref oval_definition.
  * It should be freed after use by the calling application.
  * @memberof oval_definition
  */
-struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *);
+OSCAP_API struct oval_string_iterator *oval_definition_get_notes(struct oval_definition *);
 /**
  * Returns attribute @ref oval_definition->criteria.
  * @return A pointer to the criteria attribute of the specified @ref oval_definition.
  * @memberof oval_definition
  */
-struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *);
+OSCAP_API struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *);
 /** @} */
 
 /**
@@ -988,18 +989,18 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition *
  * Returns <b>true</b> if the iterator contains more instances of @ref oval_definition.
  * @memberof oval_definition_iterator
  */
-bool oval_definition_iterator_has_more(struct oval_definition_iterator *);
+OSCAP_API bool oval_definition_iterator_has_more(struct oval_definition_iterator *);
 /**
  * Returns the next iterated instance of @ref oval_definition.
  * NULL is returned if the iterator is exhausted (@ref oval_definition_iterator_has_more == <b>false</b>)
  * @memberof oval_definition_iterator
  */
-struct oval_definition *oval_definition_iterator_next(struct oval_definition_iterator *);
+OSCAP_API struct oval_definition *oval_definition_iterator_next(struct oval_definition_iterator *);
 /**
  * Free the iterator.
  * @memberof oval_definition_iterator
  */
-void oval_definition_iterator_free(struct oval_definition_iterator *);
+OSCAP_API void oval_definition_iterator_free(struct oval_definition_iterator *);
 /** @} */
 
 /**
@@ -1022,18 +1023,18 @@ void oval_definition_iterator_free(struct oval_definition_iterator *);
  * @param id - (Not NULL) the text of the required test id.
  * @memberof oval_test
  */
-struct oval_test *oval_test_new(struct oval_definition_model *, const char *id);
+OSCAP_API struct oval_test *oval_test_new(struct oval_definition_model *, const char *id);
 /**
  * Clone instance of @ref oval_test and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_test.
  * @memberof oval_test
  */
-struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test);
+OSCAP_API struct oval_test *oval_test_clone(struct oval_definition_model *new_model, struct oval_test *old_test);
 /**
  * Destruct instance of @ref oval_test.
  * @memberof oval_test
  */
-void oval_test_free(struct oval_test *);
+OSCAP_API void oval_test_free(struct oval_test *);
 
 /**
  * @name Setters
@@ -1048,24 +1049,24 @@ void oval_test_free(struct oval_test *);
  * @param subtype - the required subtype value.
  * @memberof oval_test
  */
-void oval_test_set_subtype(struct oval_test *, oval_subtype_t subtype);
+OSCAP_API void oval_test_set_subtype(struct oval_test *, oval_subtype_t subtype);
 /**
  * Appends a copy of the note parameter to attribute @ref oval_test->notes.
  * @param note - (Not NULL) the text of the appended note.
  * @memberof oval_test
  */
-void oval_test_add_note(struct oval_test *, char *note);
+OSCAP_API void oval_test_add_note(struct oval_test *, char *note);
 /**
  * Sets a copy of the comment parameter to attribute @ref oval_test->comment.
  * @param comment - (Not NULL) the text of the comment.
  * @memberof oval_test
  */
-void oval_test_set_comment(struct oval_test *, char *comment);
+OSCAP_API void oval_test_set_comment(struct oval_test *, char *comment);
 /**
  * Sets attribute @ref oval_test->deprecated.
  * @memberof oval_test
  */
-void oval_test_set_deprecated(struct oval_test *, bool deprecated);
+OSCAP_API void oval_test_set_deprecated(struct oval_test *, bool deprecated);
 /**
  * Sets attribute @ref oval_test->version.
  * If Oval_test->version == 0 and parameter version >0,
@@ -1074,12 +1075,12 @@ void oval_test_set_deprecated(struct oval_test *, bool deprecated);
  * @param version - (>0) the required version
  * @memberof oval_test
  */
-void oval_test_set_version(struct oval_test *, int version);
+OSCAP_API void oval_test_set_version(struct oval_test *, int version);
 /**
  * Sets attribute @ref oval_test->state_operator.
  * @memberof oval_test
  */
-void oval_test_set_state_operator(struct oval_test *, oval_operator_t);
+OSCAP_API void oval_test_set_state_operator(struct oval_test *, oval_operator_t);
 /**
  * Sets attribute @ref oval_test->existence.
  * If Oval_test->existence == @ref OVAL_CHECK_UNKNOWN and parameter existence <> @ref OVAL_CHECK_UNKNOWN,
@@ -1088,7 +1089,7 @@ void oval_test_set_state_operator(struct oval_test *, oval_operator_t);
  * @param existence - (<> @ref OVAL_CHECK_UNKNOWN) the required existence
  * @memberof oval_test
  */
-void oval_test_set_existence(struct oval_test *, oval_existence_t);
+OSCAP_API void oval_test_set_existence(struct oval_test *, oval_existence_t);
 /**
  * Sets attribute @ref oval_test->check.
  * If Oval_test->check == @ref OVAL_CHECK_UNKNOWN and parameter check <> @ref OVAL_CHECK_UNKNOWN,
@@ -1098,7 +1099,7 @@ void oval_test_set_existence(struct oval_test *, oval_existence_t);
  * @param check - (<> @ref OVAL_CHECK_UNKNOWN) the required check
  * @memberof oval_test
  */
-void oval_test_set_check(struct oval_test *, oval_check_t);
+OSCAP_API void oval_test_set_check(struct oval_test *, oval_check_t);
 /**
  * Sets attribute @ref oval_test->object.
  * If Oval_test->object == NULL and parameter object <> NULL,
@@ -1107,13 +1108,13 @@ void oval_test_set_check(struct oval_test *, oval_check_t);
  * @param object - (<> NULL) the required object
  * @memberof oval_test
  */
-void oval_test_set_object(struct oval_test *, struct oval_object *);
+OSCAP_API void oval_test_set_object(struct oval_test *, struct oval_object *);
 /**
  * Add the specified state to the state list of the specified test.
  * @param state - (<> NULL) the required state
  * @memberof oval_test
  */
-void oval_test_add_state(struct oval_test *, struct oval_state *);
+OSCAP_API void oval_test_add_state(struct oval_test *, struct oval_state *);
 /** @} */
 
 /**
@@ -1124,69 +1125,69 @@ void oval_test_add_state(struct oval_test *, struct oval_state *);
  * Returns attribute @ref Oval_test->family
  * @memberof oval_test
  */
-oval_family_t oval_test_get_family(struct oval_test *);
+OSCAP_API oval_family_t oval_test_get_family(struct oval_test *);
 /**
  * Returns attribute @ref Oval_test->subtype
  * @memberof oval_test
  */
-oval_subtype_t oval_test_get_subtype(struct oval_test *);
+OSCAP_API oval_subtype_t oval_test_get_subtype(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->notes.
  * @return A new iterator for the notes attribute of the specified @ref oval_test.
  * It should be freed after use by the calling application.
  * @memberof oval_test
  */
-struct oval_string_iterator *oval_test_get_notes(struct oval_test *);
+OSCAP_API struct oval_string_iterator *oval_test_get_notes(struct oval_test *);
 /**
  * Returns attribute @ref Oval_test->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
-char *oval_test_get_comment(struct oval_test *);
+OSCAP_API char *oval_test_get_comment(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->id.
  * @return A pointer to the id attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
-char *oval_test_get_id(struct oval_test *);
+OSCAP_API char *oval_test_get_id(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->deprecated.
  * @memberof oval_test
  */
-bool oval_test_get_deprecated(struct oval_test *);
+OSCAP_API bool oval_test_get_deprecated(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->version.
  * @memberof oval_test
  */
-int oval_test_get_version(struct oval_test *);
+OSCAP_API int oval_test_get_version(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->state_operator.
  * @memberof oval_test
  */
-oval_operator_t oval_test_get_state_operator(struct oval_test *);
+OSCAP_API oval_operator_t oval_test_get_state_operator(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->existence.
  * @memberof oval_test
  */
-oval_existence_t oval_test_get_existence(struct oval_test *);
+OSCAP_API oval_existence_t oval_test_get_existence(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->check.
  * @memberof oval_test
  */
-oval_check_t oval_test_get_check(struct oval_test *);
+OSCAP_API oval_check_t oval_test_get_check(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->object.
  * @return A pointer to the object attribute of the specified @ref oval_test.
  * @memberof oval_test
  */
-struct oval_object *oval_test_get_object(struct oval_test *);
+OSCAP_API struct oval_object *oval_test_get_object(struct oval_test *);
 /**
  * Returns attribute @ref oval_test->states.
  * @return A new iterator for the states attribute of the specified @ref oval_test.
  * It should be freed after use by the calling application.
  * @memberof oval_test
  */
-struct oval_state_iterator *oval_test_get_states(struct oval_test *);
+OSCAP_API struct oval_state_iterator *oval_test_get_states(struct oval_test *);
 
 /** @} */
 
@@ -1204,17 +1205,17 @@ struct oval_state_iterator *oval_test_get_states(struct oval_test *);
  * Returns <b>true</b> if the iterator is not exhausted.
  * @memberof oval_test_iterator
  */
-bool oval_test_iterator_has_more(struct oval_test_iterator *);
+OSCAP_API bool oval_test_iterator_has_more(struct oval_test_iterator *);
 /**
  * Returns the next instance of @ref oval_test.
  * @memberof oval_test_iterator
  */
-struct oval_test *oval_test_iterator_next(struct oval_test_iterator *);
+OSCAP_API struct oval_test *oval_test_iterator_next(struct oval_test_iterator *);
 /**
  * Frees the iterator.
  * @memberof oval_test_iterator
  */
-void oval_test_iterator_free(struct oval_test_iterator *);
+OSCAP_API void oval_test_iterator_free(struct oval_test_iterator *);
 /** @} */
 
 /**
@@ -1235,18 +1236,18 @@ void oval_test_iterator_free(struct oval_test_iterator *);
  * @param id - (Not NULL) the text of the required object id.
  * @memberof oval_object
  */
-struct oval_object *oval_object_new(struct oval_definition_model *, const char *id);
+OSCAP_API struct oval_object *oval_object_new(struct oval_definition_model *, const char *id);
 /**
  * Clone instance of @ref oval_object and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_object.
  * @memberof oval_object
  */
-struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object);
+OSCAP_API struct oval_object *oval_object_clone(struct oval_definition_model *new_model, struct oval_object *old_object);
 /**
  * Free instance of @ref oval_object
  * @memberof oval_object
  */
-void oval_object_free(struct oval_object *);
+OSCAP_API void oval_object_free(struct oval_object *);
 
 /**
  * @name Setters
@@ -1261,26 +1262,26 @@ void oval_object_free(struct oval_object *);
  * @param subtype - the required subtype value.
  * @memberof oval_object
  */
-void oval_object_set_subtype(struct oval_object *, oval_subtype_t subtype);
+OSCAP_API void oval_object_set_subtype(struct oval_object *, oval_subtype_t subtype);
 /**
  * Appends a copy of the note parameter to attribute @ref oval_object->notes.
  * @param note - (Not NULL) the text of the appended note.
  * @memberof oval_object
  */
-void oval_object_add_note(struct oval_object *, char *note);
+OSCAP_API void oval_object_add_note(struct oval_object *, char *note);
 
 /**
  * Sets a copy of the comment parameter to attribute @ref oval_object->comment.
  * @param comment - (Not NULL) the text of the comment.
  * @memberof oval_object
  */
-void oval_object_set_comment(struct oval_object *, char *comment);
+OSCAP_API void oval_object_set_comment(struct oval_object *, char *comment);
 
 /**
  * Sets attribute @ref oval_object->deprecated.
  * @memberof oval_object
  */
-void oval_object_set_deprecated(struct oval_object *, bool deprecated);
+OSCAP_API void oval_object_set_deprecated(struct oval_object *, bool deprecated);
 /**
  * Sets attribute @ref oval_object->version.
  * If Oval_object->version == 0 and parameter version >0,
@@ -1289,7 +1290,7 @@ void oval_object_set_deprecated(struct oval_object *, bool deprecated);
  * @param version - (>0) the required version
  * @memberof oval_object
  */
-void oval_object_set_version(struct oval_object *, int version);
+OSCAP_API void oval_object_set_version(struct oval_object *, int version);
 /**
  * Append instance of @ref oval_object_content to attribute @ref oval_object->object_contents.
  *
@@ -1302,7 +1303,7 @@ void oval_object_set_version(struct oval_object *, int version);
  * @param content - (Not NULL) the Oval_object_content to be appended.
  * @memberof oval_object
  */
-void oval_object_add_object_content(struct oval_object *, struct oval_object_content *content);
+OSCAP_API void oval_object_add_object_content(struct oval_object *, struct oval_object_content *content);
 /**
  * Append instance of @ref oval_behavior to attribute @ref oval_object->behaviors.
  *
@@ -1315,7 +1316,7 @@ void oval_object_add_object_content(struct oval_object *, struct oval_object_con
  * @param behavior - (Not NULL) the Oval_behavior to be appended.
  * @memberof oval_object
  */
-void oval_object_add_behavior(struct oval_object *, struct oval_behavior *behavior);
+OSCAP_API void oval_object_add_behavior(struct oval_object *, struct oval_behavior *behavior);
 /** @} */
 
 /**
@@ -1326,59 +1327,59 @@ void oval_object_add_behavior(struct oval_object *, struct oval_behavior *behavi
  * Returns attribute @ref oval_object->family
  * @memberof oval_object
  */
-oval_family_t oval_object_get_family(struct oval_object *);
+OSCAP_API oval_family_t oval_object_get_family(struct oval_object *);
 /**
  * Returns the name of an @ref oval_object.
  * This is a convenience method that is equivalent to @ref oval_subtype_get_text (@ref oval_object_get_subtype)+"_object".
  * @memberof oval_object
  */
-const char *oval_object_get_name(struct oval_object *);
+OSCAP_API const char *oval_object_get_name(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->subtype
  * @memberof oval_object
  */
-oval_subtype_t oval_object_get_subtype(struct oval_object *);
+OSCAP_API oval_subtype_t oval_object_get_subtype(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->notes.
  * @return A new iterator for the notes attribute of the specified @ref oval_object.
  * It should be freed after use by the calling application.
  * @memberof oval_object
  */
-struct oval_string_iterator *oval_object_get_notes(struct oval_object *);
+OSCAP_API struct oval_string_iterator *oval_object_get_notes(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_object.
  * @memberof oval_object
  */
-char *oval_object_get_comment(struct oval_object *);
+OSCAP_API char *oval_object_get_comment(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->id.
  * @return A pointer to the id attribute of the specified @ref oval_object.
  * @memberof oval_object
  */
-char *oval_object_get_id(struct oval_object *);
+OSCAP_API char *oval_object_get_id(struct oval_object *);
 
 /**
  * Returns attribute @ref oval_object->deprecated.
  * @memberof oval_object
  */
-bool oval_object_get_deprecated(struct oval_object *);
+OSCAP_API bool oval_object_get_deprecated(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->version.
  * @memberof oval_object
  */
-int oval_object_get_version(struct oval_object *);
+OSCAP_API int oval_object_get_version(struct oval_object *);
 
 /**
  * Returns schema version of the associated definition model
  */
-OSCAP_DEPRECATED(oval_version_t oval_object_get_schema_version(struct oval_object *object));
+OSCAP_API OSCAP_DEPRECATED(oval_version_t oval_object_get_schema_version(struct oval_object *object));
 
 /**
  * Returns schema version of the associated platform extension definition model
  * @memberof oval_object
  */
-oval_schema_version_t oval_object_get_platform_schema_version(struct oval_object *object);
+OSCAP_API oval_schema_version_t oval_object_get_platform_schema_version(struct oval_object *object);
 
 /**
  * Returns attribute @ref oval_object->contents.
@@ -1386,14 +1387,14 @@ oval_schema_version_t oval_object_get_platform_schema_version(struct oval_object
  * It should be freed after use by the calling application.
  * @memberof oval_object
  */
-struct oval_object_content_iterator *oval_object_get_object_contents(struct oval_object *);
+OSCAP_API struct oval_object_content_iterator *oval_object_get_object_contents(struct oval_object *);
 /**
  * Returns attribute @ref oval_object->behaviors.
  * @return A new iterator for the behaviors attribute of the specified @ref oval_object.
  * It should be freed after use by the calling application.
  * @memberof oval_object
  */
-struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
+OSCAP_API struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
 /** @} */
 
 /**
@@ -1410,17 +1411,17 @@ struct oval_behavior_iterator *oval_object_get_behaviors(struct oval_object *);
  * Returns <b>true</b> if the iterator is not exhausted.
  * @memberof oval_object_iterator
  */
-bool oval_object_iterator_has_more(struct oval_object_iterator *);
+OSCAP_API bool oval_object_iterator_has_more(struct oval_object_iterator *);
 /**
  * Returns the next instance of @ref oval_object.
  * @memberof oval_object_iterator
  */
-struct oval_object *oval_object_iterator_next(struct oval_object_iterator *);
+OSCAP_API struct oval_object *oval_object_iterator_next(struct oval_object_iterator *);
 /**
  * Frees the iterator.
  * @memberof oval_object_iterator
  */
-void oval_object_iterator_free(struct oval_object_iterator *);
+OSCAP_API void oval_object_iterator_free(struct oval_object_iterator *);
 /** @} */
 
 /**
@@ -1441,18 +1442,18 @@ void oval_object_iterator_free(struct oval_object_iterator *);
  * @param id - (Not NULL) the text of the required state id.
  * @memberof oval_state
  */
-struct oval_state *oval_state_new(struct oval_definition_model *, const char *id);
+OSCAP_API struct oval_state *oval_state_new(struct oval_definition_model *, const char *id);
 /**
  * Clone instance of @ref oval_state and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_state.
  * @memberof oval_state
  */
-struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state);
+OSCAP_API struct oval_state *oval_state_clone(struct oval_definition_model *new_model, struct oval_state *old_state);
 /**
  * Free instance of @ref oval_state
  * @memberof oval_state
  */
-void oval_state_free(struct oval_state *);
+OSCAP_API void oval_state_free(struct oval_state *);
 
 /**
  * @name Setters
@@ -1467,24 +1468,24 @@ void oval_state_free(struct oval_state *);
  * @param subtype - the required subtype value.
  * @memberof oval_state
  */
-void oval_state_set_subtype(struct oval_state *, oval_subtype_t subtype);
+OSCAP_API void oval_state_set_subtype(struct oval_state *, oval_subtype_t subtype);
 /**
  * Appends a copy of the note parameter to attribute @ref oval_state->notes.
  * @param note - (Not NULL) the text of the appended note.
  * @memberof oval_state
  */
-void oval_state_add_note(struct oval_state *, char *note);
+OSCAP_API void oval_state_add_note(struct oval_state *, char *note);
 /**
  * Sets a copy of the comment parameter to attribute @ref oval_state->comment.
  * @param comment - (Not NULL) the text of the comment.
  * @memberof oval_state
  */
-void oval_state_set_comment(struct oval_state *, char *comment);
+OSCAP_API void oval_state_set_comment(struct oval_state *, char *comment);
 /**
  * Sets attribute @ref oval_state->deprecated.
  * @memberof oval_state
  */
-void oval_state_set_deprecated(struct oval_state *, bool deprecated);
+OSCAP_API void oval_state_set_deprecated(struct oval_state *, bool deprecated);
 /**
  * Sets attribute @ref oval_state->version.
  * If oval_state->version == 0 and parameter version >0,
@@ -1493,12 +1494,12 @@ void oval_state_set_deprecated(struct oval_state *, bool deprecated);
  * @param version - (>0) the required version
  * @memberof oval_state
  */
-void oval_state_set_version(struct oval_state *, int version);
+OSCAP_API void oval_state_set_version(struct oval_state *, int version);
 /**
  * Sets attribute @ref oval_state->operator.
  * @memberof oval_state
  */
-void oval_state_set_operator(struct oval_state *, oval_operator_t);
+OSCAP_API void oval_state_set_operator(struct oval_state *, oval_operator_t);
 /**
  * Append instance of @ref oval_state_content to attribute @ref oval_state->state_contents.
  *
@@ -1511,7 +1512,7 @@ void oval_state_set_operator(struct oval_state *, oval_operator_t);
  * @param content - (Not NULL) the oval_state_content to be appended.
  * @memberof oval_state
  */
-void oval_state_add_content(struct oval_state *, struct oval_state_content *content);
+OSCAP_API void oval_state_add_content(struct oval_state *, struct oval_state_content *content);
 /** @} */
 
 /**
@@ -1522,59 +1523,59 @@ void oval_state_add_content(struct oval_state *, struct oval_state_content *cont
  * Returns attribute @ref oval_state->family
  * @memberof oval_state
  */
-oval_family_t oval_state_get_family(struct oval_state *);
+OSCAP_API oval_family_t oval_state_get_family(struct oval_state *);
 /**
  * Returns the name of an @ref oval_state.
  * This is a convenience method that is equivalent to @ref oval_subtype_get_text (@ref oval_state_get_subtype)+"_state".
  * @memberof oval_state
  */
-const char *oval_state_get_name(struct oval_state *);
+OSCAP_API const char *oval_state_get_name(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->subtype
  * @memberof oval_state
  */
-oval_subtype_t oval_state_get_subtype(struct oval_state *);
+OSCAP_API oval_subtype_t oval_state_get_subtype(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->notes.
  * @return A new iterator for the notes attribute of the specified @ref oval_state.
  * It should be freed after use by the calling application.
  * @memberof oval_state
  */
-struct oval_string_iterator *oval_state_get_notes(struct oval_state *);
+OSCAP_API struct oval_string_iterator *oval_state_get_notes(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_state.
  * @memberof oval_state
  */
-char *oval_state_get_comment(struct oval_state *);
+OSCAP_API char *oval_state_get_comment(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->id.
  * @return A pointer to the id attribute of the specified @ref oval_state.
  * @memberof oval_state
  */
-char *oval_state_get_id(struct oval_state *);
+OSCAP_API char *oval_state_get_id(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->deprecated.
  * @memberof oval_state
  */
-bool oval_state_get_deprecated(struct oval_state *);
+OSCAP_API bool oval_state_get_deprecated(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->version.
  * @memberof oval_state
  */
-int oval_state_get_version(struct oval_state *);
+OSCAP_API int oval_state_get_version(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->operator.
  * @memberof oval_state
  */
-int oval_state_get_operator(struct oval_state *);
+OSCAP_API int oval_state_get_operator(struct oval_state *);
 /**
  * Returns attribute @ref oval_state->contents.
  * @return A new iterator for the contents attribute of the specified @ref oval_state.
  * It should be freed after use by the calling application.
  * @memberof oval_state
  */
-struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *);
+OSCAP_API struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *);
 /** @} */
 
 /**
@@ -1585,17 +1586,17 @@ struct oval_state_content_iterator *oval_state_get_contents(struct oval_state *)
  * Returns <b>true</b> if the iterator is not exhausted.
  * @memberof oval_state_iterator
  */
-bool oval_state_iterator_has_more(struct oval_state_iterator *);
+OSCAP_API bool oval_state_iterator_has_more(struct oval_state_iterator *);
 /**
  * Returns the next instance of @ref oval_state.
  * @memberof oval_state_iterator
  */
-struct oval_state *oval_state_iterator_next(struct oval_state_iterator *);
+OSCAP_API struct oval_state *oval_state_iterator_next(struct oval_state_iterator *);
 /**
  * Frees the iterator.
  * @memberof oval_state_iterator
  */
-void oval_state_iterator_free(struct oval_state_iterator *);
+OSCAP_API void oval_state_iterator_free(struct oval_state_iterator *);
 /** @} */
 
 /**
@@ -1628,18 +1629,18 @@ void oval_state_iterator_free(struct oval_state_iterator *);
  * @param type - (Not @ref OVAL_VARIABLE_UNKNOWN) the required type.
  * @memberof oval_variable
  */
-struct oval_variable *oval_variable_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type);
+OSCAP_API struct oval_variable *oval_variable_new(struct oval_definition_model *model, const char *id, oval_variable_type_t type);
 /**
  * Clone instance of @ref oval_variable and add it to the specified @ref oval_definition_model.
  * @return A copy of the specified @ref oval_variable.
  * @memberof oval_variable
  */
-struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable);
+OSCAP_API struct oval_variable *oval_variable_clone(struct oval_definition_model *new_model, struct oval_variable *old_variable);
 /**
  * Free instance of @ref oval_variable.
  * @memberof oval_variable
  */
-void oval_variable_free(struct oval_variable *);
+OSCAP_API void oval_variable_free(struct oval_variable *);
 
 /**
  * Construct new instance of possible_value element.
@@ -1647,25 +1648,25 @@ void oval_variable_free(struct oval_variable *);
  * @param value An expected value of an external variable
  * @memberof oval_variable_possible_value
  */
-struct oval_variable_possible_value *oval_variable_possible_value_new(const char *hint, const char *value);
+OSCAP_API struct oval_variable_possible_value *oval_variable_possible_value_new(const char *hint, const char *value);
 
 /**
  * Free instance of possible_value
  * @memberof oval_variable_possible_value
  */
-void oval_variable_possible_value_free(struct oval_variable_possible_value *pv);
+OSCAP_API void oval_variable_possible_value_free(struct oval_variable_possible_value *pv);
 
 /**
  * Get the hint of the possible_value
  * @memberof oval_variable_possible_value
  */
-char* oval_variable_possible_value_get_hint(struct oval_variable_possible_value* pv);
+OSCAP_API char* oval_variable_possible_value_get_hint(struct oval_variable_possible_value* pv);
 
 /**
  * Get the value of the possible value
  * @memberof oval_variable_possible_value
  */
-char* oval_variable_possible_value_get_value(struct oval_variable_possible_value* pv);
+OSCAP_API char* oval_variable_possible_value_get_value(struct oval_variable_possible_value* pv);
 
 /**
  * @name Iterators
@@ -1674,19 +1675,19 @@ char* oval_variable_possible_value_get_value(struct oval_variable_possible_value
 /**
  * @memberof oval_variable_possible_value_iterator
  */
-bool oval_variable_possible_value_iterator_has_more(struct oval_variable_possible_value_iterator*);
+OSCAP_API bool oval_variable_possible_value_iterator_has_more(struct oval_variable_possible_value_iterator*);
 /**
  * @memberof oval_variable_possible_value_iterator
  */
-struct oval_variable_possible_value *oval_variable_possible_value_iterator_next(struct oval_variable_possible_value_iterator*);
+OSCAP_API struct oval_variable_possible_value *oval_variable_possible_value_iterator_next(struct oval_variable_possible_value_iterator*);
 /**
  * @memberof oval_variable_possible_value_iterator
  */
-int oval_variable_possible_value_iterator_remaining(struct oval_variable_possible_value_iterator*);
+OSCAP_API int oval_variable_possible_value_iterator_remaining(struct oval_variable_possible_value_iterator*);
 /**
  * @memberof oval_variable_possible_value_iterator
  */
-void oval_variable_possible_value_iterator_free(struct oval_variable_possible_value_iterator*);
+OSCAP_API void oval_variable_possible_value_iterator_free(struct oval_variable_possible_value_iterator*);
 /** @} */
 
 
@@ -1696,14 +1697,14 @@ void oval_variable_possible_value_iterator_free(struct oval_variable_possible_va
  * @param hint A short description of what the value means or represents.
  * @memberof oval_variable_possible_restriction
  */
-struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t operator, const char *hint);
+OSCAP_API struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t operator, const char *hint);
 
 
 /**
  * Free instance of possible_restriction
  * @memberof oval_variable_possible_restriction
  */
-void oval_variable_possible_restriction_free(struct oval_variable_possible_restriction *pr);
+OSCAP_API void oval_variable_possible_restriction_free(struct oval_variable_possible_restriction *pr);
 
 
 /**
@@ -1713,19 +1714,19 @@ void oval_variable_possible_restriction_free(struct oval_variable_possible_restr
 /**
  * @memberof oval_variable_possible_restriction_iterator
  */
-bool oval_variable_possible_restriction_iterator_has_more(struct oval_variable_possible_restriction_iterator* iter);
+OSCAP_API bool oval_variable_possible_restriction_iterator_has_more(struct oval_variable_possible_restriction_iterator* iter);
 /**
  * @memberof oval_variable_possible_restriction_iterator
  */
-struct oval_variable_possible_restriction *oval_variable_possible_restriction_iterator_next(struct oval_variable_possible_restriction_iterator* iter);
+OSCAP_API struct oval_variable_possible_restriction *oval_variable_possible_restriction_iterator_next(struct oval_variable_possible_restriction_iterator* iter);
 /**
  * @memberof oval_variable_possible_restriction_iterator
  */
-int oval_variable_possible_restriction_iterator_remaining(struct oval_variable_possible_restriction_iterator* iter);
+OSCAP_API int oval_variable_possible_restriction_iterator_remaining(struct oval_variable_possible_restriction_iterator* iter);
 /**
  * @memberof oval_variable_possible_restriction_iterator
  */
-void oval_variable_possible_restriction_iterator_free(struct oval_variable_possible_restriction_iterator* iter);
+OSCAP_API void oval_variable_possible_restriction_iterator_free(struct oval_variable_possible_restriction_iterator* iter);
 /** @} */
 
 
@@ -1735,25 +1736,25 @@ void oval_variable_possible_restriction_iterator_free(struct oval_variable_possi
  * @param value Restriction placed on expected values for an external variable.
  * @memberof oval_variable_restriction
  */
-struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value);
+OSCAP_API struct oval_variable_restriction *oval_variable_restriction_new(oval_operation_t operation, const char *value);
 
 /**
  * Free instance of restriction element.
  * @memberof oval_variable_restriction
  */
-void oval_variable_restriction_free(struct oval_variable_restriction *r);
+OSCAP_API void oval_variable_restriction_free(struct oval_variable_restriction *r);
 
 /**
  * Get the operation of a restriction element.
  * @memberof oval_variable_restriction
  */
-oval_operation_t oval_variable_restriction_get_operation(struct oval_variable_restriction* restriction);
+OSCAP_API oval_operation_t oval_variable_restriction_get_operation(struct oval_variable_restriction* restriction);
 
 /**
  * Get the value of a restriction element.
  * @memberof oval_variable_restriction
  */
-char* oval_variable_restriction_get_value(struct oval_variable_restriction* restriction);
+OSCAP_API char* oval_variable_restriction_get_value(struct oval_variable_restriction* restriction);
 
 /**
  * @name Iterators
@@ -1762,19 +1763,19 @@ char* oval_variable_restriction_get_value(struct oval_variable_restriction* rest
 /**
  * @memberof oval_variable_restriction_iterator
  */
-bool oval_variable_restriction_iterator_has_more(struct oval_variable_restriction_iterator*);
+OSCAP_API bool oval_variable_restriction_iterator_has_more(struct oval_variable_restriction_iterator*);
 /**
  * @memberof oval_variable_restriction_iterator
  */
-struct oval_variable_restriction *oval_variable_restriction_iterator_next(struct oval_variable_restriction_iterator*);
+OSCAP_API struct oval_variable_restriction *oval_variable_restriction_iterator_next(struct oval_variable_restriction_iterator*);
 /**
  * @memberof oval_variable_restriction_iterator
  */
-int oval_variable_restriction_iterator_remaining(struct oval_variable_restriction_iterator*);
+OSCAP_API int oval_variable_restriction_iterator_remaining(struct oval_variable_restriction_iterator*);
 /**
  * @memberof oval_variable_restriction_iterator
  */
-void oval_variable_restriction_iterator_free(struct oval_variable_restriction_iterator*);
+OSCAP_API void oval_variable_restriction_iterator_free(struct oval_variable_restriction_iterator*);
 /** @} */
 
 
@@ -1789,7 +1790,7 @@ void oval_variable_restriction_iterator_free(struct oval_variable_restriction_it
  * @param comm - (Not NULL) a copy of the comment parameter is set as  the comment attribute.
  * @memberof oval_variable
  */
-void oval_variable_set_comment(struct oval_variable *, char *comment);
+OSCAP_API void oval_variable_set_comment(struct oval_variable *, char *comment);
 /**
  * set attribute @ref oval_variable->version.
  * If attribute oval_variable->version == 0 this method shall overwrite the attribute with the version parameter.
@@ -1797,13 +1798,13 @@ void oval_variable_set_comment(struct oval_variable *, char *comment);
  * @param version - (>0) the required version.
  * @memberof oval_variable
  */
-void oval_variable_set_version(struct oval_variable *, int version);
+OSCAP_API void oval_variable_set_version(struct oval_variable *, int version);
 /**
  * set attribute @ref oval_variable->deprecated.
  * @param deprecated - the required deprecation toggle.
  * @memberof oval_variable
  */
-void oval_variable_set_deprecated(struct oval_variable *, bool deprecated);
+OSCAP_API void oval_variable_set_deprecated(struct oval_variable *, bool deprecated);
 /**
  * set attribute @ref oval_variable->datatype.
  * If attribute oval_variable->datatype == @ref OVAL_DATATYPE_UNKNOWN this method shall overwrite the attribute with the datatype parameter.
@@ -1811,7 +1812,7 @@ void oval_variable_set_deprecated(struct oval_variable *, bool deprecated);
  * @param datatype - (Not @ref OVAL_DATATYPE_UNKNOWN) a the required datatype.
  * @memberof oval_variable
  */
-void oval_variable_set_datatype(struct oval_variable *, oval_datatype_t);
+OSCAP_API void oval_variable_set_datatype(struct oval_variable *, oval_datatype_t);
 /**
  * Append an instance of @ref Oval_value to the attribute @ref Oval_constant->values.
  * If attribute type <> @ref OVAL_VARIABLE_CONSTANT or the value parameter is NULL the state of the oval_variable shall not be changed by this
@@ -1825,9 +1826,9 @@ void oval_variable_set_datatype(struct oval_variable *, oval_datatype_t);
  * @param value - the required value.
  * @memberof oval_variable
  */
-void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//type==OVAL_VARIABLE_CONSTANT
+OSCAP_API void oval_variable_add_value(struct oval_variable *, struct oval_value *);	//type==OVAL_VARIABLE_CONSTANT
 
-void oval_variable_clear_values(struct oval_variable *);
+OSCAP_API void oval_variable_clear_values(struct oval_variable *);
 
 /**
  * Add a new possible value to an external variable.
@@ -1835,7 +1836,7 @@ void oval_variable_clear_values(struct oval_variable *);
  * @param pv The new possible_value.
  * @memberof oval_variable
  */
-void oval_variable_add_possible_value(struct oval_variable *variable, struct oval_variable_possible_value *pv);
+OSCAP_API void oval_variable_add_possible_value(struct oval_variable *variable, struct oval_variable_possible_value *pv);
 
 /**
  * Add a new possible restriction to an external variable.
@@ -1843,7 +1844,7 @@ void oval_variable_add_possible_value(struct oval_variable *variable, struct ova
  * @param pr The new possible_restriction.
  * @memberof oval_variable
  */
-void oval_variable_add_possible_restriction(struct oval_variable *variable, struct oval_variable_possible_restriction *pr);
+OSCAP_API void oval_variable_add_possible_restriction(struct oval_variable *variable, struct oval_variable_possible_restriction *pr);
 
 /**
  * Add a restriction to the list of possible restrictions.
@@ -1851,7 +1852,7 @@ void oval_variable_add_possible_restriction(struct oval_variable *variable, stru
  * @param r Restriction which will be added
  * @memberof oval_variable_possible_restriction
  */
-void oval_variable_possible_restriction_add_restriction(struct oval_variable_possible_restriction *pr, struct oval_variable_restriction *r);
+OSCAP_API void oval_variable_possible_restriction_add_restriction(struct oval_variable_possible_restriction *pr, struct oval_variable_restriction *r);
 
 /**
  * Bind an instance of @ref Oval_component to the attribute @ref Oval_local->component.
@@ -1865,7 +1866,7 @@ void oval_variable_possible_restriction_add_restriction(struct oval_variable_pos
  * @param component - the required component.
  * @memberof oval_variable
  */
-void oval_variable_set_component(struct oval_variable *, struct oval_component *component);	//type==OVAL_VARIABLE_LOCAL
+OSCAP_API void oval_variable_set_component(struct oval_variable *, struct oval_component *component);	//type==OVAL_VARIABLE_LOCAL
 /** @} */
 
 /**
@@ -1877,33 +1878,33 @@ void oval_variable_set_component(struct oval_variable *, struct oval_component *
  * @return A pointer to the id attribute of the specified @ref oval_variable.
  * @memberof oval_variable
  */
-char *oval_variable_get_id(struct oval_variable *);
+OSCAP_API char *oval_variable_get_id(struct oval_variable *);
 /**
  * Returns attribute @ref oval_variable->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_variable.
  * @memberof oval_variable
  */
-char *oval_variable_get_comment(struct oval_variable *);
+OSCAP_API char *oval_variable_get_comment(struct oval_variable *);
 /**
  * Returns attribute @ref oval_variable->version.
  * @memberof oval_variable
  */
-int oval_variable_get_version(struct oval_variable *);
+OSCAP_API int oval_variable_get_version(struct oval_variable *);
 /**
  * Returns attribute @ref oval_variable->deprecated.
  * @memberof oval_variable
  */
-bool oval_variable_get_deprecated(struct oval_variable *);
+OSCAP_API bool oval_variable_get_deprecated(struct oval_variable *);
 /**
  * Returns attribute @ref oval_variable->type.
  * @memberof oval_variable
  */
-oval_variable_type_t oval_variable_get_type(struct oval_variable *);
+OSCAP_API oval_variable_type_t oval_variable_get_type(struct oval_variable *);
 /**
  * Returns attribute @ref oval_variable->datatype.
  * @memberof oval_variable
  */
-oval_datatype_t oval_variable_get_datatype(struct oval_variable *);
+OSCAP_API oval_datatype_t oval_variable_get_datatype(struct oval_variable *);
 /**
  * Returns attribute @ref Oval_external/@ref Oval_constant->values.
  * If attribute type == @ref OVAL_VARIABLE_LOCAL or @ref OVAL_VARIABLE_UNKNOWN, this method shall return NULL
@@ -1911,14 +1912,14 @@ oval_datatype_t oval_variable_get_datatype(struct oval_variable *);
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-struct oval_value_iterator *oval_variable_get_values(struct oval_variable *);	//type==OVAL_VARIABLE_CONSTANT
+OSCAP_API struct oval_value_iterator *oval_variable_get_values(struct oval_variable *);	//type==OVAL_VARIABLE_CONSTANT
 /**
  * Returns attribute @ref Oval_local->component.
  * If attribute type <> @ref OVAL_VARIABLE_LOCAL this method shall return NULL.
  * @return A pointer to the component attribute of the specified @ref oval_variable.
  * @memberof oval_variable
  */
-struct oval_component *oval_variable_get_component(struct oval_variable *);	//type==OVAL_VARIABLE_LOCAL
+OSCAP_API struct oval_component *oval_variable_get_component(struct oval_variable *);	//type==OVAL_VARIABLE_LOCAL
 
 /**
  * Get list of allowed values for an external variable.
@@ -1926,8 +1927,8 @@ struct oval_component *oval_variable_get_component(struct oval_variable *);	//ty
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable));
-struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2(struct oval_variable *variable);
+OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable));
+OSCAP_API struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2(struct oval_variable *variable);
 
 /**
  * Get list of constraints for an external variable.
@@ -1935,8 +1936,8 @@ struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable));
-struct oval_variable_possible_restriction_iterator *oval_variable_get_possible_restrictions2(struct oval_variable *variable);
+OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable));
+OSCAP_API struct oval_variable_possible_restriction_iterator *oval_variable_get_possible_restrictions2(struct oval_variable *variable);
 
 
 /**
@@ -1945,28 +1946,28 @@ struct oval_variable_possible_restriction_iterator *oval_variable_get_possible_r
  * It should be freed after use by the calling application.
  * @memberof oval_variable_possible_restriction
  */
-OSCAP_DEPRECATED(struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction));
-struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions2(struct oval_variable_possible_restriction *possible_restriction);
+OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction));
+OSCAP_API struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions2(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
  * Get operator of possible_restriction element
  * @return operator
  * @memberof oval_variable_possible_restriction
  */
-oval_operator_t oval_variable_possible_restriction_get_operator(struct oval_variable_possible_restriction *possible_restriction);
+OSCAP_API oval_operator_t oval_variable_possible_restriction_get_operator(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
  * Get hint of possible_restriction element
  * @return hint
  * @memberof oval_variable_possible_restriction
  */
-char* oval_variable_possible_restriction_get_hint(struct oval_variable_possible_restriction* possible_restriction);
+OSCAP_API char* oval_variable_possible_restriction_get_hint(struct oval_variable_possible_restriction* possible_restriction);
 
 /**
  * Returns attribute @ref Oval_component_type->text.
  * @memberof oval_variable
  */
-const char *oval_component_type_get_text(oval_component_type_t type);
+OSCAP_API const char *oval_component_type_get_text(oval_component_type_t type);
 /** @} */
 
 /**
@@ -1977,17 +1978,17 @@ const char *oval_component_type_get_text(oval_component_type_t type);
  * Returns <b>true</b> if iterator not exhausted.
  * @memberof oval_variable_iterator
  */
-bool oval_variable_iterator_has_more(struct oval_variable_iterator *);
+OSCAP_API bool oval_variable_iterator_has_more(struct oval_variable_iterator *);
 /**
  * Returns next instance of @ref oval_variable.
  * @memberof oval_variable_iterator
  */
-struct oval_variable *oval_variable_iterator_next(struct oval_variable_iterator *);
+OSCAP_API struct oval_variable *oval_variable_iterator_next(struct oval_variable_iterator *);
 /**
  * Free iterator.
  * @memberof oval_variable_iterator
  */
-void oval_variable_iterator_free(struct oval_variable_iterator *);
+OSCAP_API void oval_variable_iterator_free(struct oval_variable_iterator *);
 /** @} */
 
 /**
@@ -2000,18 +2001,18 @@ void oval_variable_iterator_free(struct oval_variable_iterator *);
  * Construct instance of @ref oval_affected.
  * @memberof oval_affected
  */
-struct oval_affected *oval_affected_new(struct oval_definition_model *);
+OSCAP_API struct oval_affected *oval_affected_new(struct oval_definition_model *);
 /**
  * Clone instance of @ref oval_affected.
  * @return A copy of the specified @ref oval_affected.
  * @memberof oval_affected
  */
-struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected);
+OSCAP_API struct oval_affected *oval_affected_clone(struct oval_definition_model *new_model, struct oval_affected *old_affected);
 /**
  * Release instance of @ref oval_affected.
  * @memberof oval_affected
  */
-void oval_affected_free(struct oval_affected *);
+OSCAP_API void oval_affected_free(struct oval_affected *);
 
 /**
  * @name Setters
@@ -2021,17 +2022,17 @@ void oval_affected_free(struct oval_affected *);
  * Set @ref oval_affected family.
  * @memberof oval_affected
  */
-void oval_affected_set_family(struct oval_affected *, oval_affected_family_t family);
+OSCAP_API void oval_affected_set_family(struct oval_affected *, oval_affected_family_t family);
 /**
  * Append name to @ref oval_affected platform names.
  * @memberof oval_affected
  */
-void oval_affected_add_platform(struct oval_affected *, char *platform_name);
+OSCAP_API void oval_affected_add_platform(struct oval_affected *, char *platform_name);
 /**
  * Append name to @ref oval_affected product names.
  * @memberof oval_affected
  */
-void oval_affected_add_product(struct oval_affected *, char *product_name);
+OSCAP_API void oval_affected_add_product(struct oval_affected *, char *product_name);
 /** @} */
 
 /**
@@ -2044,7 +2045,7 @@ void oval_affected_add_product(struct oval_affected *, char *product_name);
  * other than one of the defined values is targeted.
  * @memberof oval_affected
  */
-oval_affected_family_t oval_affected_get_family(struct oval_affected *);
+OSCAP_API oval_affected_family_t oval_affected_get_family(struct oval_affected *);
 /**
  * Get member values @ref oval_affected platform_names.
  * If the returned iterator is empty, then the associated Oval_definition is not constrained to a specific platform choice.
@@ -2052,7 +2053,7 @@ oval_affected_family_t oval_affected_get_family(struct oval_affected *);
  * It should be freed after use by the calling application.
  * @memberof oval_affected
  */
-struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *);
+OSCAP_API struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *);
 /**
  * Get member values @ref oval_affected product_names.
  * If the returned iterator is empty, then the associated Oval_definition is not constrained to a specific product choice.
@@ -2060,7 +2061,7 @@ struct oval_string_iterator *oval_affected_get_platforms(struct oval_affected *)
  * It should be freed after use by the calling application.
  * @memberof oval_affected
  */
-struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
+OSCAP_API struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
 /** @} */
 
 /**
@@ -2077,33 +2078,33 @@ struct oval_string_iterator *oval_affected_get_products(struct oval_affected *);
  * Return <b>true</b> if iterator has more @ref oval_affected.
  * @memberof oval_affected_iterator
  */
-bool oval_affected_iterator_has_more(struct oval_affected_iterator *);
+OSCAP_API bool oval_affected_iterator_has_more(struct oval_affected_iterator *);
 /**
  * Return next instance of @ref oval_affected from iterator.
  * @memberof oval_affected_iterator
  */
-struct oval_affected *oval_affected_iterator_next(struct oval_affected_iterator *);
+OSCAP_API struct oval_affected *oval_affected_iterator_next(struct oval_affected_iterator *);
 /**
  * Release instance of @ref oval_affected_ iterator.
  * @memberof oval_affected_iterator
  */
-void oval_affected_iterator_free(struct oval_affected_iterator *);
+OSCAP_API void oval_affected_iterator_free(struct oval_affected_iterator *);
 /** @} */
 
 /**
  * @memberof oval_reference
  */
-struct oval_reference *oval_reference_new(struct oval_definition_model *);
+OSCAP_API struct oval_reference *oval_reference_new(struct oval_definition_model *);
 /**
  * @return A copy of the specified @ref oval_reference.
  * @memberof oval_reference
  */
-struct oval_reference *oval_reference_clone
-    (struct oval_definition_model *new_model, struct oval_reference *old_reference);
+OSCAP_API struct oval_reference *oval_reference_clone
+     (struct oval_definition_model *new_model, struct oval_reference *old_reference);
 /**
  * @memberof oval_reference
  */
-void oval_reference_free(struct oval_reference *);
+OSCAP_API void oval_reference_free(struct oval_reference *);
 
 /**
  * @name Setters
@@ -2114,15 +2115,15 @@ void oval_reference_free(struct oval_reference *);
  * Set OVAL reference source
  * @memberof oval_reference
  */
-void oval_reference_set_source(struct oval_reference *, char *);
+OSCAP_API void oval_reference_set_source(struct oval_reference *, char *);
 /**
  * @memberof oval_reference
  */
-void oval_reference_set_id(struct oval_reference *, char *);
+OSCAP_API void oval_reference_set_id(struct oval_reference *, char *);
 /**
  * @memberof oval_reference
  */
-void oval_reference_set_url(struct oval_reference *, char *);
+OSCAP_API void oval_reference_set_url(struct oval_reference *, char *);
 /** @} */
 
 /**
@@ -2134,19 +2135,19 @@ void oval_reference_set_url(struct oval_reference *, char *);
  * @return A pointer to the source attribute of the specified @ref oval_reference.
  * @memberof oval_reference
  */
-char *oval_reference_get_source(struct oval_reference *);
+OSCAP_API char *oval_reference_get_source(struct oval_reference *);
 /**
  * Get OVAL reference ID.
  * @return A pointer to the id attribute of the specified @ref oval_reference.
  * @memberof oval_reference
  */
-char *oval_reference_get_id(struct oval_reference *);
+OSCAP_API char *oval_reference_get_id(struct oval_reference *);
 /**
  * Get OVAL reference URL.
  * @return A pointer to the url attribute of the specified @ref oval_reference.
  * @memberof oval_reference
  */
-char *oval_reference_get_url(struct oval_reference *);
+OSCAP_API char *oval_reference_get_url(struct oval_reference *);
 /** @} */
 
 /**
@@ -2156,15 +2157,15 @@ char *oval_reference_get_url(struct oval_reference *);
 /**
  * @memberof oval_reference_iterator
  */
-bool oval_reference_iterator_has_more(struct oval_reference_iterator *);
+OSCAP_API bool oval_reference_iterator_has_more(struct oval_reference_iterator *);
 /**
  * @memberof oval_reference_iterator
  */
-struct oval_reference *oval_reference_iterator_next(struct oval_reference_iterator *);
+OSCAP_API struct oval_reference *oval_reference_iterator_next(struct oval_reference_iterator *);
 /**
  * @memberof oval_reference_iterator
  */
-void oval_reference_iterator_free(struct oval_reference_iterator *);
+OSCAP_API void oval_reference_iterator_free(struct oval_reference_iterator *);
 /** @} */
 
 /**
@@ -2193,19 +2194,19 @@ void oval_reference_iterator_free(struct oval_reference_iterator *);
  * @param type - the required node type.
  * @memberof oval_criteria_node
  */
-struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *, oval_criteria_node_type_t type);
+OSCAP_API struct oval_criteria_node *oval_criteria_node_new(struct oval_definition_model *, oval_criteria_node_type_t type);
 /**
  * Clone an instance of @ref oval_criteria_node.
  * @return A copy of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
-struct oval_criteria_node *oval_criteria_node_clone
-    (struct oval_definition_model *new_model, struct oval_criteria_node *old_node);
+OSCAP_API struct oval_criteria_node *oval_criteria_node_clone
+     (struct oval_definition_model *new_model, struct oval_criteria_node *old_node);
 /**
  * Free an instance of @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_free(struct oval_criteria_node *);
+OSCAP_API void oval_criteria_node_free(struct oval_criteria_node *);
 
 /**
  * @name Setters
@@ -2216,25 +2217,25 @@ void oval_criteria_node_free(struct oval_criteria_node *);
  * @param negate - the required value of the negate attribute
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
+OSCAP_API void oval_criteria_node_set_negate(struct oval_criteria_node *, bool negate);
 /**
  * Set attribute @ref Oval_criteria_node->applicability_check.
  * @param applicability_check - the required value of the applicability_check attribute
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_set_applicability_check(struct oval_criteria_node *, bool applicability_check);
+OSCAP_API void oval_criteria_node_set_applicability_check(struct oval_criteria_node *, bool applicability_check);
 /**
  * Set attribute @ref Oval_criteria_node->type.
  * @param type - the required value of the type attribute
  * @memberof oval_criteria_node
  */
-void oval_criteria_set_node_type(struct oval_criteria_node *node, oval_criteria_node_type_t type);
+OSCAP_API void oval_criteria_set_node_type(struct oval_criteria_node *node, oval_criteria_node_type_t type);
 /**
  * set attribute @ref Oval_criteria_node->comment.
  * @param comm - (Not NULL) a copy of the comment parameter is set as  the comment attribute.
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_set_comment(struct oval_criteria_node *, char *comment);
+OSCAP_API void oval_criteria_node_set_comment(struct oval_criteria_node *, char *comment);
 /**
  * Set attribute @ref Oval_criteria->operator.
  * If Oval_criteria_node->type == @ref OVAL_NODETYPE_CRITERIA and the value of the operator attribute is @ref OVAL_OPERATOR_UNKNOWN,
@@ -2242,7 +2243,7 @@ void oval_criteria_node_set_comment(struct oval_criteria_node *, char *comment);
  * Otherwise the Oval_criteria_node state shall not be changed by this method.
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_t op);
+OSCAP_API void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_t op);
 /**
  * Append instance of @ref Oval_criteria_node to attribute @ref Oval_criteria->subnodes.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return without changing the Oval_criteria_node state.
@@ -2253,7 +2254,7 @@ void oval_criteria_node_set_operator(struct oval_criteria_node *, oval_operator_
  * @param - (Not NULL) the subnode to be appended.
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_add_subnode(struct oval_criteria_node *, struct oval_criteria_node *node);
+OSCAP_API void oval_criteria_node_add_subnode(struct oval_criteria_node *, struct oval_criteria_node *node);
 /**
  * Sets attribute @ref Oval_criterion->test.
  * If Oval_criteria_node->type == @ref OVAL_NODETYPE_CRITERION and the value of the test attribute is NULL,
@@ -2261,7 +2262,7 @@ void oval_criteria_node_add_subnode(struct oval_criteria_node *, struct oval_cri
  * Otherwise the Oval_criteria_node state shall not be changed by this method.
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_set_test(struct oval_criteria_node *, struct oval_test *);
+OSCAP_API void oval_criteria_node_set_test(struct oval_criteria_node *, struct oval_test *);
 /**
  * Sets attribute @ref Oval_extends->definition.
  * If Oval_criteria_node->type == @ref OVAL_NODETYPE_EXTENDDEF and the value of the definition attribute is NULL,
@@ -2269,7 +2270,7 @@ void oval_criteria_node_set_test(struct oval_criteria_node *, struct oval_test *
  * Otherwise the Oval_criteria_node state shall not be changed by this method.
  * @memberof oval_criteria_node
  */
-void oval_criteria_node_set_definition(struct oval_criteria_node *, struct oval_definition *);	//type==NODETYPE_EXTENDDEF
+OSCAP_API void oval_criteria_node_set_definition(struct oval_criteria_node *, struct oval_definition *);	//type==NODETYPE_EXTENDDEF
 /** @} */
 
 /**
@@ -2280,30 +2281,30 @@ void oval_criteria_node_set_definition(struct oval_criteria_node *, struct oval_
  * Returns attribute @ref Oval_criteria_node->type.
  * @memberof oval_criteria_node
  */
-oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node *);
+OSCAP_API oval_criteria_node_type_t oval_criteria_node_get_type(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->negate.
  * @memberof oval_criteria_node
  */
-bool oval_criteria_node_get_negate(struct oval_criteria_node *);
+OSCAP_API bool oval_criteria_node_get_negate(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->applicability_check.
  * @memberof oval_criteria_node
  */
-bool oval_criteria_node_get_applicability_check(struct oval_criteria_node *);
+OSCAP_API bool oval_criteria_node_get_applicability_check(struct oval_criteria_node *);
 
 /**
  * Returns attribute @ref Oval_criteria_node->comment.
  * @return A pointer to the comment attribute of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
-char *oval_criteria_node_get_comment(struct oval_criteria_node *);
+OSCAP_API char *oval_criteria_node_get_comment(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria->operator HOWDI.
  * @note If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return @ref OVAL_OPERATOR_UNKNOWN.
  * @memberof oval_criteria_node
  */
-oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
+OSCAP_API oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criteria_node->subnodes.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERIA, this method shall return NULL.
@@ -2311,21 +2312,21 @@ oval_operator_t oval_criteria_node_get_operator(struct oval_criteria_node *);
  * It should be freed after use by the calling application.
  * @memberof oval_criteria_node
  */
-struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct oval_criteria_node *);
+OSCAP_API struct oval_criteria_node_iterator *oval_criteria_node_get_subnodes(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_criterion->test.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_CRITERION, this method shall return NULL.
  * @return A pointer to the test attribute of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
-struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *);
+OSCAP_API struct oval_test *oval_criteria_node_get_test(struct oval_criteria_node *);
 /**
  * Returns attribute @ref Oval_extends->definition.
  * If Oval_criteria_node->type <> @ref OVAL_NODETYPE_EXTENDDEF, this method shall return NULL.
  * @return A pointer to the definition attribute of the specified @ref oval_criteria_node.
  * @memberof oval_criteria_node
  */
-struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_node *);
+OSCAP_API struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_node *);
 /** @} */
 
 /**
@@ -2336,18 +2337,18 @@ struct oval_definition *oval_criteria_node_get_definition(struct oval_criteria_n
  * Returns <b>true</b> if the iterator is not exhausted.
  * @memberof oval_criteria_node_iterator
  */
-bool oval_criteria_node_iterator_has_more(struct oval_criteria_node_iterator *);
+OSCAP_API bool oval_criteria_node_iterator_has_more(struct oval_criteria_node_iterator *);
 /**
  * Returns the next instance of @ref Oval_criteria_node from the iterator.
  * Returns NULL if the iterator is exhausted.
  * @memberof oval_criteria_node_iterator
  */
-struct oval_criteria_node *oval_criteria_node_iterator_next(struct oval_criteria_node_iterator *);
+OSCAP_API struct oval_criteria_node *oval_criteria_node_iterator_next(struct oval_criteria_node_iterator *);
 /**
  * Free the iterator.
  * @memberof oval_criteria_node_iterator
  */
-void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
+OSCAP_API void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
 /** @} */
 
 /**
@@ -2359,19 +2360,19 @@ void oval_criteria_node_iterator_free(struct oval_criteria_node_iterator *);
 /**
  * @memberof oval_object_content
  */
-struct oval_object_content *oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type);
+OSCAP_API struct oval_object_content *oval_object_content_new(struct oval_definition_model *model, oval_object_content_type_t type);
 
 /**
  * @return A copy of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
-struct oval_object_content *oval_object_content_clone
-    (struct oval_definition_model *new_model, struct oval_object_content *old_content);
+OSCAP_API struct oval_object_content *oval_object_content_clone
+     (struct oval_definition_model *new_model, struct oval_object_content *old_content);
 
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_free(struct oval_object_content *);
+OSCAP_API void oval_object_content_free(struct oval_object_content *);
 
 /**
  * @name Setters
@@ -2381,27 +2382,27 @@ void oval_object_content_free(struct oval_object_content *);
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_set_type(struct oval_object_content *, oval_object_content_type_t);
+OSCAP_API void oval_object_content_set_type(struct oval_object_content *, oval_object_content_type_t);
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_set_field_name(struct oval_object_content *, char *);
+OSCAP_API void oval_object_content_set_field_name(struct oval_object_content *, char *);
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_set_entity(struct oval_object_content *, struct oval_entity *);	//type == OVAL_OBJECTCONTENT_ENTITY
+OSCAP_API void oval_object_content_set_entity(struct oval_object_content *, struct oval_entity *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_set_varCheck(struct oval_object_content *, oval_check_t);	//type == OVAL_OBJECTCONTENT_ENTITY
+OSCAP_API void oval_object_content_set_varCheck(struct oval_object_content *, oval_check_t);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_set_setobject(struct oval_object_content *, struct oval_setobject *);	//type == OVAL_OBJECTCONTENT_SET
+OSCAP_API void oval_object_content_set_setobject(struct oval_object_content *, struct oval_setobject *);	//type == OVAL_OBJECTCONTENT_SET
 /**
  * @memberof oval_object_content
  */
-void oval_object_content_set_filter(struct oval_object_content *, struct oval_filter *);	//type == OVAL_OBJECTCONTENT_FILTER
+OSCAP_API void oval_object_content_set_filter(struct oval_object_content *, struct oval_filter *);	//type == OVAL_OBJECTCONTENT_FILTER
 /** @} */
 
 /**
@@ -2413,35 +2414,35 @@ void oval_object_content_set_filter(struct oval_object_content *, struct oval_fi
  * @return A pointer to the fieldName attribute of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
-char *oval_object_content_get_field_name(struct oval_object_content *);
+OSCAP_API char *oval_object_content_get_field_name(struct oval_object_content *);
 /**
  * Get type of a object content (entity or set).
  * @memberof oval_object_content
  */
-oval_object_content_type_t oval_object_content_get_type(struct oval_object_content *);
+OSCAP_API oval_object_content_type_t oval_object_content_get_type(struct oval_object_content *);
 /**
  * Get entity of a simple object content.
  * @return A pointer to the entity attribute of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
-struct oval_entity *oval_object_content_get_entity(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
+OSCAP_API struct oval_entity *oval_object_content_get_entity(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * Get varCheck of a simple object content.
  * @memberof oval_object_content
  */
-oval_check_t oval_object_content_get_varCheck(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
+OSCAP_API oval_check_t oval_object_content_get_varCheck(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_ENTITY
 /**
  * Get setobject of a set object content.
  * @return A pointer to the set attribute of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
-struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
+OSCAP_API struct oval_setobject *oval_object_content_get_setobject(struct oval_object_content *);	//type == OVAL_OBJECTCONTENT_SET
 /**
  * Get filter of a set object content.
  * @return A pointer to the filter attribute of the specified @ref oval_object_content.
  * @memberof oval_object_content
  */
-struct oval_filter *oval_object_content_get_filter(struct oval_object_content *content); //type == OVAL_OBJECTCONTENT_FILTER
+OSCAP_API struct oval_filter *oval_object_content_get_filter(struct oval_object_content *content); //type == OVAL_OBJECTCONTENT_FILTER
 /** @} */
 
 /**
@@ -2451,15 +2452,15 @@ struct oval_filter *oval_object_content_get_filter(struct oval_object_content *c
 /**
  * @memberof oval_object_content_iterator
  */
-bool oval_object_content_iterator_has_more(struct oval_object_content_iterator *);
+OSCAP_API bool oval_object_content_iterator_has_more(struct oval_object_content_iterator *);
 /**
  * @memberof oval_object_content_iterator
  */
-struct oval_object_content *oval_object_content_iterator_next(struct oval_object_content_iterator *);
+OSCAP_API struct oval_object_content *oval_object_content_iterator_next(struct oval_object_content_iterator *);
 /**
  * @memberof oval_object_content_iterator
  */
-void oval_object_content_iterator_free(struct oval_object_content_iterator *);
+OSCAP_API void oval_object_content_iterator_free(struct oval_object_content_iterator *);
 /** @} */
 
 /**
@@ -2471,17 +2472,17 @@ void oval_object_content_iterator_free(struct oval_object_content_iterator *);
 /**
  * @memberof oval_behavior
  */
-struct oval_behavior *oval_behavior_new(struct oval_definition_model *);
+OSCAP_API struct oval_behavior *oval_behavior_new(struct oval_definition_model *);
 
 /**
  * @return A copy of the specified @ref oval_behavior.
  * @memberof oval_behavior
  */
-struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, struct oval_behavior *old_behavior);
+OSCAP_API struct oval_behavior *oval_behavior_clone(struct oval_definition_model *new_model, struct oval_behavior *old_behavior);
 /**
  * @memberof oval_behavior
  */
-void oval_behavior_free(struct oval_behavior *);
+OSCAP_API void oval_behavior_free(struct oval_behavior *);
 
 /**
  * @name Setters
@@ -2490,7 +2491,7 @@ void oval_behavior_free(struct oval_behavior *);
 /**
  * @memberof oval_behavior
  */
-void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, const char *value);
+OSCAP_API void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, const char *value);
 /** @} */
 
 /**
@@ -2502,13 +2503,13 @@ void oval_behavior_set_keyval(struct oval_behavior *behavior, const char *key, c
  * @return A pointer to the key attribute of the specified @ref oval_behavior.
  * @memberof oval_behavior
  */
-char *oval_behavior_get_key(struct oval_behavior *);
+OSCAP_API char *oval_behavior_get_key(struct oval_behavior *);
 /**
  * Get OVAL behavior value.
  * @return A pointer to the value attribute of the specified @ref oval_behavior.
  * @memberof oval_behavior
  */
-char *oval_behavior_get_value(struct oval_behavior *);
+OSCAP_API char *oval_behavior_get_value(struct oval_behavior *);
 /** @} */
 
 /**
@@ -2518,15 +2519,15 @@ char *oval_behavior_get_value(struct oval_behavior *);
 /**
  * @memberof oval_behavior_iterator
  */
-bool oval_behavior_iterator_has_more(struct oval_behavior_iterator *);
+OSCAP_API bool oval_behavior_iterator_has_more(struct oval_behavior_iterator *);
 /**
  * @memberof oval_behavior_iterator
  */
-struct oval_behavior *oval_behavior_iterator_next(struct oval_behavior_iterator *);
+OSCAP_API struct oval_behavior *oval_behavior_iterator_next(struct oval_behavior_iterator *);
 /**
  * @memberof oval_behavior_iterator
  */
-void oval_behavior_iterator_free(struct oval_behavior_iterator *);
+OSCAP_API void oval_behavior_iterator_free(struct oval_behavior_iterator *);
 /** @} */
 
 /**
@@ -2538,16 +2539,16 @@ void oval_behavior_iterator_free(struct oval_behavior_iterator *);
 /**
  * @memberof oval_state_content
  */
-struct oval_state_content *oval_state_content_new(struct oval_definition_model *);
+OSCAP_API struct oval_state_content *oval_state_content_new(struct oval_definition_model *);
 /**
  * @return A copy of the specified @ref oval_state_content.
  * @memberof oval_state_content
  */
-struct oval_state_content *oval_state_content_clone (struct oval_definition_model *new_model, struct oval_state_content *old_content);
+OSCAP_API struct oval_state_content *oval_state_content_clone (struct oval_definition_model *new_model, struct oval_state_content *old_content);
 /**
  * @memberof oval_state_content
  */
-void oval_state_content_free(struct oval_state_content *);
+OSCAP_API void oval_state_content_free(struct oval_state_content *);
 
 /**
  * @name Setters
@@ -2556,26 +2557,26 @@ void oval_state_content_free(struct oval_state_content *);
 /**
  * @memberof oval_state_content
  */
-void oval_state_content_set_entity(struct oval_state_content *, struct oval_entity *);
+OSCAP_API void oval_state_content_set_entity(struct oval_state_content *, struct oval_entity *);
 /**
  * @memberof oval_state_content
  */
-void oval_state_content_add_record_field(struct oval_state_content *, struct oval_record_field *);
+OSCAP_API void oval_state_content_add_record_field(struct oval_state_content *, struct oval_record_field *);
 /**
  * @memberof oval_state_content
  */
-void oval_state_content_set_varcheck(struct oval_state_content *, oval_check_t);
+OSCAP_API void oval_state_content_set_varcheck(struct oval_state_content *, oval_check_t);
 /**
  * @memberof oval_state_content
  */
-void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
+OSCAP_API void oval_state_content_set_entcheck(struct oval_state_content *, oval_check_t);
 /**
  * Sets the "check_existence" attribute of an OVAL state entity
  * @param content An entity within the state element
  * @param existence New value of check_existence attribute of that entity
  * @memberof oval_state_content
  */
-void oval_state_content_set_check_existence(struct oval_state_content *content, oval_existence_t existence);
+OSCAP_API void oval_state_content_set_check_existence(struct oval_state_content *content, oval_existence_t existence);
 /** @} */
 
 /**
@@ -2587,28 +2588,28 @@ void oval_state_content_set_check_existence(struct oval_state_content *content, 
  * @return A pointer to the entity attribute of the specified @ref oval_state_content.
  * @memberof oval_state_content
  */
-struct oval_entity *oval_state_content_get_entity(struct oval_state_content *);
+OSCAP_API struct oval_entity *oval_state_content_get_entity(struct oval_state_content *);
 /**
  * @memberof oval_state_content
  */
-struct oval_record_field_iterator *oval_state_content_get_record_fields(struct oval_state_content *);
+OSCAP_API struct oval_record_field_iterator *oval_state_content_get_record_fields(struct oval_state_content *);
 /**
  * Get multipe variable values processing of a state content.
  * @memberof oval_state_content
  */
-oval_check_t oval_state_content_get_var_check(struct oval_state_content *);
+OSCAP_API oval_check_t oval_state_content_get_var_check(struct oval_state_content *);
 /**
  * Get multipe entities processing of a state content.
  * @memberof oval_state_content
  */
-oval_check_t oval_state_content_get_ent_check(struct oval_state_content *);
+OSCAP_API oval_check_t oval_state_content_get_ent_check(struct oval_state_content *);
 /**
  * Get "check_existence" attribute of an OVAL state entity
  * @param content An entity within the state element
  * @return Value of the check_existence attribute
  * @memberof oval_state_content
  */
-oval_existence_t oval_state_content_get_check_existence(struct oval_state_content *content);
+OSCAP_API oval_existence_t oval_state_content_get_check_existence(struct oval_state_content *content);
 /** @} */
 
 /**
@@ -2619,30 +2620,30 @@ oval_existence_t oval_state_content_get_check_existence(struct oval_state_conten
  * @ingroup oval_state_content_iterators
  * @memberof oval_state_content_iterator
  */
-bool oval_state_content_iterator_has_more(struct oval_state_content_iterator *);
+OSCAP_API bool oval_state_content_iterator_has_more(struct oval_state_content_iterator *);
 /**
  * @memberof oval_state_content_iterator
  */
-struct oval_state_content *oval_state_content_iterator_next(struct oval_state_content_iterator *);
+OSCAP_API struct oval_state_content *oval_state_content_iterator_next(struct oval_state_content_iterator *);
 /**
  * @memberof oval_state_content_iterator
  */
-void oval_state_content_iterator_free(struct oval_state_content_iterator *);
+OSCAP_API void oval_state_content_iterator_free(struct oval_state_content_iterator *);
 /** @} */
 
 /**
  * @memberof oval_value
  */
-struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value);
+OSCAP_API struct oval_value *oval_value_new(oval_datatype_t datatype, char *text_value);
 /**
  * @return A copy of the specified @ref oval_value.
  * @memberof oval_value
  */
-struct oval_value *oval_value_clone(struct oval_value *old_value);
+OSCAP_API struct oval_value *oval_value_clone(struct oval_value *old_value);
 /**
  * @memberof oval_value
  */
-void oval_value_free(struct oval_value *);
+OSCAP_API void oval_value_free(struct oval_value *);
 
 /**
  * @name Setters
@@ -2651,7 +2652,7 @@ void oval_value_free(struct oval_value *);
 /**
  * @memberof oval_value
  */
-void oval_value_set_datatype(struct oval_value *, oval_datatype_t);
+OSCAP_API void oval_value_set_datatype(struct oval_value *, oval_datatype_t);
 
 /**
  * @name Getters
@@ -2661,33 +2662,33 @@ void oval_value_set_datatype(struct oval_value *, oval_datatype_t);
  * Get OVAL value datatype.
  * @memberof oval_value
  */
-oval_datatype_t oval_value_get_datatype(struct oval_value *);
+OSCAP_API oval_datatype_t oval_value_get_datatype(struct oval_value *);
 /**
  * Get OVAL value as a text.
  * @return A pointer to the text attribute of the specified @ref oval_value.
  * @memberof oval_value
  */
-char *oval_value_get_text(struct oval_value *);
+OSCAP_API char *oval_value_get_text(struct oval_value *);
 /**
  * Get OVAL value as a piece of raw binary data.
  * @memberof oval_value
  */
-unsigned char *oval_value_get_binary(struct oval_value *);	//datatype==OVAL_DATATYPE_BINARY
+OSCAP_API unsigned char *oval_value_get_binary(struct oval_value *);	//datatype==OVAL_DATATYPE_BINARY
 /**
  * Get OVAL value as a boolean.
  * @memberof oval_value
  */
-bool oval_value_get_boolean(struct oval_value *);	//datatype==OVAL_DATATYPE_BOOLEAN
+OSCAP_API bool oval_value_get_boolean(struct oval_value *);	//datatype==OVAL_DATATYPE_BOOLEAN
 /**
  * Get OVAL value as a floating point number.
  * @memberof oval_value
  */
-float oval_value_get_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
+OSCAP_API float oval_value_get_float(struct oval_value *);	//datatype==OVAL_DATATYPE_FLOAT
 /**
  * Get OVAL value as an integer.
  * @memberof oval_value
  */
-long long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
+OSCAP_API long long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE_INTEGER
 /** @} */
 
 /**
@@ -2697,19 +2698,19 @@ long long oval_value_get_integer(struct oval_value *);	//datatype==OVAL_DATATYPE
 /**
  * @memberof oval_value_iterator
  */
-bool oval_value_iterator_has_more(struct oval_value_iterator *);
+OSCAP_API bool oval_value_iterator_has_more(struct oval_value_iterator *);
 /**
  * @memberof oval_value_iterator
  */
-struct oval_value *oval_value_iterator_next(struct oval_value_iterator *);
+OSCAP_API struct oval_value *oval_value_iterator_next(struct oval_value_iterator *);
 /**
  * @memberof oval_value_iterator
  */
-int oval_value_iterator_remaining(struct oval_value_iterator *iterator);
+OSCAP_API int oval_value_iterator_remaining(struct oval_value_iterator *iterator);
 /**
  * @memberof oval_value_iterator
  */
-void oval_value_iterator_free(struct oval_value_iterator *);
+OSCAP_API void oval_value_iterator_free(struct oval_value_iterator *);
 /** @} */
 
 /**
@@ -2721,16 +2722,16 @@ void oval_value_iterator_free(struct oval_value_iterator *);
 /**
  * @memberof oval_entity
  */
-struct oval_entity *oval_entity_new(struct oval_definition_model *);
+OSCAP_API struct oval_entity *oval_entity_new(struct oval_definition_model *);
 /**
  * @return A copy of the specified @ref oval_entity.
  * @memberof oval_entity
  */
-struct oval_entity *oval_entity_clone(struct oval_definition_model *model, struct oval_entity *old_entity);
+OSCAP_API struct oval_entity *oval_entity_clone(struct oval_definition_model *model, struct oval_entity *old_entity);
 /**
  * @memberof oval_entity
  */
-void oval_entity_free(struct oval_entity *);
+OSCAP_API void oval_entity_free(struct oval_entity *);
 
 /**
  * @name Setters
@@ -2739,35 +2740,35 @@ void oval_entity_free(struct oval_entity *);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_type(struct oval_entity *, oval_entity_type_t);
+OSCAP_API void oval_entity_set_type(struct oval_entity *, oval_entity_type_t);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_datatype(struct oval_entity *, oval_datatype_t);
+OSCAP_API void oval_entity_set_datatype(struct oval_entity *, oval_datatype_t);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_mask(struct oval_entity *, int);
+OSCAP_API void oval_entity_set_mask(struct oval_entity *, int);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_varref_type(struct oval_entity *, oval_entity_varref_type_t);
+OSCAP_API void oval_entity_set_varref_type(struct oval_entity *, oval_entity_varref_type_t);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_variable(struct oval_entity *, struct oval_variable *);
+OSCAP_API void oval_entity_set_variable(struct oval_entity *, struct oval_variable *);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_value(struct oval_entity *, struct oval_value *);
+OSCAP_API void oval_entity_set_value(struct oval_entity *, struct oval_value *);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_name(struct oval_entity *, char *);
+OSCAP_API void oval_entity_set_name(struct oval_entity *, char *);
 /**
  * @memberof oval_entity
  */
-void oval_entity_set_operation(struct oval_entity *, oval_operation_t);
+OSCAP_API void oval_entity_set_operation(struct oval_entity *, oval_operation_t);
 /** @} */
 
 /**
@@ -2779,44 +2780,44 @@ void oval_entity_set_operation(struct oval_entity *, oval_operation_t);
  * @return A pointer to the name attribute of the specified @ref oval_entity.
  * @memberof oval_entity
  */
-char *oval_entity_get_name(struct oval_entity *);
+OSCAP_API char *oval_entity_get_name(struct oval_entity *);
 /**
  * Get OVAL entity type.
  * @memberof oval_entity
  */
-oval_entity_type_t oval_entity_get_type(struct oval_entity *);
+OSCAP_API oval_entity_type_t oval_entity_get_type(struct oval_entity *);
 /**
  * Get OVAL entity datatype.
  * @memberof oval_entity
  */
-oval_datatype_t oval_entity_get_datatype(struct oval_entity *);
+OSCAP_API oval_datatype_t oval_entity_get_datatype(struct oval_entity *);
 /**
  * Get OVAL entity operation type.
  * @memberof oval_entity
  */
-oval_operation_t oval_entity_get_operation(struct oval_entity *);
+OSCAP_API oval_operation_t oval_entity_get_operation(struct oval_entity *);
 /**
  * Get OVAL entity varref variable.
  * @return A pointer to the variable attribute of the specified @ref oval_entity.
  * @memberof oval_entity
  */
-struct oval_variable *oval_entity_get_variable(struct oval_entity *);
+OSCAP_API struct oval_variable *oval_entity_get_variable(struct oval_entity *);
 /**
  * Get OVAL entity value.
  * @return A pointer to the value attribute of the specified @ref oval_entity.
  * @memberof oval_entity
  */
-struct oval_value *oval_entity_get_value(struct oval_entity *);
+OSCAP_API struct oval_value *oval_entity_get_value(struct oval_entity *);
 /**
  * Get OVAL entity mask.
  * @memberof oval_entity
  */
-int oval_entity_get_mask(struct oval_entity *);
+OSCAP_API int oval_entity_get_mask(struct oval_entity *);
 /**
  * Get OVAL entity varref type.
  * @memberof oval_entity
  */
-oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *);
+OSCAP_API oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *);
 /** @} */
 
 /**
@@ -2826,15 +2827,15 @@ oval_entity_varref_type_t oval_entity_get_varref_type(struct oval_entity *);
 /**
  * @memberof oval_entity_iterator
  */
-bool oval_entity_iterator_has_more(struct oval_entity_iterator *);
+OSCAP_API bool oval_entity_iterator_has_more(struct oval_entity_iterator *);
 /**
  * @memberof oval_entity_iterator
  */
-struct oval_entity *oval_entity_iterator_next(struct oval_entity_iterator *);
+OSCAP_API struct oval_entity *oval_entity_iterator_next(struct oval_entity_iterator *);
 /**
  * @memberof oval_entity_iterator
  */
-void oval_entity_iterator_free(struct oval_entity_iterator *);
+OSCAP_API void oval_entity_iterator_free(struct oval_entity_iterator *);
 /** @} */
 
 /**
@@ -2846,15 +2847,15 @@ void oval_entity_iterator_free(struct oval_entity_iterator *);
 /**
  * @memberof oval_record_field
  */
-struct oval_record_field *oval_record_field_new(oval_record_field_type_t);
+OSCAP_API struct oval_record_field *oval_record_field_new(oval_record_field_type_t);
 /**
  * @memberof oval_record_field
  */
-struct oval_record_field *oval_record_field_clone(struct oval_record_field *);
+OSCAP_API struct oval_record_field *oval_record_field_clone(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_free(struct oval_record_field *);
+OSCAP_API void oval_record_field_free(struct oval_record_field *);
 
 /**
  * @name Setters
@@ -2863,35 +2864,35 @@ void oval_record_field_free(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_name(struct oval_record_field *, char *);
+OSCAP_API void oval_record_field_set_name(struct oval_record_field *, char *);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_value(struct oval_record_field *, char *);
+OSCAP_API void oval_record_field_set_value(struct oval_record_field *, char *);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_datatype(struct oval_record_field *, oval_datatype_t);
+OSCAP_API void oval_record_field_set_datatype(struct oval_record_field *, oval_datatype_t);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_mask(struct oval_record_field *, int);
+OSCAP_API void oval_record_field_set_mask(struct oval_record_field *, int);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_operation(struct oval_record_field *, oval_operation_t);
+OSCAP_API void oval_record_field_set_operation(struct oval_record_field *, oval_operation_t);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_variable(struct oval_record_field *, struct oval_variable *);
+OSCAP_API void oval_record_field_set_variable(struct oval_record_field *, struct oval_variable *);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_var_check(struct oval_record_field *, oval_check_t);
+OSCAP_API void oval_record_field_set_var_check(struct oval_record_field *, oval_check_t);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_set_ent_check(struct oval_record_field *, oval_check_t);
+OSCAP_API void oval_record_field_set_ent_check(struct oval_record_field *, oval_check_t);
 /** @} */
 
 /**
@@ -2901,39 +2902,39 @@ void oval_record_field_set_ent_check(struct oval_record_field *, oval_check_t);
 /**
  * @memberof oval_record_field
  */
-oval_record_field_type_t oval_record_field_get_type(struct oval_record_field *);
+OSCAP_API oval_record_field_type_t oval_record_field_get_type(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-char *oval_record_field_get_name(struct oval_record_field *);
+OSCAP_API char *oval_record_field_get_name(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-char *oval_record_field_get_value(struct oval_record_field *);
+OSCAP_API char *oval_record_field_get_value(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-oval_datatype_t oval_record_field_get_datatype(struct oval_record_field *);
+OSCAP_API oval_datatype_t oval_record_field_get_datatype(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-int oval_record_field_get_mask(struct oval_record_field *);
+OSCAP_API int oval_record_field_get_mask(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-oval_operation_t oval_record_field_get_operation(struct oval_record_field *);
+OSCAP_API oval_operation_t oval_record_field_get_operation(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-struct oval_variable *oval_record_field_get_variable(struct oval_record_field *);
+OSCAP_API struct oval_variable *oval_record_field_get_variable(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-oval_check_t oval_record_field_get_var_check(struct oval_record_field *);
+OSCAP_API oval_check_t oval_record_field_get_var_check(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-oval_check_t oval_record_field_get_ent_check(struct oval_record_field *);
+OSCAP_API oval_check_t oval_record_field_get_ent_check(struct oval_record_field *);
 /** @} */
 
 /**
@@ -2943,15 +2944,15 @@ oval_check_t oval_record_field_get_ent_check(struct oval_record_field *);
 /**
  * @memberof oval_record_field
  */
-bool oval_record_field_iterator_has_more(struct oval_record_field_iterator *);
+OSCAP_API bool oval_record_field_iterator_has_more(struct oval_record_field_iterator *);
 /**
  * @memberof oval_record_field
  */
-struct oval_record_field *oval_record_field_iterator_next(struct oval_record_field_iterator *);
+OSCAP_API struct oval_record_field *oval_record_field_iterator_next(struct oval_record_field_iterator *);
 /**
  * @memberof oval_record_field
  */
-void oval_record_field_iterator_free(struct oval_record_field_iterator *);
+OSCAP_API void oval_record_field_iterator_free(struct oval_record_field_iterator *);
 /** @} */
 
 /**
@@ -2963,15 +2964,15 @@ void oval_record_field_iterator_free(struct oval_record_field_iterator *);
 /**
  * @memberof oval_filter
  */
-struct oval_filter *oval_filter_new(struct oval_definition_model *);
+OSCAP_API struct oval_filter *oval_filter_new(struct oval_definition_model *);
 /**
  * @memberof oval_filter
  */
-void oval_filter_free(struct oval_filter *);
+OSCAP_API void oval_filter_free(struct oval_filter *);
 /**
  * @memberof oval_filter
  */
-struct oval_filter *oval_filter_clone(struct oval_definition_model *, struct oval_filter *);
+OSCAP_API struct oval_filter *oval_filter_clone(struct oval_definition_model *, struct oval_filter *);
 
 /**
  * @name Setters
@@ -2980,11 +2981,11 @@ struct oval_filter *oval_filter_clone(struct oval_definition_model *, struct ova
 /**
  * @memberof oval_filter
  */
-void oval_filter_set_state(struct oval_filter *, struct oval_state *);
+OSCAP_API void oval_filter_set_state(struct oval_filter *, struct oval_state *);
 /**
  * @memberof oval_filter
  */
-void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
+OSCAP_API void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
 /** @} */
 
 /**
@@ -2994,11 +2995,11 @@ void oval_filter_set_filter_action(struct oval_filter *, oval_filter_action_t );
 /**
  * @memberof oval_filter
  */
-struct oval_state *oval_filter_get_state(struct oval_filter *);
+OSCAP_API struct oval_state *oval_filter_get_state(struct oval_filter *);
 /**
  * @memberof oval_filter
  */
-oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *);
+OSCAP_API oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *);
 /** @} */
 
 /**
@@ -3008,15 +3009,15 @@ oval_filter_action_t oval_filter_get_filter_action(struct oval_filter *);
 /**
  * @memberof oval_filter
  */
-bool oval_filter_iterator_has_more(struct oval_filter_iterator *);
+OSCAP_API bool oval_filter_iterator_has_more(struct oval_filter_iterator *);
 /**
  * @memberof oval_filter
  */
-struct oval_filter *oval_filter_iterator_next(struct oval_filter_iterator *);
+OSCAP_API struct oval_filter *oval_filter_iterator_next(struct oval_filter_iterator *);
 /**
  * @memberof oval_filter
  */
-void oval_filter_iterator_free(struct oval_filter_iterator *);
+OSCAP_API void oval_filter_iterator_free(struct oval_filter_iterator *);
 /** @} */
 
 /**
@@ -3028,16 +3029,16 @@ void oval_filter_iterator_free(struct oval_filter_iterator *);
 /**
  * @memberof oval_setobject
  */
-struct oval_setobject *oval_setobject_new(struct oval_definition_model *);
+OSCAP_API struct oval_setobject *oval_setobject_new(struct oval_definition_model *);
 /**
  * @return A copy of the specified @ref oval_setobject.
  * @memberof oval_setobject
  */
-struct oval_setobject *oval_setobject_clone(struct oval_definition_model *new_model, struct oval_setobject *old_setobject);
+OSCAP_API struct oval_setobject *oval_setobject_clone(struct oval_definition_model *new_model, struct oval_setobject *old_setobject);
 /**
  * @memberof oval_setobject
  */
-void oval_setobject_free(struct oval_setobject *);
+OSCAP_API void oval_setobject_free(struct oval_setobject *);
 
 /**
  * @name Setters
@@ -3045,23 +3046,23 @@ void oval_setobject_free(struct oval_setobject *);
  */
 /**
  */
-void oval_setobject_set_type(struct oval_setobject *, oval_setobject_type_t);
+OSCAP_API void oval_setobject_set_type(struct oval_setobject *, oval_setobject_type_t);
 /**
  * @memberof oval_setobject
  */
-void oval_setobject_set_operation(struct oval_setobject *, oval_setobject_operation_t);
+OSCAP_API void oval_setobject_set_operation(struct oval_setobject *, oval_setobject_operation_t);
 /**
  * @memberof oval_setobject
  */
-void oval_setobject_add_subset(struct oval_setobject *, struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
+OSCAP_API void oval_setobject_add_subset(struct oval_setobject *, struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
 /**
  * @memberof oval_setobject
  */
-void oval_setobject_add_object(struct oval_setobject *, struct oval_object *);	//type==OVAL_SET_COLLECTIVE;
+OSCAP_API void oval_setobject_add_object(struct oval_setobject *, struct oval_object *);	//type==OVAL_SET_COLLECTIVE;
 /**
  * @memberof oval_setobject
  */
-void oval_setobject_add_filter(struct oval_setobject *, struct oval_filter *);	//type==OVAL_SET_COLLECTIVE;
+OSCAP_API void oval_setobject_add_filter(struct oval_setobject *, struct oval_filter *);	//type==OVAL_SET_COLLECTIVE;
 /** @} */
 
 /**
@@ -3072,12 +3073,12 @@ void oval_setobject_add_filter(struct oval_setobject *, struct oval_filter *);	/
  * Get OVAL set object type.
  * @memberof oval_setobject
  */
-oval_setobject_type_t oval_setobject_get_type(struct oval_setobject *);
+OSCAP_API oval_setobject_type_t oval_setobject_get_type(struct oval_setobject *);
 /**
  * Get OVAL set object operation type.
  * @memberof oval_setobject
  */
-oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject *);
+OSCAP_API oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject *);
 /**
  * Get OVAL set object subsets.
  * This works only with sets of OVAL_SET_AGGREGATE type.
@@ -3085,7 +3086,7 @@ oval_setobject_operation_t oval_setobject_get_operation(struct oval_setobject *)
  * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
-struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
+OSCAP_API struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject *);	//type==OVAL_SET_AGGREGATE;
 /**
  * Get OVAL set object referenced objects.
  * This works only with sets of OVAL_SET_COLLECTIVE type.
@@ -3093,7 +3094,7 @@ struct oval_setobject_iterator *oval_setobject_get_subsets(struct oval_setobject
  * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
-struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
+OSCAP_API struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
 /**
  * Get OVAL set object filters.
  * This works only with sets of OVAL_SET_COLLECTIVE type.
@@ -3101,7 +3102,7 @@ struct oval_object_iterator *oval_setobject_get_objects(struct oval_setobject *)
  * It should be freed after use by the calling application.
  * @memberof oval_setobject
  */
-struct oval_filter_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
+OSCAP_API struct oval_filter_iterator *oval_setobject_get_filters(struct oval_setobject *);	//type==OVAL_SET_COLLECTIVE;
 /** @} */
 
 /**
@@ -3111,15 +3112,15 @@ struct oval_filter_iterator *oval_setobject_get_filters(struct oval_setobject *)
 /**
  * @memberof oval_setobject_iterator
  */
-bool oval_setobject_iterator_has_more(struct oval_setobject_iterator *);
+OSCAP_API bool oval_setobject_iterator_has_more(struct oval_setobject_iterator *);
 /**
  * @memberof oval_setobject_iterator
  */
-struct oval_setobject *oval_setobject_iterator_next(struct oval_setobject_iterator *);
+OSCAP_API struct oval_setobject *oval_setobject_iterator_next(struct oval_setobject_iterator *);
 /**
  * @memberof oval_setobject_iterator
  */
-void oval_setobject_iterator_free(struct oval_setobject_iterator *);
+OSCAP_API void oval_setobject_iterator_free(struct oval_setobject_iterator *);
 /** @} */
 
 /**
@@ -3171,7 +3172,7 @@ void oval_setobject_iterator_free(struct oval_setobject_iterator *);
  * @param type - the required component type.
  * @memberof oval_component
  */
-struct oval_component *oval_component_new(struct oval_definition_model *, oval_component_type_t type);
+OSCAP_API struct oval_component *oval_component_new(struct oval_definition_model *, oval_component_type_t type);
 /**
  * Clone instance of @ref Oval_component.
  * @return A copy of the specified @ref oval_component.
@@ -3183,7 +3184,7 @@ struct oval_component *oval_component_clone(struct oval_definition_model *new_mo
  * Free instance of @ref Oval_component
  * @memberof oval_component
  */
-void oval_component_free(struct oval_component *);
+OSCAP_API void oval_component_free(struct oval_component *);
 
 /**
  * @name Setters
@@ -3193,77 +3194,77 @@ void oval_component_free(struct oval_component *);
  * Set type of component @ref Oval_component->type
  * @memberof oval_component
  */
-void oval_component_set_type(struct oval_component *component, oval_component_type_t type);
+OSCAP_API void oval_component_set_type(struct oval_component *component, oval_component_type_t type);
 /**
  * set attribute @ref Oval_component_object->object.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->object <> NULL, this method does nothing .
  * @memberof oval_component
  */
-void oval_component_set_object(struct oval_component *, struct oval_object *object);
+OSCAP_API void oval_component_set_object(struct oval_component *, struct oval_object *object);
 /**
  * set attribute @ref Oval_component_object->item_field.
  * @memberof oval_component
  */
-void oval_component_set_item_field(struct oval_component *, char *);
+OSCAP_API void oval_component_set_item_field(struct oval_component *, char *);
 /**
  * set attribute @ref Oval_component_object->record_field.
  * @memberof oval_component
  */
-void oval_component_set_record_field(struct oval_component *, char *);
+OSCAP_API void oval_component_set_record_field(struct oval_component *, char *);
 /**
  * set attribute @ref Oval_component_object->variable.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF OR component->variable <> NULL, this method does nothing.
  * @memberof oval_component
  */
-void oval_component_set_variable(struct oval_component *, struct oval_variable *variable);
+OSCAP_API void oval_component_set_variable(struct oval_component *, struct oval_variable *variable);
 /**
  * @memberof oval_component
  */
-void oval_component_add_function_component(struct oval_component *, struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
+OSCAP_API void oval_component_add_function_component(struct oval_component *, struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
 /**
  * @memberof oval_component
  */
-void oval_component_set_arithmetic_operation(struct oval_component *, oval_arithmetic_operation_t);	//type==OVAL_COMPONENT_ARITHMETIC
+OSCAP_API void oval_component_set_arithmetic_operation(struct oval_component *, oval_arithmetic_operation_t);	//type==OVAL_COMPONENT_ARITHMETIC
 /**
  * @memberof oval_component
  */
-void oval_component_set_prefix(struct oval_component *, char *);	//type==OVAL_COMPONENT_BEGIN
+OSCAP_API void oval_component_set_prefix(struct oval_component *, char *);	//type==OVAL_COMPONENT_BEGIN
 /**
  * @memberof oval_component
  */
-void oval_component_set_suffix(struct oval_component *, char *);	//type==OVAL_COMPONENT_END
+OSCAP_API void oval_component_set_suffix(struct oval_component *, char *);	//type==OVAL_COMPONENT_END
 /**
  * @memberof oval_component
  */
-void oval_component_set_split_delimiter(struct oval_component *, char *);	//type==OVAL_COMPONENT_SPLIT
+OSCAP_API void oval_component_set_split_delimiter(struct oval_component *, char *);	//type==OVAL_COMPONENT_SPLIT
 /**
  * @memberof oval_component
  */
-void oval_component_set_glob_to_regex_glob_noescape(struct oval_component *, bool);	//type==OVAL_COMPONENT_GLOB
+OSCAP_API void oval_component_set_glob_to_regex_glob_noescape(struct oval_component *, bool);	//type==OVAL_COMPONENT_GLOB
 /**
  * @memberof oval_component
  */
-void oval_component_set_substring_start(struct oval_component *, int);	//type==OVAL_COMPONENT_SUBSTRING
+OSCAP_API void oval_component_set_substring_start(struct oval_component *, int);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * @memberof oval_component
  */
-void oval_component_set_substring_length(struct oval_component *, int);	//type==OVAL_COMPONENT_SUBSTRING
+OSCAP_API void oval_component_set_substring_length(struct oval_component *, int);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * @memberof oval_component
  */
-void oval_component_set_timedif_format_1(struct oval_component *, oval_datetime_format_t);	//type==OVAL_COMPONENT_TIMEDIF
+OSCAP_API void oval_component_set_timedif_format_1(struct oval_component *, oval_datetime_format_t);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * @memberof oval_component
  */
-void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_format_t);	//type==OVAL_COMPONENT_TIMEDIF
+OSCAP_API void oval_component_set_timedif_format_2(struct oval_component *, oval_datetime_format_t);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * @memberof oval_component
  */
-void oval_component_set_regex_pattern(struct oval_component *, char *);	//type==OVAL_COMPONENT_REGEX_CAPTURE
+OSCAP_API void oval_component_set_regex_pattern(struct oval_component *, char *);	//type==OVAL_COMPONENT_REGEX_CAPTURE
 /**
  * @memberof oval_component
  */
-void oval_component_set_literal_value(struct oval_component *, struct oval_value *);	//type==OVAL_COMPONENT_LITERAL
+OSCAP_API void oval_component_set_literal_value(struct oval_component *, struct oval_value *);	//type==OVAL_COMPONENT_LITERAL
 /** @} */
 
 /**
@@ -3274,7 +3275,7 @@ void oval_component_set_literal_value(struct oval_component *, struct oval_value
  * Returns attribute @ref Oval_component->type
  * @memberof oval_component
  */
-oval_component_type_t oval_component_get_type(struct oval_component *);
+OSCAP_API oval_component_type_t oval_component_get_type(struct oval_component *);
 /**
  * Returns attribute @ref Oval_component_object->object.
  * IF component->type <> @ref OVAL_COMPONENT_OBJECTREF, this method shall return NULL.
@@ -3282,21 +3283,21 @@ oval_component_type_t oval_component_get_type(struct oval_component *);
  * @note applications should not free the @ref Oval_object returned by this method
  * @memberof oval_component
  */
-struct oval_object *oval_component_get_object(struct oval_component *);	//type==OVAL_COMPONENT_OBJECTREF
+OSCAP_API struct oval_object *oval_component_get_object(struct oval_component *);	//type==OVAL_COMPONENT_OBJECTREF
 /**
  * Returns attribute @ref Oval_component_object->item_field.
  * @return A pointer to the item_field attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_item_field(struct oval_component *);
+OSCAP_API char *oval_component_get_item_field(struct oval_component *);
 /**
  * Returns attribute @ref Oval_component_object->record_field.
  * @return A pointer to the record_field attribute of the specified @ref oval_component.
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_record_field(struct oval_component *);
+OSCAP_API char *oval_component_get_record_field(struct oval_component *);
 /**
  * Returns attribute @ref Oval_component_variable->variable.
  * IF component->type <> @ref OVAL_COMPONENT_VARREF, this method shall return NULL.
@@ -3304,7 +3305,7 @@ char *oval_component_get_record_field(struct oval_component *);
  * @note applications should not free the @ref Oval_variable returned by this method
  * @memberof oval_component
  */
-struct oval_variable *oval_component_get_variable(struct oval_component *);
+OSCAP_API struct oval_variable *oval_component_get_variable(struct oval_component *);
 /**
  * Returns attribute @ref Oval_function->components.
  * IF component->type < @ref OVAL_COMPONENT_FUNCTION, this method shall return NULL.
@@ -3312,13 +3313,13 @@ struct oval_variable *oval_component_get_variable(struct oval_component *);
  * It should be freed after use by the calling application.
  * @memberof oval_component
  */
-struct oval_component_iterator *oval_component_get_function_components(struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
+OSCAP_API struct oval_component_iterator *oval_component_get_function_components(struct oval_component *);	//type==OVAL_COMPONENT_FUNCTION
 /**
  * Returns attribute @ref Oval_function_ARITHMETIC->arithmetic_operation.
  * IF component->type <> @ref OVAL_FUNCTION_ARITHMETIC, this method shall return @ref OVAL_ARITHMETIC_UNKNOWN.
  * @memberof oval_component
  */
-oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct oval_component *);	//type==OVAL_COMPONENT_ARITHMETIC
+OSCAP_API oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct oval_component *);	//type==OVAL_COMPONENT_ARITHMETIC
 /**
  * Returns attribute @ref Oval_function_BEGIN->prefix.
  * IF component->type <> @ref OVAL_FUNCTION_BEGIN, this method shall return NULL
@@ -3326,7 +3327,7 @@ oval_arithmetic_operation_t oval_component_get_arithmetic_operation(struct oval_
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_prefix(struct oval_component *);	//type==OVAL_COMPONENT_BEGIN
+OSCAP_API char *oval_component_get_prefix(struct oval_component *);	//type==OVAL_COMPONENT_BEGIN
 /**
  * Returns attribute @ref Oval_function_END->suffix.
  * IF component->type <> @ref OVAL_FUNCTION_END, this method shall return NULL
@@ -3334,7 +3335,7 @@ char *oval_component_get_prefix(struct oval_component *);	//type==OVAL_COMPONENT
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_suffix(struct oval_component *);	//type==OVAL_COMPONENT_END
+OSCAP_API char *oval_component_get_suffix(struct oval_component *);	//type==OVAL_COMPONENT_END
 /**
  * Returns attribute @ref Oval_function_SPLIT->delimiter.
  * IF component->type <> @ref OVAL_FUNCTION_SPLIT, this method shall return NULL
@@ -3342,38 +3343,38 @@ char *oval_component_get_suffix(struct oval_component *);	//type==OVAL_COMPONENT
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_split_delimiter(struct oval_component *);	//type==OVAL_COMPONENT_SPLIT
+OSCAP_API char *oval_component_get_split_delimiter(struct oval_component *);	//type==OVAL_COMPONENT_SPLIT
 /**
  * Returns attribute @ref Oval_function_GLOB_TO_REGEX->glob_noescape.
  * IF component->type <> @ref OVAL_FUNCTION_GLOB_TO_REGEX, this method shall return false
  * @return An attribute of the specified @ref oval_component.
  * @memberof oval_component
  */
-bool oval_component_get_glob_to_regex_glob_noescape(struct oval_component *);	//type==OVAL_COMPONENT_GLOB
+OSCAP_API bool oval_component_get_glob_to_regex_glob_noescape(struct oval_component *);	//type==OVAL_COMPONENT_GLOB
 /**
  * Returns attribute @ref Oval_function_SUBSTRING->start.
  * IF component->type <> @ref OVAL_FUNCTION_SUBSTRING, this method shall return 0
  * @memberof oval_component
  */
-int oval_component_get_substring_start(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
+OSCAP_API int oval_component_get_substring_start(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * Returns attribute @ref Oval_function_SUBSTRING->length.
  * IF component->type <> @ref OVAL_FUNCTION_SUBSTRING, this method shall return 0
  * @memberof oval_component
  */
-int oval_component_get_substring_length(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
+OSCAP_API int oval_component_get_substring_length(struct oval_component *);	//type==OVAL_COMPONENT_SUBSTRING
 /**
  * Returns attribute @ref Oval_function_TIMEDIF->timedif_format_1.
  * IF component->type <> @ref OVAL_FUNCTION_TIMEDIF, this method shall return @ref OVAL_TIMEDATE_UNKNOWN
  * @memberof oval_component
  */
-oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
+OSCAP_API oval_datetime_format_t oval_component_get_timedif_format_1(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * Returns attribute @ref Oval_function_TIMEDIF->timedif_format_2.
  * IF component->type <> @ref OVAL_FUNCTION_TIMEDIF, this method shall return @ref OVAL_TIMEDATE_UNKNOWN
  * @memberof oval_component
  */
-oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
+OSCAP_API oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component *);	//type==OVAL_COMPONENT_TIMEDIF
 /**
  * Returns attribute @ref Oval_function_REGEX_CAPTURE->pattern.
  * IF component->type <> @ref OVAL_FUNCTION_REGEX_CAPTURE, this method shall return NULL
@@ -3381,7 +3382,7 @@ oval_datetime_format_t oval_component_get_timedif_format_2(struct oval_component
  * @note applications should not free the char* returned by this method
  * @memberof oval_component
  */
-char *oval_component_get_regex_pattern(struct oval_component *);	//type==OVAL_COMPONENT_REGEX_CAPTURE
+OSCAP_API char *oval_component_get_regex_pattern(struct oval_component *);	//type==OVAL_COMPONENT_REGEX_CAPTURE
 /**
  * Returns attribute @ref Oval_literal->literal.
  * IF component->type <> @ref OVAL_COMPONENT_LITERAL, this method shall return NULL
@@ -3389,7 +3390,7 @@ char *oval_component_get_regex_pattern(struct oval_component *);	//type==OVAL_CO
  * @note applications should not free the @ref Oval_value returned by this method
  * @memberof oval_component
  */
-struct oval_value *oval_component_get_literal_value(struct oval_component *);	//type==OVAL_COMPONENT_LITERAL
+OSCAP_API struct oval_value *oval_component_get_literal_value(struct oval_component *);	//type==OVAL_COMPONENT_LITERAL
 /** @} */
 
 /**
@@ -3400,23 +3401,23 @@ struct oval_value *oval_component_get_literal_value(struct oval_component *);	//
  * Return <b>true</b> if the iterator is not exhausted.
  * @memberof oval_component_iterator
  */
-bool oval_component_iterator_has_more(struct oval_component_iterator *);
+OSCAP_API bool oval_component_iterator_has_more(struct oval_component_iterator *);
 /**
  * return the next instance of @ref Oval_component.
  * If the iterator is exhausted this method shall return NULL.
  * @memberof oval_component_iterator
  */
-struct oval_component *oval_component_iterator_next(struct oval_component_iterator *);
+OSCAP_API struct oval_component *oval_component_iterator_next(struct oval_component_iterator *);
 /**
  * Free the iterator.
  * @memberof oval_component_iterator
  */
-void oval_component_iterator_free(struct oval_component_iterator *);
+OSCAP_API void oval_component_iterator_free(struct oval_component_iterator *);
 /**
  * How many remains.
  * @memberof oval_component_iterator
  */
-int oval_component_iterator_remaining(struct oval_component_iterator *);
+OSCAP_API int oval_component_iterator_remaining(struct oval_component_iterator *);
 /** @} */
 
 /**
@@ -3436,7 +3437,7 @@ int oval_component_iterator_remaining(struct oval_component_iterator *);
  * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
  * This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(char *oval_determine_document_schema_version(const char *, oscap_document_type_t));
+OSCAP_API OSCAP_DEPRECATED(char *oval_determine_document_schema_version(const char *, oscap_document_type_t));
 
 /**
  * @} END OVAL

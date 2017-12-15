@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <sexp-types.h>
 #include <strbuf.h>
+#include "oscap_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,9 +36,9 @@ extern "C" {
 
 typedef struct SEXP_ostate SEXP_ostate_t;
 
-size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp);
+OSCAP_API size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp);
 
-int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb);
+OSCAP_API int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb);
 
 #ifdef __cplusplus
 }

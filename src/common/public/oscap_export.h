@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2017 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,35 +17,29 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *      "Daniel Kopecek" <dkopecek@redhat.com>
+ *    Jan Černý <jcerny@redhat.com>
  */
 
-#pragma once
-#ifndef SEAP_ERROR_H
-#define SEAP_ERROR_H
+#ifndef OSCAP_API_H
+#define OSCAP_API_H
 
-#include <stdint.h>
-#include "oscap_export.h"
-
-#ifdef __cplusplus
-extern "C" {
+/**
+ * OSCAP_API macro
+ *
+ * OSCAP_API is a macro that marks every public function in OpenSCAP API.
+ * Functions marked with OSCAP_API will be exported to the shared library
+ * interface.
+ */
+#ifndef OSCAP_API
+#  if defined(_WIN32) && defined(_MSC_VER)
+#    ifdef OSCAP_BUILD_SHARED /* build DLL */
+#      define OSCAP_API __declspec(dllexport)
+#    else /* use DLL */
+#      define OSCAP_API __declspec(dllimport)
+#    endif
+#  else
+#    define OSCAP_API
+#  endif
 #endif
 
-struct SEAP_err {
-        SEAP_msgid_t id;
-        uint32_t     code;
-        uint8_t      type;
-        SEXP_t      *data;
-};
-
-typedef struct SEAP_err SEAP_err_t;
-
-OSCAP_API SEAP_err_t *SEAP_error_new(void);
-OSCAP_API SEAP_err_t *SEAP_error_clone(SEAP_err_t *e);
-OSCAP_API void SEAP_error_free(SEAP_err_t *e);
-
-#ifdef __cplusplus
-}
 #endif
-
-#endif /* SEAP_ERROR_H */

@@ -40,6 +40,7 @@
 #define OVAL_ADT_H
 
 #include <stdbool.h>
+#include "oscap_export.h"
 
 /**
  * @struct oval_string_iterator
@@ -54,22 +55,22 @@ struct oval_string_iterator;
  * Returns <b>true</b> if the iterator is not exhausted.
  * @memberof oval_string_iterator
  */
-bool oval_string_iterator_has_more(struct oval_string_iterator *);
+OSCAP_API bool oval_string_iterator_has_more(struct oval_string_iterator *);
 /**
  * Returns the next instance of char *.
  * @memberof oval_string_iterator
  */
-char *oval_string_iterator_next(struct oval_string_iterator *);
+OSCAP_API char *oval_string_iterator_next(struct oval_string_iterator *);
 /**
  * Return number for remaining char * elements
  * @memberof oval_string_iterator
  */
-int oval_string_iterator_remaining(struct oval_string_iterator *);
+OSCAP_API int oval_string_iterator_remaining(struct oval_string_iterator *);
 /**
  * Frees the iterator.
  * @memberof oval_string_iterator
  */
-void oval_string_iterator_free(struct oval_string_iterator *);
+OSCAP_API void oval_string_iterator_free(struct oval_string_iterator *);
 /** @} */
 
 /**

@@ -23,6 +23,8 @@
 #ifndef OSCAP_DEBUG_H_
 #define OSCAP_DEBUG_H_
 
+#include "oscap_export.h"
+
 typedef enum {
 	DBG_E = 1,
 	DBG_W,
@@ -42,7 +44,7 @@ typedef enum {
  * @param fmt   printf-line format string
  * @param ...   __oscap_dlprintf parameters
  */
-void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, int delta_indent, const char *fmt, ...);
+OSCAP_API void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, int delta_indent, const char *fmt, ...);
 
 /**
  * Turn on debugging information
@@ -53,14 +55,14 @@ void __oscap_dlprintf(int level, const char *file, const char *fn, size_t line, 
  *                 from a probe (true) or from the base library (false).
  * @return When an error occured, returns false, otherwise true.
  */
-bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe);
+OSCAP_API bool oscap_set_verbose(const char *verbosity_level, const char *filename, bool is_probe);
 
 /**
  * Parse verbosity level from a string.
  * @param level_name Verbosity level as a C string.
  * @return Verbosity level number (or -1 on error).
  */
-oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name);
+OSCAP_API oscap_verbosity_levels oscap_verbosity_level_from_cstr(const char *level_name);
 
 #if defined(_WIN32)
 errno_t getenv_s(size_t *pReturnValue, char* buffer, size_t numberOfElements, const char * varname);

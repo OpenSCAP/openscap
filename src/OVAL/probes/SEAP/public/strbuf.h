@@ -27,6 +27,7 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "oscap_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,25 +49,25 @@ typedef struct {
         size_t         size;
 } strbuf_t;
 
-strbuf_t *strbuf_new  (size_t max);
-void      strbuf_free (strbuf_t *buf);
+OSCAP_API strbuf_t *strbuf_new  (size_t max);
+OSCAP_API void      strbuf_free (strbuf_t *buf);
 
-int strbuf_add   (strbuf_t *buf, const char *str, size_t len);
-int strbuf_addf  (strbuf_t *buf, char *str, size_t len);
-int strbuf_add0  (strbuf_t *buf, const char *str);
-int strbuf_add0f (strbuf_t *buf, char *str);
-int strbuf_addc (strbuf_t *buf, char ch);
+OSCAP_API int strbuf_add   (strbuf_t *buf, const char *str, size_t len);
+OSCAP_API int strbuf_addf  (strbuf_t *buf, char *str, size_t len);
+OSCAP_API int strbuf_add0  (strbuf_t *buf, const char *str);
+OSCAP_API int strbuf_add0f (strbuf_t *buf, char *str);
+OSCAP_API int strbuf_addc (strbuf_t *buf, char ch);
 
-size_t strbuf_size (strbuf_t *buf);
-int    strbuf_trunc  (strbuf_t *buf, size_t len);
-size_t strbuf_length (strbuf_t *buf);
+OSCAP_API size_t strbuf_size (strbuf_t *buf);
+OSCAP_API int    strbuf_trunc  (strbuf_t *buf, size_t len);
+OSCAP_API size_t strbuf_length (strbuf_t *buf);
 
-char *strbuf_cstr   (strbuf_t *buf);
-char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len);
-char *strbuf_copy (strbuf_t *buf, void *dst, size_t len);
+OSCAP_API char *strbuf_cstr   (strbuf_t *buf);
+OSCAP_API char *strbuf_cstr_r (strbuf_t *buf, char *str, size_t len);
+OSCAP_API char *strbuf_copy (strbuf_t *buf, void *dst, size_t len);
 
-size_t strbuf_fwrite (FILE *fp, strbuf_t *buf);
-ssize_t strbuf_write  (strbuf_t *buf, int fd);
+OSCAP_API size_t strbuf_fwrite (FILE *fp, strbuf_t *buf);
+OSCAP_API ssize_t strbuf_write  (strbuf_t *buf, int fd);
 
 #ifdef __cplusplus
 }

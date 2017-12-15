@@ -30,11 +30,12 @@ extern "C" {
 
 #include <stddef.h>
 #include <sexp-types.h>
+#include "oscap_export.h"
 
 typedef struct SEXP_psetup SEXP_psetup_t;
 
-SEXP_psetup_t *SEXP_psetup_new  (void);
-void           SEXP_psetup_free (SEXP_psetup_t *);
+OSCAP_API SEXP_psetup_t *SEXP_psetup_new  (void);
+OSCAP_API void           SEXP_psetup_free (SEXP_psetup_t *);
 
 typedef uint8_t SEXP_pflags_t;
 
@@ -42,18 +43,18 @@ typedef uint8_t SEXP_pflags_t;
 #define SEXP_PFLAG_FREEBUF 0x02
 #define SEXP_PFLAG_ALL     0x03
 
-int SEXP_psetup_setflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags);
-int SEXP_psetup_unsetflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags);
+OSCAP_API int SEXP_psetup_setflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags);
+OSCAP_API int SEXP_psetup_unsetflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags);
 
 typedef struct SEXP_pstate SEXP_pstate_t;
 
-SEXP_pstate_t *SEXP_pstate_new (void);
-void           SEXP_pstate_free (SEXP_pstate_t *);
-SEXP_pstate_t *SEXP_pstate_init (SEXP_pstate_t *);
+OSCAP_API SEXP_pstate_t *SEXP_pstate_new (void);
+OSCAP_API void           SEXP_pstate_free (SEXP_pstate_t *);
+OSCAP_API SEXP_pstate_t *SEXP_pstate_init (SEXP_pstate_t *);
 
-SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SEXP_pstate_t **pstate);
+OSCAP_API SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SEXP_pstate_t **pstate);
 
-bool SEXP_pstate_errorp(SEXP_pstate_t *pstate);
+OSCAP_API bool SEXP_pstate_errorp(SEXP_pstate_t *pstate);
 
 #ifdef __cplusplus
 }

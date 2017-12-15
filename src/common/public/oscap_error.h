@@ -30,9 +30,9 @@
  * and textual description. Example of usage:
  *
  * @code
- * syschar = oval_probe_object_eval (pctx, object);
+OSCAP_API  * syschar = oval_probe_object_eval (pctx, object);
  * if (syschar == NULL && oscap_err()) {
- *     printf("Error: (%d) %s\n", oscap_err_family(), oscap_err_desc());
+OSCAP_API  *     printf("Error: (%d) %s\n", oscap_err_family(), oscap_err_desc());
  * }
  * oscap_clearerr()
  * @endcode
@@ -44,6 +44,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+
+#include "oscap_export.h"
 
 /// Error family type
 typedef uint16_t oscap_errfamily_t;
@@ -66,22 +68,22 @@ typedef uint16_t oscap_errfamily_t;
 /**
  * Clear an error.
  */
-void oscap_clearerr(void);
+OSCAP_API void oscap_clearerr(void);
 
 /**
  * Check for an error.
  */
-bool oscap_err(void);
+OSCAP_API bool oscap_err(void);
 
 /**
  * Get last error family.
  */
-oscap_errfamily_t oscap_err_family(void);
+OSCAP_API oscap_errfamily_t oscap_err_family(void);
 
 /**
  * Get last error description.
  */
-const char *oscap_err_desc(void);
+OSCAP_API const char *oscap_err_desc(void);
 
 /**
  * Get the full description for all the errors which has occured in this
@@ -91,7 +93,7 @@ const char *oscap_err_desc(void);
  * be disposed by caller.
  * @retval NULL if there are no errors.
  */
-char *oscap_err_get_full_error(void);
+OSCAP_API char *oscap_err_get_full_error(void);
 
 /// @}
 /// @}

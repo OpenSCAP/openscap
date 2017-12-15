@@ -39,12 +39,13 @@
 #include "oval_types.h"
 #include "oscap.h"
 #include "oscap_source.h"
+#include "oscap_export.h"
 
 /**
  * Create a new empty OVAL variable model
  * @memberof oval_variable_model
  */ 
-struct oval_variable_model *oval_variable_model_new(void);
+OSCAP_API struct oval_variable_model *oval_variable_model_new(void);
 
 /**
  * Import the content from the oscap_source into a new oval_variable_model.
@@ -52,7 +53,7 @@ struct oval_variable_model *oval_variable_model_new(void);
  * @return new oval_variable_model, or NULL if an error occurred
  * @memberof oval_variable_model
  */
-struct oval_variable_model *oval_variable_model_import_source(struct oscap_source *source);
+OSCAP_API struct oval_variable_model *oval_variable_model_import_source(struct oscap_source *source);
 
 /**
  * Import the content from the file into a new oval_variable_model.
@@ -63,32 +64,32 @@ struct oval_variable_model *oval_variable_model_import_source(struct oscap_sourc
  * OpenSCAP releases. Please use oval_variable_model_import_source instead.
  *
  */
-OSCAP_DEPRECATED(struct oval_variable_model *oval_variable_model_import(const char *file));
+OSCAP_API OSCAP_DEPRECATED(struct oval_variable_model *oval_variable_model_import(const char *file));
 
 /**
  * Clone an OVAL variable model
  * @return A copy of the specified @ref oval_variable_model.
  * @memberof oval_variable_model
  */ 
-struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);
+OSCAP_API struct oval_variable_model *oval_variable_model_clone(struct oval_variable_model *);
 /**
  * Free memory allocated to a specified oval_variable_model
  * @param variable_model the specified oval_variable_model
  * @memberof oval_variable_model
  */ 
-void oval_variable_model_free(struct oval_variable_model *);
+OSCAP_API void oval_variable_model_free(struct oval_variable_model *);
 /**
  * Export the specified oval_variable_model into file
  * @memberof oval_variable_model
  */ 
-int oval_variable_model_export (struct oval_variable_model *, const char *file);
+OSCAP_API int oval_variable_model_export (struct oval_variable_model *, const char *file);
 
 
 /**
  * @name Setters
  * @{
  */
-void oval_variable_model_set_generator(struct oval_variable_model *model, struct oval_generator *generator);
+OSCAP_API void oval_variable_model_set_generator(struct oval_variable_model *model, struct oval_generator *generator);
 /**
  * Get the values bound to a specified external variable.
  * If the varid does not resolve to a managed external variable, this method returns NULL.
@@ -96,20 +97,20 @@ void oval_variable_model_set_generator(struct oval_variable_model *model, struct
  * @param varid the identifier of the required oval_variable.
  * @memberof oval_variable_model
  */ 
-void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char *comment, oval_datatype_t datatype, char *value);
+OSCAP_API void oval_variable_model_add(struct oval_variable_model *model, char *varid, const char *comment, oval_datatype_t datatype, char *value);
 /** @} */
 
 /**
  * @name Getters
  * @{
  */
-struct oval_generator *oval_variable_model_get_generator(struct oval_variable_model *model);
+OSCAP_API struct oval_generator *oval_variable_model_get_generator(struct oval_variable_model *model);
 /**
  * Get all external variables managed by a specified oval_variable_model.
  * @param variable_model the specified oval_variable_model.
  * @memberof oval_variable_model
  */ 
-struct oval_string_iterator *oval_variable_model_get_variable_ids (struct oval_variable_model *);
+OSCAP_API struct oval_string_iterator *oval_variable_model_get_variable_ids (struct oval_variable_model *);
 
 /**
  * Return true if variable with ID is present in variable model, false otherwise
@@ -117,7 +118,7 @@ struct oval_string_iterator *oval_variable_model_get_variable_ids (struct oval_v
  * @param id ID of variable
  * @memberof oval_variable_model
  */
-bool oval_variable_model_has_variable(struct oval_variable_model *model, const char * id);
+OSCAP_API bool oval_variable_model_has_variable(struct oval_variable_model *model, const char * id);
 /**
  * Get a specified external variable datatype.
  * If the varid does not resolve to a managed external variable, this method returns 0.
@@ -125,7 +126,7 @@ bool oval_variable_model_has_variable(struct oval_variable_model *model, const c
  * @param varid the identifier of the required oval_variable.
  * @memberof oval_variable_model
  */ 
-oval_datatype_t oval_variable_model_get_datatype (struct oval_variable_model *, char *);
+OSCAP_API oval_datatype_t oval_variable_model_get_datatype (struct oval_variable_model *, char *);
 /**
  * Get a specified external variable comment.
  * If the varid does not resolve to a managed external variable, this method returns NULL.
@@ -133,7 +134,7 @@ oval_datatype_t oval_variable_model_get_datatype (struct oval_variable_model *, 
  * @param varid the identifier of the required oval_variable.
  * @memberof oval_variable_model
  */ 
-const char *oval_variable_model_get_comment (struct oval_variable_model *, char *);
+OSCAP_API const char *oval_variable_model_get_comment (struct oval_variable_model *, char *);
 /**
  * Get the values bound to a specified external variable.
  * If the varid does not resolve to a managed external variable, this method returns NULL.
@@ -141,7 +142,7 @@ const char *oval_variable_model_get_comment (struct oval_variable_model *, char 
  * @param varid the identifier of the required oval_variable.
  * @memberof oval_variable_model
  */ 
-struct oval_value_iterator *oval_variable_model_get_values(struct oval_variable_model *, char *);
+OSCAP_API struct oval_value_iterator *oval_variable_model_get_values(struct oval_variable_model *, char *);
 /** @} */
 
 /**
@@ -157,17 +158,17 @@ struct oval_variable_model_iterator;
  * Returns <b>true</b> if iterator not exhausted.
  * @memberof oval_variable_model_iterator
  */
-bool oval_variable_model_iterator_has_more(struct oval_variable_model_iterator *);
+OSCAP_API bool oval_variable_model_iterator_has_more(struct oval_variable_model_iterator *);
 /**
  * Returns next instance of @ref oval_variable_model.
  * @memberof oval_variable_model_iterator
  */
-struct oval_variable_model *oval_variable_model_iterator_next(struct oval_variable_model_iterator *);
+OSCAP_API struct oval_variable_model *oval_variable_model_iterator_next(struct oval_variable_model_iterator *);
 /**
  * Free iterator.
  * @memberof oval_variable_model_iterator
  */
-void oval_variable_model_iterator_free(struct oval_variable_model_iterator *);
+OSCAP_API void oval_variable_model_iterator_free(struct oval_variable_model_iterator *);
 /** @} */
 
 /**

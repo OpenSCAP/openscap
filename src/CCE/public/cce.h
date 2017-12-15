@@ -30,6 +30,7 @@
 
 #include <stdbool.h>
 #include "oscap.h"
+#include "oscap_export.h"
 
 #ifndef _CCE_H
 #define _CCE_H
@@ -64,56 +65,56 @@ struct cce_reference;
  * Get an iterator to the contents of the CCE.
  * @memberof cce
  */
-struct cce_entry_iterator *cce_get_entries(const struct cce *cce);
+OSCAP_API struct cce_entry_iterator *cce_get_entries(const struct cce *cce);
 
 /**
  * Get an CCE entry by ID.
  * @memberof cce
  * @retval NULL if given entry does not exist
  */
-struct cce_entry *cce_get_entry(const struct cce *cce, const char *id);
+OSCAP_API struct cce_entry *cce_get_entry(const struct cce *cce, const char *id);
 
 /**
  * Get CCE entry ID.
  * @memberof cce_entry
  */
-const char *cce_entry_get_id(const struct cce_entry *cce);
+OSCAP_API const char *cce_entry_get_id(const struct cce_entry *cce);
 
 /**
  * Get CCE entry desription.
  * @memberof cce_entry
  */
-const char *cce_entry_get_description(const struct cce_entry *cce);
+OSCAP_API const char *cce_entry_get_description(const struct cce_entry *cce);
 
 /**
  * Get an iterator to CCE entry's parameters.
  * @memberof cce_entry
  */
-struct oscap_string_iterator *cce_entry_get_params(const struct cce_entry *cce);
+OSCAP_API struct oscap_string_iterator *cce_entry_get_params(const struct cce_entry *cce);
 
 /**
  * Get an iterator to CCE entry's technical mechanisms.
  * @memberof cce_entry
  */
-struct oscap_string_iterator *cce_entry_get_tech_mechs(const struct cce_entry *cce);
+OSCAP_API struct oscap_string_iterator *cce_entry_get_tech_mechs(const struct cce_entry *cce);
 
 /**
  * Get an iterator to CCE entry's references.
  * @memberof cce_entry
  */
-struct cce_reference_iterator *cce_entry_get_references(const struct cce_entry *cce);
+OSCAP_API struct cce_reference_iterator *cce_entry_get_references(const struct cce_entry *cce);
 
 /**
  * Get source of CCE reference.
  * @memberof cce_reference
  */
-const char *cce_reference_get_source(const struct cce_reference *ref);
+OSCAP_API const char *cce_reference_get_source(const struct cce_reference *ref);
 
 /**
  * Get contents of CCE reference.
  * @memberof cce_reference
  */
-const char *cce_reference_get_value(const struct cce_reference *ref);
+OSCAP_API const char *cce_reference_get_value(const struct cce_reference *ref);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -131,13 +132,13 @@ const char *cce_reference_get_value(const struct cce_reference *ref);
  */
 struct cce_reference_iterator;
 /// @memberof cce_reference_iterator
-struct cce_reference *cce_reference_iterator_next(struct cce_reference_iterator *it);
+OSCAP_API struct cce_reference *cce_reference_iterator_next(struct cce_reference_iterator *it);
 /// @memberof cce_reference_iterator
-bool cce_reference_iterator_has_more(struct cce_reference_iterator *it);
+OSCAP_API bool cce_reference_iterator_has_more(struct cce_reference_iterator *it);
 /// @memberof cce_reference_iterator
-void cce_reference_iterator_free(struct cce_reference_iterator *it);
+OSCAP_API void cce_reference_iterator_free(struct cce_reference_iterator *it);
 /// @memberof cce_reference_iterator
-void cce_reference_iterator_reset(struct cce_reference_iterator *it);
+OSCAP_API void cce_reference_iterator_reset(struct cce_reference_iterator *it);
 
 /**
  * @struct cce_entry_iterator
@@ -146,13 +147,13 @@ void cce_reference_iterator_reset(struct cce_reference_iterator *it);
  */
 struct cce_entry_iterator;
 /// @memberof cce_entry_iterator
-struct cce_entry *cce_entry_iterator_next(struct cce_entry_iterator *it);
+OSCAP_API struct cce_entry *cce_entry_iterator_next(struct cce_entry_iterator *it);
 /// @memberof cce_entry_iterator
-bool cce_entry_iterator_has_more(struct cce_entry_iterator *it);
+OSCAP_API bool cce_entry_iterator_has_more(struct cce_entry_iterator *it);
 /// @memberof cce_entry_iterator
-void cce_entry_iterator_free(struct cce_entry_iterator *it);
+OSCAP_API void cce_entry_iterator_free(struct cce_entry_iterator *it);
 /// @memberof cce_entry_iterator
-void cce_entry_iterator_reset(struct cce_entry_iterator *it);
+OSCAP_API void cce_entry_iterator_reset(struct cce_entry_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */
@@ -163,7 +164,7 @@ void cce_entry_iterator_reset(struct cce_entry_iterator *it);
  * @param fname XML file name to porcess
  * @retval NULL on failure
  */
-struct cce *cce_new(const char *fname);
+OSCAP_API struct cce *cce_new(const char *fname);
 
 /**
  * CCE structure destructor.
@@ -171,7 +172,7 @@ struct cce *cce_new(const char *fname);
  * @memberof cce
  * @param cce pointer to target structure
  */
-void cce_free(struct cce *cce);
+OSCAP_API void cce_free(struct cce *cce);
 
 /************************************************************/
 /**
@@ -185,14 +186,14 @@ void cce_free(struct cce *cce);
  * @param filename file to be validated
  * @return result of validation (true / false)
  */
-bool cce_validate(const char *filename);
+OSCAP_API bool cce_validate(const char *filename);
 
 /**
  * Get supported version of CCE XML
  * @return version of XML file format
  * @memberof cce
  */
-const char * cce_supported(void);
+OSCAP_API const char * cce_supported(void);
 
 /************************************************************/
 /** @} End of Evaluators group */

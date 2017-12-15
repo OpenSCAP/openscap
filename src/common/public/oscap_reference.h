@@ -25,6 +25,8 @@
 #ifndef OSCAP_REFERENCE_H_
 #define OSCAP_REFERENCE_H_
 
+#include "oscap_export.h"
+
 /**
  * Dublin Core reference
  */
@@ -33,89 +35,89 @@ struct oscap_reference;
 /// @see oscap_reference
 struct oscap_reference_iterator;
 /// @memberof oscap_reference_iterator
-bool oscap_reference_iterator_has_more(struct oscap_reference_iterator *it);
+OSCAP_API bool oscap_reference_iterator_has_more(struct oscap_reference_iterator *it);
 /// @memberof oscap_reference_iterator
-struct oscap_reference *oscap_reference_iterator_next(struct oscap_reference_iterator *it);
+OSCAP_API struct oscap_reference *oscap_reference_iterator_next(struct oscap_reference_iterator *it);
 /// @memberof oscap_reference_iterator
-void oscap_reference_iterator_free(struct oscap_reference_iterator *it);
+OSCAP_API void oscap_reference_iterator_free(struct oscap_reference_iterator *it);
 /// @memberof oscap_reference_iterator
-void oscap_reference_iterator_reset(struct oscap_reference_iterator *it);
+OSCAP_API void oscap_reference_iterator_reset(struct oscap_reference_iterator *it);
 
 /// @memberof oscap_reference
-struct oscap_reference *oscap_reference_new(void);
+OSCAP_API struct oscap_reference *oscap_reference_new(void);
 /// @memberof oscap_reference
-void oscap_reference_free(struct oscap_reference *ref);
+OSCAP_API void oscap_reference_free(struct oscap_reference *ref);
 /// @memberof oscap_reference
-struct oscap_reference *oscap_reference_clone(const struct oscap_reference *ref);
+OSCAP_API struct oscap_reference *oscap_reference_clone(const struct oscap_reference *ref);
 
 /// @memberof oscap_reference
-bool oscap_reference_get_is_dublincore(const struct oscap_reference *item);
+OSCAP_API bool oscap_reference_get_is_dublincore(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_is_dublincore(struct oscap_reference *obj, bool newval);
+OSCAP_API bool oscap_reference_set_is_dublincore(struct oscap_reference *obj, bool newval);
 
 /// @memberof oscap_reference
-const char *oscap_reference_get_href(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_href(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_href(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_href(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_title(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_title(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_title(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_title(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_creator(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_creator(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_creator(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_creator(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_subject(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_subject(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_subject(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_subject(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_description(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_description(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_description(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_description(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_publisher(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_publisher(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_publisher(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_publisher(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_contributor(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_contributor(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_contributor(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_contributor(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_date(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_date(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_date(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_date(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_type(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_type(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_type(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_type(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_format(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_format(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_format(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_format(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_identifier(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_identifier(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_identifier(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_identifier(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_source(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_source(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_source(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_source(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_language(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_language(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_language(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_language(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_relation(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_relation(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_relation(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_relation(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_coverage(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_coverage(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_coverage(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_coverage(struct oscap_reference *obj, const char *newval);
 /// @memberof oscap_reference
-const char *oscap_reference_get_rights(const struct oscap_reference *item);
+OSCAP_API const char *oscap_reference_get_rights(const struct oscap_reference *item);
 /// @memberof oscap_reference
-bool oscap_reference_set_rights(struct oscap_reference *obj, const char *newval);
+OSCAP_API bool oscap_reference_set_rights(struct oscap_reference *obj, const char *newval);
 
 #endif

@@ -38,6 +38,7 @@
 #include <time.h>
 #include "oscap.h"
 #include "cpe_name.h"
+#include "oscap_export.h"
 
 /** 
  * @struct cve_model
@@ -91,134 +92,134 @@ struct cvss_impact;
  * @param cve_model CVE model
  * @memberof cve_entry
  */
-struct cve_entry_iterator *cve_model_get_entries(const struct cve_model *cve_model);
+OSCAP_API struct cve_entry_iterator *cve_model_get_entries(const struct cve_model *cve_model);
 
 /**
  * Get CVE entry ID
  * @param item CVE entry
  * @memberof cve_entry
  */
-const char *cve_entry_get_id(const struct cve_entry *item);
+OSCAP_API const char *cve_entry_get_id(const struct cve_entry *item);
 
 /**
  * Get CVE entry CWE
  * @param item CVE entry
  * @memberof cve_entry
  */
-const char *cve_entry_get_cwe(const struct cve_entry *item);
+OSCAP_API const char *cve_entry_get_cwe(const struct cve_entry *item);
 
 /**
  * Get CVE entry summary
  * @param item CVE entry
  * @memberof cve_entry
  */
-struct cve_summary_iterator *cve_entry_get_summaries(const struct cve_entry *item);
+OSCAP_API struct cve_summary_iterator *cve_entry_get_summaries(const struct cve_entry *item);
 
 /**
  * Get an iterator to CVE entry's references
  * @param item CVE entry
  * @memberof cve_entry
  */
-struct cve_reference_iterator *cve_entry_get_references(const struct cve_entry *item);
+OSCAP_API struct cve_reference_iterator *cve_entry_get_references(const struct cve_entry *item);
 
 /**
  * Get CVE reference values
  * @param ref CVE reference
  * @memberof cve_reference
  */
-const char *cve_reference_get_value(const struct cve_reference *ref);
+OSCAP_API const char *cve_reference_get_value(const struct cve_reference *ref);
 
 /**
  * Get CVE reference href
  * @param ref CVE reference
  * @memberof cve_reference
  */
-const char *cve_reference_get_href(const struct cve_reference *ref);
+OSCAP_API const char *cve_reference_get_href(const struct cve_reference *ref);
 
 /**
  * Get CVE reference type
  * @param ref CVE reference
  * @memberof cve_reference
  */
-const char *cve_reference_get_type(const struct cve_reference *ref);
+OSCAP_API const char *cve_reference_get_type(const struct cve_reference *ref);
 
 /**
  * Get CVE reference source
  * @param ref CVE reference
  * @memberof cve_reference
  */
-const char *cve_reference_get_source(const struct cve_reference *ref);
+OSCAP_API const char *cve_reference_get_source(const struct cve_reference *ref);
 /// @memberof cve_reference
-const char *cve_reference_get_lang(const struct cve_reference *ref);
+OSCAP_API const char *cve_reference_get_lang(const struct cve_reference *ref);
 
 /**
  * Get value from CVE summary
  * @param summary CVE summary
  * @memberof cve_summary
  */
-const char *cve_summary_get_summary(const struct cve_summary *summary);
+OSCAP_API const char *cve_summary_get_summary(const struct cve_summary *summary);
 /**
  * Get CVE product value
  * @param prodct CVE product
  * @memberof cve_
  */
-const char *cve_product_get_value(const struct cve_product *product);
+OSCAP_API const char *cve_product_get_value(const struct cve_product *product);
 /**
  * Get CVE entry value
  * @param entry CVE entry
  * @memberof cve_entry
  */
-const char *cwe_entry_get_value(const struct cwe_entry *entry);
+OSCAP_API const char *cwe_entry_get_value(const struct cwe_entry *entry);
 /**
  * Get CVE configuration id
  * @param conf CVE vulnerable configuration
  * @memberof cve_configuration
  */
-const char *cve_configuration_get_id(const struct cve_configuration *conf);
+OSCAP_API const char *cve_configuration_get_id(const struct cve_configuration *conf);
 /**
  * Get CVE entry published date
  * @param entry CVE entry
  * @memberof cve_entry
  */
-const char *cve_entry_get_published(const struct cve_entry *entry);
+OSCAP_API const char *cve_entry_get_published(const struct cve_entry *entry);
 /**
  * Get CVE entry modified
  * @param entry CVE entry
  * @memberof cve_entry
  */
-const char *cve_entry_get_modified(const struct cve_entry *entry);
+OSCAP_API const char *cve_entry_get_modified(const struct cve_entry *entry);
 /**
  * Get CVE entry protection
  * @param entry CVE entry
  * @memberof cve_entry
  */
-const char *cve_entry_get_sec_protection(const struct cve_entry *entry);
+OSCAP_API const char *cve_entry_get_sec_protection(const struct cve_entry *entry);
 
 /**
  * Get CVE entry products
  * @param entry CVE entry
  * @memberof cve_entry
  */
-struct cve_product_iterator *cve_entry_get_products(const struct cve_entry *entry);
+OSCAP_API struct cve_product_iterator *cve_entry_get_products(const struct cve_entry *entry);
 /**
  * Get CVE .
  * @param entry CVE entry
  * @memberof cve_entry
  */
-struct cve_configuration_iterator *cve_entry_get_configurations(const struct cve_entry *entry);
+OSCAP_API struct cve_configuration_iterator *cve_entry_get_configurations(const struct cve_entry *entry);
 /**
  * Get CVE configuration test expression.
  * @param conf CVE configuration
  * @memberof cve_configuration
  */
-const struct cpe_testexpr *cve_configuration_get_expr(const struct cve_configuration *conf);
+OSCAP_API const struct cpe_testexpr *cve_configuration_get_expr(const struct cve_configuration *conf);
 
 /**
  * Get CVSS structure from CVE.
  * @param item CVE entry
  * @memberof cve_entry
  */
-const struct cvss_impact *cve_entry_get_cvss(const struct cve_entry *item);
+OSCAP_API const struct cvss_impact *cve_entry_get_cvss(const struct cve_entry *item);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -238,19 +239,19 @@ const struct cvss_impact *cve_entry_get_cvss(const struct cve_entry *item);
  * @memberof cve_model
  * @return true if added, false otherwise
  */
-bool cve_model_add_entry(struct cve_model *model, struct cve_entry *new_entry);
+OSCAP_API bool cve_model_add_entry(struct cve_model *model, struct cve_entry *new_entry);
 
 /// @memberof cve_entry
-bool cve_entry_add_product(struct cve_entry *entry, struct cve_product *new_product);
+OSCAP_API bool cve_entry_add_product(struct cve_entry *entry, struct cve_product *new_product);
 
 /// @memberof cve_entry
-bool cve_entry_add_reference(struct cve_entry *entry, struct cve_reference *new_reference);
+OSCAP_API bool cve_entry_add_reference(struct cve_entry *entry, struct cve_reference *new_reference);
 
 /// @memberof cve_entry
-bool cve_entry_add_summary(struct cve_entry *entry, struct cve_summary *new_summary);
+OSCAP_API bool cve_entry_add_summary(struct cve_entry *entry, struct cve_summary *new_summary);
 
 /// @memberof cve_entry
-bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configuration *new_configuration);
+OSCAP_API bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configuration *new_configuration);
 
 /**
  * Set id of CVE entry
@@ -259,7 +260,7 @@ bool cve_entry_add_configuration(struct cve_entry *entry, struct cve_configurati
  * @memberof cve_entry
  * return true if set, false otherwise
  */
-bool cve_entry_set_id(struct cve_entry *entry, const char *new_id);
+OSCAP_API bool cve_entry_set_id(struct cve_entry *entry, const char *new_id);
 /**
  * Set publish date of CVE entry
  * @param entry CVE entry
@@ -267,7 +268,7 @@ bool cve_entry_set_id(struct cve_entry *entry, const char *new_id);
  * @memberof cve_entry
  * return true if set, false otherwise
  */
-bool cve_entry_set_published(struct cve_entry *entry, const char *new_published);
+OSCAP_API bool cve_entry_set_published(struct cve_entry *entry, const char *new_published);
 /**
  * Set modified date of CVE entry
  * @param entry CVE entry
@@ -275,7 +276,7 @@ bool cve_entry_set_published(struct cve_entry *entry, const char *new_published)
  * @memberof cve_entry
  * return true if set, false otherwise
  */
-bool cve_entry_set_modified(struct cve_entry *entry, const char *new_modified);
+OSCAP_API bool cve_entry_set_modified(struct cve_entry *entry, const char *new_modified);
 /**
  * Set protection of CVE entry
  * @param entry CVE entry
@@ -283,7 +284,7 @@ bool cve_entry_set_modified(struct cve_entry *entry, const char *new_modified);
  * @memberof cve_entry
  * return true if set, false otherwise
  */
-bool cve_entry_set_sec_protection(struct cve_entry *entry, const char *new_protection);
+OSCAP_API bool cve_entry_set_sec_protection(struct cve_entry *entry, const char *new_protection);
 /**
  * Set cwe of CVE entry
  * @param entry CVE entry
@@ -291,7 +292,7 @@ bool cve_entry_set_sec_protection(struct cve_entry *entry, const char *new_prote
  * @memberof cve_entry
  * return true if set, false otherwise
  */
-bool cve_entry_set_cwe(struct cve_entry *entry, const char *cwe);
+OSCAP_API bool cve_entry_set_cwe(struct cve_entry *entry, const char *cwe);
 /**
  * Set value of CVE entry
  * @param entry CVE entry
@@ -299,7 +300,7 @@ bool cve_entry_set_cwe(struct cve_entry *entry, const char *cwe);
  * @memberof cve_entry
  * return true if set, false otherwise
  */
-bool cwe_entry_set_value(struct cwe_entry *entry, const char *new_value);
+OSCAP_API bool cwe_entry_set_value(struct cwe_entry *entry, const char *new_value);
 
 /**
  * Set value of CVE reference
@@ -308,7 +309,7 @@ bool cwe_entry_set_value(struct cwe_entry *entry, const char *new_value);
  * @memberof cve_reference
  * return true if set, false otherwise
  */
-bool cve_reference_set_value(struct cve_reference *reference, const char *new_value);
+OSCAP_API bool cve_reference_set_value(struct cve_reference *reference, const char *new_value);
 /**
  * Set href of CVE reference
  * @param reference CVE reference
@@ -316,7 +317,7 @@ bool cve_reference_set_value(struct cve_reference *reference, const char *new_va
  * @memberof cve_reference href
  * return true if set, false otherwise
  */
-bool cve_reference_set_href(struct cve_reference *reference, const char *new_href);
+OSCAP_API bool cve_reference_set_href(struct cve_reference *reference, const char *new_href);
 /**
  * Set type of CVE reference
  * @param reference CVE reference
@@ -324,7 +325,7 @@ bool cve_reference_set_href(struct cve_reference *reference, const char *new_hre
  * @memberof cve_reference type
  * return true if set, false otherwise
  */
-bool cve_reference_set_type(struct cve_reference *reference, const char *new_type);
+OSCAP_API bool cve_reference_set_type(struct cve_reference *reference, const char *new_type);
 /**
  * Set source of CVE reference
  * @param reference CVE reference
@@ -332,10 +333,10 @@ bool cve_reference_set_type(struct cve_reference *reference, const char *new_typ
  * @memberof cve_reference
  * return true if set, false otherwise
  */
-bool cve_reference_set_source(struct cve_reference *reference, const char *new_source);
+OSCAP_API bool cve_reference_set_source(struct cve_reference *reference, const char *new_source);
 
 /// @memberof cve_reference
-bool cve_reference_set_lang(struct cve_reference *reference, const char *new_lang);
+OSCAP_API bool cve_reference_set_lang(struct cve_reference *reference, const char *new_lang);
 
 /**
  * Set id of CVE configuration
@@ -344,7 +345,7 @@ bool cve_reference_set_lang(struct cve_reference *reference, const char *new_lan
  * @memberof cve_configuration
  * @return true if set, false otherwise
  */
-bool cve_configuration_set_id(struct cve_configuration *conf, const char *new_id);
+OSCAP_API bool cve_configuration_set_id(struct cve_configuration *conf, const char *new_id);
 /**
  * Set value of CVE product
  * @param product CVE product
@@ -352,7 +353,7 @@ bool cve_configuration_set_id(struct cve_configuration *conf, const char *new_id
  * @memberof cve_product
  * @return true if set, false otherwise
  */
-bool cve_product_set_value(struct cve_product *product, const char *new_value);
+OSCAP_API bool cve_product_set_value(struct cve_product *product, const char *new_value);
 /**
  * Set summary of CVE summary
  * @param summary CVE summary
@@ -360,7 +361,7 @@ bool cve_product_set_value(struct cve_product *product, const char *new_value);
  * @memberof cve_summary
  * @return true if set, false otherwise
  */
-bool cve_summary_set_summary(struct cve_summary *summary, const char *new_summary);
+OSCAP_API bool cve_summary_set_summary(struct cve_summary *summary, const char *new_summary);
 
 /************************************************************/
 /** @} End of Setters group */
@@ -381,15 +382,15 @@ struct cve_entry_iterator;
 /** 
  * @memberof cve_entry_iterator 
  */
-struct cve_entry *cve_entry_iterator_next(struct cve_entry_iterator *it);
+OSCAP_API struct cve_entry *cve_entry_iterator_next(struct cve_entry_iterator *it);
 /** 
  * @memberof cve_entry_iterator 
  */
-bool cve_entry_iterator_has_more(struct cve_entry_iterator *it);
+OSCAP_API bool cve_entry_iterator_has_more(struct cve_entry_iterator *it);
 /** 
  * @memberof cve_entry_iterator 
  */
-void cve_entry_iterator_free(struct cve_entry_iterator *it);
+OSCAP_API void cve_entry_iterator_free(struct cve_entry_iterator *it);
 
 /** @struct cve_summary_iterator
  * Iterator over CVE summaries.
@@ -400,15 +401,15 @@ struct cve_summary_iterator;
 /** 
  * @memberof cve_summary_iterator
  */
-struct cve_summary *cve_summary_iterator_next(struct cve_summary_iterator *it);
+OSCAP_API struct cve_summary *cve_summary_iterator_next(struct cve_summary_iterator *it);
 /** 
  * @memberof cve_summary_iterator
  */
-bool cve_summary_iterator_has_more(struct cve_summary_iterator *it);
+OSCAP_API bool cve_summary_iterator_has_more(struct cve_summary_iterator *it);
 /**
  * @memberof cve_summary_iterator 
  */
-void cve_summary_iterator_free(struct cve_summary_iterator *it);
+OSCAP_API void cve_summary_iterator_free(struct cve_summary_iterator *it);
 
 /** @struct cve_product_iterator
  * Iterator over CVE products.
@@ -419,15 +420,15 @@ struct cve_product_iterator;
 /** 
  * @memberof cve_product_iterator 
  */
-struct cve_product *cve_product_iterator_next(struct cve_product_iterator *it);
+OSCAP_API struct cve_product *cve_product_iterator_next(struct cve_product_iterator *it);
 /** 
  * @memberof cve_product_iterator 
  */
-bool cve_product_iterator_has_more(struct cve_product_iterator *it);
+OSCAP_API bool cve_product_iterator_has_more(struct cve_product_iterator *it);
 /** 
  * @memberof cve_product_iterator 
  */
-void cve_product_iterator_free(struct cve_product_iterator *it);
+OSCAP_API void cve_product_iterator_free(struct cve_product_iterator *it);
 
 /** @struct cve_configuration_iterator
  * Iterator over CVE vulnerable configurations.
@@ -438,15 +439,15 @@ struct cve_configuration_iterator;
 /** 
  * @memberof cve_configuration_iterator 
  */
-struct cve_configuration *cve_configuration_iterator_next(struct cve_configuration_iterator *it);
+OSCAP_API struct cve_configuration *cve_configuration_iterator_next(struct cve_configuration_iterator *it);
 /** 
  * @memberof cve_configuration_iterator 
  */
-bool cve_configuration_iterator_has_more(struct cve_configuration_iterator *it);
+OSCAP_API bool cve_configuration_iterator_has_more(struct cve_configuration_iterator *it);
 /** 
  * @memberof cve_configuration_iterator
  */
-void cve_configuration_iterator_free(struct cve_configuration_iterator *it);
+OSCAP_API void cve_configuration_iterator_free(struct cve_configuration_iterator *it);
 
 /** @struct cve_reference_iterator
  * Iterator over CVE references.
@@ -457,15 +458,15 @@ struct cve_reference_iterator;
 /**
  * @memberof cve_reference_iterator
  */
-struct cve_reference *cve_reference_iterator_next(struct cve_reference_iterator *it);
+OSCAP_API struct cve_reference *cve_reference_iterator_next(struct cve_reference_iterator *it);
 /**
  * @memberof cve_reference_iterator
  */
-bool cve_reference_iterator_has_more(struct cve_reference_iterator *it);
+OSCAP_API bool cve_reference_iterator_has_more(struct cve_reference_iterator *it);
 /**
  * @memberof cve_reference_iterator
  */
-void cve_reference_iterator_free(struct cve_reference_iterator *it);
+OSCAP_API void cve_reference_iterator_free(struct cve_reference_iterator *it);
 
 
 /************************************************************/
@@ -482,7 +483,7 @@ void cve_reference_iterator_free(struct cve_reference_iterator *it);
  * @return version of XML file format
  * @memberof cve_model
  */
-const char * cve_model_supported(void);
+OSCAP_API const char * cve_model_supported(void);
 
 /************************************************************/
 /** @} End of Evaluators group */
@@ -492,168 +493,168 @@ const char * cve_model_supported(void);
  * @memberof cve_entry
  * @return New CVE entry
  */
-struct cve_entry *cve_entry_new(void);
+OSCAP_API struct cve_entry *cve_entry_new(void);
 /**
  * New CVE vulnerability configuration
  * @memberof cve_configuration
  * @return New CVE vulnerability configuration
  */
-struct cve_configuration *cve_configuration_new(void);
+OSCAP_API struct cve_configuration *cve_configuration_new(void);
 /**
  * New CWE entry
  * @memberof cwe_entry
  * @return New CWE entry
  */
-struct cwe_entry *cwe_entry_new(void);
+OSCAP_API struct cwe_entry *cwe_entry_new(void);
 /**
  * New CVE product
  * @memberof cve_product
  * @return New CVE product
  */
-struct cve_product *cve_product_new(void);
+OSCAP_API struct cve_product *cve_product_new(void);
 /**
  * New CVE summary
  * @memberof cve_summary
  * @return New CVE summary
  */
-struct cve_summary *cve_summary_new(void);
+OSCAP_API struct cve_summary *cve_summary_new(void);
 /**
  * New CVE reference
  * @memberof cve_reference
  * @return New CVE reference
  */
-struct cve_reference *cve_reference_new(void);
+OSCAP_API struct cve_reference *cve_reference_new(void);
 /**
  * New CVE model
  * @memberof cve_model
  * @return New CVE model
  */
-struct cve_model *cve_model_new(void);
+OSCAP_API struct cve_model *cve_model_new(void);
 
 /**
  * Clone CVE entry
  * @param old_entry CVE entry
  * @memberof cve_entry
  */
-struct cve_entry * cve_entry_clone(struct cve_entry * old_entry);
+OSCAP_API struct cve_entry * cve_entry_clone(struct cve_entry * old_entry);
 
 /**
  * Clone CVE configuration
  * @param old_conf CVE configuration
  * @memberof cve_configuration
  */
-struct cve_configuration * cve_configuration_clone(struct cve_configuration * old_conf);
+OSCAP_API struct cve_configuration * cve_configuration_clone(struct cve_configuration * old_conf);
 
 /**
  * Clone CWE entry
  * @param old_entry CWE entry
  * @memberof cwe_entry
  */
-struct cwe_entry * cwe_entry_clone(struct cwe_entry * old_entry);
+OSCAP_API struct cwe_entry * cwe_entry_clone(struct cwe_entry * old_entry);
 
 /**
  * Clone CVE product
  * @param old_product CVE product
  * @memberof cve_product
  */
-struct cve_product * cve_product_clone(struct cve_product * old_product);
+OSCAP_API struct cve_product * cve_product_clone(struct cve_product * old_product);
 
 /**
  * Clone CVE summary
  * @param old_sum CVE summary
  * @memberof cve_summary
  */
-struct cve_summary * cve_summary_clone(struct cve_summary * old_sum);
+OSCAP_API struct cve_summary * cve_summary_clone(struct cve_summary * old_sum);
 
 /**
  * Clone CVE reference
  * @param old_ref CVE reference
  * @memberof cve_reference
  */
-struct cve_reference * cve_reference_clone(struct cve_reference * old_ref);
+OSCAP_API struct cve_reference * cve_reference_clone(struct cve_reference * old_ref);
 
 /**
  * Clone CVE model
  * @param old_model CVE model
  * @memberof cve_model
  */
-struct cve_model * cve_model_clone(struct cve_model * old_model);
+OSCAP_API struct cve_model * cve_model_clone(struct cve_model * old_model);
 
 /**
  * Free CVE model
  * @param cve_model CVE model
  * @memberof cve_model
  */
-void cve_model_free(struct cve_model *cve_model);
+OSCAP_API void cve_model_free(struct cve_model *cve_model);
 
 /**
  * Free CVE entry
  * @param entry CVE entry
  * @memberof cve_entry
  */
-void cve_entry_free(struct cve_entry *entry);
+OSCAP_API void cve_entry_free(struct cve_entry *entry);
 
 /**
  * Free CVE summary
  * @param summary CVE summary
  * @memberof cve_summary
  */
-void cve_summary_free(struct cve_summary *summary);
+OSCAP_API void cve_summary_free(struct cve_summary *summary);
 
 /**
  * Free CVE product
  * @param product CVE product
  * @memberof cve_product
  */
-void cve_product_free(struct cve_product *product);
+OSCAP_API void cve_product_free(struct cve_product *product);
 
 /**
  * Free CVE reference
  * @param ref CVE reference
  * @memberof cve_reference
  */
-void cve_reference_free(struct cve_reference *ref);
+OSCAP_API void cve_reference_free(struct cve_reference *ref);
 
 /**
  * Free CVE entry
  * @param entry CVE entry
  * @memberof cve_entry
  */
-void cwe_entry_free(struct cwe_entry *entry);
+OSCAP_API void cwe_entry_free(struct cwe_entry *entry);
 
 /**
  * Free CVE configuration
  * @param conf CVE vulnerability configuration
  * @memberof cve_configuration
  */
-void cve_configuration_free(struct cve_configuration *conf);
+OSCAP_API void cve_configuration_free(struct cve_configuration *conf);
 
 /**@}*/
 
 /// @memberof cve_entry_iterator
-void cve_entry_iterator_remove(struct cve_entry_iterator *it);
+OSCAP_API void cve_entry_iterator_remove(struct cve_entry_iterator *it);
 /// @memberof cve_entry_iterator
-void cve_entry_iterator_reset(struct cve_entry_iterator *it);
+OSCAP_API void cve_entry_iterator_reset(struct cve_entry_iterator *it);
 
 /// @memberof cve_product_iterator
-void cve_product_iterator_remove(struct cve_product_iterator *it);
+OSCAP_API void cve_product_iterator_remove(struct cve_product_iterator *it);
 /// @memberof cve_product_iterator
-void cve_product_iterator_reset(struct cve_product_iterator *it);
+OSCAP_API void cve_product_iterator_reset(struct cve_product_iterator *it);
 
 /// @memberof cve_reference_iterator
-void cve_reference_iterator_remove(struct cve_reference_iterator *it);
+OSCAP_API void cve_reference_iterator_remove(struct cve_reference_iterator *it);
 /// @memberof cve_reference_iterator
-void cve_reference_iterator_reset(struct cve_reference_iterator *it);
+OSCAP_API void cve_reference_iterator_reset(struct cve_reference_iterator *it);
 
 /// @memberof cve_summary_iterator
-void cve_summary_iterator_remove(struct cve_summary_iterator *it);
+OSCAP_API void cve_summary_iterator_remove(struct cve_summary_iterator *it);
 /// @memberof cve_summary_iterator
-void cve_summary_iterator_reset(struct cve_summary_iterator *it);
+OSCAP_API void cve_summary_iterator_reset(struct cve_summary_iterator *it);
 
 /// @memberof cve_configuration_iterator
-void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
+OSCAP_API void cve_configuration_iterator_remove(struct cve_configuration_iterator *it);
 /// @memberof cve_configuration_iterator
-void cve_configuration_iterator_reset(struct cve_configuration_iterator *it);
+OSCAP_API void cve_configuration_iterator_reset(struct cve_configuration_iterator *it);
 
 /**
  * Export CVE model to XML file
@@ -661,7 +662,7 @@ void cve_configuration_iterator_reset(struct cve_configuration_iterator *it);
  * @param cve CVE model
  * @param file OSCAP export target
  */
-void cve_model_export(struct cve_model *cve, const char *file);
+OSCAP_API void cve_model_export(struct cve_model *cve, const char *file);
 
 /**
  * Parses the specified XML file and creates a list of CVE data structures.
@@ -670,16 +671,16 @@ void cve_model_export(struct cve_model *cve, const char *file);
  * @param file filename
  * @return non-negative value indicates the number of CVEs in the list, negative value indicates an error
  */
-struct cve_model *cve_model_import(const char *file);
+OSCAP_API struct cve_model *cve_model_import(const char *file);
 
 /// @memberof cve_model
-const char *cve_model_get_nvd_xml_version(const struct cve_model *item);
+OSCAP_API const char *cve_model_get_nvd_xml_version(const struct cve_model *item);
 /// @memberof cve_model
-bool cve_model_set_nvd_xml_version(struct cve_model *obj, const char *newval);
+OSCAP_API bool cve_model_set_nvd_xml_version(struct cve_model *obj, const char *newval);
 /// @memberof cve_model
-const char *cve_model_get_pub_date(const struct cve_model *item);
+OSCAP_API const char *cve_model_get_pub_date(const struct cve_model *item);
 /// @memberof cve_model
-bool cve_model_set_pub_date(struct cve_model *obj, const char *newval);
+OSCAP_API bool cve_model_set_pub_date(struct cve_model *obj, const char *newval);
 
 /**@}*/
 

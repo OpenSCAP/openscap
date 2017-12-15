@@ -40,6 +40,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "oscap_export.h"
 
 /// enumeration of possible CPE parts
 typedef enum {
@@ -73,21 +74,21 @@ struct cpe_name;
  * @return new structure holding parsed data
  * @retval NULL on failure
  */
-struct cpe_name *cpe_name_new(const char *cpe);
+OSCAP_API struct cpe_name *cpe_name_new(const char *cpe);
 
 /**
  * Clone CPE Name
  * @param old_name CPE name
  * @memberof cpe_name
  */
-struct cpe_name * cpe_name_clone(struct cpe_name * old_name);
+OSCAP_API struct cpe_name * cpe_name_clone(struct cpe_name * old_name);
 
 /**
  * Destructor. Frees any used resources and safely destroys @a cpe.
  * @memberof cpe_name
  * @param cpe CPE to be deleted
  */
-void cpe_name_free(struct cpe_name *cpe);
+OSCAP_API void cpe_name_free(struct cpe_name *cpe);
 
 /************************************************************/
 /**
@@ -101,73 +102,73 @@ void cpe_name_free(struct cpe_name *cpe);
  * Get how the CPE name was loaded and how it should be saved
  * @memberof cpe_name
  */
-cpe_format_t cpe_name_get_format(const struct cpe_name *cpe);
+OSCAP_API cpe_format_t cpe_name_get_format(const struct cpe_name *cpe);
 
 /**
  * Get CPE name part type field.
  * @memberof cpe_name
  */
-cpe_part_t cpe_name_get_part(const struct cpe_name *cpe);
+OSCAP_API cpe_part_t cpe_name_get_part(const struct cpe_name *cpe);
 
 /**
  * Get CPE name vendor field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_vendor(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_vendor(const struct cpe_name *cpe);
 
 /**
  * Get CPE name product field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_product(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_product(const struct cpe_name *cpe);
 
 /**
  * Get CPE name version field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_version(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_version(const struct cpe_name *cpe);
 
 /**
  * Get CPE name update field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_update(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_update(const struct cpe_name *cpe);
 
 /**
  * Get CPE name edition field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_edition(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_edition(const struct cpe_name *cpe);
 
 /**
  * Get CPE name language field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_language(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_language(const struct cpe_name *cpe);
 
 /**
  * Get CPE name sw_edition field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_sw_edition(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_sw_edition(const struct cpe_name *cpe);
 
 /**
  * Get CPE name target_sw field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_target_sw(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_target_sw(const struct cpe_name *cpe);
 
 /**
  * Get CPE name target_hw field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_target_hw(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_target_hw(const struct cpe_name *cpe);
 
 /**
  * Get CPE name other field.
  * @memberof cpe_name
  */
-const char *cpe_name_get_other(const struct cpe_name *cpe);
+OSCAP_API const char *cpe_name_get_other(const struct cpe_name *cpe);
 
 /**
  * Return CPE URI as a new string in specified format.
@@ -178,7 +179,7 @@ const char *cpe_name_get_other(const struct cpe_name *cpe);
  * @return CPE URI as string
  * @retval NULL on failure
  */
-char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format);
+OSCAP_API char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format);
 
 /**
  * Return CPE URI as a new string in the format in which it was loaded.
@@ -188,7 +189,7 @@ char *cpe_name_get_as_format(const struct cpe_name *cpe, cpe_format_t format);
  * @return CPE URI as string
  * @retval NULL on failure
  */
-char *cpe_name_get_as_str(const struct cpe_name *cpe);
+OSCAP_API char *cpe_name_get_as_str(const struct cpe_name *cpe);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -205,73 +206,73 @@ char *cpe_name_get_as_str(const struct cpe_name *cpe);
  * Set how the CPE name was loaded and how it should be saved
  * @memberof cpe_name
  */
-bool cpe_name_set_format(struct cpe_name *cpe, cpe_format_t newval);
+OSCAP_API bool cpe_name_set_format(struct cpe_name *cpe, cpe_format_t newval);
 
 /**
  * Set CPE name part type field.
  * @memberof cpe_name
  */
-bool cpe_name_set_part(struct cpe_name *cpe, cpe_part_t newval);
+OSCAP_API bool cpe_name_set_part(struct cpe_name *cpe, cpe_part_t newval);
 
 /**
  * Set CPE name vendor field.
  * @memberof cpe_name
  */
-bool cpe_name_set_vendor(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_vendor(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name product field.
  * @memberof cpe_name
  */
-bool cpe_name_set_product(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_product(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name version field.
  * @memberof cpe_name
  */
-bool cpe_name_set_version(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_version(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name update field.
  * @memberof cpe_name
  */
-bool cpe_name_set_update(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_update(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name edition field.
  * @memberof cpe_name
  */
-bool cpe_name_set_edition(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_edition(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name language field.
  * @memberof cpe_name
  */
-bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_language(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name sw_edition field.
  * @memberof cpe_name
  */
-bool cpe_name_set_sw_edition(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_sw_edition(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name target_sw field.
  * @memberof cpe_name
  */
-bool cpe_name_set_target_sw(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_target_sw(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name target_hw field.
  * @memberof cpe_name
  */
-bool cpe_name_set_target_hw(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_target_hw(struct cpe_name *cpe, const char *newval);
 
 /**
  * Set CPE name other field.
  * @memberof cpe_name
  */
-bool cpe_name_set_other(struct cpe_name *cpe, const char *newval);
+OSCAP_API bool cpe_name_set_other(struct cpe_name *cpe, const char *newval);
 
 /************************************************************/
 /** @} End of Setters group */
@@ -287,7 +288,7 @@ bool cpe_name_set_other(struct cpe_name *cpe, const char *newval);
  * according to CPE specification v 2.1.
  * @memberof cpe_name
  */
-bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against);
+OSCAP_API bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against);
 
 /**
  * Check if CPE @a name matches any CPE in @a namelist.
@@ -297,7 +298,7 @@ bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *again
  * @param namelist list of names to search in
  * @return true if @a name was found within @a namelist
  */
-bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name **namelist);
+OSCAP_API bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name **namelist);
 
 /**
  * Write CPE URI @a cpe to file a descriptor @a f
@@ -307,21 +308,21 @@ bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name 
  * @return number of written characters
  * @retval <0 on failure
  */
-int cpe_name_write(const struct cpe_name *cpe, FILE * f);
+OSCAP_API int cpe_name_write(const struct cpe_name *cpe, FILE * f);
 
 /**
  * Looks at given string and returns format it is in
  *
  * CPE_FORMAT_UNKNOWN is used in case of errors
  */
-cpe_format_t cpe_name_get_format_of_str(const char *str);
+OSCAP_API cpe_format_t cpe_name_get_format_of_str(const char *str);
 
 /**
  * Checks whether @a str is valid CPE string (in any supported format).
  * @memberof cpe_name
  * @param str string to be validated
  */
-bool cpe_name_check(const char *str);
+OSCAP_API bool cpe_name_check(const char *str);
 
 /**
  * Match CPE URI @a candidate against list of @a n CPE URIs given by @a targets.
@@ -333,14 +334,14 @@ bool cpe_name_check(const char *str);
  * @retval -1 on mismatch
  * @retval -2 invalid CPE URI was given as parameter
  */
-int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
+OSCAP_API int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
 
 /**
  * Get supported version of CPE uri XML
  * @return version of XML file format
  * @memberof cpe_name
  */
-const char * cpe_name_supported(void);
+OSCAP_API const char * cpe_name_supported(void);
 
 /************************************************************/
 /** @} End of Evaluators group */
@@ -359,7 +360,7 @@ const char * cpe_name_supported(void);
  *
  * returns true = applicable, false = not applicable
  */
-typedef bool *(*cpe_check_fn) (const char*, const char*, const char*, void*);
+OSCAP_API typedef bool *(*cpe_check_fn) (const char*, const char*, const char*, void*);
 
 /**
  * Shared callback definition used to match CPE names to perform applicability tests
@@ -368,6 +369,6 @@ typedef bool *(*cpe_check_fn) (const char*, const char*, const char*, void*);
  * second argument = arbitrary pointer / user data
  * returns true = matched to existing applicable name, false = not matched/not applicable
  */
-typedef bool *(*cpe_dict_fn) (const struct cpe_name*, void*);
+OSCAP_API typedef bool *(*cpe_dict_fn) (const struct cpe_name*, void*);
 
 #endif				/* _CPEURI_H_ */

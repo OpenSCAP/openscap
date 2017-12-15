@@ -27,6 +27,7 @@
 #include <seap-message.h>
 #include <seap-command.h>
 #include <seap-error.h>
+#include "oscap_export.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,20 +41,20 @@ typedef struct SEAP_packet SEAP_packet_t;
 #define SEAP_PACKET_CMD 0x03 /* Command packet */
 #define SEAP_PACKET_RAW 0x04 /* Raw packet */
 
-SEAP_packet_t *SEAP_packet_new (void);
-void SEAP_packet_free (SEAP_packet_t *packet);
+OSCAP_API SEAP_packet_t *SEAP_packet_new (void);
+OSCAP_API void SEAP_packet_free (SEAP_packet_t *packet);
 
-void   *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type);
-uint8_t SEAP_packet_gettype (SEAP_packet_t *packet);
+OSCAP_API void   *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type);
+OSCAP_API uint8_t SEAP_packet_gettype (SEAP_packet_t *packet);
 
-SEAP_msg_t *SEAP_packet_msg (SEAP_packet_t *packet);
-SEAP_cmd_t *SEAP_packet_cmd (SEAP_packet_t *packet);
-SEAP_err_t *SEAP_packet_err (SEAP_packet_t *packet);
+OSCAP_API SEAP_msg_t *SEAP_packet_msg (SEAP_packet_t *packet);
+OSCAP_API SEAP_cmd_t *SEAP_packet_cmd (SEAP_packet_t *packet);
+OSCAP_API SEAP_err_t *SEAP_packet_err (SEAP_packet_t *packet);
 
-int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet);
-int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, uint8_t type);
-int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet);
-int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet);
+OSCAP_API int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet);
+OSCAP_API int SEAP_packet_recv_bytype (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet, uint8_t type);
+OSCAP_API int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet);
+OSCAP_API int SEAP_packet_enqueue (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet);
 
 #ifdef __cplusplus
 }

@@ -35,6 +35,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include <oscap.h>
+#include "oscap_export.h"
 
 /**
  * @struct xccdf_policy_model
@@ -85,7 +86,7 @@ typedef enum {
  *  - (struct oscap_stringlists *) -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
  *  - NULL shall be returned if the function doesn't understand the query.
  */
-typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
+OSCAP_API typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
 
 /**
  * Type of function which implements OpenSCAP checking engine.
@@ -95,7 +96,7 @@ typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query
  * function registerd. The registered function is then used by xccdf_policy module to
  * perform evaluation on the machine.
  */
-typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_if, struct xccdf_value_binding_iterator *value_binding_it, struct xccdf_check_import_iterator *check_imports_it, void *user_data);
+OSCAP_API typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_if, struct xccdf_value_binding_iterator *value_binding_it, struct xccdf_check_import_iterator *check_imports_it, void *user_data);
 
 /************************************************************/
 
@@ -108,7 +109,7 @@ typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_po
  * when it's being destructed!
  * @memberof xccdf_policy_model
  */
-struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchmark);
+OSCAP_API struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchmark);
 
 /**
  * Constructor of Policy structure
@@ -116,32 +117,32 @@ struct xccdf_policy_model *xccdf_policy_model_new(struct xccdf_benchmark *benchm
  * @param profile Profile from XCCDF Benchmark
  * @memberof xccdf_policy
  */
-struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile);
+OSCAP_API struct xccdf_policy * xccdf_policy_new(struct xccdf_policy_model * model, struct xccdf_profile * profile);
 
 /**
  * Constructor of structure with profile bindings - refine_rules, refine_values and set_values
  * @memberof xccdf_value_binding
  * @return new structure of xccdf_value_binding
  */
-struct xccdf_value_binding * xccdf_value_binding_new(void);
+OSCAP_API struct xccdf_value_binding * xccdf_value_binding_new(void);
 
 /** 
  * Destructor of Policy Model structure
  * @memberof xccdf_policy_model
  */
-void xccdf_policy_model_free(struct xccdf_policy_model *);
+OSCAP_API void xccdf_policy_model_free(struct xccdf_policy_model *);
 
 /** 
  * Destructor of Policy structure
  * @memberof xccdf_policy
  */
-void xccdf_policy_free(struct xccdf_policy *);
+OSCAP_API void xccdf_policy_free(struct xccdf_policy *);
 
 /** 
  * Destructor of Value binding structure
  * @memberof xccdf_value_binding
  */
-void xccdf_value_binding_free(struct xccdf_value_binding *);
+OSCAP_API void xccdf_value_binding_free(struct xccdf_value_binding *);
 
 /**
  * Sets the Tailoring element to use in the policy.
@@ -158,13 +159,13 @@ void xccdf_value_binding_free(struct xccdf_value_binding *);
  * The policy model will take ownership of given tailoring and free it
  * when it's being destructed or when new tailoring is being set.
  */
-bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model, struct xccdf_tailoring *tailoring);
+OSCAP_API bool xccdf_policy_model_set_tailoring(struct xccdf_policy_model *model, struct xccdf_tailoring *tailoring);
 
 /**
  * Retrieves the Tailoring element used in this policy.
  * @memberof xccdf_policy_model
  */
-struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_model *model);
+OSCAP_API struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_model *model);
 
 /**
  * Get human readable title of given XCCDF Item. This finds title with best matching language
@@ -175,7 +176,7 @@ struct xccdf_tailoring *xccdf_policy_model_get_tailoring(struct xccdf_policy_mod
  * @param preferred_lang Language of your choice, Null value for the default.
  * @returns plaintext C string which must be freed by caller
  */
-char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
+OSCAP_API char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
  * Get human readable description of given XCCDF Item. This function searches for description
@@ -187,13 +188,13 @@ char *xccdf_policy_get_readable_item_title(struct xccdf_policy *policy, struct x
  * @param preferred_lang Language of your choice, Null value for the default.
  * @returns plaintext C string which must be freed by caller
  */
-char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
+OSCAP_API char *xccdf_policy_get_readable_item_description(struct xccdf_policy *policy, struct xccdf_item *item, const char *preferred_lang);
 
 /**
  * Registers an additional CPE dictionary for applicability testing
  * The one embedded in the evaluated XCCDF take precedence!
  */
-bool xccdf_policy_model_add_cpe_dict_source(struct xccdf_policy_model * model, struct oscap_source *source);
+OSCAP_API bool xccdf_policy_model_add_cpe_dict_source(struct xccdf_policy_model * model, struct oscap_source *source);
 
 /**
  * Registers an additional CPE dictionary for applicability testing
@@ -201,13 +202,13 @@ bool xccdf_policy_model_add_cpe_dict_source(struct xccdf_policy_model * model, s
  *
  * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_dict_source
  */
-bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model * model, const char * cpe_dict);
+OSCAP_API bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model * model, const char * cpe_dict);
 
 /**
  * Registers an additional CPE lang model for applicability testing
  * The one embedded in the evaluated XCCDF take precedence!
  */
-bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_model * model, struct oscap_source *source);
+OSCAP_API bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_model * model, struct oscap_source *source);
 
 /**
  * Registers an additional CPE lang model for applicability testing
@@ -215,14 +216,14 @@ bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_model * mo
  *
  * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_lang_model_source
  */
-OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, const char *cpe_lang));
+OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, const char *cpe_lang));
 
 /**
  * Registers an additional CPE resource (either dictionary or language)
  * Autodetects given file and acts accordingly.
  * The one embedded in the evaluated XCCDF take precedence!
  */
-bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *model, struct oscap_source *source);
+OSCAP_API bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *model, struct oscap_source *source);
 
 /**
  * Registers an additional CPE resource (either dictionary or language)
@@ -231,13 +232,13 @@ bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *mod
  *
  * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_autodetect_source
  */
-OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char *filepath));
+OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char *filepath));
 
 /**
  * Retrieves an iterator of all OVAL sessions created for CPE applicability evaluation
  * key is the OVAL href, value is the OVAL session itself (type oval_agent_session*)
  */
-struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model);
+OSCAP_API struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model);
 
 /**
  * Function to register callback for checking system
@@ -251,7 +252,7 @@ struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xc
  * @deprecated This function is deprecated by @ref xccdf_policy_model_register_engine_and_query_callback
  * and might be dropped from future releases.
  */
-OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr));
+OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr));
 
 /**
  * Function to register callback for checking system
@@ -263,9 +264,9 @@ OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_p
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  */
-bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
+OSCAP_API bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
-typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
+OSCAP_API typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
 
 /**
  * Function to register output callback for checking system that will be called AFTER each rule evaluation.
@@ -275,9 +276,9 @@ typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  */
-bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr);
+OSCAP_API bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr);
 
-typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
+OSCAP_API typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
 
 /**
  * Function to register start callback for checking system that will be called BEFORE each rule evaluation.
@@ -287,7 +288,7 @@ typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
  * @memberof xccdf_policy_model
  * @return true if callback registered succesfully, false otherwise
  */
-bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr);
+OSCAP_API bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr);
 
 /************************************************************/
 /**
@@ -303,7 +304,7 @@ bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * mode
  * @return Policy model
  * @memberof xccdf_policy
  */
-struct xccdf_policy_model * xccdf_policy_get_model(const struct xccdf_policy * policy);
+OSCAP_API struct xccdf_policy_model * xccdf_policy_get_model(const struct xccdf_policy * policy);
 
 /**
  * Get Benchmark from Policy Model
@@ -311,13 +312,13 @@ struct xccdf_policy_model * xccdf_policy_get_model(const struct xccdf_policy * p
  * @return XCCDF Benchmark for given policy model
  * @memberof xccdf_policy_model
  */
-struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_policy_model * item);
+OSCAP_API struct xccdf_benchmark * xccdf_policy_model_get_benchmark(const struct xccdf_policy_model * item);
 
 /**
  * Get Value Bindings from XCCDF Policy
  * @memberof xccdf_policy
  */
-struct xccdf_value_binding_iterator  * xccdf_policy_get_values(const struct xccdf_policy * item);
+OSCAP_API struct xccdf_value_binding_iterator  * xccdf_policy_get_values(const struct xccdf_policy * item);
 
 /**
  * Get policies from Policy Model. Be aware, this function returns only a list of previously
@@ -326,7 +327,7 @@ struct xccdf_value_binding_iterator  * xccdf_policy_get_values(const struct xccd
  * @return Iterator for list of policies
  * @memberof xccdf_policy_model
  */
-struct xccdf_policy_iterator * xccdf_policy_model_get_policies(const struct xccdf_policy_model *model);
+OSCAP_API struct xccdf_policy_iterator * xccdf_policy_model_get_policies(const struct xccdf_policy_model *model);
 
 /**
  * Build all policies that can be useful for user. The useful policy is any
@@ -336,7 +337,7 @@ struct xccdf_policy_iterator * xccdf_policy_model_get_policies(const struct xccd
  * @param policy_model - XCCDF Policy Model
  * @return 0 on success
  */
-int xccdf_policy_model_build_all_useful_policies(struct xccdf_policy_model *policy_model);
+OSCAP_API int xccdf_policy_model_build_all_useful_policies(struct xccdf_policy_model *policy_model);
 
 /**
  * Get selected rules from policy
@@ -344,69 +345,69 @@ int xccdf_policy_model_build_all_useful_policies(struct xccdf_policy_model *poli
  * @return Pointer to select iterator.
  * @retval NULL on faliure
  */
-struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_policy *);
+OSCAP_API struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_policy *);
 
 /**
  * Get XCCDF Profile from Policy
  * @memberof xccdf_policy
  * @return XCCDF Profile
  */
-struct xccdf_profile * xccdf_policy_get_profile(const struct xccdf_policy *);
+OSCAP_API struct xccdf_profile * xccdf_policy_get_profile(const struct xccdf_policy *);
 
 /**
  * Get rules from Policy
  * @memberof xccdf_policy
  * @return xccdf_select_iterator
  */
-struct xccdf_select_iterator * xccdf_policy_get_selects(const struct xccdf_policy *);
+OSCAP_API struct xccdf_select_iterator * xccdf_policy_get_selects(const struct xccdf_policy *);
 
 /**
  * Get variable name from value bindings
  * @memberof xccdf_value_binding
  * @return String
  */
-char * xccdf_value_binding_get_name(const struct xccdf_value_binding *);
+OSCAP_API char * xccdf_value_binding_get_name(const struct xccdf_value_binding *);
 
 /**
  * Get value from value bindings
  * @memberof xccdf_value_binding
  * @return String
  */
-char * xccdf_value_binding_get_value(const struct xccdf_value_binding *);
+OSCAP_API char * xccdf_value_binding_get_value(const struct xccdf_value_binding *);
 
 /**
  * get variable type from value bindings
  * @memberof xccdf_value_binding
  * @return xccdf_value_type_t
  */
-xccdf_value_type_t xccdf_value_binding_get_type(const struct xccdf_value_binding *);
+OSCAP_API xccdf_value_type_t xccdf_value_binding_get_type(const struct xccdf_value_binding *);
 
 /**
  * get Value operator from value bindings
  * @memberof xccdf_value_binding
  * @return xccdf_operator_t
  */
-xccdf_operator_t xccdf_value_binding_get_operator(const struct xccdf_value_binding *);
+OSCAP_API xccdf_operator_t xccdf_value_binding_get_operator(const struct xccdf_value_binding *);
 
 /**
  * get Set Value from value bindings
  * @memberof xccdf_value_binding
  * @return String
  */
-char * xccdf_value_binding_get_setvalue(const struct xccdf_value_binding *);
+OSCAP_API char * xccdf_value_binding_get_setvalue(const struct xccdf_value_binding *);
 
 /**
  * Get results of all XCCDF Policy results
  * @memberof xccdf_policy_model
  */
-struct xccdf_result_iterator * xccdf_policy_get_results(const struct xccdf_policy * policy);
+OSCAP_API struct xccdf_result_iterator * xccdf_policy_get_results(const struct xccdf_policy * policy);
 
 /**
  * Get XCCDF Result structure by it's idetificator if there is one
  * @memberof xccdf_policy_model
  * @return structure xccdf_result if found, NULL otherwise
  */
-struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id);
+OSCAP_API struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id);
 
 /**
  * Get ID of XCCDF Profile that is implemented by XCCDF Policy
@@ -414,7 +415,7 @@ struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy
  * @memberof xccdf_policy
  * @return ID of Policy's Profile
  */
-const char * xccdf_policy_get_id(struct xccdf_policy * policy);
+OSCAP_API const char * xccdf_policy_get_id(struct xccdf_policy * policy);
 
 /**
  * Get XCCDF Policy from Policy model by speciefied ID of Profile
@@ -423,7 +424,7 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy);
  * @memberof xccdf_policy_model
  * @return XCCDF Policy
  */
-struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_model * policy_model, const char * id);
+OSCAP_API struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_model * policy_model, const char * id);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -441,14 +442,14 @@ struct xccdf_policy * xccdf_policy_model_get_policy_by_id(struct xccdf_policy_mo
  * @memberof xccdf_policy_model
  * @return true if policy has been added succesfully
  */
-bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct xccdf_policy *);
+OSCAP_API bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct xccdf_policy *);
 
 /**
  * Add rule to Policy
  * @memberof xccdf_policy
  * @return true if rule has been added succesfully
  */
-bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
+OSCAP_API bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
 
 /**
  * Set a new selector to the Policy structure
@@ -465,34 +466,34 @@ bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref)
  * Add result to XCCDF Policy Model
  * @memberof xccdf_policy_model
  */
-bool xccdf_policy_add_result(struct xccdf_policy * policy, struct xccdf_result * item);
+OSCAP_API bool xccdf_policy_add_result(struct xccdf_policy * policy, struct xccdf_result * item);
 
 /**
  * Add value binding to the Policy structure
  * @memberof xccdf_policy
  * @return true if rule has been added succesfully
  */
-bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *);
+OSCAP_API bool xccdf_policy_add_value(struct xccdf_policy *, struct xccdf_value_binding *);
 
 /**
  * Get the selection settings of the item.
  * @memberof xccdf_policy
  * @return true if the item is selected
  */
-bool xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id);
+OSCAP_API bool xccdf_policy_is_item_selected(struct xccdf_policy *policy, const char *id);
 
 /**
  * Retrieves number of selected items in the policy
  * @note This is meant to be used to estimate scanning progress for example.
  */
-int xccdf_policy_get_selected_rules_count(struct xccdf_policy *policy);
+OSCAP_API int xccdf_policy_get_selected_rules_count(struct xccdf_policy *policy);
 
 /**
  * Get select from policy by specified ID of XCCDF Item
  * @memberof xccdf_policy
  * @return XCCDF Select
  */
-struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy, const char *item_id);
+OSCAP_API struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy, const char *item_id);
 
 /************************************************************/
 /** @} End of Setters group */
@@ -518,10 +519,10 @@ struct xccdf_select * xccdf_policy_get_select_by_id(struct xccdf_policy * policy
  * \par
  * If you use this predefined OVAL callback, user data structure (last parameter of register function) \b MUST be of type \ref\a oval_agent_session_t:
  * \code
- * struct oval_agent_session * sess = oval_agent_new_session((struct oval_definition_model *) model, "name-of-file");
+OSCAP_API  * struct oval_agent_session * sess = oval_agent_new_session((struct oval_definition_model *) model, "name-of-file");
  * \endcode
  * */
-struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
+OSCAP_API struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
 
 /**
  * Resolve benchmark by applying all refine_rules and refine_values to rules / values
@@ -531,7 +532,7 @@ struct xccdf_result *  xccdf_policy_evaluate(struct xccdf_policy * policy);
  * @return true if process ends succesfuly or false in case of error
  * @memberof xccdf_policy
  */
-bool xccdf_policy_resolve(struct xccdf_policy * policy);
+OSCAP_API bool xccdf_policy_resolve(struct xccdf_policy * policy);
 
 /**
  * Generate remediation prescription (presumably a remediation script).
@@ -543,7 +544,7 @@ bool xccdf_policy_resolve(struct xccdf_policy * policy);
  * @param output_fd write prescription to this file descriptor
  * @returns zero on success, non-zero indicate partial (incomplete) output.
  */
-int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd);
+OSCAP_API int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd);
 
 /**
  * Clone the item and tailor it against given policy (profile)
@@ -552,7 +553,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
  * @return new item that has to be freed by user
  * @deprecated This function is deprecated and might be dropped from future releases.
  */
-OSCAP_DEPRECATED(struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item));
+OSCAP_API OSCAP_DEPRECATED(struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item));
 
 /**
  * xccdf_policy_model_get_files and xccdf_item_get_files each return oscap_file_entries instead of raw strings
@@ -560,15 +561,15 @@ OSCAP_DEPRECATED(struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_polic
 struct oscap_file_entry;
 
 /// @memberof oscap_file_entry
-struct oscap_file_entry *oscap_file_entry_new(void);
+OSCAP_API struct oscap_file_entry *oscap_file_entry_new(void);
 /// @memberof oscap_file_entry
-struct oscap_file_entry *oscap_file_entry_dup(struct oscap_file_entry* file_entry);
+OSCAP_API struct oscap_file_entry *oscap_file_entry_dup(struct oscap_file_entry* file_entry);
 /// @memberof oscap_file_entry
-void oscap_file_entry_free(struct oscap_file_entry* entry);
+OSCAP_API void oscap_file_entry_free(struct oscap_file_entry* entry);
 /// @memberof oscap_file_entry
-const char* oscap_file_entry_get_system(struct oscap_file_entry* entry);
+OSCAP_API const char* oscap_file_entry_get_system(struct oscap_file_entry* entry);
 /// @memberof oscap_file_entry
-const char* oscap_file_entry_get_file(struct oscap_file_entry* entry);
+OSCAP_API const char* oscap_file_entry_get_file(struct oscap_file_entry* entry);
 
 /** @struct oscap_file_entry_iterator
  * @see oscap_iterator
@@ -576,13 +577,13 @@ const char* oscap_file_entry_get_file(struct oscap_file_entry* entry);
 struct oscap_file_entry_iterator;
 
 /// @memberof oscap_file_entry_iterator
-const struct oscap_file_entry *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it);
+OSCAP_API const struct oscap_file_entry *oscap_file_entry_iterator_next(struct oscap_file_entry_iterator *it);
 /// @memberof oscap_file_entry_iterator
-bool oscap_file_entry_iterator_has_more(struct oscap_file_entry_iterator *it);
+OSCAP_API bool oscap_file_entry_iterator_has_more(struct oscap_file_entry_iterator *it);
 /// @memberof oscap_file_entry_iterator
-void oscap_file_entry_iterator_free(struct oscap_file_entry_iterator *it);
+OSCAP_API void oscap_file_entry_iterator_free(struct oscap_file_entry_iterator *it);
 /// @memberof oscap_file_entry_iterator
-void oscap_file_entry_iterator_reset(struct oscap_file_entry_iterator *it);
+OSCAP_API void oscap_file_entry_iterator_reset(struct oscap_file_entry_iterator *it);
 
 /** @struct oscap_file_entry_list
  * @see oscap_list
@@ -590,11 +591,11 @@ void oscap_file_entry_iterator_reset(struct oscap_file_entry_iterator *it);
 struct oscap_file_entry_list;
 
 /// @memberof oscap_file_entry_list
-struct oscap_file_entry_list* oscap_file_entry_list_new(void);
+OSCAP_API struct oscap_file_entry_list* oscap_file_entry_list_new(void);
 /// @memberof oscap_file_entry_list
-void oscap_file_entry_list_free(struct oscap_file_entry_list* list);
+OSCAP_API void oscap_file_entry_list_free(struct oscap_file_entry_list* list);
 /// @memberof oscap_file_entry_list
-struct oscap_file_entry_iterator* oscap_file_entry_list_get_files(struct oscap_file_entry_list* list);
+OSCAP_API struct oscap_file_entry_iterator* oscap_file_entry_list_get_files(struct oscap_file_entry_list* list);
 
 /**
  * Return names of files that are used in checks of particular rules. Every check needs this file to be
@@ -604,7 +605,7 @@ struct oscap_file_entry_iterator* oscap_file_entry_list_get_files(struct oscap_f
  *
  * The resulting list should be freed with oscap_filelist_free.
  */
-struct oscap_file_entry_list * xccdf_policy_model_get_systems_and_files(struct xccdf_policy_model * policy_model);
+OSCAP_API struct oscap_file_entry_list * xccdf_policy_model_get_systems_and_files(struct xccdf_policy_model * policy_model);
 
 /**
  * Return names of files that are used in checks of particular rules. Every check needs this file to be
@@ -613,28 +614,28 @@ struct oscap_file_entry_list * xccdf_policy_model_get_systems_and_files(struct x
  *
  * The resulting list should be freed with oscap_filelist_free.
  */
-struct oscap_file_entry_list * xccdf_item_get_systems_and_files(struct xccdf_item * item);
+OSCAP_API struct oscap_file_entry_list * xccdf_item_get_systems_and_files(struct xccdf_item * item);
 
 /**
  * Return names of files that are used in checks of particular rules. Every check needs this file to be
  * evaluated properly. If this file will not be imported and bind to the XCCDF Policy system the result
  * of rule after evaluation will be "Not checked"
  */
-struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model * policy_model);
+OSCAP_API struct oscap_stringlist * xccdf_policy_model_get_files(struct xccdf_policy_model * policy_model);
 
 /**
  * Return names of files that are used in checks of particular rules. Every check needs this file to be
  * evaluated properly. If this file will not be imported and bind to the XCCDF Policy system the result
  * of rule after evaluation will be "Not checked"
  */
-struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item);
+OSCAP_API struct oscap_stringlist * xccdf_item_get_files(struct xccdf_item * item);
 
 /**
  * Return result of the AND operation for two given attributes.
  * For more details about the attributes A and B please consult 'Table 26: Possible Results for a Single Test' from NISTIR-7275r4.
  * For more details about the AND operation please consult 'Table 12: Truth Table for AND' in the very same document.
  */
-xccdf_test_result_type_t xccdf_test_result_resolve_and_operation(xccdf_test_result_type_t A, xccdf_test_result_type_t B);
+OSCAP_API xccdf_test_result_type_t xccdf_test_result_resolve_and_operation(xccdf_test_result_type_t A, xccdf_test_result_type_t B);
 
 /************************************************************/
 /** @} End of Evaluators group */
@@ -649,49 +650,49 @@ xccdf_test_result_type_t xccdf_test_result_resolve_and_operation(xccdf_test_resu
  * Return true if the list is not empty, false otherwise
  * @memberof xccdf_policy_iterator
  */
-bool xccdf_policy_iterator_has_more(struct xccdf_policy_iterator *it);
+OSCAP_API bool xccdf_policy_iterator_has_more(struct xccdf_policy_iterator *it);
 
 /**
  * Return the next xccdf_policy structure from the list and increment the iterator
  * @memberof xccdf_policy_iterator
  */
-struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *it);
+OSCAP_API struct xccdf_policy * xccdf_policy_iterator_next(struct xccdf_policy_iterator *it);
 
 /**
  * Free the iterator structure (it makes no changes to the list structure)
  * @memberof xccdf_policy_iterator
  */
-void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
+OSCAP_API void xccdf_policy_iterator_free(struct xccdf_policy_iterator *it);
 
 /**
  * Reset the iterator structure (it will point to the first item in the list)
  * @memberof xccdf_policy_iterator
  */
-void xccdf_policy_iterator_reset(struct xccdf_policy_iterator *it);
+OSCAP_API void xccdf_policy_iterator_reset(struct xccdf_policy_iterator *it);
 
 /**
  * Return true if the list is not empty, false otherwise
  * @memberof xccdf_value_binding_iterator
  */
-bool xccdf_value_binding_iterator_has_more(struct xccdf_value_binding_iterator *it);
+OSCAP_API bool xccdf_value_binding_iterator_has_more(struct xccdf_value_binding_iterator *it);
 
 /**
  * Return the next xccdf_value_binding structure from the list and increment the iterator
  * @memberof xccdf_value_binding_iterator
  */
-struct xccdf_value_binding * xccdf_value_binding_iterator_next(struct xccdf_value_binding_iterator *it);
+OSCAP_API struct xccdf_value_binding * xccdf_value_binding_iterator_next(struct xccdf_value_binding_iterator *it);
 
 /**
  * Free the iterator structure (it makes no changes to the list structure)
  * @memberof xccdf_value_binding_iterator
  */
-void xccdf_value_binding_iterator_free(struct xccdf_value_binding_iterator *it);
+OSCAP_API void xccdf_value_binding_iterator_free(struct xccdf_value_binding_iterator *it);
 
 /**
  * Reset the iterator structure (it will point to the first item in the list)
  * @memberof xccdf_value_binding_iterator
  */
-void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it);
+OSCAP_API void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it);
 
 /**
  * Get score of the XCCDF Benchmark
@@ -700,7 +701,7 @@ void xccdf_value_binding_iterator_reset(struct xccdf_value_binding_iterator *it)
  * @param system Score system
  * @return XCCDF Score
  */
-struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct xccdf_result * test_result, const char * system);
+OSCAP_API struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct xccdf_result * test_result, const char * system);
 
 /**
  * Recalculate score of the XCCDF Benchmark
@@ -708,7 +709,7 @@ struct xccdf_score * xccdf_policy_get_score(struct xccdf_policy * policy, struct
  * @param test_result Test Result model
  * @returns zero on success
  */
-int xccdf_policy_recalculate_score(struct xccdf_policy * policy, struct xccdf_result * test_result);
+OSCAP_API int xccdf_policy_recalculate_score(struct xccdf_policy * policy, struct xccdf_result * test_result);
 
 /**
  * Get value of given value item in context of given policy
@@ -718,14 +719,14 @@ int xccdf_policy_recalculate_score(struct xccdf_policy * policy, struct xccdf_re
  * @returns string representation of resolved value_instance.
  * @retval NULL indicates failure
  */
-const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item);
+OSCAP_API const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct xccdf_item * item);
 
 /**
  * Perform textual substitution of cdf:sub elements with respect to given XCCDF policy.
  * @param text text to be substituted
  * @param policy policy to be used
  */
-char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy);
+OSCAP_API char* xccdf_policy_substitute(const char *text, struct xccdf_policy *policy);
 
 /************************************************************/
 /** @} End of Iterators group */

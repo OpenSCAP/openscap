@@ -42,6 +42,7 @@
 #include "oscap.h"
 #include "oscap_text.h"
 #include "oscap_source.h"
+#include "oscap_export.h"
 
 /**
  * CPE language operators
@@ -93,11 +94,11 @@ struct cpe_testexpr;
 struct cpe_platform_iterator;
 
 /// @memberof cpe_platform_iterator
-struct cpe_platform *cpe_platform_iterator_next(struct cpe_platform_iterator *it);
+OSCAP_API struct cpe_platform *cpe_platform_iterator_next(struct cpe_platform_iterator *it);
 /// @memberof cpe_platform_iterator
-bool cpe_platform_iterator_has_more(struct cpe_platform_iterator *it);
+OSCAP_API bool cpe_platform_iterator_has_more(struct cpe_platform_iterator *it);
 /// @memberof cpe_platform_iterator
-void cpe_platform_iterator_free(struct cpe_platform_iterator *it);
+OSCAP_API void cpe_platform_iterator_free(struct cpe_platform_iterator *it);
 
 /**
  * @struct cpe_testexpr_iterator
@@ -106,11 +107,11 @@ void cpe_platform_iterator_free(struct cpe_platform_iterator *it);
  */
 struct cpe_testexpr_iterator;
 /// @memberof cpe_testexpr_iterator
-struct cpe_testexpr *cpe_testexpr_iterator_next(struct cpe_testexpr_iterator *it);
+OSCAP_API struct cpe_testexpr *cpe_testexpr_iterator_next(struct cpe_testexpr_iterator *it);
 /// @memberof cpe_testexpr_iterator
-bool cpe_testexpr_iterator_has_more(struct cpe_testexpr_iterator *it);
+OSCAP_API bool cpe_testexpr_iterator_has_more(struct cpe_testexpr_iterator *it);
 /// @memberof cpe_testexpr_iterator
-void cpe_testexpr_iterator_free(struct cpe_testexpr_iterator *it);
+OSCAP_API void cpe_testexpr_iterator_free(struct cpe_testexpr_iterator *it);
 
 /************************************************************/
 /** @} End of Iterators group */
@@ -127,61 +128,61 @@ void cpe_testexpr_iterator_free(struct cpe_testexpr_iterator *it);
  * cpe_testexpr functions to get variable members
  * @memberof cpe_testexpr
  */
-cpe_lang_oper_t cpe_testexpr_get_oper(const struct cpe_testexpr *item);
+OSCAP_API cpe_lang_oper_t cpe_testexpr_get_oper(const struct cpe_testexpr *item);
 
 /**
  * Get CPE expression subexpression.
  * Not valid for CPE_LANG_OPER_MATCH operation.
  * @memberof cpe_testexpr
  */
-struct cpe_testexpr_iterator *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item);
+OSCAP_API struct cpe_testexpr_iterator *cpe_testexpr_get_meta_expr(const struct cpe_testexpr *item);
 
 /**
  * Get CPE name to match against.
  * Only valid for CPE_LANG_OPER_MATCH.
  * @memberof cpe_testexpr
  */
-const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
+OSCAP_API const struct cpe_name *cpe_testexpr_get_meta_cpe(const struct cpe_testexpr *item);
 
 /**
  * Get check system to evaluate
  * Only valid for CPE_LANG_OPER_CHECK.
  * @memberof cpe_testexpr
  */
-const char* cpe_testexpr_get_meta_check_system(const struct cpe_testexpr *item);
+OSCAP_API const char* cpe_testexpr_get_meta_check_system(const struct cpe_testexpr *item);
 
 /**
  * Get check href to evaluate
  * Only valid for CPE_LANG_OPER_CHECK.
  * @memberof cpe_testexpr
  */
-const char* cpe_testexpr_get_meta_check_href(const struct cpe_testexpr *item);
+OSCAP_API const char* cpe_testexpr_get_meta_check_href(const struct cpe_testexpr *item);
 
 /**
  * Get check idref to evaluate
  * Only valid for CPE_LANG_OPER_CHECK.
  * @memberof cpe_testexpr
  */
-const char* cpe_testexpr_get_meta_check_id(const struct cpe_testexpr *item);
+OSCAP_API const char* cpe_testexpr_get_meta_check_id(const struct cpe_testexpr *item);
 
 /**
  * Function to get next expr from array
  * @param expr CPE Test expression structure
  * @memberof cpe_testexpr
  */
-const struct cpe_testexpr *cpe_testexpr_get_next(const struct cpe_testexpr *expr);
+OSCAP_API const struct cpe_testexpr *cpe_testexpr_get_next(const struct cpe_testexpr *expr);
 
 /**
  * cpe_lang_model function to get CPE platforms
  * @memberof cpe_lang_model
  */
-struct cpe_platform_iterator *cpe_lang_model_get_platforms(const struct cpe_lang_model *item);
+OSCAP_API struct cpe_platform_iterator *cpe_lang_model_get_platforms(const struct cpe_lang_model *item);
 
 /**
  * cpe_lang_model function to get CPE platforms
  * @memberof cpe_lang_model
  */
-struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
+OSCAP_API struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, const char *key);
 
 /**
  * Verify whether given CPE platform idref is applicable by evaluating test expression associated with it
@@ -191,28 +192,28 @@ struct cpe_platform *cpe_lang_model_get_item(const struct cpe_lang_model *item, 
  * @param lang_model used CPE language model
  * @return true if lang model contains given platform and the platform is applicable
  */
-bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn check_cb, cpe_dict_fn dict_cb, void* usr);
+OSCAP_API bool cpe_platform_applicable_lang_model(const char* platform, struct cpe_lang_model *lang_model, cpe_check_fn check_cb, cpe_dict_fn dict_cb, void* usr);
 
 /**
  * cpe_platform functions to get id
  * @memberof cpe_platform
  */
-const char *cpe_platform_get_id(const struct cpe_platform *item);
+OSCAP_API const char *cpe_platform_get_id(const struct cpe_platform *item);
 /**
  * cpe_platform functions to get remark
  * @memberof cpe_platform
  */
-const char *cpe_platform_get_remark(const struct cpe_platform *item);
+OSCAP_API const char *cpe_platform_get_remark(const struct cpe_platform *item);
 /**
  * cpe_platform functions to get titles
  * @memberof cpe_platform
  */
-struct oscap_text_iterator *cpe_platform_get_titles(const struct cpe_platform *item);
+OSCAP_API struct oscap_text_iterator *cpe_platform_get_titles(const struct cpe_platform *item);
 /**
  * cpe_platform functions to get test expression
  * @memberof cpe_platform
  */
-const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item);
+OSCAP_API const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item);
 
 /************************************************************/
 /** @} End of Getters group */
@@ -229,12 +230,12 @@ const struct cpe_testexpr *cpe_platform_get_expr(const struct cpe_platform *item
  * Add platform to CPE lang model
  * @memberof cpe_lang_model
  */
-bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platform *platform);
+OSCAP_API bool cpe_lang_model_add_platform(struct cpe_lang_model *lang, struct cpe_platform *platform);
 /**
  * Add title to platform
  * @memberof cpe_platform
  */
-bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_text *title);
+OSCAP_API bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_text *title);
 
 /**
  * Add XML namespace to CPE lang model
@@ -248,32 +249,32 @@ bool cpe_platform_add_title(struct cpe_platform *platform, struct oscap_text *ti
  * Expression has to be of type CPE_LANG_OPER_AND or CPE_LANG_OPER_OR, possibly with negation.
  * @memberof cpe_testexpr
  */
-bool cpe_testexpr_add_subexpression(struct cpe_testexpr *expr, struct cpe_testexpr *sub);
+OSCAP_API bool cpe_testexpr_add_subexpression(struct cpe_testexpr *expr, struct cpe_testexpr *sub);
 
 /**
  * Set ID of CPE platform
  * @memberof cpe_platform
  */
-bool cpe_platform_set_id(struct cpe_platform *platform, const char *new_id);
+OSCAP_API bool cpe_platform_set_id(struct cpe_platform *platform, const char *new_id);
 /**
  * Set remark of CPE platform
  * @memberof cpe_platform
  */
-bool cpe_platform_set_remark(struct cpe_platform *platform, const char *new_remark);
+OSCAP_API bool cpe_platform_set_remark(struct cpe_platform *platform, const char *new_remark);
 /**
  * Set evaluation expression for this CPE platform.
  *
  * Expression has to be a logical-test (i.e. its operation shall be AND or OR, possibly with negation)
  * @memberof cpe_platform
  */
-bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *expr);
+OSCAP_API bool cpe_platform_set_expr(struct cpe_platform *platform, struct cpe_testexpr *expr);
 /**
  * Set CPE operation.
  *
  * Any subexpressions and CPE names associated with this expression will be removed.
  * @memberof cpe_testexpr
  */
-bool cpe_testexpr_set_oper(struct cpe_testexpr *expr, cpe_lang_oper_t oper);
+OSCAP_API bool cpe_testexpr_set_oper(struct cpe_testexpr *expr, cpe_lang_oper_t oper);
 
 /**
  * Set CPE name.
@@ -282,64 +283,64 @@ bool cpe_testexpr_set_oper(struct cpe_testexpr *expr, cpe_lang_oper_t oper);
  * this function has no effect and returns false.
  * @memberof cpe_testexpr
  */
-bool cpe_testexpr_set_name(struct cpe_testexpr *expr, struct cpe_name *name);
+OSCAP_API bool cpe_testexpr_set_name(struct cpe_testexpr *expr, struct cpe_name *name);
 
 /************************************************************/
 /** @} End of Setters group */
 
 /// @memberof cpe_platform_iterator
-void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent);
+OSCAP_API void cpe_platform_iterator_remove(struct cpe_platform_iterator *it, struct cpe_lang_model *parent);
 /// @memberof cpe_testexpr_iterator
-void cpe_platform_iterator_reset(struct cpe_platform_iterator *it);
+OSCAP_API void cpe_platform_iterator_reset(struct cpe_platform_iterator *it);
 
 /**
  * Constructor of CPE Language model
  * @memberof cpe_lang_model
  */
-struct cpe_lang_model *cpe_lang_model_new(void);
+OSCAP_API struct cpe_lang_model *cpe_lang_model_new(void);
 
 /**
  * Constructor of CPE test expression
  * @memberof cpe_testexpr
  */
-struct cpe_testexpr *cpe_testexpr_new(void);
+OSCAP_API struct cpe_testexpr *cpe_testexpr_new(void);
 
 /**
  * Constructor of CPE Platform
  * @memberof cpe_platform
  */
-struct cpe_platform *cpe_platform_new(void);
+OSCAP_API struct cpe_platform *cpe_platform_new(void);
 
 /**
  * Clone CPE test expression
  * @param old_expr CPE test expression
  * @memberof cpe_testexpr
  */
-struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr);
+OSCAP_API struct cpe_testexpr * cpe_testexpr_clone(struct cpe_testexpr * old_expr);
 
 /**
  * Free function of CPE test expression
  * @memberof cpe_testexpr
  */
-void cpe_testexpr_free(struct cpe_testexpr *expr);
+OSCAP_API void cpe_testexpr_free(struct cpe_testexpr *expr);
 
 /**
  * Reset function of CPE test expression
  * @memberof cpe_testexpr
  */
-void cpe_testexpr_iterator_reset(struct cpe_testexpr_iterator *it);
+OSCAP_API void cpe_testexpr_iterator_reset(struct cpe_testexpr_iterator *it);
 
 /**
  * Free function of CPE test expression
  * @memberof cpe_lang_model
  */
-void cpe_lang_model_free(struct cpe_lang_model *platformspec);
+OSCAP_API void cpe_lang_model_free(struct cpe_lang_model *platformspec);
 
 /**
  * Free function of CPE Platform
  * @memberof cpe_platform
  */
-void cpe_platform_free(struct cpe_platform *platform);
+OSCAP_API void cpe_platform_free(struct cpe_platform *platform);
 
 /************************************************************/
 /**
@@ -352,7 +353,7 @@ void cpe_platform_free(struct cpe_platform *platform);
  * @return version of XML file format
  * @memberof cpe_lang_model
  */
-const char * cpe_lang_model_supported(void);
+OSCAP_API const char * cpe_lang_model_supported(void);
 
 /**
  * Detect version of given CPE language XML
@@ -360,7 +361,7 @@ const char * cpe_lang_model_supported(void);
  * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
  * This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(char * cpe_lang_model_detect_version(const char* file));
+OSCAP_API OSCAP_DEPRECATED(char * cpe_lang_model_detect_version(const char* file));
 
 /**
  * Function to match cpe in platform
@@ -369,7 +370,7 @@ OSCAP_DEPRECATED(char * cpe_lang_model_detect_version(const char* file));
  * @param platform CPE platform
  * @memberof cpe_platform
  */
-bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_platform *platform);
+OSCAP_API bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_platform *platform);
 
 /************************************************************/
 /** @} End of Evaluators group */
@@ -380,20 +381,20 @@ bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_pl
  * @deprecated This function has been deprecated by @ref cpe_lang_model_import_source
  * This function may be dropped from later versions of the library.
  */
-OSCAP_DEPRECATED(struct cpe_lang_model *cpe_lang_model_import(const char *file));
+OSCAP_API OSCAP_DEPRECATED(struct cpe_lang_model *cpe_lang_model_import(const char *file));
 
 /**
  * Load CPE language model from an oscap_source.
  * @memberof cpe_lang_model
  */
-struct cpe_lang_model *cpe_lang_model_import_source(struct oscap_source *source);
+OSCAP_API struct cpe_lang_model *cpe_lang_model_import_source(struct oscap_source *source);
 
 /**
  * Sets the origin file hint
  * @note This is intended for internal use only!
  * @see cpe_lang_model_get_origin_file
  */
-bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const char* origin_file);
+OSCAP_API bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const char* origin_file);
 
 /**
  * Gets the file the CPE dict model was loaded from
@@ -402,7 +403,7 @@ bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const cha
  * testing. We can't do applicability here in the CPE module because that
  * would create awful interdependencies.
  */
-const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_model);
+OSCAP_API const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_model);
 
 /**
  * Write the lang_model to a file.
@@ -410,7 +411,7 @@ const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_mod
  * @param spec CPE lang model
  * @param file filename
  */
-void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file);
+OSCAP_API void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file);
 
 /**@}*/
 

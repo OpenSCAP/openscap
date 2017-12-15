@@ -30,6 +30,7 @@
 #include "oscap_source.h"
 #include "scap_ds.h"
 #include "oscap_download_cb.h"
+#include "oscap_export.h"
 
 /**
  * The ds_sds_session is structure tight closely to oscap_source.
@@ -54,7 +55,7 @@ struct ds_sds_session;
  * @param source The oscap_source representing a source datastream
  * @returns newly created ds_sds_session structure
  */
-struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source);
+OSCAP_API struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *source);
 
 /**
  * Get Source DataStream index
@@ -62,13 +63,13 @@ struct ds_sds_session *ds_sds_session_new_from_source(struct oscap_source *sourc
  * @param session Registry to query SDS index from
  * @returns source DataStream owned by session
  */
-struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session);
+OSCAP_API struct ds_sds_index *ds_sds_session_get_sds_idx(struct ds_sds_session *session);
 
 /**
  * Dispose ds_sds_session structure.
  * @param sds_session Registry to dispose
  */
-void ds_sds_session_free(struct ds_sds_session *sds_session);
+OSCAP_API void ds_sds_session_free(struct ds_sds_session *sds_session);
 
 /**
  * Select Checklist (XCCDF presumably) from DataStream collection. Parameters may be
@@ -80,7 +81,7 @@ void ds_sds_session_free(struct ds_sds_session *sds_session);
  * @param benchmark_id ID of Benchmark element within checklist
  * @returns XCCDF checklist in form of oscap_source
  */
-struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id);
+OSCAP_API struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *session, const char *datastream_id, const char *component_id, const char *benchmark_id);
 
 /**
  * Select XCCDF Tailoring from DataStream collection. The ds_sds_session_select_checklist
@@ -90,7 +91,7 @@ struct oscap_source *ds_sds_session_select_checklist(struct ds_sds_session *sess
  * @param component_id ID of tailoring file within checklist container
  * @returns XCCdF tailoring in form of oscap_source
  */
-struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *session, const char *component_id);
+OSCAP_API struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *session, const char *component_id);
 
 /**
  * Set the ID of DataStream within collection to use. Note that
@@ -100,7 +101,7 @@ struct oscap_source *ds_sds_session_select_tailoring(struct ds_sds_session *sess
  * @param datastream_id DataStream ID to set
  * @returns 0 on success
  */
-int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char *datastream_id);
+OSCAP_API int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char *datastream_id);
 
 /**
  * Return ID of currently selected DataStream within the DataStream collection.
@@ -108,7 +109,7 @@ int ds_sds_session_set_datastream_id(struct ds_sds_session *session, const char 
  * @param session The Source DataStream sesssion
  * @returns ID of selected datastream or NULL
  */
-const char *ds_sds_session_get_datastream_id(const struct ds_sds_session *session);
+OSCAP_API const char *ds_sds_session_get_datastream_id(const struct ds_sds_session *session);
 
 /**
  * Return ID of currently selected component representing XCCDF within the DataStream
@@ -116,7 +117,7 @@ const char *ds_sds_session_get_datastream_id(const struct ds_sds_session *sessio
  * @param session The Source DataStream session
  * @returns ID of selected component or NULL
  */
-const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session);
+OSCAP_API const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session);
 
 /**
  * Get component from Source DataStream by its href. This assumes that the component
@@ -129,7 +130,7 @@ const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session
  * element or the target name provided previously by caller of upper mentioned functions.
  * @returns oscap_source representing the component or NULL
  */
-struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session *session, const char *href);
+OSCAP_API struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session *session, const char *href);
 
 /**
  * Check whether given component can be registered.
@@ -139,7 +140,7 @@ struct oscap_source *ds_sds_session_get_component_by_href(struct ds_sds_session 
  * @returns true if at least one matching component exists, false otherwise
  * @see ds_sds_session_register_component_with_dependencies
  */
-bool ds_sds_session_can_register_component(struct ds_sds_session *session, const char *container_name, const char *component_id);
+OSCAP_API bool ds_sds_session_can_register_component(struct ds_sds_session *session, const char *container_name, const char *component_id);
 
 /**
  * Register component and its dependencies to internal cache. This functions extracts
@@ -152,7 +153,7 @@ bool ds_sds_session_can_register_component(struct ds_sds_session *session, const
  * @param target filename or NULL
  * @returns 0 on success
  */
-int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename);
+OSCAP_API int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *session, const char *container_name, const char *component_id, const char *target_filename);
 
 /**
  * Store cached component files to the disc.
@@ -160,7 +161,7 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
  * @param session The Source DataStream session
  * @returns 0 on success
  */
-int ds_sds_session_dump_component_files(struct ds_sds_session *session);
+OSCAP_API int ds_sds_session_dump_component_files(struct ds_sds_session *session);
 
 /**
  * Set target directory for the component files
@@ -169,7 +170,7 @@ int ds_sds_session_dump_component_files(struct ds_sds_session *session);
  * @param target_dir Path to the target storage dir
  * @returns 0 on success
  */
-int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *target_dir);
+OSCAP_API int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *target_dir);
 
 /**
  * Reset session for further use.
@@ -181,7 +182,7 @@ int ds_sds_session_set_target_dir(struct ds_sds_session *session, const char *ta
  * @memberof ds_sds_session
  * @param session The Source DataStream session to reset
  */
-void ds_sds_session_reset(struct ds_sds_session *session);
+OSCAP_API void ds_sds_session_reset(struct ds_sds_session *session);
 
 /**
  * Set property of remote content.
@@ -191,7 +192,7 @@ void ds_sds_session_reset(struct ds_sds_session *session);
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback);
 
 /**
  * Returns HTML representation of selected checklist in form of OpenSCAP guide.
@@ -201,6 +202,6 @@ void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool al
  * generate guide for
  * @returns a buffer of HTML content that should be freed by the caller
  */
-char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id);
+OSCAP_API char *ds_sds_session_get_html_guide(struct ds_sds_session *session, const char *profile_id);
 
 #endif

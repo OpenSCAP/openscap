@@ -33,6 +33,7 @@
 #include "seap.h"
 #include "probe-api.h"
 #include "fsdev.h"
+#include "oscap_export.h"
 
 #define MTAB_PATH "/etc/mtab"
 #define LOCAL_FILESYSTEMS { "btrfs",            \
@@ -56,7 +57,7 @@
  * @param arg an optional argument to the callback function
  */
 int find_files(SEXP_t *spath, SEXP_t *sfilename, SEXP_t *behaviors,
-	       int (*cb) (const char *, const char *, void *), void *arg);
+OSCAP_API 	       int (*cb) (const char *, const char *, void *), void *arg);
 
 #endif
 /// @}
