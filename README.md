@@ -51,7 +51,6 @@ bzip2-devel
 On Ubuntu 16.04 the command to install these package is
 ```code
 sudo apt-get install -y autoconf automake libtool make libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl libxml-xpath-perl libperl5.22 python-dev libbz2-dev librpm-dev swig
-
 ```
 
 When you have all the build dependencies installed you can run the following
