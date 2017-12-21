@@ -46,7 +46,7 @@ assert_exists 1 '//score[text()="100.000000"]'
 
 rm test_file
 
-$OSCAP xccdf generate fix --fix-type bash --profile '' --output "$result" "$input_xml" 2> $stderr
+$OSCAP xccdf generate fix --fix-type bash --profile 'common' --output "$result" "$input_xml" 2> $stderr
 
 grep -q "^\s*#.*Profile title on one line" "$result"
 grep -q "^\s*#\s*Profile description" "$result"
@@ -54,9 +54,9 @@ grep -q "^\s*#\s*that spans two lines" "$result"
 
 rm "$result"
 
-$OSCAP xccdf generate fix --fix-type ansible --profile '' --output "$result" "$input_xml" 2> $stderr
+$OSCAP xccdf generate fix --fix-type ansible --profile 'second' --output "$result" "$input_xml" 2> $stderr
 
-grep -q "^\s*#.*Profile title on one line" "$result"
+grep -q "^\s*#.*Second profile title on one line" "$result"
 grep -q "^\s*#\s*Profile description" "$result"
 grep -q "^\s*#\s*that spans two lines" "$result"
 

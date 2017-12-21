@@ -8,6 +8,12 @@
 that spans two lines</description>
       <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
   </Profile>
+  <Profile id="xccdf_moc.elpmaxe.www_profile_second">
+      <title>Second profile title on one line</title>
+      <description>Profile description
+that spans two lines</description>
+      <select idref="xccdf_moc.elpmaxe.www_rule_1" selected="true"/>
+  </Profile>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
     <title>Ensure that file exists and it is not executable</title>
     <fix system="urn:xccdf:fix:script:sh">
