@@ -112,6 +112,8 @@ EXTRA_DIST += \
 	test_remediation_simple.oval.xml \
 	test_remediation_simple.sh \
 	test_remediation_simple.xccdf.xml \
+	test_remediation_metadata.sh \
+	test_remediation_metadata.xccdf.xml \
 	test_remediation_subs_plain_text.sh \
 	test_remediation_subs_plain_text.xccdf.xml \
 	test_remediation_subs_plain_text_empty.sh \
