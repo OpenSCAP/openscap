@@ -20,6 +20,9 @@ that spans two lines</description>
         touch test_file
         chmod a-x test_file
     </fix>
+    <fix system="urn:xccdf:fix:script:ansible">- name: correct the failing case
+        shell: /bin/false
+    </fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref href="test_remediation_simple.oval.xml" name="oval:moc.elpmaxe.www:def:1"/>
     </check>
