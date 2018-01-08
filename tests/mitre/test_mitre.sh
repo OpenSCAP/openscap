@@ -11,18 +11,7 @@
 # Test Cases.
 test_init "test_mitre.log"
 
-test_run "ind-def_unknown_test.xml" test_mitre ind-def_unknown_test.xml "unknown"
-test_run "ind-def_variable_test.xml" test_mitre ind-def_variable_test.xml "true"
-test_run "ind-def_environmentvariable_test.xml" test_mitre ind-def_environmentvariable_test.xml "true"
-test_run "ind-def_environmentvariable58_test.xml" test_mitre ind-def_environmentvariable_test.xml "true"
-test_run "ind-def_family_test.xml" test_mitre ind-def_family_test.xml "true"
-test_run "ind-def_textfilecontent54_test.xml" test_mitre ind-def_textfilecontent54_test.xml "true"
-test_run "ind-def_textfilecontent_test.xml" test_mitre ind-def_textfilecontent_test.xml "true"
-test_run "ind-def_xmlfilecontent_test.xml" test_mitre ind-def_xmlfilecontent_test.xml "true"
-test_run "ind-def_filehash58_test.xml" test_mitre ind-def_filehash58_test.xml "true"
-
 # does not work because of symplink `/etc/rc' -> `/etc/rc.d/rc' (oval:org.mitre.oval.test:tst:102)
-#test_run "ind-def_filehash_test.xml" test_mitre ind-def_filehash_test.xml "true"
 #test_run "unix-def_file_test.xml" test_mitre unix-def_file_test.xml "true"
 
 test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
@@ -106,8 +95,6 @@ if [[ -f "/etc/xinetd.conf" && -f "/etc/xinetd.d/tftp" && -f "/etc/xinetd.d/teln
 fi
 
 # Unsupported objects on Fedora
-#test_run "ind-def_ldap_test.xml" test_mitre ind-def_ldap_test.xml "unknown"
-#test_run "ind-def_sql_test.xml" test_mitre ind-def_sql_test.xml "unknown"
 #test_run "linux-def_slackwarepkginfo_test.xml" test_mitre linux-def_slackwarepkginfo_test.xml "unknown"
 #test_run "unix-def_inetd_test.xml" test_mitre unix-def_inetd_test.xml "unknown"
 
