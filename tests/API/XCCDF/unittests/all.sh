@@ -111,5 +111,6 @@ test_run "generate fix: generate header for bash script" $srcdir/test_fix_script
 test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
 test_run "generate fix: result id selection by suffix" $srcdir/test_fix_resultid_by_suffix.sh
 test_run "generate fix: from result DataStream" $srcdir/test_fix_arf.sh
+test_run "generate fix: Ansible variables sanity" $srcdir/test_generate_fix_ansible_vars.sh
 
 test_exit

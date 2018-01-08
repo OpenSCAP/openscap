@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_test_ansible_vars.xccdf.xml" schematron-version="1.2"><ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_test_ansible_vars.xccdf.xml" scap-version="1.2" use-case="OTHER"><ds:checklists><ds:component-ref id="scap_org.open-scap_cref_test_ansible_vars.xccdf.xml" xlink:href="#scap_org.open-scap_comp_test_ansible_vars.xccdf.xml"><cat:catalog><cat:uri name="test_ansible_vars.oval.xml" uri="#scap_org.open-scap_cref_test_ansible_vars.oval.xml"/></cat:catalog></ds:component-ref></ds:checklists><ds:checks><ds:component-ref id="scap_org.open-scap_cref_test_ansible_vars.oval.xml" xlink:href="#scap_org.open-scap_comp_test_ansible_vars.oval.xml"/></ds:checks></ds:data-stream><ds:component id="scap_org.open-scap_comp_test_ansible_vars.oval.xml" timestamp="2017-06-09T07:07:38"><oval_definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:win-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd    http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd   http://oval.mitre.org/XMLSchema/oval-definitions-5#windows windows-definitions-schema.xsd">
+  <generator>
+    <oval:schema_version>5.11</oval:schema_version>
+    <oval:timestamp>2009-01-12T10:41:00-05:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <definition class="compliance" id="oval:default1:def:1" version="1">
+      <metadata>
+        <title>PASS</title>
+	<description>pass</description>
+      </metadata>
+      <criteria>
+        <criterion comment="PASS test" test_ref="oval:x:tst:1"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:test-fail:def:2" version="1">
+      <metadata>
+        <title>FAIL</title>
+	<description>conditional fail</description>
+      </metadata>
+      <criteria>
+        <criterion comment="FAIL test" test_ref="oval:x:tst:2"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+    <tests>
+    <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:tst:1" check="all" comment="always pass" version="1">
+      <object object_ref="oval:x:obj:1"/>
+    </variable_test>
+
+    <variable_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:tst:2" check="all" comment="always fail" version="1">
+      <object object_ref="oval:x:obj:1"/>
+      <state state_ref="oval:x:ste:1"/>
+    </variable_test>
+    </tests>
+
+    <objects>
+    <variable_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:obj:1" version="1" comment="x">
+      <var_ref>oval:x:var:1</var_ref>
+    </variable_object>
+    </objects>
+
+    <states>
+        <variable_state xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" id="oval:x:ste:1" version="1">
+            <value datatype="int" operation="equals" var_ref="oval:ssg:var:1"/>
+        </variable_state>
+    </states>
+
+    <variables>
+      <constant_variable id="oval:x:var:1" version="1" comment="x" datatype="int">
+        <value>100</value>
+      </constant_variable>
+      <external_variable comment="default1" datatype="int" id="oval:ssg:var:1" version="1"/>
+    </variables>
+
+</oval_definitions></ds:component><ds:component id="scap_org.open-scap_comp_test_ansible_vars.xccdf.xml" timestamp="2017-06-09T09:15:45"><Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="xccdf_com.example.www_benchmark_dummy" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="false" xml:lang="en-US">
+  <status>accepted</status>
+  <version>1.0</version>
+
+  <Profile id="xccdf_com.example.www_profile_test_ansible_vars">
+    <title>xccdf_test_profile</title>
+    <description>This profile is for testing.</description>
+    <select idref="xccdf_com.example.www_rule_default1" selected="true"/>
+    <select idref="xccdf_com.example.www_rule_default2" selected="true"/>
+    <refine-value idref="xccdf_com.example.www_value_val1" selector="bar_2"/>
+    <refine-value idref="xccdf_com.example.www_value_val2" selector="bar_1"/>
+  </Profile>
+
+  <Value id="xccdf_com.example.www_value_val1" type="number" interactive="0">
+    <title>test value</title>
+    <description>foo</description>
+    <value selector="bar_1">50</value>
+    <value selector="bar_2">100</value>
+  </Value>
+  <Value id="xccdf_com.example.www_value_val2" type="number" interactive="0">
+    <title>test value</title>
+    <description>foo</description>
+    <value selector="bar_1">50</value>
+    <value selector="bar_2">100</value>
+  </Value>
+
+  <Rule selected="true" id="xccdf_com.example.www_rule_default1">
+    <title>Rule default1 to test ansible variable www_value_val1</title>
+    <fix id="www_rule_default1" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="low" strategy="restrict">- name: XCCDF Value www_value_val1 # promote to variable
+  set_fact:
+    www_value_val1: <sub idref="xccdf_com.example.www_value_val1" use="legacy"/>
+  tags:
+    - always
+
+- name: default1
+  lineinfile:
+    dest: /foo/bar
+    regexp: "^bar *[0-9]*"
+    state: present
+    line: "bar {{ www_value_val1 }}"
+  tags:
+    - foo
+    - bar
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-export export-name="oval:ssg:var:1" value-id="xccdf_com.example.www_value_val1"/>
+      <check-content-ref href="test_ansible_vars.oval.xml" name="oval:default1:def:1"/>
+    </check>
+  </Rule>
+
+  <Rule selected="true" id="xccdf_com.example.www_rule_default2">
+    <title>Rule default2 to test ansible variable www_value_val2</title>
+    <fix id="www_rule_default2" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="low" strategy="restrict">- name: XCCDF Value www_value_val2 # promote to variable
+  set_fact:
+    www_value_val2: <sub idref="xccdf_com.example.www_value_val2" use="legacy"/>
+  tags:
+    - always
+
+- name: default2
+  lineinfile:
+    dest: /foo/baz
+    regexp: "^baz *[0-9]*"
+    state: present
+    line: "baz {{ www_value_val2 }}"
+  tags:
+    - foo
+    - baz
+    </fix>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-export export-name="oval:ssg:var:1" value-id="xccdf_com.example.www_value_val2"/>
+      <check-content-ref href="test_ansible_vars.oval.xml" name="oval:default1:def:1"/>
+    </check>
+  </Rule>
+
+</Benchmark></ds:component></ds:data-stream-collection>

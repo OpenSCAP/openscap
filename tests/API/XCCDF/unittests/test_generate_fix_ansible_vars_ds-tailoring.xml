@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xccdf:Tailoring xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" id="xccdf_scap-workbench_tailoring_default">
+  <xccdf:benchmark href="/home/matus/test_generate_fix_ansible_vars_ds.xml"/>
+  <xccdf:version time="2018-01-11T10:42:04">1</xccdf:version>
+  <xccdf:Profile id="xccdf_com.example.www_profile_test_ansible_vars_tailored" extends="xccdf_com.example.www_profile_test_ansible_vars">
+    <xccdf:title xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">xccdf_test_profile [CUSTOMIZED]</xccdf:title>
+    <xccdf:description xmlns:xhtml="http://www.w3.org/1999/xhtml" xml:lang="en-US" override="true">This profile is for testing.</xccdf:description>
+    <xccdf:select idref="xccdf_com.example.www_rule_default2" selected="false"/>
+    <xccdf:set-value idref="xccdf_com.example.www_value_val1">200</xccdf:set-value>
+  </xccdf:Profile>
+</xccdf:Tailoring>

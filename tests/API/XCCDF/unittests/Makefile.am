@@ -75,6 +75,12 @@ EXTRA_DIST += \
 	test_fix_resultid_by_suffix.xml \
 	test_fix_script_header.sh \
 	test_fix_script_header.xccdf.xml \
+	test_generate_fix_ansible_vars.sh \
+	test_generate_fix_ansible_vars_ds.xml \
+	test_generate_fix_ansible_vars_ds-tailoring.xml \
+	test_generate_fix_ansible_vars_golden.yml \
+	test_generate_fix_ansible_vars_golden_altered.yml \
+	test_generate_fix_ansible_vars_golden_tailoring.yml \
 	test_inherit_selector.oval.xml \
 	test_inherit_selector.sh \
 	test_inherit_selector.tailoring.xml \
