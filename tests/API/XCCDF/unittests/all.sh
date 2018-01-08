@@ -69,11 +69,13 @@ test_run "Profile suffix matching" $srcdir/test_profile_selection_by_suffix.sh
 test_run "libxml errors handled correctly" $srcdir/test_unfinished.sh
 test_run "XCCDF 1.1 to 1.2 transformation" $srcdir/test_xccdf_transformation.sh
 test_run "Test single-rule evaluation" $srcdir/test_single_rule.sh
+test_run "Test STIG viewer output for single-rule evaluation" $srcdir/test_single_rule_stigw.sh
 
 #
 # Tests for 'oscap xccdf eval --remediate' and substitution
 #
 test_run "XCCDF Remediation Simple Test" $srcdir/test_remediation_simple.sh
+test_run "XCCDF Remediation Contains Metadata Test" $srcdir/test_remediation_metadata.sh
 test_run "XCCDF Remediation Bad Fix Fails to Remedy" $srcdir/test_remediation_bad_fix.sh
 test_run "XCCDF Remediation Substitute Simple plain-text" $srcdir/test_remediation_subs_plain_text.sh
 test_run "XCCDF Remediation Substitute Empty plain-text" $srcdir/test_remediation_subs_plain_text_empty.sh

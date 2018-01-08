@@ -400,9 +400,7 @@ const char *xccdf_attribute_get(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 char *xccdf_attribute_copy(xmlTextReaderPtr reader, xccdf_attribute_t attr)
 {
 	const char *ret = xccdf_attribute_get(reader, attr);
-	if (ret)
-		return strdup(ret);
-	return NULL;
+	return oscap_strdup(ret);
 }
 
 

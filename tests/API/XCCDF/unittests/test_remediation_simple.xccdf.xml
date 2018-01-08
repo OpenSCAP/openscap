@@ -5,7 +5,7 @@
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
     <title>Ensure that file exists and it is not executable</title>
     <fix system="urn:xccdf:fix:script:sh">
-	touch test_file
+        touch test_file
         chmod a-x test_file
     </fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">

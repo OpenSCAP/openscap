@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestResult xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.open-scap_testresult_default-profile" start-time="2017-12-01T17:40:39" end-time="2017-12-01T17:40:39" version="1.0" test-system="cpe:/a:redhat:openscap:1.2.17">
+  <benchmark href="unittests/test_single_rule.xccdf.xml" id="xccdf_com.example.www_benchmark_dummy"/>
+  <title>OSCAP Scan Result</title>
+  <identity authenticated="false" privileged="false">matyc</identity>
+  <target>matyc-laptop</target>
+  <target-address>127.0.0.1</target-address>
+  <target-address>10.43.21.229</target-address>
+  <target-address>10.200.159.53</target-address>
+  <target-address>192.168.124.1</target-address>
+  <target-address>0:0:0:0:0:0:0:1</target-address>
+  <target-address>2620:52:0:2b15:96e5:dd14:dcb:de8d</target-address>
+  <target-address>fe80:0:0:0:533:83a6:d471:8f80</target-address>
+  <target-address>fe80:0:0:0:9963:7041:aab3:2a17</target-address>
+  <target-facts>
+    <fact name="urn:xccdf:fact:scanner:name" type="string">OpenSCAP</fact>
+    <fact name="urn:xccdf:fact:scanner:version" type="string">1.2.17</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">54:E1:AD:72:81:54</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">CC:2F:71:30:C6:22</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">52:54:00:06:FE:61</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">54:E1:AD:72:81:54</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">54:E1:AD:72:81:54</fact>
+    <fact name="urn:xccdf:fact:ethernet:MAC" type="string">CC:2F:71:30:C6:22</fact>
+  </target-facts>
+  <set-value idref="xccdf_com.example.www_value_val1">50</set-value>
+  <rule-result idref="SV-86937r1_rule" time="2017-12-01T17:40:39" weight="1.000000">
+    <result>pass</result>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref name="oval:test-pass:def:1" href="test_single_rule.oval.xml"/>
+    </check>
+  </rule-result>
+  <rule-result idref="SV-86601r1_rule" time="2017-12-01T17:40:39" weight="1.000000">
+    <result>fail</result>
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-export export-name="oval:ssg:var:1" value-id="xccdf_com.example.www_value_val1"/>
+      <check-content-ref name="oval:test-fail:def:2" href="test_single_rule.oval.xml"/>
+    </check>
+  </rule-result>
+  <score system="urn:xccdf:scoring:default" maximum="100.000000">50.000000</score>
+</TestResult>

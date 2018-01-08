@@ -1,0 +1,61 @@
+= How to perform a semi-automatic release =
+
+== Prerequisities ==
+
+* The `.env` file.
+  Create `.env` file in this directory (i.e. where the release scripts are).
+  You are supposed to define environment variables that contain sensitive information, s.a. GitHub access tokens.
+  Exact contents of the file are described below.
+
+* Github automation
+ * System with `python3.6` or greater, installed https://pypi.python.org/pypi/PyGithub/1.35[PyGithub] module.
+ * A Github token - get one on https://github.com/settings/tokens and put it in the `.env` file, so it contains the line `GITHUB_TOKEN='<your token here>'`.
+
+== Process ==
+
+1. Clone a clean `openscap` repository:
+
+   git clone https://github.com/OpenSCAP/openscap.git
+
+2. Check out that the information within `versions.sh` is accurate.
++
+Openscap versions are supposed to have correct values from the previous build (see the step 6), but e.g. the `latest_fedora` and `latest_rhel` may need to be updated if work on a distribution with new version has begun.
+
+3. Run `up_to_compliance_check.sh`.
++
+In the ideal case, the script ends after the ABI compatiblity check finishes.
+Review the check results and act accordingly to them.
+
+4. Run `handle_ltversions.sh`.
++
+According to the result from the compliance check (and the decision what to do about possible API/ABI changes), you run the script with an argument `bugfix`, `backwards_compatible` or `breaking_change`.
++
+Use this guideline to decide:
++
+* `bugfix`: No changes of API/ABI, the code got just some improvements under the hood.
+* `backwards_compatible`: API/ABI is backwards compatible - the API was expanded, new symbols were introduced.
+* `breaking_change`: API/ABI is not backwards compatible - the API was modified, symbols were removed, types have changed... If this happens, think about dropping symbols marked with openscap `OSCAP_DEPRECATED()` macro.
+
++
+This changes the libtool library version number so it reflects the API/ABI change.
+
+5. Update the NEWS and make the release commit.
++
+Make sure that everything in the repository is in place, and that the only thing missing is the `NEWS` file and tags.
+Use the `news_template.sh` script to generate a starting point for your `NEWS` file.
+Update the `AUTHORS` file for missing authors and the `naming.sh` file if there are duplicate author entries.
++
+Use it to update the `NEWS` file and commit it.
++
+The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.2.17`).
+
+6. Run `new-release.sh`.
++
+This will create and push version tags, create new GitHub release and handle milestones swap.
+Finally, it will bump version numbers in `versions.sh` to be ready for the next upstream release.
+
+
+== To be done ==
+
+* Full GitHub integration: Blocked by https://github.com/PyGithub/PyGithub/pull/525
+* Full Jenkins integration.
