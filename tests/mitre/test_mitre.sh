@@ -14,21 +14,6 @@ test_init "test_mitre.log"
 # does not work because of symplink `/etc/rc' -> `/etc/rc.d/rc' (oval:org.mitre.oval.test:tst:102)
 #test_run "unix-def_file_test.xml" test_mitre unix-def_file_test.xml "true"
 
-test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
-test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"
-test_run "linux-def_rpmverify_test.xml" test_mitre linux-def_rpmverify_test.xml "true"
-# Fedora 18 and RHEL-7 - no allow_console_login
-if [[ ( ${DISTRO#Fedora} != "$DISTRO" && $DISTRO_RELEASE -lt 18 ) || \
-	( ${DISTRO#Red Hat} != "$DISTRO" && $DISTRO_RELEASE -lt 7 ) ]]; then
-	test_run "linux-def_selinuxboolean_test.xml" test_mitre linux-def_selinuxboolean_test.xml "true"
-fi
-
-if [ $SELINUX_ENABLED -eq 0 ]; then
-	test_run "linux-def_selinuxsecuritycontext_test.xml" test_mitre linux-def_selinuxsecuritycontext_test.xml "true"
-fi
-
-test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"
-
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml "true"
 test_run "oval_check_enumeration_entity.xml" test_mitre oval_check_enumeration_entity.xml "true"
@@ -95,11 +80,6 @@ if [[ -f "/etc/xinetd.conf" && -f "/etc/xinetd.d/tftp" && -f "/etc/xinetd.d/teln
 fi
 
 # Unsupported objects on Fedora
-#test_run "linux-def_slackwarepkginfo_test.xml" test_mitre linux-def_slackwarepkginfo_test.xml "unknown"
 #test_run "unix-def_inetd_test.xml" test_mitre unix-def_inetd_test.xml "unknown"
-
-if [[ $DISTRO_NAME == "Debian" ]]; then
-	test_run "linux-def_dpkginfo_test.xml" test_mitre linux-def_dpkginfo_test.xml "true"
-fi
 
 test_exit cleanup_mitre
