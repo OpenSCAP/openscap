@@ -359,7 +359,7 @@ const char * cpe_name_supported(void);
  *
  * returns true = applicable, false = not applicable
  */
-typedef bool *(*cpe_check_fn) (const char*, const char*, const char*, void*);
+typedef bool (*cpe_check_fn) (const char*, const char*, const char*, void*);
 
 /**
  * Shared callback definition used to match CPE names to perform applicability tests
@@ -368,6 +368,6 @@ typedef bool *(*cpe_check_fn) (const char*, const char*, const char*, void*);
  * second argument = arbitrary pointer / user data
  * returns true = matched to existing applicable name, false = not matched/not applicable
  */
-typedef bool *(*cpe_dict_fn) (const struct cpe_name*, void*);
+typedef bool (*cpe_dict_fn) (const struct cpe_name*, void*);
 
 #endif				/* _CPEURI_H_ */
