@@ -244,7 +244,7 @@ if [ "$TARGET_SYSCHAR" != "" ]; then
     scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/syschar.xml" "$TARGET_SYSCHAR" || die "Failed to copy the OVAL syschar file back to local machine!"
 fi
 if [ "$OVAL_RESULTS" == "yes" ]; then
-    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/*-oval.xml.result.xml" "./" || die "Failed to copy OVAL result files back to local machine!"
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/*.result.xml" "./" || die "Failed to copy OVAL result files back to local machine!"
 fi
 
 echo "Removing remote temporary directory..."
