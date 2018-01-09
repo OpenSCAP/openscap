@@ -6,28 +6,9 @@
 set -e -o pipefail
 
 . $builddir/tests/test_common.sh
+. $srcdir/test_ds_common.sh
 
 # Test Cases.
-
-function assert_correct_xlinks()
-{
-	local DS=$1
-	local stderr=$(mktemp)
-	$OSCAP info $DS 2> $stderr
-	diff $stderr /dev/null
-	rm $stderr
-
-	# First of all make sure that there is at least one ds:component-ref.
-	[ "$($XPATH $DS 'count(//*[local-name()="component-ref"])')" != "0" ]
-	# We want to catch cases when this element has different namespace.
-	local ns=$($XPATH $DS 'name(//*[local-name()="component-ref"][1])' | sed 's/:.*$/:/')
-	[ "$ns" != "component-ref" ] || ns=""
-	# Ensure there is at least some xlink.
-	[ "`$XPATH $DS \"count(//${ns}component-ref/@xlink:href)\"`" != "0" ]
-	# This asserts that there is none component-ref/xlink:href broken.
-	# Previously, we have seen datastreams with broken xlinks (see trac#286).
-	[ "`$XPATH $DS  \"count(//${ns}component-ref[substring(@xlink:href, 2, 10000) != (//${ns}component/@${ns}id | //${ns}extended-component/@${ns}id)])\"`" == "0" ]
-}
 
 sds_add_multiple_twice(){
 	local DIR="${srcdir}/sds_multiple_oval"
@@ -94,47 +75,6 @@ sds_add_multiple_twice(){
 	rm $stderr
 }
 
-function test_sds {
-
-    local DIR="${srcdir}/$1"
-    local XCCDF_FILE="$2"
-    local SKIP_DIFF="$3"
-    local DS_TARGET_DIR="`mktemp -d`"
-    local DS_FILE="$DS_TARGET_DIR/sds.xml"
-
-    pushd "$DIR"
-
-    $OSCAP ds sds-compose "$XCCDF_FILE" "$DS_FILE"
-
-    assert_correct_xlinks $DS_FILE
-    popd
-
-    pushd "$DS_TARGET_DIR"
-
-    $OSCAP ds sds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
-
-    rm "$DS_FILE"
-
-    # get rid of filler prefix to make the diff work
-    for file in scap_org.open-scap_cref_*;
-    do
-        mv "$file" "${file#scap_org.open-scap_cref_}"
-    done
-
-    popd
-
-    if [ "$SKIP_DIFF" != "1" ]; then
-        if ! diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR"; then
-            echo "The files are different after going through source data stream!"
-            echo
-            return 1
-        fi
-    fi
-
-    rm -r "$DS_TARGET_DIR"
-    return 0
-}
-
 function test_eval {
     local stderr=$(mktemp -t ${name}.out.XXXXXX)
     $OSCAP xccdf eval "${srcdir}/$1" 2> $stderr
@@ -152,44 +92,6 @@ function test_eval_cpe {
     grep -q "rule_notapplicable:notapplicable" $stdout
     diff /dev/null $stderr
     rm $stdout $stderr
-}
-
-function test_generate_fix_source {
-    local fixfile=$(mktemp -t ${name}.out.XXXXXX)
-
-    # all rules (default profile)
-    $OSCAP xccdf generate fix --output $fixfile "${srcdir}/$1"
-    grep -q remediation_rule_applicable_pass $fixfile
-    grep -q remediation_rule_applicable_fail $fixfile
-    grep -q remediation_rule_notapplicable $fixfile
-    rm $fixfile
-
-    # selected profile
-    $OSCAP xccdf generate fix --output $fixfile --profile xccdf_org.ssgproject.content_profile_test "${srcdir}/$1"
-    grep -qv remediation_rule_applicable_pass $fixfile
-    grep -q remediation_rule_applicable_fail $fixfile
-    grep -q remediation_rule_notapplicable $fixfile
-    rm $fixfile
-}
-
-function test_generate_fix_results {
-    local fixfile=$(mktemp -t ${name}.out.XXXXXX)
-    local results=$(mktemp -t ${name}.out.XXXXXX)
-
-    # generate all from results
-    $OSCAP xccdf eval --results $results "${srcdir}/$1" || ret=$?
-    $OSCAP xccdf generate fix --output $fixfile $results
-    grep -q remediation_rule_applicable_pass $fixfile
-    grep -q remediation_rule_applicable_fail $fixfile
-    grep -q remediation_rule_notapplicable $fixfile
-    rm $fixfile
-
-    # generate based on TestResult
-    $OSCAP xccdf generate fix --output $fixfile --result-id xccdf_org.open-scap_testresult_default-profile $results
-    grep -qv remediation_rule_applicable_pass $fixfile
-    grep -q remediation_rule_applicable_fail $fixfile
-    grep -qv remediation_rule_notapplicable $fixfile
-    rm $fixfile $results
 }
 
 function test_invalid_eval {
@@ -280,104 +182,6 @@ function test_oval_eval_id {
     echo "$OUT" | grep $4 > /dev/null
 }
 
-function test_rds
-{
-    local ret_val=0;
-
-    local SDS_FILE="${srcdir}/$1"
-    local XCCDF_RESULT_FILE="${srcdir}/$2"
-    local OVAL_RESULT_FILE="${srcdir}/$3"
-    local DS_TARGET_DIR="`mktemp -d`"
-    local DS_FILE="$DS_TARGET_DIR/rds.xml"
-
-    $OSCAP ds rds-create "$SDS_FILE" "$DS_FILE" "$XCCDF_RESULT_FILE" "$OVAL_RESULT_FILE"
-
-    if [ $? -ne 0 ]; then
-        ret_val=1
-    fi
-
-    assert_correct_xlinks $DS_FILE
-
-    #pushd "$DS_TARGET_DIR"
-    #$OSCAP ds sds_split "`basename $DS_FILE`" "$DS_TARGET_DIR"
-    #rm sds.xml
-    #popd
-
-    rm -r "$DS_TARGET_DIR"
-
-    return "$ret_val"
-}
-
-function test_rds_index
-{
-    local ret_val=0;
-
-    local RDS_FILE="${srcdir}/$1"
-    local ASSETS="$2"
-    local REPORTS="$3"
-    local REQUESTS="$4"
-
-    INDEX=$($OSCAP info "$RDS_FILE")
-
-    for asset in "$ASSETS"; do
-        if ! echo $INDEX | grep --quiet "$asset"; then
-            ret_val=1
-            echo "Asset $asset expected in index"
-        fi
-    done
-
-    for report in "$REPORTS"; do
-        if ! echo $INDEX | grep --quiet "$report"; then
-            ret_val=1
-            echo "Report $report expected in index"
-        fi
-    done
-
-    for requests in "$REQUESTS"; do
-        if ! echo $INDEX | grep --quiet "$request"; then
-            ret_val=1
-            echo "Report request $request expected in index"
-        fi
-    done
-
-    return "$ret_val"
-}
-
-function test_rds_split {
-
-    local DIR="${srcdir}/$1"
-    local SDS_FILE="$2"
-    local REPORT_FILE="$3"
-    local SKIP_DIFF="$4"
-    local DS_TARGET_DIR="`mktemp -d`"
-    local DS_FILE="$DS_TARGET_DIR/arf.xml"
-
-    pushd "$DIR"
-
-    $OSCAP ds rds-create "$SDS_FILE" "$DS_FILE" "$REPORT_FILE"
-
-    assert_correct_xlinks $DS_FILE
-    popd
-
-    pushd "$DS_TARGET_DIR"
-
-    $OSCAP ds rds-split "`basename $DS_FILE`" "$DS_TARGET_DIR"
-
-    rm "$DS_FILE"
-    popd
-
-    if [ "$SKIP_DIFF" != "1" ]; then
-        if ! diff --exclude "oscap_debug.log.*" "$DIR" "$DS_TARGET_DIR"; then
-            echo "The files are different after going through result data stream!"
-            echo
-            return 1
-        fi
-    fi
-
-    rm -r "$DS_TARGET_DIR"
-    return 0
-}
-
 function test_sds_external_xccdf {
     local SDS_FILE="${srcdir}/$2"
     local XCCDF="$3"
@@ -417,18 +221,8 @@ function test_sds_tailoring {
 # Testing.
 test_init "test_ds.log"
 
-test_run "sds_simple" test_sds sds_simple scap-fedora14-xccdf.xml 0
 test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf.xml xccdf_external_profile_datastream_1
 test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf-file.xml xccdf_external_profile_file_1
-test_run "sds_simple OVAL 5.11.1" test_sds sds_simple_5_11_1 simple_xccdf.xml 0
-test_run "sds_multiple_oval" test_sds sds_multiple_oval multiple-oval-xccdf.xml 0
-test_run "sds_missing_oval-prepare" [ ! -f sds_missing_oval/second-oval.xml ]
-test_run "sds_missing_oval" test_sds sds_missing_oval multiple-oval-xccdf.xml 0
-test_run "sds_subdir" test_sds sds_subdir subdir/scap-fedora14-xccdf.xml 1
-test_run "sds_extended_component" test_sds sds_extended_component fake-check-xccdf.xml 0
-test_run "sds_extended_component_plain_text" test_sds sds_extended_component_plain_text fake-check-xccdf.xml 0
-test_run "sds_extended_component_plain_text_entities" test_sds sds_extended_component_plain_text_entities fake-check-xccdf.xml 0
-test_run "sds_extended_component_plain_text_whitespace" test_sds sds_extended_component_plain_text_whitespace fake-check-xccdf.xml 0
 test_run "sds_tailoring" test_sds_tailoring sds_tailoring sds_tailoring/sds.ds.xml scap_com.example_datastream_with_tailoring xccdf_com.example_cref_tailoring_01 xccdf_com.example_profile_tailoring
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
@@ -444,13 +238,6 @@ test_run "eval_just_oval" test_oval_eval eval_just_oval/sds.xml
 test_run "eval_oval_id1" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval1.xml "oval:x:def:1"
 test_run "eval_oval_id2" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-scap_datastream_just_oval scap_org.open-scap_cref_scap-oval2.xml "oval:x:def:2"
 test_run "eval_cpe" test_eval_cpe eval_cpe/sds.xml
-test_run "generate_fix_cpe_source" test_generate_fix_source eval_cpe/sds.xml
-test_run "generate_fix_cpe_results" test_generate_fix_results eval_cpe/sds.xml
-
-test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
-test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml
-test_run "rds_index_simple" test_rds_index rds_index_simple/arf.xml "asset0 asset1" "report0" "collection0"
-test_run "rds_split_simple" test_rds_split rds_split_simple report-request.xml report.xml 0
 
 test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
