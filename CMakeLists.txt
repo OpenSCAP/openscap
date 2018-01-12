@@ -159,9 +159,6 @@ endif()
 
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
-# ENABLES SSP
-set(ENABLE_SSP FALSE CACHE BOOL "enables fstack-protector")
-
 # ENABLES OSCAP UTIL
 set(ENABLE_OSCAP_UTIL TRUE CACHE BOOL "enables oscap util")
 
