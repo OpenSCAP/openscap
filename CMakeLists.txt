@@ -11,6 +11,18 @@ message(STATUS "OpenSCAP ${OPENSCAP_VERSION}")
 message(STATUS "(see ${CMAKE_SOURCE_DIR}/README.md for build instructions)")
 message(STATUS "")
 
+# Strictly speaking in-source will work but will be very messy, let's
+# discourage our users from using them
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+    message(SEND_ERROR "In-source builds are not supported! Please use out of source builds:\n"
+       "$ cd openscap\n"
+       "$ rm CMakeCache.txt\n"
+       "$ cd build\n"
+       "$ cmake ../\n"
+       "$ make -j4"
+    )
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 	set(NDEBUG 1)
 endif()
