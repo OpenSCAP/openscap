@@ -38,7 +38,6 @@ include(CheckCSourceCompiles)
 
 # ---------- DEPENDENCIES
 
-# ACL
 find_package(ACL)
 if(ACL_FOUND)
 	check_library_exists(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
@@ -46,60 +45,37 @@ if(ACL_FOUND)
 	check_include_file(sys/acl.h HAVE_SYS_ACL_H)
 endif()
 
-# APTPKG
 find_package(AptPkg)
 
-# BLKID
 find_package(Blkid)
 if(BLKID_FOUND)
 	check_library_exists(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
 endif()
 
-# CAP
 find_package(Cap)
 if(CAP_FOUND)
 	check_library_exists(cap cap_get_pid "" HAVE_CAP_GET_PID)
 endif()
 
-# CURL
 find_package(CURL)
-
-# DBUS
 find_package(DBus)
-
-# DOXYGEN
 find_package(Doxygen)
-
-# GCONF2
 find_package(GConf)
-
-# LDAP
 find_package(Ldap)
-
-# OpenDbx
 find_package(OpenDbx)
-
-# PCRE
 find_package(PCRE REQUIRED)
-
-# PERL
 find_package(PerlLibs)
-
-# POPT
 find_package(Popt)
 
-# PROCPS
 find_package(Procps)
 if(PROCPS_FOUND)
 	check_library_exists(procps dev_to_tty "" HAVE_DEV_TO_TTY)
 	check_include_file(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
-# PYTHON
 find_package(PythonLibs 2 EXACT)
 find_package(PythonInterp)
 
-# RPM
 find_package(RPM)
 if(RPM_FOUND)
 	check_library_exists(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
@@ -109,19 +85,10 @@ if(RPM_FOUND)
 	set(HAVE_RPMVERCMP 1)
 endif()
 
-# SELINUX
 find_package(SELinux)
-
-# SWIG
 find_package(SWIG)
-
-# XML2
 find_package(LibXml2 REQUIRED)
-
-# XSLT
 find_package(LibXslt REQUIRED)
-
-# BZip2
 find_package(BZip2)
 
 # PThread
@@ -142,7 +109,6 @@ else()
 	find_package(NSS)
 endif()
 
-# HAVE FUNCTIONS
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
 check_function_exists(memalign HAVE_MEMALIGN)
@@ -151,7 +117,6 @@ check_function_exists(strsep HAVE_STRSEP)
 check_function_exists(flock HAVE_FLOCK)
 check_function_exists(strptime HAVE_STRPTIME)
 
-# HAVE HEADERS
 check_include_file(syslog.h HAVE_SYSLOG_H)
 check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
 check_include_file(shadow.h HAVE_SHADOW_H)
@@ -163,7 +128,6 @@ if(NOT HAVE_ATOMIC_BUILTINS)
 	message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
 endif()
 
-# HAVE VALGRIND AND ENV
 mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
 find_program(ENV_PRESENT env)
 find_program(VALGRIND_PRESENT valgrind)
