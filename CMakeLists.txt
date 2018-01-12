@@ -146,6 +146,22 @@ option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LIN
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
 option(ENABLE_PROBES_SOLARIS "build OVAL probes for the Solaris OVAL tests" ${IS_SOLARIS})
 
+# ---------- EXECUTABLES / UTILITIES SWITCHES
+
+option(ENABLE_OSCAP_UTIL "build the oscap utility, oscap is the core utility for evaluation and processing of SCAP data" TRUE)
+option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this let's you package SCAP data as RPMs" TRUE)
+
+set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "path to the Python interpreter for oscap-docker")
+option(ENABLE_OSCAP_UTIL_DOCKER "enables the oscap-docker utility, this let's you scan containers and container images" TRUE)
+if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
+	set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
+	message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
+endif()
+
+option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this let's you scan remote machines over ssh" TRUE)
+option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this let's you scan VMs and VM storage images" TRUE)
+option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this let's you scan entire chroots using offline scanning" TRUE)
+
 # ---------- TEST-SUITE SWITCHES
 
 # Tests will be turned off on Windows, because the test suite uses bash
@@ -158,31 +174,6 @@ else()
 endif()
 
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
-
-# ENABLES OSCAP UTIL
-set(ENABLE_OSCAP_UTIL TRUE CACHE BOOL "enables oscap util")
-
-# ENABLES OSCAP UTIL AS RPM
-set(ENABLE_OSCAP_UTIL_AS_RPM TRUE CACHE BOOL "enables oscap util as RPM")
-
-# ENABLES OSCAP UTIL DOCKER
-set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "Path to the Python interpreter for oscap-docker")
-set(ENABLE_OSCAP_UTIL_DOCKER TRUE CACHE BOOL "enables oscap util Docker")
-if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
-	set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
-	message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
-endif()
-
-# ENABLES OSCAP UTIL SSH
-set(ENABLE_OSCAP_UTIL_SSH TRUE CACHE BOOL "enables oscap util SSH")
-
-# ENABLES OSCAP UTIL VM
-set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
-
-# ENABLES OSCAP UTIL CHROOT
-set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
-
-
 
 # SEAP_MSGID_BITS
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
