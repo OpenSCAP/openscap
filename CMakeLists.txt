@@ -202,11 +202,23 @@ message(STATUS "source directory: ${CMAKE_SOURCE_DIR}")
 message(STATUS "build directory: ${CMAKE_BINARY_DIR}")
 message(STATUS " ")
 
+message(STATUS "Core features:")
+message(STATUS "CCE: ${ENABLE_CCE}")
+message(STATUS "SCE: ${ENABLE_SCE}")
+message(STATUS " ")
+
+message(STATUS "OVAL:")
+message(STATUS "Base probe support: ${ENABLE_PROBES}")
+message(STATUS "independent probes: ${ENABLE_PROBES_INDEPENDENT}")
+message(STATUS "unix probes: ${ENABLE_PROBES_UNIX}")
+message(STATUS "linux probes: ${ENABLE_PROBES_LINUX}")
+message(STATUS "solaris probes: ${ENABLE_PROBES_SOLARIS}")
+message(STATUS " ")
+
 message(STATUS "Language bindings:")
 message(STATUS "python2 bindings: ${ENABLE_PYTHON2}")
 message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
 message(STATUS "perl bindings: ${ENABLE_PERL}")
-
 message(STATUS " ")
 
 # ---------- PATHS
