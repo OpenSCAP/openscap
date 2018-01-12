@@ -146,8 +146,18 @@ option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LIN
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
 option(ENABLE_PROBES_SOLARIS "build OVAL probes for the Solaris OVAL tests" ${IS_SOLARIS})
 
-# ENABLES VALGRIND
-set(ENABLE_VALGRIND FALSE CACHE BOOL "enables Valgrind")
+# ---------- TEST-SUITE SWITCHES
+
+# Tests will be turned off on Windows, because the test suite uses bash
+# and other Linux-specific tools.
+if(WIN32)
+	# TODO: I hate that the doc string is duplicated but cmake doesn't support evaluating expressions :-/
+	option(ENABLE_TESTS "enables the test suite, use `ctest` to run it" FALSE)
+else()
+	option(ENABLE_TESTS "enables the test suite, use `ctest` to run it" TRUE)
+endif()
+
+option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
 # ENABLES SSP
 set(ENABLE_SSP FALSE CACHE BOOL "enables fstack-protector")
@@ -175,14 +185,6 @@ set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
 # ENABLES OSCAP UTIL CHROOT
 set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
 
-# ENABLES TESTS
-# Tests will be turned off on Windows, because the test suite uses bash
-# and other Linux-specific tools.
-if(WIN32)
-	set(ENABLE_TESTS FALSE CACHE BOOL "enables tests")
-else()
-	set(ENABLE_TESTS TRUE CACHE BOOL "enables tests")
-endif()
 
 
 # SEAP_MSGID_BITS
