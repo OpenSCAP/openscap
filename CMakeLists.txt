@@ -14,13 +14,13 @@ message(STATUS " ")
 # Strictly speaking in-source will work but will be very messy, let's
 # discourage our users from using them
 if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
-    message(SEND_ERROR "In-source builds are not supported! Please use out of source builds:\n"
-       "$ cd openscap\n"
-       "$ rm CMakeCache.txt\n"
-       "$ cd build\n"
-       "$ cmake ../\n"
-       "$ make -j4"
-    )
+	message(SEND_ERROR "In-source builds are not supported! Please use out of source builds:\n"
+		"$ cd openscap\n"
+		"$ rm CMakeCache.txt\n"
+		"$ cd build\n"
+		"$ cmake ../\n"
+		"$ make -j4"
+		)
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
@@ -132,45 +132,25 @@ mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
 find_program(ENV_PRESENT env)
 find_program(VALGRIND_PRESENT valgrind)
 
-# ---------- SWITCHES
+# ---------- CORE FEATURE SWITCHES
 
-# ENABLES CCE
-set(ENABLE_CCE FALSE CACHE BOOL "enables CCE")
+option(ENABLE_CCE "enables support for Common Configuration Enumeration" FALSE)
+option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that let's you use executables instead of OVAL for checks" FALSE)
 
-# TODO: Shouldn't we only enable this if python2 was found?
-option(ENABLE_PYTHON2 "if enabled, the python2 swig bindings will be built" TRUE)
-
-# TODO: Shouldn't we only enable this if python3 was found?
-option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALSE)
-
-# TODO: Shouldn't we only enable this if perl was found?
-option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
+option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
+option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" TRUE)
+# TODO: We probably only want these on UNIX systems
+option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" TRUE)
+string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
+option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX})
+string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
+option(ENABLE_PROBES_SOLARIS "build OVAL probes for the Solaris OVAL tests" ${IS_SOLARIS})
 
 # ENABLES VALGRIND
 set(ENABLE_VALGRIND FALSE CACHE BOOL "enables Valgrind")
 
 # ENABLES SSP
 set(ENABLE_SSP FALSE CACHE BOOL "enables fstack-protector")
-
-# ENABLES SCE
-set(ENABLE_SCE FALSE CACHE BOOL "enables SCE")
-
-# ENABLES PROBES
-set(ENABLE_PROBES TRUE CACHE BOOL "enables probes")
-
-# ENABLES INDEPENDENT PROBES
-set(ENABLE_PROBES_INDEPENDENT TRUE CACHE BOOL "enables independent probes")
-
-# ENABLES UNIX PROBES
-set(ENABLE_PROBES_UNIX TRUE CACHE BOOL "enables unix probes")
-
-# ENABLES LINUX PROBES
-string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
-set(ENABLE_PROBES_LINUX ${IS_LINUX} CACHE BOOL "enables linux probes")
-
-# ENABLES SOLARIS PROBES
-string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
-set(ENABLE_PROBES_SOLARIS ${IS_SOLARIS} CACHE BOOL "enables solaris probes")
 
 # ENABLES OSCAP UTIL
 set(ENABLE_OSCAP_UTIL TRUE CACHE BOOL "enables oscap util")
@@ -213,6 +193,17 @@ set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 
 # WANT XBASE64
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
+
+# ---------- LANGUAGE BINDINGS
+
+# TODO: Shouldn't we only enable this if python2 was found?
+option(ENABLE_PYTHON2 "if enabled, the python2 swig bindings will be built" TRUE)
+
+# TODO: Shouldn't we only enable this if python3 was found?
+option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALSE)
+
+# TODO: Shouldn't we only enable this if perl was found?
+option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
 
 message(STATUS " ")
 message(STATUS "CMake:")
