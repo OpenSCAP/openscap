@@ -137,7 +137,10 @@ find_program(VALGRIND_PRESENT valgrind)
 option(ENABLE_CCE "enables support for Common Configuration Enumeration" FALSE)
 option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that let's you use executables instead of OVAL for checks" FALSE)
 
+# ---------- OVAL FEATURE SWITCHES
+
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
+set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" TRUE)
 # TODO: We probably only want these on UNIX systems
 option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" TRUE)
@@ -175,15 +178,6 @@ endif()
 
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
-# SEAP_MSGID_BITS
-set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
-
-# WANT BASE64
-set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
-
-# WANT XBASE64
-set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
-
 # ---------- LANGUAGE BINDINGS
 
 # TODO: Shouldn't we only enable this if python2 was found?
@@ -194,6 +188,11 @@ option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALS
 
 # TODO: Shouldn't we only enable this if perl was found?
 option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
+
+# ---------- NO IDEA WHAT THIS IS FOR
+set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
+set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
+
 
 message(STATUS " ")
 message(STATUS "CMake:")
@@ -208,7 +207,8 @@ message(STATUS "SCE: ${ENABLE_SCE}")
 message(STATUS " ")
 
 message(STATUS "OVAL:")
-message(STATUS "Base probe support: ${ENABLE_PROBES}")
+message(STATUS "base probe support: ${ENABLE_PROBES}")
+message(STATUS "SEAP msgid bit-size: ${SEAP_MSGID_BITS}")
 message(STATUS "independent probes: ${ENABLE_PROBES_INDEPENDENT}")
 message(STATUS "unix probes: ${ENABLE_PROBES_UNIX}")
 message(STATUS "linux probes: ${ENABLE_PROBES_LINUX}")
