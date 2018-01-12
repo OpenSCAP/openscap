@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 message(STATUS "OpenSCAP ${OPENSCAP_VERSION}")
 message(STATUS "(see ${CMAKE_SOURCE_DIR}/README.md for build instructions)")
-message(STATUS "")
+message(STATUS " ")
 
 # Strictly speaking in-source will work but will be very messy, let's
 # discourage our users from using them
@@ -173,14 +173,14 @@ find_program(VALGRIND_PRESENT valgrind)
 # ENABLES CCE
 set(ENABLE_CCE FALSE CACHE BOOL "enables CCE")
 
-# ENABLES PYTHON
-set(ENABLE_PYTHON2 TRUE CACHE BOOL "enables Python")
+# TODO: Shouldn't we only enable this if python2 was found?
+option(ENABLE_PYTHON2 "if enabled, the python2 swig bindings will be built" TRUE)
 
-# ENABLES PYTHON3
-set(ENABLE_PYTHON3 FALSE CACHE BOOL "enables Python3")
+# TODO: Shouldn't we only enable this if python3 was found?
+option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALSE)
 
-# ENABLES PERL
-set(ENABLE_PERL FALSE CACHE BOOL "enables Perl")
+# TODO: Shouldn't we only enable this if perl was found?
+option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
 
 # ENABLES VALGRIND
 set(ENABLE_VALGRIND FALSE CACHE BOOL "enables Valgrind")
@@ -249,6 +249,20 @@ set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 
 # WANT XBASE64
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
+
+message(STATUS " ")
+message(STATUS "CMake:")
+message(STATUS "generator: ${CMAKE_GENERATOR}")
+message(STATUS "source directory: ${CMAKE_SOURCE_DIR}")
+message(STATUS "build directory: ${CMAKE_BINARY_DIR}")
+message(STATUS " ")
+
+message(STATUS "Language bindings:")
+message(STATUS "python2 bindings: ${ENABLE_PYTHON2}")
+message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
+message(STATUS "perl bindings: ${ENABLE_PERL}")
+
+message(STATUS " ")
 
 # ---------- PATHS
 
