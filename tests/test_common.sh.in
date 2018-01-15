@@ -20,7 +20,7 @@ export OSCAP_FULL_VALIDATION
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     enable_valgrind="@ENABLE_VALGRIND@"
-    if [ $enable_valgrind != "FALSE" ] ; then
+    if [ $enable_valgrind != "OFF" ] ; then
         actualdir=@CMAKE_BINARY_DIR@
         export actualdir
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="@CMAKE_SOURCE_DIR@/tests/valgrind_test.sh"
