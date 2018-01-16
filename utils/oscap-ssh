@@ -42,7 +42,7 @@ function usage()
     echo "  --tailoring-file"
     echo "  --tailoring-id"
     echo "  --cpe (external OVAL dependencies are not supported yet!)"
-    # --oval-results, --sce-results and --check-engine-results are not supported
+    # --sce-results and --check-engine-results are not supported
     # use --results-arf instead
     echo "  --oval-results"
     echo "  --results"
@@ -226,6 +226,9 @@ if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
 fi
 
 echo "Starting the evaluation..."
+# changing directory because of --oval-results support. oval results files are
+# dumped into PWD, and we can't be sure by the file names - we need controlled
+# environment
 ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_ARGS -p "$SSH_PORT" "$SSH_HOST" "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap ${args[*]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
