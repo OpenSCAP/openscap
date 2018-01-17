@@ -7,6 +7,22 @@ set(OPENSCAP_VERSION_PATCH "0")
 set(OPENSCAP_VERSION "${OPENSCAP_VERSION_MAJOR}.${OPENSCAP_VERSION_MINOR}.${OPENSCAP_VERSION_PATCH}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
+message(STATUS "OpenSCAP ${OPENSCAP_VERSION}")
+message(STATUS "(see ${CMAKE_SOURCE_DIR}/README.md for build instructions)")
+message(STATUS " ")
+
+# Strictly speaking in-source will work but will be very messy, let's
+# discourage our users from using them
+if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
+	message(FATAL_ERROR "In-source builds are not supported! Please use out of source builds:\n"
+		"$ cd openscap\n"
+		"$ rm CMakeCache.txt\n"
+		"$ cd build\n"
+		"$ cmake ../\n"
+		"$ make -j4"
+		)
+endif()
+
 if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
 	set(NDEBUG 1)
 endif()
@@ -22,7 +38,6 @@ include(CheckCSourceCompiles)
 
 # ---------- DEPENDENCIES
 
-# ACL
 find_package(ACL)
 if(ACL_FOUND)
 	check_library_exists(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
@@ -30,60 +45,37 @@ if(ACL_FOUND)
 	check_include_file(sys/acl.h HAVE_SYS_ACL_H)
 endif()
 
-# APTPKG
 find_package(AptPkg)
 
-# BLKID
 find_package(Blkid)
 if(BLKID_FOUND)
 	check_library_exists(blkid blkid_get_tag_value "" HAVE_BLKID_GET_TAG_VALUE)
 endif()
 
-# CAP
 find_package(Cap)
 if(CAP_FOUND)
 	check_library_exists(cap cap_get_pid "" HAVE_CAP_GET_PID)
 endif()
 
-# CURL
 find_package(CURL)
-
-# DBUS
 find_package(DBus)
-
-# DOXYGEN
 find_package(Doxygen)
-
-# GCONF2
 find_package(GConf)
-
-# LDAP
 find_package(Ldap)
-
-# OpenDbx
 find_package(OpenDbx)
-
-# PCRE
 find_package(PCRE REQUIRED)
-
-# PERL
 find_package(PerlLibs)
-
-# POPT
 find_package(Popt)
 
-# PROCPS
 find_package(Procps)
 if(PROCPS_FOUND)
 	check_library_exists(procps dev_to_tty "" HAVE_DEV_TO_TTY)
 	check_include_file(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
-# PYTHON
 find_package(PythonLibs 2 EXACT)
 find_package(PythonInterp)
 
-# RPM
 find_package(RPM)
 if(RPM_FOUND)
 	check_library_exists(rpm rpmReadConfigFiles "" HAVE_RPMREADCONFIGFILES)
@@ -93,19 +85,10 @@ if(RPM_FOUND)
 	set(HAVE_RPMVERCMP 1)
 endif()
 
-# SELINUX
 find_package(SELinux)
-
-# SWIG
 find_package(SWIG)
-
-# XML2
 find_package(LibXml2 REQUIRED)
-
-# XSLT
 find_package(LibXslt REQUIRED)
-
-# BZip2
 find_package(BZip2)
 
 # PThread
@@ -126,7 +109,6 @@ else()
 	find_package(NSS)
 endif()
 
-# HAVE FUNCTIONS
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
 check_function_exists(memalign HAVE_MEMALIGN)
@@ -135,7 +117,6 @@ check_function_exists(strsep HAVE_STRSEP)
 check_function_exists(flock HAVE_FLOCK)
 check_function_exists(strptime HAVE_STRPTIME)
 
-# HAVE HEADERS
 check_include_file(syslog.h HAVE_SYSLOG_H)
 check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
 check_include_file(shadow.h HAVE_SHADOW_H)
@@ -147,92 +128,98 @@ if(NOT HAVE_ATOMIC_BUILTINS)
 	message(WARNING "!!! Compiler does not support atomic builtins. Atomic operation will be emulated using mutex-based locking. !!!")
 endif()
 
-# HAVE VALGRIND AND ENV
 mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
 find_program(ENV_PRESENT env)
 find_program(VALGRIND_PRESENT valgrind)
 
-# ---------- SWITCHES
+# ---------- CORE FEATURE SWITCHES
 
-# ENABLES CCE
-set(ENABLE_CCE FALSE CACHE BOOL "enables CCE")
+option(ENABLE_CCE "enables support for Common Configuration Enumeration" FALSE)
+option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that let's you use executables instead of OVAL for checks" FALSE)
 
-# ENABLES PYTHON
-set(ENABLE_PYTHON2 TRUE CACHE BOOL "enables Python")
+# ---------- OVAL FEATURE SWITCHES
 
-# ENABLES PYTHON3
-set(ENABLE_PYTHON3 FALSE CACHE BOOL "enables Python3")
-
-# ENABLES PERL
-set(ENABLE_PERL FALSE CACHE BOOL "enables Perl")
-
-# ENABLES VALGRIND
-set(ENABLE_VALGRIND FALSE CACHE BOOL "enables Valgrind")
-
-# ENABLES SSP
-set(ENABLE_SSP FALSE CACHE BOOL "enables fstack-protector")
-
-# ENABLES SCE
-set(ENABLE_SCE FALSE CACHE BOOL "enables SCE")
-
-# ENABLES PROBES
-set(ENABLE_PROBES TRUE CACHE BOOL "enables probes")
-
-# ENABLES INDEPENDENT PROBES
-set(ENABLE_PROBES_INDEPENDENT TRUE CACHE BOOL "enables independent probes")
-
-# ENABLES UNIX PROBES
-set(ENABLE_PROBES_UNIX TRUE CACHE BOOL "enables unix probes")
-
-# ENABLES LINUX PROBES
+option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
+set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
+option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" TRUE)
+# TODO: We probably only want these on UNIX systems
+option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" TRUE)
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
-set(ENABLE_PROBES_LINUX ${IS_LINUX} CACHE BOOL "enables linux probes")
-
-# ENABLES SOLARIS PROBES
+option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX})
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
-set(ENABLE_PROBES_SOLARIS ${IS_SOLARIS} CACHE BOOL "enables solaris probes")
+option(ENABLE_PROBES_SOLARIS "build OVAL probes for the Solaris OVAL tests" ${IS_SOLARIS})
 
-# ENABLES OSCAP UTIL
-set(ENABLE_OSCAP_UTIL TRUE CACHE BOOL "enables oscap util")
+# ---------- EXECUTABLES / UTILITIES SWITCHES
 
-# ENABLES OSCAP UTIL AS RPM
-set(ENABLE_OSCAP_UTIL_AS_RPM TRUE CACHE BOOL "enables oscap util as RPM")
+option(ENABLE_OSCAP_UTIL "build the oscap utility, oscap is the core utility for evaluation and processing of SCAP data" TRUE)
+option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this let's you package SCAP data as RPMs" TRUE)
 
-# ENABLES OSCAP UTIL DOCKER
-set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "Path to the Python interpreter for oscap-docker")
-set(ENABLE_OSCAP_UTIL_DOCKER TRUE CACHE BOOL "enables oscap util Docker")
+set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "path to the Python interpreter for oscap-docker")
+option(ENABLE_OSCAP_UTIL_DOCKER "enables the oscap-docker utility, this let's you scan containers and container images" TRUE)
 if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
 	set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
 	message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
 endif()
 
-# ENABLES OSCAP UTIL SSH
-set(ENABLE_OSCAP_UTIL_SSH TRUE CACHE BOOL "enables oscap util SSH")
+option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this let's you scan remote machines over ssh" TRUE)
+option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this let's you scan VMs and VM storage images" TRUE)
+option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this let's you scan entire chroots using offline scanning" TRUE)
 
-# ENABLES OSCAP UTIL VM
-set(ENABLE_OSCAP_UTIL_VM TRUE CACHE BOOL "enables oscap util VM utility")
+# ---------- TEST-SUITE SWITCHES
 
-# ENABLES OSCAP UTIL CHROOT
-set(ENABLE_OSCAP_UTIL_CHROOT TRUE CACHE BOOL "enables oscap util chroot")
-
-# ENABLES TESTS
 # Tests will be turned off on Windows, because the test suite uses bash
 # and other Linux-specific tools.
 if(WIN32)
-	set(ENABLE_TESTS FALSE CACHE BOOL "enables tests")
+	# TODO: I hate that the doc string is duplicated but cmake doesn't support evaluating expressions :-/
+	option(ENABLE_TESTS "enables the test suite, use `ctest` to run it" FALSE)
 else()
-	set(ENABLE_TESTS TRUE CACHE BOOL "enables tests")
+	option(ENABLE_TESTS "enables the test suite, use `ctest` to run it" TRUE)
 endif()
 
+option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
-# SEAP_MSGID_BITS
-set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
+# ---------- LANGUAGE BINDINGS
 
-# WANT BASE64
+# TODO: Shouldn't we only enable this if python2 was found?
+option(ENABLE_PYTHON2 "if enabled, the python2 swig bindings will be built" TRUE)
+
+# TODO: Shouldn't we only enable this if python3 was found?
+option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALSE)
+
+# TODO: Shouldn't we only enable this if perl was found?
+option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
+
+# ---------- NO IDEA WHAT THIS IS FOR
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
-
-# WANT XBASE64
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
+
+
+message(STATUS " ")
+message(STATUS "CMake:")
+message(STATUS "generator: ${CMAKE_GENERATOR}")
+message(STATUS "source directory: ${CMAKE_SOURCE_DIR}")
+message(STATUS "build directory: ${CMAKE_BINARY_DIR}")
+message(STATUS " ")
+
+message(STATUS "Core features:")
+message(STATUS "CCE: ${ENABLE_CCE}")
+message(STATUS "SCE: ${ENABLE_SCE}")
+message(STATUS " ")
+
+message(STATUS "OVAL:")
+message(STATUS "base probe support: ${ENABLE_PROBES}")
+message(STATUS "SEAP msgid bit-size: ${SEAP_MSGID_BITS}")
+message(STATUS "independent probes: ${ENABLE_PROBES_INDEPENDENT}")
+message(STATUS "unix probes: ${ENABLE_PROBES_UNIX}")
+message(STATUS "linux probes: ${ENABLE_PROBES_LINUX}")
+message(STATUS "solaris probes: ${ENABLE_PROBES_SOLARIS}")
+message(STATUS " ")
+
+message(STATUS "Language bindings:")
+message(STATUS "python2 bindings: ${ENABLE_PYTHON2}")
+message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
+message(STATUS "perl bindings: ${ENABLE_PERL}")
+message(STATUS " ")
 
 # ---------- PATHS
 
