@@ -37,8 +37,8 @@
 
 #include "worker.h"
 
-extern bool  OSCAP_GSYM(varref_handling);
-extern void *OSCAP_GSYM(probe_arg);
+extern bool  varref_handling;
+extern void *probe_arg;
 
 void *probe_worker_runfn(void *arg)
 {
@@ -931,12 +931,12 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		pctx.filters = probe_prepare_filters(probe, probe_in);
                 mask = probe_obj_getmask(probe_in);
 
-		if (OSCAP_GSYM(varref_handling))
+		if (varref_handling)
 			varrefs = probe_obj_getent(probe_in, "varrefs", 1);
                 else
                         varrefs = NULL;
 
-		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
+		if (varrefs == NULL || !varref_handling) {
                         /*
                          * Prepare the collected object
                          */

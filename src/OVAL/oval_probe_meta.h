@@ -34,10 +34,10 @@ typedef struct {
         const char    *pname;
 } oval_probe_meta_t;
 
-extern oval_probe_meta_t OSCAP_GSYM(__probe_meta)[];
-extern size_t OSCAP_GSYM(__probe_meta_count);
-extern oval_subtypedsc_t OSCAP_GSYM(__s2n_tbl)[];
-extern oval_subtypedsc_t OSCAP_GSYM(__n2s_tbl)[];
+extern oval_probe_meta_t __probe_meta[];
+extern size_t __probe_meta_count;
+extern oval_subtypedsc_t __s2n_tbl[];
+extern oval_subtypedsc_t __n2s_tbl[];
 
 #define OVAL_PROBEMETA_EXTERNAL 0x00000001 /**< pass the `pext' structure to the handler oval_probe_session_new */
 

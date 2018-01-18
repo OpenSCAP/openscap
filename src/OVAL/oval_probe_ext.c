@@ -992,34 +992,34 @@ int oval_probe_ext_init(oval_pext_t *pext)
                         goto _ret;
 		}
 
-		pext->pdsc = malloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
+		pext->pdsc = malloc(sizeof(oval_pdsc_t) * __probe_meta_count);
 
-                dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
+                dD("__probe_meta_count = %zu", __probe_meta_count);
 
-		for (r = 0, i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-                        if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
-                                dD("skipped: %s (not an external probe)", OSCAP_GSYM(__probe_meta)[i].stype);
+		for (r = 0, i = 0; i < __probe_meta_count; ++i) {
+                        if (!(__probe_meta[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
+                                dD("skipped: %s (not an external probe)", __probe_meta[i].stype);
                                 continue;
                         }
 
-			if (stat(OSCAP_GSYM(__probe_meta)[i].pname, &st) != 0) {
-				dD("skipped: %s (stat failed, errno=%d)", OSCAP_GSYM(__probe_meta)[i].stype, errno);
+			if (stat(__probe_meta[i].pname, &st) != 0) {
+				dD("skipped: %s (stat failed, errno=%d)", __probe_meta[i].stype, errno);
 				continue;
 			}
 
 			if (!S_ISREG(st.st_mode)) {
-				dD("skipped: %s (not a regular file)", OSCAP_GSYM(__probe_meta)[i].stype);
+				dD("skipped: %s (not a regular file)", __probe_meta[i].stype);
 				continue;
 			}
 
-                        pext->pdsc[r].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                        pext->pdsc[r].name = OSCAP_GSYM(__probe_meta)[i].stype;
-                        pext->pdsc[r].file = OSCAP_GSYM(__probe_meta)[i].pname;
+                        pext->pdsc[r].type = __probe_meta[i].otype;
+                        pext->pdsc[r].name = __probe_meta[i].stype;
+                        pext->pdsc[r].file = __probe_meta[i].pname;
 
 			++r;
 		}
 
-		if (r < OSCAP_GSYM(__probe_meta_count))
+		if (r < __probe_meta_count)
 			pext->pdsc = realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
 
 		pext->pdsc_cnt = r;

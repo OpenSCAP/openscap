@@ -80,9 +80,9 @@ typedef enum {
 	PROBE_OFFLINE_ALL = 0x0f
 } probe_offline_flags;
 
-extern pthread_barrier_t OSCAP_GSYM(th_barrier);
-extern probe_offline_flags OSCAP_GSYM(offline_mode);
-extern probe_offline_flags OSCAP_GSYM(offline_mode_supported);
-extern int OSCAP_GSYM(offline_mode_cobjflag);
+extern pthread_barrier_t th_barrier;
+extern probe_offline_flags offline_mode;
+extern probe_offline_flags offline_mode_supported;
+extern int offline_mode_cobjflag;
 
 #endif /* PROBE_H */

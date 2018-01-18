@@ -184,7 +184,7 @@ static void *probe_icache_worker(void *arg)
 	pair = &pair_mem;
         dD("icache worker ready");
 
-        switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
+        switch (errno = pthread_barrier_wait(&th_barrier))
         {
         case 0:
         case PTHREAD_BARRIER_SERIAL_THREAD:

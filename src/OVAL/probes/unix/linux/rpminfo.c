@@ -296,7 +296,7 @@ void *probe_init (void)
 		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
 	}
 
-	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
+	if (offline_mode & PROBE_OFFLINE_OWN) {
 		const char* root = getenv("OSCAP_PROBE_ROOT");
 		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}

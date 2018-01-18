@@ -50,7 +50,7 @@
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
 
-oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
+oval_probe_meta_t __probe_meta[] = {
         { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FAMILY, "family"),
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_MD5, "filemd5"),
@@ -94,14 +94,14 @@ oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYMLINK, "symlink")
 };
 
-#define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
+#define __PROBE_META_COUNT (sizeof __probe_meta/sizeof __probe_meta[0])
 
-size_t OSCAP_GSYM(__probe_meta_count) = __PROBE_META_COUNT;
-oval_subtypedsc_t OSCAP_GSYM(__s2n_tbl)[__PROBE_META_COUNT];
-oval_subtypedsc_t OSCAP_GSYM(__n2s_tbl)[__PROBE_META_COUNT];
+size_t __probe_meta_count = __PROBE_META_COUNT;
+oval_subtypedsc_t __s2n_tbl[__PROBE_META_COUNT];
+oval_subtypedsc_t __n2s_tbl[__PROBE_META_COUNT];
 
-#define __s2n_tbl_count OSCAP_GSYM(__probe_meta_count)
-#define __n2s_tbl_count OSCAP_GSYM(__probe_meta_count)
+#define __s2n_tbl_count __probe_meta_count
+#define __n2s_tbl_count __probe_meta_count
 
 static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
 {
@@ -119,8 +119,8 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
  * of memory used by this cache is done at exit using a hook
  * registered with atexit().
  */
-probe_ncache_t  *OSCAP_GSYM(ncache) = NULL;
-struct id_desc_t OSCAP_GSYM(id_desc);
+probe_ncache_t  *ncache = NULL;
+struct id_desc_t id_desc;
 
 #if defined(OSCAP_THREAD_SAFE)
 # include <pthread.h>
@@ -145,17 +145,17 @@ void oval_probe_tblinit(void)
 {
         register size_t i;
 
-        for(i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-                OSCAP_GSYM(__s2n_tbl)[i].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                OSCAP_GSYM(__n2s_tbl)[i].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                OSCAP_GSYM(__s2n_tbl)[i].name = OSCAP_GSYM(__probe_meta)[i].stype;
-                OSCAP_GSYM(__n2s_tbl)[i].name = OSCAP_GSYM(__probe_meta)[i].stype;
+        for(i = 0; i < __probe_meta_count; ++i) {
+                __s2n_tbl[i].type = __probe_meta[i].otype;
+                __n2s_tbl[i].type = __probe_meta[i].otype;
+                __s2n_tbl[i].name = __probe_meta[i].stype;
+                __n2s_tbl[i].name = __probe_meta[i].stype;
         }
 
-        qsort(OSCAP_GSYM(__s2n_tbl), OSCAP_GSYM(__probe_meta_count), sizeof (oval_subtypedsc_t),
+        qsort(__s2n_tbl, __probe_meta_count, sizeof (oval_subtypedsc_t),
               (int(*)(const void *, const void *))__s2n_tbl_sortcmp);
 
-        qsort(OSCAP_GSYM(__n2s_tbl), OSCAP_GSYM(__probe_meta_count), sizeof (oval_subtypedsc_t),
+        qsort(__n2s_tbl, __probe_meta_count, sizeof (oval_subtypedsc_t),
               (int(*)(const void *, const void *))__n2s_tbl_sortcmp);
 }
 
@@ -179,7 +179,7 @@ oval_subtype_t oval_str_to_subtype(const char *str)
 
         __init_once();
 
-        d = oscap_bfind(OSCAP_GSYM(__n2s_tbl), __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
+        d = oscap_bfind(__n2s_tbl, __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
                         (int(*)(void *, void *))__n2s_tbl_cmp);
 
         return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);
@@ -482,7 +482,7 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 #if 0
 const oval_probe_meta_t * const oval_probe_meta_get(void)
 {
-    return (const oval_probe_meta_t * const)OSCAP_GSYM(__probe_meta);
+    return (const oval_probe_meta_t * const)__probe_meta;
 }
 #endif
 
@@ -490,7 +490,7 @@ void oval_probe_meta_list(FILE *output, int flags)
 {
 	register size_t i;
 	const char *probe_dir;
-	oval_probe_meta_t *meta = OSCAP_GSYM(__probe_meta);
+	oval_probe_meta_t *meta = __probe_meta;
 	size_t probe_dirlen;
 	char probe_path[PATH_MAX+1];
 
@@ -502,7 +502,7 @@ void oval_probe_meta_list(FILE *output, int flags)
 	probe_dirlen = strlen(probe_dir);
 	assume_r(probe_dirlen + 1 <= PATH_MAX, /* void */);
 
-	for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
+	for (i = 0; i < __probe_meta_count; ++i) {
 		if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
 			strncpy(probe_path, probe_dir, PATH_MAX);
 			probe_path[probe_dirlen] = '/';

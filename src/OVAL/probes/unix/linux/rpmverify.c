@@ -243,7 +243,7 @@ void *probe_init (void)
 
         pthread_mutex_init(&(g_rpm.mutex), NULL);
 
-	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
+	if (offline_mode & PROBE_OFFLINE_OWN) {
 		const char* root = getenv("OSCAP_PROBE_ROOT");
 		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
