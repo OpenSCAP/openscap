@@ -31,7 +31,7 @@ function test_api_cve_export {
     return $ret_val
 }
 
-test_init "test_api_cve.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_cve_cvss" test_api_cve_cvss

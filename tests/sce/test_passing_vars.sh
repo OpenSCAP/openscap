@@ -28,7 +28,7 @@ function test_passing_values {
 }
 
 # Testing.
-test_init "test_passing_values.log"
+test_init
 
 test_run "sce" test_passing_values test_passing_vars_xccdf.xml
 

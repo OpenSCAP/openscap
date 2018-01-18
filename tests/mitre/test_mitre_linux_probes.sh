@@ -9,7 +9,7 @@
 . $srcdir/test_mitre_common.sh
 
 # Test Cases.
-test_init "test_mitre_linux_probes.log"
+test_init
 
 test_run "linux-def_partition_test.xml" test_mitre linux-def_partition_test.xml "true"
 test_run "linux-def_rpminfo_test.xml" test_mitre linux-def_rpminfo_test.xml "true"

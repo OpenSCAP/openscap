@@ -30,7 +30,7 @@ function test_generate_fix_results {
 }
 
 # Testing.
-test_init "test_sds_fix_from_results.log"
+test_init
 
 test_run "generate_fix_cpe_results" test_generate_fix_results eval_cpe/sds.xml
 

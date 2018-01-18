@@ -9,7 +9,7 @@
 . $srcdir/test_mitre_common.sh
 
 # Test Cases.
-test_init "test_mitre_unix_probes.log"
+test_init
 
 # does not work because of symplink `/etc/rc' -> `/etc/rc.d/rc' (oval:org.mitre.oval.test:tst:102)
 #test_run "unix-def_file_test.xml" test_mitre unix-def_file_test.xml "true"

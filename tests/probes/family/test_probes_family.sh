@@ -40,7 +40,7 @@ function test_probes_family {
 
 # Testing.
 
-test_init "test_probes_family.log"
+test_init
 
 test_run "test_probes_family" test_probes_family
 

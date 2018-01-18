@@ -47,7 +47,7 @@ function test_probes_iflisteners {
 }
 
 # Testing.
-test_init "test_probes_iflisteners.log"
+test_init
 
 tcpdump -i lo -p tcp port 12345 > /dev/null 2> /dev/null &
 sleep 3

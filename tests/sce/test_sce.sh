@@ -24,6 +24,6 @@ function test_sce {
     [ $ret_val -eq 1 ]
 }
 
-test_init "test_sce.log"
+test_init
 test_run "sce" test_sce sce_xccdf.xml
 test_exit

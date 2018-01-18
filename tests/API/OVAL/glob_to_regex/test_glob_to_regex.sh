@@ -18,7 +18,7 @@ function test_glob_to_regex {
 
 # Testing.
 
-test_init "test_glob_to_regex.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_glob_to_regex" test_glob_to_regex

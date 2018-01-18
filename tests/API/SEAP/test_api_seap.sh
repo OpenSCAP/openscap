@@ -482,7 +482,7 @@ function test_api_strto {
 
 # Testing.
 
-test_init "test_api_seap.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_seap_incorrect_expression"   test_api_seap_incorrect_expression

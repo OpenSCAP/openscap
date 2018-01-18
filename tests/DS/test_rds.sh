@@ -109,7 +109,7 @@ function test_rds_split {
 }
 
 # Testing.
-test_init "test_rds.log"
+test_init
 
 test_run "rds_simple" test_rds rds_simple/sds.xml rds_simple/results-xccdf.xml rds_simple/results-oval.xml
 test_run "rds_testresult" test_rds rds_testresult/sds.xml rds_testresult/results-xccdf.xml rds_testresult/results-oval.xml

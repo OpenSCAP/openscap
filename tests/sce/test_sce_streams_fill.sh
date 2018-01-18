@@ -25,7 +25,7 @@ function test_sce_streams_fill {
 }
 
 # Testing.
-test_init "test_sce_streams_fill.log"
+test_init
 
 test_run "SCE stream filling up" test_sce_streams_fill test_sce_streams_fill.xccdf.xml
 

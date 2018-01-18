@@ -9,7 +9,7 @@
 . $srcdir/test_mitre_common.sh
 
 # Test Cases.
-test_init "test_mitre_ind_probes.log"
+test_init
 
 test_run "ind-def_unknown_test.xml" test_mitre ind-def_unknown_test.xml "unknown"
 test_run "ind-def_variable_test.xml" test_mitre ind-def_variable_test.xml "true"

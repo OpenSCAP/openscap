@@ -45,7 +45,7 @@ function test_probes_filehash {
 
 # Testing.
 
-test_init "test_probes_filehash.log"
+test_init
 
 test_run "test_probes_filehash" test_probes_filehash
 

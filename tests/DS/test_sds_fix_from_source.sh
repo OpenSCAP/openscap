@@ -28,7 +28,7 @@ function test_generate_fix_source {
 }
 
 # Testing.
-test_init "test_ds.log"
+test_init
 
 test_run "generate_fix_cpe_source" test_generate_fix_source eval_cpe/sds.xml
 

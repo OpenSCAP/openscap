@@ -52,7 +52,7 @@ function test_sds {
 }
 
 # Testing.
-test_init "test_sds_compose_split.log"
+test_init
 
 test_run "sds_simple" test_sds sds_simple scap-fedora14-xccdf.xml 0
 test_run "sds_simple OVAL 5.11.1" test_sds sds_simple_5_11_1 simple_xccdf.xml 0

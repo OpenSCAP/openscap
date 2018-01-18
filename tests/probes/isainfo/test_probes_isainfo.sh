@@ -40,7 +40,7 @@ function test_probes_isainfo {
 
 # Testing.
 
-test_init "test_probes_isainfo.log"
+test_init
 
 test_run "test_probes_isainfo" test_probes_isainfo
 

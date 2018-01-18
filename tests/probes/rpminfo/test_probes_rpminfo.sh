@@ -45,7 +45,7 @@ function test_probes_rpminfo {
 
 # Testing.
 
-test_init "test_probes_rpminfo.log"
+test_init
 
 test_run "test_probes_rpminfo" test_probes_rpminfo
 

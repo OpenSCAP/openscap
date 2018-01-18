@@ -77,7 +77,7 @@ function test_probes_rpmverifypackage_noepoch {
 
 # Testing.
 
-test_init "test_probes_rpmverifypackage.log"
+test_init
 
 test_run "test_probes_rpmverifypackage_epoch" test_probes_rpmverifypackage_epoch
 test_run "test_probes_rpmverifypackage_noepoch" test_probes_rpmverifypackage_noepoch

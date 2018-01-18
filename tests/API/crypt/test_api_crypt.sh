@@ -82,7 +82,7 @@ function test_crapi_mdigest {
 
 # Testing.
 
-test_init "test_api_crypt.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_crapi_digest" test_crapi_digest

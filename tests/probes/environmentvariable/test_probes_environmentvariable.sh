@@ -43,7 +43,7 @@ function test_probes_environmentvariable {
 
 # Testing.
 
-test_init "test_probes_environmentvariable.log"
+test_init
 
 test_run "test_probes_environmentvariable" test_probes_environmentvariable \
     test_probes_environmentvariable

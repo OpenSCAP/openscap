@@ -125,7 +125,7 @@ function test_api_cpe_uri_match {
 
 # Testing.
 
-test_init "test_api_cpe_uri.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_cpe_uri_smoke"  test_api_cpe_uri_smoke

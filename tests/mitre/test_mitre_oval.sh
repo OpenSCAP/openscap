@@ -9,7 +9,7 @@
 . $srcdir/test_mitre_common.sh
 
 # Test Cases.
-test_init "test_mitre_oval.log"
+test_init
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml "true"

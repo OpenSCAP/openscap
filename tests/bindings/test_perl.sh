@@ -17,7 +17,7 @@ function test_perl_import {
 }
 
 # Testing.
-test_init "test_perl.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "perl_import" test_perl_import

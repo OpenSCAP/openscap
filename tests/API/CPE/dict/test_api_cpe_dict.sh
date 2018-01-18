@@ -115,7 +115,7 @@ function test_api_cpe_dict_import_official_v23(){
 
 # Testing.
 
-test_init "test_api_cpe_dict.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_cpe_dict_smoke" test_api_cpe_dict_smoke

@@ -33,7 +33,7 @@ function test_api_cvss_vector {
 
 # Testing.
 
-test_init "test_api_cvss.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_cvss_vector" test_api_cvss_vector

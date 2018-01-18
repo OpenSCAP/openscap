@@ -49,7 +49,7 @@ function test_probes_password {
 
 # Testing.
 
-test_init "test_probes_password.log"
+test_init
 
 test_run "test_probes_password" test_probes_password
 

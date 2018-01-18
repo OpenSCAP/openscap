@@ -48,7 +48,7 @@ function test_probes_interface {
 
 # Testing.
 
-test_init "test_probes_interface.log"
+test_init
 
 test_run "test_probes_interface" test_probes_interface
 
