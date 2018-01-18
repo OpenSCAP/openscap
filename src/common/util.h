@@ -447,14 +447,18 @@ OSCAP_API char *oscap_realpath(const char *path, char *resolved_path);
 /**
  * Return filename component of a path
  * @param path path
+ * The function can modify the contents of path, so the caller should pass a copy of path.
  * @return filename component of path
+ * The caller is responsible to free the returned buffer.
  */
 OSCAP_API char *oscap_basename(char *path);
 
 /**
  * Return directory component of a path
  * @param path path
+ * The function can modify the contents of path, so the caller should pass a copy of path.
  * @return dirname component of path
+ * The caller is responsible to free the returned buffer.
  */
 OSCAP_API char *oscap_dirname(char *path);
 
