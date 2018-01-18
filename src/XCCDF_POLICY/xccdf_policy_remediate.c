@@ -892,7 +892,13 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		char *ansible_fix_header = oscap_sprintf(
 			"---\n"
 			"%s\n"
-			" - hosts: all\n",
+			" - hosts: all\n"
+			"   pre_tasks:\n"
+			"     - name: Verify Ansible meets OpenSCAP version requirements.\n"
+			"       assert:\n"
+			"         that: \"ansible_version.full | version_compare('2.3', '>=')\"\n"
+			"         msg: >\n"
+			"           \"You must update Ansible to at least 2.3 to use this role.\"\n",
 			fix_header);
 		free(fix_header);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
