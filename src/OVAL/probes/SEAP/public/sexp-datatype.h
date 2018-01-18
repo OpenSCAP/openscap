@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-OSCAP_API typedef void (*SEXP_datatypeOP_t) (SEXP_t *, const SEXP_t *, void *);
+typedef void (*SEXP_datatypeOP_t) (SEXP_t *, const SEXP_t *, void *);
 
 typedef struct SEXP_datatype    SEXP_datatype_t;
 typedef struct SEXP_datatypeTbl SEXP_datatypeTbl_t;

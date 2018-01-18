@@ -3489,7 +3489,7 @@ typedef enum xccdf_subst_type {
  * @deprecated This callback has been deprecated. It cannot be applied on XCCDF 1.2+ documents
  * given the xccdf:sub/@use parameter.
  */
-OSCAP_API typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
+typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
 
 
 /**

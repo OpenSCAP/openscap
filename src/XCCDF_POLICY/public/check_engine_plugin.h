@@ -65,7 +65,7 @@ OSCAP_API const char *check_engine_plugin_get_capabilities(struct check_engine_p
 /**
  * This is the entry point of shared objects implementing extra check engines
  */
-OSCAP_API typedef int (*check_engine_plugin_entry_fn) (struct check_engine_plugin_def*);
+typedef int (*check_engine_plugin_entry_fn) (struct check_engine_plugin_def*);
 
 #define OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY OPENSCAP_CHECK_ENGINE_PLUGIN_ENTRY
 

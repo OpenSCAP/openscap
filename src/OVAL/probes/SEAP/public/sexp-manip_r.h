@@ -70,7 +70,7 @@ OSCAP_API void __SEXP_free_r(SEXP_t *s_exp, const char *file, uint32_t line, con
 
 __attribute__ ((unused)) static void SEXP_free_r(SEXP_t *sexp)
 {
-OSCAP_API         __SEXP_free_r(sexp, __FILE__, __LINE__, __PRETTY_FUNCTION__);
+	__SEXP_free_r(sexp, __FILE__, __LINE__, __PRETTY_FUNCTION__);
 }
 
 #define SEXP_free_r(ptr) __SEXP_free_r(ptr, __FILE__, __LINE__, __PRETTY_FUNCTION__)

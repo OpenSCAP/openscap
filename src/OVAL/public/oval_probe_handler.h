@@ -42,7 +42,7 @@ typedef struct oval_ph    oval_ph_t;
  * opening, evaluating, reseting and closing (whatever that means in
  * your particular case).
  */
-OSCAP_API typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
+typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
 
 #define PROBE_HANDLER_ACT_INIT  0
 #define PROBE_HANDLER_ACT_FREE  1

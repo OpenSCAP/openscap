@@ -487,7 +487,7 @@ OSCAP_API void SEXP_list_it_free(SEXP_list_it *it);
  * @param end the index of the last element of the sublist
  */
 #define SEXP_sublist_foreach(var, list, beg, end)                       \
-OSCAP_API         for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var), (var) = NULL)
+         for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var), (var) = NULL)
 
 #define SEXP_LIST_END (UINT32_MAX - 1)
 
@@ -544,10 +544,10 @@ OSCAP_API bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b);
 # define SEXP_vfree_coverity(...) \
 	do { \
 		SEXP_t *__svf##__LINE__[] = { __VA_ARGS__ }; \
-OSCAP_API 		size_t __svfc##__LINE__ = sizeof (__svf##__LINE__)/sizeof(SEXP_t *); \
+		size_t __svfc##__LINE__ = sizeof (__svf##__LINE__)/sizeof(SEXP_t *); \
 		for (; __svfc##__LINE__ > 0; --__svfc##__LINE__) \
 			if (__svf##__LINE__[__svfc##__LINE__ - 1]) \
-OSCAP_API 				SEXP_free(__svf##__LINE__[__svfc##__LINE__ - 1]); \
+				SEXP_free(__svf##__LINE__[__svfc##__LINE__ - 1]); \
 	} while(0)
 #endif /* __COVERITY__ */
 

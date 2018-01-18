@@ -112,7 +112,7 @@ typedef enum oscap_document_type {
  */
 OSCAP_API const char *oscap_document_type_to_string(oscap_document_type_t type);
 
-OSCAP_API typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
+typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
 
 /**
  * Validate a SCAP document file against a XML schema.
