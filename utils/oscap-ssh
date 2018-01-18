@@ -42,8 +42,9 @@ function usage()
     echo "  --tailoring-file"
     echo "  --tailoring-id"
     echo "  --cpe (external OVAL dependencies are not supported yet!)"
-    # --oval-results, --sce-results and --check-engine-results are not supported
+    # --sce-results and --check-engine-results are not supported
     # use --results-arf instead
+    echo "  --oval-results"
     echo "  --results"
     echo "  --results-arf"
     echo "  --report"
@@ -144,6 +145,7 @@ TARGET_RESULTS=""
 TARGET_RESULTS_ARF=""
 TARGET_REPORT=""
 TARGET_SYSCHAR=""
+OVAL_RESULTS=""
 
 # We have to rewrite various paths to a remote temp dir
 for i in $(seq 0 `expr $# - 1`); do
@@ -181,6 +183,9 @@ for i in $(seq 0 `expr $# - 1`); do
     ("--syschar")
         TARGET_SYSCHAR=${args[j]}
         args[j]="$REMOTE_TEMP_DIR/syschar.xml"
+      ;;
+    ("--oval-results")
+        OVAL_RESULTS="yes"
       ;;
     *)
       ;;
@@ -221,7 +226,10 @@ if [ "$LOCAL_DIRECTIVES_PATH" != "" ]; then
 fi
 
 echo "Starting the evaluation..."
-ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_ARGS -p "$SSH_PORT" "$SSH_HOST" "$OSCAP_SUDO oscap ${args[*]}"
+# changing directory because of --oval-results support. oval results files are
+# dumped into PWD, and we can't be sure by the file names - we need controlled
+# environment
+ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_ARGS -p "$SSH_PORT" "$SSH_HOST" "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap ${args[*]}"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
@@ -237,6 +245,9 @@ if [ "$TARGET_REPORT" != "" ]; then
 fi
 if [ "$TARGET_SYSCHAR" != "" ]; then
     scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/syschar.xml" "$TARGET_SYSCHAR" || die "Failed to copy the OVAL syschar file back to local machine!"
+fi
+if [ "$OVAL_RESULTS" == "yes" ]; then
+    scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" "$SSH_HOST:$REMOTE_TEMP_DIR/*.result.xml" "./" || die "Failed to copy OVAL result files back to local machine!"
 fi
 
 echo "Removing remote temporary directory..."
