@@ -57,14 +57,33 @@ Authors:
     </xsl:apply-templates>
 </xsl:template>
 
-<xsl:template mode='brief' match='ovalres:definition|ovalres:criteria|ovalres:criterion'>
+
+<xsl:template mode='brief' match='ovalres:criterion'>
     <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
-        <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
-    <!-- descend deeper into the logic formula -->
-    <xsl:apply-templates mode='brief'>
+    <div class="logical_tree_leaf">
+        <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
+            <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
+            <xsl:with-param name='result' select='$result'/>
+	    </xsl:apply-templates>
+    </div>
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:criteria'>
+    <xsl:param name='result'/>
+	<span class="label label-default">
+        <xsl:value-of select='@operator'/>
+    </span>
+    <div class="logical_tree_node" style="padding:10px;border:1px solid silver;">
+        <!-- descend deeper into the logic formula -->
+        <xsl:apply-templates mode='brief'>
+            <xsl:with-param name='result' select='$result'/>
+	    </xsl:apply-templates>
+    </div>
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:definition'>
+    <xsl:param name='result'/>
+	<xsl:apply-templates select="ovalres:criteria" mode='brief'>
         <xsl:with-param name='result' select='$result'/>
     </xsl:apply-templates>
 </xsl:template>
@@ -85,7 +104,7 @@ Authors:
                     </xsl:choose>
                 </span><!-- #160 is nbsp -->&#160;
                 <xsl:choose>
-                    <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because of these items:</xsl:when>
+                    <xsl:when test='@result'><span class="label label-success">passed</span> because of these items:</xsl:when>
                     <xsl:otherwise><span class="label label-danger">failed</span> because of these items:</xsl:otherwise>
                 </xsl:choose>
             </h4>
