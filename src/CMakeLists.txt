@@ -69,6 +69,9 @@ if (ENABLE_PROBES)
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
+
+# default symbol visibility is hidden
+# exported symbols must be marked by OSCAP_API
 set_target_properties(openscap PROPERTIES
 	VERSION ${SONAME}
 	SOVERSION ${SOVERSION}
