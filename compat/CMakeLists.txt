@@ -1,4 +1,5 @@
-file(GLOB_RECURSE COMPAT_SOURCES "*.h")
+file(GLOB_RECURSE COMPAT_HEADERS "*.h")
+list(APPEND COMPAT_SOURCES "")
 
 if(NOT HAVE_FLOCK)
 	list(APPEND COMPAT_SOURCES "flock.c")
@@ -16,4 +17,6 @@ if(NOT HAVE_GETOPT_H)
 	list(APPEND COMPAT_SOURCES "getopt.c")
 endif()
 
-add_library(compat_object OBJECT ${COMPAT_SOURCES})
+if(COMPAT_SOURCES)
+	add_library(compat_object OBJECT ${COMPAT_HEADERS} ${COMPAT_SOURCES})
+endif()

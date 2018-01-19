@@ -42,7 +42,6 @@ add_subdirectory("XCCDF")
 add_subdirectory("XCCDF_POLICY")
 
 set(OBJECTS_TO_LINK_AGAINST
-	$<TARGET_OBJECTS:compat_object>
 	$<TARGET_OBJECTS:common_object>
 	$<TARGET_OBJECTS:cpe_object>
 	$<TARGET_OBJECTS:cve_object>
@@ -58,6 +57,9 @@ set(OBJECTS_TO_LINK_AGAINST
 	$<TARGET_OBJECTS:xccdf_object>
 	$<TARGET_OBJECTS:xccdfPolicy_object>
 )
+if (TARGET "compat_object")
+	list(APPEND OBJECTS_TO_LINK_AGAINST $<TARGET_OBJECTS:compat_object>)
+endif()
 if (ENABLE_CCE)
 	list(APPEND OBJECTS_TO_LINK_AGAINST $<TARGET_OBJECTS:cce_object>)
 endif()
