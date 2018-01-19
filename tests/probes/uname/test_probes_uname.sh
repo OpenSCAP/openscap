@@ -42,7 +42,7 @@ function test_probes_uname {
 
 # Testing.
 
-test_init "test_probes_uname.log"
+test_init
 
 test_run "test_probes_uname" test_probes_uname
 

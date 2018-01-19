@@ -219,7 +219,7 @@ function test_sds_tailoring {
 }
 
 # Testing.
-test_init "test_ds.log"
+test_init
 
 test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf.xml xccdf_external_profile_datastream_1
 test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_external_xccdf/sds.ds.xml scap_org.open-scap_cref_xccdf-file.xml xccdf_external_profile_file_1

@@ -49,7 +49,7 @@ function test_probes_shadow {
 
 # Testing.
 
-test_init "test_probes_shadow.log"
+test_init
 
 test_run "test_probes_shadow" test_probes_shadow
 

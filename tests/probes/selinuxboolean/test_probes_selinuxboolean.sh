@@ -46,7 +46,7 @@ function test_probes_selinuxboolean {
 
 # Testing.
 
-test_init "test_probes_selinuxboolean.log"
+test_init
 
 test_run "test_probes_selinuxboolean" test_probes_selinuxboolean \
     test_probes_selinuxboolean

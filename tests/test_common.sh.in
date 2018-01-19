@@ -66,15 +66,9 @@ fi
 # Overall test result.
 result=0
 
-# Logging file (stderr is redirected here).
-log=test.log
-
 # Set-up testing environment.
 function test_init {
-    [ $# -eq 1 ] && log="$1"
-    exec 2>$log
-    echo ""
-    echo "----------------------------------------------------------------------"
+    :
 }
 
 # Execute test and report its results.
@@ -107,9 +101,6 @@ function test_run {
 
 # Clean-up testing environment.
 function test_exit {
-    echo "--------------------------------------------------"
-    echo -e "See `pwd | sed 's|.*/\(tests/.*\)|\1|'`/${log}.\n"
-
     if [ $# -eq 1 ]
     then
         ( exec 1>&2 ; eval "$@" )

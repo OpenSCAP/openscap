@@ -26,7 +26,7 @@ function test_filecontent_non_utf {
     return ${exit_code}
 }
 
-test_init test_api_oval_unittests_filecontent_non_utf.log
+test_init
 
 test_run "filecontent regex of utf8 file" test_filecontent_non_utf "false" "utf8"
 test_run "filecontent regex of iso8859 file" test_filecontent_non_utf "error" "iso8859"

@@ -65,7 +65,7 @@ function test_api_cvrf_validate {
 	return $ret_val
 }
 
-test_init "test_api_cvrf.log"
+test_init
 test_run "test_api_cvrf_export" test_api_cvrf_export
 test_run "test_api_cvrf_eval" test_api_cvrf_eval
 test_run "test_api_cvrf_validate" test_api_cvrf_validate

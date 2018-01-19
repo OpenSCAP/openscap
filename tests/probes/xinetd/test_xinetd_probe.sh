@@ -82,7 +82,7 @@ function test_probe_xinetd_duplicates {
 
 # Testing.
 
-test_init "test_probe_xinetd.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_probe_xinetd_parser" test_probe_xinetd_parser

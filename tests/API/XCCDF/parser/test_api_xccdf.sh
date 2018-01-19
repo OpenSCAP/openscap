@@ -47,7 +47,7 @@ function test_api_xccdf_validate {
 
 # Testing.
 
-test_init "test_api_xccdf.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "export xccdf 1.1" test_api_xccdf_export xccdf11.xml

@@ -12,7 +12,7 @@ function test_python_import {
 }
 
 # Testing.
-test_init "test_python.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "python_import" test_python_import

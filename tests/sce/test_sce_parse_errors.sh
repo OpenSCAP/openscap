@@ -39,7 +39,7 @@ function test_load_without_error {
 }
 
 # Testing.
-test_init "test_sce_parse_errors.log"
+test_init
 
 test_run "Load script WITHOUT error on stderr"	test_load_without_error	./test_sce_parse_errors_load_script.xccdf.xml
 test_run "Load script WITH error on stderr"		test_load_with_error	./test_sce_parse_errors_load_corrupted_xml.xccdf.xml

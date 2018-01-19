@@ -46,7 +46,7 @@ function test_api_cce_search_non_existing {
 }
 
 # Testing.
-test_init "test_api_cce.log" 
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_cce_smoke" test_api_cce_smoke

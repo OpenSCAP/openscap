@@ -44,6 +44,6 @@ function test_probes_fileextendedattribute {
 }
 
 # Testing.
-test_init "test_probes_fileattribute.log"
+test_init
 test_run "test_probes_fileattribute" test_probes_fileextendedattribute
 test_exit

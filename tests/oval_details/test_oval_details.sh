@@ -21,7 +21,7 @@ function test_oval_details {
 
 # Testing.
 
-test_init "test_oval_details.log"
+test_init
 if ! [ -f countries.xml ] ; then
   cp $srcdir/countries.src.xml ./countries.xml
 fi

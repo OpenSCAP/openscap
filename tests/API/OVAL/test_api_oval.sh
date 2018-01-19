@@ -37,7 +37,7 @@ function test_api_oval_directives {
 
 # Testing.
 
-test_init "test_api_oval.log"
+test_init
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "test_api_oval_definition" test_api_oval_definition
