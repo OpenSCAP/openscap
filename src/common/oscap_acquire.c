@@ -26,17 +26,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <io.h>
+#include <direct.h>
+#else
 #include <unistd.h>
+#include <ftw.h>
+#endif
 #include <limits.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include <curl/curl.h>
 #include <curl/easy.h>
-#include <libgen.h>
-
-#ifndef _WIN32
-#include <ftw.h>
-#endif
 
 #include "oscap_acquire.h"
 #include "common/util.h"
@@ -117,17 +119,28 @@ oscap_acquire_cleanup_dir(char **dir_path)
 int
 oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 {
+#ifdef _WIN32
+	int old_mode;
+#else
 	mode_t old_mode;
+#endif
 	int fd;
 
 	if (dir == NULL || template == NULL || filename == NULL)
 		return -1;
 
 	*filename = malloc(PATH_MAX * sizeof(char));
-	snprintf(*filename, PATH_MAX, "%s/%s", dir, template);
-
 	old_mode = umask(077); /* Override unusual umask. Ensure 0700 permissions. */
+#ifdef _WIN32
+	char *base_name = oscap_strdup(template);
+	_mktemp_s(base_name, strlen(base_name) + 1); // +1 for terminator
+	snprintf(*filename, PATH_MAX, "%s/%s", dir, base_name);
+	free(base_name);
+	fd = open(*filename, _O_RDWR | _O_CREAT, _S_IREAD | _S_IWRITE);
+#else
+	snprintf(*filename, PATH_MAX, "%s/%s", dir, template);
 	fd = mkstemp(*filename);
+#endif
 	(void) umask(old_mode);
 	if (fd < 1) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "mkstemp for %s failed: %s", *filename, strerror(errno));
@@ -250,13 +263,14 @@ char *oscap_acquire_guess_realpath(const char *filepath)
 			return NULL;
 		}
 
-		char *dir_name = dirname(copy);
+		char *dir_name = oscap_dirname(copy);
 		char *real_dir = oscap_realpath(dir_name, resolved_name);
 		if (real_dir == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: %s does not exists!", filepath, dir_name);
 			free(copy);
 			return NULL;
 		}
+		free(dir_name);
 		char *base_name = oscap_basename((char *)filepath);
 		rpath = oscap_sprintf("%s/%s", real_dir, base_name);
 		free(base_name);
@@ -305,11 +319,12 @@ int oscap_acquire_mkdir_p(const char *path)
 int oscap_acquire_ensure_parent_dir(const char *filepath)
 {
 	char *filepath_cpy = oscap_strdup(filepath);
-	char *dirpath = dirname(filepath_cpy);
+	char *dirpath = oscap_dirname(filepath_cpy);
 	int ret = oscap_acquire_mkdir_p(dirpath);
 	if (ret != 0) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Error making directory '%s' to ensure correct path of '%s'.", dirpath, filepath);
 	}
+	free(dirpath);
 	free(filepath_cpy);
 	return ret;
 }

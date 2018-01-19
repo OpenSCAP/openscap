@@ -30,7 +30,6 @@
 #include "common/util.h"
 #include "OVAL/public/oval_agent_api.h"
 
-OSCAP_HIDDEN_START;
 
 struct cpe_session {
 	struct oscap_list *dicts;                       ///< All CPE dictionaries except the one embedded in XCCDF
@@ -50,5 +49,4 @@ bool cpe_session_add_cpe_dict_source(struct cpe_session *session, struct oscap_s
 bool cpe_session_add_cpe_autodetect_source(struct cpe_session *session, struct oscap_source *source);
 void cpe_session_set_cache(struct cpe_session *session, struct oscap_htable *sources_cache);
 
-OSCAP_HIDDEN_END;
 #endif

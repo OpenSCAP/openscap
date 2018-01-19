@@ -36,7 +36,6 @@
 #include "oval_smc_impl.h"
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 struct oval_smc_iterator;
 
@@ -48,6 +47,5 @@ bool oval_smc_iterator_has_more(struct oval_smc_iterator *it);
 
 void *oval_smc_iterator_next(struct oval_smc_iterator *it);
 
-OSCAP_HIDDEN_END;
 
 #endif

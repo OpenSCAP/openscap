@@ -31,7 +31,6 @@
 #include "DS/public/ds_sds_session.h"
 #include <libxml/tree.h>
 
-OSCAP_HIDDEN_START;
 
 xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session);
 xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session);
@@ -43,5 +42,4 @@ bool ds_sds_session_fetch_remote_resources(struct ds_sds_session *session);
 download_progress_calllback_t ds_sds_session_remote_resources_progress(struct ds_sds_session *session);
 
 void download_progress_empty_calllback(bool warning, const char * format, ...);
-OSCAP_HIDDEN_END;
 #endif

@@ -25,8 +25,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#endif
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -356,7 +362,9 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 		snprintf(target_abs_path, PATH_MAX, "%s/%s", previous_cwd, action->ds_action->target);
 
 	char* temp_cwd = strdup(action->ds_action->file);
-	chdir(dirname(temp_cwd));
+	char *temp_cwd_dirname = oscap_dirname(temp_cwd);
+	chdir(temp_cwd_dirname);
+	free(temp_cwd_dirname);
 	free(temp_cwd);
 
 	char* source_xccdf = strdup(action->ds_action->file);

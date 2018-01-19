@@ -26,7 +26,6 @@
 
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define SEAP_COMMAND_BACKENDS_MAXCAPACITY 769
 
@@ -38,6 +37,5 @@ int  SEAP_cmdtbl_backendS_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b);
 void SEAP_cmdtbl_backendS_free (SEAP_cmdtbl_t *t);
 int  SEAP_cmdtbl_backendS_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r, void *), void *arg);
 
-OSCAP_HIDDEN_END;
 
 #endif /* SEAP_COMMAND_BACKENDS */

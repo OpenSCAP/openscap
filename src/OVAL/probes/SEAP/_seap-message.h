@@ -29,7 +29,6 @@
 #include "public/seap-message.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 struct SEAP_attr {
         char   *name;
@@ -43,6 +42,5 @@ struct SEAP_msg {
         SEXP_t      *sexp;
 };
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_MESSAGE_H */

@@ -32,11 +32,9 @@
 #include "DS/public/scap_ds.h"
 #include "DS/public/ds_rds_session.h"
 
-OSCAP_HIDDEN_START;
 
 xmlDoc *ds_rds_session_get_xmlDoc(struct ds_rds_session *session);
 const char *ds_rds_session_get_target_dir(struct ds_rds_session *session);
 int ds_rds_session_register_component_source(struct ds_rds_session *session, const char *content_id, struct oscap_source *component);
 
-OSCAP_HIDDEN_END;
 #endif

@@ -33,7 +33,6 @@
 #include "common/util.h"
 #include "common/text_priv.h"
 
-OSCAP_HIDDEN_START;
 
 struct xccdf_flags {
 	bool selected:1;
@@ -523,6 +522,5 @@ void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, cons
 
 #include "unused.h"
 
-OSCAP_HIDDEN_END;
 
 #endif

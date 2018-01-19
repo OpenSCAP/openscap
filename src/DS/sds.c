@@ -46,7 +46,6 @@
 
 #include <sys/stat.h>
 #include <time.h>
-#include <libgen.h>
 
 #include <libxml/xmlreader.h>
 #include <libxml/parser.h>
@@ -56,7 +55,11 @@
 
 #include <string.h>
 #include <fcntl.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #ifndef MAXPATHLEN
 #   define MAXPATHLEN 1024
@@ -213,8 +216,9 @@ static struct oscap_source *load_referenced_source(const struct ds_sds_session *
 	assert(readable_origin != NULL);
 	char* readable_origin_cp = oscap_strdup(readable_origin);
 
-	char* dir_name = dirname(readable_origin_cp);
+	char *dir_name = oscap_dirname(readable_origin_cp);
 	char* full_path = oscap_sprintf("%s/%s", dir_name, filename);
+	free(dir_name);
 
 	struct oscap_source *source_file = oscap_source_new_from_file(full_path);
 
@@ -356,9 +360,10 @@ static int ds_dsd_dump_remote_component(const char* url, const char* component_i
 static char *compose_target_filename_dirname(const char *relative_filepath, const char* sub_dir)
 {
 	char* filename_cpy = oscap_sprintf("./%s", relative_filepath);
-	char* file_reldir = dirname(filename_cpy);
+	char* file_reldir = oscap_dirname(filename_cpy);
 
 	char* target_filename_dirname = oscap_sprintf("%s/%s",sub_dir, file_reldir);
+	free(file_reldir);
 	free(filename_cpy);
 
 	return target_filename_dirname;
@@ -859,7 +864,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 	{
 		struct oscap_htable *exported = oscap_htable_new();
 		char* filepath_cpy = oscap_strdup(oscap_source_readable_origin(component_source));
-		const char* dir = dirname(filepath_cpy);
+		char *dir = oscap_dirname(filepath_cpy);
 
 		for (int i = 0; i < nodeset->nodeNr; i++)
 		{
@@ -931,12 +936,14 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 				if (ret < 0) {
 					// oscap_seterr has already been called
 					oscap_htable_free0(exported);
+					free(dir);
 					return -1;
 				}
 
 			}
 		}
 
+		free(dir);
 		oscap_htable_free0(exported);
 		free(filepath_cpy);
 	}

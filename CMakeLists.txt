@@ -27,6 +27,18 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebI
 	set(NDEBUG 1)
 endif()
 
+# In Microsoft Visual Studio, store built binaries to a single directory.
+# We need to build all the binaries in a single directory on Windows, because
+# vcpkg tool fails to fetch dependent DLLs (libxml, libcurl, etc.) if
+# oscap.exe is build to a different directory than openscap.dll.
+# See the discussion in https://github.com/Microsoft/vcpkg/issues/1002
+if(MSVC)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+	set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
 # ---------- INCLUDES CMAKE MODULES
 
 include(GNUInstallDirs)
@@ -121,6 +133,7 @@ check_include_file(syslog.h HAVE_SYSLOG_H)
 check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
 check_include_file(shadow.h HAVE_SHADOW_H)
 check_include_file(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
+check_include_file(getopt.h HAVE_GETOPT_H)
 
 # HAVE_ATOMIC_BUILTINS
 check_c_source_compiles("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
@@ -251,7 +264,9 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wvla -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
+if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
+endif()
 if(${CMAKE_SYSTEM_NAME} EQUAL "Solaris")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D__EXTENSIONS__")
 endif()

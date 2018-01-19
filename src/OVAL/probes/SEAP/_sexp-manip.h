@@ -27,7 +27,6 @@
 #include "public/sexp-manip.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define SEXP_LSTACK_INIT_SIZE      8
 #define SEXP_LSTACK_GROWFAST_TRESH 64
@@ -51,6 +50,5 @@ SEXP_t *SEXP_lstack_top (const SEXP_lstack_t *stack);
 SEXP_t *SEXP_lstack_list (SEXP_lstack_t *stack);
 size_t  SEXP_lstack_depth (SEXP_lstack_t *stack);
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_MANIP_H */

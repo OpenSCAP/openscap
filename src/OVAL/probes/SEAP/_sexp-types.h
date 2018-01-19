@@ -31,7 +31,6 @@
 #include "_sexp-datatype.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /* Magic numbers */
 #if !defined(NDEBUG) || defined(VALIDATE_SEXP)
@@ -41,6 +40,5 @@ OSCAP_HIDDEN_START;
 # define SEXP_MAGIC1_INV 0x0000
 #endif
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_TYPES_H */

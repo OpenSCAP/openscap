@@ -30,7 +30,6 @@
 #include "common/public/oscap.h"
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Determines the SCAP type of the document xmlTextReder. This function is deemed
@@ -41,5 +40,4 @@ OSCAP_HIDDEN_START;
  */
 int oscap_determine_document_type_reader(xmlTextReader *reader, oscap_document_type_t *doc_type);
 
-OSCAP_HIDDEN_END;
 #endif

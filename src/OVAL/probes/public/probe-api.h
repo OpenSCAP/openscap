@@ -79,7 +79,7 @@
  */
 OSCAP_API SEXP_t *probe_item_build(const char *fmt, ...);
 
-OSCAP_API /* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
+/* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
 /**
  * Create a new item consisting of a name, optional attributes argument and an arbitrary number of entities.
  * Every entity is a triple:
@@ -517,7 +517,7 @@ OSCAP_API SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t 
 #define PROBE_ENT_AREF(ent, dst, attr_name, invalid_exp)		\
 	do {								\
 		if (((dst) = probe_ent_getattrval(ent, attr_name)) == NULL) { \
-OSCAP_API 			dE("Attribute `%s' is missing!", attr_name);	\
+			dE("Attribute `%s' is missing!", attr_name);	\
 			invalid_exp					\
 		}               					\
 	} while(0)
@@ -527,20 +527,20 @@ OSCAP_API 			dE("Attribute `%s' is missing!", attr_name);	\
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-OSCAP_API 			dW("Entity has no value!");		\
+			dW("Entity has no value!");		\
 			invalid_exp				\
 		} else {					\
 			if (!SEXP_stringp(___r)) {		\
-OSCAP_API 				dE("Invalid type");		\
-OSCAP_API 				SEXP_free(___r);		\
+				dE("Invalid type");		\
+				SEXP_free(___r);		\
 				invalid_exp			\
 			}					\
 			else if (SEXP_string_length(___r) == 0) { \
-OSCAP_API 				SEXP_free(___r);		\
+				SEXP_free(___r);		\
 				zerolen_exp			\
 			} else {				\
-OSCAP_API 				SEXP_string_cstr_r(___r, dst, dstlen); \
-OSCAP_API 				SEXP_free(___r);		\
+				SEXP_string_cstr_r(___r, dst, dstlen); \
+				SEXP_free(___r);		\
 			}					\
 		}						\
 	} while (0)
@@ -550,16 +550,16 @@ OSCAP_API 				SEXP_free(___r);		\
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-OSCAP_API 			dW("Entity has no value!");		\
+			dW("Entity has no value!");		\
 			nil_exp;				\
 		} else {					\
 			if (!SEXP_numberp(___r)) {		\
-OSCAP_API 				dE("Invalid type");		\
-OSCAP_API 				SEXP_free(___r);		\
+				dE("Invalid type");		\
+				SEXP_free(___r);		\
 				invalid_exp;			\
 			} else {				\
-OSCAP_API 				dst = SEXP_number_geti_32(___r);	\
-OSCAP_API 				SEXP_free(___r);                	\
+				dst = SEXP_number_geti_32(___r);	\
+				SEXP_free(___r);                	\
 			}						\
 		}							\
 	} while (0)

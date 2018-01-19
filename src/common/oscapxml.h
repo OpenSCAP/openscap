@@ -23,10 +23,8 @@
 
 #include "util.h"
 
-OSCAP_HIDDEN_START;
 
 const char *oscap_path_to_xslt(void);
 
-OSCAP_HIDDEN_END;
 
 #endif

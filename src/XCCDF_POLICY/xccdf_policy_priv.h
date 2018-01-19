@@ -28,7 +28,6 @@
 #include "common/util.h"
 #include "public/xccdf_policy.h"
 
-OSCAP_HIDDEN_START;
 
 
 /**
@@ -136,6 +135,5 @@ int xccdf_policy_report_cb(struct xccdf_policy *policy, const char *sysname, voi
  */
 struct xccdf_benchmark *xccdf_policy_get_benchmark(const struct xccdf_policy *policy);
 
-OSCAP_HIDDEN_END;
 
 #endif

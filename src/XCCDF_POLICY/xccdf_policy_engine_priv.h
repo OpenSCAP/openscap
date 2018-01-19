@@ -29,7 +29,6 @@
 #include "common/list.h"
 #include "public/xccdf_policy.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Typedef of callback structure with system identificator, callback function and usr data (optional)
@@ -77,6 +76,5 @@ xccdf_test_result_type_t xccdf_policy_engine_eval(struct xccdf_policy_engine *en
  */
 struct oscap_stringlist *xccdf_policy_engine_query(struct xccdf_policy_engine *engine, xccdf_policy_engine_query_t query_type, void *query_data);
 
-OSCAP_HIDDEN_END;
 
 #endif

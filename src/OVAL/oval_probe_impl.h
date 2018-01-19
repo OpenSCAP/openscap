@@ -45,7 +45,6 @@
 #include "public/oval_probe_handler.h"
 #include "public/oval_probe.h"
 
-OSCAP_HIDDEN_START;
 
 #define OVAL_PROBE_SCHEME "pipe"
 
@@ -57,7 +56,6 @@ OSCAP_HIDDEN_START;
 
 int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test);
 
-OSCAP_HIDDEN_END;
 
 extern probe_ncache_t *OSCAP_GSYM(ncache);
 

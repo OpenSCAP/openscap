@@ -36,24 +36,6 @@
 #define __attribute__nonnull__(x) assert((x) != NULL)
 #endif
 
-/*
- * Start a list of declarations that should not be available from outside the
- * library.  Must be matched with OSCAP_HIDDEN_END.
- */
-#ifndef OSCAP_HIDDEN_START
-#define OSCAP_HIDDEN_START _Pragma("GCC visibility push(hidden)")
-#endif
-
-/*
- * Start a list of declarations that should not be available from outside the
- * library started by OSCAP_HIDDEN_END.
- */
-#ifndef OSCAP_HIDDEN_END
-#define OSCAP_HIDDEN_END _Pragma("GCC visibility pop")
-#endif
-
-OSCAP_HIDDEN_START
-
 /**
  * Function pointer to an object destructor.
  */
@@ -359,12 +341,10 @@ char *oscap_trim(char *str);
 char *oscap_vsprintf(const char *fmt, va_list ap);
 
 // FIXME: This is there because of the SCE engine using this particular function
-OSCAP_HIDDEN_END;
 
 /// Print to a newly allocated string using varialbe arguments.
 OSCAP_API char *oscap_sprintf(const char *fmt, ...);
 
-OSCAP_HIDDEN_START;
 
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
@@ -399,7 +379,6 @@ char *oscap_expand_ipv6(const char *input);
 #define protect_errno                                                   \
         for (int OSCAP_CONCAT(__e,__LINE__)=errno, OSCAP_CONCAT(__s,__LINE__)=1; OSCAP_CONCAT(__s,__LINE__)--; errno=OSCAP_CONCAT(__e,__LINE__))
 
-OSCAP_HIDDEN_END;
 
 /* The following functions aren't hidden, because they're used by some probes. */
 
@@ -440,8 +419,49 @@ OSCAP_API char *oscap_realpath(const char *path, char *resolved_path);
 /**
  * Return filename component of a path
  * @param path path
+ * The function can modify the contents of path, so the caller should pass a copy of path.
  * @return filename component of path
+ * The caller is responsible to free the returned buffer.
  */
 OSCAP_API char *oscap_basename(char *path);
+
+/**
+ * Return directory component of a path
+ * @param path path
+ * The function can modify the contents of path, so the caller should pass a copy of path.
+ * @return dirname component of path
+ * The caller is responsible to free the returned buffer.
+ */
+OSCAP_API char *oscap_dirname(char *path);
+
+/**
+ * compare two strings ignoring case
+ * @param s1 first string
+ * @param s2 second string
+ * @return an integer less than, equal to, or greater than zero if s1 is,
+ * after ignoring case, found to be less than, to match, or be greater
+ * than s2,  respectively.
+ */
+OSCAP_API int oscap_strcasecmp(const char *s1, const char *s2);
+
+/**
+* compare two strings ignoring case
+* @param s1 first string
+* @param s2 second string
+* @param n compare no more than n bytes of s1 and s2
+* @return an integer less than, equal to, or greater than zero if s1 is,
+* after ignoring case, found to be less than, to match, or be greater
+* than s2,  respectively.
+*/
+OSCAP_API int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
+
+/**
+ * Extract tokens from strings
+ * @param str string
+ * @param delim st of delimiters
+ * @param saveptr Used to store position information between calls to strtok_s
+ * @return token
+ */
+OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
 
 #endif				/* OSCAP_UTIL_H_ */

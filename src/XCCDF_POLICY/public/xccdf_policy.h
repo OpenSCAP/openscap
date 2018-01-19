@@ -86,7 +86,7 @@ typedef enum {
  *  - (struct oscap_stringlists *) -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
  *  - NULL shall be returned if the function doesn't understand the query.
  */
-OSCAP_API typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
+typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
 
 /**
  * Type of function which implements OpenSCAP checking engine.
@@ -96,7 +96,7 @@ OSCAP_API typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_en
  * function registerd. The registered function is then used by xccdf_policy module to
  * perform evaluation on the machine.
  */
-OSCAP_API typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_if, struct xccdf_value_binding_iterator *value_binding_it, struct xccdf_check_import_iterator *check_imports_it, void *user_data);
+typedef xccdf_test_result_type_t (*xccdf_policy_engine_eval_fn) (struct xccdf_policy *policy, const char *rule_id, const char *definition_id, const char *href_if, struct xccdf_value_binding_iterator *value_binding_it, struct xccdf_check_import_iterator *check_imports_it, void *user_data);
 
 /************************************************************/
 
@@ -266,7 +266,7 @@ OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(stru
  */
 OSCAP_API bool xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn);
 
-OSCAP_API typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
+typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void *);
 
 /**
  * Function to register output callback for checking system that will be called AFTER each rule evaluation.
@@ -278,7 +278,7 @@ OSCAP_API typedef int (*policy_reporter_output)(struct xccdf_rule_result *, void
  */
 OSCAP_API bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * model, policy_reporter_output func, void * usr);
 
-OSCAP_API typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
+typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
 
 /**
  * Function to register start callback for checking system that will be called BEFORE each rule evaluation.

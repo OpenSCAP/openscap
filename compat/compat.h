@@ -22,6 +22,7 @@
 
 #ifndef OSCAP_COMPAT_H_
 #define OSCAP_COMPAT_H_
+#include "oscap_export.h"
 
 /* Fallback functions fixing portability issues */
 
@@ -48,6 +49,45 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 
 #ifdef _WIN32
 #define PATH_MAX _MAX_PATH
+#endif
+
+#ifdef _MSC_VER
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#define __PRETTY_FUNCTION__ __FUNCTION__
+#define __attribute__(x)
+
+/* Definitions for access() */
+#define F_OK 0
+#define W_OK 2
+#define R_OK 4
+
+#endif
+
+#ifndef HAVE_GETOPT_H
+
+#define __getopt_argv_const const
+#define no_argument		0
+#define required_argument	1
+#define optional_argument	2
+
+char *optarg;
+int optind;
+int opterr;
+int optopt;
+
+struct option
+{
+	const char *name;
+	int has_arg;
+	int *flag;
+	int val;
+};
+
+OSCAP_API int getopt_long(int ___argc, char *__getopt_argv_const *___argv,
+	const char *__shortopts,
+	const struct option *__longopts, int *__longind);
+
 #endif
 
 #endif

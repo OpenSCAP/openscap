@@ -42,7 +42,6 @@
 /**
  * @cond INTERNAL
  */
-OSCAP_HIDDEN_START;
  /* @endcond */
 
 /**
@@ -127,7 +126,6 @@ char *cpe_lang_model_detect_version_priv(xmlTextReader *reader);
 /** 
  * @cond INTERNAL
  */
-OSCAP_HIDDEN_END;
  /* @endcond */
 
 #endif

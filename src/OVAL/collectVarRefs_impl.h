@@ -27,7 +27,6 @@
 #include "oval_definitions_impl.h"
 #include "adt/oval_string_map_impl.h"
 
-OSCAP_HIDDEN_START;
 
 /* Collect all references to variables from the respective argument,
  * recursively. They are stored as pairs of (var id, var pointer).
@@ -35,6 +34,5 @@ OSCAP_HIDDEN_START;
 void oval_obj_collect_var_refs(struct oval_object *obj, struct oval_string_map *vm);
 void oval_ste_collect_var_refs(struct oval_state *ste, struct oval_string_map *vm);
 
-OSCAP_HIDDEN_END;
 
 #endif

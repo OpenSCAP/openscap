@@ -28,7 +28,6 @@
 #include "oval_types.h"
 #include "oval_system_characteristics.h"
 
-OSCAP_HIDDEN_START;
 
 struct oval_status_counter {
 	int error_cnt;
@@ -41,6 +40,5 @@ void oval_status_counter_clear(struct oval_status_counter *counter);
 void oval_status_counter_add_status(struct oval_status_counter *counter, oval_syschar_status_t status);
 oval_result_t oval_status_counter_get_result(struct oval_status_counter *counter, oval_existence_t check_existence);
 
-OSCAP_HIDDEN_END;
 
 #endif

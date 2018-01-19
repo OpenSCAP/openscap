@@ -26,16 +26,23 @@
 
 #include "oscap-tool.h"
 #include <assert.h>
+#ifdef HAVE_GETOPT_H
 #include <getopt.h>
+#endif
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdarg.h>
 #include <errno.h>
 #include <limits.h>
 #include <cvss_score.h>
 #include <oscap_debug.h>
+#include "util.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024
@@ -285,12 +292,12 @@ static void getopt_parse_env(struct oscap_module *module, int *argc, char ***arg
 	eargv = NULL;
 	eargc = 0;
 	opts = strdup(opts);
-	opt = strtok_r(opts, delim, &state);
+	opt = oscap_strtok_r(opts, delim, &state);
 	while (opt != NULL) {
 		eargc++;
 		eargv = realloc(eargv, eargc * sizeof(char *));
 		eargv[eargc - 1] = strdup(opt);
-		opt = strtok_r(NULL, delim, &state);
+		opt = oscap_strtok_r(NULL, delim, &state);
 	}
 
 	nargc = *argc + eargc;

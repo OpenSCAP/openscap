@@ -101,7 +101,7 @@ OSCAP_API int oval_agent_reset_session(oval_agent_session_t * ag_sess);
  */
 OSCAP_API int oval_agent_abort_session(oval_agent_session_t *ag_sess);
 
-OSCAP_API typedef int (*agent_reporter)(const struct oval_result_definition * res_def, void *arg);
+typedef int (*agent_reporter)(const struct oval_result_definition * res_def, void *arg);
 
 /**
  * Probe and evaluate all definitions from the content, call the callback functions upon single evaluation

@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-OSCAP_API typedef SEXP_t * (*SEAP_cmdfn_t) (SEXP_t *, void *);
+typedef SEXP_t * (*SEAP_cmdfn_t) (SEXP_t *, void *);
 
 typedef uint16_t SEAP_cmdcode_t;
 typedef uint16_t SEAP_cmdid_t;

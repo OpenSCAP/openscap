@@ -45,7 +45,6 @@
 /**
  * @cond INTERNAL
  */
-OSCAP_HIDDEN_START;
  /* @endcond */
 
 /**
@@ -134,7 +133,6 @@ struct cpe_dict_model {		// the main node
 /** 
  * @cond INTERNAL
  */
-OSCAP_HIDDEN_END;
  /* @endcond */
 
 #endif

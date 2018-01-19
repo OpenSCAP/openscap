@@ -33,7 +33,6 @@
 #include "../common/elements.h"
 #include "cvrf.h"
 
-OSCAP_HIDDEN_START;
 
 // namespaces
 #define CVRF_NS BAD_CAST "http://www.icasi.org/CVRF/schema/cvrf/1.1"
@@ -860,6 +859,5 @@ xmlNode *cvrf_index_to_dom(struct cvrf_index *index, xmlDocPtr doc, xmlNode *par
 
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product);
 
-OSCAP_HIDDEN_END;
 
 #endif				/* _CVRF_PRIV_H_ */

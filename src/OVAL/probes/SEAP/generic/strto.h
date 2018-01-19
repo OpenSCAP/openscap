@@ -45,7 +45,6 @@ uint64_t strto_uint64_hex (const char *str, size_t len, char **endptr);
 
 double strto_double (const char *str, size_t len, char **endptr);
 
-OSCAP_HIDDEN_START;
 
 int8_t strto_int8 (const char *str, size_t len, char **endptr, int base);
 int8_t strto_int8_bin (const char *str, size_t len, char **endptr);
@@ -86,6 +85,5 @@ intmax_t strto_intmax_oct (const char *str, size_t len, char **endptr);
 intmax_t strto_intmax_dec (const char *str, size_t len, char **endptr);
 intmax_t strto_intmax_hex (const char *str, size_t len, char **endptr);
 
-OSCAP_HIDDEN_END;
 
 #endif /* STRTO_H */

@@ -33,7 +33,6 @@
 #include "oscap.h"
 #include "oscap_source.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Create new oscap_source from raw memory. The memory can contain \0 bytes
@@ -77,6 +76,5 @@ xmlTextReader *oscap_source_get_xmlTextReader(struct oscap_source *source);
  */
 xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source);
 
-OSCAP_HIDDEN_END;
 
 #endif

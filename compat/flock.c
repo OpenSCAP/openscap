@@ -21,8 +21,9 @@
    You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
+#ifdef HAVE_CONFIG_H
 #include <config.h>
-#include <sys/file.h>
+#endif
 
 #if (defined _WIN32 || defined __WIN32__) && ! defined __CYGWIN__
 
@@ -159,6 +160,8 @@ flock (int fd, int operation)
 }
 
 #else /* !Windows */
+
+#include <sys/file.h>
 
 # ifdef HAVE_STRUCT_FLOCK_L_TYPE
 /* We know how to implement flock in terms of fcntl. */

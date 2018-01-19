@@ -34,7 +34,6 @@
 #include "_sexp-types.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 typedef uint8_t SEAP_cmdclass_t;
 
@@ -118,6 +117,5 @@ void SEAP_cmdjob_free (SEAP_cmdjob_t *j);
 
 SEXP_t *SEAP_cmd2sexp (SEAP_cmd_t *cmd);
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_COMMAND_H */

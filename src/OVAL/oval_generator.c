@@ -32,8 +32,11 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <sys/time.h>
 #include <time.h>
+
+#ifndef _WIN32
+#include <sys/time.h>
+#endif
 
 #include "common/util.h"
 #include "common/debug_priv.h"

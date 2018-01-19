@@ -29,7 +29,6 @@
 #include "_sexp-manip.h"
 #include "generic/spb.h"
 
-OSCAP_HIDDEN_START;
 
 /* Number classes */
 #define SEXP_NUMCLASS_INV  0
@@ -151,6 +150,5 @@ __PARSE_RT SEXP_parse_bool          (__PARSE_PT(dsc), bool val);
  */
 int SEXP_psetup_setpfunc(SEXP_psetup_t *psetup, int pfunctype, SEXP_pfunc_t *pfunc);
 
-OSCAP_HIDDEN_END;
 
 #endif /* SEXP_PARSER_H */

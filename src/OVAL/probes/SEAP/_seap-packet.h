@@ -31,7 +31,6 @@
 #include "public/seap-packet.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define SEAP_SYM_PREFIX "seap."
 #define SEAP_SYM_MSG    SEAP_SYM_PREFIX"msg"
@@ -47,6 +46,5 @@ struct SEAP_packet {
         } data;
 };
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_PACKET_H */

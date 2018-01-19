@@ -902,11 +902,11 @@ struct cpe_vendor *cpe_vendor_parse(xmlTextReaderPtr reader)
 
 			    data = (char *)xmlTextReaderGetAttribute(reader, ATTR_PART_STR);
 			    if (data) {
-				if (strcasecmp((const char *)data, "h") == 0)
+				if (oscap_strcasecmp((const char *)data, "h") == 0)
 				    product->part = CPE_PART_HW;
-				else if (strcasecmp((const char *)data, "o") == 0)
+				else if (oscap_strcasecmp((const char *)data, "o") == 0)
 				    product->part = CPE_PART_OS;
-				else if (strcasecmp((const char *)data, "a") == 0)
+				else if (oscap_strcasecmp((const char *)data, "a") == 0)
 				    product->part = CPE_PART_APP;
 				else {
 					oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unknown attribute value of vendor/@part='%s'", data);

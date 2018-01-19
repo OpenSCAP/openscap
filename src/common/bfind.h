@@ -26,7 +26,11 @@
 #define BFIND_H
 
 #include <stddef.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdint.h>
 
 void *oscap_bfind(void *ptr, size_t nmemb, size_t size, void *key, int cmpfn(void *, void *));

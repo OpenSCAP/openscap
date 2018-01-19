@@ -69,7 +69,15 @@ if (ENABLE_PROBES)
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
-set_target_properties(openscap PROPERTIES VERSION ${SONAME} SOVERSION ${SOVERSION})
+
+# default symbol visibility is hidden
+# exported symbols must be marked by OSCAP_API
+set_target_properties(openscap PROPERTIES
+	VERSION ${SONAME}
+	SOVERSION ${SOVERSION}
+	C_VISIBILITY_PRESET hidden
+	COMPILE_DEFINITIONS OSCAP_BUILD_SHARED
+)
 target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
 if (BZIP2_FOUND)
 	target_link_libraries(openscap ${BZIP2_LIBRARIES})

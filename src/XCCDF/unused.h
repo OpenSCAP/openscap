@@ -25,7 +25,6 @@
 #ifndef OPENSCAP_XCCDF_UNUSED_H_
 #define OPENSCAP_XCCDF_UNUSED_H_
 
-OSCAP_HIDDEN_START;
 
 // Prototypes to supress compiler warnings
 // these funcs are automatically generated but useless
@@ -141,6 +140,5 @@ bool xccdf_rule_set_interactive(struct xccdf_rule *item, bool newval);
 bool xccdf_item_get_interactive(const struct xccdf_item *item);
 bool xccdf_item_set_interactive(struct xccdf_item *item, bool newval);
 
-OSCAP_HIDDEN_END;
 
 #endif

@@ -27,7 +27,6 @@
 #include "oval_definitions.h"
 #include "oval_types.h"
 
-OSCAP_HIDDEN_START;
 
 oval_result_t oval_boolean_cmp(const bool state, const bool syschar, oval_operation_t operation);
 
@@ -39,6 +38,5 @@ oval_result_t oval_string_cmp(const char *state, const char *syschar, oval_opera
 
 oval_result_t oval_binary_cmp(const char *state, const char *syschar, oval_operation_t operation);
 
-OSCAP_HIDDEN_END;
 
 #endif

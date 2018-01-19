@@ -38,7 +38,11 @@
 #      define OSCAP_API __declspec(dllimport)
 #    endif
 #  else
-#    define OSCAP_API
+#    if __GNUC__ >= 4
+#      define OSCAP_API __attribute__((visibility("default")))
+#    else
+#      define OSCAP_API
+#    endif
 #  endif
 #endif
 

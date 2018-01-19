@@ -36,7 +36,6 @@
 #include "util.h"
 #include "public/oscap_debug.h"
 
-OSCAP_HIDDEN_START;
 
 #define OSCAP_DEBUGOBJ_SEXP 1
 
@@ -66,6 +65,5 @@ void __oscap_debuglog_object (const char *file, const char *fn, size_t line, int
 
 #define dIndent(indent_change) __oscap_dlprintf(DBG_I, __FILE__, __PRETTY_FUNCTION__, __LINE__, indent_change, NULL)
 
-OSCAP_HIDDEN_END;
 
 #endif

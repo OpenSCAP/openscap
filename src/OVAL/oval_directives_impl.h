@@ -36,13 +36,11 @@
 #include "oval_parser_impl.h"
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 int oval_result_directives_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *);
 int oval_result_directives_to_dom(struct oval_result_directives *, xmlDoc *, xmlNode *);
 xmlNode *oval_directives_model_to_dom(struct oval_directives_model *, xmlDocPtr, xmlNode *);
 
-OSCAP_HIDDEN_END;
 
 #define OVAL_DIRECTIVES_IMPL_H_
 #endif				/* OVAL_DIRECTIVES_IMPL_H_ */

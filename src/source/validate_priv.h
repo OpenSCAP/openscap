@@ -29,7 +29,6 @@
 #include "common/util.h"
 #include "source/public/oscap_source.h"
 
-OSCAP_HIDDEN_START;
 
 struct oscap_schema_table_entry {
 	oscap_document_type_t doc_type;
@@ -43,5 +42,4 @@ struct oscap_schema_table_entry {
  */
 int oscap_source_validate_priv(struct oscap_source *source, oscap_document_type_t doc_type, const char *version, xml_reporter reporter, void *user);
 
-OSCAP_HIDDEN_END;
 #endif

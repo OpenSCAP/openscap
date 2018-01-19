@@ -25,7 +25,6 @@
 #endif
 
 #include <string.h>
-#include <strings.h>
 #include <time.h>
 #include <ctype.h>
 #include <math.h>

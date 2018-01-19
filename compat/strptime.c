@@ -23,6 +23,7 @@
    this is enough information for determining the date.  */
 
 #include <string.h>
+#include <ctype.h>
 #include "compat.h"
 
 #ifndef __P
@@ -62,6 +63,9 @@ localtime_r (t, tp)
      int result = strncasecmp ((cs1), (s2), len) == 0;			      \
      if (result) (s2) += len;						      \
      result; })
+#elif defined _MSC_VER
+# define match_string(cs1, s2) \
+  (_strnicmp ((cs1), (s2), strlen (cs1)) ? 0 : ((s2) += strlen (cs1), 1))
 #else
 /* Oh come on.  Get a reasonable compiler.  */
 # define match_string(cs1, s2) \

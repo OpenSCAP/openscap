@@ -29,7 +29,6 @@
 #include "common/util.h"
 #include <libxml/tree.h>
 
-OSCAP_HIDDEN_START;
 
 #ifdef BZIP2_FOUND
 
@@ -67,6 +66,5 @@ bool bz2_fd_is_bzip(int fd);
  */
 bool bz2_memory_is_bzip(const char* memory, const size_t size);
 
-OSCAP_HIDDEN_END;
 
 #endif // OSCAP_SOURCE_BZIP2_H

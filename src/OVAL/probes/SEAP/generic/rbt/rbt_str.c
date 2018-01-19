@@ -88,7 +88,7 @@ void rbt_str_free_cb2 (rbt_t *rbt, void (*callback)(struct rbt_str_node *, void 
 int rbt_str_add(rbt_t *rbt, char *key, void *data)
 {
         struct rbt_node fake;
-        register struct rbt_node *h[4];
+        struct rbt_node *h[4];
         register uint8_t dvec;
         register char *n_key, *u_key;
         register int  cmp;
@@ -440,8 +440,10 @@ int rbt_str_walk_levelorder(rbt_t *rbt, int (*callback)(struct rbt_str_node *), 
 
 int rbt_str_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(struct rbt_str_node *))
 {
-        assume_d (rbt      != NULL, -1, errno = EINVAL;);
-        assume_d (callback != NULL, -1, errno = EINVAL;);
+	if (rbt == NULL || callback == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
 
         switch (type & RBT_WALK_TYPEMASK) {
         case RBT_WALK_PREORDER:   return rbt_str_walk_preorder(rbt, callback, type);

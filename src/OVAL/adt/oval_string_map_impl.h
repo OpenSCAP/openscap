@@ -33,7 +33,6 @@
 #include "oval_collection_impl.h"
 #include "../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 struct oval_string_map;
 
@@ -49,6 +48,5 @@ void oval_string_map_free0(struct oval_string_map *);
 void oval_string_map_free_string(struct oval_string_map *);
 struct oval_collection *oval_string_map_collect_values(struct oval_string_map *map, struct oval_collection *collection);
 
-OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_STRING_MAP_IMPL_H_ */

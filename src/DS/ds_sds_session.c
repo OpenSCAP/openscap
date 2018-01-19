@@ -41,7 +41,6 @@
 #include "source/oscap_source_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/xslt_priv.h"
-#include <libgen.h>
 #include <libxml/tree.h>
 
 struct ds_sds_session {

@@ -24,7 +24,6 @@
 #include <stdint.h>
 #include "../../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #if defined(WANT_XBASE64)
 # ifndef XBASE64_H
@@ -50,4 +49,3 @@ size_t base64_decode (const char *, size_t, uint8_t **);
 # endif /* BASE64_H */
 #endif /* WANT_BASE64 */
 
-OSCAP_HIDDEN_END;

@@ -94,7 +94,7 @@ void rbt_i64_free_cb (rbt_t *rbt, void (*callback)(rbt_i64_node_t *))
 int rbt_i64_add(rbt_t *rbt, int64_t key, void *data, void **coll)
 {
         struct rbt_node fake;
-        register struct rbt_node *h[4];
+        struct rbt_node *h[4];
         register uint8_t dvec;
         register int64_t n_key, u_key;
 
@@ -431,8 +431,10 @@ int rbt_i64_walk_levelorder(rbt_t *rbt, int (*callback)(rbt_i64_node_t *), rbt_w
 
 int rbt_i64_walk(rbt_t *rbt, rbt_walk_t type, int (*callback)(rbt_i64_node_t *))
 {
-        assume_d (rbt      != NULL, -1, errno = EINVAL;);
-        assume_d (callback != NULL, -1, errno = EINVAL;);
+	if (rbt == NULL || callback == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
 
         switch (type & RBT_WALK_TYPEMASK) {
         case RBT_WALK_PREORDER:   return rbt_i64_walk_preorder(rbt, callback, type);

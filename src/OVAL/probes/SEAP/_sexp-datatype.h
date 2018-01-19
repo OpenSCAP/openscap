@@ -28,7 +28,6 @@
 #include "generic/rbt/rbt.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 struct SEXP_datatype {
         uint16_t          dt_flg;
@@ -84,6 +83,5 @@ int SEXP_datatype_del(SEXP_datatypeTbl_t *t, const char *name);
 #define SEXP_DATATYPEPTR_MASK  (UINTPTR_MAX << 2)
 #define SEXP_DATATYPEPTR_ALIGN (4 > sizeof(void *) ? 4 : sizeof (void *))
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_DATATYPE */

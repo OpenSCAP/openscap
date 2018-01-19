@@ -29,6 +29,6 @@
  * @param warning indicates whether the message is rather warning or notice
  * @param format printf-like format string
  */
-OSCAP_API typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
+typedef void (*download_progress_calllback_t) (bool warning, const char * format, ...);
 
 #endif

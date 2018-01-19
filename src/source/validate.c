@@ -26,7 +26,11 @@
 #include <libxml/xmlerror.h>
 #include <libxml/xmlschemas.h>
 #include <string.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "common/_error.h"
 #include "common/util.h"
