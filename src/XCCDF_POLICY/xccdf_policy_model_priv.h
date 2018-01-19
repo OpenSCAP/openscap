@@ -29,7 +29,6 @@
 #include "CPE/cpe_session_priv.h"
 #include "public/xccdf_policy.h"
 
-OSCAP_HIDDEN_START;
 
 #define XCCDF_POLICY_OUTCB_START "urn:xccdf:system:callback:start"
 #define XCCDF_POLICY_OUTCB_END "urn:xccdf:system:callback:output"
@@ -73,6 +72,5 @@ struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_p
 
 struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_model *policy_model, const char *id);
 
-OSCAP_HIDDEN_END;
 
 #endif

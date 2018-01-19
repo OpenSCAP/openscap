@@ -28,7 +28,6 @@
 #include "common/util.h"
 #include "public/xccdf_policy.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Callback structure with callback function and usr data (optional)
@@ -40,6 +39,5 @@ struct reporter *reporter_new(char *report_type, void *output_func, void *usr);
 
 int reporter_send_simple(struct reporter *reporter, void *data);
 
-OSCAP_HIDDEN_END;
 
 #endif

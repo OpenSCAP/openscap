@@ -40,7 +40,6 @@
 #include "public/seap-error.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /*
  * Descriptor table + related stuff
@@ -135,6 +134,5 @@ static inline int SEAP_desc_unlock (pthread_mutex_t *m)
 SEAP_msgid_t SEAP_desc_genmsgid (SEAP_desctable_t *sd_table, int sd);
 SEAP_cmdid_t SEAP_desc_gencmdid (SEAP_desctable_t *sd_table, int sd);
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_DESCRIPTOR_H */

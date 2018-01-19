@@ -28,7 +28,6 @@
 #include "oval_types.h"
 #include "oval_system_characteristics.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Compare state entity (or variable/value) to sysent object collected from system.
@@ -51,6 +50,5 @@ oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type
  */
 oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type, const char *sys_data, oval_operation_t operation);
 
-OSCAP_HIDDEN_END;
 
 #endif

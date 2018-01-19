@@ -26,7 +26,6 @@
 #include "_error.h"
 #include <stdbool.h>
 
-OSCAP_HIDDEN_START;
 
 /**
  * OpenSCAP Internal Error Queue.
@@ -97,6 +96,5 @@ void err_queue_free(struct err_queue *q, oscap_destruct_func destructor);
  */
 int err_queue_to_string(struct err_queue *q, char **result);
 
-OSCAP_HIDDEN_END;
 
 #endif

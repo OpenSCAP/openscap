@@ -27,11 +27,9 @@
 #include "common/util.h"
 #include <libxml/tree.h>
 
-OSCAP_HIDDEN_START;
 
 int ds_dump_component_sources(struct oscap_htable *component_sources, const char *target_dir);
 xmlDoc *ds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent);
 
-OSCAP_HIDDEN_END;
 
 #endif

@@ -29,7 +29,6 @@
 
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 struct oval_smc;
 
@@ -51,6 +50,5 @@ typedef void *(*oval_smc_user_clone_func) (void *user_data, void *item);
 
 struct oval_smc *oval_smc_clone_user(struct oval_smc *oldmap, oval_smc_user_clone_func cloner, void *user_data);
 
-OSCAP_HIDDEN_END;
 
 #endif

@@ -35,7 +35,6 @@
 #include "oval_definitions.h"
 #include "oval_types.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Compare two EVR (Epoch:Version-Release) strings. The format of input types shall
@@ -50,6 +49,5 @@ oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_opera
 
 oval_result_t oval_versiontype_cmp(const char *state, const char *syschar, oval_operation_t operation);
 
-OSCAP_HIDDEN_END;
 
 #endif

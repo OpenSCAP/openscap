@@ -25,7 +25,6 @@
 #ifndef _OSCAP_XMLNS_H
 #define _OSCAP_XMLNS_H
 
-OSCAP_HIDDEN_START;
 
 /// CPE version 2 Language XML namespace
 #define XMLNS_CPE2L		"http://cpe.mitre.org/language/2.0"
@@ -38,6 +37,5 @@ OSCAP_HIDDEN_START;
 /// CPE version 2.3 extension
 #define XMLNS_CPE2D3_EXTENSION	"http://scap.nist.gov/schema/cpe-extension/2.3"
 
-OSCAP_HIDDEN_END;
 
 #endif

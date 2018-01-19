@@ -37,7 +37,6 @@
 #ifndef _CCE_PRIV_H
 #define _CCE_PRIV_H
 
-OSCAP_HIDDEN_START;
 
 struct cce {
 	struct oscap_list *entries;
@@ -67,6 +66,5 @@ struct cce_entry *cce_entry_new_empty(void);
 void cce_reference_free(struct cce_reference *ref);
 void cce_entry_free(struct cce_entry *ref);
 
-OSCAP_HIDDEN_END;
 
 #endif

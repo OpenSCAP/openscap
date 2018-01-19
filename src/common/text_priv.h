@@ -30,7 +30,6 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlwriter.h>
 
-OSCAP_HIDDEN_START;
 
 /**
  * oscap_text traits
@@ -76,6 +75,5 @@ bool oscap_textlist_export(struct oscap_text_iterator *texts, xmlTextWriter *wri
 
 char *_xhtml_to_plaintext(const char *xhtml_in);
 
-OSCAP_HIDDEN_END;
 
 #endif

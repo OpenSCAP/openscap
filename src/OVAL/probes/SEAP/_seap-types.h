@@ -31,7 +31,6 @@
 #include "seap-descriptor.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /* SEAP context */
 struct SEAP_CTX {
@@ -47,6 +46,5 @@ struct SEAP_CTX {
         uint16_t send_timeout;
 };
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_TYPES_H */

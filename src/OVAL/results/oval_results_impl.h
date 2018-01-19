@@ -40,7 +40,6 @@
 #include "common/util.h"
 #include "source/oscap_source_priv.h"
 
-OSCAP_HIDDEN_START;
 
 int oval_result_system_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *);
 xmlNode *oval_result_system_to_dom(struct oval_result_system *, struct oval_results_model *, struct oval_directives_model *, xmlDocPtr, xmlNode *);
@@ -105,6 +104,5 @@ const char *oval_result_test_get_id(const struct oval_result_test *test);
 
 struct oval_result_definition *oval_result_system_prepare_definition(struct oval_result_system *sys, const char *id);
 
-OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_RESULTS_IMPL_H_ */

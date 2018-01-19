@@ -31,7 +31,6 @@
 #include <stdint.h>
 #include "../../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 void    *xmemdup (const void *src, size_t len);
 uint32_t xnumdigits (size_t size);
@@ -45,6 +44,5 @@ long     xrandom (void);
 # define EDOOFUS 88
 #endif
 
-OSCAP_HIDDEN_END;
 
 #endif /* COMMON_H */

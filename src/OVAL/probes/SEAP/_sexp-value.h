@@ -30,7 +30,6 @@
 #include "_sexp-types.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 typedef uint8_t SEXP_valtype_t;
 
@@ -124,6 +123,5 @@ void      SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *));
 
 uintptr_t SEXP_rawval_copy(uintptr_t s_valp);
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_VALUE_H */

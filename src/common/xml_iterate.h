@@ -28,7 +28,6 @@
 #include "util.h"
 #include <libxml/tree.h>
 
-OSCAP_HIDDEN_START;
 
 /**
  * A callback function to be called on each xmlNode. Note that the node
@@ -56,6 +55,5 @@ typedef int (*xml_iterate_callback) (xmlNode **node, void *user_data);
  */
 int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_callback user_fn, void *user_data);
 
-OSCAP_HIDDEN_END;
 
 #endif

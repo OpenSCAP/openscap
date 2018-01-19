@@ -36,7 +36,6 @@
 #include "oval_definitions.h"
 #include "oval_types.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Compare two IP address or address sets (CIDR). The format of input string
@@ -50,6 +49,5 @@ OSCAP_HIDDEN_START;
  */
 oval_result_t oval_ipaddr_cmp(int af, const char *s1, const char *s2, oval_operation_t op);
 
-OSCAP_HIDDEN_END;
 
 #endif

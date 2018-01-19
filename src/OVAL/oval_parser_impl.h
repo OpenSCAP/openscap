@@ -34,7 +34,6 @@
 #include "public/oval_agent_api.h"
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define OVAL_ROOT_ELM_DEFINITIONS "oval_definitions"
 #define OVAL_ROOT_ELM_DIRECTIVES "oval_directives"
@@ -65,6 +64,5 @@ int oval_parser_skip_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 
 char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_document_type_t doc_type);
 
-OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_PARSER_H_ */

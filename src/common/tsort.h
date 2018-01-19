@@ -28,7 +28,6 @@
 #ifndef OSCAP_TSORT_H_
 #define OSCAP_TSORT_H_
 
-OSCAP_HIDDEN_START;
 
 // returns nodest with an edge from given node
 typedef struct oscap_list* (*oscap_tsort_edge_func)(void *node, void *userdata);
@@ -62,7 +61,6 @@ typedef struct oscap_list* (*oscap_tsort_edge_func)(void *node, void *userdata);
  */
 bool oscap_tsort(struct oscap_list *input, struct oscap_list **output, oscap_tsort_edge_func edge_func, oscap_cmp_func cmp_func, void *userdata);
 
-OSCAP_HIDDEN_END;
 
 #endif // OSCAP_TSORT_H_
 

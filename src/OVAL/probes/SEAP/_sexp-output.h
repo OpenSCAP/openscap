@@ -31,7 +31,6 @@
 #include "_sexp-manip.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 struct SEXP_ostate {
         SEXP_t        *s_exp;   /* ref to the S-exp that we are writing */
@@ -41,6 +40,5 @@ struct SEXP_ostate {
         size_t        *s_pos;   /* S-exp position */
 };
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEXP_OUTPUT_H */

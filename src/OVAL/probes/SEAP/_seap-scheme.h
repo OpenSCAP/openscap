@@ -33,7 +33,6 @@
 #include "generic/common.h"
 #include "../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 typedef struct {
         const char *schstr;
@@ -85,6 +84,5 @@ SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[], const char *s
 
 #define SCH_NONE    255
 
-OSCAP_HIDDEN_END;
 
 #endif /* _SEAP_SCHEME_H */

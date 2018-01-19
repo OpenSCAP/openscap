@@ -41,7 +41,6 @@
 #include "adt/oval_string_map_impl.h"
 #include "../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 oval_family_t oval_family_parse(xmlTextReaderPtr);
 xmlNs *oval_family_to_namespace(oval_family_t family, const char *schema_ns, xmlDoc *doc, xmlNode *parent);
@@ -194,5 +193,4 @@ bool oval_variable_contains_value(struct oval_variable *variable, const char* o_
 //Synthetic object subtype for probing system info.
 #define  OVAL_INDEPENDENT_SYSCHAR_SUBTYPE 7999
 
-OSCAP_HIDDEN_END
 #endif

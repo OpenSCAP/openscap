@@ -38,7 +38,6 @@
 #include "../common/util.h"
 #include "oval_definitions_impl.h"
 
-OSCAP_HIDDEN_START;
 
 /*
  * OVAL -> S-exp
@@ -52,7 +51,6 @@ int oval_state_to_sexp(void *sess, struct oval_state *state, SEXP_t **out_sexp);
  * S-exp -> OVAL
  */
 int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar);
-OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_SEXP_H */
 

@@ -32,7 +32,6 @@
 
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define OVAL_ENUMERATION_INVALID (-1)
 
@@ -67,6 +66,5 @@ OSCAP_HIDDEN_START;
 
 #define OVAL_VAR_SCHEMA_LOCATION "http://oval.mitre.org/XMLSchema/oval-results-5 oval-results-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd http://oval.mitre.org/XMLSchema/oval-variables-5 oval-variables-schema.xsd"
 
-OSCAP_HIDDEN_END;
 
 #endif				/* OVAL_AGENT_API_IMPL_H_ */

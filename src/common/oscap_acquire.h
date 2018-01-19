@@ -24,7 +24,6 @@
 #include "util.h"
 #include <stdbool.h>
 
-OSCAP_HIDDEN_START;
 
 /**
  * Create an oscap temp dir. (While ideally all the operations are being
@@ -112,7 +111,6 @@ size_t
 write_to_memory_callback(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 // FIXME: SCE engine uses this particular function
-OSCAP_HIDDEN_END;
 
 /**
  * Read characters from pipe, escape '&' and store result
@@ -122,8 +120,6 @@ OSCAP_HIDDEN_END;
  */
 char *oscap_acquire_pipe_to_string(int fd);
 
-OSCAP_HIDDEN_START;
 
-OSCAP_HIDDEN_END;
 
 #endif

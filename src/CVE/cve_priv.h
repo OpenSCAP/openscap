@@ -42,7 +42,6 @@
 /** 
  * @cond INTERNAL
  */
-OSCAP_HIDDEN_START;
  /* @endcond */
 
 /** 
@@ -140,7 +139,6 @@ void cve_entry_export(const struct cve_entry *entry, xmlTextWriterPtr writer);
 /** 
  * @cond INTERNAL
  */
-OSCAP_HIDDEN_END;
  /* @endcond */
 
 #endif

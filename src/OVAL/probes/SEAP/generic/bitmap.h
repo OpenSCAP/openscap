@@ -27,7 +27,6 @@
 #include <stdint.h>
 #include "../../../../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 typedef uint32_t bitmap_cell_t;
 typedef uint16_t bitmap_size_t;
@@ -62,6 +61,5 @@ bitmap_bitn_t bitmap_setfree (bitmap_t *bitmap);
 bitmap_bitn_t bitmap_getfree (bitmap_t *bitmap);
 void      bitmap_free (bitmap_t *bitmap);
 
-OSCAP_HIDDEN_END;
 
 #endif

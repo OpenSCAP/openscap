@@ -29,7 +29,6 @@
 #include "common/util.h"
 #include "source/public/oscap_source.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Apply stylesheet on XML file (represented by oscap_source structure). If xsltfile
@@ -56,5 +55,4 @@ int oscap_source_apply_xslt_path(struct oscap_source *source, const char *xsltfi
  */
 char *oscap_source_apply_xslt_path_mem(struct oscap_source *source, const char *xsltfile, const char **params, const char *path_to_xslt);
 
-OSCAP_HIDDEN_END;
 #endif

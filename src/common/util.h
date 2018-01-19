@@ -36,31 +36,6 @@
 #define __attribute__nonnull__(x) assert((x) != NULL)
 #endif
 
-#ifdef _MSC_VER
-#define OSCAP_HIDDEN_START
-#define OSCAP_HIDDEN_END
-#else
-
- /*
- * Start a list of declarations that should not be available from outside the
- * library.  Must be matched with OSCAP_HIDDEN_END.
- */
-#ifndef OSCAP_HIDDEN_START
-#define OSCAP_HIDDEN_START _Pragma("GCC visibility push(hidden)")
-#endif
-
-/*
- * Start a list of declarations that should not be available from outside the
- * library started by OSCAP_HIDDEN_END.
- */
-#ifndef OSCAP_HIDDEN_END
-#define OSCAP_HIDDEN_END _Pragma("GCC visibility pop")
-#endif
-
-#endif
-
-OSCAP_HIDDEN_START
-
 /**
  * Function pointer to an object destructor.
  */
@@ -366,12 +341,10 @@ char *oscap_trim(char *str);
 char *oscap_vsprintf(const char *fmt, va_list ap);
 
 // FIXME: This is there because of the SCE engine using this particular function
-OSCAP_HIDDEN_END;
 
 /// Print to a newly allocated string using varialbe arguments.
 OSCAP_API char *oscap_sprintf(const char *fmt, ...);
 
-OSCAP_HIDDEN_START;
 
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key
 const char *oscap_strlist_find_value(char ** const kvalues, const char *key);
@@ -406,7 +379,6 @@ char *oscap_expand_ipv6(const char *input);
 #define protect_errno                                                   \
         for (int OSCAP_CONCAT(__e,__LINE__)=errno, OSCAP_CONCAT(__s,__LINE__)=1; OSCAP_CONCAT(__s,__LINE__)--; errno=OSCAP_CONCAT(__e,__LINE__))
 
-OSCAP_HIDDEN_END;
 
 /* The following functions aren't hidden, because they're used by some probes. */
 

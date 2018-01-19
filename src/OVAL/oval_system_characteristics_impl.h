@@ -36,7 +36,6 @@
 #include "adt/oval_smc_impl.h"
 #include "../common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /* sysint */
 typedef void (*oval_sysint_consumer) (struct oval_sysint *, void *);
@@ -82,6 +81,5 @@ int oval_syschar_get_variable_instance_hint(const struct oval_syschar *syschar);
 void oval_syschar_set_variable_instance_hint(struct oval_syschar *syschar, int variable_instance_hint_in);
 const char *oval_syschar_get_id(const struct oval_syschar *syschar);
 
-OSCAP_HIDDEN_END;
 
 #endif

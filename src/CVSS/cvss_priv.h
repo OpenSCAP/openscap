@@ -39,7 +39,6 @@
 #include "public/cvss_score.h"
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define CVSSMAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -103,6 +102,5 @@ bool cvss_impact_export(const struct cvss_impact *imp, xmlTextWriterPtr writer);
 struct cvss_metrics *cvss_metrics_new_from_xml(xmlTextReaderPtr reader);
 bool cvss_metrics_export(const struct cvss_metrics *m, xmlTextWriterPtr writer);
 
-OSCAP_HIDDEN_END;
 
 #endif

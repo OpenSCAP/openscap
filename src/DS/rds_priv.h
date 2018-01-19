@@ -32,7 +32,6 @@
 #include "ds_rds_session.h"
 #include "source/public/oscap_source.h"
 
-OSCAP_HIDDEN_START;
 
 xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name);
 xmlNode *ds_rds_lookup_component(xmlDocPtr doc, const char *container_name, const char *component_name, const char *id);
@@ -40,5 +39,4 @@ int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *containe
 struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file);
 xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id);
 
-OSCAP_HIDDEN_END;
 #endif

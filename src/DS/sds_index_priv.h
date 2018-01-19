@@ -30,9 +30,7 @@
 #include "DS/public/scap_ds.h"
 #include <libxml/xmlreader.h>
 
-OSCAP_HIDDEN_START;
 
 struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader);
 
-OSCAP_HIDDEN_END;
 #endif

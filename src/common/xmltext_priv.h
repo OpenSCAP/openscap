@@ -28,7 +28,6 @@
 #include "util.h"
 #include <libxml/xmlreader.h>
 
-OSCAP_HIDDEN_START;
 
 /**
  * Function that jump to next XML starting element.
@@ -53,6 +52,5 @@ int xmlTextReaderNextNode(xmlTextReaderPtr reader);
  */
 int xmlTextReaderNextElementWE(xmlTextReaderPtr reader, xmlChar* end_tag);
 
-OSCAP_HIDDEN_END;
 
 #endif

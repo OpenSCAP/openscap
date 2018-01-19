@@ -28,7 +28,6 @@
 #include <common/util.h>
 #include <libxml/xmlreader.h>
 
-OSCAP_HIDDEN_START;
 
 #define XCCDF_DC_NAMESPACE	BAD_CAST "http://purl.org/dc/elements/1.1/"
 #define XCCDF_DSIG_NAMESPACE	BAD_CAST "http://w3.org/2000/09/xmldsig#"
@@ -54,6 +53,5 @@ xmlNode *xccdf_ident_to_dom(struct xccdf_ident *ident, xmlDoc *doc, xmlNode *par
 xmlNode *xccdf_setvalue_to_dom(struct xccdf_setvalue *setvalue, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 xmlNode *xccdf_override_to_dom(struct xccdf_override *override, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
 
-OSCAP_HIDDEN_END;
 
 #endif

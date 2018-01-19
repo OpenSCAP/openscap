@@ -31,7 +31,6 @@
 #include "common/util.h"
 #include "public/xccdf_benchmark.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Calculate new XCCDF Score for given xccdf:TestResult
@@ -42,5 +41,4 @@ OSCAP_HIDDEN_START;
  */
 struct xccdf_score *xccdf_result_calculate_score(struct xccdf_result *test_result, struct xccdf_item *benchmark, const char *score_system);
 
-OSCAP_HIDDEN_END;
 #endif

@@ -26,7 +26,6 @@
 
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 /**
  * Internal structure to hold information useful for CPE parser
@@ -68,6 +67,5 @@ bool cpe_parser_ctx_version_gt(struct cpe_parser_ctx *ctx, const char *version);
  */
 OSCAP_SETTER_HEADER(cpe_parser_ctx, const char *, schema_version);
 
-OSCAP_HIDDEN_END;
 
 #endif

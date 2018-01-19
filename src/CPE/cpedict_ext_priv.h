@@ -29,7 +29,6 @@
 #include "cpe_ctx_priv.h"
 #include "common/util.h"
 
-OSCAP_HIDDEN_START;
 
 #define TAG_CPE23_ITEM_STR		"cpe23-item"
 
@@ -56,6 +55,5 @@ int cpe23_item_export(const struct cpe23_item *item, xmlTextWriterPtr writer);
  */
 void cpe23_item_free(struct cpe23_item *item);
 
-OSCAP_HIDDEN_END;
 
 #endif
