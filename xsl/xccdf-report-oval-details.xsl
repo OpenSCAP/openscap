@@ -50,7 +50,14 @@ Authors:
     </xsl:apply-templates>
 </xsl:template>
 
-<xsl:template mode='brief' match='ovalres:definition|ovalres:criteria|ovalres:criterion|ovalres:extend_definition'>
+<xsl:template mode='brief' match='ovalres:extend_definition'>
+    <xsl:param name='result'/>
+    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief'>
+        <xsl:with-param name='result' select='$result'/>
+    </xsl:apply-templates>
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:definition|ovalres:criteria|ovalres:criterion'>
     <xsl:param name='result'/>
     <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
         <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
