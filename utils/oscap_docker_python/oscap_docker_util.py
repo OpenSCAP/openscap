@@ -155,7 +155,8 @@ class OscapHelpers(object):
             sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
 
             # Clean up
-            self._cleanup_by_path(chroot_path)
+            DM = DockerMount("/tmp")
+            self._cleanup_by_path(chroot_path, DM)
 
             sys.exit(1)
 
@@ -186,24 +187,27 @@ class OscapHelpers(object):
         # TODO
         pass
 
-    def _cleanup_by_path(self, path):
+    def _cleanup_by_path(self, path, DM):
         '''
         Cleans up the mounted chroot by umounting it and
         removing the temporary directory
         '''
         # Sometimes when this def is called, path will have 'rootfs'
         # appended.  If it does, strip it and proceed
+        _no_rootfs = path
+        if os.path.basename(path) == 'rootfs':
+            _no_rootfs = os.path.dirname(path)
 
-        _no_rootfs = os.path.dirname(path) if os.path.basename(path) == \
-            'rootfs' else path
-
-        DM = DockerMount("/tmp")
         # umount chroot
         DM.unmount_path(_no_rootfs)
 
         # clean up temporary container
         DM._clean_temp_container_by_path(_no_rootfs)
         os.rmdir(_no_rootfs)
+
+
+def mount_image_filesystem():
+            _tmp_mnt_dir = DM.mount(image)
 
 
 class OscapScan(object):
@@ -276,7 +280,7 @@ class OscapScan(object):
 
         finally:
             # Clean up
-            self.helper._cleanup_by_path(_tmp_mnt_dir)
+            self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
             self._remove_mnt_dir(mnt_dir)
 
     def scan(self, image, scan_args):
@@ -301,5 +305,5 @@ class OscapScan(object):
         sys.stdout.write(self.helper._scan(chroot, image, scan_args))
 
         # Clean up
-        self.helper._cleanup_by_path(_tmp_mnt_dir)
+        self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
         self._remove_mnt_dir(mnt_dir)
