@@ -154,10 +154,6 @@ class OscapHelpers(object):
             sys.stderr.write("Command returned exit code {0}.\n".format(oscap_process.returncode))
             sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
 
-            # Clean up
-            DM = DockerMount("/tmp")
-            self._cleanup_by_path(chroot_path, DM)
-
             sys.exit(1)
 
         sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
@@ -207,7 +203,7 @@ class OscapHelpers(object):
 
 
 def mount_image_filesystem():
-            _tmp_mnt_dir = DM.mount(image)
+    _tmp_mnt_dir = DM.mount(image)
 
 
 class OscapScan(object):
@@ -261,9 +257,9 @@ class OscapScan(object):
             sys.stderr.write(str(e) + "\n")
             return None
 
-        chroot = self._find_chroot_path(_tmp_mnt_dir)
-
         try:
+            chroot = self._find_chroot_path(_tmp_mnt_dir)
+
             # Figure out which RHEL dist is in the chroot
             dist = self.helper._get_dist(chroot, image)
 
@@ -299,11 +295,13 @@ class OscapScan(object):
             sys.stderr.write(str(e) + "\n")
             return None
 
-        chroot = self._find_chroot_path(_tmp_mnt_dir)
+        try:
+            chroot = self._find_chroot_path(_tmp_mnt_dir)
 
-        # Scan the chroot
-        sys.stdout.write(self.helper._scan(chroot, image, scan_args))
+            # Scan the chroot
+            sys.stdout.write(self.helper._scan(chroot, image, scan_args))
 
-        # Clean up
-        self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
-        self._remove_mnt_dir(mnt_dir)
+        finally:
+            # Clean up
+            self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
+            self._remove_mnt_dir(mnt_dir)
