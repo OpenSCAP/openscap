@@ -147,7 +147,11 @@ var KeysEnum = {
     DEFAULT: "default",
     SEVERITY: "severity",
     RESULT: "result",
-    NIST: "NIST SP 800-53 ID",
+    ANNSI: "ANNSI",
+    NIST: "NIST SP 800-53 Revision 4",
+    CUI: "NIST SP 800-171 Revision 1: Controlled Unclassified Information",
+    CJIS: "CJIS: FBI Criminal Justice Information System",
+    HIPAA: "HIPAA: Health Insurance Portability and Accountability Act"
     DISA: "DISA ID",
     PCI_DSS: "PCI DSS Requirement",
     CIS: "CIS Recommendation"
