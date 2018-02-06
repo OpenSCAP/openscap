@@ -45,9 +45,11 @@ Authors:
 <xsl:template mode='brief' match='ovalres:oval_results'>
     <xsl:param name='definition-id' />
     <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+    <ul>
+        <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'>
+            <xsl:with-param name='result' select='$result'/>
+        </xsl:apply-templates>
+    </ul>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:extend_definition'>
@@ -60,30 +62,39 @@ Authors:
 
 <xsl:template mode='brief' match='ovalres:criterion'>
     <xsl:param name='result'/>
-    <div class="logical_tree_leaf">
+    <li>
         <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
             <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
             <xsl:with-param name='result' select='$result'/>
-	    </xsl:apply-templates>
-    </div>
+        </xsl:apply-templates>
+    </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:criteria'>
     <xsl:param name='result'/>
-	<span class="label label-default">
-        <xsl:value-of select='@operator'/>
-    </span>
-    <div class="logical_tree_node" style="padding:10px;border:1px solid silver;">
-        <!-- descend deeper into the logic formula -->
-        <xsl:apply-templates mode='brief'>
-            <xsl:with-param name='result' select='$result'/>
-	    </xsl:apply-templates>
-    </div>
+    <li>
+        <p>
+            <span class="label label-info">
+                <xsl:value-of select='@operator'/>
+            </span>
+            <!-- #160 is nbsp -->&#160;
+            <xsl:choose>
+                <xsl:when test='@result="true"'><span class="label label-success">pass</span></xsl:when>
+                <xsl:otherwise><span class="label label-danger">fail</span></xsl:otherwise>
+            </xsl:choose>
+        </p>
+        <ul>
+            <!-- descend deeper into the logic formula -->
+            <xsl:apply-templates mode='brief'>
+                <xsl:with-param name='result' select='$result'/>
+            </xsl:apply-templates>
+        </ul>
+    </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
     <xsl:param name='result'/>
-	<xsl:apply-templates select="ovalres:criteria" mode='brief'>
+    <xsl:apply-templates select="ovalres:criteria" mode='brief'>
         <xsl:with-param name='result' select='$result'/>
     </xsl:apply-templates>
 </xsl:template>
@@ -96,40 +107,57 @@ Authors:
     <xsl:choose>
         <!-- if there are items to display, go ahead -->
         <xsl:when test='$items'>
-            <h4>
-                <span class="label label-primary">
-                    <xsl:choose>
-                        <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
-                        <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
-                    </xsl:choose>
-                </span><!-- #160 is nbsp -->&#160;
+            <xsl:variable name="test_title">
                 <xsl:choose>
-                    <xsl:when test='@result'><span class="label label-success">passed</span> because of these items:</xsl:when>
-                    <xsl:otherwise><span class="label label-danger">failed</span> because of these items:</xsl:otherwise>
+                    <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
+                    <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
                 </xsl:choose>
-            </h4>
+            </xsl:variable>
+            <p>
+                <strong>
+                    <xsl:value-of select="$test_title"/>
+                </strong>
+                <xsl:choose>
+                    <xsl:when test='@result="true"'><span class="label label-success">pass</span></xsl:when>
+                    <xsl:otherwise><span class="label label-danger">fail</span></xsl:otherwise>
+                </xsl:choose>
+                <!-- #160 is nbsp -->&#160;
+                <a data-toggle="collapse" data-target="#{generate-id($title)}">Show details</a>
+            </p>
+            <div class='panel panel-default panel-collapse collapse' id='{generate-id($title)}'>
+                <div class="panel-body">
+                    <p>
+                        <xsl:value-of select="$test_title"/>
+                        <xsl:choose>
+                            <xsl:when test='@result="true"'> passed </xsl:when>
+                            <xsl:otherwise> failed </xsl:otherwise>
+                        </xsl:choose>
+                        because of these items:
+                    </p>
 
-            <table class="table table-striped table-bordered">
-                <!-- table head (possibly item-type-specific) -->
-                <thead>
-                    <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
-                </thead>
+                    <table class="table table-striped table-bordered">
+                        <!-- table head (possibly item-type-specific) -->
+                        <thead>
+                            <xsl:apply-templates mode='item-head' select='key("oval-items", $items[1]/@item_id)'/>
+                        </thead>
 
-                <!-- table body (possibly item-type-specific) -->
-                <!-- limited to 100 lines -->
-                <tbody>
-                    <xsl:for-each select='$items'>
-                        <xsl:if test="not(position() > 100)">
-                            <xsl:for-each select='key("oval-items", @item_id)'>
-                                <xsl:apply-templates select='.' mode='item-body'/>
+                        <!-- table body (possibly item-type-specific) -->
+                        <!-- limited to 100 lines -->
+                        <tbody>
+                            <xsl:for-each select='$items'>
+                                <xsl:if test="not(position() > 100)">
+                                    <xsl:for-each select='key("oval-items", @item_id)'>
+                                        <xsl:apply-templates select='.' mode='item-body'/>
+                                    </xsl:for-each>
+                                </xsl:if>
                             </xsl:for-each>
-                        </xsl:if>
-                    </xsl:for-each>
-                </tbody>
-            </table>
-            <xsl:if test="count($items) > 100">
-                ... and <xsl:value-of select="count($items)-100"/> more items.
-            </xsl:if>
+                        </tbody>
+                    </table>
+                    <xsl:if test="count($items) > 100">
+                        ... and <xsl:value-of select="count($items)-100"/> more items.
+                    </xsl:if>
+                </div>
+            </div>
         </xsl:when>
         <xsl:otherwise>
             <!-- Applies when tested object doesn't exist or an error occured
@@ -140,68 +168,83 @@ Authors:
             <xsl:variable name='state_info' select='key("oval-statedef",$state_id)'/>
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
-                <h4>
-                    <span class="label label-primary"><xsl:value-of select="$title"/></span><!-- #160 is nbsp -->&#160;
+                <p>
+                    <strong>
+                        <xsl:value-of select="$title"/><!-- #160 is nbsp -->&#160;
+                    </strong>
                     <xsl:choose>
-                        <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because these items were not found:</xsl:when>
-                        <xsl:otherwise><span class="label label-danger">failed</span> because these items were missing:</xsl:otherwise>
+                        <xsl:when test='@result="true"'><span class="label label-success">pass</span></xsl:when>
+                        <xsl:otherwise><span class="label label-danger">fail</span></xsl:otherwise>
                     </xsl:choose>
-                </h4>
-                <h5>Object <strong><abbr>
-                <xsl:if test='$comment'>
-                    <xsl:attribute name='title'>
-                        <xsl:value-of select='$object_info[1]/@comment'/>
-                    </xsl:attribute>
-                </xsl:if>
-                <xsl:value-of select='$object_id'/></abbr></strong> of type
-                <strong><xsl:value-of select='local-name($object_info)'/></strong></h5>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <xsl:apply-templates mode='item-head' select='$object_info[1]'/>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <xsl:variable name='variable_id' select='$object_info/*/@var_ref'/>
-                            <xsl:if test='$variable_id'>
-                                <td>
-                                    <xsl:choose>
-                                        <xsl:when test='count(ovalres:tested_variable)>1'>
-                                            <table>
-                                                <xsl:apply-templates mode='tableintable' select='ovalres:tested_variable'/>
-                                            </table>
-                                        </xsl:when>
-                                        <xsl:when test='count(ovalres:tested_variable)=1'>
-                                            <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
-                                        </xsl:when>
-                                    </xsl:choose>
-                                    <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
-                                </td>
-                            </xsl:if>
-                            <xsl:apply-templates mode='object' select='$object_info[1]'/>
-                        </tr>
-                    </tbody>
-                </table>
-                <xsl:if test="$state_info">
-                    <h5>State <strong><xsl:value-of select='$state_id'/></strong> of type
-                    <strong><xsl:value-of select='local-name($state_info)'/></strong></h5>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <xsl:apply-templates mode='item-head' select='$state_info[1]'/>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
-                                <xsl:if test='$variable_id'>
-                                    <td>
-                                        <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
-                                        <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
-                                    </td>
-                                </xsl:if>
-                                <xsl:apply-templates mode='state' select='$state_info[1]'/>
-                            </tr>
-                       </tbody>
-                    </table>
-                </xsl:if>
+                    <!-- #160 is nbsp -->&#160;
+                    <a data-toggle="collapse" data-target="#{generate-id($title)}">Show details</a>
+                </p>
+                <div class="panel panel-default panel-collapse collapse" id="{generate-id($title)}">
+                    <div class="panel-body">
+                        <p>
+                            <xsl:value-of select="$title"/><!-- #160 is nbsp -->&#160;
+                            <xsl:choose>
+                                <xsl:when test='@result="true"'>passed because these items were not found:</xsl:when>
+                                <xsl:otherwise>failed because these items were missing:</xsl:otherwise>
+                            </xsl:choose>
+                        </p>
+                        <h5>Object <strong><abbr>
+                        <xsl:if test='$comment'>
+                            <xsl:attribute name='title'>
+                                <xsl:value-of select='$object_info[1]/@comment'/>
+                            </xsl:attribute>
+                        </xsl:if>
+                        <xsl:value-of select='$object_id'/></abbr></strong> of type
+                        <strong><xsl:value-of select='local-name($object_info)'/></strong></h5>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <xsl:apply-templates mode='item-head' select='$object_info[1]'/>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <xsl:variable name='variable_id' select='$object_info/*/@var_ref'/>
+                                    <xsl:if test='$variable_id'>
+                                        <td>
+                                            <xsl:choose>
+                                                <xsl:when test='count(ovalres:tested_variable)>1'>
+                                                    <table>
+                                                        <xsl:apply-templates mode='tableintable' select='ovalres:tested_variable'/>
+                                                    </table>
+                                                </xsl:when>
+                                                <xsl:when test='count(ovalres:tested_variable)=1'>
+                                                    <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
+                                                </xsl:when>
+                                            </xsl:choose>
+                                            <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
+                                        </td>
+                                    </xsl:if>
+                                    <xsl:apply-templates mode='object' select='$object_info[1]'/>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <xsl:if test="$state_info">
+                            <h5>State <strong><xsl:value-of select='$state_id'/></strong> of type
+                            <strong><xsl:value-of select='local-name($state_info)'/></strong></h5>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <xsl:apply-templates mode='item-head' select='$state_info[1]'/>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
+                                        <xsl:if test='$variable_id'>
+                                            <td>
+                                                <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
+                                                <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
+                                            </td>
+                                        </xsl:if>
+                                        <xsl:apply-templates mode='state' select='$state_info[1]'/>
+                                    </tr>
+                               </tbody>
+                            </table>
+                        </xsl:if>
+                    </div>
+                </div>
             </xsl:if>
         </xsl:otherwise>
     </xsl:choose>

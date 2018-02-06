@@ -674,11 +674,7 @@ Authors:
             </xsl:choose>
         </xsl:variable>
         <span class="label label-default"><abbr title="OVAL details taken from {$details_origin}">OVAL details</abbr></span>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <xsl:copy-of select="$details"/>
-            </div>
-        </div>
+        <xsl:copy-of select="$details"/>
     </xsl:if>
 </xsl:template>
 
