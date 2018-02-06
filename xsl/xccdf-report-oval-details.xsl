@@ -44,34 +44,25 @@ Authors:
 
 <xsl:template mode='brief' match='ovalres:oval_results'>
     <xsl:param name='definition-id' />
-    <xsl:param name='result'/>
     <ul>
-        <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'>
-            <xsl:with-param name='result' select='$result'/>
-        </xsl:apply-templates>
+        <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'/>
     </ul>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:extend_definition'>
-    <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief'/>
 </xsl:template>
 
 
 <xsl:template mode='brief' match='ovalres:criterion'>
-    <xsl:param name='result'/>
     <li>
         <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
             <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
-            <xsl:with-param name='result' select='$result'/>
         </xsl:apply-templates>
     </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:criteria'>
-    <xsl:param name='result'/>
     <li>
         <p>
             <span class="label label-info">
@@ -85,24 +76,18 @@ Authors:
         </p>
         <ul>
             <!-- descend deeper into the logic formula -->
-            <xsl:apply-templates mode='brief'>
-                <xsl:with-param name='result' select='$result'/>
-            </xsl:apply-templates>
+            <xsl:apply-templates mode='brief' />
         </ul>
     </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
-    <xsl:param name='result'/>
-    <xsl:apply-templates select="ovalres:criteria" mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+    <xsl:apply-templates select="ovalres:criteria" mode='brief'/>
 </xsl:template>
 
 <!-- OVAL items dump -->
 <xsl:template mode='brief' match='ovalres:test'>
     <xsl:param name='title'/>
-    <xsl:param name='result'/>
     <xsl:variable name='items' select='ovalres:tested_item'/>
     <xsl:choose>
         <!-- if there are items to display, go ahead -->
