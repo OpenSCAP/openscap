@@ -99,6 +99,12 @@
   tags:
     - foo
     - bar
+
+- name: XCCDF Value www_value_val3 # promote to variable
+  set_fact:
+    www_value_val3: "dummy value"
+  tags:
+    - always
     </fix>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-export export-name="oval:ssg:var:1" value-id="xccdf_com.example.www_value_val1"/>
