@@ -34,7 +34,6 @@
 #include <errno.h>
 #include <assume.h>
 #include <pcre.h>
-#include <libgen.h>
 
 #include "fsdev.h"
 #include "_probe-api.h"
@@ -1272,7 +1271,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 			if (!strcmp(ofts->ofts_recurse_path_curpth, "/"))
 				break;
 
-			ofts->ofts_recurse_path_curpth = dirname(ofts->ofts_recurse_path_curpth);
+			ofts->ofts_recurse_path_curpth = oscap_dirname(ofts->ofts_recurse_path_curpth);
 			ofts->ofts_recurse_path_curdepth++;
 		}
 
