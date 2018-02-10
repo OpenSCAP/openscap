@@ -80,7 +80,7 @@ bool SEXP_atomic_cas_u64 (volatile uint64_t *ptr, uint64_t old, uint64_t new)
 #endif /* SEXP_ATOMIC_64BITS */
 
 #else
-# warning "Using mutex-based emulation of atomic operations!"
+/* Using mutex-based emulation of atomic operations! */
 # include <pthread.h>
 # define SEXP_ATOMIC_MTX_CNT 17
 
