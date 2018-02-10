@@ -36,7 +36,6 @@
 #include "common/debug_priv.h"
 #include "common/memusage.h"
 #include "common/alloc.h"
-#include "common/assume.h"
 
 #include "probe.h"
 #include "icache.h"
@@ -55,8 +54,12 @@ static void probe_icache_item_setID(SEXP_t *item, SEXP_ID_t item_ID)
 
         /* ((foo_item :id "<int>") ... ) */
 
-        assume_d(item != NULL, /* void */);
-        assume_d(SEXP_listp(item), /* void */);
+	if (item == NULL) {
+		return;
+	}
+	if (!SEXP_listp(item)) {
+		return;
+	}
 
 #if defined(HAVE_ATOMIC_FUNCTIONS)
         local_id = __sync_fetch_and_add(&next_ID, 1);
@@ -165,7 +168,9 @@ static void *probe_icache_worker(void *arg)
         probe_iqpair_t *pair, pair_mem;
         SEXP_ID_t       item_ID;
 
-        assume_d(cache != NULL, NULL);
+	if (cache == NULL) {
+		return NULL;
+	}
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
 # if defined(__APPLE__)
@@ -197,7 +202,9 @@ static void *probe_icache_worker(void *arg)
         }
 
         while(pthread_cond_wait(&cache->queue_notempty, &cache->queue_mutex) == 0) {
-                assume_d(cache->queue_cnt > 0, NULL);
+			if (cache->queue_cnt <= 0) {
+				return NULL;
+			}
         do {
                 dI("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"", cache->queue_cnt, cache->queue_beg);
                 /*
@@ -213,9 +220,11 @@ static void *probe_icache_worker(void *arg)
 		if (cache->queue_beg == cache->queue_max)
 			cache->queue_beg = 0;
 
-		assume_d(cache->queue_cnt == 0 ?
-			 cache->queue_end == cache->queue_beg :
-			 cache->queue_end != cache->queue_beg, NULL);
+		if (cache->queue_cnt == 0 ?
+			cache->queue_end != cache->queue_beg :
+			cache->queue_end == cache->queue_beg) {
+			return NULL;
+		}
 
 
                 dD("Signaling `notfull'");
@@ -238,7 +247,9 @@ static void *probe_icache_worker(void *arg)
                         /*
                          * Handle NOP case (synchronization)
                          */
-                        assume_d(pair->p.cond != NULL, NULL);
+					if (pair->p.cond == NULL) {
+						return NULL;
+					}
 
                         dD("Handling NOP");
 
@@ -334,16 +345,22 @@ fail:
 
 static int __probe_icache_add_nolock(probe_icache_t *cache, SEXP_t *cobj, SEXP_t *item, pthread_cond_t *cond)
 {
-        assume_d((cond == NULL) ^ (item == NULL), -1);
+	if (!((cond == NULL) ^ (item == NULL))) {
+		return -1;
+	}
 retry:
         if (cache->queue_cnt < cache->queue_max) {
                 cache->queue[cache->queue_end].cobj = cobj;
 
                 if (item != NULL) {
-			assume_d(cobj != NULL, -1);
+					if (cobj == NULL) {
+						return -1;
+					}
                         cache->queue[cache->queue_end].p.item = item;
                 } else {
-			assume_d(item == NULL && cobj == NULL, -1);
+					if (item != NULL || cobj != NULL) {
+						return -1;
+					}
                         cache->queue[cache->queue_end].p.cond = cond;
 		}
 
@@ -522,9 +539,9 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	SEXP_t *cobj_content;
 	size_t  cobj_itemcnt;
 
-	assume_d(ctx != NULL, -1);
-	assume_d(ctx->probe_out != NULL, -1);
-	assume_d(item != NULL, -1);
+	if (ctx == NULL || ctx->probe_out == NULL || item == NULL) {
+		return -1;
+	}
 
 	cobj_content = SEXP_listref_nth(ctx->probe_out, 3);
 	cobj_itemcnt = SEXP_list_length(cobj_content);
