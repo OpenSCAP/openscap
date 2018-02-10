@@ -43,6 +43,7 @@
 #include <sexp-types.h>
 #include <helpers.h>
 #include "oscap_export.h"
+#include <common/util.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -467,9 +468,6 @@ OSCAP_API SEXP_list_it *SEXP_list_it_new(const SEXP_t *list);
 OSCAP_API SEXP_t *SEXP_list_it_next(SEXP_list_it *it);
 OSCAP_API void SEXP_list_it_free(SEXP_list_it *it);
 
-#if __STDC_VERSION__ >= 199901L
-# include <common/util.h>
-
 /* TODO: use alloca & softref_r here */
 /**
  * Iterate through a list, assigning each element to a variable.
@@ -490,8 +488,6 @@ OSCAP_API void SEXP_list_it_free(SEXP_list_it *it);
          for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var), (var) = NULL)
 
 #define SEXP_LIST_END (UINT32_MAX - 1)
-
-#endif /* __STDC_VERSION__ >= 199901L */
 
 /*
  * generic
