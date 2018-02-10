@@ -8,7 +8,6 @@ function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 endfunction()
 
 if(ENABLE_PROBES)
-	add_subdirectory("crapi")
 	add_subdirectory("probe")
 
 	if(ENABLE_PROBES_INDEPENDENT)
@@ -25,11 +24,14 @@ if(ENABLE_PROBES)
 		add_oscap_probe(probe_xmlfilecontent "independent/xmlfilecontent.c")
 		target_link_libraries(probe_xmlfilecontent ${LIBXML2_LIBRARIES})
 
-		add_oscap_probe(probe_filehash "independent/filehash.c")
-		target_link_libraries(probe_filehash crapi)
+		if(GCRYPT_FOUND OR NSS_FOUND)
+			add_subdirectory("crapi")
+			add_oscap_probe(probe_filehash "independent/filehash.c")
+			target_link_libraries(probe_filehash crapi)
 
-		add_oscap_probe(probe_filehash58 "independent/filehash58.c")
-		target_link_libraries(probe_filehash58 crapi)
+			add_oscap_probe(probe_filehash58 "independent/filehash58.c")
+			target_link_libraries(probe_filehash58 crapi)
+		endif()
 
 		add_oscap_probe(probe_environmentvariable "independent/environmentvariable.c")
 
