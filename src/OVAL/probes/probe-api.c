@@ -35,6 +35,7 @@
 
 #include <stdarg.h>
 #include <string.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <arpa/inet.h> /* inet_pton() in probe_ent_from_cstr() */
 #include <netinet/in.h>
