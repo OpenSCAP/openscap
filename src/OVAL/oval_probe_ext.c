@@ -30,7 +30,11 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 
 #include "common/_error.h"
