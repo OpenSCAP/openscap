@@ -332,7 +332,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 			nref = SEXP_list_first(probe_in);
 			nval = SEXP_number_newu_32(getpid());
 			pid2 = SEXP_list_new(nref, nval, NULL);
-			SEXP_vfree(pid, nref, nval, NULL);
+			SEXP_free(pid);
+			SEXP_free(nref);
+			SEXP_free(nval);
 			pid = pid2;
 		}
 

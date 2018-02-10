@@ -1860,7 +1860,6 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
         return;
 }
 
-#if defined(NDEBUG)
 void SEXP_free (SEXP_t *s_exp)
 {
         if (s_exp != NULL) {
@@ -1868,33 +1867,6 @@ void SEXP_free (SEXP_t *s_exp)
                 sm_free(s_exp);
         }
         return;
-}
-#else
-void __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
-{
-        if (s_exp != NULL) {
-                __SEXP_free_r(s_exp, file, line, func);
-                sm_free (s_exp);
-        }
-        return;
-}
-#endif
-
-#if defined(NDEBUG)
-void __SEXP_vfree (int n, SEXP_t *s_exp, ...)
-#else
-void __SEXP_vfree (const char *file, uint32_t line, const char *func, int n, SEXP_t *s_exp, ...)
-#endif
-{
-        va_list ap;
-
-        va_start (ap, s_exp);
-
-        for (; n > 1; --n, s_exp = va_arg (ap, SEXP_t *))
-		if (s_exp != NULL)
-			SEXP_free (s_exp);
-
-        va_end (ap);
 }
 
 const char *SEXP_datatype (const SEXP_t *s_exp)

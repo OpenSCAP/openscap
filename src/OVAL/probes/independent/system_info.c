@@ -260,7 +260,10 @@ static int get_ifs(SEXP_t *item)
 #if defined(OS_SOLARIS)
 		item_added = 1;
 #endif
-		SEXP_vfree(attrs, r0, r1, r2, NULL);
+		SEXP_free(attrs);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 	}
 leave2:
         close(fd);
@@ -274,7 +277,10 @@ leave2:
 					 r2 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
 					 NULL);
 		probe_item_ent_add(item, "interface", attrs, NULL);
-		SEXP_vfree(attrs, r0, r1, r2, NULL);
+		SEXP_free(attrs);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 	}
  /* if not able to get info on interfaces, do not fail. */
 	if (rc > 0)
@@ -302,7 +308,11 @@ static int get_ifs(SEXP_t *item)
                                  NULL);
 
         probe_item_ent_add(item, "interface", attrs, NULL);
-        SEXP_vfree (attrs, r0, r1, r2, NULL);
+
+		SEXP_free(attrs);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 
         return 0;
 }

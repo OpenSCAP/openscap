@@ -49,9 +49,17 @@ int main (void)
 		SEXP_free(l2);					\
 		SEXP_free(l3);					\
 								\
-		SEXP_vfree(v1, v2, v3, v4,			\
-			   v5, v6, v7, v8,			\
-			   v9, v10, v11, NULL);			\
+		SEXP_free(v1);						\
+		SEXP_free(v2);						\
+		SEXP_free(v3);						\
+		SEXP_free(v4);						\
+		SEXP_free(v5);						\
+		SEXP_free(v6);						\
+		SEXP_free(v7);						\
+		SEXP_free(v8);						\
+		SEXP_free(v9);						\
+		SEXP_free(v10);						\
+		SEXP_free(v11);						\
 		printf("%s = ", #dst);				\
 		SEXP_fprintfa(stdout, dst);			\
 		printf("\n");					\
@@ -90,9 +98,17 @@ int main (void)
 								\
 		SEXP_free(l2);					\
 								\
-		SEXP_vfree(v1, v2, v3, v4,			\
-			   v5, v6, v7, v8,			\
-			   v9, v10, v11, NULL);			\
+		SEXP_free(v1);						\
+		SEXP_free(v2);						\
+		SEXP_free(v3);						\
+		SEXP_free(v4);						\
+		SEXP_free(v5);						\
+		SEXP_free(v6);						\
+		SEXP_free(v7);						\
+		SEXP_free(v8);						\
+		SEXP_free(v9);						\
+		SEXP_free(v10);						\
+		SEXP_free(v11);						\
 		printf("%s = ", #dst);				\
 		SEXP_fprintfa(stdout, dst);			\
 		printf("\n");					\

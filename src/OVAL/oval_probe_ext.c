@@ -632,7 +632,9 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                     r3 = SEXP_string_newf ("sysinfo:0"),
                                     NULL);
 
-                SEXP_vfree (r1, r2, r3, NULL);
+				SEXP_free(r1);
+				SEXP_free(r2);
+				SEXP_free(r3);
                 s_obj = SEXP_list_new (r0, NULL);
                 SEXP_free (r0);
         }
@@ -645,7 +647,8 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
 
 	r1 = probe_cobj_get_items(r0);
 	s_sinf = SEXP_list_first(r1);
-	SEXP_vfree(r0, r1, NULL);
+	SEXP_free(r0);
+	SEXP_free(r1);
 
 	if (s_sinf == NULL)
 		return (-1);

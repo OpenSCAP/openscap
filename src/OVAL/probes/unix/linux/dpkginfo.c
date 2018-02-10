@@ -181,7 +181,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                 }
         }
 
-        SEXP_vfree(ent, NULL);
+	SEXP_free(ent);
         free(request_st);
 
         return (0);
