@@ -15,6 +15,7 @@ if(ENABLE_PROBES)
 
 		add_oscap_probe(probe_family "independent/family.c")
 
+		if(NOT WIN32)
 		add_oscap_probe(probe_textfilecontent "independent/textfilecontent.c")
 
 		add_oscap_probe(probe_textfilecontent54 "independent/textfilecontent54.c")
@@ -51,6 +52,7 @@ if(ENABLE_PROBES)
 			add_oscap_probe(probe_ldap57 "independent/ldap57.c")
 			target_include_directories(probe_ldap57 PRIVATE ${LDAP_INCLUDE_DIRS})
 			target_link_libraries(probe_ldap57 ${LDAP_LIBRARIES})
+		endif()
 		endif()
 	endif()
 
