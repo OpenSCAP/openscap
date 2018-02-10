@@ -156,8 +156,7 @@ option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine 
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" TRUE)
-# TODO: We probably only want these on UNIX systems
-option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" TRUE)
+option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" ${UNIX})
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
 option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX})
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
