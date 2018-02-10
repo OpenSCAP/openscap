@@ -36,8 +36,12 @@
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#endif
 
 #include "common/debug_priv.h"
 #include "entcmp.h"
