@@ -25,7 +25,11 @@
 #define SCH_PIPE_H
 
 #include <sys/types.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include "../../../common/util.h"
 
 

@@ -29,7 +29,11 @@
 #include <assert.h>
 #include <time.h>
 #include <sys/types.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "public/sm_alloc.h"
 #include "common.h"

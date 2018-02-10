@@ -32,7 +32,11 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <sys/uio.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "common/debug_priv.h"
 #include "strbuf.h"
