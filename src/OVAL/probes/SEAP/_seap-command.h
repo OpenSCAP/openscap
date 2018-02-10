@@ -26,9 +26,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#if defined(SEAP_THREAD_SAFE)
-# include <pthread.h>
-#endif
+#include <pthread.h>
 
 #include "public/seap-command.h"
 #include "_sexp-types.h"
