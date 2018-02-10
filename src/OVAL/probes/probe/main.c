@@ -31,7 +31,6 @@
 #include <signal.h>
 #include <pthread.h>
 #include <errno.h>
-#include <libgen.h>
 #include <seap.h>
 #include "common/bfind.h"
 #include "probe.h"
