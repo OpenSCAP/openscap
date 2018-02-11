@@ -78,6 +78,7 @@
 #cmakedefine HAVE_ACL_LIBACL_H
 #cmakedefine HAVE_SYS_ACL_H
 #cmakedefine HAVE_GETOPT_H
+#cmakedefine HAVE_UIO_H
 
 #cmakedefine HAVE_STRSEP
 #cmakedefine HAVE_FLOCK
