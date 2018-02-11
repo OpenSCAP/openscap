@@ -40,6 +40,7 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <in6addr.h>
+#include <ws2tcpip.h>
 #else
 #include <arpa/inet.h> /* inet_pton() in probe_ent_from_cstr() */
 #include <netinet/in.h>
