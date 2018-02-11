@@ -280,7 +280,6 @@ int main(int argc, char *argv[])
 		fail(errno, "pthread_create(probe_signal_handler)", __LINE__ - 1);
 
 	pthread_attr_destroy(&th_attr);
-#endif
 
 	probe_offline_mode();
 
@@ -321,6 +320,7 @@ int main(int argc, char *argv[])
 	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
 		OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_RPMDB;
 	}
+#endif
 
 	/*
 	 * Create input handler (detached)
