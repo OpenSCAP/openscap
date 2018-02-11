@@ -31,7 +31,9 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <limits.h>
+#ifdef HAVE_UIO_H
 #include <sys/uio.h>
+#endif
 #ifdef _WIN32
 #include <io.h>
 #else
@@ -282,6 +284,7 @@ size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
 
 ssize_t strbuf_write (strbuf_t *buf, int fd)
 {
+#ifdef HAVE_UIO_H
         struct strblk *cur;
         ssize_t rsize, wsize;
 
@@ -342,4 +345,18 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 	dD("total bytes written: %zu", (size_t)rsize);
 
         return (rsize);
+#else
+	struct strblk *cur;
+	size_t size;
+
+	cur = buf->beg;
+	size = 0;
+
+	while (cur != NULL) {
+		size += write(fd, cur->data, cur->next == NULL ? buf->blkoff : cur->size);
+		cur = cur->next;
+	}
+
+	return (size);
+#endif
 }
