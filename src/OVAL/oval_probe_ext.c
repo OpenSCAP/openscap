@@ -1010,7 +1010,11 @@ int oval_probe_ext_init(oval_pext_t *pext)
 				continue;
 			}
 
-			if (!S_ISREG(st.st_mode)) {
+#ifdef _WIN32
+		if (!(st.st_mode & _S_IFREG)) {
+#else
+		if (!S_ISREG(st.st_mode)) {
+#endif
 				dD("skipped: %s (not a regular file)", OSCAP_GSYM(__probe_meta)[i].stype);
 				continue;
 			}
