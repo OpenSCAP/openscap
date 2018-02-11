@@ -948,15 +948,29 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
 SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...)
 {
 	va_list alist;
-	int len;
-	char *cstr;
+	int len = 0;
 	SEXP_t *lvl, *str, *msg;
+	char *cstr = NULL;
 
 	va_start(alist, fmt);
-	len = vasprintf(&cstr, fmt, alist);
+	len = vsnprintf(cstr, len, fmt, alist);
 	va_end(alist);
-	if (len < 0)
+
+	if (len < 0) {
 		return NULL;
+	}
+
+	len++;
+	cstr = malloc(len);
+
+	va_start(alist, fmt);
+	len = vsnprintf(cstr, len, fmt, alist);
+	va_end(alist);
+
+	if (len < 0) {
+		free(cstr);
+		return NULL;
+	}
 
 	dI("%s", cstr);
 	str = SEXP_string_new(cstr, len);

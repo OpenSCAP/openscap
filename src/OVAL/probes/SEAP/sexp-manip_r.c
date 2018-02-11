@@ -243,15 +243,28 @@ SEXP_t *SEXP_string_newf_r(SEXP_t *sexp_mem, const char *format, ...)
 SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap)
 {
         SEXP_val_t v_dsc;
-        char      *v_string;
-        int        v_strlen;
+	char *v_string = NULL;
+	int v_strlen = 0;
+	va_list copy;
 
         if (sexp_mem == NULL) {
                 errno = EFAULT;
                 return (NULL);
         }
 
-        v_strlen = vasprintf (&v_string, format, ap);
+	va_copy(copy, ap);
+	v_strlen = vsnprintf(v_string, v_strlen, format, copy);
+	va_end(copy);
+	if (v_strlen < 0) {
+		return NULL;
+	}
+	v_strlen++; /* For '\0' */
+	v_string = malloc(v_strlen);
+	v_strlen = vsnprintf(v_string, v_strlen, format, ap);
+	if (v_strlen < 0) {
+		free(v_string);
+		return NULL;
+	}
 
         if (v_strlen < 0) {
                 /* TODO: handle this */
