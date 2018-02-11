@@ -146,7 +146,9 @@ probe_worker_t *probe_worker_new(void)
 	probe_worker_t *pth = oscap_talloc(probe_worker_t);
 
 	pth->sid = 0;
+#ifndef _WIN32
 	pth->tid = 0;
+#endif
 	pth->msg_handler = NULL;
 	pth->msg = NULL;
 
