@@ -40,7 +40,6 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <fcntl.h>
-#include <common/assume.h>
 #include <common/_error.h>
 #include <errno.h>
 
@@ -208,9 +207,14 @@ int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
         pid_t pid;
         int   pfd[2] = { -1, -1 };
 
-        assume_r (desc != NULL, -1, errno = EFAULT;);
-        assume_r (uri  != NULL, -1, errno = EFAULT;);
-        assume_r (desc->scheme_data == NULL, -1, errno = EALREADY;);
+	if (desc == NULL || uri == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	if (desc->scheme_data != NULL) {
+		errno = EALREADY;
+		return -1;
+	}
 
         data = (sch_pipedata_t *) sm_talloc (sch_pipedata_t);
         data->execpath = get_exec_path (uri, flags);
@@ -293,13 +297,16 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
         sch_pipedata_t *data;
 	ssize_t         ret;
 
-        assume_d (desc != NULL, -1, errno = EFAULT;);
-        assume_d (buf  != NULL, -1, errno = EFAULT;);
-
-        data = (sch_pipedata_t *)desc->scheme_data;
-
-        assume_r (data != NULL, -1, errno = EBADF;);
 	/* TODO: This code is duplicated in every supported operation in the SEAP pipe schema. */
+	if (desc == NULL || buf == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	data = (sch_pipedata_t *)desc->scheme_data;
+	if (data == NULL) {
+		errno = EBADF;
+		return -1;
+	}
 
         if (check_child (data->pid, 0) == 0) {
                 if ((ret = read (data->pfd, buf, len)) == 0)
@@ -320,12 +327,15 @@ ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 #else
         sch_pipedata_t *data;
 
-        assume_d (desc != NULL, -1, errno = EFAULT;);
-        assume_d (buf  != NULL, -1, errno = EFAULT;);
-
-        data = (sch_pipedata_t *)desc->scheme_data;
-
-        assume_r (data != NULL, -1, errno = EBADF;);
+	if (desc == NULL || buf == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	data = (sch_pipedata_t *)desc->scheme_data;
+	if (data == NULL) {
+		errno = EBADF;
+		return -1;
+	}
 
         if (check_child (data->pid, 0) == 0)
                 return write (data->pfd, buf, len);
@@ -342,12 +352,15 @@ ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 #else
         sch_pipedata_t *data;
 
-        assume_d (desc != NULL, -1, errno = EFAULT;);
-        assume_d (sexp != NULL, -1, errno = EFAULT;);
-
-        data = (sch_pipedata_t *)desc->scheme_data;
-
-        assume_r (data != NULL, -1, errno = EBADF;);
+	if (desc == NULL || sexp == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	data = (sch_pipedata_t *)desc->scheme_data;
+	if (data == NULL) {
+		errno = EBADF;
+		return -1;
+	}
 
         if (check_child (data->pid, 0) != 0)
                 return (-1);
@@ -379,11 +392,15 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
         int try;
         sch_pipedata_t *data;
 
-        assume_d (desc != NULL, -1, errno = EFAULT;);
-
-        data = (sch_pipedata_t *)desc->scheme_data;
-
-        assume_r (data != NULL, -1, errno = EBADF;);
+	if (desc == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	data = (sch_pipedata_t *)desc->scheme_data;
+	if (data == NULL) {
+		errno = EBADF;
+		return -1;
+	}
 
         kill (data->pid, SIGTERM);
 
@@ -430,11 +447,15 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
 #else
         sch_pipedata_t *data;
 
-        assume_d (desc != NULL, -1, errno = EFAULT;);
-
-        data = (sch_pipedata_t *)desc->scheme_data;
-
-        assume_r (data != NULL, -1, errno = EBADF;);
+	if (desc == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	data = (sch_pipedata_t *)desc->scheme_data;
+	if (data == NULL) {
+		errno = EBADF;
+		return -1;
+	}
 
         if (check_child (data->pid, 0) == 0) {
                 fd_set *wptr, *rptr;
@@ -465,8 +486,10 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
                         tv_ptr = &tv;
                 }
 
-                assume_d (!(wptr == NULL && rptr == NULL), -1, errno = EINVAL;);
-                assume_d (!(wptr != NULL && rptr != NULL), -1, errno = EINVAL;);
+		if ((wptr == NULL && rptr == NULL) || (wptr != NULL && rptr != NULL)) {
+			errno = EINVAL;
+			return -1;
+		}
 
                 switch (select (data->pfd + 1, rptr, wptr, NULL, tv_ptr)) {
                 case -1:
