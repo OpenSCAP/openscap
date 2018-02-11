@@ -50,10 +50,6 @@
 
 #define __ERRBUF_SIZE 128
 
-#if (defined(__SVR4) && defined (__sun)) || defined(_AIX)
-#define __STRING(x)     #x
-#endif
-
 static oval_pdtbl_t *oval_pdtbl_new(void);
 static void          oval_pdtbl_free(oval_pdtbl_t *table);
 static int           oval_pdtbl_add(oval_pdtbl_t *table, oval_subtype_t type, int sd, const char *uri);
@@ -667,15 +663,15 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                 SEXP_t *val;                                            \
                 char    buf[128+1];                                     \
                                                                         \
-                val = probe_obj_getentval (obj, __STRING(name), 1);     \
+                val = probe_obj_getentval (obj, #name, 1);     \
                                                                         \
                 if (val == NULL) {                                      \
-                        dI("No entity or value: %s", __STRING(name)); \
+                        dI("No entity or value: %s", #name); \
                         goto fail;                                      \
                 }                                                       \
                                                                         \
                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                        dI("Value too large: %s", __STRING(name));    \
+                        dI("Value too large: %s", #name);    \
                         SEXP_free (val);                                \
                         goto fail;                                      \
                 }                                                       \
@@ -703,15 +699,15 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                 SEXP_t *val;                            \
                                 char    buf[128+1];                     \
                                                                         \
-                                val = probe_ent_getattrval (ent, __STRING(name)); \
+                                val = probe_ent_getattrval (ent, #name); \
                                                                         \
                                 if (val == NULL) {                      \
-                                        dI("No value: %s", __STRING(name)); \
+                                        dI("No value: %s", #name); \
                                         goto fail;                      \
                                 }                                       \
                                                                         \
                                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                                        dI("Value too large: %s", __STRING(name)); \
+                                        dI("Value too large: %s", #name); \
                                         SEXP_free (val);                \
                                         goto fail;                      \
                                 }                                       \
