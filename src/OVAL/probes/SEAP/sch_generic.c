@@ -30,13 +30,14 @@
 #include <stddef.h>
 #ifdef _WIN32
 #include <io.h>
+#include <WinSock2.h>
 #else
 #include <unistd.h>
+#include <sys/select.h>
+#include <sys/time.h>
 #endif
 #include <errno.h>
 #include <sys/types.h>
-#include <sys/time.h>
-#include <sys/select.h>
 
 #include "public/sm_alloc.h"
 #include "public/strbuf.h"
