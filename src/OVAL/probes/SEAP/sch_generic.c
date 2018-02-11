@@ -35,7 +35,6 @@
 #endif
 #include <errno.h>
 #include <sys/types.h>
-#include <sys/uio.h>
 #include <sys/time.h>
 #include <sys/select.h>
 
