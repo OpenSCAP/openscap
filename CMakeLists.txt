@@ -264,6 +264,10 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
+if (MSVC)
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)
+endif()
 
 if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")
