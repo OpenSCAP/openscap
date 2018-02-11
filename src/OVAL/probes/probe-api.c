@@ -1695,11 +1695,11 @@ SEXP_t *probe_entval_from_cstr(oval_datatype_t type,
 			}
 			break;
 		case 4:
-			if (strncasecmp(value, "true", 4) == 0)
+			if (oscap_strncasecmp(value, "true", 4) == 0)
 				ent_val = SEXP_number_newb(true);
 			break;
 		case 5:
-			if (strncasecmp(value, "false", 5) == 0)
+			if (oscap_strncasecmp(value, "false", 5) == 0)
 				ent_val = SEXP_number_newb(false);
 			break;
 		}
