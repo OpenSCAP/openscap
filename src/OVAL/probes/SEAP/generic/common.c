@@ -77,10 +77,10 @@ int xstrncoll (const char *a, size_t alen,
 
 void xsrandom (unsigned long seed)
 {
-        srandom (seed);
+	srand(seed);
 }
 
 long xrandom (void)
 {
-        return random ();
+	return rand();
 }
