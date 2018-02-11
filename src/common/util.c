@@ -300,3 +300,13 @@ char *oscap_strtok_r(char *str, const char *delim, char **saveptr)
 	return strtok_r(str, delim, saveptr);
 #endif
 }
+
+char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
+{
+#ifdef _WIN32
+	strerror_s(buf, buflen, errnum);
+	return buf;
+#else
+	return strerror_r(errnum, buf, buflen);
+#endif
+}

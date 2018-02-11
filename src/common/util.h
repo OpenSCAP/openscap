@@ -464,4 +464,12 @@ OSCAP_API int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
  */
 OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
 
+/**
+ * Get string describing error number
+ * @param errnum error number
+ * @param buf buffer to hold error string
+ * @param buflen size of buffer
+ */
+OSCAP_API char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
+
 #endif				/* OSCAP_UTIL_H_ */
