@@ -228,7 +228,11 @@ int main(int argc, char *argv[])
 	 * Initialize SEAP stuff
 	 */
 	probe.SEAP_ctx = SEAP_CTX_new();
-	probe.sd       = SEAP_openfd2(probe.SEAP_ctx, STDIN_FILENO, STDOUT_FILENO, 0);
+#ifdef _WIN32
+	probe.sd = SEAP_openfd2(probe.SEAP_ctx, _fileno(stdin), _fileno(stdout), 0);
+#else
+	probe.sd = SEAP_openfd2(probe.SEAP_ctx, STDIN_FILENO, STDOUT_FILENO, 0);
+#endif
 
 	if (probe.sd < 0)
 		fail(errno, "SEAP_openfd2", __LINE__ - 3);
