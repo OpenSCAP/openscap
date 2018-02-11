@@ -30,9 +30,13 @@
 #include <string.h>
 #include <limits.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <WinSock2.h>
+#else
 #include <sys/wait.h>
 #include <sys/socket.h>
 #include <sys/select.h>
+#endif
 #include <sys/types.h>
 #include <signal.h>
 #include <fcntl.h>
@@ -166,6 +170,10 @@ fail:
 
 static int check_child (pid_t pid, int waitf)
 {
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         int status = -1;
 
         switch (pid = waitpid (pid, &status, waitf ? 0 : WNOHANG)) {
@@ -187,10 +195,15 @@ static int check_child (pid_t pid, int waitf)
                 }
         }
         return (1);
+#endif
 }
 
 int sch_pipe_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
 {
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         sch_pipedata_t *data;
         pid_t pid;
         int   pfd[2] = { -1, -1 };
@@ -256,6 +269,7 @@ fail1:
                 sm_free (data);
         }
         return (-1);
+#endif
 }
 
 int sch_pipe_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
@@ -282,6 +296,10 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
         assume_r (data != NULL, -1, errno = EBADF;);
 
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         if (check_child (data->pid, 0) == 0) {
                 if ((ret = read (data->pfd, buf, len)) == 0)
 			if (check_child(data->pid, 0))
@@ -290,6 +308,7 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 		return (ret);
         } else
                 return (-1);
+#endif
 }
 
 ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
@@ -303,10 +322,15 @@ ssize_t sch_pipe_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 
         assume_r (data != NULL, -1, errno = EBADF;);
 
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         if (check_child (data->pid, 0) == 0)
                 return write (data->pfd, buf, len);
         else
                 return (-1);
+#endif
 }
 
 ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
@@ -320,6 +344,10 @@ ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 
         assume_r (data != NULL, -1, errno = EBADF;);
 
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         if (check_child (data->pid, 0) != 0)
                 return (-1);
         else {
@@ -338,6 +366,7 @@ ssize_t sch_pipe_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 
                 return (ret);
         }
+#endif
 }
 
 int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
@@ -351,6 +380,10 @@ int sch_pipe_close (SEAP_desc_t *desc, uint32_t flags)
 
         assume_r (data != NULL, -1, errno = EBADF;);
 
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         kill (data->pid, SIGTERM);
 
         for (try = 0; try < 3; ++try) {
@@ -385,6 +418,7 @@ clean:
         desc->scheme_data = NULL;
 
         return (0);
+#endif
 }
 
 int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
@@ -397,6 +431,10 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
 
         assume_r (data != NULL, -1, errno = EBADF;);
 
+#ifdef _WIN32
+	errno = EOPNOTSUPP;
+	return (-1);
+#else
         if (check_child (data->pid, 0) == 0) {
                 fd_set *wptr, *rptr;
                 fd_set  fset;
@@ -441,4 +479,5 @@ int sch_pipe_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags
         }
 
         return (-1);
+#endif
 }
