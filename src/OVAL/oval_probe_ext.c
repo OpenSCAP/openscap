@@ -1141,13 +1141,14 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 	switch (dsc->scheme) {
 	case SCH_PIPE:
 	{
+#ifdef _WIN32
+		dE("Operation oval_probe_ext_abort is not supported on Windows!");
+#else
 		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
-
 		dI("Sending SIGUSR1 to pid=%u", pipeinfo->pid);
-
 		if (kill(pipeinfo->pid, SIGUSR1) != 0)
 			dW("kill(SIGUSR1, %u): %u, %s", errno, strerror(errno));
-
+#endif
 		break;
 	}
 	default:

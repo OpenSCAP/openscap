@@ -22,6 +22,8 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
+#ifndef _WIN32
 void *probe_signal_handler(void *arg);
+#endif
 
 #endif /* SIGNAL_H */

@@ -179,7 +179,9 @@ static void preload_libraries_before_chroot()
 int main(int argc, char *argv[])
 {
 	pthread_attr_t th_attr;
+#ifndef _WIN32
 	sigset_t       sigmask;
+#endif
 	probe_t        probe;
 	char *rootdir = NULL;
 
@@ -189,7 +191,9 @@ int main(int argc, char *argv[])
 	oscap_set_verbose(verbosity_level, verbose_log_file, true);
 
 	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
+#ifndef _WIN32
 	                                  1 + // signal thread
+#endif
 	                                  1 + // input thread
 	                                  1 + // icache thread
 	                                  0)) != 0)
@@ -197,6 +201,7 @@ int main(int argc, char *argv[])
 		fail(errno, "pthread_barrier_init", __LINE__ - 6);
 	}
 
+#ifndef _WIN32
 	/*
 	 * Block signals, any signals received will be
 	 * handled by the signal handler thread.
@@ -212,6 +217,7 @@ int main(int argc, char *argv[])
 
 	if (pthread_sigmask(SIG_BLOCK, &sigmask, NULL))
 		fail(errno, "pthread_sigmask", __LINE__ - 1);
+#endif
 
 	probe.flags = 0;
 	probe.pid   = getpid();
@@ -257,6 +263,7 @@ int main(int argc, char *argv[])
 	OSCAP_GSYM(probe_optdef) = probe.option;
 	OSCAP_GSYM(probe_optdef_count) = probe.optcnt;
 
+#ifndef _WIN32
 	/*
 	 * Create signal handler
 	 */
@@ -269,6 +276,7 @@ int main(int argc, char *argv[])
 		fail(errno, "pthread_create(probe_signal_handler)", __LINE__ - 1);
 
 	pthread_attr_destroy(&th_attr);
+#endif
 
 	probe_offline_mode();
 
@@ -323,11 +331,13 @@ int main(int argc, char *argv[])
 
 	pthread_attr_destroy(&th_attr);
 
+#ifndef _WIN32
 	/*
 	 * Wait until the signal handler exits
 	 */
 	if (pthread_join(probe.th_signal, NULL))
 		fail(errno, "pthread_join", __LINE__ - 1);
+#endif
 
 	/*
 	 * Wait for the input_handler thread
