@@ -648,13 +648,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                              if (isnextexp (cur_c))
                                                      goto L_NUMBER_stage3;
                                              else {
-                                                     switch (cur_c) {
-                                                     case 'e':
-                                                     case 'E':
-                                                             ++e_dsc.p_explen;
-                                                             goto L_NUMBER_final_exp;
-                                                     default:
-                                                             goto L_NUMBER_invalid;
+                                                     if (cur_c == 'e' || cur_c == 'E') {
+                                                            ++e_dsc.p_explen;
+                                                            goto L_NUMBER_final_exp;
+                                                     } else {
+                                                            goto L_NUMBER_invalid;
                                                      }
                                              }
                                      }
