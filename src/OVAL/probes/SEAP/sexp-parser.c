@@ -506,7 +506,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 if (__predict(cur_c < 128, 1))
                         goto laddr(cur_c);
                 else
-                        goto laddr(128);
+                        goto L_INVALID;
                 /* NOTREACHED */
         L_CHAR:
                 e_dsc.p_label = SEXP_LABELNUM_CHAR;
