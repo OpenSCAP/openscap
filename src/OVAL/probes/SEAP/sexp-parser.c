@@ -504,10 +504,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 assume_r (e_dsc.p_label != 128, NULL);
 
                 goto laddr(e_dsc.p_label);
-        }
-
-        if (e_dsc.s_exp != NULL)
+        } else if (e_dsc.s_exp != NULL) {
                 goto L_NO_SEXP_ALLOC;
+        }
 
         for (;;) {
                 /*
