@@ -643,7 +643,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                 goto laddr(e_dsc.p_label);
         } else if (e_dsc.s_exp != NULL) {
-                goto L_NO_SEXP_ALLOC;
+                dfa_state = S_NO_SEXP_ALLOC;
         }
 
         for (;;) {
@@ -656,7 +656,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         assume_d (e_dsc.s_exp == NULL, NULL); /* no leaks */
                         e_dsc.s_exp = SEXP_new ();
 
+                        /* fall through */
                 L_NO_SEXP_ALLOC:
+                case S_NO_SEXP_ALLOC:
+                        dfa_state = S_START;
                         if (e_dsc.p_bufoff >= spb_len)
                                 goto SKIP_LOOP;
 
