@@ -697,12 +697,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 break;
         L_NUMBER_stage2:
 
-                switch (cur_c) {
-                case '.':
+                if (cur_c == '.') {
                         ++e_dsc.p_explen;
                         goto L_NUMBER_final_flt;
-                case 'e':
-                case 'E':
+                }
+                if (cur_c == 'e' || cur_c == 'E') {
                         ++e_dsc.p_explen;
                 L_NUMBER_final_exp:
                         e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
