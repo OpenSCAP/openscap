@@ -649,59 +649,59 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         for (;;) {
                 switch (dfa_state) {
                 case S_START:
-                /*
-                 * Allocate an empty S-exp. The value or type will be assigned in the
-                 * subparser.
-                 */
-                assume_d (e_dsc.s_exp == NULL, NULL); /* no leaks */
-                e_dsc.s_exp = SEXP_new ();
+                        /*
+                         * Allocate an empty S-exp. The value or type will be assigned in the
+                         * subparser.
+                         */
+                        assume_d (e_dsc.s_exp == NULL, NULL); /* no leaks */
+                        e_dsc.s_exp = SEXP_new ();
 
-        L_NO_SEXP_ALLOC:
-                if (e_dsc.p_bufoff >= spb_len)
-                        goto SKIP_LOOP;
+                L_NO_SEXP_ALLOC:
+                        if (e_dsc.p_bufoff >= spb_len)
+                                goto SKIP_LOOP;
 
-                ret_p = SEXP_PRET_EUNDEF;
-                cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
-        L_NO_CURC_UPDATE:
-                assume_d (e_dsc.s_exp != NULL, NULL);
-                assume_d (ret_p == SEXP_PRET_EUNDEF, NULL);
-                assume_d (cur_c != 128, NULL);
-                /*
-                 * Jump to subparser block. cur_c holds the first character of the next
-                 * expression.
-                 */
-                if (__predict(cur_c < 128, 1))
-                        goto laddr(cur_c);
-                else
-                        goto L_INVALID;
-                /* NOTREACHED */
-        L_CHAR:
-                e_dsc.p_label = SEXP_LABELNUM_CHAR;
+                        ret_p = SEXP_PRET_EUNDEF;
+                        cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
+                L_NO_CURC_UPDATE:
+                        assume_d (e_dsc.s_exp != NULL, NULL);
+                        assume_d (ret_p == SEXP_PRET_EUNDEF, NULL);
+                        assume_d (cur_c != 128, NULL);
+                        /*
+                         * Jump to subparser block. cur_c holds the first character of the next
+                         * expression.
+                         */
+                        if (__predict(cur_c < 128, 1))
+                                goto laddr(cur_c);
+                        else
+                                goto L_INVALID;
+                        /* NOTREACHED */
+                L_CHAR:
+                        e_dsc.p_label = SEXP_LABELNUM_CHAR;
 
-                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SI](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        goto SKIP_LOOP;
-                goto L_SEXP_ADD;
-        L_CHAR_FIXEDLEN:
-                e_dsc.p_label = SEXP_LABELNUM_CHAR_FIXED;
-
-                if (e_dsc.p_bufoff + e_dsc.p_explen > spb_len) {
-                        ret_p = SEXP_PRET_EUNFIN;
-                        goto SKIP_LOOP;
-                } else {
-                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING](&e_dsc)) != SEXP_PRET_SUCCESS)
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SI](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
                         goto L_SEXP_ADD;
-                }
-                /* NOTREACHED */
-        L_DQUOTE:
-                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_DQ](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        goto SKIP_LOOP;
-                goto L_SEXP_ADD;
-        L_SQUOTE:
-                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SQ](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        goto SKIP_LOOP;
-                goto L_SEXP_ADD;
-        L_DOT:
+                L_CHAR_FIXEDLEN:
+                        e_dsc.p_label = SEXP_LABELNUM_CHAR_FIXED;
+
+                        if (e_dsc.p_bufoff + e_dsc.p_explen > spb_len) {
+                                ret_p = SEXP_PRET_EUNFIN;
+                                goto SKIP_LOOP;
+                        } else {
+                                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                        goto SKIP_LOOP;
+                                goto L_SEXP_ADD;
+                        }
+                        /* NOTREACHED */
+                L_DQUOTE:
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_DQ](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                goto SKIP_LOOP;
+                        goto L_SEXP_ADD;
+                L_SQUOTE:
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SQ](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                goto SKIP_LOOP;
+                        goto L_SEXP_ADD;
+                L_DOT:
 
 #define SEXP_NUMSTAGE_CONT_INT   0
 #define SEXP_NUMSTAGE_FINAL_EXP  1
@@ -709,611 +709,596 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 #define SEXP_NUMSTAGE_FINAL_FLT  3
 #define SEXP_NUMSTAGE_3          4
 
-                if (e_dsc.p_bufoff + 1 < spb_len) {
-                        ++e_dsc.p_explen;
-
-                        if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen))) {
-                                e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
-                                e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
-                                goto L_NUMBER_final_flt;
-                        } else
-                                goto L_CHAR;
-                } else {
-                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
-                                goto L_CHAR;
-                        else {
-                                ret_p = SEXP_PRET_EUNFIN;
-                                goto SKIP_LOOP;
-                        }
-                }
-                /* NOTREACHED */
-        L_PLUS:
-        L_MINUS:
-                if (e_dsc.p_bufoff + 1 < spb_len) {
-                        register uint8_t tmp_c;
-
-                        tmp_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 1);
-
-                        if (isdigit (tmp_c)) {
-                                e_dsc.p_numclass = SEXP_NUMCLASS_INT;
-                                e_dsc.p_numstage = SEXP_NUMSTAGE_CONT_INT;
-                                e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
-
+                        if (e_dsc.p_bufoff + 1 < spb_len) {
                                 ++e_dsc.p_explen;
 
-                                goto L_NUMBER_cont_int;
-                        } else if (tmp_c == '.') {
-                                if (e_dsc.p_bufoff + 2 < spb_len) {
-                                        ++e_dsc.p_explen;
+                                if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen))) {
+                                        e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
+                                        e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
+                                        goto L_NUMBER_final_flt;
+                                } else
+                                        goto L_CHAR;
+                        } else {
+                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                        goto L_CHAR;
+                                else {
+                                        ret_p = SEXP_PRET_EUNFIN;
+                                        goto SKIP_LOOP;
+                                }
+                        }
+                        /* NOTREACHED */
+                L_PLUS:
+                L_MINUS:
+                        if (e_dsc.p_bufoff + 1 < spb_len) {
+                                register uint8_t tmp_c;
+
+                                tmp_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 1);
+
+                                if (isdigit (tmp_c)) {
+                                        e_dsc.p_numclass = SEXP_NUMCLASS_INT;
+                                        e_dsc.p_numstage = SEXP_NUMSTAGE_CONT_INT;
+                                        e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
+
                                         ++e_dsc.p_explen;
 
-                                        if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 2))) {
-                                                e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
-                                                e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
-                                                goto L_NUMBER_final_flt;
-                                        } else
-                                                goto L_CHAR;
-                                } else {
-                                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
+                                        goto L_NUMBER_cont_int;
+                                } else if (tmp_c == '.') {
+                                        if (e_dsc.p_bufoff + 2 < spb_len) {
                                                 ++e_dsc.p_explen;
                                                 ++e_dsc.p_explen;
 
-                                                goto L_CHAR;
+                                                if (isdigit (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 2))) {
+                                                        e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
+                                                        e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
+                                                        goto L_NUMBER_final_flt;
+                                                } else
+                                                        goto L_CHAR;
                                         } else {
+                                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
+                                                        ++e_dsc.p_explen;
+                                                        ++e_dsc.p_explen;
+
+                                                        goto L_CHAR;
+                                                } else {
+                                                        ret_p = SEXP_PRET_EUNFIN;
+                                                        goto SKIP_LOOP;
+                                                }
+                                        }
+                                } else {
+                                        ++e_dsc.p_explen;
+                                        goto L_CHAR;
+                                }
+                        } else {
+                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
+                                        ++e_dsc.p_explen;
+                                        goto L_CHAR;
+                                } else {
+                                        ret_p = SEXP_PRET_EUNFIN;
+                                        goto SKIP_LOOP;
+                                }
+                        }
+                        goto SKIP_LOOP;
+                        /* NOTREACHED */
+                L_NUMBER:
+                        e_dsc.p_label = SEXP_LABELNUM_NUMBER;
+
+                        /*
+                         * Numbers are handled in a special way because they can have the meaning of
+                         * a "length prefix". Length prefix is always related to a expression and in
+                         * our case it's always the very next expression in the buffer. In some cases
+                         * the lenght prefix and the expression are separated with a colon character.
+                         */
+                        if (e_dsc.p_explen > 0) {
+                                const void *n_labels[] = {
+                                        &&L_NUMBER_cont_int,
+                                        &&L_NUMBER_final_exp,
+                                        &&L_NUMBER_final_exp2,
+                                        &&L_NUMBER_final_flt,
+                                        &&L_NUMBER_stage3
+                                };
+
+                                assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
+
+                                goto *(void *)(n_labels[e_dsc.p_numstage]);
+                        }
+                        //L_NUMBER_stage1:
+
+                        if (cur_c == '.') {
+                                ++e_dsc.p_explen;
+                        L_NUMBER_final_flt:
+                                e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
+
+                                spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
+                                             if (!isdigit (cur_c)) {
+                                                     if (isnextexp (cur_c))
+                                                             goto L_NUMBER_stage3;
+                                                     else {
+                                                             if (cur_c == 'e' || cur_c == 'E') {
+                                                                    ++e_dsc.p_explen;
+                                                                    goto L_NUMBER_final_exp;
+                                                             } else {
+                                                                    goto L_NUMBER_invalid;
+                                                             }
+                                                     }
+                                             }
+
+                                             ++e_dsc.p_explen;
+                                        );
+
+                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                        goto L_NUMBER_stage3;
+                                else {
+                                        ret_p = SEXP_PRET_EUNFIN;
+                                        e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_FLT;
+
+                                        goto SKIP_LOOP;
+                                }
+                        } else {
+                                if (isdigit (cur_c)) {
+                                        if (e_dsc.p_numclass != SEXP_NUMCLASS_INT)
+                                                e_dsc.p_numclass = SEXP_NUMCLASS_UINT;
+
+                                        ++e_dsc.p_explen;
+                                L_NUMBER_cont_int:
+                                        spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
+                                                     if (!isdigit (cur_c))
+                                                             goto L_NUMBER_stage2;
+
+                                                     ++e_dsc.p_explen;
+                                                );
+
+                                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                                goto L_NUMBER_stage3;
+                                        else {
+                                                ret_p = SEXP_PRET_EUNFIN;
+                                                e_dsc.p_numstage = SEXP_NUMSTAGE_CONT_INT;
+
+                                                goto SKIP_LOOP;
+                                        }
+                                }
+
+                                goto L_NUMBER_invalid;
+                        }
+                        goto SKIP_LOOP;
+                L_NUMBER_stage2:
+
+                        if (cur_c == '.') {
+                                ++e_dsc.p_explen;
+                                goto L_NUMBER_final_flt;
+                        }
+                        if (cur_c == 'e' || cur_c == 'E') {
+                                ++e_dsc.p_explen;
+                        L_NUMBER_final_exp:
+                                e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
+
+                                if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
+                                        cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
+
+                                        if (cur_c == '+' || cur_c == '-') {
+                                                ++e_dsc.p_explen;
+                                        }
+                                L_NUMBER_final_exp2:
+                                        spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
+                                                     if (!isdigit (cur_c)) {
+                                                             if (isdigit (spb_octet (e_dsc.p_buffer,
+                                                                                     e_dsc.p_bufoff + e_dsc.p_explen - 1)))
+                                                             {
+                                                                     /*
+                                                                      * We've reached some non-digit character but the previous
+                                                                      * one was a digit - we consider this to be the end of the
+                                                                      * exponent
+                                                                      */
+                                                                     goto L_NUMBER_stage3;
+                                                             } else {
+                                                                     /*
+                                                                      * Only digits are allowed right after the sign of exponent
+                                                                      * characters
+                                                                      */
+                                                                     goto L_NUMBER_invalid;
+                                                             }
+                                                     }
+                                                     ++e_dsc.p_explen;
+                                                );
+
+                                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                                goto L_NUMBER_stage3;
+                                        else {
+                                                ret_p = SEXP_PRET_EUNFIN;
+                                                e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_EXP2;
+
+                                                goto SKIP_LOOP;
+                                        }
+                                } else {
+                                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                                goto L_NUMBER_invalid;
+                                }
+
+                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                        goto L_NUMBER_stage3;
+                                else {
+                                        ret_p = SEXP_PRET_EUNFIN;
+                                        e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_EXP;
+
+                                        goto SKIP_LOOP;
+                                }
+                        }
+                L_NUMBER_stage3:
+                        /*
+                         * Find out whether the number parsed in the previous stages
+                         * in a length prefix. Length prefix a non-negative integer
+                         * followed by an expression.
+                         *
+                         * We need the number to be stored in a continues memory region
+                         * because the string to number conversion API doesn't support
+                         * sparse buffers currently. However, if the whole number happens
+                         * to be stored in just one buffer, we can get a pointer to it
+                         * using the spb_direct function. In other case, we try to copy
+                         * the number to a statically allocated buffer and if it's too
+                         * large we allocate a new buffer on the heap.
+                         */
+
+                        e_dsc.sp_data = (void *)spb_direct (e_dsc.p_buffer, e_dsc.p_bufoff, e_dsc.p_explen);
+                        e_dsc.sp_free = NULL;
+
+                        if (e_dsc.sp_data == NULL) {
+                                if (e_dsc.p_explen <= (sizeof _nbuffer / sizeof (uint8_t)))
+                                        e_dsc.sp_data = (void *)_nbuffer;
+                                else {
+                                        e_dsc.sp_data = sm_alloc (sizeof (uint8_t) * e_dsc.p_explen);
+                                        e_dsc.sp_free = sm_free;
+
+                                        if (e_dsc.sp_data == NULL) {
+                                                e_dsc.p_numstage = SEXP_NUMSTAGE_3;
                                                 ret_p = SEXP_PRET_EUNFIN;
                                                 goto SKIP_LOOP;
                                         }
                                 }
-                        } else {
-                                ++e_dsc.p_explen;
-                                goto L_CHAR;
-                        }
-                } else {
-                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
-                                ++e_dsc.p_explen;
-                                goto L_CHAR;
-                        } else {
-                                ret_p = SEXP_PRET_EUNFIN;
-                                goto SKIP_LOOP;
-                        }
-                }
-                goto SKIP_LOOP;
-                /* NOTREACHED */
-        L_NUMBER:
-                e_dsc.p_label = SEXP_LABELNUM_NUMBER;
 
-                /*
-                 * Numbers are handled in a special way because they can have the meaning of
-                 * a "length prefix". Length prefix is always related to a expression and in
-                 * our case it's always the very next expression in the buffer. In some cases
-                 * the lenght prefix and the expression are separated with a colon character.
-                 */
-                if (e_dsc.p_explen > 0) {
-                        const void *n_labels[] = {
-                                &&L_NUMBER_cont_int,
-                                &&L_NUMBER_final_exp,
-                                &&L_NUMBER_final_exp2,
-                                &&L_NUMBER_final_flt,
-                                &&L_NUMBER_stage3
-                        };
-
-                        assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
-
-                        goto *(void *)(n_labels[e_dsc.p_numstage]);
-                }
-                //L_NUMBER_stage1:
-
-                if (cur_c == '.') {
-                        ++e_dsc.p_explen;
-                L_NUMBER_final_flt:
-                        e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
-
-                        spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
-                                     if (!isdigit (cur_c)) {
-                                             if (isnextexp (cur_c))
-                                                     goto L_NUMBER_stage3;
-                                             else {
-                                                     if (cur_c == 'e' || cur_c == 'E') {
-                                                            ++e_dsc.p_explen;
-                                                            goto L_NUMBER_final_exp;
-                                                     } else {
-                                                            goto L_NUMBER_invalid;
-                                                     }
-                                             }
-                                     }
-
-                                     ++e_dsc.p_explen;
-                                );
-
-                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
-                                goto L_NUMBER_stage3;
-                        else {
-                                ret_p = SEXP_PRET_EUNFIN;
-                                e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_FLT;
-
-                                goto SKIP_LOOP;
-                        }
-                } else {
-                        if (isdigit (cur_c)) {
-                                if (e_dsc.p_numclass != SEXP_NUMCLASS_INT)
-                                        e_dsc.p_numclass = SEXP_NUMCLASS_UINT;
-
-                                ++e_dsc.p_explen;
-                        L_NUMBER_cont_int:
-                                spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
-                                             if (!isdigit (cur_c))
-                                                     goto L_NUMBER_stage2;
-
-                                             ++e_dsc.p_explen;
-                                        );
-
-                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
-                                        goto L_NUMBER_stage3;
-                                else {
-                                        ret_p = SEXP_PRET_EUNFIN;
-                                        e_dsc.p_numstage = SEXP_NUMSTAGE_CONT_INT;
-
+                                if (spb_pick (e_dsc.p_buffer, e_dsc.p_bufoff,
+                                              e_dsc.p_explen, e_dsc.sp_data) != 0)
+                                {
+                                        ret_p = SEXP_PRET_EUNDEF;
                                         goto SKIP_LOOP;
                                 }
                         }
 
-                        goto L_NUMBER_invalid;
-                }
-                goto SKIP_LOOP;
-        L_NUMBER_stage2:
+                        nbuffer = (uint8_t *)e_dsc.sp_data;
+                        cur_c   = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
 
-                if (cur_c == '.') {
-                        ++e_dsc.p_explen;
-                        goto L_NUMBER_final_flt;
-                }
-                if (cur_c == 'e' || cur_c == 'E') {
-                        ++e_dsc.p_explen;
-                L_NUMBER_final_exp:
-                        e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
+                        if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
+                                uint64_t explen = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+
+                                if (explen == 0 && (errno == EINVAL || errno == ERANGE)) {
+                                        ret_p = SEXP_PRET_EINVAL;
+                                        goto SKIP_LOOP;
+                                }
+
+                                if (cur_c == ':') {
+                                        e_dsc.p_bufoff  += e_dsc.p_explen + 1 /* skip colon */;
+                                        e_dsc.p_explen   = (spb_size_t)explen;
+                                        e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
+                                        goto L_CHAR_FIXEDLEN;
+                                } else if (cur_c == '|') {
+                                        e_dsc.p_bufoff  += e_dsc.p_explen;
+                                        e_dsc.p_explen   = (spb_size_t)explen;
+                                        e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
+                                        goto L_VERTBAR_FIXEDLEN;
+                                } else if (cur_c == '[') {
+                                        e_dsc.p_bufoff  += e_dsc.p_explen;
+                                        e_dsc.p_explen   = (spb_size_t)explen;
+                                        e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
+                                        goto L_BRACKETOPEN_FIXEDLEN;
+                                } else if (cur_c == '{') {
+                                        e_dsc.p_bufoff  += e_dsc.p_explen;
+                                        e_dsc.p_explen   = (spb_size_t)explen;
+                                        e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
+                                        goto L_BRACEOPEN_FIXEDLEN;
+                                }
+                        }
 
                         if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
-                                cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
-
-                                if (cur_c == '+' || cur_c == '-') {
-                                        ++e_dsc.p_explen;
-                                }
-                        L_NUMBER_final_exp2:
-                                spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
-                                             if (!isdigit (cur_c)) {
-                                                     if (isdigit (spb_octet (e_dsc.p_buffer,
-                                                                             e_dsc.p_bufoff + e_dsc.p_explen - 1)))
-                                                     {
-                                                             /*
-                                                              * We've reached some non-digit character but the previous
-                                                              * one was a digit - we consider this to be the end of the
-                                                              * exponent
-                                                              */
-                                                             goto L_NUMBER_stage3;
-                                                     } else {
-                                                             /*
-                                                              * Only digits are allowed right after the sign of exponent
-                                                              * characters
-                                                              */
-                                                             goto L_NUMBER_invalid;
-                                                     }
-                                             }
-                                             ++e_dsc.p_explen;
-                                        );
-
-                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
-                                        goto L_NUMBER_stage3;
-                                else {
-                                        ret_p = SEXP_PRET_EUNFIN;
-                                        e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_EXP2;
-
-                                        goto SKIP_LOOP;
-                                }
-                        } else {
-                                if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
+                                if (!isnextexp (cur_c))
                                         goto L_NUMBER_invalid;
                         }
 
-                        if (e_dsc.p_flags & SEXP_PFLAG_EOFOK)
-                                goto L_NUMBER_stage3;
-                        else {
-                                ret_p = SEXP_PRET_EUNFIN;
-                                e_dsc.p_numstage = SEXP_NUMSTAGE_FINAL_EXP;
+                        if (e_dsc.p_explen > 0) {
+                                SEXP_val_t v_dsc;
 
-                                goto SKIP_LOOP;
-                        }
-                }
-        L_NUMBER_stage3:
-                /*
-                 * Find out whether the number parsed in the previous stages
-                 * in a length prefix. Length prefix a non-negative integer
-                 * followed by an expression.
-                 *
-                 * We need the number to be stored in a continues memory region
-                 * because the string to number conversion API doesn't support
-                 * sparse buffers currently. However, if the whole number happens
-                 * to be stored in just one buffer, we can get a pointer to it
-                 * using the spb_direct function. In other case, we try to copy
-                 * the number to a statically allocated buffer and if it's too
-                 * large we allocate a new buffer on the heap.
-                 */
+                                if (e_dsc.p_numclass == SEXP_NUMCLASS_INT) {
+                                        int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
 
-                e_dsc.sp_data = (void *)spb_direct (e_dsc.p_buffer, e_dsc.p_bufoff, e_dsc.p_explen);
-                e_dsc.sp_free = NULL;
-
-                if (e_dsc.sp_data == NULL) {
-                        if (e_dsc.p_explen <= (sizeof _nbuffer / sizeof (uint8_t)))
-                                e_dsc.sp_data = (void *)_nbuffer;
-                        else {
-                                e_dsc.sp_data = sm_alloc (sizeof (uint8_t) * e_dsc.p_explen);
-                                e_dsc.sp_free = sm_free;
-
-                                if (e_dsc.sp_data == NULL) {
-                                        e_dsc.p_numstage = SEXP_NUMSTAGE_3;
-                                        ret_p = SEXP_PRET_EUNFIN;
-                                        goto SKIP_LOOP;
-                                }
-                        }
-
-                        if (spb_pick (e_dsc.p_buffer, e_dsc.p_bufoff,
-                                      e_dsc.p_explen, e_dsc.sp_data) != 0)
-                        {
-                                ret_p = SEXP_PRET_EUNDEF;
-                                goto SKIP_LOOP;
-                        }
-                }
-
-                nbuffer = (uint8_t *)e_dsc.sp_data;
-                cur_c   = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
-
-                if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
-                        uint64_t explen = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
-
-                        if (explen == 0 && (errno == EINVAL || errno == ERANGE)) {
-                                ret_p = SEXP_PRET_EINVAL;
-                                goto SKIP_LOOP;
-                        }
-
-                        if (cur_c == ':') {
-                                e_dsc.p_bufoff  += e_dsc.p_explen + 1 /* skip colon */;
-                                e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                goto L_CHAR_FIXEDLEN;
-                        } else if (cur_c == '|') {
-                                e_dsc.p_bufoff  += e_dsc.p_explen;
-                                e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                goto L_VERTBAR_FIXEDLEN;
-                        } else if (cur_c == '[') {
-                                e_dsc.p_bufoff  += e_dsc.p_explen;
-                                e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                goto L_BRACKETOPEN_FIXEDLEN;
-                        } else if (cur_c == '{') {
-                                e_dsc.p_bufoff  += e_dsc.p_explen;
-                                e_dsc.p_explen   = (spb_size_t)explen;
-                                e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                goto L_BRACEOPEN_FIXEDLEN;
-                        }
-                }
-
-                if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
-                        if (!isnextexp (cur_c))
-                                goto L_NUMBER_invalid;
-                }
-
-                if (e_dsc.p_explen > 0) {
-                        SEXP_val_t v_dsc;
-
-                        if (e_dsc.p_numclass == SEXP_NUMCLASS_INT) {
-                                int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
-
-                                if (errno == ERANGE) {
-                                        goto L_NUMBER_invalid;
-                                }
-                                if (errno == EINVAL) {
-#ifndef NDEBUG
-                                        abort ();
-#endif
-                                        goto L_NUMBER_invalid;
-                                }
-
-                                if (number < INT16_MIN) {
-                                        if (number < INT32_MIN) {
-                                                /* 64 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i64),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(i64,v_dsc.mem)->n = (int64_t)number;
-                                                SEXP_NCASTP(i64,v_dsc.mem)->t = SEXP_NUM_INT64;
-                                        } else {
-                                                /* 32 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i32),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(i32,v_dsc.mem)->n = (int32_t)number;
-                                                SEXP_NCASTP(i32,v_dsc.mem)->t = SEXP_NUM_INT32;
+                                        if (errno == ERANGE) {
+                                                goto L_NUMBER_invalid;
                                         }
+                                        if (errno == EINVAL) {
+#ifndef NDEBUG
+                                                abort ();
+#endif
+                                                goto L_NUMBER_invalid;
+                                        }
+
+                                        if (number < INT16_MIN) {
+                                                if (number < INT32_MIN) {
+                                                        /* 64 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i64),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(i64,v_dsc.mem)->n = (int64_t)number;
+                                                        SEXP_NCASTP(i64,v_dsc.mem)->t = SEXP_NUM_INT64;
+                                                } else {
+                                                        /* 32 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i32),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(i32,v_dsc.mem)->n = (int32_t)number;
+                                                        SEXP_NCASTP(i32,v_dsc.mem)->t = SEXP_NUM_INT32;
+                                                }
+                                        } else {
+                                                if (number < INT8_MIN) {
+                                                        /* 16 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i16),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(i16,v_dsc.mem)->n = (int16_t)number;
+                                                        SEXP_NCASTP(i16,v_dsc.mem)->t = SEXP_NUM_INT16;
+                                                } else {
+                                                        /* 8 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i8),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(i8,v_dsc.mem)->n = (int8_t)number;
+                                                        SEXP_NCASTP(i8,v_dsc.mem)->t = SEXP_NUM_INT8;
+                                                }
+                                        }
+                                } else if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
+                                        uint64_t number = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+
+                                        if (errno == ERANGE) {
+                                                goto L_NUMBER_invalid;
+                                        }
+                                        if (errno == EINVAL) {
+#ifndef NDEBUG
+                                                abort ();
+#endif
+                                                goto L_NUMBER_invalid;
+                                        }
+
+                                        if (number > UINT16_MAX) {
+                                                if (number > UINT32_MAX) {
+                                                        /* 64 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u64),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(u64,v_dsc.mem)->n = (uint64_t)number;
+                                                        SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
+                                                } else {
+                                                        /* 32 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u32),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(u32,v_dsc.mem)->n = (uint32_t)number;
+                                                        SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
+                                                }
+                                        } else {
+                                                if (number > UINT8_MAX) {
+                                                        /* 16 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u16),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(u16,v_dsc.mem)->n = (uint16_t)number;
+                                                        SEXP_NCASTP(u16,v_dsc.mem)->t = SEXP_NUM_UINT16;
+                                                } else {
+                                                        /* 8 */
+                                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u8),
+                                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                                        {
+                                                                /* TODO: handle this */
+                                                                abort ();
+                                                        }
+                                                        SEXP_NCASTP(u8,v_dsc.mem)->n = (uint8_t)number;
+                                                        SEXP_NCASTP(u8,v_dsc.mem)->t = SEXP_NUM_UINT8;
+                                                }
+                                        }
+                                } else if (e_dsc.p_numclass == SEXP_NUMCLASS_FLT || e_dsc.p_numclass == SEXP_NUMCLASS_EXP) {
+                                        double number;
+
+                                        number = strto_double ((char *)nbuffer, e_dsc.p_explen, NULL);
+
+                                        if (errno == ERANGE) {
+                                                goto L_NUMBER_invalid;
+                                        }
+                                        if (errno == EINVAL) {
+#ifndef NDEBUG
+                                                abort ();
+#endif
+                                                goto L_NUMBER_invalid;
+                                        }
+
+                                        if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_f),
+                                                          SEXP_VALTYPE_NUMBER) != 0)
+                                        {
+                                                /* TODO: handle this */
+                                                abort ();
+                                        }
+                                        SEXP_NCASTP(f,v_dsc.mem)->n = (double)number;
+                                        SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
                                 } else {
-                                        if (number < INT8_MIN) {
-                                                /* 16 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i16),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(i16,v_dsc.mem)->n = (int16_t)number;
-                                                SEXP_NCASTP(i16,v_dsc.mem)->t = SEXP_NUM_INT16;
-                                        } else {
-                                                /* 8 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_i8),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(i8,v_dsc.mem)->n = (int8_t)number;
-                                                SEXP_NCASTP(i8,v_dsc.mem)->t = SEXP_NUM_INT8;
-                                        }
-                                }
-                        } else if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
-                                uint64_t number = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
-
-                                if (errno == ERANGE) {
-                                        goto L_NUMBER_invalid;
-                                }
-                                if (errno == EINVAL) {
+                                        /* Unknown number class */
 #ifndef NDEBUG
                                         abort ();
 #endif
                                         goto L_NUMBER_invalid;
                                 }
+                                assume_d (e_dsc.s_exp != NULL, SEXP_PRET_EUNDEF);
+                                /* update the value pointer */
+                                e_dsc.s_exp->s_valp = SEXP_val_ptr (&v_dsc);
+                                ret_p = SEXP_PRET_SUCCESS;
 
-                                if (number > UINT16_MAX) {
-                                        if (number > UINT32_MAX) {
-                                                /* 64 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u64),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(u64,v_dsc.mem)->n = (uint64_t)number;
-                                                SEXP_NCASTP(u64,v_dsc.mem)->t = SEXP_NUM_UINT64;
-                                        } else {
-                                                /* 32 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u32),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(u32,v_dsc.mem)->n = (uint32_t)number;
-                                                SEXP_NCASTP(u32,v_dsc.mem)->t = SEXP_NUM_UINT32;
-                                        }
-                                } else {
-                                        if (number > UINT8_MAX) {
-                                                /* 16 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u16),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(u16,v_dsc.mem)->n = (uint16_t)number;
-                                                SEXP_NCASTP(u16,v_dsc.mem)->t = SEXP_NUM_UINT16;
-                                        } else {
-                                                /* 8 */
-                                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_u8),
-                                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                                {
-                                                        /* TODO: handle this */
-                                                        abort ();
-                                                }
-                                                SEXP_NCASTP(u8,v_dsc.mem)->n = (uint8_t)number;
-                                                SEXP_NCASTP(u8,v_dsc.mem)->t = SEXP_NUM_UINT8;
-                                        }
-                                }
-                        } else if (e_dsc.p_numclass == SEXP_NUMCLASS_FLT || e_dsc.p_numclass == SEXP_NUMCLASS_EXP) {
-                                double number;
-
-                                number = strto_double ((char *)nbuffer, e_dsc.p_explen, NULL);
-
-                                if (errno == ERANGE) {
-                                        goto L_NUMBER_invalid;
-                                }
-                                if (errno == EINVAL) {
-#ifndef NDEBUG
-                                        abort ();
-#endif
-                                        goto L_NUMBER_invalid;
-                                }
-
-                                if (SEXP_val_new (&v_dsc, sizeof (struct SEXP_val_num_f),
-                                                  SEXP_VALTYPE_NUMBER) != 0)
-                                {
-                                        /* TODO: handle this */
-                                        abort ();
-                                }
-                                SEXP_NCASTP(f,v_dsc.mem)->n = (double)number;
-                                SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
-                        } else {
-                                /* Unknown number class */
-#ifndef NDEBUG
-                                abort ();
-#endif
-                                goto L_NUMBER_invalid;
+                                goto L_SEXP_ADD;
                         }
-                        assume_d (e_dsc.s_exp != NULL, SEXP_PRET_EUNDEF);
-                        /* update the value pointer */
-                        e_dsc.s_exp->s_valp = SEXP_val_ptr (&v_dsc);
-                        ret_p = SEXP_PRET_SUCCESS;
-
-                        goto L_SEXP_ADD;
-                }
-        L_NUMBER_invalid:
-                ret_p = SEXP_PRET_EINVAL;
-                goto SKIP_LOOP;
-        L_HASH:
-                /*
-                 * #<1:T><1..n:number>
-                 *
-                 *  T - bool, true
-                 *  F - bool, false
-                 *  b - binary
-                 *  o - octal
-                 *  d - decimal
-                 *  x - hexadecimal
-                 *
-                 * Some examples: decimal 255 as...
-                 *  #xff       - hexadecimal (base 16)
-                 *  #d255      - decimal (base 10)
-                 *  #o377      - octal   (base 8)
-                 *  #b11111111 - binary  (base 2)
-                 */
-                if (e_dsc.p_bufoff + 1 < spb_len) {
-                        uint8_t cur_oct = spb_octet(e_dsc.p_buffer, e_dsc.p_bufoff + 1);
-                        if (cur_oct == 'T') {
-                                ++e_dsc.p_bufoff;
-
-                                if ((ret_p = SEXP_parse_bool (&e_dsc, true)) != SEXP_PRET_SUCCESS)
-                                        goto SKIP_LOOP;
-                                else
-                                        goto L_SEXP_ADD;
-                        } else if (cur_oct == 'F') {
-                                ++e_dsc.p_bufoff;
-
-                                if ((ret_p = SEXP_parse_bool (&e_dsc, false)) != SEXP_PRET_SUCCESS)
-                                        goto SKIP_LOOP;
-                                else
-                                        goto L_SEXP_ADD;
-                        } else if (cur_oct == 'b') {
-                                e_dsc.p_numbase = 2;
-                        } else if (cur_oct == 'd') {
-                                e_dsc.p_numbase = 10;
-                        } else if (cur_oct == 'x') {
-                                e_dsc.p_numbase = 16;
-                        } else if (cur_oct == 'o') {
-                                e_dsc.p_numbase = 8;
-                        } else {
-                                ret_p = SEXP_PRET_EINVAL;
-                                goto SKIP_LOOP;
-                        }
-
-                        if (e_dsc.p_bufoff + 2 < spb_len) {
-                                ++e_dsc.p_bufoff;
-                                ++e_dsc.p_bufoff;
-
-                                cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
-
-                                if (cur_c == '+' || cur_c == '-' || cur_c == '.') {
-                                        goto laddr(cur_c);
-                                }
-                                if (isdigit(cur_c)) {
-                                        goto laddr(cur_c);
-                                }
-
-                                ret_p = SEXP_PRET_EINVAL;
-                                goto SKIP_LOOP;
-                        }
-                }
-
-                ret_p = SEXP_PRET_EUNFIN;
-                e_dsc.p_label = '#';
-
-                goto SKIP_LOOP;
-        L_WHITESPACE:
-                spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff, cur_c,
-                             if (!isspace (cur_c))
-                                     goto L_NO_CURC_UPDATE;
-                             ++e_dsc.p_bufoff;
-                        );
-
-                ret_p = SEXP_PRET_SUCCESS;
-                goto SKIP_LOOP;
-        L_PAROPEN:
-                {
-                        SEXP_t *ref_h, *ref_s;
-
-                        ref_h = SEXP_list_new (NULL);
-
-                        /*
-                         * Update the s_type & s_flgs fields. This ensures
-                         * that a previously processed type/hint doesn't get
-                         * lost.
-                         */
-                        ref_h->s_type = e_dsc.s_exp->s_type;
-                        e_dsc.s_exp->s_type = NULL;
-
-                        ref_s = SEXP_softref (ref_h);
-                        SEXP_list_add (ref_l, ref_h);
-                        SEXP_free (ref_h);
-                        SEXP_lstack_push (&state->l_stack, ref_s);
-                        ref_l = ref_s;
-
-                        /*
-                         * Unset the EOFOK flag if we are inside a list
-                         */
-                        if (SEXP_lstack_depth (&state->l_stack) == 2) {
-                                state->p_flags0 = e_dsc.p_flags;
-                                e_dsc.p_flags  &= ~(SEXP_PFLAG_EOFOK);
-                        }
-                }
-
-                ret_p = SEXP_PRET_EUNFIN;
-                ++e_dsc.p_bufoff;
-
-                goto L_NO_SEXP_ALLOC;
-        L_PARCLOSE:
-                if (e_dsc.s_exp->s_type != NULL) {
+                L_NUMBER_invalid:
                         ret_p = SEXP_PRET_EINVAL;
                         goto SKIP_LOOP;
-                }
+                L_HASH:
+                        /*
+                         * #<1:T><1..n:number>
+                         *
+                         *  T - bool, true
+                         *  F - bool, false
+                         *  b - binary
+                         *  o - octal
+                         *  d - decimal
+                         *  x - hexadecimal
+                         *
+                         * Some examples: decimal 255 as...
+                         *  #xff       - hexadecimal (base 16)
+                         *  #d255      - decimal (base 10)
+                         *  #o377      - octal   (base 8)
+                         *  #b11111111 - binary  (base 2)
+                         */
+                        if (e_dsc.p_bufoff + 1 < spb_len) {
+                                uint8_t cur_oct = spb_octet(e_dsc.p_buffer, e_dsc.p_bufoff + 1);
+                                if (cur_oct == 'T') {
+                                        ++e_dsc.p_bufoff;
 
-                if (SEXP_lstack_depth (&state->l_stack) > 1) {
-                        SEXP_t *ref_t;
+                                        if ((ret_p = SEXP_parse_bool (&e_dsc, true)) != SEXP_PRET_SUCCESS)
+                                                goto SKIP_LOOP;
+                                        else
+                                                goto L_SEXP_ADD;
+                                } else if (cur_oct == 'F') {
+                                        ++e_dsc.p_bufoff;
 
-                        ref_t = SEXP_lstack_pop (&state->l_stack);
-                        SEXP_free (ref_t);
-                        ref_l = SEXP_lstack_top (&state->l_stack);
+                                        if ((ret_p = SEXP_parse_bool (&e_dsc, false)) != SEXP_PRET_SUCCESS)
+                                                goto SKIP_LOOP;
+                                        else
+                                                goto L_SEXP_ADD;
+                                } else if (cur_oct == 'b') {
+                                        e_dsc.p_numbase = 2;
+                                } else if (cur_oct == 'd') {
+                                        e_dsc.p_numbase = 10;
+                                } else if (cur_oct == 'x') {
+                                        e_dsc.p_numbase = 16;
+                                } else if (cur_oct == 'o') {
+                                        e_dsc.p_numbase = 8;
+                                } else {
+                                        ret_p = SEXP_PRET_EINVAL;
+                                        goto SKIP_LOOP;
+                                }
 
-                        if (SEXP_lstack_depth (&state->l_stack) == 1)
-                                e_dsc.p_flags = state->p_flags0;
+                                if (e_dsc.p_bufoff + 2 < spb_len) {
+                                        ++e_dsc.p_bufoff;
+                                        ++e_dsc.p_bufoff;
 
-                        ++e_dsc.p_bufoff;
+                                        cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
+
+                                        if (cur_c == '+' || cur_c == '-' || cur_c == '.') {
+                                                goto laddr(cur_c);
+                                        }
+                                        if (isdigit(cur_c)) {
+                                                goto laddr(cur_c);
+                                        }
+
+                                        ret_p = SEXP_PRET_EINVAL;
+                                        goto SKIP_LOOP;
+                                }
+                        }
+
+                        ret_p = SEXP_PRET_EUNFIN;
+                        e_dsc.p_label = '#';
+
+                        goto SKIP_LOOP;
+                L_WHITESPACE:
+                        spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff, cur_c,
+                                     if (!isspace (cur_c))
+                                             goto L_NO_CURC_UPDATE;
+                                     ++e_dsc.p_bufoff;
+                                );
+
                         ret_p = SEXP_PRET_SUCCESS;
+                        goto SKIP_LOOP;
+                L_PAROPEN:
+                        {
+                                SEXP_t *ref_h, *ref_s;
+
+                                ref_h = SEXP_list_new (NULL);
+
+                                /*
+                                 * Update the s_type & s_flgs fields. This ensures
+                                 * that a previously processed type/hint doesn't get
+                                 * lost.
+                                 */
+                                ref_h->s_type = e_dsc.s_exp->s_type;
+                                e_dsc.s_exp->s_type = NULL;
+
+                                ref_s = SEXP_softref (ref_h);
+                                SEXP_list_add (ref_l, ref_h);
+                                SEXP_free (ref_h);
+                                SEXP_lstack_push (&state->l_stack, ref_s);
+                                ref_l = ref_s;
+
+                                /*
+                                 * Unset the EOFOK flag if we are inside a list
+                                 */
+                                if (SEXP_lstack_depth (&state->l_stack) == 2) {
+                                        state->p_flags0 = e_dsc.p_flags;
+                                        e_dsc.p_flags  &= ~(SEXP_PFLAG_EOFOK);
+                                }
+                        }
+
+                        ret_p = SEXP_PRET_EUNFIN;
+                        ++e_dsc.p_bufoff;
 
                         goto L_NO_SEXP_ALLOC;
-                } else {
-                        ret_p = SEXP_PRET_EINVAL;
-                        goto SKIP_LOOP;
-                }
-                /* NOTREACHED */
-        L_BRACKETOPEN:
-                e_dsc.p_label = SEXP_LABELNUM_DTYPE;
+                L_PARCLOSE:
+                        if (e_dsc.s_exp->s_type != NULL) {
+                                ret_p = SEXP_PRET_EINVAL;
+                                goto SKIP_LOOP;
+                        }
 
-                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        goto SKIP_LOOP;
+                        if (SEXP_lstack_depth (&state->l_stack) > 1) {
+                                SEXP_t *ref_t;
 
-                e_dsc.p_bufoff += e_dsc.p_explen;
-                e_dsc.p_explen  = 0;
-                ret_p = SEXP_PRET_EUNFIN;
+                                ref_t = SEXP_lstack_pop (&state->l_stack);
+                                SEXP_free (ref_t);
+                                ref_l = SEXP_lstack_top (&state->l_stack);
 
-                goto L_NO_SEXP_ALLOC;
-        L_BRACKETOPEN_FIXEDLEN:
-                e_dsc.p_label = SEXP_LABELNUM_DTYPE_FIXED;
+                                if (SEXP_lstack_depth (&state->l_stack) == 1)
+                                        e_dsc.p_flags = state->p_flags0;
 
-                if (e_dsc.p_bufoff + e_dsc.p_explen + 2 /* [] */ > spb_len) {
-                        ret_p = SEXP_PRET_EUNFIN;
-                        goto SKIP_LOOP;
-                } else {
-                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                ++e_dsc.p_bufoff;
+                                ret_p = SEXP_PRET_SUCCESS;
+
+                                goto L_NO_SEXP_ALLOC;
+                        } else {
+                                ret_p = SEXP_PRET_EINVAL;
+                                goto SKIP_LOOP;
+                        }
+                        /* NOTREACHED */
+                L_BRACKETOPEN:
+                        e_dsc.p_label = SEXP_LABELNUM_DTYPE;
+
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
 
                         e_dsc.p_bufoff += e_dsc.p_explen;
@@ -1321,55 +1306,70 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         ret_p = SEXP_PRET_EUNFIN;
 
                         goto L_NO_SEXP_ALLOC;
-                }
-                /* NOTREACHED */
-        L_BRACEOPEN:
-                e_dsc.p_label = SEXP_LABELNUM_B64E;
-                /* b64 decode - not supported yet */
-                ret_p = SEXP_PRET_EINVAL;
-                goto SKIP_LOOP;
-        L_BRACEOPEN_FIXEDLEN:
-                e_dsc.p_label = SEXP_LABELNUM_B64E_FIXED;
-                /* b64 decode - not supported yet */
-                ret_p = SEXP_PRET_EINVAL;
-                goto SKIP_LOOP;
-        L_VERTBAR:
-                e_dsc.p_label = SEXP_LABELNUM_B64S;
+                L_BRACKETOPEN_FIXEDLEN:
+                        e_dsc.p_label = SEXP_LABELNUM_DTYPE_FIXED;
 
-                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        goto SKIP_LOOP;
-                goto L_SEXP_ADD;
-        L_VERTBAR_FIXEDLEN:
-                e_dsc.p_label = SEXP_LABELNUM_B64S_FIXED;
+                        if (e_dsc.p_bufoff + e_dsc.p_explen + 2 /* [] */ > spb_len) {
+                                ret_p = SEXP_PRET_EUNFIN;
+                                goto SKIP_LOOP;
+                        } else {
+                                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                        goto SKIP_LOOP;
 
-                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                e_dsc.p_bufoff += e_dsc.p_explen;
+                                e_dsc.p_explen  = 0;
+                                ret_p = SEXP_PRET_EUNFIN;
+
+                                goto L_NO_SEXP_ALLOC;
+                        }
+                        /* NOTREACHED */
+                L_BRACEOPEN:
+                        e_dsc.p_label = SEXP_LABELNUM_B64E;
+                        /* b64 decode - not supported yet */
+                        ret_p = SEXP_PRET_EINVAL;
                         goto SKIP_LOOP;
-                goto L_SEXP_ADD;
-        L_NUL:
-        L_BRACECLOSE:
-        L_BRACKETCLOSE:
-        L_INVALID:
-                /*
-                 * Denied parser state
-                 */
+                L_BRACEOPEN_FIXEDLEN:
+                        e_dsc.p_label = SEXP_LABELNUM_B64E_FIXED;
+                        /* b64 decode - not supported yet */
+                        ret_p = SEXP_PRET_EINVAL;
+                        goto SKIP_LOOP;
+                L_VERTBAR:
+                        e_dsc.p_label = SEXP_LABELNUM_B64S;
+
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                goto SKIP_LOOP;
+                        goto L_SEXP_ADD;
+                L_VERTBAR_FIXEDLEN:
+                        e_dsc.p_label = SEXP_LABELNUM_B64S_FIXED;
+
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                goto SKIP_LOOP;
+                        goto L_SEXP_ADD;
+                L_NUL:
+                L_BRACECLOSE:
+                L_BRACKETCLOSE:
+                L_INVALID:
+                        /*
+                         * Denied parser state
+                         */
 #ifndef NDEBUG
-                abort ();
+                        abort ();
 #endif
-                goto SKIP_LOOP;
-        L_SEXP_ADD:
-                /*
-                 * Add new S-exp to the list at the top of the list stack
-                 */
-                SEXP_list_add (ref_l, e_dsc.s_exp);
-                SEXP_free (e_dsc.s_exp);
+                        goto SKIP_LOOP;
+                L_SEXP_ADD:
+                        /*
+                         * Add new S-exp to the list at the top of the list stack
+                         */
+                        SEXP_list_add (ref_l, e_dsc.s_exp);
+                        SEXP_free (e_dsc.s_exp);
 
-                e_dsc.s_exp = NULL;
-                e_dsc.p_bufoff += e_dsc.p_explen;
-                e_dsc.p_explen  = 0;
+                        e_dsc.s_exp = NULL;
+                        e_dsc.p_bufoff += e_dsc.p_explen;
+                        e_dsc.p_explen  = 0;
 
-                e_dsc.p_numclass = SEXP_NUMCLASS_INV;
-                e_dsc.p_numbase  = 0;
-                e_dsc.p_numstage = 255;
+                        e_dsc.p_numclass = SEXP_NUMCLASS_INV;
+                        e_dsc.p_numbase  = 0;
+                        e_dsc.p_numstage = 255;
 
                 }
         } /* for (;;) */
