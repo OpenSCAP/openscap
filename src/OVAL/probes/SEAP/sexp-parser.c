@@ -1048,14 +1048,11 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                                 cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
 
-                                switch (cur_c) {
-                                case '+':
-                                case '-':
-                                case '.':
+                                if (cur_c == '+' || cur_c == '-' || cur_c == '.') {
                                         goto laddr(cur_c);
-                                default:
-                                        if (isdigit (cur_c))
-                                                goto laddr(cur_c);
+                                }
+                                if (isdigit(cur_c)) {
+                                        goto laddr(cur_c);
                                 }
 
                                 ret_p = SEXP_PRET_EINVAL;
