@@ -637,8 +637,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 }
                 //L_NUMBER_stage1:
 
-                switch (cur_c) {
-                case '.':
+                if (cur_c == '.') {
                         ++e_dsc.p_explen;
                 L_NUMBER_final_flt:
                         e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
@@ -668,7 +667,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                                 goto SKIP_LOOP;
                         }
-                default:
+                } else {
                         if (isdigit (cur_c)) {
                                 if (e_dsc.p_numclass != SEXP_NUMCLASS_INT)
                                         e_dsc.p_numclass = SEXP_NUMCLASS_UINT;
