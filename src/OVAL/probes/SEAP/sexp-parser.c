@@ -491,7 +491,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
         L_NO_SEXP_ALLOC:
                 if (e_dsc.p_bufoff >= spb_len)
-                        break;
+                        goto SKIP_LOOP;
 
                 ret_p = SEXP_PRET_EUNDEF;
                 cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
