@@ -1205,7 +1205,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 e_dsc.p_numbase  = 0;
                 e_dsc.p_numstage = 255;
 
-                continue;
         } /* for (;;) */
 
 SKIP_LOOP:
