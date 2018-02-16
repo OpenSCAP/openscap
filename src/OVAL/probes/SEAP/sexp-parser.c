@@ -508,7 +508,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 else
                         goto laddr(128);
                 /* NOTREACHED */
-                break;
         L_CHAR:
                 e_dsc.p_label = SEXP_LABELNUM_CHAR;
 
