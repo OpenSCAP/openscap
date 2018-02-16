@@ -238,6 +238,7 @@ static inline bool isnextexp (int c)
 }
 
 enum SEXP_parser_states {
+        S_START,
         S_NO_SEXP_ALLOC,
         S_NO_CURC_UPDATE,
         S_CHAR,
@@ -568,6 +569,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         struct SEXP_pext_dsc e_dsc;
         uint8_t _nbuffer[512];
         uint8_t *nbuffer;
+        int dfa_state = S_START;
 
         /*
          * First check the parser state. In case it already exists update the internal
@@ -645,6 +647,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
         }
 
         for (;;) {
+                switch (dfa_state) {
+                case S_START:
                 /*
                  * Allocate an empty S-exp. The value or type will be assigned in the
                  * subparser.
@@ -1367,6 +1371,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 e_dsc.p_numbase  = 0;
                 e_dsc.p_numstage = 255;
 
+                }
         } /* for (;;) */
 
 SKIP_LOOP:
