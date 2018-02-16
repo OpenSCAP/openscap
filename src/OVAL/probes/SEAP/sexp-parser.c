@@ -710,10 +710,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
                                 cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
 
-                                switch (cur_c) {
-                                case '+':
-
-                                case '-':
+                                if (cur_c == '+' || cur_c == '-') {
                                         ++e_dsc.p_explen;
                                 }
                         L_NUMBER_final_exp2:
