@@ -1015,34 +1015,29 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                  */
                 if (e_dsc.p_bufoff + 1 < spb_len) {
                         uint8_t cur_oct = spb_octet(e_dsc.p_buffer, e_dsc.p_bufoff + 1);
-                        switch (cur_oct) {
-                        case 'T':
+                        if (cur_oct == 'T') {
                                 ++e_dsc.p_bufoff;
 
                                 if ((ret_p = SEXP_parse_bool (&e_dsc, true)) != SEXP_PRET_SUCCESS)
                                         goto SKIP_LOOP;
                                 else
                                         goto L_SEXP_ADD;
-                        case 'F':
+                        } else if (cur_oct == 'F') {
                                 ++e_dsc.p_bufoff;
 
                                 if ((ret_p = SEXP_parse_bool (&e_dsc, false)) != SEXP_PRET_SUCCESS)
                                         goto SKIP_LOOP;
                                 else
                                         goto L_SEXP_ADD;
-                        case 'b':
+                        } else if (cur_oct == 'b') {
                                 e_dsc.p_numbase = 2;
-                                break;
-                        case 'd':
+                        } else if (cur_oct == 'd') {
                                 e_dsc.p_numbase = 10;
-                                break;
-                        case 'x':
+                        } else if (cur_oct == 'x') {
                                 e_dsc.p_numbase = 16;
-                                break;
-                        case 'o':
+                        } else if (cur_oct == 'o') {
                                 e_dsc.p_numbase = 8;
-                                break;
-                        default:
+                        } else {
                                 ret_p = SEXP_PRET_EINVAL;
                                 goto SKIP_LOOP;
                         }
