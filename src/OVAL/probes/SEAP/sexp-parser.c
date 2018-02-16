@@ -237,6 +237,34 @@ static inline bool isnextexp (int c)
         return (false);
 }
 
+enum SEXP_parser_states {
+        S_NO_SEXP_ALLOC,
+        S_NO_CURC_UPDATE,
+        S_CHAR,
+        S_CHAR_FIXEDLEN,
+        S_DQUOTE,
+        S_SQUOTE,
+        S_DOT,
+        S_PLUS,
+        S_MINUS,
+        S_NUMBER,
+        S_HASH,
+        S_WHITESPACE,
+        S_PAROPEN,
+        S_PARCLOSE,
+        S_BRACKETOPEN,
+        S_BRACKETOPEN_FIXEDLEN,
+        S_BRACEOPEN,
+        S_BRACEOPEN_FIXEDLEN,
+        S_VERTBAR,
+        S_VERTBAR_FIXEDLEN,
+        S_NUL,
+        S_BRACECLOSE,
+        S_BRACKETCLOSE,
+        S_INVALID,
+        S_SEXP_ADD,
+};
+
 /**
  * The S-expression parser
  * @param psetup parser settings (this argument is ignored is *pstate != NULL)
