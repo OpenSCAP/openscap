@@ -670,7 +670,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                 L_NO_CURC_UPDATE:
                 case S_NO_CURC_UPDATE:
-                        dfa_state = S_START;
                         assume_d (e_dsc.s_exp != NULL, NULL);
                         assume_d (ret_p == SEXP_PRET_EUNDEF, NULL);
                         assume_d (cur_c != 128, NULL);
@@ -1379,6 +1378,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         e_dsc.p_numbase  = 0;
                         e_dsc.p_numstage = 255;
 
+                        dfa_state = S_START;
                 }
         } /* for (;;) */
 
