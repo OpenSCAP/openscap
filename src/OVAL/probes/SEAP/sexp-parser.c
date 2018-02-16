@@ -840,8 +840,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 if (e_dsc.p_explen > 0) {
                         SEXP_val_t v_dsc;
 
-                        switch (e_dsc.p_numclass) {
-                        case SEXP_NUMCLASS_INT: {
+                        if (e_dsc.p_numclass == SEXP_NUMCLASS_INT) {
                                 int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
 
                                 if (errno == ERANGE) {
@@ -899,8 +898,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                                 SEXP_NCASTP(i8,v_dsc.mem)->t = SEXP_NUM_INT8;
                                         }
                                 }
-                        }       break;
-                        case SEXP_NUMCLASS_UINT: {
+                        } else if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
                                 uint64_t number = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
 
                                 if (errno == ERANGE) {
@@ -958,9 +956,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                                 SEXP_NCASTP(u8,v_dsc.mem)->t = SEXP_NUM_UINT8;
                                         }
                                 }
-                        }       break;
-                        case SEXP_NUMCLASS_FLT:
-                        case SEXP_NUMCLASS_EXP: {
+                        } else if (e_dsc.p_numclass == SEXP_NUMCLASS_FLT || e_dsc.p_numclass == SEXP_NUMCLASS_EXP) {
                                 double number;
 
                                 number = strto_double ((char *)nbuffer, e_dsc.p_explen, NULL);
@@ -983,8 +979,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 }
                                 SEXP_NCASTP(f,v_dsc.mem)->n = (double)number;
                                 SEXP_NCASTP(f,v_dsc.mem)->t = SEXP_NUM_DOUBLE;
-                        }       break;
-                        default: /* Unknown number class */
+                        } else {
+                                /* Unknown number class */
 #ifndef NDEBUG
                                 abort ();
 #endif
