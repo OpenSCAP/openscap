@@ -660,13 +660,17 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                 L_NO_SEXP_ALLOC:
                 case S_NO_SEXP_ALLOC:
-                        dfa_state = S_START;
                         if (e_dsc.p_bufoff >= spb_len)
                                 goto SKIP_LOOP;
 
                         ret_p = SEXP_PRET_EUNDEF;
                         cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff);
+                        dfa_state = S_NO_CURC_UPDATE;
+                        break;
+
                 L_NO_CURC_UPDATE:
+                case S_NO_CURC_UPDATE:
+                        dfa_state = S_START;
                         assume_d (e_dsc.s_exp != NULL, NULL);
                         assume_d (ret_p == SEXP_PRET_EUNDEF, NULL);
                         assume_d (cur_c != 128, NULL);
