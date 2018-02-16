@@ -844,10 +844,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         case SEXP_NUMCLASS_INT: {
                                 int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
 
-                                switch (errno) {
-                                case ERANGE:
+                                if (errno == ERANGE) {
                                         goto L_NUMBER_invalid;
-                                case EINVAL:
+                                }
+                                if (errno == EINVAL) {
 #ifndef NDEBUG
                                         abort ();
 #endif
