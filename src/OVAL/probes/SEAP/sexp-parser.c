@@ -1014,7 +1014,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                  *  #b11111111 - binary  (base 2)
                  */
                 if (e_dsc.p_bufoff + 1 < spb_len) {
-                        switch (spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + 1)) {
+                        uint8_t cur_oct = spb_octet(e_dsc.p_buffer, e_dsc.p_bufoff + 1);
+                        switch (cur_oct) {
                         case 'T':
                                 ++e_dsc.p_bufoff;
 
