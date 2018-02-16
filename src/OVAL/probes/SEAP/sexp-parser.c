@@ -1145,10 +1145,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                 if (e_dsc.p_bufoff + e_dsc.p_explen + 2 /* [] */ > spb_len) {
                         ret_p = SEXP_PRET_EUNFIN;
-                        break;
+                        goto SKIP_LOOP;
                 } else {
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_DATATYPE](&e_dsc)) != SEXP_PRET_SUCCESS)
-                                break;
+                                goto SKIP_LOOP;
 
                         e_dsc.p_bufoff += e_dsc.p_explen;
                         e_dsc.p_explen  = 0;
@@ -1161,23 +1161,23 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 e_dsc.p_label = SEXP_LABELNUM_B64E;
                 /* b64 decode - not supported yet */
                 ret_p = SEXP_PRET_EINVAL;
-                break;
+                goto SKIP_LOOP;
         L_BRACEOPEN_FIXEDLEN:
                 e_dsc.p_label = SEXP_LABELNUM_B64E_FIXED;
                 /* b64 decode - not supported yet */
                 ret_p = SEXP_PRET_EINVAL;
-                break;
+                goto SKIP_LOOP;
         L_VERTBAR:
                 e_dsc.p_label = SEXP_LABELNUM_B64S;
 
                 if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        break;
+                        goto SKIP_LOOP;
                 goto L_SEXP_ADD;
         L_VERTBAR_FIXEDLEN:
                 e_dsc.p_label = SEXP_LABELNUM_B64S_FIXED;
 
                 if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
-                        break;
+                        goto SKIP_LOOP;
                 goto L_SEXP_ADD;
         L_NUL:
         L_BRACECLOSE:
