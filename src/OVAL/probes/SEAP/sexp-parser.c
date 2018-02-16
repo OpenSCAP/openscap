@@ -655,8 +655,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                          */
                         assume_d (e_dsc.s_exp == NULL, NULL); /* no leaks */
                         e_dsc.s_exp = SEXP_new ();
+                        dfa_state = S_NO_SEXP_ALLOC;
+                        break;
 
-                        /* fall through */
                 L_NO_SEXP_ALLOC:
                 case S_NO_SEXP_ALLOC:
                         dfa_state = S_START;
