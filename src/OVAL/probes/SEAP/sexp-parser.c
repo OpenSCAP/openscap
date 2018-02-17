@@ -678,10 +678,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                          * expression.
                          */
                         if (__predict(cur_c < 128, 1))
-                                goto laddr(cur_c);
+                                dfa_state = d_states[cur_c];
                         else
-                                goto L_INVALID;
-                        /* NOTREACHED */
+                                dfa_state = S_INVALID;
+                        break;
 
                 L_CHAR:
                 case S_CHAR:
