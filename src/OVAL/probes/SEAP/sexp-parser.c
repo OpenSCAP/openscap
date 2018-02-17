@@ -709,13 +709,15 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 case S_DQUOTE:
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_DQ](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
-                        goto L_SEXP_ADD;
+                        dfa_state = S_SEXP_ADD;
+                        break;
 
                 L_SQUOTE:
                 case S_SQUOTE:
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SQ](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
-                        goto L_SEXP_ADD;
+                        dfa_state = S_SEXP_ADD;
+                        break;
 
                 L_DOT:
                 case S_DOT:
@@ -1177,7 +1179,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 e_dsc.s_exp->s_valp = SEXP_val_ptr (&v_dsc);
                                 ret_p = SEXP_PRET_SUCCESS;
 
-                                goto L_SEXP_ADD;
+                                dfa_state = S_SEXP_ADD;
+                                break;
                         }
                 L_NUMBER_invalid:
                         ret_p = SEXP_PRET_EINVAL;
@@ -1208,15 +1211,19 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                                         if ((ret_p = SEXP_parse_bool (&e_dsc, true)) != SEXP_PRET_SUCCESS)
                                                 goto SKIP_LOOP;
-                                        else
-                                                goto L_SEXP_ADD;
+                                        else {
+                                                dfa_state = S_SEXP_ADD;
+                                                break;
+                                        }
                                 } else if (cur_oct == 'F') {
                                         ++e_dsc.p_bufoff;
 
                                         if ((ret_p = SEXP_parse_bool (&e_dsc, false)) != SEXP_PRET_SUCCESS)
                                                 goto SKIP_LOOP;
-                                        else
-                                                goto L_SEXP_ADD;
+                                        else {
+                                                dfa_state = S_SEXP_ADD;
+                                                break;
+                                        }
                                 } else if (cur_oct == 'b') {
                                         e_dsc.p_numbase = 2;
                                 } else if (cur_oct == 'd') {
@@ -1378,7 +1385,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
-                        goto L_SEXP_ADD;
+                        dfa_state = S_SEXP_ADD;
+                        break;
 
                 L_VERTBAR_FIXEDLEN:
                 case S_VERTBAR_FIXEDLEN:
@@ -1386,7 +1394,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING_B64](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
-                        goto L_SEXP_ADD;
+                        dfa_state = S_SEXP_ADD;
+                        break;
 
                 L_NUL:
                 L_BRACECLOSE:
