@@ -547,7 +547,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 /* 132                                */ S_BRACEOPEN_FIXEDLEN
         };
 
-#define laddr(i) *(void *)(d_labels[i])
 
 #define SEXP_LABELNUM_CHAR        65
 #define SEXP_LABELNUM_CHAR_FIXED  129
