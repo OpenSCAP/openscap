@@ -1413,7 +1413,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 #endif
                         goto SKIP_LOOP;
 
-                L_SEXP_ADD:
                 case S_SEXP_ADD:
                         /*
                          * Add new S-exp to the list at the top of the list stack
