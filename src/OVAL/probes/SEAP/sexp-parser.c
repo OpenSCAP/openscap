@@ -822,7 +822,17 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                                 assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
 
-                                goto *(void *)(n_labels[e_dsc.p_numstage]);
+                                if (e_dsc.p_numstage == SEXP_NUMSTAGE_CONT_INT) {
+                                        goto L_NUMBER_cont_int;
+                                } else if (e_dsc.p_numstage == SEXP_NUMSTAGE_FINAL_EXP) {
+                                        goto L_NUMBER_final_exp;
+                                } else if (e_dsc.p_numstage == SEXP_NUMSTAGE_FINAL_EXP2) {
+                                        goto L_NUMBER_final_exp2;
+                                } else if (e_dsc.p_numstage == SEXP_NUMSTAGE_FINAL_FLT) {
+                                        goto L_NUMBER_final_flt;
+                                } else if (e_dsc.p_numstage == SEXP_NUMSTAGE_3) {
+                                        goto L_NUMBER_stage3;
+                                }
                         }
                         //L_NUMBER_stage1:
 
