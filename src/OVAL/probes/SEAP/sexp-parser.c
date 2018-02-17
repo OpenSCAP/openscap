@@ -530,7 +530,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         dfa_state = S_NO_CURC_UPDATE;
                         break;
 
-                L_NO_CURC_UPDATE:
                 case S_NO_CURC_UPDATE:
                         assume_d (e_dsc.s_exp != NULL, NULL);
                         assume_d (ret_p == SEXP_PRET_EUNDEF, NULL);
@@ -1121,12 +1120,15 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 case S_WHITESPACE:
                         spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff, cur_c,
                                      if (!isspace (cur_c))
-                                             goto L_NO_CURC_UPDATE;
+                                             goto S_WHITESPACE_END;
                                      ++e_dsc.p_bufoff;
                                 );
 
                         ret_p = SEXP_PRET_SUCCESS;
                         goto SKIP_LOOP;
+S_WHITESPACE_END:
+                        dfa_state = S_NO_CURC_UPDATE;
+                        break;
 
                 case S_PAROPEN:
                         {
