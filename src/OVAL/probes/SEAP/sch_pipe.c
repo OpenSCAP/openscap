@@ -295,6 +295,7 @@ ssize_t sch_pipe_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
         data = (sch_pipedata_t *)desc->scheme_data;
 
         assume_r (data != NULL, -1, errno = EBADF;);
+	/* TODO: This code is duplicated in every supported operation in the SEAP pipe schema. */
 
 #ifdef _WIN32
 	errno = EOPNOTSUPP;
