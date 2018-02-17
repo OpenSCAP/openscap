@@ -702,8 +702,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         }
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
-                        goto L_SEXP_ADD;
-                        /* NOTREACHED */
+                        dfa_state = S_SEXP_ADD;
+                        break;
 
                 L_DQUOTE:
                 case S_DQUOTE:
