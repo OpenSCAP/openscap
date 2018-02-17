@@ -282,9 +282,10 @@ size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
         return (size);
 }
 
+#ifdef HAVE_UIO_H
+
 ssize_t strbuf_write (strbuf_t *buf, int fd)
 {
-#ifdef HAVE_UIO_H
         struct strblk *cur;
         ssize_t rsize, wsize;
 
@@ -345,7 +346,12 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 	dD("total bytes written: %zu", (size_t)rsize);
 
         return (rsize);
+}
+
 #else
+
+ssize_t strbuf_write (strbuf_t *buf, int fd)
+{
 	struct strblk *cur;
 	size_t size;
 
@@ -358,5 +364,6 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 	}
 
 	return (size);
-#endif
 }
+
+#endif
