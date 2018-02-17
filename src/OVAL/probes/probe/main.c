@@ -190,14 +190,12 @@ int main(int argc, char *argv[])
 	char *verbose_log_file = getenv("OSCAP_PROBE_VERBOSE_LOG_FILE");
 	oscap_set_verbose(verbosity_level, verbose_log_file, true);
 
-	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL,
-#ifndef _WIN32
-	                                  1 + // signal thread
+#ifdef _WIN32
+	const unsigned thread_count = 2; // input and icache threads
+#else
+	const unsigned thread_count = 3; // signal, input and icache threads
 #endif
-	                                  1 + // input thread
-	                                  1 + // icache thread
-	                                  0)) != 0)
-	{
+	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL, thread_count)) != 0) {
 		fail(errno, "pthread_barrier_init", __LINE__ - 6);
 	}
 
