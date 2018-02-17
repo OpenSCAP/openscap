@@ -681,7 +681,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                         if (cur_c == '.') {
                                 ++e_dsc.p_explen;
-                        L_NUMBER_final_flt:
+L_NUMBER_final_flt:
                                 e_dsc.p_numclass = SEXP_NUMCLASS_FLT;
 
                                 spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
@@ -715,7 +715,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                                 e_dsc.p_numclass = SEXP_NUMCLASS_UINT;
 
                                         ++e_dsc.p_explen;
-                                L_NUMBER_cont_int:
+L_NUMBER_cont_int:
                                         spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
                                                      if (!isdigit (cur_c))
                                                              goto L_NUMBER_stage2;
@@ -736,7 +736,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 goto L_NUMBER_invalid;
                         }
                         goto SKIP_LOOP;
-                L_NUMBER_stage2:
+L_NUMBER_stage2:
 
                         if (cur_c == '.') {
                                 ++e_dsc.p_explen;
@@ -744,7 +744,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         }
                         if (cur_c == 'e' || cur_c == 'E') {
                                 ++e_dsc.p_explen;
-                        L_NUMBER_final_exp:
+L_NUMBER_final_exp:
                                 e_dsc.p_numclass = SEXP_NUMCLASS_EXP;
 
                                 if (e_dsc.p_bufoff + e_dsc.p_explen < spb_len) {
@@ -753,7 +753,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         if (cur_c == '+' || cur_c == '-') {
                                                 ++e_dsc.p_explen;
                                         }
-                                L_NUMBER_final_exp2:
+L_NUMBER_final_exp2:
                                         spb_iterate (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen, cur_c,
                                                      if (!isdigit (cur_c)) {
                                                              if (isdigit (spb_octet (e_dsc.p_buffer,
@@ -798,7 +798,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         goto SKIP_LOOP;
                                 }
                         }
-                L_NUMBER_stage3:
+L_NUMBER_stage3:
                         /*
                          * Find out whether the number parsed in the previous stages
                          * in a length prefix. Length prefix a non-negative integer
@@ -1038,7 +1038,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 dfa_state = S_SEXP_ADD;
                                 break;
                         }
-                L_NUMBER_invalid:
+L_NUMBER_invalid:
                         ret_p = SEXP_PRET_EINVAL;
                         goto SKIP_LOOP;
 
