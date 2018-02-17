@@ -774,13 +774,13 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                                         e_dsc.p_label    = SEXP_LABELNUM_NUMBER;
                                                         goto L_NUMBER_final_flt;
                                                 } else
-                                                        goto L_CHAR;
+                                                        dfa_state = S_CHAR;
                                         } else {
                                                 if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
                                                         ++e_dsc.p_explen;
                                                         ++e_dsc.p_explen;
 
-                                                        goto L_CHAR;
+                                                        dfa_state = S_CHAR;
                                                 } else {
                                                         ret_p = SEXP_PRET_EUNFIN;
                                                         goto SKIP_LOOP;
@@ -788,19 +788,18 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         }
                                 } else {
                                         ++e_dsc.p_explen;
-                                        goto L_CHAR;
+                                        dfa_state = S_CHAR;
                                 }
                         } else {
                                 if (e_dsc.p_flags & SEXP_PFLAG_EOFOK) {
                                         ++e_dsc.p_explen;
-                                        goto L_CHAR;
+                                        dfa_state = S_CHAR;
                                 } else {
                                         ret_p = SEXP_PRET_EUNFIN;
                                         goto SKIP_LOOP;
                                 }
                         }
-                        goto SKIP_LOOP;
-                        /* NOTREACHED */
+                        break;
 
                 L_NUMBER:
                 case S_NUMBER:
