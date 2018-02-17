@@ -50,6 +50,10 @@
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
 
+#ifdef _WIN32
+#define X_OK 0
+#endif
+
 oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
         { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FAMILY, "family"),
@@ -511,11 +515,7 @@ void oval_probe_meta_list(FILE *output, int flags)
 
 			if (flags & OVAL_PROBEMETA_LIST_DYNAMIC) {
 				dI("Checking access to \"%s\"", probe_path);
-#ifdef _WIN32
-				if (access(probe_path, 0) != 0) {
-#else
 				if (access(probe_path, X_OK) != 0) {
-#endif
 					dW("access: errno=%d, %s", errno, strerror(errno));
 					continue;
 				}
