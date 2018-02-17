@@ -641,7 +641,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 assume_d (e_dsc.s_exp   != NULL, NULL);
                 assume_r (e_dsc.p_label != 128, NULL);
 
-                goto laddr(e_dsc.p_label);
+                dfa_state = d_states[e_dsc.p_label];
         } else if (e_dsc.s_exp != NULL) {
                 dfa_state = S_NO_SEXP_ALLOC;
         }
