@@ -689,7 +689,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                         if ((ret_p = psetup->p_funcp[SEXP_PFUNC_UL_STRING_SI](&e_dsc)) != SEXP_PRET_SUCCESS)
                                 goto SKIP_LOOP;
-                        goto L_SEXP_ADD;
+                        dfa_state = S_SEXP_ADD;
+                        break;
 
                 L_CHAR_FIXEDLEN:
                 case S_CHAR_FIXEDLEN:
