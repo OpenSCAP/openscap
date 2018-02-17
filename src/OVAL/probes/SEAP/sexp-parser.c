@@ -812,16 +812,6 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                          * the lenght prefix and the expression are separated with a colon character.
                          */
                         if (e_dsc.p_explen > 0) {
-                                const void *n_labels[] = {
-                                        &&L_NUMBER_cont_int,
-                                        &&L_NUMBER_final_exp,
-                                        &&L_NUMBER_final_exp2,
-                                        &&L_NUMBER_final_flt,
-                                        &&L_NUMBER_stage3
-                                };
-
-                                assume_d (e_dsc.p_numstage < (sizeof n_labels/sizeof (void *)), SEXP_PRET_EUNDEF);
-
                                 if (e_dsc.p_numstage == SEXP_NUMSTAGE_CONT_INT) {
                                         goto L_NUMBER_cont_int;
                                 } else if (e_dsc.p_numstage == SEXP_NUMSTAGE_FINAL_EXP) {
