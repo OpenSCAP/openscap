@@ -1309,7 +1309,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         ret_p = SEXP_PRET_EUNFIN;
                         ++e_dsc.p_bufoff;
 
-                        goto L_NO_SEXP_ALLOC;
+                        dfa_state = S_NO_SEXP_ALLOC;
+                        break;
 
                 L_PARCLOSE:
                 case S_PARCLOSE:
@@ -1331,7 +1332,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 ++e_dsc.p_bufoff;
                                 ret_p = SEXP_PRET_SUCCESS;
 
-                                goto L_NO_SEXP_ALLOC;
+                                dfa_state = S_NO_SEXP_ALLOC;
+                                break;
                         } else {
                                 ret_p = SEXP_PRET_EINVAL;
                                 goto SKIP_LOOP;
@@ -1348,8 +1350,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         e_dsc.p_bufoff += e_dsc.p_explen;
                         e_dsc.p_explen  = 0;
                         ret_p = SEXP_PRET_EUNFIN;
-
-                        goto L_NO_SEXP_ALLOC;
+                        dfa_state = S_NO_SEXP_ALLOC;
+                        break;
 
                 L_BRACKETOPEN_FIXEDLEN:
                 case S_BRACKETOPEN_FIXEDLEN:
@@ -1366,7 +1368,8 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 e_dsc.p_explen  = 0;
                                 ret_p = SEXP_PRET_EUNFIN;
 
-                                goto L_NO_SEXP_ALLOC;
+                                dfa_state = S_NO_SEXP_ALLOC;
+                                break;
                         }
                         /* NOTREACHED */
 
