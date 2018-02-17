@@ -699,11 +699,10 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                         if (e_dsc.p_bufoff + e_dsc.p_explen > spb_len) {
                                 ret_p = SEXP_PRET_EUNFIN;
                                 goto SKIP_LOOP;
-                        } else {
-                                if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING](&e_dsc)) != SEXP_PRET_SUCCESS)
-                                        goto SKIP_LOOP;
-                                goto L_SEXP_ADD;
                         }
+                        if ((ret_p = psetup->p_funcp[SEXP_PFUNC_KL_STRING](&e_dsc)) != SEXP_PRET_SUCCESS)
+                                goto SKIP_LOOP;
+                        goto L_SEXP_ADD;
                         /* NOTREACHED */
 
                 L_DQUOTE:
