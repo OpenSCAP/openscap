@@ -1000,22 +1000,26 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                         e_dsc.p_bufoff  += e_dsc.p_explen + 1 /* skip colon */;
                                         e_dsc.p_explen   = (spb_size_t)explen;
                                         e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                        goto L_CHAR_FIXEDLEN;
+                                        dfa_state = S_CHAR_FIXEDLEN;
+                                        break;
                                 } else if (cur_c == '|') {
                                         e_dsc.p_bufoff  += e_dsc.p_explen;
                                         e_dsc.p_explen   = (spb_size_t)explen;
                                         e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                        goto L_VERTBAR_FIXEDLEN;
+                                        dfa_state = S_VERTBAR_FIXEDLEN;
+                                        break;
                                 } else if (cur_c == '[') {
                                         e_dsc.p_bufoff  += e_dsc.p_explen;
                                         e_dsc.p_explen   = (spb_size_t)explen;
                                         e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                        goto L_BRACKETOPEN_FIXEDLEN;
+                                        dfa_state = S_BRACKETOPEN_FIXEDLEN;
+                                        break;
                                 } else if (cur_c == '{') {
                                         e_dsc.p_bufoff  += e_dsc.p_explen;
                                         e_dsc.p_explen   = (spb_size_t)explen;
                                         e_dsc.p_numclass = SEXP_NUMCLASS_PRE;
-                                        goto L_BRACEOPEN_FIXEDLEN;
+                                        dfa_state = S_BRACEOPEN_FIXEDLEN;
+                                        break;
                                 }
                         }
 
