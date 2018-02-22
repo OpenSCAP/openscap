@@ -54,6 +54,7 @@
 
 #include "main.h"
 #include "seap-descriptor.h"
+#include "probe_table.h"
 
 static int fail(int err, const char *who, int line)
 {
@@ -252,7 +253,10 @@ void *probe_common_main(void *arg)
 
 	pthread_attr_destroy(&th_attr);
 
-	probe.supported_offline_mode = probe_offline_mode_supported();
+	probe_offline_mode_function_t offline_mode_function = probe_table_get_offline_mode_function(probe.subtype);
+	if (offline_mode_function != NULL) {
+		probe.supported_offline_mode = offline_mode_function();
+	}
 
 	/*
 	 * Setup offline mode(s)
@@ -298,7 +302,11 @@ void *probe_common_main(void *arg)
 	 * Create input handler (detached)
 	 */
         probe.workers   = rbt_i32_new();
-        probe.probe_arg = probe_init();
+
+	probe_init_function_t init_function = probe_table_get_init_function(probe.subtype);
+	if (init_function != NULL) {
+		probe.probe_arg = init_function();
+	}
 
 	pthread_attr_init(&th_attr);
 
@@ -337,7 +345,10 @@ void *probe_common_main(void *arg)
 	/*
 	 * Cleanup
 	 */
-        probe_fini(probe.probe_arg);
+	probe_fini_function_t fini_function = probe_table_get_fini_function(probe.subtype);
+	if (fini_function != NULL) {
+		fini_function(probe.probe_arg);
+	}
 
 	probe_ncache_free(probe.ncache);
 	probe_rcache_free(probe.rcache);
