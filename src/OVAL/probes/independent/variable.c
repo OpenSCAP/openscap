@@ -51,13 +51,14 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+#include "variable.h"
 
-int probe_offline_mode_supported()
+int variable_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_ALL;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int variable_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *vr_ent, *sid, *sval, *svallst, *item;
 

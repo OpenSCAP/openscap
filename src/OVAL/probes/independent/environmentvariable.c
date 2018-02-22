@@ -49,6 +49,7 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "alloc.h"
+#include "environmentvariable.h"
 
 extern char **environ;
 
@@ -78,7 +79,7 @@ static int read_environment(SEXP_t *un_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int environmentvariable_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *ent;
 

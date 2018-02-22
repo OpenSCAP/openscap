@@ -5,6 +5,10 @@ set (INDEPENDENT_PROBES_SOURCES
 	"family.h"
 	"textfilecontent54.c"
 	"textfilecontent54.h"
+	"environmentvariable.c"
+	"environmentvariable.h"
+	"variable.c"
+	"variable.h"
 )
 add_library(independent_probes_object OBJECT ${INDEPENDENT_PROBES_SOURCES})
 set_oscap_generic_properties(independent_probes_object)
