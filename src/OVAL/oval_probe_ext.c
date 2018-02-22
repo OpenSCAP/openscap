@@ -993,7 +993,6 @@ int oval_probe_ext_init(oval_pext_t *pext)
 
         if (pext->do_init) {
 		char curdir[PATH_MAX];
-		struct stat st;
 		register unsigned int i, r;
 
 		if (getcwd(curdir, PATH_MAX) == NULL) {
@@ -1016,22 +1015,8 @@ int oval_probe_ext_init(oval_pext_t *pext)
                         if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
                                 dD("skipped: %s (not an external probe)", OSCAP_GSYM(__probe_meta)[i].stype);
                                 continue;
-                        }
-
-			if (stat(OSCAP_GSYM(__probe_meta)[i].pname, &st) != 0) {
-				dD("skipped: %s (stat failed, errno=%d)", OSCAP_GSYM(__probe_meta)[i].stype, errno);
-				continue;
 			}
-
-#ifdef _WIN32
-		if (!(st.st_mode & _S_IFREG)) {
-#else
-		if (!S_ISREG(st.st_mode)) {
-#endif
-				dD("skipped: %s (not a regular file)", OSCAP_GSYM(__probe_meta)[i].stype);
-				continue;
-			}
-
+			/* TODO: check if the probe is available. */
                         pext->pdsc[r].type = OSCAP_GSYM(__probe_meta)[i].otype;
                         pext->pdsc[r].name = OSCAP_GSYM(__probe_meta)[i].stype;
                         pext->pdsc[r].file = OSCAP_GSYM(__probe_meta)[i].pname;
