@@ -497,7 +497,7 @@ Authors:
         <xsl:when test="starts-with($href, 'https://www.gpo.gov/fdsys/pkg/CFR-2007-title45-vol1')">
             <xsl:text>HIPAA</xsl:text>
         </xsl:when>
-        <xsl:when test="starts-with($href, 'https://www.iso.org/standard')">
+        <xsl:when test="starts-with($href, 'https://www.iso.org/standard/54534.html')">
             <xsl:text>ISO 27001-2013</xsl:text>
         </xsl:when>
         <xsl:when test="starts-with($href, 'https://iase.disa.mil/stigs/pages/stig-viewing-guidance')">
