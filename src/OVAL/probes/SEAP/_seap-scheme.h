@@ -86,6 +86,10 @@ SEAP_scheme_t SEAP_scheme_search (const SEAP_schemefn_t fntable[], const char *s
 #include "sch_pipe.h"
 #define SCH_PIPE    3
 
+/* queue */
+#include "sch_queue.h"
+#define SCH_QUEUE    4
+
 #define SCH_NONE    255
 
 

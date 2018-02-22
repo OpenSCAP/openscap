@@ -46,7 +46,7 @@
 #include "public/oval_probe.h"
 
 
-#define OVAL_PROBE_SCHEME "pipe"
+#define OVAL_PROBE_SCHEME "queue"
 
 #ifndef OVAL_PROBE_DIR
 # define OVAL_PROBE_DIR    "/usr/libexec/openscap"

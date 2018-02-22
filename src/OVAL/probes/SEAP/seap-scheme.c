@@ -29,6 +29,7 @@
 
 #include "generic/common.h"
 #include "_seap-scheme.h"
+#include "sch_queue.h"
 
 /* KEEP THIS ARRAY SORTED! */
 const SEAP_schemefn_t __schtbl[] = {
@@ -51,7 +52,13 @@ const SEAP_schemefn_t __schtbl[] = {
           sch_pipe_connect, sch_pipe_openfd,
           sch_pipe_openfd2, sch_pipe_recv,
           sch_pipe_send, sch_pipe_close,
-          sch_pipe_sendsexp, sch_pipe_select }
+          sch_pipe_sendsexp, sch_pipe_select },
+	{ "queue",
+		sch_queue_connect, sch_queue_openfd,
+		sch_queue_openfd2, sch_queue_recv,
+		sch_queue_send, sch_queue_close,
+		sch_queue_sendsexp, sch_queue_select }
+
 };
 
 #define SCHTBLSIZE ((sizeof __schtbl)/sizeof (SEAP_schemefn_t))
