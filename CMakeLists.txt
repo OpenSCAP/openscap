@@ -265,7 +265,20 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
 if (MSVC)
+	# Disable some of Microsoft Visual Studio 2017 warnings
+	#
+	# Visual Studio recommends using some non-standard functions with _s suffix
+	# instead of standard functions, because they considered it more secure.
+	# However these functions are available only in Microsoft C Runtime.
+	# Therefore we disable this type of warnings.
+	# https://docs.microsoft.com/en-us/cpp/c-runtime-library/security-features-in-the-crt
 	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	# Microsoft has renamed some POSIX functions in the CRT to conform with C99 rules for
+	# implementation-defined global function names. In most cases, a leading underscore was
+	# added to the POSIX function name to create a standard conformant name.
+	# If we use POSIX functions without leading underscore, a deprecation warning is shown.
+	# Therefore we disable this type of warnings.
+	# https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
 	add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)
 endif()
 
