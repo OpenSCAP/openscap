@@ -44,6 +44,7 @@ struct SEAP_CTX {
 
         uint16_t recv_timeout;
         uint16_t send_timeout;
+	oval_subtype_t subtype;
 };
 
 

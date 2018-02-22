@@ -37,6 +37,7 @@
 #endif
 #include <stdlib.h>
 
+#include "_seap-types.h"
 #include "common/_error.h"
 #include "common/alloc.h"
 #include "common/util.h"
@@ -449,6 +450,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 		return -1;
 	}
 
+	ctx->subtype = pd->subtype;
 	for (retry = 0;;) {
 		/*
 		 * Establish connection to probe. The connection may be

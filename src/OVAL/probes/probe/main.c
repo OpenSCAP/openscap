@@ -52,6 +52,9 @@
 #include <unistd.h>
 #endif
 
+#include "main.h"
+#include "seap-descriptor.h"
+
 static int fail(int err, const char *who, int line)
 {
 	fprintf(stderr, "FAIL: %d:%s: %d, %s\n", line, who, err, strerror(err));
@@ -142,7 +145,7 @@ static void preload_libraries_before_chroot()
 	pthread_join(t, NULL);
 }
 
-int main(int argc, char *argv[])
+void *probe_common_main(void *arg)
 {
 	pthread_attr_t th_attr;
 #ifndef _WIN32
@@ -150,6 +153,14 @@ int main(int argc, char *argv[])
 #endif
 	probe_t        probe;
 	char *rootdir = NULL;
+	struct probe_common_main_argument *probe_argument = (struct probe_common_main_argument *) arg;
+	sch_queuedata_t *data = probe_argument->queuedata;
+	oval_subtype_t subtype = probe_argument->subtype;
+	probe.subtype = subtype;
+
+
+	pthread_setname_np(pthread_self(), "common_main");
+	dI("probe_common_main started");
 
 	/* Turn on verbose mode */
 	char *verbosity_level = getenv("OSCAP_PROBE_VERBOSITY_LEVEL");
@@ -187,14 +198,14 @@ int main(int argc, char *argv[])
 	probe.selected_offline_mode = PROBE_OFFLINE_NONE;
 	probe.flags = 0;
 	probe.pid   = getpid();
-	probe.name = oscap_basename(argv[0]);
+	probe.name = (char *) arg;
         probe.probe_exitcode = 0;
 
 	/*
 	 * Initialize SEAP stuff
 	 */
 	probe.SEAP_ctx = SEAP_CTX_new();
-	probe.sd = SEAP_openfd2(probe.SEAP_ctx, STDIN_FILENO, STDOUT_FILENO, 0);
+	probe.sd = SEAP_add_probe(probe.SEAP_ctx, data);
 
 	if (probe.sd < 0)
 		fail(errno, "SEAP_openfd2", __LINE__ - 3);
@@ -340,5 +351,5 @@ int main(int argc, char *argv[])
 	SEAP_CTX_free(probe.SEAP_ctx);
         free(probe.option);
 	free(probe.name);
-	return (probe.probe_exitcode);
+	return NULL;
 }

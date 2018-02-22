@@ -42,6 +42,7 @@
 #include "_seap-error.h"
 #include "_seap-packet.h"
 #include "_seap.h"
+#include "seap-descriptor.h"
 
 static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 {
@@ -125,6 +126,7 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
                 errno = ESRCH;
                 return(-1);
         }
+	dsc->subtype = ctx->subtype;
 
         if (SCH_CONNECT(scheme, dsc, uri + schstr_len + 1, flags) != 0) {
                 dI("FAIL: errno=%u, %s.", errno, strerror (errno));
@@ -153,7 +155,7 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
         SEAP_desc_t *dsc;
         int sd;
 
-        sd = SEAP_desc_add (ctx->sd_table, NULL, SCH_GENERIC, NULL);
+        sd = SEAP_desc_add (ctx->sd_table, NULL, SCH_QUEUE, NULL);
 
         if (sd < 0) {
                 dI("Can't create/add new SEAP descriptor");
@@ -173,6 +175,22 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
         }
 
         return (sd);
+}
+
+int SEAP_add_probe (SEAP_CTX_t *ctx, sch_queuedata_t *data)
+{
+	int sd = SEAP_desc_add(ctx->sd_table, NULL, SCH_QUEUE, data);
+	dI("SEAP_add_probe");
+	if (sd < 0) {
+		dI("Can't create/add new SEAP descriptor");
+		return (-1);
+	}
+	SEAP_desc_t *dsc = SEAP_desc_get (ctx->sd_table, sd);
+
+	if (dsc == NULL) {
+		dI("dsc == NULL");
+	}
+    return sd;
 }
 
 int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp)

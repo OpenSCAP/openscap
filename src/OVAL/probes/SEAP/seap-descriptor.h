@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <stdint.h>
+#include "oval_types.h"
 #include "generic/bitmap.h"
 #include "generic/rbt/rbt.h"
 #include "_sexp-types.h"
@@ -63,6 +64,7 @@ typedef struct {
         SEAP_cmdid_t   next_cid;
         SEAP_cmdtbl_t *cmd_c_table; /* Local SEAP commands */
         SEAP_cmdtbl_t *cmd_w_table; /* Waiting SEAP commands */
+    oval_subtype_t subtype;
 } SEAP_desc_t;
 
 #define SEAP_DESC_FDIN  0x00000001
