@@ -69,6 +69,11 @@ if (ENABLE_PROBES)
 		$<TARGET_OBJECTS:probe_object>
 		$<TARGET_OBJECTS:seap_object>
 	)
+	if (ENABLE_PROBES_INDEPENDENT)
+		list(APPEND OBJECTS_TO_LINK_AGAINST
+			$<TARGET_OBJECTS:independent_probes_object>
+		)
+endif()
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
