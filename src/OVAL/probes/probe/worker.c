@@ -29,12 +29,16 @@
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
+#include "independent/family.h"
+#include "independent/system_info.h"
 
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
 
 #include "worker.h"
+#include "probe_table.h"
+#include "probe.h"
 
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);
@@ -994,7 +998,13 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                          */
 			int __unused_oldstate;
 			pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &__unused_oldstate);
-			*ret = probe_main(&pctx, probe->probe_arg);
+
+
+			oval_subtype_t subtype = probe->subtype;
+			dI("I will run %s_probe_main:", oval_subtype_get_text(subtype));
+			probe_main_function_t probe_main_function = probe_table_get_main_function(subtype);
+			*ret = probe_main_function(&pctx, probe->probe_arg);
+
 			pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &__unused_oldstate);
 
                         /*
