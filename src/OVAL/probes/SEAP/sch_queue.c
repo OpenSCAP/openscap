@@ -142,7 +142,7 @@ ssize_t sch_queue_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 	if (SEXP_sbprintf_t(sexp, sb) != 0) {
 		return -1;
 	}
-	char *msg = strbuf_cstr(sb);
+	char *msg = oscap_strdup(strbuf_cstr(sb));
 
 	ssize_t len = strbuf_length(sb);
 	msg[len] = '\0';
