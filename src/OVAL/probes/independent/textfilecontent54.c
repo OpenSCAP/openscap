@@ -53,6 +53,7 @@
 #include <oval_fts.h>
 #include <alloc.h>
 #include "common/debug_priv.h"
+#include "textfilecontent54.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -304,12 +305,12 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	return ret;
 }
 
-int probe_offline_mode_supported()
+int textfilecontent54_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int textfilecontent54_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent, *probe_in;
         SEXP_t *r0;

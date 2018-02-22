@@ -53,15 +53,16 @@
 #include <probe-api.h>
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "family.h"
 
-int probe_offline_mode_supported()
+int family_probe_offline_mode_supported()
 {
 	/* We say that the probe supports all offline modes, but in fact
 	   it always returns the same hardocoded string. */
 	return PROBE_OFFLINE_ALL;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int family_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *item;
 

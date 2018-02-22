@@ -70,6 +70,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <limits.h>
+#include "system_info.h"
 
 #undef OS_FREEBSD
 #undef OS_LINUX
@@ -551,12 +552,12 @@ fail:
 }
 #endif
 
-int probe_offline_mode_supported()
+int system_info_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int system_info_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t* item = NULL;
 	char* os_name, *architecture, *hname;
