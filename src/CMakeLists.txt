@@ -73,7 +73,7 @@ if (ENABLE_PROBES)
 		list(APPEND OBJECTS_TO_LINK_AGAINST
 			$<TARGET_OBJECTS:independent_probes_object>
 		)
-endif()
+	endif()
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
