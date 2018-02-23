@@ -38,7 +38,7 @@
 #include "../probe/main.h"
 
 
-int sch_queue_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
+int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
 {
 	sch_queuedata_t *data = malloc(sizeof(sch_queuedata_t));
 
@@ -66,17 +66,17 @@ int sch_queue_connect (SEAP_desc_t *desc, const char *uri, uint32_t flags)
 	return 0;
 }
 
-int sch_queue_openfd (SEAP_desc_t *desc, int fd, uint32_t flags)
+int sch_queue_openfd(SEAP_desc_t *desc, int fd, uint32_t flags)
 {
 	return 0;
 }
 
-int sch_queue_openfd2 (SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
+int sch_queue_openfd2(SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 {
 	return 0;
 }
 
-ssize_t sch_queue_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
+ssize_t sch_queue_recv(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *)desc->scheme_data;
 	struct oscap_queue *queue;
@@ -106,7 +106,7 @@ ssize_t sch_queue_recv (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags
 	return ret;
 }
 
-ssize_t sch_queue_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
+ssize_t sch_queue_send(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *)desc->scheme_data;
 
@@ -135,7 +135,7 @@ ssize_t sch_queue_send (SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags
 	return len;
 }
 
-ssize_t sch_queue_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
+ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
 	strbuf_t *sb = strbuf_new(SEAP_STRBUF_MAX);
@@ -170,7 +170,7 @@ ssize_t sch_queue_sendsexp (SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 	return len;
 }
 
-int sch_queue_close (SEAP_desc_t *desc, uint32_t flags)
+int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
 	oscap_queue_free(data->to_probe_queue, &free);
@@ -178,7 +178,7 @@ int sch_queue_close (SEAP_desc_t *desc, uint32_t flags)
 	return 0;
 }
 
-int sch_queue_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
+int sch_queue_select(SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
 {
 	return 0;
 }
