@@ -21,8 +21,8 @@
  */
 
 
-#ifndef PROBE_TABLE_H
-#define PROBE_TABLE_H
+#ifndef OPENSCAP_PROBE_TABLE_H
+#define OPENSCAP_PROBE_TABLE_H
 
 #include "probe-api.h"
 
@@ -36,4 +36,4 @@ probe_main_function_t probe_table_get_main_function(oval_subtype_t type);
 probe_fini_function_t probe_table_get_fini_function(oval_subtype_t type);
 probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype_t type);
 
-#endif //OPENSCAP_PROBE_TABLE_H
+#endif /* OPENSCAP_OPENSCAP_PROBE_TABLE_H */

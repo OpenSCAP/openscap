@@ -20,12 +20,12 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
-#ifndef SYSTEM_INFO_H
-#define SYSTEM_INFO_H
+#ifndef OPENSCAP_SYSTEM_INFO_H
+#define OPENSCAP_SYSTEM_INFO_H
 
 #include "probe-api.h"
 
 int system_info_probe_offline_mode_supported(void);
 int system_info_probe_main(probe_ctx *ctx, void *arg);
 
-#endif //OPENSCAP_SYSTEM_INFO_H
+#endif /* OPENSCAP_SYSTEM_INFO_H */

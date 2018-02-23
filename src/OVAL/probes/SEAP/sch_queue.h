@@ -21,8 +21,8 @@
  */
 
 #pragma once
-#ifndef SCH_QUEUE_H
-#define SCH_QUEUE_H
+#ifndef OPENSCAP_SCH_QUEUE_H
+#define OPENSCAP_SCH_QUEUE_H
 
 #include "util.h"
 #include "oscap_queue.h"
@@ -51,4 +51,4 @@ int sch_queue_close (SEAP_desc_t *desc, uint32_t flags);
 int sch_queue_select (SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags);
 
 
-#endif /* SCH_QUEUE_H */
+#endif /* OPENSCAP_SCH_QUEUE_H */

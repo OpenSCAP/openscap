@@ -20,11 +20,11 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
-#ifndef ENVIRONMENTVARIABLE_H
-#define ENVIRONMENTVARIABLE_H
+#ifndef OPENSCAP_ENVIRONMENTVARIABLE_H
+#define OPENSCAP_ENVIRONMENTVARIABLE_H
 
 #include "probe-api.h"
 
 int environmentvariable_probe_main(probe_ctx *ctx, void *arg);
 
-#endif //ENVIRONMENTVARIABLE_H
+#endif /* OPENSCAP_ENVIRONMENTVARIABLE_H */

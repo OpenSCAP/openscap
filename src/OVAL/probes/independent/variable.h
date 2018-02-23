@@ -20,12 +20,12 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
-#ifndef VARIABLE_H
-#define VARIABLE_H
+#ifndef OPENSCAP_VARIABLE_H
+#define OPENSCAP_VARIABLE_H
 
 #include "probe-api.h"
 
 int variable_probe_offline_mode_supported(void);
 int variable_probe_main(probe_ctx *ctx, void *arg);
 
-#endif //VARIABLE_H
+#endif /* OPENSCAP_VARIABLE_H */

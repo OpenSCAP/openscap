@@ -20,12 +20,12 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
-#ifndef FAMILY_H
-#define FAMILY_H
+#ifndef OPENSCAP_FAMILY_H
+#define OPENSCAP_FAMILY_H
 
 #include "probe-api.h"
 
 int family_probe_offline_mode_supported(void);
 int family_probe_main(probe_ctx *ctx, void *arg);
 
-#endif //FAMILY_H
+#endif /* OPENSCAP_FAMILY_H */

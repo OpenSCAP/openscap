@@ -20,12 +20,12 @@
  *      Jan Černý <jcerny@redhat.com>
  */
 
-#ifndef TEXTFILECONTENT54_H
-#define TEXTFILECONTENT54_H
+#ifndef OPENSCAP_TEXTFILECONTENT54_H
+#define OPENSCAP_TEXTFILECONTENT54_H
 
 #include "probe-api.h"
 
 int textfilecontent54_probe_offline_mode_supported(void);
 int textfilecontent54_probe_main(probe_ctx *ctx, void *arg);
 
-#endif //TEXTFILECONTENT54_H
+#endif /* OPENSCAP_TEXTFILECONTENT54_H */

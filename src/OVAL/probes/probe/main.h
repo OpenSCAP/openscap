@@ -20,8 +20,8 @@
  *      "Jan Černý" <jcerny@redhat.com>
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef OPENSCAP_MAIN_H
+#define OPENSCAP_MAIN_H
 
 struct probe_common_main_argument {
 	oval_subtype_t subtype;
@@ -29,4 +29,4 @@ struct probe_common_main_argument {
 };
 void *probe_common_main(void *);
 
-#endif //MAIN_H
+#endif /* OPENSCAP_MAIN_H */
