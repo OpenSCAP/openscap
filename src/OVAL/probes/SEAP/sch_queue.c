@@ -60,6 +60,7 @@ int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
 
 	if (pthread_create(&data->probe_thread_id, NULL, &probe_common_main, arg)) {
 		dE("Cannot create probe thread");
+		return -1;
 	}
 
 	desc->scheme_data = (void *) data;
