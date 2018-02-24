@@ -28,7 +28,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "common/assume.h"
 #include "_sexp-atomic.h"
 
 #if defined(HAVE_ATOMIC_BUILTINS)
