@@ -34,7 +34,6 @@
 
 #include "debug_priv.h"
 #include "memusage.h"
-#include "assume.h"
 #include "bfind.h"
 
 #if defined(__linux__)
@@ -42,8 +41,9 @@ static int read_common_sizet(void *szp, char *strval)
 {
 	char *end;
 
-	assume_d(szp    != NULL, -1);
-	assume_d(strval != NULL, -1);
+	if (szp == NULL || strval == NULL) {
+		return -1;
+	}
 
 	end = strchr(strval, ' ');
 
