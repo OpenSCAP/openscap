@@ -34,6 +34,7 @@
 #include "independent/environmentvariable58.h"
 #include "independent/filehash.h"
 #include "independent/filehash58.h"
+#include "independent/sql.h"
 
 typedef struct probe_table_entry {
 	oval_subtype_t type;
@@ -50,6 +51,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_FAMILY, family_probe_init, family_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_FILE_HASH, filehash_probe_init, filehash_probe_main, filehash_probe_fini, NULL},
 	{OVAL_INDEPENDENT_FILE_HASH58, filehash58_probe_init, filehash58_probe_main, filehash58_probe_fini, NULL},
+	{OVAL_INDEPENDENT_SQL, NULL, sql_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, textfilecontent54_probe_init, textfilecontent54_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_VARIABLE, variable_probe_init, variable_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_SYSINFO, system_info_probe_init, system_info_probe_main, NULL, NULL},

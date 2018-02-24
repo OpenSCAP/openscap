@@ -41,20 +41,11 @@
 #include <time.h>
 #include <errno.h>
 #include <opendbx/api.h>
+#include "sql.h"
 
 #ifndef SQLPROBE_DEFAULT_CONNTIMEOUT
 # define SQLPROBE_DEFAULT_CONNTIMEOUT 30
 #endif
-
-void *probe_init(void)
-{
-	return (NULL);
-}
-
-void probe_fini(void *arg)
-{
-	return;
-}
 
 typedef struct {
 	char *o_engine; /* object engine  */
@@ -391,7 +382,7 @@ __exit:
 	return (err);
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int sql_probe_main(probe_ctx *ctx, void *arg)
 {
 	char *engine, *version, *conn, *sqlexp;
 	int err;

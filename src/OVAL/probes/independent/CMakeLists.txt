@@ -20,6 +20,12 @@ if (GCRYPT_FOUND OR NSS_FOUND)
 		"filehash58.h"
 	)
 endif()
+if (OPENDBX_FOUND)
+	list(APPEND INDEPENDENT_PROBES_SOURCES
+		"sql.c"
+		"sql.h"
+	)
+endif()
 
 add_library(independent_probes_object OBJECT ${INDEPENDENT_PROBES_SOURCES})
 set_oscap_generic_properties(independent_probes_object)
