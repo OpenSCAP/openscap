@@ -39,7 +39,6 @@
 
 #include "common/_error.h"
 #include "common/alloc.h"
-#include "common/assume.h"
 #include "common/util.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
@@ -130,15 +129,17 @@ static void oval_pdtbl_free(oval_pdtbl_t *tbl)
 
 static int oval_pdtbl_pdcmp(const oval_pd_t **a, const oval_pd_t **b)
 {
-	assume_d(*a != NULL, -1);
-	assume_d(*b != NULL, -1);
+	if (*a == NULL || *b == NULL) {
+		return -1;
+	}
 	return ((*a)->subtype - (*b)->subtype);
 }
 
 static int oval_pdtbl_typecmp(oval_subtype_t *a, oval_pd_t **b)
 {
-	assume_d(a != NULL, -1);
-	assume_d(*b != NULL, -1);
+	if (a == NULL || *b == NULL) {
+		return -1;
+	}
         return (*a - (*b)->subtype);
 }
 
@@ -146,8 +147,9 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 {
 	oval_pd_t *pd;
 
-	assume_d (tbl != NULL, -1);
-	assume_d (uri != NULL, -1);
+	if (tbl == NULL || uri == NULL) {
+		return -1;
+	}
 
 	pd = oscap_talloc(oval_pd_t);
 	pd->subtype = type;
@@ -156,7 +158,9 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 
 	tbl->memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
 
-	assume_d(tbl->memb != NULL, -1);
+	if (tbl->memb == NULL) {
+		return -1;
+	}
 
 	tbl->memb[tbl->count - 1] = pd;
 
@@ -185,7 +189,9 @@ static int     oval_probe_cmd_init(oval_pext_t *pext);
 
 static int oval_probe_cmd_init(oval_pext_t *pext)
 {
-        assume_d (pext != NULL, -1);
+	if (pext == NULL) {
+		return -1;
+	}
 
 	if (SEAP_cmd_register(pext->pdtbl->ctx, PROBECMD_OBJ_EVAL, SEAP_CMDREG_USEARG,
                               &oval_probe_cmd_obj_eval, (void *)pext) != 0)
@@ -216,8 +222,9 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	SEXP_t *ret, *ret_code;
 	int r;
 
-        assume_d (sexp != NULL, NULL);
-        assume_d (arg  != NULL, NULL);
+	if (sexp == NULL || arg == NULL) {
+		return NULL;
+	}
 
 	if (!SEXP_stringp(sexp)) {
 		dE("Invalid argument: type=%s.", SEXP_strtype(sexp));
@@ -273,8 +280,9 @@ static SEXP_t *oval_probe_cmd_ste_fetch(SEXP_t *sexp, void *arg)
 	oval_pext_t *pext = (oval_pext_t *)arg;
 	int ret;
 
-        assume_d (sexp != NULL, NULL);
-        assume_d (arg  != NULL, NULL);
+	if (sexp == NULL || arg == NULL) {
+		return NULL;
+	}
 
 	ste_list = SEXP_list_new(NULL);
 
@@ -437,8 +445,9 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 	SEAP_msg_t *s_imsg, *s_omsg;
 	SEXP_t *s_oobj;
 
-	assume_d (pd != NULL, -1);
-        assume_d (s_iobj != NULL, -1);
+	if (pd == NULL || s_iobj == NULL) {
+		return -1;
+	}
 
 	for (retry = 0;;) {
 		/*
@@ -769,7 +778,9 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                         pd = oval_pdtbl_get(pext->pdtbl, type);
                 }
 
-                assume_r(pd != NULL, -1);
+		if (pd == NULL) {
+			return -1;
+		}
 		ret = oval_probe_sys_eval(pext->pdtbl->ctx, pd, *(pext->model), inf);
                 break;
         }
@@ -1137,9 +1148,9 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 	 * Send SIGUSR1 to the probe
 	 */
 
-	assume_d(ctx  != NULL, -1);
-	assume_d(pd   != NULL, -1);
-	assume_d(pext != NULL, -1);
+	if (ctx == NULL || pd == NULL || pext == NULL) {
+		return -1;
+	}
 
 	dI("Sending abort to sd=%d", pd->sd);
 
