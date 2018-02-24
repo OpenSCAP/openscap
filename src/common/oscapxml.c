@@ -45,7 +45,6 @@
 #include "util.h"
 #include "list.h"
 #include "elements.h"
-#include "assume.h"
 #include "debug_priv.h"
 #include "oscap_source.h"
 #include "oscapxml.h"
