@@ -30,7 +30,6 @@
 
 #include "alloc.h"
 #include "_error.h"
-#include "assume.h"
 
 static void __oscap_err_check(void *m);
 
@@ -62,8 +61,9 @@ void *__oscap_calloc(size_t n, size_t s)
 {
 	void *m;
 #if defined(OSCAP_ALLOC_STRICT)
-	assume_d (n > 0, NULL);
-	assume_d (s > 0, NULL);
+	if (n <= 0 || s <= 0) {
+		return NULL;
+	}
 #endif
 	m = calloc(n, s);
 	__oscap_err_check(m);
@@ -105,7 +105,9 @@ void *__oscap_reallocf(void *p, size_t s)
 void __oscap_free(void *p)
 {
 #if defined(OSCAP_ALLOC_STRICT)
-	assume_d (p != NULL, /* void */);
+	if (p == NULL) {
+		return;
+	}
 #endif
 	if (p != NULL)
 		free(p);
