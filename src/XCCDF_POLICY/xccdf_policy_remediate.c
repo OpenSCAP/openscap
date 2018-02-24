@@ -40,7 +40,6 @@
 
 #include "XCCDF/item.h"
 #include "common/_error.h"
-#include "common/assume.h"
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
 #include "xccdf_policy_priv.h"
@@ -60,10 +59,10 @@ static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
 	va_end(ap);
 
 	msg = xccdf_message_new();
-	assume_ex(xccdf_message_set_content(msg, text), 1);
+	xccdf_message_set_content(msg, text);
 	free(text);
-	assume_ex(xccdf_message_set_severity(msg, XCCDF_MSG_INFO), 1);
-	assume_ex(xccdf_rule_result_add_message(rr, msg), 1);
+	xccdf_message_set_severity(msg, XCCDF_MSG_INFO);
+	xccdf_rule_result_add_message(rr, msg);
 	return 0;
 }
 
@@ -193,7 +192,7 @@ static inline bool _is_platform_applicable(struct xccdf_policy *policy, const ch
 	if (oscap_streq("", platform))
 		return true;
 	struct oscap_stringlist *platform_list = oscap_stringlist_new();
-	assume_ex(oscap_stringlist_add_string(platform_list, platform), false);
+	oscap_stringlist_add_string(platform_list, platform);
 	struct oscap_string_iterator *platform_it = oscap_stringlist_get_strings(platform_list);
 	bool ret = xccdf_policy_model_platforms_are_applicable(xccdf_policy_get_model(policy), platform_it);
 	oscap_string_iterator_free(platform_it);
