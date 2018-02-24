@@ -39,7 +39,6 @@
 #include <stdbool.h>
 #include <errno.h>
 
-#include "common/assume.h"
 #include "public/sm_alloc.h"
 
 #include "_sexp-types.h"
@@ -54,7 +53,9 @@ static SEXP_ID_t SEXP_ID_hash(void *buf, size_t len, SEXP_ID_t seed, int part)
 {
         uint64_t resbuf[2];
 
-	assume_d(part == 0 || part == 1, -1);
+	if (part != 0 && part != 1) {
+		return -1;
+	}
 
         MurmurHash3_x86_128(buf, (int)len, (uint32_t)((0x7C0FFEE7 ^ seed) ^ (seed >> 32)), resbuf);
 
@@ -65,8 +66,9 @@ static int SEXP_ID_v_callback(const SEXP_t *sexp, __IDres_pair *pair)
 {
         SEXP_val_t v_dsc;
 
-        assume_d(sexp != NULL, -1);
-        assume_d(pair != NULL, -1);
+	if (sexp == NULL || pair == NULL) {
+		return -1;
+	}
 
         /*
          * Fill v_dsc with metainformation
