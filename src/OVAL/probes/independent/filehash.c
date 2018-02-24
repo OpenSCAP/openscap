@@ -50,6 +50,7 @@
 
 #include "oval_fts.h"
 #include <common/debug_priv.h>
+#include "filehash.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -184,12 +185,12 @@ static int filehash_cb (const char *prefix, const char *p, const char *f, probe_
         return (0);
 }
 
-int probe_offline_mode_supported()
+int filehash_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init(void)
+void *filehash_probe_init(void)
 {
         /*
          * Initialize crypto API
@@ -211,7 +212,7 @@ void *probe_init(void)
         return (NULL);
 }
 
-void probe_fini (void *arg)
+void filehash_probe_fini(void *arg)
 {
         _A((void *)arg == (void *)&__filehash_probe_mutex);
 
@@ -223,7 +224,7 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (probe_ctx *ctx, void *mutex)
+int filehash_probe_main(probe_ctx *ctx, void *mutex)
 {
         SEXP_t *path, *filename, *behaviors, *filepath, *probe_in;
 

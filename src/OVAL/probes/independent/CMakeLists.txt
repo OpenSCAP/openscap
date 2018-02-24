@@ -12,5 +12,12 @@ set (INDEPENDENT_PROBES_SOURCES
 	"variable.c"
 	"variable.h"
 )
+if (GCRYPT_FOUND OR NSS_FOUND)
+	list(APPEND INDEPENDENT_PROBES_SOURCES
+		"filehash.c"
+		"filehash.h"
+	)
+endif()
+
 add_library(independent_probes_object OBJECT ${INDEPENDENT_PROBES_SOURCES})
 set_oscap_generic_properties(independent_probes_object)

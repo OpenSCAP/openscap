@@ -75,6 +75,11 @@ if (ENABLE_PROBES)
 		)
 	endif()
 endif()
+if (GCRYPT_FOUND OR NSS_FOUND)
+	list(APPEND OBJECTS_TO_LINK_AGAINST
+		$<TARGET_OBJECTS:crapi_object>
+	)
+endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
 
@@ -97,5 +102,12 @@ endif()
 if(WIN32)
 	target_link_libraries(openscap wsock32 ws2_32)
 endif()
+if (GCRYPT_FOUND)
+	target_link_libraries(openscap ${GCRYPT_LIBRARIES})
+endif()
+if (NSS_FOUND)
+	target_link_libraries(openscap ${NSS_LIBRARIES})
+endif()
+
 
 install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})
