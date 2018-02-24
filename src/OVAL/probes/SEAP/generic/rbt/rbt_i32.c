@@ -25,7 +25,6 @@
 #endif
 
 #include <errno.h>
-#include <assume.h>
 #include <stdlib.h>
 #include "rbt_common.h"
 #include "rbt_i32.h"
@@ -239,7 +238,9 @@ int rbt_i32_del(rbt_t *rbt, int32_t key, void **n)
                 return (1);
         }
 
-        assume_d(rbt_node_ptr(rbt->root) != NULL, -1);
+	if (rbt_node_ptr(rbt->root) == NULL) {
+		return -1;
+	}
 
         /*
          * Fake node
@@ -345,7 +346,10 @@ int rbt_i32_del(rbt_t *rbt, int32_t key, void **n)
                  * The node color of the node that will be delete is always
                  * red in case the node is not the root node.
                  */
-                assume_d(rbt_node_ptr(fake._chld[RBT_NODE_SR]) == h[0] || rbt_node_getcolor(h[0]) == RBT_NODE_CR, -1);
+		if (rbt_node_ptr(fake._chld[RBT_NODE_SR]) != h[0]
+				&& rbt_node_getcolor(h[0]) != RBT_NODE_CR) {
+			return -1;
+		}
                 if (n != NULL)
                         *n = rbt_i32_node(save)->data;
 
