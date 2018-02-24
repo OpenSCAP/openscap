@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include "probe_table.h"
+#include "probe-table.h"
 #include "independent/system_info.h"
 #include "independent/family.h"
 #include "oval_types.h"
@@ -96,4 +96,18 @@ probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype
 {
 	probe_table_entry_t *entry = probe_table_get(type);
 	return entry->probe_offline_mode_function;
+}
+
+void oval_probe_table_list(FILE *output)
+{
+	const probe_table_entry_t *entry = probe_table;
+	while (entry->type != OVAL_SUBTYPE_UNKNOWN)
+	{
+		oval_subtype_t type = entry->type;
+		fprintf(output, "%-14s", oval_family_get_text(oval_subtype_get_family(type)));
+		fprintf(output, "%-29s", oval_subtype_get_text(type));
+		fprintf(output, "probe_%s", oval_subtype_get_text(type));
+		fprintf(output, "\n");
+		entry++;
+	}
 }

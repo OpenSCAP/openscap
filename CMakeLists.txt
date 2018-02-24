@@ -306,6 +306,7 @@ include_directories(
 	"src/CVSS/public/"
 	"src/DS/public/"
 	"src/OVAL/public/"
+	"src/OVAL/probes/public/"
 	"src/OVAL/probes/SEAP/"
 	"src/OVAL/probes/SEAP/public/"
 	"src/OVAL/"

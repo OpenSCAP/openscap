@@ -54,7 +54,7 @@
 
 #include "probe_main.h"
 #include "seap-descriptor.h"
-#include "probe_table.h"
+#include "probe-table.h"
 
 static int fail(int err, const char *who, int line)
 {
