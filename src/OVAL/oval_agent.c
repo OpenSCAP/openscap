@@ -34,7 +34,6 @@
 
 #include <string.h>
 #include <time.h>
-#include <assume.h>
 
 #include "oval_agent_api.h"
 #include "oval_definitions_impl.h"
@@ -258,9 +257,13 @@ int oval_agent_reset_session(oval_agent_session_t * ag_sess) {
 
 int oval_agent_abort_session(oval_agent_session_t *ag_sess)
 {
-	assume_d(ag_sess != NULL, -1);
+	if (ag_sess == NULL) {
+		return -1;
+	}
 #if defined(OVAL_PROBES_ENABLED)
-	assume_d(ag_sess->psess != NULL, -1);
+	if (ag_sess->psess == NULL) {
+		return -1;
+	}
 	return oval_probe_session_abort(ag_sess->psess);
 #else
 	/* TODO */
@@ -576,8 +579,12 @@ oval_agent_eval_multi_check(oval_agent_session_t *sess)
 		id = oval_definition_get_id(oval_def);
 
 		// Evaluate definition.
-		assume_r(oval_agent_eval_definition(sess, id) != -1, -1);
-		assume_r(oval_agent_get_definition_result(sess, id, &oval_result) != -1, -1);
+		if (oval_agent_eval_definition(sess, id) == -1) {
+			return -1;
+		}
+		if (oval_agent_get_definition_result(sess, id, &oval_result) == -1) {
+			return -1;
+		}
 		// Get XCCDF equivalent of the oval result.
 		xccdf_result = xccdf_get_result_from_oval(oval_definition_get_class(oval_def), oval_result);
 		// AND as described in (NISTIR-7275r4): Table 12: Truth Table for AND
