@@ -48,7 +48,6 @@
 #include "common/list.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
-#include "common/assume.h"
 #include "common/text_priv.h"
 #include "XCCDF/result_scoring_priv.h"
 #include "xccdf_policy_resolve.h"
@@ -353,7 +352,7 @@ static void xccdf_policy_resolve_item(struct xccdf_policy * policy, struct xccdf
 		xccdf_item_iterator_free(child_it);
 	}
 
-	assume_ex(oscap_htable_add(policy->selected_final, xccdf_item_get_id(item), result ? &TRUE0 : &FALSE0), NULL);
+	oscap_htable_add(policy->selected_final, xccdf_item_get_id(item), result ? &TRUE0 : &FALSE0);
 }
 
 /**
@@ -661,9 +660,9 @@ static struct xccdf_rule_result * _xccdf_rule_result_new_from_rule(const struct 
 
 	if (message != NULL) {
 		struct xccdf_message *msg = xccdf_message_new();
-		assume_ex(xccdf_message_set_content(msg, message), rule_ritem);
-		assume_ex(xccdf_message_set_severity(msg, XCCDF_MSG_INFO), rule_ritem);
-		assume_ex(xccdf_rule_result_add_message(rule_ritem, msg), rule_ritem);
+		xccdf_message_set_content(msg, message);
+		xccdf_message_set_severity(msg, XCCDF_MSG_INFO);
+		xccdf_rule_result_add_message(rule_ritem, msg);
 	}
 	return rule_ritem;
 }
