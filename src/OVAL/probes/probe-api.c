@@ -49,7 +49,6 @@
 
 #include "debug_priv.h"
 #include "_probe-api.h"
-#include "assume.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
 #include "probe/probe.h"
@@ -1562,10 +1561,9 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                                 return (NULL);
                         }
 
-                        assume_d(item       != NULL, NULL);
-                        assume_d(entity     != NULL, NULL);
-                        assume_d(name_sexp  != NULL, NULL);
-
+			if (item == NULL || entity == NULL || name_sexp == NULL) {
+				return NULL;
+			}
                         SEXP_list_add(item, entity);
                         SEXP_free_r(&entity_mem);
 
