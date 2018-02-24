@@ -28,12 +28,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <assume.h>
 #include <errno.h>
 #include <unistd.h>
 
 #include "crapi.h"
 #include "sha2.h"
+#include "alloc.h"
 
 #if defined(HAVE_NSS3)
 #include <sechash.h>
@@ -44,9 +44,14 @@ static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
         void   *buffer;
         size_t  buflen;
 
-        assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (*size >= HASH_ResultLen (algo), -1, errno = ENOBUFS;);
-        assume_r (dst != NULL, -1, errno = EFAULT;);
+	if (size == NULL || dst == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	if (*size < HASH_ResultLen(algo)) {
+		errno = ENOBUFS;
+		return -1;
+	}
 
         if (fstat (fd, &st) != 0)
                 return (-1);
@@ -79,7 +84,10 @@ static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
                         case -1:
                                 return (-1);
                         default:
-                                assume_r (ret > 0, -1, HASH_Destroy (ctx););
+				if (ret <= 0) {
+					HASH_Destroy(ctx);
+					return -1;
+				}
                                 HASH_Update (ctx, (const unsigned char *)buffer, (unsigned int) ret);
                         }
 
@@ -204,9 +212,14 @@ static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
         void   *buffer;
         size_t  buflen;
 
-        assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (dst != NULL, -1, errno = EFAULT;);
-        assume_r (*size >= gcry_md_get_algo_dlen (algo), -1, errno = ENOBUFS;);
+	if (size == NULL || dst == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	if (*size < gcry_md_get_algo_dlen(algo)) {
+		errno = ENOBUFS;
+		return -1;
+	}
 
         if (fstat (fd, &st) != 0)
                 return (-1);
@@ -236,7 +249,10 @@ static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
                         case -1:
                                 return (-1);
                         default:
-                                assume_r (ret > 0, -1, gcry_md_close (hd););
+				if (ret <= 0) {
+					gcry_md_close(hd);
+					return -1;
+				}
                                 gcry_md_write (hd, (const void *)buffer, (size_t)ret);
                         }
 
