@@ -52,7 +52,7 @@
 #include <unistd.h>
 #endif
 
-#include "main.h"
+#include "probe_main.h"
 #include "seap-descriptor.h"
 #include "probe_table.h"
 
