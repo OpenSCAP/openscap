@@ -53,6 +53,7 @@
 #include "oval_fts.h"
 #include "util.h"
 #include "probe/entcmp.h"
+#include "filehash58.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -204,12 +205,12 @@ static int filehash58_cb(const char *prefix, const char *p, const char *f, const
 	return (0);
 }
 
-int probe_offline_mode_supported()
+int filehash58_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init(void)
+void *filehash58_probe_init(void)
 {
 	/*
 	 * Initialize crypto API
@@ -230,7 +231,7 @@ void *probe_init(void)
 	return (NULL);
 }
 
-void probe_fini (void *arg)
+void filehash58_probe_fini(void *arg)
 {
 	_A((void *)arg == (void *)&__filehash58_probe_mutex);
 
@@ -242,7 +243,7 @@ void probe_fini (void *arg)
 	return;
 }
 
-int probe_main(probe_ctx *ctx, void *mutex)
+int filehash58_probe_main(probe_ctx *ctx, void *mutex)
 {
 	SEXP_t *probe_in;
 	SEXP_t *path, *filename, *behaviors, *filepath, *hash_type;

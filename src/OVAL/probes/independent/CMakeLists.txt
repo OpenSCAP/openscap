@@ -16,6 +16,8 @@ if (GCRYPT_FOUND OR NSS_FOUND)
 	list(APPEND INDEPENDENT_PROBES_SOURCES
 		"filehash.c"
 		"filehash.h"
+		"filehash58.c"
+		"filehash58.h"
 	)
 endif()
 
