@@ -52,7 +52,7 @@ typedef struct {
 	char *b_engine; /* backend engine */
 } dbEngineMap_t;
 
-dbEngineMap_t engine_map[] = {
+static dbEngineMap_t engine_map[] = {
 	{ "access",    NULL       },
 	{ "db2",       NULL       },
 	{ "cache",     NULL       },

@@ -24,6 +24,8 @@ if (OPENDBX_FOUND)
 	list(APPEND INDEPENDENT_PROBES_SOURCES
 		"sql.c"
 		"sql.h"
+		"sql57.c"
+		"sql57.h"
 	)
 endif()
 

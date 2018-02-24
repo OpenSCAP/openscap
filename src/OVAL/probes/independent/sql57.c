@@ -41,27 +41,18 @@
 #include <time.h>
 #include <errno.h>
 #include <opendbx/api.h>
+#include "sql57.h"
 
 #ifndef SQLPROBE_DEFAULT_CONNTIMEOUT
 # define SQLPROBE_DEFAULT_CONNTIMEOUT 30
 #endif
-
-void *probe_init(void)
-{
-	return (NULL);
-}
-
-void probe_fini(void *arg)
-{
-	return;
-}
 
 typedef struct {
 	char *o_engine; /* object engine  */
 	char *b_engine; /* backend engine */
 } dbEngineMap_t;
 
-dbEngineMap_t engine_map[] = {
+static dbEngineMap_t engine_map[] = {
 	{ "access",    NULL       },
 	{ "db2",       NULL       },
 	{ "cache",     NULL       },
@@ -446,7 +437,7 @@ __exit:
 	return (err);
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int sql57_probe_main(probe_ctx *ctx, void *arg)
 {
 	char *engine, *version, *conn, *sqlexp;
 	int err;
