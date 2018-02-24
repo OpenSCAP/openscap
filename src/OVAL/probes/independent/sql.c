@@ -36,7 +36,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <common/assume.h>
 #include <common/debug_priv.h>
 #include <common/bfind.h>
 #include <time.h>
@@ -93,8 +92,9 @@ dbEngineMap_t engine_map[] = {
 
 static int engine_cmp (const char *a, const dbEngineMap_t *b)
 {
-	assume_d(a != NULL, -1);
-	assume_d(b != NULL, -1);
+	if (a == NULL || b == NULL) {
+		return -1;
+	}
 	return strcmp(a, b->o_engine);
 }
 
