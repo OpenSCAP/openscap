@@ -3,6 +3,8 @@ set (INDEPENDENT_PROBES_SOURCES
 	"system_info.h"
 	"family.c"
 	"family.h"
+	"textfilecontent.c"
+	"textfilecontent.h"
 	"textfilecontent54.c"
 	"textfilecontent54.h"
 	"environmentvariable.c"
