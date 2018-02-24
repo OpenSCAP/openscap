@@ -7,6 +7,8 @@ set (INDEPENDENT_PROBES_SOURCES
 	"textfilecontent54.h"
 	"environmentvariable.c"
 	"environmentvariable.h"
+	"environmentvariable58.c"
+	"environmentvariable58.h"
 	"variable.c"
 	"variable.h"
 )

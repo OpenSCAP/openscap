@@ -31,6 +31,7 @@
 #include "independent/textfilecontent54.h"
 #include "independent/environmentvariable.h"
 #include "independent/variable.h"
+#include "independent/environmentvariable58.h"
 
 typedef struct probe_table_entry {
 	oval_subtype_t type;
@@ -43,6 +44,7 @@ typedef struct probe_table_entry {
 static const probe_table_entry_t probe_table[] = {
 	/* {type, init, main, fini, offline} */
 	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, NULL, environmentvariable_probe_main, NULL, NULL},
+	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL, environmentvariable58_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_VARIABLE, variable_probe_init, variable_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_FAMILY, family_probe_init, family_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, textfilecontent54_probe_init, textfilecontent54_probe_main, NULL, NULL},

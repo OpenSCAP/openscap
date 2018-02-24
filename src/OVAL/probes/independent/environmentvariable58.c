@@ -56,6 +56,7 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 #include "common/debug_priv.h"
+#include "environmentvariable58.h"
 
 #define BUFFER_SIZE 256
 
@@ -192,7 +193,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int environmentvariable58_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *name_ent, *pid_ent;
 	int pid, err;
