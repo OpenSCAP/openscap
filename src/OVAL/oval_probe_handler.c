@@ -34,7 +34,6 @@
 
 #include "common/alloc.h"
 #include "common/bfind.h"
-#include "common/assume.h"
 #include "_oval_probe_handler.h"
 
 oval_phtbl_t *oval_phtbl_new(void)
@@ -103,7 +102,9 @@ int oval_probe_handler_set(oval_phtbl_t *phtbl, oval_subtype_t type, oval_probe_
         phrec = phtbl->ph[phtbl->sz - 1] = oscap_talloc(oval_ph_t);
         sort  = true;
 fillrec:
-        assume_d(phrec != NULL, -1);
+	if (phrec == NULL) {
+		return -1;
+	}
 
         phrec->type = type;
         phrec->func = handler;
