@@ -27,7 +27,6 @@
 #include <stddef.h>
 #include <errno.h>
 
-#include "common/assume.h"
 #include "public/sm_alloc.h"
 #include "_seap-command.h"
 #include "generic/rbt/rbt.h"
@@ -63,7 +62,9 @@ int  SEAP_cmdtbl_backendT_add (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r)
         if (t->table == NULL)
                 t->table = Ttable_new(-1);
 
-        assume_d(t->table != NULL, -1);
+	if (t->table == NULL) {
+		return -1;
+	}
 
         return Ttable_add ((Ttable_t *)t->table, r);
 }
