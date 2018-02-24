@@ -23,7 +23,6 @@
 #include <config.h>
 #include <string.h>
 #include <errno.h>
-#include "common/assume.h"
 #include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
