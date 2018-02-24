@@ -68,6 +68,7 @@
 #include <probe/option.h>
 #include <oval_fts.h>
 #include <common/debug_priv.h>
+#include "xmlfilecontent.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -81,12 +82,12 @@ static void dummy_err_func(void * ctx, const char * msg, ...)
 {
 }
 
-int probe_offline_mode_supported()
+int xmlfilecontent_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init(void)
+void *xmlfilecontent_probe_init(void)
 {
 	/* init libxml */
 	//LIBXML_TEST_VERSION;
@@ -96,7 +97,7 @@ void *probe_init(void)
 	return NULL;
 }
 
-void probe_fini(void *arg)
+void xmlfilecontent_probe_fini(void *arg)
 {
         (void)arg;
 	/* deinit libxml */
@@ -285,7 +286,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	return ret;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int xmlfilecontent_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *path_ent, *filename_ent, *xpath_ent, *behaviors_ent, *filepath_ent, *probe_in;
 	SEXP_t *r0;

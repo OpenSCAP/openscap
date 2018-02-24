@@ -13,6 +13,8 @@ set (INDEPENDENT_PROBES_SOURCES
 	"environmentvariable58.h"
 	"variable.c"
 	"variable.h"
+	"xmlfilecontent.c"
+	"xmlfilecontent.h"
 )
 if (GCRYPT_FOUND OR NSS_FOUND)
 	list(APPEND INDEPENDENT_PROBES_SOURCES
