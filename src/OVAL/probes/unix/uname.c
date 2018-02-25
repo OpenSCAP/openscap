@@ -57,8 +57,9 @@
 #include "seap.h"
 #include "probe-api.h"
 #include "alloc.h"
+#include "uname.h"
 
-int probe_main(probe_ctx *ctx, void *arg)
+int uname_probe_main(probe_ctx *ctx, void *arg)
 {
 	struct utsname buf;
         SEXP_t *item;

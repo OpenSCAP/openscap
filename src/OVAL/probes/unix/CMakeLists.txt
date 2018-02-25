@@ -19,6 +19,8 @@ set (UNIX_PROBES_SOURCES
 	"symlink.h"
 	"sysctl.c"
 	"sysctl.h"
+	"uname.c"
+	"uname.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES
