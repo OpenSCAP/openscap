@@ -7,6 +7,8 @@ set (UNIX_PROBES_SOURCES
 	"interface.h"
 	"password.c"
 	"password.h"
+	"process.c"
+	"process.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

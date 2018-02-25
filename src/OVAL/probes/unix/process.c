@@ -58,6 +58,7 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 #include "common/debug_priv.h"
+#include "process.h"
 
 oval_schema_version_t over;
 
@@ -322,7 +323,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int process_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *ent;
 
@@ -462,7 +463,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int process_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *obj, *ent;
 
@@ -484,7 +485,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 }
 
 #else
-int probe_main(probe_ctx *ctx, void *arg)
+int process_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *item_sexp;
 

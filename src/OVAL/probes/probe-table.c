@@ -43,6 +43,7 @@
 #include "unix/gconf.h"
 #include "unix/interface.h"
 #include "unix/password.h"
+#include "unix/process.h"
 
 typedef struct probe_table_entry {
 	oval_subtype_t type;
@@ -70,6 +71,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_GCONF, NULL, gconf_probe_main, NULL, NULL},
 	{OVAL_UNIX_INTERFACE, NULL, interface_probe_main, NULL, NULL},
 	{OVAL_UNIX_PASSWORD, password_probe_init, password_probe_main, NULL, NULL},
+	{OVAL_UNIX_PROCESS, NULL, process_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_SYSINFO, system_info_probe_init, system_info_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };

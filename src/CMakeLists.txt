@@ -119,6 +119,12 @@ endif()
 if(GCONF_FOUND)
 	target_link_libraries(openscap ${GCONF_LIBRARIES})
 endif()
+if(SELINUX_FOUND)
+	target_link_libraries(openscap ${SELINUX_LIBRARIES})
+endif()
+if(PROCPS_FOUND)
+	target_link_libraries(openscap ${PROCPS_LIBRARIES})
+endif()
 
 
 install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})
