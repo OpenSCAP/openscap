@@ -11,6 +11,8 @@ set (UNIX_PROBES_SOURCES
 	"process.h"
 	"routingtable.c"
 	"routingtable.h"
+	"runlevel.c"
+	"runlevel.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

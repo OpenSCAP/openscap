@@ -68,6 +68,7 @@
 #include <probe/option.h>
 #include <alloc.h>
 #include "common/debug_priv.h"
+#include "runlevel.h"
 
 #define RELEASENAME_MAX_SIZE	256
 #define RELEASENAME_PATTERN	"CPE_NAME=\"%255s\""
@@ -452,12 +453,12 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 # error "Sorry, your OS isn't supported."
 #endif
 
-int probe_offline_mode_supported()
+int runlevel_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_CHROOT;
 }
 
-int probe_main (probe_ctx *ctx, void *arg)
+int runlevel_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *object;
         struct runlevel_req request_st;
