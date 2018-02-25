@@ -1,4 +1,6 @@
 set (UNIX_PROBES_SOURCES
+	"dnscache.c"
+	"dnscache.h"
 	"file.c"
 	"file.h"
 	"fileextendedattribute.c"

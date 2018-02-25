@@ -6,8 +6,9 @@
 #include <string.h>
 #include "probe-api.h"
 #include "common/debug_priv.h"
+#include "dnscache.h"
 
-int probe_main(probe_ctx *ctx, void *unused)
+int dnscache_probe_main(probe_ctx *ctx, void *unused)
 {
         (void)unused;
 

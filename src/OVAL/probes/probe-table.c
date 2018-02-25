@@ -38,6 +38,7 @@
 #include "independent/sql.h"
 #include "independent/sql57.h"
 #include "independent/xmlfilecontent.h"
+#include "unix/dnscache.h"
 #include "unix/file.h"
 #include "unix/fileextendedattribute.h"
 #include "unix/gconf.h"
@@ -74,6 +75,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, textfilecontent54_probe_init, textfilecontent54_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_VARIABLE, variable_probe_init, variable_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT, xmlfilecontent_probe_init, xmlfilecontent_probe_main, xmlfilecontent_probe_fini, NULL},
+	{OVAL_UNIX_DNSCACHE, NULL, dnscache_probe_main, NULL, NULL},
 	{OVAL_UNIX_FILE, file_probe_init, file_probe_main, file_probe_fini, NULL},
 	{OVAL_UNIX_FILEEXTENDEDATTRIBUTE, fileextendedattribute_probe_init, fileextendedattribute_probe_main, fileextendedattribute_probe_fini, NULL},
 	{OVAL_UNIX_GCONF, NULL, gconf_probe_main, NULL, NULL},
