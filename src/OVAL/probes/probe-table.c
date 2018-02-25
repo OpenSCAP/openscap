@@ -122,3 +122,9 @@ int probe_table_size()
 	}
 	return size;
 }
+
+bool probe_table_exists(oval_subtype_t type)
+{
+	probe_table_entry_t *entry = probe_table_get(type);
+	return (entry->type != OVAL_SUBTYPE_UNKNOWN);
+}
