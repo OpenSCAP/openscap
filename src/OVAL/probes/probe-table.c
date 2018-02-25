@@ -98,7 +98,7 @@ probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype
 	return entry->probe_offline_mode_function;
 }
 
-void oval_probe_table_list(FILE *output)
+void probe_table_list(FILE *output)
 {
 	const probe_table_entry_t *entry = probe_table;
 	while (entry->type != OVAL_SUBTYPE_UNKNOWN)
