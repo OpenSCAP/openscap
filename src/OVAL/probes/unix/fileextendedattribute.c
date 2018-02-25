@@ -48,6 +48,7 @@
 #include "probe/entcmp.h"
 #include "oval_fts.h"
 #include "common/debug_priv.h"
+#include "fileextendedattribute.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -219,12 +220,12 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 
 static pthread_mutex_t __file_probe_mutex;
 
-int probe_offline_mode_supported()
+int fileextendedattribute_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init (void)
+void *fileextendedattribute_probe_init(void)
 {
 	SEXP_init(&gr_lastpath);
 
@@ -244,7 +245,7 @@ void *probe_init (void)
         return (NULL);
 }
 
-void probe_fini (void *arg)
+void fileextendedattribute_probe_fini(void *arg)
 {
         _A((void *)arg == (void *)&__file_probe_mutex);
 
@@ -259,7 +260,7 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (probe_ctx *ctx, void *mutex)
+int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 {
         SEXP_t *path, *filename, *behaviors;
         SEXP_t *filepath, *attribute_, *probe_in;

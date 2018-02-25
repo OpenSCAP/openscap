@@ -39,6 +39,7 @@
 #include "independent/sql57.h"
 #include "independent/xmlfilecontent.h"
 #include "unix/file.h"
+#include "unix/fileextendedattribute.h"
 
 typedef struct probe_table_entry {
 	oval_subtype_t type;
@@ -62,6 +63,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_VARIABLE, variable_probe_init, variable_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT, xmlfilecontent_probe_init, xmlfilecontent_probe_main, xmlfilecontent_probe_fini, NULL},
 	{OVAL_UNIX_FILE, file_probe_init, file_probe_main, file_probe_fini, NULL},
+	{OVAL_UNIX_FILEEXTENDEDATTRIBUTE, fileextendedattribute_probe_init, fileextendedattribute_probe_main, fileextendedattribute_probe_fini, NULL},
 	{OVAL_SUBTYPE_SYSINFO, system_info_probe_init, system_info_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };
