@@ -111,3 +111,14 @@ void oval_probe_table_list(FILE *output)
 		entry++;
 	}
 }
+
+int probe_table_size()
+{
+	int size = 0;
+	const probe_table_entry_t *entry = probe_table;
+	while (entry->type != OVAL_SUBTYPE_UNKNOWN) {
+		entry++;
+		size++;
+	}
+	return size;
+}

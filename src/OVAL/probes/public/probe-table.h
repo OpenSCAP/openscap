@@ -37,5 +37,6 @@ probe_fini_function_t probe_table_get_fini_function(oval_subtype_t type);
 probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype_t type);
 
 OSCAP_API void oval_probe_table_list(FILE *output);
+OSCAP_API int probe_table_size(void);
 
 #endif /* OPENSCAP_OPENSCAP_PROBE_TABLE_H */
