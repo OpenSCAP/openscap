@@ -42,11 +42,12 @@
 #include <limits.h>
 #include "oval_fts.h"
 #include "common/debug_priv.h"
+#include "sysctl.h"
 
 #define PROC_SYS_DIR "/proc/sys"
 #define PROC_SYS_MAXDEPTH 7
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         OVAL_FTS    *ofts;
         OVAL_FTSENT *ofts_ent;
@@ -268,7 +269,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         return (0);
 }
 #else
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         return(PROBE_EOPNOTSUPP);
 }
