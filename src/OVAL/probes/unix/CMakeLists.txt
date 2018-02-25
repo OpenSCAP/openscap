@@ -9,6 +9,8 @@ set (UNIX_PROBES_SOURCES
 	"password.h"
 	"process.c"
 	"process.h"
+	"routingtable.c"
+	"routingtable.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

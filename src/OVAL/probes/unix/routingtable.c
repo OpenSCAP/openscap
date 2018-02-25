@@ -48,6 +48,7 @@
 #include "util.h"
 #include "debug_priv.h"
 #include "SEAP/generic/strto.h"
+#include "routingtable.h"
 
 #ifndef RT_FLAGS_MAX
 #define RT_FLAGS_MAX 10
@@ -289,7 +290,7 @@ static int process_line_ip6(char *line, struct route_info *rt)
     return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int routingtable_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *dst_ent;
 	FILE *fp;
