@@ -860,11 +860,8 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         char         probe_uri[PATH_MAX + 1];
                         size_t       probe_urilen;
                         char        *probe_dir;
-                        oval_pdsc_t *probe_dsc;
 
                         probe_dir = pext->probe_dir;
-
-			probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, obj_subtype);
 
 			if (!probe_table_exists(obj_subtype)) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
