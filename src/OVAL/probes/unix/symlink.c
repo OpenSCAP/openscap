@@ -42,6 +42,7 @@
 
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "symlink.h"
 
 static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 {
@@ -114,12 +115,12 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	return 0;
 }
 
-int probe_offline_mode_supported()
+int symlink_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_CHROOT;
 }
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int symlink_probe_main(probe_ctx *ctx, void *probe_arg)
 {
 	int err;
 	SEXP_t *entity, *probe_in;

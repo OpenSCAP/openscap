@@ -15,6 +15,8 @@ set (UNIX_PROBES_SOURCES
 	"runlevel.h"
 	"shadow.c"
 	"shadow.h"
+	"symlink.c"
+	"symlink.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES
