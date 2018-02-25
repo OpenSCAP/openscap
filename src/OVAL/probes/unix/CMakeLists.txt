@@ -19,6 +19,18 @@ if(GCONF_FOUND)
 		${GCONF_INCLUDE_DIRS}
 	)
 endif()
+if(CAP_FOUND)
+	list(APPEND UNIX_PROBES_SOURCES
+		"process58.c"
+		"process58.h"
+		"process58-capability.h"
+		"process58-devname.c"
+		"process58-devname.h"
+	)
+	list(APPEND UNIX_PROBES_INCLUDE_DIRECTORIES
+		${CAP_INCLUDE_DIR}
+	)
+endif()
 
 add_library(unix_probes_object OBJECT ${UNIX_PROBES_SOURCES})
 set_oscap_generic_properties(unix_probes_object)

@@ -104,6 +104,7 @@ extern char const *_cap_names[];
 #include "common/debug_priv.h"
 #include <ctype.h>
 #include "common/oscap_buffer.h"
+#include "process58.h"
 
 #define CHUNK_SIZE 1024
 
@@ -640,7 +641,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int process58_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *command_line_ent, *pid_ent;
 
@@ -783,7 +784,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int process58_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *ent;
 
@@ -803,7 +804,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 }
 
 #else
-int probe_main(probe_ctx *ctx, void *arg)
+int process58_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *item_sexp;
 
