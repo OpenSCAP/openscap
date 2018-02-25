@@ -804,8 +804,8 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
 			break;
 		}
 
-                probe_urilen = snprintf(probe_uri, sizeof probe_uri,
-                                        "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
+		probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s/%s",
+				OVAL_PROBE_SCHEME, probe_dir, oval_subtype_get_text(type));
 
                 if (probe_urilen >= sizeof probe_uri) {
                         oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
