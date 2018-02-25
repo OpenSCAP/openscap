@@ -47,6 +47,7 @@
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
 #include "oval_probe_meta.h"
+#include "probe-table.h"
 
 #define __ERRBUF_SIZE 128
 
@@ -796,7 +797,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 probe_dir = pext->probe_dir;
                 probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, type);
 
-		if (probe_dsc == NULL) {
+		if (!probe_table_exists(type)) {
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "subtype %u not supported", type);
 
 			ret = -1;
@@ -863,7 +864,7 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         probe_dir = pext->probe_dir;
                         probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, oval_object_get_subtype(obj));
 
-			if (probe_dsc == NULL) {
+			if (!probe_table_exists(oval_object_get_subtype(obj))) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 				va_end(ap);
