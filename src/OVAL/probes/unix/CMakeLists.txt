@@ -5,6 +5,8 @@ set (UNIX_PROBES_SOURCES
 	"fileextendedattribute.h"
 	"interface.c"
 	"interface.h"
+	"password.c"
+	"password.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

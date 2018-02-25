@@ -60,6 +60,7 @@
 #include "common/debug_priv.h"
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "password.h"
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -139,7 +140,7 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t o
         return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int password_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *ent, *obj;
 	oval_schema_version_t over;
