@@ -815,7 +815,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                         dI("Starting probe on URI '%s'.", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, "%s probe not supported", probe_dsc->name);
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "%s probe not supported", oval_subtype_get_text(type));
 
                                 ret = -1;
                         }
