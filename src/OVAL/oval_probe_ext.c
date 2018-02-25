@@ -991,53 +991,6 @@ int oval_probe_ext_init(oval_pext_t *pext)
         pthread_mutex_lock(&pext->lock);
 
         if (pext->do_init) {
-		char curdir[PATH_MAX];
-		register unsigned int i, r;
-
-		if (getcwd(curdir, PATH_MAX) == NULL) {
-			dE("getcwd() failed");
-                        ret = -1;
-                        goto _ret;
-		}
-
-		if (chdir(pext->probe_dir) != 0) {
-			dE("Can't chdir to \"%s\"", pext->probe_dir);
-                        ret = -1;
-                        goto _ret;
-		}
-
-		pext->pdsc = malloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
-
-                dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
-
-		for (r = 0, i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-                        if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
-                                dD("skipped: %s (not an external probe)", OSCAP_GSYM(__probe_meta)[i].stype);
-                                continue;
-			}
-			/* TODO: check if the probe is available. */
-                        pext->pdsc[r].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                        pext->pdsc[r].name = OSCAP_GSYM(__probe_meta)[i].stype;
-                        pext->pdsc[r].file = OSCAP_GSYM(__probe_meta)[i].pname;
-
-			++r;
-		}
-
-		if (r < OSCAP_GSYM(__probe_meta_count))
-			pext->pdsc = realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
-
-		pext->pdsc_cnt = r;
-		qsort(pext->pdsc, pext->pdsc_cnt, sizeof(oval_pdsc_t),
-		      (int(*)(const void *, const void *))oval_pdsc_cmp);
-
-		if (chdir(curdir) != 0) {
-			dE("Can't chdir back to \"%s\"", curdir);
-			free(pext->pdsc);
-			pext->pdsc_cnt = 0;
-                        ret = -1;
-                        goto _ret;
-		}
-
                 pext->pdtbl = oval_pdtbl_new();
 
                 if (oval_probe_cmd_init(pext) != 0)
