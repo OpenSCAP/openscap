@@ -792,10 +792,9 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 char         probe_uri[PATH_MAX + 1];
                 size_t       probe_urilen;
                 char        *probe_dir;
-                oval_pdsc_t *probe_dsc;
 
                 probe_dir = pext->probe_dir;
-                probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, type);
+
 
 		if (!probe_table_exists(type)) {
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "subtype %u not supported", type);
