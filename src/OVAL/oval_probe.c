@@ -276,7 +276,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 		return 1;
         }
 
-	if ((ret = ph->func(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, sysc, flags)) != 0) {
+	if ((ret = oval_probe_ext_handler(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, sysc, flags)) != 0) {
 		return ret;
 	}
 
@@ -312,7 +312,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
         sysinf = NULL;
 
-	ret = ph->func(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
+	ret = oval_probe_sys_handler(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
 	if (ret != 0)
 		return(ret);
 
