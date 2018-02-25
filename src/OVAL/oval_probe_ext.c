@@ -853,7 +853,8 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 		sys = va_arg(ap, struct oval_syschar *);
 		flags = va_arg(ap, int);
 		obj = oval_syschar_get_object(sys);
-                pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
+		oval_subtype_t obj_subtype = oval_object_get_subtype(obj);
+		pd = oval_pdtbl_get(pext->pdtbl, obj_subtype);
 
                 if (pd == NULL) {
                         char         probe_uri[PATH_MAX + 1];
@@ -862,9 +863,10 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                         oval_pdsc_t *probe_dsc;
 
                         probe_dir = pext->probe_dir;
-                        probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, oval_object_get_subtype(obj));
 
-			if (!probe_table_exists(oval_object_get_subtype(obj))) {
+			probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, obj_subtype);
+
+			if (!probe_table_exists(obj_subtype)) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 				va_end(ap);
@@ -882,14 +884,14 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                         dI("Starting probe on URI '%s'.", probe_uri);
 
-                        if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
+                        if (oval_pdtbl_add(pext->pdtbl, obj_subtype, -1, probe_uri) != 0) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 				va_end(ap);
                                 return (1);
 			}
 
-			pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
+			pd = oval_pdtbl_get(pext->pdtbl, obj_subtype);
 
                         if (pd == NULL) {
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "internal error");
