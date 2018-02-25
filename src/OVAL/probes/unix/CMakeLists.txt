@@ -3,6 +3,8 @@ set (UNIX_PROBES_SOURCES
 	"file.h"
 	"fileextendedattribute.c"
 	"fileextendedattribute.h"
+	"interface.c"
+	"interface.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

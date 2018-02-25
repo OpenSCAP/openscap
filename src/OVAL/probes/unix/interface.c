@@ -71,6 +71,7 @@
 #include <net/if.h>
 #include <net/if_arp.h>
 #include <arpa/inet.h>
+#include "interface.h"
 
 static int fd=-1;
 
@@ -385,7 +386,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 }
 #endif
 
-int probe_main(probe_ctx *ctx, void *arg)
+int interface_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *name_ent, *probe_in;
 	oval_schema_version_t over;
