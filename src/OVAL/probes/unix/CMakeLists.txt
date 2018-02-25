@@ -13,6 +13,8 @@ set (UNIX_PROBES_SOURCES
 	"routingtable.h"
 	"runlevel.c"
 	"runlevel.h"
+	"shadow.c"
+	"shadow.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

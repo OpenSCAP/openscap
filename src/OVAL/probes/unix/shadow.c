@@ -60,11 +60,12 @@
 #include "common/debug_priv.h"
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "shadow.h"
 
 oval_schema_version_t over;
 
 #ifndef HAVE_SHADOW_H
-int probe_main(probe_ctx *ctx, void *arg)
+int shadow_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *item_sexp;
 
@@ -209,7 +210,7 @@ static int read_shadow(SEXP_t *un_ent, probe_ctx *ctx)
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int shadow_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *ent, *obj;
 

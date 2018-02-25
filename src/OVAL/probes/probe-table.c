@@ -47,6 +47,7 @@
 #include "unix/process58.h"
 #include "unix/routingtable.h"
 #include "unix/runlevel.h"
+#include "unix/shadow.h"
 
 typedef struct probe_table_entry {
 	oval_subtype_t type;
@@ -78,6 +79,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_PROCESS58, NULL, process58_probe_main, NULL, NULL},
 	{OVAL_UNIX_ROUTINGTABLE, NULL, routingtable_probe_main, NULL, NULL},
 	{OVAL_UNIX_RUNLEVEL, runlevel_probe_init, runlevel_probe_main, NULL, NULL},
+	{OVAL_UNIX_SHADOW, shadow_probe_init, shadow_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_SYSINFO, system_info_probe_init, system_info_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };
