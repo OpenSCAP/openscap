@@ -74,6 +74,11 @@ if (ENABLE_PROBES)
 			$<TARGET_OBJECTS:independent_probes_object>
 		)
 	endif()
+	if (ENABLE_PROBES_UNIX)
+		list(APPEND OBJECTS_TO_LINK_AGAINST
+			$<TARGET_OBJECTS:unix_probes_object>
+		)
+	endif()
 endif()
 if (GCRYPT_FOUND OR NSS_FOUND)
 	list(APPEND OBJECTS_TO_LINK_AGAINST

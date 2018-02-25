@@ -57,6 +57,7 @@
 #include "oval_fts.h"
 #include "SEAP/generic/rbt/rbt.h"
 #include "common/debug_priv.h"
+#include "file.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
@@ -374,12 +375,12 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 
 static pthread_mutex_t __file_probe_mutex;
 
-int probe_offline_mode_supported()
+int file_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init (void)
+void *file_probe_init(void)
 {
         /*
          * Initialize true/false global reference.
@@ -439,7 +440,7 @@ void *probe_init (void)
         return (NULL);
 }
 
-void probe_fini (void *arg)
+void file_probe_fini(void *arg)
 {
         _A((void *)arg == (void *)&__file_probe_mutex);
 
@@ -472,7 +473,7 @@ void probe_fini (void *arg)
         return;
 }
 
-int probe_main (probe_ctx *ctx, void *mutex)
+int file_probe_main(probe_ctx *ctx, void *mutex)
 {
         SEXP_t *path, *filename, *behaviors, *filepath, *probe_in;
 	int err;
