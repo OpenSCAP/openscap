@@ -77,8 +77,6 @@ oval_pext_t *oval_pext_new(void)
                 pext->probe_dir = OVAL_PROBE_DIR;
 
         pext->pdtbl     = NULL;
-        pext->pdsc      = NULL;
-        pext->pdsc_cnt  = 0;
 
         return(pext);
 }
@@ -87,9 +85,6 @@ void oval_pext_free(oval_pext_t *pext)
 {
         if (!pext->do_init) {
                 /* free structs */
-		free(pext->pdsc);
-		pext->pdsc     = NULL;
-		pext->pdsc_cnt = 0;
                 oval_pdtbl_free(pext->pdtbl);
         }
 
@@ -608,22 +603,6 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 	return (0);
 }
 
-static int oval_pdsc_typecmp(oval_subtype_t *a, oval_pdsc_t *b)
-{
-        return (*a - b->type);
-}
-
-static int oval_pdsc_cmp(oval_pdsc_t *a, oval_pdsc_t *b)
-{
-	return (a->type - b->type);
-}
-
-static oval_pdsc_t *oval_pdsc_lookup(oval_pdsc_t pdsc[], int count, oval_subtype_t type)
-{
-	return oscap_bfind(pdsc, count, sizeof(oval_pdsc_t), &type,
-                           (int (*)(void *, void *))oval_pdsc_typecmp);
-}
-
 static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_syschar_model *model, struct oval_sysinfo **out_sysinf)
 {
 	struct oval_sysinfo *sysinf;
@@ -909,8 +888,6 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 
 				pext->do_init  = true;
 				pext->pdtbl    = NULL;
-				pext->pdsc     = NULL;
-				pext->pdsc_cnt = 0;
 
 				oval_probe_ext_init(pext);
 
