@@ -21,6 +21,8 @@ set (UNIX_PROBES_SOURCES
 	"sysctl.h"
 	"uname.c"
 	"uname.h"
+	"xinetd.c"
+	"xinetd.h"
 )
 if(GCONF_FOUND)
 	list(APPEND UNIX_PROBES_SOURCES

@@ -51,6 +51,7 @@
 #include "unix/symlink.h"
 #include "unix/sysctl.h"
 #include "unix/uname.h"
+#include "unix/xinetd.h"
 
 typedef struct probe_table_entry {
 	oval_subtype_t type;
@@ -86,6 +87,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_SYMLINK, symlink_probe_init, symlink_probe_main, NULL, NULL},
 	{OVAL_UNIX_SYSCTL, NULL, sysctl_probe_main, NULL, NULL},
 	{OVAL_UNIX_UNAME, NULL, uname_probe_main, NULL, NULL},
+	{OVAL_UNIX_XINETD, xinetd_probe_init, xinetd_probe_main, xinetd_probe_fini, NULL},
 	{OVAL_SUBTYPE_SYSINFO, system_info_probe_init, system_info_probe_main, NULL, NULL},
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };

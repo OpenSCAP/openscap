@@ -54,6 +54,7 @@
 #include <common/debug_priv.h>
 #include <netdb.h>
 #include "../SEAP/generic/rbt/rbt.h"
+#include "xinetd.h"
 
 #define PATH_SEPARATOR '/'
 
@@ -1600,23 +1601,23 @@ static void xiservice_process_query(probe_ctx *ctx, SEXP_t *service_name, SEXP_t
 	SEXP_free(xres_protocol);
 }
 
-int probe_offline_mode_supported()
+int xinetd_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_CHROOT;
 }
 
-void *probe_init(void)
+void *xinetd_probe_init(void)
 {
 	return xiconf_parse(XINETD_CONFPATH, XINETD_CONFDEPTH);
 }
 
-void probe_fini(void *arg)
+void xinetd_probe_fini(void *arg)
 {
 	if (arg != NULL)
 		xiconf_free(arg);
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int xinetd_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *service_name, *protocol, *eval, *object;
 	char    srv_name[256];
