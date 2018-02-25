@@ -116,6 +116,9 @@ endif()
 if(OPENDBX_FOUND)
 	target_link_libraries(openscap ${OPENDBX_LIBRARIES})
 endif()
+if(GCONF_FOUND)
+	target_link_libraries(openscap ${GCONF_LIBRARIES})
+endif()
 
 
 install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})

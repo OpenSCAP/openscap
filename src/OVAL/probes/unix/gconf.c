@@ -38,6 +38,7 @@
 #include <probe-api.h>
 #include <pcre.h>
 #include <gconf/gconf.h>
+#include "gconf.h"
 
 #include "common/debug_priv.h"
 #include "oval_fts.h"
@@ -133,7 +134,7 @@ static int collect_item_regexp(probe_ctx *ctx, const char *source, GConfEngine *
         return (0);
 }
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int gconf_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         int probe_ret = 0;
         SEXP_t *probe_in, *gconf_src, *gconf_key, *key_opval;
