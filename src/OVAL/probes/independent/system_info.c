@@ -59,8 +59,12 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+#else
 #include <sys/utsname.h>
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -260,7 +264,10 @@ static int get_ifs(SEXP_t *item)
 #if defined(OS_SOLARIS)
 		item_added = 1;
 #endif
-		SEXP_vfree(attrs, r0, r1, r2, NULL);
+		SEXP_free(attrs);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 	}
 leave2:
         close(fd);
@@ -274,7 +281,10 @@ leave2:
 					 r2 = SEXP_string_newf("aa:bb:cc:dd:ee:ff"),
 					 NULL);
 		probe_item_ent_add(item, "interface", attrs, NULL);
-		SEXP_vfree(attrs, r0, r1, r2, NULL);
+		SEXP_free(attrs);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 	}
  /* if not able to get info on interfaces, do not fail. */
 	if (rc > 0)
@@ -302,7 +312,11 @@ static int get_ifs(SEXP_t *item)
                                  NULL);
 
         probe_item_ent_add(item, "interface", attrs, NULL);
-        SEXP_vfree (attrs, r0, r1, r2, NULL);
+
+		SEXP_free(attrs);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 
         return 0;
 }
@@ -345,6 +359,7 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
+#ifndef _WIN32
 static char * _offline_chroot_get_menuentry(int entry_num)
 {
 	FILE *fp;
@@ -518,6 +533,7 @@ finish:
 fail:
 	return ret;
 }
+#endif
 
 void *probe_init(void)
 {
@@ -531,7 +547,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 	char* os_name, *architecture, *hname;
 	const char *os_version = NULL;
 	const char unknown[] = "Unknown";
-	struct utsname sname;
 	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 	int ret = 0;
 	(void)arg;
@@ -539,6 +554,14 @@ int probe_main(probe_ctx *ctx, void *arg)
 	os_name = architecture = hname = NULL;
 	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
+#ifdef _WIN32
+	/* TODO: Get system information */
+	os_name = oscap_strdup(unknown);
+	os_version = oscap_strdup(unknown);
+	architecture = oscap_strdup(unknown);
+	hname = oscap_strdup(unknown);
+#else
+	struct utsname sname;
 	if (offline_mode == PROBE_OFFLINE_NONE) {
 		if (uname(&sname) == 0) {
 			os_name = strdup(sname.sysname);
@@ -552,6 +575,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 		architecture = _offline_chroot_get_arch(os_version);
 		hname = _offline_chroot_get_hname();
 	}
+#endif
 
 	/* All four elements are required */
 	if (!os_name)

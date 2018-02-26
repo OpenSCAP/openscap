@@ -2034,7 +2034,7 @@ cd c:\devel
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 .\bootstrap-vcpkg.bat
-.\vcpkg install curl libxml2 libxslt bzip2 pcre
+.\vcpkg install curl libxml2 libxslt bzip2 pcre pthreads
 .\vcpkg integrate install
 ----
 
@@ -2057,7 +2057,7 @@ cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER
 
 1. Launch Visual Studio
 2. Click on File -> Open -> Project/Solution...
-3. Locate c:\devel\openscap\build\openscap.sln
+3. Locate ```c:\devel\openscap\build\openscap.sln```
 
 5) Build
 

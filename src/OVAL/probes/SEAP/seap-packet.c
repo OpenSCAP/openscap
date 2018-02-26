@@ -235,7 +235,9 @@ static SEXP_t *SEAP_packet_msg2sexp (SEAP_msg_t *msg)
 #endif
                               NULL);
 
-        SEXP_vfree (r0, r1, r2, NULL);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 
         /* Add message attributes */
         for (i = 0; i < msg->attrs_cnt; ++i) {
@@ -391,7 +393,9 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
                               r2 = SEXP_number_newu_16 (cmd->id),
                               NULL);
 
-        SEXP_vfree (r0, r1, r2, NULL);
+	SEXP_free(r0);
+	SEXP_free(r1);
+	SEXP_free(r2);
 
         if (cmd->flags & SEAP_CMDFLAG_REPLY) {
                 SEXP_list_add (sexp,
@@ -399,7 +403,8 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
                 SEXP_list_add (sexp,
                                r1 = SEXP_number_newu_16 (cmd->rid));
 
-                SEXP_vfree (r0, r1, NULL);
+				SEXP_free(r0);
+				SEXP_free(r1);
         }
 
         SEXP_list_add (sexp,
@@ -432,7 +437,9 @@ static SEXP_t *SEAP_packet_cmd2sexp (SEAP_cmd_t *cmd)
         SEXP_list_add (sexp,
                        r2 = SEXP_number_newu_16 (cmd->code));
 
-        SEXP_vfree (r0, r1, r2, NULL);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
 
         if (cmd->args != NULL)
                 SEXP_list_add (sexp, cmd->args);
@@ -556,7 +563,12 @@ static SEXP_t *SEAP_packet_err2sexp (SEAP_err_t *err)
                               r5 = SEXP_number_newu (err->code),
                               NULL);
 
-        SEXP_vfree (r0, r1, r2, r3, r4, r5);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
+		SEXP_free(r3);
+		SEXP_free(r4);
+		SEXP_free(r5);
 
         if (err->data != NULL)
                 SEXP_list_add (sexp, err->data);

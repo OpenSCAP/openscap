@@ -93,8 +93,8 @@ void *probe_worker_runfn(void *arg)
 			/* TODO */
 			abort();
 		}
-
-		SEXP_vfree(obj, oid, NULL);
+		SEXP_free(obj);
+		SEXP_free(oid);
 	}
 
 	if (probe_ret != 0) {
@@ -146,7 +146,9 @@ probe_worker_t *probe_worker_new(void)
 	probe_worker_t *pth = oscap_talloc(probe_worker_t);
 
 	pth->sid = 0;
+#ifndef _WIN32
 	pth->tid = 0;
+#endif
 	pth->msg_handler = NULL;
 	pth->msg = NULL;
 
@@ -202,7 +204,10 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 		SEXP_free(r0);
 		r0 = SEXP_list_rest(r1);
 		ent_name = SEXP_list_join(r3, r0);
-		SEXP_vfree(r0, r1, r2, r3, NULL);
+		SEXP_free(r0);
+		SEXP_free(r1);
+		SEXP_free(r2);
+		SEXP_free(r3);
 
 		SEXP_sublist_foreach(varref, varrefs, 4, SEXP_LIST_END) {
 			r0 = SEXP_list_first(varref);
@@ -217,7 +222,10 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 			char *var_id = SEXP_string_cstr(vid);
 			dE("Unexpected error: variable id \"%s\" not found in varrefs.", var_id);
 			free(var_id);
-			SEXP_vfree(vid, ent_name, vidx_name, vidx_val, NULL);
+			SEXP_free(vid);
+			SEXP_free(ent_name);
+			SEXP_free(vidx_name);
+			SEXP_free(vidx_val);
 			probe_varref_destroy_ctx(ctx);
 			return -1;
 		}
@@ -227,13 +235,16 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 		r0 = SEXP_list_nth(varref, 2);
 		val_cnt = SEXP_number_getu_32(r0);
 		val_lst = SEXP_list_nth(varref, 3);
-		SEXP_vfree(varref, r0, NULL);
+		SEXP_free(varref);
+		SEXP_free(r0);
 
 		ent = SEXP_list_new(ent_name, val_lst, NULL);
-		SEXP_vfree(ent_name, val_lst, NULL);
+		SEXP_free(ent_name);
+		SEXP_free(val_lst);
 
 		r0 = SEXP_list_replace(ctx->pi2, i + 2, ent);
-		SEXP_vfree(r0, ent, NULL);
+		SEXP_free(r0);
+		SEXP_free(ent);
 
 		r0 = SEXP_listref_nth(ctx->pi2, i + 2);
 		ctx->ent_lst[i].ent_name_sref = SEXP_listref_first(r0);
@@ -242,7 +253,8 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 		ctx->ent_lst[i].next_val_idx = 0;
 	}
 
-	SEXP_vfree(vidx_name, vidx_val, NULL);
+	SEXP_free(vidx_name);
+	SEXP_free(vidx_val);
 
 	*octx = ctx;
 
@@ -297,7 +309,10 @@ static int probe_varref_iterate_ctx(struct probe_varref_ctx *ctx)
 		ent_name_sref = ent->ent_name_sref;
 	}
 	r1 = SEXP_list_replace(ent_name_sref, 3, r2 = SEXP_number_newu(*next_val_idx));
-	SEXP_vfree(r0, r1, r2, NULL);
+
+	SEXP_free(r0);
+	SEXP_free(r1);
+	SEXP_free(r2);
 
 	return 1;
 }
@@ -378,7 +393,8 @@ static SEXP_t *probe_obj_eval(probe_t *probe, SEXP_t *id)
 
 	rid = SEXP_list_first(res);
 	assume_r(SEXP_string_cmp(id, rid) == 0, NULL);
-	SEXP_vfree(res, rid, NULL);
+	SEXP_free(res);
+	SEXP_free(rid);
 
 	return probe_rcache_sexp_get(probe->rcache, id);
 }
@@ -409,13 +425,18 @@ static SEXP_t *probe_prepare_filters(probe_t *probe, SEXP_t *obj)
 			r1  = probe_ste_fetch(probe, r0);
 			ste = SEXP_list_first(r1);
 
-			SEXP_vfree(r0, r1, NULL);
+			SEXP_free(r0);
+			SEXP_free(r1);
 		}
-		SEXP_vfree(of, ste_id, NULL);
+		SEXP_free(of);
+		SEXP_free(ste_id);
 
 		f = SEXP_list_new(act, ste, NULL);
 		SEXP_list_add(filters, f);
-		SEXP_vfree(act, ste, f, NULL);
+
+		SEXP_free(act);
+		SEXP_free(ste);
+		SEXP_free(f);
 	}
 
 	return filters;
@@ -543,8 +564,12 @@ static SEXP_t *probe_set_combine(SEXP_t *cobj0, SEXP_t *cobj1, oval_setobject_op
 
 	res_cobj = probe_cobj_new(res_flag, NULL, res, res_mask);
 
-        SEXP_vfree(set0, set1, res, res_mask);
-        SEXP_vfree(cobj0_mask, cobj1_mask);
+	SEXP_free(set0);
+	SEXP_free(set1);
+	SEXP_free(res);
+	SEXP_free(res_mask);
+	SEXP_free(cobj0_mask);
+	SEXP_free(cobj1_mask);
 
 	// todo: variables
 
@@ -584,7 +609,11 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
                                                       "Supplied item has an invalid status: %d.", item_status);
 				r1 = SEXP_list_new(r0, NULL);
 				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
-				SEXP_vfree(items, item, result_items, r0, r1, NULL);
+				SEXP_free(items);
+				SEXP_free(item);
+				SEXP_free(result_items);
+				SEXP_free(r0);
+				SEXP_free(r1);
 				return cobj;
 			}
 		default:
@@ -605,7 +634,9 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 		flag = SYSCHAR_FLAG_DOES_NOT_EXIST;
 
 	cobj = probe_cobj_new(flag, NULL, result_items, mask);
-	SEXP_vfree(items, result_items, mask);
+	SEXP_free(items);
+	SEXP_free(result_items);
+	SEXP_free(mask);
 
 	return cobj;
 }
@@ -644,7 +675,8 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 		r0 = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, fmt, (size_t) MAX_EVAL_DEPTH);
 		r1 = SEXP_list_new(r0, NULL);
 		result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
-		SEXP_vfree(r0, r1, NULL);
+		SEXP_free(r0);
+		SEXP_free(r1);
 		return result;
 	}
 
@@ -804,7 +836,8 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 					"%s: Can't get unavailable filters.", __FUNCTION__);
 		goto eval_fail;
 	}
-	SEXP_vfree(filters_req, result, NULL);
+	SEXP_free(filters_req);
+	SEXP_free(result);
 
 	SEXP_list_foreach(member, filters_u) {
 		SEXP_t *id, *act, *ste;
@@ -814,7 +847,11 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 		ste = probe_rcache_sexp_get(probe->rcache, id);
 		r0 = SEXP_list_new(act, ste, NULL);
 		SEXP_list_add(filters_a, r0);
-		SEXP_vfree(act, id, ste, r0, NULL);
+
+		SEXP_free(act);
+		SEXP_free(id);
+		SEXP_free(ste);
+		SEXP_free(r0);
 	}
 
 	SEXP_free(filters_u);
@@ -888,7 +925,8 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
 
         r1 = SEXP_list_new(Omsg, NULL);
 	result = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
-	SEXP_vfree(Omsg, r1, NULL);
+	SEXP_free(Omsg);
+	SEXP_free(r1);
 	return result;
 }
 
@@ -972,7 +1010,10 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			dD("handling varrefs in object");
 
 			if (probe_varref_create_ctx(probe_in, varrefs, &ctx) != 0) {
-				SEXP_vfree(varrefs, pctx.filters, probe_in, mask, NULL);
+				SEXP_free(varrefs);
+				SEXP_free(pctx.filters);
+				SEXP_free(probe_in);
+				SEXP_free(mask);
 				*ret = PROBE_EUNKNOWN;
 				return (NULL);
 			}
@@ -1001,7 +1042,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 				probe_cobj_compute_flag(cobj);
 				r0 = probe_out;
 				probe_out = probe_set_combine(r0, cobj, OVAL_SET_OPERATION_UNION);
-				SEXP_vfree(cobj, r0, NULL);
+				SEXP_free(cobj);
+				SEXP_free(r0);
 			} while (*ret == 0
 				 && probe_varref_iterate_ctx(ctx));
 

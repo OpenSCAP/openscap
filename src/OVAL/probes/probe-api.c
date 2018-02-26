@@ -35,10 +35,17 @@
 
 #include <stdarg.h>
 #include <string.h>
+#include <stdbool.h>
 #include <errno.h>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <in6addr.h>
+#include <ws2tcpip.h>
+#else
 #include <arpa/inet.h> /* inet_pton() in probe_ent_from_cstr() */
 #include <netinet/in.h>
 #include <sys/socket.h>
+#endif
 
 #include "debug_priv.h"
 #include "_probe-api.h"
@@ -121,7 +128,8 @@ SEXP_t *probe_item_new(const char *name, SEXP_t * attrs)
 	 * Objects have the same structure as items.
 	 */
 	itm = probe_obj_new(name, attrs);
-	SEXP_vfree(sid, attrs, NULL);
+	SEXP_free(sid);
+	SEXP_free(attrs);
 
 	return itm;
 }
@@ -285,7 +293,9 @@ bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters)
 		else
 			oopr = SEXP_number_geti_32(r0);
 		ores = probe_ent_result_byopr(ste_res, oopr);
-		SEXP_vfree(ste, ste_res, r0, NULL);
+		SEXP_free(ste);
+		SEXP_free(ste_res);
+		SEXP_free(r0);
 
 		if ((ores == OVAL_RESULT_TRUE && ofact == OVAL_FILTER_ACTION_EXCLUDE)
 		    || (ores == OVAL_RESULT_FALSE && ofact == OVAL_FILTER_ACTION_INCLUDE)) {
@@ -631,7 +641,10 @@ SEXP_t *probe_cobj_new(oval_syschar_collection_flag_t flag, SEXP_t *msg_list, SE
 			     item_list,
                              mask_list,
 			     NULL);
-	SEXP_vfree(msg_list, item_list, mask_list, r0, NULL);
+	SEXP_free(msg_list);
+	SEXP_free(item_list);
+	SEXP_free(mask_list);
+	SEXP_free(r0);
 
 	return cobj;
 }
@@ -666,7 +679,8 @@ int probe_cobj_add_item(SEXP_t *cobj, const SEXP_t *item)
 	lst = SEXP_listref_nth(cobj, 3);
 	oitem = probe_item_optimize(item);
 	SEXP_list_add(lst, oitem);
-	SEXP_vfree(lst, oitem, NULL);
+	SEXP_free(lst);
+	SEXP_free(oitem);
 
 	return 0;
 }
@@ -926,7 +940,8 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
 	lvl = SEXP_number_newu(level);
 	str = SEXP_string_newf("%s", message);
 	msg = SEXP_list_new(lvl, str, NULL);
-	SEXP_vfree(lvl, str, NULL);
+	SEXP_free(lvl);
+	SEXP_free(str);
 
 	return msg;
 }
@@ -934,22 +949,37 @@ SEXP_t *probe_msg_creat(oval_message_level_t level, char *message)
 SEXP_t *probe_msg_creatf(oval_message_level_t level, const char *fmt, ...)
 {
 	va_list alist;
-	int len;
-	char *cstr;
+	int len = 0;
 	SEXP_t *lvl, *str, *msg;
+	char *cstr = NULL;
 
 	va_start(alist, fmt);
-	len = vasprintf(&cstr, fmt, alist);
+	len = vsnprintf(cstr, len, fmt, alist);
 	va_end(alist);
-	if (len < 0)
+
+	if (len < 0) {
 		return NULL;
+	}
+
+	len++;
+	cstr = malloc(len);
+
+	va_start(alist, fmt);
+	len = vsnprintf(cstr, len, fmt, alist);
+	va_end(alist);
+
+	if (len < 0) {
+		free(cstr);
+		return NULL;
+	}
 
 	dI("%s", cstr);
 	str = SEXP_string_new(cstr, len);
 	free(cstr);
 	lvl = SEXP_number_newu(level);
 	msg = SEXP_list_new(lvl, str, NULL);
-	SEXP_vfree(lvl, str, NULL);
+	SEXP_free(lvl);
+	SEXP_free(str);
 
 	return msg;
 }
@@ -1666,11 +1696,11 @@ SEXP_t *probe_entval_from_cstr(oval_datatype_t type,
 			}
 			break;
 		case 4:
-			if (strncasecmp(value, "true", 4) == 0)
+			if (oscap_strncasecmp(value, "true", 4) == 0)
 				ent_val = SEXP_number_newb(true);
 			break;
 		case 5:
-			if (strncasecmp(value, "false", 5) == 0)
+			if (oscap_strncasecmp(value, "false", 5) == 0)
 				ent_val = SEXP_number_newb(false);
 			break;
 		}

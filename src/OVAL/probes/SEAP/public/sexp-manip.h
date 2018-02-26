@@ -43,6 +43,7 @@
 #include <sexp-types.h>
 #include <helpers.h>
 #include "oscap_export.h"
+#include <common/util.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -467,9 +468,6 @@ OSCAP_API SEXP_list_it *SEXP_list_it_new(const SEXP_t *list);
 OSCAP_API SEXP_t *SEXP_list_it_next(SEXP_list_it *it);
 OSCAP_API void SEXP_list_it_free(SEXP_list_it *it);
 
-#if __STDC_VERSION__ >= 199901L
-# include <common/util.h>
-
 /* TODO: use alloca & softref_r here */
 /**
  * Iterate through a list, assigning each element to a variable.
@@ -490,8 +488,6 @@ OSCAP_API void SEXP_list_it_free(SEXP_list_it *it);
          for (uint32_t OSCAP_CONCAT(i,__LINE__) = (beg); OSCAP_CONCAT(i,__LINE__) <= ((size_t)(end)) && ((var) = SEXP_list_nth (list, OSCAP_CONCAT(i,__LINE__))) != NULL; ++OSCAP_CONCAT(i,__LINE__), SEXP_free (var), (var) = NULL)
 
 #define SEXP_LIST_END (UINT32_MAX - 1)
-
-#endif /* __STDC_VERSION__ >= 199901L */
 
 /*
  * generic
@@ -535,51 +531,11 @@ OSCAP_API int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b);
 
 OSCAP_API bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b);
 
-#ifdef __COVERITY__
-/*
- * An alternative implementation for Coverity, which reports
- * a lot of false positives because it is not be able to
- * handle functions with variable number of arguments
- */
-# define SEXP_vfree_coverity(...) \
-	do { \
-		SEXP_t *__svf##__LINE__[] = { __VA_ARGS__ }; \
-		size_t __svfc##__LINE__ = sizeof (__svf##__LINE__)/sizeof(SEXP_t *); \
-		for (; __svfc##__LINE__ > 0; --__svfc##__LINE__) \
-			if (__svf##__LINE__[__svfc##__LINE__ - 1]) \
-				SEXP_free(__svf##__LINE__[__svfc##__LINE__ - 1]); \
-	} while(0)
-#endif /* __COVERITY__ */
-
-#if defined(NDEBUG)
 /**
  * Free a sexp object.
  * @param s_exp the object to be freed
  */
 OSCAP_API void     SEXP_free (SEXP_t *s_exp);
-
-/**
- * Free multiple sexp objects.
- * The argument list needs to be terminated with NULL.
- * @param s_exp the object to be freed
- * @param ... arbitrary number of objects to be freed
- */
-OSCAP_API void     __SEXP_vfree (int n, SEXP_t *s_exp, ...);
-#ifdef __COVERITY__
-# define SEXP_vfree(...) SEXP_vfree_coverity(__VA_ARGS__)
-#else
-# define SEXP_vfree(...) __SEXP_vfree(PP_NARG(__VA_ARGS__), __VA_ARGS__)
-#endif
-#else
-# define SEXP_free(ptr) __SEXP_free (ptr, __FILE__, __LINE__, __PRETTY_FUNCTION__)
-OSCAP_API void     __SEXP_free (SEXP_t *s_exp, const char *file, uint32_t line, const char *func);
-#ifdef __COVERITY__
-# define SEXP_vfree(...) SEXP_vfree_coverity(__VA_ARGS__)
-#else
-# define SEXP_vfree(...) __SEXP_vfree (__FILE__, __LINE__, __PRETTY_FUNCTION__, PP_NARG(__VA_ARGS__), __VA_ARGS__)
-#endif
-OSCAP_API void     __SEXP_vfree (const char *file, uint32_t line, const char *func, int n, SEXP_t *s_exp, ...);
-#endif
 
 /**
  * Get the user data type of a sexp object.

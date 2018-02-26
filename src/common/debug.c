@@ -237,10 +237,15 @@ static void debug_message_devel_metadata(const char *file, const char *fn, size_
 #else
 	snprintf(thread_name, THREAD_NAME_LEN, "unknown");
 #endif
+#ifdef _WIN32
+	unsigned long long tid = pthread_getw32threadid_np(thread);
+#else
 	/* XXX: non-portable usage of pthread_t */
+	unsigned long long tid = (unsigned long long) thread;
+#endif
 	fprintf(__debuglog_fp, " [%s(%ld):%s(%llx):%s:%zu:%s]",
 		GET_PROGRAM_NAME, (long) getpid(), thread_name,
-		(unsigned long long) thread, f, line, fn);
+		tid, f, line, fn);
 #else
 	fprintf(__debuglog_fp, " [%ld:%s:%zu:%s]", (long) getpid(),
 		f, line, fn);

@@ -31,8 +31,14 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <limits.h>
+#ifdef HAVE_UIO_H
 #include <sys/uio.h>
+#endif
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 
 #include "common/debug_priv.h"
 #include "strbuf.h"
@@ -276,6 +282,8 @@ size_t strbuf_fwrite (FILE *fp, strbuf_t *buf)
         return (size);
 }
 
+#ifdef HAVE_UIO_H
+
 ssize_t strbuf_write (strbuf_t *buf, int fd)
 {
         struct strblk *cur;
@@ -339,3 +347,23 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 
         return (rsize);
 }
+
+#else
+
+ssize_t strbuf_write (strbuf_t *buf, int fd)
+{
+	struct strblk *cur;
+	size_t size;
+
+	cur = buf->beg;
+	size = 0;
+
+	while (cur != NULL) {
+		size += write(fd, cur->data, cur->next == NULL ? buf->blkoff : cur->size);
+		cur = cur->next;
+	}
+
+	return (size);
+}
+
+#endif

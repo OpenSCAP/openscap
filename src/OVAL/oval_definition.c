@@ -40,7 +40,6 @@
 #include "adt/oval_string_map_impl.h"
 #include "oval_agent_api_impl.h"
 
-#include "common/assume.h"
 #include "common/util.h"
 #include "common/debug_priv.h"
 #include "common/elements.h"
@@ -152,8 +151,6 @@ struct oval_definition *oval_definition_new(struct oval_definition_model *model,
 	struct oval_definition *definition;
 
 	definition = (struct oval_definition *)oscap_talloc(oval_definition_t);
-
-        assume_r(definition != NULL, /* return */ NULL);
 
 	definition->id = oscap_strdup(id);
 	definition->version = 0;

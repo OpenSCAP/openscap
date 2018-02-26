@@ -26,7 +26,11 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "seap-descriptor.h"

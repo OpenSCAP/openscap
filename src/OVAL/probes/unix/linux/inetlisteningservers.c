@@ -602,7 +602,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	err = 0;
  cleanup:
-	SEXP_vfree(req.protocol_ent, req.local_address_ent, req.local_port_ent, NULL);
+	SEXP_free(req.protocol_ent);
+	SEXP_free(req.local_address_ent);
+	SEXP_free(req.local_port_ent);
 
 	return err;
 }

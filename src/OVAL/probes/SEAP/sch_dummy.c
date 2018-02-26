@@ -26,7 +26,11 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <errno.h>
 
 #include "_sexp-types.h"

@@ -75,7 +75,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 		probe_item_ent_add(item, "value", NULL, sval);
 
 	probe_item_collect(ctx, item);
-	SEXP_vfree(vr_ent, sid, svallst, NULL);
+	SEXP_free(vr_ent);
+	SEXP_free(sid);
+	SEXP_free(svallst);
 
 	return 0;
 }

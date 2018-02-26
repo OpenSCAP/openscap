@@ -30,7 +30,11 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 
 #include "common/_error.h"
@@ -45,10 +49,6 @@
 #include "oval_probe_meta.h"
 
 #define __ERRBUF_SIZE 128
-
-#if (defined(__SVR4) && defined (__sun)) || defined(_AIX)
-#define __STRING(x)     #x
-#endif
 
 static oval_pdtbl_t *oval_pdtbl_new(void);
 static void          oval_pdtbl_free(oval_pdtbl_t *table);
@@ -405,7 +405,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 	if (flags & OVAL_PDFLAG_SLAVE) {
 		char errbuf[__ERRBUF_SIZE];
 
-		if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+		if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message to probe");
 		else
 			oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
@@ -420,7 +420,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 			dE("Can't close sd: %u, %s.", errno, strerror(errno));
 		}
 
-		if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+		if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to close probe sd");
 		else
 			oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
@@ -464,7 +464,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                                 dE("Connect: retry limit (%u) reached.", OVAL_PROBE_MAXRETRY);
                                         }
 
-                                        if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+                                        if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "Can't connect to the probe");
                                         else
                                                 oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
@@ -501,7 +501,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			if (flags & OVAL_PDFLAG_SLAVE) {
                                 char errbuf[__ERRBUF_SIZE];
 
-                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+                                if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to send a message to probe");
                                 else
 					oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
@@ -518,7 +518,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                         SEAP_msg_free(s_omsg);
                                 }
 
-                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+                                if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, "Can't close sd");
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
@@ -540,7 +540,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                         SEAP_msg_free(s_omsg);
                                 }
 
-                                if (strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
+                                if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to send a message to probe");
                                 else
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
@@ -574,7 +574,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 					}
 
 					char errbuf[__ERRBUF_SIZE];
-					if (strerror_r (errno, errbuf, sizeof errbuf - 1) == 0)
+					if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) == 0)
 						oscap_seterr(OSCAP_EFAMILY_OVAL, errbuf);
 					oscap_seterr(OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
 
@@ -632,7 +632,9 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                     r3 = SEXP_string_newf ("sysinfo:0"),
                                     NULL);
 
-                SEXP_vfree (r1, r2, r3, NULL);
+				SEXP_free(r1);
+				SEXP_free(r2);
+				SEXP_free(r3);
                 s_obj = SEXP_list_new (r0, NULL);
                 SEXP_free (r0);
         }
@@ -645,7 +647,8 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
 
 	r1 = probe_cobj_get_items(r0);
 	s_sinf = SEXP_list_first(r1);
-	SEXP_vfree(r0, r1, NULL);
+	SEXP_free(r0);
+	SEXP_free(r1);
 
 	if (s_sinf == NULL)
 		return (-1);
@@ -660,15 +663,15 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                 SEXP_t *val;                                            \
                 char    buf[128+1];                                     \
                                                                         \
-                val = probe_obj_getentval (obj, __STRING(name), 1);     \
+                val = probe_obj_getentval (obj, #name, 1);     \
                                                                         \
                 if (val == NULL) {                                      \
-                        dI("No entity or value: %s", __STRING(name)); \
+                        dI("No entity or value: %s", #name); \
                         goto fail;                                      \
                 }                                                       \
                                                                         \
                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                        dI("Value too large: %s", __STRING(name));    \
+                        dI("Value too large: %s", #name);    \
                         SEXP_free (val);                                \
                         goto fail;                                      \
                 }                                                       \
@@ -696,15 +699,15 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                 SEXP_t *val;                            \
                                 char    buf[128+1];                     \
                                                                         \
-                                val = probe_ent_getattrval (ent, __STRING(name)); \
+                                val = probe_ent_getattrval (ent, #name); \
                                                                         \
                                 if (val == NULL) {                      \
-                                        dI("No value: %s", __STRING(name)); \
+                                        dI("No value: %s", #name); \
                                         goto fail;                      \
                                 }                                       \
                                                                         \
                                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                                        dI("Value too large: %s", __STRING(name)); \
+                                        dI("Value too large: %s", #name); \
                                         SEXP_free (val);                \
                                         goto fail;                      \
                                 }                                       \
@@ -1007,7 +1010,11 @@ int oval_probe_ext_init(oval_pext_t *pext)
 				continue;
 			}
 
-			if (!S_ISREG(st.st_mode)) {
+#ifdef _WIN32
+		if (!(st.st_mode & _S_IFREG)) {
+#else
+		if (!S_ISREG(st.st_mode)) {
+#endif
 				dD("skipped: %s (not a regular file)", OSCAP_GSYM(__probe_meta)[i].stype);
 				continue;
 			}
@@ -1113,6 +1120,16 @@ int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 #include "SEAP/_seap-scheme.h"
 #include "SEAP/sch_pipe.h"
 
+#ifdef _WIN32
+
+int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
+{
+	dE("Operation oval_probe_ext_abort is not supported on Windows!");
+	return 0;
+}
+
+#else
+
 int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 {
 	SEAP_desc_t *dsc;
@@ -1135,12 +1152,9 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 	case SCH_PIPE:
 	{
 		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
-
 		dI("Sending SIGUSR1 to pid=%u", pipeinfo->pid);
-
 		if (kill(pipeinfo->pid, SIGUSR1) != 0)
 			dW("kill(SIGUSR1, %u): %u, %s", errno, strerror(errno));
-
 		break;
 	}
 	default:
@@ -1149,6 +1163,8 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 
 	return (0);
 }
+
+#endif
 
 const char *oval_probe_ext_getdir(void)
 {

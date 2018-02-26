@@ -23,7 +23,11 @@
 #define PROBE_H
 
 #include <sys/types.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>

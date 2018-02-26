@@ -25,6 +25,8 @@
 #include <config.h>
 #endif
 
+#ifndef _WIN32
+
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
@@ -176,3 +178,5 @@ void *probe_signal_handler(void *arg)
 exitloop:
 	return (NULL);
 }
+
+#endif /* ifndef _WIN32 */

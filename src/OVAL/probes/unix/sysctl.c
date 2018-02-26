@@ -80,7 +80,11 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
                                      "recurse", r3 = SEXP_string_new("symlinks and directories", 24),
                                      NULL);
         bh_entity = probe_ent_creat1("behaviors", ent_attrs, NULL);
-        SEXP_vfree(r0, r1, r2, r3, ent_attrs, NULL);
+	SEXP_free(r0);
+	SEXP_free(r1);
+	SEXP_free(r2);
+	SEXP_free(r3);
+	SEXP_free(ent_attrs);
 
         /*
          * prepare path, filename
@@ -88,12 +92,15 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         ent_attrs = probe_attr_creat("operation", r0 = SEXP_number_newi(OVAL_OPERATION_EQUALS),
                                      NULL);
         path_entity = probe_ent_creat1("path", ent_attrs, r1 = SEXP_string_new(PROC_SYS_DIR, strlen(PROC_SYS_DIR)));
-        SEXP_vfree(r0, r1, NULL);
+	SEXP_free(r0);
+	SEXP_free(r1);
 
         ent_attrs = probe_attr_creat("operation", r0 = SEXP_number_newi(OVAL_OPERATION_PATTERN_MATCH),
                                      NULL);
         filename_entity = probe_ent_creat1("filename", ent_attrs, r1 = SEXP_string_new(".*", 2));
-        SEXP_vfree(r0, r1, ent_attrs, NULL);
+	SEXP_free(r0);
+	SEXP_free(r1);
+	SEXP_free(ent_attrs);
 
         /*
          * collect sysctls
@@ -103,7 +110,10 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
         if (ofts == NULL) {
                 dE("oval_fts_open(%s, %s) failed", PROC_SYS_DIR, ".\\+");
-                SEXP_vfree(path_entity, filename_entity, bh_entity, name_entity, NULL);
+		SEXP_free(path_entity);
+		SEXP_free(filename_entity);
+		SEXP_free(bh_entity);
+		SEXP_free(name_entity);
 
                 return (PROBE_EFATAL);
         }
@@ -251,7 +261,10 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
         }
 
         oval_fts_close(ofts);
-	SEXP_vfree(path_entity, filename_entity, bh_entity, name_entity);
+	SEXP_free(path_entity);
+	SEXP_free(filename_entity);
+	SEXP_free(bh_entity);
+	SEXP_free(name_entity);
 
         return (0);
 }

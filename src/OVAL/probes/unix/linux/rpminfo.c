@@ -547,7 +547,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                                 __rpminfo_rep_free (&(reply_st[i]));
 
 				if (probe_item_collect(ctx, item) < 0) {
-					SEXP_vfree(ent, NULL);
+					SEXP_free(ent);
 					return PROBE_EUNKNOWN;
 				}
                         }
@@ -556,7 +556,7 @@ int probe_main (probe_ctx *ctx, void *arg)
                 }
         }
 
-	SEXP_vfree(ent, NULL);
+	SEXP_free(ent);
         free(request_st.name);
 
         return 0;

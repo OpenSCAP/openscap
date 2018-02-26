@@ -431,10 +431,15 @@ void probe_fini (void *arg)
         /*
          * Release global reference.
          */
-        SEXP_vfree (gr_true, gr_false, gr_t_reg,
-                    gr_t_dir, gr_t_lnk, gr_t_blk,
-                    gr_t_fifo, gr_t_sock, gr_t_char,
-                    NULL);
+	SEXP_free(gr_true);
+	SEXP_free(gr_false);
+	SEXP_free(gr_t_reg);
+	SEXP_free(gr_t_dir);
+	SEXP_free(gr_t_lnk);
+	SEXP_free(gr_t_blk);
+	SEXP_free(gr_t_fifo);
+	SEXP_free(gr_t_sock);
+	SEXP_free(gr_t_char);
 
 	if (!SEXP_emptyp(&gr_lastpath))
 		SEXP_free_r(&gr_lastpath);

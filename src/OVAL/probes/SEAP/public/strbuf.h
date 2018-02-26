@@ -25,7 +25,11 @@
 #define STRBUF_H
 
 #include <stddef.h>
+#ifdef _WIN32
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include "oscap_export.h"
 

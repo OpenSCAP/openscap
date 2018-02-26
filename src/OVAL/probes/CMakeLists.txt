@@ -8,7 +8,6 @@ function(add_oscap_probe PROBE_NAME PROBE_SOURCE_FILE)
 endfunction()
 
 if(ENABLE_PROBES)
-	add_subdirectory("crapi")
 	add_subdirectory("probe")
 
 	if(ENABLE_PROBES_INDEPENDENT)
@@ -16,39 +15,44 @@ if(ENABLE_PROBES)
 
 		add_oscap_probe(probe_family "independent/family.c")
 
-		add_oscap_probe(probe_textfilecontent "independent/textfilecontent.c")
+		if(NOT WIN32)
+			add_oscap_probe(probe_textfilecontent "independent/textfilecontent.c")
 
-		add_oscap_probe(probe_textfilecontent54 "independent/textfilecontent54.c")
+			add_oscap_probe(probe_textfilecontent54 "independent/textfilecontent54.c")
 
-		add_oscap_probe(probe_variable "independent/variable.c")
+			add_oscap_probe(probe_variable "independent/variable.c")
 
-		add_oscap_probe(probe_xmlfilecontent "independent/xmlfilecontent.c")
-		target_link_libraries(probe_xmlfilecontent ${LIBXML2_LIBRARIES})
+			add_oscap_probe(probe_xmlfilecontent "independent/xmlfilecontent.c")
+			target_link_libraries(probe_xmlfilecontent ${LIBXML2_LIBRARIES})
 
-		add_oscap_probe(probe_filehash "independent/filehash.c")
-		target_link_libraries(probe_filehash crapi)
+			if(GCRYPT_FOUND OR NSS_FOUND)
+				add_subdirectory("crapi")
+				add_oscap_probe(probe_filehash "independent/filehash.c")
+				target_link_libraries(probe_filehash crapi)
 
-		add_oscap_probe(probe_filehash58 "independent/filehash58.c")
-		target_link_libraries(probe_filehash58 crapi)
+				add_oscap_probe(probe_filehash58 "independent/filehash58.c")
+				target_link_libraries(probe_filehash58 crapi)
+			endif()
 
-		add_oscap_probe(probe_environmentvariable "independent/environmentvariable.c")
+			add_oscap_probe(probe_environmentvariable "independent/environmentvariable.c")
 
-		add_oscap_probe(probe_environmentvariable58 "independent/environmentvariable58.c")
+			add_oscap_probe(probe_environmentvariable58 "independent/environmentvariable58.c")
 
-		if(OPENDBX_FOUND)
-			add_oscap_probe(probe_sql "independent/sql.c")
-			target_include_directories(probe_sql PRIVATE ${OPENDBX_INCLUDE_DIRS})
-			target_link_libraries(probe_sql ${OPENDBX_LIBRARIES})
+			if(OPENDBX_FOUND)
+				add_oscap_probe(probe_sql "independent/sql.c")
+				target_include_directories(probe_sql PRIVATE ${OPENDBX_INCLUDE_DIRS})
+				target_link_libraries(probe_sql ${OPENDBX_LIBRARIES})
 
-			add_oscap_probe(probe_sql57 "independent/sql57.c")
-			target_include_directories(probe_sql57 PRIVATE ${OPENDBX_INCLUDE_DIRS})
-			target_link_libraries(probe_sql57 ${OPENDBX_LIBRARIES})
-		endif()
+				add_oscap_probe(probe_sql57 "independent/sql57.c")
+				target_include_directories(probe_sql57 PRIVATE ${OPENDBX_INCLUDE_DIRS})
+				target_link_libraries(probe_sql57 ${OPENDBX_LIBRARIES})
+			endif()
 
-		if(LDAP_FOUND)
-			add_oscap_probe(probe_ldap57 "independent/ldap57.c")
-			target_include_directories(probe_ldap57 PRIVATE ${LDAP_INCLUDE_DIRS})
-			target_link_libraries(probe_ldap57 ${LDAP_LIBRARIES})
+			if(LDAP_FOUND)
+				add_oscap_probe(probe_ldap57 "independent/ldap57.c")
+				target_include_directories(probe_ldap57 PRIVATE ${LDAP_INCLUDE_DIRS})
+				target_link_libraries(probe_ldap57 ${LDAP_LIBRARIES})
+			endif()
 		endif()
 	endif()
 

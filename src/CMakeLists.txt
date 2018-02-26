@@ -22,6 +22,7 @@ function(set_oscap_generic_properties TARGET_OBJECT)
 		CXX_VISIBILITY_PRESET hidden    # Make global variables and functions HIDDEN by default.
 		POSITION_INDEPENDENT_CODE ON    # Compile this object code position independent.
 	)
+	target_compile_definitions(${TARGET_OBJECT} PRIVATE OSCAP_BUILD_SHARED)
 endfunction()
 
 if(ENABLE_CCE)
@@ -78,9 +79,9 @@ set_target_properties(openscap PROPERTIES
 	VERSION ${SONAME}
 	SOVERSION ${SOVERSION}
 	C_VISIBILITY_PRESET hidden
-	COMPILE_DEFINITIONS OSCAP_BUILD_SHARED
 )
-target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES})
+
+target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 if (BZIP2_FOUND)
 	target_link_libraries(openscap ${BZIP2_LIBRARIES})
 endif()

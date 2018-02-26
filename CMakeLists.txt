@@ -106,7 +106,8 @@ find_package(BZip2)
 # PThread
 set(CMAKE_THREAD_PREFER_PTHREAD)
 set(THREADS_PREFER_PTHREAD_FLAG)
-find_package(Threads)
+set(THREADS_USE_PTHREADS_WIN32 true)
+find_package(Threads REQUIRED)
 check_library_exists(pthread pthread_timedjoin_np "" HAVE_PTHREAD_TIMEDJOIN_NP)
 check_library_exists(pthread pthread_setname_np "" HAVE_PTHREAD_SETNAME_NP)
 check_library_exists(pthread pthread_getname_np "" HAVE_PTHREAD_GETNAME_NP)
@@ -134,6 +135,7 @@ check_include_file(stdio_ext.h HAVE_STDIO_EXT_H)
 check_include_file(shadow.h HAVE_SHADOW_H)
 check_include_file(sys/systeminfo.h HAVE_SYS_SYSTEMINFO_H)
 check_include_file(getopt.h HAVE_GETOPT_H)
+check_include_file(sys/uio.h HAVE_UIO_H)
 
 # HAVE_ATOMIC_BUILTINS
 check_c_source_compiles("#include <stdint.h>\nint main() {uint16_t foovar=0; uint16_t old=1; uint16_t new=2;__sync_bool_compare_and_swap(&foovar,old,new); return __sync_fetch_and_add(&foovar, 1); __sync_fetch_and_add(&foovar, 1);}" HAVE_ATOMIC_BUILTINS)
@@ -155,8 +157,7 @@ option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine 
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" TRUE)
-# TODO: We probably only want these on UNIX systems
-option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" TRUE)
+option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" ${UNIX})
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
 option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX})
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
@@ -263,6 +264,23 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 configure_file("config.h.in" "config.h")
 add_definitions(-DHAVE_CONFIG_H)
+if (MSVC)
+	# Disable some of Microsoft Visual Studio 2017 warnings
+	#
+	# Visual Studio recommends using some non-standard functions with _s suffix
+	# instead of standard functions, because they considered it more secure.
+	# However these functions are available only in Microsoft C Runtime.
+	# Therefore we disable this type of warnings.
+	# https://docs.microsoft.com/en-us/cpp/c-runtime-library/security-features-in-the-crt
+	add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+	# Microsoft has renamed some POSIX functions in the CRT to conform with C99 rules for
+	# implementation-defined global function names. In most cases, a leading underscore was
+	# added to the POSIX function name to create a standard conformant name.
+	# If we use POSIX functions without leading underscore, a deprecation warning is shown.
+	# Therefore we disable this type of warnings.
+	# https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996
+	add_definitions(-D_CRT_NONSTDC_NO_WARNINGS)
+endif()
 
 if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Clang")
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pipe -std=c99 -W -Wall -Wnonnull -Wshadow -Wformat -Wundef -Wno-unused-parameter -Wmissing-prototypes -Wno-unknown-pragmas -D_GNU_SOURCE -D_POSIX_C_SOURCE=200112L")

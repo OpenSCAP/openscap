@@ -1682,7 +1682,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 		free(xres);
 
 	}
-	SEXP_vfree(service_name, protocol, NULL);
+	SEXP_free(service_name);
+	SEXP_free(protocol);
 
 	return (0);
  fail:

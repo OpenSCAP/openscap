@@ -460,7 +460,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	err = 0;
  cleanup:
-	SEXP_vfree(interface_name_ent, NULL);
+	SEXP_free(interface_name_ent);
 
 	return err;
 }
