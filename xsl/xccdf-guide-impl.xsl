@@ -35,6 +35,7 @@ Authors:
 <xsl:include href="xccdf-branding.xsl" />
 <xsl:include href="xccdf-resources.xsl" />
 <xsl:include href="xccdf-share.xsl" />
+<xsl:include href="xccdf-references.xsl" />
 
 <xsl:output
     method="html"
@@ -298,6 +299,17 @@ Authors:
                 <xsl:with-param name="item" select="."/>
                 <xsl:with-param name="profile" select="$profile"/>
             </xsl:call-template>
+            
+        </xsl:for-each>
+        <xsl:for-each select="$item/cdf:Rule">
+            <xsl:call-template name="guide-count-contained-selected-groups-impl">
+                <xsl:with-param name="item" select="."/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+            <xsl:call-template name="guide-count-contained-selected-rules-impl">
+                <xsl:with-param name="item" select="."/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
         </xsl:for-each>
 
         <xsl:for-each select="$item/cdf:Rule">
@@ -309,6 +321,38 @@ Authors:
                 </xsl:call-template>
             </xsl:variable>
             <xsl:if test="$rule_selected_final = 'true'">R</xsl:if>
+        </xsl:for-each>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template name="guide-count-contained-selected-groups-impl">
+    <xsl:param name="item"/>
+    <xsl:param name="profile"/>
+
+    <xsl:variable name="selected_group_final">
+        <xsl:call-template name="is-item-selected-final">
+            <xsl:with-param name="item" select="$item"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:if test="$selected_group_final = 'true'">
+        <xsl:for-each select="$item/cdf:Group">
+            <xsl:call-template name="guide-count-contained-selected-groups-impl">
+                <xsl:with-param name="item" select="."/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </xsl:for-each>
+
+        <xsl:for-each select="$item/cdf:Group">
+            <xsl:variable name="group" select="."/>
+            <xsl:variable name="group_selected_final">
+                <xsl:call-template name="is-item-selected-final">
+                    <xsl:with-param name="item" select="$group"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:if test="$group_selected_final = 'true'">G</xsl:if>
         </xsl:for-each>
     </xsl:if>
 </xsl:template>
@@ -333,6 +377,49 @@ Authors:
     <xsl:value-of select="string-length($impl-ret)"/>
 </xsl:template>
 
+<xsl:template name="guide-count-contained-selected-groups">
+    <!-- XSLT is a functional language, you cannot "update"
+         variables. That's why we recursivelly build a huge
+         string containing 'Group' for each selected RULE.
+         We then cound the number of Groups to get the number
+         we need. -->
+
+    <xsl:param name="item"/>
+    <xsl:param name="profile"/>
+
+    <xsl:variable name="impl-ret-group">
+        <xsl:call-template name="guide-count-contained-selected-groups-impl">
+            <xsl:with-param name="item" select="$item"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:value-of select="string-length($impl-ret-group)"/>
+</xsl:template>
+
+<xsl:template name="contained-groups-wording">
+    <xsl:param name="item"/>
+    <xsl:param name="profile"/>
+
+    <xsl:variable name="contained_groups">
+        <xsl:call-template name="guide-count-contained-selected-groups">
+            <xsl:with-param name="item" select="$item"/>
+            <xsl:with-param name="profile" select="$profile"/>
+        </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:choose>
+        <xsl:when test="$contained_groups > 1">
+            <small> <xsl:value-of select="$contained_groups"/> groups and </small>
+        </xsl:when>
+        <xsl:when test="$contained_groups = 1">
+            <small><xsl:value-of select="$contained_groups"/> group and </small>
+        </xsl:when>
+        <xsl:otherwise>                
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:template>
+
 <xsl:template name="guide-tree-inner-node">
     <xsl:param name="item"/>
     <xsl:param name="profile"/>
@@ -353,6 +440,13 @@ Authors:
             </xsl:call-template>
         </xsl:variable>
 
+        <xsl:variable name="contained_groups">
+            <xsl:call-template name="contained-groups-wording">
+                <xsl:with-param name="item" select="$item"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </xsl:variable>
+
         <xsl:if test="not($item/self::cdf:Benchmark)">
             <tr data-tt-id="{$item/@id}" class="guide-tree-inner-node guide-tree-inner-node-id-{$item/@id}">
                 <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
@@ -362,24 +456,29 @@ Authors:
                 </xsl:if>
 
                 <td style="padding-left: {$indent * 19}px">
-                    <h3>
-                        <xsl:attribute name="id">
-                            <xsl:value-of select="$item/@id"/>
-                        </xsl:attribute>
-                        <span class="label label-default">Group</span>&#160;&#160;
-                        <xsl:call-template name="item-title">
-                            <xsl:with-param name="item" select="$item"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:call-template>
-                        &#160;&#160;<a class="small" href="{concat('#', $item/@id)}">[ref]</a>                      
-                    </h3>
+                    <table class="table table-striped table-bordered">
+                        <tbody>
+                            <tr><td colspan="2">
+                                <h3>
+                                     <xsl:attribute name="id">
+                                         <xsl:value-of select="$item/@id"/>
+                                     </xsl:attribute>
+                                     <span class="label label-default">Group</span>&#160;&#160;
+                                     <xsl:call-template name="item-title">
+                                         <xsl:with-param name="item" select="$item"/>
+                                         <xsl:with-param name="profile" select="$profile"/>
+                                     </xsl:call-template>
+                                     &#160;&#160;<a class="small" href="{concat('#', $item/@id)}">[ref]</a>                      
+                                </h3>
+                            </td></tr>
 
-                    <p>
-                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
-                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </p>
+                            <tr><td colspan="2">
+                                <p>
+                                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                                        <xsl:with-param name="profile" select="$profile"/>
+                                    </xsl:apply-templates>
+                                </p>
 
                     <xsl:for-each select="$item/cdf:warning">
                         <div class="panel panel-warning">
@@ -392,10 +491,15 @@ Authors:
                             </div>
                         </div>
                     </xsl:for-each>
-
-                    <xsl:call-template name="item-idents-refs">
-                        <xsl:with-param name="item" select="$item"/>
-                    </xsl:call-template>
+</td></tr>
+                    <xsl:if test="$item/cdf:reference">
+                        <tr><td>Identifiers and References</td><td class="identifiers">
+                            <xsl:call-template name="item-idents-refs">
+                                <xsl:with-param name="item" select="$item"/>
+                            </xsl:call-template>
+                        </td></tr>
+                    </xsl:if>
+                    </tbody></table>
                 </td>
             </tr>
         </xsl:if>
@@ -410,10 +514,10 @@ Authors:
             <td style="padding-left: {$indent * 19}px">
                 <xsl:choose>
                     <xsl:when test="$contained_rules > 1">
-                        <small>contains <xsl:value-of select="$contained_rules"/> rules</small>
+                        <small>Group contains <xsl:value-of select="$contained_groups"/><xsl:value-of select="$contained_rules"/> rules</small>
                     </xsl:when>
                     <xsl:when test="$contained_rules = 1">
-                        <small>contains <xsl:value-of select="$contained_rules"/> rule</small>
+                        <small>Group contains  <xsl:value-of select="$contained_groups"/><xsl:value-of select="$contained_rules"/> rule</small>
                     </xsl:when>
                     <xsl:otherwise>
                     </xsl:otherwise>
@@ -501,7 +605,7 @@ Authors:
         <div class="row">
             <div class="col-sm-6">
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search through XCCDF rules" id="search-input" oninput="ruleSearch()"/>
+                    <input type="text" class="form-control" placeholder="Search through the guide" id="search-input" oninput="ruleSearch()"/>
 
                     <div class="input-group-btn">
                          <button class="btn btn-default" onclick="ruleSearch()">Search</button>
@@ -517,9 +621,9 @@ Authors:
                     <option value="severity">Severity</option>
                     <option value="result">Result</option>
                     <option disabled="disabled">──────────</option>
-                    <!--xsl:call-template name="get-all-references">
+                    <xsl:call-template name="get-all-references">
                         <xsl:with-param name="benchmark" select="$benchmark"/>
-                    </xsl:call-template-->
+                    </xsl:call-template>
                  </select>
             </div>
         </div>
@@ -534,7 +638,7 @@ Authors:
             </tbody>
         </table>
 
-        <a href="#table-of-contents"><button type="button" class="btn btn-secondary">Scroll back to the start of the checklist</button></a>
+        <a href="#guide-tree"><button type="button" class="btn btn-secondary">Scroll back to the start of the checklist</button></a>
     </div>
 </xsl:template>
 
