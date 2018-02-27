@@ -2,6 +2,7 @@ xsldir = $(pkgdatadir)/xsl
 
 xsl_DATA =   xccdf-share.xsl \
              xccdf-branding.xsl \
+             xccdf-references.xsl \
              xccdf-resources.xsl \
              \
              xccdf-guide.xsl \
@@ -24,6 +25,7 @@ xsl_DATA =   xccdf-share.xsl \
 
 EXTRA_DIST = xccdf-share.xsl \
              xccdf-branding.xsl \
+             xccdf-references.xsl \
              xccdf-resources.xsl \
              \
              xccdf-guide.xsl \
