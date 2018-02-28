@@ -141,7 +141,7 @@ static void _print_xccdf_profile_verbose(const struct xccdf_profile *prof, const
 	printf("%s\tTitle: %s\n", prefix, profile_title);
 	free(profile_title);
 
-	printf("%s\tId: %s%s\n", prefix,
+	printf("%s\tId: %s%s\n\n", prefix,
 		xccdf_profile_get_id(prof),
 		xccdf_profile_get_abstract(prof) ? " (abstract)" : "");
 
