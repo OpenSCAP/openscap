@@ -477,8 +477,6 @@ OSCAP_API void probe_fini(void *) __attribute__ ((unused));
 
 typedef struct probe_ctx probe_ctx;
 
-OSCAP_API int probe_main(probe_ctx *, void *) __attribute__ ((nonnull(1)));
-
 OSCAP_API bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
 
 OSCAP_API int probe_result_additem(SEXP_t *result, SEXP_t *item);
