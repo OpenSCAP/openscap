@@ -447,6 +447,35 @@ Authors:
             </xsl:call-template>
         </xsl:variable>
 
+        <tr data-tt-id="children-{$item/@id}">
+            <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
+                <xsl:attribute name="data-tt-parent-id">
+                    <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
+                </xsl:attribute>
+            </xsl:if>
+
+            <td style="padding-left: {$indent * 19}px" colspan="2">
+                <xsl:attribute name="id">
+                    <xsl:value-of select="$item/@id"/>
+                </xsl:attribute>
+                <span class="label label-default">Group</span>&#160;&#160;
+                <xsl:call-template name="item-title">
+                    <xsl:with-param name="item" select="$item"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:call-template>
+                <xsl:choose>
+                    <xsl:when test="$contained_rules > 1">
+                        &#160;&#160;<small>Group contains <xsl:value-of select="$contained_groups"/><xsl:value-of select="$contained_rules"/> rules</small>
+                    </xsl:when>
+                    <xsl:when test="$contained_rules = 1">
+                        &#160;&#160;<small>Group contains  <xsl:value-of select="$contained_groups"/><xsl:value-of select="$contained_rules"/> rule</small>
+                    </xsl:when>
+                    <xsl:otherwise>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </td>
+        </tr>
+
         <xsl:if test="not($item/self::cdf:Benchmark)">
             <tr data-tt-id="{$item/@id}" class="guide-tree-inner-node guide-tree-inner-node-id-{$item/@id}">
                 <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
@@ -455,25 +484,9 @@ Authors:
                     </xsl:attribute>
                 </xsl:if>
 
-                <td style="padding-left: {$indent * 19}px">
-                    <table class="table table-striped table-bordered">
-                        <tbody>
-                            <tr><td colspan="2">
-                                <h3>
-                                     <xsl:attribute name="id">
-                                         <xsl:value-of select="$item/@id"/>
-                                     </xsl:attribute>
-                                     <span class="label label-default">Group</span>&#160;&#160;
-                                     <xsl:call-template name="item-title">
-                                         <xsl:with-param name="item" select="$item"/>
-                                         <xsl:with-param name="profile" select="$profile"/>
-                                     </xsl:call-template>
-                                     &#160;&#160;<a class="small" href="{concat('#', $item/@id)}">[ref]</a>                      
-                                </h3>
-                            </td></tr>
-
-                            <tr><td colspan="2">
-                                <p>
+                <td style="padding-left: {$indent * 19}px" colspan="2">
+                    <p>
+                        <a class="small" href="{concat('#', $item/@id)}">[ref]</a>&#160;&#160;
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
@@ -491,39 +504,21 @@ Authors:
                             </div>
                         </div>
                     </xsl:for-each>
-</td></tr>
+
                     <xsl:if test="$item/cdf:reference">
-                        <tr><td>Identifiers and References</td><td class="identifiers">
-                            <xsl:call-template name="item-idents-refs">
-                                <xsl:with-param name="item" select="$item"/>
-                            </xsl:call-template>
-                        </td></tr>
+                        <table class="table table-striped table-bordered">
+                            <tbody>
+                                <tr><td>Identifiers and References</td><td class="identifiers">
+                                    <xsl:call-template name="item-idents-refs">
+                                        <xsl:with-param name="item" select="$item"/>
+                                    </xsl:call-template>
+                                </td></tr>
+                            </tbody>
+                        </table>
                     </xsl:if>
-                    </tbody></table>
                 </td>
             </tr>
         </xsl:if>
-
-        <tr data-tt-id="children-{$item/@id}">
-            <xsl:if test="$item/parent::cdf:Group or $item/parent::cdf:Benchmark">
-                <xsl:attribute name="data-tt-parent-id">
-                    <xsl:value-of select="concat('children-', $item/parent::cdf:*/@id)"/>
-                </xsl:attribute>
-            </xsl:if>
-
-            <td style="padding-left: {$indent * 19}px">
-                <xsl:choose>
-                    <xsl:when test="$contained_rules > 1">
-                        <small>Group contains <xsl:value-of select="$contained_groups"/><xsl:value-of select="$contained_rules"/> rules</small>
-                    </xsl:when>
-                    <xsl:when test="$contained_rules = 1">
-                        <small>Group contains  <xsl:value-of select="$contained_groups"/><xsl:value-of select="$contained_rules"/> rule</small>
-                    </xsl:when>
-                    <xsl:otherwise>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </td>
-        </tr>
 
         <xsl:for-each select="$item/cdf:Group">
             <xsl:call-template name="guide-tree-inner-node">
