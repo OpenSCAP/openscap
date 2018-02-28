@@ -487,11 +487,11 @@ Authors:
                 <td style="padding-left: {$indent * 19}px" colspan="2">
                     <p>
                         <a class="small" href="{concat('#', $item/@id)}">[ref]</a>&#160;&#160;
-                                    <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
-                                        <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
-                                        <xsl:with-param name="profile" select="$profile"/>
-                                    </xsl:apply-templates>
-                                </p>
+                        <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
+                            <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </p>
 
                     <xsl:for-each select="$item/cdf:warning">
                         <div class="panel panel-warning">
