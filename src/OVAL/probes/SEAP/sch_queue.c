@@ -36,6 +36,7 @@
 #include "seap-descriptor.h"
 #include "common/debug_priv.h"
 #include "../probe/probe_main.h"
+#include "oval_definitions.h"
 
 
 int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)

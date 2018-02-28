@@ -979,6 +979,10 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 else
                         varrefs = NULL;
 
+		oval_subtype_t subtype = probe->subtype;
+		probe_main_function_t probe_main_function = probe_table_get_main_function(subtype);
+		const char *subtype_str = oval_subtype_get_text(subtype);
+
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
                         /*
                          * Prepare the collected object
@@ -998,9 +1002,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &__unused_oldstate);
 
 
-			oval_subtype_t subtype = probe->subtype;
-			dI("I will run %s_probe_main:", oval_subtype_get_text(subtype));
-			probe_main_function_t probe_main_function = probe_table_get_main_function(subtype);
+
+			dI("I will run %s_probe_main:", subtype_str);
 			*ret = probe_main_function(&pctx, probe->probe_arg);
 
 			pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &__unused_oldstate);
@@ -1043,7 +1046,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                                 /*
                                  * Run the main function of the probe implementation
                                  */
-				*ret = probe_main(&pctx, probe->probe_arg);
+			dI("I will run %s_probe_main:", subtype_str);
+			*ret = probe_main_function(&pctx, probe->probe_arg);
 
                                 /*
                                  * Synchronize
