@@ -1305,9 +1305,9 @@ S_WHITESPACE_END:
 	} /* for (;;) */
 
 SKIP_LOOP:
-		if (SEXP_lstack_depth(&state->l_stack) <= 0) {
-			return SEXP_PRET_EUNDEF;
-		}
+	if (SEXP_lstack_depth(&state->l_stack) <= 0) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         switch (ret_p) {
         case SEXP_PRET_SUCCESS:
