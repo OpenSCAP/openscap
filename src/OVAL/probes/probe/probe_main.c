@@ -38,7 +38,6 @@
 #include "rcache.h"
 #include "icache.h"
 #include "worker.h"
-#include "signal_handler.h"
 #include "input_handler.h"
 #include "probe-api.h"
 #include "option.h"
@@ -149,9 +148,6 @@ static void preload_libraries_before_chroot()
 void *probe_common_main(void *arg)
 {
 	pthread_attr_t th_attr;
-#ifndef _WIN32
-	sigset_t       sigmask;
-#endif
 	probe_t        probe;
 	char *rootdir = NULL;
 	struct probe_common_main_argument *probe_argument = (struct probe_common_main_argument *) arg;
@@ -168,32 +164,10 @@ void *probe_common_main(void *arg)
 	char *verbose_log_file = getenv("OSCAP_PROBE_VERBOSE_LOG_FILE");
 	oscap_set_verbose(verbosity_level, verbose_log_file, true);
 
-#ifdef _WIN32
 	const unsigned thread_count = 2; // input and icache threads
-#else
-	const unsigned thread_count = 3; // signal, input and icache threads
-#endif
 	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL, thread_count)) != 0) {
 		fail(errno, "pthread_barrier_init", __LINE__ - 6);
 	}
-
-#ifndef _WIN32
-	/*
-	 * Block signals, any signals received will be
-	 * handled by the signal handler thread.
-	 */
-	sigemptyset(&sigmask);
-	sigaddset(&sigmask, SIGHUP);
-	sigaddset(&sigmask, SIGUSR1);
-	sigaddset(&sigmask, SIGUSR2);
-	sigaddset(&sigmask, SIGINT);
-	sigaddset(&sigmask, SIGTERM);
-	sigaddset(&sigmask, SIGQUIT);
-        sigaddset(&sigmask, SIGPIPE);
-
-	if (pthread_sigmask(SIG_BLOCK, &sigmask, NULL))
-		fail(errno, "pthread_sigmask", __LINE__ - 1);
-#endif
 
 	probe.offline_mode = false;
 	probe.selected_offline_mode = PROBE_OFFLINE_NONE;
@@ -239,20 +213,6 @@ void *probe_common_main(void *arg)
 	OSCAP_GSYM(probe_optdef) = probe.option;
 	OSCAP_GSYM(probe_optdef_count) = probe.optcnt;
 
-#ifndef _WIN32
-	/*
-	 * Create signal handler
-	 */
-	pthread_attr_init(&th_attr);
-
-	if (pthread_attr_setdetachstate(&th_attr, PTHREAD_CREATE_JOINABLE))
-		fail(errno, "pthread_attr_setdetachstate", __LINE__ - 1);
-
-	if (pthread_create(&probe.th_signal, &th_attr, &probe_signal_handler, &probe))
-		fail(errno, "pthread_create(probe_signal_handler)", __LINE__ - 1);
-
-	pthread_attr_destroy(&th_attr);
-
 	probe_offline_mode_function_t offline_mode_function = probe_table_get_offline_mode_function(probe.subtype);
 	if (offline_mode_function != NULL) {
 		probe.supported_offline_mode = offline_mode_function();
@@ -296,7 +256,6 @@ void *probe_common_main(void *arg)
 		dI("Swiching probe to PROBE_OFFLINE_RPMDB mode.");
 		probe.selected_offline_mode = PROBE_OFFLINE_RPMDB;
 	}
-#endif
 
 	/*
 	 * Create input handler (detached)
@@ -314,14 +273,6 @@ void *probe_common_main(void *arg)
 		fail(errno, "pthread_create(probe_input_handler)", __LINE__ - 1);
 
 	pthread_attr_destroy(&th_attr);
-
-#ifndef _WIN32
-	/*
-	 * Wait until the signal handler exits
-	 */
-	if (pthread_join(probe.th_signal, NULL))
-		fail(errno, "pthread_join", __LINE__ - 1);
-#endif
 
 	/*
 	 * Wait for the input_handler thread
