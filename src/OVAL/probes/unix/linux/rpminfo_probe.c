@@ -1,5 +1,5 @@
 /**
- * @file   rpminfo.c
+ * @file   rpminfo_probe.c
  * @brief  rpminfo probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
@@ -70,6 +70,7 @@
 #include "probe/entcmp.h"
 #include <alloc.h>
 #include "common/debug_priv.h"
+#include "rpminfo_probe.h"
 
 
 struct rpminfo_req {
@@ -264,17 +265,17 @@ ret:
         return (ret);
 }
 
-void probe_preload ()
+void rpminfo_probe_preload()
 {
 	rpmLibsPreload();
 }
 
-int probe_offline_mode_supported()
+int rpminfo_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN|PROBE_OFFLINE_RPMDB;
 }
 
-void *probe_init (void)
+void *rpminfo_probe_init(void)
 {
 #ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
@@ -301,7 +302,7 @@ void *probe_init (void)
         return ((void *)&g_rpm);
 }
 
-void probe_fini (void *ptr)
+void rpminfo_probe_fini (void *ptr)
 {
         struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
@@ -387,7 +388,7 @@ cleanup:
 	return ret;
 }
 
-int probe_main (probe_ctx *ctx, void *arg)
+int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *val, *item, *ent, *probe_in;
 	oval_schema_version_t over;

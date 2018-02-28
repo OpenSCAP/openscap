@@ -1,5 +1,5 @@
 /**
- * @file   inetlisteningservers.c
+ * @file   inetlisteningservers_probe.c
  * @brief  inetlisteningserver probe
  * @author "Steve Grubb" <sgrubb@redhat.com>
  *
@@ -65,6 +65,7 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 #include "common/debug_priv.h"
+#include "inetlisteningservers_probe.h"
 
 /* This structure contains the information OVAL is asking or requesting */
 struct server_info {
@@ -545,7 +546,7 @@ static int read_raw(const char *proc, const char *type, llist *l, probe_ctx *ctx
 	return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int inetlisteningservers_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *object;
 	int err;

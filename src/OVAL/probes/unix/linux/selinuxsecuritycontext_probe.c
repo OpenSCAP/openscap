@@ -1,5 +1,5 @@
 /**
- * @file   selinuxsecuritycontext.c
+ * @file   selinuxsecuritycontext_probe.c
  * @brief  selinuxsecuritycontext probe
  * @author "Petr Lautrbach" <plautrba@redhat.com>
  *
@@ -54,6 +54,7 @@
 #include "util.h"
 #include "common/debug_priv.h"
 #include "probe/probe.h"
+#include "selinuxsecuritycontext_probe.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -283,12 +284,12 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 	return (err);
 }
 
-int probe_offline_mode_supported(void)
+int selinuxsecuritycontext_probe_offline_mode_supported(void)
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int selinuxsecuritycontext_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in;
 	SEXP_t *path, *filename, *filepath, *pid, *behaviors = NULL;

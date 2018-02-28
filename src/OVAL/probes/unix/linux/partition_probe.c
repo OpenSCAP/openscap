@@ -1,5 +1,5 @@
 /**
- * @file   partition.c
+ * @file   partition_probe.c
  * @brief  partition probe implementation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
@@ -65,6 +65,7 @@
 #include <pcre.h>
 
 #include "common/debug_priv.h"
+#include "partition_probe.h"
 
 #ifndef MTAB_PATH
 # define MTAB_PATH "/proc/mounts"
@@ -239,12 +240,12 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         return (0);
 }
 
-void *probe_init(void)
+void *partition_probe_init(void)
 {
 	return (NULL);
 }
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int partition_probe_main(probe_ctx *ctx, void *probe_arg)
 {
         int probe_ret = 0;
         SEXP_t *mnt_entity, *mnt_opval, *mnt_entval, *probe_in;

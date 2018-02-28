@@ -78,6 +78,11 @@ if (ENABLE_PROBES)
 		list(APPEND OBJECTS_TO_LINK_AGAINST
 			$<TARGET_OBJECTS:unix_probes_object>
 		)
+		if (ENABLE_PROBES_LINUX)
+			list(APPEND OBJECTS_TO_LINK_AGAINST
+				$<TARGET_OBJECTS:linux_probes_object>
+			)
+		endif()
 	endif()
 endif()
 if (GCRYPT_FOUND OR NSS_FOUND)
@@ -101,7 +106,6 @@ if (BZIP2_FOUND)
 	target_link_libraries(openscap ${BZIP2_LIBRARIES})
 endif()
 if(RPM_FOUND)
-	# just because of rpmvercmp
 	target_link_libraries(openscap ${RPM_LIBRARIES})
 endif()
 if(WIN32)
@@ -124,6 +128,18 @@ if(SELINUX_FOUND)
 endif()
 if(PROCPS_FOUND)
 	target_link_libraries(openscap ${PROCPS_LIBRARIES})
+endif()
+if(BLKID_FOUND)
+	target_link_libraries(openscap ${BLKID_LIBRARIES})
+endif()
+if(SELINUX_FOUND)
+	target_link_libraries(openscap ${SELINUX_LIBRARIES})
+endif()
+if(DBUS_FOUND)
+	target_link_libraries(openscap ${DBUS_LIBRARIES})
+endif()
+if(APTPKG_FOUND)
+	target_link_libraries(openscap ${APTPKG_LIBRARIES})
 endif()
 
 

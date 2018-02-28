@@ -1,5 +1,5 @@
 /**
- * @file   selinuxboolean.c
+ * @file   selinuxboolean_probe.c
  * @brief  selinuxboolean probe
  * @author "Petr Lautrbach" <plautrba@redhat.com>
  *
@@ -54,6 +54,7 @@
 #include "alloc.h"
 
 #include <selinux/selinux.h>
+#include "selinuxboolean_probe.h"
 
 static int get_selinuxboolean(SEXP_t *ut_ent, probe_ctx *ctx)
 {
@@ -94,7 +95,7 @@ static int get_selinuxboolean(SEXP_t *ut_ent, probe_ctx *ctx)
 	return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int selinuxboolean_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *name;
 	int err;

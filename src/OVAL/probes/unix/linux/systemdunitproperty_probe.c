@@ -1,5 +1,5 @@
 /**
- * @file   systemdunitproperty.c
+ * @file   systemdunitproperty_probe.c
  * @brief  implementation of the systemdunitproperty_object
  * @author
  */
@@ -34,6 +34,7 @@
 #include <string.h>
 #include "probe/entcmp.h"
 #include "systemdshared.h"
+#include "systemdunitproperty_probe.h"
 
 static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, int(*callback)(const char *name, const char *value, void *arg), void *cbarg)
 {
@@ -251,7 +252,7 @@ static int unit_callback(const char *unit, void *cbarg)
 	return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int systemdunitproperty_probe_main(probe_ctx *ctx, void *probe_arg)
 {
 	SEXP_t *unit_entity, *probe_in, *property_entity;
 	oval_schema_version_t oval_version;

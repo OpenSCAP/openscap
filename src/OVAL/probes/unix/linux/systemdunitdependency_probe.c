@@ -1,5 +1,5 @@
 /**
- * @file   systemdunitdependency.c
+ * @file   systemdunitdependency_probe.c
  * @brief  implementation of the systemdunitdependency_object
  * @author
  */
@@ -35,6 +35,7 @@
 #include "systemdshared.h"
 #include "common/list.h"
 #include <string.h>
+#include "systemdunitdependency_probe.h"
 
 static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_path, const char *property)
 {
@@ -229,7 +230,7 @@ static int unit_callback(const char *unit, void *cbarg)
 	return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int systemdunitdependency_probe_main(probe_ctx *ctx, void *probe_arg)
 {
 	SEXP_t *unit_entity, *probe_in;
 	oval_schema_version_t oval_version;

@@ -1,5 +1,5 @@
 /**
- * @file   rpmverifyfile.c
+ * @file   rpmverifyfile_probe.c
  * @brief  rpmverifyfile probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  * @author "Petr Lautrbach" <plautrba@redhat.com>
@@ -57,6 +57,7 @@
 
 #include <probe/probe.h>
 #include <probe/option.h>
+#include "rpmverifyfile_probe.h"
 
 struct rpmverify_res {
 	char *name;  /**< package name */
@@ -304,17 +305,17 @@ ret:
 	return (ret);
 }
 
-void probe_preload ()
+void rpmverifyfile_probe_preload()
 {
 	rpmLibsPreload();
 }
 
-int probe_offline_mode_supported()
+int rpmverifyfile_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init (void)
+void *rpmverifyfile_probe_init(void)
 {
 #ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
@@ -331,7 +332,7 @@ void *probe_init (void)
 	return ((void *)&g_rpm);
 }
 
-void probe_fini (void *ptr)
+void rpmverifyfile_probe_fini(void *ptr)
 {
 	struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
@@ -435,7 +436,7 @@ const rpmverifyfile_bhmap_t rpmverifyfile_bhmap[] = {
 	{ "nocaps", (uint64_t)VERIFY_CAPS }
 };
 
-int probe_main (probe_ctx *ctx, void *arg)
+int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *file_ent, *bh_ent;
 	SEXP_t *name_ent, *epoch_ent, *version_ent, *release_ent, *arch_ent;

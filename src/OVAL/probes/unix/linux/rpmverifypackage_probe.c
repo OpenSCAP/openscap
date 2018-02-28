@@ -1,5 +1,5 @@
 /**
- * @file   rpmverifypackage.c
+ * @file   rpmverifypackage_probe.c
  * @brief  rpmverifypackage probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  * @author "Petr Lautrbach" <plautrba@redhat.com>
@@ -59,6 +59,8 @@
 
 #include <probe/probe.h>
 #include <probe/option.h>
+
+#include "rpmverifypackage_probe.h"
 
 typedef struct {
 	const char *a_name;
@@ -310,12 +312,12 @@ ret:
 	return (ret);
 }
 
-int probe_offline_mode_supported()
+int rpmverifypackage_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init (void)
+void *rpmverifypackage_probe_init(void)
 {
 	const char* root = getenv("OSCAP_PROBE_ROOT");
 	if ((root!= NULL) && (strlen(root) == 0)) {
@@ -356,7 +358,7 @@ void *probe_init (void)
 	return ((void *)&g_rpm);
 }
 
-void probe_fini (void *ptr)
+void rpmverifypackage_probe_fini(void *ptr)
 {
 	struct verifypackage_global *r = (struct verifypackage_global *)ptr;
 
@@ -422,7 +424,7 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 
 	return probe_item_collect(ctx, item) == 2 ? 1 : 0;
 }
-int probe_main (probe_ctx *ctx, void *arg)
+int rpmverifypackage_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *bh_ent;
 	SEXP_t *name_ent, *epoch_ent, *version_ent, *release_ent, *arch_ent;

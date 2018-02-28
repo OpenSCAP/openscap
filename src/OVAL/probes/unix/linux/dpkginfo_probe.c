@@ -1,5 +1,5 @@
 /**
- * @file   dpkginfo.c
+ * @file   dpkginfo_probe.c
  * @brief  dpkginfo probe
  * @author "Pierre Chifflier" <chifflier@wzdftpd.net>
  */
@@ -60,6 +60,7 @@
 
 #include "dpkginfo-helper.h"
 
+#include "dpkginfo_probe.h"
 
 struct dpkginfo_global {
         pthread_mutex_t mutex;
@@ -68,7 +69,7 @@ struct dpkginfo_global {
 static struct dpkginfo_global g_dpkg;
 
 
-void *probe_init(void)
+void *dpkginfo_probe_init(void)
 {
         pthread_mutex_init (&(g_dpkg.mutex), NULL);
         dpkginfo_init();
@@ -76,7 +77,7 @@ void *probe_init(void)
         return ((void *)&g_dpkg);
 }
 
-void probe_fini (void *ptr)
+void dpkginfo_probe_fini (void *ptr)
 {
         struct dpkginfo_global *d = (struct dpkginfo_global *)ptr;
 
@@ -86,7 +87,7 @@ void probe_fini (void *ptr)
         return;
 }
 
-int probe_main (probe_ctx *ctx, void *arg)
+int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
 {
 	SEXP_t *val, *item, *ent, *obj;
         char *request_st = NULL;

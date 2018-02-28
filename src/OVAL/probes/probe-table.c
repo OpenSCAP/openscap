@@ -38,6 +38,19 @@
 #include "independent/sql_probe.h"
 #include "independent/sql57_probe.h"
 #include "independent/xmlfilecontent_probe.h"
+#include "unix/linux/dpkginfo_probe.h"
+#include "unix/linux/iflisteners_probe.h"
+#include "unix/linux/iflisteners-proto.h"
+#include "unix/linux/inetlisteningservers_probe.h"
+#include "unix/linux/partition_probe.h"
+#include "unix/linux/rpminfo_probe.h"
+#include "unix/linux/rpmverifyfile_probe.h"
+#include "unix/linux/rpmverifypackage_probe.h"
+#include "unix/linux/rpmverify_probe.h"
+#include "unix/linux/selinuxboolean_probe.h"
+#include "unix/linux/selinuxsecuritycontext_probe.h"
+#include "unix/linux/systemdunitdependency_probe.h"
+#include "unix/linux/systemdunitproperty_probe.h"
 #include "unix/dnscache_probe.h"
 #include "unix/file_probe.h"
 #include "unix/fileextendedattribute_probe.h"
@@ -75,6 +88,18 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, textfilecontent54_probe_init, textfilecontent54_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_VARIABLE, variable_probe_init, variable_probe_main, NULL, NULL},
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT, xmlfilecontent_probe_init, xmlfilecontent_probe_main, xmlfilecontent_probe_fini, NULL},
+	{OVAL_LINUX_DPKG_INFO, dpkginfo_probe_init, dpkginfo_probe_main, NULL, NULL},
+	{OVAL_LINUX_IFLISTENERS, NULL, iflisteners_probe_main, NULL, NULL},
+	{OVAL_LINUX_INET_LISTENING_SERVERS, NULL, inetlisteningservers_probe_main, NULL, NULL},
+	{OVAL_LINUX_PARTITION, partition_probe_init, partition_probe_main, NULL, NULL},
+	{OVAL_LINUX_RPM_INFO, rpminfo_probe_init, rpminfo_probe_main, rpminfo_probe_fini, rpminfo_probe_offline_mode},
+	{OVAL_LINUX_RPMVERIFY, rpmverify_probe_init, rpmverify_probe_main, rpmverify_probe_fini, rpmverify_probe_offline_mode},
+	{OVAL_LINUX_RPMVERIFYFILE, rpmverifyfile_probe_init, rpmverifyfile_probe_main, rpmverifyfile_probe_fini, rpmverifyfile_probe_offline_mode},
+	{OVAL_LINUX_RPMVERIFYPACKAGE, rpmverifypackage_probe_init, rpmverifypackage_probe_main, rpmverifypackage_probe_fini, rpmverifypackage_probe_offline_mode},
+	{OVAL_LINUX_SELINUXBOOLEAN, NULL, selinuxboolean_probe_main, NULL, NULL},
+	{OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL, selinuxsecuritycontext_probe_main, NULL, NULL},
+	{OVAL_LINUX_SYSTEMDUNITDEPENDENCY, NULL, systemdunitdependency_probe_main, NULL, NULL},
+	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, NULL},
 	{OVAL_UNIX_DNSCACHE, NULL, dnscache_probe_main, NULL, NULL},
 	{OVAL_UNIX_FILE, file_probe_init, file_probe_main, file_probe_fini, NULL},
 	{OVAL_UNIX_FILEEXTENDEDATTRIBUTE, fileextendedattribute_probe_init, fileextendedattribute_probe_main, fileextendedattribute_probe_fini, NULL},

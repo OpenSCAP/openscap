@@ -1,5 +1,5 @@
 /**
- * @file   iflisteners.c
+ * @file   iflisteners_probe.c
  * @brief  iflisteners probe
  * @author "Petr Lautrbach <plautrba@redhat.com>"
  *
@@ -62,6 +62,7 @@
 #include "common/debug_priv.h"
 
 #include "iflisteners-proto.h"
+#include "iflisteners_probe.h"
 
 SEXP_t *interface_name_ent;
 
@@ -424,7 +425,7 @@ static int read_packet(llist *l, probe_ctx *ctx, oval_schema_version_t over)
 	return 0;
 }
 
-int probe_main(probe_ctx *ctx, void *arg)
+int iflisteners_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *object;
 	int err;

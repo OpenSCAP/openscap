@@ -1,5 +1,5 @@
 /**
- * @file   rpmverify.c
+ * @file   rpmverify_probe.c
  * @brief  rpmverify probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
@@ -55,6 +55,8 @@
 
 #include <probe/probe.h>
 #include <probe/option.h>
+
+#include "rpmverify_probe.h"
 
 struct rpmverify_res {
         char *name;  /**< package name */
@@ -219,17 +221,17 @@ ret:
         return (ret);
 }
 
-void probe_preload ()
+void rpmverify_probe_preload()
 {
 	rpmLibsPreload();
 }
 
-int probe_offline_mode_supported()
+int rpmverify_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
 }
 
-void *probe_init (void)
+void *rpmverify_probe_init(void)
 {
 #ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
@@ -245,7 +247,7 @@ void *probe_init (void)
         return ((void *)&g_rpm);
 }
 
-void probe_fini (void *ptr)
+void rpmverify_probe_fini(void *ptr)
 {
         struct rpm_probe_global *r = (struct rpm_probe_global *)ptr;
 
@@ -318,7 +320,7 @@ const rpmverify_bhmap_t rpmverify_bhmap[] = {
         { "noghostfiles",  RPMVERIFY_SKIP_GHOST       }
 };
 
-int probe_main (probe_ctx *ctx, void *arg)
+int rpmverify_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *probe_in, *name_ent, *file_ent, *bh_ent;
         char   file[PATH_MAX];
