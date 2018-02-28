@@ -173,7 +173,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
         /*
          * Construct `base'
          */
-	if (((relative_dn ? strlen(relative_dn) : 0) + (suffix ? strlen(suffix) : 0) + 2) >= (sizeof base/sizeof(char))) {
+	if (((relative_dn ? strlen(relative_dn) : 0) + (suffix ? strlen(suffix) : 0) + 2) >= (sizeof(base)/sizeof(char))) {
 		return PROBE_ERANGE;
 	}
 
