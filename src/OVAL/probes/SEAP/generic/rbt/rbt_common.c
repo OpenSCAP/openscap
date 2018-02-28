@@ -387,9 +387,6 @@ int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
                 delta = 0;
         else {
                 delta = sizeof(void *) * 2;
-		if ((sizeof(void *) * 2) != (size_t)(((struct rbt_node *)(NULL))->_node)) {
-			return -1;
-		}
         }
 
         depth = 0;
@@ -442,9 +439,6 @@ int rbt_walk_inorder2(rbt_t *rbt, int (*callback)(void *, void *), void *user, r
                 delta = 0;
         else {
                 delta = sizeof(void *) * 2;
-		if ((sizeof(void *) * 2) != (size_t)(((struct rbt_node *)(NULL))->_node)) {
-			return -1;
-		}
         }
 
         depth = 0;
