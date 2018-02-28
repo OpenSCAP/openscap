@@ -173,10 +173,15 @@ ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 
 int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 {
+	int ret = 0;
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
+	if (pthread_cancel(data->probe_thread_id) != 0) {
+		dE("Could not cancel %s_probe main thread.", oval_subtype_get_text(desc->subtype));
+		ret = 1;
+	}
 	oscap_queue_free(data->to_probe_queue, &free);
 	oscap_queue_free(data->from_probe_queue, &free);
-	return 0;
+	return ret;
 }
 
 int sch_queue_select(SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
