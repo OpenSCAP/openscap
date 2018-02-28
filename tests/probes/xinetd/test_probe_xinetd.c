@@ -4,7 +4,7 @@
 #endif
 
 #define XINETD_TEST
-#include <../../../../src/OVAL/probes/unix/xinetd.c>
+#include <../../../../src/OVAL/probes/unix/xinetd_probe.c>
 
 #define EMPTYSTR_IF_NULL(val) val ? val : ""
 

@@ -1,35 +1,35 @@
 set (INDEPENDENT_PROBES_SOURCES
-	"system_info.c"
-	"system_info.h"
-	"family.c"
-	"family.h"
-	"textfilecontent.c"
-	"textfilecontent.h"
-	"textfilecontent54.c"
-	"textfilecontent54.h"
-	"environmentvariable.c"
-	"environmentvariable.h"
-	"environmentvariable58.c"
-	"environmentvariable58.h"
-	"variable.c"
-	"variable.h"
-	"xmlfilecontent.c"
-	"xmlfilecontent.h"
+	"system_info_probe.c"
+	"system_info_probe.h"
+	"family_probe.c"
+	"family_probe.h"
+	"textfilecontent_probe.c"
+	"textfilecontent_probe.h"
+	"textfilecontent54_probe.c"
+	"textfilecontent54_probe.h"
+	"environmentvariable_probe.c"
+	"environmentvariable_probe.h"
+	"environmentvariable58_probe.c"
+	"environmentvariable58_probe.h"
+	"variable_probe.c"
+	"variable_probe.h"
+	"xmlfilecontent_probe.c"
+	"xmlfilecontent_probe.h"
 )
 if (GCRYPT_FOUND OR NSS_FOUND)
 	list(APPEND INDEPENDENT_PROBES_SOURCES
-		"filehash.c"
-		"filehash.h"
-		"filehash58.c"
-		"filehash58.h"
+		"filehash_probe.c"
+		"filehash_probe.h"
+		"filehash58_probe.c"
+		"filehash58_probe.h"
 	)
 endif()
 if (OPENDBX_FOUND)
 	list(APPEND INDEPENDENT_PROBES_SOURCES
-		"sql.c"
-		"sql.h"
-		"sql57.c"
-		"sql57.h"
+		"sql_probe.c"
+		"sql_probe.h"
+		"sql57_probe.c"
+		"sql57_probe.h"
 	)
 endif()
 

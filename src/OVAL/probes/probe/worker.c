@@ -29,8 +29,6 @@
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
-#include "independent/family.h"
-#include "independent/system_info.h"
 
 #include "probe-api.h"
 #include "common/debug_priv.h"
