@@ -32,7 +32,6 @@
 
 #include "common/alloc.h"
 #include "common/bfind.h"
-#include "common/assume.h"
 
 #include "ncache.h"
 
@@ -99,7 +98,9 @@ void probe_ncache_free (probe_ncache_t *cache)
 {
         size_t i;
 
-        assume_d (cache != NULL, /* void */);
+	if (cache == NULL) {
+		return;
+	}
 
         for (i = 0; i < cache->real; ++i)
                 if (cache->name[i] != NULL)
@@ -126,8 +127,9 @@ SEXP_t *probe_ncache_add (probe_ncache_t *cache, const char *name)
 {
         SEXP_t *ref;
 
-        assume_d (cache != NULL, NULL);
-        assume_d (name  != NULL, NULL);
+	if (cache == NULL || name == NULL) {
+		return NULL;
+	}
 
         ref = SEXP_string_new (name, strlen (name));
 
@@ -141,8 +143,10 @@ SEXP_t *probe_ncache_add (probe_ncache_t *cache, const char *name)
                 cache->name  = realloc (cache->name, sizeof (SEXP_t *) * cache->size);
         }
 
-        assume_d (cache->name != NULL, NULL);
-        assume_d (cache->size > cache->real, NULL);
+	/* TODO: check if this is really needed */
+	if (cache->name == NULL || cache->size <= cache->real) {
+		return NULL;
+	}
 
         cache->name[cache->real] = ref;
         ++cache->real;
@@ -159,8 +163,9 @@ SEXP_t *probe_ncache_get (probe_ncache_t *cache, const char *name)
 {
         SEXP_t **ref = NULL;
 
-        assume_d (cache != NULL, NULL);
-        assume_d (name  != NULL, NULL);
+	if (cache == NULL || name == NULL) {
+		return NULL;
+	}
 
         PROBE_NCACHE_RLOCK(cache, NULL);
 
@@ -181,7 +186,9 @@ SEXP_t *probe_ncache_ref (probe_ncache_t *cache, const char *name)
 {
         SEXP_t *ref;
 
-        assume_d (name  != NULL, NULL);
+	if (name == NULL) {
+		return NULL;
+	}
 
         if (cache == NULL)
                 return SEXP_string_new (name, strlen (name));

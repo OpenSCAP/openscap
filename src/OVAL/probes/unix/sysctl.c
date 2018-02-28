@@ -42,7 +42,6 @@
 #include <limits.h>
 #include "oval_fts.h"
 #include "common/debug_priv.h"
-#include "common/assume.h"
 
 #define PROC_SYS_DIR "/proc/sys"
 #define PROC_SYS_MAXDEPTH 7

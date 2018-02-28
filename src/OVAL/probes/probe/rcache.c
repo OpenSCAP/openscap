@@ -28,7 +28,6 @@
 #include <sexp.h>
 
 #include "common/alloc.h"
-#include "common/assume.h"
 #include "../SEAP/generic/rbt/rbt.h"
 
 #include "rcache.h"
@@ -61,9 +60,9 @@ int probe_rcache_sexp_add(probe_rcache_t *cache, const SEXP_t *id, SEXP_t *item)
         SEXP_t *r;
         char   *k;
 
-	assume_d(cache != NULL, -1);
-	assume_d(id    != NULL, -1);
-	assume_d(item  != NULL, -1);
+	if (cache == NULL || id == NULL || item == NULL) {
+		return -1;
+	}
 
         k = SEXP_string_cstr(id);
         r = SEXP_ref(item);

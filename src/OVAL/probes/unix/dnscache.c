@@ -6,7 +6,6 @@
 #include <string.h>
 #include "probe-api.h"
 #include "common/debug_priv.h"
-#include "common/assume.h"
 
 int probe_main(probe_ctx *ctx, void *unused)
 {

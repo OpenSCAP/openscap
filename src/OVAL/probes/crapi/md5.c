@@ -28,7 +28,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <assume.h>
 #include <errno.h>
 #include <unistd.h>
 #include <alloc.h>
@@ -158,11 +157,20 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         struct stat st;
         void   *buffer;
         size_t  buflen;
-        
-        assume_r (size != NULL, -1, errno = EFAULT;);
-        assume_r (*size >= CRAPI_MD5DST_LEN, -1, errno = ENOBUFS;);
-        assume_r (dst != NULL, -1, errno = EFAULT;);
-        
+
+	if (size == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	if (*size < CRAPI_MD5DST_LEN) {
+		errno = ENOBUFS;
+		return -1;
+	}
+	if (dst == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+
         if (fstat (fd, &st) != 0)
                 return (-1);
         else {
@@ -194,7 +202,10 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
                         case -1:
                                 return (-1);
                         default:
-                                assume_r (ret > 0, -1, crapi_md5_free (ctx););
+				if (ret <= 0) {
+					crapi_md5_free(ctx);
+					return -1;
+				}
                                 crapi_md5_update (ctx, buffer, (size_t) ret);
                         }
                         

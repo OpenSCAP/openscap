@@ -30,7 +30,6 @@
 #include <ctype.h>
 #include <errno.h>
 
-#include "common/assume.h"
 #include "generic/common.h"
 #include "public/sm_alloc.h"
 #include "_sexp-types.h"
@@ -78,7 +77,9 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
 {
         register uint32_t i;
 
-        assume_d (pstate != NULL, /* void */);
+	if (pstate == NULL) {
+		return;
+	}
 
         if (pstate->p_buffer != NULL) {
                 if (pstate->p_flags & SEXP_PFLAG_FREEBUF)
@@ -134,8 +135,9 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
 
 int SEXP_psetup_setflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags)
 {
-        assume_d (psetup != NULL, -1);
-        assume_r (flags & SEXP_PFLAG_ALL, -1);
+	if (psetup == NULL || !(flags & SEXP_PFLAG_ALL)) {
+		return -1;
+	}
 
         psetup->p_flags |= flags;
 
@@ -144,8 +146,9 @@ int SEXP_psetup_setflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags)
 
 int SEXP_psetup_unsetflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags)
 {
-        assume_d (psetup != NULL, -1);
-        assume_r (flags & SEXP_PFLAG_ALL, -1);
+	if (psetup == NULL || !(flags & SEXP_PFLAG_ALL)) {
+		return -1;
+	}
 
         psetup->p_flags &= ~flags;
 
@@ -175,10 +178,18 @@ SEXP_psetup_t *SEXP_psetup_new (void)
 
 int SEXP_psetup_setpfunc(SEXP_psetup_t *psetup, int pfunctype, SEXP_pfunc_t *pfunc)
 {
-        assume_r(psetup != NULL, -1, errno = EFAULT;);
-        assume_r(pfunc  != NULL, -1, errno = EINVAL;);
-        assume_r(pfunctype >= 0 && pfunctype < SEXP_PFUNC_COUNT, -1, errno = EINVAL;);
-
+	if (psetup == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	if (pfunc == NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+	if (pfunctype < 0 || pfunctype >= SEXP_PFUNC_COUNT) {
+		errno = EINVAL;
+		return -1;
+	}
         psetup->p_funcp[pfunctype] = pfunc;
 
         return(0);
@@ -441,7 +452,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 	if (*pstate != NULL) {
 		state = *pstate;
 
-		assume_d (state->p_buffer != NULL, NULL);
+		if (state->p_buffer == NULL) {
+			return NULL;
+		}
 
 		if (spb_add (state->p_buffer, buffer, buflen) != 0) {
 			/* XXX */
@@ -454,8 +467,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 		state->p_flags = psetup->p_flags;
 		SEXP_lstack_init(&state->l_stack);
 	}
-
-	assume_d (state != NULL, NULL);
+	if (state == NULL) {
+		return NULL;
+	}
 
 	/* Initialize e_dsc before the main loop */
 	e_dsc.p_buffer = state->p_buffer;
@@ -478,7 +492,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 	e_dsc.p_numstage = state->p_numstage;
 	e_dsc.v_bool = state->v_bool;
 
-	assume_d (e_dsc.p_buffer != NULL, NULL);
+	if (e_dsc.p_buffer == NULL) {
+		return NULL;
+	}
 
 	/* Get total buffer length */
 	spb_len = spb_size (e_dsc.p_buffer);
@@ -493,15 +509,18 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 			e_dsc.p_label != SEXP_LABELNUM_DTYPE_FIXED &&
 			e_dsc.p_label != SEXP_LABELNUM_B64S_FIXED  &&
 			e_dsc.p_label != SEXP_LABELNUM_B64E_FIXED) {
-		assume_d (e_dsc.p_bufoff + e_dsc.p_explen < spb_len, NULL);
+		if (e_dsc.p_bufoff + e_dsc.p_explen >= spb_len) {
+			return NULL;
+		}
 	}
 #endif
 
 	ref_l = SEXP_lstack_top (&state->l_stack);
 
 	if (e_dsc.p_explen > 0) {
-		assume_d (e_dsc.s_exp != NULL, NULL);
-		assume_r (e_dsc.p_label != 128, NULL);
+		if (e_dsc.s_exp == NULL || e_dsc.p_label == 128) {
+			return NULL;
+		}
 
 		dfa_state = d_states[e_dsc.p_label];
 	} else if (e_dsc.s_exp != NULL) {
@@ -515,7 +534,9 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 			 * Allocate an empty S-exp. The value or type will be assigned in the
 			 * subparser.
 			 */
-			assume_d (e_dsc.s_exp == NULL, NULL); /* no leaks */
+			if (e_dsc.s_exp != NULL) {
+				return NULL; /* no leaks */
+			}
 			e_dsc.s_exp = SEXP_new ();
 			dfa_state = S_NO_SEXP_ALLOC;
 			break;
@@ -530,9 +551,15 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 			break;
 
 		case S_NO_CURC_UPDATE:
-			assume_d (e_dsc.s_exp != NULL, NULL);
-			assume_d (ret_p == SEXP_PRET_EUNDEF, NULL);
-			assume_d (cur_c != 128, NULL);
+			if (e_dsc.s_exp == NULL) {
+				return NULL; /* no leaks */
+			}
+			if (ret_p != SEXP_PRET_EUNDEF) {
+				return NULL;
+			}
+			if (cur_c == 128) {
+				return NULL;
+			}
 			/*
 			 * Jump to subparser block. cur_c holds the first character of the next
 			 * expression.
@@ -735,7 +762,6 @@ L_NUMBER_cont_int:
 			}
 			goto SKIP_LOOP;
 L_NUMBER_stage2:
-
 			if (cur_c == '.') {
 				++e_dsc.p_explen;
 				goto L_NUMBER_final_flt;
@@ -1025,7 +1051,9 @@ L_NUMBER_stage3:
 #endif
 					goto L_NUMBER_invalid;
 				}
-				assume_d (e_dsc.s_exp != NULL, SEXP_PRET_EUNDEF);
+				if (e_dsc.s_exp == NULL) {
+					return SEXP_PRET_EUNDEF;
+				}
 				/* update the value pointer */
 				e_dsc.s_exp->s_valp = SEXP_val_ptr (&v_dsc);
 				ret_p = SEXP_PRET_SUCCESS;
@@ -1277,7 +1305,9 @@ S_WHITESPACE_END:
 	} /* for (;;) */
 
 SKIP_LOOP:
-        assume_d (SEXP_lstack_depth (&state->l_stack) > 0, SEXP_PRET_EUNDEF);
+	if (SEXP_lstack_depth(&state->l_stack) <= 0) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         switch (ret_p) {
         case SEXP_PRET_SUCCESS:
@@ -1354,8 +1384,9 @@ __PARSE_RT SEXP_parse_ul_string_si (__PARSE_PT(dsc))
         register spb_size_t cnt;
         register uint8_t    oct;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         /*
          * From where to start the iteration over
@@ -1401,9 +1432,13 @@ found:
          */
         dsc->p_explen += cnt;
 
-        /* the buffer can't be smaller than the expression */
-        assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
-        assume_r (spb_size (dsc->p_buffer) >= dsc->p_bufoff + dsc->p_explen, SEXP_PRET_EUNDEF);
+	/* the buffer can't be smaller than the expression */
+	if (spb_size(dsc->p_buffer) < dsc->p_explen) {
+		return SEXP_PRET_EUNDEF;
+	}
+	if (spb_size(dsc->p_buffer) < dsc->p_bufoff + dsc->p_explen) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         {/******************************************************************************************/
                 /*
@@ -1422,7 +1457,9 @@ found:
                         return (SEXP_PRET_EUNDEF);
                 }
 
-                assume_d (v_dsc.mem != NULL, NULL);
+		if (v_dsc.mem == NULL) {
+			return NULL;
+		}
 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff, dsc->p_explen, v_dsc.mem) != 0)
                 {
@@ -1432,7 +1469,9 @@ found:
                 /*
                  * Update the S-exp value pointer to the newly created value
                  */
-                assume_d(dsc->s_exp != NULL, SEXP_PRET_EUNDEF);
+		if (dsc->s_exp == NULL) {
+			return SEXP_PRET_EUNDEF;
+		}
                 dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         }/******************************************************************************************/
 
@@ -1459,8 +1498,9 @@ __PARSE_RT SEXP_parse_ul_string_dq (__PARSE_PT(dsc))
         register bool       esc = false;
         register uint8_t    oct;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         /* count in the starting quote if this is the first invocation */
         if (dsc->p_explen == 0) {
@@ -1578,7 +1618,9 @@ found:
         } else
                 ++dsc->p_explen; /* count in the last quote */;
 
-        assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
+	if (spb_size(dsc->p_buffer) < dsc->p_explen) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         {/******************************************************************************************/
                 SEXP_val_t v_dsc;
@@ -1586,7 +1628,9 @@ found:
 
                 sz = strbuf_size (strbuf);
 
-                assume_r (spb_size (dsc->p_buffer) >= itb + sz, SEXP_PRET_EUNDEF);
+		if (spb_size(dsc->p_buffer) < itb + sz) {
+			return SEXP_PRET_EUNDEF;
+		}
 
                 if (SEXP_val_new (&v_dsc, sizeof (char) * sz,
                                   SEXP_VALTYPE_STRING) != 0)
@@ -1603,7 +1647,9 @@ found:
                         return (SEXP_PRET_EUNDEF);
                 }
 
-                assume_d(dsc->s_exp != NULL, SEXP_PRET_EUNDEF);
+		if (dsc->s_exp == NULL) {
+			return SEXP_PRET_EUNDEF;
+		}
                 dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         }/******************************************************************************************/
 
@@ -1620,8 +1666,9 @@ __PARSE_RT SEXP_parse_ul_string_sq (__PARSE_PT(dsc))
         register spb_size_t cnt;
         register uint8_t    oct;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         /* count in the starting quote if this is the first invocation */
         if (dsc->p_explen == 0) {
@@ -1643,8 +1690,9 @@ __PARSE_RT SEXP_parse_ul_string_sq (__PARSE_PT(dsc))
 found:
         dsc->p_explen += cnt + 1 /* count in the last quote */;
 
-        assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
-        assume_r (spb_size (dsc->p_buffer) >= dsc->p_bufoff + dsc->p_explen, SEXP_PRET_EUNDEF);
+	if (spb_size(dsc->p_buffer) < dsc->p_explen || spb_size(dsc->p_buffer) < dsc->p_bufoff + dsc->p_explen) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         {/******************************************************************************************/
                 SEXP_val_t v_dsc;
@@ -1659,7 +1707,9 @@ found:
                         return (SEXP_PRET_EUNDEF);
                 }
 
-                assume_d (v_dsc.mem != NULL, NULL);
+		if (v_dsc.mem == NULL) {
+			return NULL;
+		}
 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1 /* skip the quote */,
                               dsc->p_explen - 2, v_dsc.mem) != 0)
@@ -1670,7 +1720,9 @@ found:
                 /*
                  * Update the S-exp value pointer to the newly created value
                  */
-                assume_d(dsc->s_exp != NULL, SEXP_PRET_EUNDEF);
+		if (dsc->s_exp == NULL) {
+			return SEXP_PRET_EUNDEF;
+		}
                 dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         }/******************************************************************************************/
 
@@ -1681,8 +1733,9 @@ __PARSE_RT SEXP_parse_kl_string (__PARSE_PT(dsc))
 {
         SEXP_val_t v_dsc;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         if (SEXP_val_new (&v_dsc, sizeof (char) * dsc->p_explen,
                           SEXP_VALTYPE_STRING) != 0)
@@ -1708,8 +1761,9 @@ __PARSE_RT SEXP_parse_ul_string_b64 (__PARSE_PT(dsc))
         register spb_size_t cnt;
         spb_size_t itb;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         if (dsc->p_explen == 0) {
                 itb = dsc->p_bufoff + 1;
@@ -1806,8 +1860,9 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
         uint8_t *b_dec;
         size_t   b_declen;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         b_enc = (char *)spb_direct (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen);
 
@@ -1872,9 +1927,12 @@ __PARSE_RT SEXP_parse_ul_datatype (__PARSE_PT(dsc))
         register spb_size_t cnt;
         register uint8_t    oct;
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
-        assume_d (SEXP_rawptr_mask(dsc->s_exp->s_type, SEXP_DATATYPEPTR_MASK) == NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
+	if (SEXP_rawptr_mask(dsc->s_exp->s_type, SEXP_DATATYPEPTR_MASK) != NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         /* count in the starting quote if this is the first invocation */
         if (dsc->p_explen == 0) {
@@ -1896,8 +1954,10 @@ __PARSE_RT SEXP_parse_ul_datatype (__PARSE_PT(dsc))
 found:
         dsc->p_explen += cnt + 1 /* count in the last bracket */;
 
-        assume_d (spb_size (dsc->p_buffer) >= dsc->p_explen, SEXP_PRET_EUNDEF);
-        assume_r (spb_size (dsc->p_buffer) >= dsc->p_bufoff + dsc->p_explen, SEXP_PRET_EUNDEF);
+	if (spb_size(dsc->p_buffer) < dsc->p_explen ||
+			spb_size(dsc->p_buffer) < dsc->p_bufoff + dsc->p_explen) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         {
                 char *name, name_static[128];
@@ -1940,8 +2000,9 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
 {
         char *name, name_static[128];
 
-        assume_d (dsc != NULL, SEXP_PRET_EUNDEF);
-        assume_d (dsc->p_buffer != NULL, SEXP_PRET_EUNDEF);
+	if (dsc == NULL || dsc->p_buffer == NULL) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         if (dsc->p_explen < sizeof name_static)
                 name = name_static;
@@ -1983,9 +2044,6 @@ __PARSE_RT SEXP_parse_bool (__PARSE_PT(dsc), bool val)
 {
         SEXP_val_t v_dsc;
 
-        assume_d ((true  & 1) == 1, SEXP_PRET_EUNDEF);
-        assume_d ((false & 1) == 0, SEXP_PRET_EUNDEF);
-
         if (dsc->v_bool[val & 1] == 0) {
                 if (SEXP_val_new (&v_dsc, sizeof (SEXP_numtype_t) + sizeof (bool),
                                   SEXP_VALTYPE_NUMBER) != 0)
@@ -1998,7 +2056,9 @@ __PARSE_RT SEXP_parse_bool (__PARSE_PT(dsc), bool val)
                 dsc->v_bool[val & 1] = SEXP_val_ptr (&v_dsc);
         }
 
-        assume_d (dsc->v_bool[val & 1] != 0, SEXP_PRET_EUNDEF);
+	if (dsc->v_bool[val & 1] == 0) {
+		return SEXP_PRET_EUNDEF;
+	}
 
         dsc->s_exp->s_valp = SEXP_rawval_incref (dsc->v_bool[val & 1]);
         dsc->p_explen = 1;

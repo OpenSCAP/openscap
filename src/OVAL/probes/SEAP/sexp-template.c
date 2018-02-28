@@ -123,7 +123,9 @@ SEXP_t *SEXP_template_new(const char *tplstr)
         sexp = SEXP_parse(psetup, tplstr, strlen(tplstr), &pstate);
 
         if (sexp == NULL || pstate != NULL) {
-                assume_d(pstate != NULL, NULL);
+		if (pstate == NULL) {
+			return NULL;
+		}
 
                 SEXP_pstate_free(pstate);
                 SEXP_psetup_free(psetup);

@@ -39,7 +39,6 @@
 #include <errno.h>
 #include <math.h>
 
-#include "common/assume.h"
 #include "common/bfind.h"
 #include "public/sm_alloc.h"
 #include "_sexp-types.h"
@@ -1873,7 +1872,10 @@ const char *SEXP_datatype (const SEXP_t *s_exp)
 {
 	SEXP_datatypePtr_t *p;
 
-        assume_r(s_exp != NULL, NULL, errno=EFAULT;);
+	if (s_exp == NULL) {
+		errno = EFAULT;
+		return NULL;
+	}
         SEXP_VALIDATE(s_exp);
 
 	p = SEXP_rawptr_maskT(SEXP_datatypePtr_t,
@@ -1915,9 +1917,10 @@ int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
         SEXP_val_t v_dsc;
         SEXP_t    *s_nth;
 
-        assume_r(list != NULL, -1, errno=EFAULT;);
-        assume_r(name != NULL, -1, errno=EFAULT;);
-
+	if (list == NULL || name == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
         SEXP_VALIDATE(list);
 
         t = SEXP_datatype_get (&g_datatypes, name);

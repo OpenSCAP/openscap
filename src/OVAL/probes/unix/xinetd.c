@@ -49,7 +49,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fnmatch.h>
-#include <common/assume.h>
 #include <alloc.h>
 #include <bfind.h>
 #include <common/debug_priv.h>
@@ -1193,7 +1192,9 @@ xiconf_strans_t *xiconf_getservice(xiconf_t *xiconf, char *name, char *prot)
 	char             strans_key[XICFG_STRANS_MAXKEYLEN+1];
 	xiconf_strans_t *strans = NULL;
 
-	assume_d(xiconf != NULL, NULL);
+	if (xiconf == NULL) {
+		return NULL;
+	}
 
 	if (name == NULL || prot == NULL)
 		return (NULL);
@@ -1213,7 +1214,9 @@ static int xiconf_dump_cb(struct rbt_str_node *node, void *user)
 {
 	xiconf_strans_t *res = (xiconf_strans_t *)user;
 
-	assume_d(res->cnt > 0, -1);
+	if (res->cnt <= 0) {
+		return -1;
+	}
 
 	res->srv[res->cnt - 1] = (xiconf_service_t *)node->data;
 	--res->cnt;
@@ -1225,7 +1228,9 @@ xiconf_strans_t *xiconf_dump(xiconf_t *xiconf)
 {
 	xiconf_strans_t *res;
 
-	assume_d(xiconf != NULL, NULL);
+	if (xiconf == NULL) {
+		return NULL;
+	}
 
 	res = oscap_talloc(xiconf_strans_t);
 	res->cnt = rbt_str_size(xiconf->stree);
@@ -1250,7 +1255,9 @@ void xiconf_strans_free(xiconf_strans_t *strans)
 
 int op_assign_bool(void *var, char *val)
 {
-	assume_d(var != NULL, -1);
+	if (var == NULL) {
+		return -1;
+	}
 
 	if (strcmp(val, "yes") == 0) {
 		*((bool *)(var)) = true;
@@ -1298,7 +1305,9 @@ int op_merge_u16(void *dst, void *src, int type)
 
 int op_assign_str(void *var, char *val)
 {
-	assume_d(var != NULL, -1);
+	if (var == NULL) {
+		return -1;
+	}
 
 	/* skip whitespaces */
 	while(isspace(*val)) ++val;

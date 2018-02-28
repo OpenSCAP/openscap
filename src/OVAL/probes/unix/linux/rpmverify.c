@@ -50,7 +50,6 @@
 /* SEAP */
 #include <probe-api.h>
 #include <alloc.h>
-#include <common/assume.h>
 #include "debug_priv.h"
 #include "probe/entcmp.h"
 
@@ -152,8 +151,9 @@ static int rpmverify_collect(probe_ctx *ctx,
                 goto ret;
         }
 
-	assume_d(RPMTAG_BASENAMES != 0, -1);
-	assume_d(RPMTAG_DIRNAMES  != 0, -1);
+	if (RPMTAG_BASENAMES == 0 || RPMTAG_DIRNAMES == 0) {
+		return -1;
+	}
 
         while ((pkgh = rpmdbNextIterator (match)) != NULL) {
                 rpmfi  fi;

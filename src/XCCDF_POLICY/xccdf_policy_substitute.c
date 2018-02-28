@@ -27,7 +27,6 @@
 #include "util.h"
 #include "xml_iterate.h"
 #include "debug_priv.h"
-#include "assume.h"
 #include "_error.h"
 #include "XCCDF/elements.h"
 #include "XCCDF/xccdf_impl.h"

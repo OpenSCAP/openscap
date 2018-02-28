@@ -37,7 +37,6 @@
 #include <stdlib.h>
 
 #include "common/_error.h"
-#include "common/assume.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
 

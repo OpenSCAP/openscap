@@ -27,7 +27,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <assume.h>
 
 #include "rbt_common.h"
 
@@ -185,7 +184,9 @@ void rbt_free2(rbt_t *rbt, void (*callback)(void *, void *), void *user)
 #if defined(RBT_IMPLICIT_LOCKING)
 int rbt_rlock(rbt_t *rbt)
 {
-        assume_d (rbt != NULL, -1);
+	if (rbt == NULL) {
+		return -1;
+	}
 
         if (pthread_rwlock_rdlock(&rbt->lock) != 0)
                 return (-1);
@@ -195,7 +196,9 @@ int rbt_rlock(rbt_t *rbt)
 
 void rbt_runlock(rbt_t *rbt)
 {
-        assume_d (rbt != NULL, /* void */);
+	if (rbt == NULL) {
+		return;
+	}
 
         if (pthread_rwlock_unlock(&rbt->lock) != 0) {
                 /*
@@ -210,7 +213,9 @@ void rbt_runlock(rbt_t *rbt)
 
 int rbt_wlock(rbt_t *rbt)
 {
-        assume_d (rbt != NULL, -1);
+	if (rbt == NULL) {
+		return -1;
+	}
         if (pthread_rwlock_wrlock(&rbt->lock) != 0)
                 return (-1);
         else
@@ -219,7 +224,9 @@ int rbt_wlock(rbt_t *rbt)
 
 void rbt_wunlock(rbt_t *rbt)
 {
-        assume_d (rbt != NULL, /* void */);
+	if (rbt == NULL) {
+		return;
+	}
         rbt_runlock(rbt);
         return;
 }
@@ -372,13 +379,14 @@ int rbt_walk_inorder(rbt_t *rbt, int (*callback)(void *), rbt_walk_t flags)
         register uint8_t depth, delta;
         register int     r;
 
-        assume_d(rbt != NULL, -1);
+	if (rbt == NULL) {
+		return -1;
+	}
 
         if (flags & RBT_WALK_RAWNODE)
                 delta = 0;
         else {
                 delta = sizeof(void *) * 2;
-                assume_d((sizeof(void *) * 2) == (size_t)(((struct rbt_node *)(NULL))->_node), -1);
         }
 
         depth = 0;
@@ -423,13 +431,14 @@ int rbt_walk_inorder2(rbt_t *rbt, int (*callback)(void *, void *), void *user, r
         register uint8_t depth, delta;
         register int     r;
 
-        assume_d(rbt != NULL, -1);
+	if (rbt == NULL) {
+		return -1;
+	}
 
         if (flags & RBT_WALK_RAWNODE)
                 delta = 0;
         else {
                 delta = sizeof(void *) * 2;
-                assume_d((sizeof(void *) * 2) == (size_t)(((struct rbt_node *)(NULL))->_node), -1);
         }
 
         depth = 0;

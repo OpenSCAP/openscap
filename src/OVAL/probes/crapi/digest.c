@@ -28,8 +28,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <unistd.h>
-#include <assume.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "crapi.h"
 #include "digest.h"
@@ -40,8 +40,14 @@
 
 int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size)
 {
-        assume_r(dst  != NULL, -1, errno = EFAULT;);
-        assume_r(size != NULL, -1, errno = EFAULT;);
+	if (dst == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
+	if (size == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
 
         switch (alg) {
         case CRAPI_DIGEST_MD5:
@@ -77,9 +83,10 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         uint8_t fd_buf[CRAPI_IO_BUFSZ];
         ssize_t ret;
 
-        assume_r (num > 0, -1, errno = EINVAL;);
-        assume_r (fd  > 0, -1, errno = EINVAL;);
-
+	if (num <= 0 || fd <= 0) {
+		errno = EINVAL;
+		return -1;
+	}
         for (i = 0; i < num; ++i)
                 ctbl[i].ctx = NULL;
 
@@ -160,7 +167,9 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
         case -1:
                 goto fail;
         default:
-                assume_r (ret > 0, -1, goto fail;);
+		if (ret <= 0) {
+			return -1;
+		}
 
                 for (i = 0; i < num; ++i) {
 			if (ctbl[i].ctx == NULL)

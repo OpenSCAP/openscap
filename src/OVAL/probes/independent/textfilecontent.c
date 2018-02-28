@@ -71,7 +71,6 @@
 #include <probe/option.h>
 #include <oval_fts.h>
 #include <alloc.h>
-#include "common/assume.h"
 #include "common/debug_priv.h"
 
 #define FILE_SEPARATOR '/'
@@ -313,7 +312,9 @@ int probe_main(probe_ctx *ctx, void *arg)
 	SEXP_t *ent_val;
 	ent_val = probe_ent_getval(line_ent);
 	pattern = SEXP_string_cstr(ent_val);
-	assume_d(pattern != NULL, -1);
+	if (pattern == NULL) {
+		return -1;
+	}
 	SEXP_free(line_ent);
 	SEXP_free(ent_val);
 

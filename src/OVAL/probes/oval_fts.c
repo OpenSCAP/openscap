@@ -32,7 +32,6 @@
 #include <sys/stat.h>
 #include <limits.h>
 #include <errno.h>
-#include <assume.h>
 #include <pcre.h>
 
 #include "fsdev.h"
@@ -672,9 +671,13 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 	pcre *regex = NULL;
 	struct stat st;
 
-	assume_d((path == NULL && filename == NULL && filepath != NULL)
-		 || (path != NULL && filepath == NULL), NULL);
-	assume_d(behaviors != NULL, NULL);
+	if ((path != NULL || filename != NULL || filepath == NULL)
+			&& (path == NULL || filepath != NULL)) {
+		return NULL;
+	}
+	if (behaviors == NULL) {
+		return NULL;
+	}
 
 	if (path)
 		PROBE_ENT_AREF(path, r0, "operation", /**/);

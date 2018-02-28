@@ -27,7 +27,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "common/assume.h"
 #include "public/sm_alloc.h"
 #include "_sexp-datatype.h"
 #include "_sexp-rawptr.h"
@@ -58,7 +57,9 @@ void SEXP_datatypeTbl_free(SEXP_datatypeTbl_t *t)
 
 int SEXP_datatypeTbl_init (SEXP_datatypeTbl_t *t)
 {
-        assume_d(t != NULL, -1);
+	if (t == NULL) {
+		return -1;
+	}
         t->tree = rbt_str_new();
         return(0);
 }
@@ -94,8 +95,9 @@ SEXP_datatypePtr_t *SEXP_datatype_get (SEXP_datatypeTbl_t *t, const char *k)
         struct rbt_str_node *n = NULL;
         SEXP_datatype_t *d;
 
-        assume_d(t != NULL, NULL);
-        assume_d(k != NULL, NULL);
+	if (t == NULL || k == NULL) {
+		return NULL;
+	}
 
         SEXP_datatype_once();
 
@@ -130,8 +132,9 @@ SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datat
         void *r;
         struct rbt_str_node *node = NULL;
 
-        assume_d(t != NULL, NULL);
-        assume_d(n != NULL, NULL);
+	if (t == NULL || n == NULL) {
+		return NULL;
+	}
 
         SEXP_datatype_once();
 
@@ -220,8 +223,10 @@ SEXP_datatype_t *SEXP_datatype_new(void)
 
 int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...)
 {
-        assume_r( dp != NULL, -1, errno = EFAULT;);
-        assume_r(*dp != NULL, -1, errno = EFAULT;);
+	if (dp == NULL || *dp == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
 
         switch(flag) {
         case SEXP_DTFLG_LOCALDATA:
@@ -236,8 +241,10 @@ int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...)
 
 int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag)
 {
-        assume_r( dp != NULL, -1, errno = EFAULT;);
-        assume_r(*dp != NULL, -1, errno = EFAULT;);
+	if (dp == NULL || *dp == NULL) {
+		errno = EFAULT;
+		return -1;
+	}
 
         switch(flag) {
         case SEXP_DTFLG_LOCALDATA:

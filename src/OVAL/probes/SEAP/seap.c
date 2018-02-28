@@ -30,7 +30,6 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <errno.h>
-#include "common/assume.h"
 #include "public/seap.h"
 #include "public/sm_alloc.h"
 #include "generic/common.h"
@@ -572,7 +571,9 @@ int SEAP_recverr_byid (SEAP_CTX_t *ctx, int sd, SEAP_err_t **err, SEAP_msgid_t i
 	if (rbt_i32_del(sd_desc->err_queue, (uint32_t)id, &data) != 0)
 		return (1);
 	else {
-		assume_d(data != NULL, -1);
+		if (data == NULL) {
+			return -1;
+		}
 		*err = (SEAP_err_t *)data;
 	}
 

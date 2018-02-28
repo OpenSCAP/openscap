@@ -69,7 +69,6 @@
 #include <probe/option.h>
 #include "probe/entcmp.h"
 #include <alloc.h>
-#include <common/assume.h>
 #include "common/debug_priv.h"
 
 
@@ -116,8 +115,9 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
         size_t len;
 	regmatch_t keyid_match[1];
 
-        assume_d (h != NULL, /* void */);
-        assume_d (r != NULL, /* void */);
+	if (h == NULL || r == NULL) {
+		return;
+	}
 
         r->name = headerFormat (h, "%{NAME}", &rpmerr);
         r->arch = headerFormat (h, "%{ARCH}", &rpmerr);
@@ -251,7 +251,9 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
                 while ((pkgh = rpmdbNextIterator (match)) != NULL) {
                         (*rep) = realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
-                        assume_r (*rep != NULL, -1);
+			if (*rep == NULL) {
+				return -1;
+			}
                         pkgh2rep (pkgh, (*rep) + (ret - 1));
                 }
         }

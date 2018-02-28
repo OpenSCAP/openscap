@@ -36,7 +36,6 @@
 #include "oval_probe.h"
 #include "oval_system_characteristics.h"
 #include "common/_error.h"
-#include "common/assume.h"
 
 #include "oval_probe_impl.h"
 #include "oval_system_characteristics_impl.h"
@@ -502,9 +501,13 @@ void oval_probe_meta_list(FILE *output, int flags)
 		output = stdout;
 
 	probe_dir = oval_probe_ext_getdir();
-	assume_d(probe_dir != NULL, /* void */);
+	if (probe_dir == NULL) {
+		return;
+	}
 	probe_dirlen = strlen(probe_dir);
-	assume_r(probe_dirlen + 1 <= PATH_MAX, /* void */);
+	if (probe_dirlen + 1 > PATH_MAX) {
+		return;
+	}
 
 	for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
 		if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {

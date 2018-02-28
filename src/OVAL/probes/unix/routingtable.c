@@ -46,7 +46,6 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 #include "util.h"
-#include "assume.h"
 #include "debug_priv.h"
 #include "SEAP/generic/strto.h"
 
@@ -82,8 +81,12 @@ static int hexstring2bin(const char *hexstr, size_t hexlen, uint8_t *binbuf, siz
 {
     register size_t i, l;
 
-    assume_r(hexlen % 2 == 0, -1);
-    assume_r(binlen * 2 >= hexlen, -1);
+	if (hexlen % 2 != 0) {
+		return -1;
+	}
+	if (binlen * 2 < hexlen) {
+		return -1;
+	}
 
     for (l = 0, i = 0; i < hexlen; ++i,++i,++l) {
        binbuf[l] = strto_uint8_hex(hexstr + i, 2, NULL);
@@ -126,8 +129,12 @@ static int proc_ip4_to_string(const char *proc_ip, size_t proc_iplen, char *strb
     uint32_t *addr = (uint32_t *)bb;
     struct in_addr ip4;
 
-    assume_d(strbuf != NULL, -1);
-    assume_r(proc_ip != NULL && proc_iplen > 0, -1);
+	if (strbuf == NULL) {
+		return -1;
+	}
+	if (proc_ip == NULL || proc_iplen <= 0) {
+		return -1;
+	}
 
     if (hexstring2bin(proc_ip, proc_iplen, bb, sizeof bb) != 0)
         return -1;
@@ -143,8 +150,12 @@ static int proc_ip6_to_string(const char *proc_ip, size_t proc_iplen, char *strb
 {
     struct in6_addr ip6;
 
-    assume_d(strbuf != NULL, -1);
-    assume_r(proc_ip != NULL && proc_iplen > 0, -1);
+	if (strbuf == NULL) {
+		return -1;
+	}
+	if (proc_ip == NULL || proc_iplen <= 0) {
+		return -1;
+	}
 
     if (hexstring2bin(proc_ip, proc_iplen, (uint8_t *)&ip6, sizeof ip6) != 0)
         return -1;
@@ -160,8 +171,9 @@ static int process_line_ip4(char *line, struct route_info *rt)
     uint16_t rt_flags;
     register int i;
 
-    assume_d(line != NULL, -1);
-    assume_r(rt != NULL, -1);
+	if (line == NULL || rt == NULL) {
+		return -1;
+	}
 
     save = NULL;
     token[0] = strtok_r(line, RT_INFO_DELIMITERS, &save);
@@ -222,8 +234,9 @@ static int process_line_ip6(char *line, struct route_info *rt)
     uint32_t rt_flags;
     register int i;
 
-    assume_d(line != NULL, -1);
-    assume_r(rt != NULL, -1);
+	if (line == NULL || rt == NULL) {
+		return -1;
+	}
 
     save = NULL;
     token[0] = strtok_r(line, RT_INFO_DELIMITERS, &save);

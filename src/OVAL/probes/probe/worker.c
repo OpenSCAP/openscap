@@ -32,7 +32,6 @@
 
 #include "probe-api.h"
 #include "common/debug_priv.h"
-#include "common/assume.h"
 #include "entcmp.h"
 
 #include "worker.h"
@@ -392,7 +391,9 @@ static SEXP_t *probe_obj_eval(probe_t *probe, SEXP_t *id)
 	res = SEAP_cmd_exec(probe->SEAP_ctx, probe->sd, 0, PROBECMD_OBJ_EVAL, id, SEAP_CMDTYPE_SYNC, NULL, NULL);
 
 	rid = SEXP_list_first(res);
-	assume_r(SEXP_string_cmp(id, rid) == 0, NULL);
+	if (SEXP_string_cmp(id, rid) != 0) {
+		return NULL;
+	}
 	SEXP_free(res);
 	SEXP_free(rid);
 

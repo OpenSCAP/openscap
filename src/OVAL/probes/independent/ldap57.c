@@ -34,7 +34,6 @@
 #include <ldap.h>
 
 #include "probe-api.h"
-#include "common/assume.h"
 #include "common/debug_priv.h"
 
 #if defined(PROBE_LDAP_MUTEX)
@@ -79,7 +78,9 @@ int probe_main(probe_ctx *ctx, void *mutex)
 
         /* runtime */
 #if defined(PROBE_LDAP_MUTEX)
-        assume_r(mutex != NULL, PROBE_EINIT);
+	if (mutex == NULL) {
+		return PROBE_EINIT;
+	}
 #endif
         probe_in = probe_ctx_getobject(ctx);
         se_ldap_behaviors = probe_obj_getent(probe_in, "behaviors", 1);
@@ -172,9 +173,9 @@ int probe_main(probe_ctx *ctx, void *mutex)
         /*
          * Construct `base'
          */
-        assume_r(((relative_dn ? strlen(relative_dn) : 0) +
-                  (     suffix ? strlen(suffix)      : 0) + 2) < (sizeof base/sizeof(char)),
-                 PROBE_ERANGE);
+	if (((relative_dn ? strlen(relative_dn) : 0) + (suffix ? strlen(suffix) : 0) + 2) >= (sizeof(base)/sizeof(char))) {
+		return PROBE_ERANGE;
+	}
 
         if (relative_dn != NULL) {
                 strcpy(base, relative_dn);
@@ -270,7 +271,9 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                                 continue;
                                         }
 
-                                        assume_d(bertag & LBER_PRIMITIVE, NULL);
+						if (!(bertag & LBER_PRIMITIVE)) {
+							return 0;
+						}
 
                                         switch(bertag & LBER_BIG_TAG_MASK) {
                                         case LBER_BOOLEAN:
@@ -283,7 +286,9 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                                         continue;
                                                 }
 
-                                                assume_d(val != -1, NULL);
+							if (val == -1) {
+								return 0;
+							}
                                                 field = probe_ent_creat1("field", NULL, SEXP_number_newb_r(&se_tmp_mem, (bool)val));
                                                 field_type = OVAL_DATATYPE_BOOLEAN;
                                                 SEXP_free_r(&se_tmp_mem);
@@ -320,8 +325,10 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                                         /* XXX: set error status on field */
                                                         continue;
                                                 }
+								if (val == NULL) {
+									return 0;
+								}
 
-                                                assume_d(val != NULL, NULL);
                                                 field = probe_ent_creat1("field", NULL, SEXP_string_new_r(&se_tmp_mem, val, strlen(val)));
                                                 field_type = OVAL_DATATYPE_STRING;
                                                 SEXP_free_r(&se_tmp_mem);
@@ -341,7 +348,9 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                         }
 
                                         if (field != NULL) {
-                                                assume_d(field_type != OVAL_DATATYPE_UNKNOWN, NULL);
+								if (field_type == OVAL_DATATYPE_UNKNOWN) {
+									return 0;
+								}
 
                                                 probe_ent_setdatatype(field, field_type);
                                                 probe_ent_attr_add(field, "name", SEXP_string_new_r(&se_tmp_mem, attr, strlen(attr)));
