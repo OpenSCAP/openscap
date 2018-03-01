@@ -43,6 +43,7 @@ extern void *OSCAP_GSYM(probe_arg);
 
 void *probe_worker_runfn(void *arg)
 {
+	dD("probe_worker_runfn has started");
 	probe_pwpair_t *pair = (probe_pwpair_t *)arg;
 
 	SEXP_t *probe_res, *obj, *oid;
@@ -75,6 +76,7 @@ void *probe_worker_runfn(void *arg)
                 SEXP_free(probe_res);
                 free(pair);
 
+		dD("probe_worker_runfn has finished");
                 return (NULL);
 	} else {
                 SEXP_t *items;
@@ -139,6 +141,7 @@ void *probe_worker_runfn(void *arg)
 	free(pair);
 	pthread_detach(pthread_self());
 
+	dD("probe_worker_runfn has finished");
 	return (NULL);
 }
 
