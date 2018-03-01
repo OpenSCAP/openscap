@@ -1257,32 +1257,48 @@ if test "x${perl_bind}" = xyes; then
 fi
 
 # (AM_PATH_PYTHON) cannot be used for multiple Python version at once
-if test "x${python3_bind}" = xyes; then
-	AC_PATH_PROG([PYTHON3], [python3])
-	AC_PATH_PROG([PYTHON3_CONFIG], [python3-config], [no])
-		[if test "$PYTHON3_CONFIG" = "no"]
-		[then]
-			[echo "The python3-config program was not found in the search path. Please ensure"]
-			[echo "that it is installed and its directory is included in the search path."]
-			[echo "Then run configure again before attempting to build OpenSCAP."]
-			[exit 1]
-		[fi]
-	PYTHON3_CFLAGS=`python3-config --cflags 2> /dev/null`
-	PYTHON3_LIBS=`python3-config --libs 2> /dev/null`
-	PYTHON3_INCLUDES=`python3-config --includes 2> /dev/null`
+AS_IF([test "x${python3_bind}" = xyes], [m4_do(
+    [AC_PATH_PROG([PYTHON3], [python3])],
+    [AC_PATH_PROG([PYTHON3_CONFIG], [python3-config], [no])],
+    [AS_IF([test "$PYTHON3_CONFIG" = "no"], [[
+echo ""
+echo "ERROR: Missing python3-config"
+echo "Python3 bindings were requested, but the python3-config program was not found "
+echo "in the search path. Please ensure that it is installed an available."
+echo "Then run configure again before attempting to build OpenSCAP, or"
+echo "run configure with --disable-python3 option."
+exit 1
+]])], [[
+PYTHON3_CFLAGS=`python3-config --cflags 2> /dev/null`
+PYTHON3_LIBS=`python3-config --libs 2> /dev/null`
+PYTHON3_INCLUDES=`python3-config --includes 2> /dev/null`
 
-	# the string concatenation below is just a trick to prevent substitution
-	PYTHON3_DIR=`$PYTHON3 -c "import distutils.sysconfig; \
-		print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
-	PYTHON3_EXECDIR=`$PYTHON3 -c "import distutils.sysconfig; \
-		print(distutils.sysconfig.get_python_lib(1,0,prefix='$' '{exec_prefix}'))"`
+# the string concatenation below is just a trick to prevent substitution
+PYTHON3_DIR=`$PYTHON3 -c "import distutils.sysconfig; \
+    print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
+PYTHON3_EXECDIR=`$PYTHON3 -c "import distutils.sysconfig; \
+    print(distutils.sysconfig.get_python_lib(1,0,prefix='$' '{exec_prefix}'))"`
+]],
+    [AC_SUBST(PYTHON3_CFLAGS)],
+    [AC_SUBST(PYTHON3_LIBS)],
+    [AC_SUBST(PYTHON3_INCLUDES)],
+    [AC_SUBST(python3dir, $PYTHON3_DIR)],
+    [AC_SUBST(py3execdir, $PYTHON3_EXECDIR)],
+)])
 
-	AC_SUBST(PYTHON3_CFLAGS)
-	AC_SUBST(PYTHON3_LIBS)
-	AC_SUBST(PYTHON3_INCLUDES)
-	AC_SUBST(python3dir, $PYTHON3_DIR)
-	AC_SUBST(py3execdir, $PYTHON3_EXECDIR)
-fi
+# Abort if we want Python2 bindings and can't find python2-config
+AS_IF([test "x${python_bind}" = xyes], [m4_do(
+    [AC_PATH_PROG([PYTHON2_CONFIG], [python2-config], [no])],
+    [AS_IF([test "$PYTHON2_CONFIG" = "no"], [[
+echo ""
+echo "ERROR: Missing python2-config"
+echo "Python2 bindings were requested, but the python2-config program was not found "
+echo "in the search path. Please ensure that it is installed an available."
+echo "Then run configure again before attempting to build OpenSCAP, or"
+echo "run configure with --disable-python option."
+exit 1
+]])],
+)])
 
 # oscap-docker determine python dir on default python version
 OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
