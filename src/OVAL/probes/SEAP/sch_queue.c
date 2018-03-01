@@ -146,8 +146,7 @@ ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 	}
 	char *msg = oscap_strdup(strbuf_cstr(sb));
 
-	ssize_t len = strbuf_length(sb);
-	msg[len] = '\0';
+	ssize_t len = strlen(msg);
 	struct oscap_queue *queue;
 	pthread_mutex_t *mutex;
 	pthread_cond_t *cond;
