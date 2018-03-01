@@ -119,9 +119,9 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };
 
-static probe_table_entry_t *probe_table_get(oval_subtype_t type)
+static const probe_table_entry_t *probe_table_get(oval_subtype_t type)
 {
-	probe_table_entry_t *entry = probe_table;
+	const probe_table_entry_t *entry = probe_table;
 	while (entry->probe_main_function != NULL && entry->type != type)
 	{
 		entry++;
@@ -131,25 +131,25 @@ static probe_table_entry_t *probe_table_get(oval_subtype_t type)
 
 probe_init_function_t probe_table_get_init_function(oval_subtype_t type)
 {
-	probe_table_entry_t *entry = probe_table_get(type);
+	const probe_table_entry_t *entry = probe_table_get(type);
 	return entry->probe_init_function;
 }
 
 probe_main_function_t probe_table_get_main_function(oval_subtype_t type)
 {
-	probe_table_entry_t *entry = probe_table_get(type);
+	const probe_table_entry_t *entry = probe_table_get(type);
 	return entry->probe_main_function;
 }
 
 probe_fini_function_t probe_table_get_fini_function(oval_subtype_t type)
 {
-	probe_table_entry_t *entry = probe_table_get(type);
+	const probe_table_entry_t *entry = probe_table_get(type);
 	return entry->probe_fini_function;
 }
 
 probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype_t type)
 {
-	probe_table_entry_t *entry = probe_table_get(type);
+	const probe_table_entry_t *entry = probe_table_get(type);
 	return entry->probe_offline_mode_function;
 }
 
@@ -180,6 +180,6 @@ int probe_table_size()
 
 bool probe_table_exists(oval_subtype_t type)
 {
-	probe_table_entry_t *entry = probe_table_get(type);
+	const probe_table_entry_t *entry = probe_table_get(type);
 	return (entry->type != OVAL_SUBTYPE_UNKNOWN);
 }
