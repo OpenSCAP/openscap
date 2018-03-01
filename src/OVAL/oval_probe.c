@@ -106,11 +106,6 @@ oval_subtypedsc_t OSCAP_GSYM(__n2s_tbl)[__PROBE_META_COUNT];
 #define __s2n_tbl_count OSCAP_GSYM(__probe_meta_count)
 #define __n2s_tbl_count OSCAP_GSYM(__probe_meta_count)
 
-static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
-{
-        return (*type - dsc->type);
-}
-
 static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
 {
         return strcmp(name, dsc->name);
