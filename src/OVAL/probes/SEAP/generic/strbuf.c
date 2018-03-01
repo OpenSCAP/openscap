@@ -204,7 +204,7 @@ char *strbuf_cstr (strbuf_t *buf)
         struct strblk *cur;
         char  *stroff, *strbeg;
 
-        strbeg = malloc (sizeof (char) * buf->size);
+	strbeg = malloc(buf->size + 1); /* +1 for terminating '\0' */
         stroff = strbeg;
 
         if (strbeg == NULL)
@@ -217,6 +217,7 @@ char *strbuf_cstr (strbuf_t *buf)
                 stroff += cur->size;
                 cur = cur->next;
         }
+	strbeg[buf->size] = '\0';
 
         return (strbeg);
 }
