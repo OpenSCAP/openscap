@@ -1059,35 +1059,6 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 
 int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 {
-	SEAP_desc_t *dsc;
-	/*
-	 * Send SIGUSR1 to the probe
-	 */
-
-	if (ctx == NULL || pd == NULL || pext == NULL) {
-		return -1;
-	}
-
-	dI("Sending abort to sd=%d", pd->sd);
-
-	dsc = SEAP_desc_get(ctx->sd_table, pd->sd);
-
-	if (dsc == NULL)
-		return (-1);
-
-	switch (dsc->scheme) {
-	case SCH_PIPE:
-	{
-		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
-		dI("Sending SIGUSR1 to pid=%u", pipeinfo->pid);
-		if (kill(pipeinfo->pid, SIGUSR1) != 0)
-			dW("kill(SIGUSR1, %u): %u, %s", errno, strerror(errno));
-		break;
-	}
-	default:
-		return (-1);
-	}
-
 	return (0);
 }
 
