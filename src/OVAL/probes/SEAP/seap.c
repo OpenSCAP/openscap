@@ -94,7 +94,6 @@ void SEAP_CTX_free (SEAP_CTX_t *ctx)
 int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
 {
         SEAP_desc_t  *dsc;
-        SEAP_scheme_t scheme;
         size_t schstr_len = 0;
         int sd;
 
@@ -106,14 +105,7 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
                 ++schstr_len;
         }
 
-        scheme = SEAP_scheme_search (__schtbl, uri, schstr_len);
-        if (scheme == SCH_NONE) {
-                /* scheme not found */
-                errno = EPROTONOSUPPORT;
-                return (-1);
-        }
-
-        sd = SEAP_desc_add (ctx->sd_table, NULL, scheme, NULL);
+	sd = SEAP_desc_add(ctx->sd_table, NULL, SCH_QUEUE, NULL);
 
         if (sd < 0) {
                 dI("Can't create/add new SEAP descriptor");

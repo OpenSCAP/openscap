@@ -1045,7 +1045,6 @@ int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 #include "SEAP/_seap-types.h"
 #include "SEAP/seap-descriptor.h"
 #include "SEAP/_seap-scheme.h"
-#include "SEAP/sch_pipe.h"
 
 #ifdef _WIN32
 
