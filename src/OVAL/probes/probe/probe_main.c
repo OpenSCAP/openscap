@@ -145,6 +145,39 @@ static void preload_libraries_before_chroot()
 	pthread_join(t, NULL);
 }
 
+static void probe_common_main_cleanup(void *arg)
+{
+	dD("probe_common_main_cleanup started");
+
+	probe_t *probe = (probe_t *)arg;
+	/* Cancel probe_input_handler thread */
+	if (pthread_cancel(probe->th_input) != 0) {
+		dE("Cannot cancel the probe input thread.");
+		return;
+	}
+
+	void *status;
+	int ret = pthread_join(probe->th_input, &status);
+	if (ret != 0) {
+		dE("pthread_join of probe_input_handler thread has failed: %d", ret);
+	}
+	dD("probe_input_handler thread has joined with status %ld", (long) status);
+
+	probe_fini_function_t fini_function = probe_table_get_fini_function(probe->subtype);
+	if (fini_function != NULL) {
+		fini_function(probe->probe_arg);
+	}
+
+	probe_rcache_free(probe->rcache);
+	probe_icache_free(probe->icache);
+	rbt_i32_free(probe->workers);
+	SEAP_CTX_free(probe->SEAP_ctx);
+	free(probe->option);
+	free(probe->name);
+
+	dD("probe_common_main_cleanup finished");
+}
+
 void *probe_common_main(void *arg)
 {
 	pthread_attr_t th_attr;
@@ -267,6 +300,8 @@ void *probe_common_main(void *arg)
 		probe.probe_arg = init_function();
 	}
 
+	pthread_cleanup_push(probe_common_main_cleanup, (void *) &probe);
+
 	pthread_attr_init(&th_attr);
 
 	if (pthread_create(&probe.th_input, &th_attr, &probe_input_handler, &probe))
@@ -274,44 +309,13 @@ void *probe_common_main(void *arg)
 
 	pthread_attr_destroy(&th_attr);
 
-	/*
-	 * Wait for the input_handler thread
-	 */
-#if defined(HAVE_PTHREAD_TIMEDJOIN_NP) && defined(HAVE_CLOCK_GETTIME)
-	{
-		struct timespec j_tm;
-
-		if (clock_gettime(CLOCK_REALTIME, &j_tm) == -1)
-			fail(errno, "clock_gettime", __LINE__ - 1);
-
-		j_tm.tv_sec += 3;
-
-		if (pthread_timedjoin_np(probe.th_input, NULL, &j_tm) != 0)
-			fail(errno, "pthread_timedjoin_np", __LINE__ - 1);
+	void *status;
+	if (pthread_join(probe.th_input, &status) != 0) {
+		dD("pthread_join of probe_input_handler thread has failed");
 	}
-#else
-	if (pthread_join(probe.th_input, NULL))
-		fail(errno, "pthread_join", __LINE__ - 1);
-#endif
-	/*
-	 * Cleanup
-	 */
-	probe_fini_function_t fini_function = probe_table_get_fini_function(probe.subtype);
-	if (fini_function != NULL) {
-		fini_function(probe.probe_arg);
-	}
+	dD("probe_input_handler thread has joined with status %ld", (long) status);
 
-	probe_ncache_free(probe.ncache);
-	probe_rcache_free(probe.rcache);
-        probe_icache_free(probe.icache);
+	pthread_cleanup_pop(1);
 
-        rbt_i32_free(probe.workers);
-
-        if (probe.sd != -1)
-                SEAP_close(probe.SEAP_ctx, probe.sd);
-
-	SEAP_CTX_free(probe.SEAP_ctx);
-        free(probe.option);
-	free(probe.name);
 	return NULL;
 }
