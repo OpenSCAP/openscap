@@ -59,10 +59,14 @@ int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
 	arg->subtype = desc->subtype;
 	arg->queuedata = data;
 
-	if (pthread_create(&data->probe_thread_id, NULL, &probe_common_main, arg)) {
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	if (pthread_create(&data->probe_thread_id, &attr, &probe_common_main, arg)) {
 		dE("Cannot create probe thread");
 		return -1;
 	}
+	pthread_attr_destroy(&attr);
 
 	desc->scheme_data = (void *) data;
 	return 0;
@@ -177,7 +181,13 @@ int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
 	if (pthread_cancel(data->probe_thread_id) != 0) {
 		dE("Could not cancel %s_probe main thread.", oval_subtype_get_text(desc->subtype));
-		ret = 1;
+		return -1;
+	}
+	void *status;
+	const char *subtype_str = oval_subtype_get_text(desc->subtype);
+	ret = pthread_join(data->probe_thread_id, &status);
+	if (ret != 0) {
+		dE("Return code of %s_probe main thread is %d.", subtype_str, ret);
 	}
 	oscap_queue_free(data->to_probe_queue, &free);
 	oscap_queue_free(data->from_probe_queue, &free);
