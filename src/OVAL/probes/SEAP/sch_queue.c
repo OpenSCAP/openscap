@@ -82,7 +82,7 @@ int sch_queue_openfd2(SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 	return 0;
 }
 
-ssize_t sch_queue_recv(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
+ssize_t sch_queue_recv(SEAP_desc_t *desc, void **buf, size_t len, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *)desc->scheme_data;
 	struct oscap_queue *queue;
@@ -109,9 +109,9 @@ ssize_t sch_queue_recv(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 	size_t item_len = strlen(item);
 	if (len < item_len) {
 		/* Buffer 'buf' is not large enough to fit the received item */
-		abort();
+		*buf = realloc(*buf, item_len);
 	}
-	strncpy(buf, item, len);
+	strncpy(*buf, item, item_len);
 	pthread_mutex_unlock(mutex);
 	return item_len;
 }

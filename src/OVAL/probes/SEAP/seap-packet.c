@@ -695,7 +695,7 @@ eloop_exit:
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
-		data_length = sch_queue_recv(dsc, data_buffer, data_buflen, 0);
+		data_length = sch_queue_recv(dsc, &data_buffer, data_buflen, 0);
 
                 if (data_length < 0) {
                         protect_errno {
