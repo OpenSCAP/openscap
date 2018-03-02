@@ -106,10 +106,14 @@ ssize_t sch_queue_recv(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
 	}
 	char *item = oscap_queue_remove(queue);
 	(*cnt)--;
+	size_t item_len = strlen(item);
+	if (len < item_len) {
+		/* Buffer 'buf' is not large enough to fit the received item */
+		abort();
+	}
 	strncpy(buf, item, len);
-	ssize_t ret = strlen(item);
 	pthread_mutex_unlock(mutex);
-	return ret;
+	return item_len;
 }
 
 ssize_t sch_queue_send(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
