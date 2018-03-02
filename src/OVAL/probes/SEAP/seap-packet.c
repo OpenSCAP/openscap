@@ -643,7 +643,7 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
 eloop_start:
 
         for (;;) {
-                if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
+		if (sch_queue_select(dsc, SEAP_IO_EVREAD, 0, 0) != 0)
                         return (-1);
 
                 dD("return from select");
@@ -695,7 +695,7 @@ eloop_exit:
         for (;;) {
                 data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
                 data_buflen = SEAP_RECVBUF_SIZE;
-                data_length = SCH_RECV(dsc->scheme, dsc, data_buffer, data_buflen, 0);
+		data_length = sch_queue_recv(dsc, data_buffer, data_buflen, 0);
 
                 if (data_length < 0) {
                         protect_errno {
@@ -759,7 +759,7 @@ eloop_exit:
 			}
 		}
 
-                if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
+		if (sch_queue_select(dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
                         switch (errno) {
                         case ETIMEDOUT:
                                 protect_errno {
@@ -986,7 +986,7 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         if (DESC_WLOCK (dsc)) {
                 ret = 0;
 
-                if (SCH_SENDSEXP(dsc->scheme, dsc, packet_sexp, 0) < 0) {
+		if (sch_queue_sendsexp(dsc, packet_sexp, 0) < 0) {
                         ret = -1;
 
                         protect_errno {

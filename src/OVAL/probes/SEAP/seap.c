@@ -128,7 +128,7 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
         }
 	dsc->subtype = ctx->subtype;
 
-        if (SCH_CONNECT(scheme, dsc, uri + schstr_len + 1, flags) != 0) {
+	if (sch_queue_connect(dsc, uri + schstr_len + 1, flags) != 0) {
                 dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                 SEAP_desc_del(ctx->sd_table, sd);
 
@@ -169,7 +169,7 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
                 return(-1);
         }
 
-        if (SCH_OPENFD2(SCH_GENERIC, dsc, ifd, ofd, flags) != 0) {
+	if (sch_queue_openfd2(dsc, ifd, ofd, flags) != 0) {
                 dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                 return (-1);
         }
@@ -629,7 +629,7 @@ int SEAP_close (SEAP_CTX_t *ctx, int sd)
                 return (-1);
         }
 
-        ret = SCH_CLOSE(dsc->scheme, dsc, 0); /* TODO: Are flags usable here? */
+	ret = sch_queue_close(dsc, 0); /* TODO: Are flags usable here? */
 
         protect_errno {
                 if (SEAP_desc_del (ctx->sd_table, sd) != 0) {
