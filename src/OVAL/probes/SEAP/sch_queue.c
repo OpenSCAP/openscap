@@ -168,8 +168,3 @@ int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 	oscap_queue_free(data->from_probe_queue, &free);
 	return ret;
 }
-
-int sch_queue_select(SEAP_desc_t *desc, int ev, uint16_t timeout, uint32_t flags)
-{
-	return 0;
-}
