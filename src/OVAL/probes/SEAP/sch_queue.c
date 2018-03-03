@@ -72,7 +72,7 @@ int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
 	return 0;
 }
 
-ssize_t sch_queue_recv(SEAP_desc_t *desc, void **buf, size_t len, uint32_t flags)
+SEXP_t *sch_queue_recvsexp(SEAP_desc_t *desc)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *)desc->scheme_data;
 	struct oscap_queue *queue;
@@ -94,28 +94,15 @@ ssize_t sch_queue_recv(SEAP_desc_t *desc, void **buf, size_t len, uint32_t flags
 	while (*cnt == 0) {
 		pthread_cond_wait(cond, mutex);
 	}
-	char *item = oscap_queue_remove(queue);
+	SEXP_t *sexp = oscap_queue_remove(queue);
 	(*cnt)--;
-	size_t item_len = strlen(item);
-	if (len < item_len) {
-		/* Buffer 'buf' is not large enough to fit the received item */
-		*buf = realloc(*buf, item_len);
-	}
-	strncpy(*buf, item, item_len);
 	pthread_mutex_unlock(mutex);
-	return item_len;
+	return sexp;
 }
 
 ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
-	strbuf_t *sb = strbuf_new(SEAP_STRBUF_MAX);
-	if (SEXP_sbprintf_t(sexp, sb) != 0) {
-		return -1;
-	}
-	char *msg = oscap_strdup(strbuf_cstr(sb));
-
-	ssize_t len = strlen(msg);
 	struct oscap_queue *queue;
 	pthread_mutex_t *mutex;
 	pthread_cond_t *cond;
@@ -131,13 +118,14 @@ ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 		cond = &data->from_probe_cond;
 		cnt = &data->from_probe_cnt;
 	}
+	/* We want to send a SEXP, but the receiver expects a list of SEXPs. */
+	SEXP_t *sexp_list = SEXP_list_new(sexp, NULL);
 	pthread_mutex_lock(mutex);
-	oscap_queue_add(queue, (void *) msg);
+	oscap_queue_add(queue, (void *) sexp_list);
 	(*cnt)++;
 	pthread_cond_broadcast(cond);
 	pthread_mutex_unlock(mutex);
-	strbuf_free(sb);
-	return len;
+	return 0;
 }
 
 int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
@@ -154,7 +142,7 @@ int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 	if (ret != 0) {
 		dE("Return code of %s_probe main thread is %d.", subtype_str, ret);
 	}
-	oscap_queue_free(data->to_probe_queue, &free);
-	oscap_queue_free(data->from_probe_queue, &free);
+	oscap_queue_free(data->to_probe_queue, NULL);
+	oscap_queue_free(data->from_probe_queue, NULL);
 	return ret;
 }
