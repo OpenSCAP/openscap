@@ -72,11 +72,6 @@ int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
 	return 0;
 }
 
-int sch_queue_openfd2(SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
-{
-	return 0;
-}
-
 ssize_t sch_queue_recv(SEAP_desc_t *desc, void **buf, size_t len, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *)desc->scheme_data;
