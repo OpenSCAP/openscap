@@ -161,11 +161,6 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
                 return(-1);
         }
 
-	if (sch_queue_openfd2(dsc, ifd, ofd, flags) != 0) {
-                dI("FAIL: errno=%u, %s.", errno, strerror (errno));
-                return (-1);
-        }
-
         return (sd);
 }
 
