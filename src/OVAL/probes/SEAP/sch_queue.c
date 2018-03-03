@@ -31,7 +31,6 @@
 
 #include "_sexp-types.h"
 #include "_seap-types.h"
-#include "_seap-scheme.h"
 #include "sch_queue.h"
 #include "seap-descriptor.h"
 #include "common/debug_priv.h"

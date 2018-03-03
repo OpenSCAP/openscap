@@ -36,13 +36,14 @@
 #include "_sexp-types.h"
 #include "_sexp-parser.h"
 #include "_seap-types.h"
-#include "_seap-scheme.h"
 #include "_seap-message.h"
 #include "_seap-command.h"
 #include "_seap-error.h"
 #include "_seap-packet.h"
 #include "_seap.h"
 #include "seap-descriptor.h"
+
+#define SCH_QUEUE 4
 
 static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 {

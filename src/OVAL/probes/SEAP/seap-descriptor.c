@@ -29,7 +29,6 @@
 #include "public/sm_alloc.h"
 #include "generic/bitmap.h"
 #include "_sexp-parser.h"
-#include "_seap-scheme.h"
 #include "seap-descriptor.h"
 #include "_sexp-atomic.h"
 

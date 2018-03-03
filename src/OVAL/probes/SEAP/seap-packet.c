@@ -33,12 +33,13 @@
 #include "_sexp-parser.h"
 #include "_seap-packetq.h"
 #include "_seap-packet.h"
-#include "_seap-scheme.h"
+#include "_seap-types.h"
 #include "seap-descriptor.h"
 #include "public/seap-message.h"
 #include "public/seap-command.h"
 #include "public/seap-error.h"
 #include "public/sm_alloc.h"
+#include "sch_queue.h"
 
 SEAP_packet_t *SEAP_packet_new (void)
 {
