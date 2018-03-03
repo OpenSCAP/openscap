@@ -643,11 +643,6 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
 eloop_start:
 
         for (;;) {
-		if (sch_queue_select(dsc, SEAP_IO_EVREAD, 0, 0) != 0)
-                        return (-1);
-
-                dD("return from select");
-
                 switch (DESC_TRYRLOCK (dsc)) {
                 case  1:
                         goto eloop_exit;
@@ -759,26 +754,6 @@ eloop_exit:
 			}
 		}
 
-		if (sch_queue_select(dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
-                        switch (errno) {
-                        case ETIMEDOUT:
-                                protect_errno {
-                                        dI("FAIL: recv failed (timeout): dsc=%p, time=%hu, errno=%u, %s.",
-                                           dsc, ctx->recv_timeout, errno, strerror (errno));
-                                }
-                                /* FALLTHROUGH */
-                        default:
-                                protect_errno {
-                                        dI("FAIL: recv failed: dsc=%p, errno=%u, %s.",
-                                           dsc, errno, strerror (errno));
-
-                                        SEXP_psetup_free (psetup);
-                                        SEXP_pstate_free (pstate);
-                                }
-                                SEXP_free(sexp_buffer);
-                                return (-1);
-                        }
-                }
         }
 
         SEXP_psetup_free (psetup);
