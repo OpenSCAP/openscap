@@ -192,11 +192,6 @@ void *probe_common_main(void *arg)
 	pthread_setname_np(pthread_self(), "common_main");
 	dI("probe_common_main started");
 
-	/* Turn on verbose mode */
-	char *verbosity_level = getenv("OSCAP_PROBE_VERBOSITY_LEVEL");
-	char *verbose_log_file = getenv("OSCAP_PROBE_VERBOSE_LOG_FILE");
-	oscap_set_verbose(verbosity_level, verbose_log_file, true);
-
 	const unsigned thread_count = 2; // input and icache threads
 	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL, thread_count)) != 0) {
 		fail(errno, "pthread_barrier_init", __LINE__ - 6);
