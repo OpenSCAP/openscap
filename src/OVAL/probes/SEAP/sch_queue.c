@@ -116,35 +116,6 @@ ssize_t sch_queue_recv(SEAP_desc_t *desc, void **buf, size_t len, uint32_t flags
 	return item_len;
 }
 
-ssize_t sch_queue_send(SEAP_desc_t *desc, void *buf, size_t len, uint32_t flags)
-{
-	sch_queuedata_t *data = (sch_queuedata_t *)desc->scheme_data;
-
-	char *msg = malloc(len + 1);
-	strncpy(msg, buf, len);
-	struct oscap_queue *queue;
-	pthread_mutex_t *mutex;
-	pthread_cond_t *cond;
-	int *cnt;
-	if (pthread_self() == data->parent_thread_id) {
-		queue = data->to_probe_queue;
-		mutex = &data->to_probe_mutex;
-		cond = &data->to_probe_cond;
-		cnt = &data->to_probe_cnt;
-	} else {
-		queue = data->from_probe_queue;
-		mutex = &data->from_probe_mutex;
-		cond = &data->from_probe_cond;
-		cnt = &data->from_probe_cnt;
-	}
-	pthread_mutex_lock(mutex);
-	oscap_queue_add(queue, (void *) msg);
-	(*cnt)++;
-	pthread_cond_broadcast(cond);
-	pthread_mutex_unlock(mutex);
-	return len;
-}
-
 ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 {
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
