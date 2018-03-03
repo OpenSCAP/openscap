@@ -72,11 +72,6 @@ int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
 	return 0;
 }
 
-int sch_queue_openfd(SEAP_desc_t *desc, int fd, uint32_t flags)
-{
-	return 0;
-}
-
 int sch_queue_openfd2(SEAP_desc_t *desc, int ifd, int ofd, uint32_t flags)
 {
 	return 0;
