@@ -614,7 +614,7 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 
-	item = probe_item_create(OVAL_SUBTYPE_SYSINFO, NULL,
+	item = probe_item_create(OVAL_INDEPENDENT_SYSCHAR_SUBTYPE, NULL,
 	                         "os_name",           OVAL_DATATYPE_STRING, os_name,
 	                         "os_version",        OVAL_DATATYPE_STRING, os_version,
 	                         "os_architecture",   OVAL_DATATYPE_STRING, architecture,

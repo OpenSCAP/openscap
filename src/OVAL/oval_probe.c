@@ -54,7 +54,7 @@
 #endif
 
 oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
-        { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
+        { OVAL_INDEPENDENT_SYSCHAR_SUBTYPE, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FAMILY, "family"),
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_MD5, "filemd5"),
         OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_HASH, "filehash"),
@@ -293,7 +293,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
 	dI("Querying system information.");
 
-        ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
+        ph = oval_probe_handler_get(sess->ph, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
 
         if (ph == NULL) {
                 oscap_seterr (OSCAP_EFAMILY_OVAL, "OVAL object not supported");
@@ -307,7 +307,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
         sysinf = NULL;
 
-	ret = oval_probe_sys_handler(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
+	ret = oval_probe_sys_handler(OVAL_INDEPENDENT_SYSCHAR_SUBTYPE, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
 	if (ret != 0)
 		return(ret);
 
