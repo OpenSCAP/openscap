@@ -476,10 +476,3 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 	/* we shouldn't get here */
         return -1;
 }
-
-#if 0
-const oval_probe_meta_t * const oval_probe_meta_get(void)
-{
-    return (const oval_probe_meta_t * const)OSCAP_GSYM(__probe_meta);
-}
-#endif
