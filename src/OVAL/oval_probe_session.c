@@ -46,7 +46,6 @@
 #include "_oval_probe_handler.h"
 #include "oval_probe_impl.h"
 #include "oval_probe_ext.h"
-#include "oval_probe_meta.h"
 #include "probe-table.h"
 #include "oval_types.h"
 
@@ -94,7 +93,6 @@ static void oval_probe_session_libinit(void)
 	SEXP_free((SEXP_t *)exp);
 
         ncache_libinit();
-        oval_probe_tblinit();
 }
 
 /**

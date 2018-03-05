@@ -61,7 +61,6 @@ if (ENABLE_PROBES)
 	"_oval_probe_session.h"
 	"oval_probe_handler.c"
 	"_oval_probe_handler.h"
-	"oval_probe_meta.h"
 	"probes/probe-api.c"
 	"probes/_probe-api.h"
 	"probes/probe-table.c"
