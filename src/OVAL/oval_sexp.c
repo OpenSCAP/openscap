@@ -965,7 +965,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 		*endptr = '\0';	// cut off the '_item' part
 	}
 
-	int type = oval_str_to_subtype(name);
+	int type = oval_subtype_from_str(name);
 
 	dD("Syschar entry type: %d '%s' => %s", type, name,
 	   ((type != OVAL_SUBTYPE_UNKNOWN) ? "decoded OK" : "FAILED to decode"));
