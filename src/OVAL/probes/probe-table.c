@@ -183,3 +183,12 @@ bool probe_table_exists(oval_subtype_t type)
 	const probe_table_entry_t *entry = probe_table_get(type);
 	return (entry->type != OVAL_SUBTYPE_UNKNOWN);
 }
+
+oval_subtype_t probe_table_at_index(int idx)
+{
+	if (idx < 0 || idx >= probe_table_size()) {
+		return OVAL_SUBTYPE_UNKNOWN;
+	}
+	const probe_table_entry_t entry = probe_table[idx];
+	return entry.type;
+}
