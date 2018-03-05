@@ -173,7 +173,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
 	dI("Querying system information.");
 
-        ph = oval_probe_handler_get(sess->ph, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
+	ph = oval_probe_handler_get(sess->ph, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
 
         if (ph == NULL) {
                 oscap_seterr (OSCAP_EFAMILY_OVAL, "OVAL object not supported");
