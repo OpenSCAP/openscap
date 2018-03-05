@@ -38,7 +38,7 @@
 #include "oval_definitions.h"
 
 
-int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags)
+int sch_queue_connect(SEAP_desc_t *desc)
 {
 	sch_queuedata_t *data = malloc(sizeof(sch_queuedata_t));
 

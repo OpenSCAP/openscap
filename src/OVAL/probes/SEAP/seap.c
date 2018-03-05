@@ -92,19 +92,11 @@ void SEAP_CTX_free (SEAP_CTX_t *ctx)
         return;
 }
 
-int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
+int SEAP_connect(SEAP_CTX_t *ctx)
 {
         SEAP_desc_t  *dsc;
-        size_t schstr_len = 0;
         int sd;
 
-        while (uri[schstr_len] != ':') {
-                if (uri[schstr_len] == '\0') {
-                        errno = EINVAL;
-                        return (-1);
-                }
-                ++schstr_len;
-        }
 
 	sd = SEAP_desc_add(ctx->sd_table, NULL, SCH_QUEUE, NULL);
 
@@ -121,7 +113,7 @@ int SEAP_connect (SEAP_CTX_t *ctx, const char *uri, uint32_t flags)
         }
 	dsc->subtype = ctx->subtype;
 
-	if (sch_queue_connect(dsc, uri + schstr_len + 1, flags) != 0) {
+	if (sch_queue_connect(dsc) != 0) {
                 dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                 SEAP_desc_del(ctx->sd_table, sd);
 

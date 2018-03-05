@@ -40,7 +40,7 @@ typedef struct {
 	int from_probe_cnt;
 } sch_queuedata_t;
 
-int sch_queue_connect(SEAP_desc_t *desc, const char *uri, uint32_t flags);
+int sch_queue_connect(SEAP_desc_t *desc);
 ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags);
 SEXP_t *sch_queue_recvsexp(SEAP_desc_t *desc);
 int sch_queue_close(SEAP_desc_t *desc, uint32_t flags);

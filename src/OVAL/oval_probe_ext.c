@@ -453,7 +453,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 		 * by the probe context handling functions.
 		 */
 		if (pd->sd == -1) {
-			pd->sd = SEAP_connect(ctx, pd->uri, 0);
+			pd->sd = SEAP_connect(ctx);
 
 			if (pd->sd < 0) {
                                 protect_errno {
