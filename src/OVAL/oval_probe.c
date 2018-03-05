@@ -171,18 +171,6 @@ static void __init_once(void)
         return;
 }
 
-oval_subtype_t oval_str_to_subtype(const char *str)
-{
-        oval_subtypedsc_t *d;
-
-        __init_once();
-
-        d = oscap_bfind(OSCAP_GSYM(__n2s_tbl), __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
-                        (int(*)(void *, void *))__n2s_tbl_cmp);
-
-        return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);
-}
-
 static void _syschar_add_bindings(struct oval_syschar *sc, struct oval_string_map *vm)
 {
 	struct oval_iterator *var_itr;

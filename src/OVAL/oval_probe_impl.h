@@ -66,7 +66,6 @@ typedef struct {
 
 void oval_probe_tblinit(void);
 const char *oval_subtype_to_str(oval_subtype_t subtype);
-oval_subtype_t oval_str_to_subtype(const char *str);
 
 int oval_probe_hint_definition(oval_probe_session_t *sess, struct oval_definition *definition, int variable_instance_hint);
 
