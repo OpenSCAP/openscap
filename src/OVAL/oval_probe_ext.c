@@ -974,7 +974,6 @@ int oval_probe_ext_init(oval_pext_t *pext)
                 else
                         pext->do_init = false;
         }
-_ret:
         pthread_mutex_unlock(&pext->lock);
 
         return(ret);
