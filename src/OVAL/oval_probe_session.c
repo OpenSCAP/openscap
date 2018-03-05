@@ -47,6 +47,8 @@
 #include "oval_probe_impl.h"
 #include "oval_probe_ext.h"
 #include "oval_probe_meta.h"
+#include "probe-table.h"
+#include "oval_types.h"
 
 #if defined(OSCAP_THREAD_SAFE)
 #include <pthread.h>
@@ -119,9 +121,6 @@ static void __init_once(void)
 
 static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_syschar_model *model)
 {
-        void *handler_arg;
-        register size_t i;
-
         sess->ph = oval_phtbl_new();
         sess->sys_model = model;
         sess->flg = 0;
@@ -131,18 +130,17 @@ static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_sysc
 
         __init_once();
 
-        dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
-
-        for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-                handler_arg = NULL;
-
-                if (OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)
-                        handler_arg = sess->pext;
-
-                oval_probe_handler_set(sess->ph,
-				       OSCAP_GSYM(__probe_meta)[i].otype,
-				       OSCAP_GSYM(__probe_meta)[i].handler, handler_arg);
-        }
+	oval_probe_handler_t *probe_handler;
+	int probe_count = probe_table_size();
+	for (int i = 0; i < probe_count; i++) {
+		oval_subtype_t type = probe_table_at_index(i);
+		if (type == OVAL_INDEPENDENT_SYSCHAR_SUBTYPE) {
+			probe_handler = &oval_probe_sys_handler;
+		} else {
+			probe_handler = &oval_probe_ext_handler;
+		}
+		oval_probe_handler_set(sess->ph, type, probe_handler, sess->pext);
+	}
 
         oval_probe_handler_set(sess->ph, OVAL_SUBTYPE_ALL, oval_probe_ext_handler, sess->pext); /* special case for reset */
 }
