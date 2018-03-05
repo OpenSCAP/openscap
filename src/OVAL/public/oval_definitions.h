@@ -253,6 +253,7 @@ OSCAP_API oval_family_t oval_subtype_get_family(oval_subtype_t);
 OSCAP_API const char *oval_operator_get_text(oval_operator_t);
 OSCAP_API const char *oval_subtype_get_text(oval_subtype_t);
 OSCAP_API const char *oval_subtype_to_str(oval_subtype_t);
+OSCAP_API oval_subtype_t oval_subtype_from_str(const char *str);
 OSCAP_API const char *oval_family_get_text(oval_family_t);
 OSCAP_API const char *oval_check_get_text(oval_check_t);
 OSCAP_API const char *oval_existence_get_text(oval_existence_t);

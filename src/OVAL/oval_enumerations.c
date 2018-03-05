@@ -618,6 +618,24 @@ static const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
+static const struct oscap_string_map *oval_subtype_string_maps[] = {
+	OVAL_SUBTYPE_AIX_MAP,
+	OVAL_SUBTYPE_APACHE_MAP,
+	OVAL_SUBTYPE_CATOS_MAP,
+	OVAL_SUBTYPE_ESX_MAP,
+	OVAL_SUBTYPE_FREEBSD_MAP,
+	OVAL_SUBTYPE_HPUX_MAP,
+	OVAL_SUBTYPE_INDEPENDENT_MAP,
+	OVAL_SUBTYPE_IOS_MAP,
+	OVAL_SUBTYPE_LINUX_MAP,
+	OVAL_SUBTYPE_MACOS_MAP,
+	OVAL_SUBTYPE_PIXOS_MAP,
+	OVAL_SUBTYPE_SOLARIS_MAP,
+	OVAL_SUBTYPE_UNIX_MAP,
+	OVAL_SUBTYPE_WINDOWS_MAP,
+	NULL
+};
+
 oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 {
 	oval_family_t family = oval_family_parse(reader);
@@ -755,6 +773,17 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 const char *oval_subtype_to_str(oval_subtype_t subtype)
 {
 	return oval_subtype_get_text(subtype);
+}
+
+oval_subtype_t oval_subtype_from_str(const char *str)
+{
+	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
+	const struct oscap_string_map *map = *oval_subtype_string_maps;
+	while (map != NULL && subtype == OVAL_SUBTYPE_UNKNOWN) {
+		subtype = oval_enumeration_from_text(map, str);
+		map++;
+	}
+	return subtype;
 }
 
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {
