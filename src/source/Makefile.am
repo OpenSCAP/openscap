@@ -26,7 +26,7 @@ liboscapsource_la_CPPFLAGS  = \
 liboscapsource_la_LIBADD = \
 	@bz2_LIBS@ \
 	@curl_LIBS@ \
-	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
+	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @PTHREAD_LIBS@
 
 pkginclude_HEADERS =\
 	public/oscap_source.h

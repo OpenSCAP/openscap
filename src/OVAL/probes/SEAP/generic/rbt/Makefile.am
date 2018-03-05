@@ -11,7 +11,7 @@ librbt_la_SOURCES=	rbt_common.c	\
 			rbt_str.c	\
 			rbt_str.h
 
-librbt_la_CFLAGS=	-DRBT_IMPLICIT_LOCKING @pthread_CFLAGS@ \
+librbt_la_CFLAGS=	-DRBT_IMPLICIT_LOCKING @PTHREAD_CFLAGS@ \
 			-I.					\
 			-I$(top_srcdir) 			\
 			-I$(top_srcdir)/src			\
@@ -20,4 +20,4 @@ librbt_la_CFLAGS=	-DRBT_IMPLICIT_LOCKING @pthread_CFLAGS@ \
 			-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 			-Wno-strict-aliasing
 
-librbt_la_LDFLAGS= @pthread_LIBS@
+librbt_la_LDFLAGS= @PTHREAD_LIBS@
