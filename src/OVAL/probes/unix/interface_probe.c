@@ -73,9 +73,7 @@
 #include <arpa/inet.h>
 #include "interface_probe.h"
 
-static int fd=-1;
-
-static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp)
+static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 {
 	struct ifreq ifr;
 	unsigned char mac[6];
@@ -216,7 +214,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 		return rc;
 	}
 
-	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+	int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
 	if (fd < 0) {
 		SEXP_t *msg;
 
@@ -250,7 +248,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 		}
 		SEXP_free(sname);
 
-		get_l2_info(ifa, &mac, &type);
+		get_l2_info(ifa, &mac, &type, fd);
 		get_flags(ifa, &flags);
 
 /* The inet_addr entity is the IP address of the specific interface.
