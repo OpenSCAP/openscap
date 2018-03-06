@@ -217,8 +217,6 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
         return (0);
 }
 
-static pthread_mutex_t __file_probe_mutex;
-
 int fileextendedattribute_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
@@ -229,9 +227,10 @@ void *fileextendedattribute_probe_init(void)
         /*
          * Initialize mutex.
          */
-        switch (pthread_mutex_init (&__file_probe_mutex, NULL)) {
+	pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
+	switch (pthread_mutex_init (mutex, NULL)) {
         case 0:
-                return ((void *)&__file_probe_mutex);
+		return ((void *)mutex);
         default:
                 dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
@@ -244,16 +243,11 @@ void *fileextendedattribute_probe_init(void)
 
 void fileextendedattribute_probe_fini(void *arg)
 {
-        _A((void *)arg == (void *)&__file_probe_mutex);
-
-
-
         /*
          * Destroy mutex.
          */
-        (void) pthread_mutex_destroy (&__file_probe_mutex);
-
-        return;
+	(void) pthread_mutex_destroy((pthread_mutex_t *)arg);
+	free(arg);
 }
 
 int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
@@ -268,8 +262,6 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 
         if (mutex == NULL)
                 return PROBE_EINIT;
-
-        _A(mutex == &__file_probe_mutex);
 
         probe_in  = probe_ctx_getobject(ctx);
 
@@ -294,11 +286,11 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 
 	probe_filebehaviors_canonicalize(&behaviors);
 
-        switch (pthread_mutex_lock (&__file_probe_mutex)) {
+	switch (pthread_mutex_lock(mutex)) {
         case 0:
                 break;
         default:
-                dI("Can't lock mutex(%p): %u, %s.", &__file_probe_mutex, errno, strerror (errno));
+		dI("Can't lock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
 
 		SEXP_free(path);
 		SEXP_free(filename);
@@ -334,11 +326,11 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 	SEXP_free(behaviors);
         SEXP_free(attribute_);
 
-        switch (pthread_mutex_unlock (&__file_probe_mutex)) {
+	switch (pthread_mutex_unlock(mutex)) {
         case 0:
                 break;
         default:
-                dI("Can't unlock mutex(%p): %u, %s.", &__file_probe_mutex, errno, strerror (errno));
+		dI("Can't unlock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
 
                 return PROBE_EFATAL;
         }
