@@ -90,27 +90,90 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
-static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
-static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
-static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
 static SEXP_t  gr_lastpath;
+
+#define STR_REGULAR   "regular"
+#define STR_DIRECTORY "directory"
+#define STR_SYMLINK   "symbolic link"
+#define STR_BLKSPEC   "block special"
+#define STR_FIFO      "fifo"
+#define STR_SOCKET    "socket"
+#define STR_CHARSPEC  "character special"
+#define STRLEN_PAIR(str) (str), strlen(str)
 #if defined(OS_SOLARIS)
-static SEXP_t *gr_t_door = NULL, *gr_t_port = NULL;
+#define STR_DOOR      "door"
+#define STR_PORT      "port"
 #endif
 
-static SEXP_t *se_filetype (mode_t mode)
-{
-        switch (mode & S_IFMT) {
-        case S_IFREG:  return (gr_t_reg);
-        case S_IFDIR:  return (gr_t_dir);
-        case S_IFLNK:  return (gr_t_lnk);
-        case S_IFBLK:  return (gr_t_blk);
-        case S_IFIFO:  return (gr_t_fifo);
-        case S_IFSOCK: return (gr_t_sock);
-        case S_IFCHR:  return (gr_t_char);
+struct gr_sexps {
+	SEXP_t *gr_t_reg;
+	SEXP_t *gr_t_dir;
+	SEXP_t *gr_t_lnk;
+	SEXP_t *gr_t_blk;
+	SEXP_t *gr_t_fifo;
+	SEXP_t *gr_t_sock;
+	SEXP_t *gr_t_char;
 #if defined(OS_SOLARIS)
-	case S_IFDOOR: return (gr_t_door);
-	case S_IFPORT: return (gr_t_port);
+	SEXP_t *gr_t_door;
+	SEXP_t *gr_t_port;
+#endif
+};
+
+static struct gr_sexps *gr_sexps_init()
+{
+	struct gr_sexps *s = malloc(sizeof(struct gr_sexps));
+	s->gr_t_reg = SEXP_string_new(STRLEN_PAIR(STR_REGULAR));
+	s->gr_t_dir = SEXP_string_new(STRLEN_PAIR(STR_DIRECTORY));
+	s->gr_t_lnk = SEXP_string_new(STRLEN_PAIR(STR_SYMLINK));
+	s->gr_t_blk = SEXP_string_new(STRLEN_PAIR(STR_BLKSPEC));
+	s->gr_t_fifo = SEXP_string_new(STRLEN_PAIR(STR_FIFO));
+	s->gr_t_sock = SEXP_string_new(STRLEN_PAIR(STR_SOCKET));
+	s->gr_t_char = SEXP_string_new(STRLEN_PAIR(STR_CHARSPEC));
+#if defined(OS_SOLARIS)
+	s->gr_t_door = SEXP_string_new(STRLEN_PAIR(STR_DOOR));
+	s->gr_t_port = SEXP_string_new(STRLEN_PAIR(STR_PORT));
+#endif
+	return s;
+}
+
+static void gr_sexps_free(struct gr_sexps *s)
+{
+	SEXP_free(s->gr_t_reg);
+	SEXP_free(s->gr_t_dir);
+	SEXP_free(s->gr_t_lnk);
+	SEXP_free(s->gr_t_blk);
+	SEXP_free(s->gr_t_fifo);
+	SEXP_free(s->gr_t_sock);
+	SEXP_free(s->gr_t_char);
+#if defined(OS_SOLARIS)
+	SEXP_free(s->gr_t_door);
+	SEXP_free(s->gr_t_port);
+#endif
+	free(s);
+}
+
+static SEXP_t *se_filetype(struct gr_sexps *s, mode_t mode)
+{
+	switch (mode & S_IFMT) {
+	case S_IFREG:
+		return s->gr_t_reg;
+	case S_IFDIR:
+		return s->gr_t_dir;
+	case S_IFLNK:
+		return s->gr_t_lnk;
+	case S_IFBLK:
+		return s->gr_t_blk;
+	case S_IFIFO:
+		return s->gr_t_fifo;
+	case S_IFSOCK:
+		return s->gr_t_sock;
+	case S_IFCHR:
+		return s->gr_t_char;
+#if defined(OS_SOLARIS)
+	case S_IFDOOR:
+		return s->gr_t_door;
+	case S_IFPORT:
+		return s->gr_t_port;
 #endif
         default:
                 abort ();
@@ -247,7 +310,14 @@ static SEXP_t *get_size(struct stat *st, SEXP_t *sexp)
 	}
 }
 
-#define MODEP(statp, bit) ((statp)->st_mode & (bit) ? gr_true : gr_false)
+static SEXP_t *MODEP(struct stat *statp, unsigned int bit)
+{
+	if (statp->st_mode & bit) {
+		return SEXP_number_newb(true);
+	} else {
+		return SEXP_number_newb(false);
+	}
+}
 
 static SEXP_t *has_extended_acl(const char *path)
 {
@@ -257,15 +327,15 @@ static SEXP_t *has_extended_acl(const char *path)
 		dD("Getting extended ACL for file '%s' has failed, %s", path, strerror(errno));
 		return NULL;
 	}
-	return (has_acl == 1) ? gr_true : gr_false;
+	return (has_acl == 1) ? SEXP_number_newb(true) : SEXP_number_newb(false);
 #elif defined(OS_SOLARIS)
-	return acl_trivial(path) ? gr_true : gr_false;
+	return acl_trivial(path) ? SEXP_number_newb(true) : SEXP_number_newb(false);
 #else
 	return NULL;
 #endif
 }
 
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache, struct gr_sexps *grs)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item;
@@ -330,7 +400,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
                                          "filepath", OVAL_DATATYPE_SEXP, se_filepath,
                                          "path",     OVAL_DATATYPE_SEXP,  &gr_lastpath,
                                          "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
-                                         "type",     OVAL_DATATYPE_SEXP, se_filetype(st.st_mode),
+                                         "type",     OVAL_DATATYPE_SEXP, se_filetype(grs, st.st_mode),
                                          "group_id", OVAL_DATATYPE_SEXP, se_grp_id,
                                          "user_id",  OVAL_DATATYPE_SEXP, se_usr_id,
                                          "a_time",   OVAL_DATATYPE_SEXP, get_atime(&st, &se_atime_mem, over),
@@ -352,7 +422,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 					 "has_extended_acl", OVAL_DATATYPE_SEXP, se_acl,
                                          NULL);
 		if (se_acl == NULL) {
-			probe_item_ent_add(item, "has_extended_acl", NULL, gr_true);
+			probe_item_ent_add(item, "has_extended_acl", NULL, SEXP_number_newb(true));
 			probe_itement_setstatus(item, "has_extended_acl", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
 		}
 
@@ -383,41 +453,6 @@ int file_probe_offline_mode_supported()
 
 void *file_probe_init(void)
 {
-        /*
-         * Initialize true/false global reference.
-         */
-        gr_true  = SEXP_number_newb (true);
-        gr_false = SEXP_number_newb (false);
-
-        /*
-         * Initialize file type string references.
-         * (Used by strfiletype())
-         */
-#define STR_REGULAR   "regular"
-#define STR_DIRECTORY "directory"
-#define STR_SYMLINK   "symbolic link"
-#define STR_BLKSPEC   "block special"
-#define STR_FIFO      "fifo"
-#define STR_SOCKET    "socket"
-#define STR_CHARSPEC  "character special"
-#define STRLEN_PAIR(str) (str), strlen(str)
-#if defined(OS_SOLARIS)
-#define	STR_DOOR	"door"
-#define	STR_PORT	"port"
-#endif
-
-        gr_t_reg  = SEXP_string_new (STRLEN_PAIR(STR_REGULAR));
-        gr_t_dir  = SEXP_string_new (STRLEN_PAIR(STR_DIRECTORY));
-        gr_t_lnk  = SEXP_string_new (STRLEN_PAIR(STR_SYMLINK));
-        gr_t_blk  = SEXP_string_new (STRLEN_PAIR(STR_BLKSPEC));
-        gr_t_fifo = SEXP_string_new (STRLEN_PAIR(STR_FIFO));
-        gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
-        gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));
-#if defined(OS_SOLARIS)
-        gr_t_door = SEXP_string_new (STRLEN_PAIR(STR_DOOR));
-        gr_t_port = SEXP_string_new (STRLEN_PAIR(STR_PORT));
-#endif
-
 	SEXP_init(&gr_lastpath);
 
         /*
@@ -440,18 +475,6 @@ void file_probe_fini(void *arg)
 {
         _A((void *)arg == (void *)&__file_probe_mutex);
 
-        /*
-         * Release global reference.
-         */
-	SEXP_free(gr_true);
-	SEXP_free(gr_false);
-	SEXP_free(gr_t_reg);
-	SEXP_free(gr_t_dir);
-	SEXP_free(gr_t_lnk);
-	SEXP_free(gr_t_blk);
-	SEXP_free(gr_t_fifo);
-	SEXP_free(gr_t_sock);
-	SEXP_free(gr_t_char);
 
 	if (!SEXP_emptyp(&gr_lastpath))
 		SEXP_free_r(&gr_lastpath);
@@ -517,10 +540,11 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	struct ID_cache *cache = ID_cache_init(10000);
+	struct gr_sexps *grs = gr_sexps_init();
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache) != 0) {
+			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache, grs) != 0) {
 				oval_ftsent_free(ofts_ent);
 				break;
 			}
@@ -529,6 +553,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 		oval_fts_close(ofts);
 	}
 	ID_cache_free(cache);
+	gr_sexps_free(grs);
 
 	err = 0;
 
