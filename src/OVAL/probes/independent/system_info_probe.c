@@ -113,9 +113,7 @@
 		               "|m68k|mips|mipsel|powerpc|ppc64|s390|s390x|sh3|sh3eb|sh4|sh4eb|sparc"
 #define MAX_BUFFER_SIZE        4096
 
-static int fd=-1;
-
-static char *get_mac(const struct ifaddrs *ifa)
+static char *get_mac(const struct ifaddrs *ifa, int fd)
 {
        struct ifreq ifr;
        unsigned char mac[6];
@@ -146,9 +144,7 @@ static char *get_mac(const struct ifaddrs *ifa)
 #include <net/if_types.h>
 #include <libdlpi.h>
 
-static int fd=-1;
-
-static char *get_mac(const struct ifaddrs *ifa)
+static char *get_mac(const struct ifaddrs *ifa, int fd)
 {
        struct lifreq lifr;
 	size_t physaddrlen = DLPI_PHYSADDR_MAX;
@@ -215,7 +211,7 @@ static int get_ifs(SEXP_t *item)
        if (getifaddrs(&ifaddr) == -1)
                return rc;
 
-       fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+       int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
        if (fd < 0)
                goto leave1;
 
@@ -229,7 +225,7 @@ static int get_ifs(SEXP_t *item)
                 } else
                         continue;
 
-                mac = get_mac(ifa);
+                mac = get_mac(ifa, fd);
 #if defined(OS_SOLARIS)
 		if (mac == NULL) {
 			rc = 1;
