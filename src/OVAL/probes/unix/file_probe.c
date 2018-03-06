@@ -124,14 +124,16 @@ struct cbargs {
 	int     error;
 };
 
-static rbt_t   *g_ID_cache     = NULL;
-static uint32_t g_ID_cache_max = 0; /* 0 = unlimited */
+struct ID_cache {
+	rbt_t *tree;
+	uint32_t max;
+};
 
-static SEXP_t *ID_cache_get(int32_t id, oval_schema_version_t over)
+static SEXP_t *ID_cache_get(struct ID_cache *cache, int32_t id, oval_schema_version_t over)
 {
 	SEXP_t *s_id = NULL, *s_id2 = NULL;
 
-	if (rbt_i32_get(g_ID_cache, id, (void *)&s_id) == 0)
+	if (rbt_i32_get(cache->tree, id, (void *)&s_id) == 0)
 		return SEXP_ref(s_id); /* cache hit (first attempt) */
 
 	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.8)) < 0) {
@@ -140,11 +142,11 @@ static SEXP_t *ID_cache_get(int32_t id, oval_schema_version_t over)
 		s_id = SEXP_number_newu_32(id);
 	}
 
-	if (g_ID_cache_max == 0 || rbt_i32_size(g_ID_cache) < g_ID_cache_max) {
-		if (rbt_i32_add(g_ID_cache, id, (void *)s_id, NULL) == 0)
+	if (cache->max == 0 || rbt_i32_size(cache->tree) < cache->max) {
+		if (rbt_i32_add(cache->tree, id, (void *)s_id, NULL) == 0)
 			return SEXP_ref(s_id); /* insert succeeded */
 
-		if (rbt_i32_get(g_ID_cache, id, (void *)&s_id2) == 0) {
+		if (rbt_i32_get(cache->tree, id, (void *)&s_id2) == 0) {
 			SEXP_free (s_id); /* cache hit (second attempt) */
 			return SEXP_ref(s_id2);
 		}
@@ -154,10 +156,12 @@ static SEXP_t *ID_cache_get(int32_t id, oval_schema_version_t over)
 	return (s_id);
 }
 
-static void ID_cache_init(uint32_t max)
+static struct ID_cache *ID_cache_init(uint32_t max)
 {
-	g_ID_cache_max = max;
-	g_ID_cache     = rbt_i32_new();
+	struct ID_cache *cache = malloc(sizeof(struct ID_cache));
+	cache->max = max;
+	cache->tree = rbt_i32_new();
+	return cache;
 }
 
 static void ID_cache_free_cb(rbt_i32_node_t *n)
@@ -165,11 +169,10 @@ static void ID_cache_free_cb(rbt_i32_node_t *n)
 	SEXP_free(n->data);
 }
 
-static void ID_cache_free(void)
+static void ID_cache_free(struct ID_cache *cache)
 {
-	rbt_i32_free_cb(g_ID_cache, ID_cache_free_cb);
-	g_ID_cache     = NULL;
-	g_ID_cache_max = 0;
+	rbt_i32_free_cb(cache->tree, ID_cache_free_cb);
+	free(cache);
 }
 
 static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp, oval_schema_version_t over)
@@ -262,7 +265,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #endif
 }
 
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item;
@@ -305,8 +308,8 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 			se_filepath = SEXP_string_newf("%s", st_path);
 		}
 
-		se_usr_id = ID_cache_get(st.st_uid, over);
-		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid, over) : SEXP_ref(se_usr_id);
+		se_usr_id = ID_cache_get(cache, st.st_uid, over);
+		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(cache, st.st_gid, over) : SEXP_ref(se_usr_id);
 
 		if (!SEXP_emptyp(&gr_lastpath)) {
 			if (SEXP_strcmp(&gr_lastpath, p) != 0) {
@@ -417,11 +420,6 @@ void *file_probe_init(void)
 
 	SEXP_init(&gr_lastpath);
 
-	/*
-	 * Initialize ID cache
-	 */
-	ID_cache_init(10000);
-
         /*
          * Initialize mutex.
          */
@@ -457,11 +455,6 @@ void file_probe_fini(void *arg)
 
 	if (!SEXP_emptyp(&gr_lastpath))
 		SEXP_free_r(&gr_lastpath);
-
-	/*
-	 * Free ID cache
-	 */
-	ID_cache_free();
 
         /*
          * Destroy mutex.
@@ -523,10 +516,11 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 	cbargs.error   = 0;
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	struct ID_cache *cache = ID_cache_init(10000);
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over) != 0) {
+			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache) != 0) {
 				oval_ftsent_free(ofts_ent);
 				break;
 			}
@@ -534,6 +528,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 		}
 		oval_fts_close(ofts);
 	}
+	ID_cache_free(cache);
 
 	err = 0;
 
