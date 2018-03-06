@@ -90,8 +90,6 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
-oval_schema_version_t over;
-
 static SEXP_t *gr_true   = NULL, *gr_false  = NULL, *gr_t_reg  = NULL;
 static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
 static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
@@ -129,7 +127,7 @@ struct cbargs {
 static rbt_t   *g_ID_cache     = NULL;
 static uint32_t g_ID_cache_max = 0; /* 0 = unlimited */
 
-static SEXP_t *ID_cache_get(int32_t id)
+static SEXP_t *ID_cache_get(int32_t id, oval_schema_version_t over)
 {
 	SEXP_t *s_id = NULL, *s_id2 = NULL;
 
@@ -174,7 +172,7 @@ static void ID_cache_free(void)
 	g_ID_cache_max = 0;
 }
 
-static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
+static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp, oval_schema_version_t over)
 {
 	uint64_t t = (
 #if defined(OS_FREEBSD)
@@ -193,7 +191,7 @@ static SEXP_t *get_atime(struct stat *st, SEXP_t *sexp)
 	}
 }
 
-static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
+static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp, oval_schema_version_t over)
 {
 	uint64_t t = (
 #if defined(OS_FREEBSD)
@@ -212,7 +210,7 @@ static SEXP_t *get_ctime(struct stat *st, SEXP_t *sexp)
 	}
 }
 
-static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp)
+static SEXP_t *get_mtime(struct stat *st, SEXP_t *sexp, oval_schema_version_t over)
 {
 	uint64_t t = (
 #if defined(OS_FREEBSD)
@@ -264,7 +262,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #endif
 }
 
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item;
@@ -307,8 +305,8 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 			se_filepath = SEXP_string_newf("%s", st_path);
 		}
 
-		se_usr_id = ID_cache_get(st.st_uid);
-		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid) : SEXP_ref(se_usr_id);
+		se_usr_id = ID_cache_get(st.st_uid, over);
+		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(st.st_gid, over) : SEXP_ref(se_usr_id);
 
 		if (!SEXP_emptyp(&gr_lastpath)) {
 			if (SEXP_strcmp(&gr_lastpath, p) != 0) {
@@ -332,9 +330,9 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
                                          "type",     OVAL_DATATYPE_SEXP, se_filetype(st.st_mode),
                                          "group_id", OVAL_DATATYPE_SEXP, se_grp_id,
                                          "user_id",  OVAL_DATATYPE_SEXP, se_usr_id,
-                                         "a_time",   OVAL_DATATYPE_SEXP, get_atime(&st, &se_atime_mem),
-                                         "c_time",   OVAL_DATATYPE_SEXP, get_ctime(&st, &se_ctime_mem),
-                                         "m_time",   OVAL_DATATYPE_SEXP, get_mtime(&st, &se_mtime_mem),
+                                         "a_time",   OVAL_DATATYPE_SEXP, get_atime(&st, &se_atime_mem, over),
+                                         "c_time",   OVAL_DATATYPE_SEXP, get_ctime(&st, &se_ctime_mem, over),
+                                         "m_time",   OVAL_DATATYPE_SEXP, get_mtime(&st, &se_mtime_mem, over),
                                          "size",     OVAL_DATATYPE_SEXP, get_size(&st, &se_size_mem),
                                          "suid",     OVAL_DATATYPE_SEXP, MODEP(&st, S_ISUID),
                                          "sgid",     OVAL_DATATYPE_SEXP, MODEP(&st, S_ISGID),
@@ -489,7 +487,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 
         probe_in  = probe_ctx_getobject(ctx);
 
-	over = probe_obj_get_platform_schema_version(probe_in);
+	oval_schema_version_t over = probe_obj_get_platform_schema_version(probe_in);
         path      = probe_obj_getent (probe_in, "path",      1);
         filename  = probe_obj_getent (probe_in, "filename",  1);
         behaviors = probe_obj_getent (probe_in, "behaviors", 1);
@@ -528,7 +526,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs) != 0) {
+			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over) != 0) {
 				oval_ftsent_free(ofts_ent);
 				break;
 			}
