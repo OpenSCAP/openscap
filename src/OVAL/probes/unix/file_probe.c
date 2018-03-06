@@ -90,8 +90,6 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
-static SEXP_t  gr_lastpath;
-
 #define STR_REGULAR   "regular"
 #define STR_DIRECTORY "directory"
 #define STR_SYMLINK   "symbolic link"
@@ -335,7 +333,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #endif
 }
 
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache, struct gr_sexps *grs)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, oval_schema_version_t over, struct ID_cache *cache, struct gr_sexps *grs, SEXP_t *gr_lastpath)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item;
@@ -381,13 +379,13 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		se_usr_id = ID_cache_get(cache, st.st_uid, over);
 		se_grp_id = st.st_gid != st.st_uid ? ID_cache_get(cache, st.st_gid, over) : SEXP_ref(se_usr_id);
 
-		if (!SEXP_emptyp(&gr_lastpath)) {
-			if (SEXP_strcmp(&gr_lastpath, p) != 0) {
-				SEXP_free_r(&gr_lastpath);
-				SEXP_string_new_r(&gr_lastpath, p, strlen(p));
+		if (!SEXP_emptyp(gr_lastpath)) {
+			if (SEXP_strcmp(gr_lastpath, p) != 0) {
+				SEXP_free_r(gr_lastpath);
+				SEXP_string_new_r(gr_lastpath, p, strlen(p));
 			}
 		} else
-			SEXP_string_new_r(&gr_lastpath, p, strlen(p));
+			SEXP_string_new_r(gr_lastpath, p, strlen(p));
 
 		if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.7)) < 0) {
 			se_acl = NULL;
@@ -398,7 +396,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
                                          "filepath", OVAL_DATATYPE_SEXP, se_filepath,
-                                         "path",     OVAL_DATATYPE_SEXP,  &gr_lastpath,
+                                         "path",     OVAL_DATATYPE_SEXP, gr_lastpath,
                                          "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
                                          "type",     OVAL_DATATYPE_SEXP, se_filetype(grs, st.st_mode),
                                          "group_id", OVAL_DATATYPE_SEXP, se_grp_id,
@@ -453,8 +451,6 @@ int file_probe_offline_mode_supported()
 
 void *file_probe_init(void)
 {
-	SEXP_init(&gr_lastpath);
-
         /*
          * Initialize mutex.
          */
@@ -476,8 +472,7 @@ void file_probe_fini(void *arg)
         _A((void *)arg == (void *)&__file_probe_mutex);
 
 
-	if (!SEXP_emptyp(&gr_lastpath))
-		SEXP_free_r(&gr_lastpath);
+
 
         /*
          * Destroy mutex.
@@ -539,12 +534,14 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 	cbargs.error   = 0;
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	SEXP_t gr_lastpath;
+	SEXP_init(&gr_lastpath);
 	struct ID_cache *cache = ID_cache_init(10000);
 	struct gr_sexps *grs = gr_sexps_init();
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache, grs) != 0) {
+			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, over, cache, grs, &gr_lastpath) != 0) {
 				oval_ftsent_free(ofts_ent);
 				break;
 			}
@@ -554,6 +551,9 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
 	}
 	ID_cache_free(cache);
 	gr_sexps_free(grs);
+
+	if (!SEXP_emptyp(&gr_lastpath))
+		SEXP_free_r(&gr_lastpath);
 
 	err = 0;
 
