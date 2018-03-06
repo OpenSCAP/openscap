@@ -78,15 +78,13 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
-SEXP_t gr_lastpath;
-
 struct cbargs {
         probe_ctx *ctx;
 	int        error;
         SEXP_t    *attr_ent;
 };
 
-static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item, xattr_name;
@@ -145,13 +143,14 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
         }
 
         /* update lastpath if needed */
-        if (!SEXP_emptyp(&gr_lastpath)) {
-                if (SEXP_strcmp(&gr_lastpath, p) != 0) {
-                        SEXP_free_r(&gr_lastpath);
-                        SEXP_string_new_r(&gr_lastpath, p, strlen(p));
-                }
-        } else
-                SEXP_string_new_r(&gr_lastpath, p, strlen(p));
+	if (!SEXP_emptyp(gr_lastpath)) {
+		if (SEXP_strcmp(gr_lastpath, p) != 0) {
+			SEXP_free_r(gr_lastpath);
+			SEXP_string_new_r(gr_lastpath, p, strlen(p));
+		}
+	} else {
+		SEXP_string_new_r(gr_lastpath, p, strlen(p));
+	}
 
         i = 0;
         /* collect */
@@ -185,7 +184,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 
                                 item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL,
                                                          "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
-                                                         "path",     OVAL_DATATYPE_SEXP,  &gr_lastpath,
+                                                         "path",     OVAL_DATATYPE_SEXP, gr_lastpath,
                                                          "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
                                                          "attribute_name", OVAL_DATATYPE_SEXP,   &xattr_name,
                                                          "value",          OVAL_DATATYPE_STRING, xattr_val,
@@ -227,8 +226,6 @@ int fileextendedattribute_probe_offline_mode_supported()
 
 void *fileextendedattribute_probe_init(void)
 {
-	SEXP_init(&gr_lastpath);
-
         /*
          * Initialize mutex.
          */
@@ -249,8 +246,7 @@ void fileextendedattribute_probe_fini(void *arg)
 {
         _A((void *)arg == (void *)&__file_probe_mutex);
 
-	if (!SEXP_emptyp(&gr_lastpath))
-		SEXP_free_r(&gr_lastpath);
+
 
         /*
          * Destroy mutex.
@@ -268,6 +264,7 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
         struct cbargs cbargs;
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
+	SEXP_t gr_lastpath;
 
         if (mutex == NULL)
                 return PROBE_EINIT;
@@ -317,14 +314,17 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
         cbargs.attr_ent = attribute_;
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	SEXP_init(&gr_lastpath);
 
 	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs);
+			file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs, &gr_lastpath);
 			oval_ftsent_free(ofts_ent);
 		}
 		oval_fts_close(ofts);
 	}
+	if (!SEXP_emptyp(&gr_lastpath))
+		SEXP_free_r(&gr_lastpath);
 
 	err = 0;
 
