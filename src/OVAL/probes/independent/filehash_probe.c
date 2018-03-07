@@ -54,8 +54,6 @@
 
 #define FILE_SEPARATOR '/'
 
-static pthread_mutex_t __filehash_probe_mutex;
-
 static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 {
         const char ch[] = "0123456789abcdef";
@@ -201,11 +199,13 @@ void *filehash_probe_init(void)
         /*
          * Initialize mutex.
          */
-        switch (pthread_mutex_init (&__filehash_probe_mutex, NULL)) {
+	pthread_mutex_t *filehash_probe_mutex = malloc(sizeof(pthread_mutex_t));
+	switch (pthread_mutex_init(filehash_probe_mutex, NULL)) {
         case 0:
-                return ((void *)&__filehash_probe_mutex);
+		return ((void *)filehash_probe_mutex);
         default:
                 dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
+		free(filehash_probe_mutex);
         }
 
 
@@ -214,17 +214,15 @@ void *filehash_probe_init(void)
 
 void filehash_probe_fini(void *arg)
 {
-        _A((void *)arg == (void *)&__filehash_probe_mutex);
-
         /*
          * Destroy mutex.
          */
-        (void) pthread_mutex_destroy (&__filehash_probe_mutex);
-
-        return;
+	pthread_mutex_t *filehash_probe_mutex = (pthread_mutex_t *)arg;
+	(void) pthread_mutex_destroy(filehash_probe_mutex);
+	free(filehash_probe_mutex);
 }
 
-int filehash_probe_main(probe_ctx *ctx, void *mutex)
+int filehash_probe_main(probe_ctx *ctx, void *arg)
 {
         SEXP_t *path, *filename, *behaviors, *filepath, *probe_in;
 
@@ -232,11 +230,10 @@ int filehash_probe_main(probe_ctx *ctx, void *mutex)
 	OVAL_FTSENT *ofts_ent;
 	oval_schema_version_t over;
 
-        if (mutex == NULL) {
+	pthread_mutex_t *filehash_probe_mutex = (pthread_mutex_t *)arg;
+	if (filehash_probe_mutex == NULL) {
 		return (PROBE_EINIT);
         }
-
-        _A(mutex == &__filehash_probe_mutex);
 
         probe_in  = probe_ctx_getobject(ctx);
 
@@ -258,11 +255,11 @@ int filehash_probe_main(probe_ctx *ctx, void *mutex)
 
 	probe_filebehaviors_canonicalize(&behaviors);
 
-        switch (pthread_mutex_lock (&__filehash_probe_mutex)) {
+	switch (pthread_mutex_lock(filehash_probe_mutex)) {
         case 0:
                 break;
         default:
-                dI("Can't lock mutex(%p): %u, %s.", &__filehash_probe_mutex, errno, strerror (errno));
+		dI("Can't lock mutex(%p): %u, %s.", filehash_probe_mutex, errno, strerror (errno));
 
 		SEXP_free (behaviors);
 		SEXP_free (path);
@@ -287,11 +284,11 @@ int filehash_probe_main(probe_ctx *ctx, void *mutex)
         SEXP_free (filename);
         SEXP_free (filepath);
 
-        switch (pthread_mutex_unlock (&__filehash_probe_mutex)) {
+	switch (pthread_mutex_unlock(filehash_probe_mutex)) {
         case 0:
                 break;
         default:
-                dI("Can't unlock mutex(%p): %u, %s.", &__filehash_probe_mutex, errno, strerror (errno));
+	dI("Can't unlock mutex(%p): %u, %s.", filehash_probe_mutex, errno, strerror (errno));
 
 		return (PROBE_EFATAL);
         }
