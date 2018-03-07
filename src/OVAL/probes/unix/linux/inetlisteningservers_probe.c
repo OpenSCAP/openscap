@@ -99,9 +99,6 @@ typedef struct {
   lnode *cur;           // Pointer to current node
 } llist;
 
-/* Local data */
-static struct server_info req;
-
 /* Function prototypes */
 static inline lnode *list_get_cur(llist *l) { return l->cur; }
 static void list_create(llist *l);
@@ -300,26 +297,26 @@ static int collect_process_info(llist *l)
 }
 
 static int eval_data(const char *type, const char *local_address,
-	unsigned int local_port)
+	unsigned int local_port, struct server_info *req)
 {
 	SEXP_t *r0;
 
 	r0 = SEXP_string_newf("%s", type);
-	if (probe_entobj_cmp(req.protocol_ent, r0) != OVAL_RESULT_TRUE) {
+	if (probe_entobj_cmp(req->protocol_ent, r0) != OVAL_RESULT_TRUE) {
 		SEXP_free(r0);
 		return 0;
 	}
 	SEXP_free(r0);
 
 	r0 = SEXP_string_newf("%s", local_address);
-	if (probe_entobj_cmp(req.local_address_ent, r0) != OVAL_RESULT_TRUE) {
+	if (probe_entobj_cmp(req->local_address_ent, r0) != OVAL_RESULT_TRUE) {
 		SEXP_free(r0);
 		return 0;
 	}
 	SEXP_free(r0);
 
 	r0 = SEXP_number_newu_32(local_port);
-	if (probe_entobj_cmp(req.local_port_ent, r0) != OVAL_RESULT_TRUE) {
+	if (probe_entobj_cmp(req->local_port_ent, r0) != OVAL_RESULT_TRUE) {
 		SEXP_free(r0);
 		return 0;
 	}
@@ -392,7 +389,7 @@ static void addr_convert(const char *src, char *dest, int size)
 }
 
 
-static int read_tcp(const char *proc, const char *type, llist *l, probe_ctx *ctx)
+static int read_tcp(const char *proc, const char *type, llist *l, probe_ctx *ctx, struct server_info *req)
 {
 	int line = 0;
 	FILE *f;
@@ -426,7 +423,7 @@ static int read_tcp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 		addr_convert(local_addr, src, NI_MAXHOST);
 		addr_convert(rem_addr, dest, NI_MAXHOST);
 		dI("Have tcp port: %s:%u", src, local_port);
-		if (eval_data(type, src, local_port)) {
+		if (eval_data(type, src, local_port, req)) {
 			struct result_info r;
 			r.proto = type;
 			r.laddr = src;
@@ -444,7 +441,7 @@ static int read_tcp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 	return 0;
 }
 
-static int read_udp(const char *proc, const char *type, llist *l, probe_ctx *ctx)
+static int read_udp(const char *proc, const char *type, llist *l, probe_ctx *ctx, struct server_info *req)
 {
 	int line = 0;
 	FILE *f;
@@ -477,7 +474,7 @@ static int read_udp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 		addr_convert(local_addr, src, NI_MAXHOST);
 		addr_convert(rem_addr, dest, NI_MAXHOST);
 		dI("Have udp port: %s:%u", src, local_port);
-		if (eval_data(type, src, local_port)) {
+		if (eval_data(type, src, local_port, req)) {
 			struct result_info r;
 			r.proto = type;
 			r.laddr = src;
@@ -495,7 +492,7 @@ static int read_udp(const char *proc, const char *type, llist *l, probe_ctx *ctx
 	return 0;
 }
 
-static int read_raw(const char *proc, const char *type, llist *l, probe_ctx *ctx)
+static int read_raw(const char *proc, const char *type, llist *l, probe_ctx *ctx, struct server_info *req)
 {
 	int line = 0;
 	FILE *f;
@@ -528,7 +525,7 @@ static int read_raw(const char *proc, const char *type, llist *l, probe_ctx *ctx
 		addr_convert(local_addr, src, NI_MAXHOST);
 		addr_convert(rem_addr, dest, NI_MAXHOST);
 		dI("Have raw port: %s:%u", src, local_port);
-		if (eval_data(type, src, local_port)) {
+		if (eval_data(type, src, local_port, req)) {
 			struct result_info r;
 			r.proto = type;
 			r.laddr = src;
@@ -553,21 +550,21 @@ int inetlisteningservers_probe_main(probe_ctx *ctx, void *arg)
 	llist ll;
 
         object = probe_ctx_getobject(ctx);
-
-	req.protocol_ent = probe_obj_getent(object, "protocol", 1);
-	if (req.protocol_ent == NULL) {
+	struct server_info *req = malloc(sizeof(struct server_info));
+	req->protocol_ent = probe_obj_getent(object, "protocol", 1);
+	if (req->protocol_ent == NULL) {
 		err = PROBE_ENOVAL;
 		goto cleanup;
 	}
 
-	req.local_address_ent = probe_obj_getent(object, "local_address", 1);
-	if (req.local_address_ent == NULL) {
+	req->local_address_ent = probe_obj_getent(object, "local_address", 1);
+	if (req->local_address_ent == NULL) {
 		err = PROBE_ENOVAL;
 		goto cleanup;
 	}
 
-	req.local_port_ent = probe_obj_getent(object, "local_port", 1);
-	if (req.local_port_ent == NULL) {
+	req->local_port_ent = probe_obj_getent(object, "local_port", 1);
+	if (req->local_port_ent == NULL) {
 		err = PROBE_ENOVAL;
 		goto cleanup;
 	}
@@ -587,25 +584,26 @@ int inetlisteningservers_probe_main(probe_ctx *ctx, void *arg)
 	}
 
 	// Now we check the tcp socket list...
-	read_tcp("/proc/net/tcp", "tcp", &ll, ctx);
-	read_tcp("/proc/net/tcp6", "tcp", &ll, ctx);
+	read_tcp("/proc/net/tcp", "tcp", &ll, ctx, req);
+	read_tcp("/proc/net/tcp6", "tcp", &ll, ctx, req);
 
 	// Next udp sockets...
-	read_udp("/proc/net/udp", "udp", &ll, ctx);
-	read_udp("/proc/net/udp6", "udp", &ll, ctx);
+	read_udp("/proc/net/udp", "udp", &ll, ctx, req);
+	read_udp("/proc/net/udp6", "udp", &ll, ctx, req);
 
 	// Next, raw sockets...not exactly part of standard yet. They
 	// can be used to send datagrams, so we will pretend they are udp
-	read_raw("/proc/net/raw", "udp", &ll, ctx);
-	read_raw("/proc/net/raw6", "udp", &ll, ctx);
+	read_raw("/proc/net/raw", "udp", &ll, ctx, req);
+	read_raw("/proc/net/raw6", "udp", &ll, ctx, req);
 
 	list_clear(&ll);
 
 	err = 0;
  cleanup:
-	SEXP_free(req.protocol_ent);
-	SEXP_free(req.local_address_ent);
-	SEXP_free(req.local_port_ent);
+	SEXP_free(req->protocol_ent);
+	SEXP_free(req->local_address_ent);
+	SEXP_free(req->local_port_ent);
+	free(req);
 
 	return err;
 }
