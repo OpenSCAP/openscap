@@ -94,7 +94,7 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 	const char runlevel_list[] = {'0', '1', '2', '3', '4', '5', '6'};
 
 	char pathbuf[PATH_MAX];
-	DIR *init_dir, *rc_dir;
+	DIR *init_dir, *rc_dir, *orig_dir;
 	struct dirent *init_dp, *rc_dp;
 	struct stat init_st, rc_st;
 	struct runlevel_rep *rep_lst = NULL;
@@ -102,10 +102,16 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 	_A(req != NULL);
 	_A(rep != NULL);
 
+	orig_dir = opendir(".");
+	if (orig_dir == NULL) {
+		dI("Can't open directory \".\": errno=%d, %s.", errno, strerror(errno));
+		return -1;
+	}
 	init_dir = opendir(init_path);
 	if (init_dir == NULL) {
 		dI("Can't open directory \"%s\": errno=%d, %s.",
 		   init_path, errno, strerror (errno));
+		closedir(orig_dir);
 		return (-1);
 	}
 
@@ -120,6 +126,7 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 			dI("Can't fchdir to \"%s\": errno=%d, %s.",
 			   init_path, errno, strerror (errno));
 			closedir(init_dir);
+			closedir(orig_dir);
 			return -1;
 		}
 
@@ -222,6 +229,12 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 		}
 	}
 	closedir(init_dir);
+
+	if (fchdir(dirfd(orig_dir)) == -1) {
+		dE("Can't fchdir back to original working directory: errno=%d, %s.", errno, strerror(errno));
+		return -1;
+	}
+	closedir(orig_dir);
 
 	return (1);
 }
