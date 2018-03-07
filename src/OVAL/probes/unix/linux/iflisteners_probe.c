@@ -64,8 +64,6 @@
 #include "iflisteners-proto.h"
 #include "iflisteners_probe.h"
 
-SEXP_t *interface_name_ent;
-
 /* Convenience structure for the results being reported */
 struct result_info {
 	const char *interface_name;
@@ -371,7 +369,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 	return 0;
 }
 
-static int read_packet(llist *l, probe_ctx *ctx, oval_schema_version_t over)
+static int read_packet(llist *l, probe_ctx *ctx, oval_schema_version_t over, SEXP_t *interface_name_ent)
 {
 	int line = 0;
 	FILE *f;
@@ -435,7 +433,7 @@ int iflisteners_probe_main(probe_ctx *ctx, void *arg)
         object = probe_ctx_getobject(ctx);
         over   = probe_obj_get_platform_schema_version(object);
 
-	interface_name_ent = probe_obj_getent(object, "interface_name", 1);
+	SEXP_t *interface_name_ent = probe_obj_getent(object, "interface_name", 1);
 	if (interface_name_ent == NULL) {
 		err = PROBE_ENOVAL;
 		goto cleanup;
@@ -455,7 +453,7 @@ int iflisteners_probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 
-	read_packet(&ll, ctx, over);
+	read_packet(&ll, ctx, over, interface_name_ent);
 
 	list_clear(&ll);
 
