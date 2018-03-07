@@ -91,11 +91,9 @@ struct rpmverify_res {
 	#define VERIFY_CAPS 0
 #endif
 
-static struct rpm_probe_global g_rpm;
+#define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm->mutex)
 
-#define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm.mutex)
-
-#define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm.mutex)
+#define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm->mutex)
 
 /* modify passed-in iterator to test also given entity */
 static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_tag) {
@@ -130,7 +128,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 			     const char *file, oval_operation_t file_op,
 			     SEXP_t *name_ent, SEXP_t *epoch_ent, SEXP_t *version_ent, SEXP_t *release_ent, SEXP_t *arch_ent,
 			     uint64_t flags,
-			     int (*callback)(probe_ctx *, struct rpmverify_res *))
+		int (*callback)(probe_ctx *, struct rpmverify_res *),
+		struct rpm_probe_global *g_rpm)
 {
 	rpmdbMatchIterator match;
 	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
@@ -153,7 +152,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 	RPMVERIFY_LOCK;
 
-	match = rpmtsInitIterator (g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+	match = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_PACKAGES, NULL, 0);
 	if (match == NULL) {
 		ret = 0;
 		goto ret;
@@ -229,7 +228,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		 * Inspect package files & directories
 		 */
 		for (i = 0; i < 2; ++i) {
-		  fi = rpmfiNew(g_rpm.rpmts, pkgh, tag[i], 1);
+			fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
 
 		  while (rpmfiNext(fi) != -1) {
 				res.file = oscap_strdup(rpmfiFN(fi));
@@ -280,7 +279,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      goto ret;
 		    }
 
-		    if (rpmVerifyFile(g_rpm.rpmts, fi, &res.vflags, omit) != 0)
+			if (rpmVerifyFile(g_rpm->rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
 
 		    if (callback(ctx, &res) != 0) {
@@ -325,11 +324,12 @@ void *rpmverifyfile_probe_init(void)
 		return (NULL);
 	}
 
-	g_rpm.rpmts = rpmtsCreate();
+	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
+	g_rpm->rpmts = rpmtsCreate();
 
-	pthread_mutex_init(&(g_rpm.mutex), NULL);
+	pthread_mutex_init(&(g_rpm->mutex), NULL);
 
-	return ((void *)&g_rpm);
+	return ((void *)g_rpm);
 }
 
 void rpmverifyfile_probe_fini(void *ptr)
@@ -347,6 +347,7 @@ void rpmverifyfile_probe_fini(void *ptr)
 
 	rpmtsFree(r->rpmts);
 	pthread_mutex_destroy (&(r->mutex));
+	free(r);
 
 	return;
 }
@@ -451,6 +452,7 @@ int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
 	}
+	struct rpm_probe_global *g_rpm = (struct rpm_probe_global *)arg;
 
 	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
 		const char* root = getenv("OSCAP_PROBE_ROOT");
@@ -524,7 +526,7 @@ int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
 			      file, file_op,
 			      name_ent, epoch_ent, version_ent, release_ent, arch_ent,
 			      collect_flags,
-			      rpmverify_additem) != 0)
+			rpmverify_additem, g_rpm) != 0)
 	{
 		dE("An error ocured while collecting rpmverifyfile data");
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
