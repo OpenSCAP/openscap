@@ -90,10 +90,10 @@ struct rpmverify_res {
 #define RPMVERIFY_SKIP_GHOST  0x2000000000000000
 #define RPMVERIFY_RPMATTRMASK 0x00000000ffffffff
 
-static struct verifypackage_global {
+struct verifypackage_global {
 	struct rpm_probe_global rpm;
 	struct probe_chroot chr;
-} g_rpm;
+};
 
 static struct poptOption optionsTable[] = {
 	{ NULL, '\0', POPT_ARG_INCLUDE_TABLE, rpmcliAllPoptTable, 0,
@@ -105,17 +105,17 @@ static struct poptOption optionsTable[] = {
 	POPT_TABLEEND
 };
 
-#define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm.rpm.mutex)
+#define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm->rpm.mutex)
 
-#define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm.rpm.mutex)
+#define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm->rpm.mutex)
 
-#define CHROOT_ENTER() probe_chroot_enter(&g_rpm.chr)
+#define CHROOT_ENTER() probe_chroot_enter(&g_rpm->chr)
 
-#define CHROOT_LEAVE() probe_chroot_leave(&g_rpm.chr)
+#define CHROOT_LEAVE() probe_chroot_leave(&g_rpm->chr)
 
-#define CHROOT_IS_SET() probe_chroot_is_set(&g_rpm.chr)
+#define CHROOT_IS_SET() probe_chroot_is_set(&g_rpm->chr)
 
-#define CHROOT_PATH() probe_chroot_get_path(&g_rpm.chr)
+#define CHROOT_PATH() probe_chroot_get_path(&g_rpm->chr)
 
 /* modify passed-in iterator to test also given entity */
 static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_tag) {
@@ -152,7 +152,8 @@ static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_ta
 static int rpmverify_collect(probe_ctx *ctx,
 			     SEXP_t *name_ent, SEXP_t *epoch_ent, SEXP_t *version_ent, SEXP_t *release_ent, SEXP_t *arch_ent,
 			     uint64_t flags,
-			     int (*callback)(probe_ctx *, struct rpmverify_res *))
+			int (*callback)(probe_ctx *, struct rpmverify_res *),
+			struct verifypackage_global *g_rpm)
 {
 	rpmdbMatchIterator match;
 	Header pkgh;
@@ -164,7 +165,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 	RPMVERIFY_LOCK;
 
-	match = rpmtsInitIterator (g_rpm.rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+	match = rpmtsInitIterator (g_rpm->rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
 	if (match == NULL) {
 		ret = 0;
 		goto ret;
@@ -323,7 +324,9 @@ void *rpmverifypackage_probe_init(void)
 	if ((root!= NULL) && (strlen(root) == 0)) {
 		root = NULL;
 	}
-	probe_chroot_init(&g_rpm.chr, root);
+
+	struct verifypackage_global *g_rpm = malloc(sizeof(struct verifypackage_global));
+	probe_chroot_init(&g_rpm->chr, root);
 
 #ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
@@ -338,24 +341,24 @@ void *rpmverifypackage_probe_init(void)
 
 	if (rpmReadConfigFiles (NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
-		g_rpm.rpm.rpmts = NULL;
-		return ((void *)&g_rpm);
+		g_rpm->rpm.rpmts = NULL;
+		return ((void *)g_rpm);
 	}
 
-	g_rpm.rpm.rpmts = rpmtsCreate();
+	g_rpm->rpm.rpmts = rpmtsCreate();
 
 	if (CHROOT_IS_SET()) {
 		CHROOT_LEAVE();
 
 		// plugins for offline mode can cause, that .so from
 		// container are loaded - we don't want it
-		DISABLE_PLUGINS(g_rpm.rpm.rpmts);
+		DISABLE_PLUGINS(g_rpm->rpm.rpmts);
 
-		rpmtsSetRootDir(g_rpm.rpm.rpmts, CHROOT_PATH());
+		rpmtsSetRootDir(g_rpm->rpm.rpmts, CHROOT_PATH());
 	}
 
-	pthread_mutex_init(&(g_rpm.rpm.mutex), NULL);
-	return ((void *)&g_rpm);
+	pthread_mutex_init(&(g_rpm->rpm.mutex), NULL);
+	return ((void *)g_rpm);
 }
 
 void rpmverifypackage_probe_fini(void *ptr)
@@ -368,7 +371,7 @@ void rpmverifypackage_probe_fini(void *ptr)
 	rpmlogClose();
 
 	// This will be always set by probe_init(), lets free it
-	probe_chroot_free(&g_rpm.chr);
+	probe_chroot_free(&r->chr);
 
 	// If r is null, probe_init() failed during chroot
 	if (r == NULL)
@@ -381,6 +384,7 @@ void rpmverifypackage_probe_fini(void *ptr)
 	rpmtsFree(r->rpm.rpmts);
 	pthread_mutex_destroy (&(r->rpm.mutex));
 
+	free(r);
 	return;
 }
 
@@ -435,9 +439,10 @@ int rpmverifypackage_probe_main(probe_ctx *ctx, void *arg)
 	if (arg == NULL) {
 		return PROBE_EINIT;
 	}
+	struct verifypackage_global *g_rpm = (struct verifypackage_global *)arg;
 
 	// There was no rpm config files
-	if (g_rpm.rpm.rpmts == NULL) {
+	if (g_rpm->rpm.rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
 	}
@@ -477,10 +482,8 @@ int rpmverifypackage_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free(bh_ent);
 	}
 
-	if (rpmverify_collect(ctx,
-			      name_ent, epoch_ent, version_ent, release_ent, arch_ent,
-			      collect_flags,
-			      rpmverifypackage_additem) != 0)
+	if (rpmverify_collect(ctx, name_ent, epoch_ent, version_ent, release_ent,
+			arch_ent, collect_flags, rpmverifypackage_additem, g_rpm) != 0)
 	{
 		dE("An error ocured while collecting rpmverifypackage data");
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
