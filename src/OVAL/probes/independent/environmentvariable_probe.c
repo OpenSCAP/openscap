@@ -1,5 +1,5 @@
 /**
- * @file   environmentvariable.c
+ * @file   environmentvariable_probe.c
  * @brief  environmentvariable probe
  * @author "Petr Lautrbach" <plautrba@redhat.com>
  *

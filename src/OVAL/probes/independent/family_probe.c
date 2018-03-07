@@ -1,5 +1,5 @@
 /**
- * @file   family.c
+ * @file   family_probe.c
  * @brief  family probe
  * @author "Tomas Heinrich" <theinric@redhat.com>
  * @author "Daniel Kopecek" <dkopecek@redhat.com>

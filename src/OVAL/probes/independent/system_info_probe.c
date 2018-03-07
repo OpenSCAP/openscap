@@ -1,5 +1,5 @@
 /**
- * @file   system_info.c
+ * @file   system_info_probe.c
  * @brief  system_info probe
  * @author "Tomas Heinrich" <theinric@redhat.com>
  */

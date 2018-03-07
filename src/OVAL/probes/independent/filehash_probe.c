@@ -1,5 +1,5 @@
 /**
- * @file   filehash.c
+ * @file   filehash_probe.c
  * @brief  filehash probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *

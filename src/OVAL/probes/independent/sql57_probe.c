@@ -1,5 +1,5 @@
 /**
- * @file   sql57.c
+ * @file   sql57_probe.c
  * @brief  sql57 probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *

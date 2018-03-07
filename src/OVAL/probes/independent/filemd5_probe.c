@@ -1,5 +1,5 @@
 /**
- * @file   filemd5.c
+ * @file   filemd5_probe.c
  * @brief  filemd5 probe
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
