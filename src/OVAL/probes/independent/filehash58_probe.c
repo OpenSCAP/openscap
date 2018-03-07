@@ -57,8 +57,6 @@
 
 #define FILE_SEPARATOR '/'
 
-static pthread_mutex_t __filehash58_probe_mutex;
-
 #define CRAPI_INVALID -1
 
 static const struct oscap_string_map CRAPI_ALG_MAP[] = {
@@ -221,11 +219,13 @@ void *filehash58_probe_init(void)
 	/*
 	 * Initialize mutex.
 	 */
-	switch (pthread_mutex_init (&__filehash58_probe_mutex, NULL)) {
+	pthread_mutex_t *filehash58_probe_mutex = malloc(sizeof(pthread_mutex_t));
+	switch (pthread_mutex_init(filehash58_probe_mutex, NULL)) {
 	case 0:
-		return ((void *)&__filehash58_probe_mutex);
+		return ((void *)filehash58_probe_mutex);
 	default:
 		dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
+		free(filehash58_probe_mutex);
 	}
 
 	return (NULL);
@@ -233,17 +233,15 @@ void *filehash58_probe_init(void)
 
 void filehash58_probe_fini(void *arg)
 {
-	_A((void *)arg == (void *)&__filehash58_probe_mutex);
-
 	/*
 	 * Destroy mutex.
 	 */
-	(void) pthread_mutex_destroy (&__filehash58_probe_mutex);
-
-	return;
+	pthread_mutex_t *filehash58_probe_mutex = (pthread_mutex_t *)arg;
+	(void) pthread_mutex_destroy(filehash58_probe_mutex);
+	free(filehash58_probe_mutex);
 }
 
-int filehash58_probe_main(probe_ctx *ctx, void *mutex)
+int filehash58_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in;
 	SEXP_t *path, *filename, *behaviors, *filepath, *hash_type;
@@ -253,11 +251,10 @@ int filehash58_probe_main(probe_ctx *ctx, void *mutex)
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 
-	if (mutex == NULL) {
+	pthread_mutex_t *filehash58_probe_mutex = (pthread_mutex_t *)arg;
+	if (filehash58_probe_mutex == NULL) {
 		return (PROBE_EINIT);
 	}
-
-	_A(mutex == &__filehash58_probe_mutex);
 
 	probe_in  = probe_ctx_getobject(ctx);
 
@@ -281,11 +278,11 @@ int filehash58_probe_main(probe_ctx *ctx, void *mutex)
 
 	probe_filebehaviors_canonicalize(&behaviors);
 
-	switch (pthread_mutex_lock (&__filehash58_probe_mutex)) {
+	switch (pthread_mutex_lock(filehash58_probe_mutex)) {
 	case 0:
 		break;
 	default:
-		dI("Can't lock mutex(%p): %u, %s.", &__filehash58_probe_mutex, errno, strerror (errno));
+		dI("Can't lock mutex(%p): %u, %s.", filehash58_probe_mutex, errno, strerror(errno));
 
 		err = PROBE_EFATAL;
 		goto cleanup;
@@ -318,11 +315,11 @@ cleanup:
 	SEXP_free (filepath);
         SEXP_free (hash_type);
 
-	switch (pthread_mutex_unlock (&__filehash58_probe_mutex)) {
+	switch (pthread_mutex_unlock(filehash58_probe_mutex)) {
 	case 0:
 		break;
 	default:
-		dI("Can't unlock mutex(%p): %u, %s.", &__filehash58_probe_mutex, errno, strerror (errno));
+		dI("Can't unlock mutex(%p): %u, %s.", filehash58_probe_mutex, errno, strerror(errno));
 
 		err = PROBE_EFATAL;
 	}
