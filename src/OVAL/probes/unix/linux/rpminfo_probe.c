@@ -95,7 +95,6 @@ struct rpminfo_rep {
 
 static struct rpm_probe_global g_rpm;
 static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";
-static regex_t g_keyid_regex;
 
 static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
 {
@@ -108,7 +107,7 @@ static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
         free (ptr->signature_keyid);
 }
 
-static void pkgh2rep (Header h, struct rpminfo_rep *r)
+static void pkgh2rep(Header h, struct rpminfo_rep *r, regex_t *keyid_regex)
 {
         errmsg_t rpmerr;
         char *str, *sid;
@@ -142,7 +141,7 @@ static void pkgh2rep (Header h, struct rpminfo_rep *r)
 
         str = headerFormat (h, "%|SIGGPG?{%{SIGGPG:pgpsig}}:{%{SIGPGP:pgpsig}}|", &rpmerr);
 
-	if (regexec(&g_keyid_regex, str, 1, keyid_match, 0) != 0) {
+	if (regexec(keyid_regex, str, 1, keyid_match, 0) != 0) {
 		sid = NULL;
 		dD("Failed to extract the Key ID value: regex=\"%s\", string=\"%s\"",
 		   g_keyid_regex_string, str);
@@ -177,6 +176,12 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 	rpmdbMatchIterator match;
 	Header pkgh;
 	int ret = 0, i;
+	regex_t keyid_regex;
+
+	if (regcomp(&keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {
+		dE("regcomp(%s) failed.");
+		return -1;
+	}
 
         RPMINFO_LOCK;
 
@@ -241,7 +246,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                         pkgh = rpmdbNextIterator (match);
 
                         if (pkgh != NULL)
-                                pkgh2rep (pkgh, (*rep) + i);
+			pkgh2rep(pkgh, (*rep) + i, &keyid_regex);
                         else {
                                 /* XXX: emit warning */
                                 break;
@@ -253,15 +258,17 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
                 while ((pkgh = rpmdbNextIterator (match)) != NULL) {
                         (*rep) = realloc (*rep, sizeof (struct rpminfo_rep) * ++ret);
 			if (*rep == NULL) {
-				return -1;
+					return -1;
 			}
-                        pkgh2rep (pkgh, (*rep) + (ret - 1));
+			pkgh2rep(pkgh, (*rep) + (ret - 1), &keyid_regex);
                 }
         }
 
 	match = rpmdbFreeIterator (match);
 ret:
         RPMINFO_UNLOCK;
+
+	regfree(&keyid_regex);
         return (ret);
 }
 
@@ -280,11 +287,6 @@ void *rpminfo_probe_init(void)
 #ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
-	if (regcomp(&g_keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {
-		dE("regcomp(%s) failed.");
-		return NULL;
-	}
-
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		g_rpm.rpmts = NULL;
@@ -314,7 +316,6 @@ void rpminfo_probe_fini (void *ptr)
 	if (r == NULL)
 		return;
 
-	regfree(&g_keyid_regex);
 
 	if (r->rpmts == NULL)
 		return;
