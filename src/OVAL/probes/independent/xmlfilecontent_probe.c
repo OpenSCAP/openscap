@@ -209,7 +209,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		double d;
 
 		d = xmlXPathCastToNumber(xpath_obj);
-		val = SEXP_number_newf(d);
+		val = SEXP_number_newi_32(d);
 		probe_item_ent_add(item, "value_of", NULL, val);
 		SEXP_free(val);
 		break;
