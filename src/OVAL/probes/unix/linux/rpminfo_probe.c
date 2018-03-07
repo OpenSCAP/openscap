@@ -89,11 +89,10 @@ struct rpminfo_rep {
 	char extended_name[1024];
 };
 
-#define RPMINFO_LOCK	RPM_MUTEX_LOCK(&g_rpm.mutex)
+#define RPMINFO_LOCK	RPM_MUTEX_LOCK(&g_rpm->mutex)
 
-#define RPMINFO_UNLOCK	RPM_MUTEX_UNLOCK(&g_rpm.mutex)
+#define RPMINFO_UNLOCK	RPM_MUTEX_UNLOCK(&g_rpm->mutex)
 
-static struct rpm_probe_global g_rpm;
 static const char g_keyid_regex_string[] = "Key ID [a-fA-F0-9]{16}";
 
 static void __rpminfo_rep_free (struct rpminfo_rep *ptr)
@@ -171,7 +170,7 @@ static void pkgh2rep(Header h, struct rpminfo_rep *r, regex_t *keyid_regex)
  * The return value on error is -1. Otherwise the number of
  * rpminfo_rep structures allocated in *rep is returned.
  */
-static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
+static int get_rpminfo(struct rpminfo_req *req, struct rpminfo_rep **rep, struct rpm_probe_global *g_rpm)
 {
 	rpmdbMatchIterator match;
 	Header pkgh;
@@ -189,7 +188,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
         switch (req->op) {
         case OVAL_OPERATION_EQUALS:
-                match = rpmtsInitIterator (g_rpm.rpmts, RPMTAG_NAME, (const void *)req->name, 0);
+		match = rpmtsInitIterator(g_rpm->rpmts, RPMTAG_NAME, (const void *)req->name, 0);
 
                 if (match == NULL) {
                         ret = 0;
@@ -200,7 +199,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
                 break;
 	case OVAL_OPERATION_NOT_EQUAL:
-                match = rpmtsInitIterator (g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+		match = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_PACKAGES, NULL, 0);
                 if (match == NULL) {
                         ret = 0;
                         goto ret;
@@ -214,7 +213,7 @@ static int get_rpminfo (struct rpminfo_req *req, struct rpminfo_rep **rep)
 
                 break;
         case OVAL_OPERATION_PATTERN_MATCH:
-                match = rpmtsInitIterator (g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+		match = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_PACKAGES, NULL, 0);
 
                 if (match == NULL) {
                         ret = 0;
@@ -287,21 +286,22 @@ void *rpminfo_probe_init(void)
 #ifdef RPM46_FOUND
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
+	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
 		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
-		g_rpm.rpmts = NULL;
-		return ((void *)&g_rpm);
+		g_rpm->rpmts = NULL;
+		return ((void *)g_rpm);
         }
 
-        g_rpm.rpmts = rpmtsCreate();
-        pthread_mutex_init (&(g_rpm.mutex), NULL);
+	g_rpm->rpmts = rpmtsCreate();
+	pthread_mutex_init (&(g_rpm->mutex), NULL);
 
 	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
 	if (dbpath) {
 		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
 	}
 
-        return ((void *)&g_rpm);
+	return ((void *)g_rpm);
 }
 
 void rpminfo_probe_fini (void *ptr)
@@ -323,10 +323,12 @@ void rpminfo_probe_fini (void *ptr)
         rpmtsFree(r->rpmts);
         pthread_mutex_destroy (&(r->mutex));
 
+	free(r);
         return;
 }
 
-static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep) {
+static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep, struct rpm_probe_global *g_rpm)
+{
 	SEXP_t *value;
 	rpmdbMatchIterator ts;
 	Header pkgh;
@@ -334,7 +336,7 @@ static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep) {
 	rpmTag tag[2] = { RPMTAG_BASENAMES, RPMTAG_DIRNAMES };
 	int i, ret = 0;
 
-	ts = rpmtsInitIterator(g_rpm.rpmts, RPMDBI_PACKAGES, NULL, 0);
+	ts = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_PACKAGES, NULL, 0);
 	if (ts == NULL) {
 		return -1;
 	}
@@ -365,7 +367,7 @@ static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep) {
 		 * Inspect package files & directories
 		 */
 		for (i = 0; i < 2; ++i) {
-			fi = rpmfiNew(g_rpm.rpmts, pkgh, tag[i], 1);
+			fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
 
 			while (rpmfiNext(fi) != -1) {
 				const char *filepath;
@@ -407,9 +409,10 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 		const char* root = getenv("OSCAP_PROBE_ROOT");
 		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
+	struct rpm_probe_global *g_rpm = (struct rpm_probe_global *)arg;
 
 	// There was no rpm config files
-	if (g_rpm.rpmts == NULL) {
+	if (g_rpm->rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
 	}
@@ -478,7 +481,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
         reply_st  = NULL;
 
         /* get info from RPM db */
-        switch (rpmret = get_rpminfo (&request_st, &reply_st)) {
+	switch (rpmret = get_rpminfo(&request_st, &reply_st, g_rpm)) {
         case 0: /* Not found */
                 dI("Package \"%s\" not found.", request_st.name);
                 break;
@@ -536,7 +539,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 						if (bh_value != NULL) {
 							if (SEXP_strcmp(bh_value, "true") == 0) {
 								/* collect package files */
-								collect_rpm_files(item, &reply_st[i]);
+								collect_rpm_files(item, &reply_st[i], g_rpm);
 
 							}
 							SEXP_free(bh_value);
