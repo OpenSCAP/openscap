@@ -76,8 +76,6 @@
 
 #define FILE_SEPARATOR '/'
 
-oval_schema_version_t over;
-
 static int get_substrings(char *str, pcre *re, int want_substrs, char ***substrings) {
 	int i, ret, rc;
 	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
@@ -132,7 +130,7 @@ static int get_substrings(char *str, pcre *re, int want_substrs, char ***substri
 }
 
 static SEXP_t *create_item(const char *path, const char *filename, char *pattern,
-			   int instance, char **substrs, int substr_cnt)
+			   int instance, char **substrs, int substr_cnt, oval_schema_version_t over)
 {
 	int i;
 	SEXP_t *item;
@@ -188,7 +186,7 @@ struct pfdata {
         probe_ctx *ctx;
 };
 
-static int process_file(const char *prefix, const char *path, const char *filename, void *arg)
+static int process_file(const char *prefix, const char *path, const char *filename, void *arg, oval_schema_version_t over)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, filename_len;
@@ -254,7 +252,7 @@ static int process_file(const char *prefix, const char *path, const char *filena
 
 			++cur_inst;
 			item = create_item(path, filename, pfd->pattern,
-					   cur_inst, substrs, substr_cnt);
+					cur_inst, substrs, substr_cnt, over);
 
                         probe_item_collect(pfd->ctx, item);
 
@@ -293,7 +291,7 @@ int textfilecontent_probe_main(probe_ctx *ctx, void *arg)
 
         probe_in = probe_ctx_getobject(ctx);
 
-	over = probe_obj_get_platform_schema_version(probe_in);
+	oval_schema_version_t over = probe_obj_get_platform_schema_version(probe_in);
 	path_ent = probe_obj_getent(probe_in, "path",     1);
 	filename_ent = probe_obj_getent(probe_in, "filename", 1);
 	line_ent = probe_obj_getent(probe_in, "line",  1);
@@ -341,7 +339,7 @@ int textfilecontent_probe_main(probe_ctx *ctx, void *arg)
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
 				// todo: handle return code
-				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd);
+				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd, over);
 			}
 			oval_ftsent_free(ofts_ent);
 		}
