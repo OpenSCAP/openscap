@@ -740,13 +740,13 @@ const char *oval_subtype_to_str(oval_subtype_t subtype)
 	return oval_subtype_get_text(subtype);
 }
 
-oval_subtype_t oval_subtype_from_str(const char *str)
+oval_subtype_t oval_subtype_from_str(const char *family_str, const char *subtype_str)
 {
 	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
-	const struct oscap_string_map *map = *oval_subtype_string_maps;
-	while (map != NULL && subtype == OVAL_SUBTYPE_UNKNOWN) {
-		subtype = oval_enumeration_from_text(map, str);
-		map++;
+	oval_family_t family = oval_enumeration_from_text(OVAL_FAMILY_MAP, family_str);
+	const struct oscap_string_map *map = get_map_for_family(family);
+	if (map != NULL) {
+		subtype = oval_enumeration_from_text(map, subtype_str);
 	}
 	return subtype;
 }
