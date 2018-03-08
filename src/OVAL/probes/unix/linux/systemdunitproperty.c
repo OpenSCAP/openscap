@@ -31,9 +31,12 @@
 #endif
 
 #include <probe-api.h>
+#include <probe/probe.h>
 #include <string.h>
 #include "probe/entcmp.h"
 #include "systemdshared.h"
+
+const char *UNIT_FILE_STATE = "UnitFileState";
 
 static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, int(*callback)(const char *name, const char *value, void *arg), void *cbarg)
 {
@@ -174,6 +177,7 @@ struct unit_callback_vars {
 	SEXP_t *se_unit;
 	SEXP_t *se_property;
 	SEXP_t *item;
+	char *offline_unit_state;
 };
 
 static int property_callback(const char *property, const char *value, void *cbarg)
@@ -231,14 +235,18 @@ static int unit_callback(const char *unit, void *cbarg)
 	vars->se_property = NULL;
 	vars->item = NULL;
 
-	char *unit_path = get_path_by_unit(vars->dbus_conn, unit);
+	if (vars->dbus_conn != NULL) {
+		char *unit_path = get_path_by_unit(vars->dbus_conn, unit);
 
-	if (unit_path == NULL) {
-		return 1;
+		if (unit_path == NULL) {
+			return 1;
+		}
+	
+		get_all_properties_by_unit_path(vars->dbus_conn, unit_path,
+						property_callback, vars);
+	} else {
+		property_callback(UNIT_FILE_STATE, vars->offline_unit_state, vars);
 	}
-
-	get_all_properties_by_unit_path(vars->dbus_conn, unit_path,
-					property_callback, vars);
 
 	if (vars->item != NULL) {
 		probe_item_collect(vars->ctx, vars->item);
@@ -249,6 +257,44 @@ static int unit_callback(const char *unit, void *cbarg)
 
 	SEXP_free(se_unit);
 	return 0;
+}
+
+void get_unit_file_state_in_offline_mode(const char *unit, struct unit_callback_vars *vars)
+{
+	char systemctl_call[] = "systemctl list-unit-files | grep -P '\\S+\\.service'";
+
+	FILE *p = popen(systemctl_call, "r");
+	size_t len = 0;
+	char *ln = NULL;
+
+	while (getline(&ln, &len, p) != -1) {
+		char name[256];
+		char state[16];
+		size_t i = 0;
+		
+		// Find name
+		while (i < len && ln[i] != ' ') ++i;
+		strncpy(name, ln, i);
+		name[i] = '\0';
+		
+		// Find state
+		size_t begin_state = 0;
+		while (i < len && ln[i] == ' ') ++i;
+		begin_state = i;
+		while (i < len && ln[i] != ' ' && ln[i] != '\n') ++i;
+		strncpy(state, &ln[begin_state], i - begin_state);
+		state[i - begin_state] = '\0';
+	
+		vars->offline_unit_state = state;
+		unit_callback(name, vars);
+	}
+	free(ln);
+	pclose(p);
+}
+
+void probe_offline_mode()
+{
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 }
 
 int probe_main(probe_ctx *ctx, void *probe_arg)
@@ -263,6 +309,17 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 		// OVAL 5.10 and less
 		return PROBE_EOPNOTSUPP;
 	}
+	
+	unit_entity = probe_obj_getent(probe_in, "unit", 1);
+	property_entity = probe_obj_getent(probe_in, "property", 1);
+	
+	struct unit_callback_vars vars;
+
+	vars.dbus_conn = NULL;
+	vars.ctx = ctx;
+	vars.unit_entity = unit_entity;
+	vars.property_entity = property_entity;
+	vars.offline_unit_state = NULL;
 
 	DBusError dbus_error;
 	DBusConnection *dbus_conn;
@@ -270,31 +327,37 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 	dbus_error_init(&dbus_error);
 	dbus_conn = connect_dbus();
 
-	if (dbus_conn == NULL) {
+	if (dbus_conn != NULL) {
+		vars.dbus_conn = dbus_conn;
+		get_all_systemd_units(dbus_conn, unit_callback, &vars);
 		dbus_error_free(&dbus_error);
-		SEXP_t *msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_INFO, "DBus connection failed, could not identify systemd units.");
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-		SEXP_free(msg);
-		return 0;
+		disconnect_dbus(dbus_conn);
+	} else {
+		// Allows the probe to retrieve property UnitFileState even if systemd is not accessible
+		SEXP_t *temp_unit_entity, *temp_property_entity;
+		const char *cstr_unit_entity = SEXP_string_cstr(temp_unit_entity = probe_ent_getval(unit_entity));
+		SEXP_free(temp_unit_entity);
+		const char *cstr_property_entity = SEXP_string_cstr(temp_property_entity = probe_ent_getval(property_entity));
+		SEXP_free(temp_property_entity);
+		
+		if(strcmp(cstr_property_entity, UNIT_FILE_STATE) != 0) {
+			dbus_error_free(&dbus_error);
+			SEXP_t *msg = probe_msg_creat(OVAL_MESSAGE_LEVEL_INFO, "DBus connection failed, could not identify systemd units.");
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+			SEXP_free(msg);
+			
+			return 0;
+		}
+		
+		get_unit_file_state_in_offline_mode(cstr_unit_entity, &vars);
+		
+		free(cstr_unit_entity);
+		free(cstr_property_entity);
 	}
-
-	unit_entity = probe_obj_getent(probe_in, "unit", 1);
-	property_entity = probe_obj_getent(probe_in, "property", 1);
-
-	struct unit_callback_vars vars;
-
-	vars.dbus_conn = dbus_conn;
-	vars.ctx = ctx;
-	vars.unit_entity = unit_entity;
-	vars.property_entity = property_entity;
-
-	get_all_systemd_units(dbus_conn, unit_callback, &vars);
 
 	SEXP_free(unit_entity);
 	SEXP_free(property_entity);
-	dbus_error_free(&dbus_error);
-	disconnect_dbus(dbus_conn);
 
 	return 0;
 }
