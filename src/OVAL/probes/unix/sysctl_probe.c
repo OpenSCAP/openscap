@@ -250,7 +250,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
                         if (fp != NULL)
                                 fclose(fp);
 
-                        item = probe_item_creat("sysctl_item", NULL, NULL);
+			item = probe_item_create(OVAL_UNIX_SYSCTL, NULL, NULL);
                         probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
                 add_item:
                         probe_item_collect(ctx, item);
