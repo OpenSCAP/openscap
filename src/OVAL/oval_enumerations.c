@@ -671,24 +671,6 @@ static const struct oscap_string_map *get_map_for_family(oval_family_t family)
 	return map;
 }
 
-static const struct oscap_string_map *oval_subtype_string_maps[] = {
-	OVAL_SUBTYPE_AIX_MAP,
-	OVAL_SUBTYPE_APACHE_MAP,
-	OVAL_SUBTYPE_CATOS_MAP,
-	OVAL_SUBTYPE_ESX_MAP,
-	OVAL_SUBTYPE_FREEBSD_MAP,
-	OVAL_SUBTYPE_HPUX_MAP,
-	OVAL_SUBTYPE_INDEPENDENT_MAP,
-	OVAL_SUBTYPE_IOS_MAP,
-	OVAL_SUBTYPE_LINUX_MAP,
-	OVAL_SUBTYPE_MACOS_MAP,
-	OVAL_SUBTYPE_PIXOS_MAP,
-	OVAL_SUBTYPE_SOLARIS_MAP,
-	OVAL_SUBTYPE_UNIX_MAP,
-	OVAL_SUBTYPE_WINDOWS_MAP,
-	NULL
-};
-
 oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 {
 	oval_family_t family = oval_family_parse(reader);
