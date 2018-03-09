@@ -1,32 +1,25 @@
-set (UNIX_PROBES_SOURCES
-	"dnscache_probe.c"
-	"dnscache_probe.h"
-	"file_probe.c"
-	"file_probe.h"
-	"fileextendedattribute_probe.c"
-	"fileextendedattribute_probe.h"
-	"interface_probe.c"
-	"interface_probe.h"
-	"password_probe.c"
-	"password_probe.h"
-	"process_probe.c"
-	"process_probe.h"
-	"routingtable_probe.c"
-	"routingtable_probe.h"
-	"runlevel_probe.c"
-	"runlevel_probe.h"
-	"shadow_probe.c"
-	"shadow_probe.h"
-	"symlink_probe.c"
-	"symlink_probe.h"
-	"sysctl_probe.c"
-	"sysctl_probe.h"
-	"uname_probe.c"
-	"uname_probe.h"
-	"xinetd_probe.c"
-	"xinetd_probe.h"
-)
-if(GCONF_FOUND)
+if(UNIX_DNSCACHE_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"dnscache_probe.c"
+		"dnscache_probe.h"
+	)
+endif()
+
+if(UNIX_FILE_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"file_probe.c"
+		"file_probe.h"
+	)
+endif()
+
+if(UNIX_FILEEXTENDEDATTRIBUTE_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"fileextendedattribute_probe.c"
+		"fileextendedattribute_probe.h"
+	)
+endif()
+
+if(UNIX_GCONF_PROBE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"gconf_probe.c"
 		"gconf_probe.h"
@@ -35,7 +28,29 @@ if(GCONF_FOUND)
 		${GCONF_INCLUDE_DIRS}
 	)
 endif()
-if(CAP_FOUND)
+
+if(UNIX_INTERFACE_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"interface_probe.c"
+		"interface_probe.h"
+	)
+endif()
+
+if(UNIX_PASSWORD_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"password_probe.c"
+		"password_probe.h"
+	)
+endif()
+
+if(UNIX_PROCESS_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"process_probe.c"
+		"process_probe.h"
+	)
+endif()
+
+if(UNIX_PROCESS58_PROBE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"process58_probe.c"
 		"process58_probe.h"
@@ -45,6 +60,55 @@ if(CAP_FOUND)
 	)
 	list(APPEND UNIX_PROBES_INCLUDE_DIRECTORIES
 		${CAP_INCLUDE_DIR}
+	)
+endif()
+
+if(UNIX_ROUTINGTABLE_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"routingtable_probe.c"
+		"routingtable_probe.h"
+	)
+endif()
+
+if(UNIX_RUNLEVEL_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"runlevel_probe.c"
+		"runlevel_probe.h"
+	)
+endif()
+
+if(UNIX_SHADOW_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"shadow_probe.c"
+		"shadow_probe.h"
+	)
+endif()
+
+if(UNIX_SYMLINK_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"symlink_probe.c"
+		"symlink_probe.h"
+	)
+endif()
+
+if(UNIX_SYSCTL_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"sysctl_probe.c"
+		"sysctl_probe.h"
+	)
+endif()
+
+if(UNIX_UNAME_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"uname_probe.c"
+		"uname_probe.h"
+	)
+endif()
+
+if(UNIX_XINETD_PROBE)
+	list(APPEND UNIX_PROBES_SOURCES
+		"xinetd_probe.c"
+		"xinetd_probe.h"
 	)
 endif()
 
