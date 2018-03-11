@@ -24,10 +24,7 @@
 #include <config.h>
 #endif
 
-#include <stdint.h>
-#include <stddef.h>
-#include <unistd.h>
-#include <errno.h>
+#include <stdlib.h>
 
 #include "_sexp-types.h"
 #include "_seap-types.h"
