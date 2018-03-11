@@ -188,8 +188,14 @@ void *probe_common_main(void *arg)
 	oval_subtype_t subtype = probe_argument->subtype;
 	probe.subtype = subtype;
 
-
+#if defined(HAVE_PTHREAD_SETNAME_NP)
+# if defined(__APPLE__)
+	pthread_setname_np("common_main");
+# else
 	pthread_setname_np(pthread_self(), "common_main");
+# endif
+#endif
+
 	dI("probe_common_main started");
 
 	const unsigned thread_count = 2; // input and icache threads
