@@ -1,25 +1,25 @@
-if(UNIX_DNSCACHE_PROBE)
+if(OPENSCAP_PROBE_UNIX_DNSCACHE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"dnscache_probe.c"
 		"dnscache_probe.h"
 	)
 endif()
 
-if(UNIX_FILE_PROBE)
+if(OPENSCAP_PROBE_UNIX_FILE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"file_probe.c"
 		"file_probe.h"
 	)
 endif()
 
-if(UNIX_FILEEXTENDEDATTRIBUTE_PROBE)
+if(OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"fileextendedattribute_probe.c"
 		"fileextendedattribute_probe.h"
 	)
 endif()
 
-if(UNIX_GCONF_PROBE)
+if(OPENSCAP_PROBE_UNIX_GCONF)
 	list(APPEND UNIX_PROBES_SOURCES
 		"gconf_probe.c"
 		"gconf_probe.h"
@@ -29,28 +29,28 @@ if(UNIX_GCONF_PROBE)
 	)
 endif()
 
-if(UNIX_INTERFACE_PROBE)
+if(OPENSCAP_PROBE_UNIX_INTERFACE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"interface_probe.c"
 		"interface_probe.h"
 	)
 endif()
 
-if(UNIX_PASSWORD_PROBE)
+if(OPENSCAP_PROBE_UNIX_PASSWORD)
 	list(APPEND UNIX_PROBES_SOURCES
 		"password_probe.c"
 		"password_probe.h"
 	)
 endif()
 
-if(UNIX_PROCESS_PROBE)
+if(OPENSCAP_PROBE_UNIX_PROCESS)
 	list(APPEND UNIX_PROBES_SOURCES
 		"process_probe.c"
 		"process_probe.h"
 	)
 endif()
 
-if(UNIX_PROCESS58_PROBE)
+if(OPENSCAP_PROBE_UNIX_PROCESS58)
 	list(APPEND UNIX_PROBES_SOURCES
 		"process58_probe.c"
 		"process58_probe.h"
@@ -63,49 +63,49 @@ if(UNIX_PROCESS58_PROBE)
 	)
 endif()
 
-if(UNIX_ROUTINGTABLE_PROBE)
+if(OPENSCAP_PROBE_UNIX_ROUTINGTABLE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"routingtable_probe.c"
 		"routingtable_probe.h"
 	)
 endif()
 
-if(UNIX_RUNLEVEL_PROBE)
+if(OPENSCAP_PROBE_UNIX_RUNLEVEL)
 	list(APPEND UNIX_PROBES_SOURCES
 		"runlevel_probe.c"
 		"runlevel_probe.h"
 	)
 endif()
 
-if(UNIX_SHADOW_PROBE)
+if(OPENSCAP_PROBE_UNIX_SHADOW)
 	list(APPEND UNIX_PROBES_SOURCES
 		"shadow_probe.c"
 		"shadow_probe.h"
 	)
 endif()
 
-if(UNIX_SYMLINK_PROBE)
+if(OPENSCAP_PROBE_UNIX_SYMLINK)
 	list(APPEND UNIX_PROBES_SOURCES
 		"symlink_probe.c"
 		"symlink_probe.h"
 	)
 endif()
 
-if(UNIX_SYSCTL_PROBE)
+if(OPENSCAP_PROBE_UNIX_SYSCTL)
 	list(APPEND UNIX_PROBES_SOURCES
 		"sysctl_probe.c"
 		"sysctl_probe.h"
 	)
 endif()
 
-if(UNIX_UNAME_PROBE)
+if(OPENSCAP_PROBE_UNIX_UNAME)
 	list(APPEND UNIX_PROBES_SOURCES
 		"uname_probe.c"
 		"uname_probe.h"
 	)
 endif()
 
-if(UNIX_XINETD_PROBE)
+if(OPENSCAP_PROBE_UNIX_XINETD)
 	list(APPEND UNIX_PROBES_SOURCES
 		"xinetd_probe.c"
 		"xinetd_probe.h"
