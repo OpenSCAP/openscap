@@ -75,7 +75,7 @@ SEXP_t *sch_queue_recvsexp(SEAP_desc_t *desc)
 	pthread_mutex_t *mutex;
 	pthread_cond_t *cond;
 	int *cnt;
-	if (pthread_self() == data->parent_thread_id) {
+	if (pthread_equal(pthread_self(), data->parent_thread_id)) {
 		queue = data->from_probe_queue;
 		mutex = &data->from_probe_mutex;
 		cond = &data->from_probe_cond;
@@ -103,7 +103,7 @@ ssize_t sch_queue_sendsexp(SEAP_desc_t *desc, SEXP_t *sexp, uint32_t flags)
 	pthread_mutex_t *mutex;
 	pthread_cond_t *cond;
 	int *cnt;
-	if (pthread_self() == data->parent_thread_id) {
+	if (pthread_equal(pthread_self(), data->parent_thread_id)) {
 		queue = data->to_probe_queue;
 		mutex = &data->to_probe_mutex;
 		cond = &data->to_probe_cond;
