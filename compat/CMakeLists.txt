@@ -1,10 +1,6 @@
 file(GLOB_RECURSE COMPAT_HEADERS "*.h")
 list(APPEND COMPAT_SOURCES "")
 
-if(NOT HAVE_FLOCK)
-	list(APPEND COMPAT_SOURCES "flock.c")
-endif()
-
 if(NOT HAVE_STRSEP)
 	list(APPEND COMPAT_SOURCES "strsep.c")
 endif()
