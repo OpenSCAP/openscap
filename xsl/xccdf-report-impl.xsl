@@ -710,6 +710,7 @@ Authors:
     <xsl:if test="$result != 'notselected'">
     <div class="panel panel-default rule-detail rule-detail-{$result} rule-detail-id-{$item/@id}" id="rule-detail-{generate-id($ruleresult)}">
         <div class="keywords sr-only">
+            <xsl:comment>This allows OpenSCAP JS to search the report rules</xsl:comment>
             <xsl:call-template name="item-title">
                 <xsl:with-param name="item" select="$item"/>
                 <xsl:with-param name="testresult" select="$testresult"/>
