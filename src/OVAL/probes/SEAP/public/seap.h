@@ -65,7 +65,7 @@ OSCAP_API int     SEAP_close (SEAP_CTX_t *ctx, int sd);
 
 OSCAP_API int SEAP_openfd (SEAP_CTX_t *ctx, int fd, uint32_t flags);
 OSCAP_API int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags);
-OSCAP_API int SEAP_add_probe (SEAP_CTX_t *ctx, sch_queuedata_t *data);
+OSCAP_API int SEAP_add_probe(SEAP_CTX_t *ctx, sch_queuedata_t *data);
 
 OSCAP_API SEAP_msg_t *SEAP_msg_new (void);
 OSCAP_API void        SEAP_msg_free (SEAP_msg_t *msg);
