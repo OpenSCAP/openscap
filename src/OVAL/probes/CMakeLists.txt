@@ -1,6 +1,9 @@
 add_subdirectory("SEAP")
-add_subdirectory("crapi")
 add_subdirectory("probe")
+
+if(CRYPTO_FOUND)
+	add_subdirectory("crapi")
+endif()
 
 include_directories("." "public")
 
