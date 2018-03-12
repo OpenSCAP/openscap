@@ -597,32 +597,6 @@ Authors:
     <div id="guide-tree">
         <h2>Checklist</h2>
      
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search through the guide" id="search-input" oninput="ruleSearch()"/>
-
-                    <div class="input-group-btn">
-                         <button class="btn btn-default" onclick="ruleSearch()">Search</button>
-                    </div>
-                </div>
-                <p id="search-matches"></p>
-            </div>
-
-            <div class="col-sm-6">
-                Group rules by:
-                <select name="groupby" onchange="groupRulesBy(value)">
-                    <option value="default" selected="selected">Default</option>
-                    <option value="severity">Severity</option>
-                    <option value="result">Result</option>
-                    <option disabled="disabled">──────────</option>
-                    <xsl:call-template name="get-all-references">
-                        <xsl:with-param name="benchmark" select="$benchmark"/>
-                    </xsl:call-template>
-                 </select>
-            </div>
-        </div>
-
         <table class="treetable table table-bordered">
             <tbody>
                 <xsl:call-template name="guide-tree-inner-node">
@@ -632,8 +606,6 @@ Authors:
                 </xsl:call-template>
             </tbody>
         </table>
-
-        <a href="#guide-tree"><button type="button" class="btn btn-secondary">Scroll back to the start of the checklist</button></a>
     </div>
 </xsl:template>
 
