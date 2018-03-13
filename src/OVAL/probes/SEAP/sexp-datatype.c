@@ -117,14 +117,6 @@ SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datat
 
         SEXP_datatype_once();
 
-        /*
-         * Check whether flags & passed values are meaningful
-         */
-        if (l != NULL && (d->dt_flg & SEXP_DTFLG_LOCALDATA) == 0) {
-                errno = EINVAL;
-                return(NULL);
-        }
-
         if (rbt_str_add(t->tree, n, d) != 0)
                 return(NULL);
         /*
