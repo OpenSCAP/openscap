@@ -106,7 +106,7 @@ SEXP_datatypePtr_t *SEXP_datatype_get (SEXP_datatypeTbl_t *t, const char *k)
         return((SEXP_datatypePtr_t *)n);
 }
 
-SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datatype_t *d, void *l)
+SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n)
 {
         void *r;
         struct rbt_str_node *node = NULL;
@@ -117,7 +117,7 @@ SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datat
 
         SEXP_datatype_once();
 
-        if (rbt_str_add(t->tree, n, d) != 0)
+	if (rbt_str_add(t->tree, n, NULL) != 0)
                 return(NULL);
         /*
          * XXX: consider adding a version of rbt_str_add that returns

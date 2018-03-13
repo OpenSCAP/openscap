@@ -73,7 +73,7 @@ int SEXP_datatypeTbl_init(SEXP_datatypeTbl_t *t);
 void SEXP_datatypeTbl_free(SEXP_datatypeTbl_t *t);
 
 SEXP_datatypePtr_t *SEXP_datatype_get(SEXP_datatypeTbl_t *t, const char *name);
-SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *name, SEXP_datatype_t *d, void *l);
+SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *name);
 int SEXP_datatype_del(SEXP_datatypeTbl_t *t, const char *name);
 
 #define SEXP_OP_CONTINUE 0 /* continue with the default handler */

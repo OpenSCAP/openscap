@@ -1898,7 +1898,7 @@ int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
         if (t == NULL) {
                 char *k = strdup(name);
 
-                t = SEXP_datatype_add (&g_datatypes, k, NULL, NULL);
+		t = SEXP_datatype_add(&g_datatypes, k);
 
                 if (t == NULL) {
                         sm_free(k);
@@ -1928,7 +1928,7 @@ int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
         if (t == NULL) {
                 char *k = strdup(name);
 
-                t = SEXP_datatype_add (&g_datatypes, k, NULL, NULL);
+		t = SEXP_datatype_add(&g_datatypes, k);
 
                 if (t == NULL) {
                         sm_free(k);
