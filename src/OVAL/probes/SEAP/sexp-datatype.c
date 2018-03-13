@@ -156,35 +156,6 @@ SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datat
         if (rbt_str_getnode(t->tree, n, &node) != 0)
                 return(NULL);
 
-        if (d != NULL) {
-                /*
-                 * If DTFLG_LOCALDATA is set, allocate a new extended pointer
-                 * and return it with `l' set as the local data pointer.
-                 */
-                if (d->dt_flg & SEXP_DTFLG_LOCALDATA) {
-                        struct SEXP_datatype_extptr *eptr = NULL;
-
-                        /*
-                         * Ensure that we can use the lowest bit for the extended
-                         * pointer flag. In the case we are returning the "normal"
-                         * pointer, the memory is already aligned because it's a
-                         * pointer into a red-black tree node + 2*sizeof(void *)
-                         * offset. The red-black tree implmentation allocates nodes
-                         * aligned to sizeof(void *) bytes.
-                         */
-                        if (posix_memalign((void **)(void *)(&eptr), SEXP_DATATYPEPTR_ALIGN,
-                                           sizeof(struct SEXP_datatype_extptr)) != 0)
-                        {
-                                return(NULL);
-                        }
-
-                        eptr->n = node;
-                        eptr->l = l;
-
-                        r = (void *)((uintptr_t)(eptr)|1);
-                } else
-                        r = node;
-        } else
                 r = node;
 
         return((SEXP_datatypePtr_t *)r);
