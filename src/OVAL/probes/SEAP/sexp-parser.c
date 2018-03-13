@@ -1981,7 +1981,7 @@ found:
                         if (name == name_static)
                                 name = strdup(name);
 
-                        dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, name, NULL, NULL);
+			dsc->s_exp->s_type = SEXP_datatype_add(&g_datatypes, name);
 
                         if (dsc->s_exp->s_type == NULL) {
                                 sm_free(name);
@@ -2023,7 +2023,7 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
                 if (name == name_static)
                         name = strdup(name);
 
-                dsc->s_exp->s_type = SEXP_datatype_add (&g_datatypes, name, NULL, NULL);
+			dsc->s_exp->s_type = SEXP_datatype_add(&g_datatypes, name);
 
                 if (dsc->s_exp->s_type == NULL) {
                         sm_free(name);
