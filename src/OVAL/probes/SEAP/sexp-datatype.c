@@ -93,7 +93,6 @@ void SEXP_datatypeGlobalTbl_free(void)
 SEXP_datatypePtr_t *SEXP_datatype_get (SEXP_datatypeTbl_t *t, const char *k)
 {
         struct rbt_str_node *n = NULL;
-        SEXP_datatype_t *d;
 
 	if (t == NULL || k == NULL) {
 		return NULL;
@@ -103,26 +102,6 @@ SEXP_datatypePtr_t *SEXP_datatype_get (SEXP_datatypeTbl_t *t, const char *k)
 
         if (rbt_str_getnode(t->tree, k, &n) != 0)
                 return(NULL);
-
-        d = (SEXP_datatype_t *)(n->data);
-
-        if (d != NULL) {
-                if (d->dt_flg & SEXP_DTFLG_LOCALDATA) {
-                        struct SEXP_datatype_extptr *eptr = NULL;
-
-                        /* See comment in SEXP_datatype_add */
-                        if (posix_memalign((void **)(void *)(&eptr), SEXP_DATATYPEPTR_ALIGN,
-                                           sizeof(struct SEXP_datatype_extptr)) != 0)
-                        {
-                                return(NULL);
-                        }
-
-                        eptr->n = n;
-                        eptr->l = NULL;
-
-                        return(SEXP_datatypePtr_t *)((uintptr_t)(eptr)|1);
-                }
-        }
 
         return((SEXP_datatypePtr_t *)n);
 }
