@@ -135,7 +135,7 @@ SEXP_datatypePtr_t *SEXP_datatype_add(SEXP_datatypeTbl_t *t, char *n, SEXP_datat
         if (rbt_str_getnode(t->tree, n, &node) != 0)
                 return(NULL);
 
-                r = node;
+	r = node;
 
         return((SEXP_datatypePtr_t *)r);
 }
