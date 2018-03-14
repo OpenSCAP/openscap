@@ -588,7 +588,7 @@ static int _write_fix_footer_to_fd(const char *sys, int output_fd, struct xccdf_
 static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule)
 {
 	if (oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands")) {
-		char *fix_footer = oscap_sprintf("# FIX FOR THIS RULE IS MISSING\n");
+		char *fix_footer = oscap_sprintf("(>&2 echo \"FIX FOR THIS RULE '%s' IS MISSING!\")\n", xccdf_rule_get_id(rule));
 		return _write_text_to_fd_and_free(output_fd, fix_footer);
 	} else {
 		return 0;
@@ -656,9 +656,12 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 			}
 		}
 		else {
-			char *remediation_part = malloc((ovector[0] + 1) * sizeof(char));
-			memcpy(remediation_part, &fix_text[start_offset], ovector[0]);
-			remediation_part[ovector[0]] = '\0';
+			// Remarks: ovector doesn't contain values relative to start_offset, it contains
+			// absolute indices of fix_text.
+			const int length_between_matches = ovector[0] - start_offset;
+			char *remediation_part = malloc((length_between_matches + 1) * sizeof(char));
+			memcpy(remediation_part, &fix_text[start_offset], length_between_matches);
+			remediation_part[length_between_matches] = '\0';
 			if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
 				pcre_free(re);
 				return 1;

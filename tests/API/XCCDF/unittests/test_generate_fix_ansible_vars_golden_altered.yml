@@ -1,0 +1,25 @@
+---
+ - hosts: all
+   vars:
+      www_value_val1: 0
+      www_value_val3: "dummy value"
+      www_value_val2: 50
+   tasks:
+    - name: default1
+      lineinfile:
+        dest: /foo/bar
+        regexp: "^bar *[0-9]*"
+        state: present
+        line: "bar {{ www_value_val1 }}"
+      tags:
+        - foo
+        - bar
+    - name: default2
+      lineinfile:
+        dest: /foo/baz
+        regexp: "^baz *[0-9]*"
+        state: present
+        line: "baz {{ www_value_val2 }}"
+      tags:
+        - foo
+        - baz

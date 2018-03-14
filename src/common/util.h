@@ -374,6 +374,12 @@ char *oscap_expand_ipv6(const char *input);
 # define OSCAP_CONCAT(a,b) OSCAP_CONCAT1(a,b)
 #endif
 
+/**
+ * Mark global symbols.
+ * This macro can be used to wrap global variables and helps distinguish
+ * global variables and local varibles.
+ * It adds '___G_' prefix to variable name.
+ */
 #define OSCAP_GSYM(s) OSCAP_CONCAT(___G_, s)
 
 #define protect_errno                                                   \

@@ -626,7 +626,7 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 
 	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
 	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *endptr = strrchr(tagname, '_');
+	char *endptr = (tagname != NULL) ? strrchr(tagname, '_') : NULL;
 	if (endptr == NULL)
 		goto cleanup;
 	*endptr = '\0';
@@ -679,13 +679,9 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 		goto cleanup;
 	}
 
-	int subtype_s = oscap_string_to_enum(map, tagname);
-	if (subtype < 0) {
+	subtype = oscap_string_to_enum(map, tagname);
+	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
 		dW("Unknown OVAL family subtype: %s", tagname);
-		subtype = OVAL_ENUMERATION_INVALID;
-	}
-	else {
-		subtype = subtype_s;
 	}
 
  cleanup:
