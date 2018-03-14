@@ -2082,14 +2082,22 @@ static int __SEXP_VALIDATE_cb (SEXP_t *s_exp, __dbginf_t *info)
 
 void __SEXP_VALIDATE(const SEXP_t *s_exp, const char *file, uint32_t line, const char *func)
 {
+	static bool sexp_validate_disabled = false;
+	static bool sexp_validate_initialized = false;
+
+	if (!sexp_validate_initialized) {
+		sexp_validate_disabled = getenv("SEXP_VALIDATE_DISABLE") != NULL;
+		sexp_validate_initialized = true;
+	}
+
         SEXP_val_t v_dsc;
 
 #ifdef SEXP_VALIDATE_DEBUG
         dI("VALIDATE: s_exp=%p (%s:%u:%s)", s_exp, file, line, func);
 #endif
 
-        if (getenv ("SEXP_VALIDATE_DISABLE") != NULL)
-                return;
+	if (sexp_validate_disabled)
+		return;
 
         if (s_exp == NULL) abort ();
         if (s_exp->__magic0 != SEXP_MAGIC0) abort ();
