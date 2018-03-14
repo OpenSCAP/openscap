@@ -63,10 +63,10 @@ typedef SSIZE_T ssize_t;
 #define required_argument	1
 #define optional_argument	2
 
-char *optarg;
-int optind;
-int opterr;
-int optopt;
+OSCAP_API extern char *optarg;
+OSCAP_API extern int optind;
+OSCAP_API extern int opterr;
+OSCAP_API extern int optopt;
 
 struct option
 {
