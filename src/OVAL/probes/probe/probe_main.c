@@ -247,6 +247,7 @@ void *probe_common_main(void *arg)
 	OSCAP_GSYM(probe_optdef) = probe.option;
 	OSCAP_GSYM(probe_optdef_count) = probe.optcnt;
 
+#ifndef _WIN32
 	probe_offline_mode_function_t offline_mode_function = probe_table_get_offline_mode_function(probe.subtype);
 	if (offline_mode_function != NULL) {
 		probe.supported_offline_mode = offline_mode_function();
@@ -290,6 +291,7 @@ void *probe_common_main(void *arg)
 		dI("Swiching probe to PROBE_OFFLINE_RPMDB mode.");
 		probe.selected_offline_mode = PROBE_OFFLINE_RPMDB;
 	}
+#endif
 
 	/*
 	 * Create input handler (detached)
