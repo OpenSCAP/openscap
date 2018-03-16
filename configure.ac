@@ -289,44 +289,27 @@ AC_FUNC_REALLOC
 
 AM_CHECK_PYTHON_HEADERS
 
-#
-# threads
-#
-pthread_CFLAGS=error
-pthread_LIBS=error
-SAVE_LIBS=$LIBS
+# Check for pthreads support: http://git.savannah.gnu.org/gitweb/?p=autoconf-archive.git;a=blob_plain;f=m4/ax_pthread.m4
+AX_PTHREAD()
 
-if test "x$pthread_LIBS" = "xerror"; then
-   AC_CHECK_LIB(c_r, pthread_attr_init, [
-                     pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE -pthread"
-                     pthread_LIBS="-pthread -lrt" ])
-fi
-
-if test "x$pthread_LIBS" = "xerror"; then
-   AC_CHECK_LIB(pthread, pthread_attr_init, [
-                         pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_REENTRANT -D_POSIX_PTHREAD_SEMANTICS"
-                         pthread_LIBS="-lpthread -lrt" ])
-fi
-
-if test "x$pthread_LIBS" = "xerror"; then
-   AC_CHECK_LIB(pthreads, pthread_attr_init, [
-                          pthread_CFLAGS="-DOSCAP_THREAD_SAFE -D_THREAD_SAFE"
-                          pthread_LIBS="-lpthreads -lrt" ])
-fi
-
-if test "x$pthread_LIBS" = "xerror"; then
+if test "x$ax_pthread_ok" != "xyes"; then
    AC_MSG_FAILURE(pthread library is missing)
 fi
 
+SAVE_LIBS=$LIBS
 SAVE_CFLAGS=$CFLAGS
-CFLAGS="$CFLAGS -D_GNU_SOURCE"
-LIBS="$pthread_LIBS"
-AC_CHECK_FUNCS([pthread_timedjoin_np pthread_setname_np pthread_getname_np clock_gettime])
-CFLAGS=$SAVE_CFLAGS
 
+CFLAGS="$CFLAGS -D_GNU_SOURCE"
+LIBS="$PTHREAD_LIBS"
+
+AC_CHECK_FUNCS([pthread_timedjoin_np pthread_setname_np pthread_getname_np clock_gettime])
+
+CFLAGS=$SAVE_CFLAGS
 LIBS=$SAVE_LIBS
-AC_SUBST(pthread_CFLAGS)
-AC_SUBST(pthread_LIBS)
+
+AC_SUBST([PTHREAD_CFLAGS])
+AC_SUBST([PTHREAD_LIBS])
+
 
 PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],
                           AC_MSG_FAILURE([libcurl devel support is missing]))

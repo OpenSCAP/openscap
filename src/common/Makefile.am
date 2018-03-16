@@ -32,7 +32,7 @@ liboscapcommon_la_CPPFLAGS  = \
 
 liboscapcommon_la_LIBADD = \
 	@curl_LIBS@ \
-	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @pthread_LIBS@
+	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @PTHREAD_LIBS@
 
 pkginclude_HEADERS =\
 	public/oscap_debug.h \

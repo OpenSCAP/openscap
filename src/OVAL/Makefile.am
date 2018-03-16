@@ -95,7 +95,7 @@ common_oval_sources = \
 # -I options go to CPPFLAGS, not CFLAGS
 # lets build one common for both normal and probe sources (does it mind?)
 AM_CPPFLAGS =	@xml2_CFLAGS@ \
-		@pthread_CFLAGS@ \
+		@PTHREAD_CFLAGS@ \
 		@pcre_CFLAGS@ \
 		@rpm_CFLAGS@ \
 		-I$(srcdir)/public \
@@ -117,7 +117,7 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 
 # -l or -L options go to LIBADD (or LDADD), not to LDFLAGS
 liboval_la_LIBADD =	@xml2_LIBS@ \
-			@pthread_LIBS@ \
+			@PTHREAD_LIBS@ \
 			@pcre_LIBS@ \
 			@rpm_LIBS@
 liboval_testing_la_LIBADD = $(liboval_la_LIBADD)

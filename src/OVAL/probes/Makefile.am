@@ -3,7 +3,7 @@ SUBDIRS= probe crapi
 pkglibexecdir= $(libexecdir)/openscap
 pkglibexec_PROGRAMS=
 
-CFLAGS +=	@xml2_CFLAGS@ @pthread_CFLAGS@ @pcre_CFLAGS@	\
+CFLAGS +=	@xml2_CFLAGS@ @PTHREAD_CFLAGS@ @pcre_CFLAGS@	\
 		-DTHREAD_SAFE -DSEAP_THREAD_SAFE		\
 		-I$(top_srcdir)/src				\
 		-I$(top_srcdir)/src/common 			\
