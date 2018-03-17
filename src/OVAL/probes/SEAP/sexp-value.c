@@ -33,13 +33,7 @@
 
 int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
 {
-        void *s_val;
-
-        if (sm_memalign (&s_val, SEXP_VALP_ALIGN,
-                         sizeof (SEXP_valhdr_t) + vmemsize) != 0)
-        {
-                return (-1);
-        }
+	void *s_val = oscap_aligned_malloc(sizeof(SEXP_valhdr_t) + vmemsize, SEXP_VALP_ALIGN);
 
         SEXP_val_dsc (dst, (uintptr_t) s_val);
 
