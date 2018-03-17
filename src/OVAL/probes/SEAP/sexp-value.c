@@ -104,16 +104,12 @@ size_t SEXP_rawval_list_length (struct SEXP_val_list *list)
 
 uintptr_t SEXP_rawval_lblk_new (uint8_t sz)
 {
-        struct SEXP_val_lblk *lblk;
-
         _A(sz < 16);
 
-        if (sm_memalign ((void **)(void *)&lblk, SEXP_LBLK_ALIGN,
-                         sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + (sizeof (SEXP_t) * (1 << sz))) != 0) {
-                /* TODO: handle this */
-                abort ();
-                return ((uintptr_t) NULL);
-        }
+	struct SEXP_val_lblk *lblk = oscap_aligned_malloc(
+		sizeof(uintptr_t) + (2 * sizeof(uint16_t)) + (sizeof(SEXP_t) * (1 << sz)),
+		SEXP_LBLK_ALIGN
+	);
 
         lblk->nxsz = ((uintptr_t)(NULL) & SEXP_LBLKP_MASK) | ((uintptr_t)sz & SEXP_LBLKS_MASK);
         lblk->refs = 1;
