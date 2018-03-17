@@ -519,7 +519,7 @@ void SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *))
                         func (lblk->memb + lblk->real);
                 }
 
-                sm_free (lblk);
+		oscap_aligned_free(lblk);
 
                 if (next != NULL)
                         SEXP_rawval_lblk_free ((uintptr_t)next, func);
@@ -540,7 +540,7 @@ void SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *))
                         func (lblk->memb + lblk->real);
                 }
 
-                sm_free (lblk);
+		oscap_aligned_free(lblk);
         }
 
         return;
