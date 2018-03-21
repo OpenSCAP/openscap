@@ -565,9 +565,12 @@ dnl
 dnl $1: Python major version
 m4_define([_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER],
 	[AS_IF([test "$HAVE_PYTHON$1" = yes],
-		[PYTHON_CHECK_FOR_INSTALLED_MODULE(
+		[AC_MSG_CHECKING([whether ${PYTHON$1} can import Atomic])
+		 PYTHON_CHECK_FOR_INSTALLED_MODULE(
 			[${PYTHON$1}], [Atomic],
-			[preferred_python="${PYTHON$1}"])])])
+			[AC_MSG_RESULT([yes])
+			 preferred_python="${PYTHON$1}"],
+			 AC_MSG_RESULT([no]))])])
 
 AM_PATH_PYTHON_OF_MAJOR_VERSION([2], [2.6], [HAVE_PYTHON2=yes], [HAVE_PYTHON2=no])
 AM_PATH_PYTHON_OF_MAJOR_VERSION([3], [3.4], [HAVE_PYTHON3=yes], [HAVE_PYTHON3=no])
@@ -575,20 +578,24 @@ AM_PATH_PYTHON_OF_MAJOR_VERSION([3], [3.4], [HAVE_PYTHON3=yes], [HAVE_PYTHON3=no
 EVALUATE_PYTHON_CHECK_RESULT(3)
 EVALUATE_PYTHON_CHECK_RESULT(2)
 
-preferred_python=:
-
-_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(2)
-_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(3)
-
-AS_IF([test "$preferred_python" = :],
-	  [AC_MSG_ERROR([Couldnt detect preferred python interpreter for oscap-docker. Install an interpreter and make sure it can import the 'Atomic' module.])])
-
 # Just to have PYTHON defined so Automake doesn't freak out.
 # Therefore, we define it to one of available interpreters in favor of Python 3
 PYTHON=:
 test "x$HAVE_PYTHON2" = xyes && PYTHON="$PYTHON2"
 test "x$HAVE_PYTHON3" = xyes && PYTHON="$PYTHON3"
 AC_SUBST([PYTHON])
+
+preferred_python=:
+
+AS_IF([test "x$util_oscap_docker" = xyes],
+	[_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(2)
+	_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(3)
+	AS_IF([test "$preferred_python" = :],
+		[AS_IF([test "$PYTHON" != :],
+			[AC_MSG_NOTICE([Couldnt detect preferred python interpreter for oscap-docker. If you can, make sure one can import the 'Atomic' module and re-run the configure script.])
+			AC_MSG_NOTICE([Setting the oscap-docker python to '$PYTHON'.])
+			preferred_python="$PYTHON"],
+			[AC_MSG_ERROR([Not found a working Python interpreter and oscap-docker needs it. Aborting, as oscap-docker has been requested.])])])])
 
 # oscap-docker determine python dir on default python version
 OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
