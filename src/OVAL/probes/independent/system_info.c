@@ -620,10 +620,9 @@ fail:
 	return ret;
 }
 
-void *probe_init(void)
+void probe_offline_mode(void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
-	return NULL;
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 }
 
 int probe_main(probe_ctx *ctx, void *arg)
