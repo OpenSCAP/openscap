@@ -353,7 +353,7 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
-static char * _offline_chroot_get_menuentry(int entry_num)
+static char *_offline_chroot_get_menuentry(const char *oscap_probe_root, int entry_num)
 {
 	FILE *fp;
 	char *ret = NULL;
@@ -361,7 +361,17 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 	int rc = PCRE_ERROR_NOMATCH;
 	int len;
 
-	fp = fopen("/boot/grub2/grub.cfg", "r");
+	const char *grubcfg_path = "/boot/grub2/grub.cfg";
+	if (oscap_probe_root != NULL) {
+		char grubcfg_path_with_root[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
+		size_t oscap_probe_root_len = strlen(oscap_probe_root);
+		strncpy(grubcfg_path_with_root, oscap_probe_root, PATH_MAX);
+		strncpy(grubcfg_path_with_root + oscap_probe_root_len, grubcfg_path, PATH_MAX - oscap_probe_root_len);
+		fp = fopen(grubcfg_path_with_root, "r");
+	} else {
+		fp = fopen(grubcfg_path, "r");
+	}
+
 	if (fp == NULL)
 		goto fail;
 
@@ -507,14 +517,24 @@ fail2:
 #endif
 }
 
-static char * _offline_chroot_get_os_name(void)
+static char *_offline_chroot_get_os_name(const char *oscap_probe_root)
 {
 	FILE *fp;
 	int rc;
 	char saved_entry[MAX_BUFFER_SIZE+1];
 	char *ptr, *ret = NULL;
 
-	fp = fopen("/boot/grub2/grubenv", "r");
+	const char *grubenv_path = "/boot/grub2/grubenv";
+	if (oscap_probe_root != NULL) {
+		char grubenv_path_with_root[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
+		size_t oscap_probe_root_len = strlen(oscap_probe_root);
+		strncpy(grubenv_path_with_root, oscap_probe_root, PATH_MAX);
+		strncpy(grubenv_path_with_root + oscap_probe_root_len, grubenv_path, PATH_MAX - oscap_probe_root_len);
+		fp = fopen(grubenv_path_with_root, "r");
+	} else {
+		fp = fopen(grubenv_path, "r");
+	}
+
 	if (fp == NULL)
 		goto fail;
 
@@ -540,7 +560,7 @@ static char * _offline_chroot_get_os_name(void)
 		saved_entry[ovec[1]] = '\0';
 		ptr = saved_entry + ovec[0];
 		int nr = atoi(ptr);
-		ret = _offline_chroot_get_menuentry(nr);
+		ret = _offline_chroot_get_menuentry(oscap_probe_root, nr);
 		pcre_free(re);
 		goto finish;
 	}
@@ -584,7 +604,7 @@ static char * _offline_chroot_get_os_name(void)
 
 	if (ret == NULL) { // Saved entry is all digits, so we need to inspect grub.cfg
 		int nr = atoi(ptr);
-		ret = _offline_chroot_get_menuentry(nr);
+		ret = _offline_chroot_get_menuentry(oscap_probe_root, nr);
 	}
 
 	regfree(&preg);
@@ -595,14 +615,24 @@ fail:
 	return ret;
 }
 
-static char * _offline_chroot_get_hname(void)
+static char *_offline_chroot_get_hname(const char *oscap_probe_root)
 {
 	FILE *fp;
 	char hname[HOST_NAME_MAX+1] = { '\0' };
 	char *ret = NULL;
 	int rc;
 
-	fp = fopen("/etc/hostname", "r");
+	const char *hostname_path = "/etc/hostname";
+	if (oscap_probe_root != NULL) {
+		char hostname_path_with_root[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
+		size_t oscap_probe_root_len = strlen(oscap_probe_root);
+		strncpy(hostname_path_with_root, oscap_probe_root, PATH_MAX);
+		strncpy(hostname_path_with_root + oscap_probe_root_len, hostname_path, PATH_MAX - oscap_probe_root_len);
+		fp = fopen(hostname_path_with_root, "r");
+	} else {
+		fp = fopen(hostname_path, "r");
+	}
+
 	if (fp == NULL)
 		goto fail;
 
@@ -622,7 +652,7 @@ fail:
 
 void probe_offline_mode(void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN);
 }
 
 int probe_main(probe_ctx *ctx, void *arg)
@@ -646,11 +676,12 @@ int probe_main(probe_ctx *ctx, void *arg)
 			architecture = strdup(sname.machine);
 			hname = strdup(sname.nodename);
 		}
-	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
-		os_name = _offline_chroot_get_os_name();
+	} else if (offline_mode & PROBE_OFFLINE_OWN) {
+		const char *oscap_probe_root = getenv("OSCAP_PROBE_ROOT");
+		os_name = _offline_chroot_get_os_name(oscap_probe_root);
 		os_version = _offline_chroot_get_os_version(os_name);
 		architecture = _offline_chroot_get_arch(os_version);
-		hname = _offline_chroot_get_hname();
+		hname = _offline_chroot_get_hname(oscap_probe_root);
 	}
 
 	/* All four elements are required */
