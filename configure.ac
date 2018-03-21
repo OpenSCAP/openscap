@@ -1316,6 +1316,8 @@ AS_IF([test "x$util_oscap_docker" = xyes],
 
 # oscap-docker determine python dir on default python version
 OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
+# oscap-docker uses preferred_python substitution
+AC_SUBST([preferred_python])
 AC_SUBST(oscapdocker_pythondir, $OSCAPDOCKER_PYTHONDIR)
 
 
