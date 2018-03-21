@@ -68,7 +68,7 @@ import sys
 # split strings by '.' and convert to numeric.  Append some zeros
 # because we need at least 4 digits for the hex conversion.
 # map returns an iterator in Python 3.0 and a list in 2.x
-]m4_ifnblank([$1], [[# Check that the major Python version is OK
+]m4_if([$1], , , [[# Check that the major Python version is OK
 if sys.version_info[0] != int($1): sys.exit($2)]])[
 minver = list(map(int, '$3'.split('.'))) + [0, 0, 0]
 minverhex = 0
@@ -252,7 +252,7 @@ AC_DEFUN([AM_PYTHON_CHECK_VERSION],
 	AM_RUN_LOG([$1 -c "$prog"])
 	AS_IF(
 		[test "$ac_status" = 0], [$4],
-		m4_ifnblank([$2], [[test "$ac_status" = _PYTHON_MAJOR_VERSION_MISMATCH_CODE], m4_default_quoted([$5], [$6]),])
+		m4_if([$2], , , [[test "$ac_status" = _PYTHON_MAJOR_VERSION_MISMATCH_CODE], m4_default([$5], [[$6]]),])
 		[test "$ac_status" = _PYTHON_GENERAL_VERSION_MISMATCH_CODE], [$6],
 		[$7])
 ])

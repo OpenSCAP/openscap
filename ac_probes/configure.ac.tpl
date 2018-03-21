@@ -536,7 +536,7 @@ dnl python_bind can be set either to yes, no or auto. It will be set to yes or n
 dnl
 dnl $1: Python major version
 m4_define([EVALUATE_PYTHON_CHECK_RESULT],
-	[m4_ifblank([$1], [m4_fatal([The $0 macro needs Python major version as its first argument.])])
+	[m4_if([$1], , [m4_fatal([The $0 macro needs Python major version as its first argument.])])
 	AS_IF([test "x${python$1_bind}" = xyes && test "x$HAVE_PYTHON$1" = xno],
 		[python$1_bind=no
 		TELL_PYTHON_NOT_PRESENT([$1], [AC_MSG_ERROR])],
@@ -569,7 +569,7 @@ m4_define([_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER],
 			[${PYTHON$1}], [Atomic],
 			[preferred_python="${PYTHON$1}"])])])
 
-AM_PATH_PYTHON_OF_MAJOR_VERSION([2], [2.7], [HAVE_PYTHON2=yes], [HAVE_PYTHON2=no])
+AM_PATH_PYTHON_OF_MAJOR_VERSION([2], [2.6], [HAVE_PYTHON2=yes], [HAVE_PYTHON2=no])
 AM_PATH_PYTHON_OF_MAJOR_VERSION([3], [3.4], [HAVE_PYTHON3=yes], [HAVE_PYTHON3=no])
 
 EVALUATE_PYTHON_CHECK_RESULT(3)
@@ -583,6 +583,12 @@ _ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(3)
 AS_IF([test "$preferred_python" = :],
 	  [AC_MSG_ERROR([Couldnt detect preferred python interpreter for oscap-docker. Install an interpreter and make sure it can import the 'Atomic' module.])])
 
+# Just to have PYTHON defined so Automake doesn't freak out.
+# Therefore, we define it to one of available interpreters in favor of Python 3
+PYTHON=:
+test "x$HAVE_PYTHON2" = xyes && PYTHON="$PYTHON2"
+test "x$HAVE_PYTHON3" = xyes && PYTHON="$PYTHON3"
+AC_SUBST([PYTHON])
 
 # oscap-docker determine python dir on default python version
 OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
