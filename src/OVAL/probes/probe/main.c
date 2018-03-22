@@ -271,7 +271,8 @@ int main(int argc, char *argv[])
 
 	pthread_attr_destroy(&th_attr);
 
-	probe_offline_mode();
+	int supported_mode_flags = probe_offline_mode_supported();
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, supported_mode_flags);
 
 	/*
 	 * Setup offline mode(s)

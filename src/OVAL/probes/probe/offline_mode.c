@@ -1,6 +1,6 @@
 /**
  * @file   offline_mode.c
- * @brief  file containg the dummy probe_offline_mode function
+ * @brief  file containg the dummy probe_offline_mode_supported function
  */
 
 /*
@@ -28,11 +28,13 @@
 #endif
 
 #include <probe-api.h>
+#include "probe.h"
 
 /**
  * In this function can be set supported type of offline mode
  */
-void probe_offline_mode(void)
+int probe_offline_mode_supported(void)
 {
-	return;
+	/* Default value is that probe doesn't support any offline mode. */
+	return PROBE_OFFLINE_NONE;
 }

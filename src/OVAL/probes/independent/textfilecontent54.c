@@ -347,9 +347,9 @@ static int process_file(const char *path, const char *file, void *arg)
 	return ret;
 }
 
-void probe_offline_mode ()
+int probe_offline_mode_supported()
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN);
+	return PROBE_OFFLINE_OWN;
 }
 
 void *probe_init(void)

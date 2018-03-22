@@ -33,9 +33,9 @@
 
 #include <probe-api.h>
 
-void probe_offline_mode(void)
+int probe_offline_mode_supported(void)
 {
-	return;
+	return PROBE_OFFLINE_NONE;
 }
 
 void probe_preload()
