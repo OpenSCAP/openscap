@@ -353,7 +353,7 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
-static char *_offline_chroot_get_menuentry(const char *oscap_probe_root, int entry_num)
+static char *_offline_get_menuentry(const char *oscap_probe_root, int entry_num)
 {
 	FILE *fp;
 	char *ret = NULL;
@@ -447,7 +447,7 @@ fail:
 	return ret;
 }
 
-static const char * _offline_chroot_get_os_version(char *os)
+static const char * _offline_get_os_version(char *os)
 {
 	char *ptr;
 
@@ -461,7 +461,7 @@ static const char * _offline_chroot_get_os_version(char *os)
 	return ptr;
 }
 
-static char * _offline_chroot_get_arch(const char *os)
+static char * _offline_get_arch(const char *os)
 {
 	int rc;
 	char *ptr = NULL;
@@ -517,7 +517,7 @@ fail2:
 #endif
 }
 
-static char *_offline_chroot_get_os_name(const char *oscap_probe_root)
+static char *_offline_get_os_name(const char *oscap_probe_root)
 {
 	FILE *fp;
 	int rc;
@@ -560,7 +560,7 @@ static char *_offline_chroot_get_os_name(const char *oscap_probe_root)
 		saved_entry[ovec[1]] = '\0';
 		ptr = saved_entry + ovec[0];
 		int nr = atoi(ptr);
-		ret = _offline_chroot_get_menuentry(oscap_probe_root, nr);
+		ret = _offline_get_menuentry(oscap_probe_root, nr);
 		pcre_free(re);
 		goto finish;
 	}
@@ -604,7 +604,7 @@ static char *_offline_chroot_get_os_name(const char *oscap_probe_root)
 
 	if (ret == NULL) { // Saved entry is all digits, so we need to inspect grub.cfg
 		int nr = atoi(ptr);
-		ret = _offline_chroot_get_menuentry(oscap_probe_root, nr);
+		ret = _offline_get_menuentry(oscap_probe_root, nr);
 	}
 
 	regfree(&preg);
@@ -615,7 +615,7 @@ fail:
 	return ret;
 }
 
-static char *_offline_chroot_get_hname(const char *oscap_probe_root)
+static char *_offline_get_hname(const char *oscap_probe_root)
 {
 	FILE *fp;
 	char hname[HOST_NAME_MAX+1] = { '\0' };
@@ -678,10 +678,10 @@ int probe_main(probe_ctx *ctx, void *arg)
 		}
 	} else if (offline_mode & PROBE_OFFLINE_OWN) {
 		const char *oscap_probe_root = getenv("OSCAP_PROBE_ROOT");
-		os_name = _offline_chroot_get_os_name(oscap_probe_root);
-		os_version = _offline_chroot_get_os_version(os_name);
-		architecture = _offline_chroot_get_arch(os_version);
-		hname = _offline_chroot_get_hname(oscap_probe_root);
+		os_name = _offline_get_os_name(oscap_probe_root);
+		os_version = _offline_get_os_version(os_name);
+		architecture = _offline_get_arch(os_version);
+		hname = _offline_get_hname(oscap_probe_root);
 	}
 
 	/* All four elements are required */
