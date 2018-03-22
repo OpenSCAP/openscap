@@ -353,6 +353,21 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
+static FILE *_fopen_with_prefix(const char *prefix, const char *path)
+{
+	FILE *fp;
+	if (prefix != NULL) {
+		char path_with_prefix[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
+		size_t prefix_len = strlen(prefix);
+		strncpy(path_with_prefix, prefix, PATH_MAX);
+		strncpy(path_with_prefix + prefix_len, path, PATH_MAX - prefix_len);
+		fp = fopen(path_with_prefix, "r");
+	} else {
+		fp = fopen(path, "r");
+	}
+	return fp;
+}
+
 static char *_offline_get_menuentry(const char *oscap_probe_root, int entry_num)
 {
 	FILE *fp;
@@ -361,16 +376,7 @@ static char *_offline_get_menuentry(const char *oscap_probe_root, int entry_num)
 	int rc = PCRE_ERROR_NOMATCH;
 	int len;
 
-	const char *grubcfg_path = "/boot/grub2/grub.cfg";
-	if (oscap_probe_root != NULL) {
-		char grubcfg_path_with_root[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
-		size_t oscap_probe_root_len = strlen(oscap_probe_root);
-		strncpy(grubcfg_path_with_root, oscap_probe_root, PATH_MAX);
-		strncpy(grubcfg_path_with_root + oscap_probe_root_len, grubcfg_path, PATH_MAX - oscap_probe_root_len);
-		fp = fopen(grubcfg_path_with_root, "r");
-	} else {
-		fp = fopen(grubcfg_path, "r");
-	}
+	fp = _fopen_with_prefix(oscap_probe_root, "/boot/grub2/grub.cfg");
 
 	if (fp == NULL)
 		goto fail;
@@ -524,16 +530,7 @@ static char *_offline_get_os_name(const char *oscap_probe_root)
 	char saved_entry[MAX_BUFFER_SIZE+1];
 	char *ptr, *ret = NULL;
 
-	const char *grubenv_path = "/boot/grub2/grubenv";
-	if (oscap_probe_root != NULL) {
-		char grubenv_path_with_root[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
-		size_t oscap_probe_root_len = strlen(oscap_probe_root);
-		strncpy(grubenv_path_with_root, oscap_probe_root, PATH_MAX);
-		strncpy(grubenv_path_with_root + oscap_probe_root_len, grubenv_path, PATH_MAX - oscap_probe_root_len);
-		fp = fopen(grubenv_path_with_root, "r");
-	} else {
-		fp = fopen(grubenv_path, "r");
-	}
+	fp = _fopen_with_prefix(oscap_probe_root, "/boot/grub2/grubenv");
 
 	if (fp == NULL)
 		goto fail;
@@ -622,16 +619,7 @@ static char *_offline_get_hname(const char *oscap_probe_root)
 	char *ret = NULL;
 	int rc;
 
-	const char *hostname_path = "/etc/hostname";
-	if (oscap_probe_root != NULL) {
-		char hostname_path_with_root[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
-		size_t oscap_probe_root_len = strlen(oscap_probe_root);
-		strncpy(hostname_path_with_root, oscap_probe_root, PATH_MAX);
-		strncpy(hostname_path_with_root + oscap_probe_root_len, hostname_path, PATH_MAX - oscap_probe_root_len);
-		fp = fopen(hostname_path_with_root, "r");
-	} else {
-		fp = fopen(hostname_path, "r");
-	}
+	fp = _fopen_with_prefix(oscap_probe_root, "/etc/hostname");
 
 	if (fp == NULL)
 		goto fail;
