@@ -357,11 +357,9 @@ static FILE *_fopen_with_prefix(const char *prefix, const char *path)
 {
 	FILE *fp;
 	if (prefix != NULL) {
-		char path_with_prefix[PATH_MAX]; // PATH_MAX includes terminating '\0' byte
-		const size_t prefix_len = strlen(prefix);
-		strncpy(path_with_prefix, prefix, PATH_MAX);
-		strncpy(path_with_prefix + prefix_len, path, PATH_MAX - prefix_len);
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
 		fp = fopen(path_with_prefix, "r");
+		free(path_with_prefix);
 	} else {
 		fp = fopen(path, "r");
 	}
