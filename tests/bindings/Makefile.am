@@ -7,7 +7,7 @@ TESTS_ENVIRONMENT = \
 		$(top_builddir)/run
 
 TESTS =
-if WANT_PYTHON
+if WANT_PYTHON2
 TESTS +=test_python.sh
 endif
 if WANT_PERL

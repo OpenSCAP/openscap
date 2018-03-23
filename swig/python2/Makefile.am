@@ -1,6 +1,6 @@
 
 AM_CFLAGS = -fPIC
-PYLIBVER ?= python$(PYTHON_VERSION)
+PYLIBVER ?= python$(PYTHON2_VERSION)
 
 AM_CPPFLAGS =	@xml2_CFLAGS@ \
 		-I$(top_srcdir)/src/CPE/public \
@@ -18,10 +18,10 @@ AM_CPPFLAGS =	@xml2_CFLAGS@ \
 
 CFLAGS+= -Wno-missing-prototypes
 
-if WANT_PYTHON
-AM_CPPFLAGS += $(PYTHON_INCLUDES)
-nodist_pyexec_PYTHON = openscap.py ${srcdir}/../src/openscap_api.py
-pyexec_LTLIBRARIES = _openscap_py.la
+if WANT_PYTHON2
+AM_CPPFLAGS += $(PYTHON2_INCLUDES)
+nodist_py2exec_PYTHON = openscap.py ${srcdir}/../src/openscap_api.py
+py2exec_LTLIBRARIES = _openscap_py.la
 _openscap_py_la_LDFLAGS = -module -avoid-version
 _openscap_py_la_LIBADD  = ${top_builddir}/src/libopenscap.la
 nodist__openscap_py_la_SOURCES = openscap_py_wrap.c
@@ -35,7 +35,7 @@ endif
 
 ##beware of: http://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html
 
-if WANT_PYTHON
+if WANT_PYTHON2
 openscap_py_wrap.c: ${srcdir}/../src/openscap.i
 	$(SWIG) -o openscap_py_wrap.c -python -module openscap_py ${INCLUDES} ${WANT_MODULE} ${srcdir}/../src/openscap.i
 	mv openscap_py.py openscap.py

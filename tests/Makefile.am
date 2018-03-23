@@ -9,7 +9,7 @@ SCE_SUBDIRS = sce
 endif
 
 BINDINGS_SUBDIRS=
-if WANT_PYTHON
+if WANT_PYTHON2
   BINDINGS_SUBDIRS += bindings
 else
 if WANT_PERL
