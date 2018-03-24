@@ -506,7 +506,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 #endif
 
 	path_with_root[PATH_MAX] = '\0';
-	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
 		strncpy(path_with_root, getenv("OSCAP_PROBE_ROOT"), PATH_MAX);
 		root_len = strlen(path_with_root);
 

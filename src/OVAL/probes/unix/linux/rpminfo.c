@@ -296,11 +296,6 @@ void *probe_init (void)
 		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
 	}
 
-	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
-		const char* root = getenv("OSCAP_PROBE_ROOT");
-		rpmtsSetRootDir(g_rpm.rpmts, root);
-	}
-
         return ((void *)&g_rpm);
 }
 
@@ -402,6 +397,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 	// arg is NULL if regex compilation failed
 	if (arg == NULL) {
 		return PROBE_EINIT;
+	}
+
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char* root = getenv("OSCAP_PROBE_ROOT");
+		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
 
 	// There was no rpm config files

@@ -242,12 +242,6 @@ void *probe_init (void)
         g_rpm.rpmts = rpmtsCreate();
 
         pthread_mutex_init(&(g_rpm.mutex), NULL);
-
-	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
-		const char* root = getenv("OSCAP_PROBE_ROOT");
-		rpmtsSetRootDir(g_rpm.rpmts, root);
-	}
-
         return ((void *)&g_rpm);
 }
 
@@ -339,6 +333,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 	if (arg == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
+	}
+
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char* root = getenv("OSCAP_PROBE_ROOT");
+		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
 
         /*

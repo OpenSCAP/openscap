@@ -64,6 +64,7 @@ typedef struct {
 	size_t          optcnt; /**< number of defined options */
 	bool offline_mode;
 	int supported_offline_mode;
+	int selected_offline_mode;
 } probe_t;
 
 struct probe_ctx {
@@ -71,6 +72,7 @@ struct probe_ctx {
         SEXP_t         *probe_out; /**< collected object */
         SEXP_t         *filters;   /**< object filters (OVAL 5.8 and higher) */
         probe_icache_t *icache;    /**< item cache */
+	int offline_mode;
 };
 
 typedef enum {
@@ -82,6 +84,5 @@ typedef enum {
 } probe_offline_flags;
 
 extern pthread_barrier_t OSCAP_GSYM(th_barrier);
-extern probe_offline_flags OSCAP_GSYM(offline_mode);
 
 #endif /* PROBE_H */

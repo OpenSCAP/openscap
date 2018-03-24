@@ -55,7 +55,6 @@ void  *OSCAP_GSYM(probe_arg)          = NULL;
 bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
-probe_offline_flags OSCAP_GSYM(offline_mode) = PROBE_OFFLINE_NONE;
 
 pthread_barrier_t OSCAP_GSYM(th_barrier);
 
@@ -174,6 +173,7 @@ int main(int argc, char *argv[])
 		fail(errno, "pthread_sigmask", __LINE__ - 1);
 
 	probe.offline_mode = false;
+	probe.selected_offline_mode = PROBE_OFFLINE_NONE;
 	probe.flags = 0;
 	probe.pid   = getpid();
 	probe.name  = basename(argv[0]);
@@ -241,8 +241,8 @@ int main(int argc, char *argv[])
 		preload_libraries_before_chroot(); // todo - maybe useless for own mode
 
 		if (probe.supported_offline_mode & PROBE_OFFLINE_OWN) {
-			dD("Own offline mode selected");
-			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_OWN;
+			dI("Swiching probe to PROBE_OFFLINE_OWN mode.");
+			probe.selected_offline_mode = PROBE_OFFLINE_OWN;
 
 		} else if (probe.supported_offline_mode & PROBE_OFFLINE_CHROOT) {
 			if (chdir(rootdir) != 0) {
@@ -260,12 +260,14 @@ int main(int argc, char *argv[])
 			 * Switch to offline mode. We may add a separate
 			 * mechanism to control this behaviour in the future.
 			 */
-			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_CHROOT;
+			dI("Swiching probe to PROBE_OFFLINE_CHROOT mode.");
+			probe.selected_offline_mode = PROBE_OFFLINE_CHROOT;
 		}
 	}
 
 	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
-		OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_RPMDB;
+		dI("Swiching probe to PROBE_OFFLINE_RPMDB mode.");
+		probe.selected_offline_mode = PROBE_OFFLINE_RPMDB;
 	}
 
 	/*
