@@ -62,6 +62,7 @@ typedef struct {
 
 	probe_option_t *option; /**< probe option handlers */
 	size_t          optcnt; /**< number of defined options */
+	int supported_offline_mode;
 } probe_t;
 
 struct probe_ctx {
@@ -81,7 +82,6 @@ typedef enum {
 
 extern pthread_barrier_t OSCAP_GSYM(th_barrier);
 extern probe_offline_flags OSCAP_GSYM(offline_mode);
-extern probe_offline_flags OSCAP_GSYM(offline_mode_supported);
 extern int OSCAP_GSYM(offline_mode_cobjflag);
 
 #endif /* PROBE_H */
