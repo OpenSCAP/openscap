@@ -174,6 +174,7 @@ int main(int argc, char *argv[])
 	if (pthread_sigmask(SIG_BLOCK, &sigmask, NULL))
 		fail(errno, "pthread_sigmask", __LINE__ - 1);
 
+	probe.offline_mode = false;
 	probe.flags = 0;
 	probe.pid   = getpid();
 	probe.name  = basename(argv[0]);
@@ -236,16 +237,15 @@ int main(int argc, char *argv[])
 	 */
 	rootdir = getenv("OSCAP_PROBE_ROOT");
 	if ((rootdir != NULL) && (strlen(rootdir) > 0)) {
+		probe.offline_mode = true;
 
 		preload_libraries_before_chroot(); // todo - maybe useless for own mode
-		probe_offline_flags supported_mode = probe.supported_offline_mode;
-		bool own_mode = (supported_mode & PROBE_OFFLINE_OWN);
 
-		if (own_mode) {
+		if (probe.supported_offline_mode & PROBE_OFFLINE_OWN) {
 			dD("Own offline mode selected");
 			OSCAP_GSYM(offline_mode) |= PROBE_OFFLINE_OWN;
 
-		} else {
+		} else if (probe.supported_offline_mode & PROBE_OFFLINE_CHROOT) {
 			if (chdir(rootdir) != 0) {
 				fail(errno, "chdir", __LINE__ -1);
 			}

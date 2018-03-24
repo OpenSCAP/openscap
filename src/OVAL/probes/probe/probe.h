@@ -62,6 +62,7 @@ typedef struct {
 
 	probe_option_t *option; /**< probe option handlers */
 	size_t          optcnt; /**< number of defined options */
+	bool offline_mode;
 	int supported_offline_mode;
 } probe_t;
 
