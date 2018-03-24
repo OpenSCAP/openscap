@@ -183,7 +183,7 @@ int probe_offline_mode_supported()
 	return PROBE_OFFLINE_CHROOT;
 }
 
-void *probe_init (void)
+void *probe_init(void)
 {
         /*
          * Initialize crypto API
