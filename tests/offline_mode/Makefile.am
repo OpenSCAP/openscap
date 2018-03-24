@@ -11,5 +11,5 @@ TESTS_ENVIRONMENT= \
 TESTS = test_system_info.sh
 
 EXTRA_DIST += test_system_info.sh \
-		grubenv
+		grubenv \
 		textfilecontent54.oval.xml
