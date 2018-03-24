@@ -206,10 +206,13 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
 static pthread_mutex_t __file_probe_mutex;
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_CHROOT;
+}
+
 void *probe_init (void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
-
 	SEXP_init(&gr_lastpath);
 
         /*

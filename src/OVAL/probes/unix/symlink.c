@@ -114,10 +114,9 @@ static int collect_symlink(SEXP_t *ent, probe_ctx *ctx)
 	return 0;
 }
 
-void *probe_init (void)
+int probe_offline_mode_supported()
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
-	return NULL;
+	return PROBE_OFFLINE_CHROOT;
 }
 
 int probe_main(probe_ctx *ctx, void *probe_arg)

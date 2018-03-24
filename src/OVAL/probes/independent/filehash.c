@@ -178,10 +178,13 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_schem
         return (0);
 }
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_CHROOT;
+}
+
 void *probe_init (void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
-
         /*
          * Initialize crypto API
          */

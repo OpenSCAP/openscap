@@ -54,11 +54,11 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 
-void *probe_init(void)
+int probe_offline_mode_supported()
 {
-	/* XXX: Well, not really... */
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
-	return NULL;
+	/* We say that the probe supports all offline modes, but in fact
+	   it always returns the same hardocoded string. */
+	return PROBE_OFFLINE_ALL;
 }
 
 int probe_main(probe_ctx *ctx, void *arg)

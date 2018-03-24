@@ -156,6 +156,11 @@ static int filehash_cb (const char *p, const char *f, void *ptr, const SEXP_t *f
         return (0);
 }
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_CHROOT;
+}
+
 void *probe_init (void)
 {
         /*
@@ -173,8 +178,6 @@ void *probe_init (void)
         default:
                 dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
-
-        probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
         return (NULL);
 }
