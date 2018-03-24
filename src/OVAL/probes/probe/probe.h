@@ -83,6 +83,5 @@ typedef enum {
 
 extern pthread_barrier_t OSCAP_GSYM(th_barrier);
 extern probe_offline_flags OSCAP_GSYM(offline_mode);
-extern int OSCAP_GSYM(offline_mode_cobjflag);
 
 #endif /* PROBE_H */

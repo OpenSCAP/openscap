@@ -56,7 +56,6 @@ bool   OSCAP_GSYM(varref_handling)    = true;
 char **OSCAP_GSYM(no_varref_ents)     = NULL;
 size_t OSCAP_GSYM(no_varref_ents_cnt) = 0;
 probe_offline_flags OSCAP_GSYM(offline_mode) = PROBE_OFFLINE_NONE;
-int OSCAP_GSYM(offline_mode_cobjflag) = SYSCHAR_FLAG_NOT_APPLICABLE;
 
 pthread_barrier_t OSCAP_GSYM(th_barrier);
 
