@@ -1,5 +1,5 @@
 /**
- * @file isainfo.c
+ * @file isainfo_probe.c
  * @brief isainfo probe
  * @author "Ryan E Haggerty" <rhaggerty@tresys.com
  *
@@ -48,6 +48,7 @@
 #include <regex.h>
 #include <sys/systeminfo.h>
 #include "../../../../common/debug_priv.h"
+#include "isainfo_probe.h"
 
 /* man sysinfo (2) recommends using 257 for this size */
 #define MAX_STR_RESULT 257
@@ -108,7 +109,7 @@ int read_sysinfo(probe_ctx *ctx) {
 	return err;
 }
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
+int isainfo_probe_main(probe_ctx *ctx, void *probe_arg)
 {
 	if (read_sysinfo(ctx)) {
 		return PROBE_EACCESS;

@@ -123,6 +123,10 @@
 #include "unix/linux/systemdunitproperty_probe.h"
 #endif
 
+#ifdef OPENSCAP_PROBE_SOLARIS_ISAINFO
+#include "unix/solaris/isainfo_probe.h"
+#endif
+
 #ifdef OPENSCAP_PROBE_UNIX_DNSCACHE
 #include "unix/dnscache_probe.h"
 #endif
@@ -264,6 +268,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY
 	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, NULL},
+#endif
+#ifdef OPENSCAP_PROBE_SOLARIS_ISAINFO
+	{OVAL_SOLARIS_ISAINFO, NULL, isainfo_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_DNSCACHE
 	{OVAL_UNIX_DNSCACHE, NULL, dnscache_probe_main, NULL, NULL},

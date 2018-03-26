@@ -1,14 +1,6 @@
-/**
- * @file patch.c
- * @brief patch probe
- * @author "Ryan E Haggerty" <rhaggerty@tresys.com
- *
- * 2011/05/06 rhaggerty@tresys.com
- *	This probe allows patches installed on the system to be checked.
- */
-
 /*
- * Copyright (c) 2011 Tresys Technology LLC, Columbia, Maryland, USA
+ * Copyright 2018 Red Hat Inc., Durham, North Carolina.
+ * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,16 +15,16 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-*/
+ *
+ * Authors:
+ *      Jan Černý <jcerny@redhat.com>
+ */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef OPENSCAP_ISAINFO_PROBE_H
+#define OPENSCAP_ISAINFO_PROBE_H
 
 #include "probe-api.h"
 
+int isainfo_probe_main(probe_ctx *ctx, void *probe_arg);
 
-int probe_main(probe_ctx *ctx, void *probe_arg)
-{
-        return(PROBE_EOPNOTSUPP);
-}
+#endif /* OPENSCAP_ISAINFO_PROBE_H */

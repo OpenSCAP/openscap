@@ -83,6 +83,11 @@ if (ENABLE_PROBES)
 				$<TARGET_OBJECTS:linux_probes_object>
 			)
 		endif()
+		if (ENABLE_PROBES_SOLARIS)
+			list(APPEND OBJECTS_TO_LINK_AGAINST
+				$<TARGET_OBJECTS:solaris_probes_object>
+			)
+		endif()
 	endif()
 endif()
 if (GCRYPT_FOUND OR NSS_FOUND)

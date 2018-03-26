@@ -209,7 +209,10 @@ cmake_dependent_option(OPENSCAP_PROBE_LINUX_RPMVERIFYPACKAGE "Linux rpmverifypac
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN "Linux selinuxboolean probe" ON "ENABLE_PROBES_LINUX; SELINUX_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT "Linux selinuxsecuritycontext probe" ON "ENABLE_PROBES_LINUX; SELINUX_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY "Linux systemdunitdependency probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
-cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY "Linux systemdunitproperty dpkginfo probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY "Linux systemdunitproperty probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
+
+# SOLARIS PROBES
+cmake_dependent_option(OPENSCAP_PROBE_SOLARIS_ISAINFO "Solaris isainfo probe" ON "ENABLE_PROBES_SOLARIS" OFF)
 
 # ---------- EXECUTABLES / UTILITIES SWITCHES
 

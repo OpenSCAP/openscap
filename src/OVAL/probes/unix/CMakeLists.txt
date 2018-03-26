@@ -119,3 +119,7 @@ target_include_directories(unix_probes_object PRIVATE ${UNIX_PROBES_INCLUDE_DIRE
 if(ENABLE_PROBES_LINUX)
 	add_subdirectory("linux")
 endif()
+
+if(ENABLE_PROBES_SOLARIS)
+	add_subdirectory("solaris")
+endif()
