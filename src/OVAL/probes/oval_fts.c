@@ -650,7 +650,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 #undef TEST_PATH1
 #undef TEST_PATH2
 
-OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
+OVAL_FTS *oval_fts_open(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
 {
 	OVAL_FTS *ofts;
 

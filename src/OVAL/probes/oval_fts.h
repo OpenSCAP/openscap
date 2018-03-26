@@ -119,7 +119,7 @@ typedef struct {
 /*
  * OVAL FTS public API
  */
-OVAL_FTS    *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result);
+OVAL_FTS *oval_fts_open(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result);
 OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts);
 int          oval_fts_close(OVAL_FTS *ofts);
 

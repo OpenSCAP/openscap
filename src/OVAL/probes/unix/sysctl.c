@@ -99,7 +99,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
          * collect sysctls
          *  XXX: use direct access for the "equals" op
          */
-        ofts = oval_fts_open(path_entity, filename_entity, NULL, bh_entity, probe_ctx_getresult(ctx));
+        ofts = oval_fts_open(NULL, path_entity, filename_entity, NULL, bh_entity, probe_ctx_getresult(ctx));
 
         if (ofts == NULL) {
                 dE("oval_fts_open(%s, %s) failed", PROC_SYS_DIR, ".\\+");

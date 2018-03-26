@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 		"filepath=%p\n"
 		"behaviors=%p\n", path, filename, filepath, behaviors);
 
-	ofts = oval_fts_open(path, filename, filepath, behaviors, result);
+	ofts = oval_fts_open(NULL, path, filename, filepath, behaviors, result);
 
 	if (ofts != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
