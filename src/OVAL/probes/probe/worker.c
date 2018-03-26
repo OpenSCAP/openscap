@@ -1072,6 +1072,29 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 SEXP_free(pctx.filters);
 	}
 
+	/* Revert chroot */
+	if (probe->real_root_fd != -1) {
+		if (fchdir(probe->real_root_fd) != 0) {
+			dE("fchdir failed: %s", strerror(errno));
+			close(probe->real_root_fd);
+			close(probe->real_cwd_fd);
+			return NULL;
+		}
+		close(probe->real_root_fd);
+		dI("Leaving chroot mode");
+		if (chroot(".") == -1) {
+			dE("chroot(\".\") failed: %s", strerror(errno));
+			close(probe->real_cwd_fd);
+			return NULL;
+		}
+		if (fchdir(probe->real_cwd_fd) != 0) {
+			dE("fchdir failed: %s", strerror(errno));
+			close(probe->real_cwd_fd);
+			return NULL;
+		}
+		close(probe->real_cwd_fd);
+	}
+
 	SEXP_free(probe_in);
 	SEXP_VALIDATE(probe_out);
 

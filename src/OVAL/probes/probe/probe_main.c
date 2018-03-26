@@ -31,6 +31,7 @@
 #include <signal.h>
 #include <pthread.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <seap.h>
 #include "common/bfind.h"
 #include "probe.h"
@@ -187,6 +188,8 @@ void *probe_common_main(void *arg)
 	sch_queuedata_t *data = probe_argument->queuedata;
 	oval_subtype_t subtype = probe_argument->subtype;
 	probe.subtype = subtype;
+	probe.real_root_fd = -1;
+	probe.real_cwd_fd = -1;
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
 # if defined(__APPLE__)
@@ -267,6 +270,8 @@ void *probe_common_main(void *arg)
 			probe.selected_offline_mode = PROBE_OFFLINE_OWN;
 
 		} else if (probe.supported_offline_mode & PROBE_OFFLINE_CHROOT) {
+			probe.real_root_fd = open("/", O_RDONLY);
+			probe.real_cwd_fd = open(".", O_RDONLY);
 			if (chdir(rootdir) != 0) {
 				fail(errno, "chdir", __LINE__ -1);
 			}
