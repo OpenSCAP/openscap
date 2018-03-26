@@ -1072,6 +1072,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 SEXP_free(pctx.filters);
 	}
 
+#ifndef _WIN32
 	/* Revert chroot */
 	if (probe->real_root_fd != -1) {
 		if (fchdir(probe->real_root_fd) != 0) {
@@ -1094,6 +1095,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		}
 		close(probe->real_cwd_fd);
 	}
+#endif
 
 	SEXP_free(probe_in);
 	SEXP_VALIDATE(probe_out);
