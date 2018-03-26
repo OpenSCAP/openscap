@@ -187,7 +187,13 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
 	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.6)) < 0) {
 		se_filepath = NULL;
 	} else {
-		se_filepath = SEXP_string_newf("%s%c%s", path, FILE_SEPARATOR, filename);
+		const size_t path_len = strlen(path);
+		/* Avoid 2 slashes */
+		if (path_len >= 1 && path[path_len - 1] == FILE_SEPARATOR) {
+			se_filepath = SEXP_string_newf("%s%s", path, filename);
+		} else {
+			se_filepath = SEXP_string_newf("%s%c%s", path, FILE_SEPARATOR, filename);
+		}
 	}
 
         item = probe_item_create(OVAL_INDEPENDENT_TEXT_FILE_CONTENT, NULL,
@@ -220,12 +226,12 @@ struct pfdata {
 #endif
 };
 
-static int process_file(const char *path, const char *file, void *arg)
+static int process_file(const char *prefix, const char *path, const char *file, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, file_len, cur_inst = 0, fd = -1, substr_cnt,
 		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
-	char *whole_path = NULL, *buf = NULL;
+	char *whole_path = NULL, *whole_path_with_prefix = NULL, *buf = NULL;
 	SEXP_t *next_inst = NULL;
 	struct stat st;
 
@@ -254,12 +260,13 @@ static int process_file(const char *path, const char *file, void *arg)
 	 * to return 'FTS_SL' and the presence of a valid target has to
 	 * be determined with stat().
 	 */
-	if (stat(whole_path, &st) == -1)
+	whole_path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", whole_path);
+	if (stat(whole_path_with_prefix, &st) == -1)
 		goto cleanup;
 	if (!S_ISREG(st.st_mode))
 		goto cleanup;
 
-	fd = open(whole_path, O_RDONLY);
+	fd = open(whole_path_with_prefix, O_RDONLY);
 	if (fd == -1) {
 		SEXP_t *msg;
 
@@ -343,6 +350,7 @@ static int process_file(const char *path, const char *file, void *arg)
 	free(buf);
 	if (whole_path != NULL)
 		free(whole_path);
+	free(whole_path_with_prefix);
 
 	return ret;
 }
@@ -350,12 +358,6 @@ static int process_file(const char *path, const char *file, void *arg)
 int probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
-}
-
-void *probe_init(void)
-{
-  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
-  return NULL;
 }
 
 int probe_main(probe_ctx *ctx, void *arg)
@@ -503,12 +505,14 @@ int probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 #endif
-	if ((ofts = oval_fts_open(NULL, path_ent, file_ent, filepath_ent, bh_ent, probe_ctx_getresult(ctx))) != NULL) {
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+
+	if ((ofts = oval_fts_open(prefix, path_ent, file_ent, filepath_ent, bh_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
 				// todo: handle return code
-				process_file(ofts_ent->path, ofts_ent->file, &pfd);
+				process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd);
 			}
 			oval_ftsent_free(ofts_ent);
 		}

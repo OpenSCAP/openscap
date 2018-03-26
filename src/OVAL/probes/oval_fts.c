@@ -102,17 +102,28 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	ofts_ent = oscap_talloc(OVAL_FTSENT);
 
 	ofts_ent->fts_info = fts_ent->fts_info;
+	const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 	if (ofts->ofts_sfilename || ofts->ofts_sfilepath) {
-		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
-		ofts_ent->path = malloc(ofts_ent->path_len + 1);
-		strncpy(ofts_ent->path, fts_ent->fts_path, ofts_ent->path_len);
-		ofts_ent->path[ofts_ent->path_len] = '\0';
+		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen) - shift;
+		if (ofts_ent->path_len > 0) {
+			ofts_ent->path = malloc(ofts_ent->path_len + 1);
+			strncpy(ofts_ent->path + shift, fts_ent->fts_path, ofts_ent->path_len);
+			ofts_ent->path[ofts_ent->path_len] = '\0';
+		} else {
+			ofts_ent->path_len = 1;
+			ofts_ent->path = strdup("/");
+		}
 
 		ofts_ent->file_len = fts_ent->fts_namelen;
 		ofts_ent->file = strdup(fts_ent->fts_name);
 	} else {
-		ofts_ent->path_len = fts_ent->fts_pathlen;
-		ofts_ent->path = strdup(fts_ent->fts_path);
+		ofts_ent->path_len = fts_ent->fts_pathlen - shift;
+		if (ofts_ent->path_len > 0) {
+			ofts_ent->path = strdup(fts_ent->fts_path + shift);
+		} else {
+			ofts_ent->path_len = 1;
+			ofts_ent->path = strdup("/");
+		}
 
 		ofts_ent->file_len = -1;
 		ofts_ent->file = NULL;
@@ -811,6 +822,12 @@ OVAL_FTS *oval_fts_open(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP
 		paths[0] = strdup("/");
 	}
 
+	if (prefix != NULL) {
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, paths[0]);
+		free((void *) paths[0]);
+		paths[0] = path_with_prefix;
+	}
+	dI("Opening file '%s'.", paths[0]);
 	/* Fail if the provided path doensn't actually exist. Symlinks
 	   without targets are accepted. */
 	if (lstat(paths[0], &st) == -1) {
@@ -825,6 +842,8 @@ OVAL_FTS *oval_fts_open(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP
 	dI("Opening file '%s'.", paths[0]);
 
 	ofts = OVAL_FTS_new();
+	ofts->prefix = prefix;
+
 	/* reset errno as fts_open() doesn't do it itself. */
 	errno = 0;
 	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
@@ -991,7 +1010,9 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		    || (!ofts->ofts_sfilepath && fts_ent->fts_info != FTS_D))
 			continue;
 
-		stmp = SEXP_string_newf("%s", fts_ent->fts_path);
+		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
+		stmp = SEXP_string_newf("%s", fts_ent->fts_path + shift);
+
 		if (ofts->ofts_sfilepath)
 			/* try to match filepath */
 			ores = probe_entobj_cmp(ofts->ofts_sfilepath, stmp);

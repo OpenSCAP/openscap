@@ -91,6 +91,7 @@ typedef struct {
 	int filesystem;
 
 	fsdev_t *localdevs;
+	const char *prefix;
 } OVAL_FTS;
 
 #define OVAL_RECURSE_DIRECTION_NONE 0 /* default */
