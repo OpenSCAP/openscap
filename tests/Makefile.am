@@ -26,6 +26,7 @@ SUBDIRS = \
 	sources \
 	schemas \
 	nist \
+	offline_mode \
 	oscap_string \
 	oval_details \
 	$(PROBE_SUBDIRS) $(SCE_SUBDIRS) $(BINDINGS_SUBDIRS)

@@ -353,7 +353,20 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
-static char * _offline_chroot_get_menuentry(int entry_num)
+static FILE *_fopen_with_prefix(const char *prefix, const char *path)
+{
+	FILE *fp;
+	if (prefix != NULL) {
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
+		fp = fopen(path_with_prefix, "r");
+		free(path_with_prefix);
+	} else {
+		fp = fopen(path, "r");
+	}
+	return fp;
+}
+
+static char *_offline_get_menuentry(const char *oscap_probe_root, int entry_num)
 {
 	FILE *fp;
 	char *ret = NULL;
@@ -361,7 +374,8 @@ static char * _offline_chroot_get_menuentry(int entry_num)
 	int rc = PCRE_ERROR_NOMATCH;
 	int len;
 
-	fp = fopen("/boot/grub2/grub.cfg", "r");
+	fp = _fopen_with_prefix(oscap_probe_root, "/boot/grub2/grub.cfg");
+
 	if (fp == NULL)
 		goto fail;
 
@@ -437,7 +451,7 @@ fail:
 	return ret;
 }
 
-static const char * _offline_chroot_get_os_version(char *os)
+static const char * _offline_get_os_version(char *os)
 {
 	char *ptr;
 
@@ -451,7 +465,7 @@ static const char * _offline_chroot_get_os_version(char *os)
 	return ptr;
 }
 
-static char * _offline_chroot_get_arch(const char *os)
+static char * _offline_get_arch(const char *os)
 {
 	int rc;
 	char *ptr = NULL;
@@ -507,14 +521,15 @@ fail2:
 #endif
 }
 
-static char * _offline_chroot_get_os_name(void)
+static char *_offline_get_os_name(const char *oscap_probe_root)
 {
 	FILE *fp;
 	int rc;
 	char saved_entry[MAX_BUFFER_SIZE+1];
 	char *ptr, *ret = NULL;
 
-	fp = fopen("/boot/grub2/grubenv", "r");
+	fp = _fopen_with_prefix(oscap_probe_root, "/boot/grub2/grubenv");
+
 	if (fp == NULL)
 		goto fail;
 
@@ -540,7 +555,7 @@ static char * _offline_chroot_get_os_name(void)
 		saved_entry[ovec[1]] = '\0';
 		ptr = saved_entry + ovec[0];
 		int nr = atoi(ptr);
-		ret = _offline_chroot_get_menuentry(nr);
+		ret = _offline_get_menuentry(oscap_probe_root, nr);
 		pcre_free(re);
 		goto finish;
 	}
@@ -584,7 +599,7 @@ static char * _offline_chroot_get_os_name(void)
 
 	if (ret == NULL) { // Saved entry is all digits, so we need to inspect grub.cfg
 		int nr = atoi(ptr);
-		ret = _offline_chroot_get_menuentry(nr);
+		ret = _offline_get_menuentry(oscap_probe_root, nr);
 	}
 
 	regfree(&preg);
@@ -595,14 +610,15 @@ fail:
 	return ret;
 }
 
-static char * _offline_chroot_get_hname(void)
+static char *_offline_get_hname(const char *oscap_probe_root)
 {
 	FILE *fp;
 	char hname[HOST_NAME_MAX+1] = { '\0' };
 	char *ret = NULL;
 	int rc;
 
-	fp = fopen("/etc/hostname", "r");
+	fp = _fopen_with_prefix(oscap_probe_root, "/etc/hostname");
+
 	if (fp == NULL)
 		goto fail;
 
@@ -620,10 +636,9 @@ fail:
 	return ret;
 }
 
-void *probe_init(void)
+void probe_offline_mode(void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
-	return NULL;
+	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN);
 }
 
 int probe_main(probe_ctx *ctx, void *arg)
@@ -647,11 +662,12 @@ int probe_main(probe_ctx *ctx, void *arg)
 			architecture = strdup(sname.machine);
 			hname = strdup(sname.nodename);
 		}
-	} else if (offline_mode == PROBE_OFFLINE_CHROOT) {
-		os_name = _offline_chroot_get_os_name();
-		os_version = _offline_chroot_get_os_version(os_name);
-		architecture = _offline_chroot_get_arch(os_version);
-		hname = _offline_chroot_get_hname();
+	} else if (offline_mode & PROBE_OFFLINE_OWN) {
+		const char *oscap_probe_root = getenv("OSCAP_PROBE_ROOT");
+		os_name = _offline_get_os_name(oscap_probe_root);
+		os_version = _offline_get_os_version(os_name);
+		architecture = _offline_get_arch(os_version);
+		hname = _offline_get_hname(oscap_probe_root);
 	}
 
 	/* All four elements are required */

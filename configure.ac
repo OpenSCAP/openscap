@@ -1549,6 +1549,7 @@ AC_CONFIG_FILES([Makefile
 		tests/codestyle/Makefile
 		tests/oval_details/Makefile
 		tests/nist/Makefile
+		tests/offline_mode/Makefile
 
                  src/SCE/Makefile
                  tests/sce/Makefile])
