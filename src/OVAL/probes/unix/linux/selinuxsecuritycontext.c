@@ -53,6 +53,7 @@
 #include "oval_fts.h"
 #include "util.h"
 #include "common/debug_priv.h"
+#include "probe/probe.h"
 
 #define FILE_SEPARATOR '/'
 
@@ -176,7 +177,7 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 }
 
 
-static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_ctx *ctx)
+static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, const char *f, probe_ctx *ctx)
 {
 	SEXP_t *item;
 
@@ -216,7 +217,9 @@ static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_c
 
 	pbuf[plen+flen] = '\0';
 
-	file_context_size = getfilecon(pbuf, &file_context);
+	char *path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", pbuf);
+	file_context_size = getfilecon(path_with_prefix, &file_context);
+	free(path_with_prefix);
 	if (file_context_size == -1) {
 		dE("Can't get context for %s: %s", pbuf, strerror(errno));
 
@@ -280,6 +283,11 @@ static int selinuxsecuritycontext_file_cb (const char *p, const char *f, probe_c
 	return (err);
 }
 
+int probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
+}
+
 int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in;
@@ -310,9 +318,10 @@ int probe_main(probe_ctx *ctx, void *arg)
 	if (filepath || (path && filename)) {
 		probe_filebehaviors_canonicalize(&behaviors);
 
-		if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+		const char *prefix = getenv("OSCAP_PROBE_ROOT");
+		if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 			while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-				selinuxsecuritycontext_file_cb(ofts_ent->path, ofts_ent->file, ctx);
+				selinuxsecuritycontext_file_cb(prefix, ofts_ent->path, ofts_ent->file, ctx);
 				oval_ftsent_free(ofts_ent);
 			}
 
