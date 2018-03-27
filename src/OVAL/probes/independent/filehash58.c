@@ -103,7 +103,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 	return (0);
 }
 
-static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx *ctx)
+static int filehash58_cb(const char *prefix, const char *p, const char *f, const char *h, probe_ctx *ctx)
 {
 	SEXP_t *itm;
 
@@ -137,7 +137,13 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 	/*
 	 * Open the file
 	 */
-	fd = open (pbuf, O_RDONLY);
+	if (prefix == NULL) {
+		fd = open(pbuf, O_RDONLY);
+	} else {
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, pbuf);
+		fd = open(path_with_prefix, O_RDONLY);
+		free(path_with_prefix);
+	}
 
 	if (fd < 0) {
 		strerror_r (errno, pbuf, PATH_MAX);
@@ -200,7 +206,7 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 
 int probe_offline_mode_supported()
 {
-	return PROBE_OFFLINE_CHROOT;
+	return PROBE_OFFLINE_OWN;
 }
 
 void *probe_init(void)
@@ -284,14 +290,15 @@ int probe_main(probe_ctx *ctx, void *mutex)
 		goto cleanup;
 	}
 
-	if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			/* find hash types to compare with entity, think "not satisfy" */
 			const struct oscap_string_map *p = CRAPI_ALG_MAP;
 			while (p->value != CRAPI_INVALID) {
 				SEXP_t *crapi_hash_type_sexp = SEXP_string_new(p->string, strlen(p->string));
 				if (probe_entobj_cmp(hash_type, crapi_hash_type_sexp) == OVAL_RESULT_TRUE) {
-					filehash58_cb(ofts_ent->path, ofts_ent->file, p->string, ctx);
+					filehash58_cb(prefix, ofts_ent->path, ofts_ent->file, p->string, ctx);
 				}
 
 				SEXP_free(crapi_hash_type_sexp);
