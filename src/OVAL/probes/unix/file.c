@@ -62,6 +62,8 @@
 #define PATH_MAX 4096
 #endif
 
+#define FILE_SEPARATOR '/'
+
 #undef OS_FREEBSD
 #undef OS_LINUX
 #undef OS_SOLARIS
@@ -261,7 +263,7 @@ static SEXP_t *has_extended_acl(const char *path)
 #endif
 }
 
-static int file_cb (const char *p, const char *f, void *ptr)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item;
@@ -272,17 +274,25 @@ static int file_cb (const char *p, const char *f, void *ptr)
 	if (f == NULL) {
 		st_path = p;
 	} else {
-		snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
+		const size_t p_len = strlen(p);
+		/* Avoid 2 slashes */
+		if (p_len >= 1 && p[p_len - 1] == FILE_SEPARATOR) {
+			snprintf(path_buffer, sizeof path_buffer, "%s%s", p, f);
+		} else {
+			snprintf(path_buffer, sizeof path_buffer, "%s/%s", p, f);
+		}
 		st_path = path_buffer;
 	}
 
-        if (lstat (st_path, &st) == -1) {
+	char *st_path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", st_path);
+	if (lstat(st_path_with_prefix, &st) == -1) {
                 dI("lstat failed when processing %s: errno=%u, %s.", st_path, errno, strerror (errno));
 		/*
 		 * Whatever the reason of this lstat error (for example the file may
 		 * have disappeared) we don't want it to stop the whole file tree walk;
 		 * so we just don't report the error.
 		 */
+		free(st_path_with_prefix);
 		return 0;
         } else {
                 SEXP_t *se_usr_id, *se_grp_id;
@@ -310,8 +320,9 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.7)) < 0) {
 			se_acl = NULL;
 		} else {
-			se_acl = has_extended_acl(st_path);
+			se_acl = has_extended_acl(st_path_with_prefix);
 		}
+		free(st_path_with_prefix);
 
                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
                                          "filepath", OVAL_DATATYPE_SEXP, se_filepath,
@@ -365,7 +376,7 @@ static pthread_mutex_t __file_probe_mutex;
 
 int probe_offline_mode_supported()
 {
-	return PROBE_OFFLINE_CHROOT;
+	return PROBE_OFFLINE_OWN;
 }
 
 void *probe_init (void)
@@ -507,9 +518,11 @@ int probe_main (probe_ctx *ctx, void *mutex)
         cbargs.ctx     = ctx;
 	cbargs.error   = 0;
 
-	if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+
+	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (file_cb(ofts_ent->path, ofts_ent->file, &cbargs) != 0) {
+			if (file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs) != 0) {
 				oval_ftsent_free(ofts_ent);
 				break;
 			}
