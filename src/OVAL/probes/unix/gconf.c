@@ -201,7 +201,7 @@ int probe_main(probe_ctx *ctx, void *probe_arg)
 
 		probe_filebehaviors_canonicalize(&behaviors);
 
-                if ((ofts = oval_fts_open(NULL, NULL, NULL, gconf_src, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+                if ((ofts = oval_fts_open_prefixed(NULL, NULL, NULL, gconf_src, behaviors, probe_ctx_getresult(ctx))) != NULL) {
                         while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
                                 assume_r(ofts_ent->path_len
                                          + ofts_ent->file_len + 2 <= PATH_MAX, PROBE_EFATAL);

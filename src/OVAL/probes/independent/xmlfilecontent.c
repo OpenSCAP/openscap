@@ -320,7 +320,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	pfd.filename_ent = filename_ent;
         pfd.ctx = ctx;
 
-	if ((ofts = oval_fts_open(NULL, path_ent, filename_ent, filepath_ent, behaviors_ent, probe_ctx_getresult(ctx))) != NULL) {
+	if ((ofts = oval_fts_open_prefixed(NULL, path_ent, filename_ent, filepath_ent, behaviors_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			process_file(ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);

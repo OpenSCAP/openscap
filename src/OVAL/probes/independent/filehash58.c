@@ -284,7 +284,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 		goto cleanup;
 	}
 
-	if ((ofts = oval_fts_open(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			/* find hash types to compare with entity, think "not satisfy" */
 			const struct oscap_string_map *p = CRAPI_ALG_MAP;

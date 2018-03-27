@@ -661,7 +661,12 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 #undef TEST_PATH1
 #undef TEST_PATH2
 
-OVAL_FTS *oval_fts_open(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
+OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
+{
+	return oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, result);
+}
+
+OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
 {
 	OVAL_FTS *ofts;
 
@@ -1237,7 +1242,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				   it would be more accurate to obtain the device
 				   id here, but for the sake of supporting the
 				   comparison also in oval_fts_read_match_path(),
-				   the device id is obtained in oval_fts_open()
+				   the device id is obtained in oval_fts_open_prefixed()
 
 				if (ofts->ofts_recurse_path_curdepth == 0)
 					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;

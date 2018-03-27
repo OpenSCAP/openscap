@@ -392,7 +392,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 
-	if ((ofts = oval_fts_open(prefix, path_ent, filename_ent, filepath_ent, behaviors_ent, probe_ctx_getresult(ctx))) != NULL) {
+	if ((ofts = oval_fts_open_prefixed(prefix, path_ent, filename_ent, filepath_ent, behaviors_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {

@@ -265,7 +265,7 @@ int probe_main (probe_ctx *ctx, void *mutex)
 		return (PROBE_EFATAL);
         }
 
-	if ((ofts = oval_fts_open(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			filehash_cb(ofts_ent->path, ofts_ent->file, ctx, over);
 			oval_ftsent_free(ofts_ent);

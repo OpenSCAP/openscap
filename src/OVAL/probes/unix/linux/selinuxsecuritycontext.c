@@ -310,7 +310,7 @@ int probe_main(probe_ctx *ctx, void *arg)
 	if (filepath || (path && filename)) {
 		probe_filebehaviors_canonicalize(&behaviors);
 
-		if ((ofts = oval_fts_open(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+		if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 			while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 				selinuxsecuritycontext_file_cb(ofts_ent->path, ofts_ent->file, ctx);
 				oval_ftsent_free(ofts_ent);
