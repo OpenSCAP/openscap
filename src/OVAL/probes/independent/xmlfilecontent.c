@@ -128,7 +128,6 @@ static int process_file(const char *prefix, const char *path, const char *filena
 		whole_path[path_len] = FILE_SEPARATOR;
 		++path_len;
 	}
-	dI("%s", path);
 
 	memcpy(whole_path + path_len, filename, filename_len + 1);
 
