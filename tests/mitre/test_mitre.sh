@@ -17,6 +17,8 @@ DISTRO_NAME="$(cat /etc/*-release | awk '{print $1}' | head -n1)"
 DISTRO_RELEASE="$(cat /etc/*-release | sed -n 's|^[^0-9]*\([0-9]*\).*$|\1|p' | head -n1)"
 SELINUX_ENABLED=$(grep -iqE "(SELINUX=enforcing|SELINUX=permissive)" \
 	/etc/selinux/config 2>/dev/null; echo $?)
+SENDMAIL_RUNNING="yes"
+ps aux | grep sendmail | grep -v -q grep || SENDMAIL_RUNNING="no"
 
 function test_mitre {
 
@@ -111,7 +113,11 @@ if [ $SELINUX_ENABLED -eq 0 ]; then
 	test_run "linux-def_selinuxsecuritycontext_test.xml" test_mitre linux-def_selinuxsecuritycontext_test.xml "true"
 fi
 
-test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"
+if  [ $SENDMAIL_RUNNING = yes ]; then
+	test_run "linux-def_inetlisteningservers_test.xml" test_mitre linux-def_inetlisteningservers_test.xml "true"
+else
+	echo "Skipped the inetlisteningservers test as sendmail service is not running." >&2
+fi
 
 test_run "oval_binary_datatype.xml" test_mitre oval_binary_datatype.xml "true"
 test_run "oval_boolean_datatype.xml" test_mitre oval_boolean_datatype.xml "true"

@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. ${srcdir}/../test_common.sh
+. ../test_common.sh
 
 function test_config_h(){
 	text='(#\s*include\s+<config.h>)|(#\s*include\s+"config.h")'

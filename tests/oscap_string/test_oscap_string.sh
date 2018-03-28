@@ -8,7 +8,7 @@
 # Authors:
 #      Jan Černý <jcerny@redhat.com>
 
-. ${srcdir}/../test_common.sh
+. ../test_common.sh
 
 # Test cases.
 
