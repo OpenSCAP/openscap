@@ -81,13 +81,17 @@ static void dummy_err_func(void * ctx, const char * msg, ...)
 {
 }
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_CHROOT;
+}
+
 void *probe_init(void)
 {
 	/* init libxml */
 	//LIBXML_TEST_VERSION;
 	xmlInitParser();
 	xmlSetGenericErrorFunc(NULL, dummy_err_func);
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
 	return NULL;
 }

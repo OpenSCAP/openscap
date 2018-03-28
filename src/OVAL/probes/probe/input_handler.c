@@ -113,14 +113,10 @@ void *probe_input_handler(void *arg)
 		if (oid != NULL) {
 			SEXP_VALIDATE(oid);
 
-			dD("offline_mode=%08x", OSCAP_GSYM(offline_mode));
-			dD("offline_mode_supported=%08x", OSCAP_GSYM(offline_mode_supported));
-
-			if ((OSCAP_GSYM(offline_mode) != PROBE_OFFLINE_NONE) &&
-			    !(OSCAP_GSYM(offline_mode) & OSCAP_GSYM(offline_mode_supported))) {
+			if (probe->offline_mode && probe->supported_offline_mode == PROBE_OFFLINE_NONE) {
 				dW("Requested offline mode is not supported by %s.", probe->name);
 				/* Return a dummy. */
-				probe_out = probe_cobj_new(OSCAP_GSYM(offline_mode_cobjflag), NULL, NULL, NULL);
+				probe_out = probe_cobj_new(SYSCHAR_FLAG_NOT_APPLICABLE, NULL, NULL, NULL);
 				probe_ret = 0;
 				SEXP_free(oid);
 				SEXP_free(probe_in);

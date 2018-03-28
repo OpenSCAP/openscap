@@ -198,10 +198,13 @@ static int filehash58_cb (const char *p, const char *f, const char *h, probe_ctx
 	return (0);
 }
 
-void *probe_init (void)
+int probe_offline_mode_supported()
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	return PROBE_OFFLINE_CHROOT;
+}
 
+void *probe_init(void)
+{
 	/*
 	 * Initialize crypto API
 	 */

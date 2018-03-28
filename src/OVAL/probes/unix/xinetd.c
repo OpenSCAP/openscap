@@ -1591,9 +1591,13 @@ static void xiservice_process_query(probe_ctx *ctx, SEXP_t *service_name, SEXP_t
 	SEXP_free(xres_protocol);
 }
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_CHROOT;
+}
+
 void *probe_init(void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 	return xiconf_parse(XINETD_CONFPATH, XINETD_CONFDEPTH);
 }
 

@@ -469,7 +469,7 @@ void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 #define PROBECMD_RESET     3 /**< Reset command code */
 
 
-void probe_offline_mode(void);
+int probe_offline_mode_supported(void);
 void probe_preload(void);
 void *probe_init(void) __attribute__ ((unused));
 void probe_fini(void *) __attribute__ ((unused));

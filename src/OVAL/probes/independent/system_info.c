@@ -636,9 +636,9 @@ fail:
 	return ret;
 }
 
-void probe_offline_mode(void)
+int probe_offline_mode_supported()
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN);
+	return PROBE_OFFLINE_OWN;
 }
 
 int probe_main(probe_ctx *ctx, void *arg)
@@ -648,21 +648,19 @@ int probe_main(probe_ctx *ctx, void *arg)
 	const char *os_version = NULL;
 	const char unknown[] = "Unknown";
 	struct utsname sname;
-	probe_offline_flags offline_mode = PROBE_OFFLINE_NONE;
 	int ret = 0;
 	(void)arg;
 
 	os_name = architecture = hname = NULL;
-	probe_getoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, NULL, &offline_mode);
 
-	if (offline_mode == PROBE_OFFLINE_NONE) {
+	if (ctx->offline_mode == PROBE_OFFLINE_NONE) {
 		if (uname(&sname) == 0) {
 			os_name = strdup(sname.sysname);
 			os_version = sname.version;
 			architecture = strdup(sname.machine);
 			hname = strdup(sname.nodename);
 		}
-	} else if (offline_mode & PROBE_OFFLINE_OWN) {
+	} else if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
 		const char *oscap_probe_root = getenv("OSCAP_PROBE_ROOT");
 		os_name = _offline_get_os_name(oscap_probe_root);
 		os_version = _offline_get_os_version(os_name);
@@ -704,7 +702,7 @@ cleanup:
 	free(architecture);
 	free(hname);
 
-	if (!offline_mode && item) {
+	if (ctx->offline_mode == PROBE_OFFLINE_NONE && item) {
 		if (get_ifs(item)) {
 			SEXP_free(item);
 			return PROBE_EUNKNOWN;
