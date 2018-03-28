@@ -391,11 +391,13 @@ OSCAP_HIDDEN_END;
 char *oscap_sprintf(const char *fmt, ...);
 
 /**
- * Join 2 paths intelligently
- * Caller is responsible to free the returned pointer.
+ * Join 2 paths in an intelligent way.
+ * Both paths are allowed to be NULL.
+ * Caller is responsible for freeing the returned pointer.
  * @param path1 first path
  * @param path2 second path
- * @return Join of path1 and path2.
+ * @return Join of path1 and path2. The first path is separated by the second
+ * path by exactly 1 slash separator.
  */
 char *oscap_path_join(const char *path1, const char *path2);
 
