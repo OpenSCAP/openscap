@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.results oscap_debug.log.* *.result.xml */*.results_arf.xml */*.results_oval.xml */*.stdout
 CLEANFILES = *.log *.results oscap_debug.log.* *.result.xml */*.results_arf.xml */*.results_oval.xml */*.stdout
 
@@ -10,7 +8,7 @@ TESTS_ENVIRONMENT= \
 
 TESTS = nist_test.sh
 
-EXTRA_DIST += nist_test.sh \
+EXTRA_DIST = nist_test.sh \
 	test_worker.py \
 	ind_family_test/catalog.xml \
 	ind_family_test/ind_family_test-datastream.xml \

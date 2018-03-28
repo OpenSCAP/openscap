@@ -34,6 +34,7 @@ SUBDIRS = \
 EXTRA_DIST = \
 	suppressions.supp \
 	valgrind_test.sh \
-	xmldiff.pl
+	xmldiff.pl \
+	test_common.sh.in
 
 CONFIG_CLEAN_FILES = test_common.sh

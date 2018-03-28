@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = *.log *.results oscap_debug.log.* *.result.xml */*.results_arf.xml */*.results_oval.xml */*.stdout
 CLEANFILES = *.log *.results oscap_debug.log.* *.result.xml */*.results_arf.xml */*.results_oval.xml */*.stdout
 
@@ -11,7 +9,8 @@ TESTS_ENVIRONMENT= \
 TESTS = test_offline_mode_system_info.sh \
 		test_offline_mode_textfilecontent54.sh
 
-EXTRA_DIST += test_offline_mode_system_info.sh \
-		test_offline_mode_textfilecontent54.sh \
-		grubenv \
-		textfilecontent54.oval.xml
+EXTRA_DIST = \
+	test_offline_mode_system_info.sh \
+	test_offline_mode_textfilecontent54.sh \
+	textfilecontent54.oval.xml \
+	grubenv
