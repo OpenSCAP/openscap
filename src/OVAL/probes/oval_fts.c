@@ -844,8 +844,6 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		return NULL;
 	}
 
-	dI("Opening file '%s'.", paths[0]);
-
 	ofts = OVAL_FTS_new();
 	ofts->prefix = prefix;
 
