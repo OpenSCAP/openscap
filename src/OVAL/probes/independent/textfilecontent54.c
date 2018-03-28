@@ -260,7 +260,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	 * to return 'FTS_SL' and the presence of a valid target has to
 	 * be determined with stat().
 	 */
-	whole_path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", whole_path);
+	whole_path_with_prefix = oscap_path_join(prefix, whole_path);
 	if (stat(whole_path_with_prefix, &st) == -1)
 		goto cleanup;
 	if (!S_ISREG(st.st_mode))

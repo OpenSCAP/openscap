@@ -834,7 +834,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	}
 
 	if (prefix != NULL) {
-		char *path_with_prefix = oscap_sprintf("%s%s", prefix, paths[0]);
+		char *path_with_prefix = oscap_path_join(prefix, paths[0]);
 		free((void *) paths[0]);
 		paths[0] = path_with_prefix;
 	}

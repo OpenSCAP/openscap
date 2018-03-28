@@ -112,7 +112,7 @@ static int filehash_cb (const char *prefix, const char *p, const char *f, probe_
 	if (prefix == NULL) {
 		fd = open(pbuf, O_RDONLY);
 	} else {
-		char *path_with_prefix = oscap_sprintf("%s%s", prefix, pbuf);
+		char *path_with_prefix = oscap_path_join(prefix, pbuf);
 		fd = open(path_with_prefix, O_RDONLY);
 		free(path_with_prefix);
 	}

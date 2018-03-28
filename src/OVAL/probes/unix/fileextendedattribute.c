@@ -111,7 +111,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 
         SEXP_init(&xattr_name);
 
-	char *st_path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", st_path);
+	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
 	do {
 		/* estimate the size of the buffer */
 

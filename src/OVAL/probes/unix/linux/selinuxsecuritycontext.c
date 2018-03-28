@@ -217,7 +217,7 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 
 	pbuf[plen+flen] = '\0';
 
-	char *path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", pbuf);
+	char *path_with_prefix = oscap_path_join(prefix, pbuf);
 	file_context_size = getfilecon(path_with_prefix, &file_context);
 	free(path_with_prefix);
 	if (file_context_size == -1) {

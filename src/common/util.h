@@ -390,6 +390,15 @@ OSCAP_HIDDEN_END;
 /// Print to a newly allocated string using varialbe arguments.
 char *oscap_sprintf(const char *fmt, ...);
 
+/**
+ * Join 2 paths intelligently
+ * Caller is responsible to free the returned pointer.
+ * @param path1 first path
+ * @param path2 second path
+ * @return Join of path1 and path2.
+ */
+char *oscap_path_join(const char *path1, const char *path2);
+
 OSCAP_HIDDEN_START;
 
 /// In a list of key-value pairs (odd indicies are keys, even values), find a value for given key

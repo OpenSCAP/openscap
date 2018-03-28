@@ -284,7 +284,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 		st_path = path_buffer;
 	}
 
-	char *st_path_with_prefix = oscap_sprintf("%s%s", prefix ? prefix : "", st_path);
+	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
 	if (lstat(st_path_with_prefix, &st) == -1) {
                 dI("lstat failed when processing %s: errno=%u, %s.", st_path, errno, strerror (errno));
 		/*
