@@ -279,7 +279,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 		if (p_len >= 1 && p[p_len - 1] == FILE_SEPARATOR) {
 			snprintf(path_buffer, sizeof path_buffer, "%s%s", p, f);
 		} else {
-			snprintf(path_buffer, sizeof path_buffer, "%s/%s", p, f);
+			snprintf(path_buffer, sizeof path_buffer, "%s%c%s", p, FILE_SEPARATOR, f);
 		}
 		st_path = path_buffer;
 	}
