@@ -8,8 +8,10 @@ TESTS_ENVIRONMENT= \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
-TESTS = test_system_info.sh
+TESTS = test_system_info.sh \
+		test_textfilecontent54.sh
 
 EXTRA_DIST += test_system_info.sh \
+		test_textfilecontent54.sh \
 		grubenv \
 		textfilecontent54.oval.xml
