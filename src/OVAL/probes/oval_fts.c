@@ -102,6 +102,12 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	ofts_ent = oscap_talloc(OVAL_FTSENT);
 
 	ofts_ent->fts_info = fts_ent->fts_info;
+	/* The 'shift' variable stores length of the prefix if the prefix
+	 * is defined, otherwise it is set to 0. The value of 'shift' gives
+	 * us information how many characters of the path string are part of
+	 * the prefix and also where the actual path begins.
+	 * We use it to remove the prefix from the path.
+	 */
 	const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 	if (ofts->ofts_sfilename || ofts->ofts_sfilepath) {
 		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen) - shift;
