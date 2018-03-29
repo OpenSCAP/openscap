@@ -12,7 +12,7 @@
 
 set -e -o pipefail
 
-function test_textfilecontent54 {
+function test_offline_mode_textfilecontent54 {
     temp_dir="$(mktemp -d)"
 
     # prepare /bar.txt
@@ -51,8 +51,8 @@ function test_textfilecontent54 {
 
 # Testing.
 
-test_init "test_textfilecontent54.log"
+test_init "test_offline_mode_textfilecontent54.log"
 
-test_run "test_textfilecontent54" test_textfilecontent54
+test_run "test_offline_mode_textfilecontent54" test_offline_mode_textfilecontent54
 
 test_exit

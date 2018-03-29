@@ -12,7 +12,7 @@
 
 set -e -o pipefail
 
-function test_system_info {
+function test_offline_mode_system_info {
     temp_dir="$(mktemp -d)"
 
     # create a mock host name
@@ -48,8 +48,8 @@ function test_system_info {
 
 # Testing.
 
-test_init "test_system_info.log"
+test_init "test_offline_mode_system_info.log"
 
-test_run "test_system_info" test_system_info
+test_run "test_offline_mode_system_info" test_offline_mode_system_info
 
 test_exit
