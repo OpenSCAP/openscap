@@ -18,17 +18,38 @@
         <criterion test_ref="oval:x:tst:1" comment="textfilecontent54_test"/>
       </criteria>
     </definition>
+    <definition class="compliance" version="1" id="oval:x:def:2">
+      <metadata>
+        <title>A second simple test OVAL for textfilecontent54 test.</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:2" comment="textfilecontent54_test"/>
+      </criteria>
+    </definition>
   </definitions>
 
   <tests>
     <ind:textfilecontent54_test id="oval:x:tst:1" version="1" comment="File /bar.txt must contain something"  check="all">
       <ind:object object_ref="oval:x:obj:1"/>
     </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:2" version="1" comment="File /zzz/foo.txt must contain something"  check="all">
+      <ind:object object_ref="oval:x:obj:2"/>
+    </ind:textfilecontent54_test>
   </tests>
 
   <objects>
     <ind:textfilecontent54_object id="oval:x:obj:1" version="1" comment="Object representing file">
       <ind:filepath>/bar.txt</ind:filepath>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:x:obj:2" version="1" comment="Object representing file">
+      <ind:path>/zzz</ind:path>
+      <ind:filename>foo.txt</ind:filename>
       <ind:pattern operation="pattern match">^.*$</ind:pattern>
       <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
     </ind:textfilecontent54_object>

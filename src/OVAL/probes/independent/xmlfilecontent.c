@@ -83,7 +83,7 @@ static void dummy_err_func(void * ctx, const char * msg, ...)
 
 int probe_offline_mode_supported()
 {
-	return PROBE_OFFLINE_CHROOT;
+	return PROBE_OFFLINE_OWN;
 }
 
 void *probe_init(void)
@@ -103,7 +103,7 @@ void probe_fini(void *arg)
 	xmlCleanupParser();
 }
 
-static int process_file(const char *path, const char *filename, void *arg)
+static int process_file(const char *prefix, const char *path, const char *filename, void *arg)
 {
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, filename_len;
@@ -131,9 +131,14 @@ static int process_file(const char *path, const char *filename, void *arg)
 
 	memcpy(whole_path + path_len, filename, filename_len + 1);
 
-	/* evaluate xpath */
+	if (prefix == NULL) {
+		doc = xmlParseFile(whole_path);
+	} else {
+		char *path_with_prefix = oscap_path_join(prefix, whole_path);
+		doc = xmlParseFile(path_with_prefix);
+		free(path_with_prefix);
+	}
 
-	doc = xmlParseFile(whole_path);
 	if (doc == NULL) {
                 SEXP_t *msg;
                 msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, "Can't parse '%s'.", whole_path);
@@ -145,6 +150,7 @@ static int process_file(const char *path, const char *filename, void *arg)
 		goto cleanup;
 	}
 
+	/* evaluate xpath */
 	xpath_ctx = xmlXPathNewContext(doc);
 	if (xpath_ctx == NULL) {
                 SEXP_t *msg;
@@ -169,7 +175,12 @@ static int process_file(const char *path, const char *filename, void *arg)
 		goto cleanup;
 	}
 
-        snprintf(filepath, PATH_MAX, "%s%c%s", path, FILE_SEPARATOR, filename);
+	/* Avoid 2 slashes */
+	if (path_len >= 1 && path[path_len - 1] == FILE_SEPARATOR) {
+		snprintf(filepath, PATH_MAX, "%s%s", path, filename);
+	} else {
+		snprintf(filepath, PATH_MAX, "%s%c%s", path, FILE_SEPARATOR, filename);
+	}
 
         item = probe_item_create(OVAL_INDEPENDENT_XML_FILE_CONTENT, NULL,
                                  "filepath", OVAL_DATATYPE_STRING, filepath,
@@ -320,9 +331,11 @@ int probe_main(probe_ctx *ctx, void *arg)
 	pfd.filename_ent = filename_ent;
         pfd.ctx = ctx;
 
-	if ((ofts = oval_fts_open(path_ent, filename_ent, filepath_ent, behaviors_ent, probe_ctx_getresult(ctx))) != NULL) {
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+
+	if ((ofts = oval_fts_open_prefixed(prefix, path_ent, filename_ent, filepath_ent, behaviors_ent, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			process_file(ofts_ent->path, ofts_ent->file, &pfd);
+			process_file(prefix, ofts_ent->path, ofts_ent->file, &pfd);
 			oval_ftsent_free(ofts_ent);
 		}
 

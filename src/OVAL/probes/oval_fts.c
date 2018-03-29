@@ -102,17 +102,34 @@ static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 	ofts_ent = oscap_talloc(OVAL_FTSENT);
 
 	ofts_ent->fts_info = fts_ent->fts_info;
+	/* The 'shift' variable stores length of the prefix if the prefix
+	 * is defined, otherwise it is set to 0. The value of 'shift' gives
+	 * us information how many characters of the path string are part of
+	 * the prefix and also where the actual path begins.
+	 * We use it to remove the prefix from the path.
+	 */
+	const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 	if (ofts->ofts_sfilename || ofts->ofts_sfilepath) {
-		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen);
-		ofts_ent->path = malloc(ofts_ent->path_len + 1);
-		strncpy(ofts_ent->path, fts_ent->fts_path, ofts_ent->path_len);
-		ofts_ent->path[ofts_ent->path_len] = '\0';
+		ofts_ent->path_len = pathlen_from_ftse(fts_ent->fts_pathlen, fts_ent->fts_namelen) - shift;
+		if (ofts_ent->path_len > 0) {
+			ofts_ent->path = malloc(ofts_ent->path_len + 1);
+			strncpy(ofts_ent->path, fts_ent->fts_path + shift, ofts_ent->path_len);
+			ofts_ent->path[ofts_ent->path_len] = '\0';
+		} else {
+			ofts_ent->path_len = 1;
+			ofts_ent->path = strdup("/");
+		}
 
 		ofts_ent->file_len = fts_ent->fts_namelen;
 		ofts_ent->file = strdup(fts_ent->fts_name);
 	} else {
-		ofts_ent->path_len = fts_ent->fts_pathlen;
-		ofts_ent->path = strdup(fts_ent->fts_path);
+		ofts_ent->path_len = fts_ent->fts_pathlen - shift;
+		if (ofts_ent->path_len > 0) {
+			ofts_ent->path = strdup(fts_ent->fts_path + shift);
+		} else {
+			ofts_ent->path_len = 1;
+			ofts_ent->path = strdup("/");
+		}
 
 		ofts_ent->file_len = -1;
 		ofts_ent->file = NULL;
@@ -652,6 +669,11 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
 {
+	return oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, result);
+}
+
+OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result)
+{
 	OVAL_FTS *ofts;
 
 	char cstr_path[PATH_MAX+1];
@@ -811,6 +833,12 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		paths[0] = strdup("/");
 	}
 
+	if (prefix != NULL) {
+		char *path_with_prefix = oscap_path_join(prefix, paths[0]);
+		free((void *) paths[0]);
+		paths[0] = path_with_prefix;
+	}
+	dI("Opening file '%s'.", paths[0]);
 	/* Fail if the provided path doensn't actually exist. Symlinks
 	   without targets are accepted. */
 	if (lstat(paths[0], &st) == -1) {
@@ -822,9 +850,9 @@ OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t
 		return NULL;
 	}
 
-	dI("Opening file '%s'.", paths[0]);
-
 	ofts = OVAL_FTS_new();
+	ofts->prefix = prefix;
+
 	/* reset errno as fts_open() doesn't do it itself. */
 	errno = 0;
 	ofts->ofts_match_path_fts = fts_open((char * const *) paths, mtc_fts_options, NULL);
@@ -991,7 +1019,9 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		    || (!ofts->ofts_sfilepath && fts_ent->fts_info != FTS_D))
 			continue;
 
-		stmp = SEXP_string_newf("%s", fts_ent->fts_path);
+		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
+		stmp = SEXP_string_newf("%s", fts_ent->fts_path + shift);
+
 		if (ofts->ofts_sfilepath)
 			/* try to match filepath */
 			ores = probe_entobj_cmp(ofts->ofts_sfilepath, stmp);
@@ -1216,7 +1246,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				   it would be more accurate to obtain the device
 				   id here, but for the sake of supporting the
 				   comparison also in oval_fts_read_match_path(),
-				   the device id is obtained in oval_fts_open()
+				   the device id is obtained in oval_fts_open_prefixed()
 
 				if (ofts->ofts_recurse_path_curdepth == 0)
 					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
