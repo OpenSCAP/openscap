@@ -29,7 +29,7 @@
 typedef void *(*probe_init_function_t)(void);
 typedef int (*probe_main_function_t)(probe_ctx *ctx, void *arg);
 typedef void (*probe_fini_function_t)(void *probe_arg);
-typedef void (*probe_offline_mode_function_t)(void);
+typedef int (*probe_offline_mode_function_t)(void);
 
 OSCAP_API probe_init_function_t probe_table_get_init_function(oval_subtype_t type);
 OSCAP_API probe_main_function_t probe_table_get_main_function(oval_subtype_t type);

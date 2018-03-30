@@ -405,16 +405,17 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 		return PROBE_EINIT;
 	}
 
-	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
-		const char* root = getenv("OSCAP_PROBE_ROOT");
-		rpmtsSetRootDir(g_rpm.rpmts, root);
-	}
 	struct rpm_probe_global *g_rpm = (struct rpm_probe_global *)arg;
 
 	// There was no rpm config files
 	if (g_rpm->rpmts == NULL) {
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
+	}
+	
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char* root = getenv("OSCAP_PROBE_ROOT");
+		rpmtsSetRootDir(g_rpm->rpmts, root);
 	}
 
 	probe_in = probe_ctx_getobject(ctx);

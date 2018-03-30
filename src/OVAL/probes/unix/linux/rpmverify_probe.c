@@ -340,7 +340,7 @@ int rpmverify_probe_main(probe_ctx *ctx, void *arg)
 
 	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
 		const char* root = getenv("OSCAP_PROBE_ROOT");
-		rpmtsSetRootDir(g_rpm.rpmts, root);
+		rpmtsSetRootDir(g_rpm->rpmts, root);
 	}
 
         /*
