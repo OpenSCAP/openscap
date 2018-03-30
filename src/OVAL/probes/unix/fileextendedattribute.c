@@ -53,6 +53,8 @@
 #define PATH_MAX 4096
 #endif
 
+#define FILE_SEPARATOR '/'
+
 #undef OS_FREEBSD
 #undef OS_LINUX
 #undef OS_SOLARIS
@@ -83,7 +85,7 @@ struct cbargs {
         SEXP_t    *attr_ent;
 };
 
-static int file_cb (const char *p, const char *f, void *ptr)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr)
 {
         char path_buffer[PATH_MAX];
         SEXP_t *item, xattr_name;
@@ -97,20 +99,31 @@ static int file_cb (const char *p, const char *f, void *ptr)
 	if (f == NULL) {
 		st_path = p;
 	} else {
-		snprintf (path_buffer, sizeof path_buffer, "%s/%s", p, f);
+		const size_t p_len = strlen(p);
+		/* Avoid 2 slashes */
+		if (p_len >= 1 && p[p_len - 1] == FILE_SEPARATOR) {
+			snprintf(path_buffer, sizeof path_buffer, "%s%s", p, f);
+		} else {
+			snprintf(path_buffer, sizeof path_buffer, "%s%c%s", p, FILE_SEPARATOR, f);
+		}
 		st_path = path_buffer;
 	}
 
         SEXP_init(&xattr_name);
 
+	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
 	do {
 		/* estimate the size of the buffer */
-		xattr_count = llistxattr(st_path, NULL, 0);
 
-		if (xattr_count == 0)
-				return (0);
+		xattr_count = llistxattr(st_path_with_prefix, NULL, 0);
+
+		if (xattr_count == 0) {
+			free(st_path_with_prefix);
+			return (0);
+		}
 
 		if (xattr_count < 0) {
+			free(st_path_with_prefix);
 				dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
 				return 0;
 		}
@@ -120,7 +133,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 		xattr_buf    = realloc(xattr_buf, sizeof(char) * xattr_buflen);
 
 		/* fill the buffer */
-		xattr_count = llistxattr(st_path, xattr_buf, xattr_buflen);
+		xattr_count = llistxattr(st_path_with_prefix, xattr_buf, xattr_buflen);
 
 		/* check & retry if needed */
 	} while (errno == ERANGE);
@@ -148,7 +161,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
                         ssize_t xattr_vallen = -1;
                         char   *xattr_val = NULL;
 
-                        xattr_vallen = lgetxattr(st_path, xattr_buf + i, NULL, 0);
+                        xattr_vallen = lgetxattr(st_path_with_prefix, xattr_buf + i, NULL, 0);
                 retry_value:
                         if (xattr_vallen >= 0) {
 				// Check possible buffer overflow
@@ -162,7 +175,7 @@ static int file_cb (const char *p, const char *f, void *ptr)
 
 				// we don't want to override space for '\0' by call of 'lgetxattr'
 				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'
-                                xattr_vallen = lgetxattr(st_path, xattr_buf + i, xattr_val, xattr_vallen);
+                                xattr_vallen = lgetxattr(st_path_with_prefix, xattr_buf + i, xattr_val, xattr_vallen);
 
                                 if (xattr_vallen < 0 || errno == ERANGE)
                                         goto retry_value;
@@ -200,16 +213,19 @@ static int file_cb (const char *p, const char *f, void *ptr)
         } while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
 
         free(xattr_buf);
-
+	free(st_path_with_prefix);
         return (0);
 }
 
 static pthread_mutex_t __file_probe_mutex;
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_OWN;
+}
+
 void *probe_init (void)
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
-
 	SEXP_init(&gr_lastpath);
 
         /*
@@ -299,9 +315,11 @@ int probe_main (probe_ctx *ctx, void *mutex)
 	cbargs.error    = 0;
         cbargs.attr_ent = attribute_;
 
-	if ((ofts = oval_fts_open(path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+
+	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			file_cb(ofts_ent->path, ofts_ent->file, &cbargs);
+			file_cb(prefix, ofts_ent->path, ofts_ent->file, &cbargs);
 			oval_ftsent_free(ofts_ent);
 		}
 		oval_fts_close(ofts);

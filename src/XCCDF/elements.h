@@ -138,7 +138,21 @@ typedef enum {
 const char *xccdf_element_to_str(xccdf_element_t element);
 xccdf_element_t xccdf_element_get(xmlTextReaderPtr reader);
 
-#define XCCDF_ASSERT_ELEMENT(reader, element) do { if (xccdf_element_get(reader) != element) { oscap_seterr(OSCAP_EFAMILY_XCCDF, "Find element '%s' while expecting element: '%s'", xccdf_element_to_str((xccdf_element_get(reader))), xccdf_element_to_str(element)); return false; } } while(false)
+#define XCCDF_ASSERT_ELEMENT(reader, element)						\
+	do {										\
+		if (xccdf_element_get(reader) != element) {				\
+			const char *found, *expected;					\
+											\
+			found = xccdf_element_to_str((xccdf_element_get(reader)));	\
+			expected = xccdf_element_to_str(element);			\
+			oscap_seterr(							\
+				OSCAP_EFAMILY_XCCDF,					\
+				"Find element '%s' while expecting element: '%s'",	\
+				found != NULL ? found : "(null)",			\
+				expected != NULL ? expected : "(null)");		\
+			return false;							\
+		}									\
+	} while (false)
 
 typedef enum {
 	XCCDFA_NONE,

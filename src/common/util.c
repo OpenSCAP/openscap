@@ -42,6 +42,7 @@
 #include <strings.h>
 #endif
 
+#define PATH_SEPARATOR '/'
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
@@ -309,4 +310,31 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
 #else
 	return strerror_r(errnum, buf, buflen);
 #endif
+}
+
+char *oscap_path_join(const char *path1, const char *path2)
+{
+	if (path1 == NULL) {
+		return oscap_strdup(path2);
+	}
+	if (path2 == NULL) {
+		return oscap_strdup(path1);
+	}
+	size_t path1_len = strlen(path1);
+	size_t path2_len = strlen(path2);
+	size_t path2_shift = 0;
+	while (path1_len >= 1 && path1[path1_len - 1] == PATH_SEPARATOR) {
+		path1_len--;
+	}
+	while (path2_shift < path2_len && path2[path2_shift] == PATH_SEPARATOR) {
+		path2_shift++;
+	}
+	path2_len -= path2_shift;
+	const size_t joined_path_len = path1_len + 1 + path2_len;
+	char *joined_path = malloc(joined_path_len + 1);
+	strncpy(joined_path, path1, path1_len);
+	joined_path[path1_len++] = PATH_SEPARATOR;
+	strncpy(joined_path + path1_len, path2 + path2_shift, path2_len);
+	joined_path[joined_path_len] = '\0';
+	return joined_path;
 }

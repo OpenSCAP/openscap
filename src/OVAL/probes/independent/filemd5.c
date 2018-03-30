@@ -156,6 +156,11 @@ static int filehash_cb (const char *p, const char *f, void *ptr, const SEXP_t *f
         return (0);
 }
 
+int probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_CHROOT;
+}
+
 void *probe_init (void)
 {
         /*
@@ -173,8 +178,6 @@ void *probe_init (void)
         default:
                 dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
-
-        probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
 
         return (NULL);
 }
@@ -240,7 +243,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
 		return (PROBE_EFATAL);
         }
 
-	if ((ofts = oval_fts_open(path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	if ((ofts = oval_fts_open_prefixed(NULL, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			filehash_cb(ofts_ent->path, ofts_ent->file, probe_out, filters);
 			oval_ftsent_free(ofts_ent);

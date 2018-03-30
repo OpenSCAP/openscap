@@ -269,9 +269,9 @@ void probe_preload ()
 	rpmLibsPreload();
 }
 
-void probe_offline_mode ()
+int probe_offline_mode_supported()
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_OWN|PROBE_OFFLINE_RPMDB);
+	return PROBE_OFFLINE_OWN|PROBE_OFFLINE_RPMDB;
 }
 
 void *probe_init (void)
@@ -296,11 +296,6 @@ void *probe_init (void)
 	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
 	if (dbpath) {
 		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
-	}
-
-	if (OSCAP_GSYM(offline_mode) & PROBE_OFFLINE_OWN) {
-		const char* root = getenv("OSCAP_PROBE_ROOT");
-		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
 
         return ((void *)&g_rpm);
@@ -404,6 +399,11 @@ int probe_main (probe_ctx *ctx, void *arg)
 	// arg is NULL if regex compilation failed
 	if (arg == NULL) {
 		return PROBE_EINIT;
+	}
+
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char* root = getenv("OSCAP_PROBE_ROOT");
+		rpmtsSetRootDir(g_rpm.rpmts, root);
 	}
 
 	// There was no rpm config files

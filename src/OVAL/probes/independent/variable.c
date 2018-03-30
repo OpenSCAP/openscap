@@ -52,10 +52,9 @@
 #include "probe/entcmp.h"
 #include "alloc.h"
 
-void *probe_init(void)
+int probe_offline_mode_supported()
 {
-  probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_ALL);
-  return NULL;
+	return PROBE_OFFLINE_ALL;
 }
 
 int probe_main(probe_ctx *ctx, void *arg)

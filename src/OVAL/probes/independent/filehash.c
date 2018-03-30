@@ -75,7 +75,7 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
         return (0);
 }
 
-static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_schema_version_t over)
+static int filehash_cb (const char *prefix, const char *p, const char *f, probe_ctx *ctx, oval_schema_version_t over)
 {
         SEXP_t *itm;
         char   pbuf[PATH_MAX+1];
@@ -109,7 +109,13 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_schem
         /*
          * Open the file
          */
-        fd = open (pbuf, O_RDONLY);
+	if (prefix == NULL) {
+		fd = open(pbuf, O_RDONLY);
+	} else {
+		char *path_with_prefix = oscap_path_join(prefix, pbuf);
+		fd = open(path_with_prefix, O_RDONLY);
+		free(path_with_prefix);
+	}
 
         if (fd < 0) {
                 strerror_r (errno, pbuf, PATH_MAX);
@@ -178,10 +184,13 @@ static int filehash_cb (const char *p, const char *f, probe_ctx *ctx, oval_schem
         return (0);
 }
 
-void *probe_init (void)
+int probe_offline_mode_supported()
 {
-	probe_setoption(PROBEOPT_OFFLINE_MODE_SUPPORTED, PROBE_OFFLINE_CHROOT);
+	return PROBE_OFFLINE_OWN;
+}
 
+void *probe_init(void)
+{
         /*
          * Initialize crypto API
          */
@@ -262,9 +271,10 @@ int probe_main (probe_ctx *ctx, void *mutex)
 		return (PROBE_EFATAL);
         }
 
-	if ((ofts = oval_fts_open(path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	if ((ofts = oval_fts_open_prefixed(prefix, path, filename, filepath, behaviors, probe_ctx_getresult(ctx))) != NULL) {
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			filehash_cb(ofts_ent->path, ofts_ent->file, ctx, over);
+			filehash_cb(prefix, ofts_ent->path, ofts_ent->file, ctx, over);
 			oval_ftsent_free(ofts_ent);
 		}
 

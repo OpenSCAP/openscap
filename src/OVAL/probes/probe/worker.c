@@ -965,6 +965,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 struct probe_ctx pctx;
 		SEXP_t *varrefs, *mask;
 
+		pctx.offline_mode = probe->selected_offline_mode;
+
 		/* simple object */
                 pctx.icache  = probe->icache;
 		pctx.filters = probe_prepare_filters(probe, probe_in);
