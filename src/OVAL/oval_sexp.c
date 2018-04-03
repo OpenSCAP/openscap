@@ -936,7 +936,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 {
 	_A(sexp);
 
-	char *name, *id;
+	char *item_name, *name, *id, *family;
 	SEXP_t *id_sexp;
 	struct oval_sysitem *sysitem = NULL;
 
@@ -951,13 +951,17 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 		return sysitem;
         }
 
-	name = probe_ent_getname(sexp);
+	item_name = probe_ent_getname(sexp);
 
-	if (name == NULL) {
+	if (item_name == NULL) {
                 free(id);
 		return NULL;
         } else {
-		char *endptr = strrchr(name, '_');
+		family = item_name;
+		char *endptr = strchr(family, ':');
+		*endptr = '\0';
+		name = endptr + 1;
+		endptr = strrchr(name, '_');
 
 		if (strcmp(endptr, "_item") != 0)
 			goto cleanup;
@@ -965,9 +969,9 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 		*endptr = '\0';	// cut off the '_item' part
 	}
 
-	int type = oval_str_to_subtype(name);
+	int type = oval_subtype_from_str(family, name);
 
-	dD("Syschar entry type: %d '%s' => %s", type, name,
+	dD("Syschar entry type: %d '%s' => %s", type, item_name,
 	   ((type != OVAL_SUBTYPE_UNKNOWN) ? "decoded OK" : "FAILED to decode"));
 #ifndef NDEBUG
 	if (type == OVAL_SUBTYPE_UNKNOWN)
@@ -990,7 +994,7 @@ static struct oval_sysitem *oval_sexp_to_sysitem(struct oval_syschar_model *mode
 
  cleanup:
         free(id);
-	free(name);
+	free(item_name);
 	return sysitem;
 }
 

@@ -47,6 +47,7 @@ include(CheckLibraryExists)
 include(CheckFunctionExists)
 include(CheckIncludeFile)
 include(CheckCSourceCompiles)
+include(CMakeDependentOption)
 
 # ---------- DEPENDENCIES
 
@@ -121,13 +122,15 @@ else()
 	# nss3
 	find_package(NSS)
 endif()
+if(GCRYPT_FOUND OR NSS_FOUND)
+	set(CRYPTO_FOUND TRUE)
+endif()
 
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
 check_function_exists(memalign HAVE_MEMALIGN)
 check_function_exists(fts_open HAVE_FTS_OPEN)
 check_function_exists(strsep HAVE_STRSEP)
-check_function_exists(flock HAVE_FLOCK)
 check_function_exists(strptime HAVE_STRPTIME)
 
 check_include_file(syslog.h HAVE_SYSLOG_H)
@@ -162,6 +165,54 @@ string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
 option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX})
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
 option(ENABLE_PROBES_SOLARIS "build OVAL probes for the Solaris OVAL tests" ${IS_SOLARIS})
+
+# INDEPENDENT PROBES
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58 "Independent environmentvariable58 probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FAMILY "Independent family probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FILEHASH "Independent filehash probe" ON "ENABLE_PROBES_INDEPENDENT; CRYPTO_FOUND; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_FILEHASH58 "Independent filehash58 probe" ON "ENABLE_PROBES_INDEPENDENT; CRYPTO_FOUND; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_SQL "Independent sql probe" ON "ENABLE_PROBES_INDEPENDENT; OPENDBX_FOUND; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_SQL57 "Independent sql57 probe" ON "ENABLE_PROBES_INDEPENDENT; OPENDBX_FOUND; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_SYSTEM_INFO "Independent system info probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT "Independent textfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT54 "Independent textfilecontent54 probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_VARIABLE "Independent variable probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT "Independent xmlfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+
+# UNIX PROBES
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_DNSCACHE "Unix dnscache probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILE "Unix file probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE "Unix fileextendedattribute probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_GCONF "Unix gconf probe" ON "ENABLE_PROBES_UNIX; GCONF_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_INTERFACE "Unix interface probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_PASSWORD "Unix password probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_PROCESS "Unix process probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_PROCESS58 "Unix process58 probe" ON "ENABLE_PROBES_UNIX; CAP_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_ROUTINGTABLE "Unix routingtable probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_RUNLEVEL "Unix runlevel probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_SHADOW "Unix shadow probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_SYMLINK "Unix symlink probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_SYSCTL "Unix sysctl probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_UNAME "Unix uname probe" ON "ENABLE_PROBES_UNIX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_UNIX_XINETD "Unix xinetd probe" ON "ENABLE_PROBES_UNIX" OFF)
+
+# LINUX PROBES
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_DPKGINFO "Linux dpkginfo probe" ON "ENABLE_PROBES_LINUX; APTPKG_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_IFLISTENERS "Linux iflisteners probe" ON "ENABLE_PROBES_LINUX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS "Linux inetlisteningservers probe" ON "ENABLE_PROBES_LINUX" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_PARTITION "Linux partition probe" ON "ENABLE_PROBES_LINUX; BLKID_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_RPMINFO "Linux rpminfo probe" ON "ENABLE_PROBES_LINUX; RPM_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_RPMVERIFY "Linux rpmverify probe" ON "ENABLE_PROBES_LINUX; RPM_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_RPMVERIFYFILE "Linux rpmverifyfile probe" ON "ENABLE_PROBES_LINUX; RPM_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_RPMVERIFYPACKAGE "Linux rpmverifypackage probe" ON "ENABLE_PROBES_LINUX; RPM_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN "Linux selinuxboolean probe" ON "ENABLE_PROBES_LINUX; SELINUX_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT "Linux selinuxsecuritycontext probe" ON "ENABLE_PROBES_LINUX; SELINUX_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY "Linux systemdunitdependency probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY "Linux systemdunitproperty probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
+
+# SOLARIS PROBES
+cmake_dependent_option(OPENSCAP_PROBE_SOLARIS_ISAINFO "Solaris isainfo probe" ON "ENABLE_PROBES_SOLARIS" OFF)
 
 # ---------- EXECUTABLES / UTILITIES SWITCHES
 
@@ -306,6 +357,7 @@ include_directories(
 	"src/CVSS/public/"
 	"src/DS/public/"
 	"src/OVAL/public/"
+	"src/OVAL/probes/public/"
 	"src/OVAL/probes/SEAP/"
 	"src/OVAL/probes/SEAP/public/"
 	"src/OVAL/"

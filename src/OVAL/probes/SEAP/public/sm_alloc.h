@@ -46,7 +46,6 @@ OSCAP_API void *sm_alloc (size_t s);
 OSCAP_API void *sm_calloc (size_t n, size_t s);
 OSCAP_API void *sm_realloc (void *p, size_t s);
 OSCAP_API void *sm_reallocf (void *p, size_t s);
-OSCAP_API int   sm_memalign (void **p, size_t a, size_t s);
 OSCAP_API void  sm_free (void *p);
 #else
 OSCAP_API void *  __sm_alloc_dbg (size_t s, const char *f, size_t l);
@@ -61,9 +60,6 @@ __ATTRIB void *sm_realloc     (void *p, size_t s) { return __sm_realloc_dbg (p, 
 OSCAP_API void *  __sm_reallocf_dbg (void *p, size_t s, const char *f, size_t l);
 __ATTRIB void *sm_reallocf     (void *p, size_t s) { return __sm_reallocf_dbg (p, s, __FUNCTION__, 0); }
 
-OSCAP_API int     __sm_memalign_dbg (void **p, size_t a, size_t s, const char *f, size_t l);
-__ATTRIB int __sm_memalign     (void **p, size_t a, size_t s) { return __sm_memalign_dbg (p, a, s, __FUNCTION__, 0); }
-
 OSCAP_API void   __sm_free_dbg (void *p, const char *f, size_t l);
 __ATTRIB void sm_free     (void *p) { __sm_free_dbg (p, __FUNCTION__, 0); }
 
@@ -71,7 +67,6 @@ __ATTRIB void sm_free     (void *p) { __sm_free_dbg (p, __FUNCTION__, 0); }
 # define sm_calloc(n, s)      __sm_calloc_dbg (n, s, __PRETTY_FUNCTION__, __LINE__)
 # define sm_realloc(p, s)     __sm_realloc_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
 # define sm_reallocf(p, s)    __sm_reallocf_dbg ((void *)(p), s, __PRETTY_FUNCTION__, __LINE__)
-# define sm_memalign(p, a, s) __sm_memalign_dbg (p, a, s, __PRETTY_FUNCTION__, __LINE__)
 # define sm_free(p)           __sm_free_dbg ((void *)(p), __PRETTY_FUNCTION__, __LINE__)
 #endif
 

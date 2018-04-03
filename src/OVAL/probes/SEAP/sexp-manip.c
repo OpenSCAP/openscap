@@ -1637,16 +1637,16 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
 
                         switch (v_dsc.type) {
                         case SEXP_VALTYPE_STRING:
-                                sm_free (v_dsc.hdr);
+				oscap_aligned_free(v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_NUMBER:
-                                sm_free (v_dsc.hdr);
+				oscap_aligned_free(v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_LIST:
                                 if (SEXP_LCASTP(v_dsc.mem)->b_addr != NULL)
                                         SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
 
-                                sm_free (v_dsc.hdr);
+				oscap_aligned_free(v_dsc.hdr);
                                 break;
                         default:
                                 abort ();
@@ -1832,16 +1832,16 @@ static void SEXP_free_lmemb (SEXP_t *s_exp)
                 if (SEXP_rawval_decref (s_exp->s_valp)) {
                         switch (v_dsc.type) {
                         case SEXP_VALTYPE_STRING:
-                                sm_free (v_dsc.hdr);
+				oscap_aligned_free(v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_NUMBER:
-                                sm_free (v_dsc.hdr);
+				oscap_aligned_free(v_dsc.hdr);
                                 break;
                         case SEXP_VALTYPE_LIST:
                                 if (SEXP_LCASTP(v_dsc.mem)->b_addr != NULL)
                                         SEXP_rawval_lblk_free ((uintptr_t)SEXP_LCASTP(v_dsc.mem)->b_addr, SEXP_free_lmemb);
 
-                                sm_free (v_dsc.hdr);
+				oscap_aligned_free(v_dsc.hdr);
                                 break;
                         default:
                                 abort ();

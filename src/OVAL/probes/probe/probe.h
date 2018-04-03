@@ -70,6 +70,10 @@ typedef struct {
 	bool offline_mode;
 	int supported_offline_mode;
 	int selected_offline_mode;
+	oval_subtype_t subtype;
+
+	int real_root_fd;
+	int real_cwd_fd;
 } probe_t;
 
 struct probe_ctx {

@@ -69,6 +69,31 @@ if (ENABLE_PROBES)
 		$<TARGET_OBJECTS:probe_object>
 		$<TARGET_OBJECTS:seap_object>
 	)
+	if (ENABLE_PROBES_INDEPENDENT)
+		list(APPEND OBJECTS_TO_LINK_AGAINST
+			$<TARGET_OBJECTS:independent_probes_object>
+		)
+	endif()
+	if (ENABLE_PROBES_UNIX)
+		list(APPEND OBJECTS_TO_LINK_AGAINST
+			$<TARGET_OBJECTS:unix_probes_object>
+		)
+		if (ENABLE_PROBES_LINUX)
+			list(APPEND OBJECTS_TO_LINK_AGAINST
+				$<TARGET_OBJECTS:linux_probes_object>
+			)
+		endif()
+		if (ENABLE_PROBES_SOLARIS)
+			list(APPEND OBJECTS_TO_LINK_AGAINST
+				$<TARGET_OBJECTS:solaris_probes_object>
+			)
+		endif()
+	endif()
+endif()
+if (GCRYPT_FOUND OR NSS_FOUND)
+	list(APPEND OBJECTS_TO_LINK_AGAINST
+		$<TARGET_OBJECTS:crapi_object>
+	)
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
@@ -86,11 +111,38 @@ if (BZIP2_FOUND)
 	target_link_libraries(openscap ${BZIP2_LIBRARIES})
 endif()
 if(RPM_FOUND)
-	# just because of rpmvercmp
 	target_link_libraries(openscap ${RPM_LIBRARIES})
 endif()
 if(WIN32)
 	target_link_libraries(openscap wsock32 ws2_32)
 endif()
+if (GCRYPT_FOUND)
+	target_link_libraries(openscap ${GCRYPT_LIBRARIES})
+endif()
+if (NSS_FOUND)
+	target_link_libraries(openscap ${NSS_LIBRARIES})
+endif()
+if(OPENDBX_FOUND)
+	target_link_libraries(openscap ${OPENDBX_LIBRARIES})
+endif()
+if(GCONF_FOUND)
+	target_link_libraries(openscap ${GCONF_LIBRARIES})
+endif()
+if(SELINUX_FOUND)
+	target_link_libraries(openscap ${SELINUX_LIBRARIES})
+endif()
+if(PROCPS_FOUND)
+	target_link_libraries(openscap ${PROCPS_LIBRARIES})
+endif()
+if(BLKID_FOUND)
+	target_link_libraries(openscap ${BLKID_LIBRARIES})
+endif()
+if(DBUS_FOUND)
+	target_link_libraries(openscap ${DBUS_LIBRARIES})
+endif()
+if(APTPKG_FOUND)
+	target_link_libraries(openscap ${APTPKG_LIBRARIES})
+endif()
+
 
 install(TARGETS openscap DESTINATION ${CMAKE_INSTALL_LIBDIR})

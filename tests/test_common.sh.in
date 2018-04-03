@@ -124,10 +124,10 @@ function require {
 # Check if probe exists, use it as follows:
 # probecheck 'probe' || return 255
 function probecheck {
-    if [ ! -f @CMAKE_BINARY_DIR@/src/OVAL/probes/probe_${1} ]; then
-	echo -e "Probe $1 does not exist!\n"
-	return 255; # Test is not applicable.
-    fi
+	if ! $OSCAP --version | grep "\<"$1"\>" >/dev/null ; then
+		echo -e "Probe $1 does not exist!\n"
+		return 255 # Test is not applicable.
+	fi
     return 0
 }
 

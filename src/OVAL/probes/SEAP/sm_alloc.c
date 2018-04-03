@@ -89,21 +89,6 @@ void *sm_reallocf (void *p, size_t s)
         return (m);
 }
 
-int sm_memalign (void **p, size_t a, size_t s)
-{
-        int ret;
-
-        _A(p != NULL);
-
-        ret = posix_memalign (p, a, s);
-
-#if defined(SEAP_MALLOC_EXIT)
-        if (ret != 0)
-                exit (ret);
-#endif
-        return (ret);
-}
-
 void sm_free (void *p)
 {
 #if defined(SEAP_MALLOC_STRICT)
@@ -192,23 +177,6 @@ void *__sm_reallocf_dbg (void *p, size_t s, const char *f, size_t l)
 #endif
         }
         return (m);
-}
-
-int __sm_memalign_dbg (void **p, size_t a, size_t s, const char *f, size_t l)
-{
-        int ret;
-
-        _A(p != NULL);
-
-        ret = posix_memalign (p, a, s);
-
-#if defined(SEAP_MALLOC_EXIT)
-        if (ret != 0) {
-                dI("FAIL: p=%p, a=%zu, s=%zu", p, a, s);
-                exit (ret);
-        }
-#endif
-        return (ret);
 }
 
 void __sm_free_dbg (void *p, const char *f, size_t l)

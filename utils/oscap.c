@@ -40,6 +40,7 @@
 #include "oscap-tool.h"
 #include "check_engine_plugin.h"
 #include "oscap_source.h"
+#include "probe-table.h"
 
 static bool getopt_root(int argc, char **argv, struct oscap_action *action);
 static int print_versions(const struct oscap_action*);
@@ -192,7 +193,7 @@ static int print_versions(const struct oscap_action *action)
 	printf("==== Supported OVAL objects and associated OpenSCAP probes ====\n");
 	printf("%-14s%-28s %-28s\n", "OVAL family", "OVAL object", "OpenSCAP probe");
 	printf("%-14s%-28s %-28s\n", "----------", "----------", "----------");
-	oval_probe_meta_list(stdout, OVAL_PROBEMETA_LIST_DYNAMIC | OVAL_PROBEMETA_LIST_OTYPE);
+	probe_table_list(stdout);
 #endif
 
 	return OSCAP_OK;

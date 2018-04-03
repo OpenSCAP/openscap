@@ -335,6 +335,27 @@ static inline bool oscap_str_endswith(const char *str, const char *suffix) {
 		return false;
 	return strncmp(str + str_len - suffix_len, suffix, suffix_len) == 0;
 }
+
+/// Allocate aligned memory
+static inline void *oscap_aligned_malloc(size_t size, size_t alignment) {
+#ifdef WIN32
+	return _aligned_malloc(size, alignment);
+#else
+	void *ptr = NULL;
+	posix_memalign(&ptr, alignment, size);
+	return ptr;
+#endif
+}
+
+/// Free aligned memory
+static inline void oscap_aligned_free(void *memblock) {
+#ifdef WIN32
+	_aligned_free(memblock);
+#else
+	free(memblock);
+#endif
+}
+
 /// Trim whitespace (modifies its argument!)
 char *oscap_trim(char *str);
 /// Print to a newly allocated string using a va_list.

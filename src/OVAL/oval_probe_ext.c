@@ -37,6 +37,7 @@
 #endif
 #include <stdlib.h>
 
+#include "_seap-types.h"
 #include "common/_error.h"
 #include "common/alloc.h"
 #include "common/util.h"
@@ -45,7 +46,7 @@
 #include "probes/public/probe-api.h"
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
-#include "oval_probe_meta.h"
+#include "probe-table.h"
 
 #define __ERRBUF_SIZE 128
 
@@ -75,8 +76,6 @@ oval_pext_t *oval_pext_new(void)
                 pext->probe_dir = OVAL_PROBE_DIR;
 
         pext->pdtbl     = NULL;
-        pext->pdsc      = NULL;
-        pext->pdsc_cnt  = 0;
 
         return(pext);
 }
@@ -85,9 +84,6 @@ void oval_pext_free(oval_pext_t *pext)
 {
         if (!pext->do_init) {
                 /* free structs */
-		free(pext->pdsc);
-		pext->pdsc     = NULL;
-		pext->pdsc_cnt = 0;
                 oval_pdtbl_free(pext->pdtbl);
         }
 
@@ -449,6 +445,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 		return -1;
 	}
 
+	ctx->subtype = pd->subtype;
 	for (retry = 0;;) {
 		/*
 		 * Establish connection to probe. The connection may be
@@ -456,7 +453,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 		 * by the probe context handling functions.
 		 */
 		if (pd->sd == -1) {
-			pd->sd = SEAP_connect(ctx, pd->uri, 0);
+			pd->sd = SEAP_connect(ctx);
 
 			if (pd->sd < 0) {
                                 protect_errno {
@@ -603,22 +600,6 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 	*out_sexp = s_oobj;
 	return (0);
-}
-
-static int oval_pdsc_typecmp(oval_subtype_t *a, oval_pdsc_t *b)
-{
-        return (*a - b->type);
-}
-
-static int oval_pdsc_cmp(oval_pdsc_t *a, oval_pdsc_t *b)
-{
-	return (a->type - b->type);
-}
-
-static oval_pdsc_t *oval_pdsc_lookup(oval_pdsc_t pdsc[], int count, oval_subtype_t type)
-{
-	return oscap_bfind(pdsc, count, sizeof(oval_pdsc_t), &type,
-                           (int (*)(void *, void *))oval_pdsc_typecmp);
 }
 
 static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_syschar_model *model, struct oval_sysinfo **out_sysinf)
@@ -789,20 +770,19 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 char         probe_uri[PATH_MAX + 1];
                 size_t       probe_urilen;
                 char        *probe_dir;
-                oval_pdsc_t *probe_dsc;
 
                 probe_dir = pext->probe_dir;
-                probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, type);
 
-		if (probe_dsc == NULL) {
+
+		if (!probe_table_exists(type)) {
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "subtype %u not supported", type);
 
 			ret = -1;
 			break;
 		}
 
-                probe_urilen = snprintf(probe_uri, sizeof probe_uri,
-                                        "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
+		probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s/%s",
+				OVAL_PROBE_SCHEME, probe_dir, oval_subtype_get_text(type));
 
                 if (probe_urilen >= sizeof probe_uri) {
                         oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
@@ -812,7 +792,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                         dI("Starting probe on URI '%s'.", probe_uri);
 
                         if (oval_pdtbl_add(pext->pdtbl, type, -1, probe_uri) != 0) {
-                                oscap_seterr (OSCAP_EFAMILY_OVAL, "%s probe not supported", probe_dsc->name);
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "%s probe not supported", oval_subtype_get_text(type));
 
                                 ret = -1;
                         }
@@ -850,26 +830,25 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 		sys = va_arg(ap, struct oval_syschar *);
 		flags = va_arg(ap, int);
 		obj = oval_syschar_get_object(sys);
-                pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
+		oval_subtype_t obj_subtype = oval_object_get_subtype(obj);
+		pd = oval_pdtbl_get(pext->pdtbl, obj_subtype);
 
                 if (pd == NULL) {
                         char         probe_uri[PATH_MAX + 1];
                         size_t       probe_urilen;
                         char        *probe_dir;
-                        oval_pdsc_t *probe_dsc;
 
                         probe_dir = pext->probe_dir;
-                        probe_dsc = oval_pdsc_lookup(pext->pdsc, pext->pdsc_cnt, oval_object_get_subtype(obj));
 
-			if (probe_dsc == NULL) {
+			if (!probe_table_exists(obj_subtype)) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 				va_end(ap);
 				return (1);
 			}
 
-                        probe_urilen = snprintf(probe_uri, sizeof probe_uri,
-                                                "%s://%s/%s", OVAL_PROBE_SCHEME, probe_dir, probe_dsc->file);
+			probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s/%s",
+					OVAL_PROBE_SCHEME, probe_dir, oval_subtype_get_text(obj_subtype));
 
                         if (probe_urilen >= sizeof probe_uri) {
                                 oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
@@ -879,14 +858,14 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 
                         dI("Starting probe on URI '%s'.", probe_uri);
 
-                        if (oval_pdtbl_add(pext->pdtbl, oval_object_get_subtype(obj), -1, probe_uri) != 0) {
+                        if (oval_pdtbl_add(pext->pdtbl, obj_subtype, -1, probe_uri) != 0) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
 				oval_syschar_set_flag(sys, SYSCHAR_FLAG_NOT_COLLECTED);
 				va_end(ap);
                                 return (1);
 			}
 
-			pd = oval_pdtbl_get(pext->pdtbl, oval_object_get_subtype(obj));
+			pd = oval_pdtbl_get(pext->pdtbl, obj_subtype);
 
                         if (pd == NULL) {
                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "internal error");
@@ -908,8 +887,6 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 
 				pext->do_init  = true;
 				pext->pdtbl    = NULL;
-				pext->pdsc     = NULL;
-				pext->pdsc_cnt = 0;
 
 				oval_probe_ext_init(pext);
 
@@ -990,68 +967,6 @@ int oval_probe_ext_init(oval_pext_t *pext)
         pthread_mutex_lock(&pext->lock);
 
         if (pext->do_init) {
-		char curdir[PATH_MAX];
-		struct stat st;
-		register unsigned int i, r;
-
-		if (getcwd(curdir, PATH_MAX) == NULL) {
-			dE("getcwd() failed");
-                        ret = -1;
-                        goto _ret;
-		}
-
-		if (chdir(pext->probe_dir) != 0) {
-			dE("Can't chdir to \"%s\"", pext->probe_dir);
-                        ret = -1;
-                        goto _ret;
-		}
-
-		pext->pdsc = malloc(sizeof(oval_pdsc_t) * OSCAP_GSYM(__probe_meta_count));
-
-                dD("__probe_meta_count = %zu", OSCAP_GSYM(__probe_meta_count));
-
-		for (r = 0, i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-                        if (!(OSCAP_GSYM(__probe_meta)[i].flags & OVAL_PROBEMETA_EXTERNAL)) {
-                                dD("skipped: %s (not an external probe)", OSCAP_GSYM(__probe_meta)[i].stype);
-                                continue;
-                        }
-
-			if (stat(OSCAP_GSYM(__probe_meta)[i].pname, &st) != 0) {
-				dD("skipped: %s (stat failed, errno=%d)", OSCAP_GSYM(__probe_meta)[i].stype, errno);
-				continue;
-			}
-
-#ifdef _WIN32
-		if (!(st.st_mode & _S_IFREG)) {
-#else
-		if (!S_ISREG(st.st_mode)) {
-#endif
-				dD("skipped: %s (not a regular file)", OSCAP_GSYM(__probe_meta)[i].stype);
-				continue;
-			}
-
-                        pext->pdsc[r].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                        pext->pdsc[r].name = OSCAP_GSYM(__probe_meta)[i].stype;
-                        pext->pdsc[r].file = OSCAP_GSYM(__probe_meta)[i].pname;
-
-			++r;
-		}
-
-		if (r < OSCAP_GSYM(__probe_meta_count))
-			pext->pdsc = realloc(pext->pdsc, sizeof(oval_pdsc_t) * r);
-
-		pext->pdsc_cnt = r;
-		qsort(pext->pdsc, pext->pdsc_cnt, sizeof(oval_pdsc_t),
-		      (int(*)(const void *, const void *))oval_pdsc_cmp);
-
-		if (chdir(curdir) != 0) {
-			dE("Can't chdir back to \"%s\"", curdir);
-			free(pext->pdsc);
-			pext->pdsc_cnt = 0;
-                        ret = -1;
-                        goto _ret;
-		}
-
                 pext->pdtbl = oval_pdtbl_new();
 
                 if (oval_probe_cmd_init(pext) != 0)
@@ -1059,7 +974,6 @@ int oval_probe_ext_init(oval_pext_t *pext)
                 else
                         pext->do_init = false;
         }
-_ret:
         pthread_mutex_unlock(&pext->lock);
 
         return(ret);
@@ -1128,8 +1042,6 @@ int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 #include <signal.h>
 #include "SEAP/_seap-types.h"
 #include "SEAP/seap-descriptor.h"
-#include "SEAP/_seap-scheme.h"
-#include "SEAP/sch_pipe.h"
 
 #ifdef _WIN32
 
@@ -1143,35 +1055,6 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 
 int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 {
-	SEAP_desc_t *dsc;
-	/*
-	 * Send SIGUSR1 to the probe
-	 */
-
-	if (ctx == NULL || pd == NULL || pext == NULL) {
-		return -1;
-	}
-
-	dI("Sending abort to sd=%d", pd->sd);
-
-	dsc = SEAP_desc_get(ctx->sd_table, pd->sd);
-
-	if (dsc == NULL)
-		return (-1);
-
-	switch (dsc->scheme) {
-	case SCH_PIPE:
-	{
-		sch_pipedata_t *pipeinfo = (sch_pipedata_t *)dsc->scheme_data;
-		dI("Sending SIGUSR1 to pid=%u", pipeinfo->pid);
-		if (kill(pipeinfo->pid, SIGUSR1) != 0)
-			dW("kill(SIGUSR1, %u): %u, %s", errno, strerror(errno));
-		break;
-	}
-	default:
-		return (-1);
-	}
-
 	return (0);
 }
 

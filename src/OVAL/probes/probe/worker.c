@@ -35,12 +35,15 @@
 #include "entcmp.h"
 
 #include "worker.h"
+#include "probe-table.h"
+#include "probe.h"
 
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);
 
 void *probe_worker_runfn(void *arg)
 {
+	dD("probe_worker_runfn has started");
 	probe_pwpair_t *pair = (probe_pwpair_t *)arg;
 
 	SEXP_t *probe_res, *obj, *oid;
@@ -73,6 +76,7 @@ void *probe_worker_runfn(void *arg)
                 SEXP_free(probe_res);
                 free(pair);
 
+		dD("probe_worker_runfn has finished");
                 return (NULL);
 	} else {
                 SEXP_t *items;
@@ -137,6 +141,7 @@ void *probe_worker_runfn(void *arg)
 	free(pair);
 	pthread_detach(pthread_self());
 
+	dD("probe_worker_runfn has finished");
 	return (NULL);
 }
 
@@ -977,6 +982,10 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 else
                         varrefs = NULL;
 
+		oval_subtype_t subtype = probe->subtype;
+		probe_main_function_t probe_main_function = probe_table_get_main_function(subtype);
+		const char *subtype_str = oval_subtype_get_text(subtype);
+
 		if (varrefs == NULL || !OSCAP_GSYM(varref_handling)) {
                         /*
                          * Prepare the collected object
@@ -994,7 +1003,12 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                          */
 			int __unused_oldstate;
 			pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, &__unused_oldstate);
-			*ret = probe_main(&pctx, probe->probe_arg);
+
+
+
+			dI("I will run %s_probe_main:", subtype_str);
+			*ret = probe_main_function(&pctx, probe->probe_arg);
+
 			pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, &__unused_oldstate);
 
                         /*
@@ -1035,7 +1049,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                                 /*
                                  * Run the main function of the probe implementation
                                  */
-				*ret = probe_main(&pctx, probe->probe_arg);
+			dI("I will run %s_probe_main:", subtype_str);
+			*ret = probe_main_function(&pctx, probe->probe_arg);
 
                                 /*
                                  * Synchronize
@@ -1056,6 +1071,31 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
                 SEXP_free(pctx.filters);
 	}
+
+#ifndef _WIN32
+	/* Revert chroot */
+	if (probe->real_root_fd != -1) {
+		if (fchdir(probe->real_root_fd) != 0) {
+			dE("fchdir failed: %s", strerror(errno));
+			close(probe->real_root_fd);
+			close(probe->real_cwd_fd);
+			return NULL;
+		}
+		close(probe->real_root_fd);
+		dI("Leaving chroot mode");
+		if (chroot(".") == -1) {
+			dE("chroot(\".\") failed: %s", strerror(errno));
+			close(probe->real_cwd_fd);
+			return NULL;
+		}
+		if (fchdir(probe->real_cwd_fd) != 0) {
+			dE("fchdir failed: %s", strerror(errno));
+			close(probe->real_cwd_fd);
+			return NULL;
+		}
+		close(probe->real_cwd_fd);
+	}
+#endif
 
 	SEXP_free(probe_in);
 	SEXP_VALIDATE(probe_out);

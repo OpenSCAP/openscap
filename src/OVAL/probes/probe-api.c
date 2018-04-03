@@ -1425,8 +1425,9 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
         va_list ap;
 	SEXP_t *item, *name_sexp, *value_sexp = NULL, *entity;
         SEXP_t value_sexp_mem, entity_mem;
-	const char *value_name, *subtype_name;
-        char item_name[64];
+	const char *value_name, *subtype_name, *family_name;
+	oval_family_t family;
+	char item_name[128];
         oval_datatype_t value_type;
 
         char   *value_str, **value_stra;
@@ -1444,14 +1445,9 @@ SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attr
                 return (NULL);
         }
 
-        if (strlen(subtype_name) + strlen("_item") < sizeof item_name) {
-                strcpy(item_name, subtype_name);
-                strcat(item_name, "_item");
-                item_name[sizeof item_name - 1] = '\0';
-        } else {
-                dE("item name too long: no buffer space available");
-                return (NULL);
-        }
+	family = oval_subtype_get_family(item_subtype);
+	family_name = oval_family_get_text(family);
+	snprintf(item_name, sizeof(item_name), "%s:%s_item", family_name, subtype_name);
 
 	va_start(ap, item_attributes);
 
@@ -1808,12 +1804,5 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
 
     SEXP_free(objents);
     return (mask);
-}
-
-/* Empty implementation of probe_main is used in libopenscap.so shared library
- * to avoid undefined symbol errors. Probes have their own implementation. */
-int probe_main(probe_ctx *ctx, void *arg)
-{
-	return 0;
 }
 /// @}

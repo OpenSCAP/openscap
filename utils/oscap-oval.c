@@ -44,6 +44,7 @@
 #include "oscap-tool.h"
 #include "scap_ds.h"
 #include <oscap_debug.h>
+#include "probe-table.h"
 
 #if defined(OVAL_PROBES_ENABLED)
 static int app_collect_oval(const struct oscap_action *action);
@@ -550,14 +551,8 @@ static int app_oval_xslt(const struct oscap_action *action)
 #if defined(OVAL_PROBES_ENABLED)
 static int app_oval_list_probes(const struct oscap_action *action)
 {
-    int flags = 0;
+	probe_table_list(stdout);
 
-    if (action->list_dynamic)
-	flags |= OVAL_PROBEMETA_LIST_DYNAMIC;
-    if (action->verbosity >= 10)
-	flags |= OVAL_PROBEMETA_LIST_VERBOSE;
-
-    oval_probe_meta_list(stdout, flags);
     return (0);
 }
 #endif /* OVAL_PROBES_ENABLED */

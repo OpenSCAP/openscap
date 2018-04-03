@@ -33,12 +33,13 @@
 #include "_sexp-parser.h"
 #include "_seap-packetq.h"
 #include "_seap-packet.h"
-#include "_seap-scheme.h"
+#include "_seap-types.h"
 #include "seap-descriptor.h"
 #include "public/seap-message.h"
 #include "public/seap-command.h"
 #include "public/seap-error.h"
 #include "public/sm_alloc.h"
+#include "sch_queue.h"
 
 SEAP_packet_t *SEAP_packet_new (void)
 {
@@ -606,12 +607,6 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
         SEAP_desc_t *dsc;
         SEXP_t      *sexp_buffer;
         SEXP_t      *sexp_packet;
-        void        *data_buffer;
-        size_t       data_buflen;
-        ssize_t      data_length;
-
-        SEXP_psetup_t *psetup;
-        SEXP_pstate_t *pstate;
 
         SEXP_t     *psym_sexp;
         char        psym_cstr_b[16+1];
@@ -640,14 +635,7 @@ int SEAP_packet_recv (SEAP_CTX_t *ctx, int sd, SEAP_packet_t **packet)
          * parsing of data can begin.
          */
 
-eloop_start:
-
         for (;;) {
-                if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, 0, 0) != 0)
-                        return (-1);
-
-                dD("return from select");
-
                 switch (DESC_TRYRLOCK (dsc)) {
                 case  1:
                         goto eloop_exit;
@@ -676,113 +664,9 @@ eloop_start:
         }
 eloop_exit:
 
-        /*
-         * Receive loop
-         * The read mutex is locked during execution of this loop and
-         * the execution stops if the received data forms a valid
-         * S-expression.
-         */
-
-        pstate = NULL;
-        psetup = SEXP_psetup_new ();
-
-        /*
-         * All buffer passed to SEXP_parse will be freed by
-         * SEXP_pstate_free (i.e. after successful parsing)
-         */
-        SEXP_psetup_setflags(psetup, SEXP_PFLAG_FREEBUF);
-
-        for (;;) {
-                data_buffer = sm_alloc (SEAP_RECVBUF_SIZE);
-                data_buflen = SEAP_RECVBUF_SIZE;
-                data_length = SCH_RECV(dsc->scheme, dsc, data_buffer, data_buflen, 0);
-
-                if (data_length < 0) {
-                        protect_errno {
-                                dI("FAIL: recv failed: dsc=%p, errno=%u, %s.", dsc, errno, strerror (errno));
-
-                                sm_free (data_buffer);
-                                SEXP_psetup_free (psetup);
-
-                                if (pstate != NULL)
-                                        SEXP_pstate_free (pstate);
-                        }
-                        return (-1);
-                } else if (data_length == 0) {
-                        dI("zero bytes received -> EOF");
-                        sm_free (data_buffer);
-                        SEXP_psetup_free (psetup);
-
-                        if (pstate != NULL) {
-                                dI("FAIL: incomplete S-exp received");
-                                errno = ENETRESET;
-                                return (-1);
-                        } else {
-                                errno = ECONNABORTED;
-                                return (-1);
-                        }
-                }
-
-                _A(data_length > 0);
-
-                if (data_buflen != (size_t)(data_length)) {
-                        data_buffer = sm_realloc (data_buffer, data_length);
-			data_buflen = data_length;
-		}
-
-                sexp_buffer = SEXP_parse (psetup, data_buffer, data_length, &pstate);
-
-                if (sexp_buffer != NULL) {
-                        _A(pstate == NULL);
-
-                        DESC_RUNLOCK(dsc);
-
-                        if (SEXP_list_length (sexp_buffer) > 0) {
-                                break;
-                        } else {
-                                SEXP_list_free (sexp_buffer);
-                                SEXP_psetup_free (psetup);
-                                dI("eloop_restart");
-                                goto eloop_start;
-                        }
-                } else {
-			if (pstate == NULL || SEXP_pstate_errorp(pstate)) {
-				dI("FAIL: S-exp parsing error, buffer: length: %ld, content:\n%.*s",
-				   data_length, data_length, data_buffer);
-
-				SEXP_psetup_free(psetup);
-				SEXP_pstate_free(pstate);
-
-				errno = EILSEQ;
-
-				return (-1);
-			}
-		}
-
-                if (SCH_SELECT(dsc->scheme, dsc, SEAP_IO_EVREAD, ctx->recv_timeout, 0) != 0) {
-                        switch (errno) {
-                        case ETIMEDOUT:
-                                protect_errno {
-                                        dI("FAIL: recv failed (timeout): dsc=%p, time=%hu, errno=%u, %s.",
-                                           dsc, ctx->recv_timeout, errno, strerror (errno));
-                                }
-                                /* FALLTHROUGH */
-                        default:
-                                protect_errno {
-                                        dI("FAIL: recv failed: dsc=%p, errno=%u, %s.",
-                                           dsc, errno, strerror (errno));
-
-                                        SEXP_psetup_free (psetup);
-                                        SEXP_pstate_free (pstate);
-                                }
-                                SEXP_free(sexp_buffer);
-                                return (-1);
-                        }
-                }
-        }
-
-        SEXP_psetup_free (psetup);
+	sexp_buffer = sch_queue_recvsexp(dsc);
 	SEXP_VALIDATE(sexp_buffer);
+
 	(*packet) = NULL;
 
         while((sexp_packet = SEXP_list_pop (sexp_buffer)) != NULL) {
@@ -986,7 +870,7 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
         if (DESC_WLOCK (dsc)) {
                 ret = 0;
 
-                if (SCH_SENDSEXP(dsc->scheme, dsc, packet_sexp, 0) < 0) {
+		if (sch_queue_sendsexp(dsc, packet_sexp, 0) < 0) {
                         ret = -1;
 
                         protect_errno {

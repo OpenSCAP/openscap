@@ -45,76 +45,12 @@
 
 #include "_oval_probe_session.h"
 #include "_oval_probe_handler.h"
-#include "oval_probe_meta.h"
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
 
 #ifdef _WIN32
 #define X_OK 0
 #endif
-
-oval_probe_meta_t OSCAP_GSYM(__probe_meta)[] = {
-        { OVAL_SUBTYPE_SYSINFO, "system_info", &oval_probe_sys_handler, OVAL_PROBEMETA_EXTERNAL, "probe_system_info" },
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FAMILY, "family"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_MD5, "filemd5"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_HASH, "filehash"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, "environmentvariable"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_SQL, "sql"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_TEXT_FILE_CONTENT_54, "textfilecontent54"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_TEXT_FILE_CONTENT, "textfilecontent"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_VARIABLE, "variable"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_XML_FILE_CONTENT, "xmlfilecontent"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_SQL57, "sql57"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, "environmentvariable58"),
-        OVAL_PROBE_EXTERNAL(OVAL_INDEPENDENT_FILE_HASH58, "filehash58"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_DPKG_INFO, "dpkginfo"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_INET_LISTENING_SERVERS, "inetlisteningservers"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_INET_LISTENING_SERVER, "inetlisteningserver"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPM_INFO, "rpminfo"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_PARTITION, "partition"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_IFLISTENERS, "iflisteners"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFY, "rpmverify"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFYFILE, "rpmverifyfile"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_RPMVERIFYPACKAGE, "rpmverifypackage"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXBOOLEAN, "selinuxboolean"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SYSTEMDUNITPROPERTY, "systemdunitproperty"),
-        OVAL_PROBE_EXTERNAL(OVAL_LINUX_SYSTEMDUNITDEPENDENCY, "systemdunitdependency"),
-        OVAL_PROBE_EXTERNAL(OVAL_SOLARIS_ISAINFO, "isainfo"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILE, "file"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_INTERFACE, "interface"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_PASSWORD, "password"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_PROCESS, "process"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_RUNLEVEL, "runlevel"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SHADOW, "shadow"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_UNAME, "uname"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_XINETD, "xinetd"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYSCTL, "sysctl"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_PROCESS58, "process58"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, "fileextendedattribute"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_GCONF, "gconf"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_ROUTINGTABLE, "routingtable"),
-        OVAL_PROBE_EXTERNAL(OVAL_UNIX_SYMLINK, "symlink")
-};
-
-#define __PROBE_META_COUNT (sizeof OSCAP_GSYM(__probe_meta)/sizeof OSCAP_GSYM(__probe_meta)[0])
-
-size_t OSCAP_GSYM(__probe_meta_count) = __PROBE_META_COUNT;
-oval_subtypedsc_t OSCAP_GSYM(__s2n_tbl)[__PROBE_META_COUNT];
-oval_subtypedsc_t OSCAP_GSYM(__n2s_tbl)[__PROBE_META_COUNT];
-
-#define __s2n_tbl_count OSCAP_GSYM(__probe_meta_count)
-#define __n2s_tbl_count OSCAP_GSYM(__probe_meta_count)
-
-static int __s2n_tbl_cmp(oval_subtype_t *type, oval_subtypedsc_t *dsc)
-{
-        return (*type - dsc->type);
-}
-
-static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
-{
-        return strcmp(name, dsc->name);
-}
 
 /*
  * Library side entity name cache. Initialization needs to be
@@ -125,68 +61,7 @@ static int __n2s_tbl_cmp(const char *name, oval_subtypedsc_t *dsc)
 probe_ncache_t  *OSCAP_GSYM(ncache) = NULL;
 struct id_desc_t OSCAP_GSYM(id_desc);
 
-#if defined(OSCAP_THREAD_SAFE)
-# include <pthread.h>
-static pthread_once_t __oval_probe_init_once = PTHREAD_ONCE_INIT;
-#else
-static volatile int __oval_probe_init_once = 0;
-#endif
-
 #define __ERRBUF_SIZE 128
-
-static int __s2n_tbl_sortcmp(oval_subtypedsc_t *a, oval_subtypedsc_t *b)
-{
-        return (a->type - b->type);
-}
-
-static int __n2s_tbl_sortcmp(oval_subtypedsc_t *a, oval_subtypedsc_t *b)
-{
-        return strcmp(a->name, b->name);
-}
-
-void oval_probe_tblinit(void)
-{
-        register size_t i;
-
-        for(i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-                OSCAP_GSYM(__s2n_tbl)[i].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                OSCAP_GSYM(__n2s_tbl)[i].type = OSCAP_GSYM(__probe_meta)[i].otype;
-                OSCAP_GSYM(__s2n_tbl)[i].name = OSCAP_GSYM(__probe_meta)[i].stype;
-                OSCAP_GSYM(__n2s_tbl)[i].name = OSCAP_GSYM(__probe_meta)[i].stype;
-        }
-
-        qsort(OSCAP_GSYM(__s2n_tbl), OSCAP_GSYM(__probe_meta_count), sizeof (oval_subtypedsc_t),
-              (int(*)(const void *, const void *))__s2n_tbl_sortcmp);
-
-        qsort(OSCAP_GSYM(__n2s_tbl), OSCAP_GSYM(__probe_meta_count), sizeof (oval_subtypedsc_t),
-              (int(*)(const void *, const void *))__n2s_tbl_sortcmp);
-}
-
-static void __init_once(void)
-{
-#if defined(OSCAP_THREAD_SAFE)
-        if (pthread_once(&__oval_probe_init_once, &oval_probe_tblinit) != 0)
-                abort();
-#else
-        if (__oval_probe_init_once == 0) {
-                oval_probe_tblinit();
-                __oval_probe_init_once = 1;
-        }
-#endif
-        return;
-}
-
-oval_subtype_t oval_str_to_subtype(const char *str)
-{
-        oval_subtypedsc_t *d;
-
-        __init_once();
-
-        d = oscap_bfind(OSCAP_GSYM(__n2s_tbl), __n2s_tbl_count, sizeof(oval_subtypedsc_t), (void *)str,
-                        (int(*)(void *, void *))__n2s_tbl_cmp);
-
-        return (d == NULL ? OVAL_SUBTYPE_UNKNOWN : d->type);
-}
 
 static void _syschar_add_bindings(struct oval_syschar *sc, struct oval_string_map *vm)
 {
@@ -276,7 +151,7 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 		return 1;
         }
 
-	if ((ret = ph->func(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, sysc, flags)) != 0) {
+	if ((ret = oval_probe_ext_handler(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, sysc, flags)) != 0) {
 		return ret;
 	}
 
@@ -298,7 +173,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
 	dI("Querying system information.");
 
-        ph = oval_probe_handler_get(sess->ph, OVAL_SUBTYPE_SYSINFO);
+	ph = oval_probe_handler_get(sess->ph, OVAL_INDEPENDENT_SYSCHAR_SUBTYPE);
 
         if (ph == NULL) {
                 oscap_seterr (OSCAP_EFAMILY_OVAL, "OVAL object not supported");
@@ -312,7 +187,7 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 
         sysinf = NULL;
 
-	ret = ph->func(OVAL_SUBTYPE_SYSINFO, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
+	ret = oval_probe_sys_handler(OVAL_INDEPENDENT_SYSCHAR_SUBTYPE, ph->uptr, PROBE_HANDLER_ACT_EVAL, NULL, &sysinf, 0);
 	if (ret != 0)
 		return(ret);
 
@@ -480,67 +355,4 @@ static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_cri
 
 	/* we shouldn't get here */
         return -1;
-}
-
-#if 0
-const oval_probe_meta_t * const oval_probe_meta_get(void)
-{
-    return (const oval_probe_meta_t * const)OSCAP_GSYM(__probe_meta);
-}
-#endif
-
-void oval_probe_meta_list(FILE *output, int flags)
-{
-	register size_t i;
-	const char *probe_dir;
-	oval_probe_meta_t *meta = OSCAP_GSYM(__probe_meta);
-	size_t probe_dirlen;
-	char probe_path[PATH_MAX+1];
-
-	if (output == NULL)
-		output = stdout;
-
-	probe_dir = oval_probe_ext_getdir();
-	if (probe_dir == NULL) {
-		return;
-	}
-	probe_dirlen = strlen(probe_dir);
-	if (probe_dirlen + 1 > PATH_MAX) {
-		return;
-	}
-
-	for (i = 0; i < OSCAP_GSYM(__probe_meta_count); ++i) {
-		if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
-			strncpy(probe_path, probe_dir, PATH_MAX);
-			probe_path[probe_dirlen] = '/';
-			probe_path[probe_dirlen+1] = '\0';
-			strncat(probe_path, meta[i].pname, PATH_MAX - strlen(probe_dir) - 1);
-
-			if (flags & OVAL_PROBEMETA_LIST_DYNAMIC) {
-				dI("Checking access to \"%s\"", probe_path);
-				if (access(probe_path, X_OK) != 0) {
-					dW("access: errno=%d, %s", errno, strerror(errno));
-					continue;
-				}
-			}
-		}
-
-		if (flags & OVAL_PROBEMETA_LIST_OTYPE) {
-			fprintf(output, "%-14s", oval_family_get_text(oval_subtype_get_family(meta[i].otype)));
-		}
-
-		fprintf(output, "%-28s %-28s", meta[i].stype, meta[i].pname);
-
-		if (flags & OVAL_PROBEMETA_LIST_VERBOSE) {
-			if (meta[i].flags & OVAL_PROBEMETA_EXTERNAL) {
-				fprintf(output, " %-5u %s", meta[i].otype, probe_path);
-			} else {
-				fprintf(output, " %-5u", meta[i].otype);
-			}
-		}
-
-		fprintf(output, "\n");
-	}
-
-	return;
 }

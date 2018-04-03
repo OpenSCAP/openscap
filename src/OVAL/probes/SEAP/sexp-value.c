@@ -33,13 +33,7 @@
 
 int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
 {
-        void *s_val;
-
-        if (sm_memalign (&s_val, SEXP_VALP_ALIGN,
-                         sizeof (SEXP_valhdr_t) + vmemsize) != 0)
-        {
-                return (-1);
-        }
+	void *s_val = oscap_aligned_malloc(sizeof(SEXP_valhdr_t) + vmemsize, SEXP_VALP_ALIGN);
 
         SEXP_val_dsc (dst, (uintptr_t) s_val);
 
@@ -110,16 +104,12 @@ size_t SEXP_rawval_list_length (struct SEXP_val_list *list)
 
 uintptr_t SEXP_rawval_lblk_new (uint8_t sz)
 {
-        struct SEXP_val_lblk *lblk;
-
         _A(sz < 16);
 
-        if (sm_memalign ((void **)(void *)&lblk, SEXP_LBLK_ALIGN,
-                         sizeof (uintptr_t) + (2 * sizeof (uint16_t)) + (sizeof (SEXP_t) * (1 << sz))) != 0) {
-                /* TODO: handle this */
-                abort ();
-                return ((uintptr_t) NULL);
-        }
+	struct SEXP_val_lblk *lblk = oscap_aligned_malloc(
+		sizeof(uintptr_t) + (2 * sizeof(uint16_t)) + (sizeof(SEXP_t) * (1 << sz)),
+		SEXP_LBLK_ALIGN
+	);
 
         lblk->nxsz = ((uintptr_t)(NULL) & SEXP_LBLKP_MASK) | ((uintptr_t)sz & SEXP_LBLKS_MASK);
         lblk->refs = 1;
@@ -529,7 +519,7 @@ void SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *))
                         func (lblk->memb + lblk->real);
                 }
 
-                sm_free (lblk);
+		oscap_aligned_free(lblk);
 
                 if (next != NULL)
                         SEXP_rawval_lblk_free ((uintptr_t)next, func);
@@ -550,7 +540,7 @@ void SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *))
                         func (lblk->memb + lblk->real);
                 }
 
-                sm_free (lblk);
+		oscap_aligned_free(lblk);
         }
 
         return;

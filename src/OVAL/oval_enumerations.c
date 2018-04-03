@@ -618,19 +618,8 @@ static const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
-oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
+static const struct oscap_string_map *get_map_for_family(oval_family_t family)
 {
-	oval_family_t family = oval_family_parse(reader);
-	if (family == OVAL_FAMILY_UNKNOWN)
-		return OVAL_SUBTYPE_UNKNOWN;
-
-	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
-	char *tagname = (char *)xmlTextReaderLocalName(reader);
-	char *endptr = (tagname != NULL) ? strrchr(tagname, '_') : NULL;
-	if (endptr == NULL)
-		goto cleanup;
-	*endptr = '\0';
-
 	const struct oscap_string_map *map = NULL;
 	switch (family) {
 	case OVAL_FAMILY_AIX:
@@ -676,6 +665,27 @@ oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
 		map = OVAL_SUBTYPE_WINDOWS_MAP;
 		break;
 	default:
+		map = NULL;
+		break;
+	}
+	return map;
+}
+
+oval_subtype_t oval_subtype_parse(xmlTextReaderPtr reader)
+{
+	oval_family_t family = oval_family_parse(reader);
+	if (family == OVAL_FAMILY_UNKNOWN)
+		return OVAL_SUBTYPE_UNKNOWN;
+
+	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
+	char *tagname = (char *)xmlTextReaderLocalName(reader);
+	char *endptr = strrchr(tagname, '_');
+	if (endptr == NULL)
+		goto cleanup;
+	*endptr = '\0';
+
+	const struct oscap_string_map *map = get_map_for_family(family);
+	if (map == NULL) {
 		goto cleanup;
 	}
 
@@ -696,53 +706,8 @@ oval_family_t oval_subtype_get_family(oval_subtype_t subtype)
 
 const char *oval_subtype_get_text(oval_subtype_t subtype)
 {
-	const struct oscap_string_map *map = NULL;
-	switch (oval_subtype_get_family(subtype)) {
-	case OVAL_FAMILY_AIX:
-		map = OVAL_SUBTYPE_AIX_MAP;
-		break;
-	case OVAL_FAMILY_APACHE:
-		map = OVAL_SUBTYPE_APACHE_MAP;
-		break;
-	case OVAL_FAMILY_CATOS:
-		map = OVAL_SUBTYPE_CATOS_MAP;
-		break;
-	case OVAL_FAMILY_ESX:
-		map = OVAL_SUBTYPE_ESX_MAP;
-		break;
-	case OVAL_FAMILY_FREEBSD:
-		map = OVAL_SUBTYPE_FREEBSD_MAP;
-		break;
-	case OVAL_FAMILY_HPUX:
-		map = OVAL_SUBTYPE_HPUX_MAP;
-		break;
-	case OVAL_FAMILY_INDEPENDENT:
-		map = OVAL_SUBTYPE_INDEPENDENT_MAP;
-		break;
-	case OVAL_FAMILY_IOS:
-		map = OVAL_SUBTYPE_IOS_MAP;
-		break;
-	case OVAL_FAMILY_LINUX:
-		map = OVAL_SUBTYPE_LINUX_MAP;
-		break;
-	case OVAL_FAMILY_MACOS:
-		map = OVAL_SUBTYPE_MACOS_MAP;
-		break;
-	case OVAL_FAMILY_PIXOS:
-		map = OVAL_SUBTYPE_PIXOS_MAP;
-		break;
-	case OVAL_FAMILY_SOLARIS:
-		map = OVAL_SUBTYPE_SOLARIS_MAP;
-		break;
-	case OVAL_FAMILY_UNIX:
-		map = OVAL_SUBTYPE_UNIX_MAP;
-		break;
-	case OVAL_FAMILY_WINDOWS:
-		map = OVAL_SUBTYPE_WINDOWS_MAP;
-		break;
-	default:
-		map = NULL;
-	}
+	oval_family_t family = oval_subtype_get_family(subtype);
+	const struct oscap_string_map *map = get_map_for_family(family);
 
 	if (map) {
 		return oval_enumeration_get_text(map, subtype);
@@ -755,6 +720,17 @@ const char *oval_subtype_get_text(oval_subtype_t subtype)
 const char *oval_subtype_to_str(oval_subtype_t subtype)
 {
 	return oval_subtype_get_text(subtype);
+}
+
+oval_subtype_t oval_subtype_from_str(const char *family_str, const char *subtype_str)
+{
+	oval_subtype_t subtype = OVAL_SUBTYPE_UNKNOWN;
+	oval_family_t family = oval_enumeration_from_text(OVAL_FAMILY_MAP, family_str);
+	const struct oscap_string_map *map = get_map_for_family(family);
+	if (map != NULL) {
+		subtype = oval_enumeration_from_text(map, subtype_str);
+	}
+	return subtype;
 }
 
 static const struct oscap_string_map OVAL_RESULT_MAP[] = {
