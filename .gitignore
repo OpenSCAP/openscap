@@ -4,7 +4,7 @@
 .gdb_history
 .libs/
 .*.swp
-Makefile
+Makefile$
 Makefile.in
 tags
 

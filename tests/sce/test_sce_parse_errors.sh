@@ -9,7 +9,7 @@
 
 set -e -o pipefail
 
-. ${srcdir}/../test_common.sh
+. ../test_common.sh
 
 # In this test oscap should try to load corrupted/invalid (XML) file and get
 # error

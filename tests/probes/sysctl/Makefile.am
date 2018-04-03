@@ -1,5 +1,3 @@
-EXTRA_DIST = $(top_srcdir)/tests/test_common.sh
-
 DISTCLEANFILES = \
 	*.log \
 	oscap_debug.log.* \
@@ -21,7 +19,7 @@ check_SCRIPTS = \
 	test_sysctl_probe.sh \
 	test_sysctl_probe_all.sh
 
-EXTRA_DIST += \
+EXTRA_DIST = \
 	all.sh \
 	test_sysctl_probe.sh \
 	test_sysctl_probe.oval.xml \

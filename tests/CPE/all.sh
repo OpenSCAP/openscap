@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. ${srcdir}/../test_common.sh
+. ../test_common.sh
 
 function test_cpe() {
     $OSCAP oval validate --schematron ${top_srcdir}/cpe/openscap-cpe-oval.xml
