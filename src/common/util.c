@@ -37,6 +37,7 @@
 
 #ifdef _WIN32
 #include <stdlib.h>
+#include <windows.h>
 #else
 #include <libgen.h>
 #include <strings.h>
@@ -338,3 +339,42 @@ char *oscap_path_join(const char *path1, const char *path2)
 	joined_path[joined_path_len] = '\0';
 	return joined_path;
 }
+
+#ifdef _WIN32
+char *oscap_windows_wstr_to_str(const wchar_t *wstr)
+{
+	if (wstr == NULL) {
+		return NULL;
+	}
+	const int required_size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+	char *str = malloc(required_size);
+	WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, required_size, NULL, NULL);
+	return str;
+}
+
+wchar_t *oscap_windows_str_to_wstr(const char *str)
+{
+	if (str == NULL) {
+		return NULL;
+	}
+	const int required_size = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+	wchar_t *wstr = malloc(required_size * sizeof(wchar_t));
+	MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, required_size);
+	return wstr;
+}
+
+char *oscap_windows_error_message(unsigned long error_code)
+{
+	wchar_t *buffer = NULL;
+	/* According to FormatMessage documentation, if FORMAT_MESSAGE_ALLOCATE_BUFFER
+	 * flag is set, the buffer must be freed by LocalFree and must be casted to LPWSTR.
+	 */
+	FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER |
+		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPWSTR) &buffer, 0, NULL);
+	char *error_message = oscap_windows_wstr_to_str(buffer);
+	LocalFree(buffer);
+	return error_message;
+}
+#endif

@@ -58,9 +58,21 @@
 #include <probe-api.h>
 #include <probe/probe.h>
 #include <probe/option.h>
+#include <debug_priv.h>
 
 #ifdef _WIN32
+/* By defining WIN32_LEAN_AND_MEAN we ensure that Windows.h won't include
+ * winsock.h, which would conflict with symbols from WinSock2.h.
+ */
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <WinSock2.h>
+#include <Iphlpapi.h>
 #include <Windows.h>
+#include <ws2def.h>
+#include <io.h>
+#include <winternl.h>
 #else
 #include <sys/utsname.h>
 #include <unistd.h>
@@ -290,6 +302,135 @@ leave2:
 leave1:
         freeifaddrs(ifaddr);
         return rc;
+}
+
+#elif defined(_WIN32)
+
+#define VERSION_LEN 32
+/* Microsoft recommends to start with a 15 kB buffer for GetAdaptersAddresses. */
+#define ADDRESSES_BUFFER_SIZE 15000
+#define MAX_TRIES 3
+#define MAX_IP_ADDRESS_STRING_LENGTH 128
+
+static int get_ifs(SEXP_t *item)
+{
+	/*
+	 * Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h
+	 * to define the Windows Socket specification version we will use.
+	 * The current version of the Windows Sockets specification is version 2.2.
+	 * Version 2.2 is supported on all systems since Windows 95 OSR2.
+	 */
+	WORD requested_version = MAKEWORD(2, 2);
+
+	WSADATA wsa_data;
+	int err = WSAStartup(requested_version, &wsa_data);
+	if (err != 0) {
+		char *error_message = oscap_windows_error_message(err);
+		dE("Can't initialize Winsock DLL. WSAStartup failed: %s", error_message);
+		free(error_message);
+		return 1;
+	}
+
+	PIP_ADAPTER_ADDRESSES addresses = NULL;
+	ULONG ret_val = 0;
+	ULONG addresses_size = ADDRESSES_BUFFER_SIZE;
+	ULONG family = AF_UNSPEC; // both IPv4 and IPv6
+	ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
+	int iterations = 0;
+
+	/* Try to get information about network adapters and their adresses */
+	do {
+		addresses = malloc(addresses_size);
+		ret_val = GetAdaptersAddresses(family, flags, NULL, addresses, &addresses_size);
+		if (ret_val == ERROR_BUFFER_OVERFLOW) {
+			free(addresses);
+			addresses = NULL;
+		}
+		iterations++;
+	} while (ret_val == ERROR_BUFFER_OVERFLOW && iterations < MAX_TRIES);
+
+	if (ret_val != NO_ERROR) {
+		char *error_message = oscap_windows_error_message(err);
+		dE("Can't get information about network adapters and their adresses. %s", error_message);
+		free(error_message);
+		free(addresses);
+		WSACleanup();
+		return 1;
+	}
+
+	/* Iterate over all network adapters */
+	PIP_ADAPTER_ADDRESSES current_address = addresses;
+	while (current_address != NULL) {
+		/* MAC address */
+		char *mac_address_str;
+		if (current_address->PhysicalAddressLength != 0) {
+			/* n bytes of MAC address will be printed as:
+			(2 * n) hexa numbers + (n - 1) delimiters + 1 terminating null byte = 3 * n */
+			const size_t mac_address_str_len = current_address->PhysicalAddressLength * 3;
+			mac_address_str = malloc(mac_address_str_len);
+
+			for (unsigned i = 0; i < current_address->PhysicalAddressLength; i++) {
+				if (i == (current_address->PhysicalAddressLength - 1)) {
+					snprintf(mac_address_str + i * 3, mac_address_str_len, "%.2X",
+						(int)current_address->PhysicalAddress[i]);
+				} else {
+					snprintf(mac_address_str + i * 3, mac_address_str_len, "%.2X-",
+						(int)current_address->PhysicalAddress[i]);
+				}
+			}
+		} else {
+			mac_address_str = strdup("unknown");
+		}
+
+		/* Find the network intefrace name */
+		char *interface_name_str = oscap_windows_wstr_to_str(current_address->FriendlyName);
+
+		/* Iterate over all unicast IP addresses of the network interface */
+		PIP_ADAPTER_UNICAST_ADDRESS unicast_address = current_address->FirstUnicastAddress;
+		while (unicast_address != NULL) {
+			SOCKET_ADDRESS socket_address = unicast_address->Address;
+			WCHAR ip_address_wstr[MAX_IP_ADDRESS_STRING_LENGTH];
+			DWORD ip_address_wstr_length = MAX_IP_ADDRESS_STRING_LENGTH;
+			int rc = WSAAddressToStringW(socket_address.lpSockaddr, socket_address.iSockaddrLength, NULL, ip_address_wstr, &ip_address_wstr_length);
+			if (rc != 0) {
+				free(mac_address_str);
+				free(interface_name_str);
+				free(addresses);
+				WSACleanup();
+				return 1;
+			}
+
+			/* Add prefix length (mask) */
+			char *ip_address_str = oscap_windows_wstr_to_str(ip_address_wstr);
+			UINT8 prefix = unicast_address->OnLinkPrefixLength;
+			char *ip_address_with_prefix = oscap_sprintf("%s/%d", ip_address_str, prefix);
+			free(ip_address_str);
+
+			/* Create probe item */
+			SEXP_t *interface_name_sexp = SEXP_string_newf(interface_name_str);
+			SEXP_t *ip_address_sexp = SEXP_string_newf(ip_address_with_prefix);
+			SEXP_t *mac_address_sexp = SEXP_string_newf(mac_address_str);
+			SEXP_t *attrs = probe_attr_creat("name", interface_name_sexp,
+				"ip_address", ip_address_sexp,
+				"mac_address", mac_address_sexp,
+				NULL);
+			probe_item_ent_add(item, "interface", attrs, NULL);
+			SEXP_free(attrs);
+			SEXP_free(interface_name_sexp);
+			SEXP_free(ip_address_sexp);
+			SEXP_free(mac_address_sexp);
+			free(ip_address_with_prefix);
+
+			unicast_address = unicast_address->Next;
+		}
+		free(interface_name_str);
+		free(mac_address_str);
+		current_address = current_address->Next;
+	}
+
+	free(addresses);
+	WSACleanup();
+	return 0;
 }
 
 #else
@@ -548,6 +689,63 @@ fail:
 }
 #endif
 
+#ifdef _WIN32
+static char *get_windows_version()
+{
+	/* We can't use GetVersionEx to get Windows version because we want to get
+	 * the real Windows version, but the compatibilty mode lies to applications
+	 * about system version. Moreover the GetVersionEx function is deprecated
+	 * since Windows 8.1. Instead we need to access RtlGetVersion.
+	 * Code inspired by https://github.com/GNOME/glib/blob/master/glib/gwin32.c
+	 */
+	OSVERSIONINFOEXW osverinfo;
+	typedef NTSTATUS(WINAPI f_rtl_get_version) (PRTL_OSVERSIONINFOEXW);
+	f_rtl_get_version *rtl_get_version;
+	HMODULE hmodule;
+
+	hmodule = LoadLibraryW(L"ntdll.dll");
+	rtl_get_version = (f_rtl_get_version *)GetProcAddress(hmodule, "RtlGetVersion");
+
+	memset(&osverinfo, 0, sizeof(OSVERSIONINFOEXW));
+	osverinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEXW);
+	rtl_get_version(&osverinfo);
+
+	char *version = oscap_sprintf("%d.%d.%d", osverinfo.dwMajorVersion,
+		osverinfo.dwMinorVersion, osverinfo.dwBuildNumber);
+
+	return version;
+}
+
+static const char *get_windows_architecture(void)
+{
+	SYSTEM_INFO si;
+	GetNativeSystemInfo(&si);
+	const char *arch;
+	switch (si.wProcessorArchitecture) {
+	case PROCESSOR_ARCHITECTURE_AMD64:
+		arch = "x64";
+		break;
+	case PROCESSOR_ARCHITECTURE_ARM:
+		arch = "ARM";
+		break;
+	case PROCESSOR_ARCHITECTURE_ARM64:
+		arch = "ARM64";
+		break;
+	case PROCESSOR_ARCHITECTURE_IA64:
+		arch = "Intel Itanium-based";
+		break;
+	case PROCESSOR_ARCHITECTURE_INTEL:
+		arch = "x86";
+		break;
+	case PROCESSOR_ARCHITECTURE_UNKNOWN:
+	default:
+		arch = "unknown";
+		break;
+	}
+	return arch;
+}
+#endif
+
 int system_info_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
@@ -565,11 +763,14 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 	os_name = architecture = hname = NULL;
 
 #ifdef _WIN32
-	/* TODO: Get system information */
-	os_name = oscap_strdup(unknown);
-	os_version = oscap_strdup(unknown);
-	architecture = oscap_strdup(unknown);
-	hname = oscap_strdup(unknown);
+	WCHAR computer_name_wstr[MAX_COMPUTERNAME_LENGTH + 1];
+	DWORD computer_name_len = MAX_COMPUTERNAME_LENGTH + 1;
+	GetComputerNameW(computer_name_wstr, &computer_name_len);
+
+	os_name = strdup("Windows");
+	os_version = get_windows_version();
+	architecture = strdup(get_windows_architecture());
+	hname = oscap_windows_wstr_to_str(computer_name_wstr);
 #else
 	struct utsname sname;
 	if (ctx->offline_mode == PROBE_OFFLINE_NONE) {
@@ -618,7 +819,10 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 	                         NULL);
 cleanup:
 	free(os_name);
-	// Don't free os_version, it shares same memory from os_name!
+	// Free os_version only on Windows. On other platforms it shares same memory from os_name!
+#ifdef _WIN32
+	free(os_version);
+#endif
 	free(architecture);
 	free(hname);
 

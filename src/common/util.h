@@ -509,4 +509,33 @@ OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
  */
 OSCAP_API char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
 
+#ifdef _WIN32
+/**
+ * Convert wide character string to a C string (UTF-16 to UTF-8)
+ * It is a wrapper around Windows API WideCharToMultiByte().
+ * Caller is responsible for freein the returned string.
+ * @param wstr wide string
+ * @return C string
+ */
+char *oscap_windows_wstr_to_str(const wchar_t *wstr);
+
+/**
+* Convert C string to wide character string (UTF-8 to UTF-16)
+* It is a wrapper around Windows API MultiByteToWideChar().
+* Caller is responsible for freeing the returned string.
+* @param str C string
+* @return wide string
+*/
+wchar_t *oscap_windows_str_to_wstr(const char *str);
+
+/**
+ * Get formated message about Windows API errors.
+ * It is a wrapper around Windows API FormatMessage().
+ * Caller is responsible for freeing the returned string.
+ * @param error_code Error code returned by a Windows API call.
+ * @return Error message in a form of a C string.
+ */
+char *oscap_windows_error_message(unsigned long error_code);
+#endif
+
 #endif				/* OSCAP_UTIL_H_ */
