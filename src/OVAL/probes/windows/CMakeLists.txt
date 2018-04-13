@@ -1,3 +1,9 @@
+if(OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN)
+	list(APPEND WINDOWS_PROBES_SOURCES
+		"accesstoken_probe.c"
+		"accesstoken_probe.h"
+	)
+endif()
 if(OPENSCAP_PROBE_WINDOWS_REGISTRY)
 	list(APPEND WINDOWS_PROBES_SOURCES
 		"registry_probe.c"
