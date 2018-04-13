@@ -2012,9 +2012,6 @@ Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
 
 === Building OpenSCAP on Windows using Visual Studio
 
-Currently it is possible to build OpenSCAP for Windows only without probes.
-The resulting binary is not able to perform scanning.
-
 Prerequisites:
 
 * https://www.visualstudio.com/[Visual Studio]
@@ -2050,7 +2047,7 @@ git clone -b master https://github.com/OpenSCAP/openscap.git
 ----
 cd openscap
 cd build
-cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 ----
 
 4) Open in Visual Studio
