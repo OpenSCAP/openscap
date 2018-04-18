@@ -187,6 +187,10 @@
 #include "unix/xinetd_probe.h"
 #endif
 
+#ifdef OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN
+#include "windows/accesstoken_probe.h"
+#endif
+
 #ifdef OPENSCAP_PROBE_WINDOWS_REGISTRY
 #include "windows/registry_probe.h"
 #endif
@@ -320,6 +324,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_XINETD
 	{OVAL_UNIX_XINETD, xinetd_probe_init, xinetd_probe_main, xinetd_probe_fini, xinetd_probe_offline_mode_supported},
+#endif
+#ifdef OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN
+	{OVAL_WINDOWS_ACCESS_TOKEN, NULL, accesstoken_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_WINDOWS_REGISTRY
 	{OVAL_WINDOWS_REGISTRY, NULL, registry_probe_main, NULL, NULL},
