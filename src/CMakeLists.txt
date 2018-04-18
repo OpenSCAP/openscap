@@ -89,6 +89,11 @@ if (ENABLE_PROBES)
 			)
 		endif()
 	endif()
+	if (ENABLE_PROBES_WINDOWS)
+		list(APPEND OBJECTS_TO_LINK_AGAINST
+			$<TARGET_OBJECTS:windows_probes_object>
+		)
+	endif()
 endif()
 if (GCRYPT_FOUND OR NSS_FOUND)
 	list(APPEND OBJECTS_TO_LINK_AGAINST

@@ -124,6 +124,7 @@
 #cmakedefine OPENSCAP_PROBE_UNIX_SYSCTL
 #cmakedefine OPENSCAP_PROBE_UNIX_UNAME
 #cmakedefine OPENSCAP_PROBE_UNIX_XINETD
+#cmakedefine OPENSCAP_PROBE_WINDOWS_REGISTRY
 
 #include "compat.h"
 
