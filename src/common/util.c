@@ -268,7 +268,7 @@ char *oscap_basename(char *path)
 char *oscap_dirname(char *path)
 {
 #ifdef _WIN32
-	if (path == NULL || *path == '\0' || strchr(path, '/') == NULL) {
+	if (path == NULL || *path == '\0' || strchr(path, '/') == NULL || strchr(path, '\\') == NULL) {
 		return strdup(".");
 	}
 	char dirpath[_MAX_DIR];
