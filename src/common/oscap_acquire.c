@@ -22,7 +22,6 @@
 #include <config.h>
 #endif
 
-#include <stdio.h> // for P_tmpdir macro
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -41,11 +40,11 @@
 #include "common/_error.h"
 #include "oscap_string.h"
 
-#ifndef P_tmpdir
-#define P_tmpdir "/tmp"
+#ifndef SCE_SCRIPT_DIR
+#define SCE_SCRIPT_DIR "/tmp"
 #endif
 
-#define TEMP_DIR_TEMPLATE P_tmpdir "/oscap.XXXXXX"
+#define TEMP_DIR_TEMPLATE SCE_SCRIPT_DIR "/oscap.XXXXXX"
 #define TEMP_URL_TEMPLATE "downloaded.XXXXXX"
 
 char *
