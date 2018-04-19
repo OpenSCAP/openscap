@@ -28,8 +28,19 @@
 #include <string.h>
 
 #ifdef _WIN32
+ /* By defining WIN32_LEAN_AND_MEAN we ensure that Windows.h won't include
+  * winsock.h, which would conflict with symbols from WinSock2.h.
+  */
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <WinSock2.h>
+#include <Iphlpapi.h>
+#include <Windows.h>
+#include <ws2def.h>
 #include <io.h>
-#include <windows.h>
+#include <winternl.h>
+#include <io.h>
 #include <lmcons.h>
 #else
 #include <unistd.h>
@@ -286,6 +297,117 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	close(fd);
  out1:
 	freeifaddrs(ifaddr);
+
+#elif defined(_WIN32)
+
+#define VERSION_LEN 32
+/* Microsoft recommends to start with a 15 kB buffer for GetAdaptersAddresses. */
+#define ADDRESSES_BUFFER_SIZE 15000
+#define MAX_TRIES 3
+#define MAX_IP_ADDRESS_STRING_LENGTH 128
+
+	/*
+	 * Use the MAKEWORD(lowbyte, highbyte) macro declared in Windef.h
+	 * to define the Windows Socket specification version we will use.
+	 * The current version of the Windows Sockets specification is version 2.2.
+	 * Version 2.2 is supported on all systems since Windows 95 OSR2.
+	 */
+	WORD requested_version = MAKEWORD(2, 2);
+
+	WSADATA wsa_data;
+	int err = WSAStartup(requested_version, &wsa_data);
+	if (err != 0) {
+		char *error_message = oscap_windows_error_message(err);
+		dE("Can't initialize Winsock DLL. WSAStartup failed: %s", error_message);
+		free(error_message);
+		return;
+	}
+
+	PIP_ADAPTER_ADDRESSES addresses = NULL;
+	ULONG ret_val = 0;
+	ULONG addresses_size = ADDRESSES_BUFFER_SIZE;
+	ULONG family = AF_UNSPEC; // both IPv4 and IPv6
+	ULONG flags = GAA_FLAG_INCLUDE_PREFIX;
+	int iterations = 0;
+
+	/* Try to get information about network adapters and their adresses */
+	do {
+		addresses = malloc(addresses_size);
+		ret_val = GetAdaptersAddresses(family, flags, NULL, addresses, &addresses_size);
+		if (ret_val == ERROR_BUFFER_OVERFLOW) {
+			free(addresses);
+			addresses = NULL;
+		}
+		iterations++;
+	} while (ret_val == ERROR_BUFFER_OVERFLOW && iterations < MAX_TRIES);
+
+	if (ret_val != NO_ERROR) {
+		char *error_message = oscap_windows_error_message(err);
+		dE("Can't get information about network adapters and their adresses. %s", error_message);
+		free(error_message);
+		free(addresses);
+		WSACleanup();
+		return;
+	}
+
+	/* Iterate over all network adapters */
+	PIP_ADAPTER_ADDRESSES current_address = addresses;
+	while (current_address != NULL) {
+		/* MAC address */
+		char *mac_address_str = NULL;
+		if (current_address->PhysicalAddressLength != 0) {
+			/* n bytes of MAC address will be printed as:
+			(2 * n) hexa numbers + (n - 1) delimiters + 1 terminating null byte = 3 * n */
+			const size_t mac_address_str_len = current_address->PhysicalAddressLength * 3;
+			mac_address_str = malloc(mac_address_str_len);
+
+			for (unsigned i = 0; i < current_address->PhysicalAddressLength; i++) {
+				if (i == (current_address->PhysicalAddressLength - 1)) {
+					snprintf(mac_address_str + i * 3, mac_address_str_len, "%.2X",
+						(int)current_address->PhysicalAddress[i]);
+				}
+				else {
+					snprintf(mac_address_str + i * 3, mac_address_str_len, "%.2X-",
+						(int)current_address->PhysicalAddress[i]);
+				}
+			}
+
+			/* Add the IP address to XCCDF TestResult/target-facts */
+			struct xccdf_target_fact *fact = xccdf_target_fact_new();
+			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
+			xccdf_target_fact_set_string(fact, mac_address_str);
+			/* store mac address */
+			xccdf_result_add_target_fact(result, fact);
+			free(mac_address_str);
+		}
+
+		/* Iterate over all unicast IP addresses of the network interface */
+		PIP_ADAPTER_UNICAST_ADDRESS unicast_address = current_address->FirstUnicastAddress;
+		while (unicast_address != NULL) {
+			SOCKET_ADDRESS socket_address = unicast_address->Address;
+			WCHAR ip_address_wstr[MAX_IP_ADDRESS_STRING_LENGTH];
+			DWORD ip_address_wstr_length = MAX_IP_ADDRESS_STRING_LENGTH;
+			int rc = WSAAddressToStringW(socket_address.lpSockaddr, socket_address.iSockaddrLength, NULL, ip_address_wstr, &ip_address_wstr_length);
+			if (rc != 0) {
+				free(addresses);
+				WSACleanup();
+				return;
+			}
+
+			/* Add the IP address to XCCDF TestResult/target-address */
+			char *ip_address_str = oscap_windows_wstr_to_str(ip_address_wstr);
+			xccdf_result_add_target_address(result, ip_address_str);
+			free(ip_address_str);
+
+			unicast_address = unicast_address->Next;
+		}
+		current_address = current_address->Next;
+	}
+
+	free(addresses);
+	WSACleanup();
+	return 0;
+
 #endif
 }
 
