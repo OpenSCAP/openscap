@@ -400,10 +400,12 @@ configure_file("run.in" "run" @ONLY)
 
 # pkgconfig file
 configure_file("libopenscap.pc.in" "libopenscap.pc" @ONLY)
-install(FILES
-	${CMAKE_CURRENT_BINARY_DIR}/libopenscap.pc
-	DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-)
+if(NOT WIN32)
+	install(FILES
+		${CMAKE_CURRENT_BINARY_DIR}/libopenscap.pc
+		DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+	)
+endif()
 
 # Ctest
 if(ENABLE_TESTS)
