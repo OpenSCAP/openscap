@@ -1160,7 +1160,7 @@ AC_ARG_WITH([sce-script-dir],
 
 if test "x${sce}" = xyes; then
   AC_DEFINE([ENABLE_SCE], [1], [compilation of script check engine enabled])
-  CFLAGS="$CFLAGS -DSCE_SCRIPT_DIR=\\\"${with_sce_script_dir}\\\""
+  CFLAGS="$CFLAGS -DSCE_SCRIPT_DIR=\\\"${with_sce_script_dir}\\\"" # double escape needed for compilation on some systems
 fi
 
 AC_ARG_ENABLE([util-oscap],
