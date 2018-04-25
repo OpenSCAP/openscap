@@ -52,23 +52,9 @@
 #include "source/validate_priv.h"
 #include "source/xslt_priv.h"
 
-#ifndef OSCAP_DEFAULT_SCHEMA_PATH
-const char * const OSCAP_SCHEMA_PATH = "/usr/local/share/openscap/schemas";
-#else
-const char * const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
-#endif
-
-#ifndef OSCAP_DEFAULT_XSLT_PATH
-const char * const OSCAP_XSLT_PATH = "/usr/local/share/openscap/xsl";
-#else
-const char * const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
-#endif
-
-#ifndef OSCAP_DEFAULT_CPE_PATH
-const char * const OSCAP_CPE_PATH = "/usr/local/share/openscap/cpe";
-#else
-const char * const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
-#endif
+const char *const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
+const char *const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
+const char *const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
 
 /* return default path if pathvar is not defined */
 static const char * oscap_path_to(const char *pathvar, const char *defpath) {
