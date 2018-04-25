@@ -295,11 +295,21 @@ message(STATUS " ")
 
 # ---------- PATHS
 
-set(OSCAP_DEFAULT_SCHEMA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/schemas")
-set(OSCAP_DEFAULT_XSLT_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/xsl")
-set(OSCAP_DEFAULT_CPE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/cpe")
-set(OVAL_PROBE_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/openscap")
-set(OVAL_PROBEDIR_ENV 1)
+if(WIN32)
+	# Windows installer does not allow full paths.
+	# The install path can be changed by user in Windows installer.
+	# We will use relative names - "schemas", "xsl" and "cpe"
+	# directories will be located in the same directory as oscap.exe.
+	set(OSCAP_DEFAULT_SCHEMA_PATH "schemas")
+	set(OSCAP_DEFAULT_XSLT_PATH "xsl")
+	set(OSCAP_DEFAULT_CPE_PATH "cpe")
+else()
+	set(OSCAP_DEFAULT_SCHEMA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/schemas")
+	set(OSCAP_DEFAULT_XSLT_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/xsl")
+	set(OSCAP_DEFAULT_CPE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/cpe")
+	set(OVAL_PROBE_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/openscap")
+	set(OVAL_PROBEDIR_ENV 1)
+endif()
 
 # ---------- RPATHS for linking
 
