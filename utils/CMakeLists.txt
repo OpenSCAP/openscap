@@ -2,8 +2,13 @@ if(ENABLE_OSCAP_UTIL)
 	file(GLOB UTILS_SOURCES "*.c")
 	add_executable(oscap ${UTILS_SOURCES})
 	target_link_libraries(oscap openscap)
+	if(WIN32)
+		set(OSCAP_UTIL_DESTINATION ".")
+	else()
+		set(OSCAP_UTIL_DESTINATION ${CMAKE_INSTALL_BINDIR})
+	endif()
 	install(TARGETS "oscap"
-		DESTINATION ${CMAKE_INSTALL_BINDIR}
+		DESTINATION ${OSCAP_UTIL_DESTINATION}
 	)
 	install(FILES "oscap.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
