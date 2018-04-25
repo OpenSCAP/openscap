@@ -56,7 +56,10 @@ const char *const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
 const char *const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 const char *const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
 
-/* return default path if pathvar is not defined */
+/*
+ * If environment variable specified by 'pathvar' is defined, returns value of this environment variable.
+ * If this environment variable is not defined, returns default path, provided by 'defpath' argument.
+ */
 static const char * oscap_path_to(const char *pathvar, const char *defpath) {
 	const char *path = NULL;
 
