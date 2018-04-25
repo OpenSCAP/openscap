@@ -268,15 +268,21 @@ char *oscap_basename(char *path)
 char *oscap_dirname(char *path)
 {
 #ifdef _WIN32
-	if (path == NULL || *path == '\0' || strchr(path, '/') == NULL || strchr(path, '\\') == NULL) {
+	if (path == NULL || *path == '\0' || (strchr(path, '/') == NULL && strchr(path, '\\') == NULL)) {
 		return strdup(".");
 	}
-	char dirpath[_MAX_DIR];
-	_splitpath_s(path, NULL, 0, dirpath, _MAX_DIR, NULL, 0, NULL, 0);
+	char dir[_MAX_DIR];
+	char drive[_MAX_DRIVE];
+	char dirname[_MAX_PATH];
+	_splitpath_s(path, drive, _MAX_DRIVE, dir, _MAX_DIR, NULL, 0, NULL, 0);
+	_makepath_s(dirname, _MAX_PATH, drive, dir, NULL, NULL);
+	oscap_rtrim(dirname, '/');
+	oscap_rtrim(dirname, '\\');
+	return oscap_strdup(dirname);
 #else
 	char *dirpath = dirname(path);
-#endif
 	return oscap_strdup(dirpath);
+#endif
 }
 
 int oscap_strcasecmp(const char *s1, const char *s2)
