@@ -13,6 +13,16 @@ if(ENABLE_OSCAP_UTIL)
 	install(FILES "oscap.8"
 		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 	)
+
+	if(WIN32)
+		# Install all recursively dependent DLLs for oscap.exe
+		set(APPS "\${CMAKE_INSTALL_PREFIX}/oscap.exe") # the \ before $ is required by BundleUtilities
+		set(VCPKG_DLL_DIR "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
+		install(CODE "
+			include(BundleUtilities)
+			fixup_bundle(\"${APPS}\" \"\" \"${VCPKG_DLL_DIR}\")
+		")
+	endif()
 endif()
 if(ENABLE_OSCAP_UTIL_CHROOT)
 	install(PROGRAMS "oscap-chroot"
