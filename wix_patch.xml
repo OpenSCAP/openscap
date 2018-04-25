@@ -1,0 +1,5 @@
+<CPackWiXPatch>
+  <CPackWiXFragment Id="CM_CP_oscap.exe">
+    <Environment Id="PATH" Name="PATH" Value="[INSTALL_ROOT]" Permanent="yes" Part="last" Action="set" System="yes" />
+  </CPackWiXFragment>
+</CPackWiXPatch>
