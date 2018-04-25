@@ -37,6 +37,7 @@
 #include <unistd.h>
 #else
 #include <io.h>
+#include <windows.h>
 #endif
 #include <fcntl.h>
 
@@ -66,8 +67,21 @@ static const char * oscap_path_to(const char *pathvar, const char *defpath) {
 	if (pathvar != NULL)
 		path = getenv(pathvar);
 
-	if (path == NULL || oscap_streq(path, ""))
+	if (path == NULL || oscap_streq(path, "")) {
+#ifdef _WIN32
+		/* On Windows, default paths are directory names of directories that are
+		 * located in the same directory as oscap.exe. We will make a full path
+		 * based on oscap.exe location.
+		 */
+		char oscap_path[PATH_MAX];
+		GetModuleFileName(NULL, oscap_path, PATH_MAX);
+		char *oscap_path_dirname = oscap_dirname(oscap_path);
+		path = oscap_sprintf("%s\\%s", oscap_path_dirname, defpath);
+		free(oscap_path_dirname);
+#else
 		path = defpath;
+#endif
+	}
 
 	return path;
 }
