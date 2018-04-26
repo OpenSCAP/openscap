@@ -2047,7 +2047,7 @@ git clone -b master https://github.com/OpenSCAP/openscap.git
 ----
 cd openscap
 cd build
-cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+cmake -D ENABLE_PYTHON2=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 ----
 
 4) Open in Visual Studio
