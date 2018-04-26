@@ -195,6 +195,10 @@
 #include "windows/registry_probe.h"
 #endif
 
+#ifdef OPENSCAP_PROBE_WINDOWS_WMI57
+#include "windows/wmi57_probe.h"
+#endif
+
 typedef struct probe_table_entry {
 	oval_subtype_t type;
 	probe_init_function_t probe_init_function;
@@ -330,6 +334,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_WINDOWS_REGISTRY
 	{OVAL_WINDOWS_REGISTRY, NULL, registry_probe_main, NULL, NULL},
+#endif
+#ifdef OPENSCAP_PROBE_WINDOWS_WMI57
+	{OVAL_WINDOWS_WMI_57, NULL, wmi57_probe_main, NULL, NULL},
 #endif
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };
