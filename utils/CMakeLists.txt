@@ -10,10 +10,11 @@ if(ENABLE_OSCAP_UTIL)
 	install(TARGETS "oscap"
 		DESTINATION ${OSCAP_UTIL_DESTINATION}
 	)
-	install(FILES "oscap.8"
-		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
-	)
-
+	if(NOT WIN32)
+		install(FILES "oscap.8"
+			DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+		)
+	endif()
 	if(WIN32)
 		# Install all recursively dependent DLLs for oscap.exe
 		set(APPS "\${CMAKE_INSTALL_PREFIX}/oscap.exe") # the \ before $ is required by BundleUtilities
