@@ -224,18 +224,18 @@ cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_WMI57 "Windows wmi57 probe" ON "EN
 # ---------- EXECUTABLES / UTILITIES SWITCHES
 
 option(ENABLE_OSCAP_UTIL "build the oscap utility, oscap is the core utility for evaluation and processing of SCAP data" TRUE)
-option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this let's you package SCAP data as RPMs" TRUE)
 
 set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "path to the Python interpreter for oscap-docker")
-option(ENABLE_OSCAP_UTIL_DOCKER "enables the oscap-docker utility, this let's you scan containers and container images" TRUE)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_DOCKER "enables the oscap-docker utility, this let's you scan containers and container images" ON "NOT WIN32" OFF)
 if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
 	set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
 	message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
 endif()
 
-option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this let's you scan remote machines over ssh" TRUE)
-option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this let's you scan VMs and VM storage images" TRUE)
-option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this let's you scan entire chroots using offline scanning" TRUE)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this let's you package SCAP data as RPMs" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this let's you scan remote machines over ssh" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this let's you scan VMs and VM storage images" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this let's you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
 
 # ---------- TEST-SUITE SWITCHES
 
