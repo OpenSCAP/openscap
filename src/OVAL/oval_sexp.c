@@ -664,7 +664,13 @@ static struct oval_record_field *oval_record_field_ITEM_from_sexp(SEXP_t *sexp)
 		return NULL;
 
 	rf = oval_record_field_new(OVAL_RECORD_FIELD_ITEM);
-	oval_record_field_set_name(rf, oval_sysent_get_name(sysent));
+
+	SEXP_t *name_sexp = probe_ent_getattrval(sexp, "name");
+	char *name_str = SEXP_string_cstr(name_sexp);
+	oval_record_field_set_name(rf, name_str);
+	free(name_str);
+	SEXP_free(name_sexp);
+
 	oval_record_field_set_value(rf, oval_sysent_get_value(sysent));
 	oval_record_field_set_datatype(rf, oval_sysent_get_datatype(sysent));
 	oval_record_field_set_mask(rf, oval_sysent_get_mask(sysent));

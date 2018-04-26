@@ -309,7 +309,7 @@ void oval_sysent_to_dom(struct oval_sysent *sysent, xmlDoc * doc, xmlNode * pare
 
 	rf_itr = oval_sysent_get_record_fields(sysent);
 	if (oval_record_field_iterator_has_more(rf_itr)) {
-		xmlNsPtr field_ns = xmlSearchNsByHref(doc, xmlDocGetRootElement(doc), OVAL_SYSCHAR_NAMESPACE);
+		xmlNsPtr field_ns = xmlSearchNsByHref(doc, sysent_tag, OVAL_SYSCHAR_NAMESPACE);
 		if (field_ns == NULL) {
 			field_ns = xmlNewNs(xmlDocGetRootElement(doc), OVAL_SYSCHAR_NAMESPACE, NULL);
 		}
