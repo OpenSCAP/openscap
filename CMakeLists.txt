@@ -265,6 +265,7 @@ option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
+# ---------- STATUS MESSAGES
 
 message(STATUS " ")
 message(STATUS "CMake:")
@@ -292,6 +293,14 @@ message(STATUS "python2 bindings: ${ENABLE_PYTHON2}")
 message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
 message(STATUS "perl bindings: ${ENABLE_PERL}")
 message(STATUS " ")
+
+message(STATUS "Utilities:")
+message(STATUS "oscap: ${ENABLE_OSCAP_UTIL}")
+message(STATUS "oscap-docker: ${ENABLE_OSCAP_UTIL_DOCKER}")
+message(STATUS "scap-as-rpm: ${ENABLE_OSCAP_UTIL_AS_RPM}")
+message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
+message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
+message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
 
 # ---------- PATHS
 
