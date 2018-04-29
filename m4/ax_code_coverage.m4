@@ -76,6 +76,19 @@
 
 #serial 30
 
+
+dnl vvvvvvvvvvvvvvvvv Defined to prevent weird include errors
+AC_DEFUN([AMINCLUDE_STATIC],[aminclude_static.am])
+
+AC_DEFUN([AX_AM_MACROS_STATIC],
+[
+AX_AC_PRINT_TO_FILE(AMINCLUDE_STATIC,[
+# ]AMINCLUDE_STATIC[ generated automatically by Autoconf
+# from AX_AM_MACROS_STATIC on ]m4_esyscmd([LC_ALL=C date])[
+])
+])
+dnl ^^^^^^^^^^^^^^^^^ END of Defined to prevent weird include errors
+
 m4_define(_AX_CODE_COVERAGE_RULES,[
 AX_ADD_AM_MACRO_STATIC([
 # Code coverage

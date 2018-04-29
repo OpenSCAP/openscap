@@ -27,12 +27,12 @@
 
 #serial 11
 
-AC_DEFUN([AMINCLUDE_STATIC],[aminclude_static.am])
-
-AC_DEFUN([AX_AM_MACROS_STATIC],
-[
-AX_AC_PRINT_TO_FILE(AMINCLUDE_STATIC,[
-# ]AMINCLUDE_STATIC[ generated automatically by Autoconf
-# from AX_AM_MACROS_STATIC on ]m4_esyscmd([LC_ALL=C date])[
-])
-])
+dnl AC_DEFUN([AMINCLUDE_STATIC],[aminclude_static.am])
+dnl 
+dnl AC_DEFUN([AX_AM_MACROS_STATIC],
+dnl [
+dnl AX_AC_PRINT_TO_FILE(AMINCLUDE_STATIC,[
+dnl # ]AMINCLUDE_STATIC[ generated automatically by Autoconf
+dnl # from AX_AM_MACROS_STATIC on ]m4_esyscmd([LC_ALL=C date])[
+dnl ])
+dnl ])
