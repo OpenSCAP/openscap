@@ -1,18 +1,19 @@
 # ===========================================================================
-#  https://www.gnu.org/software/autoconf-archive/ax_add_am_macro_static.html
+#   https://www.gnu.org/software/autoconf-archive/ax_ac_print_to_file.html
 # ===========================================================================
 #
 # SYNOPSIS
 #
-#   AX_ADD_AM_MACRO_STATIC([RULE])
+#   AX_AC_PRINT_TO_FILE([FILE],[DATA])
 #
 # DESCRIPTION
 #
-#   Adds the specified rule to $AMINCLUDE.
+#   Writes the specified data to the specified file when Autoconf is run. If
+#   you want to print to a file when configure is run use AX_PRINT_TO_FILE
+#   instead.
 #
 # LICENSE
 #
-#   Copyright (c) 2009 Tom Howard <tomhoward@users.sf.net>
 #   Copyright (c) 2009 Allan Caffee <allan.caffee@gmail.com>
 #
 #   Copying and distribution of this file, with or without modification, are
@@ -20,9 +21,12 @@
 #   and this notice are preserved. This file is offered as-is, without any
 #   warranty.
 
-#serial 8
+#serial 9
 
-AC_DEFUN([AX_ADD_AM_MACRO_STATIC],[
-  AC_REQUIRE([AX_AM_MACROS_STATIC])
-  AX_AC_APPEND_TO_FILE(AMINCLUDE_STATIC,[$1])
+AC_DEFUN([AX_AC_PRINT_TO_FILE],[
+m4_esyscmd(
+AC_REQUIRE([AX_FILE_ESCAPES])
+[
+printf "$2" > "$1"
+])
 ])
