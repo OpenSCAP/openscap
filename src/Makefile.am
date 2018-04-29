@@ -8,10 +8,12 @@ noinst_LTLIBRARIES = libopenscap_testing.la
 libopenscap_la_SOURCES =
 libopenscap_la_LIBADD = $(top_builddir)/lib/libgnu.la
 libopenscap_la_LDFLAGS = -no-undefined -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libopenscap_la_CFLAGS = $(CFLAGS)
 
 libopenscap_testing_la_SOURCES =
 libopenscap_testing_la_LIBADD = $(top_builddir)/lib/libgnu.la
 libopenscap_testing_la_LDFLAGS= -rpath /nowhere
+libopenscap_testing_la_CFLAGS = $(CFLAGS)
 
 noinst_LTLIBRARIES += liboscapcommon.la
 
@@ -58,9 +60,13 @@ pkginclude_HEADERS += \
 	common/public/oscap_text.h
 
 if CODE_COVERAGE_ENABLED
-libopenscap_la_LIBADD = $(CODE_COVERAGE_LIBS)
+libopenscap_la_LIBADD += $(CODE_COVERAGE_LIBS)
 libopenscap_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
-libopenscap_la_CFLAGS = $(CODE_COVERAGE_CFLAGS) $(CFLAGS)
+libopenscap_la_CFLAGS += $(CODE_COVERAGE_CFLAGS)
+
+libopenscap_testing_la_LIBADD += $(CODE_COVERAGE_LIBS)
+libopenscap_testing_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
+libopenscap_testing_la_CFLAGS += $(CODE_COVERAGE_CFLAGS)
 endif
 
 SUBDIRS += common
