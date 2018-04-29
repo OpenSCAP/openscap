@@ -70,10 +70,10 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 		"TARGET_DIRECTORY - Directory of the resulting files.\n"
 		"\n"
 		"Options:\n"
-		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-		"   --xccdf-id <id> \r\t\t\t\t - ID of XCCDF in the datastream that should be evaluated.\n"
-		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n"
-		"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by DataStream.\n",
+		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
+		"   --xccdf-id <id>               - ID of XCCDF in the datastream that should be evaluated.\n"
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
 };
@@ -84,7 +84,7 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.summary = "Compose SourceDataStream from given XCCDF",
 	.usage = "[options] xccdf-file.xml target_datastream.xml",
 	.help = "Options:\n"
-		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
 };
@@ -95,8 +95,8 @@ static struct oscap_module DS_SDS_ADD_MODULE = {
 	.summary = "Add a component to the existing SourceDataStream",
 	.usage = "[options] new-component.xml existing_datastream.xml",
 	.help =	"Options:\n"
-		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection for adding to.\n"
-		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
+		"   --datastream-id <id>          - ID of the datastream in the collection for adding to.\n"
+		"   --skip-valid                  - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_add
 };
@@ -117,8 +117,8 @@ static struct oscap_module DS_RDS_SPLIT_MODULE = {
 	.summary = "Splits a ResultDataStream. Creating source datastream (from report-request) and report in target directory.",
 	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
 	.help =	"Options:\n"
-		"   --report-id <id> \r\t\t\t\t - ID of report inside ARF that should be split.\n"
-		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
+		"   --report-id <id>              - ID of report inside ARF that should be split.\n"
+		"   --skip-valid                  - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_split
 };
@@ -129,7 +129,7 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.summary = "Create a ResultDataStream from given SourceDataStream, XCCDF results and one or more OVAL results",
 	.usage = "[options] sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
 	.help =	"Options:\n"
-		"   --skip-valid \r\t\t\t\t - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_create
 };
@@ -140,8 +140,8 @@ static struct oscap_module DS_RDS_VALIDATE_MODULE = {
 	.summary = "Validate given ResultDataStream",
 	.usage = "[options] result_datastream.xml",
 	.help = "Options:\n"
-		"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
-		"   --verbose-log-file <file>\r\t\t\t\t - Write verbose informations into file.\n",
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"   --verbose-log-file <file>     - Write verbose informations into file.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_validate
 };

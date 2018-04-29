@@ -63,9 +63,9 @@ struct oscap_module OSCAP_ROOT_MODULE = {
     .summary = "OpenSCAP command-line tool",
     .help =
 		"oscap options:\n"
-		"   -h --help\r\t\t\t\t - show this help\n"
-		"   -q --quiet\r\t\t\t\t - quiet mode\n"
-		"   -V --version\r\t\t\t\t - print info about supported SCAP versions",
+		"   -h --help                     - show this help\n"
+		"   -q --quiet                    - quiet mode\n"
+		"   -V --version                  - print info about supported SCAP versions",
     .opt_parser = getopt_root,
     .submodules = OSCAP_ROOT_SUBMODULES
 };

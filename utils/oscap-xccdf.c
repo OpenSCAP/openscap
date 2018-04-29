@@ -84,8 +84,8 @@ static struct oscap_module XCCDF_RESOLVE = {
     .summary = "Resolve an XCCDF document",
     .usage = "[options] -o output-xccdf.xml input-xccdf.xml",
     .help =
-        "Options:\n"
-        "   --force\r\t\t\t\t - Force resolving XCCDF document even if it is aleready marked as resolved.",
+		"Options:\n"
+		"   --force                       - Force resolving XCCDF document even if it is aleready marked as resolved.",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_resolve
 };
@@ -98,7 +98,7 @@ static struct oscap_module XCCDF_VALIDATE_XML = {
     .opt_parser = getopt_xccdf,
 	.func = app_xccdf_validate,
 	.help = "Options:\n"
-		"   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n"
+		"   --schematron                  - Use schematron-based validation in addition to XML Schema\n"
 	,
 };
 
@@ -110,7 +110,7 @@ static struct oscap_module XCCDF_VALIDATE = {
     .opt_parser = getopt_xccdf,
 	.func = app_xccdf_validate,
 	.help = "Options:\n"
-		"   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n"
+		"   --schematron                  - Use schematron-based validation in addition to XML Schema\n"
 	,
 };
 
@@ -122,18 +122,18 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_export_oval_variables,
 	.help =	"Options:\n"
-		"   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
-		"   --skip-valid \r\t\t\t\t - Skip validation.\n"
-		"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
-		"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-		"                        \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"                   \r\t\t\t\t   (only applicable when datastream-id AND xccdf-id are not specified)\n"
-		"   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
-		"               \r\t\t\t\t   for applicability checks.\n"
+		"   --profile <name>              - The name of Profile to be evaluated.\n"
+		"   --skip-valid                  - Skip validation.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
+		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
+		"                                   for applicability checks.\n"
 	,
 };
 
@@ -144,39 +144,39 @@ static struct oscap_module XCCDF_EVAL = {
     .usage = "[options] INPUT_FILE [oval-definitions-files]",
     .help =
 		"INPUT_FILE - XCCDF file or a source data stream file\n\n"
-        "Options:\n"
-        "   --profile <name>\r\t\t\t\t - The name of Profile to be evaluated.\n"
-	"   --rule <name>\r\t\t\t\t - The name of a single rule to be evaluated.\n"
-        "   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
-        "   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
-        "   --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
-        "               \r\t\t\t\t   for applicability checks.\n"
-        "   --oval-results\r\t\t\t\t - Save OVAL results as well.\n"
-        "   --sce-results\r\t\t\t\t - Save SCE results as well. (DEPRECATED! use --check-engine-results)\n"
-        "   --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
-        "   --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
-        "   --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
-        "   --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
-        "   --stig-viewer <file>\r\t\t\t\t - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
-        "   --thin-results\r\t\t\t\t - Thin Results provides only minimal amount of information in OVAL/ARF results.\n"
-        "                 \r\t\t\t\t   The option --without-syschar is automatically enabled when you use Thin Results.\n"
-        "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in OVAL/ARF result files.\n"
-        "   --report <file>\r\t\t\t\t - Write HTML report into file.\n"
-        "   --skip-valid \r\t\t\t\t - Skip validation.\n"
-	"   --fetch-remote-resources \r\t\t\t\t - Download remote content referenced by XCCDF.\n"
-	"   --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
-	"              \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
-	"   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-	"                        \r\t\t\t\t   (only applicable for source datastreams)\n"
-	"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-	"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-	"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
-	"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-	"                   \r\t\t\t\t   (only applicable when datastream-id AND xccdf-id are not specified)\n"
-	"   --remediate \r\t\t\t\t - Automatically execute XCCDF fix elements for failed rules.\n"
-	"               \r\t\t\t\t   Use of this option is always at your own risk.\n"
-	"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
-	"   --verbose-log-file <file>\r\t\t\t\t - Write verbose informations into file.\n",
+		"Options:\n"
+		"   --profile <name>              - The name of Profile to be evaluated.\n"
+		"   --rule <name>                 - The name of a single rule to be evaluated.\n"
+		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
+		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
+		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
+		"                                   for applicability checks.\n"
+		"   --oval-results                - Save OVAL results as well.\n"
+		"   --sce-results                 - Save SCE results as well. (DEPRECATED! use --check-engine-results)\n"
+		"   --check-engine-results        - Save results from check engines loaded from plugins as well.\n"
+		"   --export-variables            - Export OVAL external variables provided by XCCDF.\n"
+		"   --results <file>              - Write XCCDF Results into file.\n"
+		"   --results-arf <file>          - Write ARF (result data stream) into file.\n"
+		"   --stig-viewer <file>          - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
+		"   --thin-results                - Thin Results provides only minimal amount of information in OVAL/ARF results.\n"
+		"                                   The option --without-syschar is automatically enabled when you use Thin Results.\n"
+		"   --without-syschar             - Don't provide system characteristic in OVAL/ARF result files.\n"
+		"   --report <file>               - Write HTML report into file.\n"
+		"   --skip-valid                  - Skip validation.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
+		"                                   Format is \"$rule_id:$result\\n\".\n"
+		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
+		"   --remediate                   - Automatically execute XCCDF fix elements for failed rules.\n"
+		"                                   Use of this option is always at your own risk.\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"   --verbose-log-file <file>     - Write verbose informations into file.\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -187,24 +187,24 @@ static struct oscap_module XCCDF_REMEDIATE = {
 	.summary =	"Perform remediation driven by XCCDF TestResult file or ARF.",
 	.usage =	"[options] INPUT_FILE [oval-definitions-files]",
 	.help =		"INPUT_FILE - XCCDF TestResult file or ARF\n\n"
-			"Options:\n"
-			"  --result-id\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
-			"  --skip-valid\r\t\t\t\t - Skip validation.\n"
-			"  --cpe <name>\r\t\t\t\t - Use given CPE dictionary or language (autodetected)\n"
-			"              \r\t\t\t\t   for applicability checks.\n"
-			"  --fetch-remote-resources\r\t\t\t\t - Download remote content referenced by XCCDF.\n"
-			"  --results <file>\r\t\t\t\t - Write XCCDF Results into file.\n"
-			"  --results-arf <file>\r\t\t\t\t - Write ARF (result data stream) into file.\n"
-			"  --stig-viewer <file>\r\t\t\t\t - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
-			"  --report <file>\r\t\t\t\t - Write HTML report into file.\n"
-			"  --oval-results\r\t\t\t\t - Save OVAL results.\n"
-			"  --export-variables\r\t\t\t\t - Export OVAL external variables provided by XCCDF.\n"
-			"  --sce-results\r\t\t\t\t - Save SCE results. (DEPRECATED! use --check-engine-results)\n"
-			"  --check-engine-results\r\t\t\t\t - Save results from check engines loaded from plugins as well.\n"
-			"  --progress \r\t\t\t\t - Switch to sparse output suitable for progress reporting.\n"
-			"             \r\t\t\t\t   Format is \"$rule_id:$result\\n\".\n"
-			"  --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
-			"  --verbose-log-file <file>\r\t\t\t\t - Write verbose informations into file.\n"
+		"Options:\n"
+		"   --result-id                   - TestResult ID to be processed. Default is the most recent one.\n"
+		"   --skip-valid                  - Skip validation.\n"
+		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
+		"                                   for applicability checks.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --results <file>              - Write XCCDF Results into file.\n"
+		"   --results-arf <file>          - Write ARF (result data stream) into file.\n"
+		"   --stig-viewer <file>          - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
+		"   --report <file>               - Write HTML report into file.\n"
+		"   --oval-results                - Save OVAL results.\n"
+		"   --export-variables            - Export OVAL external variables provided by XCCDF.\n"
+		"   --sce-results                 - Save SCE results. (DEPRECATED! use --check-engine-results)\n"
+		"   --check-engine-results        - Save results from check engines loaded from plugins as well.\n"
+		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
+		"                                   Format is \"$rule_id:$result\\n\".\n"
+		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+		"   --verbose-log-file <file>     - Write verbose informations into file.\n"
 	,
 	.opt_parser = getopt_xccdf,
 	.func = app_xccdf_remediate
@@ -212,7 +212,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 
 #define GEN_OPTS \
         "Generate options:\n" \
-        "   --profile <profile-id>\r\t\t\t\t - Apply profile with given ID to the Benchmark before further processing takes place.\n"
+	"   --profile <profile-id>        - Apply profile with given ID to the Benchmark before further processing takes place.\n"
 
 static struct oscap_module XCCDF_GENERATE = {
     .name = "generate",
@@ -231,11 +231,11 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .summary = "Generate results report",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nReport Options:\n"
-        "   --result-id <id>\r\t\t\t\t - TestResult ID to be processed. Default is the most recent one.\n"
-        "   --show <result-type*>\r\t\t\t\t - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
-        "   --output <file>\r\t\t\t\t - Write the document into file.\n"
-        "   --oval-template <template-string> - Template which will be used to obtain OVAL result files.\n",
+		"\nReport Options:\n"
+		"   --result-id <id>              - TestResult ID to be processed. Default is the most recent one.\n"
+		"   --show <result-type*>         - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
+		"   --output <file>               - Write the document into file.\n"
+		"   --oval-template <template-string> - Template which will be used to obtain OVAL result files.\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-report.xsl",
     .func = app_xccdf_xslt
@@ -247,11 +247,11 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .summary = "Generate security guide",
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nGuide Options:\n"
-        "   --output <file>\r\t\t\t\t - Write the document into file.\n"
-        "   --hide-profile-info\r\t\t\t\t - Do not output additional information about selected profile.\n"
-		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
+		"\nGuide Options:\n"
+		"   --output <file>               - Write the document into file.\n"
+		"   --hide-profile-info           - Do not output additional information about selected profile.\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
+		"                                   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "xccdf-guide.xsl",
     .func = app_xccdf_xslt
@@ -264,18 +264,18 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nFix Options:\n"
-		"   --fix-type <type>\r\t\t\t\t - Fix type. Should be one of: bash, ansible, puppet, anaconda (default: bash).\n"
-        "   --output <file>\r\t\t\t\t - Write the script into file.\n"
-        "   --result-id <id>\r\t\t\t\t - Fixes will be generated for failed rule-results of the specified TestResult.\n"
-		"   --template <id|filename>\r\t\t\t\t - Fix template. (default: bash)\n"
-		"   --benchmark-id <id> \r\t\t\t\t - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id> \r\t\t\t\t - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"   --tailoring-file <file>\r\t\t\t\t - Use given XCCDF Tailoring file.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n"
-		"   --tailoring-id <component-id>\r\t\t\t\t - Use given DS component as XCCDF Tailoring file.\n"
-		"                   \r\t\t\t\t   (only applicable for source datastreams)\n",
+		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda (default: bash).\n"
+		"   --output <file>               - Write the script into file.\n"
+		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
+		"   --template <id|filename>      - Fix template. (default: bash)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
+		"                                   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -287,9 +287,9 @@ static struct oscap_module XCCDF_GEN_CUSTOM = {
     .summary = "Generate a custom output (depending on given XSLT file) from an XCCDF file",
     .usage = "--stylesheet <file> [--output <file>] xccdf-file.xml",
     .help = GEN_OPTS
-        "\nCustom Options:\n"
-        "   --stylesheet <file>\r\t\t\t\t - Specify an absolute path to a custom stylesheet to format the output.\n"
-        "   --output <file>\r\t\t\t\t - Write the document into file.\n",
+		"\nCustom Options:\n"
+		"   --stylesheet <file>           - Specify an absolute path to a custom stylesheet to format the output.\n"
+		"   --output <file>               - Write the document into file.\n",
     .opt_parser = getopt_xccdf,
     .user = NULL,
     .func = app_xccdf_xslt
