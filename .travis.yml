@@ -1,5 +1,7 @@
 sudo: required
 
+dist: xenial
+
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y autoconf automake libtool libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev
