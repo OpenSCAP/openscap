@@ -1,3 +1,5 @@
+include $(top_srcdir)/aminclude_static.am
+
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = lib src src/OVAL/probes utils tests xsl schemas cpe

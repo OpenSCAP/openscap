@@ -226,3 +226,6 @@ selinux/oscap.pp
 /tests/sce/test_sce.log
 /tests/schemas/test_schemas.log
 /tests/test_common.sh
+
+# Generated automatically
+aminclude_static.am

@@ -13,9 +13,9 @@ before_script:
   - cd build
 
 script:
-  - ../configure && build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+  - ../configure --enable-code-coverage && build-wrapper-linux-x86-64 --out-dir bw-output make clean all
+  - make check-code-coverage || true
   - cd .. && sonar-scanner
-# - make check
 
 env:
   global:

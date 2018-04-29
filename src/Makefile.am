@@ -1,3 +1,5 @@
+include $(top_srcdir)/aminclude_static.am
+
 SUBDIRS =
 pkginclude_HEADERS =
 lib_LTLIBRARIES = libopenscap.la
@@ -55,6 +57,13 @@ pkginclude_HEADERS += \
 	common/public/oscap_download_cb.h \
 	common/public/oscap_text.h
 
+if CODE_COVERAGE_ENABLED
+libopenscap_la_LIBADD = $(CODE_COVERAGE_LIBS)
+libopenscap_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
+libopenscap_la_CFLAGS = $(CODE_COVERAGE_CFLAGS) $(CFLAGS)
+endif
+
+SUBDIRS += common
 libopenscap_la_LIBADD += common/liboscapcommon.la
 libopenscap_testing_la_LIBADD += common/liboscapcommon.la
 

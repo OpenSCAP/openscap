@@ -34,6 +34,8 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([])
 
+AX_CODE_COVERAGE
+
 # libtool versioning
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
@@ -1139,9 +1141,14 @@ fi
 if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
-   CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
-   AC_DEFINE([NDEBUG], [1], [No Debug defined])
+   if test "$CODE_COVERAGE_ENABLED" = "yes"; then
+     CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
+   else
+     CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
+   fi
+     AC_DEFINE([NDEBUG], [1], [No Debug defined])
 fi
+
 
 AC_ARG_ENABLE([sce],
      [AC_HELP_STRING([--enable-sce], [enable script check engine (default=no)])],
@@ -1850,5 +1857,6 @@ echo "   cflags:                     $crapi_CFLAGS"
 echo ""
 
 echo "Valgrind checks enabled:       $vgcheck"
+echo "Code coverage enabled:         $CODE_COVERAGE_ENABLED"
 echo "CFLAGS:                        $CFLAGS"
 echo "CXXFLAGS:                      $CXXFLAGS"
