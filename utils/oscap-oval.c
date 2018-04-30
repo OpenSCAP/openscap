@@ -90,12 +90,12 @@ static struct oscap_module OVAL_VALIDATE_XML = {
     .summary = "Validate OVAL XML content",
     .usage = "[options] oval-file.xml",
     .help =
-        "Options:\n"
-        "   --definitions\r\t\t\t\t - Validate OVAL Definitions\n"
-        "   --variables\r\t\t\t\t - Validate external OVAL Variables\n"
-        "   --syschar\r\t\t\t\t - Validate OVAL System Characteristics\n"
-        "   --results\r\t\t\t\t - Validate OVAL Results\n"
-        "   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n",
+	"Options:\n"
+	"   --definitions                 - Validate OVAL Definitions\n"
+	"   --variables                   - Validate external OVAL Variables\n"
+	"   --syschar                     - Validate OVAL System Characteristics\n"
+	"   --results                     - Validate OVAL Results\n"
+	"   --schematron                  - Use schematron-based validation in addition to XML Schema\n",
     .opt_parser = getopt_oval_validate,
     .func = app_oval_validate
 };
@@ -106,12 +106,12 @@ static struct oscap_module OVAL_VALIDATE = {
     .summary = "Validate OVAL XML content",
     .usage = "[options] oval-file.xml",
     .help =
-        "Options:\n"
-        "   --definitions\r\t\t\t\t - Validate OVAL Definitions\n"
-        "   --variables\r\t\t\t\t - Validate external OVAL Variables\n"
-        "   --syschar\r\t\t\t\t - Validate OVAL System Characteristics\n"
-        "   --results\r\t\t\t\t - Validate OVAL Results\n"
-        "   --schematron\r\t\t\t\t - Use schematron-based validation in addition to XML Schema\n",
+	"Options:\n"
+	"   --definitions                 - Validate OVAL Definitions\n"
+	"   --variables                   - Validate external OVAL Variables\n"
+	"   --syschar                     - Validate OVAL System Characteristics\n"
+	"   --results                     - Validate OVAL Results\n"
+	"   --schematron                  - Use schematron-based validation in addition to XML Schema\n",
     .opt_parser = getopt_oval_validate,
     .func = app_oval_validate
 };
@@ -123,21 +123,21 @@ static struct oscap_module OVAL_EVAL = {
     .summary = "Probe the system and evaluate definitions from OVAL Definition file",
     .usage = "[options] oval-definitions.xml",
     .help =
-        "Options:\n"
-	"   --id <definition-id>\r\t\t\t\t - ID of the definition we want to evaluate.\n"
-	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
-        "   --directives <file>\r\t\t\t\t - Use OVAL Directives content to specify desired results content.\n"
-        "   --without-syschar \r\t\t\t\t - Don't provide system characteristic in result file.\n"
-        "   --results <file>\r\t\t\t\t - Write OVAL Results into file.\n"
-        "   --report <file>\r\t\t\t\t - Create human readable (HTML) report from OVAL Results.\n"
-        "   --skip-valid\r\t\t\t\t - Skip validation.\n"
-        "   --datastream-id <id> \r\t\t\t\t - ID of the datastream in the collection to use.\n"
-        "                        \r\t\t\t\t   (only applicable for source datastreams)\n"
-        "   --oval-id <id> \r\t\t\t\t - ID of the OVAL component ref in the datastream to use.\n"
-        "                  \r\t\t\t\t   (only applicable for source datastreams)\n"
-	"   --probe-root <dir>\r\t\t\t\t - Change the root directory before scanning the system.\n"
-	"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
-	"   --verbose-log-file <file>\r\t\t\t\t - Write verbose information into file.\n",
+	"Options:\n"
+	"   --id <definition-id>          - ID of the definition we want to evaluate.\n"
+	"   --variables <file>            - Provide external variables expected by OVAL Definitions.\n"
+	"   --directives <file>           - Use OVAL Directives content to specify desired results content.\n"
+	"   --without-syschar             - Don't provide system characteristic in result file.\n"
+	"   --results <file>              - Write OVAL Results into file.\n"
+	"   --report <file>               - Create human readable (HTML) report from OVAL Results.\n"
+	"   --skip-valid                  - Skip validation.\n"
+	"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
+	"                                   (only applicable for source datastreams)\n"
+	"   --oval-id <id>                - ID of the OVAL component ref in the datastream to use.\n"
+	"                                   (only applicable for source datastreams)\n"
+	"   --probe-root <dir>            - Change the root directory before scanning the system.\n"
+	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+	"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
@@ -149,12 +149,12 @@ static struct oscap_module OVAL_COLLECT = {
     .usage = "[options] oval-definitions.xml",
     .help =
 	"Options:\n"
-	"   --id <object>\r\t\t\t\t - Collect system characteristics ONLY for specified OVAL Object.\n"
-        "   --syschar <file>\r\t\t\t\t - Write OVAL System Characteristic into file.\n"
-	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
-        "   --skip-valid\r\t\t\t\t - Skip validation.\n"
-	"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
-	"   --verbose-log-file <file>\r\t\t\t\t - Write verbose information into file.\n",
+	"   --id <object>                 - Collect system characteristics ONLY for specified OVAL Object.\n"
+	"   --syschar <file>              - Write OVAL System Characteristic into file.\n"
+	"   --variables <file>            - Provide external variables expected by OVAL Definitions.\n"
+	"   --skip-valid                  - Skip validation.\n"
+	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+	"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_oval_collect,
     .func = app_collect_oval
 };
@@ -167,11 +167,11 @@ static struct oscap_module OVAL_ANALYSE = {
     .usage = "[options] --results FILE oval-definitions.xml system-characteristics.xml" ,
     .help =
 	"Options:\n"
-	"   --variables <file>\r\t\t\t\t - Provide external variables expected by OVAL Definitions.\n"
-        "   --directives <file>\r\t\t\t\t - Use OVAL Directives content to specify desired results content.\n"
-        "   --skip-valid\r\t\t\t\t - Skip validation.\n"
-	"   --verbose <verbosity_level>\r\t\t\t\t - Turn on verbose mode at specified verbosity level.\n"
-	"   --verbose-log-file <file>\r\t\t\t\t - Write verbose information into file.\n",
+	"   --variables <file>            - Provide external variables expected by OVAL Definitions.\n"
+	"   --directives <file>           - Use OVAL Directives content to specify desired results content.\n"
+	"   --skip-valid                  - Skip validation.\n"
+	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+	"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_oval_analyse,
     .func = app_analyse_oval
 };
@@ -190,8 +190,8 @@ static struct oscap_module OVAL_REPORT = {
     .summary = "Generate a HTML report from OVAL results file",
     .usage = "[options] oval-file.xml",
     .help =
-        "Options:\n"
-        "   --output <file>\r\t\t\t\t - Write the HTML into file.",
+	"Options:\n"
+	"   --output <file>               - Write the HTML into file.",
     .opt_parser = getopt_oval_report,
     .user = "oval-results-report.xsl",
     .func = app_oval_xslt
@@ -204,9 +204,9 @@ static struct oscap_module OVAL_LIST_PROBES = {
     .summary = "List supported object types (i.e. probes)",
     .usage = "[options]",
     .help = "Options:\n"
-            "   --static\r\t\t\t\t - List all probes defined in the internal tables.\n"
-            "   --dynamic\r\t\t\t\t - List all probes supported on the current system (this is default behavior).\n"
-            "   --verbose\r\t\t\t\t - Be verbose.",
+	"   --static                      - List all probes defined in the internal tables.\n"
+	"   --dynamic                     - List all probes supported on the current system (this is default behavior).\n"
+	"   --verbose                     - Be verbose.",
     .opt_parser = getopt_oval_list_probes,
     .func = app_oval_list_probes
 };

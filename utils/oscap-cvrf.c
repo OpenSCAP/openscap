@@ -60,8 +60,8 @@ static struct oscap_module CVRF_EVALUATE_MODULE = {
 	.opt_parser = getopt_cvrf,
 	.func = app_cvrf_evaluate,
 	.help = "Options:\n"
-		"   --index\r\t\t\t\t - Use index file to evaluate a directory of CVRF files.\n"
-		"   --results\r\t\t\t\t - Filename to which evaluation results will be saved.\n",
+		"   --index                       - Use index file to evaluate a directory of CVRF files.\n"
+		"   --results                     - Filename to which evaluation results will be saved.\n",
 };
 
 static struct oscap_module CVRF_EXPORT_MODULE = {
@@ -72,8 +72,8 @@ static struct oscap_module CVRF_EXPORT_MODULE = {
 	.opt_parser = getopt_cvrf,
 	.func = app_cvrf_export,
 	.help = "Options:\n"
-		"   --index\r\t\t\t\t - Use index file to export a directory of CVRF files \n"
-		"   --output\r\t\t\t\t - Filename to which exported CVRF document will be saved.\n",
+		"   --index                       - Use index file to export a directory of CVRF files \n"
+		"   --output                      - Filename to which exported CVRF document will be saved.\n",
 };
 
 static struct oscap_module CVRF_VALIDATE_MODULE = {
@@ -84,7 +84,7 @@ static struct oscap_module CVRF_VALIDATE_MODULE = {
 	.opt_parser = getopt_cvrf,
 	.func = app_cvrf_validate,
 	.help = "Options:\n"
-		"   --index\r\t\t\t\t - Use index file to validate a directory of CVRF files \n",
+		"   --index                       - Use index file to validate a directory of CVRF files \n",
 };
 
 static struct oscap_module* CVRF_SUBMODULES[] = {

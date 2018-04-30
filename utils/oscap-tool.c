@@ -151,7 +151,7 @@ static inline void oscap_module_print_summary(struct oscap_module *module, FILE 
     assert(module != NULL);
     if (!module->hidden) {
         fprintf(out, "    %s", module->name);
-        if (module->summary) fprintf(out, "\r\t\t\t\t - %s", module->summary);
+        if (module->summary) fprintf(out, " - %s", module->summary);
         fprintf(out, "\n");
     }
 }
