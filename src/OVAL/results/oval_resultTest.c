@@ -469,7 +469,7 @@ static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_co
 	ores_clear(&record_ores);
 	/* During analysis of a system characteristics item, each record field is
 	 * analyzed and then the overall result for elements of the record type is
-	 * computed by logically anding the results for each field and applying
+	 * computed by logically ANDing the results for each field and applying
 	 * the entity_check attribute.
 	 */
 	struct oval_record_field_iterator *state_it = oval_state_content_get_record_fields(state_content);
