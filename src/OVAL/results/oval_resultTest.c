@@ -443,6 +443,24 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 	return ent_val_res;
 }
 
+struct record_field_instance {
+	char *name;
+	char *value;
+	oval_datatype_t data_type;
+	oval_check_t ent_check;
+};
+
+static struct record_field_instance _oval_record_field_iterator_next_instance(struct oval_record_field_iterator *iterator)
+{
+	struct record_field_instance instance;
+	struct oval_record_field *rf = oval_record_field_iterator_next(iterator);
+	instance.name = oval_record_field_get_name(rf);
+	instance.value = oval_record_field_get_value(rf);
+	instance.data_type = oval_record_field_get_datatype(rf);
+	instance.ent_check = oval_record_field_get_ent_check(rf);
+	return instance;
+}
+
 static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_content, struct oval_sysent *item_entity)
 {
 	struct oresults record_ores;
@@ -454,21 +472,16 @@ static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_co
 	 */
 	struct oval_record_field_iterator *state_it = oval_state_content_get_record_fields(state_content);
 	while (oval_record_field_iterator_has_more(state_it)) {
-		struct oval_record_field *state_rf = oval_record_field_iterator_next(state_it);
-		char *state_rf_value = oval_record_field_get_value(state_rf);
-		oval_datatype_t state_rf_data_type = oval_record_field_get_datatype(state_rf);
-		char *state_field_name = oval_record_field_get_name(state_rf);
+		struct record_field_instance state_rf = _oval_record_field_iterator_next_instance(state_it);
 		bool field_found = false;
-		struct oval_record_field_iterator *item_it = oval_sysent_get_record_fields(item_entity);
 		struct oresults field_ores;
 		ores_clear(&field_ores);
+		struct oval_record_field_iterator *item_it = oval_sysent_get_record_fields(item_entity);
 		while (oval_record_field_iterator_has_more(item_it)) {
-			struct oval_record_field *item_rf = oval_record_field_iterator_next(item_it);
-			char *item_field_name = oval_record_field_get_name(item_rf);
-			if (strcmp(state_field_name, item_field_name) == 0) {
+			struct record_field_instance item_rf = _oval_record_field_iterator_next_instance(item_it);
+			if (strcmp(state_rf.name, item_rf.name) == 0) {
 				field_found = true;
-				char *item_rf_value = oval_record_field_get_value(item_rf);
-				oval_result_t fields_comparison_result = oval_str_cmp_str(state_rf_value, state_rf_data_type, item_rf_value, OVAL_OPERATION_EQUALS);
+				oval_result_t fields_comparison_result = oval_str_cmp_str(state_rf.value, state_rf.data_type, item_rf.value, OVAL_OPERATION_EQUALS);
 				ores_add_res(&field_ores, fields_comparison_result);
 			}
 		}
@@ -480,7 +493,7 @@ static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_co
 		if (!field_found) {
 			ores_add_res(&record_ores, OVAL_RESULT_ERROR);
 		} else {
-			oval_result_t field_result = ores_get_result_bychk(&field_ores, oval_record_field_get_ent_check(state_rf));
+			oval_result_t field_result = ores_get_result_bychk(&field_ores, state_rf.ent_check);
 			ores_add_res(&record_ores, field_result);
 		}
 	}
