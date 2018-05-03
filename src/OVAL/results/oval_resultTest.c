@@ -457,7 +457,9 @@ static struct record_field_instance _oval_record_field_iterator_next_instance(st
 	instance.name = oval_record_field_get_name(rf);
 	instance.value = oval_record_field_get_value(rf);
 	instance.data_type = oval_record_field_get_datatype(rf);
-	instance.ent_check = oval_record_field_get_ent_check(rf);
+	if (oval_record_field_get_type(rf) == OVAL_RECORD_FIELD_STATE) {
+		instance.ent_check = oval_record_field_get_ent_check(rf);
+	}
 	return instance;
 }
 
