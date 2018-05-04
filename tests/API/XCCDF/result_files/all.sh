@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. ../../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 function test_api_xccdf_result_files_cpe_conflict {
     local ABS_SRC_DIR=`cd $srcdir; pwd`

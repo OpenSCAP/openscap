@@ -19,7 +19,9 @@
 
 set -e -o pipefail
 
-. ../../../test_common.sh
+. "$builddir/tests/test_common.sh"
+test_srcdir="$srcdir/variable_instance"
+srcdir="$test_srcdir"
 
 #
 # Export two values from XCCDF to a single OVAL variable as a part

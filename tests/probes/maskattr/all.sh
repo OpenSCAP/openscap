@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 test_init test_maskattr.log
 test_run "object entity with mask - OVAL 5.10" $srcdir/test_object_entity_mask.sh

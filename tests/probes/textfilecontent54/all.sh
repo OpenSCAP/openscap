@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 test_init "test_probes_textfilecontent54.log"
 test_run "textfilecontent54 general functionality" $srcdir/test_probes_textfilecontent54.sh

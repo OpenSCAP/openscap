@@ -3,7 +3,7 @@
 # Copyright 2012 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 
-. ../../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 function test_fedora {
     local FEDORA_VERSION=$1
