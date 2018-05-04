@@ -1,3 +1,4 @@
+include $(top_srcdir)/aminclude_static.am
 
 EXTRA_DIST =
 TESTS =

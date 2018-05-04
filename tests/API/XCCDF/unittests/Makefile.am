@@ -16,7 +16,6 @@ AM_CPPFLAGS =   -I$(top_srcdir)/tests/include \
 
 LDADD = $(top_builddir)/src/libopenscap_testing.la @pcre_LIBS@
 
-EXTRA_DIST = $(top_srcdir)/tests/assume.h
 
 check_DATA += not_executable
 not_executable:
@@ -40,6 +39,7 @@ test_xccdf_shall_pass_SOURCES = %reldir%/test_xccdf_shall_pass.c %reldir%/unit_h
 test_xccdf_overrides_SOURCES = %reldir%/test_xccdf_overrides.c
 
 EXTRA_DIST += \
+	$(top_srcdir)/tests/assume.h \
 	%reldir%/all.sh \
 	%reldir%/oval \
 	%reldir%/oval_without_definitions.oval.xml \

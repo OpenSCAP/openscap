@@ -1444,8 +1444,6 @@ AC_CONFIG_FILES([Makefile
                  schemas/Makefile
                  cpe/Makefile
                  libopenscap.pc
-                 src/common/Makefile
-		src/source/Makefile
                  tests/Makefile
                  tests/API/Makefile
 

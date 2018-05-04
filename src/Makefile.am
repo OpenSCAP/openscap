@@ -51,6 +51,12 @@ liboscapcommon_la_LIBADD = \
 	@curl_LIBS@ \
 	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @PTHREAD_LIBS@
 
+if CODE_COVERAGE_ENABLED
+liboscapcommon_la_LIBADD += $(CODE_COVERAGE_LIBS)
+liboscapcommon_la_CPPFLAGS += $(CODE_COVERAGE_CPPFLAGS)
+liboscapcommon_la_CFLAGS = $(CODE_COVERAGE_CFLAGS) $(CFLAGS)
+endif
+
 pkginclude_HEADERS += \
 	common/public/oscap_debug.h \
 	common/public/oscap_error.h \
@@ -59,23 +65,50 @@ pkginclude_HEADERS += \
 	common/public/oscap_download_cb.h \
 	common/public/oscap_text.h
 
-if CODE_COVERAGE_ENABLED
-libopenscap_la_LIBADD += $(CODE_COVERAGE_LIBS)
-libopenscap_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
-libopenscap_la_CFLAGS += $(CODE_COVERAGE_CFLAGS)
+libopenscap_la_LIBADD += liboscapcommon.la
+libopenscap_testing_la_LIBADD += liboscapcommon.la
 
-libopenscap_testing_la_LIBADD += $(CODE_COVERAGE_LIBS)
-libopenscap_testing_la_CPPFLAGS = $(CODE_COVERAGE_CPPFLAGS)
-libopenscap_testing_la_CFLAGS += $(CODE_COVERAGE_CFLAGS)
+noinst_LTLIBRARIES += liboscapsource.la
+
+liboscapsource_la_SOURCES = \
+	source/bz2.c \
+	source/bz2_priv.h \
+	source/doc_type.c \
+	source/doc_type_priv.h \
+	source/oscap_source.c \
+	source/oscap_source_priv.h \
+	source/schematron.c \
+	source/schematron_priv.h \
+	source/validate.c \
+	source/validate_priv.h \
+	source/xslt.c \
+	source/xslt_priv.h
+
+liboscapsource_la_CPPFLAGS  = \
+	@curl_CFLAGS@ \
+	@xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ \
+	-I$(srcdir)/source/public \
+	-I$(top_srcdir)/src \
+	-I$(top_srcdir)/src/CPE/public \
+	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+	-I$(top_srcdir)/src/common/public
+
+liboscapsource_la_LIBADD = \
+	@bz2_LIBS@ \
+	@curl_LIBS@ \
+	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @PTHREAD_LIBS@
+
+pkginclude_HEADERS += \
+	source/public/oscap_source.h
+
+if CODE_COVERAGE_ENABLED
+liboscapsource_la_LIBADD += $(CODE_COVERAGE_LIBS)
+liboscapsource_la_CPPFLAGS += $(CODE_COVERAGE_CPPFLAGS)
+liboscapsource_la_CFLAGS = $(CODE_COVERAGE_CFLAGS) $(CFLAGS)
 endif
 
-SUBDIRS += common
-libopenscap_la_LIBADD += common/liboscapcommon.la
-libopenscap_testing_la_LIBADD += common/liboscapcommon.la
-
-SUBDIRS += source
-libopenscap_la_LIBADD += source/liboscapsource.la
-libopenscap_testing_la_LIBADD += source/liboscapsource.la
+libopenscap_la_LIBADD += liboscapsource.la
+libopenscap_testing_la_LIBADD += liboscapsource.la
 
 SUBDIRS += DS
 libopenscap_la_LIBADD += DS/libds.la

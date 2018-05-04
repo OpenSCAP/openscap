@@ -1,3 +1,5 @@
+include $(top_srcdir)/aminclude_static.am
+
 PROBES_SUBDIR = probes
 
 if WANT_CCE
@@ -11,7 +13,10 @@ CVRF_SUBDIR = CVRF
 OVAL_SUBDIR = OVAL
 XCCDF_SUBDIR = XCCDF
 
-SUBDIRS = SEAP \
+NUL =
+
+SUBDIRS = \
+          SEAP \
           crypt \
           $(CCE_SUBDIR) \
           $(CVE_SUBDIR) \
@@ -19,6 +24,7 @@ SUBDIRS = SEAP \
           $(CVSS_SUBDIR) \
           $(CVRF_SUBDIR) \
           $(OVAL_SUBDIR) \
+          $(PROBES_SUBDIR) \
           $(XCCDF_SUBDIR) \
-          $(PROBES_SUBDIR)
+          $(NUL)
 
