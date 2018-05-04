@@ -36,11 +36,10 @@
 #endif
 #include <WinSock2.h>
 #include <Iphlpapi.h>
-#include <Windows.h>
+#include <windows.h>
 #include <ws2def.h>
 #include <io.h>
 #include <winternl.h>
-#include <io.h>
 #include <lmcons.h>
 #else
 #include <unistd.h>
