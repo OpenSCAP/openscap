@@ -24,7 +24,7 @@ def get_xccdf_values():
     """
 
     ret = {}
-    for key, value in os.environ.iteritems():
+    for key, value in os.environ.items():
         if key.startswith("XCCDF_VALUE_"):
             name = key[12:]
             value = value
