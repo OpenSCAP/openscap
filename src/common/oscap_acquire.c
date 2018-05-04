@@ -40,11 +40,11 @@
 #include "common/_error.h"
 #include "oscap_string.h"
 
-#ifndef SCE_SCRIPT_DIR
-#define SCE_SCRIPT_DIR "/tmp"
+#ifndef OSCAP_TEMP_DIR
+#define OSCAP_TEMP_DIR "/tmp"
 #endif
 
-#define TEMP_DIR_TEMPLATE SCE_SCRIPT_DIR "/oscap.XXXXXX"
+#define TEMP_DIR_TEMPLATE OSCAP_TEMP_DIR "/oscap.XXXXXX"
 #define TEMP_URL_TEMPLATE "downloaded.XXXXXX"
 
 char *
