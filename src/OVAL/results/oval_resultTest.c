@@ -445,6 +445,66 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 	return ent_val_res;
 }
 
+struct record_field_instance {
+	char *name;
+	char *value;
+	oval_datatype_t data_type;
+	oval_check_t ent_check;
+};
+
+static struct record_field_instance _oval_record_field_iterator_next_instance(struct oval_record_field_iterator *iterator)
+{
+	struct record_field_instance instance;
+	struct oval_record_field *rf = oval_record_field_iterator_next(iterator);
+	instance.name = oval_record_field_get_name(rf);
+	instance.value = oval_record_field_get_value(rf);
+	instance.data_type = oval_record_field_get_datatype(rf);
+	if (oval_record_field_get_type(rf) == OVAL_RECORD_FIELD_STATE) {
+		instance.ent_check = oval_record_field_get_ent_check(rf);
+	}
+	return instance;
+}
+
+static oval_result_t _evaluate_sysent_record(struct oval_state_content *state_content, struct oval_sysent *item_entity)
+{
+	struct oresults record_ores;
+	ores_clear(&record_ores);
+	/* During analysis of a system characteristics item, each record field is
+	 * analyzed and then the overall result for elements of the record type is
+	 * computed by logically ANDing the results for each field and applying
+	 * the entity_check attribute.
+	 */
+	struct oval_record_field_iterator *state_it = oval_state_content_get_record_fields(state_content);
+	while (oval_record_field_iterator_has_more(state_it)) {
+		struct record_field_instance state_rf = _oval_record_field_iterator_next_instance(state_it);
+		bool field_found = false;
+		struct oresults field_ores;
+		ores_clear(&field_ores);
+		struct oval_record_field_iterator *item_it = oval_sysent_get_record_fields(item_entity);
+		while (oval_record_field_iterator_has_more(item_it)) {
+			struct record_field_instance item_rf = _oval_record_field_iterator_next_instance(item_it);
+			if (strcmp(state_rf.name, item_rf.name) == 0) {
+				field_found = true;
+				oval_result_t fields_comparison_result = oval_str_cmp_str(state_rf.value, state_rf.data_type, item_rf.value, OVAL_OPERATION_EQUALS);
+				ores_add_res(&field_ores, fields_comparison_result);
+			}
+		}
+		oval_record_field_iterator_free(item_it);
+		/* When analyzing system characteristics an error should be reported
+		 * for the result of a field that is present in the OVAL State, but
+		 * not found in the system characteristics item.
+		 */
+		if (!field_found) {
+			ores_add_res(&record_ores, OVAL_RESULT_ERROR);
+		} else {
+			oval_result_t field_result = ores_get_result_bychk(&field_ores, state_rf.ent_check);
+			ores_add_res(&record_ores, field_result);
+		}
+	}
+	oval_record_field_iterator_free(state_it);
+	return ores_get_result_byopr(&record_ores, OVAL_OPERATOR_AND);
+}
+
 static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_model, struct oval_sysent *item_entity, struct oval_entity *state_entity, oval_operation_t state_entity_operation, struct oval_state_content *content)
 {
 	if (oval_sysent_get_status(item_entity) == SYSCHAR_STATUS_DOES_NOT_EXIST) {
@@ -459,17 +519,26 @@ static inline oval_result_t _evaluate_sysent(struct oval_syschar_model *syschar_
 		char *state_entity_val_text;
 		oval_datatype_t state_entity_val_datatype;
 
-		if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value");
-			return -1;
-		}
-		if ((state_entity_val_text = oval_value_get_text(state_entity_val)) == NULL) {
-			oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value text");
-			return -1;
-		}
-		state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
+		oval_datatype_t state_entity_type = oval_entity_get_datatype(state_entity);
+		if (state_entity_type == OVAL_DATATYPE_RECORD) {
+			if (state_entity_operation != OVAL_OPERATION_EQUALS) {
+				dE("The only allowed operation for comparing record types is 'equals'.");
+				return OVAL_RESULT_ERROR;
+			}
+			return _evaluate_sysent_record(content, item_entity);
+		} else {
+			if ((state_entity_val = oval_entity_get_value(state_entity)) == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value");
+				return -1;
+			}
+			if ((state_entity_val_text = oval_value_get_text(state_entity_val)) == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_OVAL, "OVAL internal error: found NULL entity value text");
+				return -1;
+			}
+			state_entity_val_datatype = oval_value_get_datatype(state_entity_val);
 
-		return oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
+			return oval_ent_cmp_str(state_entity_val_text, state_entity_val_datatype, item_entity, state_entity_operation);
+		}
 	}
 }
 
