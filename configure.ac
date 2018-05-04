@@ -1536,13 +1536,11 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/default_cpe/Makefile
                  tests/API/XCCDF/fix/Makefile
                  tests/API/XCCDF/guide/Makefile
-                 tests/API/XCCDF/unittests/Makefile
                  tests/API/XCCDF/parser/Makefile
                  tests/API/XCCDF/progress/Makefile
                  tests/API/XCCDF/report/Makefile
                  tests/API/XCCDF/result_files/Makefile
                  tests/API/XCCDF/tailoring/Makefile
-                 tests/API/XCCDF/variable_instance/Makefile
 
                  tests/schemas/Makefile
 		tests/bz2/Makefile

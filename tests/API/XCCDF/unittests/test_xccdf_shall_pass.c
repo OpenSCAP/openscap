@@ -26,7 +26,7 @@
 #include <xccdf_policy.h>
 
 #include "unit_helper.h"
-#include <../../../assume.h>
+#include "../../assume.h"
 
 int main(int argc, char *argv[])
 {
