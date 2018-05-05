@@ -3,7 +3,6 @@ sudo: required
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y autoconf autoconf-archive automake libtool lcov libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 language: c
 
@@ -14,22 +13,10 @@ before_script:
 
 script:
   - ../configure --enable-code-coverage && build-wrapper-linux-x86-64 --out-dir bw-output make clean all
-  - make check-code-coverage || true
+  - make check-code-coverage VERBOSE=true || true
   - cd .. && sonar-scanner
 
-env:
-  global:
-   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-   #   via the "travis encrypt" command using the project repo's public key
-   - secure: "IaVecisYdGESUwvePBOhJIlEFLcgJRB72UZbuuAOKYckjGwvejXFLKEO6LX7RpkxpahjADkQ3aso81xo1bNfpxdL3lyVHO7CVHrFqOwqsDQDnIajFYunpRFytCU5SjOduBzWLVq4tJZiFNd04JdaTUrx0KcvYiP4nf06FFNhmhpE64yEg2mqv5qrv59m7Ms7zUYKMge8bcdXBun2+XWC3o/zIqicEoib47jO+J/QJAfTD2ThZsyouw42D/H5jQGa9nQPgKnW9yzS7j5eFvfVG62pj1aK8BqLB5jdpMjMQ+0Su+i38KpomoVaGEDRsAzkCriumheXeHKnFGWHrnNdoXcxc3CbuIdd1F3pme1SzU7UiYgbGd9JI1FAGcwBuTAveQtqWUy5Jy/2XX4ZOMH0IVrIz2AovpE1uEAZPfnRXdkRoT4rqLiFipFKuSthIS1SC+Cx+W/x12L9GQMDGG268dUX3O9O1oWHvDBu2o/sMyUdGOVDLjD6aS7tdXQcKdWSQCkZ/f4CeEaEHrDDR7MX9yVhWYIBHPVgQZUU4Joqp8p8y07ngLdVJQnSaV9bi+r+OYcX+HjG/0amoNCnr95WkxKk20Zs0amrmg6R5dvfotO8QcnrmmD2B6OeJTaUPrjXtnkk2Li2WAzGCsBx29pJjWSLOFK2+O7EteC1GDArUTo="
-
 addons:
-  coverity_scan:
-    project:
-      name: "matejak/openscap"
-    build_command_prepend: "../configure"
-    build_command: "make"
-
   sonarcloud:
     organization: "matejak-github"
 
