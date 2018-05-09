@@ -64,6 +64,9 @@ import subprocess
 
 for file_path in files:
     result = subprocess.call(["./%s" % (file_path)])
-    result_text = xccdf_reverse_result_map[result] if result in xccdf_reverse_result_map else "Unknown exit code %i" % (result)
+    if result in xccdf_reverse_result_map:
+        result_text = xccdf_reverse_result_map[result]
+    else:
+        result_text = "Unknown exit code %i" % (result)
     print("Result of '%s' is %s" % (file_path, result_text))
 
