@@ -1151,8 +1151,16 @@ AC_ARG_ENABLE([sce],
        *) AC_MSG_ERROR([bad value ${enableval} for --enable-sce]) ;;
      esac],[sce=no])
 
+
+AC_ARG_WITH([oscap-temp-dir],
+     [AS_HELP_STRING([--with-oscap-temp-dir],
+     [use different temporary directory to execute sce scripts [default=/tmp]])],
+     [],
+     [with_oscap_temp_dir="/tmp"])
+
 if test "x${sce}" = xyes; then
   AC_DEFINE([ENABLE_SCE], [1], [compilation of script check engine enabled])
+  CFLAGS="$CFLAGS -DOSCAP_TEMP_DIR=\\\"${with_oscap_temp_dir}\\\"" # double escape needed for compilation on some systems
 fi
 
 AC_ARG_ENABLE([util-oscap],
