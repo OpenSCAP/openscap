@@ -1149,7 +1149,6 @@ else
      AC_DEFINE([NDEBUG], [1], [No Debug defined])
 fi
 
-
 AC_ARG_ENABLE([sce],
      [AC_HELP_STRING([--enable-sce], [enable script check engine (default=no)])],
      [case "${enableval}" in

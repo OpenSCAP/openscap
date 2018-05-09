@@ -6,7 +6,7 @@ pkglibexec_PROGRAMS=
 CFLAGS +=	@xml2_CFLAGS@ @PTHREAD_CFLAGS@ @pcre_CFLAGS@	\
 		-DTHREAD_SAFE -DSEAP_THREAD_SAFE		\
 		-I$(top_srcdir)/src				\
-		-I$(top_srcdir)/src/common 			\
+		-I$(top_srcdir)/src/common			\
 		-I$(top_srcdir)/src/common/public		\
 		-I$(top_srcdir)/src/source/public		\
 		-I$(top_srcdir)/src/OVAL			\
@@ -62,7 +62,7 @@ endif
 if probe_filehash58_enabled
 pkglibexec_PROGRAMS += probe_filehash58
 probe_filehash58_SOURCES= independent/filehash58.c
-probe_filehash58_LDFLAGS= crapi/libcrapi.la ../../common/liboscapcommon.la
+probe_filehash58_LDFLAGS= crapi/libcrapi.la ../../liboscapcommon.la
 endif
 
 if probe_environmentvariable_enabled
@@ -137,7 +137,7 @@ if probe_process58_enabled
 pkglibexec_PROGRAMS += probe_process58
 probe_process58_SOURCES= unix/process58.c unix/process58-capability.h unix/process58-devname.c unix/process58-devname.h
 probe_process58_CFLAGS= @selinux_CFLAGS@ @cap_CFLAGS@ @procps_CFLAGS@
-probe_process58_LDFLAGS= @selinux_LIBS@ @cap_LIBS@ @procps_LIBS@ ../../common/liboscapcommon.la
+probe_process58_LDFLAGS= @selinux_LIBS@ @cap_LIBS@ @procps_LIBS@ ../../liboscapcommon.la
 endif
 
 if probe_shadow_enabled
@@ -228,7 +228,7 @@ endif
 if probe_iflisteners_enabled
 pkglibexec_PROGRAMS += probe_iflisteners
 probe_iflisteners_SOURCES= unix/linux/iflisteners.c unix/linux/iflisteners-proto.h
-probe_iflisteners_LDFLAGS= ../../common/liboscapcommon.la
+probe_iflisteners_LDFLAGS= ../../liboscapcommon.la
 endif
 
 if probe_selinuxboolean_enabled
