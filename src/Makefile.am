@@ -1,22 +1,22 @@
+include $(top_srcdir)/aminclude_static.am
+
 SUBDIRS =
+pkginclude_HEADERS =
 lib_LTLIBRARIES = libopenscap.la
 noinst_LTLIBRARIES = libopenscap_testing.la
 
 libopenscap_la_SOURCES =
 libopenscap_la_LIBADD = $(top_builddir)/lib/libgnu.la
 libopenscap_la_LDFLAGS = -no-undefined -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
+libopenscap_la_CFLAGS = $(CFLAGS)
 
 libopenscap_testing_la_SOURCES =
 libopenscap_testing_la_LIBADD = $(top_builddir)/lib/libgnu.la
 libopenscap_testing_la_LDFLAGS= -rpath /nowhere
+libopenscap_testing_la_CFLAGS = $(CFLAGS)
 
-SUBDIRS += common
-libopenscap_la_LIBADD += common/liboscapcommon.la
-libopenscap_testing_la_LIBADD += common/liboscapcommon.la
-
-SUBDIRS += source
-libopenscap_la_LIBADD += source/liboscapsource.la
-libopenscap_testing_la_LIBADD += source/liboscapsource.la
+include common/Makefile.am
+include source/Makefile.am
 
 SUBDIRS += DS
 libopenscap_la_LIBADD += DS/libds.la

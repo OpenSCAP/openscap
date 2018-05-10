@@ -7,7 +7,7 @@
 
 set -e -o pipefail
 
-. ../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 function test_probes_systemdunitproperty_mount_wants {
     probecheck "systemdunitproperty" || return 255

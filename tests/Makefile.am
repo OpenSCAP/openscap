@@ -1,3 +1,5 @@
+include $(top_srcdir)/aminclude_static.am
+
 if ENABLE_VALGRIND_TESTS
   export ENABLE_VALGRIND_TESTS=1
 endif
@@ -16,6 +18,8 @@ if WANT_PERL
     BINDINGS_SUBDIRS += bindings
 endif
 endif
+
+NUL =
 
 SUBDIRS = \
 	API \

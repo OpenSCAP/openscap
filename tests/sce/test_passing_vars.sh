@@ -8,7 +8,7 @@
 
 set -e -o pipefail
 
-. ../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 # Test Cases.
 function test_passing_values {

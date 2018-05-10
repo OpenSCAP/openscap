@@ -5,7 +5,7 @@
 
 set -e -o pipefail
 
-. ../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 function test_config_h(){
 	text='(#\s*include\s+<config.h>)|(#\s*include\s+"config.h")'

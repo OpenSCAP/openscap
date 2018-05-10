@@ -2,7 +2,7 @@
 
 set -e -o pipefail
 
-. ../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 test_init ds_sds_index.log
 

@@ -1,23 +1,23 @@
-noinst_LTLIBRARIES = liboscapsource.la
+noinst_LTLIBRARIES += liboscapsource.la
 
 liboscapsource_la_SOURCES = \
-	bz2.c \
-	bz2_priv.h \
-	doc_type.c \
-	doc_type_priv.h \
-	oscap_source.c \
-	oscap_source_priv.h \
-	schematron.c \
-	schematron_priv.h \
-	validate.c \
-	validate_priv.h \
-	xslt.c \
-	xslt_priv.h
+	%reldir%/bz2.c \
+	%reldir%/bz2_priv.h \
+	%reldir%/doc_type.c \
+	%reldir%/doc_type_priv.h \
+	%reldir%/oscap_source.c \
+	%reldir%/oscap_source_priv.h \
+	%reldir%/schematron.c \
+	%reldir%/schematron_priv.h \
+	%reldir%/validate.c \
+	%reldir%/validate_priv.h \
+	%reldir%/xslt.c \
+	%reldir%/xslt_priv.h
 
 liboscapsource_la_CPPFLAGS  = \
 	@curl_CFLAGS@ \
 	@xml2_CFLAGS@ @xslt_CFLAGS@ @exslt_CFLAGS@ \
-	-I$(srcdir)/public \
+	-I$(srcdir)/%reldir%/public \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/CPE/public \
 	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
@@ -29,4 +29,14 @@ liboscapsource_la_LIBADD = \
 	@xml2_LIBS@ @xslt_LIBS@ @exslt_LIBS@ @PTHREAD_LIBS@
 
 pkginclude_HEADERS =\
-	public/oscap_source.h
+	%reldir%/public/oscap_source.h
+
+
+if CODE_COVERAGE_ENABLED
+liboscapsource_la_LIBADD += $(CODE_COVERAGE_LIBS)
+liboscapsource_la_CPPFLAGS += $(CODE_COVERAGE_CPPFLAGS)
+liboscapsource_la_CFLAGS = $(CODE_COVERAGE_CFLAGS) $(CFLAGS)
+endif
+
+libopenscap_la_LIBADD += liboscapsource.la
+libopenscap_testing_la_LIBADD += liboscapsource.la

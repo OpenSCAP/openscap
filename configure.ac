@@ -34,6 +34,8 @@ AC_PROG_LIBTOOL
 # swig
 AC_PROG_SWIG([])
 
+AX_CODE_COVERAGE
+
 # libtool versioning
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
@@ -1139,8 +1141,12 @@ fi
 if test "$debug" = "yes"; then
    CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
 else
-   CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
-   AC_DEFINE([NDEBUG], [1], [No Debug defined])
+   if test "$CODE_COVERAGE_ENABLED" = "yes"; then
+     CFLAGS="$CFLAGS $CFLAGS_DEBUGGING"
+   else
+     CFLAGS="$CFLAGS $CFLAGS_NODEBUG"
+   fi
+     AC_DEFINE([NDEBUG], [1], [No Debug defined])
 fi
 
 AC_ARG_ENABLE([sce],
@@ -1445,8 +1451,6 @@ AC_CONFIG_FILES([Makefile
                  schemas/Makefile
                  cpe/Makefile
                  libopenscap.pc
-                 src/common/Makefile
-		src/source/Makefile
                  tests/Makefile
                  tests/API/Makefile
 
@@ -1544,13 +1548,11 @@ AC_CONFIG_FILES([Makefile
                  tests/API/XCCDF/default_cpe/Makefile
                  tests/API/XCCDF/fix/Makefile
                  tests/API/XCCDF/guide/Makefile
-                 tests/API/XCCDF/unittests/Makefile
                  tests/API/XCCDF/parser/Makefile
                  tests/API/XCCDF/progress/Makefile
                  tests/API/XCCDF/report/Makefile
                  tests/API/XCCDF/result_files/Makefile
                  tests/API/XCCDF/tailoring/Makefile
-                 tests/API/XCCDF/variable_instance/Makefile
 
                  tests/schemas/Makefile
 		tests/bz2/Makefile
@@ -1860,5 +1862,6 @@ echo "   cflags:                     $crapi_CFLAGS"
 echo ""
 
 echo "Valgrind checks enabled:       $vgcheck"
+echo "Code coverage enabled:         $CODE_COVERAGE_ENABLED"
 echo "CFLAGS:                        $CFLAGS"
 echo "CXXFLAGS:                      $CXXFLAGS"

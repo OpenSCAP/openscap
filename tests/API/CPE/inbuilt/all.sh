@@ -19,7 +19,7 @@
 
 set -e -o pipefail
 
-. ../../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 function ensure_oscap_version(){
 	local name=$FUNCNAME

@@ -36,6 +36,6 @@ libprobe_la_SOURCES=	\
 
 libprobe_la_LIBADD= \
 			$(top_builddir)/src/libopenscap.la	\
-			$(top_builddir)/src/common/liboscapcommon.la \
+			$(top_builddir)/src/liboscapcommon.la \
 			$(top_builddir)/src/OVAL/results/libovalcmp.la \
 			@PTHREAD_LIBS@

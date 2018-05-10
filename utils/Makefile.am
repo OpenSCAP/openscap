@@ -1,3 +1,5 @@
+include $(top_srcdir)/aminclude_static.am
+
 SUBDIRS =
 oscap_LDADD =
 
@@ -37,6 +39,13 @@ oscap_SOURCES   += oscap-cvrf.c
 oscap_CPPFLAGS  += -I$(top_srcdir)/src/CVRF/public
 
 oscap_SOURCES   += oscap-info.c
+
+if CODE_COVERAGE_ENABLED
+oscap_LDADD += $(CODE_COVERAGE_LIBS)
+oscap_CPPFLAGS += $(CODE_COVERAGE_CPPFLAGS)
+oscap_CFLAGS = $(CODE_COVERAGE_CFLAGS) $(CFLAGS)
+endif
+
 endif
 
 if WANT_UTIL_SCAP_AS_RPM

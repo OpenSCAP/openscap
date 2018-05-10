@@ -5,7 +5,7 @@
 
 set -x
 
-. ../../test_common.sh
+. "$builddir/tests/test_common.sh"
 
 name=$(basename $0 .sh)
 export=$(mktemp -t ${name}.export.xml.XXXXXX)
