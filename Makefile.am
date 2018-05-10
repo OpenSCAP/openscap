@@ -61,7 +61,6 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		docs/Doxyfile \
 		docs/title.doc \
 		docs/modules \
-		docs/examples/oval_probes.py \
 		docs/examples/package-test.xml \
                 docs/oscap-scan.cron \
 		docs/manual/manual.adoc \
