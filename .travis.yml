@@ -1,0 +1,33 @@
+sudo: required
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y autoconf automake libtool lcov libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev
+
+language: c
+
+before_script:
+  - export CC=gcc-7 GCOV=gcov-7
+  - ./autogen.sh
+  - mkdir build
+  - cd build
+
+script:
+  - ../configure CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov --enable-debug && build-wrapper-linux-x86-64 --out-dir bw-output make all
+  - make -k check VERBOSE=true
+  - bash ../tests/recursively_generate_gcov.sh .
+  - cd .. && sonar-scanner
+
+addons:
+  sonarcloud:
+    organization: "openscap"
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - gcc-7
+
+
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
