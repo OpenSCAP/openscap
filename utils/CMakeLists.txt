@@ -3,32 +3,27 @@ if(ENABLE_OSCAP_UTIL)
 	add_executable(oscap ${UTILS_SOURCES})
 	target_link_libraries(oscap openscap)
 
-	# Install the 'oscap' utility
 	if(WIN32)
 		set(OSCAP_UTIL_DESTINATION ".")
-	else()
-		set(OSCAP_UTIL_DESTINATION ${CMAKE_INSTALL_BINDIR})
-	endif()
-	install(TARGETS "oscap"
-		DESTINATION ${OSCAP_UTIL_DESTINATION}
-	)
-
-	# Install manual page
-	if(NOT WIN32)
-		install(FILES "oscap.8"
-			DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
-		)
-	endif()
-
-	# Windows: Install all recursively dependent DLLs for oscap.exe
-	if(WIN32)
+		# Install all recursively dependent DLLs for oscap.exe
 		set(APPS "\${CMAKE_INSTALL_PREFIX}/oscap.exe") # the \ before $ is required by BundleUtilities
 		set(VCPKG_DLL_DIR "${_VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/bin")
 		install(CODE "
 			include(BundleUtilities)
 			fixup_bundle(\"${APPS}\" \"\" \"${VCPKG_DLL_DIR}\")
 		")
+	else()
+		set(OSCAP_UTIL_DESTINATION ${CMAKE_INSTALL_BINDIR})
+		# Install manual page
+		install(FILES "oscap.8"
+			DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+		)
 	endif()
+
+	# Install the 'oscap' utility
+	install(TARGETS "oscap"
+		DESTINATION ${OSCAP_UTIL_DESTINATION}
+	)
 endif()
 if(ENABLE_OSCAP_UTIL_CHROOT)
 	install(PROGRAMS "oscap-chroot"
