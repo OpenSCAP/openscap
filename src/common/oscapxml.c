@@ -57,6 +57,27 @@ const char *const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
 const char *const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 const char *const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
 
+#ifdef _WIN32
+static const char *_get_default_path(const char *defpath)
+{
+	/* On Windows, default paths are directory names of directories that are
+	 * located in the same directory as oscap.exe. We will make a full path
+	 * based on oscap.exe location.
+	 */
+	char oscap_path[PATH_MAX];
+	GetModuleFileName(NULL, oscap_path, PATH_MAX);
+	char *oscap_path_dirname = oscap_dirname(oscap_path);
+	const char *path = oscap_sprintf("%s\\%s", oscap_path_dirname, defpath);
+	free(oscap_path_dirname);
+	return path;
+}
+#else
+static const char *_get_default_path(const char *defpath)
+{
+	return defpath;
+}
+#endif
+
 /*
  * If environment variable specified by 'pathvar' is defined, returns value of this environment variable.
  * If this environment variable is not defined, returns default path, provided by 'defpath' argument.
@@ -68,19 +89,7 @@ static const char * oscap_path_to(const char *pathvar, const char *defpath) {
 		path = getenv(pathvar);
 
 	if (path == NULL || oscap_streq(path, "")) {
-#ifdef _WIN32
-		/* On Windows, default paths are directory names of directories that are
-		 * located in the same directory as oscap.exe. We will make a full path
-		 * based on oscap.exe location.
-		 */
-		char oscap_path[PATH_MAX];
-		GetModuleFileName(NULL, oscap_path, PATH_MAX);
-		char *oscap_path_dirname = oscap_dirname(oscap_path);
-		path = oscap_sprintf("%s\\%s", oscap_path_dirname, defpath);
-		free(oscap_path_dirname);
-#else
-		path = defpath;
-#endif
+		path = _get_default_path(defpath);
 	}
 
 	return path;
