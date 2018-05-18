@@ -1,0 +1,18 @@
+version: master-{build}
+branches:
+  only:
+  - master
+image: Visual Studio 2017
+configuration: Release
+clone_folder: c:\projects\openscap
+install:
+- cmd: vcpkg install curl libxml2 libxslt bzip2 pcre pthreads
+cache: c:\tools\vcpkg\installed\
+before_build:
+- cmd: >-
+    cd build
+
+    cmake -DENABLE_PYTHON2=FALSE -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+build:
+  project: c:\projects\openscap\build\openscap.sln
+  verbosity: minimal
