@@ -24,3 +24,6 @@ build/
 /src/OVAL/oval_testing_ext_probe.c
 /src/OVAL/probes/probe_*
 /schemas/build/
+/swig/python3/openscap.py
+/swig/python3/openscap_py_wrap.c
+/swig/python3/openscap_api.pyc
