@@ -25,79 +25,15 @@ import locale
 # We shall always behave the same, regardless of locale
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
-import sys
 
-try:
-    import argparse
-    ParserClass = argparse.ArgumentParser
-except ImportError:
-    # XXX: get rid of this block once any old Python not having argparse by
-    # default needs to be supported
-    import optparse
-
-    class ArgOptParserShim(optparse.OptionParser):
-        """
-        A shim class allowing usage of an OptionParser instance as an
-        ArgumentParser instance as far as the needs of this script go.
-
-        """
-
-        def __init__(self, *args, **kwargs):
-            optparse.OptionParser.__init__(self, *args, **kwargs)
-
-            # name of the attribute to store args in
-            self._args_name = None
-            self._args_spec = ""
-            self._args_description = ""
-
-        def add_argument(self, argument, *args, **kwargs):
-            # get and remove the "metavar" argument
-            metavar = kwargs.pop("metavar", "ARG")
-
-            # we don't care about nargs
-            kwargs.pop("nargs", None)
-
-            if argument.startswith("--"):
-                return self.add_option(argument, *args, **kwargs)
-            else:
-                self._args_name = argument
-                self._args_spec = "{0} [{0}...]".format(metavar)
-                self._args_description = "  %s" % self._args_spec
-                desc = kwargs.get("help")
-                if desc:
-                    self._args_description += "\t%s" % desc
-
-        def parse_args(self, args=None, values=None):
-            opts, args = optparse.OptionParser.parse_args(self, args, values)
-            if self._args_spec:
-                if not args:
-                    print("Missing arguments: %s" % self._args_spec)
-                    self.print_help()
-
-                setattr(opts, self._args_name, args)
-
-            return opts
-
-        def print_help(self, fobj=None):
-            if self._args_spec:
-                self.usage = self.usage + " " + self._args_spec
-
-            optparse.OptionParser.print_help(self, fobj)
-
-            if self._args_spec:
-                if fobj:
-                    fobj.write("%s\n" % self._args_description)
-                else:
-                    print(self._args_description)
-
-    ParserClass = ArgOptParserShim
-
+import argparse
 import string
 import os.path
 import shutil
 import datetime
 import tempfile
 import subprocess
+import sys
 
 
 def subprocess_check_output(*popenargs, **kwargs):
@@ -246,7 +182,7 @@ ${__package_installed_files}
     target_file.write(spec_source)
 
 def main():
-    parser = ParserClass(
+    parser = argparse.ArgumentParser(
         description = "Takes given SCAP input(s) and makes an RPM package that contains them. "
                       "The result RPM can be installed using # yum install ./package-name-1-1.rpm "
                       "which will put the contents into /usr/share/xml/scap. No dependency on openscap "
