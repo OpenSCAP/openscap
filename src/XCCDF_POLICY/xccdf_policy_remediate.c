@@ -166,6 +166,7 @@ static const char *_get_supported_interpret(const char *sys, const struct _inter
 		{"urn:xccdf:fix:script:sh",		"/bin/bash"},
 		{"urn:xccdf:fix:script:perl",		"/usr/bin/perl"},
 		{"urn:xccdf:fix:script:python",		"/usr/bin/python"},
+		{"urn:xccdf:fix:script:python3",	"/usr/bin/python3"},
 		{"urn:xccdf:fix:script:csh",		"/bin/csh"},
 		{"urn:xccdf:fix:script:tclsh",		"/usr/bin/tclsh"},
 		{"urn:xccdf:fix:script:javascript",	"/usr/bin/js"},
