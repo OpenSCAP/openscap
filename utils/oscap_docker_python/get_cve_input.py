@@ -15,14 +15,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-try:
-    # Python2 imports
-    import urlparse
-    import urllib2 as urllib
-except ImportError:
-    #Python3 imports
-    import urllib.parse as urlparse
-    import urllib.request as urllib
+import urllib.parse as urlparse
+import urllib.request as urllib
 from os.path import join, exists
 from os import stat, utime
 from sys import stderr
