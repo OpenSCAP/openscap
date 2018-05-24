@@ -8,7 +8,7 @@
 # Test Cases.
 
 function test_python_import {
-    bash $builddir/run python -c "import openscap_api"
+    bash $builddir/run python3 -c "import openscap_api"
 }
 
 # Testing.
