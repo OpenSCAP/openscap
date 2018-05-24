@@ -251,12 +251,7 @@ endif()
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
 # ---------- LANGUAGE BINDINGS
-
-# TODO: Shouldn't we only enable this if python2 was found?
-option(ENABLE_PYTHON2 "if enabled, the python2 swig bindings will be built" TRUE)
-
-# TODO: Shouldn't we only enable this if python3 was found?
-option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALSE)
+cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND" OFF)
 
 # TODO: Shouldn't we only enable this if perl was found?
 option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
@@ -289,7 +284,6 @@ message(STATUS "solaris probes: ${ENABLE_PROBES_SOLARIS}")
 message(STATUS " ")
 
 message(STATUS "Language bindings:")
-message(STATUS "python2 bindings: ${ENABLE_PYTHON2}")
 message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
 message(STATUS "perl bindings: ${ENABLE_PERL}")
 message(STATUS " ")
