@@ -52,18 +52,21 @@ xccdf_result_map["XCCDF_RESULT_INFORMATIONAL"] = 108
 xccdf_result_map["XCCDF_RESULT_FIXED"] = 109
 
 xccdf_reverse_result_map = dict()
-for key, value in xccdf_result_map.iteritems():
+for key, value in xccdf_result_map.items():
     xccdf_reverse_result_map[value] = key
 
 # set all XCCDF result types as environment variables
 # (this is especially useful for bash scripts)
-for key, value in xccdf_result_map.iteritems():
+for key, value in xccdf_result_map.items():
     os.environ[key] = str(value)
 
 import subprocess
 
 for file_path in files:
     result = subprocess.call(["./%s" % (file_path)])
-    result_text = xccdf_reverse_result_map[result] if xccdf_reverse_result_map.has_key(result) else "Unknown exit code %i" % (result)
+    if result in xccdf_reverse_result_map:
+        result_text = xccdf_reverse_result_map[result]
+    else:
+        result_text = "Unknown exit code %i" % (result)
     print("Result of '%s' is %s" % (file_path, result_text))
 

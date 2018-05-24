@@ -319,6 +319,7 @@ else()
 	set(OVAL_PROBE_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/openscap")
 	set(OVAL_PROBEDIR_ENV 1)
 endif()
+set(OSCAP_TEMP_DIR "/tmp" CACHE STRING "use different temporary directory to execute sce scripts (default=/tmp)")
 
 # ---------- RPATHS for linking
 
