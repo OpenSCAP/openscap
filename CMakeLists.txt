@@ -86,8 +86,8 @@ if(PROCPS_FOUND)
 	check_include_file(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
-find_package(PythonLibs 2 EXACT)
-find_package(PythonInterp)
+find_package(PythonInterp 3)
+find_package(PythonLibs 3 EXACT)
 
 find_package(RPM)
 if(RPM_FOUND)
