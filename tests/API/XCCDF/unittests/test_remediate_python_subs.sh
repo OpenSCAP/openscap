@@ -16,7 +16,7 @@ $OSCAP xccdf remediate --skip-valid --results $result $srcdir/${name}.xccdf.xml 
 
 assert_exists 1 '//Rule'
 assert_exists 1 '//Rule/fix'
-assert_exists 1 '//Rule/fix[@system="urn:xccdf:fix:script:python"]'
+assert_exists 1 '//Rule/fix[@system="urn:xccdf:fix:script:python3"]'
 assert_exists 0 '//Rule/fix/sub'
 assert_exists 3 '//Rule/fix/xhtml:object'
 assert_exists 2 '//TestResult'

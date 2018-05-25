@@ -5,7 +5,7 @@
 import os
 def touch(fname, times=None):
     if not os.path.exists(fname):
-	open(fname, 'w').close()
+        open(fname, 'w').close()
   </plain-text>
   <version>1.0</version>
   <Value id="xccdf_moc.elpmaxe.www_value_1">
@@ -14,7 +14,7 @@ def touch(fname, times=None):
   </Value>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
     <title>touch</title>
-    <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" system="urn:xccdf:fix:script:python">
+    <fix xmlns:xhtml="http://www.w3.org/1999/xhtml" system="urn:xccdf:fix:script:python3">
 <xhtml:object data="#xccdf:value:touch_definition"/>
 <xhtml:object data="#xccdf:title:xccdf_moc.elpmaxe.www_rule_1"/>('<xhtml:object data="#xccdf:value:xccdf_moc.elpmaxe.www_value_1"/>')
     </fix>
