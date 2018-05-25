@@ -1069,7 +1069,7 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
 {
 
 	char *temp;
-	struct oscap_iterator *it;;
+	struct oscap_iterator *it;
 
 	__attribute__nonnull__(item);
 	__attribute__nonnull__(writer);
