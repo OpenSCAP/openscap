@@ -4,11 +4,11 @@
   <version>1.0</version>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
     <title>Ensure that file exists and it is not executable</title>
-    <fix system="urn:xccdf:fix:script:python">
+    <fix system="urn:xccdf:fix:script:python3">
 import os
 def touch(fname, times=None):
     if not os.path.exists(fname):
-	open(fname, 'w').close()
+        open(fname, 'w').close()
 
 touch('test_file')
     </fix>
