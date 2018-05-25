@@ -111,8 +111,6 @@ ELSE()
   # Do we have pthreads?
   CHECK_INCLUDE_FILES("pthread.h" CMAKE_HAVE_PTHREAD_H)
   IF(CMAKE_HAVE_PTHREAD_H)
-    message("!!!We have pthread.h!")
-
     #
     # We have pthread.h
     # Let's check for the library now.
