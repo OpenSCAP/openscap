@@ -86,6 +86,11 @@ if(PROCPS_FOUND)
 	check_include_file(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
+# According to CMake documentation:
+# https://cmake.org/cmake/help/latest/module/FindPythonInterp.html
+# If calling both find_package(PythonInterp) and find_package(PythonLibs),
+# call find_package(PythonInterp) first to get the currently active Python
+# version by default with a consistent version of PYTHON_LIBRARIES.
 find_package(PythonInterp 3)
 find_package(PythonLibs 3 EXACT)
 
