@@ -641,7 +641,7 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 	}
 
 	char file_timestamp[32];
-	strcpy(file_timestamp, "0000-00-00T00:00:00");
+	strncpy(file_timestamp, "0000-00-00T00:00:00", sizeof(file_timestamp));
 
 	const char *filepath = oscap_source_get_filepath(component_source);
 	struct stat file_stat;

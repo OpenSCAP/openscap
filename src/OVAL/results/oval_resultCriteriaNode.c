@@ -497,7 +497,7 @@ void oval_result_criteria_node_set_extends(struct oval_result_criteria_node *nod
 	__attribute__nonnull__(node);
 	/*type==NODETYPE_EXTENDDEF */
 	if (oval_result_criteria_node_get_type(node) == OVAL_NODETYPE_EXTENDDEF) {
-		extends = ((struct oval_result_criteria_node_EXTENDDEF *)node)->extends = extends;
+		((struct oval_result_criteria_node_EXTENDDEF *)node)->extends = extends;
 	}
 }
 
