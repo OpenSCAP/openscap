@@ -14,9 +14,12 @@ before_script:
 
 script:
   - ../configure CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov --enable-debug && build-wrapper-linux-x86-64 --out-dir bw-output make all
-  - make -k check VERBOSE=true
+  - make -k check VERBOSE=true || { test "$SEND_COVERAGE_EVEN_IF_TESTS_FAIL" = yes && curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"; }
   - bash ../tests/recursively_generate_gcov.sh .
   - cd .. && sonar-scanner
+
+after_success:
+ - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
 
 addons:
   sonarcloud:
