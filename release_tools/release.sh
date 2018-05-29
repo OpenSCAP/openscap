@@ -47,7 +47,7 @@ check_python_binding()
     local _python_major
     _python_major="${1%%.*}"
     (
-        cd $OSCAP_REPO_ROOT/build
+        cd "$BUILDDIR"
         if LD_PRELOAD="/usr/lib64/libpython$1.so" ldd -r "$BUILDDIR/swig/python$_python_major/_openscap_py.so" | grep -q '^undefined' ; then
             die "Python $1 bindings seem to have undefined symbols"
         fi
