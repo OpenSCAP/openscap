@@ -1,3 +1,40 @@
+openscap-1.2.17                                                 29-05-2018
+  - New features
+    - HTML Guide user experience improvements
+    - New options in HTML report "Group By" menu
+    - oscap-ssh supports --oval-results (issue #863)
+  - Maintenance
+    - Support comparing state record elements with item
+    - Updated Bash completion
+    - Make Bash role headers consistent with --help output
+    - Fixed problems reported by Coverity (issue #909)
+    - Fixed CVE schema to support 4 to 7 digits CVEs
+    - Fix output of generated bash role missing fix message
+    - Fix oscap-docker to clean up temporary image (RHBZ #1454637)
+    - Fix Ansible remediations generation
+    - Add a newline between ids in xccdf info (issue #968)
+    - Fix unknown subtype handling in oval_subtype_parse (issue #986)
+    - Outsourced the pthreads feature check and setup
+    - Speed up in debug mode
+    - Refactored the Python handling in build scripts
+    - Prevent reading from host in offline mode (issue #1001)
+    - Many probes use OWN offline mode
+    - Improve offline mode logic in OVAL probes
+    - Do not use chroot in system_info probe
+    - Prevent a segfault in oscap_seterr on Solaris
+    - Out of tree build is possible
+    - Use chroot for RPM probes in offline mode
+    - PEP8 accepts lines up to 99 characters
+    - New configure parameter --with-oscap-temp-dir (issue #1016)
+    - Fixed OVAL record elements namespace and SEXP conversion
+    - Removed '\r' characters from help output (issue #1023)
+    - Full Python 3 compatibility
+    - Removed basic Python implementation of oval_probes.c
+    - Added support for Travis CI and Sonar Cloud
+    - Minor fixes inspired by Sonar Cloud
+    - Added Fedora 29 CPE
+    - New tests in upstream test suite (offline mode, Ansible, etc.)
+
 openscap-1.2.16                                                 13-11-2017
   - Stats
     - Over 350 commits from 12 distinct persons
