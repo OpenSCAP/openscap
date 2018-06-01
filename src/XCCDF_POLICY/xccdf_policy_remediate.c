@@ -785,6 +785,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 
 	const bool ansible_script = strcmp(sys, "urn:xccdf:fix:script:ansible") == 0;
 	const char *how_to_apply = ansible_script ?
+		"# $ ansible-playbook -i \"localhost,\" -c local playbook.yml\n"
 		"# $ ansible-playbook -i \"192.168.1.155,\" playbook.yml\n"
 		"# $ ansible-playbook -i inventory.ini playbook.yml" :
 		"# $ sudo ./remediation-role.sh";
