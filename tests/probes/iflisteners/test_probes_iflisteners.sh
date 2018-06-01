@@ -22,7 +22,7 @@ function test_probes_iflisteners {
 
     if [ `id -u` -ne 0 ]; then
         echo you need to be root
-        exit 255
+        return 255
     fi
 
     local ret_val=0;

@@ -4,6 +4,7 @@
 
 set -e -o pipefail
 
+function perform_test {
 probecheck "sysctl" || return 255
 
 result=`mktemp`
@@ -17,4 +18,6 @@ assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system
 
 rm $result
 rm $stderr
+}
 
+perform_test
