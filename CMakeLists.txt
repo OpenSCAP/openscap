@@ -170,7 +170,11 @@ string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
 cmake_dependent_option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX} "ENABLE_PROBES" OFF)
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
 cmake_dependent_option(ENABLE_PROBES_SOLARIS "build OVAL probes for the Solaris OVAL tests" ${IS_SOLARIS} "ENABLE_PROBES" OFF)
-cmake_dependent_option(ENABLE_PROBES_WINDOWS "build OVAL probes for the Windows OVAL tests" ${WIN32} "ENABLE_PROBES" OFF)
+set(IS_WIN32 FALSE)
+if (WIN32)
+    set(IS_WIN32 TRUE)
+endif()
+cmake_dependent_option(ENABLE_PROBES_WINDOWS "build OVAL probes for the Windows OVAL tests" ${IS_WIN32} "ENABLE_PROBES" OFF)
 
 # INDEPENDENT PROBES
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE "Independent environmentvariable probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
