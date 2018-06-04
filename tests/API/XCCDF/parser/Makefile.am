@@ -22,10 +22,11 @@ TESTS_ENVIRONMENT = \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
-TESTS = test_api_xccdf.sh
+TESTS = test_api_xccdf.sh test_extensions.sh
 check_PROGRAMS = test_api_xccdf
 
 test_api_xccdf_SOURCES = test_api_xccdf.c
 
-EXTRA_DIST = test_api_xccdf.sh xccdf11.xml xccdf12.xml xccdf11-results.xml
+EXTRA_DIST = test_api_xccdf.sh test_extensions.sh xccdf11.xml xccdf12.xml xccdf11-results.xml \
+             test_known_extensions.xml test_malformed_extensions.xml test_proprietary_extensions.xml
 
