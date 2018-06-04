@@ -160,7 +160,12 @@ option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine 
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 cmake_dependent_option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" ON "ENABLE_PROBES" OFF)
-cmake_dependent_option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" ${UNIX} "ENABLE_PROBES" OFF)
+# On some platforms (Windows..) UNIX ends up being empty instead of "false"
+set(IS_UNIX FALSE)
+if (UNIX)
+    set(IS_UNIX TRUE)
+endif()
+cmake_dependent_option(ENABLE_PROBES_UNIX "build OVAL probes for the UNIX OVAL tests" ${IS_UNIX} "ENABLE_PROBES" OFF)
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" IS_LINUX)
 cmake_dependent_option(ENABLE_PROBES_LINUX "build OVAL probes for the Linux OVAL tests" ${IS_LINUX} "ENABLE_PROBES" OFF)
 string(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Solaris" IS_SOLARIS)
