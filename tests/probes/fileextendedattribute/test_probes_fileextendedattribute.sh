@@ -12,11 +12,6 @@ function test_probes_fileextendedattribute {
 
     probecheck "fileextendedattribute" || return 255
 
-    if [ ! -x ${OVAL_PROBE_DIR}/probe_fileextendedattribute ]; then
-        echo -e "Probe file does not exist!\n"
-        return 255; # Test is not applicable.
-    fi
-
     local ret_val=0;
     local DEFFILE="$srcdir/test_probes_fileextendedattribute.xml"
     local RESFILE="results.xml"

@@ -47,7 +47,6 @@ struct oval_pext {
 
         SEAP_CTX_t   *sctx;
         oval_pdtbl_t *pdtbl;
-        char         *probe_dir;
 
         void *sess_ptr;
         struct oval_syschar_model **model;

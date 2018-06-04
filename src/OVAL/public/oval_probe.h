@@ -79,7 +79,5 @@ OSCAP_API OSCAP_DEPRECATED(int oval_probe_query_definition(oval_probe_session_t 
  * @return 0 on success
  */
 OSCAP_API int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
-
-OSCAP_API const char *oval_probe_ext_getdir(void);
 #endif				/* OVAL_PROBE_H */
 /// @}

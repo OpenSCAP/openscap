@@ -48,10 +48,6 @@
 
 #define OVAL_PROBE_SCHEME "queue"
 
-#ifndef OVAL_PROBE_DIR
-# define OVAL_PROBE_DIR    "/usr/libexec/openscap"
-#endif
-
 #define OVAL_PROBE_MAXRETRY 0
 
 int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test);

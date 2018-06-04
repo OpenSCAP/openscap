@@ -67,14 +67,6 @@ oval_pext_t *oval_pext_new(void)
         pext->do_init = true;
         pthread_mutex_init(&pext->lock, NULL);
 
-#if defined(OVAL_PROBEDIR_ENV)
-        pext->probe_dir = getenv("OVAL_PROBE_DIR");
-#else
-        pext->probe_dir = NULL;
-#endif
-        if (pext->probe_dir == NULL)
-                pext->probe_dir = OVAL_PROBE_DIR;
-
         pext->pdtbl     = NULL;
 
         return(pext);
@@ -769,10 +761,6 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
         {
                 char         probe_uri[PATH_MAX + 1];
                 size_t       probe_urilen;
-                char        *probe_dir;
-
-                probe_dir = pext->probe_dir;
-
 
 		if (!probe_table_exists(type)) {
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "subtype %u not supported", type);
@@ -781,8 +769,8 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
 			break;
 		}
 
-		probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s/%s",
-				OVAL_PROBE_SCHEME, probe_dir, oval_subtype_get_text(type));
+		probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s",
+				OVAL_PROBE_SCHEME, oval_subtype_get_text(type));
 
                 if (probe_urilen >= sizeof probe_uri) {
                         oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
@@ -836,9 +824,6 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
                 if (pd == NULL) {
                         char         probe_uri[PATH_MAX + 1];
                         size_t       probe_urilen;
-                        char        *probe_dir;
-
-                        probe_dir = pext->probe_dir;
 
 			if (!probe_table_exists(obj_subtype)) {
 				oval_syschar_add_new_message(sys, "OVAL object not supported", OVAL_MESSAGE_LEVEL_WARNING);
@@ -847,8 +832,8 @@ int oval_probe_ext_handler(oval_subtype_t type, void *ptr, int act, ...)
 				return (1);
 			}
 
-			probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s/%s",
-					OVAL_PROBE_SCHEME, probe_dir, oval_subtype_get_text(obj_subtype));
+			probe_urilen = snprintf(probe_uri, sizeof probe_uri, "%s://%s",
+					OVAL_PROBE_SCHEME, oval_subtype_get_text(obj_subtype));
 
                         if (probe_urilen >= sizeof probe_uri) {
                                 oscap_seterr (OSCAP_EFAMILY_GLIBC, "probe URI too long");
@@ -1059,18 +1044,3 @@ int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 }
 
 #endif
-
-const char *oval_probe_ext_getdir(void)
-{
-    const char *probe_dir;
-
-#if defined(OVAL_PROBEDIR_ENV)
-    probe_dir = getenv("OVAL_PROBE_DIR");
-#else
-    probe_dir = NULL;
-#endif
-    if (probe_dir == NULL)
-	probe_dir = OVAL_PROBE_DIR;
-
-    return (probe_dir);
-}
