@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
+  <status date="2011-12-08">draft</status>
+  <title xml:lang="en-US">Sample XCCDF using proprietary extensions</title>
+  <description xml:lang="en-US">Proprietary extensions WILL NOT appear the XCCDF report</description>
+  <version>0.1</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+  <Group id="bash-passer" hidden="false">
+    <title xml:lang="en-US">Check with a hint of Mint</title>
+    <description xml:lang="en-US">Mint tea consumed during the making of this test</description>
+    <Rule id="rule-1000" selected="true" weight="10.000000">
+      <title xml:lang="en-US">TEST (proprietary)</title>
+      <check system="https://www.bigelowtea.com/Teas/Flavors/Mint">
+        <check-content-ref href="mint.tea"/>
+      </check>
+    </Rule>
+  </Group>
+</Benchmark>
