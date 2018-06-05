@@ -310,7 +310,7 @@ int oval_entity_parse_tag(xmlTextReaderPtr reader,
 	//The value of the type field vs. the complexity of extracting type is arguable
 	char *varref = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "var_ref");
 	struct oval_value *value = NULL;
-	struct oval_variable *variable;
+	struct oval_variable *variable = NULL;
 	char *name = (char *)xmlTextReaderLocalName(reader);
 	oval_entity_varref_type_t varref_type;
 	if (strcmp(name, "var_ref") == 0) {	//special case for <var_ref>

@@ -354,6 +354,19 @@
                         <criterion comment="Fedora 28 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:28"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:29" version="1">
+                  <metadata>
+                        <title>Fedora 29</title>
+                        <affected family="unix">
+                            <platform>Fedora 29</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:29" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 29</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Fedora 29 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:29"/>
+                  </criteria>
+            </definition>
 
             <definition class="inventory" id="oval:org.open-scap.cpe.sle:def:1" version="1">
                   <metadata>
@@ -689,6 +702,11 @@
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:28"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:29" version="1" check="at least one" comment="fedora-release is version Fedora 29"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:29"/>
+            </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:1" version="1" check="at least one" comment="/etc/sles-release is provided by sles-release package"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.sles-release:obj:1"/>
@@ -939,6 +957,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:28" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^28$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:29" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^29$</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^sles-release</name>
