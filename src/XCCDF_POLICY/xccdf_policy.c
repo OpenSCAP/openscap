@@ -28,6 +28,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "xccdf_policy_priv.h"
@@ -570,12 +571,26 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 			// If the refined selector does not match, checks without selector shall be used.
 			candidate_it = xccdf_rule_get_checks_filtered(rule, NULL);
 		}
+
+		int print_warning = 0;
+		char *warning_check_system;
 		// Check Processing Algorithm -- Check.System
 		while (xccdf_check_iterator_has_more(candidate_it)) {
 			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);
-			if (_xccdf_policy_is_engine_registered(policy, (char *) xccdf_check_get_system(check)))
+			if (_xccdf_policy_is_engine_registered(policy, (char *) xccdf_check_get_system(check))) {
 				result = check;
+			} else {
+				print_warning = 1;
+				warning_check_system = check->system;
+			}
 		}
+
+		// Only print a warning if we didn't select a check but could've otherwise.
+		if (print_warning && result == NULL)
+			printf("WARNING: Skipping rule that requires an unregistered check system "
+			       "or incorrect content reference to evaluate. "
+			       "Please consider providing SCAP/OVAL with valid references instead: %s\n",
+				warning_check_system);
 		xccdf_check_iterator_free(candidate_it);
 	}
 	// A tool processing the Benchmark for compliance checking must pick at most one check or
