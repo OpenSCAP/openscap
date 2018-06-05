@@ -1,5 +1,5 @@
 version=1.3.0
-previous_version=1.2.17
+previous_version=1.3.0
 latest_fedora=29
 latest_rhel=7
 
