@@ -165,6 +165,14 @@
             <title xml:lang="en-us">openSUSE Leap 42.2</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:422</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:opensuse:leap:42.3">
+            <title xml:lang="en-us">openSUSE Leap 42.3</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:423</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:opensuse:leap:15.0">
+            <title xml:lang="en-us">openSUSE Leap 15.0</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:150</check>
+      </cpe-item>
       <cpe-item name="cpe:/o:opensuse:opensuse">
             <title xml:lang="en-us">openSUSE All Versions</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:1</check>
