@@ -4,7 +4,7 @@
 .gdb_history
 .libs/
 .*.swp
-Makefile$
+Makefile
 Makefile.in
 tags
 
@@ -226,3 +226,4 @@ selinux/oscap.pp
 /tests/sce/test_sce.log
 /tests/schemas/test_schemas.log
 /tests/test_common.sh
+/Testing
