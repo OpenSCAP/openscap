@@ -519,28 +519,30 @@
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:421" version="1">
                   <metadata>
-                        <title>openSUSE 42.1</title>
+                        <title>openSUSE Leap 42.1</title>
                         <affected family="unix">
-                            <platform>openSUSE 42.1</platform>
+                            <platform>openSUSE Leap 42.1</platform>
                         </affected>
                         <reference ref_id="cpe:/o:novell:leap:42.1" source="CPE"/>
-                        <description>The operating system installed on the system is openSUSE 42.1</description>
+                        <reference ref_id="cpe:/o:opensuse:leap:42.1" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE Leap 42.1</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="openSUSE 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
+                        <criterion comment="openSUSE Leap 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:422" version="1">
                   <metadata>
-                        <title>openSUSE 42.2</title>
+                        <title>openSUSE Leap 42.2</title>
                         <affected family="unix">
-                            <platform>openSUSE 42.2</platform>
+                            <platform>openSUSE Leap 42.2</platform>
                         </affected>
                         <reference ref_id="cpe:/o:novell:leap:42.2" source="CPE"/>
-                        <description>The operating system installed on the system is openSUSE 42.2</description>
+                        <reference ref_id="cpe:/o:opensuse:leap:42.2" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE Leap 42.2</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="openSUSE 42.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:422"/>
+                        <criterion comment="openSUSE Leap 42.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:422"/>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.wrlinux:def:1" version="1" >
