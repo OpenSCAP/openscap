@@ -2,20 +2,19 @@ sudo: required
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y autoconf automake libtool lcov libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev
+  - sudo apt-get install -y cmake lcov libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev
 
 language: c
 
 before_script:
   - export CC=gcc-7 GCOV=gcov-7
-  - ./autogen.sh
-  - mkdir build
   - cd build
 
 script:
-  - ../configure CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov --enable-debug
+  - CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov cmake -DCMAKE_BUILD_TYPE=Debug ../
   - build-wrapper-linux-x86-64 --out-dir bw-output make all || true  # Will always fail builds on forked repositories.
-  - make -k check VERBOSE=true || { test "$SEND_COVERAGE_EVEN_IF_TESTS_FAIL" = yes && curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"; }
+  - make all
+  - CTEST_OUTPUT_ON_FAILURE=1 ctest || { test "$SEND_COVERAGE_EVEN_IF_TESTS_FAIL" = yes && curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"; }
   - bash ../tests/recursively_generate_gcov.sh . || true  # Failures that occur here are harmless
   - cd .. && sonar-scanner || true  # Will always fail builds on forked repositories.
 
