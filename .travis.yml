@@ -13,6 +13,7 @@ before_script:
 script:
   - CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov cmake -DCMAKE_BUILD_TYPE=Debug ../
   - build-wrapper-linux-x86-64 --out-dir bw-output make all || true  # Will always fail builds on forked repositories.
+  - make all
   - CTEST_OUTPUT_ON_FAILURE=1 ctest || { test "$SEND_COVERAGE_EVEN_IF_TESTS_FAIL" = yes && curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"; }
   - bash ../tests/recursively_generate_gcov.sh . || true  # Failures that occur here are harmless
   - cd .. && sonar-scanner || true  # Will always fail builds on forked repositories.
