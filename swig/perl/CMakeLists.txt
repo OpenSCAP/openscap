@@ -1,7 +1,11 @@
 include(UseSWIG)
 
 set(CMAKE_SWIG_FLAGS "-module" "openscap_pm")
-swig_add_module(openscap_pm perl5 ../openscap.i)
+if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+	swig_add_module(openscap_pm perl5 ../openscap.i)
+else()
+	swig_add_library(openscap_pm LANGUAGE perl5 SOURCES ../openscap.i)
+endif()
 swig_link_libraries(openscap_pm openscap ${PERL_LIBRARY})
 target_include_directories(openscap_pm PUBLIC ${PERL_INCLUDE_PATH})
 
