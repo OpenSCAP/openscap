@@ -53,7 +53,7 @@ include(CMakeDependentOption)
 
 find_package(ACL)
 if(ACL_FOUND)
-	check_library_exists(acl acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
+	check_library_exists(${ACL_LIBRARY} acl_extended_file "" HAVE_ACL_EXTENDED_FILE)
 	check_include_file(acl/libacl.h HAVE_ACL_LIBACL_H)
 	check_include_file(sys/acl.h HAVE_SYS_ACL_H)
 endif()
