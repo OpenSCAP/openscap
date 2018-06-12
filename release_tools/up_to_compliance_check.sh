@@ -73,7 +73,7 @@ script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || die "Couldn't dete
 build_stderr=build-stderr.log
 build_stdout=build-stdout.log
 
-if ["$_arg_clean" = "on"]; then
+if [ "$_arg_clean" = "on" ]; then
     echo Cleaning the repository...
     clean_repository
     clean_repository_aggressively

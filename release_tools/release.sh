@@ -6,7 +6,7 @@ test -f .env && . .env
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OSCAP_REPO_ROOT="$(cd "$SCRIPT_DIR" && cd .. && pwd)"
 LIBRARY_STASH="/tmp/library-stash"
-BUILDDIR="$OSCAP_REPO_ROOT"
+BUILDDIR="$OSCAP_REPO_ROOT/build"
 
 FILE_WITH_VERSIONS="$SCRIPT_DIR/versions.sh"
 
@@ -40,14 +40,6 @@ check_cpe()
     grep -q "cpe:/o:redhat:enterprise_linux:$latest_rhel" "$OSCAP_REPO_ROOT/cpe/openscap-cpe-dict.xml" || die "Couldn't find RHEL $latest_rhel CPE"
 }
 
-
-check_python_bindings()
-{
-    check_python_binding 2.7
-    check_python_binding 3
-}
-
-
 # Args:
 # $1: Python version
 check_python_binding()
@@ -55,9 +47,10 @@ check_python_binding()
     local _python_major
     _python_major="${1%%.*}"
     (
-        cd $OSCAP_REPO_ROOT/build \
-            && LD_PRELOAD="/usr/lib64/libpython$1.so" ldd -r "swig/python$_python_major/.libs/_openscap_py.so" | grep -q '^undefined' \
-            && die "Python $1 bindings seem to have undefined symbols"
+        cd "$BUILDDIR"
+        if LD_PRELOAD="/usr/lib64/libpython$1.so" ldd -r "$BUILDDIR/swig/python$_python_major/_openscap_py.so" | grep -q '^undefined' ; then
+            die "Python $1 bindings seem to have undefined symbols"
+        fi
     )
 }
 
@@ -81,8 +74,7 @@ ensure_test_prerequisities()
 
 build_all()
 {
-    (cd "$OSCAP_REPO_ROOT" && ./autogen.sh) || die "Error generating the configure script"
-    (mkdir -p "$BUILDDIR" && cd "$BUILDDIR" && "$OSCAP_REPO_ROOT/configure" --enable-sce --enable-debug --enable-python3 && make) || die "Error building pristine OpenScap"
+    (mkdir -p "$BUILDDIR" && cd "$BUILDDIR" && cmake -DENABLE_SCE=TRUE .. && make) || die "Error building pristine OpenSCAP"
 }
 
 
@@ -90,8 +82,8 @@ execute_local_tests()
 {
     ensure_test_prerequisities
     build_all
-    (cd "$BUILDDIR" && make check && make distcheck || die "Error during test run")
-    check_python_bindings
+    (cd "$BUILDDIR" && ctest || die "Error during test run")
+    check_python_binding 3
 }
 
 
@@ -99,7 +91,7 @@ make_dist()
 {
     (
         cd "$BUILDDIR"
-        make dist
+        make package_source
         sha1sum openscap-$version.tar.gz > openscap-$version.tar.gz.sha1sum
         sha512sum openscap-$version.tar.gz > openscap-$version.tar.gz.sha512sum
     )
@@ -122,18 +114,18 @@ check_abi()
 parse_variable_assignment_from_file()
 {
     local _variable="$1" _fname="$2"
-    test "$(grep "$_variable=[0-9]\+" "$_fname" | wc -l)" = 1 || die "More than one occurence of numerical assignment to '$_variable'"
-    echo $(grep "$_variable=[0-9]\+" "$_fname" | sed -e "s/$_variable=\([0-9]\+\).*/\1/")
+    test "$(grep "set(\s*$_variable\s\+[0-9]\+\s*)" "$_fname" | wc -l)" = 1 || die "More than one occurence of numerical assignment to '$_variable'"
+    echo $(grep "set(\s*$_variable\s\+[0-9]\+\s*)" "$_fname" | sed -e "s/set(\s*$_variable\s\+\([0-9]\+\)\s*)/\1/")
 }
 
 
 substitute_variable_assignment_value_in_file()
 {
     local _variable="$1" _old_value="$2" _new_value="$3" _fname="$4"
-    sed -i "s/$_variable=$_old_value/$_variable=$_new_value/" "$_fname"
+    sed -i "s/set(\s*$_variable\s\+$_old_value\s*)/set($_variable $_new_value)/" "$_fname"
 }
 
-
+# $1 ... File to probe
 get_lt_triplet_from_file()
 {
     local _varname _fname="$1"
@@ -143,22 +135,6 @@ get_lt_triplet_from_file()
     done
     echo
 }
-
-#
-# $1, $2, ... Files to probe
-get_lt_triplet_from_files()
-{
-    local _first_file="$1" _from_first _from_next
-    _from_first=$(get_lt_triplet_from_file "$_first_file")
-    while [ $# -gt 1 ]
-    do
-        shift
-        _from_next=$(get_lt_triplet_from_file "$1")
-        test "$_from_first" == "$_from_next" || die "Inconsistent data from '$_first_file' and from '$1': Got '$_from_first' and '$_from_next' respectively."
-    done
-    echo "$_from_first"
-}
-
 
 increment_on_backwards_compatible()
 {
@@ -191,20 +167,6 @@ increment_on_breaking_change()
 # Args:
 # $1: Triplet to be replaced
 # $2: The replacement
-# $3,$4, ...: Concerned files
-apply_triplets_to_files()
-{
-    local _previous="$1" _replacement="$2" _fname
-    shift 2
-    for _fname in "$@"
-    do
-        apply_triplets_to_file "$_previous" "$_replacement" "$_fname"
-    done
-}
-
-# Args:
-# $1: Triplet to be replaced
-# $2: The replacement
 # $3: The concerned file
 apply_triplets_to_file()
 {
@@ -217,12 +179,12 @@ apply_triplets_to_file()
 
 
 #
-# $1: Stragegy (backwards_compatible, bugfix, breaking_change)
+# $1: Strategy (backwards_compatible, bugfix, breaking_change)
 increment_ltversions()
 {
-    local _files=("$OSCAP_REPO_ROOT/configure.ac" "$OSCAP_REPO_ROOT/ac_probes/configure.ac.tpl") _old_versions _new_versions _new_soname _old_soname
+    local _cmake_file="$OSCAP_REPO_ROOT/src/CMakeLists.txt" _old_versions _new_versions _new_soname _old_soname
     # check_for_clean_repo
-    _old_versions="$(get_lt_triplet_from_files "${_files[@]}")" || die "Unable to get current LT versions"
+    _old_versions="$(get_lt_triplet_from_file "$_cmake_file")" || die "Unable to get current LT versions"
     _new_versions="$(increment_on_$1 "$_old_versions")" || die  "Unable to get calculate refreshed LT version with strategy '$1'"
     _old_soname="$(get_soname_from_triplet "$_old_versions")"
     _new_soname="$(get_soname_from_triplet "$_new_versions")"
@@ -238,7 +200,7 @@ increment_ltversions()
     check_stash_for_soname "$_old_soname" || die "Couldn't find the expected (old) soname $_old_soname, did it compile?"
     check_stash_for_soname "$_new_soname" && die "Unexpectedly found new soname $_new_soname where only the old soname $_old_soname is supposed to be."
 
-    apply_triplets_to_files "$_old_versions" "$_new_versions" "${_files[@]}"
+    apply_triplets_to_file "$_old_versions" "$_new_versions" "$_cmake_file"
 
     echo "Building with the new soname"
     build_all 2> /dev/null > /dev/null || die "Build with the new soname failed"
@@ -247,7 +209,7 @@ increment_ltversions()
     echo "Build went as expected, showing git diff."
 
     git diff
-    printf "%s\n" "If you are satisfied with the diff, you can commit. Execute " "git add ${_files[*]}" "" "Then 'git commit' with message" "" "Bump soname from $_old_soname to $_new_soname" "" "<X> new symbols were added, <Y> were removed."
+    printf "%s\n" "If you are satisfied with the diff, you can commit. Execute " "git add $_cmake_file" "" "Then 'git commit' with message" "" "Bump soname from $_old_soname to $_new_soname" "" "<X> new symbols were added, <Y> were removed."
 }
 
 
@@ -297,7 +259,7 @@ clean_library_stash()
 stash_library()
 {
     mkdir -p "$LIBRARY_STASH"
-    cp "$BUILDDIR/src/.libs/"libopenscap.so.* "$LIBRARY_STASH/"
+    cp "$BUILDDIR/src/"libopenscap.so.* "$LIBRARY_STASH/"
 }
 
 # Args:
@@ -349,9 +311,15 @@ bump_release_in_release_script()
 # Args:
 # $1: The filename
 # $2: The next version
-bump_release_in_configure()
+bump_release_in_cmake()
 {
-    sed -i "s/^\(AC_INIT(\[openscap\],\s*\[\)$version/\1$2/" "$1"
+    local _version_triplet=($(echo "$version" | tr "." "\n"))
+    local _version_names=(OPENSCAP_VERSION_MAJOR OPENSCAP_VERSION_MINOR OPENSCAP_VERSION_PATCH)
+    local _cmake="$OSCAP_REPO_ROOT/CMakeLists.txt"
+    for i in 0 1 2
+    do
+        sed -i "s/set(\s*${_version_names[$i]}\s\+\"[0-9]\+\"\s*)/set(${_version_names[$i]} \"${_version_triplet[$i]}\")/" $_cmake
+    done
 }
 
 
@@ -361,11 +329,10 @@ bump_release()
 {
     test $# -lt 2 || die "Provide the version number as an argument"
     check_that_bump_is_appropriate
-    bump_release_in_configure "$OSCAP_REPO_ROOT/configure.ac" "$1"
-    bump_release_in_configure "$OSCAP_REPO_ROOT/ac_probes/configure.ac.tpl" "$1"
+    bump_release_in_cmake "$1"
     bump_release_in_release_script "$FILE_WITH_VERSIONS" "$1"
     git diff
-    git add "$OSCAP_REPO_ROOT/configure.ac" "$OSCAP_REPO_ROOT/ac_probes/configure.ac.tpl" "$FILE_WITH_VERSIONS"
+    git add "$OSCAP_REPO_ROOT/CMakeLists.txt" "$FILE_WITH_VERSIONS"
     printf "Commit with this message:\n%s\n\n%s\n" "Version bump after release." "Next release from the maint-${1%.*} branch will be $1"
 }
 
