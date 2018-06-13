@@ -6,7 +6,11 @@ include_directories(${PYTHON_INCLUDE_PATH})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_SWIG_FLAGS "-module" "openscap_py")
-swig_add_module(openscap_py python ../openscap.i)
+if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
+	swig_add_module(openscap_py python ../openscap.i)
+else()
+	swig_add_library(openscap_py LANGUAGE python SOURCES ../openscap.i)
+endif()
 swig_link_libraries(openscap_py ${PYTHON_LIBRARIES} openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${BZIP2_LIBRARIES} ${RPM_LIBRARIES})
 
 add_custom_command(OUTPUT ${PYTHON_COMPILED_FILES}
