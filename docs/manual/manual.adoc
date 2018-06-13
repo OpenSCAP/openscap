@@ -1752,7 +1752,7 @@ By default, you need the following packages installed on your system:
 * rpm-devel
 * libgcrypt-devel
 * pcre-devel
-* python-devel
+* python3-devel
 * perl-devel
 * libcurl-devel
 * libxslt-devel
@@ -1999,7 +1999,7 @@ NOTE: mingw32-pthreads needs to be version 5.0 or greater.
 ----------------------------------------------------------------------------------
  $ mkdir build-win32
  $ cd build-win32
- $ mingw32-cmake -D ENABLE_PYTHON2=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
+ $ mingw32-cmake -D ENABLE_PYTHON3=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
 ----------------------------------------------------------------------------------
 
 4) Build!
@@ -2047,7 +2047,7 @@ git clone -b master https://github.com/OpenSCAP/openscap.git
 ----
 cd openscap
 cd build
-cmake -D ENABLE_PYTHON2=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+cmake -D ENABLE_PYTHON3=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 ----
 
 4) Open in Visual Studio

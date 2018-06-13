@@ -59,9 +59,6 @@ selinux/oscap.pp
 /schemas/build/
 /swig/perl/openscap.pm
 /swig/perl/openscap_pm_wrap.c
-/swig/python2/openscap.py
-/swig/python2/openscap_py_wrap.c
-/swig/python2/openscap_api.pyc
 /swig/python3/openscap.py
 /swig/python3/openscap_py_wrap.c
 /swig/python3/openscap_api.pyc
