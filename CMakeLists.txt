@@ -274,6 +274,9 @@ option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
+# ---------- OTHERS
+cmake_dependent_option(ENABLE_DOXYGEN_DOCS "if enabled, doxygen API reference documentation will be built" ON "DOXYGEN_FOUND" OFF)
+
 # ---------- STATUS MESSAGES
 
 message(STATUS " ")
@@ -310,6 +313,11 @@ message(STATUS "scap-as-rpm: ${ENABLE_OSCAP_UTIL_AS_RPM}")
 message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
+message(STATUS " ")
+
+message(STATUS "Others:")
+message(STATUS "doxygen docs: ${ENABLE_DOXYGEN_DOCS}")
+message(STATUS " ")
 
 # ---------- PATHS
 
