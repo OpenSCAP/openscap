@@ -333,8 +333,6 @@ else()
 	set(OSCAP_DEFAULT_SCHEMA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/schemas")
 	set(OSCAP_DEFAULT_XSLT_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/xsl")
 	set(OSCAP_DEFAULT_CPE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/cpe")
-	set(OVAL_PROBE_DIR "${CMAKE_INSTALL_FULL_LIBEXECDIR}/openscap")
-	set(OVAL_PROBEDIR_ENV 1)
 endif()
 set(OSCAP_TEMP_DIR "/tmp" CACHE STRING "use different temporary directory to execute sce scripts (default=/tmp)")
 

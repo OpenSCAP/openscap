@@ -41,9 +41,6 @@ export OSCAP_CHECK_ENGINE_PLUGIN_DIR=$b/src/SCE
 
 # Set paths to probes, schemas, transformations and cpes.
 # If those variables are already set, don't change their values.
-if [ -z ${OVAL_PROBE_DIR+x} ] ; then
-    export OVAL_PROBE_DIR=$b/src/OVAL/probes
-fi
 if [ -z ${OSCAP_SCHEMA_PATH+x} ] ; then
     export OSCAP_SCHEMA_PATH=$s/schemas
 fi
