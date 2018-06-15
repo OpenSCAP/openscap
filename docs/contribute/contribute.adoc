@@ -4,58 +4,84 @@ This document is meant for new OpenSCAP contributors and it describes how to
 contribute to the OpenSCAP project. Let's suppose that you already have an
 active Github's account with a user name _adam_ and you want to fix one of the
 issue from the link:https://github.com/OpenSCAP/openscap/issues[tracker]. Let's
-say that we want to fix the isuues with number _455_ and the fix will go into
-the _maint-1.0_ branch.
+say that you want to fix the issue with number _455_ and the fix will go into
+the `maint-1.2` branch.
 
-== Fork the OpenSCAP repository
+NOTE: This guide also applies for adding a new feature, the process is the same
+as for fixing an issue described below.
+
+
+== Fork and setup the OpenSCAP repository
 Before you start working on a fix it's a good practice to leave a
 comment in the issue that you work on the fix so other contributors know that
 the fix is in progress.  Next thing you have to do is to fork the OpenSCAP
-repository. You can do that by pressing the **Fork** button in the top-right
+repository. You can do that by pressing the *'Fork'* button in the top-right
 corner on the Github's link:https://github.com/OpenSCAP/openscap[OpenSCAP page].
 It will create a copy of the original repository which you can use for
-proposing changes.
-
-== Choose the right branch
-Before you start working of the fix it's necessary to determine which branch the
-fix will go into. If you are not familiar with the OpenSCAP's branches or
-versions yet please have a look at the link:versioning.adoc[versioning]
-document. Be aware that the fact that an issue description says that the fix
-should go to a _maint-1.2_ branch doesn't have to be true. It's a good practice
-to investigate the correct branch first or ask experienced developers on our
-FreeNode IRC channel called `#openscap` or
-link:https://www.redhat.com/mailman/listinfo/open-scap-list[mailing list].
-
-Once you have forked the repository and decided what branch the fix will go into
-you can clone your forked repository.
+proposing changes. Then you can clone your forked repository:
 [[app-listing]]
 [source,bash]
 ----
 $ git clone git@github.com:adam/openscap.git
 ----
 
+Sometimes you will need to update your forked repository with the latest
+upstream changes. To be able to do so you need to add a remote (we will name it
+upstream) which will track the upstream OpenSCAP repository:
+[[app-listing]]
+[source,bash]
+----
+$ cd openscap/
+# add remote name 'upstream' to refer to the upstream's repository
+$ git remote add upstream git@github.com:OpenSCAP/openscap.git
+----
 
-Now you can create a new branch, which we will call _fix_455_, where you can work on the fix. Remember that
-the name of the new branch will appear in the commit message when your fix is
-merged so choose the name wisely.
+NOTE: In the code snippets, lines starting with # are comments and lines
+starting with $ are commands.
+
+
+== Choose the right branch
+Before you start working on the fix it's necessary to determine which branch the
+fix will go into. If you are not familiar with the OpenSCAP's branches or
+versions yet please have a look at the link:versioning.adoc[versioning]
+document. Be aware that the fact that an issue description says that the fix
+should go to the `maint-1.2` branch doesn't have to be true. It's a good practice
+to investigate the correct branch first or ask experienced developers on our
+FreeNode IRC channel called `#openscap` or
+link:https://www.redhat.com/mailman/listinfo/open-scap-list[mailing list].
+
+NOTE: The default branch of the openscap repository is set to the `maint-1.2`.
+
+Once you have forked the repository and decided that the fix will go into the
+`maint-1.2` branch you can create a new branch from it, which we will call
+_fix_455_, where you can work on the fix. Remember that the name of the new
+branch will appear in the commit message when your fix is merged so choose the
+name wisely:
 
 [[app-listing]]
 [source,bash]
 ----
-# checkout to the maint-1.0 branch
-$ git checkout maint-1.0
+$ git checkout maint-1.2
 # create a new branch
 $ git checkout -b fix_455
 ----
 
-NOTE: The default branch of the openscap repository is set to the `maint-1.2`.
-Our fix will go into the `maint-1.0` so we have to switch to this branch before
-creating a new one.
+On the other hand, if you decided that the fix will go into the `master` branch
+you have to switch to this branch first before creating a new one:
+[[app-listing]]
+[source,bash]
+----
+# create a new local branch to track the remote master branch
+$ git checkout -b master remotes/origin/master
+# and now create a new branch from the master branch which will contain your fix
+$ git checkout -b fix_455
+----
+
 
 == Fix the issue
-NOTE: OpenSCAP is licensed under LGPLv2. Any fixes or improvements must be licensed
-under the same license to be included. Check the COPYING file in the repository
-for more details.
+NOTE: OpenSCAP is licensed under _LGPL v2.1_. Any fixes or improvements must be
+licensed under the same license to be included. Check the COPYING file in the
+repository for more details.
 
 Now you can work on the fix. Try to create small commits which can be easily
 reviewed and make self-explaining commit messages. The
@@ -63,67 +89,76 @@ link:http://chris.beams.io/posts/git-commit/[How to Write a Git Commit
 Message] article could help you with that. Nobody will review a pull request
 which contains a four thousand new lines of code.
 
-NOTE: Since we're fixing an issue number 455 make sure that your commit message
-contain a
+NOTE: Since you're fixing issue number 455 make sure that your commit
+message contain a
 link:https://help.github.com/articles/closing-issues-via-commit-messages/[keyword]
 which will close the issue automatically when your pull request is merged.
 
-
 Let's say that you've fixed the issue, made a few commits to your local fix_455
-branch and you think it's ready to be review by other contributors. Before you
+branch and you think it's ready to be reviewed by other contributors. Before you
 push your local changes to your remote forked repository it's necessary to check
 if your changes will be applicable and won't be in a conflict with some work that
-  other contributors could publish while you were working on the fix.
+other contributors could have published while you were working on the fix.
 
 
 == Rebase before pull request
-If some other contributor pushed some code to the maint-1.0 branch while you was
-working of the fix then it's necessary to pull those changes and rebase our fix
-on top of them. First we need to make sure that our local maint-1.0 branch is
-up-to date.
+If some other contributor pushed some code to the `maint-1.2` branch while you
+were working on the fix and if there would be a conflict between your changes
+then it might be necessary to fetch those changes and rebase your fix on top
+of them. First you need to make sure that your local `maint-1.2` branch is
+up-to date:
 
 [[app-listing]]
 [source,bash]
 ----
-# add remote name 'upstream' to refer to the upstream's repository
-$ git remote add upstream git@github.com:OpenSCAP/openscap.git
-# checkout to branch 'maint-1.0' in your local forked repository
-$ git checkout maint-1.0
-# download and apply any upstream changes to your local maint-1.0 branch
-$ git pull --ff-only upstream maint-1.0
+# checkout to branch 'maint-1.2' in your local forked repository
+$ git checkout maint-1.2
+# download and apply any upstream changes to your local maint-1.2 branch
+$ git pull upstream maint-1.2
+# now you can optionally also push these changes to your fork on Github (recommended)
+$ git push origin maint-1.2
 ----
 
 Now you can go back to your local branch with the fix and try to rebase your
-changes on top of your local updated maint-1.0 branch. If there are no conflicts
-then you can push your branch with the fix to your remote forked repository.
+changes on top of your local updated `maint-1.2` branch:
 
 [[app-listing]]
 [source,bash]
 ----
 # checkout back to your branch with the fix
 $ git checkout fix_455
-# rebase your changes on the top of the updated maint-1.0 branch
-$ git rebase maint-1.0
-# push your changes to your remote forked repository
-$ git push origin fix_455
-# note about --force
+# rebase your changes on the top of the updated maint-1.2 branch
+$ git rebase maint-1.2
 ----
 
-NOTE: If you've already push the branch to your remote repository then made some
-changes and know you want to rewrite the fix_455 branch then the `--force`
-option may come in handy but be aware that it will rewrite your fix_455 branch
-so please use wisely.
+If there are no conflicts then you can push your branch with the fix to your
+remote forked repository:
+
+[[app-listing]]
+[source,bash]
+----
+# push your changes to your remote forked repository (also see the note below)
+$ git push origin fix_455
+----
+
+NOTE: The previous `git push` command will not work if you've already pushed the
+branch to your remote repository. If this is the case, but you made some new
+changes/updates and you want to push them into the fix_455 branch then append
+the `--force` after the `git push` command. Be aware that it will rewrite your
+fix_455 branch in your remote forked repository.
+
 
 == Create a new pull request
 Once you have pushed your local fix_455 branch to your remote forked repository
 you can link:https://help.github.com/articles/creating-a-pull-request/[create] a
 new pull request. You can create the pull request on the OpenSCAP's
 link:https://github.com/OpenSCAP/openscap/pulls[github page] when you click on
-the `Pull requests` in the right menu then you see the green *New pull request*
-button. In the branch menu choose the branch that contains your fix. That is the
-fix_455 branch and also don't forget to set maint-1.0 as the base branch. The
-base branch is the one that your fix_455 will be compared to. If there are no
-conflicts add some description and hit the *Create pull request* button.
+the *'Pull requests'* in the right menu then you see the green
+*'New pull request'* button. In the branch menu choose the branch that contains
+your fix. That is the fix_455 branch and also don't forget to set `maint-1.2`
+as the base branch. The base branch is the one that your fix_455 will be
+compared to. If there are no conflicts add some description and hit the
+*'Create pull request'* button.
 
 Developers and contributor that watch the repository should now
 receive an email about a new pull request. They will review your code and
@@ -135,40 +170,53 @@ After the review is done and one or more experienced developers is complaining
 about your code you have to do some changes. There are two ways to change your
 code in a submitted pull request:
 
- . Add a new commit or,
- . edit existing commits.
+ . Add a new commit,
+ . or edit existing commits.
 
 ==== Add a new commit
-Adding a new commit is easy and I would choose this option if I would have to
-add something new like a function or a new module.
+Adding a new commit is easy and it is a good option if you have to add something
+new like a function or a new module.
 
 ==== Edit existing commits
-If you just need to fix a typo or add a condition I would choose to go back to
-the commit, where the change is needed, and use commit's `--ammed` option to
-change the commit. You can use following steps to do that.
+If you just need to fix something (for example a typo) you need to go back to
+the commit where the change is needed and use commit's `--amend` option to
+change the commit. You can use the following steps to do that:
 
 [[app-listing]]
 [source,bash]
 ----
 # show all the commits in your fix_455 branch
-$ git rebase -i maint-1.0
-# replace 'pick' with 'e' at a line with commit you'd like to change
+$ git rebase -i maint-1.2
+# replace 'pick' with 'e' at the line with commit(s) you'd like to edit
 # make your changes
 # vim my_source_file.c
 # commit your new changes
 $ git commit --amend
-# get back to your last commit
+# move to the next commit which you selected for editing using 'e' in the
+# 'git rebase' command
 $ git rebase --continue
+----
+
+When you are finished with editing commits you can force push all the changes
+into your remote repository to update it with your latest edits. The pull
+request will be updated automatically too:
+
+[[app-listing]]
+[source,bash]
+----
+$ git push --force origin fix_455
 ----
 
 === Closing the pull request
 Once the pull request has been merged to upstream's branch the pull request will
 be closed automatically. The issue will be also closed if you used the right
-keyword in the commit message. Now you can delete your `fix_455` branch.
+keyword in the commit message. Now you can delete your `fix_455` branch:
 
 [[app-listing]]
 [source,bash]
 ----
-# detele the fix_455 branch
+# detele the fix_455 branch locally
 $ git branch -d fix_455
+# optionally also delete the fix_455 branch from your remote forked repository
+$ git push origin --delete fix_455
 ----
