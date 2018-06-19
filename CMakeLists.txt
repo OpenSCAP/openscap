@@ -92,7 +92,7 @@ endif()
 # call find_package(PythonInterp) first to get the currently active Python
 # version by default with a consistent version of PYTHON_LIBRARIES.
 find_package(PythonInterp 3)
-find_package(PythonLibs 3 EXACT)
+find_package(PythonLibs 3)
 
 find_package(RPM)
 if(RPM_FOUND)
@@ -265,7 +265,7 @@ endif()
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
 # ---------- LANGUAGE BINDINGS
-cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND" OFF)
+cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
 
 # TODO: Shouldn't we only enable this if perl was found?
 option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
