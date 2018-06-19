@@ -15,14 +15,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-try:
-    # Python2 imports
-    import urlparse
-    import urllib2 as urllib
-except ImportError:
-    #Python3 imports
-    import urllib.parse as urlparse
-    import urllib.request as urllib
+import urllib.parse
+import urllib.request
 from os.path import join, exists
 from os import stat, utime
 from sys import stderr
@@ -55,16 +49,16 @@ class getInputCVE(object):
         '''
         cve_file = self.dist_cve_name.format(dist)
         dest_file = join(self.dest, cve_file)
-        dist_url = (urlparse.urljoin(self.url, cve_file))
+        dist_url = urllib.parse.urljoin(self.url, cve_file)
         if self._is_cache_same(dest_file, dist_url):
             return dest_file
 
-        _url = urllib.Request(dist_url, headers=self.hdr)
+        _url = urllib.request.Request(dist_url, headers=self.hdr)
         # TODO
         # When dist specific files are available in bz form, some
         # of this logic may need to change
         try:
-            resp = urllib.urlopen(_url)
+            resp = urllib.request.urlopen(_url)
 
         except Exception as url_error:
             raise Exception("Unable to fetch CVE inputs due to {0}"
@@ -114,7 +108,7 @@ class getInputCVE(object):
                 stderr.write("No file in cache, fetching {0}\n".format(dest_file))
             return False
 
-        opener = urllib.build_opener()
+        opener = urllib.request.build_opener()
         # Add the header
         opener.addheaders = self.hdr2
         # Grab the header
@@ -124,7 +118,7 @@ class getInputCVE(object):
             res.close()
             remote_ts = headers['last-modified']
 
-        except urllib.HTTPError as http_error:
+        except urllib.request.HTTPError as http_error:
             if self.DEBUG:
                 stderr.write("Cannot send HTTP HEAD request to get \"last-modified\"" \
                              " attribute of remote content file.\n{0} - {1}\n"
@@ -165,6 +159,6 @@ class getInputCVE(object):
         return cve_files
 
 
-class HeadRequest(urllib.Request):
+class HeadRequest(urllib.request.Request):
     def get_method(self):
         return 'HEAD'

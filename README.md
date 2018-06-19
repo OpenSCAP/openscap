@@ -37,21 +37,26 @@ cd openscap
 
 2) To build the library you will also need the following build dependencies
 (some of these are optional, if they are not detected, openscap will be compiled
-without respective optional features). On RHEL 7 / Fedora, the command to
+without respective optional features). On RHEL / Fedora / CentOS, the command to
 install these packages is:
+
 ```bash
-sudo yum install cmake dbus-devel GConf2-devel libacl-devel libblkid-devel \
-libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel \
-libxslt-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath \
-perl-devel python-devel rpm-devel swig bzip2-devel gcc-c++
+sudo yum install \
+cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
+libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel make openldap-devel \
+pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
+bzip2-devel gcc-c++
 ```
+
 On Ubuntu 16.04 the command to install these package is
+
 ```code
-sudo apt-get install -y autoconf automake libtool make libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl libxml-xpath-perl libperl5.22 python-dev libbz2-dev librpm-dev swig g++
+sudo apt-get install -y autoconf automake libtool make libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl libxml-xpath-perl libperl5.22 libbz2-dev librpm-dev g++
 ```
 
 When you have all the build dependencies installed you can run the following
 commands to build the library:
+
 ```
 cd build/
 cmake ..

@@ -86,8 +86,13 @@ if(PROCPS_FOUND)
 	check_include_file(proc/devname.h HAVE_PROC_DEVNAME_H)
 endif()
 
-find_package(PythonLibs 2 EXACT)
-find_package(PythonInterp)
+# According to CMake documentation:
+# https://cmake.org/cmake/help/latest/module/FindPythonInterp.html
+# If calling both find_package(PythonInterp) and find_package(PythonLibs),
+# call find_package(PythonInterp) first to get the currently active Python
+# version by default with a consistent version of PYTHON_LIBRARIES.
+find_package(PythonInterp 3)
+find_package(PythonLibs 3)
 
 find_package(RPM)
 if(RPM_FOUND)
@@ -260,12 +265,7 @@ endif()
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
 # ---------- LANGUAGE BINDINGS
-
-# TODO: Shouldn't we only enable this if python2 was found?
-option(ENABLE_PYTHON2 "if enabled, the python2 swig bindings will be built" TRUE)
-
-# TODO: Shouldn't we only enable this if python3 was found?
-option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" FALSE)
+cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
 
 # TODO: Shouldn't we only enable this if perl was found?
 option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
@@ -301,7 +301,6 @@ message(STATUS "solaris probes: ${ENABLE_PROBES_SOLARIS}")
 message(STATUS " ")
 
 message(STATUS "Language bindings:")
-message(STATUS "python2 bindings: ${ENABLE_PYTHON2}")
 message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
 message(STATUS "perl bindings: ${ENABLE_PERL}")
 message(STATUS " ")
