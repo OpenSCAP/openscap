@@ -101,6 +101,18 @@ if your changes will be applicable and won't be in a conflict with some work tha
 other contributors could have published while you were working on the fix.
 
 
+== Optional: Write an automated test for your code
+There is a big chance that the code you've fixed or the code that you've added
+has no test coverage. We encourage you to write a new test or extend the
+existing one to cover the changes/additions to OpenSCAP that you have made.
+It is not mandatory, so reviewer will not require you to write a test, but keep
+in mind that providing a test might uncover some unexpected issues with the
+code. We also run these tests on every pull request so adding a test for your
+fix or new feature might prevent someone from breaking it in the future. If you
+decided to add a test please see our
+link:testing.adoc[guide for writing and running tests].
+
+
 == Rebase before pull request
 If some other contributor pushed some code to the `maint-1.2` branch while you
 were working on the fix and if there would be a conflict between your changes
