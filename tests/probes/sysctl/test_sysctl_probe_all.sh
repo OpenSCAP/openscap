@@ -4,6 +4,7 @@
 
 set -e -o pipefail
 
+function perform_test {
 probecheck "sysctl" || return 255
 
 name=$(basename $0 .sh)
@@ -34,5 +35,6 @@ sed -i -E "/^E: lt-probe_sysctl: Can't read sysctl value from /d" "$stderr"
 [ ! -s $stderr ]
 
 rm $stderr $result $ourNames $sysctlNames
+}
 
-
+perform_test
