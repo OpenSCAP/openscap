@@ -20,6 +20,10 @@
  *	Simon Lukasik <slukasik@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include "unit_helper.h"
 #include <xccdf_benchmark.h>
 #include <oval_agent_xccdf_api.h>

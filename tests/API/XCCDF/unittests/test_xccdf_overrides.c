@@ -20,6 +20,10 @@
  *	Simon Lukasik <slukasik@redhat.com>
  */
 
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 
 #include <ds_rds_session.h>
