@@ -35,7 +35,9 @@
 #include <oscap_text.h>
 
 #include <oval_definitions.h>
-#include <oval_probe.h>
+#if defined(OVAL_PROBES_ENABLED)
+# include <oval_probe.h>
+#endif
 #include <cvss_score.h>
 #include <xccdf_benchmark.h>
 #include <xccdf_session.h>

@@ -24,7 +24,9 @@
 #include <config.h>
 #endif
 
-#include <oval_probe.h>
+#if defined(OVAL_PROBES_ENABLED)
+# include <oval_probe.h>
+#endif
 #include <oval_agent_api.h>
 #include <oval_agent_xccdf_api.h>
 #include <oval_results.h>

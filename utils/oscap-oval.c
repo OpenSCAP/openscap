@@ -29,6 +29,7 @@
 #include "oscap_source.h"
 #if defined(OVAL_PROBES_ENABLED)
 # include <oval_probe.h>
+# include "probe-table.h"
 #endif
 #include <oval_agent_api.h>
 #include <oval_session.h>
@@ -44,7 +45,6 @@
 #include "oscap-tool.h"
 #include "scap_ds.h"
 #include <oscap_debug.h>
-#include "probe-table.h"
 
 #if defined(OVAL_PROBES_ENABLED)
 static int app_collect_oval(const struct oscap_action *action);
