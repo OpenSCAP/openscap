@@ -30,7 +30,6 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <unistd.h>
-#include <alloc.h>
 #include "crapi.h"
 #include "md5.h"
 
@@ -47,7 +46,7 @@ struct crapi_md5_ctx {
 
 void *crapi_md5_init (void *dst, void *size)
 {
-        struct crapi_md5_ctx *ctx = oscap_talloc (struct crapi_md5_ctx);
+        struct crapi_md5_ctx *ctx = malloc(sizeof(struct crapi_md5_ctx));
 
         ctx->ctx  = HASH_Create (HASH_AlgMD5);
         ctx->dst  = dst;
@@ -104,7 +103,7 @@ struct crapi_md5_ctx {
 
 void *crapi_md5_init (void *dst, void *size)
 {
-        struct crapi_md5_ctx *ctx = oscap_talloc (struct crapi_md5_ctx);
+        struct crapi_md5_ctx *ctx = malloc(sizeof(struct crapi_md5_ctx));
 
         if (gcry_md_open (&ctx->ctx, GCRY_MD_MD5, 0) != 0) {
 		free(ctx);

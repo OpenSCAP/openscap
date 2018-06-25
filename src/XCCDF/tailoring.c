@@ -29,7 +29,6 @@
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
-#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"
 #include "common/elements.h"

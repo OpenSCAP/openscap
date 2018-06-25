@@ -28,7 +28,6 @@
 #include "public/oscap_text.h"
 #include "public/oscap.h"
 
-#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"

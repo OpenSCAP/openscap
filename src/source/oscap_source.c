@@ -35,7 +35,6 @@
 #include <libxml/xmlreader.h>
 #include <libxml/xmlerror.h>
 
-#include "common/alloc.h"
 #include "common/elements.h"
 #include "common/_error.h"
 #include "common/debug_priv.h"

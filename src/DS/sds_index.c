@@ -27,7 +27,6 @@
 #include "public/scap_ds.h"
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/alloc.h"
 #include "common/elements.h"
 #include "sds_index_priv.h"
 #include "source/oscap_source_priv.h"

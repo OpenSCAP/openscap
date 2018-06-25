@@ -70,7 +70,6 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 #include <oval_fts.h>
-#include <alloc.h>
 #include "common/debug_priv.h"
 #include "textfilecontent_probe.h"
 

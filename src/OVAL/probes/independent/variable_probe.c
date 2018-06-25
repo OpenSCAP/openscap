@@ -50,7 +50,6 @@
 #include "seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
-#include "alloc.h"
 #include "variable_probe.h"
 
 int variable_probe_offline_mode_supported()

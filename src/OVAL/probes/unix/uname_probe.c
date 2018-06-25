@@ -56,7 +56,6 @@
 
 #include "seap.h"
 #include "probe-api.h"
-#include "alloc.h"
 #include "uname_probe.h"
 
 int uname_probe_main(probe_ctx *ctx, void *arg)

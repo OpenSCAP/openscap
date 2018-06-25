@@ -155,13 +155,12 @@ void *probe_input_handler(void *arg)
 	                                        SEXP_free(skip_flag);
 	                                        SEXP_free(obj_mask);
 					} else {
-						probe_pwpair_t *pair;
 
-	                                        SEXP_free(oid);
+						SEXP_free(oid);
 						SEXP_free(skip_flag);
 						SEXP_free(obj_mask);
 
-	                                        pair = oscap_talloc(probe_pwpair_t);
+						probe_pwpair_t *pair = malloc(sizeof(probe_pwpair_t));
 						pair->probe = probe;
 						pair->pth   = probe_worker_new();
 						pair->pth->sid = SEAP_msg_id(seap_request);

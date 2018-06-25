@@ -39,7 +39,6 @@
 
 #include "_seap-types.h"
 #include "common/_error.h"
-#include "common/alloc.h"
 #include "common/util.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
@@ -60,13 +59,10 @@ static oval_pd_t    *oval_pdtbl_get(oval_pdtbl_t *table, oval_subtype_t type);
  */
 oval_pext_t *oval_pext_new(void)
 {
-        oval_pext_t *pext;
-
-        pext = oscap_talloc(oval_pext_t);
+        oval_pext_t *pext = malloc(sizeof(oval_pext_t));
 
         pext->do_init = true;
         pthread_mutex_init(&pext->lock, NULL);
-
         pext->pdtbl     = NULL;
 
         return(pext);
@@ -88,9 +84,7 @@ void oval_pext_free(oval_pext_t *pext)
  */
 static oval_pdtbl_t *oval_pdtbl_new(void)
 {
-	oval_pdtbl_t *p_tbl;
-
-	p_tbl = oscap_talloc(oval_pdtbl_t);
+	oval_pdtbl_t *p_tbl = malloc(sizeof(oval_pdtbl_t));
 	p_tbl->memb = NULL;
 	p_tbl->count = 0;
 	p_tbl->ctx = SEAP_CTX_new();
@@ -133,13 +127,11 @@ static int oval_pdtbl_typecmp(oval_subtype_t *a, oval_pd_t **b)
 
 static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const char *uri)
 {
-	oval_pd_t *pd;
-
 	if (tbl == NULL || uri == NULL) {
 		return -1;
 	}
 
-	pd = oscap_talloc(oval_pd_t);
+	oval_pd_t *pd = malloc(sizeof(oval_pd_t));
 	pd->subtype = type;
 	pd->sd      = sd;
 	pd->uri     = oscap_strdup(uri);

@@ -51,7 +51,6 @@
 #include "seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
-#include "alloc.h"
 
 #include <selinux/selinux.h>
 #include "selinuxboolean_probe.h"

@@ -147,7 +147,7 @@ void *probe_worker_runfn(void *arg)
 
 probe_worker_t *probe_worker_new(void)
 {
-	probe_worker_t *pth = oscap_talloc(probe_worker_t);
+	probe_worker_t *pth = malloc(sizeof(probe_worker_t));
 
 	pth->sid = 0;
 #ifndef _WIN32
@@ -179,13 +179,12 @@ static int probe_varref_create_ctx(const SEXP_t *probe_in, SEXP_t *varrefs, stru
 	SEXP_t *ent_name, *ent, *varref, *val_lst;
 	SEXP_t *r0, *r1, *r2, *r3;
 	SEXP_t *vid, *vidx_name, *vidx_val;
-	struct probe_varref_ctx *ctx;
 
 	/* varref_cnt = SEXP_number_getu_32(r0 = SEXP_list_nth(varrefs, 2)); */
 	ent_cnt = SEXP_number_getu_32(r1 = SEXP_list_nth(varrefs, 3));
 	SEXP_free(r1);
 
-	ctx = oscap_talloc (struct probe_varref_ctx);
+	struct probe_varref_ctx *ctx = malloc(sizeof(struct probe_varref_ctx));
 	ctx->pi2 = SEXP_softref((SEXP_t *)probe_in);
 	ctx->ent_cnt = ent_cnt;
 	ctx->ent_lst = malloc(ent_cnt * sizeof (ctx->ent_lst[0]));

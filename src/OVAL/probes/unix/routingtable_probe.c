@@ -44,7 +44,6 @@
 
 #include "probe-api.h"
 #include "probe/entcmp.h"
-#include "alloc.h"
 #include "util.h"
 #include "debug_priv.h"
 #include "SEAP/generic/strto.h"

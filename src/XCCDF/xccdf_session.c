@@ -37,7 +37,6 @@
 #include <OVAL/public/oval_agent_api.h>
 #include <OVAL/public/oval_agent_xccdf_api.h>
 #include "common/oscap_acquire.h"
-#include <common/alloc.h>
 #include "common/util.h"
 #include "common/list.h"
 #include "common/oscapxml.h"

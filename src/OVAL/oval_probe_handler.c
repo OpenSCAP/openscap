@@ -32,15 +32,13 @@
 #include <config.h>
 #endif
 
-#include "common/alloc.h"
+#include <stdlib.h>
 #include "common/bfind.h"
 #include "_oval_probe_handler.h"
 
 oval_phtbl_t *oval_phtbl_new(void)
 {
-        oval_phtbl_t *phtbl;
-
-        phtbl = oscap_talloc(oval_phtbl_t);
+        oval_phtbl_t *phtbl = malloc(sizeof(oval_phtbl_t));
         phtbl->ph = NULL;
         phtbl->sz = 0;
 
@@ -99,7 +97,7 @@ int oval_probe_handler_set(oval_phtbl_t *phtbl, oval_subtype_t type, oval_probe_
         }
 
         phtbl->ph = realloc(phtbl->ph, sizeof(oval_ph_t *) * ++phtbl->sz);
-        phrec = phtbl->ph[phtbl->sz - 1] = oscap_talloc(oval_ph_t);
+        phrec = phtbl->ph[phtbl->sz - 1] = malloc(sizeof(oval_ph_t));
         sort  = true;
 fillrec:
 	if (phrec == NULL) {

@@ -90,18 +90,17 @@ static const struct oval_result_to_xccdf_spec XCCDF_OVAL_RESULTS_MAP[] = {
 };
 
 oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *model, const char * name) {
-	oval_agent_session_t *ag_sess;
 	struct oval_sysinfo *sysinfo;
 	struct oval_generator *generator;
 	int ret;
 
 	dI("Started new OVAL agent.", name);
 
-        /* Optimalization */
-        oval_definition_model_optimize_by_filter_propagation(model);
+	/* Optimalization */
+	oval_definition_model_optimize_by_filter_propagation(model);
 
-	ag_sess = oscap_talloc(oval_agent_session_t);
-        ag_sess->filename = oscap_strdup(name);
+	oval_agent_session_t *ag_sess = malloc(sizeof(oval_agent_session_t));
+	ag_sess->filename = oscap_strdup(name);
 	ag_sess->def_model = model;
 	ag_sess->cur_var_model = NULL;
 	ag_sess->sys_model = oval_syschar_model_new(model);

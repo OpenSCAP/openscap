@@ -53,7 +53,6 @@
 /* SEAP */
 #include <seap.h>
 #include <probe-api.h>
-#include <alloc.h>
 
 #include "common/debug_priv.h"
 #include "public/oval_schema_version.h"

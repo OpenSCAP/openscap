@@ -148,9 +148,7 @@ struct oval_criteria_node *oval_definition_get_criteria(struct oval_definition
 struct oval_definition *oval_definition_new(struct oval_definition_model *model, const char *id)
 {
 	__attribute__nonnull__(model);
-	struct oval_definition *definition;
-
-	definition = (struct oval_definition *)oscap_talloc(oval_definition_t);
+	struct oval_definition *definition = (struct oval_definition *)malloc(sizeof(oval_definition_t));
 
 	definition->id = oscap_strdup(id);
 	definition->version = 0;

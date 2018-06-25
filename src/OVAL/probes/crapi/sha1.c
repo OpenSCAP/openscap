@@ -30,7 +30,6 @@
 #include <sys/mman.h>
 #include <errno.h>
 #include <unistd.h>
-#include <alloc.h>
 #include "crapi.h"
 #include "sha1.h"
 
@@ -47,7 +46,7 @@ struct crapi_sha1_ctx {
 
 void *crapi_sha1_init (void *dst, void *size)
 {
-        struct crapi_sha1_ctx *ctx = oscap_talloc (struct crapi_sha1_ctx);
+        struct crapi_sha1_ctx *ctx = malloc(sizeof(struct crapi_sha1_ctx));
 
         ctx->ctx  = HASH_Create (HASH_AlgSHA1);
         ctx->dst  = dst;
@@ -104,7 +103,7 @@ struct crapi_sha1_ctx {
 
 void *crapi_sha1_init (void *dst, void *size)
 {
-        struct crapi_sha1_ctx *ctx = oscap_talloc (struct crapi_sha1_ctx);
+        struct crapi_sha1_ctx *ctx = malloc(sizeof(struct crapi_sha1_ctx));
 
         if (gcry_md_open (&ctx->ctx, GCRY_MD_SHA1, 0) != 0) {
 		free(ctx);
