@@ -740,7 +740,14 @@ it has no way of displaying the last generated, updated and officially
 published dates of static or product bundled CCE data because the dates
 are not defined.
 
+==== Scanning with Script Check Engine (SCE)
+The Script Check Engine (SCE) is an alternative check engine for XCCDF checklist
+evaluation.  SCE allows you to call shell scripts out of the XCCDF document.
+This approach might be suitable for various use cases, mostly when OVAL checks
+are not required. More information about SCE usage is available on this page:
+{sce_web}[Using SCE].
 
+WARNING: SCE is not part of any SCAP specification.
 
 
 == Advanced oscap usage
@@ -1855,15 +1862,6 @@ behaviour.
 * *SEXP_VALIDATE_DISABLE=1* - do not validate SEXP expressions (faster)
 
 
-
-=== Scanning with Script Check Engine (SCE)
-The Script Check Engine (SCE) is an alternative check engine for XCCDF checklist
-evaluation.  SCE allows you to call shell scripts out of the XCCDF document.
-This approach might be suitable for various use cases, mostly when OVAL checks
-are not required. More information about SCE usage is available on this page:
-{sce_web}[Using SCE].
-
-WARNING: SCE is not part of any SCAP specification.
 
 === Generating of code coverage
 Code coverage can be usefull during writing of test or performance profiling. 
