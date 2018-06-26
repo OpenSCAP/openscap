@@ -1732,7 +1732,7 @@ the OpenSCAP library and create own projects on top of it.
 If you want to build the ```libopenscap``` library and the ```oscap``` tool from
 the {oscap_git}[source code] then follow these instructions:
 
-1) Get the lastest source code
+1) Get the latest source code
 
  $ git clone https://github.com/OpenSCAP/openscap.git
 
