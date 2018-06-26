@@ -1847,28 +1847,6 @@ The ```--oval-results``` option force ```oscap``` tool to generate OVAL Result f
 for each OVAL session used for evaluation. It's also very useful for
 debugging!
 
-==== Debugging probes
-It's also possible to debug a probe itself. You need to raise timeout
-value for thread join in ```src/OVAL/probes/probe/main.c:228``` and rebuild
-sources.
-
-----------------------------
--       j_tm.tv_sec += 3;
-+       j_tm.tv_sec += 3000;
-----------------------------
-
-Then you can run gdb with probe binary:
---------------------------------------------------------
-$ ./run gdb src/OVAL/probes/probe_rpmverifypackage
---------------------------------------------------------
-
-An input for the probe can be found in the log file created by
-previous ```oscap``` tool run in verbose mode, e.g.:
-
-----
- ("seap.msg" ":id" 0 (("rpmverifypackage_object" ":id" "oval:org.mitre.oval.test:obj:1386" ":oval_version" 84541440 ) (("name" ":operation" 5 ":var_check" 1 ) "plymouth" ) (("behaviors" ":nodeps" "false" ":nodigest" "false" ":noscripts" "true" ":nosignature" "false" ) ) ) )
-----
-
 ==== Environment variables
 There are few more environment variables that control ```oscap``` tool
 behaviour.
