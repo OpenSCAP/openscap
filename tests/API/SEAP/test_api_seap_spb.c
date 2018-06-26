@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <errno.h>
-#include "../../assume.h"
+#include "oscap_assert.h"
 
 #define BUFNUM 256
 #define BUFLEN_MIN 1
@@ -260,17 +260,17 @@ int main (int argc, char *argv[])
         spb_add (spb, b3, 32);
         spb_add (spb, b4, 64);        
 
-        assume (spb_size (spb) == 8+16+32+64);
-        assume (spb_drop_head (spb, 4, 0) == 0);
-        assume (spb_size (spb) == 8+16+32+64);
-        assume (spb_drop_head (spb, 8, 0) == 8);
-        assume (spb_size (spb) == 16+32+64);
-        assume (spb_drop_head (spb, 17, 0) == 16);
-        assume (spb_size (spb) == 32+64);
-        assume (spb_drop_head (spb, 31, 0) == 0);
-        assume (spb_size (spb) == 32+64);
-        assume (spb_drop_head (spb, 32+64, 0) == 32+64);
-        assume (spb_size (spb) == 0);
+	oscap_assert(spb_size(spb) == 8 + 16 + 32 + 64);
+	oscap_assert(spb_drop_head(spb, 4, 0) == 0);
+	oscap_assert(spb_size(spb) == 8 + 16 + 32 + 64);
+	oscap_assert(spb_drop_head(spb, 8, 0) == 8);
+	oscap_assert(spb_size(spb) == 16 + 32 + 64);
+	oscap_assert(spb_drop_head(spb, 17, 0) == 16);
+	oscap_assert(spb_size(spb) == 32 + 64);
+	oscap_assert(spb_drop_head(spb, 31, 0) == 0);
+	oscap_assert(spb_size(spb) == 32 + 64);
+	oscap_assert(spb_drop_head(spb, 32 + 64, 0) == 32 + 64);
+	oscap_assert(spb_size(spb) == 0);
 
         spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////
