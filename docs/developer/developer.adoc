@@ -1,5 +1,6 @@
 = OpenSCAP Developer Manual
 :toc: preamble
+:numbered:
 
 This part of documentation is meant to serve mainly to developers who want to
 contribute to OpenSCAP, help to fix bugs, or take an advantage of
