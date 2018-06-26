@@ -1889,53 +1889,6 @@ are not required. More information about SCE usage is available on this page:
 
 WARNING: SCE is not part of any SCAP specification.
 
-
-=== Building OpenSCAP on Windows
-The OpenSCAP library is developed mainly on Linux platform but it can be built
-also on Windows platforms. Follow these instructions to build
-OpenSCAP on Windows using Cygwin:
-
-1.  The easiest way to compile OpenSCAP on Windows is in
-http://www.cygwin.com/[cygwin]. First install basic set of packages from
-*cygwin* distribution plus:
-* *autoconf automake libtool make gcc*
-* *pcre-devel libxml2-devel libcurl-devel libgrcypt-devel*
-* *swig perl python*
-2.  Checkout the master branch of OpenSCAP:
-
- $ git clone -b master https://github.com/OpenSCAP/openscap.git
-
-3.  Run autotools machinery by
-
- $ ./autogen.sh
-
-4. Unfortunately the probes support is platform dependent and windows code
-was not implemented yet so it's necessary to disable compilation of probes by
-
- $ configure --disable-probes
-
-5. Build the library
-
- $ make build
-
-6.  You might want to run the library self-check by
-
- $ make check
-
-7.  Install the library
-
- $ make install
-
-8.  The final DLL is called ```cygopenscap-0.dll``` and you can link you app
-to it.
-
-----------------------------------------------------------------------------------
-Example: gcc myapp.c -I/path/to/headers -L/path/to/dynamic/library -lcygopenscap-0
-----------------------------------------------------------------------------------
-
-If you want to run your app, make sure ```cygopenscap-0.dll``` is either in
-working directory or in PATH variable directories.
-
 === Generating of code coverage
 Code coverage can be usefull during writing of test or performance profiling. 
 We could separate the process into five phases.
