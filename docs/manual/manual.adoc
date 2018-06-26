@@ -1744,7 +1744,7 @@ NOTE: The *cmake* tools are required to be installed on your system.
  $ cmake ../
  $ make
 
-Build dependencies may vary in dependency on enabled features (by the configure command).
+Build dependencies may vary depending on enabled features (by the ```cmake``` command).
 By default, you need the following packages installed on your system:
 
 * swig
