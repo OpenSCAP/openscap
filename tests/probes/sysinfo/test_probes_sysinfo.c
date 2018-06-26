@@ -4,11 +4,11 @@
 #endif
 
 #include <stdio.h>
-#include <assert.h>
 #include "oval_agent_api.h"
 #include "oval_system_characteristics.h"
 #include "oval_definitions_impl.h"
 #include "oval_probe.h"
+#include "oscap_assert.h"
 
 int main (void)
 {
@@ -18,22 +18,22 @@ int main (void)
    *  Create empty models
    */
   struct oval_definition_model *def_model = oval_definition_model_new();
-  assert(def_model != NULL);
+	oscap_assert(def_model != NULL);
 
   struct oval_syschar_model *sys_model = oval_syschar_model_new(def_model);
-  assert(sys_model != NULL);
+	oscap_assert(sys_model != NULL);
 
   /*
    *  Create probe session
    */
   oval_probe_session_t *sess = oval_probe_session_new(sys_model);
-  assert(sess != NULL);
+	oscap_assert(sess != NULL);
 
   /*
    *  Call the sysinfo probe.
    */
-  assert(oval_probe_query_sysinfo(sess, &info) == 0);
-  assert(info != NULL);
+	oscap_assert(oval_probe_query_sysinfo(sess, &info) == 0);
+	oscap_assert(info != NULL);
 
   if (info != NULL) {
     char *a, *b, *c, *d;
@@ -48,10 +48,10 @@ int main (void)
 	    c = oval_sysinfo_get_os_architecture (info),
 	    d = oval_sysinfo_get_primary_host_name (info));
 
-    assert(a != NULL);
-    assert(b != NULL);
-    assert(c != NULL);
-    assert(d != NULL);
+		oscap_assert(a != NULL);
+		oscap_assert(b != NULL);
+		oscap_assert(c != NULL);
+		oscap_assert(d != NULL);
 
     struct oval_sysint_iterator *ifit = oval_sysinfo_get_interfaces (info);
 
@@ -60,7 +60,7 @@ int main (void)
 
       while (oval_sysint_iterator_has_more (ifit)) {
 	struct oval_sysint *ife = oval_sysint_iterator_next (ifit);
-        assert(ife != NULL);
+				oscap_assert(ife != NULL);
 
 	printf ("%s %s %s\n",
 		oval_sysint_get_name (ife),

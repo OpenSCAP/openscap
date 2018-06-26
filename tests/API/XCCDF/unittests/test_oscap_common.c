@@ -24,7 +24,7 @@
 #include <string.h>
 #include "common/list.h"
 #include "common/util.h"
-#include "../../../assume.h"
+#include "oscap_assert.h"
 
 #define SEEN_LEN 9
 
@@ -37,26 +37,26 @@ static void _test_first_item_is_not_skipped(void)
 {
 	// Test that first item is not skipped when using filter.
 	struct oscap_stringlist *names = oscap_stringlist_new();
-	assume(oscap_stringlist_add_string(names, "Peter"));
-	assume(oscap_stringlist_add_string(names, "Tomas"));
-	assume(oscap_stringlist_add_string(names, "Peter"));
+	oscap_assert(oscap_stringlist_add_string(names, "Peter"));
+	oscap_assert(oscap_stringlist_add_string(names, "Tomas"));
+	oscap_assert(oscap_stringlist_add_string(names, "Peter"));
 	struct oscap_string_iterator *it =
 		(struct oscap_string_iterator*) oscap_iterator_new_filter(
 			(struct oscap_list *) names,
 			(oscap_filter_func) _simple_string_filter,
 			"Peter");
-	assume(oscap_string_iterator_has_more(it));
-	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
-	assume(oscap_string_iterator_has_more(it));
-	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it));
+	oscap_assert(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
+	oscap_assert(oscap_string_iterator_has_more(it));
+	oscap_assert(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 
 	oscap_string_iterator_reset(it);
-	assume(oscap_string_iterator_has_more(it));
-	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
-	assume(oscap_string_iterator_has_more(it));
-	assume(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it));
+	oscap_assert(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
+	oscap_assert(oscap_string_iterator_has_more(it));
+	oscap_assert(strcmp(oscap_string_iterator_next(it), "Peter") == 0);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_free(it);
 	oscap_stringlist_free(names);
 }
@@ -65,15 +65,15 @@ static void _test_not_matching_last_item_is_not_returned(void)
 {
 	// Test that oscap_iterator_has_more works with filter.
 	struct oscap_stringlist *names = oscap_stringlist_new();
-	assume(oscap_stringlist_add_string(names, "Peter"));
+	oscap_assert(oscap_stringlist_add_string(names, "Peter"));
 	struct oscap_string_iterator *it =
 		(struct oscap_string_iterator*) oscap_iterator_new_filter(
 			(struct oscap_list *) names,
 			(oscap_filter_func) _simple_string_filter,
 			"Tomas");
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_reset(it);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_free(it);
 	oscap_stringlist_free(names);
 }
@@ -82,9 +82,9 @@ static void _test_empty_list_has_more(void)
 {
 	struct oscap_stringlist *names = oscap_stringlist_new();
 	struct oscap_string_iterator *it = oscap_stringlist_get_strings(names);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_reset(it);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_free(it);
 	oscap_stringlist_free(names);
 }
@@ -97,9 +97,9 @@ static void _test_empty_list_filter_has_more(void)
 			(struct oscap_list *) names,
 			(oscap_filter_func) _simple_string_filter,
 			NULL);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_reset(it);
-	assume(oscap_string_iterator_has_more(it) == false);
+	oscap_assert(oscap_string_iterator_has_more(it) == false);
 	oscap_string_iterator_free(it);
 	oscap_stringlist_free(names);
 }
@@ -108,9 +108,9 @@ static void _test_hit_empty(void)
 {
 	struct oscap_htable *h = oscap_htable_new();
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(h);
-	assume(!oscap_htable_iterator_has_more(hit));
-	assume(!oscap_htable_iterator_has_more(hit));
-	assume(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
 	oscap_htable_iterator_free(hit);
 	oscap_htable_free0(h);
 }
@@ -120,15 +120,15 @@ static void _test_hit_single_item(void)
 	static const char *key = "id-12345";
 	static const char *value = "openscap!";
 	struct oscap_htable *h = oscap_htable_new();
-	assume(oscap_htable_add(h, key, (char *) value));
+	oscap_assert(oscap_htable_add(h, key, (char *) value));
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(h);
-	assume(oscap_htable_iterator_has_more(hit));
+	oscap_assert(oscap_htable_iterator_has_more(hit));
 	const struct oscap_htable_item *item = oscap_htable_iterator_next(hit);
-	assume(item != NULL);
-	assume(strcmp(item->key, key) == 0);
-	assume(strcmp(item->value, value) == 0);
-	assume(!oscap_htable_iterator_has_more(hit));
-	assume(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(item != NULL);
+	oscap_assert(strcmp(item->key, key) == 0);
+	oscap_assert(strcmp(item->value, value) == 0);
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
 	oscap_htable_iterator_free(hit);
 	oscap_htable_free0(h);
 }
@@ -140,24 +140,24 @@ static void _test_hit_multiple_items(void)
 	for (int i = 0; i < SEEN_LEN; i++) {
 		char key[10];
 		snprintf(key, 10, "%d", i);
-		assume(oscap_htable_add(h, key, NULL));
+		oscap_assert(oscap_htable_add(h, key, NULL));
 		seen[i] = false;
 	}
 
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(h);
-	assume(oscap_htable_iterator_has_more(hit));
+	oscap_assert(oscap_htable_iterator_has_more(hit));
 	int i = 0;
 	while (oscap_htable_iterator_has_more(hit)) {
 		const char *key = oscap_htable_iterator_next_key(hit);
-		assume(key != NULL);
-		assume(strlen(key) == 1);
+		oscap_assert(key != NULL);
+		oscap_assert(strlen(key) == 1);
 		seen[key[0] - '0'] = true;
 		i++;
 	}
-	assume(i == SEEN_LEN);
+	oscap_assert(i == SEEN_LEN);
 	oscap_htable_iterator_free(hit);
 	for (i = 0; i < SEEN_LEN; i++) {
-		assume(seen[i]);
+		oscap_assert(seen[i]);
 	}
 	oscap_htable_free0(h);
 }
@@ -175,9 +175,9 @@ static void _test_hit_empty1(void)
 {
 	struct oscap_htable *h = oscap_htable_new1(_htable_cmp, 1);
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(h);
-	assume(!oscap_htable_iterator_has_more(hit));
-	assume(!oscap_htable_iterator_has_more(hit));
-	assume(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
 	oscap_htable_iterator_free(hit);
 	oscap_htable_free0(h);
 }
@@ -187,15 +187,15 @@ static void _test_hit_single_item1(void)
 	static const char *key = "id-12345";
 	static const char *value = "openscap!";
 	struct oscap_htable *h = oscap_htable_new1(_htable_cmp, 1);
-	assume(oscap_htable_add(h, key, (char *) value));
+	oscap_assert(oscap_htable_add(h, key, (char *) value));
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(h);
-	assume(oscap_htable_iterator_has_more(hit));
+	oscap_assert(oscap_htable_iterator_has_more(hit));
 	const struct oscap_htable_item *item = oscap_htable_iterator_next(hit);
-	assume(item != NULL);
-	assume(strcmp(item->key, key) == 0);
-	assume(strcmp(item->value, value) == 0);
-	assume(!oscap_htable_iterator_has_more(hit));
-	assume(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(item != NULL);
+	oscap_assert(strcmp(item->key, key) == 0);
+	oscap_assert(strcmp(item->value, value) == 0);
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
+	oscap_assert(!oscap_htable_iterator_has_more(hit));
 	oscap_htable_iterator_free(hit);
 	oscap_htable_free0(h);
 }
@@ -207,24 +207,24 @@ static void _test_hit_multiple_items1(void)
 	for (int i = 0; i < SEEN_LEN; i++) {
 		char key[10];
 		snprintf(key, 10, "%d", i);
-		assume(oscap_htable_add(h, key, NULL));
+		oscap_assert(oscap_htable_add(h, key, NULL));
 		seen[i] = false;
 	}
 
 	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(h);
-	assume(oscap_htable_iterator_has_more(hit));
+	oscap_assert(oscap_htable_iterator_has_more(hit));
 	int i = 0;
 	while (oscap_htable_iterator_has_more(hit)) {
 		const char *key = oscap_htable_iterator_next_key(hit);
-		assume(key != NULL);
-		assume(strlen(key) == 1);
+		oscap_assert(key != NULL);
+		oscap_assert(strlen(key) == 1);
 		seen[key[0] - '0'] = true;
 		i++;
 	}
-	assume(i == SEEN_LEN);
+	oscap_assert(i == SEEN_LEN);
 	oscap_htable_iterator_free(hit);
 	for (i = 0; i < SEEN_LEN; i++) {
-		assume(seen[i]);
+		oscap_assert(seen[i]);
 	}
 	oscap_htable_free0(h);
 }
@@ -246,10 +246,10 @@ static void _test_list_check_sanity(struct oscap_list *list)
 	}
 
 	// we already do this in the loop
-	//assume(prev->next == list->last);
-	assume(oscap_list_get_itemcount(list) == count);
-	assume(list->last->next == NULL);
-	assume(count > 0 || list->first == NULL);
+	//oscap_assert(prev->next == list->last);
+	oscap_assert(oscap_list_get_itemcount(list) == count);
+	oscap_assert(list->last->next == NULL);
+	oscap_assert(count > 0 || list->first == NULL);
 }
 
 static void _test_list_remove(void)
@@ -262,7 +262,7 @@ static void _test_list_remove(void)
 	struct oscap_list *list = oscap_list_new();
 
 	// desired fail
-	assume(!oscap_list_remove(list, a, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	oscap_assert(!oscap_list_remove(list, a, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
 
 	// three important special cases to test
 	// 1) removing front item
@@ -270,42 +270,42 @@ static void _test_list_remove(void)
 	// 3) removing middle item
 
 	// two items front remove
-	assume(oscap_list_add(list, a));
-	assume(oscap_list_add(list, b));
+	oscap_assert(oscap_list_add(list, a));
+	oscap_assert(oscap_list_add(list, b));
 	_test_list_check_sanity(list);
 	oscap_list_remove(list, b, (oscap_cmp_func)_test_list_remove_ptreq, NULL);
 	_test_list_check_sanity(list);
-	assume(oscap_list_get_itemcount(list) == 1);
-	assume(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(!oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_get_itemcount(list) == 1);
+	oscap_assert(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(!oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
 	// one item remove
-	assume(oscap_list_remove(list, a, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
-	assume(oscap_list_get_itemcount(list) == 0);
-	assume(!oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_remove(list, a, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	oscap_assert(oscap_list_get_itemcount(list) == 0);
+	oscap_assert(!oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
 
 	// three items back remove
-	assume(oscap_list_add(list, a));
-	assume(oscap_list_add(list, b));
-	assume(oscap_list_add(list, c));
+	oscap_assert(oscap_list_add(list, a));
+	oscap_assert(oscap_list_add(list, b));
+	oscap_assert(oscap_list_add(list, c));
 	_test_list_check_sanity(list);
-	assume(oscap_list_remove(list, c, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	oscap_assert(oscap_list_remove(list, c, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
 	_test_list_check_sanity(list);
-	assume(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(!oscap_list_contains(list, c, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(!oscap_list_contains(list, c, (oscap_cmp_func)_test_list_remove_ptreq));
 
 	// four items middle remove
-	assume(oscap_list_add(list, c));
-	assume(oscap_list_add(list, d));
+	oscap_assert(oscap_list_add(list, c));
+	oscap_assert(oscap_list_add(list, d));
 	_test_list_check_sanity(list);
-	assume(oscap_list_get_itemcount(list) == 4);
-	assume(oscap_list_remove(list, b, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
+	oscap_assert(oscap_list_get_itemcount(list) == 4);
+	oscap_assert(oscap_list_remove(list, b, (oscap_cmp_func)_test_list_remove_ptreq, NULL));
 	_test_list_check_sanity(list);
-	assume(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(!oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(oscap_list_contains(list, c, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(oscap_list_contains(list, d, (oscap_cmp_func)_test_list_remove_ptreq));
-	assume(oscap_list_get_itemcount(list) == 3);
+	oscap_assert(oscap_list_contains(list, a, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(!oscap_list_contains(list, b, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_contains(list, c, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_contains(list, d, (oscap_cmp_func)_test_list_remove_ptreq));
+	oscap_assert(oscap_list_get_itemcount(list) == 3);
 
 	oscap_list_free(list, NULL);
 }
