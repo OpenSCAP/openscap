@@ -1898,45 +1898,6 @@ If we want to generate new statistics, we should remove the old ones.
  $ lcov --directory ./ --zerocounters ; find ./ -name "*.gcno" | xargs rm
  $ rm -rf ./coverage
 
-=== Building OpenSCAP for Windows on a Linux box (cross-compilation)
-Currently it is possible to build OpenSCAP for Windows only without probes.
-The resulting binary is not able to perform scanning.
-Instructions for cross-compiling OpenSCAP for Windows:
-
-1) Install the cross-compiler & dependencies
-
-NOTE: mingw32-pthreads needs to be version 5.0 or greater.
-
--------------------------------------------------------------
- # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
- mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
- mingw32-curl mingw32-pcre \
- mingw32-filesystem mingw32-bzip2
--------------------------------------------------------------
-
-2) Checkout the master branch of the OpenSCAP repository
-
-----------------------------------------------------------------------
- $ git clone -b master https://github.com/openscap/openscap.git
- $ cd openscap
-----------------------------------------------------------------------
-
-3) Prepare the build
-
-----------------------------------------------------------------------------------
- $ mkdir build-win32
- $ cd build-win32
- $ mingw32-cmake -D ENABLE_PYTHON3=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
-----------------------------------------------------------------------------------
-
-4) Build!
-
-------------------------------
- $ make
-------------------------------
-
-Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
-
 === Building OpenSCAP on Windows using Visual Studio
 
 Prerequisites:
@@ -1989,6 +1950,46 @@ cmake -D ENABLE_PYTHON3=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/bui
 2. Click on Build -> Build Solution.
 
 Built binaries and their dependencies are now located in ```C:\devel\openscap\build\<BUILD_TYPE>\```, eg. ```C:\devel\openscap\build\Debug\```
+
+=== Building OpenSCAP for Windows on a Linux box (cross-compilation)
+Currently it is possible to build OpenSCAP for Windows only without probes.
+The resulting binary is not able to perform scanning.
+Instructions for cross-compiling OpenSCAP for Windows:
+
+1) Install the cross-compiler & dependencies
+
+NOTE: mingw32-pthreads needs to be version 5.0 or greater.
+
+-------------------------------------------------------------
+ # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
+ mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
+ mingw32-curl mingw32-pcre \
+ mingw32-filesystem mingw32-bzip2
+-------------------------------------------------------------
+
+2) Checkout the master branch of the OpenSCAP repository
+
+----------------------------------------------------------------------
+ $ git clone -b master https://github.com/openscap/openscap.git
+ $ cd openscap
+----------------------------------------------------------------------
+
+3) Prepare the build
+
+----------------------------------------------------------------------------------
+ $ mkdir build-win32
+ $ cd build-win32
+ $ mingw32-cmake -D ENABLE_PYTHON3=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
+----------------------------------------------------------------------------------
+
+4) Build!
+
+------------------------------
+ $ make
+------------------------------
+
+Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
+
 
 If you would like to send us a patch fixing any Windows
 compiling issues, please consult the page about
