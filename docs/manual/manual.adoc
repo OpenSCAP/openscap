@@ -1731,7 +1731,7 @@ Again, usage of the tool mimics usage and options of ```oscap``` tool.
 [[devs]]
 == Developer's operations
 This part of documentation is meant to serve mainly to developers who want to
-contribute to the ```oscap```, help to fix bugs, or take an advantage of
+contribute to OpenSCAP, help to fix bugs, or take an advantage of
 the OpenSCAP library and create own projects on top of it.
 
 [[devs-compiling]]
