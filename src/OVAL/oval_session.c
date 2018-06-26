@@ -34,7 +34,6 @@
 #include <linux/limits.h>
 #endif
 
-#include "common/alloc.h"
 #include "common/debug_priv.h"
 #include "common/util.h"
 #include "common/_error.h"

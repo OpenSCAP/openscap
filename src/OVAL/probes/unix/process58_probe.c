@@ -100,7 +100,6 @@ extern char const *_cap_names[];
 #include "seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
-#include "alloc.h"
 #include "common/debug_priv.h"
 #include <ctype.h>
 #include "common/oscap_buffer.h"

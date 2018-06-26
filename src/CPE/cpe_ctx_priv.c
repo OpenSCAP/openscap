@@ -28,7 +28,6 @@
 #include <libxml/xmlreader.h>
 
 #include "cpe_ctx_priv.h"
-#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/elements.h"
 

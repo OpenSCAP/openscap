@@ -37,7 +37,6 @@
 #include "fsdev.h"
 #include "_probe-api.h"
 #include "probe/entcmp.h"
-#include "alloc.h"
 #include "debug_priv.h"
 #include "oval_fts.h"
 #if defined(__SVR4) && defined(__sun)
@@ -55,10 +54,7 @@
 
 static OVAL_FTS *OVAL_FTS_new()
 {
-	OVAL_FTS *ofts;
-
-	ofts = oscap_talloc(OVAL_FTS);
-	memset(ofts, 0, sizeof(*ofts));
+	OVAL_FTS *ofts = calloc(1, sizeof(OVAL_FTS));
 
 	ofts->max_depth  = -1;
 	ofts->direction  = -1;
@@ -95,9 +91,7 @@ static int pathlen_from_ftse(int fts_pathlen, int fts_namelen)
 
 static OVAL_FTSENT *OVAL_FTSENT_new(OVAL_FTS *ofts, FTSENT *fts_ent)
 {
-	OVAL_FTSENT *ofts_ent;
-
-	ofts_ent = oscap_talloc(OVAL_FTSENT);
+	OVAL_FTSENT *ofts_ent = calloc(1, sizeof(OVAL_FTSENT));
 
 	ofts_ent->fts_info = fts_ent->fts_info;
 	/* The 'shift' variable stores length of the prefix if the prefix

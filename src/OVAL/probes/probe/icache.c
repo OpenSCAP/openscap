@@ -35,7 +35,6 @@
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "common/memusage.h"
-#include "common/alloc.h"
 
 #include "probe.h"
 #include "icache.h"
@@ -143,8 +142,8 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 
 static void icache_add_to_tree(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 
-	probe_citem_t *cached = oscap_talloc(probe_citem_t);
-	cached->item = oscap_talloc(SEXP_t *);
+	probe_citem_t *cached = malloc(sizeof(probe_citem_t));
+	cached->item = malloc(sizeof(SEXP_t *));
 	cached->item[0] = pair->p.item;
 	cached->count = 1;
 
@@ -297,9 +296,7 @@ static void *probe_icache_worker(void *arg)
 
 probe_icache_t *probe_icache_new(void)
 {
-        probe_icache_t *cache;
-
-        cache = oscap_talloc(probe_icache_t);
+        probe_icache_t *cache = malloc(sizeof(probe_icache_t));
         cache->tree = rbt_i64_new();
 
         if (pthread_mutex_init(&cache->queue_mutex, NULL) != 0) {

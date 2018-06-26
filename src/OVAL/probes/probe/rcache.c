@@ -27,7 +27,6 @@
 #include <stddef.h>
 #include <sexp.h>
 
-#include "common/alloc.h"
 #include "../SEAP/generic/rbt/rbt.h"
 
 #include "rcache.h"
@@ -36,7 +35,7 @@ probe_rcache_t *probe_rcache_new(void)
 {
 	probe_rcache_t *cache;
 
-	cache = oscap_talloc(probe_rcache_t);
+	cache = malloc(sizeof(probe_rcache_t));
 	cache->tree = rbt_str_new();
 
 	return (cache);

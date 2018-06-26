@@ -53,7 +53,6 @@
 
 /* SEAP */
 #include <probe-api.h>
-#include <alloc.h>
 #include "debug_priv.h"
 #include "probe/entcmp.h"
 

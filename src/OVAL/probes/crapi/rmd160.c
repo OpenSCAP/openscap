@@ -33,7 +33,6 @@
 
 #include "crapi.h"
 #include "rmd160.h"
-#include "alloc.h"
 
 #if defined(HAVE_NSS3)
 #include <sechash.h>
@@ -76,7 +75,7 @@ struct crapi_rmd160_ctx {
 
 void *crapi_rmd160_init (void *dst, void *size)
 {
-        struct crapi_rmd160_ctx *ctx = oscap_talloc (struct crapi_rmd160_ctx);
+        struct crapi_rmd160_ctx *ctx = malloc(sizeof(struct crapi_rmd160_ctx));
 
         if (gcry_md_open (&ctx->ctx, GCRY_MD_RMD160, 0) != 0) {
 		free(ctx);

@@ -33,7 +33,6 @@
 #include <config.h>
 #endif
 
-#include "common/alloc.h"
 #include "oval_smc_iterator_impl.h"
 #include "oval_string_map_impl.h"
 #include "oval_smc_impl.h"

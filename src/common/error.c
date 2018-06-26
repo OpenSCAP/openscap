@@ -30,7 +30,6 @@
 #endif
 #include <string.h>
 
-#include "alloc.h"
 #include "util.h"
 #include "_error.h"
 #include "err_queue.h"
@@ -53,9 +52,7 @@ static void oscap_errkey_init(void)
 static struct oscap_err_t *oscap_err_new(oscap_errfamily_t family, const char *desc,
 					 const char *func, uint32_t line, const char *file)
 {
-	struct oscap_err_t *err;
-
-	err = oscap_talloc(struct oscap_err_t);
+	struct oscap_err_t *err = (struct oscap_err_t*)malloc(sizeof(struct oscap_err_t));
 	err->family = family;
 	err->desc = oscap_sprintf("%s [%s:%d]", desc, file, line);
 	err->func = func;

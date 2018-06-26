@@ -66,7 +66,6 @@
 #include <probe/probe.h>
 #include <probe/entcmp.h>
 #include <probe/option.h>
-#include <alloc.h>
 #include "common/debug_priv.h"
 #include "runlevel_probe.h"
 

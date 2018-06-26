@@ -24,10 +24,10 @@
 #ifndef OSCAP_UTIL_H_
 #define OSCAP_UTIL_H_
 
+#include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
 #include "public/oscap.h"
-#include "alloc.h"
 #include <stdarg.h>
 #include <string.h>
 #include "oscap_export.h"

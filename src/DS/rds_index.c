@@ -27,7 +27,6 @@
 #include "public/scap_ds.h"
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/alloc.h"
 #include "common/util.h"
 #include "common/elements.h"
 #include "common/debug_priv.h"

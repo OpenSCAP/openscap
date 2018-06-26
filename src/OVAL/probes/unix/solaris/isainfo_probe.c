@@ -35,7 +35,6 @@
 #endif
 
 #include "probe-api.h"
-#include "alloc.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

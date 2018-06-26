@@ -68,7 +68,6 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 #include "probe/entcmp.h"
-#include <alloc.h>
 #include "common/debug_priv.h"
 #include "rpminfo_probe.h"
 

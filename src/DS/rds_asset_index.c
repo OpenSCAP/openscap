@@ -30,7 +30,6 @@
 
 #include "common/list.h"
 #include "common/_error.h"
-#include "common/alloc.h"
 #include "common/elements.h"
 #include "rds_index_priv.h"
 

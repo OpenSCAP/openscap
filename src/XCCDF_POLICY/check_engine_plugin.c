@@ -24,7 +24,6 @@
 #endif
 
 #include "public/check_engine_plugin.h"
-#include "common/alloc.h"
 #include "common/util.h"
 #include "common/_error.h"
 

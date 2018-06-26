@@ -26,7 +26,6 @@
 
 #include "common/debug_priv.h"
 #include "common/oscap_acquire.h"
-#include "common/alloc.h"
 #include "common/elements.h"
 #include "common/_error.h"
 #include "common/list.h"

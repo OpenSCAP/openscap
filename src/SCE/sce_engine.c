@@ -29,7 +29,6 @@
 #include <config.h>
 #endif
 
-#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"

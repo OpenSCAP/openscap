@@ -42,7 +42,6 @@
 #include <unistd.h>
 #include <regex.h>
 #include <assert.h>
-#include <alloc.h>
 
 #include "findfile.h"
 #include "probe-entcmp.h"

@@ -33,7 +33,6 @@
 
 #include "crapi.h"
 #include "sha2.h"
-#include "alloc.h"
 
 #if defined(HAVE_NSS3)
 #include <sechash.h>
@@ -280,7 +279,7 @@ struct crapi_sha2_ctx {
 
 static void *crapi_sha2_init(void *dst, void *size, int alg)
 {
-        struct crapi_sha2_ctx *ctx = oscap_talloc (struct crapi_sha2_ctx);
+        struct crapi_sha2_ctx *ctx = malloc(sizeof(struct crapi_sha2_ctx));
 
         if (gcry_md_open (&ctx->ctx, alg, 0) != 0) {
 		free(ctx);

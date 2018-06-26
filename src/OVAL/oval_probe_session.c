@@ -145,7 +145,7 @@ static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_sysc
 
 oval_probe_session_t *oval_probe_session_new(struct oval_syschar_model *model)
 {
-        oval_probe_session_t *sess = oscap_talloc(oval_probe_session_t);
+        oval_probe_session_t *sess = malloc(sizeof(oval_probe_session_t));
         oval_probe_session_init(sess, model);
         return sess;
 }

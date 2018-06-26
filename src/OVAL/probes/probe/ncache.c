@@ -30,7 +30,6 @@
 #include <pthread.h>
 #include <sexp.h>
 
-#include "common/alloc.h"
 #include "common/bfind.h"
 
 #include "ncache.h"
@@ -79,8 +78,7 @@
 
 probe_ncache_t *probe_ncache_new (void)
 {
-        probe_ncache_t *cache;
-        cache = oscap_talloc (probe_ncache_t);
+        probe_ncache_t *cache = malloc(sizeof(probe_ncache_t));
 
         if (pthread_rwlock_init (&cache->lock, NULL) != 0) {
                 free (cache);

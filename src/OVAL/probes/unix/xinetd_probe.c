@@ -49,7 +49,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fnmatch.h>
-#include <alloc.h>
 #include <bfind.h>
 #include <common/debug_priv.h>
 #include <netdb.h>
@@ -360,9 +359,7 @@ static int xiattr_cmp(void *a, void *b)
  */
 static xiconf_t *xiconf_new(void)
 {
-	xiconf_t *xiconf;
-
-	xiconf = oscap_talloc(xiconf_t);
+	xiconf_t *xiconf = malloc(sizeof(xiconf_t));
 	xiconf->cfile = malloc(sizeof(xiconf_file_t *));
 	xiconf->count = 0;
 	xiconf->stree = rbt_str_new();
@@ -374,9 +371,7 @@ static xiconf_t *xiconf_new(void)
 
 static xiconf_service_t *xiconf_service_new(void)
 {
-	xiconf_service_t *service;
-
-	service = oscap_talloc(xiconf_service_t);
+	xiconf_service_t *service = malloc(sizeof(xiconf_service_t));
 
 	service->id    = NULL;
 	service->type  = NULL;
@@ -479,7 +474,6 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 {
 	int fd;
 	struct stat st;
-	xiconf_file_t *file;
 
 	fd = open(path, O_RDONLY);
 
@@ -504,7 +498,7 @@ static xiconf_file_t *xiconf_read(const char *path, int flags)
 		return (NULL);
 	}
 
-	file = oscap_talloc(xiconf_file_t);
+	xiconf_file_t *file = malloc(sizeof(xiconf_file_t));
 
 	/* initialize items that don't need to have extra memory allocated for them */
 	file->fd    = fd;
@@ -1135,7 +1129,7 @@ finish_section:
 		if (st == NULL) {
 			dI("new strans record: k=%s", st_key);
 
-			st = oscap_talloc (xiconf_strans_t);
+			st = malloc(sizeof(xiconf_strans_t));
 			st->cnt = 1;
 			st->srv = malloc (sizeof (xiconf_service_t *));
 			st->srv[0] = scur;
@@ -1227,13 +1221,11 @@ static int xiconf_dump_cb(struct rbt_str_node *node, void *user)
 
 xiconf_strans_t *xiconf_dump(xiconf_t *xiconf)
 {
-	xiconf_strans_t *res;
-
 	if (xiconf == NULL) {
 		return NULL;
 	}
 
-	res = oscap_talloc(xiconf_strans_t);
+	xiconf_strans_t *res = malloc(sizeof(xiconf_strans_t));
 	res->cnt = rbt_str_size(xiconf->stree);
 	res->srv = malloc(sizeof(xiconf_service_t *) * res->cnt);
 

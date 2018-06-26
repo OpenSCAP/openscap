@@ -36,7 +36,6 @@
 #include "sds_priv.h"
 
 #include "common/debug_priv.h"
-#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/util.h"
 #include "common/list.h"

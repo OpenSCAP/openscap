@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 
-#include "common/alloc.h"
 #include "common/_error.h"
 #include "common/list.h"
 #include "common/oscapxml.h"
