@@ -1820,29 +1820,27 @@ every process that was run.
 * http://www.gnu.org/software/gawk/manual/html_node/Assert-Function.html[assertions]
 are evaluated.
 
-==== Testing library
-Next important step is to preload ```libopenscap_testing.so``` before you run
- ```oscap``` tool. The testing library allows you to specify custom path to
-probes via *OVAL_PROBE_DIR* environment variable. The easiest way how to
-achieve that without need to install libopenscap, is to use shell
-script called *run* in the OpenSCAP directory.
+==== Running oscap
+It is important to use your compiled ```libopenscap.so``` library with your ```oscap``` tool.
+The easiest way how to achieve that without need to install ```libopenscap.so``` to the system path, is to use a shell script called *run* in the OpenSCAP build directory.
 
 -------------------------------------------------
-$ ./run utils/oscap xccdf eval ... whatever
+$ cd build/
+$ bash ./run utils/oscap xccdf eval ... whatever
 -------------------------------------------------
 
-The *run* script is generated at configure time and it sets:
+The *run* script is generated at configure time by CMake and it sets the following environment variables:
 
-* *LD_PRELOAD* and *LD_LIBRARY_PATH* - preload ```libopenscap_testing.so```
-* *OVAL_PROBE_DIR* - path to probes
-* *OSCAP_SCHEMA_PATH* - path to XCCDF, OVAL, CPE, ... schemas. (required
-for valudation)
-* *OSCAP_XSLT_PATH*- path to XSLT transformations. (required if you want
+* *LD_LIBRARY_PATH* - path to ```libopenscap.so```
+* *OSCAP_SCHEMA_PATH* - path to XCCDF, OVAL, CPE, ... XSD schemas and schematrons
+(required for correct SCAP content validation)
+* *OSCAP_XSLT_PATH* - path to XSLT transformations. (required if you want
 to generate html documents from xml)
+* *OSCAP_CPE_PATH* - path to the OpenSCAP CPE dictionary.
 
 ==== Example
 
- $ ./run gdb --args utils/oscap xccdf eval --profile hard --results xccdf-results.xml --oval-results my-favourite-xccdf-checklist.xml
+ $ bash ./run gdb --args utils/oscap xccdf eval --profile hard --results xccdf-results.xml --oval-results my-favourite-xccdf-checklist.xml
 
 
 The ```--oval-results``` option force ```oscap``` tool to generate OVAL Result file
