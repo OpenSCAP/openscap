@@ -1952,7 +1952,7 @@ cmake -D ENABLE_PYTHON3=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/bui
 Built binaries and their dependencies are now located in ```C:\devel\openscap\build\<BUILD_TYPE>\```, eg. ```C:\devel\openscap\build\Debug\```
 
 === Building OpenSCAP for Windows on a Linux box (cross-compilation)
-Currently it is possible to build OpenSCAP for Windows only without probes.
+Currently it is possible to cross-compile OpenSCAP for Windows only without probes.
 The resulting binary is not able to perform scanning.
 Instructions for cross-compiling OpenSCAP for Windows:
 
