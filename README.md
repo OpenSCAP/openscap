@@ -11,6 +11,7 @@ validate, edit, and export SCAP documents.
 
  * Homepage of the project: [www.open-scap.org](http://www.open-scap.org)
  * Manual: [Oscap User Manual](https://github.com/OpenSCAP/openscap/blob/master/docs/manual/manual.adoc)
+ * Compilation, testing and debugging: [OpenSCAP Developer Manual](https://github.com/OpenSCAP/openscap/blob/master/docs/developer/developer.adoc)
  * For new contributors: [How to contribute](https://github.com/OpenSCAP/openscap/blob/master/docs/contribute/contribute.adoc)
 
 ## Compilation
