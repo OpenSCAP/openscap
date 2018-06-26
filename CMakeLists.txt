@@ -23,10 +23,6 @@ if ("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}")
 		)
 endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-	set(NDEBUG 1)
-endif()
-
 # In Microsoft Visual Studio, store built binaries to a single directory.
 # We need to build all the binaries in a single directory on Windows, because
 # vcpkg tool fails to fetch dependent DLLs (libxml, libcurl, etc.) if
