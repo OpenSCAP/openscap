@@ -1,4 +1,5 @@
 = OpenSCAP Developer Manual
+:oscap_git: https://github.com/OpenSCAP/openscap
 :toc: preamble
 :numbered:
 
