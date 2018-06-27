@@ -31,40 +31,53 @@ Choose *1a* or *1b* depending on whether you want sources from a release tarball
  $ git clone https://github.com/OpenSCAP/openscap.git
  $ cd openscap
 +
-NOTE: The *cmake* tools are required to be installed on your system.
 
-. To build the library you will also need the following build dependencies.
+. *Get the build dependencies*
 +
+--
+To build the library you will also need the following build dependencies.
 Build dependencies may vary depending on enabled features (by the ```cmake``` command).
-By default, you need the following packages installed on your system:
-+
-* swig
-* libxml2-devel
-* rpm-devel
-* libgcrypt-devel
-* pcre-devel
-* python3-devel
-* perl-devel
-* libcurl-devel
-* libxslt-devel
+By default, OpenSCAP requires these dependencies to build:
+
+* CMake
+* DBus
+* SWIG
+* libxml2
+* librpm
+* libselinux
+* libgcrypt
+* pcre
+* python3
+* perl
+* libcurl
+* libxslt
 * libtool
 * perl-XML-XPath
-+
+
 (some of these are optional, if they are not detected, openscap will be compiled
-without respective optional features). On RHEL / Fedora / CentOS, the command to
-install these packages is:
+without respective optional features).
 
- sudo yum install \
- cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
- libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel make openldap-devel \
- pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
- bzip2-devel gcc-c++
-+
-On Ubuntu 16.04 the command to install these package is
+On RHEL / Fedora / CentOS, the command to install these packages is:
 
- sudo apt-get install -y autoconf automake libtool make libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl libxml-xpath-perl libperl5.22 libbz2-dev librpm-dev g++
-+
+----
+sudo yum install \
+cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
+libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel make openldap-devel \
+pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
+bzip2-devel gcc-c++
+----
+
+On Ubuntu 16.04, the command to install these packages is:
+
+----
+sudo apt-get install -y cmake libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev \
+libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev \
+libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl \
+libxml-xpath-perl libperl5.22 libbz2-dev librpm-dev g++
+----
+
 When you have all the build dependencies installed you can build the library.
+--
 
 . Run the following commands to build the library:
 
