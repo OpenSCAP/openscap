@@ -27,7 +27,6 @@
 #include <stddef.h>
 #include <errno.h>
 
-#include "public/sm_alloc.h"
 #include "_seap-command.h"
 #include "generic/rbt/rbt.h"
 #include "seap-command-backendT.h"
