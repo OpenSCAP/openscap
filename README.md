@@ -10,7 +10,7 @@ The oscap program is a command line tool that allows users to load, scan,
 validate, edit, and export SCAP documents.
 
  * Homepage of the project: [www.open-scap.org](http://www.open-scap.org)
- * Manual: [Oscap User Manual](docs/manual/manual.adoc)
+ * User Manual: [OpenSCAP User Manual](docs/manual/manual.adoc)
  * Compilation, testing and debugging: [OpenSCAP Developer Manual](docs/developer/developer.adoc)
  * For new contributors: [How to contribute](docs/contribute/contribute.adoc)
 
