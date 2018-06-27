@@ -27,7 +27,6 @@
 #include <string.h>
 #include <errno.h>
 
-#include "public/sm_alloc.h"
 #include "_sexp-datatype.h"
 #include "_sexp-rawptr.h"
 
@@ -40,9 +39,7 @@ SEXP_datatypeTbl_t g_datatypes = { NULL };
 
 SEXP_datatypeTbl_t *SEXP_datatypeTbl_new ()
 {
-        SEXP_datatypeTbl_t *t;
-
-        t = sm_talloc (SEXP_datatypeTbl_t);
+	SEXP_datatypeTbl_t *t = malloc(sizeof(SEXP_datatypeTbl_t));
         SEXP_datatypeTbl_init(t);
 
         return(t);
@@ -51,7 +48,7 @@ SEXP_datatypeTbl_t *SEXP_datatypeTbl_new ()
 void SEXP_datatypeTbl_free(SEXP_datatypeTbl_t *t)
 {
         rbt_str_free(t->tree);
-        sm_free(t);
+	free(t);
         return;
 }
 
@@ -155,9 +152,7 @@ const char *SEXP_datatype_name(SEXP_datatypePtr_t *p)
 
 SEXP_datatype_t *SEXP_datatype_new(void)
 {
-        SEXP_datatype_t *d;
-
-        d = sm_talloc(SEXP_datatype_t);
+	SEXP_datatype_t *d = malloc(sizeof(SEXP_datatype_t));
         d->dt_flg = 0;
 
         return(d);
