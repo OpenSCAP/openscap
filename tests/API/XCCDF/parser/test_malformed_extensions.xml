@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="RHEL-6" xsi:schemaLocation="http://checklists.nist.gov/xccdf/1.1 xccdf-1.1.4.xsd" resolved="0" xml:lang="en-US">
+  <status date="2011-12-08">draft</status>
+  <title xml:lang="en-US">Sample XCCDF using open extensions</title>
+  <description xml:lang="en-US">Open extensions will appear the XCCDF report</description>
+  <version>0.1</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <model system="urn:xccdf:scoring:flat"/>
+  <Group id="bash-passer" hidden="false">
+    <title xml:lang="en-US">Check with a hint of OVAL</title>
+    <description xml:lang="en-US">Be Sure To Drink Your OVALtine.</description>
+    <Rule id="rule-1000" selected="true" weight="10.000000">
+      <title xml:lang="en-US">TEST (open)</title>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref href="../some/arbitrary/path/which/will/never/really/exist/on/real/systems.xml" name="oval:x:def:1"/>
+      </check>
+    </Rule>
+  </Group>
+</Benchmark>
