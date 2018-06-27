@@ -32,15 +32,13 @@
 #include <errno.h>
 
 #include "spb.h"
-#include "sm_alloc.h"
 
 spb_t *spb_new (void *buffer, size_t buflen, uint32_t balloc)
 {
-        spb_t *spb;
+	spb_t *spb = malloc(sizeof(spb_t));
 
-        spb = sm_talloc (spb_t);
         spb->balloc = (balloc == 0 ? SPB_DEFAULT_BALLOC : balloc);
-        spb->buffer = sm_alloc (sizeof (spb_item_t) * spb->balloc);
+	spb->buffer = malloc(sizeof(spb_item_t) * spb->balloc);
         spb->bflags = 0;
 
         if (buffer != NULL && buflen > 0) {
@@ -101,7 +99,7 @@ int spb_add (spb_t *spb, void *buffer, size_t buflen)
                 else
                         spb->balloc  += SPB_BALLOC_ADD;
 
-                spb->buffer = sm_realloc (spb->buffer, sizeof (spb_item_t) * spb->balloc);
+		spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * spb->balloc);
         }
 
         /* XXX: assume that btotal > 0 if btotal > balloc? */
@@ -235,16 +233,16 @@ void spb_free (spb_t *spb, spb_flags_t flags)
                 register uint32_t i;
 
                 for (i = 0; i < spb->btotal; ++i)
-                        sm_free(spb->buffer[i].base);
+			free(spb->buffer[i].base);
         }
 #ifndef NDEBUG
         memset (spb->buffer, 0, sizeof (spb_item_t) * spb->balloc);
 #endif
-        sm_free (spb->buffer);
+	free(spb->buffer);
 #ifndef NDEBUG
         memset (spb, 0, sizeof (spb_t));
 #endif
-        sm_free (spb);
+	free(spb);
         return;
 }
 
@@ -264,10 +262,10 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
                                 register uint32_t i;
 
                                 for (i = spb->btotal; i > 0; --i)
-                                        sm_free (spb->buffer[i - 1].base);
+					free(spb->buffer[i - 1].base);
                         }
 
-                        spb->buffer = sm_realloc (spb->buffer, sizeof (spb_item_t) * SPB_DEFAULT_BALLOC);
+			spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * SPB_DEFAULT_BALLOC);
                         spb->btotal = 0;
                         spb->balloc = SPB_DEFAULT_BALLOC;
                 } else {
@@ -278,7 +276,7 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
 
                         if (flags & SPB_FLAG_FREE) {
                                 for (i = b_idx - 1; i > 0; --i)
-                                        sm_free (spb->buffer[i - 1].base);
+					free(spb->buffer[i - 1].base);
                         }
 
                         spb->btotal -= b_idx;
@@ -290,7 +288,7 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
                          */
                         if ((spb->balloc >> 1) > spb->btotal) {
                                 spb->balloc >>= 1;
-                                spb->buffer   = sm_realloc (spb->buffer, sizeof (spb_item_t) * spb->balloc);
+					spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * spb->balloc);
                         }
 
                         /*
