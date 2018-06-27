@@ -132,6 +132,19 @@ Authors:
                             </xsl:choose>
                         </td>
                     </tr>
+                    <tr>
+                        <th>Test system</th>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$testresult/@test-system">
+                                    <xsl:value-of select="$testresult/@test-system"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    unknown
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div class="col-md-3 horizontal-scroll">
