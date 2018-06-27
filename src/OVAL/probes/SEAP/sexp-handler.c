@@ -32,7 +32,6 @@
 
 #include "generic/common.h"
 #include "generic/redblack.h"
-#include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "sexp-handler.h"
 
@@ -123,7 +122,7 @@ SEXP_handler_t *SEXP_reghandler (SEXP_handlertbl_t *htbl, SEXP_handler_t *handle
                 ret = &(new->handler);
         } else {
                 dI("Failed to register handler for: %.*s", handler->typelen, handler->typestr);
-                sm_free (new);
+		free(new);
                 ret = NULL;
         }
 
