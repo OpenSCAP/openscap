@@ -39,8 +39,6 @@
 #include <stdbool.h>
 #include <errno.h>
 
-#include "public/sm_alloc.h"
-
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
