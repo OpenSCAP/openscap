@@ -13,7 +13,7 @@ toc::[]
 If you want to build the ```libopenscap``` library and the ```oscap``` tool from
 the {oscap_git}[source code] then follow these instructions:
 
-. Get the source code
+. *Get the source code*
 +
 Choose *1a* or *1b* depending on whether you want sources from a release tarball or the git repository.
 
@@ -79,14 +79,18 @@ libxml-xpath-perl libperl5.22 libbz2-dev librpm-dev g++
 When you have all the build dependencies installed you can build the library.
 --
 
-. Run the following commands to build the library:
+. *Build the library*
++
+Run the following commands to build the library:
 
  $ cd build/
  $ cmake ../
  $ make
 
 
-. After building the library you might want to run library self-checks. To do
+. *Run the tests*
++
+After building the library you might want to run library self-checks. To do
 that you need to have these additional packages installed:
 
  wget lua which procps-ng initscripts chkconfig sendmail
@@ -111,7 +115,9 @@ It's also possible to use the make check to test any other oscap binary present 
 Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
 
 
-. Run the installation procedure by executing the following command:
+. *Install*
++
+Run the installation procedure by executing the following command:
 
  $ make install
 
