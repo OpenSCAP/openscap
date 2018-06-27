@@ -29,13 +29,11 @@
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "_seap-message.h"
-#include "public/sm_alloc.h"
+#include "debug_priv.h"
 
 SEAP_msg_t *SEAP_msg_new (void)
 {
-        SEAP_msg_t *new;
-
-        new = sm_talloc (SEAP_msg_t);
+	SEAP_msg_t *new = malloc(sizeof(SEAP_msg_t));
         new->id = 0;
         new->attrs = NULL;
         new->attrs_cnt = 0;
@@ -47,12 +45,11 @@ SEAP_msg_t *SEAP_msg_new (void)
 SEAP_msg_t *SEAP_msg_clone (SEAP_msg_t *msg)
 {
         uint16_t i;
-        SEAP_msg_t *new;
 
-        new = sm_talloc (SEAP_msg_t);
+	SEAP_msg_t *new = malloc(sizeof(SEAP_msg_t));
         memcpy (new, msg, sizeof (SEAP_msg_t));
 
-        new->attrs = sm_alloc (sizeof (SEAP_attr_t) * new->attrs_cnt);
+	new->attrs = malloc(sizeof(SEAP_attr_t) * new->attrs_cnt);
 
         for (i = 0; i < new->attrs_cnt; ++i) {
                 new->attrs[i].name  = strdup (msg->attrs[i].name);
@@ -75,17 +72,17 @@ void SEAP_msg_free (SEAP_msg_t *msg)
                            msg->attrs[msg->attrs_cnt - 1].name,
                            msg->attrs[msg->attrs_cnt - 1].value);
 
-                        sm_free (msg->attrs[msg->attrs_cnt - 1].name);
+			free(msg->attrs[msg->attrs_cnt - 1].name);
                         SEXP_free (msg->attrs[msg->attrs_cnt - 1].value);
                 }
 
-                sm_free (msg->attrs);
+		free(msg->attrs);
         }
 
         if (msg->sexp != NULL)
                 SEXP_free (msg->sexp);
 
-        sm_free (msg);
+	free(msg);
         return;
 }
 
@@ -121,7 +118,7 @@ int SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value)
         if (value != NULL)
                 SEXP_VALIDATE(value);
 #endif
-        msg->attrs = sm_realloc (msg->attrs, sizeof (SEAP_attr_t) * (++msg->attrs_cnt));
+	msg->attrs = realloc(msg->attrs, sizeof(SEAP_attr_t) * (++msg->attrs_cnt));
         msg->attrs[msg->attrs_cnt - 1].name  = strdup (attr);
         msg->attrs[msg->attrs_cnt - 1].value = (value != NULL ? SEXP_ref (value) : NULL);
 
