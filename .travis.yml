@@ -1,25 +1,31 @@
-sudo: required
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y cmake lcov libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev xsltproc
-
 language: c
 
-before_script:
-  - export CC=gcc-7 GCOV=gcov-7
-  - cd build
-
-script:
-  - CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov cmake -DCMAKE_BUILD_TYPE=Debug ../
-  - build-wrapper-linux-x86-64 --out-dir bw-output make all || true  # Will always fail builds on forked repositories.
-  - make all
-  - CTEST_OUTPUT_ON_FAILURE=1 ctest || { test "$SEND_COVERAGE_EVEN_IF_TESTS_FAIL" = yes && curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"; }
-  - bash ../tests/recursively_generate_gcov.sh . || true  # Failures that occur here are harmless
-  - cd .. && sonar-scanner || true  # Will always fail builds on forked repositories.
-
-after_success:
- - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
+matrix:
+  include:
+    - os: linux
+      sudo: required
+      before_install:
+        - sudo apt-get -qq update
+        - sudo apt-get install -y cmake lcov libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev swig libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev swig librtmp-dev xsltproc
+      before_script:
+        - export CC=gcc-7 GCOV=gcov-7
+        - cd build
+      script:
+        - CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov cmake -DCMAKE_BUILD_TYPE=Debug ../
+        - build-wrapper-linux-x86-64 --out-dir bw-output make all || true  # Will always fail builds on forked repositories.
+        - make all
+        - CTEST_OUTPUT_ON_FAILURE=1 ctest || { test "$SEND_COVERAGE_EVEN_IF_TESTS_FAIL" = yes && curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"; }
+        - bash ../tests/recursively_generate_gcov.sh . || true  # Failures that occur here are harmless
+        - cd .. && sonar-scanner || true  # Will always fail builds on forked repositories.
+      after_success:
+        - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
+    - os: osx
+      osx_image: xcode8.3
+      before_script:
+        - cd build
+      script:
+        - cmake -DENABLE_PYTHON3=false -DENABLE_PROBES=false -DENABLE_OSCAP_UTIL_DOCKER=false ../
+        - make -j 4
 
 addons:
   sonarcloud:
