@@ -519,28 +519,56 @@
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:421" version="1">
                   <metadata>
-                        <title>openSUSE 42.1</title>
+                        <title>openSUSE Leap 42.1</title>
                         <affected family="unix">
-                            <platform>openSUSE 42.1</platform>
+                            <platform>openSUSE Leap 42.1</platform>
                         </affected>
                         <reference ref_id="cpe:/o:novell:leap:42.1" source="CPE"/>
-                        <description>The operating system installed on the system is openSUSE 42.1</description>
+                        <reference ref_id="cpe:/o:opensuse:leap:42.1" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE Leap 42.1</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="openSUSE 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
+                        <criterion comment="openSUSE Leap 42.1 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:421"/>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:422" version="1">
                   <metadata>
-                        <title>openSUSE 42.2</title>
+                        <title>openSUSE Leap 42.2</title>
                         <affected family="unix">
-                            <platform>openSUSE 42.2</platform>
+                            <platform>openSUSE Leap 42.2</platform>
                         </affected>
                         <reference ref_id="cpe:/o:novell:leap:42.2" source="CPE"/>
-                        <description>The operating system installed on the system is openSUSE 42.2</description>
+                        <reference ref_id="cpe:/o:opensuse:leap:42.2" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE Leap 42.2</description>
                   </metadata>
                   <criteria>
-                        <criterion comment="openSUSE 42.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:422"/>
+                        <criterion comment="openSUSE Leap 42.2 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:422"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:423" version="1">
+                  <metadata>
+                        <title>openSUSE Leap 42.3</title>
+                        <affected family="unix">
+                            <platform>openSUSE Leap 42.3</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:opensuse:leap:42.3" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE Leap 42.3</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="openSUSE Leap 42.3 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:423"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.opensuse:def:150" version="1">
+                  <metadata>
+                        <title>openSUSE Leap 15.0</title>
+                        <affected family="unix">
+                            <platform>openSUSE Leap 15.0</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:opensuse:leap:15.0" source="CPE"/>
+                        <description>The operating system installed on the system is openSUSE Leap 15.0</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="openSUSE Leap 15.0 is installed" test_ref="oval:org.open-scap.cpe.opensuse:tst:150"/>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.wrlinux:def:1" version="1" >
@@ -778,6 +806,16 @@
                   <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.opensuse:ste:422"/>
             </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:423" version="2" check="at least one" comment="openSUSE-release is version 42.3"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:423"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.opensuse:tst:150" version="2" check="at least one" comment="openSUSE-release is version 15.0"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.openSUSE-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.opensuse:ste:150"/>
+            </rpminfo_test>
             <family_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.wrlinux:tst:1" version="1" check="only one"
                   comment="Installed operating system is part of the Unix family."
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -1002,6 +1040,12 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:422" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^42.2$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:423" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^42.3$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.opensuse:ste:150" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^15.0$</version>
             </rpminfo_state>
             <textfilecontent54_state
                             id="oval:org.open-scap.cpe.wrlinux-release:ste:8"

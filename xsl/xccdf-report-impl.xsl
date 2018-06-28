@@ -94,6 +94,12 @@ Authors:
                             </tr>
                         </xsl:if>
                     </xsl:if>
+                    <xsl:if test="$benchmark/cdf:version">
+                        <tr>
+                            <th>Benchmark version</th>
+                            <td><xsl:value-of select="$benchmark/cdf:version[1]/text()"/></td>
+                        </tr>
+                    </xsl:if>
                     <xsl:if test="$testresult/cdf:profile">
                         <tr>
                             <th>Profile ID</th>
@@ -128,6 +134,19 @@ Authors:
                                 </xsl:when>
                                 <xsl:otherwise>
                                     unknown user
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Test system</th>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$testresult/@test-system">
+                                    <xsl:value-of select="$testresult/@test-system"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    unknown
                                 </xsl:otherwise>
                             </xsl:choose>
                         </td>

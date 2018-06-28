@@ -83,7 +83,7 @@ function test_run {
 	echo -e "RESULT: PASSED\n" >&2
 	return 0;
     elif [ $ret_val -eq 1 ]; then
-        result=$[$result + $ret_val]
+	result=$(($result + $ret_val))
 	echo "[ FAIL ]"; 
 	echo -e "RESULT: FAILED\n" >&2
 	return 1;
@@ -92,7 +92,7 @@ function test_run {
 	echo -e "RESULT: SKIPPED\n" >&2
 	return 0; 
     else
-        result=$[$result + $ret_val]
+	result=$(($result + $ret_val))
 	echo "[ WARN ]"; 
 	echo -e "RESULT: WARNING (unknown exist status $ret_val)\n" >&2
 	return 1;
@@ -168,10 +168,10 @@ function verify_results {
 	
 	if [ ! $RES = $CMT ]; then
 	    echo "Result of ${OVAL_ID} should be ${CMT} and is ${RES}"
-	    ret_val=$[$ret_val + 1]
+	    ret_val=$(($ret_val + 1))
 	fi
-	
-	ID=$[$ID+1]
+
+	ID=$(($ID+1))
     done
 
     return $([ $ret_val -eq 0 ])

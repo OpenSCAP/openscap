@@ -28,6 +28,7 @@
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "xccdf_policy_priv.h"
@@ -570,11 +571,32 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 			// If the refined selector does not match, checks without selector shall be used.
 			candidate_it = xccdf_rule_get_checks_filtered(rule, NULL);
 		}
+
+		bool print_general_warning = false;
+		bool print_oval_warning = false;
+		char *warning_check_system;
 		// Check Processing Algorithm -- Check.System
 		while (xccdf_check_iterator_has_more(candidate_it)) {
 			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);
-			if (_xccdf_policy_is_engine_registered(policy, (char *) xccdf_check_get_system(check)))
+			if (_xccdf_policy_is_engine_registered(policy, (char *) xccdf_check_get_system(check))) {
 				result = check;
+			} else if (strcmp("http://oval.mitre.org/XMLSchema/oval-definitions-5", check->system) == 0) {
+				print_oval_warning = true;
+			} else {
+				print_general_warning = true;
+				warning_check_system = check->system;
+			}
+		}
+
+		// Only print a warning if we didn't select a check but could've otherwise.
+		if (print_oval_warning) {
+			printf("WARNING: Skipping rule that uses OVAL but is possibly malformed; "
+			       "an incorrect content reference prevents this check from being evaluated.\n");
+		} else if (print_general_warning && result == NULL) {
+			printf("WARNING: Skipping rule that requires an unregistered check system "
+			       "or incorrect content reference to evaluate. "
+			       "Please consider providing a valid SCAP/OVAL instead of %s\n",
+				warning_check_system);
 		}
 		xccdf_check_iterator_free(candidate_it);
 	}

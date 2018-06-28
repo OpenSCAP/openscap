@@ -4,6 +4,7 @@
 
 set -e -o pipefail
 
+function perform_test {
 probecheck "file" || return 255
 
 name=$(basename $0 .sh)
@@ -27,3 +28,6 @@ echo "Testing syschar values."
 [ "$($XPATH $result 'string(/oval_results/results/system/oval_system_characteristics/system_data/unix-sys:file_item/unix-sys:filepath)')" == "/etc/passwd" ]
 
 rm $result
+}
+
+perform_test

@@ -13,7 +13,7 @@ function test_config_h(){
 	ignore_list='(MurmurHash3.c|rbt_gen.c|oval_testing_ext_probe.c)$'
 	echo "Files from this mask will not be checked: $ignore_list"
 
-	codebase=$(find $top_srcdir/src/ -name "*.c" | sort)
+	codebase=$(find $top_srcdir/src/ $top_srcdir/tests/ -name "*.c" | sort)
 	echo "$codebase" | grep -vE "$ignore_list" | while read filename;
 	do
 		grep -E "$text" "$filename" --quiet || {
