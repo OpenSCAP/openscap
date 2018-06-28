@@ -348,6 +348,8 @@ set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
 # which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
+# Turn on RPATH for OSX for policy warning
+set(CMAKE_MACOSX_RPATH ON)
 # ---------- CONFIGURATION
 
 configure_file("config.h.in" "config.h")
