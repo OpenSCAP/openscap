@@ -71,12 +71,6 @@ OSCAP_API int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* targ
 OSCAP_API int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
 
 /**
- * @deprecated This function has been deprecated. Make a use of ds_rds_session
- * instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir));
-
-/**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream
  *
  * @param sds_file

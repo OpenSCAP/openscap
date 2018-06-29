@@ -172,38 +172,6 @@ int ds_rds_dump_arf_content(struct ds_rds_session *session, const char *containe
 	return ds_rds_session_register_component_source(session, content_id, source);
 }
 
-int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir)
-{
-	struct oscap_source *rds_source = oscap_source_new_from_file(input_file);
-	struct ds_rds_session *session = ds_rds_session_new_from_source(rds_source);
-
-	if (session == NULL) {
-		ds_rds_session_free(session);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-	ds_rds_session_set_target_dir(session, target_dir);
-
-	if (ds_rds_dump_arf_content(session, "reports", "report", report_id) != 0) {
-		ds_rds_session_free(session);
-		oscap_source_free(rds_source);
-		return -1;
-	}
-
-	if (request_id != NULL) {
-		if (ds_rds_dump_arf_content(session, "report-requests", "report-request", request_id) != 0) {
-			ds_rds_session_free(session);
-			oscap_source_free(rds_source);
-			return -1;
-		}
-	}
-
-	int ret = ds_rds_session_dump_component_files(session);
-	ds_rds_session_free(session);
-	oscap_source_free(rds_source);
-	return ret;
-}
-
 xmlNodePtr ds_rds_create_report(xmlDocPtr target_doc, xmlNodePtr reports_node, xmlDocPtr source_doc, const char* report_id)
 {
 	xmlNsPtr arf_ns = xmlSearchNsByHref(target_doc, xmlDocGetRootElement(target_doc), BAD_CAST arf_ns_uri);
