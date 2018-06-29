@@ -31,6 +31,7 @@
 #include <unistd.h>
 #endif
 #include <stdio.h>
+#include <sys/types.h>
 #include "oscap_export.h"
 
 #ifdef __cplusplus

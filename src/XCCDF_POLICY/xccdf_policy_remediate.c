@@ -24,6 +24,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #ifdef OSCAP_UNIX
 #include <sys/wait.h>
