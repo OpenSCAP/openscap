@@ -479,17 +479,6 @@ int probe_obj_getentvals(const SEXP_t * obj, const char *name, uint32_t n, SEXP_
 	return (ret);
 }
 
-oval_version_t probe_obj_get_schema_version(const SEXP_t *obj)
-{
-	oval_schema_version_t version = probe_obj_get_platform_schema_version(obj);
-	// oval_schema_version_to_cstr result has to be freed despite being
-	// declared as const char* :-(
-	char *version_str = (char*)oval_schema_version_to_cstr(version);
-	oval_version_t old_version_format = oval_version_from_cstr(version_str);
-	free(version_str);
-	return old_version_format;
-}
-
 oval_schema_version_t probe_obj_get_platform_schema_version(const SEXP_t *obj)
 {
 	SEXP_t *sexp_ver;
