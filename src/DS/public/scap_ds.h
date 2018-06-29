@@ -200,16 +200,6 @@ OSCAP_API struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s
 OSCAP_API struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
 
 /**
- * @brief imports given source datastream and indexes it
- *
- * @memberof ds_sds_index
- *
- * @deprecated This function has been deprecated. Make a use of ds_sds_session
- *     instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct ds_sds_index *ds_sds_index_import(const char* file));
-
-/**
  * @brief chooses datastream and checklist id combination given the IDs
  *
  * @param datastream_id has to point to an allocated char*, selected datastream ID will be filled into it
