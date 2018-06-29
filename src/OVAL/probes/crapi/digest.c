@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <assume.h>
 #include <errno.h>
+#include <sys/types.h>
 
 #include "crapi.h"
 #include "digest.h"

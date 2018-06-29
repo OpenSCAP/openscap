@@ -39,6 +39,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdbool.h>
+#include <sys/types.h>
 
 #include "oval_definitions_impl.h"
 #include "adt/oval_collection_impl.h"
