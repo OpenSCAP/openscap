@@ -652,11 +652,3 @@ bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, 
 		oval_agent_eval_rule, (void *) usr, _oval_agent_list_definitions);
 }
 
-void oval_agent_export_sysinfo_to_xccdf_result(struct oval_agent_session * sess, struct xccdf_result * ritem)
-{
-	// just a delegate to maintain API and ABI stability,
-	// this has been implemented elsewhere and this function is deprecated!
-
-	xccdf_result_fill_sysinfo(ritem);
-}
-
