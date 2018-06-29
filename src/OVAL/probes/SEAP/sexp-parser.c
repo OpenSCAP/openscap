@@ -31,7 +31,6 @@
 #include <errno.h>
 
 #include "generic/common.h"
-#include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-manip.h"
 #include "_sexp-parser.h"
@@ -44,9 +43,7 @@
 
 SEXP_pstate_t *SEXP_pstate_new (void)
 {
-        SEXP_pstate_t *pstate;
-
-        pstate = sm_talloc (SEXP_pstate_t);
+        SEXP_pstate_t *pstate = malloc(sizeof(SEXP_pstate_t));
         pstate->p_buffer = NULL;
         pstate->p_bufoff = 0;
         pstate->p_explen = 0;
@@ -120,7 +117,7 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
                                 SEXP_val_t v_dsc;
 
                                 SEXP_val_dsc (&v_dsc, pstate->v_bool[i]);
-                                sm_free (v_dsc.hdr);
+				free(v_dsc.hdr);
                         }
                 }
         }
@@ -128,7 +125,7 @@ void SEXP_pstate_free (SEXP_pstate_t *pstate)
 #ifndef NDEBUG
         memset (pstate, 0, sizeof (SEXP_pstate_t));
 #endif
-        sm_free (pstate);
+	free(pstate);
 
         return;
 }
@@ -157,9 +154,7 @@ int SEXP_psetup_unsetflags (SEXP_psetup_t *psetup, SEXP_pflags_t flags)
 
 SEXP_psetup_t *SEXP_psetup_new (void)
 {
-        SEXP_psetup_t *psetup;
-
-        psetup = sm_talloc (SEXP_psetup_t);
+	SEXP_psetup_t *psetup = malloc(sizeof(SEXP_psetup_t));
         psetup->p_format = 0;
         psetup->p_flags  = SEXP_PFLAG_EOFOK;
 
@@ -197,7 +192,7 @@ int SEXP_psetup_setpfunc(SEXP_psetup_t *psetup, int pfunctype, SEXP_pfunc_t *pfu
 
 void SEXP_psetup_free (SEXP_psetup_t *psetup)
 {
-        sm_free (psetup);
+	free(psetup);
         return;
 }
 
@@ -844,8 +839,8 @@ L_NUMBER_stage3:
 				if (e_dsc.p_explen <= (sizeof _nbuffer / sizeof (uint8_t)))
 					e_dsc.sp_data = (void *)_nbuffer;
 				else {
-					e_dsc.sp_data = sm_alloc (sizeof (uint8_t) * e_dsc.p_explen);
-					e_dsc.sp_free = sm_free;
+					e_dsc.sp_data = malloc(sizeof(uint8_t) * e_dsc.p_explen);
+					e_dsc.sp_free = free;
 
 					if (e_dsc.sp_data == NULL) {
 						e_dsc.p_numstage = SEXP_NUMSTAGE_3;
@@ -1804,13 +1799,13 @@ found:
                                 b_enc = _b_enc;
                                 b_encfree = false;
                         } else {
-                                b_enc = sm_alloc (sizeof (char) * (dsc->p_explen));
+				b_enc = malloc(sizeof(char) * (dsc->p_explen));
                                 b_encfree = true;
                         }
 
 			if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2, b_enc) != 0) {
 				if (b_encfree)
-					sm_free (b_enc);
+					free(b_enc);
                                 return (SEXP_PRET_EUNDEF);
 			}
                 } else
@@ -1821,10 +1816,10 @@ found:
 
                 if (b_declen == 0) {
                         if (b_encfree)
-                                sm_free (b_enc);
+				free(b_enc);
 
                         if (b_dec != NULL)
-                                sm_free (b_dec);
+				free(b_dec);
 
                         return (SEXP_PRET_EINVAL);
                 }
@@ -1832,19 +1827,19 @@ found:
                 if (SEXP_val_new (&v_dsc, sizeof (char) * b_declen,
                                   SEXP_VALTYPE_STRING) != 0)
                 {
-                        sm_free (b_dec);
+			free(b_dec);
 
                         if (b_encfree)
-                                sm_free (b_enc);
+				free(b_enc);
 
                         return (SEXP_PRET_EUNDEF);
                 }
 
                 memcpy (v_dsc.mem, b_dec, sizeof (char) * b_declen);
-                sm_free (b_dec);
+			free(b_dec);
 
                 if (b_encfree)
-                        sm_free (b_enc);
+			free(b_enc);
 
                 dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
         }
@@ -1871,13 +1866,13 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
                         b_enc = _b_enc;
                         b_encfree = false;
                 } else {
-                        b_enc = sm_alloc (sizeof (char) * (dsc->p_explen));
+			b_enc = malloc(sizeof(char) * (dsc->p_explen));
                         b_encfree = true;
                 }
 
 		if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen, b_enc) != 0) {
 			if (b_encfree)
-				sm_free (b_enc);
+				free(b_enc);
                         return (SEXP_PRET_EUNDEF);
 		}
         } else
@@ -1888,10 +1883,10 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
 
         if (b_declen == 0) {
                 if (b_encfree)
-                        sm_free (b_enc);
+			free(b_enc);
 
                 if (b_dec != NULL)
-                        sm_free (b_dec);
+			free(b_dec);
 
                 return (SEXP_PRET_EINVAL);
         }
@@ -1899,19 +1894,19 @@ __PARSE_RT SEXP_parse_kl_string_b64 (__PARSE_PT(dsc))
         if (SEXP_val_new (&v_dsc, sizeof (char) * b_declen,
                           SEXP_VALTYPE_STRING) != 0)
         {
-                sm_free (b_dec);
+		free(b_dec);
 
                 if (b_encfree)
-                        sm_free (b_enc);
+			free(b_enc);
 
                 return (SEXP_PRET_EUNDEF);
         }
 
         memcpy (v_dsc.mem, b_dec, sizeof (char) * b_declen);
-        sm_free (b_dec);
+	free(b_dec);
 
         if (b_encfree)
-                sm_free (b_enc);
+		free(b_enc);
 
         dsc->s_exp->s_valp = SEXP_val_ptr (&v_dsc);
 
@@ -1965,11 +1960,11 @@ found:
                 if ((dsc->p_explen - 2) < sizeof name_static)
                         name = name_static;
                 else
-                        name = sm_alloc (sizeof (char) * (dsc->p_explen - 1));
+			name = malloc(dsc->p_explen - 1);
 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen - 2, name) != 0) {
                         if (name != name_static)
-                                sm_free (name);
+				free(name);
 
                         return (SEXP_PRET_EUNDEF);
                 }
@@ -1984,12 +1979,12 @@ found:
 			dsc->s_exp->s_type = SEXP_datatype_add(&g_datatypes, name);
 
                         if (dsc->s_exp->s_type == NULL) {
-                                sm_free(name);
+				free(name);
                                 return(SEXP_PRET_EUNDEF);
                         }
                 } else {
                         if (name != name_static)
-                                sm_free (name);
+				free(name);
                 }
         }
 
@@ -2007,11 +2002,11 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
         if (dsc->p_explen < sizeof name_static)
                 name = name_static;
         else
-                name = sm_alloc (sizeof (char) * (dsc->p_explen + 1));
+		name = malloc(dsc->p_explen + 1);
 
         if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1, dsc->p_explen, name) != 0) {
                 if (name != name_static)
-                        sm_free (name);
+			free(name);
 
                 return (SEXP_PRET_EUNDEF);
         }
@@ -2023,15 +2018,15 @@ __PARSE_RT SEXP_parse_kl_datatype (__PARSE_PT(dsc))
                 if (name == name_static)
                         name = strdup(name);
 
-			dsc->s_exp->s_type = SEXP_datatype_add(&g_datatypes, name);
+		dsc->s_exp->s_type = SEXP_datatype_add(&g_datatypes, name);
 
                 if (dsc->s_exp->s_type == NULL) {
-                        sm_free(name);
+			free(name);
                         return(SEXP_PRET_EUNDEF);
                 }
         } else {
                 if (name != name_static)
-                        sm_free (name);
+			free(name);
         }
 
         ++dsc->p_explen;
