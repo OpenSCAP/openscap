@@ -43,17 +43,6 @@
 
 #define CPE_LANG_SUPPORTED "2.2"
 
-struct cpe_lang_model *cpe_lang_model_import(const char *file)
-{
-
-	__attribute__nonnull__(file);
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct cpe_lang_model *lang = cpe_lang_model_import_source(source);
-	oscap_source_free(source);
-	return lang;
-}
-
 void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file)
 {
 
