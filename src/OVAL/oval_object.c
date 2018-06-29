@@ -132,15 +132,6 @@ int oval_object_get_version(struct oval_object *object)
 	return ((struct oval_object *)object)->version;
 }
 
-oval_version_t oval_object_get_schema_version(struct oval_object *object)
-{
-	__attribute__nonnull__(object);
-
-	if (object->model == NULL)
-		return OVAL_VERSION_INVALID;
-	return oval_definition_model_get_schema_version(object->model);
-}
-
 oval_schema_version_t oval_object_get_platform_schema_version(struct oval_object *object)
 {
 	__attribute__nonnull__(object);

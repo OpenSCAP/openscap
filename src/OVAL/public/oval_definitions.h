@@ -1372,11 +1372,6 @@ OSCAP_API bool oval_object_get_deprecated(struct oval_object *);
 OSCAP_API int oval_object_get_version(struct oval_object *);
 
 /**
- * Returns schema version of the associated definition model
- */
-OSCAP_API OSCAP_DEPRECATED(oval_version_t oval_object_get_schema_version(struct oval_object *object));
-
-/**
  * Returns schema version of the associated platform extension definition model
  * @memberof oval_object
  */
