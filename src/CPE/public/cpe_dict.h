@@ -504,13 +504,6 @@ OSCAP_API bool cpe_item_add_check(struct cpe_item *item, struct cpe_check *new_c
 /// @memberof cpe_item
 OSCAP_API bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
 
-/**
- * @memberof cpe_item
- * @deprecated This function has been deprecated and it may be dropped from later
- * versions of the library. (Please see upstream ticket #339 for further details).
- */
-OSCAP_API OSCAP_DEPRECATED(bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title));
-
 /// @memberof cpe_dict_model
 OSCAP_API bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *new_item);
 
