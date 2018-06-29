@@ -851,15 +851,6 @@ OSCAP_API void cpe_language_iterator_reset(struct cpe_language_iterator *it);
  */
 OSCAP_API const char * cpe_dict_model_supported(void);
 
-/**
- * Detects which version the given CPE file is
- *
- * Deallocate the result after use with "free(..)".
- * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(char *cpe_dict_detect_version(const char* file));
-
 /** 
  * Verify wether given CPE is known according to specified dictionary
  * @memberof cpe_name

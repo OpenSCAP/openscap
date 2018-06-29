@@ -252,16 +252,3 @@ char *cpe_dict_detect_version_priv(xmlTextReader *reader)
 	}
 	return version;
 }
-
-char * cpe_dict_detect_version(const char* file)
-{
-	char *version = NULL;
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
-	if (reader != NULL) {
-		version = cpe_dict_detect_version_priv(reader);
-	}
-	xmlFreeTextReader(reader);
-	oscap_source_free(source);
-	return version;
-}
