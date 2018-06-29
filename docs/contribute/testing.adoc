@@ -13,9 +13,10 @@ in the link:../../tests[tests] directory. Use your best judgement when deciding
 where to put the test for your pull request and if you are not sure don't be
 affraid to ask in the pull request, someone will definitely help you with that.
 
-NOTE: OpenSCAP project uses the **GNU automake** which has built-in
-link:https://www.gnu.org/software/automake/manual/html_node/Tests.html[support
-for test suites].
+NOTE: OpenSCAP project uses the **CMake** buildsystem which has built-in
+testing support through the
+link:https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest[CTest]
+testing tool.
 
 
 == Preparing test environment and running tests
@@ -56,34 +57,35 @@ our test into the link:../../tests/sce[tests/sce] directory.
 This might happen if your test covers a part of the OpenSCAP which has no tests
 at all. In this case you would need to add a new directory with suitable name
 into the link:../../tests[tests] directory structure and create/update
-Makefiles.
+`CMakeLists.txt` files.
 
 To have an example also for this scenario, let's suppose we want to add the
 `foo` subdirectory into the link:../../tests[tests] directory. We need to:
 
 . Create the `foo` subdirectory in the link:../../tests[tests] directory.
-. Add a new entry for `foo` subdirectory into the `SUBDIRS` variable in
-  the link:../../tests/Makefile.am[tests/Makefile.am].
-. Create `Makefile.am` inside the `tests/foo` directory and list all
-  your test scripts inside that directory in the `TESTS` variable.
+. Use the link:https://cmake.org/cmake/help/latest/command/add_subdirectory.html[add_subdirectory]
+  command from the link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]
+  to add the `foo` subdirectory to the CMake buildsystem.
+. Create `CMakeLists.txt` inside the `tests/foo` directory and use the
+  `add_oscap_test` function (defined in the
+  link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]) to add all your test
+  scripts from the `foo` directory.
 
-Please see the GNU automake
-link:https://www.gnu.org/software/automake/manual/html_node/Tests.html[
-documentation about test suites] for more details.
+Please see the
+link:https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest[
+CTest documentation] for more details.
 
 
 === Common test library
 When writing tests for OpenSCAP you should use the common test library which is
 located at link:../../tests/test_common.sh.in[tests/test_common.sh.in].
 
-NOTE: The `configure` script will generate the `tests/test_common.sh` file from
+NOTE: The `cmake` command will generate the `tests/test_common.sh` file from
 the link:../../tests/test_common.sh.in[tests/test_common.sh.in] adding
 configuration specific settings.
 
 You will need to source the `tests/test_common.sh` in your test scripts to use
-the functions which it provides. When sourcing the file, you need to specify
-a relative path to it from the directory with your test script. For example,
-when your test script will be in the `tests/foo` directory:
+the functions which it provides:
 [[app-listing]]
 [source,bash]
 ----
@@ -91,12 +93,16 @@ when your test script will be in the `tests/foo` directory:
 
 set -o pipefail
 
-. ../test_common.sh
+. $builddir/tests/test_common.sh
 
 test1
 test2
 ...
 ----
+
+NOTE: The `$builddir` variable contains the path to the top level of the build
+tree. It is defined in the link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]
+as `builddir=${CMAKE_BINARY_DIR}`.
 
 
 ==== Global variables exported by test library
@@ -136,28 +142,24 @@ set -e
 
 
 ==== test_init function
-The function expects that you provide it with a name of a test log file.
-All tests which will be run after `test_init` using `test_run` function
-will report results into this log file:
-[[app-listing]]
-[source,bash]
-----
-test_init test_foo.log
-----
-
-NOTE: The specified log file will contain output of both `stdout` and `stderr`
-of every test executed by the `test_run` function.
+This function does nothing. Logging is done by the CTest and the log from
+testing can be found at `build/Testing/Temporary/LastTest.log`.
 
 
 ==== test_run function
 The function is responsible for executing a test script file or a function and
-logging its result into the log file created by the `test_init` function.
+logging its result into the log file.
 [[app-listing]]
 [source,bash]
 ----
 test_run "DESCRIPTION" TEST_FUNCTION|$srcdir/TEST_SCRIPT_FILE ARG [ARG...]
 ----
-The `$srcdir` variable contains the path to the directory with the test script.
+
+NOTE: The `$srcdir` variable contains the path to the directory with the test
+script. It is defined in the link:../../tests/CMakeLists.txt[tests/CMakeLists.txt]
+as `srcdir=${CMAKE_CURRENT_SOURCE_DIR}`. The reason is backward compatibility
+as originally tests were executed by the GNU automake.
+
 The `test_run` function reports the following results into the log file:
 
 * *PASS* when script/function returns *0*,
@@ -177,8 +179,6 @@ RESULT: PASS/FAIL/SKIP/WARN
 
 
 ==== test_exit function
-NOTE: This function should be called after the `test_init` function.
-
 The function is responsible for cleaning-up the testing environment. You can
 call it without arguments or with one argument -- a script/function which will
 do additional clean-up tasks.
@@ -263,57 +263,42 @@ XCCDF document file and it will check that all rule results are `pass`.
 
 === Plugging your new test into the test library
 You need to plug your test into the test library so it will be run automatically
-everytime `make check` is run. To do this, you need to add all the test files
-into the `Makefile.am`. The `Makefile.am` which you need to modify is located
-in the same directory as your test files.
+everytime `make test` is run. To do this, you need to add your test script
+into the `CMakeLists.txt`. The `CMakeLists.txt` which you need to modify is
+located in the same directory as your test script.
 
 We will demonstrate this on our example with the SCE test. We have prepared our
 test script, the XML document file with custom rules and various check scripts
 for testing. We placed all our test files into the
 link:../../tests/sce[tests/sce] directory. Now we will modify the
-link:../../tests/sce/Makefile.am[tests/sce/Makefile.am] and we will add all our
-test files into the `EXTRA_DIST` variable and our test script into the `TESTS`
-variable which will make sure that our test will be executed by the `make check`:
+link:../../tests/sce/CMakeLists.txt[tests/sce/CMakeLists.txt] and we will add
+our test script file using the `add_oscap_test` function which will make sure
+that our test will be executed by the `make test`:
 [[app-listing]]
 [subs=+quotes]
 ----
-...
-
-TESTS = *test_sce.sh* \
-		...
-
-...
-
-EXTRA_DIST = *test_sce.sh \
-		sce_xccdf.xml \
-		bash_passer.sh \
-		python_passer.py \
-		python_is16.py \
-		lua_passer.lua \*
-		...
+if(ENABLE_SCE)
+	...
+	*add_oscap_test("test_sce.sh")*
+	...
+endif()
 ----
 
 
 === Running your new test
 To run your new test you first need to compile the OpenSCAP library. See the
 *Compilation* section in the link:../../README.md[README.md] for more details.
-Also you don't need to run all the tests, only tests in a directory where you
-have added your new test. To do so, first change directory to the directory
-with your test and then run `make check` from there, for example:
+Also you don't need to run all the tests using `make test`, you can run only
+the specific test(s). To do so, you need to be in the build directory and
+run `ctest -R` from there, for example:
 [[app-listing]]
 [source,bash]
 ----
-$ cd tests/sce
-$ make check
+$ cd build/
+$ ctest -R sce/test_sce.sh
+$ less Testing/Temporary/LastTest.log
 ----
 
-Log file with your test results can be located under the name which is set
-using the `test_init` function in your test script. In our example,
-in the link:../../tests/sce/test_sce.sh[tests/sce/test_sce.sh] test script,
-the log file is set as `test_sce.log`.
-
-NOTE: Our Jenkins runs `make distcheck` instead of `make check` so please make
-sure that your test works for both of these modes. More details about the GNU
-Build System build tree and source tree can be found in the
-link:https://www.gnu.org/software/automake/manual/html_node/Checking-the-Distribution.html[GNU automake documentation].
+Results from testing will be printed on the stdout and detailed log file with
+your test results can be found in the `Testing/Temporary/LastTest.log` file.
 
