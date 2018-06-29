@@ -36,43 +36,6 @@
 #include "oscap_export.h"
 
 /**
- * @brief takes given source data stream and decomposes it into separate files
- *
- * This function bases the output on an XCCDF embedded in the "checklists"
- * element in the datastream. Most of the times this is what everybody wants.
- *
- * If you want to decompose just an OVAL file or some other custom behavior,
- * see ds_sds_decompose_custom.
- *
- * @param input_file
- *     File containing a datastream collection we want to decompose parts from
- *
- * @param id
- *     ID of a datastream we want to use from the given datastream
- *     collection. The first encountered datastream is used if id is NULL.
- *
- * @param xccdf_id
- *     ID of the component containing the XCCDF we want to process.
- *     The first encountered XCCDF component is used if id is NULL.
- *
- * @param target_dir
- *     Directory where the resulting files will be stored, names of the files
- *     are deduced using component-refs inside the datastream.
- *
- * @param target_filename
- *     Base name of the target XCCDF file, if NULL is given the filename will
- *     be deduced from the contents of the datastream.
- *
- * @returns
- * 	    0 if no errors were encountered
- * 	   -1 in case of errors
- *
- * @deprecated This function has been deprecated. Make a use of ds_sds_session
- *     instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* target_filename));
-
-/**
  * @brief same as ds_sds_decompose but works with other components than just XCCDFs
  *
  * @param container component reference container such as "checklists", "checks", ...

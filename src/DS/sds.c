@@ -598,11 +598,6 @@ int ds_sds_decompose_custom(const char* input_file, const char* id, const char* 
 	return ret;
 }
 
-int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* xccdf_filename)
-{
-	return ds_sds_decompose_custom(input_file, id, target_dir, "checklists", xccdf_id, xccdf_filename);
-}
-
 static inline int ds_sds_compose_component_add_script_content(xmlNode *component, const char *filepath)
 {
 	FILE* f = fopen(filepath, "r");
