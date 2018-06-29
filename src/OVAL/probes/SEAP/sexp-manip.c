@@ -40,13 +40,13 @@
 #include <math.h>
 
 #include "common/bfind.h"
-#include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
 #include "_sexp-rawptr.h"
 #include "public/sexp-manip.h"
 #include "public/sexp-manip_r.h"
+#include "debug_priv.h"
 
 static void SEXP_free_lmemb (SEXP_t *s_exp);
 
@@ -756,7 +756,6 @@ int SEXP_string_nth (const SEXP_t *s_exp, size_t n)
 char *SEXP_string_cstr (const SEXP_t *s_exp)
 {
         SEXP_val_t v_dsc;
-        char      *str;
         size_t     len;
 
         if (s_exp == NULL) {
@@ -774,7 +773,8 @@ char *SEXP_string_cstr (const SEXP_t *s_exp)
         }
 
         len = v_dsc.hdr->size / sizeof (char);
-        str = sm_alloc (sizeof (char) * (len + 1));
+
+	char *str = malloc(len + 1); // + 1 for terminating '\0'
 
         memcpy (str, v_dsc.mem, sizeof (char) * len);
 
@@ -846,7 +846,7 @@ char *SEXP_string_subcstr (const SEXP_t *s_exp, size_t beg, size_t len)
 
         if (s_len > 0) {
                 s_len = v_dsc.hdr->size / sizeof (char);
-                s_str = sm_alloc (sizeof (char) * (s_len + 1));
+		s_str = malloc(s_len + 1);
 
                 memcpy (s_str, ((char *) v_dsc.mem) + beg, sizeof (char) * s_len);
 
@@ -888,8 +888,8 @@ int SEXP_string_cmp (const SEXP_t *str_a, const SEXP_t *str_b)
 
         c = strcmp (a, b);
 
-        sm_free (a);
-        sm_free (b);
+	free(a);
+	free(b);
 
         return (c);
 }
@@ -1319,7 +1319,6 @@ struct SEXP_list_it{
 SEXP_list_it *SEXP_list_it_new(const SEXP_t *list)
 {
         SEXP_val_t v_dsc;
-        SEXP_list_it *it;
 
         if (list == NULL) {
                 errno = EFAULT;
@@ -1333,7 +1332,7 @@ SEXP_list_it *SEXP_list_it_new(const SEXP_t *list)
                 return (NULL);
         }
 
-        it = sm_talloc(SEXP_list_it);
+	SEXP_list_it *it = malloc(sizeof(SEXP_list_it));
         it->block = SEXP_LCASTP(v_dsc.mem)->b_addr;
         it->index = SEXP_LCASTP(v_dsc.mem)->offset;
         it->count = it->block != NULL ? it->block->real : 0;
@@ -1363,7 +1362,7 @@ SEXP_t *SEXP_list_it_next(SEXP_list_it *it)
 
 void SEXP_list_it_free(SEXP_list_it *it)
 {
-        sm_free(it);
+	free(it);
 }
 
 SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t *))
@@ -1394,7 +1393,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
          */
         list_it_count = 1;
         list_it_alloc = SEXP_LISTIT_ARRAY_INIT;
-        list_it = sm_alloc(sizeof(SEXP_list_it) * list_it_alloc);
+	list_it = malloc(sizeof(SEXP_list_it) * list_it_alloc);
 
         list_it[0].block = SEXP_LCASTP(v_dsc.mem)->b_addr;
 
@@ -1416,7 +1415,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
                            list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
 
                         list_it_alloc += SEXP_LISTIT_ARRAY_INC;
-                        list_it = sm_realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
+			list_it = realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
                 }
 
                 /* skip to the next block */
@@ -1479,7 +1478,7 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
         /*
          * Cleanup
          */
-        sm_free(list_it);
+	free(list_it);
 
         return (list);
 }
@@ -1489,7 +1488,7 @@ void SEXP_lstack_init (SEXP_lstack_t *stack)
         stack->p_list = SEXP_list_new (NULL);
         stack->l_size = SEXP_LSTACK_INIT_SIZE;
         stack->l_real = 1;
-        stack->l_sref = sm_alloc (sizeof (SEXP_t *) * SEXP_LSTACK_INIT_SIZE);
+	stack->l_sref = malloc(sizeof(SEXP_t *) * SEXP_LSTACK_INIT_SIZE);
         stack->l_sref[0] = SEXP_softref (stack->p_list);
 
         return;
@@ -1497,9 +1496,7 @@ void SEXP_lstack_init (SEXP_lstack_t *stack)
 
 SEXP_lstack_t *SEXP_lstack_new (void)
 {
-        SEXP_lstack_t *stack;
-
-        stack = sm_talloc (SEXP_lstack_t);
+	SEXP_lstack_t *stack = malloc(sizeof(SEXP_lstack_t));
         SEXP_lstack_init (stack);
 
         return (stack);
@@ -1512,7 +1509,7 @@ void SEXP_lstack_destroy (SEXP_lstack_t *stack)
         for (i = stack->l_real; i > 0; --i)
                 SEXP_free (stack->l_sref[i - 1]);
 
-        sm_free (stack->l_sref);
+	free(stack->l_sref);
         SEXP_free (stack->p_list);
         return;
 }
@@ -1520,7 +1517,7 @@ void SEXP_lstack_destroy (SEXP_lstack_t *stack)
 void SEXP_lstack_free (SEXP_lstack_t *stack)
 {
         SEXP_lstack_destroy (stack);
-        sm_free (stack);
+	free(stack);
         return;
 }
 
@@ -1532,7 +1529,7 @@ SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, SEXP_t *s_exp)
                 else
                         stack->l_size += SEXP_LSTACK_GROWSLOW_DIFF;
 
-                stack->l_sref = sm_realloc (stack->l_sref, sizeof (SEXP_t *) * stack->l_size);
+		stack->l_sref = realloc(stack->l_sref, sizeof(SEXP_t *) * stack->l_size);
         }
 
         stack->l_sref[stack->l_real++] = s_exp;
@@ -1562,7 +1559,7 @@ SEXP_t *SEXP_lstack_pop (SEXP_lstack_t *stack)
 
         return (ref);
 resize:
-        stack->l_sref = sm_realloc (stack->l_sref, sizeof (SEXP_t *) * stack->l_size);
+	stack->l_sref = realloc(stack->l_sref, sizeof(SEXP_t *) * stack->l_size);
         return (ref);
 }
 
@@ -1587,9 +1584,7 @@ size_t SEXP_lstack_depth (SEXP_lstack_t *stack)
 
 SEXP_t *SEXP_new (void)
 {
-        SEXP_t *s_exp;
-
-        s_exp = sm_talloc (SEXP_t);
+	SEXP_t *s_exp = malloc(sizeof(SEXP_t));
         s_exp->s_type = NULL;
         s_exp->s_valp = 0;
 
@@ -1658,7 +1653,7 @@ SEXP_t *SEXP_unref (SEXP_t *s_exp_o)
                         s_exp_o->__magic0 = SEXP_MAGIC0_INV;
                         s_exp_o->__magic1 = SEXP_MAGIC1_INV;
 #endif
-                        sm_free (s_exp_o);
+			free(s_exp_o);
 			return (NULL);
                 }
 
@@ -1863,7 +1858,7 @@ void SEXP_free (SEXP_t *s_exp)
 {
         if (s_exp != NULL) {
                 SEXP_free_r(s_exp);
-                sm_free(s_exp);
+		free(s_exp);
         }
         return;
 }
@@ -1901,7 +1896,7 @@ int SEXP_datatype_set (SEXP_t *s_exp, const char *name)
 		t = SEXP_datatype_add(&g_datatypes, k);
 
                 if (t == NULL) {
-                        sm_free(k);
+			free(k);
                         return(-1);
                 }
         }
@@ -1931,7 +1926,7 @@ int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
 		t = SEXP_datatype_add(&g_datatypes, k);
 
                 if (t == NULL) {
-                        sm_free(k);
+			free(k);
                         return(-1);
                 }
         }

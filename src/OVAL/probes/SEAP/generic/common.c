@@ -29,8 +29,8 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "public/sm_alloc.h"
 #include "common.h"
+#include "debug_priv.h"
 
 void *xmemdup (const void *src, size_t len)
 {
@@ -38,7 +38,7 @@ void *xmemdup (const void *src, size_t len)
 
         _A(src != NULL);
 
-        new = sm_alloc (len);
+	new = malloc(len);
         memcpy (new, src, len);
 
         return (new);

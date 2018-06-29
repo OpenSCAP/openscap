@@ -31,7 +31,6 @@
 #include <pthread.h>
 #include <errno.h>
 #include "public/seap.h"
-#include "public/sm_alloc.h"
 #include "generic/common.h"
 #include "_sexp-types.h"
 #include "_sexp-parser.h"
@@ -42,6 +41,7 @@
 #include "_seap-packet.h"
 #include "_seap.h"
 #include "seap-descriptor.h"
+#include "debug_priv.h"
 
 #define SCH_QUEUE 4
 
@@ -67,9 +67,7 @@ static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 
 SEAP_CTX_t *SEAP_CTX_new (void)
 {
-        SEAP_CTX_t *ctx;
-
-        ctx = sm_talloc (SEAP_CTX_t);
+	SEAP_CTX_t *ctx = malloc(sizeof(SEAP_CTX_t));
         SEAP_CTX_initdefault (ctx);
 
         return (ctx);
@@ -87,7 +85,7 @@ void SEAP_CTX_free (SEAP_CTX_t *ctx)
         _A(ctx != NULL);
         SEAP_desctable_free(ctx->sd_table);
         SEAP_cmdtbl_free (ctx->cmd_c_table);
-        sm_free (ctx);
+	free(ctx);
 
         return;
 }
@@ -368,7 +366,7 @@ int SEAP_recvmsg (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg)
                 switch (SEAP_packet_gettype (packet)) {
                 case SEAP_PACKET_MSG:
 
-                        (*seap_msg) = sm_talloc (SEAP_msg_t);
+			(*seap_msg) = malloc(sizeof(SEAP_msg_t));
                         memcpy ((*seap_msg), SEAP_packet_msg (packet), sizeof (SEAP_msg_t));
 
 			SEAP_packet_free (packet);

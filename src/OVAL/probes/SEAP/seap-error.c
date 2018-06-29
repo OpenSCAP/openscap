@@ -22,12 +22,11 @@
 
 #include <config.h>
 #include "public/sexp.h"
-#include "public/sm_alloc.h"
 #include "_seap-error.h"
 
 SEAP_err_t *SEAP_error_new(void)
 {
-	SEAP_err_t *e = sm_talloc(SEAP_err_t);
+	SEAP_err_t *e = malloc(sizeof(SEAP_err_t));
 
 	e->id   = 0;
 	e->code = 0;
@@ -53,6 +52,6 @@ void SEAP_error_free(SEAP_err_t *e)
 {
 	if (e->data == NULL)
 		SEXP_free(e->data);
-	sm_free(e);
+	free(e);
 	return;
 }

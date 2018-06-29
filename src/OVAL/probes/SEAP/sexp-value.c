@@ -29,7 +29,7 @@
 
 #include "_sexp-atomic.h"
 #include "_sexp-value.h"
-#include "public/sm_alloc.h"
+#include "debug_priv.h"
 
 int SEXP_val_new (SEXP_val_t *dst, size_t vmemsize, SEXP_type_t type)
 {

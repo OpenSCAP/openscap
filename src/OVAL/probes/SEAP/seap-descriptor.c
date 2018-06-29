@@ -26,7 +26,6 @@
 
 #include <pthread.h>
 
-#include "public/sm_alloc.h"
 #include "generic/bitmap.h"
 #include "_sexp-parser.h"
 #include "seap-descriptor.h"
@@ -34,9 +33,7 @@
 
 SEAP_desctable_t *SEAP_desctable_new (void)
 {
-        SEAP_desctable_t *t;
-
-        t = sm_talloc(SEAP_desctable_t);
+	SEAP_desctable_t *t = malloc(sizeof(SEAP_desctable_t));
         t->tree = NULL;
         t->bmap = NULL;
 
@@ -61,7 +58,7 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
                 if (sd_table->tree == NULL)
                         sd_table->tree = rbt_i32_new();
 
-                sd_dsc = sm_talloc(SEAP_desc_t);
+		sd_dsc = malloc(sizeof(SEAP_desc_t));
 
                 sd_dsc->next_id = 0;
                 /* sd_dsc->sexpcnt = 0; */
@@ -133,7 +130,7 @@ void SEAP_desc_free(SEAP_desc_t *dsc)
         pthread_mutex_destroy(&(dsc->r_lock));
         pthread_mutex_destroy(&(dsc->w_lock));
 	rbt_i32_free_cb(dsc->err_queue, __SEAP_desc_errqueue_free_cb);
-        sm_free(dsc);
+	free(dsc);
 }
 
 static void SEAP_desc_free_node(struct rbt_i32_node *n)
@@ -147,7 +144,7 @@ void SEAP_desctable_free(SEAP_desctable_t *sd_table)
                 rbt_i32_free_cb(sd_table->tree, &SEAP_desc_free_node);
         if (sd_table->bmap != NULL)
                 bitmap_free(sd_table->bmap);
-        sm_free(sd_table);
+	free(sd_table);
 }
 
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd)

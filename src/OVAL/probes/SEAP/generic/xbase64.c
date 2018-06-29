@@ -25,7 +25,6 @@
 
 #include <sys/types.h>
 
-#include "public/sm_alloc.h"
 #include "xbase64.h"
 
 #if defined(WANT_XBASE64)
@@ -87,7 +86,7 @@ size_t xbase64_encode (const uint8_t *data, size_t size, char **buffer) {
         register uint8_t    d = size % 3;
         register size_t  i, s = size - d;
 
-        *buffer = sm_alloc (sizeof (char) * (1 + (s/3 * 4) + (d != 0 ? 4 : 0)));
+	*buffer = malloc(sizeof(char) * (1 + (s/3 * 4) + (d != 0 ? 4 : 0)));
 
         for (i = 0; i < s/3; ++i) {
                 __xb64_enc3 (data + (i * 3), (*buffer) + (i * 4));
@@ -133,7 +132,7 @@ size_t xbase64_decode (const char *data, size_t size, uint8_t **buffer) {
 
         fprintf(stderr, "d = %u\n", d);
 
-        *buffer = sm_alloc (sizeof (uint8_t) * ((s/4 * 3) + d));
+	*buffer = malloc(sizeof(uint8_t) * ((s / 4 * 3) + d));
 
         for (i = 0; i < s/4; ++i) {
                 __xb64_dec4 (data + (i * 4), (*buffer) + (i * 3));
@@ -282,7 +281,7 @@ size_t base64_encode (const uint8_t *data, size_t size, char **buffer) {
         register uint8_t    d = size % 3;
         register size_t  i, s = size - d;
 
-        *buffer = sm_alloc (sizeof (char) * (1 + (s/3 * 4) + (d != 0 ? 4 : 0)));
+	*buffer = malloc(sizeof(char) * (1 + (s / 3 * 4) + (d != 0 ? 4 : 0)));
 
         for (i = 0; i < s/3; ++i) {
                 __b64_enc3 (data + (i * 3), (*buffer) + (i * 4));
@@ -326,7 +325,7 @@ size_t base64_decode (const char *data, size_t size, uint8_t **buffer) {
                 }
         }
 
-        *buffer = sm_alloc (sizeof (uint8_t) * ((s/4 * 3) + d));
+	*buffer = malloc(sizeof(uint8_t) * ((s / 4 * 3) + d));
 
         for (i = 0; i < s/4; ++i) {
                 __b64_dec4 (data + (i * 4), (*buffer) + (i * 3));

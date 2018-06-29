@@ -39,12 +39,12 @@
 
 #include "generic/common.h"
 #include "public/strbuf.h"
-#include "public/sm_alloc.h"
 #include "_sexp-types.h"
 #include "_sexp-output.h"
 #include "_sexp-value.h"
 #include "_sexp-datatype.h"
 #include "_sexp-rawptr.h"
+#include "debug_priv.h"
 
 #define SEXP_SBPRINTF_BUFSZ 1024
 

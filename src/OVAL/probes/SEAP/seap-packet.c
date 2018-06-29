@@ -38,14 +38,12 @@
 #include "public/seap-message.h"
 #include "public/seap-command.h"
 #include "public/seap-error.h"
-#include "public/sm_alloc.h"
 #include "sch_queue.h"
+#include "debug_priv.h"
 
 SEAP_packet_t *SEAP_packet_new (void)
 {
-        SEAP_packet_t *p;
-
-        p = sm_talloc (SEAP_packet_t);
+	SEAP_packet_t *p = malloc(sizeof(SEAP_packet_t));
         memset (p, 0, sizeof (SEAP_packet_t));
         p->type = SEAP_PACKET_INV;
 
@@ -54,7 +52,7 @@ SEAP_packet_t *SEAP_packet_new (void)
 
 void SEAP_packet_free (SEAP_packet_t *packet)
 {
-        sm_free (packet);
+	free(packet);
 }
 
 void *SEAP_packet_settype (SEAP_packet_t *packet, uint8_t type)
@@ -113,7 +111,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
         msg_icnt = SEXP_list_length (sexp_msg);
 
         seap_msg->attrs_cnt = msg_icnt - 4;
-        seap_msg->attrs     = sm_alloc (sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
+	seap_msg->attrs = malloc(sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
 
         for (msg_n = 2, attr_i = 0; msg_n < msg_icnt; ++msg_n) {
 
@@ -122,7 +120,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                         dI("Unexpected error: No S-exp (attr_name) at position %u in the message (%p).",
                            msg_n, sexp_msg);
 
-                        sm_free (seap_msg->attrs);
+		free(seap_msg->attrs);
 
                         return (SEAP_EUNEXP);
                 }
@@ -135,7 +133,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         dI("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).",
                                            "id", msg_n + 1, sexp_msg);
 
-                                        sm_free (seap_msg->attrs);
+					free(seap_msg->attrs);
 					SEXP_free(attr_name);
 
                                         return (SEAP_EUNEXP);
@@ -154,7 +152,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                                 dI("id: invalid value or type: s_exp=%p, type=%s",
                                                    (void *)attr_val, SEXP_strtype (attr_val));
 
-                                                sm_free (seap_msg->attrs);
+						free(seap_msg->attrs);
                                                 SEXP_free(attr_val);
                                                 SEXP_free(attr_name);
 
@@ -162,7 +160,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         case EFAULT:
                                                 dI("id: not found");
 
-                                                sm_free (seap_msg->attrs);
+						free(seap_msg->attrs);
                                                 SEXP_free(attr_val);
                                                 SEXP_free(attr_name);
 
@@ -179,16 +177,16 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                         dI("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).",
                                            seap_msg->attrs[attr_i].name, msg_n + 1, sexp_msg);
 
-                                        sm_free (seap_msg->attrs[attr_i].name);
+					free(seap_msg->attrs[attr_i].name);
 
                                         for (; attr_i > 0; --attr_i) {
-                                                sm_free (seap_msg->attrs[attr_i - 1].name);
+						free(seap_msg->attrs[attr_i - 1].name);
 
                                                 if (seap_msg->attrs[attr_i - 1].value != NULL)
                                                         SEXP_free (seap_msg->attrs[attr_i - 1].value);
                                         }
 
-                                        sm_free (seap_msg->attrs);
+					free(seap_msg->attrs);
                                         SEXP_free(attr_name);
 
                                         return (SEAP_EINVAL);
@@ -212,7 +210,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
         _A(attr_i >= (SEXP_list_length (sexp_msg) - 4)/2);
 
         seap_msg->attrs_cnt = attr_i;
-        seap_msg->attrs     = sm_realloc (seap_msg->attrs, sizeof (SEAP_attr_t) * seap_msg->attrs_cnt);
+	seap_msg->attrs = realloc(seap_msg->attrs, sizeof(SEAP_attr_t) * seap_msg->attrs_cnt);
         seap_msg->sexp      = SEXP_list_last (sexp_msg);
 
         return (0);

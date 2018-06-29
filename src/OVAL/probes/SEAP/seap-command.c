@@ -32,7 +32,6 @@
 #endif
 
 #include "generic/common.h"
-#include "public/sm_alloc.h"
 #include "_seap-types.h"
 #include "_sexp-types.h"
 #include "_sexp-manip.h"
@@ -40,6 +39,7 @@
 #include "_seap-command.h"
 #include "_seap-packet.h"
 #include "_seap.h"
+#include "debug_priv.h"
 
 int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...) /* sd, arg */
 {
@@ -118,9 +118,7 @@ int SEAP_cmd_register (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEA
  */
 SEAP_cmdrec_t *SEAP_cmdrec_new (void)
 {
-        SEAP_cmdrec_t *r;
-
-        r = sm_talloc (SEAP_cmdrec_t);
+	SEAP_cmdrec_t *r = malloc(sizeof(SEAP_cmdrec_t));
         r->code = 0;
         r->func = NULL;
         r->arg  = NULL;
@@ -130,14 +128,12 @@ SEAP_cmdrec_t *SEAP_cmdrec_new (void)
 
 void SEAP_cmdrec_free (SEAP_cmdrec_t *r)
 {
-        sm_free (r);
+	free(r);
 }
 
 SEAP_cmdtbl_t *SEAP_cmdtbl_new (void)
 {
-        SEAP_cmdtbl_t *t;
-
-        t = sm_talloc (SEAP_cmdtbl_t);
+	SEAP_cmdtbl_t *t = malloc(sizeof(SEAP_cmdtbl_t));
 
         t->table = NULL;
         t->maxcnt = 0;
@@ -146,7 +142,7 @@ SEAP_cmdtbl_t *SEAP_cmdtbl_new (void)
         if (pthread_rwlock_init (&t->lock, NULL) != 0) {
                 dI("Can't initialize rwlock: %u, %s.",
                    errno, strerror (errno));
-                sm_free (t);
+		free(t);
                 return (NULL);
         }
 #endif
@@ -157,7 +153,7 @@ void SEAP_cmdtbl_free (SEAP_cmdtbl_t *t)
 {
         if (t != NULL)
                 SEAP_cmdtbl_backendT_free (t);
-        sm_free(t);
+	free(t);
 }
 
 int SEAP_cmdtbl_setsize (SEAP_cmdtbl_t *t, size_t maxsz)
@@ -502,9 +498,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
 
 SEAP_cmdjob_t *SEAP_cmdjob_new (void)
 {
-        SEAP_cmdjob_t *j;
-
-        j = sm_talloc (SEAP_cmdjob_t);
+        SEAP_cmdjob_t *j = malloc(sizeof(SEAP_cmdjob_t));
         j->ctx = NULL;
         j->sd  = -1;
 
@@ -513,5 +507,5 @@ SEAP_cmdjob_t *SEAP_cmdjob_new (void)
 
 void SEAP_cmdjob_free (SEAP_cmdjob_t *j)
 {
-        sm_free (j);
+	free(j);
 }

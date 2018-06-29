@@ -27,10 +27,10 @@
 #include <stddef.h>
 #include <errno.h>
 
-#include "public/sm_alloc.h"
 #include "_seap-command.h"
 #include "seap-command-backendS.h"
 #include "seap-command-backendL.h"
+#include "debug_priv.h"
 
 typedef struct {
         SEAP_cmdrec_t **c_recs;
@@ -75,9 +75,9 @@ static Stable_t *Stable_new (size_t capacity)
         _A(capacity > 0 &&
            capacity < SEAP_COMMAND_BACKENDS_MAXCAPACITY);
         
-        t = sm_talloc (Stable_t);
+	t = malloc(sizeof(Stable_t));
         t->t_size = Stable_prime_gt (capacity);
-        t->t_recs = sm_calloc (t->t_size, sizeof (Stable_rec_t));
+	t->t_recs = calloc(t->t_size, sizeof(Stable_rec_t));
         
         for (i = 0; i < t->t_size; ++i)
                 t->t_recs[i].c_recs = NULL;
@@ -94,8 +94,7 @@ static int Stable_add (Stable_t *t, SEAP_cmdrec_t *r)
 
         t_r = &(t->t_recs[r->code % t->t_size]);
         ++(t_r->c_size);
-        t_r->c_recs = sm_realloc (t_r->c_recs,
-                                  sizeof (SEAP_cmdrec_t *) * t_r->c_size);
+	t_r->c_recs = realloc(t_r->c_recs, sizeof(SEAP_cmdrec_t *) * t_r->c_size);
         t_r->c_recs[t_r->c_size - 1] = r;
         
         return (0);
@@ -190,10 +189,10 @@ void SEAP_cmdtbl_backendS_free (SEAP_cmdtbl_t *t)
         if (St != NULL) {
                 for (i = 0; i < St->t_size; ++i)
                         if (St->t_recs[i].c_size > 0)
-                                sm_free (St->t_recs[i].c_recs);
+				free(St->t_recs[i].c_recs);
                 
-                sm_free (St->t_recs);
-                sm_free (St);
+		free(St->t_recs);
+		free(St);
                 
                 t->table = NULL;
         }
