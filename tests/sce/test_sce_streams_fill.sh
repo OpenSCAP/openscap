@@ -18,8 +18,6 @@ function test_sce_streams_fill {
     # my laptop. 60s is safe margin in case of slow virtual jenkins nodes
     timeout "60s" $OSCAP xccdf eval --results "$result" "$xccdf_file" 2> $stderr
     echo "===== result ====="
-    cat $result
-
     # zero is generated into stdout, 1 is stderr
     grep "001999990" $result && grep "101999990" $result
 }
