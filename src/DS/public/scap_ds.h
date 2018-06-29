@@ -344,14 +344,6 @@ OSCAP_API struct rds_report_request_index *rds_index_get_report_request(struct r
 OSCAP_API struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *id);
 /// @memberof rds_index
 OSCAP_API struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
-
-/**
- * @memberof rds_index
- * @deprecated This function has been deprecated. Make a use of ds_rds_session
- * instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
-
 /// @memberof rds_index
 OSCAP_API int rds_index_select_report(struct rds_index *s, const char **report_id);
 
