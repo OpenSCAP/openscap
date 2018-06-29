@@ -23,11 +23,12 @@
 #include <config.h>
 #include <string.h>
 #include <errno.h>
-#include "public/sm_alloc.h"
+
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-rawptr.h"
 #include "public/sexp-manip_r.h"
+#include "debug_priv.h"
 
 SEXP_t *SEXP_init(SEXP_t *sexp_mem)
 {
@@ -278,7 +279,7 @@ SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap)
         }
 
         memcpy  (v_dsc.mem, v_string, sizeof (char) * v_strlen);
-        sm_free (v_string);
+	free(v_string);
 
         SEXP_init(sexp_mem);
         sexp_mem->s_type = NULL;
