@@ -125,11 +125,6 @@ char *cpe_lang_model_detect_version_priv(xmlTextReader *reader)
 	return oscap_strdup("2.3");
 }
 
-char * cpe_lang_model_detect_version(const char* file)
-{
-	return cpe_lang_model_detect_version_priv(NULL);
-}
-
 /*
 bool cpe_language_match_str(const char* cpe, const struct cpe_platform* platform)
 {
