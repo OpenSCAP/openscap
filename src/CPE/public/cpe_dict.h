@@ -215,14 +215,6 @@ OSCAP_API struct cpe_check_iterator *cpe_item_get_checks(const struct cpe_item *
  */
 OSCAP_API struct oscap_text_iterator *cpe_item_get_titles(const struct cpe_item *item);
 
-/** cpe_item functions to get CPE notes
- * @memberof cpe_item
- * @param item CPE item
- * @deprecated This function has been deprecated and it may be dropped from later
- * versions of the library. (Please see upstream ticket #339 for further details).
- */
-OSCAP_API OSCAP_DEPRECATED(struct oscap_text_iterator *cpe_item_get_notes(const struct cpe_item *item));
-
 /** cpe_generator functions to get product name
  * @memberof cpe_generator
  * @param item document generator

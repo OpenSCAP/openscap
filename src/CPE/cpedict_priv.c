@@ -95,7 +95,6 @@ OSCAP_GETTER(struct cpe_item_metadata *, cpe_item, metadata)
 OSCAP_IGETINS_GEN(cpe_reference, cpe_item, references, reference)
 OSCAP_IGETINS_GEN(cpe_check, cpe_item, checks, check)
 OSCAP_IGETINS(oscap_text, cpe_item, titles, title)
-OSCAP_IGETINS(oscap_text, cpe_item, notes, note)
 OSCAP_ITERATOR_REMOVE_F(cpe_reference) OSCAP_ITERATOR_REMOVE_F(cpe_check)
 
 struct cpe_notes {				///< representation of <notes> element
