@@ -895,17 +895,6 @@ OSCAP_API bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, vo
  */
 OSCAP_API void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
 
-/** 
- * Load new CPE dictionary from file
- * @memberof cpe_dict_model
- * @param file filename
- * @return new dictionary
- * @retval NULL on failure
- * @deprecated This function has been deprecated by @ref cpe_dict_model_import_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct cpe_dict_model *cpe_dict_model_import(const char *file));
-
 /**
  * Load new CPE dictionary from an oscap_source
  * @memberof cpe_dict_model

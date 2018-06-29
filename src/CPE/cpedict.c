@@ -67,16 +67,6 @@ struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source)
 	return dict;
 }
 
-struct cpe_dict_model *cpe_dict_model_import(const char *file)
-{
-	__attribute__nonnull__(file);
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct cpe_dict_model *dict = cpe_dict_model_import_source(source);
-	oscap_source_free(source);
-	return dict;
-}
-
 bool cpe_dict_model_set_origin_file(struct cpe_dict_model* dict, const char* origin_file)
 {
 	free(dict->origin_file);

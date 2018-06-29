@@ -65,8 +65,11 @@ int main(int argc, char **argv)
 
 	else if (argc == 4 && !strcmp(argv[1], "--list-cpe-names")) {
 
-		if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
+		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+		if ((dict_model = cpe_dict_model_import_source(source)) == NULL) {
+			oscap_source_free(source);
 			return 2;
+		}
 
 		OSCAP_FOREACH(cpe_item, local_item,
 			      cpe_dict_model_get_items(dict_model),
@@ -75,12 +78,16 @@ int main(int argc, char **argv)
 			      putchar('\n');)
 
 		    cpe_dict_model_free(dict_model);
+		oscap_source_free(source);
 	}
 	// List all dictionary.
 	else if (argc == 4 && !strcmp(argv[1], "--list")) {
 
-		if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
+		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+		if ((dict_model = cpe_dict_model_import_source(source)) == NULL) {
+			oscap_source_free(source);
 			return 2;
+		}
 
 		// Generator.
 		generator = cpe_dict_model_get_generator(dict_model);
@@ -177,12 +184,16 @@ int main(int argc, char **argv)
 			putchar('\n');
 		}
 		cpe_dict_model_free(dict_model);
+		oscap_source_free(source);
 	}
 
 	else if (argc == 5 && !strcmp(argv[1], "--match")) {
 
-		if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
+		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+		if ((dict_model = cpe_dict_model_import_source(source)) == NULL) {
+			oscap_source_free(source);
 			return 2;
+		}
 
 		name = cpe_name_new(argv[4]);
 
@@ -198,12 +209,16 @@ int main(int argc, char **argv)
 
 		cpe_name_free(name);
 		cpe_dict_model_free(dict_model);
+		oscap_source_free(source);
 	}
 
 	else if (argc == 5 && !strcmp(argv[1], "--remove")) {
 
-		if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
+		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+		if ((dict_model = cpe_dict_model_import_source(source)) == NULL) {
+			oscap_source_free(source);
 			return 2;
+		}
 
 		name = cpe_name_new(argv[4]);
 
@@ -223,15 +238,20 @@ int main(int argc, char **argv)
 
 		    cpe_name_free(name);
 		cpe_dict_model_free(dict_model);
+		oscap_source_free(source);
 	}
 
 	else if (argc == 6 && !strcmp(argv[1], "--export")) {
-		if ((dict_model = cpe_dict_model_import(argv[2])) == NULL)
+		struct oscap_source *source = oscap_source_new_from_file(argv[2]);
+		if ((dict_model = cpe_dict_model_import_source(source)) == NULL) {
+			oscap_source_free(source);
 			return 2;
+		}
 
 		cpe_dict_model_export(dict_model, argv[4]);
 
 		cpe_dict_model_free(dict_model);
+		oscap_source_free(source);
 	}
 
 	else if (argc == 2 && !strcmp(argv[1], "--smoke-test")) {
