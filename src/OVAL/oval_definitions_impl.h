@@ -93,7 +93,6 @@ struct oval_object *oval_object_clone2(struct oval_definition_model *, struct ov
 struct oval_object *oval_object_create_internal(struct oval_object *, char *);
 struct oval_object *oval_object_get_base_obj(struct oval_object *);
 
-OSCAP_DEPRECATED(oval_version_t oval_state_get_schema_version(const struct oval_state *state));
 oval_schema_version_t oval_state_get_platform_schema_version(const struct oval_state *state);
 int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *context, void *);
 xmlNode *oval_state_to_dom(struct oval_state *, xmlDoc *, xmlNode *);

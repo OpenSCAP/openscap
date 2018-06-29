@@ -253,15 +253,6 @@ void oval_state_add_content(struct oval_state *state, struct oval_state_content 
 	oval_collection_add(state->contents, content);
 }
 
-oval_version_t oval_state_get_schema_version(const struct oval_state *state)
-{
-	__attribute__nonnull__(state);
-
-	if (state->model == NULL)
-		return OVAL_VERSION_INVALID;
-	return oval_definition_model_get_schema_version(state->model);
-}
-
 oval_schema_version_t oval_state_get_platform_schema_version(const struct oval_state *state)
 {
 	oval_family_t family = oval_state_get_family((struct oval_state *)state);
