@@ -163,15 +163,6 @@ const char * oval_definition_model_get_schema(struct oval_definition_model * mod
         return model->schema;
 }
 
-oval_version_t oval_definition_model_get_schema_version(struct oval_definition_model *model)
-{
-	if (model == NULL || model->generator == NULL) {
-		return OVAL_VERSION_INVALID;
-	}
-	const char *ver_str = oval_generator_get_core_schema_version(model->generator);
-	return oval_version_from_cstr(ver_str);
-}
-
 oval_schema_version_t oval_definition_model_get_core_schema_version(struct oval_definition_model *model)
 {
 	if (model == NULL || model->generator == NULL) {

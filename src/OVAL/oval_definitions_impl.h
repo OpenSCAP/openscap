@@ -177,7 +177,6 @@ void oval_definition_model_add_variable(struct oval_definition_model *, struct o
 
 const char * oval_definition_model_get_schema(struct oval_definition_model * model);
 void oval_definition_model_set_schema(struct oval_definition_model *model, const char *version);
-OSCAP_DEPRECATED(oval_version_t oval_definition_model_get_schema_version(struct oval_definition_model *model));
 oval_schema_version_t oval_definition_model_get_core_schema_version(struct oval_definition_model *model);
 oval_schema_version_t oval_definition_model_get_platform_schema_version(struct oval_definition_model *model, const char *platform);
 
