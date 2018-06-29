@@ -566,38 +566,6 @@ xmlNodePtr ds_sds_lookup_datastream_in_collection(xmlDocPtr doc, const char *dat
 	return datastream;
 }
 
-int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir,
-		const char* container_name, const char* component_id, const char* target_filename)
-{
-	struct oscap_source *ds_source = oscap_source_new_from_file(input_file);
-	struct ds_sds_session *session = ds_sds_session_new_from_source(ds_source);
-	if (session == NULL) {
-		oscap_source_free(ds_source);
-		return -1;
-	}
-	if (ds_sds_session_set_datastream_id(session, id)) {
-		ds_sds_session_free(session);
-		oscap_source_free(ds_source);
-		return -1;
-	}
-	if (ds_sds_session_set_target_dir(session, oscap_streq(target_dir, "") ? "." : target_dir)) {
-		ds_sds_session_free(session);
-		oscap_source_free(ds_source);
-		return -1;
-	}
-
-	if (ds_sds_session_register_component_with_dependencies(session, container_name, component_id, target_filename) != 0) {
-		ds_sds_session_free(session);
-		oscap_source_free(ds_source);
-		return -1;
-	}
-
-	int ret = ds_sds_session_dump_component_files(session);
-	ds_sds_session_free(session);
-	oscap_source_free(ds_source);
-	return ret;
-}
-
 static inline int ds_sds_compose_component_add_script_content(xmlNode *component, const char *filepath)
 {
 	FILE* f = fopen(filepath, "r");

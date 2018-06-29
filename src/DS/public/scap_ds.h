@@ -36,26 +36,6 @@
 #include "oscap_export.h"
 
 /**
- * @brief same as ds_sds_decompose but works with other components than just XCCDFs
- *
- * @param container component reference container such as "checklists", "checks", ...
- *
- * @param component_id
- * 		id of the component you want to start the export from. If NULL, all
- * 		components refs inside given container will be exported.
- *
- * @param target_filename
- *     Base name of the target file, if NULL is given the filename will
- *     be deduced from the contents of the datastream.
- *
- * @see ds_sds_decompose
- *
- * @deprecated This function has been deprecated. Make a use of ds_sds_session
- *     instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir, const char* container_name, const char* component_id, const char* target_filename));
-
-/**
  * @brief takes given xccdf file and constructs a source datastream
  *
  * @param xccdf_file
