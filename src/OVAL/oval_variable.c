@@ -388,16 +388,6 @@ struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2
 	}
 }
 
-struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable)
-{
-	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
-		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
-		return oval_collection_iterator(var->possible_restrictions);
-	} else {
-		return oval_collection_iterator_new();
-	}
-}
-
 struct oval_variable_possible_restriction_iterator *oval_variable_get_possible_restrictions2(struct oval_variable *variable)
 {
 	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
