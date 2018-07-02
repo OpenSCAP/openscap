@@ -220,15 +220,6 @@ struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *sourc
 	return tailoring;
 }
 
-struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark)
-{
-	struct oscap_source *source = oscap_source_new_from_file(file);
-
-	struct xccdf_tailoring *tailoring = xccdf_tailoring_import_source(source, benchmark);
-	oscap_source_free(source);
-	return tailoring;
-}
-
 xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr doc, xmlNodePtr parent, const struct xccdf_version_info *version_info)
 {
 	xmlNs *ns_tailoring = NULL;

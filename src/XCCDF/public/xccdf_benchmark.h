@@ -2692,13 +2692,6 @@ OSCAP_API const char *xccdf_instance_get_parent_context(const struct xccdf_insta
 OSCAP_API const char *xccdf_instance_get_content(const struct xccdf_instance *item);
 /// @memberof xccdf_tailoring
 OSCAP_API struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark);
-/*
- * @memberof xccdf_tailoring
- * @deprecated This function has been deprecated by @ref xccdf_tailoring_import_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark));
-
 /// @memberof xccdf_tailoring
 OSCAP_API const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
