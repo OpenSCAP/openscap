@@ -43,7 +43,6 @@
 #include "oscap_source.h"
 #include "oval_adt.h"
 #include "oval_types.h"
-#include "oval_version.h"
 #include "oval_schema_version.h"
 #include <stdbool.h>
 #include "oscap_export.h"

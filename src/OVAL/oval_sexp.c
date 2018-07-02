@@ -50,7 +50,6 @@
 #include "adt/oval_string_map_impl.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
-#include "public/oval_version.h"
 #include "public/oval_schema_version.h"
 
 

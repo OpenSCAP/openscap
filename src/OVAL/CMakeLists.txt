@@ -50,7 +50,6 @@ set (OVAL_SOURCES
     "oval_sys_parser.c"
     "oval_varModel.c"
     "oval_vardefMapping.c"
-    "oval_version.c"
 )
 
 if (ENABLE_PROBES)
