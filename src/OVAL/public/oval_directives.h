@@ -76,13 +76,6 @@ OSCAP_API int oval_directives_model_import_source(struct oval_directives_model *
 
 /**
  * @memberof oval_directives_model
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases. Please use oval_directives_model_import_source instead.
- */
-OSCAP_API OSCAP_DEPRECATED(int oval_directives_model_import(struct oval_directives_model *, char *));
-
-/**
- * @memberof oval_directives_model
  */
 OSCAP_API struct oval_generator *oval_directives_model_get_generator(struct oval_directives_model *);
 /**

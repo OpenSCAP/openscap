@@ -138,15 +138,6 @@ int oval_directives_model_import_source(struct oval_directives_model *model, str
 	return ret;
 }
 
-int oval_directives_model_import(struct oval_directives_model * model, char *file) {
-	/* open file */
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	int ret = oval_directives_model_import_source(model, source);
-        oscap_source_free(source);
-
-	return ret;
-}
-
 int oval_directives_model_export(struct oval_directives_model *model, const char *file) {
 	 __attribute__nonnull__(model);
 
