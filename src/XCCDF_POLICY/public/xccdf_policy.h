@@ -227,20 +227,6 @@ OSCAP_API struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions
  * Function to register callback for checking system
  * @param model XCCDF Policy Model
  * @param sys String representing given checking system
- * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
- * @param usr optional parameter for passing user data to callback
- * @memberof xccdf_policy_model
- * @return true if callback registered succesfully, false otherwise
- *
- * @deprecated This function is deprecated by @ref xccdf_policy_model_register_engine_and_query_callback
- * and might be dropped from future releases.
- */
-OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr));
-
-/**
- * Function to register callback for checking system
- * @param model XCCDF Policy Model
- * @param sys String representing given checking system
  * @param eval_fn Callback - pointer to function called by XCCDF Policy system when rule parsed
  * @param usr optional parameter for passing user data to callback
  * @param query_fn - optional parameter for providing xccdf_policy_engine_query_fn implementation for given system.

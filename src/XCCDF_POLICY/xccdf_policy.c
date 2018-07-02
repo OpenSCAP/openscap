@@ -1553,17 +1553,6 @@ const char * xccdf_policy_get_id(struct xccdf_policy * policy)
     else return NULL;
 }
 
-/**
- * Funtion to register callback for particular checking system. System is used for evaluating content
- * of rules.
- */
-OSCAP_DEPRECATED(
-bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr)
-{
-	return xccdf_policy_model_register_engine_and_query_callback(model, sys, func, usr, NULL);
-}
-)
-
 bool
 xccdf_policy_model_register_engine_and_query_callback(struct xccdf_policy_model *model, char *sys, xccdf_policy_engine_eval_fn eval_fn, void *usr, xccdf_policy_engine_query_fn query_fn)
 {
