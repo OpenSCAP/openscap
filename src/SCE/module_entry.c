@@ -80,15 +80,6 @@ static int sce_engine_export_results(struct xccdf_policy_model *model, bool vali
 		char target[2 + strlen(sce_check_result_get_basename(check_result)) + 11 + 1];
 		snprintf(target, sizeof(target), "./%s.result.xml", sce_check_result_get_basename(check_result));
 		sce_check_result_export(check_result, target);
-
-		if (validate) {
-			// FIXME: This is borken!
-			/*if (oscap_validate_document(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0", NULL, NULL)) {
-				_validation_failed(target, OSCAP_DOCUMENT_SCE_RESULT, "1.0");
-				sce_check_result_iterator_free(it);
-				return 1;
-			}*/
-		}
 	}
 
 	sce_check_result_iterator_free(it);

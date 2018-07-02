@@ -53,10 +53,13 @@ int main(int argc, char **argv)
 			return 1;
 		}
 
-		if (oscap_validate_document(argv[3], OSCAP_DOCUMENT_XCCDF, argv[2], NULL, stdout)) {
+		struct oscap_source *source = oscap_source_new_from_file(argv[3]);
+		if (oscap_source_validate(source, NULL, stdout)) {
 			fprintf(stderr, "ERROR: %s\n", oscap_err_desc());
+			oscap_source_free(source);
 			return 1;
 		}
+		oscap_source_free(source);
 		return 0;
 
 	}

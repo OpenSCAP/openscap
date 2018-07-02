@@ -115,26 +115,6 @@ OSCAP_API const char *oscap_document_type_to_string(oscap_document_type_t type);
 typedef int (*xml_reporter)(const char *file, int line, const char *msg, void *arg);
 
 /**
- * Validate a SCAP document file against a XML schema.
- *
- * Schemas are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable.
- * If the variable does not exist a default path is used (usually something like $PREFIX/share/openscap/schemas).
- *
- * Directory structure must adhere $SCHEMA_PATH/$STANDARD/$VERSION/$SCHEMAFILE.xsd structure, where $STANDARD
- * is oval, xccdf, etc., and $VERSION is a version of the standard.
- *
- * @param xmlfile File to be validated.
- * @param doctype Document type represented by the file.
- * @param version Version of the document, use NULL for library's default.
- * @param reporter A reporter to by notified of encountered issues. Can be NULL, if a binary document validates / does not validate answer is satisfactonary.
- * @param arg Argument for the reporter.
- * @return 0 on pass; -1 error; 1 fail
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases. Please use oscap_source_validate instead.
- */
-OSCAP_API OSCAP_DEPRECATED(int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg));
-
-/**
  * Validate a SCAP document file against schematron rules.
  *
  * The rules are searched relative to path specified by the OSCAP_SCHEMA_PATH environment variable.

@@ -356,11 +356,6 @@ class OSCAP_Object(object):
             raise TypeError("Wrong call of oval_probe_session_query_objects function on %s" % (self.object,))
         return OSCAP.oval_probe_session_query_objects(self.instance)
 
-    def validate_document(self, file, doctype, version, cb, usr):
-        if self.object != "oscap":
-            raise TypeError("Wrong call of validate_document function on %s" % (self.object,))
-        return OSCAP.oscap_validate_document_py(file, doctype, version, self.__output_callback, (cb, usr))
-
     """ ********* Implementation of required high level functions ********* """
 
     def get_all_values(self):
