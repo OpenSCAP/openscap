@@ -105,12 +105,6 @@ char *oval_generator_get_product_version(struct oval_generator *generator)
 	return generator->product_version;
 }
 
-char *oval_generator_get_schema_version(struct oval_generator *generator)
-{
-	/* Removed a const type because we can't change API of this function. */
-	return (char *) oval_generator_get_core_schema_version(generator);
-}
-
 const char *oval_generator_get_core_schema_version(struct oval_generator *generator)
 {
 	return generator->core_schema_version;

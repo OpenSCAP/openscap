@@ -603,7 +603,6 @@ OSCAP_API void oval_generator_free(struct oval_generator *generator);
 OSCAP_API struct oval_generator *oval_generator_clone(struct oval_generator *old_generator);
 OSCAP_API char *oval_generator_get_product_name(struct oval_generator *generator);
 OSCAP_API char *oval_generator_get_product_version(struct oval_generator *generator);
-OSCAP_API OSCAP_DEPRECATED(char *oval_generator_get_schema_version(struct oval_generator *generator));
 OSCAP_API const char *oval_generator_get_core_schema_version(struct oval_generator *generator);
 OSCAP_API char *oval_generator_get_timestamp(struct oval_generator *generator);
 OSCAP_API const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform);
