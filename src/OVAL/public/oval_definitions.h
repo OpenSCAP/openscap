@@ -628,16 +628,6 @@ OSCAP_API struct oval_definition_model *oval_definition_model_new(void);
 OSCAP_API struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source);
 
 /**
- * Import the content from the file into an oval_definition_model.
- * @param file filename
- * @return new oval_definition_model, or NULL if an error occurred
- * @memberof oval_definition_model
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases. Please use oval_definition_model_import_source instead.
- */
-OSCAP_API OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(const char *file));
-
-/**
  * Merge the content from the file with specified oval_definition_model.
  * If imported content specifies a model entity that is already registered within the model its content is overwritten.
  * @param model the merge target model
