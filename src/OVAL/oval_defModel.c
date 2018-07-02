@@ -252,20 +252,6 @@ struct oval_definition_model *oval_definition_model_import_source(struct oscap_s
 	return model;
 }
 
-int oval_definition_model_merge(struct oval_definition_model *model, const char *file)
-{
-	__attribute__nonnull__(model);
-
-	int ret;
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	ret = _oval_definition_model_merge_source(model, source);
-
-	oscap_source_free(source);
-
-	return ret;
-}
-
 struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *model, const char *key)
 {
 	__attribute__nonnull__(model);
