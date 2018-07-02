@@ -1840,10 +1840,6 @@ struct xccdf_select_iterator * xccdf_policy_get_selected_rules(struct xccdf_poli
                                                                        policy);
 }
 
-bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref) {
-	return false;
-}
-
 /**
  * Get Policy from Policy model by it's id.
  */

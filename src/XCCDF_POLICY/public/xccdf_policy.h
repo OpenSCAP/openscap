@@ -421,17 +421,6 @@ OSCAP_API bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct
 OSCAP_API bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
 
 /**
- * Set a new selector to the Policy structure
- * @memberof xccdf_policy
- * @return true if rule has been added succesfully
- * @deprecated This function is deprecated by @ref xccdf_policy_add_select
- * and might be dropped from future releases.
- */
-OSCAP_DEPRECATED(
-bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref)
-);
-
-/**
  * Add result to XCCDF Policy Model
  * @memberof xccdf_policy_model
  */
