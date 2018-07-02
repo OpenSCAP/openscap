@@ -182,11 +182,6 @@ void oval_variable_possible_restriction_add_restriction(struct oval_variable_pos
 	oval_collection_add(pr->restrictions, r);
 }
 
-struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction)
-{
-	return oval_collection_iterator(possible_restriction->restrictions);
-}
-
 struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions2(struct oval_variable_possible_restriction *possible_restriction)
 {
 	return (struct oval_variable_restriction_iterator*)oval_collection_iterator(possible_restriction->restrictions);

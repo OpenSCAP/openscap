@@ -1916,7 +1916,6 @@ OSCAP_API struct oval_variable_possible_restriction_iterator *oval_variable_get_
  * It should be freed after use by the calling application.
  * @memberof oval_variable_possible_restriction
  */
-OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction));
 OSCAP_API struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions2(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
