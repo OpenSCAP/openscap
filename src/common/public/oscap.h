@@ -138,13 +138,6 @@ OSCAP_API const char * oscap_path_to_schemas(void);
  */
 OSCAP_API const char * oscap_path_to_cpe(void);
 
-/**
- * Determine document type
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases. Please use oscap_source_get_scap_type instead.
- */
-OSCAP_API OSCAP_DEPRECATED(int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type));
-
 /************************************************************/
 /** @} validation group end */
 

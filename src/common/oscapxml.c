@@ -132,13 +132,6 @@ int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outf
 	return ret;
 }
 
-int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
-	struct oscap_source *source = oscap_source_new_from_file(document);
-	*doc_type = oscap_source_get_scap_type(source);
-	oscap_source_free(source);
-	return (*doc_type == OSCAP_DOCUMENT_UNKNOWN) ? -1 : 0;
-}
-
 const char *oscap_document_type_to_string(oscap_document_type_t type)
 {
 	switch (type) {
