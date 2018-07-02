@@ -378,16 +378,6 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 		(struct oval_value_iterator *) oval_collection_iterator_new();
 }
 
-struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable)
-{
-	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
-		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
-		return oval_collection_iterator(var->possible_values);
-	} else {
-		return oval_collection_iterator_new();
-	}
-}
-
 struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2(struct oval_variable *variable)
 {
 	if (variable->type == OVAL_VARIABLE_EXTERNAL) {

@@ -1899,7 +1899,6 @@ OSCAP_API struct oval_component *oval_variable_get_component(struct oval_variabl
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable));
 OSCAP_API struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2(struct oval_variable *variable);
 
 /**
