@@ -699,17 +699,6 @@ OSCAP_API struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
 OSCAP_API struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
 
 /**
- * Import the content from a specified XML stream into a benchmark.
- * @memberof xccdf_benchmark
- * @param file filename.
- * @return Pointer to the new benchmark.
- * @retval NULL on failure
- * @deprecated This function has been deprecated by @ref xccdf_benchmark_import_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct xccdf_benchmark* xccdf_benchmark_import(const char *file));
-
-/**
  * Import the content from oscap_source into a benchmark
  * @memberof xccdf_benchmark
  * @param source The oscap_source to import from

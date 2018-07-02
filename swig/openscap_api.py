@@ -803,7 +803,7 @@ class _XCCDF_Benchmark_Class(OSCAP_Object):
 
     def __init__(self, path):
         dict.__setattr__(self, "object", "xccdf_benchmark")
-        dict.__setattr__(self, "instance", OSCAP.xccdf_benchmark_import(path))
+        dict.__setattr__(self, "instance", OSCAP.xccdf_benchmark_import_source(OSCAP.oscap_source_new_from_file(path)))
 
     def __repr__(self):
         return "<Oscap Object of type 'XCCDF Benchmark' at %s>" % (hex(id(self)),)

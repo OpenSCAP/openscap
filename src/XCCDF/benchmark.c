@@ -51,14 +51,6 @@ struct xccdf_backref {
 	char *id;		// id
 };
 
-struct xccdf_benchmark *xccdf_benchmark_import(const char *file)
-{
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct xccdf_benchmark *benchmark = xccdf_benchmark_import_source(source);
-	oscap_source_free(source);
-	return benchmark;
-}
-
 struct xccdf_benchmark *xccdf_benchmark_import_source(struct oscap_source *source)
 {
 	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);

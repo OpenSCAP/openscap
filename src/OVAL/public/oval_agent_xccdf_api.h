@@ -67,7 +67,7 @@ typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_pol
  * \code
  *  struct oscap_source *source = oscap_source_new_from_file(file);
  *  struct oval_definition_model *def_model = oval_definition_model_import_source(source);
- *  struct xccdf_benchmark *benchmark = xccdf_benchmark_import(file);
+ *  struct xccdf_benchmark *benchmark = xccdf_benchmark_import_source(source);
  *  struct xccdf_policy_model *policy_model = xccdf_policy_model_new(benchmark);
  *  struct oval_agent_session *sess = oval_agent_new_session(def_model, "name-of-file");
  *  ...
