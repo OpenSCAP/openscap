@@ -104,13 +104,6 @@ const char *oscap_path_to_xslt(void)
 	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
 }
 
-OSCAP_DEPRECATED(
-const char * oscap_path_to_schematron() {
-	// It has never returned correct path to schematron files.
-	return oscap_path_to_xslt();
-}
-)
-
 const char * oscap_path_to_cpe() {
 	return oscap_path_to("OSCAP_CPE_PATH", OSCAP_CPE_PATH);
 }
