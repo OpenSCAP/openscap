@@ -137,11 +137,6 @@ void oval_generator_set_product_version(struct oval_generator *generator, const 
 	generator->product_version = oscap_strdup(product_version);
 }
 
-void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version)
-{
-	oval_generator_set_core_schema_version(generator, schema_version);
-}
-
 void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version)
 {
 	free(generator->core_schema_version);
