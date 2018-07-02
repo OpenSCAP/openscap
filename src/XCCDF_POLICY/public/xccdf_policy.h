@@ -211,14 +211,6 @@ OSCAP_API bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model * model
 OSCAP_API bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_model * model, struct oscap_source *source);
 
 /**
- * Registers an additional CPE lang model for applicability testing
- * The one embedded in the evaluated XCCDF take precedence!
- *
- * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_lang_model_source
- */
-OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, const char *cpe_lang));
-
-/**
  * Registers an additional CPE resource (either dictionary or language)
  * Autodetects given file and acts accordingly.
  * The one embedded in the evaluated XCCDF take precedence!

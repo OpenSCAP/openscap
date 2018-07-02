@@ -1525,17 +1525,6 @@ bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_model *mod
 	return cpe_session_add_cpe_lang_model_source(model->cpe, source);
 }
 
-bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model *model, const char * cpe_lang)
-{
-		__attribute__nonnull__(model);
-		__attribute__nonnull__(cpe_lang);
-
-	struct oscap_source *source = oscap_source_new_from_file(cpe_lang);
-	bool ret = cpe_session_add_cpe_lang_model_source(model->cpe, source);
-	oscap_source_free(source);
-	return ret;
-}
-
 bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *model, struct oscap_source *source)
 {
 	__attribute__nonnull__(model);
