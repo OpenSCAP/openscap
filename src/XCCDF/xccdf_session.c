@@ -1606,11 +1606,6 @@ int xccdf_session_export_check_engine_plugins(struct xccdf_session *session)
 	return ret;
 }
 
-int xccdf_session_export_sce(struct xccdf_session *session)
-{
-	return xccdf_session_export_check_engine_plugins(session);
-}
-
 int xccdf_session_export_arf(struct xccdf_session *session)
 {
 	if (session->export.arf_file != NULL) {

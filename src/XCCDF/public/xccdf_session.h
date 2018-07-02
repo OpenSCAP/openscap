@@ -469,16 +469,6 @@ OSCAP_API int xccdf_session_export_oval(struct xccdf_session *session);
 OSCAP_API int xccdf_session_export_check_engine_plugins(struct xccdf_session *session);
 
 /**
- * Export SCE files (if enabled by @ref xccdf_session_set_sce_results_export).
- *
- * @deprecated Please use xccdf_session_export_check_engine_plugins instead.
- * @memberof xccdf_session
- * @param session XCCDF Session
- * @returns zero on success
- */
-OSCAP_API OSCAP_DEPRECATED(int xccdf_session_export_sce(struct xccdf_session *session));
-
-/**
  * Export ARF (if enabled by @ref xccdf_session_set_arf_export).
  * @memberof xccdf_session
  * @param session XCCDF Session
