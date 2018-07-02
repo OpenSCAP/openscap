@@ -3435,18 +3435,6 @@ typedef enum xccdf_subst_type {
     XCCDF_SUBST_INSTANCE   ///< substitute cdf:instance element
 } xccdf_subst_type_t;
 
-/**
- * Textual substitution callback.
- * This function is supposed to return textual representation of the substitution with given ID.
- * @param type Type of the substitution
- * @param id   ID of the object to be substituted
- * @param arg  arbitrary user-defined argument
- * @return     newly allocated substitution string (will be free'd)
- * @deprecated This callback has been deprecated. It cannot be applied on XCCDF 1.2+ documents
- * given the xccdf:sub/@use parameter.
- */
-typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
-
 /************************************************************/
 /** @} End of XCCDF group */
 /// @}
