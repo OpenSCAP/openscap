@@ -124,14 +124,6 @@ void oscap_cleanup(void)
 
 const char *oscap_get_version(void) { return OPENSCAP_VERSION; }
 
-int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile) {
-
-	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
-	int ret = oscap_source_validate_schematron_priv(source, doctype, version, outfile);
-	oscap_source_free(source);
-	return ret;
-}
-
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
 	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
