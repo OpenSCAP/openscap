@@ -1533,14 +1533,6 @@ bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *mod
 	return cpe_session_add_cpe_autodetect_source(model->cpe, source);
 }
 
-bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char* filepath)
-{
-	struct oscap_source *source = oscap_source_new_from_file(filepath);
-	bool ret = cpe_session_add_cpe_autodetect_source(model->cpe, source);
-	oscap_source_free(source);
-	return ret;
-}
-
 struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model)
 {
 	return oscap_htable_iterator_new(model->cpe->oval_sessions);

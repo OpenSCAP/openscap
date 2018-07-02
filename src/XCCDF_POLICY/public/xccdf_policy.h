@@ -218,15 +218,6 @@ OSCAP_API bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_
 OSCAP_API bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *model, struct oscap_source *source);
 
 /**
- * Registers an additional CPE resource (either dictionary or language)
- * Autodetects given file and acts accordingly.
- * The one embedded in the evaluated XCCDF take precedence!
- *
- * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_autodetect_source
- */
-OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char *filepath));
-
-/**
  * Retrieves an iterator of all OVAL sessions created for CPE applicability evaluation
  * key is the OVAL href, value is the OVAL session itself (type oval_agent_session*)
  */
