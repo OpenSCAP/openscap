@@ -3447,19 +3447,6 @@ typedef enum xccdf_subst_type {
  */
 typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
 
-
-/**
- * Perform a textual substitution.
- * Calls @a cb on each substitution (e.g. a cdf:sub element) of @a text and returns a string with substitutions done.
- * @param text source text
- * @param cb substitution callback
- * @param arg arbitrary argument to be passed to he callback
- * @return substituted string (it is up to the caller to free it)
- * @deprecated This function has been deprecated. It cannot be applied on XCCDF 1.2+ documents
- * given the xccdf:sub/@use parameter.
- */
-OSCAP_API OSCAP_DEPRECATED(char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg));
-
 /************************************************************/
 /** @} End of XCCDF group */
 /// @}

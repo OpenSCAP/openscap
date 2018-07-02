@@ -569,19 +569,5 @@ bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t docty
     return oscap_validate_document(xmlfile, doctype, version, validate_callback_wrapper, (void *)new_usrdata);
 }
 
-char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject *usr) {
-    struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
-    Py_INCREF(func);
-    Py_INCREF(usr);
-    new_usrdata = malloc(sizeof(struct internal_usr));
-    if (new_usrdata == NULL) return false;
-
-    new_usrdata->func = func;
-    new_usrdata->usr = usr;
-
-    return oscap_text_xccdf_substitute(text, sub_callback_wrapper, (void *)new_usrdata);
-}
-
 %}
 #endif

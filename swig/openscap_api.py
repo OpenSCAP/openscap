@@ -361,11 +361,6 @@ class OSCAP_Object(object):
             raise TypeError("Wrong call of validate_document function on %s" % (self.object,))
         return OSCAP.oscap_validate_document_py(file, doctype, version, self.__output_callback, (cb, usr))
 
-    def text_xccdf_substitute(self, text, cb, usr):
-        if self.object != "oscap":
-            raise TypeError("Wrong call of text_xccdf_substitute function on %s" % (self.object,))
-        return OSCAP.oscap_text_xccdf_substitute_py(text, cb, usr)
-
     """ ********* Implementation of required high level functions ********* """
 
     def get_all_values(self):
