@@ -195,32 +195,6 @@ int oval_probe_query_sysinfo(oval_probe_session_t *sess, struct oval_sysinfo **o
 	return(0);
 }
 
-static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode);
-
-int oval_probe_query_definition(oval_probe_session_t *sess, const char *id) {
-
-	struct oval_syschar_model * syschar_model;
-        struct oval_definition_model *definition_model;
-	struct oval_definition *definition;
-	int ret;
-
-	syschar_model = sess->sys_model;
-        definition_model = oval_syschar_model_get_definition_model(syschar_model);
-	definition = oval_definition_model_get_definition(definition_model, id);
-	if (definition == NULL) {
-                oscap_seterr(OSCAP_EFAMILY_OSCAP, "No definition with ID: %s in definition model.", id);
-		return -1;
-	}
-
-	struct oval_criteria_node * cnode = oval_definition_get_criteria(definition);
-	if (cnode == NULL)
-		return -1;
-
-	ret = oval_probe_query_criteria(sess, cnode);
-
-	return ret;
-}
-
 static int oval_probe_query_var_ref(oval_probe_session_t *sess, struct oval_state *state)
 {
 	struct oval_state_content_iterator *contents = oval_state_get_contents(state);
@@ -296,63 +270,3 @@ int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
 	return 0;
 }
 
-static int oval_probe_query_extend_definition(oval_probe_session_t *sess, struct oval_criteria_node *cnode)
-{
-	struct oval_definition *oval_def = oval_criteria_node_get_definition(cnode);
-	const char *def_id = oval_definition_get_id(oval_def);
-	return oval_probe_query_definition(sess, def_id);
-}
-
-/**
- * @returns 0 on success; -1 on error; 1 on warning
- */
-static int oval_probe_query_criteria(oval_probe_session_t *sess, struct oval_criteria_node *cnode) {
-	int ret;
-
-	switch (oval_criteria_node_get_type(cnode)) {
-	/* Criterion node is the final node that has a reference to a test */
-	case OVAL_NODETYPE_CRITERION:{
-		/* There should be a test .. */
-		struct oval_test *test = oval_criteria_node_get_test(cnode);
-		if (test == NULL) {
-			return 0;
-		}
-		ret = oval_probe_query_test(sess, test);
-		return ret;
-		}
-		break;
-                /* Criteria node is type of set that contains more criterias. Criteria node
-                 * child can be also type of criteria, criterion or extended definition */
-        case OVAL_NODETYPE_CRITERIA:{
-                        /* group of criterion nodes, get subnodes, continue recursive */
-                        struct oval_criteria_node_iterator *cnode_it = oval_criteria_node_get_subnodes(cnode);
-                        if (cnode_it == NULL)
-                                return 0;
-                        /* we have subnotes */
-                        struct oval_criteria_node *node;
-                        while (oval_criteria_node_iterator_has_more(cnode_it)) {
-                                node = oval_criteria_node_iterator_next(cnode_it);
-                                ret = oval_probe_query_criteria(sess, node);
-                                if (ret != 0) {
-                                        oval_criteria_node_iterator_free(cnode_it);
-                                        return ret;
-                                }
-                        }
-                        oval_criteria_node_iterator_free(cnode_it);
-			return 0;
-                }
-                break;
-                /* Extended definition contains reference to definition, we need criteria of this
-                 * definition to be evaluated completely */
-        case OVAL_NODETYPE_EXTENDDEF:{
-		ret = oval_probe_query_extend_definition(sess, cnode);
-		return ret;
-                }
-                break;
-        case OVAL_NODETYPE_UNKNOWN:
-                break;
-        }
-
-	/* we shouldn't get here */
-        return -1;
-}
