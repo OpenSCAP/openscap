@@ -228,21 +228,6 @@ int oval_results_model_import_source(struct oval_results_model *model, struct os
 	return ret;
 }
 
-int oval_results_model_import(struct oval_results_model *model, const char *file)
-{
-	__attribute__nonnull__(model);
-
-	int ret = 0;
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	ret = oval_results_model_import_source(model, source);
-	oscap_source_free(source);
-
-	return ret;
-}
-
-
-
 int oval_results_model_eval(struct oval_results_model *res_model)
 {
 	struct oval_result_system_iterator *systems_itr;
