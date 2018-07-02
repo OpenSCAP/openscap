@@ -642,16 +642,6 @@ OSCAP_API const char* xccdf_version_info_get_namespace_uri(const struct xccdf_ve
 /// @memberof xccdf_version_info
 OSCAP_API const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* v);
 
-/**
- * Starts parsing given XCCDF benchmark file to detect its version,
- * stops as soon as the version is found. Returned string should be
- * freed by caller. Return NULL if error occur.
- * @memberof xccdf_benchmark
- * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(char * xccdf_detect_version(const char* file));
-
 /************************************************************/
 
 /// @memberof xccdf_item
