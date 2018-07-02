@@ -736,16 +736,6 @@ OSCAP_API struct xccdf_result *xccdf_result_import_source(struct oscap_source *s
 OSCAP_API void xccdf_result_fill_sysinfo(struct xccdf_result *result);
 
 /**
- * Export a TestResult to an XML stream
- * @memberof xccdf_result
- * @return Integer
- * @retval -1 if error occurred
- * @deprecated This function has been deprecated by @ref xccdf_benchmark_export_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char *file));
-
-/**
  * Export TestResult to oscap_source structure
  * @memberof xccdf_result
  * @returns newly created oscap_source or NULL on error
