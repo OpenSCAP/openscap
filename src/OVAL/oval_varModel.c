@@ -319,15 +319,6 @@ struct oval_variable_model *oval_variable_model_import_source(struct oscap_sourc
 
 }
 
-struct oval_variable_model * oval_variable_model_import(const char *file)
-{
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct oval_variable_model *model = oval_variable_model_import_source(source);
-	oscap_source_free(source);
-	return model;
-}
-
-
 static xmlNode *oval_variable_model_to_dom(struct oval_variable_model * variable_model,
 				   xmlDocPtr doc, xmlNode * parent, void *user_arg)
 {
