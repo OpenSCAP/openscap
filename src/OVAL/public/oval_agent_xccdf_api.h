@@ -65,14 +65,15 @@ typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_pol
  * Next example shows common use of this function in evaluation proccess of XCCDF file.
  * \par
  * \code
-OSCAP_API  *  struct oval_definition_model * def_model = oval_definition_model_import(oval_file);
-OSCAP_API  *  struct xccdf_benchmark * benchmark = xccdf_benchmark_import(file);
-OSCAP_API  *  struct xccdf_policy_model * policy_model = xccdf_policy_model_new(benchmark);
-OSCAP_API  *  struct oval_agent_session * sess = oval_agent_new_session(def_model, "name-of-file");
+ *  struct oscap_source *source = oscap_source_new_from_file(file);
+ *  struct oval_definition_model *def_model = oval_definition_model_import_source(source);
+ *  struct xccdf_benchmark *benchmark = xccdf_benchmark_import(file);
+ *  struct xccdf_policy_model *policy_model = xccdf_policy_model_new(benchmark);
+ *  struct oval_agent_session *sess = oval_agent_new_session(def_model, "name-of-file");
  *  ...
-OSCAP_API  *  xccdf_policy_model_register_engine_and_query_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess, NULL);
+ *  xccdf_policy_model_register_engine_and_query_callback(policy_model, "http://oval.mitre.org/XMLSchema/oval-definitions-5", oval_agent_eval_rule, (void *) sess, NULL);
  * \endcode
- * 
+ *
  */
 xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy * policy, const char * rule_id, const char * id, const char * href,
 		struct xccdf_value_binding_iterator * it,
