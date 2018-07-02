@@ -922,12 +922,6 @@ OSCAP_API void xccdf_tailoring_free(struct xccdf_tailoring *tailoring);
 OSCAP_API int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, const struct xccdf_version_info *version_info);
 
 /**
- * Release library internal caches.
- * @deprecated Use @ref oscap_cleanup() instead.
- */
-OSCAP_API OSCAP_DEPRECATED(void xccdf_cleanup(void));
-
-/**
  * Create a group and append it to the benchmark.
  * @param id - the identifier of the appended value.
  * @return the handle of the new group.

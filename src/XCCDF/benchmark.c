@@ -647,13 +647,6 @@ void xccdf_notice_free(struct xccdf_notice *notice)
 OSCAP_ACCESSOR_STRING(xccdf_notice, id)
 OSCAP_ACCESSOR_TEXT(xccdf_notice, text)
 
-OSCAP_DEPRECATED(
-void xccdf_cleanup(void)
-{
-	xmlCleanupParser();
-}
-)
-
 const char * xccdf_benchmark_supported(void)
 {
     return XCCDF_SUPPORTED;
