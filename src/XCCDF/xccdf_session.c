@@ -1132,11 +1132,6 @@ static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *sess
 	session->check_engine_plugins = oscap_list_new();
 }
 
-int xccdf_session_load_sce(struct xccdf_session *session)
-{
-	return xccdf_session_load_check_engine_plugins(session);
-}
-
 int xccdf_session_load_tailoring(struct xccdf_session *session)
 {
 	bool from_sds = false;

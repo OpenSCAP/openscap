@@ -427,13 +427,6 @@ OSCAP_API int xccdf_session_load_check_engine_plugin(struct xccdf_session *sessi
 OSCAP_API int xccdf_session_load_check_engine_plugins(struct xccdf_session *session);
 
 /**
- * @deprecated
- * SCE is no longer part of the main openscap library,
- * use xccdf_session_load_check_engine_plugins instead.
- */
-OSCAP_API OSCAP_DEPRECATED(int xccdf_session_load_sce(struct xccdf_session *session));
-
-/**
  * Load Tailoring file (if applicable) to the XCCDF session.
  * @memberof xccdf_session
  * @param session XCCDF Session
