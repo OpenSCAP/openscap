@@ -400,11 +400,6 @@ void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session 
 	session->export.check_engine_plugins_results = to_export_results;
 }
 
-void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results)
-{
-	xccdf_session_set_check_engine_plugins_results_export(session, to_export_sce_results);
-}
-
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file)
 {
 	free(session->export.arf_file);

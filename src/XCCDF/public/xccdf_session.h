@@ -279,14 +279,6 @@ OSCAP_API void xccdf_session_set_oval_results_export(struct xccdf_session *sessi
 OSCAP_API void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session *session, bool to_export_results);
 
 /**
- * Set that SCE reult files shall be exported.
- * @memberof xccdf_session
- * @param session XCCDF Session
- * @param to_export_sce_results whether to export SCE results or not.
- */
-OSCAP_API OSCAP_DEPRECATED(void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results));
-
-/**
  * Set whether the OVAL variables files shall be exported.
  * @memberof xccdf_session
  * @param session XCCDF Session
