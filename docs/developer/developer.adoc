@@ -92,9 +92,9 @@ Note: If you want to run `make distcheck` you will also need to install
 on Fedora), or you can install `rubygems` package and then run
 `gem install asciidoctor`.
 +
-It's also possible to use the make check to test any other oscap binary present in the system. You just have to set the path of the binary to the CUSTOM_OSCAP variable:
+It's also possible to use `ctest` to test any other oscap binary present in the system. You just have to set the path of the binary to the CUSTOM_OSCAP variable:
 
- $ export CUSTOM_OSCAP=/usr/bin/oscap; make test
+ $ export CUSTOM_OSCAP=/usr/bin/oscap; ctest
 +
 Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
 
