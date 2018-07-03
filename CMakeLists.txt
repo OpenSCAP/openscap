@@ -262,9 +262,7 @@ option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE
 
 # ---------- LANGUAGE BINDINGS
 cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
-
-# TODO: Shouldn't we only enable this if perl was found?
-option(ENABLE_PERL "if enabled, the perl swig bindings will be built" FALSE)
+cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be built" ON "PERLLIBS_FOUND;SWIG_FOUND" OFF)
 
 # ---------- NO IDEA WHAT THIS IS FOR
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
