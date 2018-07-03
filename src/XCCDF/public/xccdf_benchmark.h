@@ -642,16 +642,6 @@ OSCAP_API const char* xccdf_version_info_get_namespace_uri(const struct xccdf_ve
 /// @memberof xccdf_version_info
 OSCAP_API const char* xccdf_version_info_get_cpe_version(const struct xccdf_version_info* v);
 
-/**
- * Starts parsing given XCCDF benchmark file to detect its version,
- * stops as soon as the version is found. Returned string should be
- * freed by caller. Return NULL if error occur.
- * @memberof xccdf_benchmark
- * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(char * xccdf_detect_version(const char* file));
-
 /************************************************************/
 
 /// @memberof xccdf_item
@@ -709,17 +699,6 @@ OSCAP_API struct xccdf_value* xccdf_item_to_value(struct xccdf_item* item);
 OSCAP_API struct xccdf_result* xccdf_item_to_result(struct xccdf_item* item);
 
 /**
- * Import the content from a specified XML stream into a benchmark.
- * @memberof xccdf_benchmark
- * @param file filename.
- * @return Pointer to the new benchmark.
- * @retval NULL on failure
- * @deprecated This function has been deprecated by @ref xccdf_benchmark_import_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct xccdf_benchmark* xccdf_benchmark_import(const char *file));
-
-/**
  * Import the content from oscap_source into a benchmark
  * @memberof xccdf_benchmark
  * @param source The oscap_source to import from
@@ -755,16 +734,6 @@ OSCAP_API struct xccdf_result *xccdf_result_import_source(struct oscap_source *s
  * @memberof xccdf_result
  */
 OSCAP_API void xccdf_result_fill_sysinfo(struct xccdf_result *result);
-
-/**
- * Export a TestResult to an XML stream
- * @memberof xccdf_result
- * @return Integer
- * @retval -1 if error occurred
- * @deprecated This function has been deprecated by @ref xccdf_benchmark_export_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int xccdf_result_export(struct xccdf_result *result, const char *file));
 
 /**
  * Export TestResult to oscap_source structure
@@ -951,12 +920,6 @@ OSCAP_API struct xccdf_tailoring *xccdf_tailoring_new(void);
 OSCAP_API void xccdf_tailoring_free(struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
 OSCAP_API int xccdf_tailoring_export(struct xccdf_tailoring *tailoring, const char *file, const struct xccdf_version_info *version_info);
-
-/**
- * Release library internal caches.
- * @deprecated Use @ref oscap_cleanup() instead.
- */
-OSCAP_API OSCAP_DEPRECATED(void xccdf_cleanup(void));
 
 /**
  * Create a group and append it to the benchmark.
@@ -2729,13 +2692,6 @@ OSCAP_API const char *xccdf_instance_get_parent_context(const struct xccdf_insta
 OSCAP_API const char *xccdf_instance_get_content(const struct xccdf_instance *item);
 /// @memberof xccdf_tailoring
 OSCAP_API struct xccdf_tailoring *xccdf_tailoring_import_source(struct oscap_source *source, struct xccdf_benchmark *benchmark);
-/*
- * @memberof xccdf_tailoring
- * @deprecated This function has been deprecated by @ref xccdf_tailoring_import_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct xccdf_tailoring *xccdf_tailoring_import(const char *file, struct xccdf_benchmark *benchmark));
-
 /// @memberof xccdf_tailoring
 OSCAP_API const char *xccdf_tailoring_get_id(const struct xccdf_tailoring *tailoring);
 /// @memberof xccdf_tailoring
@@ -3478,31 +3434,6 @@ typedef enum xccdf_subst_type {
     XCCDF_SUBST_LINK,      ///< substitute a hyperlink
     XCCDF_SUBST_INSTANCE   ///< substitute cdf:instance element
 } xccdf_subst_type_t;
-
-/**
- * Textual substitution callback.
- * This function is supposed to return textual representation of the substitution with given ID.
- * @param type Type of the substitution
- * @param id   ID of the object to be substituted
- * @param arg  arbitrary user-defined argument
- * @return     newly allocated substitution string (will be free'd)
- * @deprecated This callback has been deprecated. It cannot be applied on XCCDF 1.2+ documents
- * given the xccdf:sub/@use parameter.
- */
-typedef char*(*xccdf_substitution_func)(xccdf_subst_type_t type, const char *id, void *arg);
-
-
-/**
- * Perform a textual substitution.
- * Calls @a cb on each substitution (e.g. a cdf:sub element) of @a text and returns a string with substitutions done.
- * @param text source text
- * @param cb substitution callback
- * @param arg arbitrary argument to be passed to he callback
- * @return substituted string (it is up to the caller to free it)
- * @deprecated This function has been deprecated. It cannot be applied on XCCDF 1.2+ documents
- * given the xccdf:sub/@use parameter.
- */
-OSCAP_API OSCAP_DEPRECATED(char* oscap_text_xccdf_substitute(const char *text, xccdf_substitution_func cb, void *arg));
 
 /************************************************************/
 /** @} End of XCCDF group */

@@ -133,20 +133,6 @@ char *oval_determine_document_schema_version_priv(xmlTextReader *reader, oscap_d
 	return version;
 }
 
-
-char *oval_determine_document_schema_version(const char *document, oscap_document_type_t doc_type)
-{
-	char *ret = NULL;
-	struct oscap_source *source = oscap_source_new_from_file(document);
-	xmlTextReaderPtr reader = oscap_source_get_xmlTextReader(source);
-	if (reader != NULL) {
-		ret = oval_determine_document_schema_version_priv(reader, doc_type);
-		xmlFreeTextReader(reader);
-	}
-	oscap_source_free(source);
-	return ret;
-}
-
 /*
  * -1 error; 0 OK; 1 warning
  */

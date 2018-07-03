@@ -182,11 +182,6 @@ void oval_variable_possible_restriction_add_restriction(struct oval_variable_pos
 	oval_collection_add(pr->restrictions, r);
 }
 
-struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction)
-{
-	return oval_collection_iterator(possible_restriction->restrictions);
-}
-
 struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions2(struct oval_variable_possible_restriction *possible_restriction)
 {
 	return (struct oval_variable_restriction_iterator*)oval_collection_iterator(possible_restriction->restrictions);
@@ -378,16 +373,6 @@ struct oval_value_iterator *oval_variable_get_values(struct oval_variable *varia
 		(struct oval_value_iterator *) oval_collection_iterator_new();
 }
 
-struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable)
-{
-	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
-		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
-		return oval_collection_iterator(var->possible_values);
-	} else {
-		return oval_collection_iterator_new();
-	}
-}
-
 struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2(struct oval_variable *variable)
 {
 	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
@@ -395,16 +380,6 @@ struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2
 		return (struct oval_variable_possible_value_iterator*)oval_collection_iterator(var->possible_values);
 	} else {
 		return (struct oval_variable_possible_value_iterator*)oval_collection_iterator_new();
-	}
-}
-
-struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable)
-{
-	if (variable->type == OVAL_VARIABLE_EXTERNAL) {
-		oval_variable_EXTERNAL_t *var = (oval_variable_EXTERNAL_t *) variable;
-		return oval_collection_iterator(var->possible_restrictions);
-	} else {
-		return oval_collection_iterator_new();
 	}
 }
 

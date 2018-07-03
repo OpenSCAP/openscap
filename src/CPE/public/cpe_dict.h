@@ -185,15 +185,6 @@ OSCAP_API struct cpe_name *cpe_item_get_name(const struct cpe_item *item);
  */
 OSCAP_API struct cpe_name *cpe_item_get_deprecated_by(const struct cpe_item *item);
 
-/** cpe_item functions to get variable member deprecated_by
- * @memberof cpe_item
- * @param item CPE item
- * @returns deprecated_by attribute
- * @deprecated This function has been deprecated by @ref cpe_item_get_deprecated_by.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct cpe_name *cpe_item_get_deprecated(const struct cpe_item *item));
-
 /** cpe_item functions to get variable member date
  * @memberof cpe_item
  * @param item CPE item
@@ -223,14 +214,6 @@ OSCAP_API struct cpe_check_iterator *cpe_item_get_checks(const struct cpe_item *
  * @param item CPE item
  */
 OSCAP_API struct oscap_text_iterator *cpe_item_get_titles(const struct cpe_item *item);
-
-/** cpe_item functions to get CPE notes
- * @memberof cpe_item
- * @param item CPE item
- * @deprecated This function has been deprecated and it may be dropped from later
- * versions of the library. (Please see upstream ticket #339 for further details).
- */
-OSCAP_API OSCAP_DEPRECATED(struct oscap_text_iterator *cpe_item_get_notes(const struct cpe_item *item));
 
 /** cpe_generator functions to get product name
  * @memberof cpe_generator
@@ -520,13 +503,6 @@ OSCAP_API bool cpe_item_add_check(struct cpe_item *item, struct cpe_check *new_c
 
 /// @memberof cpe_item
 OSCAP_API bool cpe_item_add_title(struct cpe_item *item, struct oscap_text *new_title);
-
-/**
- * @memberof cpe_item
- * @deprecated This function has been deprecated and it may be dropped from later
- * versions of the library. (Please see upstream ticket #339 for further details).
- */
-OSCAP_API OSCAP_DEPRECATED(bool cpe_item_add_note(struct cpe_item *item, struct oscap_text *new_title));
 
 /// @memberof cpe_dict_model
 OSCAP_API bool cpe_dict_model_add_item(struct cpe_dict_model *dict, struct cpe_item *new_item);
@@ -875,15 +851,6 @@ OSCAP_API void cpe_language_iterator_reset(struct cpe_language_iterator *it);
  */
 OSCAP_API const char * cpe_dict_model_supported(void);
 
-/**
- * Detects which version the given CPE file is
- *
- * Deallocate the result after use with "free(..)".
- * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(char *cpe_dict_detect_version(const char* file));
-
 /** 
  * Verify wether given CPE is known according to specified dictionary
  * @memberof cpe_name
@@ -927,17 +894,6 @@ OSCAP_API bool cpe_item_is_applicable(struct cpe_item* item, cpe_check_fn cb, vo
  * @memberof cpe_dict_model
  */
 OSCAP_API void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file);
-
-/** 
- * Load new CPE dictionary from file
- * @memberof cpe_dict_model
- * @param file filename
- * @return new dictionary
- * @retval NULL on failure
- * @deprecated This function has been deprecated by @ref cpe_dict_model_import_source.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct cpe_dict_model *cpe_dict_model_import(const char *file));
 
 /**
  * Load new CPE dictionary from an oscap_source

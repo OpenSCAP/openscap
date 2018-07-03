@@ -36,63 +36,6 @@
 #include "oscap_export.h"
 
 /**
- * @brief takes given source data stream and decomposes it into separate files
- *
- * This function bases the output on an XCCDF embedded in the "checklists"
- * element in the datastream. Most of the times this is what everybody wants.
- *
- * If you want to decompose just an OVAL file or some other custom behavior,
- * see ds_sds_decompose_custom.
- *
- * @param input_file
- *     File containing a datastream collection we want to decompose parts from
- *
- * @param id
- *     ID of a datastream we want to use from the given datastream
- *     collection. The first encountered datastream is used if id is NULL.
- *
- * @param xccdf_id
- *     ID of the component containing the XCCDF we want to process.
- *     The first encountered XCCDF component is used if id is NULL.
- *
- * @param target_dir
- *     Directory where the resulting files will be stored, names of the files
- *     are deduced using component-refs inside the datastream.
- *
- * @param target_filename
- *     Base name of the target XCCDF file, if NULL is given the filename will
- *     be deduced from the contents of the datastream.
- *
- * @returns
- * 	    0 if no errors were encountered
- * 	   -1 in case of errors
- *
- * @deprecated This function has been deprecated. Make a use of ds_sds_session
- *     instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int ds_sds_decompose(const char* input_file, const char* id, const char* xccdf_id, const char* target_dir, const char* target_filename));
-
-/**
- * @brief same as ds_sds_decompose but works with other components than just XCCDFs
- *
- * @param container component reference container such as "checklists", "checks", ...
- *
- * @param component_id
- * 		id of the component you want to start the export from. If NULL, all
- * 		components refs inside given container will be exported.
- *
- * @param target_filename
- *     Base name of the target file, if NULL is given the filename will
- *     be deduced from the contents of the datastream.
- *
- * @see ds_sds_decompose
- *
- * @deprecated This function has been deprecated. Make a use of ds_sds_session
- *     instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int ds_sds_decompose_custom(const char* input_file, const char* id, const char* target_dir, const char* container_name, const char* component_id, const char* target_filename));
-
-/**
  * @brief takes given xccdf file and constructs a source datastream
  *
  * @param xccdf_file
@@ -126,12 +69,6 @@ OSCAP_API int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* targ
  * @returns 0 in case of success
  */
 OSCAP_API int ds_sds_compose_add_component(const char *target_datastream, const char *datastream_id, const char *new_component, bool extended);
-
-/**
- * @deprecated This function has been deprecated. Make a use of ds_rds_session
- * instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(int ds_rds_decompose(const char* input_file, const char* report_id, const char* request_id, const char* target_dir));
 
 /**
  * @brief takes given source data stream and XCCDF result file and makes a result data stream
@@ -261,16 +198,6 @@ OSCAP_API struct ds_stream_index* ds_sds_index_get_stream(struct ds_sds_index* s
  * @memberof ds_sds_index
  */
 OSCAP_API struct ds_stream_index_iterator* ds_sds_index_get_streams(struct ds_sds_index* s);
-
-/**
- * @brief imports given source datastream and indexes it
- *
- * @memberof ds_sds_index
- *
- * @deprecated This function has been deprecated. Make a use of ds_sds_session
- *     instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct ds_sds_index *ds_sds_index_import(const char* file));
 
 /**
  * @brief chooses datastream and checklist id combination given the IDs
@@ -417,14 +344,6 @@ OSCAP_API struct rds_report_request_index *rds_index_get_report_request(struct r
 OSCAP_API struct rds_asset_index *rds_index_get_asset(struct rds_index *rds, const char *id);
 /// @memberof rds_index
 OSCAP_API struct rds_report_index *rds_index_get_report(struct rds_index *rds, const char *id);
-
-/**
- * @memberof rds_index
- * @deprecated This function has been deprecated. Make a use of ds_rds_session
- * instread. This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct rds_index *rds_index_import(const char *file));
-
 /// @memberof rds_index
 OSCAP_API int rds_index_select_report(struct rds_index *s, const char **report_id);
 

@@ -891,21 +891,6 @@ struct oscap_source *xccdf_result_stig_viewer_export_source(struct xccdf_result 
 	return oscap_source_new_from_xmlDoc(doc, filepath);
 }
 
-int xccdf_result_export(struct xccdf_result *result, const char *file)
-{
-	__attribute__nonnull__(file);
-
-	LIBXML_TEST_VERSION;
-
-	struct oscap_source *result_source = xccdf_result_export_source(result, file);
-	if (result_source == NULL) {
-		return -1;
-	}
-	int ret = oscap_source_save_as(result_source, NULL);
-	oscap_source_free(result_source);
-	return ret;
-}
-
 void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlDoc *doc, xmlNode *parent, bool use_stig_rule_id)
 {
         xmlNs *ns_xccdf = NULL;

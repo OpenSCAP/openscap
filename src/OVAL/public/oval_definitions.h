@@ -43,7 +43,6 @@
 #include "oscap_source.h"
 #include "oval_adt.h"
 #include "oval_types.h"
-#include "oval_version.h"
 #include "oval_schema_version.h"
 #include <stdbool.h>
 #include "oscap_export.h"
@@ -603,13 +602,11 @@ OSCAP_API void oval_generator_free(struct oval_generator *generator);
 OSCAP_API struct oval_generator *oval_generator_clone(struct oval_generator *old_generator);
 OSCAP_API char *oval_generator_get_product_name(struct oval_generator *generator);
 OSCAP_API char *oval_generator_get_product_version(struct oval_generator *generator);
-OSCAP_API OSCAP_DEPRECATED(char *oval_generator_get_schema_version(struct oval_generator *generator));
 OSCAP_API const char *oval_generator_get_core_schema_version(struct oval_generator *generator);
 OSCAP_API char *oval_generator_get_timestamp(struct oval_generator *generator);
 OSCAP_API const char *oval_generator_get_platform_schema_version (struct oval_generator *generator, const char *platform);
 OSCAP_API void oval_generator_set_product_name(struct oval_generator *generator, const char *product_name);
 OSCAP_API void oval_generator_set_product_version(struct oval_generator *generator, const char *product_version);
-OSCAP_API OSCAP_DEPRECATED(void oval_generator_set_schema_version(struct oval_generator *generator, const char *schema_version));
 OSCAP_API void oval_generator_set_core_schema_version(struct oval_generator *generator, const char *schema_version);
 OSCAP_API void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version);
 OSCAP_API void oval_generator_set_timestamp(struct oval_generator *generator, const char *timestamp);
@@ -628,28 +625,6 @@ OSCAP_API struct oval_definition_model *oval_definition_model_new(void);
  * @returns newly build oval_definition_model, or NULL if something went wrong
  */
 OSCAP_API struct oval_definition_model *oval_definition_model_import_source(struct oscap_source *source);
-
-/**
- * Import the content from the file into an oval_definition_model.
- * @param file filename
- * @return new oval_definition_model, or NULL if an error occurred
- * @memberof oval_definition_model
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases. Please use oval_definition_model_import_source instead.
- */
-OSCAP_API OSCAP_DEPRECATED(struct oval_definition_model *oval_definition_model_import(const char *file));
-
-/**
- * Merge the content from the file with specified oval_definition_model.
- * If imported content specifies a model entity that is already registered within the model its content is overwritten.
- * @param model the merge target model
- * @param file filename 
- * @return -1 if an error occurred
- * @memberof oval_definition_model
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases.
- */
-OSCAP_API OSCAP_DEPRECATED(int oval_definition_model_merge(struct oval_definition_model *model, const char *file));
 
 /**
  * Copy an oval_definition_model.
@@ -1372,11 +1347,6 @@ OSCAP_API bool oval_object_get_deprecated(struct oval_object *);
 OSCAP_API int oval_object_get_version(struct oval_object *);
 
 /**
- * Returns schema version of the associated definition model
- */
-OSCAP_API OSCAP_DEPRECATED(oval_version_t oval_object_get_schema_version(struct oval_object *object));
-
-/**
  * Returns schema version of the associated platform extension definition model
  * @memberof oval_object
  */
@@ -1928,7 +1898,6 @@ OSCAP_API struct oval_component *oval_variable_get_component(struct oval_variabl
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_values(struct oval_variable *variable));
 OSCAP_API struct oval_variable_possible_value_iterator *oval_variable_get_possible_values2(struct oval_variable *variable);
 
 /**
@@ -1937,7 +1906,6 @@ OSCAP_API struct oval_variable_possible_value_iterator *oval_variable_get_possib
  * It should be freed after use by the calling application.
  * @memberof oval_variable
  */
-OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_get_possible_restrictions(struct oval_variable *variable));
 OSCAP_API struct oval_variable_possible_restriction_iterator *oval_variable_get_possible_restrictions2(struct oval_variable *variable);
 
 
@@ -1947,7 +1915,6 @@ OSCAP_API struct oval_variable_possible_restriction_iterator *oval_variable_get_
  * It should be freed after use by the calling application.
  * @memberof oval_variable_possible_restriction
  */
-OSCAP_API OSCAP_DEPRECATED(struct oval_iterator *oval_variable_possible_restriction_get_restrictions(struct oval_variable_possible_restriction *possible_restriction));
 OSCAP_API struct oval_variable_restriction_iterator *oval_variable_possible_restriction_get_restrictions2(struct oval_variable_possible_restriction *possible_restriction);
 
 /**
@@ -3430,15 +3397,6 @@ OSCAP_API int oval_component_iterator_remaining(struct oval_component_iterator *
 /**
  * @} END OVALDEF
  */
-
-/**
- * Returns the version of the schema this document should be validated against
- *
- * Deallocate the result after use with "free(..)".
- * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(char *oval_determine_document_schema_version(const char *, oscap_document_type_t));
 
 /**
  * @} END OVAL

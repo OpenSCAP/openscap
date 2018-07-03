@@ -211,14 +211,6 @@ OSCAP_API bool xccdf_policy_model_add_cpe_dict(struct xccdf_policy_model * model
 OSCAP_API bool xccdf_policy_model_add_cpe_lang_model_source(struct xccdf_policy_model * model, struct oscap_source *source);
 
 /**
- * Registers an additional CPE lang model for applicability testing
- * The one embedded in the evaluated XCCDF take precedence!
- *
- * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_lang_model_source
- */
-OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_lang_model(struct xccdf_policy_model * model, const char *cpe_lang));
-
-/**
  * Registers an additional CPE resource (either dictionary or language)
  * Autodetects given file and acts accordingly.
  * The one embedded in the evaluated XCCDF take precedence!
@@ -226,33 +218,10 @@ OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_lang_model(struct xcc
 OSCAP_API bool xccdf_policy_model_add_cpe_autodetect_source(struct xccdf_policy_model *model, struct oscap_source *source);
 
 /**
- * Registers an additional CPE resource (either dictionary or language)
- * Autodetects given file and acts accordingly.
- * The one embedded in the evaluated XCCDF take precedence!
- *
- * @deprecated Deprecated in favor of @ref xccdf_policy_model_add_cpe_autodetect_source
- */
-OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_add_cpe_autodetect(struct xccdf_policy_model *model, const char *filepath));
-
-/**
  * Retrieves an iterator of all OVAL sessions created for CPE applicability evaluation
  * key is the OVAL href, value is the OVAL session itself (type oval_agent_session*)
  */
 OSCAP_API struct oscap_htable_iterator *xccdf_policy_model_get_cpe_oval_sessions(struct xccdf_policy_model *model);
-
-/**
- * Function to register callback for checking system
- * @param model XCCDF Policy Model
- * @param sys String representing given checking system
- * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
- * @param usr optional parameter for passing user data to callback
- * @memberof xccdf_policy_model
- * @return true if callback registered succesfully, false otherwise
- *
- * @deprecated This function is deprecated by @ref xccdf_policy_model_register_engine_and_query_callback
- * and might be dropped from future releases.
- */
-OSCAP_API OSCAP_DEPRECATED(bool xccdf_policy_model_register_engine_callback(struct xccdf_policy_model * model, char * sys, void * func, void * usr));
 
 /**
  * Function to register callback for checking system
@@ -452,17 +421,6 @@ OSCAP_API bool xccdf_policy_model_add_policy(struct xccdf_policy_model *, struct
 OSCAP_API bool xccdf_policy_add_select(struct xccdf_policy *, struct xccdf_select *);
 
 /**
- * Set a new selector to the Policy structure
- * @memberof xccdf_policy
- * @return true if rule has been added succesfully
- * @deprecated This function is deprecated by @ref xccdf_policy_add_select
- * and might be dropped from future releases.
- */
-OSCAP_DEPRECATED(
-bool xccdf_policy_set_selected(struct xccdf_policy * policy, char * idref)
-);
-
-/**
  * Add result to XCCDF Policy Model
  * @memberof xccdf_policy_model
  */
@@ -545,15 +503,6 @@ OSCAP_API bool xccdf_policy_resolve(struct xccdf_policy * policy);
  * @returns zero on success, non-zero indicate partial (incomplete) output.
  */
 OSCAP_API int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd);
-
-/**
- * Clone the item and tailor it against given policy (profile)
- * @param policy Policy with profile
- * @param item XCCDF item to be tailored
- * @return new item that has to be freed by user
- * @deprecated This function is deprecated and might be dropped from future releases.
- */
-OSCAP_API OSCAP_DEPRECATED(struct xccdf_item * xccdf_policy_tailor_item(struct xccdf_policy * policy, struct xccdf_item * item));
 
 /**
  * xccdf_policy_model_get_files and xccdf_item_get_files each return oscap_file_entries instead of raw strings

@@ -264,19 +264,6 @@ int oval_syschar_model_import_source(struct oval_syschar_model *model, struct os
 	return ret;
 }
 
-/* -1 error; 0 OK; 1 warning */
-int oval_syschar_model_import(struct oval_syschar_model *model, const char *file)
-{
-	__attribute__nonnull__(model);
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	int ret = oval_syschar_model_import_source(model, source);
-	oscap_source_free(source);
-
-	return ret;
-}
-
-
 int oval_syschar_model_bind_variable_model(struct oval_syschar_model *sysmodel, struct oval_variable_model *varmodel)
 {
 	__attribute__nonnull__(sysmodel);

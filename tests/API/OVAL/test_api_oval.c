@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <oval_agent_api.h>
-#include <oval_version.h>
 #include <oscap.h>
 #include "oscap_source.h"
 #include "oscap_error.h"
@@ -53,48 +52,6 @@ int main(int argc, char **argv)
 
 	oval_definition_model_free(model);
 	oscap_cleanup();
-
-
-	{
-#define TEST_CONV(v)                                                    \
-		do { \
-			oval_version_t V; \
-			V = oval_version_from_cstr(#v); \
-			if (V == OVAL_VERSION_INVALID) \
-				return 1; \
-		} while(0)
-#define TEST_VCMP(v1, op, v2)                                           \
-		do { \
-			oval_version_t a, b; \
-			int r; \
-			a = oval_version_from_cstr(#v1); \
-			b = oval_version_from_cstr(#v2); \
-			r = oval_version_cmp(a, b); \
-			if (!(r op 0)) { \
-				fprintf(stderr, "%s %s %s: not true\n", \
-				        #v1, #op, #v2); \
-				return 1; \
-			} \
-		} while(0)
-
-		TEST_CONV(5);
-		TEST_CONV(5.10);
-		TEST_CONV(5.10.1);
-		TEST_CONV(1.2.3);
-		TEST_CONV(11.2.3);
-		TEST_CONV(11.22.3);
-		TEST_CONV(11.22.33);
-		TEST_CONV(255.255.255);
-		TEST_CONV(1.0.0);
-
-		TEST_VCMP(5.10,   ==, 5.10);
-		TEST_VCMP(5.10,   < , 5.10.1);
-		TEST_VCMP(5.10.1, > , 5.10);
-		TEST_VCMP(5.10.0, ==, 5.10);
-		TEST_VCMP(5.4,    < , 5.10);
-		TEST_VCMP(1.0.0,  ==, 1);
-		TEST_VCMP(1.0.1,  !=, 1.0.0);
-	}
 
 	return 0;
 }

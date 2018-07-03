@@ -356,14 +356,6 @@ OSCAP_API void cpe_platform_free(struct cpe_platform *platform);
 OSCAP_API const char * cpe_lang_model_supported(void);
 
 /**
- * Detect version of given CPE language XML
- * @memberof cpe_lang_model
- * @deprecated This function has been deprecated by @ref oscap_source_get_schema_version.
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(char * cpe_lang_model_detect_version(const char* file));
-
-/**
  * Function to match cpe in platform
  * @param cpe to be matched with
  * @param n size
@@ -374,14 +366,6 @@ OSCAP_API bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const str
 
 /************************************************************/
 /** @} End of Evaluators group */
-
-/**
- * Load CPE language model from a XML document.
- * @memberof cpe_lang_model
- * @deprecated This function has been deprecated by @ref cpe_lang_model_import_source
- * This function may be dropped from later versions of the library.
- */
-OSCAP_API OSCAP_DEPRECATED(struct cpe_lang_model *cpe_lang_model_import(const char *file));
 
 /**
  * Load CPE language model from an oscap_source.

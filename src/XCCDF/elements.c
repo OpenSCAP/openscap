@@ -129,21 +129,6 @@ char *xccdf_detect_version_priv(xmlTextReader *reader)
 	return oscap_strdup(xccdf_version_info_get_version(ver_info));
 }
 
-char * xccdf_detect_version(const char* file)
-{
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
-	if (!reader) {
-		oscap_source_free(source);
-		return NULL;
-	}
-
-	char *doc_version = xccdf_detect_version_priv(reader);
-	xmlFreeTextReader(reader);
-	oscap_source_free(source);
-	return doc_version;
-}
-
 int
 xccdf_version_cmp(const struct xccdf_version_info *actual, const char *desired)
 {

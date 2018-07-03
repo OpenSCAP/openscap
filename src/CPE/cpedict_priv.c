@@ -90,18 +90,11 @@ OSCAP_GETTER(struct cpe_name *, cpe_item, name)
 OSCAP_SETTER_GENERIC(cpe_item, const struct cpe_name *, name, cpe_name_free, )
 OSCAP_GETTER(struct cpe_name *, cpe_item, deprecated_by)
 OSCAP_SETTER_GENERIC(cpe_item, const struct cpe_name *, deprecated_by, cpe_name_free, )
-OSCAP_DEPRECATED(
-	struct cpe_name *cpe_item_get_deprecated(const struct cpe_item *item)
-	{
-		return cpe_item_get_deprecated_by(item);
-	}
-)
 OSCAP_ACCESSOR_STRING(cpe_item, deprecation_date)
 OSCAP_GETTER(struct cpe_item_metadata *, cpe_item, metadata)
 OSCAP_IGETINS_GEN(cpe_reference, cpe_item, references, reference)
 OSCAP_IGETINS_GEN(cpe_check, cpe_item, checks, check)
 OSCAP_IGETINS(oscap_text, cpe_item, titles, title)
-OSCAP_IGETINS(oscap_text, cpe_item, notes, note)
 OSCAP_ITERATOR_REMOVE_F(cpe_reference) OSCAP_ITERATOR_REMOVE_F(cpe_check)
 
 struct cpe_notes {				///< representation of <notes> element

@@ -163,15 +163,6 @@ const char * oval_definition_model_get_schema(struct oval_definition_model * mod
         return model->schema;
 }
 
-oval_version_t oval_definition_model_get_schema_version(struct oval_definition_model *model)
-{
-	if (model == NULL || model->generator == NULL) {
-		return OVAL_VERSION_INVALID;
-	}
-	const char *ver_str = oval_generator_get_core_schema_version(model->generator);
-	return oval_version_from_cstr(ver_str);
-}
-
 oval_schema_version_t oval_definition_model_get_core_schema_version(struct oval_definition_model *model)
 {
 	if (model == NULL || model->generator == NULL) {
@@ -259,28 +250,6 @@ struct oval_definition_model *oval_definition_model_import_source(struct oscap_s
                 model = NULL;
         }
 	return model;
-}
-
-struct oval_definition_model * oval_definition_model_import(const char *file)
-{
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	struct oval_definition_model *model = oval_definition_model_import_source(source);
-	oscap_source_free(source);
-        return model;
-}
-
-int oval_definition_model_merge(struct oval_definition_model *model, const char *file)
-{
-	__attribute__nonnull__(model);
-
-	int ret;
-
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	ret = _oval_definition_model_merge_source(model, source);
-
-	oscap_source_free(source);
-
-	return ret;
 }
 
 struct oval_definition *oval_definition_model_get_definition(struct oval_definition_model *model, const char *key)

@@ -104,13 +104,6 @@ const char *oscap_path_to_xslt(void)
 	return oscap_path_to("OSCAP_XSLT_PATH", OSCAP_XSLT_PATH);
 }
 
-OSCAP_DEPRECATED(
-const char * oscap_path_to_schematron() {
-	// It has never returned correct path to schematron files.
-	return oscap_path_to_xslt();
-}
-)
-
 const char * oscap_path_to_cpe() {
 	return oscap_path_to("OSCAP_CPE_PATH", OSCAP_CPE_PATH);
 }
@@ -131,45 +124,12 @@ void oscap_cleanup(void)
 
 const char *oscap_get_version(void) { return OPENSCAP_VERSION; }
 
-int oscap_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, xml_reporter reporter, void *arg)
-{
-	if (xmlfile == NULL) {
-		oscap_seterr(OSCAP_EFAMILY_OSCAP, "'xmlfile' == NULL");
-		return -1;
-	}
-
-	if (access(xmlfile, R_OK)) {
-		oscap_seterr(OSCAP_EFAMILY_GLIBC, "%s '%s'", strerror(errno), xmlfile);
-		return -1;
-	}
-
-	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
-	int ret = oscap_source_validate_priv(source, doctype, version, reporter, arg);
-	oscap_source_free(source);
-	return ret;
-}
-
-int oscap_schematron_validate_document(const char *xmlfile, oscap_document_type_t doctype, const char *version, const char *outfile) {
-
-	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
-	int ret = oscap_source_validate_schematron_priv(source, doctype, version, outfile);
-	oscap_source_free(source);
-	return ret;
-}
-
 int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outfile, const char **params)
 {
 	struct oscap_source *source = oscap_source_new_from_file(xmlfile);
 	int ret = oscap_source_apply_xslt_path(source, xsltfile, outfile, params, oscap_path_to_xslt());
 	oscap_source_free(source);
 	return ret;
-}
-
-int oscap_determine_document_type(const char *document, oscap_document_type_t *doc_type) {
-	struct oscap_source *source = oscap_source_new_from_file(document);
-	*doc_type = oscap_source_get_scap_type(source);
-	oscap_source_free(source);
-	return (*doc_type == OSCAP_DOCUMENT_UNKNOWN) ? -1 : 0;
 }
 
 const char *oscap_document_type_to_string(oscap_document_type_t type)

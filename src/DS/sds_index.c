@@ -406,23 +406,6 @@ struct ds_sds_index* ds_sds_index_parse(xmlTextReaderPtr reader)
 	return ret;
 }
 
-struct ds_sds_index *ds_sds_index_import(const char* file)
-{
-	struct oscap_source *source = oscap_source_new_from_file(file);
-	xmlTextReader *reader = oscap_source_get_xmlTextReader(source);
-	if (!reader) {
-		oscap_source_free(source);
-		return NULL;
-	}
-
-	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT);
-	struct ds_sds_index* ret = ds_sds_index_parse(reader);
-	xmlFreeTextReader(reader);
-	oscap_source_free(source);
-
-	return ret;
-}
-
 int ds_sds_index_select_checklist(struct ds_sds_index* s,
 		const char** datastream_id, const char** component_id)
 {

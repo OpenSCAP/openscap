@@ -279,14 +279,6 @@ OSCAP_API void xccdf_session_set_oval_results_export(struct xccdf_session *sessi
 OSCAP_API void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session *session, bool to_export_results);
 
 /**
- * Set that SCE reult files shall be exported.
- * @memberof xccdf_session
- * @param session XCCDF Session
- * @param to_export_sce_results whether to export SCE results or not.
- */
-OSCAP_API OSCAP_DEPRECATED(void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results));
-
-/**
  * Set whether the OVAL variables files shall be exported.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -435,13 +427,6 @@ OSCAP_API int xccdf_session_load_check_engine_plugin(struct xccdf_session *sessi
 OSCAP_API int xccdf_session_load_check_engine_plugins(struct xccdf_session *session);
 
 /**
- * @deprecated
- * SCE is no longer part of the main openscap library,
- * use xccdf_session_load_check_engine_plugins instead.
- */
-OSCAP_API OSCAP_DEPRECATED(int xccdf_session_load_sce(struct xccdf_session *session));
-
-/**
  * Load Tailoring file (if applicable) to the XCCDF session.
  * @memberof xccdf_session
  * @param session XCCDF Session
@@ -482,16 +467,6 @@ OSCAP_API int xccdf_session_export_oval(struct xccdf_session *session);
  * @returns zero on success
  */
 OSCAP_API int xccdf_session_export_check_engine_plugins(struct xccdf_session *session);
-
-/**
- * Export SCE files (if enabled by @ref xccdf_session_set_sce_results_export).
- *
- * @deprecated Please use xccdf_session_export_check_engine_plugins instead.
- * @memberof xccdf_session
- * @param session XCCDF Session
- * @returns zero on success
- */
-OSCAP_API OSCAP_DEPRECATED(int xccdf_session_export_sce(struct xccdf_session *session));
 
 /**
  * Export ARF (if enabled by @ref xccdf_session_set_arf_export).

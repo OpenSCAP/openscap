@@ -400,11 +400,6 @@ void xccdf_session_set_check_engine_plugins_results_export(struct xccdf_session 
 	session->export.check_engine_plugins_results = to_export_results;
 }
 
-void xccdf_session_set_sce_results_export(struct xccdf_session *session, bool to_export_sce_results)
-{
-	xccdf_session_set_check_engine_plugins_results_export(session, to_export_sce_results);
-}
-
 bool xccdf_session_set_arf_export(struct xccdf_session *session, const char *arf_file)
 {
 	free(session->export.arf_file);
@@ -1137,11 +1132,6 @@ static void xccdf_session_unload_check_engine_plugins(struct xccdf_session *sess
 	session->check_engine_plugins = oscap_list_new();
 }
 
-int xccdf_session_load_sce(struct xccdf_session *session)
-{
-	return xccdf_session_load_check_engine_plugins(session);
-}
-
 int xccdf_session_load_tailoring(struct xccdf_session *session)
 {
 	bool from_sds = false;
@@ -1614,11 +1604,6 @@ int xccdf_session_export_check_engine_plugins(struct xccdf_session *session)
 	oscap_iterator_free(it);
 
 	return ret;
-}
-
-int xccdf_session_export_sce(struct xccdf_session *session)
-{
-	return xccdf_session_export_check_engine_plugins(session);
 }
 
 int xccdf_session_export_arf(struct xccdf_session *session)

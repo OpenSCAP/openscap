@@ -16,6 +16,8 @@
 
 #include "scap_ds.h"
 #include "common/list.h"
+#include "oscap_source.h"
+#include "ds_sds_session.h"
 
 int main(int argc, char **argv)
 {
@@ -25,7 +27,9 @@ int main(int argc, char **argv)
 		return 2;
 	}
 
-	struct ds_sds_index* idx = ds_sds_index_import(argv[1]);
+	struct oscap_source *source = oscap_source_new_from_file(argv[1]);
+	struct ds_sds_session *session = ds_sds_session_new_from_source(source);
+	struct ds_sds_index *idx = ds_sds_session_get_sds_idx(session);
 	struct ds_stream_index_iterator* streams = ds_sds_index_get_streams(idx);
 
 	// number of streams in the collection
@@ -42,6 +46,8 @@ int main(int argc, char **argv)
 			printf("Failed to read datastream ID correctly. "
 			       "Expected 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml', "
 			       "found '%s'.\n", ds_stream_index_get_id(stream));
+			ds_sds_session_free(session);
+			oscap_source_free(source);
 			return 1;
 		}
 		if (strcmp(ds_stream_index_get_timestamp(stream),
@@ -50,6 +56,8 @@ int main(int argc, char **argv)
 			printf("Failed to read datastream timestamp correctly. "
 			       "Expected '2012-11-01T12:22:58', "
 			       "found '%s'.\n", ds_stream_index_get_timestamp(stream));
+			ds_sds_session_free(session);
+			oscap_source_free(source);
 			return 1;
 		}
 		if (strcmp(ds_stream_index_get_version(stream),
@@ -58,6 +66,8 @@ int main(int argc, char **argv)
 			printf("Failed to read datastream scap-version correctly. "
 			       "Expected '1.2', "
 			       "found '%s'.\n", ds_stream_index_get_version(stream));
+			ds_sds_session_free(session);
+			oscap_source_free(source);
 			return 1;
 		}
 	}
@@ -67,15 +77,20 @@ int main(int argc, char **argv)
 	{
 		printf("Attempted to retrieve 'scap_org.open-scap_datastream_from_xccdf_scap-fedora14-xccdf.xml' "
 		       "by ID but got NULL as a result!\n");
+		ds_sds_session_free(session);
+		oscap_source_free(source);
 		return 1;
 	}
 	if (ds_sds_index_get_stream(idx, "nonexistant_rubbish") != NULL)
 	{
 		printf("Attempted to retrieve a nonexistant stream by ID but got a non-NULL result!\n");
+		ds_sds_session_free(session);
+		oscap_source_free(source);
 		return 1;
 	}
 
-	ds_sds_index_free(idx);
+	ds_sds_session_free(session);
+	oscap_source_free(source);
 
 	if (nr_streams != 1)
 	{

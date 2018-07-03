@@ -250,7 +250,6 @@
  #include "../../src/OVAL/public/oval_session.h"
  #include "../../src/OVAL/public/oval_types.h"
  #include "../../src/OVAL/public/oval_variables.h"
- #include "../../src/OVAL/public/oval_version.h"
  #include "../../src/OVAL/public/oval_probe.h"
  #include "../../src/OVAL/public/oval_probe_handler.h"
  #include "../../src/OVAL/public/oval_probe_session.h"
@@ -265,7 +264,6 @@
 %include "../../src/OVAL/public/oval_session.h"
 %include "../../src/OVAL/public/oval_types.h"
 %include "../../src/OVAL/public/oval_variables.h"
-%include "../../src/OVAL/public/oval_version.h"
 %include "../../src/OVAL/public/oval_probe.h"
 %include "../../src/OVAL/public/oval_probe_handler.h"
 %include "../../src/OVAL/public/oval_probe_session.h"
@@ -555,34 +553,6 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyO
     new_usrdata->usr = usr;
 
     return oval_agent_eval_system(asess, agent_reporter_callback_wrapper, (void *) new_usrdata);
-}
-
-bool oscap_validate_document_py(const char *xmlfile, oscap_document_type_t doctype, const char *version, PyObject *func, PyObject *usr) {
-    struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
-    Py_INCREF(func);
-    Py_INCREF(usr);
-    new_usrdata = malloc(sizeof(struct internal_usr));
-    if (new_usrdata == NULL) return false;
-
-    new_usrdata->func = func;
-    new_usrdata->usr = usr;
-
-    return oscap_validate_document(xmlfile, doctype, version, validate_callback_wrapper, (void *)new_usrdata);
-}
-
-char * oscap_text_xccdf_substitute_py(const char *text, PyObject *func, PyObject *usr) {
-    struct internal_usr *new_usrdata;
-    PyEval_InitThreads();
-    Py_INCREF(func);
-    Py_INCREF(usr);
-    new_usrdata = malloc(sizeof(struct internal_usr));
-    if (new_usrdata == NULL) return false;
-
-    new_usrdata->func = func;
-    new_usrdata->usr = usr;
-
-    return oscap_text_xccdf_substitute(text, sub_callback_wrapper, (void *)new_usrdata);
 }
 
 %}

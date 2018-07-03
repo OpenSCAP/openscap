@@ -56,17 +56,6 @@ OSCAP_API struct oval_variable_model *oval_variable_model_new(void);
 OSCAP_API struct oval_variable_model *oval_variable_model_import_source(struct oscap_source *source);
 
 /**
- * Import the content from the file into a new oval_variable_model.
- * @param file filename
- * @return new oval_variable_model, or NULL if an error occurred
- * @memberof oval_variable_model
- * @deprecated This function has been deprecated and it may be dropped from later
- * OpenSCAP releases. Please use oval_variable_model_import_source instead.
- *
- */
-OSCAP_API OSCAP_DEPRECATED(struct oval_variable_model *oval_variable_model_import(const char *file));
-
-/**
  * Clone an OVAL variable model
  * @return A copy of the specified @ref oval_variable_model.
  * @memberof oval_variable_model
