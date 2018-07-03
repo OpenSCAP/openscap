@@ -35,29 +35,13 @@ Choose *1a* or *1b* depending on whether you want sources from a release tarball
 . *Get the build dependencies*
 +
 --
-To build the library you will also need the following build dependencies.
+To build the library you will also need to install the build dependencies.
+
 Build dependencies may vary depending on enabled features (by the ```cmake``` command).
-By default, OpenSCAP requires these dependencies to build:
+Some of the dependencies are optional, if they are not detected, openscap will be compiled
+without respective optional features.
 
-* CMake
-* DBus
-* SWIG
-* libxml2
-* librpm
-* libselinux
-* libgcrypt
-* pcre
-* python3
-* perl
-* libcurl
-* libxslt
-* libtool
-* perl-XML-XPath
-
-(some of these are optional, if they are not detected, openscap will be compiled
-without respective optional features).
-
-On RHEL / Fedora / CentOS, the command to install these packages is:
+On RHEL / Fedora / CentOS, the command to install the build dependencies is:
 
 ----
 sudo yum install \
@@ -67,7 +51,7 @@ pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig
 bzip2-devel gcc-c++
 ----
 
-On Ubuntu 16.04, the command to install these packages is:
+On Ubuntu 16.04, the command to install the build dependencies is:
 
 ----
 sudo apt-get install -y cmake libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev \
