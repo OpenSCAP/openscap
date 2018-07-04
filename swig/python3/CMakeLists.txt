@@ -15,14 +15,14 @@ swig_link_libraries(openscap_py openscap ${PYTHON_LIBRARIES} ${LIBXML2_LIBRARIES
 
 add_custom_command(OUTPUT ${PYTHON_COMPILED_FILES}
 	COMMAND cp ${CMAKE_CURRENT_SOURCE_DIR}/../openscap_api.py ${CMAKE_CURRENT_BINARY_DIR}
-	COMMAND python3 -m compileall ${CMAKE_CURRENT_BINARY_DIR}
-	COMMAND python3 -O -m compileall ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${PYTHON_EXECUTABLE} -m compileall ${CMAKE_CURRENT_BINARY_DIR}
+	COMMAND ${PYTHON_EXECUTABLE} -O -m compileall ${CMAKE_CURRENT_BINARY_DIR}
 	DEPENDS ${SWIG_MODULE_openscap_py_REAL_NAME}
 )
 add_custom_target(python3_compile ALL DEPENDS ${PYTHON_COMPILED_FILES})
 
 execute_process(COMMAND
-	python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(True, prefix='${CMAKE_INSTALL_PREFIX}'))"
+	${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(True, prefix='${CMAKE_INSTALL_PREFIX}'))"
 	OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_INSTALL_DIR
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )
