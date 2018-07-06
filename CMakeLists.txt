@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 
+if(WIN32 AND NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "Release")
+endif()
+
 project("openscap")
 set(OPENSCAP_VERSION_MAJOR "1")
 set(OPENSCAP_VERSION_MINOR "3")
