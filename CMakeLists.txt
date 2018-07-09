@@ -381,6 +381,10 @@ if(WIN32)
 	# eg. inet_pton
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_WIN32_WINNT=0x0600")
 endif()
+if(APPLE)
+	#full Single Unix Standard v3 (SUSv3) conformance (the Unix API)
+	add_definitions(-D_DARWIN_C_SOURCE)
+endif()
 
 include_directories(
 	"compat/"
