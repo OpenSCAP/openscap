@@ -421,6 +421,12 @@ if(NOT WIN32)
 	)
 endif()
 
+# changelog
+add_custom_target(changelog
+	COMMAND git log | sed '/^commit/d\; /^Merge/d' > "${CMAKE_BINARY_DIR}/ChangeLog"
+	COMMENT "Generating ChangeLog"
+)
+
 # Ctest
 if(ENABLE_TESTS)
 	enable_testing()
