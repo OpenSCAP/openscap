@@ -37,5 +37,14 @@ if(ASCIIDOCTOR_PRESENT)
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/developer"
         DESTINATION "${CMAKE_INSTALL_DOCDIR}"
     )
-    add_dependencies(docs user_manual developer_manual)
+    add_custom_target(contribute_docs
+        COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/contribute/contribute.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/contribute.html"
+        COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/contribute/testing.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/testing.html"
+        COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/contribute/versioning.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/versioning.html"
+        COMMENT "Generate contribute documentation in HTML format"
+    )
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/contribute"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+    )
+    add_dependencies(docs user_manual developer_manual contribute_docs)
 endif()
