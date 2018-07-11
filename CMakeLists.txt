@@ -451,6 +451,7 @@ set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_SOURCE_IGNORE_FILES
 	"\\\\.git.*"
 	"build/"
+	"build-win32/"
 	"~$"
 	"\\\\CMakeLists.txt.user"
 )
