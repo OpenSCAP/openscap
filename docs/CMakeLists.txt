@@ -1,5 +1,5 @@
 add_custom_target(docs
-    COMMENT "Generate documentation and manuals in HTML format"
+    COMMENT "Generating documentation and manuals in HTML format"
 )
 
 if(DOXYGEN_FOUND)
@@ -14,7 +14,7 @@ if(DOXYGEN_FOUND)
     add_custom_target(doxygen_docs
         COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUT}"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-        COMMENT "Generate API documentation with Doxygen")
+        COMMENT "Generating API documentation with Doxygen")
     add_dependencies(docs doxygen_docs)
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html"
         DESTINATION "${CMAKE_INSTALL_DOCDIR}"
@@ -25,14 +25,14 @@ if(ASCIIDOCTOR_PRESENT)
     add_custom_target(user_manual
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/manual/manual.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/manual/manual.html"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/manual/images" "${CMAKE_CURRENT_BINARY_DIR}/manual/images"
-        COMMENT "Generate OpenSCAP User Manual in HTML format"
+        COMMENT "Generating OpenSCAP User Manual in HTML format"
     )
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/manual"
         DESTINATION "${CMAKE_INSTALL_DOCDIR}"
     )
     add_custom_target(developer_manual
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/developer/developer.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/developer/developer.html"
-        COMMENT "Generate OpenSCAP Developer Manual in HTML format"
+        COMMENT "Generating OpenSCAP Developer Manual in HTML format"
     )
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/developer"
         DESTINATION "${CMAKE_INSTALL_DOCDIR}"
@@ -41,7 +41,7 @@ if(ASCIIDOCTOR_PRESENT)
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/contribute/contribute.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/contribute.html"
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/contribute/testing.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/testing.html"
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/contribute/versioning.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/versioning.html"
-        COMMENT "Generate contribute documentation in HTML format"
+        COMMENT "Generating contribute documentation in HTML format"
     )
     install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/contribute"
         DESTINATION "${CMAKE_INSTALL_DOCDIR}"
