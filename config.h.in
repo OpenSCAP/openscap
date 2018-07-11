@@ -125,5 +125,6 @@
 #cmakedefine OPENSCAP_PROBE_WINDOWS_WMI57
 
 #include "compat.h"
+#include "oscap_platforms.h"
 
 #endif

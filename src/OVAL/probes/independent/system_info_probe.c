@@ -84,28 +84,6 @@
 #include <limits.h>
 #include "system_info_probe.h"
 
-#undef OS_FREEBSD
-#undef OS_LINUX
-#undef OS_SOLARIS
-#undef OS_SUNOS
-#undef OS_WINDOWS
-
-#if defined(__FreeBSD__)
-# define OS_FREEBSD
-#elif defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
-# define OS_LINUX
-#elif defined(sun) || defined(__sun)
-# if defined(__SVR4) || defined(__svr4__)
-#  define OS_SOLARIS
-# else
-#  define OS_SUNOS
-# endif
-#elif defined(_WIN32)
-# define OS_WINDOWS
-#else
-# error "Sorry, your OS isn't supported."
-#endif
-
 #if defined(OS_LINUX)
 #include <sys/socket.h>
 #include <ifaddrs.h>
