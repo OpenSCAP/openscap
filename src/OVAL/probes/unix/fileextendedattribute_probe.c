@@ -41,7 +41,11 @@
 #include <limits.h>
 
 #include <sys/types.h>
+#ifdef OS_APPLE
+#include <sys/xattr.h>
+#else
 #include <attr/xattr.h>
+#endif
 
 #include <probe/probe.h>
 #include <probe/option.h>
@@ -52,6 +56,12 @@
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
+#endif
+
+#ifdef OS_APPLE
+#define llistxattr(path, buf, size)   listxattr((path), (buf), (size), XATTR_NOFOLLOW)
+#define lgetxattr(path, name, value, size)   getxattr((path), (name), (value), (size), 0, XATTR_NOFOLLOW)
+#define lsetxattr(path, name, value, size, flags) setxattr((path), (name), (value), (size), 0, (flags) | XATTR_NOFOLLOW)
 #endif
 
 #define FILE_SEPARATOR '/'

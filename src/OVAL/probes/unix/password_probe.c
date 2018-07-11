@@ -51,7 +51,11 @@
 #include <errno.h>
 #include <pwd.h>
 #include <paths.h>
+#ifdef OS_APPLE
+#include <utmp.h>
+#else
 #include <lastlog.h>
+#endif
 
 #include "seap.h"
 #include "probe-api.h"

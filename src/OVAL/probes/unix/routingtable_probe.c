@@ -34,8 +34,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#ifdef OS_APPLE
+#include <machine/endian.h>
+#else
 #include <endian.h>
-
+#endif
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/ip6.h>
@@ -60,7 +63,14 @@
 #define RT_INFO_DELIMITERS " \t"
 
 #ifndef htobe32
+#ifdef OS_APPLE
+#include <libkern/OSByteOrder.h>
+#define __bswap_16 OSSwapInt16
+#define __bswap_32 OSSwapInt32
+#define __bswap_64 OSSwapInt64
+#else
 #include <byteswap.h>
+#endif
 # if BYTE_ORDER == LITTLE_ENDIAN
 #  define htobe32(x) __bswap_32 (x)
 # else
@@ -213,7 +223,9 @@ static int process_line_ip4(char *line, struct route_info *rt)
     RT_COND_ADD_FLAG(RTF_UP, "UP");
     RT_COND_ADD_FLAG(RTF_GATEWAY, "GATEWAY");
     RT_COND_ADD_FLAG(RTF_HOST, "HOST");
+#ifndef OS_APPLE
     RT_COND_ADD_FLAG(RTF_REINSTATE, "REINSTATE");
+#endif
     RT_COND_ADD_FLAG(RTF_DYNAMIC, "DYNAMIC");
     RT_COND_ADD_FLAG(RTF_MODIFIED, "MODIFIED");
     RT_COND_ADD_FLAG(RTF_REJECT, "REJECT");
@@ -273,12 +285,14 @@ static int process_line_ip6(char *line, struct route_info *rt)
     RT_COND_ADD_FLAG(RTF_UP, "UP");
     RT_COND_ADD_FLAG(RTF_GATEWAY, "GATEWAY");
     RT_COND_ADD_FLAG(RTF_HOST, "HOST");
-    RT_COND_ADD_FLAG(RTF_REINSTATE, "REINSTATE");
     RT_COND_ADD_FLAG(RTF_DYNAMIC, "DYNAMIC");
     RT_COND_ADD_FLAG(RTF_MODIFIED, "MODIFIED");
+    RT_COND_ADD_FLAG(RTF_REJECT, "REJECT");
+#ifndef OS_APPLE
+    RT_COND_ADD_FLAG(RTF_REINSTATE, "REINSTATE");
     RT_COND_ADD_FLAG(RTF_ADDRCONF, "ADDRCONF");
     RT_COND_ADD_FLAG(RTF_CACHE, "CACHE");
-    RT_COND_ADD_FLAG(RTF_REJECT, "REJECT");
+#endif
     rt->rt_flags[i] = NULL;
 
 #undef TOK_dst
