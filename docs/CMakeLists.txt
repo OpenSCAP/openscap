@@ -16,6 +16,9 @@ if(DOXYGEN_FOUND)
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         COMMENT "Generate API documentation with Doxygen")
     add_dependencies(docs doxygen_docs)
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/html"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+    )
 endif()
 
 if(ASCIIDOCTOR_PRESENT)
@@ -24,9 +27,15 @@ if(ASCIIDOCTOR_PRESENT)
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/manual/images" "${CMAKE_CURRENT_BINARY_DIR}/manual/images"
         COMMENT "Generate OpenSCAP User Manual in HTML format"
     )
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/manual"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+    )
     add_custom_target(developer_manual
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/developer/developer.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/developer/developer.html"
         COMMENT "Generate OpenSCAP Developer Manual in HTML format"
+    )
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/developer"
+        DESTINATION "${CMAKE_INSTALL_DOCDIR}"
     )
     add_dependencies(docs user_manual developer_manual)
 endif()
