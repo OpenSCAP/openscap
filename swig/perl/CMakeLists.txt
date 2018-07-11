@@ -11,5 +11,5 @@ target_include_directories(openscap_pm PUBLIC ${PERL_INCLUDE_PATH})
 
 install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
 	DESTINATION ${CMAKE_INSTALL_LIBDIR}/perl5/vendor_perl)
-install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap.pm
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
 	DESTINATION ${CMAKE_INSTALL_DATADIR}/perl5/vendor_perl)
