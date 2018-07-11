@@ -1,4 +1,4 @@
-add_custom_target(docs
+add_custom_target(docs ALL
     COMMENT "Generating documentation and manuals in HTML format"
 )
 
