@@ -1,3 +1,7 @@
+add_custom_target(docs
+    COMMENT "Generate documentation and manuals in HTML format"
+)
+
 if(DOXYGEN_FOUND)
     # set input and output files
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in)
@@ -11,6 +15,7 @@ if(DOXYGEN_FOUND)
         COMMAND "${DOXYGEN_EXECUTABLE}" "${DOXYGEN_OUT}"
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
         COMMENT "Generate API documentation with Doxygen")
+    add_dependencies(docs doxygen_docs)
 endif()
 
 if(ASCIIDOCTOR_PRESENT)
@@ -23,15 +28,5 @@ if(ASCIIDOCTOR_PRESENT)
         COMMAND asciidoctor "${CMAKE_CURRENT_SOURCE_DIR}/developer/developer.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/developer/developer.html"
         COMMENT "Generate OpenSCAP Developer Manual in HTML format"
     )
-endif()
-
-add_custom_target(docs
-    COMMENT "Generate documentation and manuals in HTML format"
-)
-
-if(ASCIIDOCTOR_PRESENT)
     add_dependencies(docs user_manual developer_manual)
-endif()
-if(DOXYGEN_FOUND)
-    add_dependencies(docs doxygen_docs)
 endif()
