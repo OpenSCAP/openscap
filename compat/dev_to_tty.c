@@ -1,7 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include "config.h"
-
-#ifndef HAVE_DEV_TO_TTY
 
 /*
  * devname - device name functions
@@ -30,7 +30,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#include "process58-devname.h"
+#include "compat.h"
 
 // This is the buffer size for a tty name. Any path is legal,
 // which makes PAGE_SIZE appropriate (see kernel source), but
@@ -318,6 +318,3 @@ abbrev:
   *ret = '\0';
   return i;
 }
-
-#endif
-

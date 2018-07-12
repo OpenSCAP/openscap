@@ -13,6 +13,10 @@ if(NOT HAVE_GETOPT_H)
 	list(APPEND COMPAT_SOURCES "getopt.c")
 endif()
 
+if(NOT HAVE_DEV_TO_TTY)
+	list(APPEND COMPAT_SOURCES "dev_to_tty.c")
+endif()
+
 if(COMPAT_SOURCES)
 	add_library(compat_object OBJECT ${COMPAT_HEADERS} ${COMPAT_SOURCES})
 endif()
