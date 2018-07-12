@@ -158,6 +158,9 @@ endif()
 mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
 find_program(ENV_PRESENT env)
 find_program(VALGRIND_PRESENT valgrind)
+find_program(ASCIIDOCTOR_EXECUTABLE asciidoctor)
+find_program(SED_EXECUTABLE sed)
+find_program(GIT_EXECUTABLE git)
 
 # ---------- CORE FEATURE SWITCHES
 
@@ -276,9 +279,6 @@ cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be b
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
-# ---------- OTHERS
-cmake_dependent_option(ENABLE_DOXYGEN_DOCS "if enabled, doxygen API reference documentation will be built" ON "DOXYGEN_FOUND" OFF)
-
 # ---------- STATUS MESSAGES
 
 message(STATUS " ")
@@ -314,10 +314,6 @@ message(STATUS "scap-as-rpm: ${ENABLE_OSCAP_UTIL_AS_RPM}")
 message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
-message(STATUS " ")
-
-message(STATUS "Others:")
-message(STATUS "doxygen docs: ${ENABLE_DOXYGEN_DOCS}")
 message(STATUS " ")
 
 # ---------- PATHS
@@ -436,6 +432,14 @@ if(NOT WIN32)
 	install(FILES
 		${CMAKE_CURRENT_BINARY_DIR}/libopenscap.pc
 		DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+	)
+endif()
+
+# changelog
+if(GIT_EXECUTABLE AND SED_EXECUTABLE)
+	add_custom_target(changelog
+		COMMAND "${GIT_EXECUTABLE}" log | "${SED_EXECUTABLE}" '/^commit/d\; /^Merge/d' > "${CMAKE_BINARY_DIR}/ChangeLog"
+		COMMENT "Generating ChangeLog"
 	)
 endif()
 
