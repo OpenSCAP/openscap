@@ -1,4 +1,4 @@
-version=1.3.0-alpha1
+version=1.3.0_alpha1
 previous_version=1.2.17
 latest_fedora=29
 latest_rhel=7
