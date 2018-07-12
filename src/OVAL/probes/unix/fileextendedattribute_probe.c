@@ -41,10 +41,12 @@
 #include <limits.h>
 
 #include <sys/types.h>
-#ifdef OS_APPLE
-#include <sys/xattr.h>
+#if defined(HAVE_SYS_XATTR_H)
+#  include <sys/xattr.h>
+#elif defined(HAVE_ATTR_XATTR_H)
+#  include <attr/xattr.h>
 #else
-#include <attr/xattr.h>
+#  error "This probe requires sys/xattr.h or attr/xattr.h, none were found!"
 #endif
 
 #include <probe/probe.h>
