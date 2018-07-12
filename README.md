@@ -1,6 +1,7 @@
 # OpenSCAP
 
 [![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/master?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap/branch/master)
+[![Build Status](https://travis-ci.org/OpenSCAP/openscap.svg?branch=master)](https://travis-ci.org/OpenSCAP/openscap)
 
 Open Source Security Compliance Solution
 
