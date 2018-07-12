@@ -150,7 +150,9 @@ endif()
 mark_as_advanced(ENV_PRESENT VALGRIND_PRESENT)
 find_program(ENV_PRESENT env)
 find_program(VALGRIND_PRESENT valgrind)
-find_program(ASCIIDOCTOR_PRESENT asciidoctor)
+find_program(ASCIIDOCTOR_EXECUTABLE asciidoctor)
+find_program(SED_EXECUTABLE sed)
+find_program(GIT_EXECUTABLE git)
 
 # ---------- CORE FEATURE SWITCHES
 
@@ -422,10 +424,12 @@ if(NOT WIN32)
 endif()
 
 # changelog
-add_custom_target(changelog
-	COMMAND git log | sed '/^commit/d\; /^Merge/d' > "${CMAKE_BINARY_DIR}/ChangeLog"
-	COMMENT "Generating ChangeLog"
-)
+if(GIT_EXECUTABLE AND SED_EXECUTABLE)
+	add_custom_target(changelog
+		COMMAND "${GIT_EXECUTABLE}" log | "${SED_EXECUTABLE}" '/^commit/d\; /^Merge/d' > "${CMAKE_BINARY_DIR}/ChangeLog"
+		COMMENT "Generating ChangeLog"
+	)
+endif()
 
 # Ctest
 if(ENABLE_TESTS)
