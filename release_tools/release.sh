@@ -102,11 +102,12 @@ check_abi()
 {
     rpm -q abi-compliance-checker || sudo dnf install abi-compliance-checker
     test -d openscap-abi-check || git clone https://github.com/OpenSCAP/openscap-abi-check
+    openscap_git_branch=$(git branch | grep '^\* ' | cut -f2 -d' ')
     (
         cd openscap-abi-check
-        perl run_check.pl "$previous_version" "maint-$version_major_minor"
+        perl run_check.pl "$previous_version" "$openscap_git_branch"
         echo 'Read the report, if there is an ABI issue (some symbols were changed / removed), fix it before proceeding further!'
-        printf "%s\n" "Then, Change directory to '$(pwd)' and add the reports. Then, commit with the appropriate message:" "" "cd $(pwd)" "git add reports/${version}_maint-$version_major_minor.html'" "git commit -m 'Report before $2 release'"
+        printf "%s\n" "Then, Change directory to '$(pwd)' and add the reports. Then, commit with the appropriate message:" "" "cd $(pwd)" "git add reports/${previous_version}_${openscap_git_branch}.html'" "git commit -m 'Report before $2 release'"
     )
 }
 
