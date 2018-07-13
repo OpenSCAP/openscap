@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat Inc., Durham, North Carolina.
+ * Copyright 2018 Red Hat Inc., Durham, North Carolina.
  * All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,6 +17,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+#ifndef OPENSCAP_OSCAP_PLATFORMS_H
+#define OPENSCAP_OSCAP_PLATFORMS_H
 
 #undef OS_FREEBSD
 #undef OS_LINUX
@@ -50,3 +53,4 @@
 # error "Sorry, your OS isn't supported."
 #endif
 
+#endif
