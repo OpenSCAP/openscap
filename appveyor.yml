@@ -12,7 +12,14 @@ before_build:
 - cmd: >-
     cd build
 
-    cmake -DENABLE_PYTHON3=FALSE -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+    cmake -DCMAKE_BUILD_TYPE=Release -DENABLE_PYTHON3=FALSE -DCMAKE_TOOLCHAIN_FILE=c:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 build:
   project: c:\projects\openscap\build\openscap.sln
   verbosity: minimal
+after_build:
+  - cmd: cpack
+artifacts:
+  - path: build\OpenSCAP*.msi
+    name: Windows Installer
+  - path: build\OpenSCAP*.msi.sha512
+    name: SHA512 checksum
