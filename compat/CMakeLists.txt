@@ -20,4 +20,5 @@ endif()
 
 if(COMPAT_SOURCES)
 	add_library(compat_object OBJECT ${COMPAT_HEADERS} ${COMPAT_SOURCES})
+	set_oscap_generic_properties(compat_object)
 endif()

@@ -415,6 +415,14 @@ include_directories(
 	${LIBXML2_INCLUDE_DIR}
 )
 
+function(set_oscap_generic_properties TARGET_OBJECT)
+	set_target_properties(${TARGET_OBJECT} PROPERTIES
+		CXX_VISIBILITY_PRESET hidden    # Make global variables and functions HIDDEN by default.
+		POSITION_INDEPENDENT_CODE ON    # Compile this object code position independent.
+	)
+	target_compile_definitions(${TARGET_OBJECT} PRIVATE OSCAP_BUILD_SHARED)
+endfunction()
+
 add_subdirectory("compat")
 add_subdirectory("src")
 add_subdirectory("utils")
