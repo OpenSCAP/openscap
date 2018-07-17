@@ -15,3 +15,7 @@ add_oscap_test_executable(test_xccdf_shall_pass
 target_link_libraries(test_xccdf_shall_pass openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${RPM_LIBRARIES})
 
 add_oscap_test("all.sh")
+
+if(PYTHON_EXECUTABLE)
+	add_oscap_test("all_python.sh")
+endif()
