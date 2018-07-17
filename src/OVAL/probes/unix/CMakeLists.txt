@@ -55,8 +55,6 @@ if(OPENSCAP_PROBE_UNIX_PROCESS58)
 		"process58_probe.c"
 		"process58_probe.h"
 		"process58-capability.h"
-		"process58-devname.c"
-		"process58-devname.h"
 	)
 	list(APPEND UNIX_PROBES_INCLUDE_DIRECTORIES
 		${CAP_INCLUDE_DIR}

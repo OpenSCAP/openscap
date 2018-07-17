@@ -49,8 +49,6 @@
 
 #ifdef HAVE_PROC_DEVNAME_H
  #include <proc/devname.h>
-#else
- #include "process58-devname.h"
 #endif
 
 #include "seap.h"

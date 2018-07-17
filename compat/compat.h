@@ -22,6 +22,7 @@
 
 #ifndef OSCAP_COMPAT_H_
 #define OSCAP_COMPAT_H_
+
 #include "oscap_export.h"
 
 /* Fallback functions fixing portability issues */
@@ -80,6 +81,15 @@ OSCAP_API int getopt_long(int ___argc, char *__getopt_argv_const *___argv,
 	const char *__shortopts,
 	const struct option *__longopts, int *__longind);
 
+#endif
+
+#if !defined(HAVE_DEV_TO_TTY) && !defined(OS_WINDOWS)
+#include <sys/types.h>
+#define ABBREV_DEV  1     /* remove /dev/         */
+#define ABBREV_TTY  2     /* remove tty           */
+#define ABBREV_PTS  4     /* remove pts/          */
+
+extern unsigned dev_to_tty(char *__restrict ret, unsigned chop, dev_t dev_t_dev, int pid, unsigned int flags);
 #endif
 
 #endif
