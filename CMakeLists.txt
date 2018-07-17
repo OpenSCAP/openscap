@@ -11,7 +11,13 @@ endif()
 project("openscap")
 set(OPENSCAP_VERSION_MAJOR "1")
 set(OPENSCAP_VERSION_MINOR "3")
-set(OPENSCAP_VERSION_PATCH "0_alpha1")
+#TODO: Remove this before final 1.3.0
+#FIXME: Windows Installer allows only integers in version name.
+if(WIN32)
+	set(OPENSCAP_VERSION_PATCH "0")
+else()
+	set(OPENSCAP_VERSION_PATCH "0_alpha1")
+endif()
 set(OPENSCAP_VERSION "${OPENSCAP_VERSION_MAJOR}.${OPENSCAP_VERSION_MINOR}.${OPENSCAP_VERSION_PATCH}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
