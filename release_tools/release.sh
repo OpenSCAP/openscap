@@ -107,7 +107,7 @@ check_abi()
         cd openscap-abi-check
         perl run_check.pl "$previous_version" "$openscap_git_branch"
         echo 'Read the report, if there is an ABI issue (some symbols were changed / removed), fix it before proceeding further!'
-        printf "%s\n" "Then, Change directory to '$(pwd)' and add the reports. Then, commit with the appropriate message:" "" "cd $(pwd)" "git add reports/${previous_version}_${openscap_git_branch}.html'" "git commit -m 'Report before $2 release'"
+        printf "%s\n" "Then, Change directory to '$(pwd)' and add the reports. Then, commit with the appropriate message:" "" "cd $(pwd)" "git add reports/${previous_version}_${openscap_git_branch}.html'" "git commit -m 'Report before $version release'"
     )
 }
 
