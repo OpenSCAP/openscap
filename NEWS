@@ -1,3 +1,33 @@
+openscap-1.3.0_alpha1                                           18-07-2018
+  - New features
+    - Microsoft Windows support (issue #195)
+    - new probes:
+       - Windows registry probe
+       - Windows accesstoken probe
+       - Windows wmi57 probe
+    - CMake is used as build system (issue #542)
+    - CTest is used as test suite driver
+  - Maintenance
+    - probes are not separate processes, they are threads within oscap
+    - OpenSCAP can be compiled using Visual Studio 2017
+    - Dropped 53 deprecated API symbols (issue #1088)
+    - Removed GNU Automake
+    - Removed Python 2 support (issue #1034)
+    - Ninja build is supported
+    - Public API symbols are marked by OSCAP_API macro
+    - Removed variable lenght arrays
+    - Removed custom memory allocation functions (issue #1077)
+    - Improved OS X build support
+    - Fixed crash when deallocating red-black-tree node in Windows
+    - Several large tests are splitted into smaller test cases
+    - User manual is splitted in User and Developer manual
+    - Many documentation updates (issue #1069, #1066)
+    - Stopped using '\r' characters on stdout (issue #579, #1023)
+    - Updated release tools to reflect CMake (issue #1036)
+    - Dropped Cygwin support from User Manual (issue #1011)
+    - source tarball does not contain build artifacts
+    - Many small fixes
+
 openscap-1.2.17                                                 29-05-2018
   - New features
     - HTML Guide user experience improvements
