@@ -1298,21 +1298,20 @@ size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen)
 		return (0);
 	}
 
-	switch (SEXP_typeof(ent_name)) {
-	case SEXP_TYPE_LIST:
-		{
-			SEXP_t *tmp;
+	SEXP_type_t sexp_type = SEXP_typeof(ent_name);
+	if (sexp_type == SEXP_TYPE_LIST) {
+		SEXP_t *tmp;
 
-			tmp = SEXP_list_first(ent_name);
-			SEXP_free(ent_name);
-			ent_name = tmp;
+		tmp = SEXP_list_first(ent_name);
+		SEXP_free(ent_name);
+		ent_name = tmp;
 
-			if (!SEXP_stringp(ent_name)) {
-				errno = EINVAL;
-				break;
-			}
+		if (!SEXP_stringp(ent_name)) {
+			errno = EINVAL;
+			return name_len;
 		}
-	case SEXP_TYPE_STRING:
+	}
+	if (sexp_type == SEXP_TYPE_LIST || sexp_type == SEXP_TYPE_STRING) {
 		if (SEXP_string_length(ent_name) > 0)
 			name_len = SEXP_string_cstr_r(ent_name, buffer, buflen);
 		else
