@@ -60,7 +60,6 @@ Finally, it will bump version numbers in `versions.sh` to be ready for the next 
 +
 --
 The Windows build process is described in link:../docs/developer/developer.adoc[Developer Manual].
-Don't forget about setting the build type to Release using `-DCMAKE_BUILD_TYPE=Release`.
 
 The Windows Installer can be built by running `cpack` in the `build` directory.
 CPack will produce 2 files:
