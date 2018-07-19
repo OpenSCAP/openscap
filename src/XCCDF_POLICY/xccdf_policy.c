@@ -574,7 +574,7 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 
 		bool print_general_warning = false;
 		bool print_oval_warning = false;
-		char *warning_check_system;
+		char *warning_check_system = NULL;
 		// Check Processing Algorithm -- Check.System
 		while (xccdf_check_iterator_has_more(candidate_it)) {
 			struct xccdf_check *check = xccdf_check_iterator_next(candidate_it);
