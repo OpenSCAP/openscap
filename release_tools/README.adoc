@@ -56,6 +56,19 @@ The last commit before the release has to have the `openscap-<version>` message 
 This will create and push version tags, create new GitHub release and handle milestones swap.
 Finally, it will bump version numbers in `versions.sh` to be ready for the next upstream release.
 
+. Build OpenSCAP for Windows
++
+--
+The Windows build process is described in link:../docs/developer/developer.adoc[Developer Manual].
+
+The Windows Installer can be built by running `cpack` in the `build` directory.
+CPack will produce 2 files:
+
+* `OpenSCAP-${version}-win32.msi` which is the installer package
+* `OpenSCAP-${version}-win32.msi.sha512` that contains SHA512 checksum of the installer
+
+Upload both of the files to the GitHub release.
+--
 
 == To be done ==
 
