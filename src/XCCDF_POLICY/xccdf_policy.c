@@ -2116,27 +2116,6 @@ const char *xccdf_policy_get_value_of_item(struct xccdf_policy * policy, struct 
 	}
 }
 
-static int xccdf_policy_get_refine_value_oper(struct xccdf_policy * policy, struct xccdf_item * item)
-{
-    struct xccdf_refine_value * r_value = NULL;
-    struct xccdf_profile * profile = xccdf_policy_get_profile(policy);
-    if (profile == NULL) return -1;
-
-    /* We don't have set-value in profile, look for refine-value */
-    struct xccdf_refine_value_iterator * r_value_it = xccdf_profile_get_refine_values(profile);
-    while (xccdf_refine_value_iterator_has_more(r_value_it)) {
-        r_value = xccdf_refine_value_iterator_next(r_value_it);
-        if (!strcmp(xccdf_refine_value_get_item(r_value), xccdf_value_get_id((struct xccdf_value *) item)))
-            break;
-        else r_value = NULL;
-    }
-    xccdf_refine_value_iterator_free(r_value_it);
-    if (r_value != NULL) {
-        return xccdf_refine_value_get_oper(r_value);
-    }
-    return -1;
-}
-
 struct oscap_file_entry_list * xccdf_policy_model_get_systems_and_files(struct xccdf_policy_model * policy_model)
 {
     return xccdf_item_get_systems_and_files((struct xccdf_item *) xccdf_policy_model_get_benchmark(policy_model));
