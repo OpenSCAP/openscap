@@ -1255,21 +1255,20 @@ char *probe_ent_getname(const SEXP_t * ent)
 		return (NULL);
 	}
 
-	switch (SEXP_typeof(ent_name)) {
-	case SEXP_TYPE_LIST:
-		{
-			SEXP_t *tmp;
+	SEXP_type_t sexp_type = SEXP_typeof(ent_name);
+	if (sexp_type == SEXP_TYPE_LIST) {
+		SEXP_t *tmp;
 
-			tmp = SEXP_list_first(ent_name);
-			SEXP_free(ent_name);
-			ent_name = tmp;
+		tmp = SEXP_list_first(ent_name);
+		SEXP_free(ent_name);
+		ent_name = tmp;
 
-			if (!SEXP_stringp(ent_name)) {
-				errno = EINVAL;
-				break;
-			}
+		if (!SEXP_stringp(ent_name)) {
+			errno = EINVAL;
+			return NULL;
 		}
-	case SEXP_TYPE_STRING:
+	}
+	if (sexp_type == SEXP_TYPE_LIST || sexp_type == SEXP_TYPE_STRING) {
 		if (SEXP_string_length(ent_name) > 0)
 			name_str = SEXP_string_cstr(ent_name);
 		else
