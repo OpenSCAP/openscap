@@ -32,7 +32,6 @@ the Script Check Engine (SCE) to test its basic functionality. SCE allows you
 to define your own scripts (usually written in Bash or Python) to extend XCCDF
 rule checking capabilities. Custom check scripts can be referenced from
 an XCCDF rule using `<check-content-ref>` element, for example:
-[[app-listing]]
 ----
 <check system="http://open-scap.org/page/SCE">
     <check-content-ref href="YOUR_BASH_SCRIPT.sh"/>
@@ -85,7 +84,6 @@ configuration specific settings.
 
 You will need to source the `tests/test_common.sh` in your test scripts to use
 the functions which it provides:
-[[app-listing]]
 [source,bash]
 ----
 #!/usr/bin/env bash
@@ -113,7 +111,6 @@ You can use `$XMLDIFF` in your tests which will call the
 link:../../tests/xmldiff.pl[tests/xmldiff.pl] script.
 
 It is also possible to do XPath queries using `$XPATH` variable, the usage is:
-[[app-listing]]
 [source,bash]
 ----
 $XPATH FILE 'QUERY'
@@ -123,7 +120,6 @@ $XPATH FILE 'QUERY'
 ==== Best practices when writing bash tests
 It is always good to set `pipefail` option for all your test scripts so you
 accidentally don't lose non-zero exit statuses of commands in a pipeline:
-[[app-listing]]
 [source,bash]
 ----
 set -o pipefail
@@ -133,7 +129,6 @@ The next option you can consider is `errexit` which exits your script
 immediately if a command exits with a non-zero status. You might want to use
 this option if tests are somehow dependent and it doesn't make sense to continue
 testing after one test fails.
-[[app-listing]]
 [source,bash]
 ----
 set -e
@@ -148,7 +143,6 @@ testing can be found at `build/Testing/Temporary/LastTest.log`.
 ==== test_run function
 The function is responsible for executing a test script file or a function and
 logging its result into the log file.
-[[app-listing]]
 [source,bash]
 ----
 test_run "DESCRIPTION" TEST_FUNCTION|$srcdir/TEST_SCRIPT_FILE ARG [ARG...]
@@ -168,7 +162,6 @@ The `test_run` function reports the following results into the log file:
 
 The result of every test executed by the `test_run` function will be reported
 in the log file in a following way:
-[[app-listing]]
 [source,bash]
 ----
 TEST: DESCRIPTION
@@ -181,7 +174,6 @@ RESULT: PASS/FAIL/SKIP/WARN
 The function is responsible for cleaning-up the testing environment. You can
 call it without arguments or with one argument -- a script/function which will
 do additional clean-up tasks.
-[[app-listing]]
 [source,bash]
 ----
 test_exit [CLEAN_SCRIPT|CLEAN_FUNCTION]
@@ -190,7 +182,6 @@ test_exit [CLEAN_SCRIPT|CLEAN_FUNCTION]
 
 ==== require function
 Checks if requirements are in the `$PATH`, use it as follows:
-[[app-listing]]
 [source,bash]
 ----
 require 'program' || return 255
@@ -199,7 +190,6 @@ require 'program' || return 255
 
 ==== probecheck function
 Checks if probe exists, use it as follows:
-[[app-listing]]
 [source,bash]
 ----
 probecheck 'probe' || return 255
@@ -209,7 +199,6 @@ probecheck 'probe' || return 255
 ==== verify_results function
 Verifies that there is the `COUNT` number of results of selected OVAL `TYPE` in
 a `RESULTS_FILE`:
-[[app-listing]]
 [source,bash]
 ----
 verify_results TYPE CONTENT_FILE RESULTS_FILE COUNT
@@ -222,7 +211,6 @@ in the `RESULTS_FILE`.
 ==== assert_exists function
 Does an XPath query to a file specified in the `$result` variable and checks if
 number of results matches with an expected number specified as an argument:
-[[app-listing]]
 [source,bash]
 ----
 result="relative_path_to_file"
@@ -231,7 +219,6 @@ assert_exists EXPECTED_NUMBER_OF_RESULTS XPATH_QUERY_STRING
 
 For example, let's say you want to check that in the `results.xml` file the
 result of the rule `xccdf_com.example.www_rule_test` is fail:
-[[app-listing]]
 [source,bash]
 ----
 result="./results.xml"
@@ -273,7 +260,6 @@ link:../../tests/sce[tests/sce] directory. Now we will modify the
 link:../../tests/sce/CMakeLists.txt[tests/sce/CMakeLists.txt] and we will add
 our test script file using the `add_oscap_test` function which will make sure
 that our test will be executed by the `make test`:
-[[app-listing]]
 ----
 if(ENABLE_SCE)
 	...
@@ -289,7 +275,6 @@ To run your new test you first need to compile the OpenSCAP library. See the
 Also you don't need to run all the tests using `make test`, you can run only
 the specific test(s). To do so, you need to be in the build directory and
 run `ctest -R` from there, for example:
-[[app-listing]]
 [source,bash]
 ----
 $ cd build/
