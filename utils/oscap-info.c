@@ -350,7 +350,7 @@ static const char *tailoring_get_profile_or_report_multiple_ids(struct xccdf_tai
 	return result;
 }
 
-const char *benchmark_get_profile_or_report_multiple_ids(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
+static const char *benchmark_get_profile_or_report_multiple_ids(struct xccdf_benchmark *bench, const char *profile_suffix, const char *source_file)
 {
 	int match_status;
 	const char *result = xccdf_benchmark_match_profile_id(bench, profile_suffix, &match_status);
