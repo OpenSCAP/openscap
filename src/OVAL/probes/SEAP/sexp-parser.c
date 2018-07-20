@@ -1453,7 +1453,7 @@ found:
                 }
 
 		if (v_dsc.mem == NULL) {
-			return NULL;
+			return 0;
 		}
 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff, dsc->p_explen, v_dsc.mem) != 0)
@@ -1703,7 +1703,7 @@ found:
                 }
 
 		if (v_dsc.mem == NULL) {
-			return NULL;
+			return 0;
 		}
 
                 if (spb_pick (dsc->p_buffer, dsc->p_bufoff + 1 /* skip the quote */,
