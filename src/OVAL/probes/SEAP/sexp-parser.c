@@ -1047,7 +1047,7 @@ L_NUMBER_stage3:
 					goto L_NUMBER_invalid;
 				}
 				if (e_dsc.s_exp == NULL) {
-					return SEXP_PRET_EUNDEF;
+					return NULL;
 				}
 				/* update the value pointer */
 				e_dsc.s_exp->s_valp = SEXP_val_ptr (&v_dsc);
@@ -1301,7 +1301,7 @@ S_WHITESPACE_END:
 
 SKIP_LOOP:
 	if (SEXP_lstack_depth(&state->l_stack) <= 0) {
-		return SEXP_PRET_EUNDEF;
+		return NULL;
 	}
 
         switch (ret_p) {
