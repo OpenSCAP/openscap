@@ -1,6 +1,7 @@
 include(UseSWIG)
 
 set(CMAKE_SWIG_FLAGS "-module" "openscap_pm")
+set_property(SOURCE openscapPERL5_wrap.c PROPERTY COMPILE_OPTIONS "-w")
 if (${CMAKE_VERSION} VERSION_LESS "3.8.0")
 	swig_add_module(openscap_pm perl5 ../openscap.i)
 else()
