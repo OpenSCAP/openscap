@@ -8,4 +8,4 @@ TESTS_ENVIRONMENT= \
 
 TESTS = test_probes_filehash58.sh
 
-EXTRA_DIST = test_probes_filehash58.sh test_probes_filehash58.xml.sh
+EXTRA_DIST = test_probes_filehash58.sh test_probes_filehash58.xml.sh check_filehash_simple.xml
