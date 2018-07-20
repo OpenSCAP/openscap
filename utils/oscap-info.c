@@ -341,7 +341,6 @@ static int app_info_single_ds_profiles_only(struct ds_stream_index_iterator* sds
 }
 
 void report_multiple_profile_matches(const char *profile_suffix, const char *source_file);
-void report_missing_profile(const char *profile_suffix, const char *source_file);
 
 const char *tailoring_get_profile_or_report_multiple_ids(struct xccdf_tailoring *tailoring, const char *profile_suffix, const char *source_file)
 {
