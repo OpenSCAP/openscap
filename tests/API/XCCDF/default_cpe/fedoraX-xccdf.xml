@@ -3,7 +3,7 @@
   <status>incomplete</status>
   <version>1.0</version>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
-    <platform idref="cpe:/o:fedoraproject:fedora:20"/>
+    <platform idref="cpe:/o:fedoraproject:fedora:X"/>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
       <check-content-ref href="cpe-oval.xml" name="oval:x:def:1"/>
     </check>

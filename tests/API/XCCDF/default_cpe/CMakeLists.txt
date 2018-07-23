@@ -1,1 +1,1 @@
-add_oscap_test("all.sh")
+add_oscap_test("test_default_cpe.sh")
