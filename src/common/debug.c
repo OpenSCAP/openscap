@@ -222,7 +222,7 @@ static void debug_message_devel_metadata(const char *file, const char *fn, size_
 #else
 	snprintf(thread_name, THREAD_NAME_LEN, "unknown");
 #endif
-#ifdef _WIN32
+#if !defined(__MINGW32__) && defined(_WIN32)
 	unsigned long long tid = pthread_getw32threadid_np(thread);
 #else
 	/* XXX: non-portable usage of pthread_t */

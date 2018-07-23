@@ -1,7 +1,7 @@
 add_subdirectory("SEAP")
 add_subdirectory("probe")
 
-if(CRYPTO_FOUND)
+if (HAVE_MMAN_H AND CRYPTO_FOUND)
 	add_subdirectory("crapi")
 endif()
 
