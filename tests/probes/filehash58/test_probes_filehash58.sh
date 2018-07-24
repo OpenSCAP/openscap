@@ -49,7 +49,6 @@ function test_probes_filehash58 {
 function test_probes_filehash58_chroot {
 
     probecheck "filehash58" || return 255
-    require "sha1sum" || return 255
 
     local ret_val=0;
     local DF="$srcdir/check_filehash_simple.xml"
