@@ -85,11 +85,14 @@ It is possible to generate a complete API documentation, User manual,
 Developer manual and contribute documents in HTML format.
 
 If you want to build the HTML documentation you will need to install Doxygen
-and Asciidoctor.
+and AsciiDoc.
+To install AsciiDoc, you can run `dnf install asciidoc`.
+To install Doxygen, you can run `dnf install doxygen`.
+
+To get a modern output look, you can use Asciidoctor instead of AsciiDoc.
 To install `asciidoctor`, you can either install `rubygem-asciidoctor` package
 (available on Fedora), or you can install `rubygems` package and then run
 `gem install asciidoctor`.
-To install Doxygen, you can run `dnf install doxygen`.
 
 Run the following command to build the documentation:
 
