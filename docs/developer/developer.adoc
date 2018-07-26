@@ -7,10 +7,9 @@ This part of documentation is meant to serve mainly to developers who want to
 contribute to OpenSCAP, help to fix bugs, or take an advantage of
 the OpenSCAP library and create own projects on top of it.
 
-toc::[]
 
 == Building OpenSCAP on Linux
-If you want to build the ```libopenscap``` library and the ```oscap``` tool from
+If you want to build the `libopenscap` library and the `oscap` tool from
 the {oscap_git}[source code] then follow these instructions:
 
 . *Get the source code*
@@ -18,18 +17,22 @@ the {oscap_git}[source code] then follow these instructions:
 Choose *1a* or *1b* depending on whether you want sources from a release tarball or the git repository.
 
 .. Use a release tarball:
-
- # replace ${version} with the desired version
- wget https://github.com/OpenSCAP/openscap/releases/download/${version}/openscap-${version}.tar.gz
- tar -xzpf openscap-${version}.tar.gz
- cd openscap-${version}
++
+----
+# replace ${version} with the desired version
+wget https://github.com/OpenSCAP/openscap/releases/download/${version}/openscap-${version}.tar.gz
+tar -xzpf openscap-${version}.tar.gz
+cd openscap-${version}
+----
 +
 **OR**
 
 .. Use fresh sources from git repository.
-
- $ git clone https://github.com/OpenSCAP/openscap.git
- $ cd openscap
++
+----
+$ git clone https://github.com/OpenSCAP/openscap.git
+$ cd openscap
+----
 +
 
 . *Get the build dependencies*
@@ -37,7 +40,7 @@ Choose *1a* or *1b* depending on whether you want sources from a release tarball
 --
 To build the library you will also need to install the build dependencies.
 
-Build dependencies may vary depending on enabled features (by the ```cmake``` command).
+Build dependencies may vary depending on enabled features (by the `cmake` command).
 Some of the dependencies are optional, if they are not detected, openscap will be compiled
 without respective optional features.
 
@@ -65,11 +68,15 @@ When you have all the build dependencies installed you can build the library.
 
 . *Build the library*
 +
+--
 Run the following commands to build the library:
 
- $ cd build/
- $ cmake ../
- $ make
+----
+$ cd build/
+$ cmake ../
+$ make
+----
+--
 
 . *Build the HTML documentation*
 +
@@ -78,10 +85,8 @@ It is possible to generate a complete API documentation, User manual,
 Developer manual and contribute documents in HTML format.
 
 If you want to build the HTML documentation you will need to install Doxygen
-and Asciidoctor.
-To install `asciidoctor`, you can either install `rubygem-asciidoctor` package
-(available on Fedora), or you can install `rubygems` package and then run
-`gem install asciidoctor`.
+and AsciiDoc.
+To install AsciiDoc, you can run `dnf install asciidoc`.
 To install Doxygen, you can run `dnf install doxygen`.
 
 Run the following command to build the documentation:
@@ -100,36 +105,48 @@ subdirectories:
 
 . *Run the tests*
 +
+--
 After building the library you might want to run library self-checks. To do
 that you need to have these additional packages installed:
 
- wget lua which procps-ng initscripts chkconfig sendmail
-+
+----
+wget lua which procps-ng initscripts chkconfig sendmail
+----
+
 and it is also required to have `sendmail` service running on the system:
 
- $ systemctl start sendmail.service
-+
+----
+$ systemctl start sendmail.service
+----
+
 Now you can execute the following command to run library self-checks:
 
- $ ctest
-+
+----
+$ ctest
+----
+
 It's also possible to use `ctest` to test any other oscap binary present in the system. You just have to set the path of the binary to the CUSTOM_OSCAP variable:
 
- $ export CUSTOM_OSCAP=/usr/bin/oscap; ctest
-+
-Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
+----
+$ export CUSTOM_OSCAP=/usr/bin/oscap; ctest
+----
 
+Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
+--
 
 . *Install*
 +
+--
 Run the installation procedure by executing the following command:
 
- $ make install
-
+----
+$ make install
+----
+--
 
 == Running oscap
-It is important to use your compiled ```libopenscap.so``` library with your ```oscap``` tool.
-The easiest way how to achieve that without need to install ```libopenscap.so``` to the system path, is to use a shell script called *run* in the OpenSCAP build directory.
+It is important to use your compiled `libopenscap.so` library with your `oscap` tool.
+The easiest way how to achieve that without need to install `libopenscap.so` to the system path, is to use a shell script called *run* in the OpenSCAP build directory.
 
 -------------------------------------------------
 $ cd build/
@@ -138,7 +155,7 @@ $ bash ./run utils/oscap xccdf eval ... whatever
 
 The *run* script is generated at configure time by CMake and it sets the following environment variables:
 
-* *LD_LIBRARY_PATH* - path to ```libopenscap.so```
+* *LD_LIBRARY_PATH* - path to `libopenscap.so`
 * *OSCAP_SCHEMA_PATH* - path to XCCDF, OVAL, CPE, ... XSD schemas and schematrons
 (required for correct SCAP content validation)
 * *OSCAP_XSLT_PATH* - path to XSLT transformations. (required if you want
@@ -153,17 +170,17 @@ or possible bugs in their security policies have these possibilities:
 The verbose mode provides user additional information about process of system
 scanning. The mode is useful for diagnostics of SCAP content evaluation
 and also for debugging. It produces a detailed report log with various messages.
-The mode is available for ```xccdf eval```, ```oval eval```, ```oval collect```
-and ```oval analyse``` modules.
+The mode is available for `xccdf eval`, `oval eval`, `oval collect`
+and `oval analyse` modules.
 There is no need to special compilation, the feature is available for all
 OpenSCAP users.
 
-To turn the verbose mode on, run ```oscap``` with this option:
+To turn the verbose mode on, run `oscap` with this option:
 
-* ```--verbose VERBOSITY_LEVEL``` - Turn on verbose mode at specified
+* `--verbose VERBOSITY_LEVEL` - Turn on verbose mode at specified
 verbosity level.
 
-The ```VERBOSITY_LEVEL``` can be one of:
+The `VERBOSITY_LEVEL` can be one of:
 
 1. *DEVEL* - the most detailed information for developers and bug hunters
 2. *INFO* - reports content processing and system scanning
@@ -172,7 +189,7 @@ The ```VERBOSITY_LEVEL``` can be one of:
 
 The verbose messages will be written on standard error output (stderr).
 Optionally, you can write the log into a file using
- ```--verbose-log-file FILE```.
+ `--verbose-log-file FILE`.
 
 This is an example describing how to run OpenSCAP in verbose mode:
 
@@ -196,7 +213,7 @@ $ cmake -DCMAKE_BUILD_TYPE=Debug .. && make
 
 Debug mode provides:
 
-* debug symbols on and optimization off - you can use ```gdb```,
+* debug symbols on and optimization off - you can use `gdb`,
 every process that was run.
 * http://www.gnu.org/software/gawk/manual/html_node/Assert-Function.html[assertions]
 are evaluated.
@@ -204,15 +221,19 @@ are evaluated.
 
 ==== Example
 
- $ bash ./run gdb --args utils/oscap xccdf eval --profile hard --results xccdf-results.xml --oval-results my-favourite-xccdf-checklist.xml
+----
+$ bash ./run gdb --args utils/oscap xccdf eval \
+--profile hard --results xccdf-results.xml \
+--oval-results my-favourite-xccdf-checklist.xml
+----
 
 
-The ```--oval-results``` option force ```oscap``` tool to generate OVAL Result file
+The `--oval-results` option force `oscap` tool to generate OVAL Result file
 for each OVAL session used for evaluation. It's also very useful for
 debugging!
 
 === Environment variables
-There are few more environment variables that control ```oscap``` tool
+There are few more environment variables that control `oscap` tool
 behaviour.
 
 * *OSCAP_FULL_VALIDATION=1* - validate all exported documents (slower)
@@ -226,34 +247,44 @@ We could separate the process into five phases.
 
 1) *Get dependencies*
 
- # dnf install lcov
+----
+# dnf install lcov
+----
 
 2) *Run CMake & make*
 
 To allow code to generate statistics, we need to compile it with specific flags.
 
- $ CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov cmake -DCMAKE_BUILD_TYPE=Debug ../
- $ make
+----
+$ CFLAGS="--coverage -ftest-coverage -fprofile-arcs" LDFLAGS=-lgcov cmake -DCMAKE_BUILD_TYPE=Debug ../
+$ make
+----
 
 3) *Run code*
 
 In this phase we should run code. We can run it directly or via test suite.
 
- $ bash ./run utils/oscap
+----
+$ bash ./run utils/oscap
+----
 
 4) *Generate and browse results*
 
- $ lcov -t "OpenSCAP coverage" -o ./coverage.info -c -d .
- $ genhtml -o ./coverage ./coverage.info
- $ xdg-open ./coverage/index.html # open results in browser
+----
+$ lcov -t "OpenSCAP coverage" -o ./coverage.info -c -d .
+$ genhtml -o ./coverage ./coverage.info
+$ xdg-open ./coverage/index.html # open results in browser
+----
 
 5) *Clean stats*
 
 Every run only modify our current statistics and not rewrite them completely.
 If we want to generate new statistics, we should remove the old ones.
 
- $ lcov --directory ./ --zerocounters ; find ./ -name "*.gcno" | xargs rm
- $ rm -rf ./coverage
+----
+$ lcov --directory ./ --zerocounters ; find ./ -name "*.gcno" | xargs rm
+$ rm -rf ./coverage
+----
 
 == Building OpenSCAP on Windows using Visual Studio
 
@@ -299,14 +330,14 @@ cmake -D ENABLE_PYTHON3=FALSE -D CMAKE_TOOLCHAIN_FILE=c:/devel/vcpkg/scripts/bui
 
 1. Launch Visual Studio
 2. Click on File -> Open -> Project/Solution...
-3. Locate ```c:\devel\openscap\build\openscap.sln```
+3. Locate `c:\devel\openscap\build\openscap.sln`
 
 5) Build
 
 1. Select build type (Debug, Release, ...) in the drop-down menu in the top panel.
 2. Click on Build -> Build Solution.
 
-Built binaries and their dependencies are now located in ```C:\devel\openscap\build\<BUILD_TYPE>\```, eg. ```C:\devel\openscap\build\Debug\```
+Built binaries and their dependencies are now located in `C:\devel\openscap\build\<BUILD_TYPE>\`, eg. `C:\devel\openscap\build\Debug\`
 
 == Building OpenSCAP for Windows on a Linux box (cross-compilation)
 Currently it is possible to cross-compile OpenSCAP for Windows only without probes.
@@ -318,34 +349,34 @@ Instructions for cross-compiling OpenSCAP for Windows:
 NOTE: mingw32-pthreads needs to be version 5.0 or greater.
 
 -------------------------------------------------------------
- # yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
- mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
- mingw32-curl mingw32-pcre \
- mingw32-filesystem mingw32-bzip2
+# yum install mingw32-gcc mingw32-binutils mingw32-libxml2 \
+mingw32-libgcrypt mingw32-pthreads mingw32-libxslt \
+mingw32-curl mingw32-pcre \
+mingw32-filesystem mingw32-bzip2
 -------------------------------------------------------------
 
 2) Checkout the master branch of the OpenSCAP repository
 
 ----------------------------------------------------------------------
- $ git clone -b master https://github.com/openscap/openscap.git
- $ cd openscap
+$ git clone -b master https://github.com/openscap/openscap.git
+$ cd openscap
 ----------------------------------------------------------------------
 
 3) Prepare the build
 
 ----------------------------------------------------------------------------------
- $ mkdir build-win32
- $ cd build-win32
- $ mingw32-cmake -D ENABLE_PYTHON3=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
+$ mkdir build-win32
+$ cd build-win32
+$ mingw32-cmake -D ENABLE_PYTHON3=FALSE -D ENABLE_PROBES=FALSE -D ENABLE_OSCAP_UTIL_DOCKER=FALSE ../
 ----------------------------------------------------------------------------------
 
 4) Build!
 
 ------------------------------
- $ make
+$ make
 ------------------------------
 
-Resulting ```oscap.exe``` can be found in the ```utils/``` directory.
+Resulting `oscap.exe` can be found in the `utils/` directory.
 
 
 If you would like to send us a patch fixing any Windows

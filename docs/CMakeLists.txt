@@ -21,9 +21,10 @@ if(DOXYGEN_FOUND)
     )
 endif()
 
-if(ASCIIDOCTOR_EXECUTABLE)
+if(ASCIIDOC_EXECUTABLE)
     add_custom_target(user_manual
-        COMMAND "${ASCIIDOCTOR_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/manual/manual.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/manual/manual.html"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/manual"
+        COMMAND "${ASCIIDOC_EXECUTABLE}" -b html5 -o "${CMAKE_CURRENT_BINARY_DIR}/manual/manual.html" "${CMAKE_CURRENT_SOURCE_DIR}/manual/manual.adoc"
         COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/manual/images" "${CMAKE_CURRENT_BINARY_DIR}/manual/images"
         COMMENT "Generating OpenSCAP User Manual in HTML format"
     )
@@ -31,15 +32,17 @@ if(ASCIIDOCTOR_EXECUTABLE)
         DESTINATION "${CMAKE_INSTALL_DOCDIR}"
     )
     add_custom_target(developer_manual
-        COMMAND "${ASCIIDOCTOR_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/developer/developer.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/developer/developer.html"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/developer"
+        COMMAND "${ASCIIDOC_EXECUTABLE}" -b html5 -o "${CMAKE_CURRENT_BINARY_DIR}/developer/developer.html" "${CMAKE_CURRENT_SOURCE_DIR}/developer/developer.adoc"
         COMMENT "Generating OpenSCAP Developer Manual in HTML format"
     )
     # We are not installing the OpenSCAP Developer manual because it does not
     # make any sense to install this for end-users.
     add_custom_target(contribute_docs
-        COMMAND "${ASCIIDOCTOR_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/contribute/contribute.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/contribute.html"
-        COMMAND "${ASCIIDOCTOR_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/contribute/testing.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/testing.html"
-        COMMAND "${ASCIIDOCTOR_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/contribute/versioning.adoc" -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/versioning.html"
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/contribute"
+        COMMAND "${ASCIIDOC_EXECUTABLE}" -b html5 -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/contribute.html" "${CMAKE_CURRENT_SOURCE_DIR}/contribute/contribute.adoc"
+        COMMAND "${ASCIIDOC_EXECUTABLE}" -b html5 -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/testing.html" "${CMAKE_CURRENT_SOURCE_DIR}/contribute/testing.adoc"
+        COMMAND "${ASCIIDOC_EXECUTABLE}" -b html5 -o "${CMAKE_CURRENT_BINARY_DIR}/contribute/versioning.html" "${CMAKE_CURRENT_SOURCE_DIR}/contribute/versioning.adoc"
         COMMENT "Generating contribute documentation in HTML format"
     )
     # We are not installing the contribute documentation because it does not

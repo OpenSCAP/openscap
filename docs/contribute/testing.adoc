@@ -33,7 +33,6 @@ to define your own scripts (usually written in Bash or Python) to extend XCCDF
 rule checking capabilities. Custom check scripts can be referenced from
 an XCCDF rule using `<check-content-ref>` element, for example:
 [[app-listing]]
-[subs=+quotes]
 ----
 <check system="http://open-scap.org/page/SCE">
     <check-content-ref href="YOUR_BASH_SCRIPT.sh"/>
@@ -275,7 +274,6 @@ link:../../tests/sce/CMakeLists.txt[tests/sce/CMakeLists.txt] and we will add
 our test script file using the `add_oscap_test` function which will make sure
 that our test will be executed by the `make test`:
 [[app-listing]]
-[subs=+quotes]
 ----
 if(ENABLE_SCE)
 	...
