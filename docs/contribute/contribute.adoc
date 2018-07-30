@@ -19,7 +19,6 @@ repository. You can do that by pressing the *'Fork'* button in the top-right
 corner on the Github's link:https://github.com/OpenSCAP/openscap[OpenSCAP page].
 It will create a copy of the original repository which you can use for
 proposing changes. Then you can clone your forked repository:
-[[app-listing]]
 [source,bash]
 ----
 $ git clone git@github.com:adam/openscap.git
@@ -28,7 +27,6 @@ $ git clone git@github.com:adam/openscap.git
 Sometimes you will need to update your forked repository with the latest
 upstream changes. To be able to do so you need to add a remote (we will name it
 upstream) which will track the upstream OpenSCAP repository:
-[[app-listing]]
 [source,bash]
 ----
 $ cd openscap/
@@ -58,7 +56,6 @@ _fix_455_, where you can work on the fix. Remember that the name of the new
 branch will appear in the commit message when your fix is merged so choose the
 name wisely:
 
-[[app-listing]]
 [source,bash]
 ----
 $ git checkout maint-1.2
@@ -68,7 +65,6 @@ $ git checkout -b fix_455
 
 On the other hand, if you decided that the fix will go into the `master` branch
 you have to switch to this branch first before creating a new one:
-[[app-listing]]
 [source,bash]
 ----
 # create a new local branch to track the remote master branch
@@ -120,7 +116,6 @@ then it might be necessary to fetch those changes and rebase your fix on top
 of them. First you need to make sure that your local `maint-1.2` branch is
 up-to date:
 
-[[app-listing]]
 [source,bash]
 ----
 # checkout to branch 'maint-1.2' in your local forked repository
@@ -134,7 +129,6 @@ $ git push origin maint-1.2
 Now you can go back to your local branch with the fix and try to rebase your
 changes on top of your local updated `maint-1.2` branch:
 
-[[app-listing]]
 [source,bash]
 ----
 # checkout back to your branch with the fix
@@ -146,7 +140,6 @@ $ git rebase maint-1.2
 If there are no conflicts then you can push your branch with the fix to your
 remote forked repository:
 
-[[app-listing]]
 [source,bash]
 ----
 # push your changes to your remote forked repository (also see the note below)
@@ -194,7 +187,6 @@ If you just need to fix something (for example a typo) you need to go back to
 the commit where the change is needed and use commit's `--amend` option to
 change the commit. You can use the following steps to do that:
 
-[[app-listing]]
 [source,bash]
 ----
 # show all the commits in your fix_455 branch
@@ -213,7 +205,6 @@ When you are finished with editing commits you can force push all the changes
 into your remote repository to update it with your latest edits. The pull
 request will be updated automatically too:
 
-[[app-listing]]
 [source,bash]
 ----
 $ git push --force origin fix_455
@@ -224,7 +215,6 @@ Once the pull request has been merged to upstream's branch the pull request will
 be closed automatically. The issue will be also closed if you used the right
 keyword in the commit message. Now you can delete your `fix_455` branch:
 
-[[app-listing]]
 [source,bash]
 ----
 # detele the fix_455 branch locally

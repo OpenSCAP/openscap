@@ -184,6 +184,8 @@ void oscap_print_error(void);
 bool check_verbose_options(struct oscap_action *action);
 void download_reporting_callback(bool warning, const char *format, ...);
 
+void report_missing_profile(const char *profile_suffix, const char *source_file);
+void report_multiple_profile_matches(const char *profile_suffix, const char *source_file);
 
 int xccdf_set_profile_or_report_bad_id(struct xccdf_session *session, const char *profile_id, const char *source_file);
 int evaluate_suffix_match_result_with_custom_reports(int suffix_match_result, const char *profile_suffix, const char *source_file, void (* report_missing)(const char *, const char *), void (* report_multiple)(const char *, const char *));
