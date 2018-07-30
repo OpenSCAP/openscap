@@ -10,7 +10,7 @@ $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_unsupported_check_s
 echo "Stderr file = $stderr"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_1"]/result[text()="notchecked"]'
 rm $result

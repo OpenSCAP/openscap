@@ -11,7 +11,7 @@ rm -f test_file
 
 $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr || ret=$?
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '/Benchmark/Rule/fix/instance'
 assert_exists 3 '//rule-result'
@@ -26,7 +26,7 @@ rm $result
 
 $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profile --results $result $srcdir/${name}.xccdf.xml 2> $stderr || ret=$?
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '/Benchmark/Rule/fix/instance'
 assert_exists 4 '//rule-result'

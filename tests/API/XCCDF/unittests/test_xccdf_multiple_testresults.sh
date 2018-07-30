@@ -19,7 +19,7 @@ for i in {1..5}; do
 	[ "`cat $stderr`" == "WARNING: Skipping $tmpdir/non_existent.oval.xml file which is referenced from XCCDF content" ]
 	:> $stderr
 
-	$OSCAP xccdf validate-xml $result
+	$OSCAP xccdf validate $result
 
 	assert_exists $i '//TestResult'
 	assert_exists $i '//TestResult/rule-result/result[text()="notchecked"]'

@@ -15,7 +15,7 @@ echo "Result file = $result"
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//TestResult'
 assert_exists 1 '//TestResult[@test-system]'

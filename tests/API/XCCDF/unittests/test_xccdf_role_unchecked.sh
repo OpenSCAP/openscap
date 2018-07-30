@@ -13,7 +13,7 @@ $OSCAP xccdf eval --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'

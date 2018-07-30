@@ -15,7 +15,7 @@ echo "Evaluating content."
 $OSCAP oval eval --results $result $srcdir/${name}.xml || [ $? == 2 ]
 
 echo "Validating results."
-$OSCAP oval validate-xml --results $result
+$OSCAP oval validate --results $result
 
 echo "Testing results values."
 [ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]

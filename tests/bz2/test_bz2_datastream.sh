@@ -23,7 +23,7 @@ bzip2 $xccdf
 $OSCAP info "${xccdf}.bz2" 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]
 
-$OSCAP xccdf validate-xml "${xccdf}.bz2" > $stderr
+$OSCAP xccdf validate "${xccdf}.bz2" > $stderr
 [ ! -s $stderr ]
 bash $builddir/run ./test_bz2_memory_source "${xccdf}.bz2" | grep 'XCCDF Checklist'
 

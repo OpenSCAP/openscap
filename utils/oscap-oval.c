@@ -71,7 +71,7 @@ static bool getopt_oval_report(int argc, char **argv, struct oscap_action *actio
 
 static bool valid_inputs(const struct oscap_action *action);
 
-#define OVAL_SUBMODULES_NUM	8
+#define OVAL_SUBMODULES_NUM	7
 #define OVAL_GEN_SUBMODULES_NUM 2 /* See actual OVAL_GEN_SUBMODULES and
 				OVAL_SUBMODULES arrays initialization below. */
 static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM];
@@ -82,22 +82,6 @@ struct oscap_module OSCAP_OVAL_MODULE = {
     .parent = &OSCAP_ROOT_MODULE,
     .summary = "Open Vulnerability and Assessment Language",
     .submodules = OVAL_SUBMODULES
-};
-
-static struct oscap_module OVAL_VALIDATE_XML = {
-    .name = "validate-xml",
-    .parent = &OSCAP_OVAL_MODULE,
-    .summary = "Validate OVAL XML content",
-    .usage = "[options] oval-file.xml",
-    .help =
-	"Options:\n"
-	"   --definitions                 - Validate OVAL Definitions\n"
-	"   --variables                   - Validate external OVAL Variables\n"
-	"   --syschar                     - Validate OVAL System Characteristics\n"
-	"   --results                     - Validate OVAL Results\n"
-	"   --schematron                  - Use schematron-based validation in addition to XML Schema\n",
-    .opt_parser = getopt_oval_validate,
-    .func = app_oval_validate
 };
 
 static struct oscap_module OVAL_VALIDATE = {
@@ -224,7 +208,6 @@ static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM] = {
 #endif
     &OVAL_ANALYSE,
     &OVAL_VALIDATE,
-    &OVAL_VALIDATE_XML,
     &OVAL_GENERATE,
 #if defined(OVAL_PROBES_ENABLED)
     &OVAL_LIST_PROBES,

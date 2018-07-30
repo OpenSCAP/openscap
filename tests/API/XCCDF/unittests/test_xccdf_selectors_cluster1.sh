@@ -14,7 +14,7 @@ echo "Output file = $output"
 echo "Result file = $result"
 [ -f $output ]; [ "`cat $output`" == "XCCDF Results are exported correctly." ]; rm $output
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//Profile'
 assert_exists 2 '//Profile/select'
