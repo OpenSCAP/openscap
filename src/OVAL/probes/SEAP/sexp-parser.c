@@ -1480,8 +1480,6 @@ __PARSE_RT SEXP_parse_ul_string_dq (__PARSE_PT(dsc))
                              case '0': /* Null byte */
                                      oct = '\0';
                                      break;
-                             case 'x': /* Hexadecimal - two more character needed */
-                                     abort ();
                              case 'a': /* Alert (beep) */
                                      oct = '\a';
                                      break;
