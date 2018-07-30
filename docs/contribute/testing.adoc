@@ -22,7 +22,8 @@ testing tool.
 == Preparing test environment and running tests
 To run a specific test or all tests you first need to compile the OpenSCAP
 library and then install additional packages required for testing. See the
-*Compilation* section in the link:../../README.md[README.md] for more details.
+*Building OpenSCAP on Linux* section in the link:../developer/developer.adoc[OpenSCAP Developer Manual]
+for more details.
 
 
 == Writing a new test
@@ -285,7 +286,8 @@ endif()
 
 === Running your new test
 To run your new test you first need to compile the OpenSCAP library. See the
-*Compilation* section in the link:../../README.md[README.md] for more details.
+*Building OpenSCAP on Linux* section in the link:../developer/developer.adoc[OpenSCAP Developer Manual]
+for more details.
 Also you don't need to run all the tests using `make test`, you can run only
 the specific test(s). To do so, you need to be in the build directory and
 run `ctest -R` from there, for example:
