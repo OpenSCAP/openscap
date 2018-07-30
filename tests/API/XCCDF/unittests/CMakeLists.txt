@@ -16,6 +16,6 @@ target_link_libraries(test_xccdf_shall_pass openscap ${LIBXML2_LIBRARIES} ${LIBX
 
 add_oscap_test("all.sh")
 
-if(PYTHON_EXECUTABLE)
+if(PYTHONINTERP_FOUND)
 	add_oscap_test("all_python.sh")
 endif()
