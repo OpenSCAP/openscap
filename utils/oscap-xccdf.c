@@ -247,7 +247,6 @@ static struct oscap_module XCCDF_GEN_REPORT = {
     .help = GEN_OPTS
 		"\nReport Options:\n"
 		"   --result-id <id>              - TestResult ID to be processed. Default is the most recent one.\n"
-		"   --show <result-type*>         - Rule results to show. Defaults to everything but notselected and notapplicable.\n"
 		"   --output <file>               - Write the document into file.\n"
 		"   --oval-template <template-string> - Template which will be used to obtain OVAL result files.\n",
     .opt_parser = getopt_xccdf,
@@ -1037,7 +1036,6 @@ int app_xccdf_xslt(const struct oscap_action *action)
 
 	const char *params[] = {
 		"result-id",         action->id,
-		"show",              action->show,
 		"benchmark_id",      action->f_benchmark_id,
 		"profile_id",        action->profile,
 		"template",          action->tmpl,
@@ -1079,7 +1077,6 @@ enum oval_opt {
     XCCDF_OPT_PROFILE,
     XCCDF_OPT_RULE,
     XCCDF_OPT_REPORT_FILE,
-    XCCDF_OPT_SHOW,
     XCCDF_OPT_TEMPLATE,
     XCCDF_OPT_FORMAT,
     XCCDF_OPT_OVAL_TEMPLATE,
@@ -1117,7 +1114,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"rule", 		required_argument, NULL, XCCDF_OPT_RULE},
 		{"result-id",		required_argument, NULL, XCCDF_OPT_RESULT_ID},
 		{"report", 		required_argument, NULL, XCCDF_OPT_REPORT_FILE},
-		{"show", 		required_argument, NULL, XCCDF_OPT_SHOW},
 		{"template", 		required_argument, NULL, XCCDF_OPT_TEMPLATE},
 		{"oval-template", 	required_argument, NULL, XCCDF_OPT_OVAL_TEMPLATE},
 		{"stylesheet",	required_argument, NULL, XCCDF_OPT_STYLESHEET_FILE},
@@ -1162,7 +1158,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		case XCCDF_OPT_RULE:		action->rule = optarg;		break;
 		case XCCDF_OPT_RESULT_ID:	action->id = optarg;		break;
 		case XCCDF_OPT_REPORT_FILE:	action->f_report = optarg; 	break;
-		case XCCDF_OPT_SHOW:		action->show = optarg;		break;
 		case XCCDF_OPT_TEMPLATE:	action->tmpl = optarg;		break;
 		case XCCDF_OPT_OVAL_TEMPLATE:	action->oval_template = optarg; break;
 		/* we use realpath to get an absolute path to given XSLT to prevent openscap from looking

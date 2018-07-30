@@ -132,7 +132,6 @@ struct oscap_action {
 	/* others */
         char *profile;
 	const char *rule;
-        char *show;
         char *format;
         const char *tmpl;
         char *id;
