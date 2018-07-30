@@ -39,7 +39,6 @@ function usage()
     echo "  --tailoring-id"
     echo "  --cpe (external OVAL dependencies are not supported yet!)"
     echo "  --oval-results"
-    echo "  --sce-results"
     echo "  --check-engine-results"
     echo "  --results"
     echo "  --results-arf"

@@ -166,7 +166,6 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
 		"   --oval-results                - Save OVAL results as well.\n"
-		"   --sce-results                 - Save SCE results as well. (DEPRECATED! use --check-engine-results)\n"
 		"   --check-engine-results        - Save results from check engines loaded from plugins as well.\n"
 		"   --export-variables            - Export OVAL external variables provided by XCCDF.\n"
 		"   --results <file>              - Write XCCDF Results into file.\n"
@@ -213,7 +212,6 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"   --report <file>               - Write HTML report into file.\n"
 		"   --oval-results                - Save OVAL results.\n"
 		"   --export-variables            - Export OVAL external variables provided by XCCDF.\n"
-		"   --sce-results                 - Save SCE results. (DEPRECATED! use --check-engine-results)\n"
 		"   --check-engine-results        - Save results from check engines loaded from plugins as well.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
@@ -1132,7 +1130,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 	// flags
 		{"force",		no_argument, &action->force, 1},
 		{"oval-results",	no_argument, &action->oval_results, 1},
-		{"sce-results",	no_argument, &action->check_engine_results, 1},
 		{"check-engine-results", no_argument, &action->check_engine_results, 1},
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},

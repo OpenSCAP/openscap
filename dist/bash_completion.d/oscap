@@ -31,7 +31,7 @@ function _oscap {
     opts[oscap:oval:analyse]="--variables --directives --verbose --verbose-log-file"
     opts[oscap:oval:collect]="--variables --verbose --verbose-log-file"
     opts[oscap:oval:generate:report]="-o --output"
-    opts[oscap:xccdf:eval]="--benchmark-id --check-engine-results --cpe --datastream-id --export-variables --fetch-remote-resources --oval-results --profile --progress --remediate --report --results --results-arf --rule --sce-results --skip-valid --stig-viewer --tailoring-file --tailoring-id --thin-results --verbose --verbose-log-file --without-syschar --xccdf-id"
+    opts[oscap:xccdf:eval]="--benchmark-id --check-engine-results --cpe --datastream-id --export-variables --fetch-remote-resources --oval-results --profile --progress --remediate --report --results --results-arf --rule --skip-valid --stig-viewer --tailoring-file --tailoring-id --thin-results --verbose --verbose-log-file --without-syschar --xccdf-id"
     opts[oscap:xccdf:validate]="--schematron"
     opts[oscap:xccdf:export-oval-variables]="--datastream-id --xccdf-id --profile --skip-valid --fetch-remote-resources --cpe"
     opts[oscap:xccdf:remediate]="--result-id --skip-valid --fetch-remote-resources --results --results-arf --report --oval-results --export-variables --cpe"
