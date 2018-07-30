@@ -18,7 +18,7 @@ ln -s ${tmpdir} ${tmpdir}/sl3
 echo "Evaluating content."
 $OSCAP oval eval --results $result $input || [ $? == 2 ]
 echo "Validating results."
-$OSCAP oval validate-xml --results $result
+$OSCAP oval validate --results $result
 echo "Testing syschar values."
 [ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:1"]/@result)')" == "true" ]
 [ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:x:tst:2"]/@result)')" == "false" ]

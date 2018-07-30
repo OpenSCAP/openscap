@@ -131,7 +131,7 @@ $OSCAP xccdf eval --profile child --results $result $xccdf > $stdout 2> $stderr 
 
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 RULE_COUNT=17
 

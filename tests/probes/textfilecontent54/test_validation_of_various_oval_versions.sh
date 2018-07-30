@@ -21,21 +21,21 @@ function tfc54_validation {
 	for i in $LST_VALID; do
 		i="${srcdir}/$i"
 		echo "Validating definitions '$i'."
-		$OSCAP oval validate-xml "$i" \
+		$OSCAP oval validate "$i" \
 			|| { echo "Validation failed."; ret=1; continue; }
 		echo "Evaluating definitions '$i'."
 		r="$(basename $i .xml)-results.xml"
 		$OSCAP oval eval --results "$r" "$i" \
 			|| { echo "Evaluation failed."; ret=1; continue; }
 		echo "Validating results '$r'."
-		$OSCAP oval validate-xml --results "$r" \
+		$OSCAP oval validate --results "$r" \
 			|| { echo "Validation failed."; ret=1; }
 	done
 
 	echo "*** Validating incorrect OVAL content:"
 	for i in $LST_INVALID; do
 		echo "Validating content '$i'."
-		$OSCAP oval validate-xml "$i" \
+		$OSCAP oval validate "$i" \
 			&& { echo "Validation incorrectly succeeded."; ret=1; }
 	done
 

@@ -40,7 +40,7 @@
 
 #include "oscap-tool.h"
 
-#define CPE_SUBMODULES_NUM 5 /* See actual CPE_SUBMODULES array
+#define CPE_SUBMODULES_NUM 4 /* See actual CPE_SUBMODULES array
 				initialization below. */
 static struct oscap_module* CPE_SUBMODULES[CPE_SUBMODULES_NUM];
 bool getopt_cpe(int argc, char **argv, struct oscap_action *action);
@@ -75,16 +75,6 @@ static struct oscap_module CPE_CHECK_MODULE = {
     .func = app_cpe_check
 };
 
-static struct oscap_module CPE_VALIDATE_XML = {
-    .name = "validate-xml",
-    .parent = &OSCAP_CPE_MODULE,
-    .summary = "Validate CPE Dictionary content",
-    .usage = "cpe-dict.xml",
-    .help = NULL,
-    .opt_parser = getopt_cpe,
-    .func = app_cpe_validate
-};
-
 static struct oscap_module CPE_VALIDATE = {
     .name = "validate",
     .parent = &OSCAP_CPE_MODULE,
@@ -99,7 +89,6 @@ static struct oscap_module* CPE_SUBMODULES[CPE_SUBMODULES_NUM] = {
     &CPE_MATCH_MODULE,
     &CPE_CHECK_MODULE,
     &CPE_VALIDATE,
-    &CPE_VALIDATE_XML,
     NULL
 };
 
@@ -124,7 +113,7 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 		action->cpe_action->name=argv[3];
 	}
 
-	if ((action->module == &CPE_VALIDATE) || action->module == &CPE_VALIDATE_XML) {
+	if (action->module == &CPE_VALIDATE) {
 		if( argc != 4 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;

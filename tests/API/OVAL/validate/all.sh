@@ -3,7 +3,7 @@
 . $builddir/tests/test_common.sh
 
 function good-ok {
-	$OSCAP oval validate-xml ${srcdir}/oval-ok.xml
+	$OSCAP oval validate ${srcdir}/oval-ok.xml
 	ret=$?
 	if [ $ret -eq 0 ]; then
 		return 0
@@ -12,7 +12,7 @@ function good-ok {
 }
 
 function oval-no-xml {
-	$OSCAP oval validate-xml ${srcdir}/all.sh
+	$OSCAP oval validate ${srcdir}/all.sh
 	ret=$?
 	if [ $ret -eq 1 ]; then
 		return 0
@@ -21,7 +21,7 @@ function oval-no-xml {
 }
 
 function oval-schema-fail {
-	$OSCAP oval validate-xml ${srcdir}/oval-schema-fail.xml
+	$OSCAP oval validate ${srcdir}/oval-schema-fail.xml
 	ret=$?
 	if [ $ret -eq 2 ]; then
 		return 0
@@ -30,7 +30,7 @@ function oval-schema-fail {
 }
 
 function oval-schematron-fail {
-	$OSCAP oval validate-xml --schematron ${srcdir}/oval-schematron-fail.xml
+	$OSCAP oval validate --schematron ${srcdir}/oval-schematron-fail.xml
 	ret=$?
 	if [ $ret -eq 2 ]; then
 		return 0

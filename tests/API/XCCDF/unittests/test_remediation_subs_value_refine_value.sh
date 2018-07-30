@@ -17,7 +17,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//Value'
 assert_exists 4 '//Value/value'
@@ -36,7 +36,7 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 \
 	--remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//Value'
 assert_exists 4 '//Value/value'

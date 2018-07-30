@@ -18,7 +18,7 @@ echo "line3" >> "${tmpdir}/textfile"
 echo "Evaluating content."
 $OSCAP oval eval --results $result $input || [ $? == 2 ]
 echo "Validating results."
-$OSCAP oval validate-xml --results $result
+$OSCAP oval validate --results $result
 echo "Testing syschar values."
 # filename
 [ "$($XPATH $result 'string(/oval_results/results/system/tests/test[@test_id="oval:filename:tst:1"]/@result)')" == "true" ]

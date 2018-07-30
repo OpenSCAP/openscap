@@ -19,7 +19,7 @@ grep '^Result.*pass$' $stdout
 grep '^Result.*fail$' $stdout
 rm $stdout
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'
 assert_exists 1 '//check-content-ref[not(@name)]'

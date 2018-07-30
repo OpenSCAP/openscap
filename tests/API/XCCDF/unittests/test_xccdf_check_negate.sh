@@ -12,7 +12,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 0 '//complex-check'
 assert_exists 1 '//Rule/check[@negate="true"]'

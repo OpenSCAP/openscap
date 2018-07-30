@@ -15,7 +15,7 @@ echo "Report file = $report"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f $report ]; [ -s $report ]; rm $report
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'

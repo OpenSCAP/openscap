@@ -14,7 +14,7 @@ $OSCAP oval eval --results $result $srcdir/${name}.oval.xml 2> $stderr
 sed -i -E "/^E: probe_sql57: DB engine not supported: sqlserver/d" "$stderr"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 echo "Validating results."
-#$OSCAP oval validate-xml --results --schematron $result
+#$OSCAP oval validate --results --schematron $result
 echo "Testing results values."
 assert_exists 1 '/oval_results'
 assert_exists 1 '/oval_results/oval_definitions'

@@ -78,7 +78,7 @@ static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int app_xccdf_xslt(const struct oscap_action *action);
 static int app_generate_fix(const struct oscap_action *action);
 
-#define XCCDF_SUBMODULES_NUM		8
+#define XCCDF_SUBMODULES_NUM		7
 #define XCCDF_GEN_SUBMODULES_NUM	5 /* See actual arrays
 						initialization below. */
 static struct oscap_module* XCCDF_SUBMODULES[XCCDF_SUBMODULES_NUM];
@@ -102,18 +102,6 @@ static struct oscap_module XCCDF_RESOLVE = {
 		"   --force                       - Force resolving XCCDF document even if it is aleready marked as resolved.",
     .opt_parser = getopt_xccdf,
     .func = app_xccdf_resolve
-};
-
-static struct oscap_module XCCDF_VALIDATE_XML = {
-    .name = "validate-xml",
-    .parent = &OSCAP_XCCDF_MODULE,
-    .summary = "Validate XCCDF XML content",
-    .usage = "xccdf-file.xml",
-    .opt_parser = getopt_xccdf,
-	.func = app_xccdf_validate,
-	.help = "Options:\n"
-		"   --schematron                  - Use schematron-based validation in addition to XML Schema\n"
-	,
 };
 
 static struct oscap_module XCCDF_VALIDATE = {
@@ -319,7 +307,6 @@ static struct oscap_module* XCCDF_SUBMODULES[XCCDF_SUBMODULES_NUM] = {
     &XCCDF_EVAL,
     &XCCDF_RESOLVE,
     &XCCDF_VALIDATE,
-    &XCCDF_VALIDATE_XML,
     &XCCDF_EXPORT_OVAL_VARIABLES,
     &XCCDF_GENERATE,
 	&XCCDF_REMEDIATE,

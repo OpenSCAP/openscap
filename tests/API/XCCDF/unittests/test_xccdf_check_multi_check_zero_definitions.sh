@@ -18,7 +18,7 @@ echo "Result file = $result"
 grep '^Result.*unknown$' $stdout
 rm $stdout
 
-$OSCAP xccdf validate-xml $result
+$OSCAP xccdf validate $result
 
 assert_exists 1 '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'
 assert_exists 2 '//check-content-ref'
