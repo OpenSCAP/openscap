@@ -93,8 +93,6 @@ test_run "XCCDF Remediation output should not contain unallowed characters" $src
 # Tests for 'oscap xccdf remediate'
 #
 test_run "XCCDF Remediate" $srcdir/test_remediate_simple.sh
-test_run "XCCDF Remediate + python fix" $srcdir/test_remediate_python.sh
-test_run "XCCDF Remediate + python fix + xhtml:object" $srcdir/test_remediate_python_subs.sh
 test_run "XCCDF Remediate + perl fix" $srcdir/test_remediate_perl.sh
 
 #
