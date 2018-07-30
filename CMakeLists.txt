@@ -22,7 +22,7 @@ set(OPENSCAP_VERSION "${OPENSCAP_VERSION_MAJOR}.${OPENSCAP_VERSION_MINOR}.${OPEN
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 message(STATUS "OpenSCAP ${OPENSCAP_VERSION}")
-message(STATUS "(see ${CMAKE_SOURCE_DIR}/README.md for build instructions)")
+message(STATUS "(see ${CMAKE_SOURCE_DIR}/docs/developer/developer.adoc for build instructions)")
 message(STATUS " ")
 
 # Strictly speaking in-source will work but will be very messy, let's
