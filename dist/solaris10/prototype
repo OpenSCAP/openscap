@@ -27,7 +27,6 @@ f none include/openscap/cpedict.h 0644 root root
 f none include/openscap/cpelang.h 0644 root root
 f none include/openscap/cpeuri.h 0644 root root
 f none include/openscap/cve.h 0644 root root
-f none include/openscap/cce.h 0644 root root
 f none include/openscap/cvss.h 0644 root root
 f none include/openscap/xccdf.h 0644 root root
 f none include/openscap/xccdf_policy.h 0644 root root

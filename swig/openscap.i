@@ -183,15 +183,6 @@
 
 %include "../../src/DS/public/scap_ds.h"
 
-#ifdef WANT_CCE
-%module openscap
-%{
- #include "../../src/CCE/public/cce.h"
-%}
-%include "../../src/CCE/public/cce.h"
-#endif
-
-
 %module openscap
 %{
  #include "../../src/CPE/public/cpe_name.h"

@@ -173,7 +173,6 @@ find_program(GIT_EXECUTABLE git)
 
 # ---------- CORE FEATURE SWITCHES
 
-option(ENABLE_CCE "enables support for Common Configuration Enumeration" FALSE)
 option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that let's you use executables instead of OVAL for checks" FALSE)
 
 # ---------- OVAL FEATURE SWITCHES
@@ -298,7 +297,6 @@ message(STATUS "build directory: ${CMAKE_BINARY_DIR}")
 message(STATUS " ")
 
 message(STATUS "Core features:")
-message(STATUS "CCE: ${ENABLE_CCE}")
 message(STATUS "SCE: ${ENABLE_SCE}")
 message(STATUS " ")
 
@@ -404,7 +402,6 @@ include_directories(
 	"src/"
 	"src/common/"
 	"src/common/public/"
-	"src/CCE/public/"
 	"src/CPE/public/"
 	"src/CVE/public/"
 	"src/CVRF/public/"
