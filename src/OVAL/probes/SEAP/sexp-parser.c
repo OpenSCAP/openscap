@@ -807,7 +807,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                 cur_c   = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
 
                 if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
-                        uint64_t explen = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+                        uint64_t explen = strto_uint64((char *)nbuffer, e_dsc.p_explen, NULL, 10);
 
                         if (explen == 0 && (errno == EINVAL || errno == ERANGE)) {
                                 ret_p = SEXP_PRET_EINVAL;
@@ -848,7 +848,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
 
                         switch (e_dsc.p_numclass) {
                         case SEXP_NUMCLASS_INT: {
-                                int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+                                int64_t number = strto_int64((char *)nbuffer, e_dsc.p_explen, NULL, 10);
 
                                 switch (errno) {
                                 case ERANGE:
@@ -907,7 +907,7 @@ SEXP_t *SEXP_parse (const SEXP_psetup_t *psetup, char *buffer, size_t buflen, SE
                                 }
                         }       break;
                         case SEXP_NUMCLASS_UINT: {
-                                uint64_t number = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+                                uint64_t number = strto_uint64((char *)nbuffer, e_dsc.p_explen, NULL, 10);
 
                                 switch (errno) {
                                 case ERANGE:
