@@ -52,9 +52,6 @@ static int app_evaluate_oval(const struct oscap_action *action);
 #endif
 static int app_oval_validate(const struct oscap_action *action);
 static int app_oval_xslt(const struct oscap_action *action);
-#if defined(OVAL_PROBES_ENABLED)
-static int app_oval_list_probes(const struct oscap_action *action);
-#endif
 static int app_analyse_oval(const struct oscap_action *action);
 
 #if defined(OVAL_PROBES_ENABLED)
@@ -62,16 +59,13 @@ static bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 static bool getopt_oval_collect(int argc, char **argv, struct oscap_action *action);
 #endif
 static bool getopt_oval_analyse(int argc, char **argv, struct oscap_action *action);
-#if defined(OVAL_PROBES_ENABLED)
-static bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action);
-#endif
 static bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action);
 static bool getopt_oval_report(int argc, char **argv, struct oscap_action *action);
 
 
 static bool valid_inputs(const struct oscap_action *action);
 
-#define OVAL_SUBMODULES_NUM	8
+#define OVAL_SUBMODULES_NUM	7
 #define OVAL_GEN_SUBMODULES_NUM 2 /* See actual OVAL_GEN_SUBMODULES and
 				OVAL_SUBMODULES arrays initialization below. */
 static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM];
@@ -197,21 +191,6 @@ static struct oscap_module OVAL_REPORT = {
     .func = app_oval_xslt
 };
 
-#if defined(OVAL_PROBES_ENABLED)
-static struct oscap_module OVAL_LIST_PROBES = {
-    .name = "list-probes",
-    .parent = &OSCAP_OVAL_MODULE,
-    .summary = "List supported object types (i.e. probes)",
-    .usage = "[options]",
-    .help = "Options:\n"
-	"   --static                      - List all probes defined in the internal tables.\n"
-	"   --dynamic                     - List all probes supported on the current system (this is default behavior).\n"
-	"   --verbose                     - Be verbose.",
-    .opt_parser = getopt_oval_list_probes,
-    .func = app_oval_list_probes
-};
-#endif
-
 static struct oscap_module* OVAL_GEN_SUBMODULES[OVAL_GEN_SUBMODULES_NUM] = {
     &OVAL_REPORT,
     NULL
@@ -226,9 +205,6 @@ static struct oscap_module* OVAL_SUBMODULES[OVAL_SUBMODULES_NUM] = {
     &OVAL_VALIDATE,
     &OVAL_VALIDATE_XML,
     &OVAL_GENERATE,
-#if defined(OVAL_PROBES_ENABLED)
-    &OVAL_LIST_PROBES,
-#endif
     NULL
 };
 
@@ -548,15 +524,6 @@ static int app_oval_xslt(const struct oscap_action *action)
     return app_xslt(action->f_oval, action->module->user, action->f_results, NULL);
 }
 
-#if defined(OVAL_PROBES_ENABLED)
-static int app_oval_list_probes(const struct oscap_action *action)
-{
-	probe_table_list(stdout);
-
-    return (0);
-}
-#endif /* OVAL_PROBES_ENABLED */
-
 enum oval_opt {
     OVAL_OPT_RESULT_FILE = 1,
     OVAL_OPT_REPORT_FILE,
@@ -761,40 +728,6 @@ bool getopt_oval_report(int argc, char **argv, struct oscap_action *action)
 
 	return true;
 }
-
-#if defined(OVAL_PROBES_ENABLED)
-bool getopt_oval_list_probes(int argc, char **argv, struct oscap_action *action)
-{
-#define PROBE_LIST_STATIC  0
-#define PROBE_LIST_DYNAMIC 1
-
-        int list_type = PROBE_LIST_DYNAMIC;
-	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
-	action->verbosity = 0;
-
-	/* Command-options */
-	struct option long_options[] = {
-        // flags
-		{ "static",	no_argument, &list_type, PROBE_LIST_STATIC  },
-		{ "dynamic",	no_argument, &list_type, PROBE_LIST_DYNAMIC },
-		{ "verbose",    no_argument, &action->verbosity, 10},
-        // end
-		{ 0, 0, 0, 0 }
-	};
-
-	int c;
-	while ((c = getopt_long(argc, argv, "", long_options, NULL)) != -1) {
-		switch (c) {
-        	case 0: break;
-		default: return oscap_module_usage(action->module, stderr, NULL);
-		}
-	}
-
-	action->list_dynamic = list_type == PROBE_LIST_DYNAMIC ? true : false;
-
-	return true;
-}
-#endif /* OVAL_PROBES_ENABLED */
 
 bool getopt_oval_validate(int argc, char **argv, struct oscap_action *action)
 {
