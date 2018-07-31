@@ -44,6 +44,19 @@ Common Vulnerability Scoring System
 \fBcve\fR
 Common Vulnerabilities and Exposures
 
+.SH COMMON OPTIONS FOR ALL MODULES
+.RE
+.TP
+\fB\-\-verbose VERBOSITY_LEVEL\fR
+.RS
+Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DEVEL, INFO, WARNING, ERROR.
+.RE
+.TP
+\fB\-\-verbose-log-file FILE\fR
+.RS
+Set filename to write additional information.
+.RE
+
 .SH INFO OPERATIONS
 .TP
 [\fIoptions\fR] any-scap-file.xml
@@ -179,16 +192,6 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 \fB\-\-remediate\fR
 .RS
 Execute XCCDF remediation in the process of XCCDF evaluation. This option automatically executes content of XCCDF fix elements for failed rules, and thus this shall be avoided unless for trusted content. Use of this option is always at your own risk.
-.RE
-.TP
-\fB\-\-verbose VERBOSITY_LEVEL\fR
-.RS
-Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DEVEL, INFO, WARNING, ERROR.
-.RE
-.TP
-\fB\-\-verbose-log-file FILE\fR
-.RS
-Set filename to write additional information.
 .RE
 .RE
 .TP
@@ -433,13 +436,6 @@ Do not validate input/output files.
 \fB\-\-fetch-remote-resources\fR
 Allow download of remote components referenced from Datastream.
 .RE
-.TP
-\fB\-\-verbose VERBOSITY_LEVEL\fR
-Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DEVEL, INFO, WARNING, ERROR.
-.TP
-\fB\-\-verbose-log-file FILE\fR
-Set filename to write additional information.
-.RE
 
 .TP
 .B collect\fR [\fIoptions\fR] definitions-file
@@ -459,11 +455,6 @@ Write OVAL System Characteristic into file.
 \fB\-\-skip-valid\fR
 Do not validate input/output files.
 .TP
-\fB\-\-verbose VERBOSITY_LEVEL\fR
-Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DEVEL, INFO, WARNING, ERROR.
-.TP
-\fB\-\-verbose-log-file FILE\fR
-Set filename to write additional information.
 .RE
 
 .TP
@@ -479,12 +470,6 @@ Use OVAL Directives content to specify desired results content.
 .TP
 \fB\-\-skip-valid\fR
 Do not validate input/output files.
-.TP
-\fB\-\-verbose VERBOSITY_LEVEL\fR
-Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DEVEL, INFO, WARNING, ERROR.
-.TP
-\fB\-\-verbose-log-file FILE\fR
-Set filename to write additional information.
 .RE
 
 .TP
