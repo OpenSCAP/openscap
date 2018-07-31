@@ -24,7 +24,7 @@ function oval_fts {
 		return 2
 	fi
 
-	shift 4
+	shift 10
 	echo -e "expected result:\n$1\noval_fts_list.out2:"
 	cat ${tmpdir}/oval_fts_list.out2
 	echo
@@ -50,142 +50,145 @@ while read args; do
 done <<EOF
 test1 \
 '' '' \
-'((filepath :operation 5) "'$ROOT'/d1/d12/f121")' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+'' '' \
+5 "$ROOT/d1/d12/f121" \
+"-1" "symlinks and directories" "none" "all" \
 d1/d12/f121,
 
 test2 \
 '' '' \
-'((filepath :operation 11) "^'$ROOT'/d1/.*/f1111")' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+'' '' \
+11 "^$ROOT/d1/.*/f1111" \\
+"-1" "symlinks and directories" "none" "all" \
 d1/d11/d111/f1111,
 
 test3 \
-'((path :operation 5) "'$ROOT'/d2")' \
-'((filename :operation 5) "f21")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+5 "$ROOT/d2" \
+5 "f21" \
+'' '' \
+"-1" "symlinks and directories" "none" "all" \
 d2/f21,
 
 test4 \
-'((path :operation 5) "'$ROOT'/d1/d11")' \
-'((filename :operation 11) "^f11[23]$")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+5 "$ROOT/d1/d11" \
+11 "^f11[23]$" \
+'' '' \
+"-1" "symlinks and directories" "none" "all" \
 d1/d11/f112,d1/d11/f113,
 
 test5 \
-'((path :operation 11) "^'$ROOT'/d1/d1[12]$")' \
-'((filename :operation 11) "^f..1$")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+11 "^$ROOT/d1/d1[12]$" \
+11 "^f..1$" \
+'' '' \
+"-1" "symlinks and directories" "none" "all" \
 d1/d11/f111,d1/d12/f121,
 
 test6 \
-'((path :operation 11) "^'$ROOT'/d1/.*")' \
-'((filename :operation 5) "f1111")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+11 "^$ROOT/d1/.*" \
+5 "f1111" \
+'' '' \
+"-1" "symlinks and directories" "none" "all" \
 d1/d11/d111/f1111,
 
 test7 \
-'((path :operation 5) "'$ROOT'/d1")' \
-'((filename :operation 5) "f112")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d1" \
+5 "f112" \
+'' '' \
+"-1" "symlinks and directories" "down" "all" \
 d1/d11/f112,
 
 test8 \
-'((path :operation 5) "'$ROOT'/d1")' \
-'((filename :operation 11) "^f.*1$")' \
-'' \
-'((behaviors :max_depth "1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d1" \
+11 "^f.*1$" \
+'' '' \
+"1" "symlinks and directories" "down" "all" \
 d1/d11/f111,d1/d12/f121,d1/f11,
 
 test9 \
-'((path :operation 5) "'$ROOT'/d1/d11/d111")' \
-'((filename :operation 5) "f11")' \
-'' \
-'((behaviors :max_depth "3" :recurse "symlinks and directories" :recurse_direction "up" :recurse_file_system "all"))' \
+5 "$ROOT/d1/d11/d111" \
+5 "f11" \
+'' '' \
+"3" "symlinks and directories" "up" "all" \
 d1/f11,
 
 test10 \
-'((path :operation 5) "'$ROOT'/d2")' \
-'((filename :operation 11) "^f21.*$")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d2" \
+11 "^f21.*$" \
+'' '' \
+"-1" "symlinks and directories" "down" "all" \
 d2/d21/f211,d2/f21,
 
 test11 \
-'((path :operation 5) "'$ROOT'/d2")' \
-'((filename :operation 11) "^f21.*$")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d2" \
+11 "^f21.*$" \
+'' '' \
+"-1" "symlinks" "down" "all" \
 d2/f21,
 
 test12 \
-'((path :operation 5) "'$ROOT'/d1")' \
-'((filename :operation 5))' \
-'' \
-'((behaviors :max_depth "0" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+5 "$ROOT/d1" \
+5 "" \
+'' '' \
+"0" "symlinks and directories" "none" "all" \
 d1/,
 
 test13 \
-'((path :operation 5) "'$ROOT'/d1")' \
-'((filename :operation 5))' \
-'' \
-'((behaviors :max_depth "0" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d1" \
+5 "" \
+'' '' \
+"0" "symlinks and directories" "down" "all" \
 d1/,
 
 test14 \
-'((path :operation 5) "'$ROOT'/d1")' \
-'((filename :operation 5))' \
-'' \
-'((behaviors :max_depth "0" :recurse "symlinks and directories" :recurse_direction "up" :recurse_file_system "all"))' \
+5 "$ROOT/d1" \
+5 "" \
+'' '' \
+"0" "symlinks and directories" "up" "all" \
 d1/,
 
 test15 \
-'((path :operation 5) "'$ROOT'/d1")' \
-'((filename :operation 5))' \
-'' \
-'((behaviors :max_depth "1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d1" \
+5 "" \
+'' '' \
+"1" "symlinks and directories" "down" "all" \
 d1/,d1/d11/,d1/d12/,
 
 test16 \
-'((path :operation 5) "'$ROOT'/d1/d11")' \
-'((filename :operation 5))' \
-'' \
-'((behaviors :max_depth "1" :recurse "symlinks and directories" :recurse_direction "up" :recurse_file_system "all"))' \
+5 "$ROOT/d1/d11" \
+5 "" \
+'' '' \
+"1" "symlinks and directories" "up" "all" \
 d1/,d1/d11/,
 
 test17 \
-'((path :operation 5) "'$ROOT'/d1/d11")' \
-'((filename :operation 5))' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "down" :recurse_file_system "all"))' \
+5 "$ROOT/d1/d11" \
+5 "" \
+'' '' \
+"-1" "symlinks and directories" "down" "all" \
 d1/d11/,d1/d11/d111/,
 
 # support for empty string as a pattern in 'filename' entity
 test18 \
-'((path :operation 5) "'$ROOT'/d2")' \
-'((filename :operation 11) "")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+5 "$ROOT/d2" \
+11 "EMPTY_STRING" \
+'' '' \
+"-1" "symlinks and directories" "none" "all" \
 d2/f21,
 
 # don't return nonexistent filepath
 test19 \
 '' '' \
-'((filepath :operation 5) "/nonexistent")' \
-'((behaviors :max_depth "-1" :recurse "symlinks and directories" :recurse_direction "none" :recurse_file_system "all"))' \
+'' '' \
+5 "/nonexistent" \
+"-1" "symlinks and directories" "none" "all" \
 # intentionally left blank
 
 # test for a regression caused by the errno check that follows calls to fts_open()
 test20 \
-'((path :operation 5) "'$ROOT'/d1/d11/d111")' \
-'((filename :operation 5) "f1111")' \
-'' \
-'((behaviors :max_depth "-1" :recurse "directories" :recurse_direction "down" :recurse_file_system "local"))' \
+5 "$ROOT/d1/d11/d111" \
+5 "f1111" \
+'' '' \
+"-1" "directories" "down" "local" \
 d1/d11/d111/f1111,
 
 EOF
