@@ -67,12 +67,6 @@ static void oscap_action_release(struct oscap_action *action)
 	cvss_impact_free(action->cvss_impact);
 }
 
-
-static bool oscap_action_postprocess(struct oscap_action *action)
-{
-    return true;
-}
-
 static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; while (p[s]) s += 2; return s; }
 
 static size_t paramlist_cpy(const char **to, const char **p) {
@@ -267,9 +261,7 @@ int oscap_module_call(struct oscap_action *action)
     assert(action->module != NULL);
 
     if (action->module->func) {
-        if (oscap_action_postprocess(action))
-            return action->module->func(action);
-        else return OSCAP_ERR_FETCH;
+		return action->module->func(action);
     }
     return OSCAP_UNIMPL_MOD;
 }
