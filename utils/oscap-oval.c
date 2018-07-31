@@ -362,12 +362,12 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* evaluation */
 	if (action->id) {
-		if ((oval_session_evaluate_id(session, NULL, action->id, &eval_result)) != 0)
+		if ((oval_session_evaluate_id(session, action->id, &eval_result)) != 0)
 			goto cleanup;
 		printf("Definition %s: %s\n", action->id, oval_result_get_text(eval_result));
 	}
 	else {
-		if ((oval_session_evaluate(session, NULL, app_oval_callback, NULL)) != 0)
+		if ((oval_session_evaluate(session, app_oval_callback, NULL)) != 0)
 			goto cleanup;
 	}
 

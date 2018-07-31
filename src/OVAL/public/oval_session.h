@@ -175,7 +175,6 @@ OSCAP_API int oval_session_load(struct oval_session *session);
  *
  * @memberof oval_session
  * @param session an \ref oval_session
- * @param probe_root FIXME:
  * @param id id of an OVAL Definition
  * @param result variable to write the result into
  *
@@ -183,7 +182,7 @@ OSCAP_API int oval_session_load(struct oval_session *session);
  * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-OSCAP_API int oval_session_evaluate_id(struct oval_session *session, char *probe_root, const char *id, oval_result_t *result);
+OSCAP_API int oval_session_evaluate_id(struct oval_session *session, const char *id, oval_result_t *result);
 
 /**
  * Evaluate OVAL Definitions. Optionally you can set a callback function which
@@ -194,7 +193,6 @@ OSCAP_API int oval_session_evaluate_id(struct oval_session *session, char *probe
  *
  * @memberof oval_session
  * @param session an \ref oval_session
- * @param probe_root FIXME:
  * @param fn a callback function
  * @param arg an optional argument for your callback function
  *
@@ -202,7 +200,7 @@ OSCAP_API int oval_session_evaluate_id(struct oval_session *session, char *probe
  * @retval 1 on an internal error (use \ref oscap_err_desc or \ref
  * oscap_err_get_full_error to get more details)
  */
-OSCAP_API int oval_session_evaluate(struct oval_session *session, char *probe_root, agent_reporter fn, void *arg);
+OSCAP_API int oval_session_evaluate(struct oval_session *session, agent_reporter fn, void *arg);
 
 /**
  * Export result to a file. Results can be represented as OVAL System
