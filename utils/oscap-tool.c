@@ -375,7 +375,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
 			if (!check_verbose_options(&action)) {
 				goto cleanup;
 			}
-			if (!oscap_set_verbose(action.verbosity_level, action.f_verbose_log, false)) {
+			if (!oscap_set_verbose(action.verbosity_level, action.f_verbose_log)) {
 				goto cleanup;
 			}
             ret = oscap_module_call(&action);
