@@ -32,7 +32,6 @@
 #include "generic/rbt/rbt.h"
 #include "_sexp-types.h"
 #include "_seap-packetq.h"
-#include "_sexp-parser.h"
 #include "_sexp-output.h"
 #include "_seap-command.h"
 #include "public/seap-scheme.h"
@@ -48,7 +47,6 @@
 typedef struct {
         SEAP_msgid_t   next_id;
         SEXP_ostate_t *ostate; /* Output state */
-        SEXP_pstate_t *pstate; /* Parser state */
         SEAP_scheme_t  scheme; /* Protocol/Scheme used for this descriptor */
         void          *scheme_data; /* Protocol/Scheme related data */
 
@@ -82,7 +80,7 @@ typedef struct {
 #define SEAP_MAX_OPENDESC 128
 #define SDTABLE_REALLOC_ADD 4
 
-int          SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate, SEAP_scheme_t scheme, void *scheme_data);
+int SEAP_desc_add(SEAP_desctable_t *sd_table, SEAP_scheme_t scheme, void *scheme_data);
 int          SEAP_desc_del (SEAP_desctable_t *sd_table, int sd);
 SEAP_desc_t *SEAP_desc_get (SEAP_desctable_t *sd_table, int sd);
 

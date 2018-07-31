@@ -33,7 +33,6 @@
 #include "public/seap.h"
 #include "generic/common.h"
 #include "_sexp-types.h"
-#include "_sexp-parser.h"
 #include "_seap-types.h"
 #include "_seap-message.h"
 #include "_seap-command.h"
@@ -49,8 +48,6 @@ static void SEAP_CTX_initdefault (SEAP_CTX_t *ctx)
 {
         _A(ctx != NULL);
 
-        ctx->parser  = NULL /* PARSER(label) */;
-        ctx->pflags  = SEXP_PFLAG_EOFOK;
         ctx->fmt_in  = SEXP_FMT_CANONICAL;
         ctx->fmt_out = SEXP_FMT_CANONICAL;
 
@@ -96,7 +93,7 @@ int SEAP_connect(SEAP_CTX_t *ctx)
         int sd;
 
 
-	sd = SEAP_desc_add(ctx->sd_table, NULL, SCH_QUEUE, NULL);
+	sd = SEAP_desc_add(ctx->sd_table, SCH_QUEUE, NULL);
 
         if (sd < 0) {
                 dI("Can't create/add new SEAP descriptor");
@@ -138,7 +135,7 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
         SEAP_desc_t *dsc;
         int sd;
 
-        sd = SEAP_desc_add (ctx->sd_table, NULL, SCH_QUEUE, NULL);
+        sd = SEAP_desc_add(ctx->sd_table, SCH_QUEUE, NULL);
 
         if (sd < 0) {
                 dI("Can't create/add new SEAP descriptor");
@@ -157,7 +154,7 @@ int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags)
 
 int SEAP_add_probe (SEAP_CTX_t *ctx, sch_queuedata_t *data)
 {
-	int sd = SEAP_desc_add(ctx->sd_table, NULL, SCH_QUEUE, data);
+	int sd = SEAP_desc_add(ctx->sd_table, SCH_QUEUE, data);
 	dI("SEAP_add_probe");
 	if (sd < 0) {
 		dI("Can't create/add new SEAP descriptor");
@@ -222,7 +219,7 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
 
         if (res != NULL)
                 SEXP_free(res);
-        
+
         SEAP_packet_free (packet);
 
         return (0);
