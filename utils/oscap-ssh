@@ -67,7 +67,6 @@ function usage()
     echo "  --skip-valid"
     echo "  --datastream-id"
     echo "  --oval-id"
-    echo "  --probe-root (has to be remote probe root!)"
     echo
     echo "$ oscap-ssh user@host 22 oval collect [options] INPUT_CONTENT"
     echo

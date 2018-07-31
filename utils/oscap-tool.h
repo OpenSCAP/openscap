@@ -167,7 +167,6 @@ struct oscap_action {
 	int check_engine_results;
 	int export_variables;
         int list_dynamic;
-	char *probe_root;
 	char *verbosity_level;
 	char *fix_type;
 };

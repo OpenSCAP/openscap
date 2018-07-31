@@ -113,7 +113,6 @@ static struct oscap_module OVAL_EVAL = {
 	"                                   (only applicable for source datastreams)\n"
 	"   --oval-id <id>                - ID of the OVAL component ref in the datastream to use.\n"
 	"                                   (only applicable for source datastreams)\n"
-	"   --probe-root <dir>            - Change the root directory before scanning the system.\n"
 	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
 	"   --verbose-log-file <file>     - Write verbose information into file.\n",
     .opt_parser = getopt_oval_eval,
@@ -363,12 +362,12 @@ int app_evaluate_oval(const struct oscap_action *action)
 
 	/* evaluation */
 	if (action->id) {
-		if ((oval_session_evaluate_id(session, action->probe_root, action->id, &eval_result)) != 0)
+		if ((oval_session_evaluate_id(session, NULL, action->id, &eval_result)) != 0)
 			goto cleanup;
 		printf("Definition %s: %s\n", action->id, oval_result_get_text(eval_result));
 	}
 	else {
-		if ((oval_session_evaluate(session, action->probe_root, app_oval_callback, NULL)) != 0)
+		if ((oval_session_evaluate(session, NULL, app_oval_callback, NULL)) != 0)
 			goto cleanup;
 	}
 
@@ -517,9 +516,6 @@ enum oval_opt {
     OVAL_OPT_DATASTREAM_ID,
     OVAL_OPT_OVAL_ID,
     OVAL_OPT_OUTPUT = 'o',
-#if defined(OVAL_PROBES_ENABLED)
-	OVAL_OPT_PROBE_ROOT,
-#endif
 	OVAL_OPT_VERBOSE,
 	OVAL_OPT_VERBOSE_LOG_FILE
 };
@@ -528,7 +524,6 @@ enum oval_opt {
 bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 {
 	action->doctype = OSCAP_DOCUMENT_OVAL_DEFINITIONS;
-	action->probe_root = NULL;
 
 	/* Command-options */
 	struct option long_options[] = {
@@ -541,7 +536,6 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		{ "datastream-id",required_argument, NULL, OVAL_OPT_DATASTREAM_ID},
 		{ "oval-id",    required_argument, NULL, OVAL_OPT_OVAL_ID},
 		{ "skip-valid",	no_argument, &action->validate, 0 },
-		{ "probe-root", required_argument, NULL, OVAL_OPT_PROBE_ROOT},
 		{ "verbose", required_argument, NULL, OVAL_OPT_VERBOSE },
 		{ "verbose-log-file", required_argument, NULL, OVAL_OPT_VERBOSE_LOG_FILE },
 		{ "fetch-remote-resources", no_argument, &action->remote_resources, 1},
@@ -558,7 +552,6 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case OVAL_OPT_DATASTREAM_ID: action->f_datastream_id = optarg;	break;
 		case OVAL_OPT_OVAL_ID: action->f_oval_id = optarg;	break;
-		case OVAL_OPT_PROBE_ROOT: action->probe_root = optarg; break;
 		case OVAL_OPT_VERBOSE:
 			action->verbosity_level = optarg;
 			break;
