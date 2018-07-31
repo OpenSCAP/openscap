@@ -182,6 +182,11 @@ bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err,
     return (out != stderr);
 }
 
+static const char *common_opts_help =
+	"Common options:\n"
+	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+	"   --verbose-log-file <file>     - Write verbose informations into file.\n";
+
 static void oscap_module_print_help(struct oscap_module *module, FILE *out)
 {
     assert(module != NULL);
@@ -196,7 +201,9 @@ static void oscap_module_print_help(struct oscap_module *module, FILE *out)
     oscap_module_print_usage(module, out, true);
     fprintf(out, "\n\n");
 
-    if (module->help) fprintf(out, "%s\n\n", module->help);
+	fprintf(out, "%s\n", common_opts_help);
+	if (module->help)
+		fprintf(out, "%s\n\n", module->help);
 
     if (module->submodules) {
         fprintf(out, "Commands:\n");
@@ -231,28 +238,48 @@ enum oscap_common_opts {
     OPT_LISTMODS,
     OPT_LISTALLMODS,
     OPT_MODTREE,
-    OPT_HELP = 'h'
+	OPT_HELP = 'h',
+	OPT_VERBOSE,
+	OPT_VERBOSE_LOG_FILE
 };
 
-static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv)
+static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv, struct oscap_action *action)
 {
     static const struct option opts[] = {
         { "help",                0, 0, OPT_HELP        },
         { "list-submodules",     0, 0, OPT_LISTMODS    },
         { "list-all-submodules", 0, 0, OPT_LISTALLMODS },
         { "module-tree",         0, 0, OPT_MODTREE     },
+		{ "verbose", required_argument, NULL, OPT_VERBOSE },
+		{ "verbose-log-file", required_argument, NULL, OPT_VERBOSE_LOG_FILE },
         { 0, 0, 0, 0 }
     };
 
-    int optind_bak = optind;
-    int opterr_bak = opterr;
-    opterr = 0;
-    int r = getopt_long(argc, argv, "+h", opts, NULL);
-    opterr = opterr_bak;
-    switch (r) {
-        case -1: case '?': optind = optind_bak; return OPT_NONE;
-        default: return r;
-    }
+	int r;
+	int optind_bak = optind;
+	int opterr_bak = opterr;
+	opterr = 0;
+	while ((r = getopt_long(argc, argv, "+h", opts, NULL)) != -1) {
+		switch (r) {
+		case OPT_VERBOSE:
+			optind_bak += 2;
+			action->verbosity_level = optarg;
+			break;
+		case OPT_VERBOSE_LOG_FILE:
+			optind_bak += 2;
+			action->f_verbose_log = optarg;
+			break;
+		case 0:
+			break;
+		case '?':
+			optind = optind_bak;
+			opterr = opterr_bak;
+			return OPT_NONE;
+		default:
+			return r;
+		}
+	}
+	return OPT_NONE;
 }
 
 int oscap_module_call(struct oscap_action *action)
@@ -328,7 +355,7 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
 
 	getopt_parse_env(module, &argc, &argv);
 
-        switch (oscap_parse_common_opts(argc, argv)) {
+        switch (oscap_parse_common_opts(argc, argv, &action)) {
             case OPT_HELP: oscap_module_print_help(module, stdout); goto cleanup;
             case OPT_LISTMODS: oscap_print_submodules(module, stdout, "\n", false); goto cleanup;
             case OPT_LISTALLMODS: oscap_print_submodules(module, stdout, "\n", true); goto cleanup;
@@ -345,6 +372,12 @@ int oscap_module_process(struct oscap_module *module, int argc, char **argv)
         }
 
         if (module->func) {
+			if (!check_verbose_options(&action)) {
+				goto cleanup;
+			}
+			if (!oscap_set_verbose(action.verbosity_level, action.f_verbose_log, false)) {
+				goto cleanup;
+			}
             ret = oscap_module_call(&action);
             goto cleanup;
         }
