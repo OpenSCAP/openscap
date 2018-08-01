@@ -1681,9 +1681,6 @@ xmlNode *cvrf_score_set_to_dom(const struct cvrf_score_set *score_set) {
 	cvrf_element_add_child("Vector", score_set->vector, score_node);
 	cvrf_element_add_stringlist(score_set->product_ids, "ProductID", score_node);
 
-	free(base);
-	free(temporal);
-	free(environmental);
 	return score_node;
 }
 
