@@ -144,22 +144,6 @@ bool SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name)
         return (false);
 }
 
-SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name)
-{
-        uint16_t i;
-
-        _A(msg  != NULL);
-        _A(name != NULL);
-
-        /* FIXME: this is stupid */
-        for (i = 0; i < msg->attrs_cnt; ++i) {
-                if (strcmp (name, msg->attrs[i].name) == 0)
-                        return SEXP_ref (msg->attrs[i].value);
-        }
-
-        return (NULL);
-}
-
 void SEAP_msg_print (FILE *fp, SEAP_msg_t *msg)
 {
         uint16_t i;
