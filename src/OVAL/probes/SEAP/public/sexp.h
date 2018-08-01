@@ -28,6 +28,5 @@
 #include <sexp-manip.h>
 #include <sexp-manip_r.h>
 #include <sexp-output.h>
-#include <sexp-ID.h>
 
 #endif /* SEXP_H */
