@@ -71,7 +71,6 @@ OSCAP_API int         SEAP_msg_set (SEAP_msg_t *msg, SEXP_t *sexp);
 OSCAP_API SEXP_t     *SEAP_msg_get (SEAP_msg_t *msg);
 
 OSCAP_API int     SEAP_msgattr_set (SEAP_msg_t *msg, const char *attr, SEXP_t *value);
-OSCAP_API SEXP_t *SEAP_msgattr_get (SEAP_msg_t *msg, const char *name);
 
 OSCAP_API int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp);
 OSCAP_API int SEAP_recvmsg  (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg);
