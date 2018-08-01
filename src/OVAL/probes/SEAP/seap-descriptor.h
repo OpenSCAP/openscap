@@ -36,7 +36,6 @@
 #include "_seap-command.h"
 #include "public/seap-scheme.h"
 #include "public/seap-message.h"
-#include "public/seap-command.h"
 #include "public/seap-error.h"
 #include "../../../common/util.h"
 

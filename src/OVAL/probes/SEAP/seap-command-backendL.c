@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 
-#include "seap-command.h"
 #include "seap-command-backendL.h"
 
 int  SEAP_cmdtbl_backendL_add (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r)
