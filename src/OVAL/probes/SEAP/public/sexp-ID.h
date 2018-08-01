@@ -32,6 +32,5 @@ typedef uint64_t SEXP_ID_t;
  * Compute an S-exp value identifier
  */
 OSCAP_API SEXP_ID_t SEXP_ID_v(const SEXP_t *s);
-OSCAP_API SEXP_ID_t SEXP_ID_v2(const SEXP_t *s);
 
 #endif /* SEXP_ID_H */
