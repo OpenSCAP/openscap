@@ -71,7 +71,9 @@ int main (int argc, char *argv[])
                                 SEXP_free (s_exp);
                         }
                         
-                        /* FIXME: getline/fgetln leak */
+                        free(input);
+                        input = NULL;
+                        inlen = 0;
                 }
         } else {
                 int i;

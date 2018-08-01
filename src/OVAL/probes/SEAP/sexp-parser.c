@@ -860,7 +860,7 @@ L_NUMBER_stage3:
 			cur_c = spb_octet (e_dsc.p_buffer, e_dsc.p_bufoff + e_dsc.p_explen);
 
 			if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
-				uint64_t explen = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+				uint64_t explen = strto_uint64((char *)nbuffer, e_dsc.p_explen, NULL, 10);
 
 				if (explen == 0 && (errno == EINVAL || errno == ERANGE)) {
 					ret_p = SEXP_PRET_EINVAL;
@@ -903,7 +903,7 @@ L_NUMBER_stage3:
 				SEXP_val_t v_dsc;
 
 				if (e_dsc.p_numclass == SEXP_NUMCLASS_INT) {
-					int64_t number = strto_int64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+					int64_t number = strto_int64((char *)nbuffer, e_dsc.p_explen, NULL, 10);
 
 					if (errno == ERANGE) {
 						goto L_NUMBER_invalid;
@@ -959,7 +959,7 @@ L_NUMBER_stage3:
 						}
 					}
 				} else if (e_dsc.p_numclass == SEXP_NUMCLASS_UINT) {
-					uint64_t number = strto_uint64_dec ((char *)nbuffer, e_dsc.p_explen, NULL);
+					uint64_t number = strto_uint64((char *)nbuffer, e_dsc.p_explen, NULL, 10);
 
 					if (errno == ERANGE) {
 						goto L_NUMBER_invalid;
@@ -1564,8 +1564,6 @@ __PARSE_RT SEXP_parse_ul_string_dq (__PARSE_PT(dsc))
                              case '0': /* Null byte */
                                      oct = '\0';
                                      break;
-                             case 'x': /* Hexadecimal - two more character needed */
-                                     abort ();
                              case 'a': /* Alert (beep) */
                                      oct = '\a';
                                      break;
