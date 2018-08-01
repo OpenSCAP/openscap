@@ -275,26 +275,6 @@ struct oscap_source *cvrf_index_get_results_source(struct oscap_source *import_s
 	return source;
 }
 
-static const char *get_rpm_name_from_cvrf_product_id(struct cvrf_session *session, const char *product_id) {
-	const char *rpm_name = NULL;
-	struct cvrf_product_tree *tree = cvrf_model_get_product_tree(session->model);
-
-	struct oscap_iterator *branches = cvrf_product_tree_get_branches(tree);
-	while (oscap_iterator_has_more(branches)) {
-		struct cvrf_branch *branch = oscap_iterator_next(branches);
-		if (cvrf_branch_get_branch_type(branch) == CVRF_BRANCH_PRODUCT_VERSION) {
-			struct cvrf_product_name *full_name = cvrf_branch_get_product_name(branch);
-
-			if (oscap_str_endswith(product_id, cvrf_product_name_get_product_id(full_name))) {
-				rpm_name = cvrf_product_name_get_cpe(full_name);
-				break;
-			}
-		}
-	}
-	oscap_iterator_free(branches);
-	return rpm_name;
-}
-
 bool cvrf_product_vulnerability_fixed(struct cvrf_vulnerability *vuln, const char *product) {
 	struct cvrf_product_status_iterator *it = cvrf_vulnerability_get_product_statuses(vuln);
 	while (cvrf_product_status_iterator_has_more(it)) {
