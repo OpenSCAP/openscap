@@ -34,9 +34,9 @@
 #include "_seap-packetq.h"
 #include "_sexp-output.h"
 #include "_seap-command.h"
-#include "public/seap-scheme.h"
 #include "../../../common/util.h"
 
+typedef uint8_t SEAP_scheme_t;
 
 /*
  * Descriptor table + related stuff
