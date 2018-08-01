@@ -60,7 +60,6 @@ function usage()
     echo "  --skip-valid"
     echo "  --datastream-id"
     echo "  --oval-id"
-    echo "  --probe-root"
     echo
     echo "$ oscap-vm image VM_STORAGE_IMAGE oval collect [options] INPUT_CONTENT"
     echo "$ oscap-vm domain VM_DOMAIN oval collect [options] INPUT_CONTENT"
