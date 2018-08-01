@@ -59,8 +59,6 @@ OSCAP_API void      strbuf_free (strbuf_t *buf);
 
 OSCAP_API int strbuf_add   (strbuf_t *buf, const char *str, size_t len);
 OSCAP_API int strbuf_addf  (strbuf_t *buf, char *str, size_t len);
-OSCAP_API int strbuf_add0  (strbuf_t *buf, const char *str);
-OSCAP_API int strbuf_add0f (strbuf_t *buf, char *str);
 OSCAP_API int strbuf_addc (strbuf_t *buf, char ch);
 
 OSCAP_API size_t strbuf_size (strbuf_t *buf);
