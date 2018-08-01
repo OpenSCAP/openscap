@@ -48,7 +48,9 @@
 #include <config.h>
 #endif
 
+#undef _BSD_SOURCE
 #define _BSD_SOURCE
+#undef _DEFAULT_SOURCE
 #define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdbool.h>
@@ -169,10 +171,10 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 				continue;
 			}
 
-			// On SUSE, the presence of a symbolic link to the init.d/<service> in 
+			// On SUSE, the presence of a symbolic link to the init.d/<service> in
 			// a runlevel directory rcx.d implies that the sevice is started on x.
-			
-			if (suse) {			
+
+			if (suse) {
 				start = false;
 				kill = true;
 			}
@@ -190,13 +192,13 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 
 					if (suse) {
 						if (rc_dp->d_name[0] == 'S') {
-						
+
 							start = true;
 							kill = false;
 
 							break;
 						}
-					}						
+					}
 					else {
 						if (rc_dp->d_name[0] == 'S') {
 							start = true;
