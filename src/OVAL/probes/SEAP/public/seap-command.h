@@ -48,7 +48,6 @@ typedef uint8_t  SEAP_cmdtype_t;
 #define SEAP_CMDREG_THREAD 0x00000004
 
 OSCAP_API int SEAP_cmd_register   (SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...);
-OSCAP_API int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code);
 
 #define SEAP_EXEC_LOCAL  0x01
 #define SEAP_EXEC_LONLY  0x02
