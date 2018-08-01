@@ -38,7 +38,7 @@
 #include <assert.h>
 
 #include "generic/common.h"
-#include "public/strbuf.h"
+#include "generic/strbuf.h"
 #include "_sexp-types.h"
 #include "_sexp-output.h"
 #include "_sexp-value.h"

@@ -27,9 +27,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "public/sexp-types.h"
-#include "public/strbuf.h"
 #include "_sexp-manip.h"
 #include "../../../common/util.h"
+#include "generic/strbuf.h"
 
 
 struct SEXP_ostate {
