@@ -164,29 +164,10 @@ int strbuf_addf (strbuf_t *buf, char *str, size_t len)
                 return (ret);
 }
 
-int strbuf_add0 (strbuf_t *buf, const char *str)
-{
-        return __strbuf_add (buf, (char *)str, strlen (str));
-}
-
 int strbuf_addc (strbuf_t *buf, char ch)
 {
         /* XXX: direct? */
         return __strbuf_add (buf, &ch, 1);
-}
-
-int strbuf_add0f (strbuf_t *buf, char *str)
-{
-        int ret;
-
-        ret = __strbuf_add (buf, str, strlen (str));
-
-        if (ret == 0) {
-                free (str);
-                return (0);
-        }
-
-        return (ret);
 }
 
 int strbuf_trunc (strbuf_t *buf, size_t len)
