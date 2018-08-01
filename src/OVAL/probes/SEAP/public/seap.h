@@ -36,7 +36,6 @@ extern "C" {
 #include <errno.h>
 #include <sexp.h>
 #include <seap-types.h>
-#include <seap-command.h>
 #include <seap-error.h>
 #include "oscap_export.h"
 #include "sch_queue.h"

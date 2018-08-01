@@ -34,7 +34,6 @@
 #include "_seap-packetq.h"
 #include "_sexp-output.h"
 #include "_seap-command.h"
-#include "public/seap-command.h"
 #include "public/seap-error.h"
 #include "../../../common/util.h"
 
