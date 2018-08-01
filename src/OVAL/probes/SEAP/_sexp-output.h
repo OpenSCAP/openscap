@@ -30,6 +30,7 @@
 #include "public/sexp-output.h"
 #include "_sexp-manip.h"
 #include "../../../common/util.h"
+#include "generic/strbuf.h"
 
 
 struct SEXP_ostate {
