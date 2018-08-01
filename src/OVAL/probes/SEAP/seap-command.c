@@ -199,11 +199,6 @@ int SEAP_cmdtbl_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b)
         return (int)(a->code - b->code);
 }
 
-int SEAP_cmd_unregister (SEAP_CTX_t *ctx, SEAP_cmdcode_t code)
-{
-        return(-1);
-}
-
 static SEXP_t *__SEAP_cmd_sync_handler (SEXP_t *res, void *arg)
 {
         struct SEAP_synchelper *h = (struct SEAP_synchelper *)arg;
