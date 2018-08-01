@@ -56,7 +56,6 @@ OSCAP_API int     SEAP_msgattr_set (SEAP_msg_t *msg, const char *name, SEXP_t *v
 OSCAP_API bool    SEAP_msgattr_exists (SEAP_msg_t *msg, const char *name);
 
 #include <stdio.h>
-OSCAP_API void SEAP_msg_print (FILE *fp, SEAP_msg_t *msg);
 
 #ifdef __cplusplus
 }
