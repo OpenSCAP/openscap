@@ -26,16 +26,19 @@
 
 #include "public/sexp.h"
 #include "_seap-message.h"
-#include "public/seap-error.h"
 #include "../../../common/util.h"
 
-/*
 struct SEAP_err {
-        SEAP_msgid_t id;
-        uint32_t     code;
-        uint8_t      type;
-        SEXP_t      *data;
+	SEAP_msgid_t id;
+	uint32_t code;
+	uint8_t type;
+	SEXP_t *data;
 };
-*/
+
+typedef struct SEAP_err SEAP_err_t;
+
+SEAP_err_t *SEAP_error_new(void);
+SEAP_err_t *SEAP_error_clone(SEAP_err_t *e);
+void SEAP_error_free(SEAP_err_t *e);
 
 #endif /* _SEAP_ERROR_H */
