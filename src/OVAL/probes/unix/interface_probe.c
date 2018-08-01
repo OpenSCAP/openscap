@@ -292,6 +292,7 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 			char host_tmp[NI_MAXHOST];
 			int bit, byte, prefix = 0;
 			u_int32_t tmp;
+			int host_len;
 
 			sin6p = (struct sockaddr_in6 *) ifa->ifa_addr;
 
@@ -321,7 +322,22 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 			        for (bit = 31; tmp & (1 << bit); bit--)
 			                prefix++;
 			}
-			snprintf(host_tmp, NI_MAXHOST, "%s/%d", host, prefix);
+
+			host_len = strlen(host);
+			if (host_len + 1 + 11 >= NI_MAXHOST) {
+				/*
+				 * If we might overflow the size of host_tmp, compute an
+				 * exact value for the size of prefix and bound the size of
+				 * the printed host accordingly.
+				 *
+				 * This prevents us from overwriting memory at the expense of
+				 * not having a correct host.
+				 */
+				host_len = snprintf(host_tmp, NI_MAXHOST, "%d", prefix);
+				host_len = NI_MAXHOST - host_len - 1;
+			}
+
+			snprintf(host_tmp, NI_MAXHOST, "%.*s/%d", host_len, host, prefix);
 			strncpy(host, host_tmp, NI_MAXHOST);
 		}
 
