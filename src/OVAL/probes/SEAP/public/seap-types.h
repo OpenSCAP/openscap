@@ -25,7 +25,6 @@
 #define SEAP_TYPES_H
 
 #include <stdint.h>
-#include <seap-message.h>
 
 #ifdef __cplusplus
 extern "C" {

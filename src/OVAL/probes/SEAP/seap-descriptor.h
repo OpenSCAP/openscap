@@ -35,7 +35,6 @@
 #include "_sexp-output.h"
 #include "_seap-command.h"
 #include "public/seap-scheme.h"
-#include "public/seap-message.h"
 #include "../../../common/util.h"
 
 
