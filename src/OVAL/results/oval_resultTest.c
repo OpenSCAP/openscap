@@ -1200,19 +1200,19 @@ void oval_result_test_set_instance(struct oval_result_test *test, int instance)
 	test->instance = instance;
 }
 
-void oval_result_test_add_message(struct oval_result_test *test, struct oval_message *message) 
+void oval_result_test_add_message(struct oval_result_test *test, struct oval_message *message)
 {
 	__attribute__nonnull__(test);
 	oval_collection_add(test->messages, message);
 }
 
-void oval_result_test_add_item(struct oval_result_test *test, struct oval_result_item *item) 
+void oval_result_test_add_item(struct oval_result_test *test, struct oval_result_item *item)
 {
 	__attribute__nonnull__(test);
 	oval_collection_add(test->items, item);
 }
 
-void oval_result_test_add_binding(struct oval_result_test *test, struct oval_variable_binding *binding) 
+void oval_result_test_add_binding(struct oval_result_test *test, struct oval_variable_binding *binding)
 {
 	__attribute__nonnull__(test);
 	oval_collection_add(test->bindings, binding);
@@ -1364,7 +1364,7 @@ xmlNode *oval_result_test_to_dom(struct oval_result_test *rslt_test, xmlDocPtr d
 
 	int instance_val = oval_result_test_get_instance(rslt_test);
 	if (instance_val > 1) {
-		char instance[10];
+		char instance[11];
 		*instance = '\0';
 		snprintf(instance, sizeof(instance), "%d", instance_val);
 		xmlNewProp(test_node, BAD_CAST "variable_instance", BAD_CAST instance);
