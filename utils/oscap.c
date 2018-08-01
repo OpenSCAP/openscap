@@ -116,7 +116,7 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 
 static int print_versions(const struct oscap_action *action)
 {
-	printf("OpenSCAP command line tool (oscap) %s\n" "Copyright 2009--2017 Red Hat Inc., Durham, North Carolina.\n\n",
+	printf("OpenSCAP command line tool (oscap) %s\n" "Copyright 2009--2018 Red Hat Inc., Durham, North Carolina.\n\n",
 		oscap_get_version());
 
 	printf("==== Supported specifications ====\n");
