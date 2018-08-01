@@ -30,6 +30,9 @@
 #else
 #include <unistd.h>
 #endif
+
+#include <stdbool.h>
+#include <stddef.h>
 #include <sexp-types.h>
 #include <strbuf.h>
 #include "oscap_export.h"

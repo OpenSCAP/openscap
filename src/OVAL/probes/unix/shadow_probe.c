@@ -60,6 +60,7 @@
 #include <probe/probe.h>
 #include <probe/option.h>
 #include "shadow_probe.h"
+#include "_sexp-manip_r.h"
 
 oval_schema_version_t over;
 

@@ -58,6 +58,7 @@
 #include "SEAP/generic/rbt/rbt.h"
 #include "common/debug_priv.h"
 #include "file_probe.h"
+#include "_sexp-manip_r.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096

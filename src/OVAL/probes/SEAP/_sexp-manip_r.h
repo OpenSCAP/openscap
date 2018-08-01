@@ -41,32 +41,32 @@ extern "C" {
 #define _GNUC_PRINTF( format_idx, arg_idx )
 #endif  /* __GNUC__ */
 
-OSCAP_API SEXP_t *SEXP_init(SEXP_t *sexp_mem);
+SEXP_t *SEXP_init(SEXP_t *sexp_mem);
 
-OSCAP_API SEXP_t *SEXP_number_newb_r(SEXP_t *sexp_mem, bool n);
+SEXP_t *SEXP_number_newb_r(SEXP_t *sexp_mem, bool n);
 #define SEXP_number_newi_r SEXP_number_newi_32_r
-OSCAP_API SEXP_t *SEXP_number_newi_32_r(SEXP_t *sexp_mem, int32_t n);
-OSCAP_API SEXP_t *SEXP_number_newu_32_r(SEXP_t *sexp_mem, uint32_t n);
-OSCAP_API SEXP_t *SEXP_number_newu_64_r(SEXP_t *sexp_mem, uint64_t n);
-OSCAP_API SEXP_t *SEXP_number_newi_64_r(SEXP_t *sexp_mem, int64_t n);
-OSCAP_API SEXP_t *SEXP_number_newf_r(SEXP_t *sexp_mem, double n);
+SEXP_t *SEXP_number_newi_32_r(SEXP_t *sexp_mem, int32_t n);
+SEXP_t *SEXP_number_newu_32_r(SEXP_t *sexp_mem, uint32_t n);
+SEXP_t *SEXP_number_newu_64_r(SEXP_t *sexp_mem, uint64_t n);
+SEXP_t *SEXP_number_newi_64_r(SEXP_t *sexp_mem, int64_t n);
+SEXP_t *SEXP_number_newf_r(SEXP_t *sexp_mem, double n);
 
-OSCAP_API SEXP_t *SEXP_string_new_r(SEXP_t *sexp_mem, const void *string, size_t length);
-OSCAP_API SEXP_t *SEXP_string_newf_r(SEXP_t *sexp_mem, const char *format, ...) _GNUC_PRINTF (2,3);
-OSCAP_API SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap);
+SEXP_t *SEXP_string_new_r(SEXP_t *sexp_mem, const void *string, size_t length);
+SEXP_t *SEXP_string_newf_r(SEXP_t *sexp_mem, const char *format, ...) _GNUC_PRINTF (2,3);
+SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap);
 
-OSCAP_API SEXP_t *SEXP_list_new_rv(SEXP_t *sexp_mem, SEXP_t *memb, va_list alist);
-OSCAP_API SEXP_t *SEXP_list_new_r(SEXP_t *sexp_mem, SEXP_t *memb, ...);
+SEXP_t *SEXP_list_new_rv(SEXP_t *sexp_mem, SEXP_t *memb, va_list alist);
+SEXP_t *SEXP_list_new_r(SEXP_t *sexp_mem, SEXP_t *memb, ...);
 
-OSCAP_API SEXP_t *SEXP_list_rest_r (SEXP_t *rest, const SEXP_t *list);
+SEXP_t *SEXP_list_rest_r (SEXP_t *rest, const SEXP_t *list);
 
-OSCAP_API int SEXP_unref_r(SEXP_t *s_exp);
+int SEXP_unref_r(SEXP_t *s_exp);
 
 #if defined(NDEBUG)
-OSCAP_API void SEXP_free_r (SEXP_t *s_exp);
+void SEXP_free_r (SEXP_t *s_exp);
 #else
 #include <stdint.h>
-OSCAP_API void __SEXP_free_r(SEXP_t *s_exp, const char *file, uint32_t line, const char *func);
+void __SEXP_free_r(SEXP_t *s_exp, const char *file, uint32_t line, const char *func);
 
 __attribute__ ((unused)) static void SEXP_free_r(SEXP_t *sexp)
 {

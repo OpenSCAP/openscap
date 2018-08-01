@@ -28,7 +28,7 @@
 #include "_sexp-value.h"
 #include "_sexp-rawptr.h"
 #include "_sexp-manip.h"
-#include "public/sexp-manip_r.h"
+#include "_sexp-manip_r.h"
 #include "debug_priv.h"
 
 SEXP_t *SEXP_init(SEXP_t *sexp_mem)

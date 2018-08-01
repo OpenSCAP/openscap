@@ -30,6 +30,8 @@
 #include "../SEAP/generic/rbt/rbt.h"
 
 #include "rcache.h"
+#include "_sexp-manip.h"
+#include "_sexp-manip_r.h"
 
 probe_rcache_t *probe_rcache_new(void)
 {

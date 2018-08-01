@@ -59,6 +59,7 @@
 #include "probe/entcmp.h"
 #include "util.h"
 #include "common/debug_priv.h"
+#include "_sexp-manip_r.h"
 
 #include "iflisteners-proto.h"
 #include "iflisteners_probe.h"
