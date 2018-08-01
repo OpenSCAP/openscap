@@ -24,7 +24,6 @@
 #ifndef SEAP_PACKET_H
 #define SEAP_PACKET_H
 
-#include <seap-message.h>
 #include <seap-command.h>
 #include <seap-error.h>
 #include "oscap_export.h"

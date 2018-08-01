@@ -34,7 +34,6 @@
 #include "_seap-packet.h"
 #include "_seap-types.h"
 #include "seap-descriptor.h"
-#include "public/seap-message.h"
 #include "public/seap-command.h"
 #include "public/seap-error.h"
 #include "sch_queue.h"

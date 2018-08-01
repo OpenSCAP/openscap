@@ -26,6 +26,7 @@
 
 #include <stdint.h>
 #include "oscap_export.h"
+#include "_seap-message.h"
 
 #ifdef __cplusplus
 extern "C" {

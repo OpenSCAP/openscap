@@ -26,14 +26,20 @@
 
 #include <stdint.h>
 #include "public/sexp-types.h"
-#include "public/seap-message.h"
 #include "../../../common/util.h"
 
+#if SEAP_MSGID_BITS == 64
+typedef uint64_t SEAP_msgid_t;
+#else
+typedef uint32_t SEAP_msgid_t;
+#endif
 
 struct SEAP_attr {
         char   *name;
         SEXP_t *value;
 };
+
+typedef struct SEAP_attr SEAP_attr_t;
 
 struct SEAP_msg {
         SEAP_msgid_t id;
@@ -42,5 +48,19 @@ struct SEAP_msg {
         SEXP_t      *sexp;
 };
 
+typedef struct SEAP_msg SEAP_msg_t;
+
+SEAP_msg_t *SEAP_msg_new(void);
+SEAP_msg_t *SEAP_msg_clone(SEAP_msg_t *msg);
+void SEAP_msg_free(SEAP_msg_t *msg);
+
+SEAP_msgid_t SEAP_msg_id(SEAP_msg_t *msg);
+
+int SEAP_msg_set(SEAP_msg_t *msg, SEXP_t *sexp);
+void SEAP_msg_unset(SEAP_msg_t *msg);
+SEXP_t *SEAP_msg_get(SEAP_msg_t *msg);
+
+int SEAP_msgattr_set(SEAP_msg_t *msg, const char *name, SEXP_t *value);
+bool SEAP_msgattr_exists(SEAP_msg_t *msg, const char *name);
 
 #endif /* _SEAP_MESSAGE_H */
