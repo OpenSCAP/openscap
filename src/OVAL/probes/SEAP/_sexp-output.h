@@ -27,7 +27,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "public/sexp-types.h"
-#include "public/sexp-output.h"
+#include "public/strbuf.h"
 #include "_sexp-manip.h"
 #include "../../../common/util.h"
 
@@ -39,6 +39,12 @@ struct SEXP_ostate {
         uint8_t       *s_part;  /* S-exp part */
         size_t        *s_pos;   /* S-exp position */
 };
+
+typedef struct SEXP_ostate SEXP_ostate_t;
+
+size_t SEXP_fprintfa(FILE *fp, const SEXP_t *s_exp);
+
+int SEXP_sbprintf_t(SEXP_t *s_exp, strbuf_t *sb);
 
 
 #endif /* _SEXP_OUTPUT_H */
