@@ -33,6 +33,7 @@
 #include "common/bfind.h"
 
 #include "ncache.h"
+#include "_sexp-manip.h"
 
 /**
  * Lock cache for reading.

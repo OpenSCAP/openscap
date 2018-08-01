@@ -6,6 +6,7 @@
 #include <sexp.h>
 #include <string.h>
 #include <inttypes.h>
+#include "_sexp-manip.h"
 
 int main (void)
 {

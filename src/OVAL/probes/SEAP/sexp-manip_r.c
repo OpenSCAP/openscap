@@ -27,6 +27,7 @@
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-rawptr.h"
+#include "_sexp-manip.h"
 #include "public/sexp-manip_r.h"
 #include "debug_priv.h"
 

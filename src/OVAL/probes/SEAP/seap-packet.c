@@ -29,7 +29,7 @@
 #include <errno.h>
 
 #include "generic/common.h"
-#include "public/sexp-manip.h"
+#include "_sexp-manip.h"
 #include "_seap-packetq.h"
 #include "_seap-packet.h"
 #include "_seap-types.h"

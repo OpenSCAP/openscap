@@ -44,7 +44,6 @@
 #include "_sexp-value.h"
 #include "_sexp-manip.h"
 #include "_sexp-rawptr.h"
-#include "public/sexp-manip.h"
 #include "public/sexp-manip_r.h"
 #include "debug_priv.h"
 
