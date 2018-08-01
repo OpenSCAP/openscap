@@ -65,11 +65,6 @@ OSCAP_API int SEAP_openfd (SEAP_CTX_t *ctx, int fd, uint32_t flags);
 OSCAP_API int SEAP_openfd2 (SEAP_CTX_t *ctx, int ifd, int ofd, uint32_t flags);
 OSCAP_API int SEAP_add_probe(SEAP_CTX_t *ctx, sch_queuedata_t *data);
 
-OSCAP_API SEAP_msg_t *SEAP_msg_new (void);
-OSCAP_API void        SEAP_msg_free (SEAP_msg_t *msg);
-OSCAP_API int         SEAP_msg_set (SEAP_msg_t *msg, SEXP_t *sexp);
-OSCAP_API SEXP_t     *SEAP_msg_get (SEAP_msg_t *msg);
-
 OSCAP_API int SEAP_recvsexp (SEAP_CTX_t *ctx, int sd, SEXP_t **sexp);
 OSCAP_API int SEAP_recvmsg  (SEAP_CTX_t *ctx, int sd, SEAP_msg_t **seap_msg);
 
