@@ -9,7 +9,6 @@
 #include "oval_fts.h"
 #include "probe-api.h"
 #include "_sexp-types.h"
-#include "sexp-parser.h"
 #include "_sexp-manip.h"
 
 static int create_path_sexpr(char *arg_operation, char *arg_argument, SEXP_t **result)

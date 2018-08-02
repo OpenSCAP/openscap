@@ -27,10 +27,26 @@
 #include <stdint.h>
 #include "public/seap-types.h"
 #include "_sexp-types.h"
-#include "_seap-command.h"
-#include "seap-descriptor.h"
 #include "../../../common/util.h"
+#include "generic/rbt/rbt_common.h"
+#include "generic/bitmap.h"
+#include "oval_types.h"
 
+typedef uint8_t SEAP_cflags_t;
+
+typedef struct {
+	uint8_t flags;
+	void *table;
+	size_t maxcnt;
+#if defined(SEAP_THREAD_SAFE)
+	pthread_rwlock_t lock;
+#endif
+} SEAP_cmdtbl_t;
+
+typedef struct {
+	rbt_t *tree;
+	bitmap_t *bmap;
+} SEAP_desctable_t;
 
 /* SEAP context */
 struct SEAP_CTX {
@@ -44,6 +60,7 @@ struct SEAP_CTX {
         uint16_t send_timeout;
 	oval_subtype_t subtype;
 };
+typedef struct SEAP_CTX SEAP_CTX_t;
 
 
 #endif /* _SEAP_TYPES_H */

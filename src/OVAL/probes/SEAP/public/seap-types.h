@@ -30,7 +30,6 @@
 extern "C" {
 #endif
 
-typedef struct SEAP_CTX SEAP_CTX_t;
 
 #define SEAP_CTX_INITIALIZER { NULL, 0, 0, 0, SEAP_DESCTBL_INITIALIZER, SEAP_CMDTABLE_INITIALIZER }
 
