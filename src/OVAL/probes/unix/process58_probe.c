@@ -95,7 +95,7 @@ extern char const *_cap_names[];
 #include "process58-capability.h"
 #endif /* CAP_FOUND */
 
-#include "seap.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"

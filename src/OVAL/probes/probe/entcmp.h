@@ -30,7 +30,7 @@
 #ifndef PROBE_ENTCMP_H
 #define PROBE_ENTCMP_H
 
-#include <seap.h>
+#include "_seap.h"
 #include <stdarg.h>
 #include "oval_definitions.h"
 #include "oval_results.h"

@@ -63,7 +63,7 @@
 #include <dirent.h>
 #include <limits.h>
 
-#include <seap.h>
+#include "_seap.h"
 #include <probe-api.h>
 #include <probe/probe.h>
 #include <probe/entcmp.h>

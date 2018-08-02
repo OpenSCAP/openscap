@@ -42,6 +42,7 @@
 
 #include "common/debug_priv.h"
 #include "oval_fts.h"
+#include "_sexp-manip.h"
 
 #ifndef MTAB_LINE_MAX
 # define MTAB_LINE_MAX 4096

@@ -24,6 +24,7 @@
 #ifndef OPENSCAP_PROBE_TABLE_H
 #define OPENSCAP_PROBE_TABLE_H
 
+#include <stdio.h>
 #include "probe-api.h"
 
 typedef void *(*probe_init_function_t)(void);

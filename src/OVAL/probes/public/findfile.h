@@ -30,7 +30,6 @@
 #ifndef FINDFILE_H
 #define FINDFILE_H
 
-#include "seap.h"
 #include "probe-api.h"
 #include "fsdev.h"
 #include "oscap_export.h"

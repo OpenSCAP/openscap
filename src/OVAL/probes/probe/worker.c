@@ -24,7 +24,7 @@
 #include <config.h>
 #endif
 
-#include <seap.h>
+#include "_seap.h"
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>

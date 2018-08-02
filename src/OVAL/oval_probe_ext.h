@@ -22,7 +22,7 @@
 #ifndef OVAL_PROBE_EXT_H
 #define OVAL_PROBE_EXT_H
 
-#include <seap.h>
+#include "_seap.h"
 #include <pthread.h>
 #include <stdbool.h>
 #include "oval_probe_impl.h"

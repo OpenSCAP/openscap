@@ -45,7 +45,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "seap.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "environmentvariable_probe.h"

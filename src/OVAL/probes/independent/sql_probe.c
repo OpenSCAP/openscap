@@ -31,7 +31,7 @@
 #include <config.h>
 #endif
 
-#include <seap.h>
+#include "_seap.h"
 #include <probe-api.h>
 #include <stdlib.h>
 #include <string.h>
