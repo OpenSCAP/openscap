@@ -25,7 +25,6 @@
 
 #include <pthread.h>
 #include <stddef.h>
-#include <sexp.h>
 #include <errno.h>
 #include <string.h>
 #include <inttypes.h>

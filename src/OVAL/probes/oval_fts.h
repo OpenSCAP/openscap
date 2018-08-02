@@ -24,7 +24,6 @@
 
 #include "oscap_platforms.h"
 
-#include <sexp.h>
 #if defined(OS_SOLARIS) || defined(OS_AIX)
 #include "fts_sun.h"
 #else
@@ -32,6 +31,7 @@
 #endif
 #include <pcre.h>
 #include "fsdev.h"
+#include "sexp-types.h"
 
 #define ENT_GET_AREF(ent, dst, attr_name, mandatory)			\
 	do {								\

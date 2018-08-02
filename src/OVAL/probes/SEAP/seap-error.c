@@ -21,7 +21,6 @@
  */
 
 #include <config.h>
-#include "public/sexp.h"
 #include "_seap-error.h"
 #include "_sexp-manip.h"
 

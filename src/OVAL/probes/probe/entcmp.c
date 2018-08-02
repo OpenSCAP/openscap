@@ -31,7 +31,6 @@
 #include <config.h>
 #endif
 
-#include <sexp.h>
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>

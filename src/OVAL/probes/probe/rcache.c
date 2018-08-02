@@ -25,7 +25,6 @@
 #endif
 
 #include <stddef.h>
-#include <sexp.h>
 
 #include "../SEAP/generic/rbt/rbt.h"
 

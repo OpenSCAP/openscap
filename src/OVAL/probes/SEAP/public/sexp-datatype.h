@@ -26,8 +26,8 @@
 
 #include <stdarg.h>
 #include <stdint.h>
-#include <sexp.h>
 #include "oscap_export.h"
+#include "sexp-types.h"
 
 #ifdef __cplusplus
 extern "C" {

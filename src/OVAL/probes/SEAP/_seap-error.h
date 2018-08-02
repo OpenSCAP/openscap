@@ -24,7 +24,6 @@
 #ifndef _SEAP_ERROR_H
 #define _SEAP_ERROR_H
 
-#include "public/sexp.h"
 #include "_seap-message.h"
 #include "../../../common/util.h"
 

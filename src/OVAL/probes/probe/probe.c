@@ -24,7 +24,6 @@
 #include <config.h>
 #endif
 
-#include <sexp.h>
 #include "probe-api.h"
 #include "probe.h"
 

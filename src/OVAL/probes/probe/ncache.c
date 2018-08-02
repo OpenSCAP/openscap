@@ -28,7 +28,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
-#include <sexp.h>
 
 #include "common/bfind.h"
 

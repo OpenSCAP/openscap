@@ -3,7 +3,6 @@
 #include <config.h>
 #endif
 
-#include <sexp.h>
 #include <string.h>
 #include <stdio.h>
 #include "_sexp-manip.h"

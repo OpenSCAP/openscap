@@ -25,7 +25,6 @@
 #endif
 
 #include <stdio.h>
-#include <sexp.h>
 #include <sys/time.h>
 #include <pthread.h>
 #include <stdlib.h>

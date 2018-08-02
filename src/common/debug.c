@@ -44,7 +44,6 @@
 # include <sys/stat.h>
 
 #if defined(OVAL_PROBES_ENABLED)
-# include <sexp.h>
 # include "_sexp-output.h"
 #endif
 
