@@ -29,7 +29,7 @@
 #include <WMIUtils.h>
 #include <windows.h>
 #include "debug_priv.h"
-#include "seap.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "probe/probe.h"

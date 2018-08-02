@@ -32,7 +32,7 @@
 #include <pthread.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <seap.h>
+#include "_seap.h"
 #include "common/bfind.h"
 #include "probe.h"
 #include "ncache.h"
