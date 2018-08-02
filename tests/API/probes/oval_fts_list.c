@@ -8,7 +8,7 @@
 #include <string.h>
 #include "oval_fts.h"
 #include "probe-api.h"
-#include "sexp-types.h"
+#include "_sexp-types.h"
 #include "sexp-parser.h"
 #include "_sexp-manip.h"
 

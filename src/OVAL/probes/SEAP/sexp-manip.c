@@ -45,6 +45,7 @@
 #include "_sexp-manip.h"
 #include "_sexp-rawptr.h"
 #include "_sexp-manip_r.h"
+#include "_sexp-datatype.h"
 #include "debug_priv.h"
 
 static void SEXP_free_lmemb (SEXP_t *s_exp);

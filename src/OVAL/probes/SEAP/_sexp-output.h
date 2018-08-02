@@ -26,7 +26,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include "public/sexp-types.h"
+#include "_sexp-types.h"
 #include "_sexp-manip.h"
 #include "../../../common/util.h"
 #include "generic/strbuf.h"

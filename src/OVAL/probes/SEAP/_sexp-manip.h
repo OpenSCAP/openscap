@@ -25,7 +25,7 @@
 #define _SEXP_MANIP_H
 
 #include "../../../common/util.h"
-#include "public/sexp-types.h"
+#include "_sexp-types.h"
 
 
 #define SEXP_LSTACK_INIT_SIZE      8

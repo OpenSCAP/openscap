@@ -24,7 +24,7 @@
 
 #include <stddef.h>
 #include <pthread.h>
-#include "sexp-types.h"
+#include "_sexp-types.h"
 
 #define PROBE_NCACHE_INIT_SIZE 24
 #define PROBE_NCACHE_ADD_SIZE  8

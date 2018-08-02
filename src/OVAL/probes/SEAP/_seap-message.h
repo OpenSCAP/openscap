@@ -25,7 +25,7 @@
 #define _SEAP_MESSAGE_H
 
 #include <stdint.h>
-#include "public/sexp-types.h"
+#include "_sexp-types.h"
 #include "../../../common/util.h"
 
 #if SEAP_MSGID_BITS == 64

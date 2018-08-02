@@ -66,7 +66,7 @@
 #include <oval_system_characteristics.h>
 #include <oval_results.h>
 #include <oval_types.h>
-#include "sexp-types.h"
+#include "_sexp-types.h"
 #include "oscap_export.h"
 
 /*

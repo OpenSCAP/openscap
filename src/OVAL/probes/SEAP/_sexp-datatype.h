@@ -26,7 +26,7 @@
 
 #include "generic/rbt/rbt.h"
 #include "../../../common/util.h"
-#include "sexp-types.h"
+#include "_sexp-types.h"
 
 
 struct SEXP_datatype {

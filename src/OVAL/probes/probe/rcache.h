@@ -24,7 +24,7 @@
 
 #include <stddef.h>
 #include "../SEAP/generic/rbt/rbt.h"
-#include "sexp-types.h"
+#include "_sexp-types.h"
 
 /**
  * Probe cache structure.

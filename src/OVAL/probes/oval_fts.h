@@ -31,7 +31,7 @@
 #endif
 #include <pcre.h>
 #include "fsdev.h"
-#include "sexp-types.h"
+#include "_sexp-types.h"
 
 #define ENT_GET_AREF(ent, dst, attr_name, mandatory)			\
 	do {								\
