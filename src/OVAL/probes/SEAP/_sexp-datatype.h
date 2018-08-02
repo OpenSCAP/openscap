@@ -24,18 +24,21 @@
 #ifndef _SEXP_DATATYPE
 #define _SEXP_DATATYPE
 
-#include "public/sexp-datatype.h"
 #include "generic/rbt/rbt.h"
 #include "../../../common/util.h"
+#include "sexp-types.h"
 
 
 struct SEXP_datatype {
         uint16_t          dt_flg;
         uint8_t          _dt[];
 };
+typedef struct SEXP_datatype SEXP_datatype_t;
 
 #define SEXP_DTFLG_LOCALDATA 0x01 /* whether a extended pointer should be used */
 #define SEXP_DTFLG_HAVEDTOPS 0x02 /* whether there are defined some operations */
+
+typedef void (*SEXP_datatypeOP_t) (SEXP_t *, const SEXP_t *, void *);
 
 struct SEXP_datatype_ops {
         uint16_t           dt_opcnt;
@@ -45,6 +48,7 @@ struct SEXP_datatype_ops {
 struct SEXP_datatypeTbl {
         rbt_t *tree;
 };
+typedef struct SEXP_datatypeTbl SEXP_datatypeTbl_t;
 
 /*
  * Datatype pointer
@@ -83,5 +87,17 @@ int SEXP_datatype_del(SEXP_datatypeTbl_t *t, const char *name);
 #define SEXP_DATATYPEPTR_MASK  (UINTPTR_MAX << 2)
 #define SEXP_DATATYPEPTR_ALIGN (4 > sizeof(void *) ? 4 : sizeof (void *))
 
+extern SEXP_datatypeTbl_t g_datatypes;
+
+int SEXP_datatype_register(SEXP_datatypeTbl_t *t, const char *datatype);
+
+int SEXP_datatype_op(uint8_t op, const SEXP_t *sexp, void *res, ...);
+int SEXP_datatype_op_safe(const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
+
+SEXP_datatype_t *SEXP_datatype_new(void);
+int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...);
+int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag);
+int SEXP_datatype_addop(SEXP_datatype_t **dp, int opnum, SEXP_datatypeOP_t *op);
+int SEXP_datatype_delop(SEXP_datatype_t **dp, int opnum);
 
 #endif /* _SEXP_DATATYPE */
