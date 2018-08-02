@@ -29,15 +29,9 @@
 #include <pthread.h>
 
 #include "_sexp-types.h"
-#include "public/seap-types.h"
+#include "_seap-types.h"
 #include "../../../common/util.h"
 
-
-typedef uint8_t SEAP_cmdclass_t;
-typedef uint16_t SEAP_cmdcode_t;
-typedef uint16_t SEAP_cmdid_t;
-typedef uint8_t SEAP_cmdtype_t;
-typedef SEXP_t * (*SEAP_cmdfn_t) (SEXP_t *, void *);
 
 #define SEAP_CMDCLASS_INT 1
 #define SEAP_CMDCLASS_USR 2
@@ -70,6 +64,7 @@ struct SEAP_cmd {
         SEAP_cmdcode_t  code;
         SEXP_t         *args;
 };
+typedef struct SEAP_cmd SEAP_cmd_t;
 
 struct SEAP_synchelper {
         SEXP_t         *args;
@@ -80,15 +75,6 @@ struct SEAP_synchelper {
 
 #define SEAP_CMDTBL_LARGE 0x01
 #define SEAP_CMDTBL_LARGE_TRESHOLD 32
-
-typedef struct {
-        uint8_t  flags;
-        void    *table;
-        size_t   maxcnt;
-#if defined(SEAP_THREAD_SAFE)
-        pthread_rwlock_t lock;
-#endif
-} SEAP_cmdtbl_t;
 
 typedef struct {
         SEAP_cmdcode_t code;
@@ -114,8 +100,6 @@ int SEAP_cmdtbl_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b);
 
 SEAP_cmdrec_t *SEAP_cmdrec_new (void);
 void SEAP_cmdrec_free (SEAP_cmdrec_t *r);
-
-typedef uint8_t SEAP_cflags_t;
 
 #define SEAP_CFLG_THREAD 0x01
 #define SEAP_CFLG_WATCH  0x02

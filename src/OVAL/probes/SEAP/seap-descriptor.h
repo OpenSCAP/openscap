@@ -66,11 +66,6 @@ typedef struct {
 #define SEAP_DESC_FDOUT 0x00000002
 #define SEAP_DESC_SELF  -1
 
-typedef struct {
-        rbt_t       *tree;
-        bitmap_t    *bmap;
-} SEAP_desctable_t;
-
 #define SEAP_DESCTBL_INITIALIZER { NULL, NULL }
 
 #define SEAP_BUFFER_SIZE 2*4096

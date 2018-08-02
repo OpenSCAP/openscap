@@ -27,6 +27,7 @@
 #include "_seap-message.h"
 #include "sch_queue.h"
 #include "../../../common/util.h"
+#include "_seap-types.h"
 
 #ifndef EOPNOTSUPP
 # define EOPNOTSUPP 1001
