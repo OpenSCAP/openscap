@@ -32,7 +32,6 @@
 #ifndef OVAL_PROBE_IMPL_H
 #define OVAL_PROBE_IMPL_H
 
-#include <seap-types.h>
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"

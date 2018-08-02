@@ -33,12 +33,6 @@
 #include "../../../common/util.h"
 
 
-typedef uint8_t SEAP_cmdclass_t;
-typedef uint16_t SEAP_cmdcode_t;
-typedef uint16_t SEAP_cmdid_t;
-typedef uint8_t SEAP_cmdtype_t;
-typedef SEXP_t * (*SEAP_cmdfn_t) (SEXP_t *, void *);
-
 #define SEAP_CMDCLASS_INT 1
 #define SEAP_CMDCLASS_USR 2
 
@@ -70,6 +64,7 @@ struct SEAP_cmd {
         SEAP_cmdcode_t  code;
         SEXP_t         *args;
 };
+typedef struct SEAP_cmd SEAP_cmd_t;
 
 struct SEAP_synchelper {
         SEXP_t         *args;
