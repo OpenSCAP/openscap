@@ -565,7 +565,7 @@ static int _write_fix_header_to_fd(const char *sys, int output_fd, struct xccdf_
 static int _write_fix_footer_to_fd(const char *sys, int output_fd, struct xccdf_rule *rule)
 {
 	if (oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands")) {
-		char *fix_footer = oscap_sprintf("# END fix for '%s'\n\n", xccdf_rule_get_id(rule));
+		char *fix_footer = oscap_sprintf("\n# END fix for '%s'\n\n", xccdf_rule_get_id(rule));
 		return _write_text_to_fd_and_free(output_fd, fix_footer);
 	} else {
 		return 0;
