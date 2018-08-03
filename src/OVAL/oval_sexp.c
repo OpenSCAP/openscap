@@ -5,8 +5,6 @@
  * @author "Lukas Kuklinek" <lkukline@redhat.com>
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
- * @addtogroup PROBEOVALSEXP
- * @{
  */
 /*
  * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
@@ -1065,4 +1063,3 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	return 0;
 }
 
-/// @}
