@@ -2,8 +2,6 @@
  * @file   findfile.h
  * @author "Peter Vrabec" <pvrabec@redhat.com>
  *
- * @addtogroup PROBEAUXAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -457,5 +455,3 @@ static void rglobfree(rglob_t * result)
 
 	result->pathc = 0;
 }
-
-/// @}

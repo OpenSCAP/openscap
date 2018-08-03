@@ -3,8 +3,6 @@
  * @brief  fsdev header file
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup PROBEAUXAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -89,4 +87,3 @@ int fsdev_path(fsdev_t * lfs, const char *path);
 int fsdev_fd(fsdev_t * lfs, int fd);
 
 #endif				/* FSDEV_H */
-/// @}

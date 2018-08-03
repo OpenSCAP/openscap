@@ -2,8 +2,6 @@
  * @file   findfile.h
  * @author "Peter Vrabec" <pvrabec@redhat.com>
  *
- * @addtogroup PROBEAUXAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -58,4 +56,3 @@ int find_files(SEXP_t *spath, SEXP_t *sfilename, SEXP_t *behaviors,
 int (*cb) (const char *, const char *, void *), void *arg);
 
 #endif
-/// @}

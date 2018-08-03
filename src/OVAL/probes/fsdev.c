@@ -3,8 +3,6 @@
  * @brief  fsdev API implementation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup PROBEAUXAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -466,4 +464,3 @@ int fsdev_fd(fsdev_t * lfs, int fd)
 
 	return fsdev_search(lfs, &st.st_dev);
 }
-/// @}
