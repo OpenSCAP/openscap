@@ -1,6 +1,6 @@
 /**
  * @file   fsdev.h
- * @brief  fsdev API public header file
+ * @brief  fsdev header file
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
  * @addtogroup PROBEAUXAPI
