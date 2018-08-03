@@ -44,7 +44,6 @@
 #include <oval_results.h>
 #include <oval_types.h>
 #include "_sexp-types.h"
-#include "oscap_export.h"
 
 /*
  * items

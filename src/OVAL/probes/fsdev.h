@@ -35,7 +35,6 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <sys/stat.h>
-#include "oscap_export.h"
 
 /**
  * Filesystem device structure.

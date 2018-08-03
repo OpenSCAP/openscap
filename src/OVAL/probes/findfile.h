@@ -32,7 +32,6 @@
 
 #include "probe-api.h"
 #include "fsdev.h"
-#include "oscap_export.h"
 
 #define MTAB_PATH "/etc/mtab"
 #define LOCAL_FILESYSTEMS { "btrfs",            \
