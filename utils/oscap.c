@@ -40,9 +40,6 @@
 #include "oscap-tool.h"
 #include "check_engine_plugin.h"
 #include "oscap_source.h"
-#if defined(OVAL_PROBES_ENABLED)
-#  include "probe-table.h"
-#endif
 
 static bool getopt_root(int argc, char **argv, struct oscap_action *action);
 static int print_versions(const struct oscap_action*);

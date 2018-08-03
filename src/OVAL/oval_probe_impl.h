@@ -38,7 +38,7 @@
 #include "public/oval_system_characteristics.h"
 #include "../common/util.h"
 #include "public/oval_probe.h"
-#include "probes/_probe-api.h"
+#include "probes/probe-api.h"
 
 #include "public/oval_probe_session.h"
 #include "public/oval_probe.h"

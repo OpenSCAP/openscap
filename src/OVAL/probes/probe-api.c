@@ -48,7 +48,7 @@
 #endif
 
 #include "debug_priv.h"
-#include "_probe-api.h"
+#include "probe-api.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
 #include "probe/probe.h"

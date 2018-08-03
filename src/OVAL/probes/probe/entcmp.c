@@ -44,7 +44,7 @@
 
 #include "common/debug_priv.h"
 #include "entcmp.h"
-#include "../_probe-api.h"
+#include "probe-api.h"
 #include "../../results/oval_cmp_basic_impl.h"
 #include "../../results/oval_cmp_evr_string_impl.h"
 #include "../../results/oval_cmp_ip_address_impl.h"

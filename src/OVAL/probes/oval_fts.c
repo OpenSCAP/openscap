@@ -36,7 +36,7 @@
 
 #include "oscap_helpers.h"
 #include "fsdev.h"
-#include "_probe-api.h"
+#include "probe-api.h"
 #include "probe/entcmp.h"
 #include "debug_priv.h"
 #include "oval_fts.h"

@@ -61,7 +61,7 @@ if (ENABLE_PROBES)
 	"oval_probe_handler.c"
 	"_oval_probe_handler.h"
 	"probes/probe-api.c"
-	"probes/_probe-api.h"
+	"probes/probe-api.h"
 	"probes/probe-table.c"
 	"oval_sexp.c"
 	"oval_sexp.h"

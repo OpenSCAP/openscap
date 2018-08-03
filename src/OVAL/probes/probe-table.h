@@ -32,14 +32,14 @@ typedef int (*probe_main_function_t)(probe_ctx *ctx, void *arg);
 typedef void (*probe_fini_function_t)(void *probe_arg);
 typedef int (*probe_offline_mode_function_t)(void);
 
-OSCAP_API probe_init_function_t probe_table_get_init_function(oval_subtype_t type);
-OSCAP_API probe_main_function_t probe_table_get_main_function(oval_subtype_t type);
-OSCAP_API probe_fini_function_t probe_table_get_fini_function(oval_subtype_t type);
-OSCAP_API probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype_t type);
+probe_init_function_t probe_table_get_init_function(oval_subtype_t type);
+probe_main_function_t probe_table_get_main_function(oval_subtype_t type);
+probe_fini_function_t probe_table_get_fini_function(oval_subtype_t type);
+probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype_t type);
 
-OSCAP_API void probe_table_list(FILE *output);
-OSCAP_API int probe_table_size(void);
-OSCAP_API bool probe_table_exists(oval_subtype_t type);
-OSCAP_API oval_subtype_t probe_table_at_index(int idx);
+void probe_table_list(FILE *output);
+int probe_table_size(void);
+bool probe_table_exists(oval_subtype_t type);
+oval_subtype_t probe_table_at_index(int idx);
 
 #endif /* OPENSCAP_OPENSCAP_PROBE_TABLE_H */

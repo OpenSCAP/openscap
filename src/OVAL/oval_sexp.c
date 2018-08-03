@@ -44,7 +44,7 @@
 
 #include "oval_probe_impl.h"
 #include "oval_sexp.h"
-#include "probes/public/probe-api.h"
+#include "probe-api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "adt/oval_string_map_impl.h"

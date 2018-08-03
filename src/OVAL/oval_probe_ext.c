@@ -42,7 +42,7 @@
 #include "common/util.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
-#include "probes/public/probe-api.h"
+#include "probe-api.h"
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
 #include "probe-table.h"

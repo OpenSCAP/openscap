@@ -56,7 +56,7 @@
  * @param arg an optional argument to the callback function
  */
 int find_files(SEXP_t *spath, SEXP_t *sfilename, SEXP_t *behaviors,
-OSCAP_API 	       int (*cb) (const char *, const char *, void *), void *arg);
+int (*cb) (const char *, const char *, void *), void *arg);
 
 #endif
 /// @}
