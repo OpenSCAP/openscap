@@ -19,7 +19,7 @@ typedef struct {
 extern size_t OSCAP_GSYM(probe_optdef_count);
 extern probe_option_t *OSCAP_GSYM(probe_optdef);
 
-OSCAP_API int probe_setoption(int option, ...);
-OSCAP_API int probe_getoption(int option, ...);
+int probe_setoption(int option, ...);
+int probe_getoption(int option, ...);
 
 #endif /* OSCAP_PROBE_OPTION_H */
