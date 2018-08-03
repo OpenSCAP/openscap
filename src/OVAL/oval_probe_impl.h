@@ -3,8 +3,6 @@
  * @brief OVAL probe interface private header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup PROBEINTERFACE
- * @{
  */
 /*
  * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
@@ -64,4 +62,3 @@ const char *oval_subtype_to_str(oval_subtype_t subtype);
 int oval_probe_hint_definition(oval_probe_session_t *sess, struct oval_definition *definition, int variable_instance_hint);
 
 #endif /* OVAL_PROBE_IMPL_H */
-/// @}
