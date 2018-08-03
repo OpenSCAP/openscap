@@ -123,13 +123,8 @@ SEXP_t *SEAP_cmd2sexp (SEAP_cmd_t *cmd);
 
 int SEAP_cmd_register(SEAP_CTX_t *ctx, SEAP_cmdcode_t code, uint32_t flags, SEAP_cmdfn_t func, ...);
 
-SEXP_t *SEAP_cmd_exec(SEAP_CTX_t    *ctx,
-                       int            sd,
-                       uint32_t       flags,
-                       SEAP_cmdcode_t code,
-                       SEXP_t        *args,
-                       SEAP_cmdtype_t type,
-                       SEAP_cmdfn_t   func,
-                       void          *funcarg);
+SEXP_t *SEAP_cmd_exec(SEAP_CTX_t *ctx, int sd, uint32_t flags,
+		SEAP_cmdcode_t code, SEXP_t *args, SEAP_cmdtype_t type,
+		SEAP_cmdfn_t func, void *funcarg);
 
 #endif /* _SEAP_COMMAND_H */
