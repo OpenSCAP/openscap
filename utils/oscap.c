@@ -192,7 +192,7 @@ static int print_versions(const struct oscap_action *action)
 	printf("==== Supported OVAL objects and associated OpenSCAP probes ====\n");
 	printf("%-14s%-28s %-28s\n", "OVAL family", "OVAL object", "OpenSCAP probe");
 	printf("%-14s%-28s %-28s\n", "----------", "----------", "----------");
-	probe_table_list(stdout);
+	oval_probe_list_probes(stdout);
 #endif
 
 	return OSCAP_OK;

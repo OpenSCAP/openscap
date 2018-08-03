@@ -71,5 +71,12 @@ OSCAP_API int oval_probe_query_object(oval_probe_session_t *psess, struct oval_o
  * @return 0 on success
  */
 OSCAP_API int oval_probe_query_variable(oval_probe_session_t *sess, struct oval_variable *variable);
+
+/**
+ * Prints a list of available probes and OVAL tests they implement
+ * @param output Output file stream
+ */
+OSCAP_API void oval_probe_list_probes(FILE *output);
+
 #endif				/* OVAL_PROBE_H */
 /// @}

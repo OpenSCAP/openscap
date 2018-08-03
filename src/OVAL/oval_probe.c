@@ -47,6 +47,7 @@
 #include "_oval_probe_handler.h"
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
+#include "probe-table.h"
 
 #ifdef OS_WINDOWS
 #define X_OK 0
@@ -270,3 +271,7 @@ int oval_probe_query_test(oval_probe_session_t *sess, struct oval_test *test)
 	return 0;
 }
 
+void oval_probe_list_probes(FILE *output)
+{
+	return probe_table_list(output);
+}
