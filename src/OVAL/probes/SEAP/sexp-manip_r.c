@@ -23,6 +23,7 @@
 #include <config.h>
 #include <string.h>
 #include <errno.h>
+#include <stdio.h>
 
 #include "_sexp-types.h"
 #include "_sexp-value.h"
