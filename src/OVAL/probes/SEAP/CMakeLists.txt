@@ -13,7 +13,6 @@ if(ENABLE_PROBES)
 	add_library(seap_object OBJECT ${SEAP_SOURCES} ${SEAP_HEADERS})
 	target_include_directories(seap_object PRIVATE
 		${CMAKE_SOURCE_DIR}
-		"public"
 	)
 	set_oscap_generic_properties(seap_object)
 endif()
