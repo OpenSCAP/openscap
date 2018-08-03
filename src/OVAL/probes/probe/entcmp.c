@@ -2,8 +2,6 @@
  * @file   entcmp.c
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
- * @addtogroup PROBEAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -675,5 +673,3 @@ oval_result_t probe_ent_result_byopr(SEXP_t * res_lst, oval_operator_t operator)
 
 	return result;
 }
-
-/// @}

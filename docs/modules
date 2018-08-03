@@ -23,7 +23,6 @@
  *      @defgroup PROBEINTERFACE Library-side probe interface
  *      @defgroup PROBEHANDLERS Probe handler API
  *      @defgroup PROBESESSION Probe session API
- *      @defgroup PROBEAPI Common probe API - object, entity, item manipulation
  *   @}
  * @}
  */

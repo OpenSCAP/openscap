@@ -1,6 +1,4 @@
 /**
- * @addtogroup PROBEAPI
- * @{
  * @file   probe-api.c
  * @brief  Probe API implmentation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
@@ -1794,4 +1792,3 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     SEXP_free(objents);
     return (mask);
 }
-/// @}
