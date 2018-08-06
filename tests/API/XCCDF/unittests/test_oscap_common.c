@@ -142,8 +142,8 @@ static void _test_hit_multiple_items(void)
 	bool seen[SEEN_LEN];
 	struct oscap_htable *h = oscap_htable_new();
 	for (int i = 0; i < SEEN_LEN; i++) {
-		char key[10];
-		snprintf(key, 10, "%d", i);
+		char key[12];
+		snprintf(key, 12, "%d", i);
 		oscap_assert(oscap_htable_add(h, key, NULL));
 		seen[i] = false;
 	}
@@ -209,8 +209,8 @@ static void _test_hit_multiple_items1(void)
 	bool seen[SEEN_LEN];
 	struct oscap_htable *h = oscap_htable_new1(_htable_cmp, 1);
 	for (int i = 0; i < SEEN_LEN; i++) {
-		char key[10];
-		snprintf(key, 10, "%d", i);
+		char key[12];
+		snprintf(key, 12, "%d", i);
 		oscap_assert(oscap_htable_add(h, key, NULL));
 		seen[i] = false;
 	}

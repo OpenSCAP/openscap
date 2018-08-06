@@ -32,6 +32,7 @@
 #endif
 
 #if defined(__linux__)
+#undef _XOPEN_SOURCE
 #define _XOPEN_SOURCE /* for fdopen */
 #include <sys/vfs.h>
 #include <sys/types.h>

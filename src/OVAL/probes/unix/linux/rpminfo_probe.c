@@ -270,11 +270,6 @@ ret:
         return (ret);
 }
 
-void rpminfo_probe_preload()
-{
-	rpmLibsPreload();
-}
-
 int rpminfo_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_CHROOT | PROBE_OFFLINE_RPMDB;
@@ -411,7 +406,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
 		return 0;
 	}
-	
+
 	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
 		const char* root = getenv("OSCAP_PROBE_ROOT");
 		rpmtsSetRootDir(g_rpm->rpmts, root);

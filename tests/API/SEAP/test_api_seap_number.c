@@ -10,17 +10,17 @@
 int main (void)
 {
         SEXP_t *s_exp;
-        
+
         int8_t   i8 = -1;
         uint8_t  u8 =  1;
         int16_t  i16 = -32000;
         uint16_t u16 =  65000;
         int32_t  i32 = -100000;
         uint32_t u32 =  100000;
-        int64_t  i64 = -1 * 1<<30;
+        int64_t  i64 = -1 * (1 << 30);
         uint64_t u64 = (uint64_t)1 << 48;
         double   f   = 123.456;
-        
+
         s_exp = SEXP_number_newi_8 (i8);
         SEXP_fprintfa (stdout, s_exp);
         putc('\n', stdout);
@@ -65,6 +65,6 @@ int main (void)
         SEXP_fprintfa (stdout, s_exp);
         putc('\n', stdout);
         SEXP_free (s_exp);
-        
+
         return (0);
 }

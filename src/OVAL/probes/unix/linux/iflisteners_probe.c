@@ -249,14 +249,14 @@ static int collect_process_info(llist *l)
 		}
 		// For each file in the fd dir...
 		while (( ent = readdir(f) )) {
-			char line[256], ln[256], *s, *e;
+			char line[PATH_MAX], ln[PATH_MAX], *s, *e;
 			unsigned long inode;
 			lnode node;
 			int lnlen;
 
 			if (ent->d_name[0] == '.')
 				continue;
-			snprintf(ln, 256, "%s/%s", buf, ent->d_name);
+			snprintf(ln, PATH_MAX, "%s/%s", buf, ent->d_name);
 			if ((lnlen = readlink(ln, line, sizeof(line)-1)) < 0)
 				continue;
 			line[lnlen] = 0;
@@ -329,7 +329,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 		return 0;
 
 	while (( d_ent = readdir(d) )) {
-		char buf[255];
+		char buf[PATH_MAX];
 		FILE *fd;
 
 		snprintf(buf, sizeof buf - 1, "/sys/class/net/%s/ifindex", d_ent->d_name);
@@ -351,10 +351,16 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 				*(interface->hw_address) = '\0';
 			}
 			else {
+				int buf_len;
 				if (fscanf(fd, "%s\n", buf) < 1)
 					*buf = '\0';
 
-				snprintf(interface->hw_address, sizeof interface->hw_address, "%s", buf);
+				buf_len = strlen(buf);
+				if ((unsigned)buf_len > (sizeof interface->hw_address)) {
+					buf_len = (sizeof interface->hw_address) - 1;
+				}
+
+				snprintf(interface->hw_address, sizeof interface->hw_address, "%.*s", buf_len, buf);
 				fclose(fd);
 			}
 
