@@ -77,15 +77,6 @@ OSCAP_API int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_s
 OSCAP_API int oval_probe_session_abort(oval_probe_session_t *sess);
 
 /**
- * Set a new handler for an object of the specified type.
- * @param sess pointer to the probe session structure
- * @param type object type
- * @param handler
- * @param ptr user pointer that will be passed to the handler on each invocation of the handler
- */
-OSCAP_API int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr);
-
-/**
  * Get system characteristics model from probe session.
  * @param sess pointer to the probe session structure
  */

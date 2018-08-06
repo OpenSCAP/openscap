@@ -210,12 +210,6 @@ int oval_probe_session_abort(oval_probe_session_t *sess)
         return ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_ABORT);
 }
 
-int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)
-{
-	dE("Operation not supported");
-        return(-1);
-}
-
 struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess)
 {
 	if (sess == NULL) {
