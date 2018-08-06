@@ -57,13 +57,6 @@ OSCAP_API void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval
 OSCAP_API void oval_probe_session_destroy(oval_probe_session_t *sess);
 
 /**
- * Send a close request to all probes. In case of external probes, the running
- * processes are shutdown - all cached results are lost.
- * @param sess pointer to the probe session structure
- */
-OSCAP_API int oval_probe_session_close(oval_probe_session_t *sess);
-
-/**
  * Reset the session. All state information created during the lifetime of the
  * session is freed and reset to its initial state. All cached results are lost.
  * @param sess pointer to the probe session structure

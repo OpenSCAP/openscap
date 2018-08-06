@@ -174,12 +174,6 @@ void oval_probe_session_destroy(oval_probe_session_t *sess)
 	free(sess);
 }
 
-int oval_probe_session_close(oval_probe_session_t *sess)
-{
-        /* send close to all probes */
-        return(-1);
-}
-
 int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch)
 {
         oval_ph_t *ph;
