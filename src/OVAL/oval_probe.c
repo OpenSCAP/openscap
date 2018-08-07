@@ -48,7 +48,7 @@
 #include "oval_probe_ext.h"
 #include "collectVarRefs_impl.h"
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #define X_OK 0
 #endif
 

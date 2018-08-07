@@ -37,7 +37,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <errno.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <winsock2.h>
 #include <in6addr.h>
 #include <ws2tcpip.h>

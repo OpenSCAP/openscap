@@ -50,7 +50,7 @@ void *probe_worker_runfn(void *arg)
 	int     probe_ret;
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
-# if defined(__APPLE__)
+# if defined(OS_APPLE)
 	pthread_setname_np("probe_worker");
 # else
 	pthread_setname_np(pthread_self(), "probe_worker");
@@ -150,7 +150,7 @@ probe_worker_t *probe_worker_new(void)
 	probe_worker_t *pth = malloc(sizeof(probe_worker_t));
 
 	pth->sid = 0;
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 	pth->tid = 0;
 #endif
 	pth->msg_handler = NULL;
@@ -1071,7 +1071,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 SEXP_free(pctx.filters);
 	}
 
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 	/* Revert chroot */
 	if (probe->real_root_fd != -1) {
 		if (fchdir(probe->real_root_fd) != 0) {

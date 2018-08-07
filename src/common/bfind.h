@@ -25,8 +25,10 @@
 #ifndef BFIND_H
 #define BFIND_H
 
+#include "oscap_platforms.h"
+
 #include <stddef.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>

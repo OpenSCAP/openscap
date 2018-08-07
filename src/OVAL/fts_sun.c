@@ -26,7 +26,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
-#if defined (__SVR4) && defined (__sun)
+#if defined (OS_SOLARIS)
 
 #include <config.h>
 
@@ -57,7 +57,7 @@ static char sccsid[] = "@(#)fts.c	8.6 (Berkeley) 8/14/94";
 #define	ALIGN(p)	(((unsigned long int) (p) + ALIGNBYTES) & ~ALIGNBYTES)
 #endif
 
-#if defined (__SVR4)
+#if defined (OS_SOLARIS)
 #define	USHRT_MAX	65535		/* max of "unsigned short int" */
 #define __set_errno(val) (errno = (val))
 #define __fchdir fchdir
@@ -1023,7 +1023,7 @@ fts_alloc(sp, name, namelen)
 	p->fts_instr = FTS_NOINSTR;
 	p->fts_number = 0;
 	p->fts_pointer = NULL;
-#if	defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 	if (!ISSET(FTS_NOSTAT))
 		p->fts_statp->st_fstype[0] = '\0';
 #endif

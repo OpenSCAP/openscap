@@ -31,7 +31,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <winsock2.h>
 #else
 #include <arpa/inet.h>

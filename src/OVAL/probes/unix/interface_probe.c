@@ -61,7 +61,7 @@
 #include <probe-api.h>
 #include <probe/entcmp.h>
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 #include <unistd.h>
 #include <sys/socket.h>
 #include <ifaddrs.h>

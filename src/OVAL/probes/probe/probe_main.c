@@ -45,7 +45,7 @@
 #include <oscap_debug.h>
 #include "debug_priv.h"
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #define STDIN_FILENO _fileno(stdin)
 #define STDOUT_FILENO _fileno(stdout)
 #else
@@ -192,7 +192,7 @@ void *probe_common_main(void *arg)
 	probe.real_cwd_fd = -1;
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
-# if defined(__APPLE__)
+# if defined(OS_APPLE)
 	pthread_setname_np("common_main");
 # else
 	pthread_setname_np(pthread_self(), "common_main");
@@ -250,7 +250,7 @@ void *probe_common_main(void *arg)
 	OSCAP_GSYM(probe_optdef) = probe.option;
 	OSCAP_GSYM(probe_optdef_count) = probe.optcnt;
 
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 	probe_offline_mode_function_t offline_mode_function = probe_table_get_offline_mode_function(probe.subtype);
 	if (offline_mode_function != NULL) {
 		probe.supported_offline_mode = offline_mode_function();

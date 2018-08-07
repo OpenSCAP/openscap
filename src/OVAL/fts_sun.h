@@ -50,14 +50,14 @@
 # define __END_DECLS
 #endif
 
-#if defined(hpux)
+#if defined(OS_HPUX)
 # define _D_EXACT_NAMLEN(d) ((d)->d_namlen)
 # define	_INCLUDE_POSIX_SOURCE
 # define	_LARGEFILE64_SOURCE
 #endif
 
 /* This needs to be ifdef SOLARIS */
-#if defined(__SVR4)
+#if defined(OS_SOLARIS)
 # define _D_EXACT_NAMLEN(d) (strlen((d)->d_name))
 # ifndef	_INCLUDE_POSIX_SOURCE
 # define	_INCLUDE_POSIX_SOURCE
@@ -249,8 +249,8 @@ __END_DECLS
 
 #endif /* fts.h */
 #else
-#if defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 #include <fts.h>
-#endif /* defined(__SVR4) && defined(__sun) */ 
+#endif /* defined(OS_SOLARIS) */ 
 
 #endif /* HAVE_FTS_OPEN */

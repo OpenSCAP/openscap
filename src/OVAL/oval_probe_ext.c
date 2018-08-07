@@ -30,7 +30,7 @@
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>
@@ -1021,7 +1021,7 @@ int oval_probe_ext_reset(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 #include "SEAP/_seap-types.h"
 #include "SEAP/seap-descriptor.h"
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 
 int oval_probe_ext_abort(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext)
 {

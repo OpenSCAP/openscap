@@ -101,7 +101,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
         probe_item_collect(ctx, item);
 }
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 
 unsigned long ticks, boot;
 
@@ -339,7 +339,7 @@ int process_probe_main(probe_ctx *ctx, void *arg)
 
 	return 0;
 }
-#elif defined (__SVR4) && defined (__sun)
+#elif defined (OS_SOLARIS)
 
 #include <procfs.h>
 #include <unistd.h>

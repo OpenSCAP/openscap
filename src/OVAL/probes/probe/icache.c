@@ -172,7 +172,7 @@ static void *probe_icache_worker(void *arg)
 	}
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
-# if defined(__APPLE__)
+# if defined(OS_APPLE)
 	pthread_setname_np("icache_worker");
 # else
 	pthread_setname_np(pthread_self(), "icache_worker");

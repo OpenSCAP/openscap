@@ -69,9 +69,9 @@ int family_probe_main(probe_ctx *ctx, void *arg)
         (void)arg;
 
 	const char *family =
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
         "windows";
-#elif defined(Macintosh) || defined(macintosh) || (defined(__APPLE__) && defined(__MACH__))
+#elif defined(OS_OSX)
         "macos";
 #elif defined(OSCAP_UNIX)
         "unix";

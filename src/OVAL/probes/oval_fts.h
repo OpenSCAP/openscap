@@ -22,8 +22,10 @@
 #ifndef OVAL_FTS_H
 #define OVAL_FTS_H
 
+#include "oscap_platforms.h"
+
 #include <sexp.h>
-#if (defined(__SVR4) && defined(__sun)) || defined(_AIX)
+#if defined(OS_SOLARIS) || defined(OS_AIX)
 #include "fts_sun.h"
 #else
 #include <fts.h>

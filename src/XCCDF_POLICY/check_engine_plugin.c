@@ -28,7 +28,7 @@
 #include "oscap_helpers.h"
 #include "common/_error.h"
 
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 #include <dlfcn.h>
 #endif
 
@@ -51,7 +51,7 @@ static void check_engine_plugin_def_free(struct check_engine_plugin_def *plugin)
 
 struct check_engine_plugin_def *check_engine_plugin_load2(const char* path, bool quiet)
 {
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 	struct check_engine_plugin_def *ret = check_engine_plugin_def_new();
 
 	const char *path_prefix = getenv("OSCAP_CHECK_ENGINE_PLUGIN_DIR");
@@ -111,7 +111,7 @@ struct check_engine_plugin_def *check_engine_plugin_load(const char* path)
 
 void check_engine_plugin_unload(struct check_engine_plugin_def *plugin)
 {
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 	if (!plugin->module_handle) {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC,
 			"Failed to unload this check engine plugin. It seems the plugin hasn't been loaded!");

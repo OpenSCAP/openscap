@@ -33,7 +33,7 @@
 #ifdef HAVE_FLOCK
 # include <sys/file.h>
 #endif
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>
@@ -57,10 +57,10 @@
 # define PATH_SEPARATOR '/'
 #endif
 
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 # include <windows.h>
 # define GET_PROGRAM_NAME get_program_name()
-#elif defined(__APPLE__)
+#elif defined(OS_APPLE)
 # define GET_PROGRAM_NAME getprogname()
 #else
 # define GET_PROGRAM_NAME program_invocation_short_name
@@ -91,7 +91,7 @@ oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
 
 #define THREAD_NAME_LEN 16
 
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 static char * get_program_name()
 {
         char path[PATH_MAX + 1];
@@ -150,7 +150,7 @@ bool oscap_set_verbose(const char *verbosity_level, const char *filename)
 	 * Every process using the log file must open it in append mode,
 	 * because otherwise some data may be missing on output.
 	 */
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	fd = open(filename, O_APPEND | O_CREAT | O_TRUNC | O_WRONLY, S_IREAD | S_IWRITE);
 #else
 	fd = open(filename, O_APPEND | O_CREAT | O_TRUNC | O_WRONLY,
@@ -222,7 +222,7 @@ static void debug_message_devel_metadata(const char *file, const char *fn, size_
 #else
 	snprintf(thread_name, THREAD_NAME_LEN, "unknown");
 #endif
-#if !defined(__MINGW32__) && defined(_WIN32)
+#if !defined(__MINGW32__) && defined(OS_WINDOWS)
 	unsigned long long tid = pthread_getw32threadid_np(thread);
 #else
 	/* XXX: non-portable usage of pthread_t */

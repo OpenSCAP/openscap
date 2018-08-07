@@ -30,7 +30,7 @@
 #include <sys/wait.h>
 #endif
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>

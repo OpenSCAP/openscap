@@ -36,7 +36,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <errno.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <winsock2.h>
 #else
 #include <arpa/inet.h>

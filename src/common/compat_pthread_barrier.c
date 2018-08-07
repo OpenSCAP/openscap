@@ -26,7 +26,7 @@
 
 #include "compat_pthread_barrier.h"
 
-#ifdef __APPLE__
+#ifdef OS_APPLE
 
 #include <errno.h>
 

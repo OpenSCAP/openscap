@@ -26,7 +26,7 @@
 #endif
 
 #include <stddef.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>

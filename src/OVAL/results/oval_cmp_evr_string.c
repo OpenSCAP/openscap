@@ -39,9 +39,9 @@
 #ifdef HAVE_RPMVERCMP
 #include <rpm/rpmlib.h>
 #else
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <malloc.h>
-#elif !defined(__FreeBSD__)
+#elif !defined(OS_FREEBSD)
 #include <alloca.h>
 #endif
 static int rpmvercmp(const char *a, const char *b);

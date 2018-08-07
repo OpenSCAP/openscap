@@ -33,7 +33,7 @@
 #include <libxslt/xsltutils.h>
 #include <libexslt/exslt.h>
 #include <string.h>
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 #include <unistd.h>
 #else
 #include <io.h>
@@ -58,7 +58,7 @@ const char *const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
 const char *const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 const char *const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 static const char *_get_default_path(const char *defpath)
 {
 	/* On Windows, default paths are directory names of directories that are

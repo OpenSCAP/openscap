@@ -32,7 +32,7 @@
 static struct rbt_node *rbt_i32_node_alloc(void)
 {
         struct rbt_node *n = NULL;
-#ifndef _WIN32
+#ifndef OS_WINDOWS
         if (posix_memalign((void **)(void *)(&n), sizeof(void *),
                            sizeof (struct rbt_node) + sizeof (struct rbt_i32_node)) != 0)
         {
@@ -52,7 +52,7 @@ static void rbt_i32_node_free(struct rbt_node *n)
 {
         if (n != NULL)
 	{
-#ifndef _WIN32
+#ifndef OS_WINDOWS
                 free(rbt_node_ptr(n));
 #else
 		// using free for memory allocated through _aligned_malloc is illegal

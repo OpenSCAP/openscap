@@ -60,7 +60,7 @@
 #include <probe/option.h>
 #include <debug_priv.h>
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 /* By defining WIN32_LEAN_AND_MEAN we ensure that Windows.h won't include
  * winsock.h, which would conflict with symbols from WinSock2.h.
  */
@@ -283,7 +283,7 @@ leave1:
         return rc;
 }
 
-#elif defined(_WIN32)
+#elif defined(OS_WINDOWS)
 
 #define VERSION_LEN 32
 /* Microsoft recommends to start with a 15 kB buffer for GetAdaptersAddresses. */
@@ -476,7 +476,7 @@ static ssize_t __sysinfo_saneval(const char *s)
 	return (ssize_t)real_length;
 }
 
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 static FILE *_fopen_with_prefix(const char *prefix, const char *path)
 {
 	FILE *fp;
@@ -668,7 +668,7 @@ fail:
 }
 #endif
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 static char *get_windows_version()
 {
 	/* We can't use GetVersionEx to get Windows version because we want to get
@@ -741,7 +741,7 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 
 	os_name = architecture = hname = NULL;
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	WCHAR computer_name_wstr[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD computer_name_len = MAX_COMPUTERNAME_LENGTH + 1;
 	GetComputerNameW(computer_name_wstr, &computer_name_len);
@@ -799,7 +799,7 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 cleanup:
 	free(os_name);
 	// Free os_version only on Windows. On other platforms it shares same memory from os_name!
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	free(os_version);
 #endif
 	free(architecture);

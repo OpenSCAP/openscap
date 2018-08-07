@@ -35,6 +35,7 @@
 #elif defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
 # define OS_LINUX
 #elif defined(sun) || defined(__sun)
+# define OS_SUN
 # if defined(__SVR4) || defined(__svr4__)
 #  define OS_SOLARIS
 # else
@@ -49,6 +50,8 @@
 # if defined(Macintosh) || defined(macintosh) || defined(__APPLE__) && defined(__MACH__)
 #  define OS_OSX
 # endif
+#elif defined(_hpux) || defined(hpux) || defined(__hpux)
+# define OS_HPUX
 #else
 # error "Sorry, your OS isn't supported."
 #endif
