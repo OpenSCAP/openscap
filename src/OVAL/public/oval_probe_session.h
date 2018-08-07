@@ -32,7 +32,6 @@
 
 typedef struct oval_probe_session oval_probe_session_t;
 
-#include "oval_probe_handler.h"
 #include "oval_system_characteristics.h"
 #include "oscap_export.h"
 
