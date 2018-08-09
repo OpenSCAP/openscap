@@ -101,6 +101,15 @@ matrix:
       script:
         - docker run openscap_$BASE_IMAGE:latest
     - os: linux
+      env: BASE_IMAGE="fedora_clang"
+      sudo: required
+      services:
+        - docker
+      before_install:
+        - docker build --no-cache --tag openscap_$BASE_IMAGE:latest -f Dockerfiles/$BASE_IMAGE .
+      script:
+        - docker run openscap_$BASE_IMAGE:latest
+    - os: linux
       env: BASE_IMAGE="fedora_ssg"
       sudo: required
       services:
