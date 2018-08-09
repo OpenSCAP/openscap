@@ -186,8 +186,9 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			if (*(tok) != '=') goto __fail;		\
 			else (dst) = strdup((tok) + 1);		\
 		}						\
-		else dE("Unrecognized token: '%s'", (tok)-1);		\
-	while(0)
+		else {	\
+			dE("Unrecognized token: '%s'", (tok)-1);		\
+		}
 
 #define matchitem2(tok, first, rest1, dst1, rest2, dst2)		\
 	case first:							\
@@ -203,8 +204,9 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 			if (*(tok) != '=') goto __fail;			\
 			else (dst2) = strdup((tok) + 1);		\
 		}							\
-		else dE("Unrecognized token: '%s'", (tok));		\
-		while(0)
+		else {	\
+			dE("Unrecognized token: '%s'", (tok));		\
+		}
 
 	tmp = NULL;
 
