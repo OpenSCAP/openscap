@@ -325,18 +325,6 @@ OSCAP_API cpe_format_t cpe_name_get_format_of_str(const char *str);
 OSCAP_API bool cpe_name_check(const char *str);
 
 /**
- * Match CPE URI @a candidate against list of @a n CPE URIs given by @a targets.
- * @memberof cpe_name
- * @param candidate candidarte CPE URI as string
- * @param n number of items in targets
- * @param targets list of CPE URIs to be candidate matched against
- * @return index of first URI in targets, that matched
- * @retval -1 on mismatch
- * @retval -2 invalid CPE URI was given as parameter
- */
-OSCAP_API int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
-
-/**
  * Get supported version of CPE uri XML
  * @return version of XML file format
  * @memberof cpe_name
