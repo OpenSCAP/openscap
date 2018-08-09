@@ -124,13 +124,8 @@ static void __clearmem(void *ptr, int len)
 			register int      l = len % sizeof(uint32_t);
 			register uint8_t *p = (uint8_t *)ptr;
 
-			switch (l) {
-			case 3:
-				p[2] = (uint8_t)(random() % (1 << 8));
-			case 2:
-				p[1] = (uint8_t)(random() % (1 << 8));
-			case 1:
-				p[0] = (uint8_t)(random() % (1 << 8));
+			for (int i = 0; i < l; i++) {
+				p[i] = (uint8_t)(random() % (1 << 8));
 			}
 		} while (0);
 	}
