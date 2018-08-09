@@ -46,6 +46,7 @@
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
 #include "probe-table.h"
+#include "_oval_probe_handler.h"
 
 #define __ERRBUF_SIZE 128
 

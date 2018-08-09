@@ -21,7 +21,6 @@ f none include/openscap/oval_variables.h 0644 root root
 f none include/openscap/oval_types.h 0644 root root
 f none include/openscap/oval_probe.h 0644 root root
 f none include/openscap/oval_probe_session.h 0644 root root
-f none include/openscap/oval_probe_handler.h 0644 root root
 f none include/openscap/cpe.h 0644 root root
 f none include/openscap/cpedict.h 0644 root root
 f none include/openscap/cpelang.h 0644 root root

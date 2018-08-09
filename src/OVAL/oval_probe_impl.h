@@ -42,7 +42,6 @@
 #include "probes/_probe-api.h"
 
 #include "public/oval_probe_session.h"
-#include "public/oval_probe_handler.h"
 #include "public/oval_probe.h"
 
 

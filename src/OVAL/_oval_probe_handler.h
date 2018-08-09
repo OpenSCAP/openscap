@@ -31,18 +31,38 @@
 #define _OVAL_PROBE_HANDLER
 
 #include <stdint.h>
-#include "public/oval_probe_handler.h"
+#include "oval_types.h"
+
+/**
+ * Type of the handler function. This function takes care of handling
+ * all the actions defined bellow, that is: initialization, freeing,
+ * opening, evaluating, reseting and closing (whatever that means in
+ * your particular case).
+ */
+typedef int (oval_probe_handler_t)(oval_subtype_t, void *, int, ...);
+
+#define PROBE_HANDLER_ACT_INIT  0
+#define PROBE_HANDLER_ACT_FREE  1
+#define PROBE_HANDLER_ACT_OPEN  2
+#define PROBE_HANDLER_ACT_EVAL  3
+#define PROBE_HANDLER_ACT_RESET 4
+#define PROBE_HANDLER_ACT_CLOSE 5
+#define PROBE_HANDLER_ACT_ABORT 6
+
+#define PROBE_HANDLER_IGNORE NULL
 
 struct oval_ph {
         oval_subtype_t        type;
         oval_probe_handler_t *func;
         void                 *uptr;
 };
+typedef struct oval_ph oval_ph_t;
 
 struct oval_phtbl {
         struct oval_ph **ph;
         uint32_t         sz;
 };
+typedef struct oval_phtbl oval_phtbl_t;
 
 oval_phtbl_t *oval_phtbl_new(void);
 void oval_phtbl_free(oval_phtbl_t *phtbl);

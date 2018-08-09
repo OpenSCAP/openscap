@@ -242,7 +242,6 @@
  #include "../../src/OVAL/public/oval_types.h"
  #include "../../src/OVAL/public/oval_variables.h"
  #include "../../src/OVAL/public/oval_probe.h"
- #include "../../src/OVAL/public/oval_probe_handler.h"
  #include "../../src/OVAL/public/oval_probe_session.h"
 %}
 %include "../../src/OVAL/public/oval_adt.h"
@@ -257,7 +256,6 @@
 %include "../../src/OVAL/public/oval_variables.h"
 #if defined(ENABLE_PROBES)
 %include "../../src/OVAL/public/oval_probe.h"
-%include "../../src/OVAL/public/oval_probe_handler.h"
 %include "../../src/OVAL/public/oval_probe_session.h"
 #endif
 
