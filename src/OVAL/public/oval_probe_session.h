@@ -32,7 +32,6 @@
 
 typedef struct oval_probe_session oval_probe_session_t;
 
-#include "oval_probe_handler.h"
 #include "oval_system_characteristics.h"
 #include "oscap_export.h"
 
@@ -57,13 +56,6 @@ OSCAP_API void oval_probe_session_reinit(oval_probe_session_t *sess, struct oval
 OSCAP_API void oval_probe_session_destroy(oval_probe_session_t *sess);
 
 /**
- * Send a close request to all probes. In case of external probes, the running
- * processes are shutdown - all cached results are lost.
- * @param sess pointer to the probe session structure
- */
-OSCAP_API int oval_probe_session_close(oval_probe_session_t *sess);
-
-/**
  * Reset the session. All state information created during the lifetime of the
  * session is freed and reset to its initial state. All cached results are lost.
  * @param sess pointer to the probe session structure
@@ -75,15 +67,6 @@ OSCAP_API int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_s
  * Abort the session.
  */
 OSCAP_API int oval_probe_session_abort(oval_probe_session_t *sess);
-
-/**
- * Set a new handler for an object of the specified type.
- * @param sess pointer to the probe session structure
- * @param type object type
- * @param handler
- * @param ptr user pointer that will be passed to the handler on each invocation of the handler
- */
-OSCAP_API int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr);
 
 /**
  * Get system characteristics model from probe session.

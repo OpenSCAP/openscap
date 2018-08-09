@@ -174,12 +174,6 @@ void oval_probe_session_destroy(oval_probe_session_t *sess)
 	free(sess);
 }
 
-int oval_probe_session_close(oval_probe_session_t *sess)
-{
-        /* send close to all probes */
-        return(-1);
-}
-
 int oval_probe_session_reset(oval_probe_session_t *sess, struct oval_syschar_model *sysch)
 {
         oval_ph_t *ph;
@@ -208,12 +202,6 @@ int oval_probe_session_abort(oval_probe_session_t *sess)
 	}
 
         return ph->func(OVAL_SUBTYPE_ALL, ph->uptr, PROBE_HANDLER_ACT_ABORT);
-}
-
-int oval_probe_session_sethandler(oval_probe_session_t *sess, oval_subtype_t type, oval_probe_handler_t handler, void *ptr)
-{
-	dE("Operation not supported");
-        return(-1);
 }
 
 struct oval_syschar_model *oval_probe_session_getmodel(oval_probe_session_t *sess)
