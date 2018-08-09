@@ -355,15 +355,6 @@ OSCAP_API void cpe_platform_free(struct cpe_platform *platform);
  */
 OSCAP_API const char * cpe_lang_model_supported(void);
 
-/**
- * Function to match cpe in platform
- * @param cpe to be matched with
- * @param n size
- * @param platform CPE platform
- * @memberof cpe_platform
- */
-OSCAP_API bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const struct cpe_platform *platform);
-
 /************************************************************/
 /** @} End of Evaluators group */
 

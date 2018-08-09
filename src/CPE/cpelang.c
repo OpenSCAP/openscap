@@ -55,53 +55,6 @@ void cpe_lang_model_export(const struct cpe_lang_model *spec, const char *file)
 	cpe_lang_model_export_xml(spec, file);
 }
 
-/*
- * Add new platform entry to @a platformspec
- * @note @a platformspec will take over memory management of @a platform
- * @param platformspec list of platforms being extended
- * @param platform platform to add to the list
- * @return true on success
- */
-static bool cpe_language_match_expr(struct cpe_name **cpe, size_t n, const struct cpe_testexpr *expr)
-{
-	__attribute__nonnull__(cpe);
-	__attribute__nonnull__(expr);
-
-	bool ret = false;
-
-	switch (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_MASK) {
-	case CPE_LANG_OPER_AND:
-		ret = true;
-		OSCAP_FOREACH(cpe_testexpr, cur, cpe_testexpr_get_meta_expr(expr),
-			if (!cpe_language_match_expr(cpe, n, cur)) {
-				ret = false;
-				break;
-			}
-		)
-		break;
-	case CPE_LANG_OPER_OR:
-		OSCAP_FOREACH(cpe_testexpr, cur, cpe_testexpr_get_meta_expr(expr),
-			if (cpe_language_match_expr(cpe, n, cur)) {
-				ret = true;
-				break;
-			}
-		)
-		break;
-	case CPE_LANG_OPER_MATCH:
-		ret = cpe_name_match_cpes(cpe_testexpr_get_meta_cpe(expr), n, cpe);
-		break;
-	default:
-		assert(false);
-	}
-
-	return (cpe_testexpr_get_oper(expr) & CPE_LANG_OPER_NOT ? !ret : ret);
-}
-
-bool cpe_platform_match_cpe(struct cpe_name ** cpe, size_t n, const struct cpe_platform * platform)
-{
-	return cpe_language_match_expr(cpe, n, cpe_platform_get_expr(platform));
-}
-
 const char * cpe_lang_model_supported(void)
 {
         return CPE_LANG_SUPPORTED;

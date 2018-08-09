@@ -208,42 +208,6 @@ int main (int argc, char *argv[])
 		cpe_lang_model_export(lang_model, argv[4]);
 		cpe_lang_model_free(lang_model);
 	}
-	else if (argc == 6 && !strcmp(argv[1], "--match-cpe")) {
-		if ((lang_model = cpe_lang_model_import_source(source)) == NULL) {
-			oscap_source_free(source);
-			return 1;
-		}
-
-		struct cpe_name *name1 = NULL;
-		struct cpe_name *name2 = NULL;
-		char * uri = NULL;
-
-		// make cpe_name
-		name1 = cpe_name_new(argv[4]);
-		name2 = cpe_name_new(argv[5]);
-		if ( (uri = cpe_name_get_as_str(name1)) == NULL ) return 1;
-		if ( (uri = cpe_name_get_as_str(name2)) == NULL ) return 1;
-		// actually we need array of cpe_name-s
-		struct cpe_name ** names = (struct cpe_name **) malloc(2*sizeof(struct cpe_name *)); // <-- just for clear what I'm doing
-		names[0] = name1;
-		names[1] = name2;
-
-		// let's get platform cpe's to match
-		platform_it = cpe_lang_model_get_platforms(lang_model);
-		platform = cpe_platform_iterator_next(platform_it); // we just need first one (no more there)
-		cpe_platform_iterator_free(platform_it);
-
-		ret_val = !cpe_platform_match_cpe(names, 2, platform);
-
-		cpe_name_free(name1);
-		cpe_name_free(name2);
-		free(names);
-
-		cpe_lang_model_free(lang_model);
-
-		oscap_source_free(source);
-		return ret_val;
-	}
 	else {
 		print_usage(argv[0], stderr);
 		ret_val = 1;
@@ -266,7 +230,6 @@ void print_usage(const char *program_name, FILE * out)
 		"  %s --set-all CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
 		"  %s --set-key CPE_LANG_XML ENCODING KEY ID (TITLE)*\n"
 		"  %s --set-new CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
-		"  %s --match-cpe CPE_LANG_XML ENCODING CPE_NAME1 CPE_NAME2\n"
 		"  %s --smoke-test\n",
 		program_name, program_name, program_name, program_name,
 		program_name, program_name, program_name, program_name);

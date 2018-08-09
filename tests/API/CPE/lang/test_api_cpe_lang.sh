@@ -130,21 +130,6 @@ function test_api_cpe_lang_export_namespace {
     return $ret_val
 }
 
-function test_api_cpe_lang_match {
-    echo '<?xml version="1.0"  encoding="UTF-8"?>' > export.xml.out.0
-    echo '<cpe:platform-specification xmlns:cpe="http://cpe.mitre.org/language/2.0">' >> export.xml.out.0
-    echo '<cpe:platform id="123">' >> export.xml.out.0
-    echo 'e<cpe:title xml:lang="en">Microsoft Windows XP with Adobe Reader</cpe:title>' >> export.xml.out.0
-    echo '<cpe:logical-test operator="AND" negate="FALSE">' >> export.xml.out.0
-    echo '<cpe:fact-ref name="cpe:/o:microsoft:windows_xp" />' >> export.xml.out.0
-    echo '<cpe:fact-ref name="cpe:/a:adobe:reader" />' >> export.xml.out.0
-    echo '</cpe:logical-test>' >> export.xml.out.0
-    echo '</cpe:platform>' >> export.xml.out.0
-    echo '</cpe:platform-specification>' >> export.xml.out.0
-
-    ./test_api_cpe_lang --match-cpe export.xml.out.0 "UTF-8" "cpe:/a:adobe:reader" "cpe:/o:microsoft:windows_xp"
-}
-
 # Testing.
 
 test_init
@@ -157,7 +142,6 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     # test_run "test_api_cpe_lang_export_empty" test_api_cpe_lang_export_empty
     # test_run "test_api_cpe_lang_export_ecoding" test_api_cpe_lang_export_encoding
     # test_run "test_api_cpe_lang_export_namespace" test_api_cpe_lang_export_namespace
-    test_run "test_api_cpe_lang_match" test_api_cpe_lang_match
 fi
 
 test_exit 
