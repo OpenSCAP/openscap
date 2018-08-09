@@ -25,7 +25,7 @@ function test_probes_runlevel_A {
     require "egrep" || return 255
     require "awk" || return 255
 
-    local services_list=`get_services_list`
+    local services_list="$(get_services_list)"
     [ -n "$services_list" ] || return 255
 
     local ret_val=0;
