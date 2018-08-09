@@ -291,16 +291,6 @@ OSCAP_API bool cpe_name_set_other(struct cpe_name *cpe, const char *newval);
 OSCAP_API bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against);
 
 /**
- * Check if CPE @a name matches any CPE in @a namelist.
- * @memberof cpe_name
- * @param name name to be looked-up
- * @param n number of items in namelist
- * @param namelist list of names to search in
- * @return true if @a name was found within @a namelist
- */
-OSCAP_API bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name **namelist);
-
-/**
  * Write CPE URI @a cpe to file a descriptor @a f
  * @memberof cpe_name
  * @param cpe cpe to write
