@@ -121,22 +121,6 @@ bool cpe_name_match_dict(struct cpe_name * cpe, struct cpe_dict_model * dict)
 	return ret;
 }
 
-bool cpe_name_match_dict_str(const char *cpestr, struct cpe_dict_model * dict)
-{
-	__attribute__nonnull__(cpestr);
-	__attribute__nonnull__(dict);
-
-	bool ret;
-	if (cpestr == NULL)
-		return false;
-	struct cpe_name *cpe = cpe_name_new(cpestr);
-	if (cpe == NULL)
-		return false;
-	ret = cpe_name_match_dict(cpe, dict);
-	cpe_name_free(cpe);
-	return ret;
-}
-
 bool cpe_name_applicable_dict(struct cpe_name *cpe, struct cpe_dict_model *dict, cpe_check_fn cb, void* usr)
 {
 	// FIXME: We could match faster by matching per component and storing all

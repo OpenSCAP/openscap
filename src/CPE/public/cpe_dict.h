@@ -861,16 +861,6 @@ OSCAP_API const char * cpe_dict_model_supported(void);
  */
 OSCAP_API bool cpe_name_match_dict(struct cpe_name *cpe, struct cpe_dict_model *dict);
 
-/** 
- * Verify if CPE given by string is known according to specified dictionary
- * @memberof cpe_name
- * @memberof cpe_dict_model
- * @param cpe CPE to verify
- * @param dict used CPE dictionary
- * @return true if dictionary contains given CPE
- */
-OSCAP_API bool cpe_name_match_dict_str(const char *cpe, struct cpe_dict_model *dict);
-
 /**
  * Verify whether given CPE is applicable to current platform by evaluating checks associated with it
  *
