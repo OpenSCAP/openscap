@@ -299,6 +299,8 @@ endif()
 
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
 
+option(ENABLE_MITRE "enables MITRE tests -- requires specific environment support -- see developer documentation for more details" FALSE)
+
 # ---------- LANGUAGE BINDINGS
 cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
 cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be built" ON "PERLLIBS_FOUND;SWIG_FOUND" OFF)
@@ -342,6 +344,11 @@ message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
 message(STATUS " ")
+
+message(STATUS "Testing:")
+message(STATUS "tests: ${ENABLE_TESTS}")
+message(STATUS "valgrind: ${ENABLE_VALGRIND}")
+message(STATUS "MITRE: ${ENABLE_MITRE}")
 
 # ---------- PATHS
 
