@@ -1,3 +1,23 @@
+openscap-1.3.0_alpha2                                           10-08-2018
+  - Maintenance
+    - Removed '--probe-root' option
+    - Removed '--show' option from 'oscap xccdf generate report'
+    - Removed CCE API
+    - Removed deprecated option '--sce-results'
+    - Removed 'oscap oval list-probes' submodule
+    - Removed 'validate-xml' submodule from CPE, OVAL, XCCDF modules
+    - Moved OVAL probe handler to private headers
+    - Added tests for filehash58 offline mode
+    - Fixed broken SCE
+    - Fixed problematic versioning in CMake and pkgconfig file
+    - Removed many unused code
+    - Rewritten test tests/API/XCCDF/default_cpe
+    - Started to use asciidoc instead of asciidoctor
+    - Fixed many compiler warnings
+    - Fixed MinGW builds
+    - Documentation updates
+    - Small fixes
+
 openscap-1.3.0_alpha1                                           18-07-2018
   - New features
     - Microsoft Windows support (issue #195)
