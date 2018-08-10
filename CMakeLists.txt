@@ -24,7 +24,7 @@ endif()
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-set(LT_CURRENT 23)
+set(LT_CURRENT 24)
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
 set(LT_REVISION 0)
