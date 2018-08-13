@@ -185,6 +185,7 @@ bool oscap_module_usage(struct oscap_module *module, FILE *out, const char *err,
 static const char *common_opts_help =
 	"Common options:\n"
 	"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
+	"                                   Verbosity level must be one of: DEVEL, INFO, WARNING, ERROR.\n"
 	"   --verbose-log-file <file>     - Write verbose informations into file.\n";
 
 static void oscap_module_print_help(struct oscap_module *module, FILE *out)
