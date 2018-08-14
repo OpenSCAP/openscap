@@ -135,6 +135,18 @@ testing after one test fails.
 set -e
 ----
 
+Also consider splitting the tests up into several separate bash scripts if
+you test many things at once; long running "all.sh" test should be avoided
+if possible, as when these fail it is harder to debug than having more,
+smaller tests. However, make sure these independent tests don't have hidden
+dependencies: often we'll run the test suite in parallel, meaning in-order
+execution of different test scripts cannot be ensured. (However, order
+order inside the test script is guaranteed per bash's rules).
+
+Lastly, make sure your tests are architecture, distribution, and operating
+system independent. Try to make your tests dependent on local file contents,
+not system file contents, and make them independent of listening ports and
+installed software as much as possible.
 
 ==== test_init function
 This function does nothing. Logging is done by the CTest and the log from
@@ -287,3 +299,35 @@ $ less Testing/Temporary/LastTest.log
 Results from testing will be printed on the stdout and detailed log file with
 your test results can be found in the `Testing/Temporary/LastTest.log` file.
 
+== Running the MITRE tests
+
+The MITRE tests (in `tests/mitre`) are functionality tests for several
+key probes.
+
+There are several reasons for putting these tests behind an `ENABLE_MITRE`
+CMake flag: they cannot be run in parallel as they race to create and
+delete temporary support files; they require port 25 to be open and
+listening (`mitre/test_mitre_linux_probes.sh`); there are outdated assumptions
+which need to be gated around operating system version checks; and a number of
+probes had to be disabled because they're not supported (e.g., SQL and LDAP
+checks, etc.).
+
+To run only the MITRE tests, please make sure you've installed and started a
+SMTP server that is listening on `127.0.0.1:25`, and that you're running on a
+RPM-based distribution. Then:
+
+----
+$ cd build/
+$ cmake -DENABLE_MITRE=TRUE ..
+$ make
+$ ctest --output-on-failure -R mitre
+----
+
+To run the containerized MITRE tests (which installs a SMTP server and tests
+it):
+
+----
+$ cd openscap/
+$ docker build --tag openscap_mitre_tests:latest -f Dockerfiles/mitre_tests .
+$ docker run openscap_mitre_tests:latest
+----

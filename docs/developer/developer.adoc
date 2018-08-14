@@ -132,6 +132,19 @@ $ export CUSTOM_OSCAP=/usr/bin/oscap; ctest
 ----
 
 Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
+
+To enable the MITRE tests, use the `ENABLE_MITRE` flag:
+
+----
+$ cmake -DENABLE_MITRE=TRUE ..
+----
+
+These test require specific features of the environment to function properly; most notably, a MTA needs to be listening on port 25. We suggest using our container `mitre_tests` to test MITRE functionality if possible:
+
+----
+$ docker build --tag openscap_mitre_tests:latest -f Dockerfiles/mitre_tests . && docker run openscap_mitre_tests:latest
+----
+
 --
 
 . *Install*

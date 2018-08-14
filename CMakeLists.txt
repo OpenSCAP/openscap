@@ -193,7 +193,7 @@ find_program(GIT_EXECUTABLE git)
 
 # ---------- CORE FEATURE SWITCHES
 
-option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that let's you use executables instead of OVAL for checks" FALSE)
+option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" FALSE)
 
 # ---------- OVAL FEATURE SWITCHES
 
@@ -275,16 +275,16 @@ cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_WMI57 "Windows wmi57 probe" ON "EN
 option(ENABLE_OSCAP_UTIL "build the oscap utility, oscap is the core utility for evaluation and processing of SCAP data" TRUE)
 
 set(OSCAP_DOCKER_PYTHON ${PYTHON_EXECUTABLE} CACHE STRING "path to the Python interpreter for oscap-docker")
-cmake_dependent_option(ENABLE_OSCAP_UTIL_DOCKER "enables the oscap-docker utility, this let's you scan containers and container images" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_DOCKER "enables the oscap-docker utility, this lets you scan containers and container images" ON "NOT WIN32" OFF)
 if(ENABLE_OSCAP_UTIL_DOCKER AND NOT BZIP2_FOUND)
 	set(ENABLE_OSCAP_UTIL_DOCKER FALSE)
 	message(SEND_ERROR "oscap-docker requires bzip2! Either disable oscap-docker or install bzip2")
 endif()
 
-cmake_dependent_option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this let's you package SCAP data as RPMs" ON "NOT WIN32" OFF)
-cmake_dependent_option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this let's you scan remote machines over ssh" ON "NOT WIN32" OFF)
-cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this let's you scan VMs and VM storage images" ON "NOT WIN32" OFF)
-cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this let's you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this lets you package SCAP data as RPMs" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this lets you scan remote machines over ssh" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this lets you scan VMs and VM storage images" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this lets you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
 
 # ---------- TEST-SUITE SWITCHES
 
@@ -298,6 +298,8 @@ else()
 endif()
 
 option(ENABLE_VALGRIND "enables Valgrind memory testing in the test-suite" FALSE)
+
+option(ENABLE_MITRE "enables MITRE tests -- requires specific environment support -- see developer documentation for more details" FALSE)
 
 # ---------- LANGUAGE BINDINGS
 cmake_dependent_option(ENABLE_PYTHON3 "if enabled, the python3 swig bindings will be built" ON "PYTHONINTERP_FOUND;SWIG_FOUND;PYTHONLIBS_FOUND" OFF)
@@ -342,6 +344,11 @@ message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
 message(STATUS " ")
+
+message(STATUS "Testing:")
+message(STATUS "tests: ${ENABLE_TESTS}")
+message(STATUS "valgrind: ${ENABLE_VALGRIND}")
+message(STATUS "MITRE: ${ENABLE_MITRE}")
 
 # ---------- PATHS
 
