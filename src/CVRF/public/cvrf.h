@@ -674,13 +674,6 @@ OSCAP_API struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct c
 OSCAP_API struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
 
 /*******************************************
- * @struct cvrf_vulnerability_cwe_iterator
- * Iterator representing all CWE elements in the Vulnerability
- * Contained as a list within the CVRF Vulnerability structure
- */
-struct cvrf_vulnerability_cwe_iterator;
-
-/*******************************************
  * @struct cvrf_involvement_iterator
  * Iterator representing all Involvement elements in the Involvements container
  * Contained as a list within the CVRF Vulnerability structure
