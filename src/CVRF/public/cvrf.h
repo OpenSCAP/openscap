@@ -674,63 +674,6 @@ OSCAP_API struct oscap_iterator *cvrf_vulnerability_get_acknowledgments(struct c
 OSCAP_API struct oscap_iterator *cvrf_vulnerability_get_notes(struct cvrf_vulnerability *vuln);
 
 /*******************************************
- * @struct cvrf_vulnerability_cwe_iterator
- * Iterator representing all CWE elements in the Vulnerability
- * Contained as a list within the CVRF Vulnerability structure
- */
-struct cvrf_vulnerability_cwe_iterator;
-
-/**
- * @memberof cvrf_vulnerability
- * @param vuln CVRF Vulnerability structure
- * @param vulnerability_cwe CWE structure to be added to the Vulnerability
- * @return true on success
- */
-OSCAP_API bool cvrf_vulnerability_add_vulnerability_cwe(struct cvrf_vulnerability *vuln, struct cvrf_vulnerability_cwe *vulnerability_cwe);
-
-/**
- * @memberof cvrf_vulnerability
- * @param vuln CVRF Vulnerability structure
- * @return Iterator representing list of all CWEs in the Vulnerability
- */
-OSCAP_API struct cvrf_vulnerability_cwe_iterator *cvrf_vulnerability_get_vulnerability_cwes(const struct cvrf_vulnerability *vuln);
-
-/**
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- * @return Next CWE in list of all CWEs in the Vulnerability
- */
-OSCAP_API struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_iterator_next(struct cvrf_vulnerability_cwe_iterator *it);
-
-/**
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- * @return true if the iterator has another CWE element left
- */
-OSCAP_API bool cvrf_vulnerability_cwe_iterator_has_more(struct cvrf_vulnerability_cwe_iterator *it);
-
-/**
- * Deallocate memory for the CWE Iterator structure
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- */
-OSCAP_API void cvrf_vulnerability_cwe_iterator_free(struct cvrf_vulnerability_cwe_iterator *it);
-
-/**
- * Restart iterator at the first CWE in the Vulnerability
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- */
-OSCAP_API void cvrf_vulnerability_cwe_iterator_reset(struct cvrf_vulnerability_cwe_iterator *it);
-
-/**
- * Detaches and frees the CWE iterator structure
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- */
-OSCAP_API void cvrf_vulnerability_cwe_iterator_remove(struct cvrf_vulnerability_cwe_iterator *it);
-
-/*******************************************
  * @struct cvrf_involvement_iterator
  * Iterator representing all Involvement elements in the Involvements container
  * Contained as a list within the CVRF Vulnerability structure
