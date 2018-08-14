@@ -702,13 +702,6 @@ OSCAP_API struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_iterator_next(st
 OSCAP_API bool cvrf_vulnerability_cwe_iterator_has_more(struct cvrf_vulnerability_cwe_iterator *it);
 
 /**
- * Deallocate memory for the CWE Iterator structure
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- */
-OSCAP_API void cvrf_vulnerability_cwe_iterator_free(struct cvrf_vulnerability_cwe_iterator *it);
-
-/**
  * Restart iterator at the first CWE in the Vulnerability
  * @memberof cvrf_vulnerability_cwe_iterator
  * @param it CWE iterator structure
