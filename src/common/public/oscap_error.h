@@ -30,9 +30,9 @@
  * and textual description. Example of usage:
  *
  * @code
-OSCAP_API  * syschar = oval_probe_object_eval (pctx, object);
+ * syschar = oval_probe_object_eval (pctx, object);
  * if (syschar == NULL && oscap_err()) {
-OSCAP_API  *     printf("Error: (%d) %s\n", oscap_err_family(), oscap_err_desc());
+ *     printf("Error: (%d) %s\n", oscap_err_family(), oscap_err_desc());
  * }
  * oscap_clearerr()
  * @endcode
