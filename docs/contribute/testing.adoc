@@ -299,3 +299,35 @@ $ less Testing/Temporary/LastTest.log
 Results from testing will be printed on the stdout and detailed log file with
 your test results can be found in the `Testing/Temporary/LastTest.log` file.
 
+== Running the MITRE tests
+
+The MITRE tests (in `tests/mitre`) are functionality tests for several
+key probes.
+
+There are several reasons for putting these tests behind an `ENABLE_MITRE`
+CMake flag: they cannot be run in parallel as they race to create and
+delete temporary support files; they require port 25 to be open and
+listening (`mitre/test_mitre_linux_probes.sh`); there are outdated assumptions
+which need to be gated around operating system version checks; and a number of
+probes had to be disabled because they're not supported (e.g., SQL and LDAP
+checks, etc.).
+
+To run only the MITRE tests, please make sure you've installed and started a
+SMTP server that is listening on `127.0.0.1:25`, and that you're running on a
+RPM-based distribution. Then:
+
+----
+$ cd build/
+$ cmake -DENABLE_MITRE=TRUE ..
+$ make
+$ ctest --output-on-failure -R mitre
+----
+
+To run the containerized MITRE tests (which installs a SMTP server and tests
+it):
+
+----
+$ cd openscap/
+$ docker build --tag openscap_mitre_tests:latest -f Dockerfiles/mitre_tests .
+$ docker run openscap_mitre_tests:latest
+----
