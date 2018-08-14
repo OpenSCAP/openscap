@@ -687,13 +687,6 @@ struct cvrf_vulnerability_cwe_iterator;
  */
 OSCAP_API struct cvrf_vulnerability_cwe_iterator *cvrf_vulnerability_get_vulnerability_cwes(const struct cvrf_vulnerability *vuln);
 
-/**
- * Restart iterator at the first CWE in the Vulnerability
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- */
-OSCAP_API void cvrf_vulnerability_cwe_iterator_reset(struct cvrf_vulnerability_cwe_iterator *it);
-
 /*******************************************
  * @struct cvrf_involvement_iterator
  * Iterator representing all Involvement elements in the Involvements container
