@@ -694,13 +694,6 @@ OSCAP_API struct cvrf_vulnerability_cwe_iterator *cvrf_vulnerability_get_vulnera
  */
 OSCAP_API void cvrf_vulnerability_cwe_iterator_reset(struct cvrf_vulnerability_cwe_iterator *it);
 
-/**
- * Detaches and frees the CWE iterator structure
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- */
-OSCAP_API void cvrf_vulnerability_cwe_iterator_remove(struct cvrf_vulnerability_cwe_iterator *it);
-
 /*******************************************
  * @struct cvrf_involvement_iterator
  * Iterator representing all Involvement elements in the Involvements container
