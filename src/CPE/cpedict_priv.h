@@ -120,6 +120,20 @@ void cpe_item_export(const struct cpe_item *item, xmlTextWriterPtr writer, int b
  */
 void cpe_vendor_export(const struct cpe_vendor *vendor, xmlTextWriterPtr writer);
 
+/**
+ * Sets the origin file hint
+ * @see cpe_dict_model_get_origin_file
+ */
+bool cpe_dict_model_set_origin_file(struct cpe_dict_model* dict, const char* origin_file);
+
+/**
+ * Gets the file the CPE dict model was loaded from
+ * This is necessary to figure out the full OVAL file path for applicability
+ * testing. We can't do applicability here in the CPE module because that
+ * would create awful interdependencies.
+ */
+const char* cpe_dict_model_get_origin_file(const struct cpe_dict_model* dict);
+
 /* <cpe-list>
  * */
 struct cpe_dict_model {		// the main node

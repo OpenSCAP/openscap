@@ -67,19 +67,6 @@ struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source)
 	return dict;
 }
 
-bool cpe_dict_model_set_origin_file(struct cpe_dict_model* dict, const char* origin_file)
-{
-	free(dict->origin_file);
-	dict->origin_file = oscap_strdup(origin_file);
-
-	return true;
-}
-
-const char* cpe_dict_model_get_origin_file(const struct cpe_dict_model* dict)
-{
-	return dict->origin_file;
-}
-
 void cpe_dict_model_export(const struct cpe_dict_model *dict, const char *file)
 {
 

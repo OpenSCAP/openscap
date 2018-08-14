@@ -41,6 +41,7 @@
 
 #include "cpe_lang.h"
 #include "CPE/cpe_session_priv.h"
+#include "CPE/cpedict_priv.h"
 
 #include "oscap_source.h"
 #include "oval_agent_api.h"
