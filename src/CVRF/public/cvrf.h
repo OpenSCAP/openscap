@@ -695,13 +695,6 @@ OSCAP_API struct cvrf_vulnerability_cwe_iterator *cvrf_vulnerability_get_vulnera
 OSCAP_API struct cvrf_vulnerability_cwe *cvrf_vulnerability_cwe_iterator_next(struct cvrf_vulnerability_cwe_iterator *it);
 
 /**
- * @memberof cvrf_vulnerability_cwe_iterator
- * @param it CWE iterator structure
- * @return true if the iterator has another CWE element left
- */
-OSCAP_API bool cvrf_vulnerability_cwe_iterator_has_more(struct cvrf_vulnerability_cwe_iterator *it);
-
-/**
  * Restart iterator at the first CWE in the Vulnerability
  * @memberof cvrf_vulnerability_cwe_iterator
  * @param it CWE iterator structure
