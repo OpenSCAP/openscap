@@ -1,0 +1,32 @@
+FROM fedora:28
+
+ENV OSCAP_USERNAME oscap
+ENV OSCAP_DIR openscap
+ENV BUILD_JOBS 4
+
+RUN true \
+        && dnf -y upgrade --refresh \
+        && dnf -y install cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig bzip2-devel gcc gcc-c++ which sendmail postfix \
+        && dnf -y reinstall grep \
+        && mkdir -p /home/$OSCAP_USERNAME \
+        && dnf clean all \
+        && rm -rf /usr/share/doc /usr/share/doc-base \
+                  /usr/share/man /usr/share/locale /usr/share/zoneinfo \
+        && true
+
+WORKDIR /home/$OSCAP_USERNAME
+
+COPY . $OSCAP_DIR/
+
+# clean the build dir in case the user is also building OpenSCAP locally
+RUN rm -rf $OSCAP_DIR/build/*
+
+WORKDIR /home/$OSCAP_USERNAME/$OSCAP_DIR/build
+
+CMD true \
+        && cmake -DENABLE_MITRE=TRUE .. \
+        && make -j $BUILD_JOBS \
+        && postfix start \
+        && ctest --output-on-failure -R mitre \
+        && true
+
