@@ -683,14 +683,6 @@ struct cvrf_vulnerability_cwe_iterator;
 /**
  * @memberof cvrf_vulnerability
  * @param vuln CVRF Vulnerability structure
- * @param vulnerability_cwe CWE structure to be added to the Vulnerability
- * @return true on success
- */
-OSCAP_API bool cvrf_vulnerability_add_vulnerability_cwe(struct cvrf_vulnerability *vuln, struct cvrf_vulnerability_cwe *vulnerability_cwe);
-
-/**
- * @memberof cvrf_vulnerability
- * @param vuln CVRF Vulnerability structure
  * @return Iterator representing list of all CWEs in the Vulnerability
  */
 OSCAP_API struct cvrf_vulnerability_cwe_iterator *cvrf_vulnerability_get_vulnerability_cwes(const struct cvrf_vulnerability *vuln);
