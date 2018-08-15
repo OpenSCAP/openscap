@@ -39,8 +39,9 @@
 #include "public/xccdf_benchmark.h"
 #include "public/oscap_text.h"
 
-#include "cpe_lang.h"
+#include "CPE/cpelang_priv.h"
 #include "CPE/cpe_session_priv.h"
+#include "CPE/cpedict_priv.h"
 
 #include "oscap_source.h"
 #include "oval_agent_api.h"

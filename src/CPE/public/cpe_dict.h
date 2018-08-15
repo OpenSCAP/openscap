@@ -904,22 +904,6 @@ OSCAP_API void cpe_dict_model_export(const struct cpe_dict_model *dict, const ch
 OSCAP_API struct cpe_dict_model *cpe_dict_model_import_source(struct oscap_source *source);
 
 
-/**
- * Sets the origin file hint
- * @note This is intended for internal use only!
- * @see cpe_dict_model_get_origin_file
- */
-OSCAP_API bool cpe_dict_model_set_origin_file(struct cpe_dict_model* dict, const char* origin_file);
-
-/**
- * Gets the file the CPE dict model was loaded from
- * @internal
- * This is necessary to figure out the full OVAL file path for applicability
- * testing. We can't do applicability here in the CPE module because that
- * would create awful interdependencies.
- */
-OSCAP_API const char* cpe_dict_model_get_origin_file(const struct cpe_dict_model* dict);
-
 /** @} */
 
 /** @} */

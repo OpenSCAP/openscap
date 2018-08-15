@@ -374,22 +374,6 @@ OSCAP_API bool cpe_platform_match_cpe(struct cpe_name **cpe, size_t n, const str
 OSCAP_API struct cpe_lang_model *cpe_lang_model_import_source(struct oscap_source *source);
 
 /**
- * Sets the origin file hint
- * @note This is intended for internal use only!
- * @see cpe_lang_model_get_origin_file
- */
-OSCAP_API bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const char* origin_file);
-
-/**
- * Gets the file the CPE dict model was loaded from
- * @internal
- * This is necessary to figure out the full OVAL file path for applicability
- * testing. We can't do applicability here in the CPE module because that
- * would create awful interdependencies.
- */
-OSCAP_API const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_model);
-
-/**
  * Write the lang_model to a file.
  * @memberof cpe_lang_model
  * @param spec CPE lang model

@@ -123,6 +123,21 @@ void cpe_testexpr_export(const struct cpe_testexpr *expr, xmlTextWriterPtr write
 
 char *cpe_lang_model_detect_version_priv(xmlTextReader *reader);
 
+/**
+ * Sets the origin file hint
+ * @see cpe_lang_model_get_origin_file
+ */
+bool cpe_lang_model_set_origin_file(struct cpe_lang_model* lang_model, const char* origin_file);
+
+/**
+ * Gets the file the CPE dict model was loaded from
+ * This is necessary to figure out the full OVAL file path for applicability
+ * testing. We can't do applicability here in the CPE module because that
+ * would create awful interdependencies.
+ */
+const char* cpe_lang_model_get_origin_file(const struct cpe_lang_model* lang_model);
+
+
 /** 
  * @cond INTERNAL
  */
