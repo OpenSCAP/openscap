@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 
 		ret_val_1 = cpe_name_match_dict(name, dict_model);
 
-        ret_val = (ret_val_1 == false) ? 1 : 0;
+		ret_val = (ret_val_1 == false) ? 1 : 0;
 
 		cpe_name_free(name);
 		cpe_dict_model_free(dict_model);
