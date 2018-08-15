@@ -43,10 +43,17 @@ matrix:
         - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
     - os: osx
       osx_image: xcode8.3
+      before_install:
+        - brew update
+        - brew upgrade python
+        - brew install doxygen --with-graphviz
+        - brew install opendbx
+        - brew install popt
+        - brew install swig
       before_script:
         - cd build
       script:
-        - cmake -DENABLE_PYTHON3=false -DENABLE_PROBES=false -DENABLE_OSCAP_UTIL_DOCKER=false ../
+        - cmake -DENABLE_PROBES=false ../
         - make -j 4
 
 addons:
