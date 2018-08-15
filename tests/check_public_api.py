@@ -23,7 +23,8 @@ def get_public_symbols_from_shared_object(prefix):
 
 def get_public_headers(prefix):
     """
-    It is useful to check if all the public headers are actually installed under $PREFIX/include/openscap.
+    It is useful to check if all the public headers are actually installed
+    under $PREFIX/include/openscap.
     :param prefix: CMAKE_INSTALL_PREFIX
     :return: a set of public headers filepaths
     """
@@ -113,19 +114,18 @@ def main():
     print()
 
     so_only = so_symbols.difference(header_symbols)
-    print("The following %d symbols are exported in binary, " \
-            "but are not present in public header files:" % len(so_only))
+    print("The following %d symbols are exported in binary, "
+          "but are not present in public header files:" % len(so_only))
     for s in sorted(so_only):
         print(s)
     print()
 
     header_only = header_symbols.difference(so_symbols)
-    print("The following %d symbols are present in public header files, " \
-            "but are not exported in binary:" % len(header_only))
+    print("The following %d symbols are present in public header files, "
+          "but are not exported in binary:" % len(header_only))
     for s in sorted(header_only):
         print(s)
 
 
 if __name__ == "__main__":
     main()
-
