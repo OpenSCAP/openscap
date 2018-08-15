@@ -32,8 +32,7 @@ int main(int argc, char **argv)
 	FILE *f;
 	int ret_val = 1, i;
 	char *cpe_uri = NULL;
-	bool match_result_a = false, match_result_b = false, match_result_c =
-	    false;
+	bool match_result_b = false;
 
 	if (argc == 2 && !strcmp(argv[1], "--help")) {
 		print_usage(argv[0], stdout);
@@ -111,11 +110,6 @@ int main(int argc, char **argv)
 	// Match candidate CPE URI agains the others.
 	else if (argc >= 4 && strcmp(argv[1], "--matching") == 0) {
 
-		// Check match directly using CPE URIs.
-		match_result_a =
-		    cpe_name_match_strs(argv[2], argc - 2,
-					&(argv[3])) >= 0 ? true : false;
-
 		// Load candidate CPE.
 		if ((candidate_cpe = cpe_name_new(argv[2])) != NULL) {
 			if ((cpes =
@@ -133,17 +127,10 @@ int main(int argc, char **argv)
 								  cpes[i]);
 				}
 
-				// Match check agains all loaded CPEs.
-				match_result_c =
-				    cpe_name_match_cpes(candidate_cpe, argc - 3,
-							cpes);
-
 				// Report result - all should be the same.
-				if (match_result_a && match_result_b
-				    && match_result_c)
+				if (match_result_b)
 					printf("Match\n"), ret_val = 0;
-				if (!match_result_a && !match_result_b
-				    && !match_result_c)
+				if (!match_result_b)
 					printf("Mismatch\n"), ret_val = 0;
 
 			} else

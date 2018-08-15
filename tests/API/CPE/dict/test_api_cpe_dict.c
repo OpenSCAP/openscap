@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
 	struct cpe_name *name = NULL;
 	int ret_val = 0;
-	bool ret_val_1 = false, ret_val_2 = false;
+	bool ret_val_1 = false;
 
 	if (argc == 2 && !strcmp(argv[1], "--help"))
 		print_usage(argv[0], stdout);
@@ -198,14 +198,8 @@ int main(int argc, char **argv)
 		name = cpe_name_new(argv[4]);
 
 		ret_val_1 = cpe_name_match_dict(name, dict_model);
-		ret_val_2 = cpe_name_match_dict_str(argv[4], dict_model);
 
-		if (ret_val_1 != ret_val_2) {
-			fprintf(stderr, "%s was not matched correctly!\n",
-				argv[4]);
-			ret_val = 2;
-		} else
-			ret_val = (ret_val_1 == false) ? 1 : 0;
+		ret_val = (ret_val_1 == false) ? 1 : 0;
 
 		cpe_name_free(name);
 		cpe_dict_model_free(dict_model);

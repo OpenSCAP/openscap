@@ -544,50 +544,6 @@ bool cpe_name_match_one(const struct cpe_name * cpe, const struct cpe_name * aga
 	return true;
 }
 
-bool cpe_name_match_cpes(const struct cpe_name * name, size_t n, struct cpe_name ** namelist)
-{
-
-	__attribute__nonnull__(name);
-	__attribute__nonnull__(namelist);
-
-	if (name == NULL || namelist == NULL)
-		return false;
-
-	for (size_t i = 0; i < n; ++i)
-		if (cpe_name_match_one(name, namelist[i]))
-			return true;
-	return false;
-}
-
-int cpe_name_match_strs(const char *candidate, size_t n, char **targets)
-{
-	__attribute__nonnull__(candidate);
-	__attribute__nonnull__(targets);
-
-	int i;
-	struct cpe_name *ccpe, *tcpe;
-
-	ccpe = cpe_name_new(candidate);	// candidate cpe
-	if (ccpe == NULL)
-		return -2;
-
-	for (i = 0; i < (int)n; ++i) {
-		tcpe = cpe_name_new(targets[i]);	// target cpe
-
-		if (cpe_name_match_one(ccpe, tcpe)) {
-			// CPE matched
-			cpe_name_free(ccpe);
-			cpe_name_free(tcpe);
-			return i;
-		}
-
-		cpe_name_free(tcpe);
-	}
-
-	cpe_name_free(ccpe);
-	return -1;
-}
-
 cpe_format_t cpe_name_get_format_of_str(const char *str)
 {
 	if (str == NULL)

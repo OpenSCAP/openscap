@@ -291,16 +291,6 @@ OSCAP_API bool cpe_name_set_other(struct cpe_name *cpe, const char *newval);
 OSCAP_API bool cpe_name_match_one(const struct cpe_name *cpe, const struct cpe_name *against);
 
 /**
- * Check if CPE @a name matches any CPE in @a namelist.
- * @memberof cpe_name
- * @param name name to be looked-up
- * @param n number of items in namelist
- * @param namelist list of names to search in
- * @return true if @a name was found within @a namelist
- */
-OSCAP_API bool cpe_name_match_cpes(const struct cpe_name *name, size_t n, struct cpe_name **namelist);
-
-/**
  * Write CPE URI @a cpe to file a descriptor @a f
  * @memberof cpe_name
  * @param cpe cpe to write
@@ -323,18 +313,6 @@ OSCAP_API cpe_format_t cpe_name_get_format_of_str(const char *str);
  * @param str string to be validated
  */
 OSCAP_API bool cpe_name_check(const char *str);
-
-/**
- * Match CPE URI @a candidate against list of @a n CPE URIs given by @a targets.
- * @memberof cpe_name
- * @param candidate candidarte CPE URI as string
- * @param n number of items in targets
- * @param targets list of CPE URIs to be candidate matched against
- * @return index of first URI in targets, that matched
- * @retval -1 on mismatch
- * @retval -2 invalid CPE URI was given as parameter
- */
-OSCAP_API int cpe_name_match_strs(const char *candidate, size_t n, char **targets);
 
 /**
  * Get supported version of CPE uri XML
