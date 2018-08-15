@@ -431,6 +431,8 @@ OSCAP_IGETINS_GEN(cvrf_remediation, cvrf_vulnerability, remediations, remediatio
 OSCAP_ITERATOR_REMOVE_F(cvrf_remediation)
 OSCAP_IGETINS_GEN(cvrf_threat, cvrf_vulnerability, threats, threat)
 OSCAP_ITERATOR_REMOVE_F(cvrf_threat)
+OSCAP_IGETINS_GEN(cvrf_vulnerability_cwe, cvrf_vulnerability, cwes, cwe)
+OSCAP_ITERATOR_REMOVE_F(cvrf_vulnerability_cwe)
 
 struct oscap_iterator *cvrf_vulnerability_get_references(struct cvrf_vulnerability *vuln) {
 	return oscap_iterator_new(vuln->references);
