@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
 	struct cpe_name *name = NULL;
 	int ret_val = 0;
-	bool ret_val_1 = false, ret_val_2 = false;
+	bool ret_val_1 = false;
 
 	if (argc == 2 && !strcmp(argv[1], "--help"))
 		print_usage(argv[0], stdout);

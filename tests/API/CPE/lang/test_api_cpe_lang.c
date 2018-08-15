@@ -232,7 +232,7 @@ void print_usage(const char *program_name, FILE * out)
 		"  %s --set-new CPE_LANG_XML ENCODING NS_PREFIX NS_HREF (PLATFORM_ID)*\n"
 		"  %s --smoke-test\n",
 		program_name, program_name, program_name, program_name,
-		program_name, program_name, program_name, program_name);
+		program_name, program_name, program_name);
 }
 
 // Print expression in prefix form.
