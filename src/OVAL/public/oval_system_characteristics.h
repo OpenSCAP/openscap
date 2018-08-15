@@ -898,7 +898,7 @@ OSCAP_API struct oval_variable_binding *oval_variable_binding_new(struct oval_va
  * @return A copy of the specified @ref oval_variable_binding.
  * @memberof oval_variable_binding
  */
-struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *,
+OSCAP_API struct oval_variable_binding *oval_variable_binding_clone(struct oval_variable_binding *,
 							  struct oval_definition_model *);
 /**
  * @memberof oval_variable_binding

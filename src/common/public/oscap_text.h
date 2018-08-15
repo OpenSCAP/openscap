@@ -46,11 +46,11 @@
  * @{
  */
 /// English
-extern const char * const OSCAP_LANG_ENGLISH;
+OSCAP_API extern const char *const OSCAP_LANG_ENGLISH;
 /// American English
-extern const char * const OSCAP_LANG_ENGLISH_US;
+OSCAP_API extern const char *const OSCAP_LANG_ENGLISH_US;
 /// Default language (i.e. American English)
-extern const char * const OSCAP_LANG_DEFAULT;
+OSCAP_API extern const char *const OSCAP_LANG_DEFAULT;
 /** @} */
 
 /**

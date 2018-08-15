@@ -75,7 +75,7 @@ typedef xccdf_test_result_type_t (xccdf_policy_eval_rule_cb_t) (struct xccdf_pol
  * \endcode
  *
  */
-xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy * policy, const char * rule_id, const char * id, const char * href,
+OSCAP_API xccdf_test_result_type_t oval_agent_eval_rule(struct xccdf_policy *policy, const char *rule_id, const char *id, const char *href,
 		struct xccdf_value_binding_iterator * it,
 		struct xccdf_check_import_iterator * check_import_it,
 		void * usr);

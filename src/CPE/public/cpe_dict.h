@@ -430,7 +430,7 @@ OSCAP_API bool cpe_item_set_deprecated_by(struct cpe_item *item, const struct cp
 OSCAP_API bool cpe_item_set_deprecation_date(struct cpe_item *item, const char *new_deprecation_date);
 
 /// @memberof cpe_item_metadata
-bool cpe_item_metadata_set_modification_date(struct cpe_item_metadata *item_metadata,
+OSCAP_API bool cpe_item_metadata_set_modification_date(struct cpe_item_metadata *item_metadata,
 					     const char *new_modification_date);
 
 /// @memberof cpe_item_metadata
@@ -440,7 +440,7 @@ OSCAP_API bool cpe_item_metadata_set_status(struct cpe_item_metadata *item_metad
 OSCAP_API bool cpe_item_metadata_set_nvd_id(struct cpe_item_metadata *item_metadata, const char *new_nvd_id);
 
 /// @memberof cpe_item_metadata
-bool cpe_item_metadata_set_deprecated_by_nvd_id(struct cpe_item_metadata *item_metadata,
+OSCAP_API bool cpe_item_metadata_set_deprecated_by_nvd_id(struct cpe_item_metadata *item_metadata,
 						const char *new_deprecated_by_nvd_id);
 
 /// @memberof cpe_check
