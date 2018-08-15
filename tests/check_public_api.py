@@ -4,6 +4,7 @@ import subprocess
 import tempfile
 import os
 import re
+import sys
 
 
 def get_public_symbols_from_shared_object(prefix):
@@ -70,6 +71,17 @@ def get_public_symbols_from_headers(headers):
     return symbols
 
 
+def _run_command(command):
+    try:
+        subprocess.run(command, check=True,
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                       encoding="utf-8")
+    except subprocess.CalledProcessError as e:
+        print(e.output)
+        print(e.stderr, file=sys.stderr)
+        raise RuntimeError
+
+
 def analyze_project_artifacts(src_dir):
     """
     Analyze the project and find all the symbols declared as public in
@@ -81,24 +93,29 @@ def analyze_project_artifacts(src_dir):
     :return: tuple (header_symbols, so_symbols)
     """
     cwd = os.getcwd()
+    build_dir = os.path.normpath(os.path.join(src_dir, "build"))
+    build_dir_contents = os.listdir(build_dir)
+    if ".gitkeep" in build_dir_contents:
+        build_dir_contents.remove(".gitkeep")
+    if build_dir_contents:
+        print("Directory '%s' is not empty" % build_dir, file=sys.stderr)
+        raise RuntimeError
+    os.chdir(build_dir)
     with tempfile.TemporaryDirectory() as prefix:
-        build_dir = os.path.join(src_dir, "build")
-        os.chdir(build_dir)
         cmake_command = ["cmake",
                          "-DENABLE_PYTHON3=FALSE",
                          "-DENABLE_PERL=FALSE",
                          "-DCMAKE_INSTALL_PREFIX=" + prefix,
                          "-DENABLE_TESTS=FALSE",
                          ".."]
-        subprocess.run(cmake_command)
+
+        _run_command(cmake_command)
         make_command = ["make"]
-        subprocess.run(make_command)
-        # TODO: remove make docs after
-        # https://github.com/OpenSCAP/openscap/issues/1161 is resolved
+        _run_command(make_command)
         make_docs_command = ["make", "docs"]
-        subprocess.run(make_docs_command)
+        _run_command(make_docs_command)
         make_install_command = ["make", "install"]
-        subprocess.run(make_install_command)
+        _run_command(make_install_command)
         public_headers = get_public_headers(prefix)
         so_symbols = get_public_symbols_from_shared_object(prefix)
         header_symbols = get_public_symbols_from_headers(public_headers)
@@ -108,7 +125,13 @@ def analyze_project_artifacts(src_dir):
 
 def main():
     src_dir = os.path.join(os.getcwd(), "..")
-    header_symbols, so_symbols = analyze_project_artifacts(src_dir)
+
+    try:
+        header_symbols, so_symbols = analyze_project_artifacts(src_dir)
+    except RuntimeError as e:
+        print("Could not analyze OpenSCAP public API", file=sys.stderr)
+        sys.exit(1)
+
     print("Shared object symbols: %d" % len(so_symbols))
     print("Public header symbols: %d\n" % len(header_symbols))
     print()
