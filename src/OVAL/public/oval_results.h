@@ -230,7 +230,7 @@ OSCAP_API struct oval_result_system *oval_result_system_new(struct oval_results_
  * @return A copy of the specified @ref oval_result_system.
  * @memberof oval_result_system
  */
-struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model,
+OSCAP_API struct oval_result_system *oval_result_system_clone(struct oval_results_model *new_model,
 						    struct oval_result_system *old_system);
 /**
  * @memberof oval_result_system
@@ -619,7 +619,7 @@ OSCAP_API void oval_result_item_iterator_free(struct oval_result_item_iterator *
 /**
  * @memberof oval_result_criteria_node
  */
-struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *,
+OSCAP_API struct oval_result_criteria_node *oval_result_criteria_node_new(struct oval_result_system *,
 								oval_criteria_node_type_t,
 								int, int, ...);
 /**

@@ -3146,7 +3146,7 @@ OSCAP_API struct oval_component *oval_component_new(struct oval_definition_model
  * @return A copy of the specified @ref oval_component.
  * @memberof oval_component
  */
-struct oval_component *oval_component_clone(struct oval_definition_model *new_model,
+OSCAP_API struct oval_component *oval_component_clone(struct oval_definition_model *new_model,
 					    struct oval_component *old_component);
 /**
  * Free instance of @ref Oval_component
