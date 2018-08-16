@@ -159,12 +159,6 @@ OSCAP_API SEXP_t *probe_attr_creat(const char *name, const SEXP_t * val, ...);
  */
 
 /**
- * Build a new object according to the specified format.
- * @param fmt the desired format
- */
-OSCAP_API SEXP_t *probe_obj_build(const char *fmt, ...);
-
-/**
  * Create a new object consisting of a name, optional attributes argument and an arbitrary number of entities.
  * Every entity is a triple:
  * const char *name - name of the new entity
