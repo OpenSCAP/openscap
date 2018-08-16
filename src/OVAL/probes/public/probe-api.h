@@ -229,15 +229,6 @@ OSCAP_API bool probe_obj_attrexists(const SEXP_t * obj, const char *name);
 OSCAP_API int probe_obj_setstatus(SEXP_t * obj, oval_syschar_status_t status);
 
 /**
- * Set status of an object's entity.
- * @param obj the object to be modified
- * @param name the name of the entity
- * @param n select the n-th occurence of an entity with the specified name
- * @param status the new status
- */
-OSCAP_API int probe_objent_setstatus(SEXP_t * obj, const char *name, uint32_t n, oval_syschar_status_t status);
-
-/**
  * Get the name of an object.
  * @param obj the queried object
  */
