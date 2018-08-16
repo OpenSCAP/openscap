@@ -44,6 +44,50 @@ ROOT=${tmpdir}/ftsroot
 echo "Temp dir: ${tmpdir}."
 gen_tree $ROOT
 
+# The format for the arguments is as follows:
+#
+# <name of test>
+# <path_operation_number> <path_operation_argument>
+# <filename_operation_number> <filename_operation_argument>
+# <filepath_operation_number> <filepath_operation_argument>
+# <behaviors_max_depth> <behaviors_recurse> <behaviors_recurse_direction> <behaviors_recurse_file_system>
+#
+# When path is specified, filename must also be. Else, filepath can be
+# specified. The first case is equivalent to the following SEXPs:
+#
+# ((path :operation <path_operation_number>) <path_operation_argument>)
+# ((filename :operation <filename_operation_number>) <filename_operation_argument)
+# ---empty filepath expression---
+# ((behaviors :max_depth <behaviors_max_depth> :recurse <behaviors_recurse> :recurse_direction <behaviors_recurse_direction> :recurse_file_system <behaviors_recurse_file_system>))
+#
+# Else with filepath:
+#
+# ---empty path expression---
+# ---empty filename expression---
+# ((filepath :operation <filepath_operation_number>) <filepath_operation_argument>)
+# ((behaviors :max_depth <behaviors_max_depth> :recurse <behaviors_recurse> :recurse_direction <behaviors_recurse_direction> :recurse_file_system <behaviors_recurse_file_system>))
+#
+# When both <*_operation_number> and <*_operation_argument> are empty, the
+# resulting SEXP is not add. When <*_operation_argument> is empty, the
+# resulting SEXP looks like:
+#     ((* :operation <*_operation_number))
+# For filename only, if <filename_operation_argument> is equal to the string
+# "EMPTY_STRING", the resulting SEXP looks like:
+#     ((filename :operation <filename_operation_number>) '')
+#
+# In general the utilized values of operation_number are:
+#    5 - a fixed comparison
+#   11 - a regex based comparison
+# and the value of the argument is then directly passed as a string.
+#
+# behaviors_recurse can be some combination of "symlinks" and "directories"
+#
+# behaviors_recurse_direction can either be none, down, or up
+#
+# behaviors_recurse_file_system is commonly used as all or local
+#
+# All of this is implemented in oval_fts_list.c.
+
 while read args; do
 	[ -z "${args%%#*}" ] && continue
 	eval oval_fts $args
@@ -58,7 +102,7 @@ d1/d12/f121,
 test2 \
 '' '' \
 '' '' \
-11 "^$ROOT/d1/.*/f1111" \\
+11 "^$ROOT/d1/.*/f1111" \
 "-1" "symlinks and directories" "none" "all" \
 d1/d11/d111/f1111,
 
