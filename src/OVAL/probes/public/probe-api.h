@@ -41,13 +41,13 @@
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful, 
+ * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software 
+ * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
@@ -73,13 +73,6 @@
  * items
  */
 
-/**
- * Build a new item according to the specified format.
- * @param fmt the desired format
- */
-OSCAP_API SEXP_t *probe_item_build(const char *fmt, ...);
-
-/* SEXP_t *probe_item_creat (const char *name, SEXP_t *attrs, ...); */
 /**
  * Create a new item consisting of a name, optional attributes argument and an arbitrary number of entities.
  * Every entity is a triple:
