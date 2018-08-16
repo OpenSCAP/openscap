@@ -134,13 +134,6 @@ OSCAP_API int probe_itement_setstatus(SEXP_t * obj, const char *name, uint32_t n
 struct id_desc_t;
 
 /**
- * Get a new unique id (within a probe) for an item.
- * @param id_desc pointer to a structure holding the global id context
- * @return a new id
- */
-OSCAP_API SEXP_t *probe_item_newid(struct id_desc_t *id_desc);
-
-/**
  * Reset the item id generator.
  * @param id_desc pointer to a structure holding the global id context
  */
