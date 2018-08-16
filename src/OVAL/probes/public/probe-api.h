@@ -450,8 +450,6 @@ typedef struct probe_ctx probe_ctx;
 
 OSCAP_API bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
 
-OSCAP_API int probe_result_additem(SEXP_t *result, SEXP_t *item);
-
 /**
  * Collect generated item (i.e. add it to the collected object)
  * The function takes ownership of the item reference and takes
