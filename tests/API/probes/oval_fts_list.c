@@ -19,13 +19,9 @@ static int create_path_sexpr(char *arg_operation, char *arg_argument, SEXP_t **r
 		return 0;
 	}
 
-	errno = 0;
-	int operation_number = atoi(arg_operation);
-	if (errno != 0) {
-		fprintf(stderr, "Error parsing path->operation number: %s\n", arg_operation);
-		return errno;
-	} else if (operation_number < 0 || operation_number > 255) {
-		fprintf(stderr, "Error parsing path->operation number -- out of bounds (0 <= operation number <= 255): %s\n", arg_operation);
+	int operation_number = oval_operation_from_text(arg_operation);
+	if (operation_number <= 0 || operation_number > 255) {
+		fprintf(stderr, "Error parsing path->operation number -- not a valid OVAL_OPERATION enum string: %s\n", arg_operation);
 		return 1;
 	}
 
@@ -57,13 +53,9 @@ static int create_filename_sexpr(char *arg_operation, char *arg_argument, SEXP_t
 		return 0;
 	}
 
-	errno = 0;
-	int operation_number = atoi(arg_operation);
-	if (errno != 0) {
-		fprintf(stderr, "Error parsing filename->operation number: %s\n", arg_operation);
-		return errno;
-	} else if (operation_number < 0 || operation_number > 255) {
-		fprintf(stderr, "Error parsing filename->operation number -- out of bounds (0 <= operation number <= 255): %s\n", arg_operation);
+	int operation_number = oval_operation_from_text(arg_operation);
+	if (operation_number <= 0 || operation_number > 255) {
+		fprintf(stderr, "Error parsing path->operation number -- not a valid OVAL_OPERATION enum string: %s\n", arg_operation);
 		return 1;
 	}
 
@@ -103,13 +95,9 @@ static int create_filepath_sexpr(char *arg_operation, char *arg_argument, SEXP_t
 		return 0;
 	}
 
-	errno = 0;
-	int operation_number = atoi(arg_operation);
-	if (errno != 0) {
-		fprintf(stderr, "Error parsing filepath->operation number: %s - %d\n", arg_operation, errno);
-		return errno;
-	} else if (operation_number < 0 || operation_number > 255) {
-		fprintf(stderr, "Error parsing filepath->operation number -- out of bounds (0 <= operation number <= 255): %s\n", arg_operation);
+	int operation_number = oval_operation_from_text(arg_operation);
+	if (operation_number <= 0 || operation_number > 255) {
+		fprintf(stderr, "Error parsing path->operation number -- not a valid OVAL_OPERATION enum string: %s\n", arg_operation);
 		return 1;
 	}
 
