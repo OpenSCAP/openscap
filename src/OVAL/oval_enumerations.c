@@ -224,6 +224,11 @@ const char *oval_operation_get_text(oval_operation_t operation)
 	return oval_enumeration_get_text(OVAL_OPERATION_MAP, operation);
 }
 
+oval_operation_t oval_operation_from_text(const char *text)
+{
+	return oval_enumeration_from_text(OVAL_OPERATION_MAP, text);
+}
+
 static const struct oscap_string_map OVAL_CHECK_MAP[] = {
 	{OVAL_CHECK_ALL, "all"},
 	{OVAL_CHECK_AT_LEAST_ONE, "at least one"},

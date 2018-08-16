@@ -260,6 +260,7 @@ OSCAP_API const char *oval_affected_family_get_text(oval_affected_family_t);
 OSCAP_API const char *oval_datatype_get_text(oval_datatype_t);
 OSCAP_API oval_datatype_t oval_datatype_from_text(const char *);
 OSCAP_API const char *oval_operation_get_text(oval_operation_t);
+OSCAP_API oval_operation_t oval_operation_from_text(const char *);
 OSCAP_API const char *oval_set_operation_get_text(oval_setobject_operation_t);
 OSCAP_API const char *oval_datetime_format_get_text(oval_datetime_format_t);
 OSCAP_API const char *oval_arithmetic_operation_get_text(oval_arithmetic_operation_t);
@@ -318,7 +319,7 @@ struct oval_object_iterator;
 struct oval_state;
 /**
  * @struct oval_state_iterator
- * @see oval_definition_model_get_states 
+ * @see oval_definition_model_get_states
  */
 struct oval_state_iterator;
 /**
@@ -364,7 +365,7 @@ struct oval_variable_iterator;
  * or to preselect only Red Hat definitions to be evaluated. Note, the inclusion of a particular platform
  * or product does not mean the definition is physically checking for the existence of the platform or product.
  * For the actual test to be performed, the correct test must still be included in the definition's criteria section.
- * 
+ *
  * The AffectedType complex type details the specific system, application, subsystem, library, etc. for which a
  * definition has been written. If a definition is not tied to a specific product, then this element should not
  * be included. The absence of the platform or product element can be thought of as definition applying to
@@ -498,7 +499,7 @@ struct oval_filter_iterator;
  *		The local_variable element would be evaluated to have two values, "abcxyz" and "defxyz". If one of the components does not exist,
  *		then the result of the concat operation should be does not exist.
  *	- If @ref oval_component_get_type == @ref OVAL_FUNCTION_COUNT - Counting function.
- *		- The count function counts the values represented by one or more components as an integer. This function determines the total number of values referenced 
+ *		- The count function counts the values represented by one or more components as an integer. This function determines the total number of values referenced
  *		by all of thespecified sub-components.
  *	- If @ref oval_component_get_type == @ref OVAL_FUNCTION_ARITHMETIC - Arithmetic function.
  *		- The arithmetic function takes two or more integer or float components and performs a basic mathmetical function on them.
@@ -634,7 +635,7 @@ OSCAP_API struct oval_definition_model *oval_definition_model_import_source(stru
 OSCAP_API struct oval_definition_model *oval_definition_model_clone(struct oval_definition_model *);
 /**
  * Export an oval_definition_model into file.
- * @memberof oval_definition_model 
+ * @memberof oval_definition_model
  *
  */
 OSCAP_API int oval_definition_model_export(struct oval_definition_model *, const char *file);

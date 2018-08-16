@@ -34,8 +34,6 @@
 
 /* SEAP context */
 struct SEAP_CTX {
-        SEXP_t * (*parser) (SEXP_psetup_t *, const char *, size_t, SEXP_pstate_t **);
-        SEXP_pflags_t pflags;
         SEXP_format_t fmt_in;
         SEXP_format_t fmt_out;
         SEAP_desctable_t *sd_table;

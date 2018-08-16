@@ -27,7 +27,6 @@
 #include <pthread.h>
 
 #include "generic/bitmap.h"
-#include "_sexp-parser.h"
 #include "seap-descriptor.h"
 #include "_sexp-atomic.h"
 
@@ -40,8 +39,8 @@ SEAP_desctable_t *SEAP_desctable_new (void)
         return(t);
 }
 
-int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
-                         SEAP_scheme_t scheme, void *scheme_data)
+int SEAP_desc_add(SEAP_desctable_t *sd_table, SEAP_scheme_t scheme,
+                   void *scheme_data)
 {
         bitmap_bitn_t sd;
         pthread_mutexattr_t mutex_attr;
@@ -62,7 +61,6 @@ int SEAP_desc_add (SEAP_desctable_t *sd_table, SEXP_pstate_t *pstate,
 
                 sd_dsc->next_id = 0;
                 /* sd_dsc->sexpcnt = 0; */
-                sd_dsc->pstate  = pstate;
                 sd_dsc->scheme  = scheme;
                 sd_dsc->scheme_data = scheme_data;
                 sd_dsc->ostate  = NULL;

@@ -27,7 +27,6 @@
 #include <sexp-types.h>
 #include <sexp-manip.h>
 #include <sexp-manip_r.h>
-#include <sexp-parser.h>
 #include <sexp-output.h>
 #include <sexp-ID.h>
 
