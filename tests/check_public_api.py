@@ -145,17 +145,19 @@ def main():
     print()
 
     so_only = so_symbols.difference(header_symbols)
-    print("The following %d symbols are exported in binary, "
-          "but are not present in public header files:" % len(so_only))
-    for s in sorted(so_only):
-        print(s)
-    print()
+    if so_only:
+        print("The following %d symbols are exported in binary, "
+              "but are not present in public header files:" % len(so_only))
+        for s in sorted(so_only):
+            print(s)
+        print()
 
     header_only = header_symbols.difference(so_symbols)
-    print("The following %d symbols are present in public header files, "
-          "but are not exported in binary:" % len(header_only))
-    for s in sorted(header_only):
-        print(s)
+    if header_only:
+        print("The following %d symbols are present in public header files, "
+              "but are not exported in binary:" % len(header_only))
+        for s in sorted(header_only):
+            print(s)
 
 
 if __name__ == "__main__":
