@@ -19,6 +19,8 @@ def get_public_symbols_from_shared_object(prefix):
     nm_output_bytes = subprocess.check_output(nm_command)
     nm_output = nm_output_bytes.decode(encoding="utf-8")
     symbols = {line.split()[2] for line in nm_output.splitlines()}
+    symbols = symbols.difference({"__bss_start", "_edata", "_end", "_fini",
+                                  "_init"})
     return symbols
 
 
