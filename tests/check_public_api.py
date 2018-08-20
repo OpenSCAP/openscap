@@ -19,6 +19,8 @@ def get_public_symbols_from_shared_object(prefix):
     nm_output_bytes = subprocess.check_output(nm_command)
     nm_output = nm_output_bytes.decode(encoding="utf-8")
     symbols = {line.split()[2] for line in nm_output.splitlines()}
+    symbols = symbols.difference({"__bss_start", "_edata", "_end", "_fini",
+                                  "_init"})
     return symbols
 
 
@@ -50,11 +52,17 @@ def get_public_symbols_from_header(header_path):
         content = header_file.read()
     prototypes = prototype_regex.findall(content)
     function_name_regex = re.compile(r"([a-zA-Z0-9_]+)\s*\(.*\)")
+    data_name_regex = re.compile(r"\s+([a-zA-Z0-9_]+)\s*;")
     for p in prototypes:
         p = p.replace("\n", " ")
-        f_match = function_name_regex.search(p)
-        f_name = f_match.group(1) if f_match else "unknown"
-        symbols.add(f_name)
+        match = function_name_regex.search(p)
+        if not match:
+            match = data_name_regex.search(p)
+        if not match:
+            print("Invalid prototype '%s'" % p, file=sys.stderr)
+            continue
+        symbol_name = match.group(1)
+        symbols.add(symbol_name)
     return symbols
 
 
@@ -137,17 +145,19 @@ def main():
     print()
 
     so_only = so_symbols.difference(header_symbols)
-    print("The following %d symbols are exported in binary, "
-          "but are not present in public header files:" % len(so_only))
-    for s in sorted(so_only):
-        print(s)
-    print()
+    if so_only:
+        print("The following %d symbols are exported in binary, "
+              "but are not present in public header files:" % len(so_only))
+        for s in sorted(so_only):
+            print(s)
+        print()
 
     header_only = header_symbols.difference(so_symbols)
-    print("The following %d symbols are present in public header files, "
-          "but are not exported in binary:" % len(header_only))
-    for s in sorted(header_only):
-        print(s)
+    if header_only:
+        print("The following %d symbols are present in public header files, "
+              "but are not exported in binary:" % len(header_only))
+        for s in sorted(header_only):
+            print(s)
 
 
 if __name__ == "__main__":
