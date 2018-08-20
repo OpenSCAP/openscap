@@ -309,6 +309,14 @@ cmake_dependent_option(ENABLE_PERL "if enabled, the perl swig bindings will be b
 set(WANT_BASE64 TRUE CACHE BOOL "wants builtin Base64")
 set(WANT_XBASE64 FALSE CACHE BOOL "wants builtin XBase64")
 
+# ---------- Documentation
+
+# Due to the time it takes to build documentation on every change,
+# we choose to disable documentation by default. Only when ENABLE_DOCS==TRUE
+# will docs be built and added to the `make install` target.
+
+option(ENABLE_DOCS "enables documentation building -- suggests doxygen, asciidoc" FALSE)
+
 # ---------- STATUS MESSAGES
 
 message(STATUS " ")
@@ -349,6 +357,12 @@ message(STATUS "Testing:")
 message(STATUS "tests: ${ENABLE_TESTS}")
 message(STATUS "valgrind: ${ENABLE_VALGRIND}")
 message(STATUS "MITRE: ${ENABLE_MITRE}")
+message(STATUS " ")
+
+message(STATUS "Documentation:")
+message(STATUS "enabled: ${ENABLE_DOCS}")
+message(STATUS "doxygen: ${DOXYGEN_EXECUTABLE}")
+message(STATUS "asciidoc: ${ASCIIDOC_EXECUTABLE}")
 
 # ---------- PATHS
 
