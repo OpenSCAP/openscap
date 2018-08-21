@@ -75,8 +75,21 @@ add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
 set_target_properties(openscap PROPERTIES
 	VERSION ${SONAME}
 	SOVERSION ${SOVERSION}
-	C_VISIBILITY_PRESET hidden
 )
+
+if(CMAKE_C_COMPILER_ID STREQUAL GNU)
+	set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/libopenscap.map")
+	add_custom_command(
+		OUTPUT "${VERSION_SCRIPT}"
+		COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
+		COMMENT "Generating export map"
+	)
+	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
+	add_dependencies(openscap export_map)
+	set_target_properties(openscap PROPERTIES
+		LINK_FLAGS "-Wl,--version-script=\"${VERSION_SCRIPT}\""
+	)
+endif()
 
 target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 if (BZIP2_FOUND)
