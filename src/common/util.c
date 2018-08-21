@@ -34,6 +34,7 @@
 #include "util.h"
 #include "_error.h"
 #include "oscap.h"
+#include "oscap_helpers.h"
 
 #ifdef _WIN32
 #include <stdlib.h>

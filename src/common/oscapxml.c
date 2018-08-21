@@ -52,6 +52,7 @@
 #include "source/schematron_priv.h"
 #include "source/validate_priv.h"
 #include "source/xslt_priv.h"
+#include "oscap_helpers.h"
 
 const char *const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
 const char *const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;

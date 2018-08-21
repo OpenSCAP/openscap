@@ -41,6 +41,7 @@
 #include "public/cvss_score.h"
 #include "cvss_priv.h"
 #include "common/elements.h"
+#include "oscap_helpers.h"
 
 #define CVSS_SUPPORTED "2.0"
 #define NS_VULN_STR BAD_CAST "vuln"

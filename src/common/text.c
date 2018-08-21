@@ -38,6 +38,7 @@
 #include "text_priv.h"
 #include "util.h"
 #include "list.h"
+#include "oscap_helpers.h"
 
 const char * const OSCAP_LANG_ENGLISH    = "en";
 const char * const OSCAP_LANG_ENGLISH_US = "en-US";

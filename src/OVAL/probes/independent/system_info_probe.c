@@ -83,6 +83,7 @@
 #include <errno.h>
 #include <limits.h>
 #include "system_info_probe.h"
+#include "oscap_helpers.h"
 
 #if defined(OS_LINUX)
 #include <sys/socket.h>

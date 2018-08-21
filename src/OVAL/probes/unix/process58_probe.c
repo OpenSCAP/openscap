@@ -102,6 +102,7 @@ extern char const *_cap_names[];
 #include <ctype.h>
 #include "common/oscap_buffer.h"
 #include "process58_probe.h"
+#include "oscap_helpers.h"
 
 #define CHUNK_SIZE 1024
 

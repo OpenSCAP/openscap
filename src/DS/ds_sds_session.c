@@ -41,6 +41,7 @@
 #include "source/public/oscap_source.h"
 #include "source/xslt_priv.h"
 #include <libxml/tree.h>
+#include "oscap_helpers.h"
 
 struct ds_sds_session {
 	struct oscap_source *source;            ///< Source DataStream raw representation

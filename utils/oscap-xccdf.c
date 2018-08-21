@@ -62,7 +62,7 @@
 #include "oscap.h"
 #include "oscap_source.h"
 #include <oscap_debug.h>
-#include "util.h"
+#include "oscap_helpers.h"
 
 #ifndef O_NOFOLLOW
 #define O_NOFOLLOW 0

@@ -29,6 +29,7 @@
 #include "item.h"
 #include "helpers.h"
 #include "common/tsort.h"
+#include "oscap_helpers.h"
 
 typedef void (*xccdf_textresolve_func)(void *child, void *parent);
 

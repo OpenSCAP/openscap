@@ -53,6 +53,7 @@
 #include "probe/entcmp.h"
 #include "probe/probe.h"
 #include "SEAP/generic/strto.h"
+#include "oscap_helpers.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(ncache);

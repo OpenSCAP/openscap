@@ -48,6 +48,7 @@
 #include "common/oscap_buffer.h"
 #include "common/_error.h"
 #include "oscap_string.h"
+#include "oscap_helpers.h"
 
 #ifndef OSCAP_TEMP_DIR
 #define OSCAP_TEMP_DIR "/tmp"

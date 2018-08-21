@@ -48,6 +48,7 @@
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
+#include "oscap_helpers.h"
 
 static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-format/1.1";
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";

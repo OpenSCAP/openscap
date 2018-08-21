@@ -33,6 +33,7 @@
 #include "xccdf_impl.h"
 #include "common/elements.h"
 #include "common/debug_priv.h"
+#include "oscap_helpers.h"
 
 static struct xccdf_value_instance *xccdf_value_instance_new(xccdf_value_type_t type);
 static struct xccdf_value_instance *_xccdf_value_get_instance_by_selector_internal(const struct xccdf_value *value, const char *selector);

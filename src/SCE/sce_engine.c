@@ -36,6 +36,7 @@
 #include "common/oscap_string.h"
 #include "common/debug_priv.h"
 #include "sce_engine_api.h"
+#include "oscap_helpers.h"
 
 #include <stdlib.h>
 #include <string.h>

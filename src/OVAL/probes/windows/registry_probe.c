@@ -32,6 +32,7 @@
 #include "probe/entcmp.h"
 #include "probe/probe.h"
 #include "registry_probe.h"
+#include "oscap_helpers.h"
 
 #define UNLIMITED_DEPTH -1
 

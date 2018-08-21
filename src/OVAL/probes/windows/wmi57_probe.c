@@ -38,6 +38,7 @@
 #include "oval_definitions.h"
 #include "oval_sexp.h"
 #include "wmi57_probe.h"
+#include "oscap_helpers.h"
 
 static struct oscap_list *get_wql_fields(WCHAR *wql)
 {

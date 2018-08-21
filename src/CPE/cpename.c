@@ -42,6 +42,7 @@
 
 #include "cpe_name.h"
 #include "common/util.h"
+#include "oscap_helpers.h"
 
 #define CPE_URI_SUPPORTED "2.3"
 
