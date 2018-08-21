@@ -375,22 +375,26 @@ AC_SUBST(sigwaitinfo_LIBS)
 # libopenscap links against librpm if found. Otherwise we carry own implementation of rpmvercmp.
 echo
 echo '* Checking for rpm library  (optional dependency of libopenscap) '
-PKG_CHECK_MODULES([rpm], [rpm >= 4.4],[
-	SAVE_LIBS=$LIBS
+AC_SUBST([rpm_CFLAGS])
+AC_SUBST([rpm_LIBS])
+PKG_CHECK_MODULES([rpm4], [rpm >= 4.4],[
 	AC_DEFINE([HAVE_RPMVERCMP], [1], [Define to 1 if there is rpmvercmp available.])
-	AC_SUBST([rpm_CFLAGS])
-	AC_SUBST([rpm_LIBS])
-	LIBS=$SAVE_LIBS
+	rpm_CFLAGS="$rpm4_CFLAGS"
+	rpm_LIBS="$rpm4_LIBS"
 ],[
 	AC_MSG_NOTICE([!!! librpm not found. The rpmvercmp function will be emulated. !!!])
 ])
-PKG_CHECK_MODULES([rpm], [rpm >= 4.6],[
+PKG_CHECK_MODULES([rpm6], [rpm >= 4.6],[
 	AC_DEFINE([HAVE_RPM46], [1], [Define to 1 if rpm is newer than 4.6.])
+	rpm_CFLAGS="$rpm6_CFLAGS"
+	rpm_LIBS="$rpm6_LIBS"
 ],[
 	AC_MSG_NOTICE([librpm is older than 4.6])
 ])
-PKG_CHECK_MODULES([rpm], [rpm >= 4.7],[
+PKG_CHECK_MODULES([rpm7], [rpm >= 4.7],[
 	AC_DEFINE([HAVE_RPM47], [1], [Define to 1 if rpm is newer than 4.7.])
+	rpm_CFLAGS="$rpm7_CFLAGS"
+	rpm_LIBS="$rpm7_LIBS"
 ],[
 	AC_MSG_NOTICE([librpm is older than 4.7])
 ])
