@@ -69,6 +69,7 @@ if (HAVE_MMAN_H AND (GCRYPT_FOUND OR NSS_FOUND))
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
+add_library(openscap_testing SHARED ${OBJECTS_TO_LINK_AGAINST})
 
 # default symbol visibility is hidden
 # exported symbols must be marked by OSCAP_API
@@ -132,6 +133,7 @@ if(ACL_FOUND)
 	list(APPEND OPENSCAP_LINKED_LIBRARIES ${ACL_LIBRARY})
 endif()
 target_link_libraries(openscap ${OPENSCAP_LINKED_LIBRARIES})
+target_link_libraries(openscap_testing ${OPENSCAP_LINKED_LIBRARIES})
 
 if(WIN32)
 	set(OPENSCAP_INSTALL_DESTINATION ".")
