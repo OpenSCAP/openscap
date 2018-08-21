@@ -111,42 +111,42 @@ function scp_retreive_from_temp_dir {
 }
 
 function sanity_check_arguments {
-if [ $# -lt 1 ]; then
-    echo "No arguments provided."
-    usage
-    die
-elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-    usage
-    die
-elif [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]; then
-    OSCAP_SUDO="sudo"
-    # force pseudo-tty allocation so that users can type their password if necessary
-    SSH_TTY_ALLOCATION_OPTION="-t"
-    shift
-fi
-if [ $# -lt 2 ]; then
-    echo "Missing ssh host and ssh port."
-    usage
-    die
-fi
+    if [ $# -lt 1 ]; then
+        echo "No arguments provided."
+        usage
+        die
+    elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+        usage
+        die
+    elif [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]; then
+        OSCAP_SUDO="sudo"
+        # force pseudo-tty allocation so that users can type their password if necessary
+        SSH_TTY_ALLOCATION_OPTION="-t"
+        shift
+    fi
+    if [ $# -lt 2 ]; then
+        echo "Missing ssh host and ssh port."
+        usage
+        die
+    fi
 }
 
 function check_oscap_arguments {
-if [ "$1" == "--v" ] || [ "$1" == "--version" ]; then
-    true
-elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
-    true
-elif [ "$1" == "info" ]; then
-    true
-elif [ "$1 $2" == "xccdf eval" ]; then
-    true
-elif [ "$1 $2" == "oval eval" ]; then
-    true
-elif [ "$1 $2" == "oval collect" ]; then
-    true
-else
-    die "This script only supports '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
-fi
+    if [ "$1" == "--v" ] || [ "$1" == "--version" ]; then
+        true
+    elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+        true
+    elif [ "$1" == "info" ]; then
+        true
+    elif [ "$1 $2" == "xccdf eval" ]; then
+        true
+    elif [ "$1 $2" == "oval eval" ]; then
+        true
+    elif [ "$1 $2" == "oval collect" ]; then
+        true
+    else
+        die "This script only supports '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
+    fi
 }
 
 sanity_check_arguments "$@"
