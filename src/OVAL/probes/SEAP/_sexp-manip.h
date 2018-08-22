@@ -461,7 +461,6 @@ SEXP_t *SEXP_listit_next(SEXP_it_t *it);
 SEXP_t *SEXP_listit_prev(SEXP_it_t *it);
 SEXP_t *SEXP_listit_length(SEXP_it_t *it);
 SEXP_t *SEXP_listit_seek(SEXP_it_t *it, uint32_t n);
-void SEXP_listit_free(SEXP_it_t *it);
 
 typedef struct SEXP_list_it SEXP_list_it;
 
