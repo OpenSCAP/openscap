@@ -43,6 +43,7 @@
 #include "public/oval_session.h"
 #include "../DS/public/ds_sds_session.h"
 #include "oscap_source.h"
+#include "oscap_helpers.h"
 
 
 static const char *oscap_productname = "cpe:/a:open-scap:oscap";

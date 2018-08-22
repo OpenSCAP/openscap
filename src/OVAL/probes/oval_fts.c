@@ -34,6 +34,7 @@
 #include <errno.h>
 #include <pcre.h>
 
+#include "oscap_helpers.h"
 #include "fsdev.h"
 #include "_probe-api.h"
 #include "probe/entcmp.h"
