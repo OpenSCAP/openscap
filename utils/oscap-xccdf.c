@@ -175,9 +175,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"                                   (only applicable for source datastreams)\n"
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --remediate                   - Automatically execute XCCDF fix elements for failed rules.\n"
-		"                                   Use of this option is always at your own risk.\n"
-		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
-		"   --verbose-log-file <file>     - Write verbose informations into file.\n",
+		"                                   Use of this option is always at your own risk.\n",
     .opt_parser = getopt_xccdf,
     .func = app_evaluate_xccdf
 };
@@ -203,8 +201,6 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"   --check-engine-results        - Save results from check engines loaded from plugins as well.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
-		"   --verbose <verbosity_level>   - Turn on verbose mode at specified verbosity level.\n"
-		"   --verbose-log-file <file>     - Write verbose informations into file.\n"
 	,
 	.opt_parser = getopt_xccdf,
 	.func = app_xccdf_remediate
@@ -540,9 +536,6 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	int result = OSCAP_ERROR;
 #if defined(HAVE_SYSLOG_H)
 	int priority = LOG_NOTICE;
-	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
-		goto cleanup;
-	}
 
 	/* syslog message */
 	syslog(priority, "Evaluation started. Content: %s, Profile: %s.", action->f_xccdf, action->profile);
@@ -710,10 +703,6 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 
 int app_xccdf_remediate(const struct oscap_action *action)
 {
-	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
-		return OSCAP_ERROR;
-	}
-
 	struct xccdf_session *session = NULL;
 	int result = OSCAP_ERROR;
 	session = xccdf_session_new(action->f_xccdf);
@@ -865,10 +854,6 @@ int app_generate_fix(const struct oscap_action *action)
 	struct xccdf_session *session = NULL;
 	struct ds_rds_session *arf_session = NULL;
 	const char *template = NULL;
-
-	if (!oscap_set_verbose(action->verbosity_level, action->f_verbose_log, false)) {
-		return OSCAP_ERROR;
-	}
 
 	if (action->fix_type != NULL && action->tmpl != NULL) {
 		/* Avoid undefined situations, eg.:
@@ -1074,8 +1059,6 @@ enum oval_opt {
     XCCDF_OPT_CPE_DICT,
     XCCDF_OPT_OUTPUT = 'o',
     XCCDF_OPT_RESULT_ID = 'i',
-	XCCDF_OPT_VERBOSE,
-	XCCDF_OPT_VERBOSE_LOG_FILE,
 	XCCDF_OPT_FIX_TYPE
 };
 
@@ -1107,8 +1090,6 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"cpe",	required_argument, NULL, XCCDF_OPT_CPE},
 		{"cpe-dict",	required_argument, NULL, XCCDF_OPT_CPE_DICT}, // DEPRECATED!
 		{"sce-template", 	required_argument, NULL, XCCDF_OPT_SCE_TEMPLATE},
-		{ "verbose", required_argument, NULL, XCCDF_OPT_VERBOSE },
-		{ "verbose-log-file", required_argument, NULL, XCCDF_OPT_VERBOSE_LOG_FILE },
 		{"fix-type", required_argument, NULL, XCCDF_OPT_FIX_TYPE},
 	// flags
 		{"force",		no_argument, &action->force, 1},
@@ -1156,21 +1137,12 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 				action->cpe = optarg; break;
 			}
 		case XCCDF_OPT_SCE_TEMPLATE:	action->sce_template = optarg; break;
-		case XCCDF_OPT_VERBOSE:
-			action->verbosity_level = optarg;
-			break;
-		case XCCDF_OPT_VERBOSE_LOG_FILE:
-			action->f_verbose_log = optarg;
-			break;
 		case XCCDF_OPT_FIX_TYPE:
 			action->fix_type = optarg;
 			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
-	}
-	if (!check_verbose_options(action)) {
-		return false;
 	}
 
 	if (action->module == &XCCDF_EVAL) {

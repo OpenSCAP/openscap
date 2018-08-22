@@ -59,13 +59,11 @@ static int app_info(const struct oscap_action *action);
 struct oscap_module OSCAP_INFO_MODULE = {
     .name = "info",
     .parent = &OSCAP_ROOT_MODULE,
-    .summary = "info module",
+	.summary = "Print information about a SCAP file.",
     .usage = "some-file.xml",
-    .help = "Print information about a file\n"
-    "\n"
-    "Options:\n"
+	.help = "Options:\n"
 		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n"
-		"   --profile <id>                - Show info of the profile with the given ID..\n"
+		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n",
     .opt_parser = getopt_info,
     .func = app_info
