@@ -82,7 +82,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/libopenscap.map")
 	add_custom_command(
 		OUTPUT "${VERSION_SCRIPT}"
-		COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
+		COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
 		COMMENT "Generating export map"
 	)
 	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
