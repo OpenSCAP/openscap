@@ -456,7 +456,6 @@ typedef struct SEXP_it SEXP_it_t;
 #define SEXP_IT_RECURSIVE 0x01
 #define SEXP_IT_HARDREF   0x02
 
-SEXP_t *SEXP_listit_prev(SEXP_it_t *it);
 SEXP_t *SEXP_listit_seek(SEXP_it_t *it, uint32_t n);
 
 typedef struct SEXP_list_it SEXP_list_it;
