@@ -91,8 +91,6 @@ extern SEXP_datatypeTbl_t g_datatypes;
 
 int SEXP_datatype_register(SEXP_datatypeTbl_t *t, const char *datatype);
 
-int SEXP_datatype_op_safe(const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
-
 SEXP_datatype_t *SEXP_datatype_new(void);
 int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...);
 int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag);
