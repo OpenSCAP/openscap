@@ -56,6 +56,7 @@
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"
 #include "process_probe.h"
+#include "oscap_helpers.h"
 
 oval_schema_version_t over;
 

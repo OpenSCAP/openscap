@@ -361,11 +361,6 @@ char *oscap_trim(char *str);
 /// Print to a newly allocated string using a va_list.
 char *oscap_vsprintf(const char *fmt, va_list ap);
 
-// FIXME: This is there because of the SCE engine using this particular function
-
-/// Print to a newly allocated string using varialbe arguments.
-OSCAP_API char *oscap_sprintf(const char *fmt, ...);
-
 /**
  * Join 2 paths in an intelligent way.
  * Both paths are allowed to be NULL.
@@ -416,16 +411,13 @@ char *oscap_expand_ipv6(const char *input);
 #define protect_errno                                                   \
         for (int OSCAP_CONCAT(__e,__LINE__)=errno, OSCAP_CONCAT(__s,__LINE__)=1; OSCAP_CONCAT(__s,__LINE__)--; errno=OSCAP_CONCAT(__e,__LINE__))
 
-
-/* The following functions aren't hidden, because they're used by some probes. */
-
 /**
  * Convert a string to an enumeration constant.
  * @param map An array of oscap_string_map structures that defines mapping between constants and strings.
  * @param str string to be converted
  * @memberof oscap_string_map
  */
-OSCAP_API int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
+int oscap_string_to_enum(const struct oscap_string_map *map, const char *str);
 
 /**
  * Convert an enumeration constant to its corresponding string representation.
@@ -433,7 +425,7 @@ OSCAP_API int oscap_string_to_enum(const struct oscap_string_map *map, const cha
  * @param val value to be converted
  * @memberof oscap_string_map
  */
-OSCAP_API const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
+const char *oscap_enum_to_string(const struct oscap_string_map *map, int val);
 
 /**
  * Split a string.
@@ -443,33 +435,7 @@ OSCAP_API const char *oscap_enum_to_string(const struct oscap_string_map *map, i
  * @param str String we want to split
  * @param delim Delimiter of string parts
  */
-OSCAP_API char **oscap_split(char *str, const char *delim);
-
-/**
- * Return the canonicalized absolute pathname.
- * @param path path
- * @param resolved_path pointer to a buffer
- * @return resolved_path or NULL in case of error
- */
-OSCAP_API char *oscap_realpath(const char *path, char *resolved_path);
-
-/**
- * Return filename component of a path
- * @param path path
- * The function can modify the contents of path, so the caller should pass a copy of path.
- * @return filename component of path
- * The caller is responsible to free the returned buffer.
- */
-OSCAP_API char *oscap_basename(char *path);
-
-/**
- * Return directory component of a path
- * @param path path
- * The function can modify the contents of path, so the caller should pass a copy of path.
- * @return dirname component of path
- * The caller is responsible to free the returned buffer.
- */
-OSCAP_API char *oscap_dirname(char *path);
+char **oscap_split(char *str, const char *delim);
 
 /**
  * compare two strings ignoring case
@@ -479,7 +445,7 @@ OSCAP_API char *oscap_dirname(char *path);
  * after ignoring case, found to be less than, to match, or be greater
  * than s2,  respectively.
  */
-OSCAP_API int oscap_strcasecmp(const char *s1, const char *s2);
+int oscap_strcasecmp(const char *s1, const char *s2);
 
 /**
 * compare two strings ignoring case
@@ -490,16 +456,7 @@ OSCAP_API int oscap_strcasecmp(const char *s1, const char *s2);
 * after ignoring case, found to be less than, to match, or be greater
 * than s2,  respectively.
 */
-OSCAP_API int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
-
-/**
- * Extract tokens from strings
- * @param str string
- * @param delim st of delimiters
- * @param saveptr Used to store position information between calls to strtok_s
- * @return token
- */
-OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
+int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
 
 /**
  * Get string describing error number
@@ -507,7 +464,7 @@ OSCAP_API char *oscap_strtok_r(char *str, const char *delim, char **saveptr);
  * @param buf buffer to hold error string
  * @param buflen size of buffer
  */
-OSCAP_API char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
+char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
 
 #ifdef _WIN32
 /**

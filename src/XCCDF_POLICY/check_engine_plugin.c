@@ -25,6 +25,7 @@
 
 #include "public/check_engine_plugin.h"
 #include "common/util.h"
+#include "oscap_helpers.h"
 #include "common/_error.h"
 
 #ifndef _WIN32

@@ -35,6 +35,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/debug_priv.h"
+#include "oscap_helpers.h"
 
 bool xccdf_content_parse(xmlTextReaderPtr reader, struct xccdf_item *parent)
 {

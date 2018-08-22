@@ -24,6 +24,7 @@
 #include <string.h>
 #include "debug_priv.h"
 #include "xml_iterate.h"
+#include "oscap_helpers.h"
 
 
 static int xml_element_dfs_callback(xmlNode **node, xml_iterate_callback user_fn, void *user_data)

@@ -42,7 +42,7 @@
 #include <limits.h>
 #include <cvss_score.h>
 #include <oscap_debug.h>
-#include "util.h"
+#include "oscap_helpers.h"
 
 #ifndef PATH_MAX
 # define PATH_MAX 1024

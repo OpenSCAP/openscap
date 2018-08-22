@@ -53,6 +53,7 @@
 #include "common/text_priv.h"
 #include "XCCDF/result_scoring_priv.h"
 #include "xccdf_policy_resolve.h"
+#include "oscap_helpers.h"
 
 /* Macros to generate iterators, getters and setters */
 OSCAP_GETTER(struct xccdf_benchmark *, xccdf_policy_model, benchmark)

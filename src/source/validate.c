@@ -38,6 +38,7 @@
 #include "oscap_source.h"
 #include "source/oscap_source_priv.h"
 #include "source/validate_priv.h"
+#include "oscap_helpers.h"
 
 struct ctxt {
 	xml_reporter reporter;

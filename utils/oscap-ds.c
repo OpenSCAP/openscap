@@ -47,7 +47,7 @@
 
 #include "oscap-tool.h"
 #include <oscap_debug.h>
-#include "util.h"
+#include "oscap_helpers.h"
 
 #define DS_SUBMODULES_NUM 8 /* See actual DS_SUBMODULES array
 				initialization below. */

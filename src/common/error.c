@@ -34,6 +34,7 @@
 #include "_error.h"
 #include "err_queue.h"
 #include "debug_priv.h"
+#include "oscap_helpers.h"
 
 #ifdef OSCAP_THREAD_SAFE
 static pthread_key_t __key;

@@ -37,6 +37,7 @@
 
 #include <dbus/dbus.h>
 #include "common/debug_priv.h"
+#include "oscap_helpers.h"
 
 // Old versions of libdbus API don't have DBusBasicValue and DBus8ByteStruct
 // as a public typedefs.

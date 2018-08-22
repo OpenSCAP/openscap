@@ -43,6 +43,7 @@
 #include "_error.h"
 #include "debug_priv.h"
 #include "elements.h"
+#include "oscap_helpers.h"
 
 
 const struct oscap_string_map OSCAP_BOOL_MAP[] = {

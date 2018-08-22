@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <stdlib.h>
+#include "oscap_helpers.h"
 
 #include <probe/probe.h>
 #include <probe/option.h>

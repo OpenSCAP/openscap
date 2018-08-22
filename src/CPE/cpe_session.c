@@ -34,6 +34,7 @@
 #include "OVAL/public/oval_agent_api.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
+#include "oscap_helpers.h"
 
 static inline bool cpe_session_add_default_cpe(struct cpe_session *session)
 {

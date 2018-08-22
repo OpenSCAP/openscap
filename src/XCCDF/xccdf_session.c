@@ -57,6 +57,7 @@
 #include "item.h"
 #include "public/xccdf_session.h"
 #include "XCCDF_POLICY/public/check_engine_plugin.h"
+#include "oscap_helpers.h"
 
 struct oval_content_resource {
 	char *href;					///< Coresponds with xccdf:check-content-ref/\@href.
