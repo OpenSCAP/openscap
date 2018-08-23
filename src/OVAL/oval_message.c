@@ -65,7 +65,7 @@ struct oval_message *oval_message_clone(struct oval_message *old_message)
 	oval_message_level_t level = oval_message_get_level(old_message);
 	oval_message_set_level(new_message, level);
 	char *text = oval_message_get_text(old_message);
-	oval_message_set_text(new_message, oscap_strdup(text));
+	oval_message_set_text(new_message, text);
 	return new_message;
 }
 
