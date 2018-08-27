@@ -89,6 +89,16 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 		set_target_properties(openscap PROPERTIES
 			LINK_FLAGS "-Wl,--version-script=\"${VERSION_SCRIPT}\""
 		)
+	elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin") # OS X
+		set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/darwin.exports")
+		add_custom_command(
+			OUTPUT "${VERSION_SCRIPT}"
+			COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --osx --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
+			COMMENT "Generating export map"
+		)
+		set_target_properties(openscap PROPERTIES
+			LINK_FLAGS "-exported_symbols_list \"${VERSION_SCRIPT}\""
+		)
 	endif()
 	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
 	add_dependencies(openscap export_map)
