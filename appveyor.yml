@@ -16,6 +16,7 @@ init:
 install:
 - choco install swig
 - choco install doxygen.install
+- cmd: vcpkg update
 - cmd: vcpkg install curl libxml2 libxslt bzip2 pcre pthreads
 
 cache: c:\tools\vcpkg\installed\
