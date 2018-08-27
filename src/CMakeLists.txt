@@ -68,17 +68,8 @@ if (HAVE_MMAN_H AND (GCRYPT_FOUND OR NSS_FOUND))
 	)
 endif()
 
-add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
-add_library(openscap_testing SHARED ${OBJECTS_TO_LINK_AGAINST})
-
-# default symbol visibility is hidden
-# exported symbols must be marked by OSCAP_API
-set_target_properties(openscap PROPERTIES
-	VERSION ${SONAME}
-	SOVERSION ${SOVERSION}
-)
-
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
+	add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
 	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 		set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/libopenscap.map")
 		add_custom_command(
@@ -102,7 +93,25 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 	endif()
 	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
 	add_dependencies(openscap export_map)
+elseif(MSVC)
+	set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/openscap.def")
+	add_custom_command(
+		OUTPUT "${VERSION_SCRIPT}"
+		COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --windows --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
+	)
+	add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST} "${VERSION_SCRIPT}")
+	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
+	add_dependencies(openscap export_map)
 endif()
+
+add_library(openscap_testing SHARED ${OBJECTS_TO_LINK_AGAINST})
+
+# default symbol visibility is hidden
+# exported symbols must be marked by OSCAP_API
+set_target_properties(openscap PROPERTIES
+	VERSION ${SONAME}
+	SOVERSION ${SOVERSION}
+)
 
 set(OPENSCAP_LINKED_LIBRARIES ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 if (BZIP2_FOUND)

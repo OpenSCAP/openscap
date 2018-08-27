@@ -11,7 +11,7 @@ def find_public_headers(srcdir):
     for dirpath, dirnames, filenames in os.walk(srcdir):
         if "SCE" in dirpath:
             continue
-        if dirpath.endswith("/public"):
+        if dirpath.endswith("public"):
             for name in filenames:
                 if name.endswith(".h"):
                     full_path = os.path.abspath(os.path.join(dirpath, name))
@@ -59,6 +59,14 @@ def generate_linux_export_map(symbols, file):
     file.write(epilog)
 
 
+def generate_windows_export_map(symbols, file):
+    prolog = "LIBRARY OPENSCAP\n" \
+             "EXPORTS\n"
+    file.write(prolog)
+    for s in symbols:
+        file.write("    %s\n" % s)
+
+
 def generate_osx_export_map(symbols, file):
     for s in symbols:
         file.write("_%s\n" % s)
@@ -72,12 +80,15 @@ if __name__ == "__main__":
                         type=argparse.FileType('w'),
                         default=sys.stdout,
                         help="Specify file path to write the export map")
-    group = parser.add_mutually_exclusive_group()
+    group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--linux", action="store_true")
     group.add_argument("--osx", action="store_true")
+    group.add_argument("--windows", action="store_true")
     args = parser.parse_args()
     symbols = get_all_public_symbols(args.srcdir)
     if args.linux:
         generate_linux_export_map(symbols, args.output)
     elif args.osx:
         generate_osx_export_map(symbols, args.output)
+    elif args.windows:
+        generate_windows_export_map(symbols, args.output)
