@@ -25,6 +25,8 @@
 #include <config.h>
 #endif
 
+#ifndef HAVE_GETOPT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -771,3 +773,5 @@ getopt_long(int argc, char *__getopt_argv_const *argv, const char *options,
 	return _getopt_internal(argc, (char **)argv, options, long_options,
 		opt_index, 0, 0);
 }
+
+#endif
