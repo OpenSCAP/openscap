@@ -92,9 +92,14 @@ OSCAP_SUDO=""
 # SSH_ADDITIONAL_OPTIONS may be defined in the calling shell
 SSH_TTY_ALLOCATION_OPTION=""
 
-# $1: The SSH command.
-# $2: More of additional options (optional, space-separated string)
+# $1, $2, ... SSH options (pass them as separate arguments)
 function ssh_execute_with_options {
+    ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_OPTIONS "$@" -p "$SSH_PORT" "$SSH_HOST"
+}
+
+# $1: The SSH command.
+# $2: More of additional options (optional, pass one space-separated string)
+function ssh_execute_with_command_and_options {
     ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_OPTIONS $2 -p "$SSH_PORT" "$SSH_HOST" "$1"
 }
 
@@ -145,7 +150,7 @@ function check_oscap_arguments {
     elif [ "$1 $2" == "oval collect" ]; then
         true
     else
-        die "This script only supports '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
+        die "This script only supports 'sudo' as first argument, '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
     fi
 }
 
@@ -162,10 +167,10 @@ MASTER_SOCKET_DIR=$(mktemp -d)
 MASTER_SOCKET="$MASTER_SOCKET_DIR/ssh_socket"
 
 echo "Connecting to '$SSH_HOST' on port '$SSH_PORT'..."
-ssh -M -f -N -o ServerAliveInterval=60 -o ControlPath="$MASTER_SOCKET" -p "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$SSH_HOST" || die "Failed to connect!"
+ssh_execute_with_options -M -f -N -o ServerAliveInterval=60 || die "Failed to connect!"
 echo "Connected!"
 
-REMOTE_TEMP_DIR=$(ssh_execute_with_options "mktemp -d") || die "Failed to create remote temporary directory!"
+REMOTE_TEMP_DIR=$(ssh_execute_with_command_and_options "mktemp -d") || die "Failed to create remote temporary directory!"
 
 oscap_args=("$@")
 
@@ -262,7 +267,7 @@ echo "Starting the evaluation..."
 # changing directory because of --oval-results support. oval results files are
 # dumped into PWD, and we can't be sure by the file names - we need controlled
 # environment
-ssh_execute_with_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap ${oscap_args[*]}" "$SSH_TTY_ALLOCATION_OPTION"
+ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap ${oscap_args[*]}" "$SSH_TTY_ALLOCATION_OPTION"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
@@ -284,9 +289,9 @@ if [ "$OVAL_RESULTS" == "yes" ]; then
 fi
 
 echo "Removing remote temporary directory..."
-ssh_execute_with_options "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
+ssh_execute_with_command_and_options "rm -r $REMOTE_TEMP_DIR" || die "Failed to remove remote temporary directory!"
 echo "Disconnecting ssh and removing master ssh socket directory..."
-ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_OPTIONS -p "$SSH_PORT" "$SSH_HOST" -O exit || die "Failed to disconnect!"
+ssh_execute_with_options -O exit || die "Failed to disconnect!"
 rm -r "$MASTER_SOCKET_DIR" || die "Failed to remove local master SSH socket directory!"
 
 exit $OSCAP_EXIT_CODE
