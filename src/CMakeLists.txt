@@ -79,17 +79,19 @@ set_target_properties(openscap PROPERTIES
 )
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-	set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/libopenscap.map")
-	add_custom_command(
-		OUTPUT "${VERSION_SCRIPT}"
-		COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
-		COMMENT "Generating export map"
-	)
+	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+		set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/libopenscap.map")
+		add_custom_command(
+			OUTPUT "${VERSION_SCRIPT}"
+			COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --linux --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
+			COMMENT "Generating export map"
+		)
+		set_target_properties(openscap PROPERTIES
+			LINK_FLAGS "-Wl,--version-script=\"${VERSION_SCRIPT}\""
+		)
+	endif()
 	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
 	add_dependencies(openscap export_map)
-	set_target_properties(openscap PROPERTIES
-		LINK_FLAGS "-Wl,--version-script=\"${VERSION_SCRIPT}\""
-	)
 endif()
 
 set(OPENSCAP_LINKED_LIBRARIES ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

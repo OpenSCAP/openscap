@@ -9,6 +9,8 @@ import argparse
 def find_public_headers(srcdir):
     public_headers = []
     for dirpath, dirnames, filenames in os.walk(srcdir):
+        if "SCE" in dirpath:
+            continue
         if dirpath.endswith("/public"):
             for name in filenames:
                 if name.endswith(".h"):
@@ -46,7 +48,7 @@ def get_all_public_symbols(srcdir):
     return sorted(symbols)
 
 
-def generate_export_map(symbols, file):
+def generate_linux_export_map(symbols, file):
     prolog = "{\n" \
              "    global:\n"
     file.write(prolog)
@@ -57,6 +59,11 @@ def generate_export_map(symbols, file):
     file.write(epilog)
 
 
+def generate_osx_export_map(symbols, file):
+    for s in symbols:
+        file.write("_%s\n" % s)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("srcdir",
@@ -65,6 +72,12 @@ if __name__ == "__main__":
                         type=argparse.FileType('w'),
                         default=sys.stdout,
                         help="Specify file path to write the export map")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--linux", action="store_true")
+    group.add_argument("--osx", action="store_true")
     args = parser.parse_args()
     symbols = get_all_public_symbols(args.srcdir)
-    generate_export_map(symbols, args.output)
+    if args.linux:
+        generate_linux_export_map(symbols, args.output)
+    elif args.osx:
+        generate_osx_export_map(symbols, args.output)
