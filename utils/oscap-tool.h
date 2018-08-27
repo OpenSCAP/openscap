@@ -199,3 +199,28 @@ extern struct oscap_module OSCAP_CVRF_MODULE;
 extern struct oscap_module OSCAP_CPE_MODULE;
 extern struct oscap_module OSCAP_INFO_MODULE;
 
+#ifndef HAVE_GETOPT_H
+
+#define __getopt_argv_const const
+#define no_argument		0
+#define required_argument	1
+#define optional_argument	2
+
+extern char *optarg;
+extern int optind;
+extern int opterr;
+extern int optopt;
+
+struct option
+{
+	const char *name;
+	int has_arg;
+	int *flag;
+	int val;
+};
+
+getopt_long(int ___argc, char *__getopt_argv_const *___argv,
+	const char *__shortopts,
+	const struct option *__longopts, int *__longind);
+
+#endif
