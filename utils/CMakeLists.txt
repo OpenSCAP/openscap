@@ -1,5 +1,8 @@
 if(ENABLE_OSCAP_UTIL)
 	file(GLOB UTILS_SOURCES "*.c")
+	if(HAVE_GETOPT_H)
+		list(REMOVE_ITEM UTILS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/getopt.c")
+	endif()
 	add_executable(oscap ${UTILS_SOURCES})
 	target_link_libraries(oscap openscap)
 	if(WIN32)

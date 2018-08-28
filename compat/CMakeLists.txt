@@ -9,10 +9,6 @@ if(NOT HAVE_STRPTIME)
 	list(APPEND COMPAT_SOURCES "strptime.c")
 endif()
 
-if(NOT HAVE_GETOPT_H)
-	list(APPEND COMPAT_SOURCES "getopt.c")
-endif()
-
 # dev_to_tty is used in the process and process58 probes that are UNIX only
 if(NOT HAVE_DEV_TO_TTY AND UNIX)
 	list(APPEND COMPAT_SOURCES "dev_to_tty.c")
