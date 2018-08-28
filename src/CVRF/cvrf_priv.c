@@ -1980,6 +1980,7 @@ struct cvrf_product_tree *cvrf_product_tree_parse(xmlTextReaderPtr reader) {
 	struct cvrf_product_tree *tree = cvrf_product_tree_new();
 	if (xmlTextReaderIsEmptyElement(reader) == 1) {
 		cvrf_set_parsing_error("ProductTree");
+		cvrf_product_tree_free(tree);
 		return NULL;
 	}
 	xmlTextReaderNextElementWE(reader, TAG_PRODUCT_TREE);
@@ -2085,6 +2086,7 @@ struct cvrf_note *cvrf_note_parse(xmlTextReaderPtr reader) {
 	struct cvrf_note *note = cvrf_note_new();
 	if (xmlTextReaderIsEmptyElement(reader) == 1) {
 		cvrf_set_parsing_error("Note");
+		cvrf_note_free(note);
 		return NULL;
 	}
 
@@ -2143,6 +2145,7 @@ struct cvrf_doc_tracking *cvrf_doc_tracking_parse(xmlTextReaderPtr reader) {
 	struct cvrf_doc_tracking *tracking = cvrf_doc_tracking_new();
 	if (xmlTextReaderIsEmptyElement(reader) == 1) {
 		cvrf_set_parsing_error("DocumentTracking");
+		cvrf_doc_tracking_free(tracking);
 		return NULL;
 	}
 
@@ -2214,6 +2217,7 @@ struct cvrf_doc_publisher *cvrf_doc_publisher_parse(xmlTextReaderPtr reader) {
 	publisher->type = cvrf_doc_publisher_type_parse(reader);
 	if (publisher->type == CVRF_DOC_PUBLISHER_UNKNOWN && xmlTextReaderIsEmptyElement(reader) == 1) {
 		cvrf_set_parsing_error("DocumentPublisher");
+		cvrf_doc_publisher_free(publisher);
 		return NULL;
 	}
 	publisher->vendor_id = (char *)xmlTextReaderGetAttribute(reader, ATTR_VENDOR_ID);

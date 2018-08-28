@@ -373,8 +373,8 @@ int probe_main(probe_ctx *ctx, void *arg)
 	SEXP_t *ent_val;
 	ent_val = probe_ent_getval(line_ent);
 	pattern = SEXP_string_cstr(ent_val);
-	assume_d(pattern != NULL, -1);
 	SEXP_vfree(line_ent, ent_val, NULL);
+	assume_d(pattern != NULL, -1);
 
         /* behaviours are not important if filepath is used */
         if(filepath_ent != NULL && behaviors_ent != NULL) {
