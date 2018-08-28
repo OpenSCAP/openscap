@@ -31,19 +31,7 @@
  * interface.
  */
 #ifndef OSCAP_API
-#  if defined(_WIN32) && defined(_MSC_VER)
-#    ifdef OSCAP_BUILD_SHARED /* build DLL */
-#      define OSCAP_API __declspec(dllexport)
-#    else /* use DLL */
-#      define OSCAP_API __declspec(dllimport)
-#    endif
-#  else
-#    if __GNUC__ >= 4
-#      define OSCAP_API __attribute__((visibility("default")))
-#    else
-#      define OSCAP_API
-#    endif
-#  endif
+#define OSCAP_API
 #endif
 
 #endif
