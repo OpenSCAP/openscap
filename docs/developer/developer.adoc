@@ -92,7 +92,8 @@ To install Doxygen, you can run `dnf install doxygen`.
 Run the following command to build the documentation:
 
 ----
-make docs
+$ cmake -DENABLE_DOCS=TRUE ../
+$ make docs
 ----
 
 The resulting documentation is located in `build/docs` directory in these
