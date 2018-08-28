@@ -89,9 +89,9 @@ if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
 		set_target_properties(openscap PROPERTIES
 			LINK_FLAGS "-Wl,--version-script=\"${VERSION_SCRIPT}\""
 		)
+		add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
+		add_dependencies(openscap export_map)
 	endif()
-	add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
-	add_dependencies(openscap export_map)
 endif()
 
 set(OPENSCAP_LINKED_LIBRARIES ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
