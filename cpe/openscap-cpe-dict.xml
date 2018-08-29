@@ -198,4 +198,28 @@
             <title xml:lang="en-us">Wind River Linux 8</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:8</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_7">
+            <title xml:lang="en-us">Microsoft Windows 7</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:7</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_8">
+            <title xml:lang="en-us">Microsoft Windows 8</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:8</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_8.1">
+            <title xml:lang="en-us">Microsoft Windows 8.1</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:81</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_10">
+            <title xml:lang="en-us">Microsoft Windows 10</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:10</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_server_2008">
+            <title xml:lang="en-us">Microsoft Windows Server 2008</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2008</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_server_2012">
+            <title xml:lang="en-us">Microsoft Windows Server 2012</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2012</check>
+      </cpe-item>
 </cpe-list>

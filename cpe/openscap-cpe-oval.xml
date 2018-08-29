@@ -598,6 +598,84 @@
                         <criterion comment="Wind River Linux version is 8." test_ref="oval:org.open-scap.cpe.wrlinux:tst:8" />
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:7" version="1">
+                  <metadata>
+                        <title>Microsoft Windows 7</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows 7</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_7" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows 7</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows 7 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:7" />
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:8" version="1">
+                  <metadata>
+                        <title>Microsoft Windows 8</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_8" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows 8</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows 8 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:8" />
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:81" version="1">
+                  <metadata>
+                        <title>Microsoft Windows 8.1</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows 8.1</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_8.1" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows 8.1</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows 8.1 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:81" />
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:10" version="1">
+                  <metadata>
+                        <title>Microsoft Windows 10</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows 10</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_10" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows 10</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows 10 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:10" />
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:2008" version="1">
+                  <metadata>
+                        <title>Microsoft Windows Server 2008</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows Server 2008</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_server_2008" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows Server 2008</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows Server 2008 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:2008" />
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:2012" version="1">
+                  <metadata>
+                        <title>Microsoft Windows Server 2012</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows Server 2012</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_server_2012" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows Server 2012</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows Server 2012 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:2012" />
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
@@ -849,6 +927,30 @@
                   <object object_ref="oval:org.open-scap.cpe.rhevh:obj:2" />
                   <state state_ref="oval:org.open-scap.cpe.rhevh:ste:2" />
             </textfilecontent54_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:7" version="1" comment="Windows 7 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:7"/>
+            </registry_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:8" version="1" comment="Windows 8 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:8"/>
+            </registry_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:81" version="1" comment="Windows 8.1 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:81"/>
+            </registry_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:10" version="1" comment="Windows 10 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:10"/>
+            </registry_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:2008" version="1" comment="Windows Server 2008 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:2008"/>
+            </registry_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:2012" version="1" comment="Windows Server 2012 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:2012"/>
+            </registry_test>
       </tests>
       <objects>
             <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
@@ -902,6 +1004,11 @@
             <rpminfo_object id="oval:org.open-scap.cpe.oraclelinux-release:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name>oraclelinux-release</name>
             </rpminfo_object>
+            <registry_object id="oval:org.open-scap.cpe.windows:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows" >
+                  <hive>HKEY_LOCAL_MACHINE</hive>
+                  <key>SOFTWARE\Microsoft\Windows NT\CurrentVersion</key>
+                  <name>ProductName</name>
+            </registry_object>
       </objects>
       <states>
             <family_state id="oval:org.open-scap.cpe.unix:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
@@ -1058,5 +1165,23 @@
             <textfilecontent54_state id="oval:org.open-scap.cpe.rhevh:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
                   <subexpression operation="pattern match">7</subexpression>
             </textfilecontent54_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^Windows 7.*$</value>
+            </registry_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^Windows 8.*$</value>
+            </registry_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:81" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^Windows 8\.1.*$</value>
+            </registry_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:10" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^Windows 10.*$</value>
+            </registry_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:2008" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^.*2008.*$</value>
+            </registry_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:2012" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^.*2012.*$</value>
+            </registry_state>
       </states>
 </oval_definitions>
