@@ -16,8 +16,17 @@ init:
 install:
 - choco install swig
 - choco install doxygen.install
-- cmd: vcpkg update
+# update vcpkg
+- cmd: cd C:\tools\vcpkg
+- cmd: git pull
+- cmd: .\bootstrap-vcpkg.bat
+- cmd: vcpkg version
+# remove outdated versions
+- cmd: vcpkg remove --outdated --recurse
+# install required dependencies
 - cmd: vcpkg install curl libxml2 libxslt bzip2 pcre pthreads
+# return back to build root
+- cmd: cd "%APPVEYOR_BUILD_FOLDER%"
 
 cache: c:\tools\vcpkg\installed\
 
