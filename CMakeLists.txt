@@ -462,15 +462,8 @@ include_directories(
 	${LIBXML2_INCLUDE_DIR}
 )
 
-# Honor visibility properties for all target types
-# Run "cmake --help-policy CMP0063" for policy details
-cmake_policy(SET CMP0063 NEW)
-
 function(set_oscap_generic_properties TARGET_OBJECT)
 	set_target_properties(${TARGET_OBJECT} PROPERTIES
-		# Make global variables and functions HIDDEN by default.
-		C_VISIBILITY_PRESET hidden
-		CXX_VISIBILITY_PRESET hidden
 		POSITION_INDEPENDENT_CODE ON    # Compile this object code position independent.
 	)
 	target_compile_definitions(${TARGET_OBJECT} PRIVATE OSCAP_BUILD_SHARED)

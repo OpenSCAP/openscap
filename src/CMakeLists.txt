@@ -69,55 +69,73 @@ if (HAVE_MMAN_H AND (GCRYPT_FOUND OR NSS_FOUND))
 endif()
 
 add_library(openscap SHARED ${OBJECTS_TO_LINK_AGAINST})
+add_library(openscap_testing SHARED ${OBJECTS_TO_LINK_AGAINST})
 
 # default symbol visibility is hidden
 # exported symbols must be marked by OSCAP_API
 set_target_properties(openscap PROPERTIES
 	VERSION ${SONAME}
 	SOVERSION ${SOVERSION}
-	C_VISIBILITY_PRESET hidden
 )
 
-target_link_libraries(openscap ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
+	if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+		set(VERSION_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/libopenscap.map")
+		add_custom_command(
+			OUTPUT "${VERSION_SCRIPT}"
+			COMMAND "${PYTHON_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/generate_export_map.py" --linux --output "${VERSION_SCRIPT}" "${CMAKE_CURRENT_SOURCE_DIR}"
+			COMMENT "Generating export map"
+		)
+		set_target_properties(openscap PROPERTIES
+			LINK_FLAGS "-Wl,--version-script=\"${VERSION_SCRIPT}\""
+		)
+		add_custom_target(export_map DEPENDS "${VERSION_SCRIPT}")
+		add_dependencies(openscap export_map)
+	endif()
+endif()
+
+set(OPENSCAP_LINKED_LIBRARIES ${LIBXML2_LIBRARIES} ${LIBXSLT_LIBRARIES} ${LIBXSLT_EXSLT_LIBRARIES} ${PCRE_LIBRARIES} ${CURL_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 if (BZIP2_FOUND)
-	target_link_libraries(openscap ${BZIP2_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${BZIP2_LIBRARIES})
 endif()
 if(RPM_FOUND)
-	target_link_libraries(openscap ${RPM_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${RPM_LIBRARIES})
 endif()
 if(WIN32)
-	target_link_libraries(openscap wsock32 ws2_32 iphlpapi netapi32 wbemuuid)
+	list(APPEND OPENSCAP_LINKED_LIBRARIES wsock32 ws2_32 iphlpapi netapi32 wbemuuid)
 endif()
 if (GCRYPT_FOUND)
-	target_link_libraries(openscap ${GCRYPT_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${GCRYPT_LIBRARIES})
 endif()
 if (NSS_FOUND)
-	target_link_libraries(openscap ${NSS_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${NSS_LIBRARIES})
 endif()
 if(OPENDBX_FOUND)
-	target_link_libraries(openscap ${OPENDBX_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${OPENDBX_LIBRARIES})
 endif()
 if(GCONF_FOUND)
-	target_link_libraries(openscap ${GCONF_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${GCONF_LIBRARIES})
 endif()
 if(SELINUX_FOUND)
-	target_link_libraries(openscap ${SELINUX_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${SELINUX_LIBRARIES})
 endif()
 if(PROCPS_FOUND)
-	target_link_libraries(openscap ${PROCPS_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${PROCPS_LIBRARIES})
 endif()
 if(BLKID_FOUND)
-	target_link_libraries(openscap ${BLKID_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${BLKID_LIBRARIES})
 endif()
 if(DBUS_FOUND)
-	target_link_libraries(openscap ${DBUS_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${DBUS_LIBRARIES})
 endif()
 if(APTPKG_FOUND)
-	target_link_libraries(openscap ${APTPKG_LIBRARIES})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${APTPKG_LIBRARIES})
 endif()
 if(ACL_FOUND)
-	target_link_libraries(openscap ${ACL_LIBRARY})
+	list(APPEND OPENSCAP_LINKED_LIBRARIES ${ACL_LIBRARY})
 endif()
+target_link_libraries(openscap ${OPENSCAP_LINKED_LIBRARIES})
+target_link_libraries(openscap_testing ${OPENSCAP_LINKED_LIBRARIES})
 
 if(WIN32)
 	set(OPENSCAP_INSTALL_DESTINATION ".")
