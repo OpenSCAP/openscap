@@ -230,6 +230,9 @@
 
 
 %module openscap
+#if defined(_WIN32) || defined(WIN32)
+%ignore XML_ERROR;
+#endif
 %{
  #include "../../src/OVAL/public/oval_adt.h"
  #include "../../src/OVAL/public/oval_agent_api.h"
