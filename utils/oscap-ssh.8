@@ -60,10 +60,16 @@ Supported options are:
 Specific option for oscap-ssh (must be first argument):
   --sudo
 
-.SH EXEMPLARY USAGE
+.SS Environment variables
+oscap-ssh checks out the SSH_ADDITIONAL_OPTIONS environment variable, and pastes its contents into the command-line of ssh to the location where options are expected.
+Supply the variable in form of a string that corresponds to a section of the ssh command-line and that consists of options you want to pass.
+
+.SH EXAMPLE USAGE
 .SS Simple XCCDF evaluation
 The following command evaluates a remote Fedora machine as root. HTML report is written out as report.html on the local machine. Can be executed from any machine that has ssh, scp and bash. The local machine does not need to have openscap installed.
+It also uses the SSH_ADDITIONAL_OPTIONS variable to configure ssh in such way that contents of the known_hosts file are ignored.
 
+$ export SSH_ADDITIONAL_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 $ oscap-ssh root@192.168.1.13 22 xccdf eval --profile xccdf_org.ssgproject.content_profile_common --report report.html /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
 
 .SS XCCDF Evaluation with tailoring file
