@@ -24,6 +24,7 @@
 #define OSCAP_COMPAT_H_
 
 #include "oscap_export.h"
+#include "oscap_platforms.h"
 
 /* Fallback functions fixing portability issues */
 
@@ -40,7 +41,7 @@ char *strptime(const char *buf, const char *format, struct tm *tm);
 #define OSCAP_UNIX
 #endif
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #define PATH_MAX _MAX_PATH
 #endif
 
