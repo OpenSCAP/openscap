@@ -126,6 +126,11 @@ struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_
 	return XBENCHMARK(new_benchmark);
 }
 
+static void _xccdf_benchmark_add_platform(struct xccdf_item *benchmark, xmlTextReaderPtr reader)
+{
+	oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+}
+
 bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
@@ -160,7 +165,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 				oscap_list_add(benchmark->sub.benchmark.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_PLATFORM:
-			oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+			_xccdf_benchmark_add_platform(benchmark, reader);
 			break;
 		case XCCDFE_MODEL:
 			parsed_model = xccdf_model_new_xml(reader);
