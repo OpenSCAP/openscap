@@ -676,6 +676,19 @@
                         <criterion comment="Microsoft Windows Server 2012 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:2012" />
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.windows:def:2016" version="1">
+                  <metadata>
+                        <title>Microsoft Windows Server 2016</title>
+                        <affected family="windows">
+                              <platform>Microsoft Windows Server 2016</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:microsoft:windows_server_2016" source="CPE"/>
+                        <description>The operating system installed on the system is Microsoft Windows Server 2016</description>
+                  </metadata>
+                  <criteria operator="OR">
+                        <criterion comment="Microsoft Windows Server 2016 is installed" test_ref="oval:org.open-scap.cpe.windows:tst:2016" />
+                  </criteria>
+            </definition>
       </definitions>
       <tests>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:2" version="1" check="at least one" comment="/etc/redhat-release is provided by redhat-release package"
@@ -951,6 +964,10 @@
                   <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.windows:ste:2012"/>
             </registry_test>
+            <registry_test id="oval:org.open-scap.cpe.windows:tst:2016" version="1" comment="Windows Server 2016 is installed" check_existence="at_least_one_exists" check="at least one" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <object object_ref="oval:org.open-scap.cpe.windows:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.windows:ste:2016"/>
+            </registry_test>
       </tests>
       <objects>
             <family_object id="oval:org.open-scap.cpe.unix:obj:1" version="1"  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"/>
@@ -1182,6 +1199,9 @@
             </registry_state>
             <registry_state id="oval:org.open-scap.cpe.windows:ste:2012" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
                   <value operation="pattern match">^.*2012.*$</value>
+            </registry_state>
+            <registry_state id="oval:org.open-scap.cpe.windows:ste:2016" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows">
+                  <value operation="pattern match">^.*2016.*$</value>
             </registry_state>
       </states>
 </oval_definitions>

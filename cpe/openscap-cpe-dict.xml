@@ -222,4 +222,8 @@
             <title xml:lang="en-us">Microsoft Windows Server 2012</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2012</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:microsoft:windows_server_2016">
+            <title xml:lang="en-us">Microsoft Windows Server 2016</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2016</check>
+      </cpe-item>
 </cpe-list>
