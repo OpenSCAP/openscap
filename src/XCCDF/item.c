@@ -838,7 +838,7 @@ bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reade
         oscap_list_add(item->item.rationale, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 		return true;
         case XCCDFE_PLATFORM:
-        oscap_list_add(item->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+		xccdf_item_add_applicable_platform(item, reader);
                 return true;
 	case XCCDFE_QUESTION:
         oscap_list_add(item->item.question, oscap_text_new_parse(XCCDF_TEXT_PLAIN, reader));
