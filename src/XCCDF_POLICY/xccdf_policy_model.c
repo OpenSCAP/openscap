@@ -47,7 +47,7 @@ struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_p
 	return NULL;
 }
 
-static inline void _add_selectors_for_all_items(struct xccdf_profile *profile, struct xccdf_item *item)
+static void _add_selectors_for_all_xccdf_items(struct xccdf_profile *profile, struct xccdf_item *item)
 {
 	struct xccdf_item_iterator *children = NULL;
 	if (xccdf_item_get_type(item) == XCCDF_BENCHMARK) {
@@ -55,25 +55,21 @@ static inline void _add_selectors_for_all_items(struct xccdf_profile *profile, s
 	}
 	else if (xccdf_item_get_type(item) == XCCDF_GROUP) {
 		children = xccdf_group_get_content(XGROUP(item));
-
-		struct xccdf_select *select = xccdf_select_new();
-		xccdf_select_set_item(select, xccdf_item_get_id(item));
-		xccdf_select_set_selected(select, true);
-		xccdf_profile_add_select(profile, select);
-		printf("g: %s\n", xccdf_item_get_id(item));
 	}
-	else if (xccdf_item_get_type(item) == XCCDF_RULE) {
+
+	if (xccdf_item_get_type(item) == XCCDF_RULE ||
+		xccdf_item_get_type(item) == XCCDF_GROUP)
+	{
 		struct xccdf_select *select = xccdf_select_new();
 		xccdf_select_set_item(select, xccdf_item_get_id(item));
 		xccdf_select_set_selected(select, true);
 		xccdf_profile_add_select(profile, select);
-		printf("r: %s\n", xccdf_item_get_id(item));
 	}
 
 	if (children) {
 		while (xccdf_item_iterator_has_more(children)) {
 			struct xccdf_item *current = xccdf_item_iterator_next(children);
-			_add_selectors_for_all_items(profile, current);
+			_add_selectors_for_all_xccdf_items(profile, current);
 		}
 		xccdf_item_iterator_free(children);
 	}
@@ -88,6 +84,9 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 	if (tailoring) {
 		profile = xccdf_tailoring_get_profile_by_id(tailoring, id);
 	}
+
+	// The (default) and (all) profiles are de-facto owned by the xccdf_policy
+	// and will be freed by it when it's freed. See xccdf_policy_free.
 
 	if (!profile) {
 		if (id == NULL) {
@@ -113,7 +112,7 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 				oscap_text_set_lang(title, "en");
 				xccdf_profile_add_title(profile, title);
 
-				_add_selectors_for_all_items(profile, XITEM(benchmark));
+				_add_selectors_for_all_xccdf_items(profile, XITEM(benchmark));
 			}
 			else {
 				profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
