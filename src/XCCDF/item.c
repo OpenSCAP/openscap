@@ -30,6 +30,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <pcre.h>
 
 #include <libxml/tree.h>
 #include <libxml/xpath.h>
@@ -40,6 +41,11 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/util.h"
+
+/* According to `man 3 pcreapi`, the number passed in ovecsize should always
+ * be a multiple of three.
+ */
+#define OVECTOR_LEN 30
 
 const struct oscap_string_map XCCDF_OPERATOR_MAP[] = {
 	{XCCDF_OPERATOR_EQUALS, "equals"},
@@ -740,6 +746,48 @@ bool xccdf_item_process_attributes(struct xccdf_item *item, xmlTextReaderPtr rea
 			xccdf_benchmark_register_item(xccdf_item_get_benchmark(item), item);
 	}
 	return item->item.id != NULL;
+}
+
+void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPtr reader)
+{
+	char *platform_idref = xccdf_attribute_copy(reader, XCCDFA_IDREF);
+
+	/* Official Windows 7 CPE according to National Vulnerability Database
+	 * CPE Dictionary as of 2018-08-29 is 'cpe:/o:microsoft:windows_7'.
+	 * However, content exported from Microsoft Security Compliance Manager
+	 * as of version 4.0.0.1 in CAB archive using 'Export in SCAP 1.0' is
+	 * 'cpe:/o:microsoft:windows7'. If this pattern is matched, we will add
+	 * an underscore to workaround the situation that this XCCDF benchmark is
+	 * not applicable.
+	 */
+	const char *pcreerror = NULL;
+	int erroffset = 0;
+	pcre *regex = pcre_compile("^(cpe:/o:microsoft:windows)(7.*)", 0, &pcreerror, &erroffset, NULL);
+	int ovector[OVECTOR_LEN];
+	int rc = pcre_exec(regex, NULL, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
+	/* 1 pattern + 2 groups = 3 */
+	if (rc == 3) {
+		int match_len = ovector[1] - ovector[0];
+		/* match_len + 1 underscore + 1 zero byte */
+		char *alternate_platform_idref = malloc(match_len + 1 + 1);
+		int first_group_start = ovector[2];
+		int first_group_end = ovector[3];
+		size_t first_group_len = first_group_end - first_group_start;
+		int second_group_start = ovector[4];
+		int second_group_end = ovector[5];
+		size_t second_group_len = second_group_end - second_group_start;
+		char *aptr = alternate_platform_idref;
+		strncpy(aptr, platform_idref + first_group_start, first_group_len);
+		aptr += first_group_len;
+		*aptr = '_';
+		aptr++;
+		strncpy(aptr, platform_idref + second_group_start, second_group_len);
+		aptr += second_group_len;
+		*aptr = '\0';
+		oscap_list_add(item->item.platforms, alternate_platform_idref);
+	}
+
+	oscap_list_add(item->item.platforms, platform_idref);
 }
 
 bool xccdf_item_process_element(struct xccdf_item * item, xmlTextReaderPtr reader)

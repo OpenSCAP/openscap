@@ -25,7 +25,6 @@
 #endif
 
 #include <string.h>
-#include <pcre.h>
 
 #include "oscap_text.h"
 #include "item.h"
@@ -42,11 +41,6 @@
 #include "CPE/cpe_ctx_priv.h"
 
 #define XCCDF_SUPPORTED "1.2"
-
-/* According to `man 3 pcreapi`, the number passed in ovecsize should always
- * be a multiple of three.
- */
-#define OVECTOR_LEN 30
 
 static struct oscap_htable *xccdf_benchmark_find_target_htable(const struct xccdf_benchmark *, xccdf_type_t);
 static xmlNode *xccdf_plain_text_to_dom(const struct xccdf_plain_text *ptext, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info);
@@ -132,48 +126,6 @@ struct xccdf_benchmark *xccdf_benchmark_clone(const struct xccdf_benchmark *old_
 	return XBENCHMARK(new_benchmark);
 }
 
-static void _xccdf_benchmark_add_platform(struct xccdf_item *benchmark, xmlTextReaderPtr reader)
-{
-	char *platform_idref = xccdf_attribute_copy(reader, XCCDFA_IDREF);
-
-	/* Official Windows 7 CPE according to National Vulnerability Database
-	 * CPE Dictionary as of 2018-08-29 is 'cpe:/o:microsoft:windows_7'.
-	 * However, content exported from Microsoft Security Compliance Manager
-	 * as of version 4.0.0.1 in CAB archive using 'Export in SCAP 1.0' is
-	 * 'cpe:/o:microsoft:windows7'. If this pattern is matched, we will add
-	 * an underscore to workaround the situation that this XCCDF benchmark is
-	 * not applicable.
-	 */
-	const char *pcreerror = NULL;
-	int erroffset = 0;
-	pcre *regex = pcre_compile("^(cpe:/o:microsoft:windows)(7.*)", 0, &pcreerror, &erroffset, NULL);
-	int ovector[OVECTOR_LEN];
-	int rc = pcre_exec(regex, NULL, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
-	/* 1 pattern + 2 groups = 3 */
-	if (rc == 3) {
-		int match_len = ovector[1] - ovector[0];
-		/* match_len + 1 underscore + 1 zero byte */
-		char *alternate_platform_idref = malloc(match_len + 1 + 1);
-		int first_group_start = ovector[2];
-		int first_group_end = ovector[3];
-		size_t first_group_len = first_group_end - first_group_start;
-		int second_group_start = ovector[4];
-		int second_group_end = ovector[5];
-		size_t second_group_len = second_group_end - second_group_start;
-		char *aptr = alternate_platform_idref;
-		strncpy(aptr, platform_idref + first_group_start, first_group_len);
-		aptr += first_group_len;
-		*aptr = '_';
-		aptr++;
-		strncpy(aptr, platform_idref + second_group_start, second_group_len);
-		aptr += second_group_len;
-		*aptr = '\0';
-		oscap_list_add(benchmark->item.platforms, alternate_platform_idref);
-	}
-
-	oscap_list_add(benchmark->item.platforms, platform_idref);
-}
-
 bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reader)
 {
 	XCCDF_ASSERT_ELEMENT(reader, XCCDFE_BENCHMARK);
@@ -208,7 +160,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 				oscap_list_add(benchmark->sub.benchmark.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_PLATFORM:
-			_xccdf_benchmark_add_platform(benchmark, reader);
+			xccdf_item_add_applicable_platform(benchmark, reader);
 			break;
 		case XCCDFE_MODEL:
 			parsed_model = xccdf_model_new_xml(reader);
