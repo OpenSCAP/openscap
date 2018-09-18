@@ -52,8 +52,7 @@ static void _add_selectors_for_all_xccdf_items(struct xccdf_profile *profile, st
 	struct xccdf_item_iterator *children = NULL;
 	if (xccdf_item_get_type(item) == XCCDF_BENCHMARK) {
 		children = xccdf_benchmark_get_content(XBENCHMARK(item));
-	}
-	else if (xccdf_item_get_type(item) == XCCDF_GROUP) {
+	} else if (xccdf_item_get_type(item) == XCCDF_GROUP) {
 		children = xccdf_group_get_content(XGROUP(item));
 	}
 
@@ -96,8 +95,7 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 			oscap_text_set_text(title, "No profile (default benchmark)");
 			oscap_text_set_lang(title, "en");
 			xccdf_profile_add_title(profile, title);
-		}
-		else {
+		} else {
 			struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
 			if (benchmark == NULL) {
 				assert(benchmark != NULL);
@@ -113,8 +111,7 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 				xccdf_profile_add_title(profile, title);
 
 				_add_selectors_for_all_xccdf_items(profile, XITEM(benchmark));
-			}
-			else {
+			} else {
 				profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
 				if (profile == NULL)
 					return NULL;
