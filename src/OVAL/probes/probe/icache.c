@@ -40,6 +40,7 @@
 #include "_sexp-ID.h"
 #include "_sexp-manip_r.h"
 #include "_sexp-list.h"
+#include "_sexp-list_r.h"
 
 static volatile uint32_t next_ID = 0;
 

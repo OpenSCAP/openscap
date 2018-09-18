@@ -40,6 +40,7 @@
 #include "_sexp-datatype.h"
 #include "debug_priv.h"
 #include "_sexp-list.h"
+#include "_sexp-list_r.h"
 
 /*
  * Lists
