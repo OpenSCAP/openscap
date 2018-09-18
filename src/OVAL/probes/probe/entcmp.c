@@ -46,6 +46,7 @@
 #include "../../results/oval_cmp_basic_impl.h"
 #include "../../results/oval_cmp_evr_string_impl.h"
 #include "../../results/oval_cmp_ip_address_impl.h"
+#include "_sexp-list.h"
 
 oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {

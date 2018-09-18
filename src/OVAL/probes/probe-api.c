@@ -53,6 +53,7 @@
 #include "SEAP/generic/strto.h"
 #include "oscap_helpers.h"
 #include "_sexp-manip_r.h"
+#include "_sexp-list.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(ncache);

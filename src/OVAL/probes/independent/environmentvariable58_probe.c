@@ -56,6 +56,7 @@
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"
 #include "environmentvariable58_probe.h"
+#include "_sexp-list.h"
 
 #define BUFFER_SIZE 256
 

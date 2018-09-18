@@ -43,6 +43,7 @@
 #include <opendbx/api.h>
 #include "sql57_probe.h"
 #include "_sexp-manip_r.h"
+#include "_sexp-list.h"
 
 #ifndef SQLPROBE_DEFAULT_CONNTIMEOUT
 # define SQLPROBE_DEFAULT_CONNTIMEOUT 30

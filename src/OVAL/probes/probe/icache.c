@@ -39,6 +39,7 @@
 #include "icache.h"
 #include "_sexp-ID.h"
 #include "_sexp-manip_r.h"
+#include "_sexp-list.h"
 
 static volatile uint32_t next_ID = 0;
 

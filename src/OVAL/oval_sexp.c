@@ -50,6 +50,7 @@
 #include "common/_error.h"
 #include "public/oval_schema_version.h"
 #include "_sexp-manip_r.h"
+#include "_sexp-list.h"
 
 SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 {

@@ -55,6 +55,7 @@
 #include "common/debug_priv.h"
 #include "probe/probe.h"
 #include "selinuxsecuritycontext_probe.h"
+#include "_sexp-list.h"
 
 #define FILE_SEPARATOR '/'
 

@@ -36,6 +36,7 @@
 #include "seap-descriptor.h"
 #include "sch_queue.h"
 #include "debug_priv.h"
+#include "_sexp-list.h"
 
 SEAP_packet_t *SEAP_packet_new (void)
 {

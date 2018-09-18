@@ -53,6 +53,7 @@
 #include <oval_fts.h>
 #include "common/debug_priv.h"
 #include "textfilecontent54_probe.h"
+#include "_sexp-list.h"
 
 #define FILE_SEPARATOR '/'
 

@@ -51,6 +51,7 @@
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "variable_probe.h"
+#include "_sexp-list.h"
 
 int variable_probe_offline_mode_supported()
 {
