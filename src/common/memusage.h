@@ -1,12 +1,14 @@
 #ifndef MEMUSAGE_H
 #define MEMUSAGE_H
 
-#if defined(__linux__)
+#include "oscap_platforms.h"
+
+#if defined(OS_LINUX)
 # define MEMUSAGE_LINUX_PROC_STATUS "/proc/self/status"
 # define MEMUSAGE_LINUX_PROC_ENV    "MEMUSAGE_PROC_STATUS"
 # define MEMUSAGE_LINUX_SYS_STATUS "/proc/meminfo"
 # define MEMUSAGE_LINUX_SYS_ENV "MEMUSAGE_SYS_STATUS"
-#endif /* __linux__ */
+#endif /* OS_LINUX */
 
 struct proc_memusage {
 	size_t mu_rss;

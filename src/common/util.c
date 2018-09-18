@@ -36,7 +36,7 @@
 #include "oscap.h"
 #include "oscap_helpers.h"
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <stdlib.h>
 #include <windows.h>
 #else
@@ -242,7 +242,7 @@ char *oscap_expand_ipv6(const char *input)
 
 char *oscap_realpath(const char *path, char *resolved_path)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	return _fullpath(resolved_path, path, PATH_MAX);
 #else
 	return realpath(path, resolved_path);
@@ -251,7 +251,7 @@ char *oscap_realpath(const char *path, char *resolved_path)
 
 char *oscap_basename(char *path)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	char fname[_MAX_FNAME];
 	char ext[_MAX_EXT];
 	_splitpath_s(path, NULL, 0, NULL, 0, fname, _MAX_FNAME, ext, _MAX_EXT);
@@ -266,7 +266,7 @@ char *oscap_basename(char *path)
 #endif
 }
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 char *oscap_dirname(char *path)
 {
 	if (path == NULL || *path == '\0' || (strchr(path, '/') == NULL && strchr(path, '\\') == NULL)) {
@@ -291,7 +291,7 @@ char *oscap_dirname(char *path)
 
 int oscap_strcasecmp(const char *s1, const char *s2)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	return _stricmp(s1, s2);
 #else
 	return strcasecmp(s1, s2);
@@ -300,7 +300,7 @@ int oscap_strcasecmp(const char *s1, const char *s2)
 
 int oscap_strncasecmp(const char *s1, const char *s2, size_t n)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	return _strnicmp(s1, s2, n);
 #else
 	return strncasecmp(s1, s2, n);
@@ -309,7 +309,7 @@ int oscap_strncasecmp(const char *s1, const char *s2, size_t n)
 
 char *oscap_strtok_r(char *str, const char *delim, char **saveptr)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	return strtok_s(str, delim, saveptr);
 #else
 	return strtok_r(str, delim, saveptr);
@@ -318,7 +318,7 @@ char *oscap_strtok_r(char *str, const char *delim, char **saveptr)
 
 char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	strerror_s(buf, buflen, errnum);
 	return buf;
 #else
@@ -353,7 +353,7 @@ char *oscap_path_join(const char *path1, const char *path2)
 	return joined_path;
 }
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 char *oscap_windows_wstr_to_str(const wchar_t *wstr)
 {
 	if (wstr == NULL) {

@@ -89,7 +89,7 @@ struct runlevel_rep {
 
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep);
 
-#if defined(__linux__) || defined(__GLIBC__) || (defined(__SVR4) && defined(__sun))
+#if defined(OS_LINUX) || defined(OS_SOLARIS)
 static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **rep, bool suse, const char *init_path, const char *rc_path)
 {
 	const char runlevel_list[] = {'0', '1', '2', '3', '4', '5', '6'};
@@ -242,9 +242,9 @@ static int get_runlevel_sysv (struct runlevel_req *req, struct runlevel_rep **re
 
 static int get_runlevel_redhat (struct runlevel_req *req, struct runlevel_rep **rep)
 {
-#if defined(__linux__) || defined(__GLIBC__)
+#if defined(OS_LINUX)
 	const char *init_path = "/etc/rc.d/init.d";
-#elif defined(__SVR4) && defined(__sun)
+#elif defined(OS_SOLARIS)
 	const char *init_path = "/etc/init.d";
 #endif
 	const char *rc_path = "/etc/rc%c.d";
@@ -456,7 +456,7 @@ static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
         _A(rep != NULL);
         return GET_RUNLEVEL(LINUX_DISTRO, req, rep);
 }
-#elif defined(__FreeBSD__)
+#elif defined(OS_FREEBSD)
 static int get_runlevel (struct runlevel_req *req, struct runlevel_rep **rep)
 {
         _A(req != NULL);

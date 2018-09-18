@@ -24,13 +24,13 @@
 #include <config.h>
 #endif
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>
 #endif
 #include <string.h>
-#if defined(__linux__)
+#if defined(OS_LINUX)
 #include <linux/limits.h>
 #endif
 

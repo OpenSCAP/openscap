@@ -50,7 +50,7 @@
 #endif
 #include <string.h>
 #include <sys/utsname.h>
-#if defined HAVE_SYS_SYSTEMINFO_H && defined (__SVR4) && defined (__sun)
+#if defined HAVE_SYS_SYSTEMINFO_H && defined (OS_SOLARIS)
 #include <sys/systeminfo.h>
 #endif
 
@@ -62,14 +62,14 @@ int uname_probe_main(probe_ctx *ctx, void *arg)
 {
 	struct utsname buf;
         SEXP_t *item;
-#if defined (__SVR4) && defined (__sun)
+#if defined (OS_SOLARIS)
 	char procbuf[SYS_NMLN];
 #endif
 
 	// Collect the info
 	uname(&buf);
 
-#if defined (__SVR4) && defined (__sun)
+#if defined (OS_SOLARIS)
 	if (sysinfo(SI_ARCHITECTURE, procbuf, sizeof(procbuf)) == -1)
 		return(PROBE_EFATAL);
 #endif
@@ -79,7 +79,7 @@ int uname_probe_main(probe_ctx *ctx, void *arg)
                                  "os_name",        OVAL_DATATYPE_STRING, buf.sysname,
                                  "os_release",     OVAL_DATATYPE_STRING, buf.release,
                                  "os_version",     OVAL_DATATYPE_STRING, buf.version,
-#if defined (__SVR4) && defined (__sun)
+#if defined (OS_SOLARIS)
                                  "processor_type", OVAL_DATATYPE_STRING, procbuf,
 #else
                                  "processor_type", OVAL_DATATYPE_STRING, buf.machine,

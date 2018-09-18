@@ -23,6 +23,8 @@
 #ifndef OSCAP_COMPAT_PTHREAD_BARRIER_H_
 #define OSCAP_COMPAT_PTHREAD_BARRIER_H_
 
+#include "oscap_platforms.h"
+
 /*
  * This file implements a very slow and basic pthread_barrier_t
  * on systems where this implementation isn't available.
@@ -33,7 +35,7 @@
 #include <pthread.h>
 
 // TODO: Maybe there is a better macro to check here
-#ifdef __APPLE__
+#ifdef OS_APPLE
 
 // returned to the last thread that hits the trip count
 #define PTHREAD_BARRIER_SERIAL_THREAD -1

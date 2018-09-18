@@ -33,7 +33,7 @@
 #include <probe-api.h>
 #include "probe/entcmp.h"
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 
 #include <stdio.h>
 #include <string.h>

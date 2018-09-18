@@ -22,8 +22,10 @@
 #ifndef PROBE_H
 #define PROBE_H
 
+#include "oscap_platforms.h"
+
 #include <sys/types.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>

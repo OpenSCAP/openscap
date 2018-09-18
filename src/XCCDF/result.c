@@ -27,7 +27,7 @@
 #include <math.h>
 #include <string.h>
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
  /* By defining WIN32_LEAN_AND_MEAN we ensure that Windows.h won't include
   * winsock.h, which would conflict with symbols from WinSock2.h.
   */
@@ -51,7 +51,7 @@
 #include <sys/socket.h>
 #endif
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <netdb.h>
@@ -171,7 +171,7 @@ static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
 static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 {
 	struct xccdf_identity *id = xccdf_identity_new();
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 	TCHAR w32_username[UNLEN + 1];
 	DWORD w32_usernamesize = UNLEN + 1;
 #endif
@@ -181,7 +181,7 @@ static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 	xccdf_identity_set_privileged(id, 0);
 #ifdef OSCAP_UNIX
 	xccdf_identity_set_name(id, getlogin());
-#elif defined(_WIN32)
+#elif defined(OS_WINDOWS)
 	GetUserName((TCHAR *) w32_username, &w32_usernamesize); /* XXX: Check the return value? */
 	xccdf_identity_set_name(id, w32_username);
 #else
@@ -206,7 +206,7 @@ static inline void _xccdf_result_clear_metadata(struct xccdf_item *result)
 
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
-#if defined(__linux__)
+#if defined(OS_LINUX)
 	struct ifaddrs *ifaddr, *ifa;
 	int fd;
 #endif
@@ -227,7 +227,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 
 	/* store target name */
 	xccdf_result_add_target(result, target_hostname);
-#elif defined(_WIN32)
+#elif defined(OS_WINDOWS)
 	TCHAR computer_name[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD computer_name_size = MAX_COMPUTERNAME_LENGTH + 1;
 	GetComputerName(computer_name, &computer_name_size);
@@ -238,7 +238,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	_xccdf_result_fill_scanner(result);
 	_xccdf_result_fill_identity(result);
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 
 	/* get network interfaces */
 	if (getifaddrs(&ifaddr) == -1)
@@ -298,7 +298,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
  out1:
 	freeifaddrs(ifaddr);
 
-#elif defined(_WIN32)
+#elif defined(OS_WINDOWS)
 
 #define VERSION_LEN 32
 /* Microsoft recommends to start with a 15 kB buffer for GetAdaptersAddresses. */

@@ -24,7 +24,7 @@
 
 #include <string.h>
 #include <errno.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #include <direct.h>
 /* The rand_s function requires constant _CRT_RAND_S to be defined before including <stdlib.h>.
@@ -57,7 +57,7 @@
 #define TEMP_DIR_TEMPLATE OSCAP_TEMP_DIR "/oscap.XXXXXX"
 #define TEMP_URL_TEMPLATE "downloaded.XXXXXX"
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 char *oscap_acquire_temp_dir()
 {
 	WCHAR temp_path[PATH_MAX];
@@ -124,7 +124,7 @@ char *oscap_acquire_temp_dir()
 }
 #endif
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 static bool _recursive_delete_directory(WCHAR *directory)
 {
 	if (directory == NULL) {
@@ -219,7 +219,7 @@ void oscap_acquire_cleanup_dir(char **dir_path)
 int
 oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 {
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	int old_mode;
 #else
 	mode_t old_mode;
@@ -231,7 +231,7 @@ oscap_acquire_temp_file(const char *dir, const char *template, char **filename)
 
 	*filename = malloc(PATH_MAX * sizeof(char));
 	old_mode = umask(077); /* Override unusual umask. Ensure 0700 permissions. */
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	char *base_name = oscap_strdup(template);
 	_mktemp_s(base_name, strlen(base_name) + 1); // +1 for terminator
 	snprintf(*filename, PATH_MAX, "%s/%s", dir, base_name);
@@ -399,7 +399,7 @@ int oscap_acquire_mkdir_p(const char *path)
 				if (strlen(temp) == 0)
 					continue;
 
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 				if (mkdir(temp, S_IRWXU) != 0 && errno != EEXIST) {
 #else
 				if (mkdir(temp) != 0 && errno != EEXIST) {

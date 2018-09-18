@@ -48,7 +48,7 @@
 #include <getopt.h>
 #endif
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #include <windows.h>
 #else
@@ -313,7 +313,7 @@ static struct oscap_module* XCCDF_SUBMODULES[XCCDF_SUBMODULES_NUM] = {
  * PASS:green(32), FAIL:red(31), ERROR:lred(1;31), UNKNOWN:grey(1;30), NOT_APPLICABLE:default bold(1), NOT_CHECKED:default bold(1),
  * NOT_SELECTED:default dim(2), INFORMATIONAL:blue(34), FIXED:yellow(1;33)
  */
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 int RESULT_COLORS[] = {0, 10, 12, 12, 8, 15, 15, 15, 9, 14};
 #else
 static const char * RESULT_COLORS[] = {"", "32", "31", "1;31", "1;30", "1", "1", "2", "34", "1;33" };
@@ -334,7 +334,7 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 
 	/* print */
 	if (isatty(1)) {
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 		HANDLE console;
 		console = GetStdHandle(STD_OUTPUT_HANDLE);
 		printf("Title");
@@ -347,7 +347,7 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	} else
 		printf("Title\r\t%s\n", title);
 	free((char *)title);
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 	printf("Rule\t%s\n", rule_id);
 #else
 	printf("Rule\r\t%s\n", rule_id);
@@ -357,7 +357,7 @@ static int callback_scr_rule(struct xccdf_rule *rule, void *arg)
 	while (xccdf_ident_iterator_has_more(idents)) {
 		const struct xccdf_ident *ident = xccdf_ident_iterator_next(idents);
 		const char *ident_id = xccdf_ident_get_id(ident);
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 		printf("Ident\t%s\n", ident_id);
 #else
 		printf("Ident\r\t%s\n", ident_id);
@@ -379,14 +379,14 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 		return 0;
 
 	/* print result */
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 	printf("Result\t");
 #else
 	printf("Result\r\t");
 #endif
 	const char * result_str = xccdf_test_result_type_get_text(result);
 	if (isatty(1)) {
-#if defined(_WIN32)
+#if defined(OS_WINDOWS)
 		HANDLE console;
 		console = GetStdHandle(STD_OUTPUT_HANDLE);
 		SetConsoleTextAttribute(console, RESULT_COLORS[result]);
@@ -929,7 +929,7 @@ int app_generate_fix(const struct oscap_action *action)
 	if (xccdf_session_load(session) != 0)
 		goto cleanup;
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	int output_fd = _fileno(stdout);
 #else
 	int output_fd = STDOUT_FILENO;
@@ -966,7 +966,7 @@ int app_generate_fix(const struct oscap_action *action)
 			ret = OSCAP_OK;
 	}
 cleanup2:
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 	if (output_fd != _fileno(stdout))
 #else
 	if (output_fd != STDOUT_FILENO)

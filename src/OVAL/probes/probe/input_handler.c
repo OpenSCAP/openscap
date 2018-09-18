@@ -54,7 +54,7 @@ void *probe_input_handler(void *arg)
         SEXP_t *probe_in, *probe_out, *oid;
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
-# if defined(__APPLE__)
+# if defined(OS_APPLE)
 	pthread_setname_np("input_handler");
 # else
 	pthread_setname_np(pthread_self(), "input_handler");

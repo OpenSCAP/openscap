@@ -31,7 +31,7 @@
 #include <config.h>
 #endif
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 #undef _XOPEN_SOURCE
 #define _XOPEN_SOURCE /* for fdopen */
 #include <sys/vfs.h>
@@ -254,7 +254,7 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         oval_operation_t mnt_op;
         FILE *mnt_fp;
         oval_schema_version_t obj_over;
-#if defined(PROC_CHECK) && defined(__linux__)
+#if defined(PROC_CHECK) && defined(OS_LINUX)
         int   mnt_fd;
         struct statfs stfs;
 

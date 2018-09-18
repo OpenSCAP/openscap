@@ -55,7 +55,7 @@
 
 #include <string.h>
 #include <fcntl.h>
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>
@@ -187,7 +187,7 @@ static int ds_sds_dump_component_sce(const xmlNode *script_node, const char *com
 		}
 		// TODO: error checking, fprintf should return strlen((const char*)text_contents)
 		fprintf(output_file, "%s", text_contents ? (char*)text_contents : "");
-#ifndef _WIN32
+#ifndef OS_WINDOWS
 		// NB: This code is for SCE scripts
 		if (fchmod(fd, 0700) != 0) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Failed to set executable permission on script (id='%s') that was split to '%s'.", component_id, filename);

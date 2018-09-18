@@ -47,7 +47,7 @@
 #include <assert.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#if defined(__linux__)
+#if defined(OS_LINUX)
 #include <sys/prctl.h>
 #endif
 #include <limits.h>

@@ -34,7 +34,7 @@
 #ifdef HAVE_UIO_H
 #include <sys/uio.h>
 #endif
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>

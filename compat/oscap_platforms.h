@@ -32,9 +32,12 @@
 
 #if defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
 # define OS_FREEBSD
-#elif defined(__linux__) || defined(__GNU__) || defined(__GLIBC__)
+#elif defined(__linux__) && defined(__GLIBC__)
+# define OS_LINUX_WITH_GLIBC
+#elif defined(__linux__) || defined(OS_LINUX_WITH_GLIBC)
 # define OS_LINUX
 #elif defined(sun) || defined(__sun)
+# define OS_SUN
 # if defined(__SVR4) || defined(__svr4__)
 #  define OS_SOLARIS
 # else
@@ -46,9 +49,11 @@
 # define OS_AIX
 #elif defined(__APPLE__)
 # define OS_APPLE
-# if defined(Macintosh) || defined(macintosh) || defined(__APPLE__) && defined(__MACH__)
+# if defined(Macintosh) || defined(macintosh) || defined(__MACH__) || defined(__APPLE__)
 #  define OS_OSX
 # endif
+#elif defined(_hpux) || defined(hpux) || defined(__hpux)
+# define OS_HPUX
 #else
 # error "Sorry, your OS isn't supported."
 #endif

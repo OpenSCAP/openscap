@@ -41,18 +41,18 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 # include <mntent.h>
 # include <unistd.h>
-#elif defined(__SVR4) && defined(__sun)
+#elif defined(OS_SOLARIS)
 # include <sys/mnttab.h>
 # include <sys/mntent.h>
 # include <sys/unistd.h>
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__APPLE__)
+#elif defined(OS_FREEBSD) || defined(OS_APPLE)
 # include <sys/param.h>
 # include <sys/ucred.h>
 # include <sys/mount.h>
-#elif defined(_AIX)
+#elif defined(OS_AIX)
 # include <unistd.h>
 # include <mntent.h>
 # include <fshelp.h>
@@ -112,12 +112,12 @@ static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
 	return (0);
 }
 
-#if defined(__linux__) || defined(_AIX)
+#if defined(OS_LINUX) || defined(OS_AIX)
 
 #define DEVID_ARRAY_SIZE 16
 #define DEVID_ARRAY_ADD  8
 
-#if defined(__linux__)
+#if defined(OS_LINUX)
 static int
 is_local_fs(struct mntent *ment)
 {
@@ -154,7 +154,7 @@ is_local_fs(struct mntent *ment)
 #endif
 }
 
-#elif defined(_AIX)
+#elif defined(OS_AIX)
 static int
 is_local_fs(struct mntent *ment)
 {
@@ -183,7 +183,7 @@ is_local_fs(struct mntent *ment)
 	return 1;
 }
 
-#endif /* _AIX */
+#endif /* OS_AIX */
 
 static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 {
@@ -238,7 +238,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	return (lfs);
 }
-#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__APPLE__)
+#elif defined(OS_FREEBSD) || defined(OS_APPLE)
 static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 {
 	struct statfs *mntbuf = NULL;
@@ -271,7 +271,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	return (lfs);
 }
-#elif defined(__SVR4) && defined(__sun)
+#elif defined(OS_SOLARIS)
 
 #define DEVID_ARRAY_SIZE 16
 #define DEVID_ARRAY_ADD  8

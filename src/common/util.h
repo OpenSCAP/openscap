@@ -24,6 +24,7 @@
 #ifndef OSCAP_UTIL_H_
 #define OSCAP_UTIL_H_
 
+#include "oscap_platforms.h"
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -466,7 +467,7 @@ int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
  */
 char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
 
-#ifdef _WIN32
+#ifdef OS_WINDOWS
 /**
  * Convert wide character string to a C string (UTF-16 to UTF-8)
  * It is a wrapper around Windows API WideCharToMultiByte().

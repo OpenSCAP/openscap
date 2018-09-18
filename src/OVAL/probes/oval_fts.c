@@ -40,12 +40,12 @@
 #include "probe/entcmp.h"
 #include "debug_priv.h"
 #include "oval_fts.h"
-#if defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 #include "fts_sun.h"
 #include <sys/mntent.h>
 #include <libzonecfg.h>
 #include <sys/avl.h>
-#elif defined(_AIX)
+#elif defined(OS_AIX)
 #include "fts_sun.h"
 #else
 #include <fts.h>
@@ -142,7 +142,7 @@ static void OVAL_FTSENT_free(OVAL_FTSENT *ofts_ent)
 	return;
 }
 
-#if defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 #ifndef MNTTYPE_SMB
 #define MNTTYPE_SMB	"smb"
 #endif
@@ -265,7 +265,7 @@ static bool valid_local_zone(const char *path)
 
 static bool OVAL_FTS_localp(OVAL_FTS *ofts, const char *path, void *id)
 {
-#if defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 	if (id != NULL && (*(char*)id) != '\0') {
 		/* if not a valid local fs skip */
 		if (valid_local_fs((char*)id)) {
@@ -872,7 +872,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 	}
 
 	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
-#if   defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 		ofts->localdevs = NULL;
 #else
 		ofts->localdevs = fsdev_init(NULL, 0);
@@ -911,7 +911,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		ofts->ofts_sfilepath = SEXP_ref(filepath);
 	}
 
-#if defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 	if (load_zones_path_list() != 0) {
 		dE("Failed to load zones path info. Recursing non-global zones.");
 		free_zones_path_list();
@@ -924,7 +924,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 }
 
 static inline int _oval_fts_is_local(OVAL_FTS *ofts, FTSENT *fts_ent) {
-# if defined (__SVR4) && defined(__sun)
+# if defined(OS_SOLARIS)
 	/* pseudo filesystems will be skipped */
 	/* don't recurse into remote fs if local is specified */
 	return ((fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
@@ -1248,7 +1248,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				if (ofts->ofts_recurse_path_curdepth == 0)
 					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
 				*/
-#if   defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 				if ((!OVAL_FTS_localp(ofts, fts_ent->fts_path,
 				    (fts_ent->fts_statp != NULL) ?
 				    &fts_ent->fts_statp->st_fstype : NULL)))
@@ -1378,7 +1378,7 @@ int oval_fts_close(OVAL_FTS *ofts)
 	fsdev_free(ofts->localdevs);
 
 	OVAL_FTS_free(ofts);
-#if defined(__SVR4) && defined(__sun)
+#if defined(OS_SOLARIS)
 	free_zones_path_list();
 #endif
 

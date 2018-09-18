@@ -57,7 +57,7 @@ static int crapi_sha2_fd (HASH_HashType algo, int fd, void *dst, size_t *size)
         else {
 #if _FILE_OFFSET_BITS == 32
                 buflen = st.st_size;
-# if defined(__FreeBSD__)
+# if defined(OS_FREEBSD)
                 buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
 # else
                 buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);
@@ -225,7 +225,7 @@ static int crapi_sha2_fd (int algo, int fd, void *dst, size_t *size)
         else {
 #if _FILE_OFFSET_BITS == 32
                 buflen = st.st_size;
-# if defined(__FreeBSD__)
+# if defined(OS_FREEBSD)
                 buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED | MAP_NOCORE, fd, 0);
 # else
                 buffer = mmap (NULL, buflen, PROT_READ, MAP_SHARED, fd, 0);
