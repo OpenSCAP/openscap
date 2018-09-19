@@ -28,6 +28,7 @@
 #include <string.h>
 #include <errno.h>
 
+#include "_sexp-core.h"
 #include "generic/common.h"
 #include "_sexp-manip.h"
 #include "_seap-packetq.h"

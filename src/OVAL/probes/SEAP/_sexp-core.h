@@ -20,39 +20,18 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#include <config.h>
-#include "_sexp-core.h"
-#include "_seap-error.h"
-#include "_sexp-manip.h"
+#ifndef _SEXP_CORE_H
+#define _SEXP_CORE_H
 
-SEAP_err_t *SEAP_error_new(void)
-{
-	SEAP_err_t *e = malloc(sizeof(SEAP_err_t));
+#include "_sexp-types.h"
 
-	e->id   = 0;
-	e->code = 0;
-	e->type = 0;
-	e->data = NULL;
+SEXP_t *SEXP_new(void);
 
-	return (e);
-}
+/**
+ * Free a sexp object.
+ * @param s_exp the object to be freed
+ */
+void SEXP_free(SEXP_t *s_exp);
 
-SEAP_err_t *SEAP_error_clone(SEAP_err_t *e)
-{
-	SEAP_err_t *n = SEAP_error_new();
 
-	n->id   = e->id;
-	n->code = e->code;
-	n->type = e->type;
-	n->data = e->data ? SEXP_ref(e->data) : NULL;
-
-	return (n);
-}
-
-void SEAP_error_free(SEAP_err_t *e)
-{
-	if (e->data == NULL)
-		SEXP_free(e->data);
-	free(e);
-	return;
-}
+#endif /* _SEXP_CORE_H */

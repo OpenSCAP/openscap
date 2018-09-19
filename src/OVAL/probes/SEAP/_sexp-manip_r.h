@@ -27,6 +27,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "_sexp-core.h"
 #include "_sexp-types.h"
 
 #ifdef __cplusplus

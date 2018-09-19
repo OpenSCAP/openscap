@@ -26,6 +26,7 @@
 
 #include <string.h>
 
+#include "_sexp-core.h"
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "_seap-message.h"

@@ -38,6 +38,7 @@
 #include <probe-api.h>
 #include <pcre.h>
 #include <gconf/gconf.h>
+#include "_sexp-core.h"
 #include "gconf_probe.h"
 
 #include "common/debug_priv.h"

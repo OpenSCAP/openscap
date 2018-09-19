@@ -40,6 +40,7 @@
 #include <sys/socket.h>
 #endif
 
+#include "_sexp-core.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
 #include "probe-api.h"

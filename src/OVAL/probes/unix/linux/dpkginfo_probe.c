@@ -51,6 +51,7 @@
 #include <assert.h>
 
 /* SEAP */
+#include "_sexp-core.h"
 #include "_seap.h"
 #include <probe-api.h>
 

@@ -36,6 +36,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include "_sexp-core.h"
 #include "probe/ncache.h"
 #include "probe/rcache.h"
 #include "common/util.h"

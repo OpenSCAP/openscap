@@ -52,6 +52,7 @@
 #include <bfind.h>
 #include <common/debug_priv.h>
 #include <netdb.h>
+#include "_sexp-core.h"
 #include "../SEAP/generic/rbt/rbt.h"
 #include "xinetd_probe.h"
 

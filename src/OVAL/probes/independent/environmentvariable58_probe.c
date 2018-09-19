@@ -51,6 +51,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include "_sexp-core.h"
 #include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"

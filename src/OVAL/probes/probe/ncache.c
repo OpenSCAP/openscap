@@ -29,6 +29,7 @@
 #include <string.h>
 #include <pthread.h>
 
+#include "_sexp-core.h"
 #include "common/bfind.h"
 
 #include "ncache.h"

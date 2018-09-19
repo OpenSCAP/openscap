@@ -25,6 +25,7 @@
 #include <errno.h>
 #include <stdio.h>
 
+#include "_sexp-core.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
 #include "_sexp-rawptr.h"

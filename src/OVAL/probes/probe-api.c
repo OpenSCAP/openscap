@@ -45,6 +45,7 @@
 #include <sys/socket.h>
 #endif
 
+#include "_sexp-core.h"
 #include "debug_priv.h"
 #include "probe-api.h"
 #include "oval_probe_impl.h"

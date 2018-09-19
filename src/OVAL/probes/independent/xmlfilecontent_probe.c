@@ -62,6 +62,7 @@
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
 
+#include "_sexp-core.h"
 #include "_seap.h"
 #include <probe-api.h>
 #include <probe/probe.h>

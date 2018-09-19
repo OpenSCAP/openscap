@@ -32,6 +32,7 @@
 #include <LM.h>
 #include <winnt.h>
 #include <stdbool.h>
+#include "_sexp-core.h"
 #include "debug_priv.h"
 #include "_seap.h"
 #include "probe-api.h"

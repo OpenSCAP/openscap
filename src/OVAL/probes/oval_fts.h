@@ -22,6 +22,7 @@
 #ifndef OVAL_FTS_H
 #define OVAL_FTS_H
 
+#include "_sexp-core.h"
 #include "oscap_platforms.h"
 
 #if defined(OS_SOLARIS) || defined(OS_AIX)

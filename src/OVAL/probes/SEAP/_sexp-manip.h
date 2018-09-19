@@ -24,6 +24,7 @@
 #ifndef _SEXP_MANIP_H
 #define _SEXP_MANIP_H
 
+#include "_sexp-core.h"
 #include "../../../common/util.h"
 #include "_sexp-types.h"
 
@@ -320,8 +321,6 @@ bool SEXP_string_getb(const SEXP_t *s_exp);
 /*
  * generic
  */
-SEXP_t *SEXP_new(void);
-
 bool SEXP_emptyp(SEXP_t *sexp);
 
 /**
@@ -360,12 +359,6 @@ int SEXP_refcmp(const SEXP_t *a, const SEXP_t *b);
 bool SEXP_deepcmp(const SEXP_t *a, const SEXP_t *b);
 
 void SEXP_free_lmemb(SEXP_t *s_exp);
-
-/**
- * Free a sexp object.
- * @param s_exp the object to be freed
- */
-void SEXP_free(SEXP_t *s_exp);
 
 /**
  * Get the user data type of a sexp object.

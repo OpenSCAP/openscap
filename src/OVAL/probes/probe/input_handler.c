@@ -27,6 +27,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <string.h>
+#include "_sexp-core.h"
 #include "_seap.h"
 #include <probe-api.h>
 

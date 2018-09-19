@@ -37,6 +37,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
+#include "_sexp-core.h"
 #include "_seap.h"
 #include <assert.h>
 

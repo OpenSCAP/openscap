@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <math.h>
 
+#include "_sexp-core.h"
 #include "common/bfind.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"

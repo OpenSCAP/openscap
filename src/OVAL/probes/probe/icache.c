@@ -30,6 +30,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
+#include "_sexp-core.h"
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe-api.h"
 #include "common/debug_priv.h"

@@ -60,6 +60,7 @@
 #include <regex.h>
 
 /* RPM headers */
+#include "_sexp-core.h"
 #include "rpm-helper.h"
 
 /* SEAP */

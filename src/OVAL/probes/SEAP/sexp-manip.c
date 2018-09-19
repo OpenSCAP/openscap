@@ -37,6 +37,7 @@
 #include <errno.h>
 #include <math.h>
 
+#include "_sexp-core.h"
 #include "common/bfind.h"
 #include "_sexp-types.h"
 #include "_sexp-value.h"
@@ -1017,20 +1018,6 @@ size_t SEXP_lstack_depth (SEXP_lstack_t *stack)
  * Generic
  */
 
-SEXP_t *SEXP_new (void)
-{
-	SEXP_t *s_exp = malloc(sizeof(SEXP_t));
-        s_exp->s_type = NULL;
-        s_exp->s_valp = 0;
-
-#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
-        s_exp->__magic0 = SEXP_MAGIC0;
-        s_exp->__magic1 = SEXP_MAGIC1;
-#endif
-
-        return (s_exp);
-}
-
 bool SEXP_emptyp(SEXP_t *sexp)
 {
 	if (sexp == NULL)
@@ -1286,15 +1273,6 @@ void SEXP_free_lmemb (SEXP_t *s_exp)
         s_exp->__magic1 = SEXP_MAGIC1_INV;
 #endif
 
-        return;
-}
-
-void SEXP_free (SEXP_t *s_exp)
-{
-        if (s_exp != NULL) {
-                SEXP_free_r(s_exp);
-		free(s_exp);
-        }
         return;
 }
 

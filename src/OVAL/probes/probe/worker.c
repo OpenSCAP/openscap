@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include "_sexp-core.h"
 #include "_seap.h"
 #include <stdlib.h>
 #include <string.h>

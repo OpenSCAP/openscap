@@ -26,6 +26,7 @@
 
 #include <stddef.h>
 
+#include "_sexp-core.h"
 #include "../SEAP/generic/rbt/rbt.h"
 
 #include "rcache.h"
