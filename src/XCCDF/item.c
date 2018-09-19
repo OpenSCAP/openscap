@@ -770,11 +770,11 @@ void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPt
 		size_t match_len = ovector[1] - ovector[0];
 		/* match_len + 1 underscore + 1 zero byte */
 		char *alternate_platform_idref = malloc(match_len + 1 + 1);
-		int first_group_start = ovector[2];
-		int first_group_end = ovector[3];
+		const int first_group_start = ovector[2];
+		const int first_group_end = ovector[3];
 		size_t first_group_len = first_group_end - first_group_start;
-		int second_group_start = ovector[4];
-		int second_group_end = ovector[5];
+		const int second_group_start = ovector[4];
+		const int second_group_end = ovector[5];
 		size_t second_group_len = second_group_end - second_group_start;
 		char *aptr = alternate_platform_idref;
 		strncpy(aptr, platform_idref + first_group_start, first_group_len);
