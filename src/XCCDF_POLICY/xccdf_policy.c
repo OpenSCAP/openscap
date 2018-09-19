@@ -2283,8 +2283,10 @@ void xccdf_policy_free(struct xccdf_policy * policy) {
 	/* A policy which is set to use default profile has its profile member set to NULL,
 	 * check it so we don't try to get the ID from a NULL profile.
 	 * */
-	if (policy->profile && xccdf_profile_get_id(policy->profile) == NULL)
-		/* If ID of policy's profile is NULL then this
+	if (policy->profile && (
+			(xccdf_profile_get_id(policy->profile) == NULL) ||
+			(strcmp(xccdf_profile_get_id(policy->profile), "(all)") == 0)))
+		/* If ID of policy's profile is NULL or "(all)" then this
 		 * profile is created by Policy layer and need
 		 * to be freed
 		 */

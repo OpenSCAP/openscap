@@ -31,6 +31,7 @@
 #include "xccdf_policy_model_priv.h"
 #include "xccdf_policy_priv.h"
 #include "XCCDF/item.h"
+#include "XCCDF/helpers.h"
 
 struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_policy_model *policy_model, const char *profile_id)
 {
@@ -46,6 +47,33 @@ struct xccdf_policy *xccdf_policy_model_get_existing_policy_by_id(struct xccdf_p
 	return NULL;
 }
 
+static void _add_selectors_for_all_xccdf_items(struct xccdf_profile *profile, struct xccdf_item *item)
+{
+	struct xccdf_item_iterator *children = NULL;
+	if (xccdf_item_get_type(item) == XCCDF_BENCHMARK) {
+		children = xccdf_benchmark_get_content(XBENCHMARK(item));
+	} else if (xccdf_item_get_type(item) == XCCDF_GROUP) {
+		children = xccdf_group_get_content(XGROUP(item));
+	}
+
+	if (xccdf_item_get_type(item) == XCCDF_RULE ||
+		xccdf_item_get_type(item) == XCCDF_GROUP)
+	{
+		struct xccdf_select *select = xccdf_select_new();
+		xccdf_select_set_item(select, xccdf_item_get_id(item));
+		xccdf_select_set_selected(select, true);
+		xccdf_profile_add_select(profile, select);
+	}
+
+	if (children) {
+		while (xccdf_item_iterator_has_more(children)) {
+			struct xccdf_item *current = xccdf_item_iterator_next(children);
+			_add_selectors_for_all_xccdf_items(profile, current);
+		}
+		xccdf_item_iterator_free(children);
+	}
+}
+
 struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_model *policy_model, const char *id)
 {
 	struct xccdf_profile *profile = NULL;
@@ -56,6 +84,9 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 		profile = xccdf_tailoring_get_profile_by_id(tailoring, id);
 	}
 
+	// The (default) and (all) profiles are de-facto owned by the xccdf_policy
+	// and will be freed by it when it's freed. See xccdf_policy_free.
+
 	if (!profile) {
 		if (id == NULL) {
 			profile = xccdf_profile_new();
@@ -64,16 +95,27 @@ struct xccdf_policy *xccdf_policy_model_create_policy_by_id(struct xccdf_policy_
 			oscap_text_set_text(title, "No profile (default benchmark)");
 			oscap_text_set_lang(title, "en");
 			xccdf_profile_add_title(profile, title);
-		}
-		else {
+		} else {
 			struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(policy_model);
 			if (benchmark == NULL) {
 				assert(benchmark != NULL);
 				return NULL;
 			}
-			profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
-			if (profile == NULL)
-				return NULL;
+
+			if (strcmp(id, "(all)") == 0) {
+				profile = xccdf_profile_new();
+				xccdf_profile_set_id(profile, "(all)");
+				struct oscap_text *title = oscap_text_new();
+				oscap_text_set_text(title, "(all) profile (all rules selected)");
+				oscap_text_set_lang(title, "en");
+				xccdf_profile_add_title(profile, title);
+
+				_add_selectors_for_all_xccdf_items(profile, XITEM(benchmark));
+			} else {
+				profile = xccdf_benchmark_get_profile_by_id(benchmark, id);
+				if (profile == NULL)
+					return NULL;
+			}
 		}
 	}
 
