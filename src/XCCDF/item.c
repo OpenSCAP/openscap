@@ -41,6 +41,7 @@
 #include "helpers.h"
 #include "xccdf_impl.h"
 #include "common/util.h"
+#include "oscap_helpers.h"
 
 /* According to `man 3 pcreapi`, the number passed in ovecsize should always
  * be a multiple of three.
@@ -767,23 +768,21 @@ void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPt
 	int rc = pcre_exec(regex, NULL, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
 	/* 1 pattern + 2 groups = 3 */
 	if (rc == 3) {
-		size_t match_len = ovector[1] - ovector[0];
-		/* match_len + 1 underscore + 1 zero byte */
-		char *alternate_platform_idref = malloc(match_len + 1 + 1);
 		const int first_group_start = ovector[2];
 		const int first_group_end = ovector[3];
 		size_t first_group_len = first_group_end - first_group_start;
+		char *first_group = malloc(first_group_len + 1); // + 1 for '\0'
+		strncpy(first_group, platform_idref + first_group_start, first_group_len);
+		first_group[first_group_len] = '\0';
 		const int second_group_start = ovector[4];
 		const int second_group_end = ovector[5];
 		size_t second_group_len = second_group_end - second_group_start;
-		char *aptr = alternate_platform_idref;
-		strncpy(aptr, platform_idref + first_group_start, first_group_len);
-		aptr += first_group_len;
-		*aptr = '_';
-		aptr++;
-		strncpy(aptr, platform_idref + second_group_start, second_group_len);
-		aptr += second_group_len;
-		*aptr = '\0';
+		char *second_group = malloc(second_group_len + 1); // + 1 for '\0'
+		strncpy(second_group, platform_idref + second_group_start, second_group_len);
+		second_group[second_group_len] = '\0';
+		char *alternate_platform_idref = oscap_sprintf("%s_%s", first_group, second_group);
+		free(first_group);
+		free(second_group);
 		oscap_list_add(item->item.platforms, alternate_platform_idref);
 	}
 
