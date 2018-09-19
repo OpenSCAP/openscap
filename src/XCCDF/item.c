@@ -767,7 +767,7 @@ void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPt
 	int rc = pcre_exec(regex, NULL, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
 	/* 1 pattern + 2 groups = 3 */
 	if (rc == 3) {
-		int match_len = ovector[1] - ovector[0];
+		size_t match_len = ovector[1] - ovector[0];
 		/* match_len + 1 underscore + 1 zero byte */
 		char *alternate_platform_idref = malloc(match_len + 1 + 1);
 		int first_group_start = ovector[2];
