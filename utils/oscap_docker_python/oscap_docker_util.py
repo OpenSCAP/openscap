@@ -17,6 +17,8 @@
 
 ''' Utilities for oscap-docker '''
 
+from __future__ import print_function
+
 import os
 import tempfile
 import subprocess
@@ -25,6 +27,7 @@ import shutil
 from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
+import collections
 
 try:
     from Atomic.mount import DockerMount
@@ -68,6 +71,9 @@ class OscapError(Exception):
     pass
 
 
+OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "stderr"))
+
+
 class OscapHelpers(object):
     ''' oscap class full of helpers for scanning '''
     CPE = 'oval:org.open-scap.cpe.rhel:def:'
@@ -102,10 +108,10 @@ class OscapHelpers(object):
         if not os.path.exists(cpe_dict):
             raise OscapError()
         for dist in self.DISTS:
-            output = self.oscap_chroot(chroot, target, 'oval', 'eval',
+            result = self.oscap_chroot(chroot, target, 'oval', 'eval',
                                        '--id', self.CPE + dist, cpe_dict,
                                        '2>&1', '>', '/dev/null')
-            if "{0}{1}: true".format(self.CPE, dist) in output:
+            if "{0}{1}: true".format(self.CPE, dist) in result.stdout:
                 return dist
 
     def _get_target_name(self, target):
@@ -149,15 +155,8 @@ class OscapHelpers(object):
         cmd = ['oscap'] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
-        if oscap_process.returncode not in [0, 2]:
-            sys.stderr.write("\nCommand: {0} failed!\n".format(" ".join(cmd)))
-            sys.stderr.write("Command returned exit code {0}.\n".format(oscap_process.returncode))
-            sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
-
-            sys.exit(1)
-
-        sys.stderr.write(oscap_stderr.decode("utf-8") + "\n")
-        return oscap_stdout.decode("utf-8")
+        return OscapResult(oscap_process.returncode,
+                           oscap_stdout.decode("utf-8"), oscap_stderr.decode("utf-8"))
 
     def _scan_cve(self, chroot, target, dist, scan_args):
         '''
@@ -272,12 +271,16 @@ class OscapScan(object):
             fetch._fetch_single(dist)
 
             # Scan the chroot
-            sys.stdout.write(self.helper._scan_cve(chroot, image, dist, scan_args))
+            scan_result = self.helper._scan_cve(chroot, image, dist, scan_args)
+            print(scan_result.stdout)
+            print(scan_result.stderr, file=sys.stderr)
 
         finally:
             # Clean up
             self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
             self._remove_mnt_dir(mnt_dir)
+
+        return scan_result.returncode
 
     def scan(self, image, scan_args):
         '''
@@ -299,9 +302,13 @@ class OscapScan(object):
             chroot = self._find_chroot_path(_tmp_mnt_dir)
 
             # Scan the chroot
-            sys.stdout.write(self.helper._scan(chroot, image, scan_args))
+            scan_result = self.helper._scan(chroot, image, scan_args)
+            print(scan_result.stdout)
+            print(scan_result.stderr, file=sys.stderr)
 
         finally:
             # Clean up
             self.helper._cleanup_by_path(_tmp_mnt_dir, DM)
             self._remove_mnt_dir(mnt_dir)
+
+        return scan_result.returncode

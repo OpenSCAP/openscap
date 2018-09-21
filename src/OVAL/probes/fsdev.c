@@ -408,6 +408,7 @@ fsdev_t *fsdev_strinit(const char *fs_names)
 	e = errno;
 	free(fs_arr);
 	errno = e;
+	free(pstr);
 
 	return (lfs);
 }
