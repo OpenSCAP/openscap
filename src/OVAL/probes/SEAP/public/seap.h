@@ -55,7 +55,6 @@ OSCAP_API void        SEAP_CTX_init (SEAP_CTX_t *ctx);
 OSCAP_API void        SEAP_CTX_free (SEAP_CTX_t *ctx);
 
 OSCAP_API int SEAP_connect(SEAP_CTX_t *ctx);
-OSCAP_API int     SEAP_accept (SEAP_CTX_t *ctx, int sd);
 
 OSCAP_API int     SEAP_open  (SEAP_CTX_t *ctx, const char *path, uint32_t flags);
 OSCAP_API SEXP_t *SEAP_read  (SEAP_CTX_t *ctx, int sd);
