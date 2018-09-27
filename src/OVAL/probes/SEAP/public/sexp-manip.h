@@ -455,13 +455,6 @@ typedef struct SEXP_it SEXP_it_t;
 #define SEXP_IT_RECURSIVE 0x01
 #define SEXP_IT_HARDREF   0x02
 
-OSCAP_API SEXP_it_t *SEXP_listit_new (const SEXP_t *list, int flags);
-OSCAP_API SEXP_t    *SEXP_listit_next(SEXP_it_t *it);
-OSCAP_API SEXP_t    *SEXP_listit_prev (SEXP_it_t *it);
-OSCAP_API SEXP_t    *SEXP_listit_length (SEXP_it_t *it);
-OSCAP_API SEXP_t    *SEXP_listit_seek (SEXP_it_t *it, uint32_t n);
-OSCAP_API void       SEXP_listit_free (SEXP_it_t *it);
-
 typedef struct SEXP_list_it SEXP_list_it;
 
 OSCAP_API SEXP_list_it *SEXP_list_it_new(const SEXP_t *list);
