@@ -45,9 +45,6 @@ OSCAP_API /* const char *SEXP_datatype (const SEXP_t *sexp); */
 OSCAP_API int SEXP_datatype_register (SEXP_datatypeTbl_t *t, const char *datatype);
 OSCAP_API /* int SEXP_datatype_unregister (void); */
 
-OSCAP_API int SEXP_datatype_op (uint8_t op, const SEXP_t *sexp, void *res, ...);
-OSCAP_API int SEXP_datatype_op_safe (const char *datatype, uint8_t op, const SEXP_t *sexp, void *res, ...);
-
 OSCAP_API SEXP_datatype_t *SEXP_datatype_new(void);
 OSCAP_API int SEXP_datatype_setflag(SEXP_datatype_t **dp, uint16_t flag, ...);
 OSCAP_API int SEXP_datatype_unsetflag(SEXP_datatype_t **dp, uint16_t flag);
