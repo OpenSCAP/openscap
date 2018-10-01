@@ -364,7 +364,6 @@ int probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent, *probe_in;
         SEXP_t *r0;
-	/* char *i_val, *m_val, *s_val; */
 	bool val;
 	struct pfdata pfd;
 	int ret = 0;
@@ -409,11 +408,6 @@ int probe_main(probe_ctx *ctx, void *arg)
         SEXP_free(patt_ent);
         SEXP_free(ent_val);
 	assume_d(pfd.pattern != NULL, -1);
-
-        /* wtf?
-	i_val = s_val = "0";
-	m_val = "1";
-        */
 
 	/* reset filebehavior attributes if 'filepath' entity is used */
 	if (filepath_ent != NULL && bh_ent != NULL) {
