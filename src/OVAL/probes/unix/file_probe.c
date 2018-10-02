@@ -283,13 +283,9 @@ static SEXP_t *get_size(struct stat *st, SEXP_t *sexp)
 	}
 }
 
-static SEXP_t *MODEP(struct stat *statp, unsigned int bit)
+static bool MODEP(struct stat *statp, unsigned int bit)
 {
-	if (statp->st_mode & bit) {
-		return SEXP_number_newb(true);
-	} else {
-		return SEXP_number_newb(false);
-	}
+	return (statp->st_mode & bit);
 }
 
 static SEXP_t *has_extended_acl(const char *path)
@@ -380,19 +376,19 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
                                          "c_time",   OVAL_DATATYPE_SEXP, get_ctime(&st, &se_ctime_mem, over),
                                          "m_time",   OVAL_DATATYPE_SEXP, get_mtime(&st, &se_mtime_mem, over),
                                          "size",     OVAL_DATATYPE_SEXP, get_size(&st, &se_size_mem),
-                                         "suid",     OVAL_DATATYPE_SEXP, MODEP(&st, S_ISUID),
-                                         "sgid",     OVAL_DATATYPE_SEXP, MODEP(&st, S_ISGID),
-                                         "sticky",   OVAL_DATATYPE_SEXP, MODEP(&st, S_ISVTX),
-                                         "uread",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IRUSR),
-                                         "uwrite",   OVAL_DATATYPE_SEXP, MODEP(&st, S_IWUSR),
-                                         "uexec",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IXUSR),
-                                         "gread",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IRGRP),
-                                         "gwrite",   OVAL_DATATYPE_SEXP, MODEP(&st, S_IWGRP),
-                                         "gexec",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IXGRP),
-                                         "oread",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IROTH),
-                                         "owrite",   OVAL_DATATYPE_SEXP, MODEP(&st, S_IWOTH),
-                                         "oexec",    OVAL_DATATYPE_SEXP, MODEP(&st, S_IXOTH),
-					 "has_extended_acl", OVAL_DATATYPE_SEXP, se_acl,
+				"suid", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_ISUID),
+				"sgid", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_ISGID),
+				"sticky", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_ISVTX),
+				"uread", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IRUSR),
+				"uwrite", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IWUSR),
+				"uexec", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IXUSR),
+				"gread", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IRGRP),
+				"gwrite", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IWGRP),
+				"gexec", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IXGRP),
+				"oread", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IROTH),
+				"owrite", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IWOTH),
+				"oexec", OVAL_DATATYPE_BOOLEAN, MODEP(&st, S_IXOTH),
+				"has_extended_acl", OVAL_DATATYPE_SEXP, se_acl,
                                          NULL);
 		if (se_acl == NULL) {
 			probe_item_ent_add(item, "has_extended_acl", NULL, SEXP_number_newb(true));
