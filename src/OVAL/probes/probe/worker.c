@@ -396,6 +396,8 @@ static SEXP_t *probe_obj_eval(probe_t *probe, SEXP_t *id)
 
 	rid = SEXP_list_first(res);
 	if (SEXP_string_cmp(id, rid) != 0) {
+		SEXP_free(res);
+		SEXP_free(rid);
 		return NULL;
 	}
 	SEXP_free(res);
@@ -619,6 +621,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
 				SEXP_free(result_items);
 				SEXP_free(r0);
 				SEXP_free(r1);
+				SEXP_free(mask);
 				return cobj;
 			}
 		default:
@@ -1071,6 +1074,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
                 SEXP_free(pctx.filters);
 	}
 
+	SEXP_free(probe_in);
+
 #ifndef OS_WINDOWS
 	/* Revert chroot */
 	if (probe->real_root_fd != -1) {
@@ -1078,6 +1083,7 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			dE("fchdir failed: %s", strerror(errno));
 			close(probe->real_root_fd);
 			close(probe->real_cwd_fd);
+			SEXP_free(probe_out);
 			return NULL;
 		}
 		close(probe->real_root_fd);
@@ -1085,18 +1091,19 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 		if (chroot(".") == -1) {
 			dE("chroot(\".\") failed: %s", strerror(errno));
 			close(probe->real_cwd_fd);
+			SEXP_free(probe_out);
 			return NULL;
 		}
 		if (fchdir(probe->real_cwd_fd) != 0) {
 			dE("fchdir failed: %s", strerror(errno));
 			close(probe->real_cwd_fd);
+			SEXP_free(probe_out);
 			return NULL;
 		}
 		close(probe->real_cwd_fd);
 	}
 #endif
 
-	SEXP_free(probe_in);
 	SEXP_VALIDATE(probe_out);
 
 	return (probe_out);
