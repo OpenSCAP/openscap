@@ -85,6 +85,19 @@ static Stable_t *Stable_new (size_t capacity)
         return (t);
 }
 
+static void Stable_free(Stable_t *table)
+{
+	if (table != NULL) {
+		for (i = 0; i < table->t_size; ++i) {
+			if (table->t_recs[i].c_size > 0)
+				sm_free(table->t_recs[i].c_recs);
+		}
+
+		sm_free(table->t_recs);
+		sm_free(table);
+	}
+}
+
 static int Stable_add (Stable_t *t, SEAP_cmdrec_t *r)
 {
         Stable_rec_t *t_r;
@@ -138,10 +151,11 @@ int  SEAP_cmdtbl_backendS_add (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r)
                 n = Stable_new (SEAP_CMDTBL_LARGE_TRESHOLD);
                 ret = SEAP_cmdtbl_backendL_apply (t, &Stable_conv, (void *)n);
                 
-                if (ret != 0) {
-                        SEAP_cmdtbl_backendS_free (t);
-                        return (ret);
-                }
+		if (ret != 0) {
+			SEAP_cmdtbl_backendS_free(t);
+			Stable_free(n);
+			return ret;
+		}
                 
                 SEAP_cmdtbl_backendL_free (t);
                 t->table = n;
@@ -180,24 +194,17 @@ int  SEAP_cmdtbl_backendS_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b)
         return (a->code - b->code);
 }
 
-void SEAP_cmdtbl_backendS_free (SEAP_cmdtbl_t *t)
+void SEAP_cmdtbl_backendS_free(SEAP_cmdtbl_t *t)
 {
         size_t    i;
         Stable_t *St;
-        
+
         St = (Stable_t *)(t->table);
-        
-        if (St != NULL) {
-                for (i = 0; i < St->t_size; ++i)
-                        if (St->t_recs[i].c_size > 0)
-                                sm_free (St->t_recs[i].c_recs);
-                
-                sm_free (St->t_recs);
-                sm_free (St);
-                
-                t->table = NULL;
-        }
-        return;
+
+	if (St != NULL) {
+		Stable_free(St);
+		t->table = NULL;
+	}
 }
 
 int SEAP_cmdtbl_backendS_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r, void *), void *arg)
