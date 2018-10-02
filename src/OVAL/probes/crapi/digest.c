@@ -170,6 +170,7 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                 goto fail;
         default:
 		if (ret <= 0) {
+			free(ctbl);
 			return -1;
 		}
 
