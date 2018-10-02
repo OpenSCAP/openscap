@@ -335,6 +335,8 @@ void *rpmverifypackage_probe_init(void)
 	if (CHROOT_IS_SET()) {
 		rpmLibsPreload();
 		if (CHROOT_ENTER() < 0) {
+			probe_chroot_free(&g_rpm->chr);
+			free(g_rpm);
 			return (NULL);
 		}
 	}
