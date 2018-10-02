@@ -211,6 +211,8 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                 SEXP_free (r0);
 	}
 
+	SEXP_free(se_filepath);
+	SEXP_free(se_instance);
 	return item;
 }
 
