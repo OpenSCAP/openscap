@@ -143,6 +143,7 @@ SEXP_t *probe_ncache_add (probe_ncache_t *cache, const char *name)
 
 	/* TODO: check if this is really needed */
 	if (cache->name == NULL || cache->size <= cache->real) {
+		SEXP_free(ref);
 		return NULL;
 	}
 
