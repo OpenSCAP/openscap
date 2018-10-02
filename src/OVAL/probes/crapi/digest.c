@@ -86,6 +86,7 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
 
 	if (num <= 0 || fd <= 0) {
 		errno = EINVAL;
+		free(ctbl);
 		return -1;
 	}
         for (i = 0; i < num; ++i)
@@ -169,6 +170,7 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                 goto fail;
         default:
 		if (ret <= 0) {
+			free(ctbl);
 			return -1;
 		}
 
