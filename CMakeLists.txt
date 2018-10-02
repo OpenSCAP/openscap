@@ -464,7 +464,11 @@ include_directories(
 
 # Honor visibility properties for all target types
 # Run "cmake --help-policy CMP0063" for policy details
-cmake_policy(SET CMP0063 NEW)
+if (POLICY CMP0063)
+	cmake_policy(SET CMP0063 NEW)
+else()
+	message(WARNING "It is not possible to correctly set symbol visibility in object files with your version of CMake. We recommend using CMake 3.3 or newer.")
+endif()
 
 function(set_oscap_generic_properties TARGET_OBJECT)
 	set_target_properties(${TARGET_OBJECT} PROPERTIES
