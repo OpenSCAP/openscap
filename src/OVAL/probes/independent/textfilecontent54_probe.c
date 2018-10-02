@@ -347,11 +347,12 @@ int textfilecontent54_probe_main(probe_ctx *ctx, void *arg)
         SEXP_t *ent_val;
         ent_val = probe_ent_getval(patt_ent);
 	pfd.pattern = SEXP_string_cstr(ent_val);
-	if (pfd.pattern == NULL) {
-		return -1;
-	}
         SEXP_free(patt_ent);
         SEXP_free(ent_val);
+	if (pfd.pattern == NULL) {
+		ret = -1;
+		goto cleanup;
+	}
 
         /* wtf?
 	i_val = s_val = "0";
