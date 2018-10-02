@@ -311,11 +311,15 @@ int textfilecontent_probe_main(probe_ctx *ctx, void *arg)
 	SEXP_t *ent_val;
 	ent_val = probe_ent_getval(line_ent);
 	pattern = SEXP_string_cstr(ent_val);
-	if (pattern == NULL) {
-		return -1;
-	}
 	SEXP_free(line_ent);
 	SEXP_free(ent_val);
+	if (pattern == NULL) {
+		SEXP_free(path_ent);
+		SEXP_free(filename_ent);
+		SEXP_free(filepath_ent);
+		SEXP_free(behaviors_ent);
+		return -1;
+	}
 
         /* behaviours are not important if filepath is used */
         if(filepath_ent != NULL && behaviors_ent != NULL) {
