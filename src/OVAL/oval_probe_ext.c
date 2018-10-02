@@ -745,6 +745,7 @@ int oval_probe_sys_handler(oval_subtype_t type, void *ptr, int act, ...)
                 }
 
 		if (pd == NULL) {
+			va_end(ap);
 			return -1;
 		}
 		ret = oval_probe_sys_eval(pext->pdtbl->ctx, pd, *(pext->model), inf);
