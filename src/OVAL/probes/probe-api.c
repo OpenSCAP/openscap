@@ -1390,6 +1390,11 @@ static SEXP_t *probe_item_optimize(const SEXP_t *item)
 	return SEXP_ref(item);
 }
 
+/**
+ * The order of (value_name, value_type, *value) argument tuples passed as
+ * e.g. 3rd to 5th arguments matters. If you change ordering of those tuples,
+ * it will have consequences.
+ */
 SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t *item_attributes[],
                           /* const char *value_name, oval_datatype_t value_type, void *value, */ ...)
 {
