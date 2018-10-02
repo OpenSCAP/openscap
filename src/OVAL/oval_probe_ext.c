@@ -140,6 +140,7 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 	tbl->memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
 
 	if (tbl->memb == NULL) {
+		free(pd->uri);
 		free(pd);
 		return -1;
 	}
