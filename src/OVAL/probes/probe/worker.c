@@ -580,7 +580,7 @@ static SEXP_t *probe_set_apply_filters(SEXP_t *cobj, SEXP_t *filters)
                                                       "Supplied item has an invalid status: %d.", item_status);
 				r1 = SEXP_list_new(r0, NULL);
 				cobj = probe_cobj_new(SYSCHAR_FLAG_ERROR, r1, NULL, NULL);
-				SEXP_vfree(items, item, result_items, r0, r1, NULL);
+				SEXP_vfree(items, item, result_items, r0, r1, mask, NULL);
 				return cobj;
 			}
 		default:
