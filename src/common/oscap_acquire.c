@@ -368,6 +368,7 @@ char *oscap_acquire_guess_realpath(const char *filepath)
 		if (real_dir == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot guess realpath for %s, directory: %s does not exists!", filepath, dir_name);
 			free(copy);
+			free(dir_name);
 			return NULL;
 		}
 		free(dir_name);
