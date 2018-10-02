@@ -378,7 +378,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 		goto cleanup;
 	}
 
-	if (_write_text_to_fd_and_free(fd, fix_text) != 0) {
+	if (_write_text_to_fd(fd, fix_text) != 0) {
 		_rule_add_info_message(rr, "Could not write to the temp file: %s", strerror(errno));
 		(void) close(fd);
 		goto cleanup;
@@ -440,6 +440,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 
 cleanup:
 	oscap_acquire_cleanup_dir(&temp_dir);
+	free(fix_text);
 	return result;
 }
 
