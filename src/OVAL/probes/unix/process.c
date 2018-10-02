@@ -98,6 +98,9 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
                                  "tty",          OVAL_DATATYPE_STRING, res->tty,
                                  "user_id",    OVAL_DATATYPE_INTEGER, (int64_t)res->user_id,
                                  NULL);
+	if (se_ruid) {
+		SEXP_free(se_ruid);
+	}
 
         probe_item_collect(ctx, item);
 }
