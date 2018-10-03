@@ -269,7 +269,7 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 	file_context_size = getfilecon(path_with_prefix, &file_context);
 	free(path_with_prefix);
 	if (file_context_size == -1) {
-		dE("Can't get context for %s: %s", pbuf, strerror(errno));
+		dD("Can't get context for %s: %s", pbuf, strerror(errno));
 
 		item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
 						"filepath", OVAL_DATATYPE_STRING, pbuf,
