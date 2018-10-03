@@ -25,12 +25,12 @@
 
 #include <pthread.h>
 #include <stddef.h>
-#include <sexp.h>
 #include <errno.h>
 #include <string.h>
 #include <inttypes.h>
 #include <stdlib.h>
 
+#include "_sexp-core.h"
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe-api.h"
 #include "common/debug_priv.h"
@@ -38,6 +38,10 @@
 
 #include "probe.h"
 #include "icache.h"
+#include "_sexp-ID.h"
+#include "_sexp-manip_r.h"
+#include "_sexp-list.h"
+#include "_sexp-list_r.h"
 
 static volatile uint32_t next_ID = 0;
 

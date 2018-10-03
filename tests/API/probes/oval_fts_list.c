@@ -6,9 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sexp.h"
 #include "oval_fts.h"
 #include "probe-api.h"
+#include "_sexp-types.h"
+#include "_sexp-manip.h"
 
 static int create_path_sexpr(char *arg_operation, char *arg_argument, SEXP_t **result)
 {

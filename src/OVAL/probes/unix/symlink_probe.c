@@ -31,6 +31,7 @@
 #endif
 
 #include <probe-api.h>
+#include "_sexp-core.h"
 #include "common/debug_priv.h"
 #include <string.h>
 #include <sys/types.h>

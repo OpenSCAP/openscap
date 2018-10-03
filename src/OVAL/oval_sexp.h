@@ -5,8 +5,6 @@
  * @author "Lukas Kuklinek" <lkukline@redhat.com>
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
- * @addtogroup PROBEOVALSEXP
- * @{
  */
 /*
  * Copyright 2009-2010 Red Hat Inc., Durham, North Carolina.
@@ -34,7 +32,7 @@
 #ifndef OVAL_SEXP_H
 #define OVAL_SEXP_H
 
-#include <seap.h>
+#include "_seap.h"
 #include "../common/util.h"
 #include "oval_definitions_impl.h"
 
@@ -54,4 +52,3 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar);
 
 #endif				/* OVAL_SEXP_H */
 
-/// @}

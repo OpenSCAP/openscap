@@ -53,13 +53,15 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "seap.h"
+#include "_sexp-core.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"
 #include <probe/probe.h>
 #include <probe/option.h>
 #include "shadow_probe.h"
+#include "_sexp-manip_r.h"
 
 oval_schema_version_t over;
 

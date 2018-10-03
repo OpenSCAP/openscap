@@ -24,7 +24,8 @@
 #include <config.h>
 #endif
 
-#include <seap.h>
+#include "_sexp-core.h"
+#include "_seap.h"
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -37,6 +38,7 @@
 #include "worker.h"
 #include "probe-table.h"
 #include "probe.h"
+#include "_sexp-list.h"
 
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);

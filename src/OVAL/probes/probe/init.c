@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-#include "../_probe-api.h"
+#include "probe-api.h"
 
 /**
  * Dummy probe_fini function.

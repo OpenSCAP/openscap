@@ -25,12 +25,27 @@
 #define _SEAP_TYPES_H
 
 #include <stdint.h>
-#include "public/seap-types.h"
 #include "_sexp-types.h"
-#include "_seap-command.h"
-#include "seap-descriptor.h"
 #include "../../../common/util.h"
+#include "generic/rbt/rbt_common.h"
+#include "generic/bitmap.h"
+#include "oval_types.h"
 
+typedef uint8_t SEAP_cflags_t;
+
+typedef struct {
+	uint8_t flags;
+	void *table;
+	size_t maxcnt;
+#if defined(SEAP_THREAD_SAFE)
+	pthread_rwlock_t lock;
+#endif
+} SEAP_cmdtbl_t;
+
+typedef struct {
+	rbt_t *tree;
+	bitmap_t *bmap;
+} SEAP_desctable_t;
 
 /* SEAP context */
 struct SEAP_CTX {
@@ -44,6 +59,39 @@ struct SEAP_CTX {
         uint16_t send_timeout;
 	oval_subtype_t subtype;
 };
+typedef struct SEAP_CTX SEAP_CTX_t;
 
+typedef uint8_t SEAP_cmdclass_t;
+typedef uint16_t SEAP_cmdcode_t;
+typedef uint16_t SEAP_cmdid_t;
+typedef uint8_t SEAP_cmdtype_t;
+typedef SEXP_t * (*SEAP_cmdfn_t) (SEXP_t *, void *);
+
+
+
+#define SEAP_CTX_INITIALIZER { NULL, 0, 0, 0, SEAP_DESCTBL_INITIALIZER, SEAP_CMDTABLE_INITIALIZER }
+
+
+
+/* SEAP errors */
+#define SEAP_ETYPE_INT  0 /* Internal error */
+#define SEAP_ETYPE_USER 1 /* User-defined error */
+
+#define SEAP_EUNFIN 1  /* Can't finish parsing */
+#define SEAP_EPARSE 2  /* Parsing error */
+#define SEAP_ECLOSE 3  /* Connection close */
+#define SEAP_EINVAL 4  /* Invalid argument */
+#define SEAP_ENOMEM 5  /* Cannot allocate memory */
+#define SEAP_EMSEXP 6  /* Missing required S-exp/value */
+#define SEAP_EMATTR 7  /* Missing required attribute */
+#define SEAP_EUNEXP 8  /* Unexpected error */
+#define SEAP_EUSER  9  /* User-defined error */
+#define SEAP_ENOCMD 10 /* Unknown cmd */
+#define SEAP_EQFULL 11 /* Queue full */
+#define SEAP_EUNKNOWN 255 /* Unknown/Unexpected error */
+
+/* SEAP I/O flags */
+#define SEAP_IOFL_RECONN   0x00000001 /* Try to reconnect */
+#define SEAP_IOFL_NONBLOCK 0x00000002 /* Non-blocking mode */
 
 #endif /* _SEAP_TYPES_H */

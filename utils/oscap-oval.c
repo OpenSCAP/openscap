@@ -29,7 +29,6 @@
 #include "oscap_source.h"
 #if defined(OVAL_PROBES_ENABLED)
 # include <oval_probe.h>
-# include "probe-table.h"
 #endif
 #include <oval_agent_api.h>
 #include <oval_session.h>

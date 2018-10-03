@@ -33,6 +33,7 @@
 #include "common/debug_priv.h"
 #include "../probe/probe_main.h"
 #include "oval_definitions.h"
+#include "_sexp-list.h"
 
 
 int sch_queue_connect(SEAP_desc_t *desc)

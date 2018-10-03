@@ -60,11 +60,13 @@
 #include <arpa/inet.h>
 #include <regex.h>
 
-#include "seap.h"
+#include "_sexp-core.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"
 #include "inetlisteningservers_probe.h"
+#include "_sexp-manip_r.h"
 
 /* This structure contains the information OVAL is asking or requesting */
 struct server_info {

@@ -17,25 +17,38 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * Authors:
- *      "Daniel Kopecek" <dkopecek@redhat.com>
+ *      Daniel Kopecek <dkopecek@redhat.com>
  */
 
-#pragma once
-#ifndef SEAP_COMMAND_BACKENDS
-#define SEAP_COMMAND_BACKENDS
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include "../../../common/util.h"
+#include <stdlib.h>
 
+#include "_sexp-core.h"
+#include "_sexp-manip_r.h"
 
-#define SEAP_COMMAND_BACKENDS_MAXCAPACITY 769
+SEXP_t *SEXP_new (void)
+{
+	SEXP_t *s_exp = malloc(sizeof(SEXP_t));
+        s_exp->s_type = NULL;
+        s_exp->s_valp = 0;
 
-int  SEAP_cmdtbl_backendS_add (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r);
-int  SEAP_cmdtbl_backendS_ins (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r);
-int  SEAP_cmdtbl_backendS_del (SEAP_cmdtbl_t *t, SEAP_cmdrec_t *r);
-SEAP_cmdrec_t *SEAP_cmdtbl_backendS_get (SEAP_cmdtbl_t *t, SEAP_cmdcode_t c);
-int  SEAP_cmdtbl_backendS_cmp (SEAP_cmdrec_t *a, SEAP_cmdrec_t *b);
-void SEAP_cmdtbl_backendS_free (SEAP_cmdtbl_t *t);
-int  SEAP_cmdtbl_backendS_apply (SEAP_cmdtbl_t *t, int (*func) (SEAP_cmdrec_t *r, void *), void *arg);
+#if !defined(NDEBUG) || defined(VALIDATE_SEXP)
+        s_exp->__magic0 = SEXP_MAGIC0;
+        s_exp->__magic1 = SEXP_MAGIC1;
+#endif
 
+        return (s_exp);
+}
 
-#endif /* SEAP_COMMAND_BACKENDS */
+void SEXP_free (SEXP_t *s_exp)
+{
+        if (s_exp != NULL) {
+                SEXP_free_r(s_exp);
+		free(s_exp);
+        }
+        return;
+}
+

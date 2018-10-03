@@ -5,8 +5,6 @@
  * @author "Lukas Kuklinek" <lkukline@redhat.com>
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
- * @addtogroup PROBEOVALSEXP
- * @{
  */
 /*
  * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
@@ -39,19 +37,21 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-#include <seap.h>
+#include "_sexp-core.h"
+#include "_seap.h"
 #include <assert.h>
 
 #include "oval_probe_impl.h"
 #include "oval_sexp.h"
-#include "probes/public/probe-api.h"
+#include "probe-api.h"
 #include "oval_definitions_impl.h"
 #include "oval_system_characteristics_impl.h"
 #include "adt/oval_string_map_impl.h"
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "public/oval_schema_version.h"
-
+#include "_sexp-manip_r.h"
+#include "_sexp-list.h"
 
 SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 {
@@ -1065,4 +1065,3 @@ int oval_sexp_to_sysch(const SEXP_t *cobj, struct oval_syschar *syschar)
 	return 0;
 }
 
-/// @}

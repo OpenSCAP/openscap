@@ -45,6 +45,7 @@
 #include <net/route.h>
 #include <arpa/inet.h>
 
+#include "_sexp-core.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "util.h"

@@ -33,6 +33,7 @@
 #include <stdbool.h>
 #include <ldap.h>
 
+#include "_sexp-core.h"
 #include "probe-api.h"
 #include "common/debug_priv.h"
 

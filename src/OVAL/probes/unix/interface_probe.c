@@ -71,6 +71,7 @@
 #include <net/if.h>
 #include <net/if_arp.h>
 #include <arpa/inet.h>
+#include "_sexp-core.h"
 #include "interface_probe.h"
 
 static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)

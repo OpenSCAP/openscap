@@ -19,19 +19,18 @@
  * Authors:
  *      Daniel Kopecek <dkopecek@redhat.com>
  */
-#ifndef SEXP_ID_H
-#define SEXP_ID_H
 
+#ifndef _SEXP_LIST_R_H
+#define _SEXP_LIST_R_H
+
+#include <stdarg.h>
+#include <stddef.h>
 #include <stdint.h>
-#include "sexp-types.h"
-#include "oscap_export.h"
+#include <stdbool.h>
+#include "_sexp-types.h"
 
-typedef uint64_t SEXP_ID_t;
+SEXP_t *SEXP_list_new_rv(SEXP_t *sexp_mem, SEXP_t *memb, va_list alist);
+SEXP_t *SEXP_list_new_r(SEXP_t *sexp_mem, SEXP_t *memb, ...);
+SEXP_t *SEXP_list_rest_r (SEXP_t *rest, const SEXP_t *list);
 
-/**
- * Compute an S-exp value identifier
- */
-OSCAP_API SEXP_ID_t SEXP_ID_v(const SEXP_t *s);
-OSCAP_API SEXP_ID_t SEXP_ID_v2(const SEXP_t *s);
-
-#endif /* SEXP_ID_H */
+#endif /* _SEXP_LIST_R_H */

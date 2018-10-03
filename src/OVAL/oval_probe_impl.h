@@ -3,8 +3,6 @@
  * @brief OVAL probe interface private header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup PROBEINTERFACE
- * @{
  */
 /*
  * Copyright 2009--2013 Red Hat Inc., Durham, North Carolina.
@@ -32,14 +30,13 @@
 #ifndef OVAL_PROBE_IMPL_H
 #define OVAL_PROBE_IMPL_H
 
-#include <seap-types.h>
 #include "oval_definitions_impl.h"
 #include "oval_agent_api_impl.h"
 #include "oval_parser_impl.h"
 #include "public/oval_system_characteristics.h"
 #include "../common/util.h"
 #include "public/oval_probe.h"
-#include "probes/_probe-api.h"
+#include "probes/probe-api.h"
 
 #include "public/oval_probe_session.h"
 #include "public/oval_probe.h"
@@ -65,4 +62,3 @@ const char *oval_subtype_to_str(oval_subtype_t subtype);
 int oval_probe_hint_definition(oval_probe_session_t *sess, struct oval_definition *definition, int variable_instance_hint);
 
 #endif /* OVAL_PROBE_IMPL_H */
-/// @}

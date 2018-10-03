@@ -34,7 +34,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include <pthread.h>
-#include <seap.h>
+#include "_seap.h"
 #include "ncache.h"
 #include "rcache.h"
 #include "icache.h"

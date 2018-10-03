@@ -60,10 +60,11 @@
 #include <regex.h>
 
 /* RPM headers */
+#include "_sexp-core.h"
 #include "rpm-helper.h"
 
 /* SEAP */
-#include <seap.h>
+#include "_seap.h"
 #include <probe-api.h>
 #include <probe/probe.h>
 #include <probe/option.h>

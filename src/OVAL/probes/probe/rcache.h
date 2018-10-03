@@ -23,8 +23,8 @@
 #define RCACHE_H
 
 #include <stddef.h>
-#include <sexp.h>
 #include "../SEAP/generic/rbt/rbt.h"
+#include "_sexp-types.h"
 
 /**
  * Probe cache structure.

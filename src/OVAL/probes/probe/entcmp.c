@@ -2,8 +2,6 @@
  * @file   entcmp.c
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
- * @addtogroup PROBEAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -31,7 +29,6 @@
 #include <config.h>
 #endif
 
-#include <sexp.h>
 #include <assert.h>
 #include <string.h>
 #include <stdarg.h>
@@ -43,12 +40,14 @@
 #include <sys/socket.h>
 #endif
 
+#include "_sexp-core.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
-#include "../_probe-api.h"
+#include "probe-api.h"
 #include "../../results/oval_cmp_basic_impl.h"
 #include "../../results/oval_cmp_evr_string_impl.h"
 #include "../../results/oval_cmp_ip_address_impl.h"
+#include "_sexp-list.h"
 
 oval_result_t probe_ent_cmp_binary(SEXP_t * val1, SEXP_t * val2, oval_operation_t op)
 {
@@ -676,5 +675,3 @@ oval_result_t probe_ent_result_byopr(SEXP_t * res_lst, oval_operator_t operator)
 
 	return result;
 }
-
-/// @}

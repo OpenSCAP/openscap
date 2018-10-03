@@ -36,6 +36,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "_sexp-core.h"
 #include "common/_error.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"

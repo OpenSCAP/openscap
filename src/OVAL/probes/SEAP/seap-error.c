@@ -21,8 +21,9 @@
  */
 
 #include <config.h>
-#include "public/sexp.h"
+#include "_sexp-core.h"
 #include "_seap-error.h"
+#include "_sexp-manip.h"
 
 SEAP_err_t *SEAP_error_new(void)
 {

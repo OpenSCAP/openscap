@@ -5,7 +5,7 @@ if (HAVE_MMAN_H AND CRYPTO_FOUND)
 	add_subdirectory("crapi")
 endif()
 
-include_directories("." "public")
+include_directories(".")
 
 if (ENABLE_PROBES)
 	if(ENABLE_PROBES_INDEPENDENT)

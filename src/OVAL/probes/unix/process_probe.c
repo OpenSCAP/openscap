@@ -51,7 +51,8 @@
  #include <proc/devname.h>
 #endif
 
-#include "seap.h"
+#include "_sexp-core.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"

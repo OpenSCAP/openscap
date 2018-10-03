@@ -34,7 +34,8 @@
 #include <config.h>
 #endif
 
-#include <seap.h>
+#include "_sexp-core.h"
+#include "_seap.h"
 #include <probe-api.h>
 #include <probe/entcmp.h>
 #include <stdlib.h>
@@ -55,6 +56,7 @@
 #include "common/debug_priv.h"
 #include "probe/probe.h"
 #include "selinuxsecuritycontext_probe.h"
+#include "_sexp-list.h"
 
 #define FILE_SEPARATOR '/'
 

@@ -65,6 +65,7 @@
 #include <mntent.h>
 #include <pcre.h>
 
+#include "_sexp-core.h"
 #include "common/debug_priv.h"
 #include "partition_probe.h"
 

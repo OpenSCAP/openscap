@@ -3,8 +3,6 @@
  * @brief OVAL probe session API private header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup PROBESESSION
- * @{
  */
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
@@ -48,5 +46,3 @@ struct oval_probe_session {
 };
 
 #endif /* _OVAL_PROBE_SESSION */
-
-/// @}

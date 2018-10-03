@@ -54,11 +54,13 @@
 #include <arpa/inet.h>
 #include <regex.h>
 
-#include "seap.h"
+#include "_sexp-core.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "util.h"
 #include "common/debug_priv.h"
+#include "_sexp-manip_r.h"
 
 #include "iflisteners-proto.h"
 #include "iflisteners_probe.h"

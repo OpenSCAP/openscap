@@ -30,7 +30,8 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <errno.h>
-#include "public/seap.h"
+#include "_sexp-core.h"
+#include "_seap.h"
 #include "generic/common.h"
 #include "_sexp-types.h"
 #include "_seap-types.h"

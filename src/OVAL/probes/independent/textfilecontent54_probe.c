@@ -45,7 +45,8 @@
 #include <limits.h>
 #include <pcre.h>
 
-#include <seap.h>
+#include "_sexp-core.h"
+#include "_seap.h"
 #include <probe-api.h>
 #include <probe/entcmp.h>
 #include <probe/probe.h>
@@ -53,6 +54,7 @@
 #include <oval_fts.h>
 #include "common/debug_priv.h"
 #include "textfilecontent54_probe.h"
+#include "_sexp-list.h"
 
 #define FILE_SEPARATOR '/'
 

@@ -2,8 +2,6 @@
  * @file   entcmp.h
  * @author "Tomas Heinrich" <theinric@redhat.com>
  *
- * @addtogroup PROBEAPI
- * @{
  */
 /*
  * Copyright 2009 Red Hat Inc., Durham, North Carolina.
@@ -30,7 +28,7 @@
 #ifndef PROBE_ENTCMP_H
 #define PROBE_ENTCMP_H
 
-#include <seap.h>
+#include "_seap.h"
 #include <stdarg.h>
 #include "oval_definitions.h"
 #include "oval_results.h"
@@ -160,4 +158,3 @@ oval_result_t probe_ent_cmp_version(SEXP_t * val1, SEXP_t * val2, oval_operation
 oval_result_t probe_ent_cmp_string(SEXP_t * val1, SEXP_t * val2, oval_operation_t op);
 
 #endif
-/// @}

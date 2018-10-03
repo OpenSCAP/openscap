@@ -21,31 +21,58 @@
  */
 
 #pragma once
-#ifndef SEXP_OUTPUT_H
-#define SEXP_OUTPUT_H
+#ifndef STRBUF_H
+#define STRBUF_H
 
-#include <stdio.h>
+#include <stddef.h>
 #ifdef _WIN32
 #include <io.h>
 #else
 #include <unistd.h>
 #endif
-#include <sexp-types.h>
-#include <strbuf.h>
-#include "oscap_export.h"
+#include <stdio.h>
+#include <sys/types.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct SEXP_ostate SEXP_ostate_t;
+#define SEAP_STRBUF_MAX 8192
 
-OSCAP_API size_t SEXP_fprintfa (FILE *fp, const SEXP_t *s_exp);
+struct strblk {
+        struct strblk *next;
+        size_t         size;
+        char           data[];
+};
 
-OSCAP_API int SEXP_sbprintf_t (SEXP_t *s_exp, strbuf_t *sb);
+typedef struct {
+        struct strblk *beg;
+        struct strblk *lbo;
+        size_t         blkmax;
+        size_t         blkoff;
+        size_t         size;
+} strbuf_t;
+
+strbuf_t *strbuf_new(size_t max);
+void strbuf_free(strbuf_t *buf);
+
+int strbuf_add(strbuf_t *buf, const char *str, size_t len);
+int strbuf_addf(strbuf_t *buf, char *str, size_t len);
+int strbuf_addc(strbuf_t *buf, char ch);
+
+size_t strbuf_size(strbuf_t *buf);
+int strbuf_trunc(strbuf_t *buf, size_t len);
+size_t strbuf_length(strbuf_t *buf);
+
+char *strbuf_cstr(strbuf_t *buf);
+char *strbuf_cstr_r(strbuf_t *buf, char *str, size_t len);
+char *strbuf_copy(strbuf_t *buf, void *dst, size_t len);
+
+size_t strbuf_fwrite(FILE *fp, strbuf_t *buf);
+ssize_t strbuf_write(strbuf_t *buf, int fd);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* SEXP_OUTPUT_H */
+#endif /* STRBUF_H */

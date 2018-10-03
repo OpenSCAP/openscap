@@ -23,7 +23,8 @@
 #include <config.h>
 #endif
 
-#include <seap.h>
+#include "_sexp-core.h"
+#include "_seap.h"
 #include <stdarg.h>
 #include <string.h>
 #include <errno.h>
@@ -42,11 +43,12 @@
 #include "common/util.h"
 #include "common/bfind.h"
 #include "common/debug_priv.h"
-#include "probes/public/probe-api.h"
+#include "probe-api.h"
 #include "oval_probe_ext.h"
 #include "oval_sexp.h"
 #include "probe-table.h"
 #include "_oval_probe_handler.h"
+#include "_sexp-list.h"
 
 #define __ERRBUF_SIZE 128
 

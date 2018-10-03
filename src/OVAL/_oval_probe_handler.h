@@ -3,8 +3,6 @@
  * @brief  OVAL probe handler private header
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup PROBEHANDLERS
- * @{
  */
 /*
  * Copyright 2010 Red Hat Inc., Durham, North Carolina.
@@ -69,5 +67,4 @@ void oval_phtbl_free(oval_phtbl_t *phtbl);
 oval_ph_t *oval_probe_handler_get(oval_phtbl_t *phtbl, oval_subtype_t type);
 int oval_probe_handler_set(oval_phtbl_t *phtbl, oval_subtype_t type, oval_probe_handler_t *handler, void *uptr);
 
-/// @}
 #endif /* _OVAL_PROBE_HANDLER */

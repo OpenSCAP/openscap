@@ -3,8 +3,6 @@
  * @brief  S-expression object ID functions - implementation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
  *
- * @addtogroup SEXPRESSIONS
- * @{
  */
 
 /*
@@ -112,16 +110,3 @@ SEXP_ID_t SEXP_ID_v(const SEXP_t *s)
         return (pair.hash);
 }
 
-SEXP_ID_t SEXP_ID_v2(const SEXP_t *s)
-{
-	__IDres_pair pair;
-
-        pair.hash = 0xAD309171FFC0FFEE;
-	pair.part = 1;
-
-        SEXP_ID_v_callback(s, &pair);
-
-        return (pair.hash);
-}
-
-/// @}

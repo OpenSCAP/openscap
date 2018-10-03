@@ -20,32 +20,18 @@
  *      "Daniel Kopecek" <dkopecek@redhat.com>
  */
 
-#pragma once
-#ifndef SEAP_ERROR_H
-#define SEAP_ERROR_H
+#ifndef _SEXP_CORE_H
+#define _SEXP_CORE_H
 
-#include <stdint.h>
-#include "oscap_export.h"
+#include "_sexp-types.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+SEXP_t *SEXP_new(void);
 
-struct SEAP_err {
-        SEAP_msgid_t id;
-        uint32_t     code;
-        uint8_t      type;
-        SEXP_t      *data;
-};
+/**
+ * Free a sexp object.
+ * @param s_exp the object to be freed
+ */
+void SEXP_free(SEXP_t *s_exp);
 
-typedef struct SEAP_err SEAP_err_t;
 
-OSCAP_API SEAP_err_t *SEAP_error_new(void);
-OSCAP_API SEAP_err_t *SEAP_error_clone(SEAP_err_t *e);
-OSCAP_API void SEAP_error_free(SEAP_err_t *e);
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif /* SEAP_ERROR_H */
+#endif /* _SEXP_CORE_H */

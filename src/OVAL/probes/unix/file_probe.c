@@ -34,7 +34,8 @@
 #include <config.h>
 #endif
 
-#include <seap.h>
+#include "_sexp-core.h"
+#include "_seap.h"
 #include <probe-api.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,6 +59,7 @@
 #include "SEAP/generic/rbt/rbt.h"
 #include "common/debug_priv.h"
 #include "file_probe.h"
+#include "_sexp-manip_r.h"
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096

@@ -31,6 +31,7 @@
 #endif
 
 #include <probe-api.h>
+#include "_sexp-core.h"
 #include "probe/entcmp.h"
 #include "systemdshared.h"
 #include "common/list.h"

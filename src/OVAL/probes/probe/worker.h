@@ -22,8 +22,7 @@
 #ifndef WORKER_H
 #define WORKER_H
 
-#include <seap.h>
-#include <sexp.h>
+#include "_seap.h"
 #include <pthread.h>
 #include "probe.h"
 

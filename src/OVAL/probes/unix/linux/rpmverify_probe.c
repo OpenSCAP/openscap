@@ -41,6 +41,7 @@
 #include <fcntl.h>
 #include <pcre.h>
 
+#include "_sexp-core.h"
 #include "rpm-helper.h"
 
 /* Individual RPM headers */

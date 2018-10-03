@@ -32,6 +32,7 @@
 
 #include <probe-api.h>
 #include <string.h>
+#include "_sexp-core.h"
 #include "probe/entcmp.h"
 #include "systemdshared.h"
 #include "systemdunitproperty_probe.h"

@@ -28,17 +28,16 @@
 #include <string.h>
 #include <errno.h>
 
+#include "_sexp-core.h"
 #include "generic/common.h"
-#include "public/sexp-manip.h"
+#include "_sexp-manip.h"
 #include "_seap-packetq.h"
 #include "_seap-packet.h"
 #include "_seap-types.h"
 #include "seap-descriptor.h"
-#include "public/seap-message.h"
-#include "public/seap-command.h"
-#include "public/seap-error.h"
 #include "sch_queue.h"
 #include "debug_priv.h"
+#include "_sexp-list.h"
 
 SEAP_packet_t *SEAP_packet_new (void)
 {

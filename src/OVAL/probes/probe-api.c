@@ -1,6 +1,4 @@
 /**
- * @addtogroup PROBEAPI
- * @{
  * @file   probe-api.c
  * @brief  Probe API implmentation
  * @author "Daniel Kopecek" <dkopecek@redhat.com>
@@ -47,13 +45,17 @@
 #include <sys/socket.h>
 #endif
 
+#include "_sexp-core.h"
 #include "debug_priv.h"
-#include "_probe-api.h"
+#include "probe-api.h"
 #include "oval_probe_impl.h"
 #include "probe/entcmp.h"
 #include "probe/probe.h"
 #include "SEAP/generic/strto.h"
 #include "oscap_helpers.h"
+#include "_sexp-manip_r.h"
+#include "_sexp-list.h"
+#include "_sexp-list_r.h"
 
 extern probe_rcache_t  *OSCAP_GSYM(pcache);
 extern probe_ncache_t  *OSCAP_GSYM(ncache);
@@ -1793,4 +1795,3 @@ SEXP_t *probe_obj_getmask(SEXP_t *obj)
     SEXP_free(objents);
     return (mask);
 }
-/// @}

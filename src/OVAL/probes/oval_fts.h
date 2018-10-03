@@ -22,9 +22,9 @@
 #ifndef OVAL_FTS_H
 #define OVAL_FTS_H
 
+#include "_sexp-core.h"
 #include "oscap_platforms.h"
 
-#include <sexp.h>
 #if defined(OS_SOLARIS) || defined(OS_AIX)
 #include "fts_sun.h"
 #else
@@ -32,6 +32,7 @@
 #endif
 #include <pcre.h>
 #include "fsdev.h"
+#include "_sexp-types.h"
 
 #define ENT_GET_AREF(ent, dst, attr_name, mandatory)			\
 	do {								\
@@ -120,7 +121,7 @@ typedef struct {
 } OVAL_FTSENT;
 
 /*
- * OVAL FTS public API
+ * OVAL FTS
  */
 OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result);
 OVAL_FTS *oval_fts_open(SEXP_t *path, SEXP_t *filename, SEXP_t *filepath, SEXP_t *behaviors, SEXP_t* result);

@@ -23,7 +23,6 @@
 #define ICACHE_H
 
 #include <stddef.h>
-#include <sexp.h>
 #include "../SEAP/generic/rbt/rbt.h"
 
 #ifndef PROBE_IQUEUE_CAPACITY

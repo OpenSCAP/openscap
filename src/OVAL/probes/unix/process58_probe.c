@@ -91,11 +91,12 @@ extern char const *_cap_names[];
 #include <sys/capability.h>
 #endif
 
+#include "_sexp-core.h"
 #include "util.h"
 #include "process58-capability.h"
 #endif /* CAP_FOUND */
 
-#include "seap.h"
+#include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
 #include "common/debug_priv.h"

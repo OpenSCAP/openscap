@@ -3,9 +3,11 @@
 #include <config.h>
 #endif
 
-#include <sexp.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
+#include "_sexp-manip.h"
+#include "_sexp-output.h"
 
 int main (void)
 {

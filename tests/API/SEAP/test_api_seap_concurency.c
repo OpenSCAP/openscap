@@ -25,10 +25,10 @@
 #endif
 
 #include <stdio.h>
-#include <sexp.h>
 #include <sys/time.h>
 #include <pthread.h>
 #include <stdlib.h>
+#include "_sexp-manip.h"
 
 #ifndef TEST_THREAD_COUNT_MAX
 #define TEST_THREAD_COUNT_MAX 8
