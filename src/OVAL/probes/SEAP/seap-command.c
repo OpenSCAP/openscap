@@ -226,10 +226,10 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                        SEAP_cmdfn_t   func,
                        void          *funcarg)
 {
-        SEAP_desc_t   *dsc;
-        SEAP_cmdrec_t *rec;
+        SEAP_desc_t   *dsc = NULL;
+        SEAP_cmdrec_t *rec = NULL;
         SEAP_cmdtbl_t *tbl[2];
-        SEXP_t        *res;
+        SEXP_t        *res = NULL;
         int8_t i;
 
         _A(ctx != NULL);
@@ -343,14 +343,17 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.",
                                    rec->code, (void *)dsc->cmd_w_table, sd);
                                 SEAP_cmdrec_free (rec);
+				SEAP_packet_free(packet);
                                 return (NULL);
                         case -1:
                                 dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.",
                                    rec->code, (void *)dsc->cmd_w_table, sd, errno, strerror (errno));
                                 SEAP_cmdrec_free (rec);
+				SEAP_packet_free(packet);
                                 return (NULL);
                         default:
                                 SEAP_cmdrec_free (rec);
+				SEAP_packet_free(packet);
                                 errno = EDOOFUS;
                                 return (NULL);
                         }
@@ -359,7 +362,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 protect_errno {
                                         dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                                         SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
-                                        SEAP_packet_free (packet);
+                                        SEAP_packet_free(packet);
                                 }
                                 return (NULL);
                         }
@@ -384,6 +387,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
 
                                         if (SEAP_packet_recv(ctx, sd, &packet_rcv) != 0) {
                                                 dI("FAIL: ctx=%p, sd=%d, errno=%u, %s.", ctx, sd, errno, strerror(errno));
+						SEAP_packet_free(packet);
                                                 return(NULL);
                                         }
 
@@ -394,6 +398,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                                         SEAP_packet_free(packet_rcv);
                                                         break;
                                                 default:
+							SEAP_packet_free(packet);
                                                         errno = EDOOFUS;
                                                         return(NULL);
                                                 }
@@ -440,7 +445,7 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                         pthread_mutex_unlock (&(h.mtx));
                         pthread_cond_destroy (&(h.cond));
                         pthread_mutex_destroy (&(h.mtx));
-                        SEAP_packet_free (packet);
+                        SEAP_packet_free(packet);
 
                         return (res);
                 }
@@ -460,14 +465,17 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: already registered.",
                                    rec->code, (void *)dsc->cmd_w_table, sd);
                                 SEAP_cmdrec_free (rec);
+				SEAP_packet_free(packet);
                                 return (NULL);
                         case -1:
                                 dI("Can't register async command handler: id=%u, tbl=%p, sd=%u: errno=%u, %s.",
                                    rec->code, (void *)dsc->cmd_w_table, sd, errno, strerror (errno));
-                                SEAP_cmdrec_free (rec);
+                                SEAP_cmdrec_free(rec);
+				SEAP_packet_free(packet);
                                 return (NULL);
                         default:
-                                SEAP_cmdrec_free (rec);
+                                SEAP_cmdrec_free(rec);
+				SEAP_packet_free(packet);
                                 errno = EDOOFUS;
                                 return (NULL);
                         }
@@ -476,17 +484,17 @@ SEXP_t *SEAP_cmd_exec (SEAP_CTX_t    *ctx,
                                 protect_errno {
                                         dI("FAIL: errno=%u, %s.", errno, strerror (errno));
                                         SEAP_cmdtbl_del(dsc->cmd_w_table, rec);
-                                        SEAP_cmdrec_free(rec);
-                                        SEAP_packet_free (packet);
+                                        SEAP_packet_free(packet);
                                 }
                                 return (NULL);
                         }
 
-                        SEAP_packet_free (packet);
+                        SEAP_packet_free(packet);
 
                         return (args);
                 default:
                         errno = EINVAL;
+			SEAP_packet_free(packet);
                         return (NULL);
                 }
         }
