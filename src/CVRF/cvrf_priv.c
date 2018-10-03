@@ -2333,7 +2333,6 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 	}
 	struct cvrf_index *index = cvrf_index_new();
 	cvrf_index_set_index_file(index, oscap_source_readable_origin(index_source));
-	oscap_source_free(index_source);
 	return index;
 }
 
