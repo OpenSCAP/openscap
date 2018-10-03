@@ -162,6 +162,8 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                 SEXP_free (r0);
 	}
 
+	SEXP_free(se_filepath);
+	SEXP_free(se_instance);
 	return item;
 }
 
@@ -311,7 +313,6 @@ int textfilecontent54_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *path_ent, *file_ent, *inst_ent, *bh_ent, *patt_ent, *filepath_ent, *probe_in;
         SEXP_t *r0;
-	/* char *i_val, *m_val, *s_val; */
 	bool val;
 	struct pfdata pfd;
 	int ret = 0;
@@ -353,11 +354,6 @@ int textfilecontent54_probe_main(probe_ctx *ctx, void *arg)
 		ret = -1;
 		goto cleanup;
 	}
-
-        /* wtf?
-	i_val = s_val = "0";
-	m_val = "1";
-        */
 
 	/* reset filebehavior attributes if 'filepath' entity is used */
 	if (filepath_ent != NULL && bh_ent != NULL) {

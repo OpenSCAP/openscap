@@ -1659,7 +1659,9 @@ struct cvrf_score_set *cvrf_score_set_parse(xmlTextReaderPtr reader) {
 		if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_VECTOR) == 0) {
 			score_set->vector = oscap_element_string_copy(reader);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_PRODUCT_ID) == 0) {
-			oscap_stringlist_add_string(score_set->product_ids, oscap_element_string_copy(reader));
+			char *product_id = oscap_element_string_copy(reader);
+			oscap_stringlist_add_string(score_set->product_ids, product_id);
+			free(product_id);
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_BASE_SCORE) == 0) {
 			cvrf_score_set_add_metric(score_set, CVSS_BASE, oscap_element_string_copy(reader));
 		} else if (xmlStrcmp(xmlTextReaderConstLocalName(reader), TAG_ENVIRONMENTAL_SCORE) == 0) {
@@ -2336,7 +2338,6 @@ struct cvrf_index *cvrf_index_parse_xml(struct oscap_source *index_source) {
 	}
 	struct cvrf_index *index = cvrf_index_new();
 	cvrf_index_set_index_file(index, oscap_source_readable_origin(index_source));
-	oscap_source_free(index_source);
 	return index;
 }
 

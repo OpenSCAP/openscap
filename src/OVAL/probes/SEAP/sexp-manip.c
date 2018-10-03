@@ -931,7 +931,10 @@ SEXP_t *SEXP_list_new (SEXP_t *memb, ...)
 
         va_start(ap, memb);
         list = SEXP_new ();
-        list = SEXP_list_new_rv(list, memb, ap);
+        if (SEXP_list_new_rv(list, memb, ap) == NULL) {
+		SEXP_free(list);
+		list = NULL;
+	}
         va_end(ap);
 
         return (list);
@@ -1034,7 +1037,10 @@ SEXP_t *SEXP_list_rest  (const SEXP_t *list)
 	SEXP_t *sexp;
 
 	sexp = SEXP_new();
-	sexp = SEXP_list_rest_r(sexp, list);
+	if (SEXP_list_rest_r(sexp, list) == NULL) {
+		SEXP_free(sexp);
+		sexp = NULL;
+	}
 
 	return (sexp);
 }

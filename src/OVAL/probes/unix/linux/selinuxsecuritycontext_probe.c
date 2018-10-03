@@ -104,6 +104,66 @@ static void split_range(const char *range, char **l_s, char **l_c, char **h_s, c
 	}
 }
 
+static SEXP_t *create_process_probe_item_with_range(
+		const char *range, const char *user, const char *role, const char *type,
+		int pid_number) {
+	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
+	SEXP_t *item;
+
+	split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+	item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+		"pid",     OVAL_DATATYPE_INTEGER, (int64_t)pid_number,
+
+		"user",     OVAL_DATATYPE_STRING, user,
+		"role",     OVAL_DATATYPE_STRING, role,
+		"type",     OVAL_DATATYPE_STRING, type,
+		"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+		"low_category", OVAL_DATATYPE_STRING, l_category,
+		"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+		"high_category", OVAL_DATATYPE_STRING, h_category,
+		NULL);
+	free(l_sensitivity);
+	free(l_category);
+	free(h_sensitivity);
+	free(h_category);
+
+	return item;
+}
+
+
+static SEXP_t *create_file_probe_item_with_range(
+		const char *range, const char *user, const char *role, const char *type,
+		const char *pbuf, const char *p, const char *f) {
+	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
+	SEXP_t *item;
+
+	split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
+	item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
+		"filepath", OVAL_DATATYPE_STRING, pbuf,
+		"path",     OVAL_DATATYPE_STRING, p,
+		"filename", OVAL_DATATYPE_STRING, f,
+
+		"user",     OVAL_DATATYPE_STRING, user,
+		"role",     OVAL_DATATYPE_STRING, role,
+		"type",     OVAL_DATATYPE_STRING, type,
+		"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+		"low_category", OVAL_DATATYPE_STRING, l_category,
+		"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+		"high_category", OVAL_DATATYPE_STRING, h_category,
+
+		"rawlow_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
+		"rawlow_category", OVAL_DATATYPE_STRING, l_category,
+		"rawhigh_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
+		"rawhigh_category", OVAL_DATATYPE_STRING, h_category,
+		NULL);
+	free(l_sensitivity);
+	free(l_category);
+	free(h_sensitivity);
+	free(h_category);
+
+	return item;
+}
+
 static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 
 	SEXP_t *pid_sexp, *item;
@@ -113,7 +173,6 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 	DIR *proc;
 	struct dirent *dir_entry;
 	const char *user, *role, *type, *range;
-	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
 
 	if ((proc = opendir("/proc")) == NULL) {
 		dE("Can't open /proc dir: %s", strerror(errno));
@@ -144,17 +203,7 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 			type = context_type_get(context);
 			range = context_range_get(context);
 			if (range != NULL) {
-				split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
-				item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
-					"pid",     OVAL_DATATYPE_INTEGER, (int64_t)pid_number,
-					"user",     OVAL_DATATYPE_STRING, user,
-					"role",     OVAL_DATATYPE_STRING, role,
-					"type",     OVAL_DATATYPE_STRING, type,
-					"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
-					"low_category", OVAL_DATATYPE_STRING, l_category,
-					"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
-					"high_category", OVAL_DATATYPE_STRING, h_category,
-					NULL);
+				item = create_process_probe_item_with_range(range, user, role, type, pid_number);
 			}
 			else {
 				item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
@@ -189,7 +238,6 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 	int file_context_size;
 	context_t context;
 	const char *user, *role, *type, *range;
-	char *l_sensitivity, *l_category, *h_sensitivity, *h_category;
 	int err = 0;
 
 	/* directory */
@@ -245,23 +293,7 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 		range = context_range_get(context);
 
 		if (range != NULL) {
-			split_range(range, &l_sensitivity, &l_category, &h_sensitivity, &h_category);
-			item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
-							"filepath", OVAL_DATATYPE_STRING, pbuf,
-							"path",     OVAL_DATATYPE_STRING, p,
-							"filename", OVAL_DATATYPE_STRING, f,
-							"user",     OVAL_DATATYPE_STRING, user,
-							"role",     OVAL_DATATYPE_STRING, role,
-							"type",     OVAL_DATATYPE_STRING, type,
-							"low_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
-							"low_category", OVAL_DATATYPE_STRING, l_category,
-							"high_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
-							"high_category", OVAL_DATATYPE_STRING, h_category,
-							"rawlow_sensitivity", OVAL_DATATYPE_STRING, l_sensitivity,
-							"rawlow_category", OVAL_DATATYPE_STRING, l_category,
-							"rawhigh_sensitivity", OVAL_DATATYPE_STRING, h_sensitivity,
-							"rawhigh_category", OVAL_DATATYPE_STRING, h_category,
-							NULL);
+			item = create_file_probe_item_with_range(range, user, role, type, pbuf, p, f);
 		}
 		else {
 			item = probe_item_create(OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL,
