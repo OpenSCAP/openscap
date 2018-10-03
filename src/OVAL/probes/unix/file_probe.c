@@ -393,6 +393,8 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		if (se_acl == NULL) {
 			probe_item_ent_add(item, "has_extended_acl", NULL, SEXP_number_newb(true));
 			probe_itement_setstatus(item, "has_extended_acl", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
+		} else {
+			SEXP_free(se_acl);
 		}
 
                 SEXP_free(se_grp_id);
