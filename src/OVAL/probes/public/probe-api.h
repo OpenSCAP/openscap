@@ -440,12 +440,6 @@ OSCAP_API void probe_tfc54behaviors_canonicalize(SEXP_t **behaviors);
 #define PROBECMD_OBJ_EVAL  2 /**< Object eval command code */
 #define PROBECMD_RESET     3 /**< Reset command code */
 
-
-OSCAP_API int probe_offline_mode_supported(void);
-OSCAP_API void probe_preload(void);
-OSCAP_API void *probe_init(void) __attribute__ ((unused));
-OSCAP_API void probe_fini(void *) __attribute__ ((unused));
-
 typedef struct probe_ctx probe_ctx;
 
 OSCAP_API bool probe_item_filtered(const SEXP_t *item, const SEXP_t *filters);
