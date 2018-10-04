@@ -348,7 +348,7 @@ static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool
 
 
 static void free_env_values(char **env_values, size_t index_of_first_env_value_not_compiled_in, size_t real_env_values_count) {
-	for (i = index_of_first_env_value_not_compiled_in; i < real_env_values_count; i++) {
+	for (size_t i = index_of_first_env_value_not_compiled_in; i < real_env_values_count; i++) {
 		free(env_values[i]);
 	}
 	free(env_values);
