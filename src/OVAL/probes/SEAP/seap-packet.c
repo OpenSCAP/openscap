@@ -864,7 +864,7 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
                 return (-1);
         }
 
-        if (DESC_WLOCK (dsc)) {
+	if (DESC_WLOCK(dsc) == 1) {
                 ret = 0;
 
 		if (sch_queue_sendsexp(dsc, packet_sexp, 0) < 0) {
@@ -875,8 +875,15 @@ int SEAP_packet_send (SEAP_CTX_t *ctx, int sd, SEAP_packet_t *packet)
                         }
                 }
 
-                DESC_WUNLOCK(dsc);
-        }
+		if (DESC_WUNLOCK(dsc) != 1) {
+			dE("DESC_WUNLOCK failed to unlock a mutex: %s", strerror(errno));
+			ret = -1;
+		}
+	} else {
+		dE("DESC_WLOCK failed to lock a mutex: %s", strerror(errno));
+		ret = -1;
+	}
+
 
         protect_errno {
                 SEXP_free (packet_sexp);
