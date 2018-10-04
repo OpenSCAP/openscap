@@ -39,7 +39,7 @@
 #include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
-#include <seap.h>
+#include "_seap.h"
 #include <assert.h>
 
 #include "oval_probe_impl.h"

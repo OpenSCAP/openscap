@@ -27,7 +27,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <string.h>
-#include <seap.h>
+#include "_seap.h"
 #include <probe-api.h>
 
 #include "common/debug_priv.h"

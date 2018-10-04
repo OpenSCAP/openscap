@@ -31,7 +31,7 @@
 #include <unistd.h>
 #endif
 #include <sexp-types.h>
-#include <strbuf.h>
+#include "generic/strbuf.h"
 #include "oscap_export.h"
 
 #ifdef __cplusplus

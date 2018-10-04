@@ -58,7 +58,6 @@
 #ifndef PROBE_API_H
 #define PROBE_API_H
 
-#include <seap.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -67,6 +66,7 @@
 #include <oval_system_characteristics.h>
 #include <oval_results.h>
 #include <oval_types.h>
+#include "sexp-types.h"
 #include "oscap_export.h"
 
 /*

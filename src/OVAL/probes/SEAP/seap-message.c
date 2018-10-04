@@ -29,6 +29,7 @@
 #include "_sexp-types.h"
 #include "_seap-types.h"
 #include "_seap-message.h"
+#include "_sexp-manip.h"
 #include "debug_priv.h"
 
 SEAP_msg_t *SEAP_msg_new (void)

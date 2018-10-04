@@ -34,9 +34,6 @@
 #include "_seap-packetq.h"
 #include "_sexp-output.h"
 #include "_seap-command.h"
-#include "public/seap-message.h"
-#include "public/seap-command.h"
-#include "public/seap-error.h"
 #include "../../../common/util.h"
 
 typedef uint8_t SEAP_scheme_t;
@@ -68,11 +65,6 @@ typedef struct {
 #define SEAP_DESC_FDIN  0x00000001
 #define SEAP_DESC_FDOUT 0x00000002
 #define SEAP_DESC_SELF  -1
-
-typedef struct {
-        rbt_t       *tree;
-        bitmap_t    *bmap;
-} SEAP_desctable_t;
 
 #define SEAP_DESCTBL_INITIALIZER { NULL, NULL }
 
