@@ -12,6 +12,7 @@ target_include_directories(test_api_probes_smoke PUBLIC
 file(GLOB_RECURSE OVAL_RESULTS_SOURCES "${CMAKE_SOURCE_DIR}/src/OVAL/results/oval_cmp*.c")
 add_oscap_test_executable(oval_fts_list
 	"oval_fts_list.c"
+	"${CMAKE_SOURCE_DIR}/src/OVAL/probes/fsdev.c"
 	"${CMAKE_SOURCE_DIR}/src/OVAL/probes/oval_fts.c"
 	"${CMAKE_SOURCE_DIR}/src/common/error.c"
 	"${CMAKE_SOURCE_DIR}/src/common/err_queue.c"

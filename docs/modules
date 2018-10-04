@@ -24,7 +24,6 @@
  *      @defgroup PROBEHANDLERS Probe handler API
  *      @defgroup PROBESESSION Probe session API
  *      @defgroup PROBEAPI Common probe API - object, entity, item manipulation
- *      @defgroup PROBEAUXAPI Auxilirary functions for probes
  *      @defgroup SEXPRESSIONS SEAP and S-expression API
  *   @}
  * @}
