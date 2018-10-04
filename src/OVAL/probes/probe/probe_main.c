@@ -276,7 +276,6 @@ void *probe_common_main(void *arg)
 				fail(errno, "chdir", __LINE__ -1);
 			}
 
-			probe_preload();
 			if (chroot(rootdir) != 0) {
 				fail(errno, "chroot", __LINE__ - 1);
 			}
