@@ -8,6 +8,7 @@
 set -e -o pipefail
 
 function test_sce {
+    require "python3" || return 255
 
     local ret_val=0;
     local DEFFILE=${srcdir}/$1
