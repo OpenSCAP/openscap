@@ -221,6 +221,9 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  "text",     OVAL_DATATYPE_STRING, substrs[0],
                                  NULL);
 
+	SEXP_string_free(se_filepath);
+	SEXP_string_free(se_instance);
+
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_new (substrs[i], strlen (substrs[i])));
                 SEXP_free (r0);
