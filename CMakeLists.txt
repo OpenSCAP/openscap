@@ -192,8 +192,11 @@ find_program(SED_EXECUTABLE sed)
 find_program(GIT_EXECUTABLE git)
 
 # ---------- CORE FEATURE SWITCHES
-
-option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" ON)
+if(WIN32)
+	option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" OFF)
+else()
+	option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" ON)
+endif()
 
 # ---------- OVAL FEATURE SWITCHES
 
