@@ -847,6 +847,8 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 	    oval_message_set_text(msg, txt);
 	    oval_sysitem_add_message(item, msg);
 
+	    free(key);
+
 	    return (NULL);
 	}
 

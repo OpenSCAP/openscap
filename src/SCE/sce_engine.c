@@ -348,7 +348,7 @@ static void _pipe_try_read_into_string(int fd, struct oscap_string *string, bool
 
 
 static void free_env_values(char **env_values, size_t index_of_first_env_value_not_compiled_in, size_t real_env_values_count) {
-	for (i = index_of_first_env_value_not_compiled_in; i < real_env_values_count; i++) {
+	for (size_t i = index_of_first_env_value_not_compiled_in; i < real_env_values_count; i++) {
 		free(env_values[i]);
 	}
 	free(env_values);
@@ -512,8 +512,6 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 		if (fork_result == 0)
 		{
-			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
-
 			// we won't read from the pipes, so close the reading fd
 			close(stdout_pipefd[0]);
 			close(stderr_pipefd[0]);
@@ -539,6 +537,8 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 			// we are the child process
 			execve(tmp_href, argvp, env_values);
+
+			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 
 			// no need to check the return value of execve, if it returned at all we are in trouble
 			printf("Unexpected error when executing script '%s'. Error message follows.\n", href);
