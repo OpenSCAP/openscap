@@ -160,7 +160,7 @@ bool xccdf_benchmark_parse(struct xccdf_item * benchmark, xmlTextReaderPtr reade
 				oscap_list_add(benchmark->sub.benchmark.rear_matter, oscap_text_new_parse(XCCDF_TEXT_HTMLSUB, reader));
 			break;
 		case XCCDFE_PLATFORM:
-			oscap_list_add(benchmark->item.platforms, xccdf_attribute_copy(reader, XCCDFA_IDREF));
+			xccdf_item_add_applicable_platform(benchmark, reader);
 			break;
 		case XCCDFE_MODEL:
 			parsed_model = xccdf_model_new_xml(reader);

@@ -520,6 +520,8 @@ void xccdf_reparent_item(struct xccdf_item * item, struct xccdf_item * parent);
 
 void xccdf_texts_to_dom(struct oscap_text_iterator *texts, xmlNode *parent, const char *elname);
 
+void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPtr reader);
+
 #include "unused.h"
 
 
