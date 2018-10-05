@@ -1,5 +1,7 @@
 if(ENABLE_SCE)
-	add_oscap_test("test_sce.sh")
+	if(${PYTHON_VERSION_MAJOR} EQUAL "3")
+		add_oscap_test("test_sce.sh")
+	endif()
 	add_oscap_test("test_passing_vars.sh")
 	add_oscap_test("test_check_engine_results.sh")
 	add_oscap_test("test_sce_parse_errors.sh")
