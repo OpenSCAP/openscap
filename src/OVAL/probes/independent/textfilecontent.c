@@ -245,6 +245,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	char *whole_path = NULL, *whole_path_with_prefix = NULL;
 	FILE *fp = NULL;
 	struct stat st;
+	char **substrs = NULL;
+	int substr_cnt = 0;
 
 // todo: move to probe_main()?
 #if defined USE_REGEX_PCRE
@@ -302,9 +304,6 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	char line[4096];
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
-		char **substrs;
-		int substr_cnt;
-
 		substr_cnt = get_substrings(line, re, 1, &substrs);
 		if (substr_cnt > 0) {
 			int k;
