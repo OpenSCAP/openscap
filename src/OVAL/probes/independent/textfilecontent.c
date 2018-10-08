@@ -221,6 +221,9 @@ static SEXP_t *create_item(const char *path, const char *filename, char *pattern
                                  "text",     OVAL_DATATYPE_STRING, substrs[0],
                                  NULL);
 
+	SEXP_string_free(se_filepath);
+	SEXP_string_free(se_instance);
+
 	for (i = 1; i < substr_cnt; ++i) {
                 probe_item_ent_add (item, "subexpression", NULL, r0 = SEXP_string_new (substrs[i], strlen (substrs[i])));
                 SEXP_free (r0);
@@ -242,6 +245,8 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	char *whole_path = NULL, *whole_path_with_prefix = NULL;
 	FILE *fp = NULL;
 	struct stat st;
+	char **substrs = NULL;
+	int substr_cnt = 0;
 
 // todo: move to probe_main()?
 #if defined USE_REGEX_PCRE
@@ -299,9 +304,6 @@ static int process_file(const char *prefix, const char *path, const char *filena
 	char line[4096];
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
-		char **substrs;
-		int substr_cnt;
-
 		substr_cnt = get_substrings(line, re, 1, &substrs);
 		if (substr_cnt > 0) {
 			int k;
