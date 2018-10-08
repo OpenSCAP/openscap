@@ -87,6 +87,7 @@
     }
     $1[i] = 0;
   } else {
+    free($1);
     PyErr_SetString(PyExc_TypeError,"not a list");
     return NULL;
   }
@@ -159,6 +160,9 @@
         }
         $1[i] = (struct oval_syschar_model *) arg;
     }
+}
+%typemap(freearg) struct oval_syschar_model ** {
+    free($1);
 }
 #elif defined(SWIGPERL)
 /* Definitions for PERL */
