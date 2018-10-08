@@ -219,6 +219,7 @@ static inline int ipv4addr_parse(const char *oval_ipv4_string, uint32_t *netmask
 			*netmask_out = (~0u) << (32u - nm[0]);
 		} else {
 			dW("Invalid prefix or netmask.");
+			free(s);
 			return -1;
 		}
 	} else {
