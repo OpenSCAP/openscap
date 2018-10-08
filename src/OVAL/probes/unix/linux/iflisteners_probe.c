@@ -352,7 +352,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 			}
 			else {
 				int buf_len;
-				if (fscanf(fd, "%s\n", buf) < 1)
+				if (fscanf(fd, "%254s\n", buf) < 1)
 					*buf = '\0';
 
 				buf_len = strlen(buf);

@@ -180,6 +180,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	struct pfdata *pfd = (struct pfdata *) arg;
 	int ret = 0, path_len, file_len, cur_inst = 0, fd = -1, substr_cnt,
 		buf_size = 0, buf_used = 0, ofs = 0, buf_inc = 4096;
+	char **substrs = NULL;
 	char *whole_path = NULL, *whole_path_with_prefix = NULL, *buf = NULL;
 	SEXP_t *next_inst = NULL;
 	struct stat st;
@@ -249,7 +250,6 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 	buf[buf_used++] = '\0';
 
 	do {
-		char **substrs;
 		int want_instance;
 
 		next_inst = SEXP_number_newi_32(cur_inst + 1);
