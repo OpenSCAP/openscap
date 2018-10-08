@@ -353,7 +353,7 @@ static int get_interface(const int ent_ifindex, struct interface_t *interface) {
 				*(interface->hw_address) = '\0';
 			}
 			else {
-				if (fscanf(fd, "%s\n", buf) < 1)
+				if (fscanf(fd, "%254s\n", buf) < 1)
 					*buf = '\0';
 
 				snprintf(interface->hw_address, sizeof interface->hw_address, "%s", buf);
