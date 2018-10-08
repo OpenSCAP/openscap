@@ -354,6 +354,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 		free(whole_path);
 	free(whole_path_with_prefix);
 
+	/* coverity[leaked_storage] - substrs is not leaked */
 	return ret;
 }
 
