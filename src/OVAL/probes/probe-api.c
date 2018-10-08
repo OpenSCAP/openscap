@@ -1264,6 +1264,7 @@ char *probe_ent_getname(const SEXP_t * ent)
 		ent_name = tmp;
 
 		if (!SEXP_stringp(ent_name)) {
+			SEXP_free(ent_name);
 			errno = EINVAL;
 			return NULL;
 		}
