@@ -512,7 +512,6 @@ struct cvrf_vulnerability *cvrf_vulnerability_clone(const struct cvrf_vulnerabil
 }
 
 int cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const char *prod) {
-	struct oscap_stringlist *filtered_ids = oscap_stringlist_new();
 	int ret = 0;
 
 	struct cvrf_product_status_iterator *statuses = cvrf_vulnerability_get_product_statuses(vuln);
@@ -520,6 +519,7 @@ int cvrf_vulnerability_filter_by_product(struct cvrf_vulnerability *vuln, const 
 		struct cvrf_product_status *stat = cvrf_product_status_iterator_next(statuses);
 
 		struct oscap_string_iterator *products = cvrf_product_status_get_ids(stat);
+		struct oscap_stringlist *filtered_ids = oscap_stringlist_new();
 		while (oscap_string_iterator_has_more(products)) {
 			const char *product_id = oscap_string_iterator_next(products);
 			if (oscap_str_startswith(product_id, prod))
