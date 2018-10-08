@@ -1308,6 +1308,7 @@ size_t probe_ent_getname_r(const SEXP_t * ent, char *buffer, size_t buflen)
 		ent_name = tmp;
 
 		if (!SEXP_stringp(ent_name)) {
+			SEXP_free(ent_name);
 			errno = EINVAL;
 			return name_len;
 		}
