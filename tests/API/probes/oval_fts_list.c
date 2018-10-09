@@ -83,6 +83,12 @@ static int create_filename_sexpr(char *arg_operation, char *arg_argument, SEXP_t
 		SEXP_list_add(*result, s_filename_argument);
 	}
 
+	SEXP_free(s_filename_str);
+	SEXP_free(s_operation_str);
+	SEXP_free(s_operation_number);
+	SEXP_free(s_filename_argument);
+	SEXP_free(s_inner_list);
+
 	return 0;
 }
 
