@@ -54,7 +54,7 @@
         $1 = (time_t) PyFloat_AsDouble($input);
     else {
         PyErr_SetString(PyExc_TypeError,"Expected a large number");
-        return NULL;
+        SWIG_fail;
     }
 }
 
@@ -92,7 +92,7 @@
   } else {
     free($1);
     PyErr_SetString(PyExc_TypeError,"not a list");
-    return NULL;
+    SWIG_fail;
   }
 }
 
@@ -109,11 +109,11 @@
 
     if (!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-        return NULL;
+        SWIG_fail;
     }
     if (a_size <= 0) {
         PyErr_SetString(PyExc_ValueError,"Expected not empty sequence");
-        return NULL;
+        SWIG_fail;
     }
 
     $1 = (struct cpe_name **) malloc(a_size*sizeof(struct cpe_name *));
@@ -122,12 +122,12 @@
         PyObject *obj = PySequence_GetItem($input,i);
         if (obj == NULL) {
             SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "cpe_name" "' substitution '" "', can't access sequence");
-            return NULL; /*5956*/
+            SWIG_fail; /*5956*/
         }
         res_o = SWIG_ConvertPtr(obj, &arg, SWIGTYPE_p_cpe_name, 0 );
         if (!SWIG_IsOK(res_o)) {
             SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "cpe_name" "' substitution invalid types");
-            return NULL;
+            SWIG_fail;
         }
         $1[i] = (struct cpe_name *) arg;
     }
@@ -141,11 +141,11 @@
 
     if (!PySequence_Check($input)) {
         PyErr_SetString(PyExc_ValueError,"Expected a sequence");
-        return NULL;
+        SWIG_fail;
     }
     if (a_size <= 0) {
         PyErr_SetString(PyExc_ValueError,"Expected not empty sequence");
-        return NULL;
+        SWIG_fail;
     }
 
     $1 = (struct oval_syschar_model **) malloc(a_size*sizeof(struct oval_syschar_model *));
@@ -154,12 +154,12 @@
         PyObject *obj = PySequence_GetItem($input,i);
         if (obj == NULL) {
             SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "oval_syschar_model" "' substitution '" "', can't access sequence");
-            return NULL;
+            SWIG_fail;
         }
         res_o = SWIG_ConvertPtr(obj, &arg, SWIGTYPE_p_oval_syschar_model, 0 );
         if (!SWIG_IsOK(res_o)) {
             SWIG_exception_fail(SWIG_ArgError(res_o), "in argument '" "oval_syschar_model" "' substitution invalid types");
-            return NULL;
+            SWIG_fail;
         }
         $1[i] = (struct oval_syschar_model *) arg;
     }
