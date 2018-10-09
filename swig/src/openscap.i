@@ -87,7 +87,6 @@
     }
     $1[i] = 0;
   } else {
-    free($1);
     PyErr_SetString(PyExc_TypeError,"not a list");
     SWIG_fail;
   }
