@@ -28,6 +28,16 @@ sysctl -aN --deprecated 2> /dev/null | tr "/" "." | sort -u > "$sysctlNames"
 
 grep unix-sys:name "$result" | sed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
 
+# If procps_ver > 3.3.12 we need to filter *stable_secret and vm.stat_refresh
+# options from the sysctl output, for more details see
+# https://github.com/OpenSCAP/openscap/issues/1152.
+procps_ver=$(rpm -q procps-ng --qf="%{version}")
+lowest_ver=$(echo -e "3.3.12\n$procps_ver" | sort -V | head -n1)
+if [ "$procps_ver" != "$lowest_ver" ]; then
+	sed -i '/net.ipv6.conf.*stable_secret$/d' "$sysctlNames"
+	sed -i '/.*vm.stat_refresh/d' "$sysctlNames"
+fi
+
 diff "$sysctlNames" "$ourNames"
 
 # remove oscap error message related to permissions from stderr
