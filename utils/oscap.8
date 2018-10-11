@@ -1,4 +1,4 @@
-.TH OSCAP "8" "March 2017" "Red Hat" "System Administration Utilities"
+.TH OSCAP "8" "October 2018" "Red Hat" "System Administration Utilities"
 
 .SH NAME
 oscap \- OpenSCAP command line tool
@@ -15,7 +15,7 @@ OpenSCAP tool claims to provide capabilities of Authenticated Configuration Scan
 .SH GENERAL OPTIONS
 .TP
 \fB\-V, -\-version\fR
-Print supported SCAP specification, location of schema files, schematron files, CPE files, probes and supported OVAL objects.
+Print supported SCAP specifications, location of schema files, schematron files, CPE files, probes and supported OVAL objects.
 Displays a list of inbuilt CPE names.
 .TP
 \fB\-h, \-\-help\fR
@@ -48,7 +48,7 @@ Common Vulnerabilities and Exposures
 .TP
 [\fIoptions\fR] any-scap-file.xml
 .RS
-This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional opperation switch.
+This module prints information about SCAP content in a file specified on a command line. It determines SCAP content type, specification version, date of creation, date of import and so on. Info module doesn't require any additional operation switch.
 
 For XCCDF or Datastream files, info module prints out IDs of incorporated profiles, components, and datastreams. These IDs can be used to specify the target for evaluation. Use options --profile, --xccdf-id (or --oval-id), and --datastream-id respectively.
 .PP
@@ -118,7 +118,8 @@ Writes results to a given FILE in Asset Reporting Format. It is recommended to u
 .TP
 \fB\-\-stig-viewer FILE\fR
 .RS
-Writes XCCDF results into FILE in a format readable by DISA STIG Viewer. See \fIhttp://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx\f.
+Writes XCCDF results into FILE in a format readable by DISA STIG Viewer. See \fIhttp://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx\fR.
+This option should be used to generate results for DISA STIG Viewer older than 2.6. To use DISA STIG Viewer 2.6 or newer, use \fB\-\-results\fR instead.
 .RE
 .TP
 \fB\-\-thin-results\fR
@@ -133,7 +134,7 @@ Don't provide system characteristics in OVAL/ARF result files.
 .TP
 \fB\-\-report FILE\fR
 .RS
-Write HTML report into FILE. You also have to specify --results for this feature to work. Please see --oval-results to enable additional information in the report.
+Write HTML report into FILE. Add \fB\-\-oval-results\fR to enable detailed information in the report.
 .RE
 .TP
 \fB\-\-oval-results\fR
@@ -189,6 +190,10 @@ Turn on verbose mode at specified verbosity level. VERBOSITY_LEVEL is one of: DE
 \fB\-\-verbose-log-file FILE\fR
 .RS
 Set filename to write additional information.
+.TP
+\fB\-\-progress\fR
+.RS
+Switch to sparse output suitable for progress reporting. Format of the output is "$rule_id:$result\\n".
 .RE
 .RE
 .TP
@@ -228,12 +233,13 @@ Writes results to a given FILE in Asset Reporting Format. It is recommended to u
 .TP
 \fB\-\-stig-viewer FILE\fR
 .RS
-Writes XCCDF results into FILE in a format readable by DISA STIG Viewer. See \fIhttp://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx\f.
+Writes XCCDF results into FILE in a format readable by DISA STIG Viewer. See \fIhttp://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx\fR.
+This option should be used to generate results for DISA STIG Viewer older than 2.6. To use DISA STIG Viewer 2.6 or newer, use \fB\-\-results\fR instead.
 .RE
 .TP
 \fB\-\-report FILE\fR
 .RS
-Write HTML report into FILE. You also have to specify --results for this feature to work.
+Write HTML report into FILE. Add \fB\-\-oval-results\fR to enable detailed information in the report.
 .RE
 .TP
 \fB\-\-oval-results\fR
@@ -249,6 +255,11 @@ After evaluation is finished, each loaded check engine plugin is asked to export
 \fB\-\-export-variables\fR
 .RS
 Generate OVAL Variables documents which contain external variables' values that were provided to the OVAL checking engine during evaluation. The filename format is '\fIoriginal-oval-definitions-filename\fR-\fIsession-index\fR.variables-\fIvariables-index\fR.xml'.
+.RE
+.TP
+\fB\-\-progress\fR
+.RS
+Switch to sparse output suitable for progress reporting. Format of the output is "$rule_id:$result\\n".
 .RE
 .RE
 .TP
@@ -315,18 +326,21 @@ Available submodules:
 .TP
 .B \fBguide\fR  [\fIoptions\fR] xccdf-file
 .RS
-Generate a formatted document containing a security guide from a XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output. Without profile being set only groups (not rules) will be included in the output.
+Generate a HTML document containing a security guide from an XCCDF Benchmark. Unless the --output option is specified it will be written to the standard output. Without profile being set only groups (not rules) will be included in the output.
 .TP
 \fB\-\-output FILE\fR
 Write the guide to this file instead of standard output.
 .TP
 \fB\-\-hide-profile-info\fR
 Information on chosen profile (e.g. rules selected by the profile) will be excluded from the document.
+.TP
+\fB\-\-benchmark-id ID\fR
+Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
 .RE
 .TP
 .B \fBreport\fR  [\fIoptions\fR] xccdf-file
 .RS
-Generate a document containing results of a XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output. ID of the TestResult element to visualise defaults to the most recent result (according to the end-time attribute).
+Generate a HTML document containing results of an XCCDF Benchmark execution. Unless the --output option is specified it will be written to the standard output.
 .TP
 \fB\-\-output FILE\fR
 Write the report to this file instead of standard output.
@@ -417,19 +431,14 @@ Write OVAL Results into file.
 Create human readable (HTML) report from OVAL Results.
 .TP
 \fB\-\-datastream-id ID\fR
-.RS
 Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used. Only applies if you give source datastream in place of an OVAL file.
-.RE
 .TP
 \fB\-\-oval-id ID\fR
-.RS
 Takes component ref with given ID from checks. This allows to select a particular OVAL component even in cases where there are 2 OVALs in one datastream.
-.RE
 .TP
 \fB\-\-skip-valid\fR
 Do not validate input/output files.
 .TP
-.RE
 \fB\-\-fetch-remote-resources\fR
 Allow download of remote components referenced from Datastream.
 .RE
