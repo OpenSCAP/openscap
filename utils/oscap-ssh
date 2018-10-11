@@ -115,6 +115,11 @@ function scp_retreive_from_temp_dir {
     scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$SSH_HOST:$REMOTE_TEMP_DIR/$1" "$2"
 }
 
+function first_argument_is_sudo {
+	[ "$1" == "sudo" ] || [ "$1" == "--sudo" ]
+	return $?
+}
+
 function sanity_check_arguments {
     if [ $# -lt 1 ]; then
         echo "No arguments provided."
@@ -123,7 +128,7 @@ function sanity_check_arguments {
     elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
         usage
         die
-    elif [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]; then
+    elif first_argument_is_sudo "$@"; then
         OSCAP_SUDO="sudo"
         # force pseudo-tty allocation so that users can type their password if necessary
         SSH_TTY_ALLOCATION_OPTION="-t"
@@ -155,6 +160,7 @@ function check_oscap_arguments {
 }
 
 sanity_check_arguments "$@"
+first_argument_is_sudo "$@" && shift
 
 SSH_HOST="$1"
 SSH_PORT="$2"
