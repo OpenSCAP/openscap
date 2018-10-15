@@ -240,6 +240,7 @@ void print_usage(const char *program_name, FILE * out)
 int print_expr_prefix_form(const struct cpe_testexpr *expr)
 {
 	//const struct cpe_testexpr *sub;
+	char *name = NULL;
 
 	putchar('(');
 
@@ -259,7 +260,9 @@ int print_expr_prefix_form(const struct cpe_testexpr *expr)
 		    );
 		break;
 	case CPE_LANG_OPER_MATCH:
-		printf("%s", cpe_name_get_as_str(cpe_testexpr_get_meta_cpe(expr)));
+		name = cpe_name_get_as_str(cpe_testexpr_get_meta_cpe(expr));
+		printf("%s", name);
+		free(name);
 		break;
 	default:
 		return 1;
