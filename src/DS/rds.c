@@ -722,14 +722,6 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 	xmlNodePtr arf_content = xmlNewNode(arf_ns, BAD_CAST "content");
 
-	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
-	xmlNodePtr sds_res_node = NULL;
-	xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
-			&sds_res_node, doc, NULL, 1, 0);
-	xmlAddChild(arf_content, sds_res_node);
-	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
-	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
-
 	if (tailoring_doc) {
 		xmlDOMWrapCtxtPtr tailoring_wrap_ctxt = xmlDOMWrapNewCtxt();
 		xmlNodePtr tailoring_res_node = NULL;
@@ -739,6 +731,14 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		xmlDOMWrapReconcileNamespaces(tailoring_wrap_ctxt, tailoring_res_node, 0);
 		xmlDOMWrapFreeCtxt(tailoring_wrap_ctxt);
 	}
+
+	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
+	xmlNodePtr sds_res_node = NULL;
+	xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
+			&sds_res_node, doc, NULL, 1, 0);
+	xmlAddChild(arf_content, sds_res_node);
+	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
+	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
 
 	xmlAddChild(report_request, arf_content);
 
