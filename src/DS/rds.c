@@ -38,6 +38,7 @@
 #include "ds_rds_session.h"
 #include "ds_rds_session_priv.h"
 #include "rds_priv.h"
+#include "sds_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
 
@@ -55,6 +56,7 @@ static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-for
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vocabulary/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
+static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
 
 xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
 {
@@ -722,16 +724,6 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 	xmlNodePtr arf_content = xmlNewNode(arf_ns, BAD_CAST "content");
 
-	if (tailoring_doc) {
-		xmlDOMWrapCtxtPtr tailoring_wrap_ctxt = xmlDOMWrapNewCtxt();
-		xmlNodePtr tailoring_res_node = NULL;
-		xmlDOMWrapCloneNode(tailoring_wrap_ctxt, tailoring_doc, xmlDocGetRootElement(tailoring_doc),
-				&tailoring_res_node, doc, NULL, 1, 0);
-		xmlAddChild(arf_content, tailoring_res_node);
-		xmlDOMWrapReconcileNamespaces(tailoring_wrap_ctxt, tailoring_res_node, 0);
-		xmlDOMWrapFreeCtxt(tailoring_wrap_ctxt);
-	}
-
 	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
 	xmlNodePtr sds_res_node = NULL;
 	xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
@@ -739,6 +731,36 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 	xmlAddChild(arf_content, sds_res_node);
 	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
 	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
+
+	if (tailoring_doc) {
+		const char *tailoring_component_id = "scap_org.open-scap_comp_user_file_tailoring";
+		const char *tailoring_component_ref_id = "scap_org.open-scap_cref_user_file_tailoring";
+
+		xmlDOMWrapCtxtPtr tailoring_wrap_ctxt = xmlDOMWrapNewCtxt();
+		xmlNodePtr tailoring_res_node = NULL;
+		xmlDOMWrapCloneNode(tailoring_wrap_ctxt, tailoring_doc, xmlDocGetRootElement(tailoring_doc),
+				&tailoring_res_node, doc, NULL, 1, 0);
+		xmlNsPtr sds_ns = sds_res_node->ns;
+		xmlNodePtr tailoring_component = xmlNewNode(sds_ns, BAD_CAST "component");
+		xmlSetProp(tailoring_component, BAD_CAST "id", BAD_CAST tailoring_component_id);
+		xmlAddChild(tailoring_component, tailoring_res_node);
+		xmlAddChild(sds_res_node, tailoring_component);
+
+		xmlNodePtr datastream_element = node_get_child_element(sds_res_node, "data-stream");
+		// TODO: error checking
+		xmlNodePtr checklists_element = node_get_child_element(datastream_element, "checklists");
+		// erorr cehcking
+		xmlNodePtr tailoring_component_ref = xmlNewNode(sds_ns, BAD_CAST "component-ref");
+		xmlSetProp(tailoring_component_ref, BAD_CAST "id", BAD_CAST tailoring_component_ref_id);
+		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
+		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
+		xmlSetNsProp(tailoring_component_ref, xlink_ns, BAD_CAST "href", BAD_CAST tailoring_cref_href);
+		free(tailoring_cref_href);
+		xmlAddChild(checklists_element, tailoring_component_ref);
+
+		xmlDOMWrapReconcileNamespaces(tailoring_wrap_ctxt, tailoring_res_node, 0);
+		xmlDOMWrapFreeCtxt(tailoring_wrap_ctxt);
+	}
 
 	xmlAddChild(report_request, arf_content);
 
