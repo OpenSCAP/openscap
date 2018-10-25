@@ -64,6 +64,8 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		docs/examples/package-test.xml \
                 docs/oscap-scan.cron \
 		docs/manual/manual.adoc \
+		docs/manual/manual.html \
+		docs/manual/images/vertical-logo.png \
 		dist/fedora/sectool-xccdf/00_integrity.sh \
 		dist/fedora/sectool-xccdf/01_bootloader.sh \
 		dist/fedora/sectool-xccdf/01_disk_usage.sh \
@@ -92,9 +94,15 @@ EXTRA_DIST =	m4/gnulib-cache.m4 \
 		dist/fedora/sectool-xccdf/sectool-xccdf.xml \
 		README.md
 
-dist-hook: ChangeLog
+docs/manual/%.html: $(srcdir)/docs/manual/%.adoc
+	asciidoctor -b html5 -o $@ $<
+
+docmanualdir = $(docdir)/manual
+dist_docmanual_DATA:
+	docs/manual.html
+
+dist-hook: ChangeLog docs/manual/manual.html
 	cd $(distdir)/docs && doxygen Doxyfile
-	cd $(distdir)/docs/manual && asciidoctor -b html5 manual.adoc
 
 ChangeLog:
 	git log | sed '/^commit/d; /^Merge/d' > ChangeLog
