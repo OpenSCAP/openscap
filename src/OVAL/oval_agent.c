@@ -109,6 +109,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	if (ret != 0) {
 		oval_probe_session_destroy(ag_sess->psess);
 		oval_syschar_model_free(ag_sess->sys_model);
+		free(ag_sess->filename);
 		free(ag_sess);
 		return NULL;
 	}
