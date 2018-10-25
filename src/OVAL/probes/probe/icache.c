@@ -502,16 +502,9 @@ static int probe_cobj_memcheck()
  */
 int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 {
-	SEXP_t *cobj_content;
-	size_t  cobj_itemcnt;
-
 	assume_d(ctx != NULL, -1);
 	assume_d(ctx->probe_out != NULL, -1);
 	assume_d(item != NULL, -1);
-
-	cobj_content = SEXP_listref_nth(ctx->probe_out, 3);
-	cobj_itemcnt = SEXP_list_length(cobj_content);
-	SEXP_free(cobj_content);
 
 	if (probe_cobj_memcheck() != 0) {
 
