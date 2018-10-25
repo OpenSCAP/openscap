@@ -457,39 +457,26 @@ int probe_icache_nop(probe_icache_t *cache)
         return (0);
 }
 
-#define PROBE_RESULT_MEMCHECK_CTRESHOLD  32768  /* item count */
-#define PROBE_RESULT_MEMCHECK_MINFREEMEM 512    /* MiB */
-#define PROBE_RESULT_MEMCHECK_MAXRATIO   0.8   /* max. memory usage ratio - used/total */
+/* Every n-th call of probe_cobj_memcheck actually checks memory. This is due to performance reasons */
+#define PROBE_RESULT_MEMCHECK_FREQUENCY  100
+#define PROBE_RESULT_MEMCHECK_MINFREEMEM 256    /* MiB */
 
 /**
  * Returns 0 if the memory constraints are not reached. Otherwise, 1 is returned.
  * In case of an error, -1 is returned.
  */
-static int probe_cobj_memcheck(size_t item_cnt)
+static int probe_cobj_memcheck()
 {
-	if (item_cnt > PROBE_RESULT_MEMCHECK_CTRESHOLD) {
-		struct proc_memusage mu_proc;
+	static __thread unsigned long cnt = PROBE_RESULT_MEMCHECK_FREQUENCY;
+	if (++cnt > PROBE_RESULT_MEMCHECK_FREQUENCY) {
+		cnt = 0;
 		struct sys_memusage  mu_sys;
-		double c_ratio;
-
-		if (oscap_proc_memusage (&mu_proc) != 0)
-			return (-1);
-
 		if (oscap_sys_memusage (&mu_sys) != 0)
 			return (-1);
 
-		c_ratio = (double)mu_proc.mu_rss/(double)(mu_sys.mu_total);
-
-		if (c_ratio > PROBE_RESULT_MEMCHECK_MAXRATIO) {
-			dW("Memory usage ratio limit reached! limit=%f, current=%f",
-			   PROBE_RESULT_MEMCHECK_MAXRATIO, c_ratio);
-			errno = ENOMEM;
-			return (1);
-		}
-
 		if ((mu_sys.mu_realfree / 1024) < PROBE_RESULT_MEMCHECK_MINFREEMEM) {
-			dW("Minimum free memory limit reached! limit=%zu, current=%zu",
-			   PROBE_RESULT_MEMCHECK_MINFREEMEM, mu_sys.mu_realfree / 1024);
+			dW("Minimum free memory limit reached! Currently free memory: %zu MB is lower than minimum free memory limit: %zu MB.",
+				mu_sys.mu_realfree / 1024, PROBE_RESULT_MEMCHECK_MINFREEMEM);
 			errno = ENOMEM;
 			return (1);
 		}
@@ -526,7 +513,7 @@ int probe_item_collect(struct probe_ctx *ctx, SEXP_t *item)
 	cobj_itemcnt = SEXP_list_length(cobj_content);
 	SEXP_free(cobj_content);
 
-	if (probe_cobj_memcheck(cobj_itemcnt) != 0) {
+	if (probe_cobj_memcheck() != 0) {
 
 		/*
 		 * Don't set the message again if the collected object is
