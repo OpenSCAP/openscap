@@ -1307,17 +1307,16 @@ int op_assign_str(void *var, char *val)
 	while(isspace(*val)) ++val;
 
 	if (*val != '\0') {
-		/* if trailing whitespaces exist strip them */
-		if ((strend = strchr(val, ' ')) || (strend = strchr(val, '\t'))) {
-			strend = strrchr(strend, '\0');
-			do {
-				strend--;
-			} while(isspace(*strend));
-			assert((strend-val) > 0);
-			*((char **)(var)) = strndup(val, (strend-val+1));
-		} else {
-			*((char **)(var)) = strdup(val);
-                }
+		strend = strrchr(val, '\0');
+		/* strip trailing whitespaces */
+		do {
+			strend--;
+		} while(isspace(*strend));
+		if((strend-val) < 0) {
+			dE("Error stripping white space from string '%s'", val);
+			return (-1);
+		}
+		*((char **)(var)) = strndup(val, (strend-val+1));
 		return (0);
 	} else
 		return (-1);
