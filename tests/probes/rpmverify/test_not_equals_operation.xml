@@ -29,12 +29,12 @@
   <objects>
     <rpmverify_object id="oval:x:obj:1" version="1" comment="should return precisely one package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="pattern match"/>
-      <filepath>/</filepath>
+      <filepath>/etc</filepath>
     </rpmverify_object>
 
     <rpmverify_object id="oval:x:obj:2" version="1" comment="the path should match two packages but the result should only be one package" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <name operation="not equal" var_ref="oval:x:var:1"/>
-      <filepath operation="pattern match">(^/$|^/etc/passwd$)</filepath>
+      <filepath operation="pattern match">(^/etc$|^/etc/securetty$)</filepath>
     </rpmverify_object>
   </objects>
 
