@@ -810,6 +810,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	const char *oscap_version = oscap_get_version();
 	const char *format = sys != NULL ? sys : "";
 	const char *template = sys != NULL ? " --template " : "";
+	const char *remediation_type = ansible_script ? "Ansible playbook" : "Bash remediation role";
 
 	char *fix_header;
 	if (result == NULL) {
@@ -859,7 +860,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 
 		fix_header = oscap_sprintf(
 			"###############################################################################\n#\n"
-			"# %s remediation role for profile %s\n"
+			"# %s for profile %s\n"
 			"# Profile Title:  %s\n"
 			"# Profile Description:\n"
 			"# %s\n"
@@ -872,12 +873,15 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from an OpenSCAP profile without preliminary evaluation.\n"
 			"# It attempts to fix every selected rule, even if the system is already compliant.\n"
 			"#\n"
-			"# How to apply this remediation role:\n"
+			"# How to apply this %s:\n"
 			"%s\n"
 			"#\n"
 			"###############################################################################\n\n",
-				ansible_script ? "Ansible" : "Bash", profile_id, profile_title, profile_description != NULL ? profile_description : "Not available", benchmark_id,
-				benchmark_version_info, xccdf_version_name, oscap_version, profile_id, template, format, how_to_apply);
+			remediation_type, profile_id, profile_title,
+			profile_description != NULL ? profile_description : "Not available",
+			benchmark_id, benchmark_version_info, xccdf_version_name, oscap_version,
+			profile_id, template, format, remediation_type, how_to_apply
+		);
 
 		free(profile_title);
 		free(profile_description);
@@ -892,7 +896,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 
 		fix_header = oscap_sprintf(
 			"###############################################################################\n#\n"
-			"# %s remediation role for the results of evaluation of profile %s \n"
+			"# %s for the results of evaluation of profile %s \n"
 			"# XCCDF Version:  %s\n#\n"
 			"# Evaluation Start Time:  %s\n"
 			"# Evaluation End Time:  %s\n#\n"
@@ -901,13 +905,14 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# This script is generated from the results of a profile evaluation.\n"
 			"# It attempts to remediate all issues from the selected rules that failed the test.\n"
 			"#\n"
-			"# How to apply this remediation role:\n"
+			"# How to apply this %s:\n"
 			"%s\n"
 			"#\n"
 			"###############################################################################\n\n",
-				ansible_script ? "Ansible" : "Bash", xccdf_result_get_profile(result), xccdf_version_name,
-				start_time != NULL ? start_time : "Unknown",
-				end_time, oscap_version, result_id, template, format, how_to_apply);
+			remediation_type, xccdf_result_get_profile(result), xccdf_version_name,
+			start_time != NULL ? start_time : "Unknown", end_time, oscap_version,
+			result_id, template, format, remediation_type, how_to_apply
+		);
 	}
 
 	if (ansible_script) {
