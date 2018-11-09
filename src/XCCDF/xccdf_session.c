@@ -1327,7 +1327,7 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 
 	struct oscap_source* results = session->xccdf.result_source;
 	struct oscap_source* arf = NULL;
-	if (session->export.oval_results) {
+	if (session->export.oval_results || session->export.arf_file) {
 		arf = xccdf_session_create_arf_source(session);
 		if (arf == NULL) {
 			return 1;
