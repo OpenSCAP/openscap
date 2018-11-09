@@ -40,7 +40,7 @@ function test_probes_rpmverifyfile {
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:release'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:arch'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:filepath'
-    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:filepath[text()="/etc/securetty"]'
+    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:filepath[text()="/etc/os-release"]'
     sc='oval_results/results/system/oval_system_characteristics/'
     sd=$sc'system_data/'
     assert_exists 1 $sc'collected_objects/object'
