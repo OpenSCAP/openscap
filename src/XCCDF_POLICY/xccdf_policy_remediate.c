@@ -134,11 +134,11 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 					free(text);
 					return 1;
 				}
-			}
 
-			if (_write_text_to_fd(output_fd, "\n") != 0) {
-				free(text);
-				return 1;
+				if (_write_text_to_fd(output_fd, "\n") != 0) {
+					free(text);
+					return 1;
+				}
 			}
 
 			if (next_delim != NULL) {
@@ -610,7 +610,7 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 	}
 }
 
-static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, int output_fd, const char *fix_text, bool ansible_variable_mode)
+static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *variables, struct oscap_list *tasks)
 {
 #if defined USE_REGEX_PCRE
 	// TODO: Tolerate different indentation styles in this regex
@@ -649,69 +649,53 @@ static inline int _xccdf_policy_rule_generate_fix_ansible(const char *template, 
 			return 1;
 		}
 
-		if (ansible_variable_mode) {
-			// ovector[0] and [1] hold the start and end of the whole needle match
-			// ovector[2] and [3] hold the start and end of the first capture group
-			// ovector[4] and [5] hold the start and end of the second capture group
-			char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
-			memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
-			variable_name[ovector[3] - ovector[2]] = '\0';
+		// ovector[0] and [1] hold the start and end of the whole needle match
+		// ovector[2] and [3] hold the start and end of the first capture group
+		// ovector[4] and [5] hold the start and end of the second capture group
+		char *variable_name = malloc((ovector[3] - ovector[2] + 1) * sizeof(char));
+		memcpy(variable_name, &fix_text[ovector[2]], ovector[3] - ovector[2]);
+		variable_name[ovector[3] - ovector[2]] = '\0';
 
-			char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
-			memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
-			variable_value[ovector[5] - ovector[4]] = '\0';
+		char *variable_value = malloc((ovector[5] - ovector[4] + 1) * sizeof(char));
+		memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
+		variable_value[ovector[5] - ovector[4]] = '\0';
 
-			char *var_line = oscap_sprintf("  %s: %s", variable_name, variable_value);
+		char *var_line = oscap_sprintf("      %s: %s\n", variable_name, variable_value);
 
-			free(variable_name);
-			free(variable_value);
+		free(variable_name);
+		free(variable_value);
 
-			if (_write_remediation_to_fd_and_free(output_fd, template, var_line) != 0) {
-				pcre_free(re);
-				return 1;
-			}
+		if (!oscap_list_contains(variables, var_line, (oscap_cmp_func) oscap_streq)) {
+			oscap_list_add(variables, var_line);
 		}
-		else {
-			// Remarks: ovector doesn't contain values relative to start_offset, it contains
-			// absolute indices of fix_text.
-			const int length_between_matches = ovector[0] - start_offset;
-			char *remediation_part = malloc((length_between_matches + 1) * sizeof(char));
-			memcpy(remediation_part, &fix_text[start_offset], length_between_matches);
-			remediation_part[length_between_matches] = '\0';
-			if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
-				pcre_free(re);
-				return 1;
-			}
-		}
+
+		// Remarks: ovector doesn't contain values relative to start_offset, it contains
+		// absolute indices of fix_text.
+		const int length_between_matches = ovector[0] - start_offset;
+		char *remediation_part = malloc((length_between_matches + 1) * sizeof(char));
+		memcpy(remediation_part, &fix_text[start_offset], length_between_matches);
+		remediation_part[length_between_matches] = '\0';
+		oscap_list_add(tasks, remediation_part);
 
 		start_offset = ovector[1]; // next time start after the entire pattern
 	}
 
-	if (!ansible_variable_mode && fix_text_len - start_offset > 0) {
+	if (fix_text_len - start_offset > 0) {
 		char *remediation_part = malloc((fix_text_len - start_offset + 1) * sizeof(char));
 		memcpy(remediation_part, &fix_text[start_offset], fix_text_len - start_offset);
 		remediation_part[fix_text_len - start_offset] = '\0';
-
-		if (_write_remediation_to_fd_and_free(output_fd, template, remediation_part) != 0) {
-			pcre_free(re);
-			return 1;
-		}
+		oscap_list_add(tasks, remediation_part);
 	}
 
 	pcre_free(re);
 	return 0;
 #else
 	// TODO: Implement the post-process for posix regex as well
-	if (ansible_variable_mode) {
-		// this is not implemented so we don't write anything out for variables
-		return 0;
-	}
-	else
-		return _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	oscap_list_add(tasks, strdup(fix_text));
 #endif
 }
 
-static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total, bool ansible_variable_mode)
+static int _xccdf_policy_rule_get_fix_text(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, char **fix_text)
 {
 	// Ensure that given Rule is selected and applicable (CPE).
 	const bool is_selected = xccdf_policy_is_item_selected(policy, xccdf_rule_get_id(rule));
@@ -722,15 +706,8 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 	// Find the most suitable fix.
 	const struct xccdf_fix *fix = _find_fix_for_template(policy, rule, template);
 	if (fix == NULL) {
-		int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
-		if (ret != 0)
-			return ret;
-		ret = _write_fix_missing_warning_to_fd(template, output_fd, rule);
-		if (ret != 0)
-			return ret;
-		ret = _write_fix_footer_to_fd(template, output_fd, rule);
 		dI("No fix element was found for Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
-		return ret;
+		return 0;
 	}
 	dI("Processing a fix for Rule/@id=\"%s\"", xccdf_rule_get_id(rule));
 
@@ -744,37 +721,55 @@ static inline int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, s
 		return res == 1; // Value 2 indicates warning.
 	}
 	// Refine. Resolve XML comments, CDATA and remaining elements
-	char *fix_text = NULL;
-	if (_xccdf_fix_decode_xml(cfix, &fix_text) != 0) {
+	if (_xccdf_fix_decode_xml(cfix, fix_text) != 0) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "A fix element for Rule/@id=\"%s\" contains unresolved child elements.",
 				xccdf_rule_get_id(rule));
 		xccdf_fix_free(cfix);
 		return 1;
 	}
 	xccdf_fix_free(cfix);
+	return 0;
+}
 
-	int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
+static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total, bool ansible_variable_mode)
+{
+	char *fix_text = NULL;
+	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
+	if (fix_text == NULL || ret != 0) {
+		ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
+		if (ret != 0) {
+			return ret;
+		}
+		ret = _write_fix_missing_warning_to_fd(template, output_fd, rule);
+		if (ret != 0) {
+			return ret;
+		}
+		ret = _write_fix_footer_to_fd(template, output_fd, rule);
+		return ret;
+	}
+	ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
 	if (ret != 0) {
 		free(fix_text);
 		return ret;
 	}
-
-	if (oscap_streq(template, "urn:xccdf:fix:script:ansible")) {
-		// Ansible is special because we have two output modes, variable and
-		// task mode. In both cases we have to do post processing. 
-
-		// We can't recover the return value (it is rewritten by a later call) to _write_fix_footer_to_fd
-		_xccdf_policy_rule_generate_fix_ansible(template, output_fd, fix_text, ansible_variable_mode);
-		free(fix_text);
+	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	if (ret != 0) {
+		return ret;
 	}
-	else {
-		ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
-		if (ret != 0) {
-			return ret;
-		}
-	}
-
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
+	return ret;
+}
+
+
+static int _xccdf_policy_rule_generate_ansible_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct oscap_list *variables, struct oscap_list *tasks)
+{
+	char *fix_text = NULL;
+	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
+	if (fix_text == NULL) {
+		return ret;
+	}
+	ret = _parse_ansible_fix(fix_text, variables, tasks);
+	free(fix_text);
 	return ret;
 }
 
@@ -988,30 +983,45 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 
 	// In Ansible we have to generate variables first and then tasks
 	if (strcmp(sys, "urn:xccdf:fix:script:ansible") == 0) {
-		_write_text_to_fd(output_fd, "   vars:\n");
-
-		unsigned int current = 1;
+		struct oscap_list *variables = oscap_list_new();
+		struct oscap_list *tasks = oscap_list_new();
 		struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 		while (oscap_iterator_has_more(rules_to_fix_it)) {
 			struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total, true);
+			ret = _xccdf_policy_rule_generate_ansible_fix(policy, rule, sys, variables, tasks);
 			if (ret != 0)
 				break;
 		}
 		oscap_iterator_free(rules_to_fix_it);
 
-		_write_text_to_fd(output_fd, "   tasks:\n");
-	}
+		_write_text_to_fd(output_fd, "   vars:\n");
+		struct oscap_iterator *variables_it = oscap_iterator_new(variables);
+		while(oscap_iterator_has_more(variables_it)) {
+			char *var_line = (char *) oscap_iterator_next(variables_it);
+			_write_text_to_fd(output_fd, var_line);
+		}
+		oscap_iterator_free(variables_it);
+		oscap_list_free(variables, free);
 
-	unsigned int current = 1;
-	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
-	while (oscap_iterator_has_more(rules_to_fix_it)) {
-		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total, false);
-		if (ret != 0)
-			break;
+		_write_text_to_fd(output_fd, "   tasks:\n");
+		struct oscap_iterator *tasks_it = oscap_iterator_new(tasks);
+		while(oscap_iterator_has_more(tasks_it)) {
+			char *var_line = strdup((char *) oscap_iterator_next(tasks_it));
+			_write_remediation_to_fd_and_free(output_fd, sys, var_line);
+		}
+		oscap_iterator_free(tasks_it);
+		oscap_list_free(tasks, free);
+	} else {
+		unsigned int current = 1;
+		struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+		while (oscap_iterator_has_more(rules_to_fix_it)) {
+			struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
+			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total, false);
+			if (ret != 0)
+				break;
+		}
+		oscap_iterator_free(rules_to_fix_it);
 	}
-	oscap_iterator_free(rules_to_fix_it);
 
 	oscap_list_free(rules_to_fix, NULL);
 
