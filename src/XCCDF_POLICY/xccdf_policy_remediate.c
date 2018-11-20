@@ -113,15 +113,18 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 			}
 
 			// remove all trailing whitespaces
-			end = current + strlen(current) - 1;
-			while (isspace(*end)) {
-				*end = '\0';
-				if (end == current)
-					break;
-				end--;
+			size_t len = strlen(current);
+			if (len > 0) {
+				end = current + len - 1;
+				while (isspace(*end)) {
+					*end = '\0';
+					if (end == current)
+						break;
+					end--;
+				}
 			}
 
-			if (strlen(current) != 0) {
+			if (strlen(current) > 0) {
 				// write indentation
 				if (_write_text_to_fd(output_fd, indentation) != 0) {
 					free(text);
