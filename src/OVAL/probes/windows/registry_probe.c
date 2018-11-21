@@ -475,6 +475,7 @@ static int registry_recurse_down(probe_ctx *ctx, struct ent_info *ei, char *hive
 		if (operation == OVAL_OPERATION_EQUALS || operation == OVAL_OPERATION_CASE_INSENSITIVE_EQUALS || probe_entobj_cmp(ei->key_ent, tmp) == OVAL_RESULT_TRUE) {
 			collect_registry_key(ctx, hive_str, key_str, ei->name_ent, windows_view);
 		}
+		SEXP_free(tmp);
 	}
 
 	RegCloseKey(opened_key_handle);
