@@ -731,7 +731,7 @@ static int _xccdf_policy_rule_get_fix_text(struct xccdf_policy *policy, struct x
 	return 0;
 }
 
-static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total, bool ansible_variable_mode)
+static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total)
 {
 	char *fix_text = NULL;
 	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
@@ -1016,7 +1016,7 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
 		while (oscap_iterator_has_more(rules_to_fix_it)) {
 			struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total, false);
+			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total);
 			if (ret != 0)
 				break;
 		}
