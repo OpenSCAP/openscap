@@ -8,7 +8,7 @@
 import os
 def touch(fname, times=None):
     if not os.path.exists(fname):
-	open(fname, 'w').close()
+        open(fname, 'w').close()
 
 touch('test_file')
     </fix>

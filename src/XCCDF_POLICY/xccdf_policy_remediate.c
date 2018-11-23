@@ -18,7 +18,7 @@
  *
  */
 #ifdef HAVE_CONFIG_H
-#include <config.h>
+#include "config.h"
 #endif
 
 #include <string.h>
@@ -182,7 +182,15 @@ static const char *_get_supported_interpret(const char *sys, const struct _inter
 		{"urn:xccdf:fix:commands",		"/bin/bash"},
 		{"urn:xccdf:fix:script:sh",		"/bin/bash"},
 		{"urn:xccdf:fix:script:perl",		"/usr/bin/perl"},
-		{"urn:xccdf:fix:script:python",		"/usr/bin/python"},
+#ifdef PREFERRED_PYTHON_PATH
+		{"urn:xccdf:fix:script:python",		PREFERRED_PYTHON_PATH},
+#endif
+#ifdef PYTHON2_PATH
+		{"urn:xccdf:fix:script:python2",	PYTHON2_PATH},
+#endif
+#ifdef PYTHON3_PATH
+		{"urn:xccdf:fix:script:python3",	PYTHON3_PATH},
+#endif
 		{"urn:xccdf:fix:script:csh",		"/bin/csh"},
 		{"urn:xccdf:fix:script:tclsh",		"/usr/bin/tclsh"},
 		{"urn:xccdf:fix:script:javascript",	"/usr/bin/js"},

@@ -161,6 +161,7 @@ AC_DEFUN([AM_PATH_PYTHON_OF_MAJOR_VERSION],
 	AS_IF([test "$PYTHON$1" = :],
 		[m4_default([$4], [AC_MSG_ERROR([no suitable Python$1 interpreter found])])
 ], [
+		AC_DEFINE_UNQUOTED([PYTHON$1_PATH], ["$PYTHON$1"], [Path to the Python $1 interpreter executable.])
 		dnl Query Python for its major.minor version numbers.
 		dnl Getting [:2] seems to be the best way to do this;
 		dnl it's what "site.py" does in the standard library.

@@ -5,7 +5,7 @@
 import os
 def touch(fname, times=None):
     if not os.path.exists(fname):
-	open(fname, 'w').close()
+        open(fname, 'wb').close()
   </plain-text>
   <version>1.0</version>
   <Value id="xccdf_moc.elpmaxe.www_value_1">

@@ -1103,6 +1103,12 @@ AC_ARG_WITH([crypto],
      [],
      [crypto=gcrypt])
 
+AC_ARG_WITH([preferred-python],
+	[AS_HELP_STRING([--with-preferred-python], [Set the preferred Python interpreter for oscap-docker and remediations [default=autodetection]])],
+	[preferred_python="$withval"],
+	[preferred_python=:])
+
+
 if test "x${libexecdir}" = xNONE; then
 	probe_dir="/usr/local/libexec/openscap"
 else
@@ -1314,9 +1320,7 @@ test "x$HAVE_PYTHON2" = xyes && PYTHON="$PYTHON2"
 test "x$HAVE_PYTHON3" = xyes && PYTHON="$PYTHON3"
 AC_SUBST([PYTHON])
 
-preferred_python=:
-
-AS_IF([test "x$util_oscap_docker" = xyes],
+AS_IF([test "x$util_oscap_docker" = xyes -a "x$preferred_python" = :],
 	[_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(2)
 	_ATTEMPT_TO_SET_PREFERRED_PYTHON_FOR_OSCAP_DOCKER(3)
 	AS_IF([test "$preferred_python" = :],
@@ -1326,12 +1330,20 @@ AS_IF([test "x$util_oscap_docker" = xyes],
 			preferred_python="$PYTHON"],
 			[AC_MSG_ERROR([Not found a working Python interpreter and oscap-docker needs it. Aborting, as oscap-docker has been requested.])])])])
 
+# No preferred python, but also no oscap_docker required
+AS_IF([test "$preferred_python" = :],
+	[AS_IF([test "$PYTHON" != :],
+		[AC_MSG_NOTICE([Setting the preferred python interpreter to '$PYTHON'.])
+		preferred_python="$PYTHON"],
+		[AC_MSG_NOTICE([Not found a working Python interpreter, so Python remediations aren't supported.])])])
+
 # oscap-docker determine python dir on default python version
 OSCAPDOCKER_PYTHONDIR=`$preferred_python -c "import distutils.sysconfig; print(distutils.sysconfig.get_python_lib(0,0,prefix='$' '{prefix}'))"`
 # oscap-docker uses preferred_python substitution
 AC_SUBST([preferred_python])
 AC_SUBST(oscapdocker_pythondir, $OSCAPDOCKER_PYTHONDIR)
-
+AS_IF([test "$preferred_python" != :],
+	[AC_DEFINE_UNQUOTED([PREFERRED_PYTHON_PATH], ["$preferred_python"], [Path to the preferred Python interpreter executable.])])
 
 AM_CONDITIONAL([probe_family_enabled], test "$probe_family_req_deps_ok" = yes)
 probe_family_enabled=$probe_family_req_deps_ok
