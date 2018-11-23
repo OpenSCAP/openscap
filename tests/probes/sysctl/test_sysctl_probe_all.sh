@@ -9,7 +9,24 @@ set -e -o pipefail
 PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
 # non root users are not able to access some kernel params, so they get blacklisted
-SYSCTL_BLACKLIST='stable_secret\|vm.stat_refresh\|fs.protected_hardlinks\|fs.protected_symlinks\|kernel.cad_pid\|kernel.unprivileged_userns_apparmor_policy\|kernel.usermodehelper.bset\|kernel.usermodehelper.inheritable\|net.core.bpf_jit_harden\|net.core.bpf_jit_kallsyms\|net.ipv4.tcp_fastopen_key\|vm.mmap_rnd_bits\|vm.mmap_rnd_compat_bits'
+SYSCTL_BLACKLIST='
+	fs.protected_hardlinks
+	fs.protected_symlinks
+	kernel.cad_pid
+	kernel.unprivileged_userns_apparmor_policy
+	kernel.usermodehelper.bset
+	kernel.usermodehelper.inheritable
+	net.core.bpf_jit_harden
+	net.core.bpf_jit_kallsyms
+	net.ipv4.tcp_fastopen_key
+	stable_secret
+	vm.mmap_rnd_bits
+	vm.mmap_rnd_compat_bits
+	vm.stat_refresh'
+
+SYSCTL_BLACKLIST_REGEX="$(printf '\|%s' $SYSCTL_BLACKLIST)"
+# strip leading '\|'
+SYSCTL_BLACKLIST_REGEX=${SYSCTL_BLACKLIST_REGEX:2}
 
 function perform_test {
 probecheck "sysctl" || return 255
@@ -31,9 +48,9 @@ $OSCAP oval eval --results $result $srcdir/test_sysctl_probe_all.oval.xml > /dev
 # sysctl has duplicities in output
 # hide permission errors like: "sysctl: permission denied on key 'fs.protected_hardlinks'"
 # kernel parameters might use "/" and "." separators interchangeably - normalizing
-sysctl -aN --deprecated 2> /dev/null | grep -v $SYSCTL_BLACKLIST | tr "/" "." | sort -u > "$sysctlNames"
+sysctl -aN --deprecated 2> /dev/null | grep -v $SYSCTL_BLACKLIST_REGEX | tr "/" "." | sort -u > "$sysctlNames"
 
-grep unix-sys:name "$result" | grep -v $SYSCTL_BLACKLIST | sed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
+grep unix-sys:name "$result" | grep -v $SYSCTL_BLACKLIST_REGEX | sed -E 's;.*>(.*)<.*;\1;g' | sort > "$ourNames"
 
 # If procps_ver > 3.3.12 we need to filter *stable_secret and vm.stat_refresh
 # options from the sysctl output, for more details see
