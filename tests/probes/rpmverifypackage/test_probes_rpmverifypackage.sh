@@ -81,7 +81,7 @@ function test_probes_rpmverifypackage_noepoch {
 
 test_init
 
-if [[ $ID != *"sle"* && $ID != *"suse"* ]] then
+if [[ $ID != *"sle"* && $ID != *"suse"* ]]; then
 test_run "test_probes_rpmverifypackage_epoch" test_probes_rpmverifypackage_epoch
 fi
 test_run "test_probes_rpmverifypackage_noepoch" test_probes_rpmverifypackage_noepoch
