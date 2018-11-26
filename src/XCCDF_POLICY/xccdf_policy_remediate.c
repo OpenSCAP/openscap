@@ -929,6 +929,56 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	}
 }
 
+static int _xccdf_policy_generate_fix_ansible(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
+{
+	int ret = 0;
+	struct oscap_list *variables = oscap_list_new();
+	struct oscap_list *tasks = oscap_list_new();
+	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+	while (oscap_iterator_has_more(rules_to_fix_it)) {
+		struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
+		ret = _xccdf_policy_rule_generate_ansible_fix(policy, rule, sys, variables, tasks);
+		if (ret != 0)
+			break;
+	}
+	oscap_iterator_free(rules_to_fix_it);
+
+	_write_text_to_fd(output_fd, "   vars:\n");
+	struct oscap_iterator *variables_it = oscap_iterator_new(variables);
+	while(oscap_iterator_has_more(variables_it)) {
+		char *var_line = (char *) oscap_iterator_next(variables_it);
+		_write_text_to_fd(output_fd, var_line);
+	}
+	oscap_iterator_free(variables_it);
+	oscap_list_free(variables, free);
+
+	_write_text_to_fd(output_fd, "   tasks:\n");
+	struct oscap_iterator *tasks_it = oscap_iterator_new(tasks);
+	while(oscap_iterator_has_more(tasks_it)) {
+		char *var_line = strdup((char *) oscap_iterator_next(tasks_it));
+		_write_remediation_to_fd_and_free(output_fd, sys, var_line);
+	}
+	oscap_iterator_free(tasks_it);
+	oscap_list_free(tasks, free);
+	return ret;
+}
+
+static int _xccdf_policy_generate_fix_other(struct oscap_list *rules_to_fix, struct xccdf_policy *policy, const char *sys, int output_fd)
+{
+	int ret = 0;
+	const unsigned int total = oscap_list_get_itemcount(rules_to_fix);
+	unsigned int current = 1;
+	struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
+	while (oscap_iterator_has_more(rules_to_fix_it)) {
+		struct xccdf_rule *rule = (struct xccdf_rule *) oscap_iterator_next(rules_to_fix_it);
+		ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total);
+		if (ret != 0)
+			break;
+	}
+	oscap_iterator_free(rules_to_fix_it);
+	return ret;
+}
+
 int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	__attribute__nonnull__(policy);
@@ -979,48 +1029,12 @@ int xccdf_policy_generate_fix(struct xccdf_policy *policy, struct xccdf_result *
 		xccdf_rule_result_iterator_free(rr_it);
 	}
 
-	const unsigned int total = oscap_list_get_itemcount(rules_to_fix);
-
-	// In Ansible we have to generate variables first and then tasks
+	// Ansible Playbooks are generated using a different function because
+	// in Ansible we have to generate variables first and then tasks
 	if (strcmp(sys, "urn:xccdf:fix:script:ansible") == 0) {
-		struct oscap_list *variables = oscap_list_new();
-		struct oscap_list *tasks = oscap_list_new();
-		struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
-		while (oscap_iterator_has_more(rules_to_fix_it)) {
-			struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-			ret = _xccdf_policy_rule_generate_ansible_fix(policy, rule, sys, variables, tasks);
-			if (ret != 0)
-				break;
-		}
-		oscap_iterator_free(rules_to_fix_it);
-
-		_write_text_to_fd(output_fd, "   vars:\n");
-		struct oscap_iterator *variables_it = oscap_iterator_new(variables);
-		while(oscap_iterator_has_more(variables_it)) {
-			char *var_line = (char *) oscap_iterator_next(variables_it);
-			_write_text_to_fd(output_fd, var_line);
-		}
-		oscap_iterator_free(variables_it);
-		oscap_list_free(variables, free);
-
-		_write_text_to_fd(output_fd, "   tasks:\n");
-		struct oscap_iterator *tasks_it = oscap_iterator_new(tasks);
-		while(oscap_iterator_has_more(tasks_it)) {
-			char *var_line = strdup((char *) oscap_iterator_next(tasks_it));
-			_write_remediation_to_fd_and_free(output_fd, sys, var_line);
-		}
-		oscap_iterator_free(tasks_it);
-		oscap_list_free(tasks, free);
+		ret = _xccdf_policy_generate_fix_ansible(rules_to_fix, policy, sys, output_fd);
 	} else {
-		unsigned int current = 1;
-		struct oscap_iterator *rules_to_fix_it = oscap_iterator_new(rules_to_fix);
-		while (oscap_iterator_has_more(rules_to_fix_it)) {
-			struct xccdf_rule *rule = (struct xccdf_rule*)oscap_iterator_next(rules_to_fix_it);
-			ret = _xccdf_policy_rule_generate_fix(policy, rule, sys, output_fd, current++, total);
-			if (ret != 0)
-				break;
-		}
-		oscap_iterator_free(rules_to_fix_it);
+		ret =  _xccdf_policy_generate_fix_other(rules_to_fix, policy, sys, output_fd);
 	}
 
 	oscap_list_free(rules_to_fix, NULL);
