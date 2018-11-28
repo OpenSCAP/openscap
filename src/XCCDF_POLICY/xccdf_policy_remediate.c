@@ -733,26 +733,17 @@ static int _xccdf_policy_rule_get_fix_text(struct xccdf_policy *policy, struct x
 
 static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, int output_fd, unsigned int current, unsigned int total)
 {
-	char *fix_text = NULL;
-	int ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
-	if (fix_text == NULL || ret != 0) {
-		ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
-		if (ret != 0) {
-			return ret;
-		}
-		ret = _write_fix_missing_warning_to_fd(template, output_fd, rule);
-		if (ret != 0) {
-			return ret;
-		}
-		ret = _write_fix_footer_to_fd(template, output_fd, rule);
-		return ret;
-	}
-	ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
+	int ret = _write_fix_header_to_fd(template, output_fd, rule, current, total);
 	if (ret != 0) {
-		free(fix_text);
 		return ret;
 	}
-	ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	char *fix_text = NULL;
+	ret = _xccdf_policy_rule_get_fix_text(policy, rule, template, &fix_text);
+	if (fix_text == NULL || ret != 0) {
+		ret = _write_fix_missing_warning_to_fd(template, output_fd, rule);
+	} else {
+		ret = _write_remediation_to_fd_and_free(output_fd, template, fix_text);
+	}
 	if (ret != 0) {
 		return ret;
 	}
