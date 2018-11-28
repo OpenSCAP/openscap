@@ -11,6 +11,8 @@ PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 # non root users are not able to access some kernel params, so they get blacklisted
 SYSCTL_BLACKLIST='
 	fs.protected_hardlinks
+	fs.protected_fifos
+	fs.protected_regular
 	fs.protected_symlinks
 	kernel.cad_pid
 	kernel.unprivileged_userns_apparmor_policy
