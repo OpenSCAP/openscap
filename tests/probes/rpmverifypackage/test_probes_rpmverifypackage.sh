@@ -14,6 +14,8 @@
 set -e -o pipefail
 set -x
 
+[ -f /etc/os-release ] && . /etc/os-release
+
 function test_probes_rpmverifypackage {
 
     probecheck "rpmverifypackage" || return 255
@@ -79,7 +81,9 @@ function test_probes_rpmverifypackage_noepoch {
 
 test_init
 
+if [[ $ID != *"sle"* && $ID != *"suse"* ]]; then
 test_run "test_probes_rpmverifypackage_epoch" test_probes_rpmverifypackage_epoch
+fi
 test_run "test_probes_rpmverifypackage_noepoch" test_probes_rpmverifypackage_noepoch
 
 test_exit
