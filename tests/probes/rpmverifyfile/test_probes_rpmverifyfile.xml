@@ -30,7 +30,7 @@
         <lin-def:version operation="pattern match"/>
         <lin-def:release operation="pattern match"/>
         <lin-def:arch operation="pattern match"/>
-        <lin-def:filepath>/etc/passwd</lin-def:filepath>
+        <lin-def:filepath>/etc/os-release</lin-def:filepath>
     </lin-def:rpmverifyfile_object>
   </objects>
 
