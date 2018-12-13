@@ -695,7 +695,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailoring_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
+static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailoring_doc, char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
 {
 	*ret = NULL;
 
@@ -743,6 +743,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		xmlNsPtr sds_ns = sds_res_node->ns;
 		xmlNodePtr tailoring_component = xmlNewNode(sds_ns, BAD_CAST "component");
 		xmlSetProp(tailoring_component, BAD_CAST "id", BAD_CAST tailoring_component_id);
+		xmlSetProp(tailoring_component, BAD_CAST "timestamp", BAD_CAST tailoring_doc_timestamp);
 		xmlAddChild(tailoring_component, tailoring_res_node);
 		xmlAddChild(sds_res_node, tailoring_component);
 
@@ -796,24 +797,38 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 	if (sds_doc == NULL) {
 		return NULL;
 	}
-	xmlDoc *tailoring_doc = NULL;
-	if (tailoring_source) {
-		tailoring_doc = oscap_source_get_xmlDoc(tailoring_source);
-		if (tailoring_doc == NULL) {
-			return NULL;
-		}
-	}
 
 	xmlDoc *result_file_doc = oscap_source_get_xmlDoc(xccdf_result_source);
 	if (result_file_doc == NULL) {
 		return NULL;
 	}
 
+	xmlDoc *tailoring_doc = NULL;
+	char *tailoring_doc_timestamp = NULL;
+	if (tailoring_source) {
+		tailoring_doc = oscap_source_get_xmlDoc(tailoring_source);
+		if (tailoring_doc == NULL) {
+			return NULL;
+		}
+		const char *filepath = oscap_source_get_filepath(tailoring_source);
+		struct stat file_stat;
+		if (stat(filepath, &file_stat) == 0) {
+			const size_t max_timestamp_len = 32;
+			tailoring_doc_timestamp = malloc(max_timestamp_len);
+			strftime(tailoring_doc_timestamp, max_timestamp_len, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+		} else {
+			return NULL;
+		}
+	}
+
 	xmlDocPtr rds_doc = NULL;
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, result_file_doc,
+
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_doc_timestamp, result_file_doc,
 				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
+		free(tailoring_doc_timestamp);
 		return NULL;
 	}
+	free(tailoring_doc_timestamp);
 	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
 }
 
