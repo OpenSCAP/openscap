@@ -84,7 +84,7 @@ function test_api_xccdf_tailoring_autonegotiation {
     rm -f $result
 }
 
-function test_api_xccdf_tailoring_include_in_arf {
+function test_api_xccdf_tailoring_simple_include_in_arf {
     local INPUT=$srcdir/$1
     local TAILORING=$srcdir/$2
 
@@ -94,7 +94,7 @@ function test_api_xccdf_tailoring_include_in_arf {
         return 1
     fi
 
-    assert_exists 1 '//report-request/content//Tailoring'
+    assert_exists 1 '/arf:asset-report-collection/arf:report-requests/arf:report-request/arf:content/ds:data-stream-collection/ds:component/Tailoring'
     rm -f $result
 }
 
@@ -115,6 +115,6 @@ test_run "test_api_xccdf_tailoring_ds_hybrid_override" test_api_xccdf_tailoring_
 test_run "test_api_xccdf_tailoring_oscap_info_11" test_api_xccdf_tailoring_oscap_info simple-tailoring11.xml 1
 test_run "test_api_xccdf_tailoring_oscap_info_12" test_api_xccdf_tailoring_oscap_info simple-tailoring.xml 1
 test_run "test_api_xccdf_tailoring_autonegotiation" test_api_xccdf_tailoring_autonegotiation simple-tailoring-autonegotiation.xml xccdf_org.open-scap_profile_default 1
-test_run "test_api_xccdf_tailoring_include_in_arf" test_api_xccdf_tailoring_include_in_arf simple-xccdf.xml simple-tailoring.xml
+test_run "test_api_xccdf_tailoring_simple_include_in_arf" test_api_xccdf_tailoring_simple_include_in_arf simple-xccdf.xml simple-tailoring.xml
 
 test_exit
