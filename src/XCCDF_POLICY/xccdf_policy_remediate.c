@@ -926,7 +926,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		char *ansible_fix_header = oscap_sprintf(
 			"---\n"
 			"%s\n"
-			" - hosts: all\n",
+			"- hosts: all\n",
 			fix_header);
 		free(fix_header);
 		return _write_text_to_fd_and_free(output_fd, ansible_fix_header);
@@ -949,7 +949,7 @@ static int _xccdf_policy_generate_fix_ansible(struct oscap_list *rules_to_fix, s
 	}
 	oscap_iterator_free(rules_to_fix_it);
 
-	_write_text_to_fd(output_fd, "   vars:\n");
+	_write_text_to_fd(output_fd, "  vars:\n");
 	struct oscap_iterator *variables_it = oscap_iterator_new(variables);
 	while(oscap_iterator_has_more(variables_it)) {
 		char *var_line = (char *) oscap_iterator_next(variables_it);
@@ -958,7 +958,7 @@ static int _xccdf_policy_generate_fix_ansible(struct oscap_list *rules_to_fix, s
 	oscap_iterator_free(variables_it);
 	oscap_list_free(variables, free);
 
-	_write_text_to_fd(output_fd, "   tasks:\n");
+	_write_text_to_fd(output_fd, "  tasks:\n");
 	struct oscap_iterator *tasks_it = oscap_iterator_new(tasks);
 	while(oscap_iterator_has_more(tasks_it)) {
 		char *var_line = strdup((char *) oscap_iterator_next(tasks_it));
