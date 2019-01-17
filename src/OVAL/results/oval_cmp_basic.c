@@ -146,8 +146,8 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 	} else if (ret == -1) {
 		result = OVAL_RESULT_FALSE;
 	} else {
-		dE("Unable to match regex pattern, "
-			       "pcre_exec() returned error: %d.\n", ret);
+		dE("Unable to match regex pattern '%s' on string '%s', "
+				"pcre_exec() returned error: %d.\n", pattern, test_str, ret);
 		result = OVAL_RESULT_ERROR;
 	}
 
