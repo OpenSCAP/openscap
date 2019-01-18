@@ -135,8 +135,8 @@ static oval_result_t strregcomp(const char *pattern, const char *test_str)
 
 	re = pcre_compile(pattern, PCRE_UTF8, &err, &errofs, NULL);
 	if (re == NULL) {
-		dE("Unable to compile regex pattern, "
-			       "pcre_compile() returned error (offset: %d): '%s'.\n", errofs, err);
+		dE("Unable to compile regex pattern '%s', "
+				"pcre_compile() returned error (offset: %d): '%s'.\n", pattern, errofs, err);
 		return OVAL_RESULT_ERROR;
 	}
 
