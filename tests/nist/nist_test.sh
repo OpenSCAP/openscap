@@ -24,7 +24,7 @@ function test_nist {
 		if [ "x$test_dir" == "xR1200" ]; then
 			unset OSCAP_FULL_VALIDATION
 		fi
-		"${srcdir}/test_worker.py" --scanner "$OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
+		"$PREFERRED_PYTHON" "${srcdir}/test_worker.py" --scanner "$OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
 	)
 	ret_val=$?
 	if [ $ret_val -eq 1 ]; then

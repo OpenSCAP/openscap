@@ -101,20 +101,29 @@ static int app_cvrf_evaluate(const struct oscap_action *action) {
 	// themselves
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->f_cvrf);
+
+	int ret = oscap_source_validate(import_source, reporter, (void *) action);
+	if (ret != 0) {
+		result = OSCAP_ERROR;
+		goto cleanup;
+	}
+
 	struct oscap_source *export_source = cvrf_model_get_results_source(import_source, os_name);
-	if (export_source == NULL)
-		return -1;
+	if (export_source == NULL) {
+		result = OSCAP_ERROR;
+		goto cleanup;
+	}
 
 	if (oscap_source_save_as(export_source, action->cvrf_action->f_results) == -1) {
 		result = OSCAP_ERROR;
 		goto cleanup;
 	}
+	oscap_source_free(export_source);
 
 	cleanup:
 		if (oscap_err())
 			fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
 
-	oscap_source_free(export_source);
 	free(action->cvrf_action);
 	return result;
 }

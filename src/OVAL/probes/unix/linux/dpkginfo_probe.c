@@ -62,16 +62,23 @@
 #include "dpkginfo_probe.h"
 
 struct dpkginfo_global {
+        int init_done;
         pthread_mutex_t mutex;
 };
 
-static struct dpkginfo_global g_dpkg;
+static struct dpkginfo_global g_dpkg = {
+        .init_done = -1,
+};
 
 
 void *dpkginfo_probe_init(void)
 {
         pthread_mutex_init (&(g_dpkg.mutex), NULL);
-        dpkginfo_init();
+
+        g_dpkg.init_done = dpkginfo_init();
+        if (g_dpkg.init_done < 0) {
+                dE("dpkginfo_init has failed.");
+        }
 
         return ((void *)&g_dpkg);
 }
@@ -96,6 +103,11 @@ int dpkginfo_probe_main (probe_ctx *ctx, void *arg)
 	if (arg == NULL) {
 		return PROBE_EINIT;
 	}
+
+        if (g_dpkg.init_done < 0) {
+                probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_UNKNOWN);
+                return 0;
+        }
 
 	obj = probe_ctx_getobject(ctx);
 	ent = probe_obj_getent(obj, "name", 1);

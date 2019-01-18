@@ -68,6 +68,19 @@
                          </criteria>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:8" version="1">
+                  <metadata>
+                        <title>Red Hat Enterprise Linux 8</title>
+                        <affected family="unix">
+                              <platform>Red Hat Enterprise Linux 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:redhat:enterprise_linux:8" source="CPE"/>
+                        <description>The operating system installed on the system is Red Hat Enterprise Linux 8</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Red Hat Enterprise Linux 8 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:8"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.ol:def:5" version="1">
                   <metadata>
                         <title>Oracle Linux 5</title>
@@ -724,6 +737,11 @@
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:7"/>
             </rpmverifyfile_test>
+            <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:8" version="1" check="at least one" comment="redhat-release is version 8"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:8"/>
+            </rpmverifyfile_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.ol:tst:5" version="1" check="at least one" comment="oraclelinux-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.oraclelinux-release:obj:1"/>
@@ -1062,6 +1080,10 @@
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^7[^\d]</version>
+            </rpmverifyfile_state>
+            <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^redhat-release</name>
+                  <version operation="pattern match">^8[^\d]</version>
             </rpmverifyfile_state>
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:1005" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^centos-release</name>
