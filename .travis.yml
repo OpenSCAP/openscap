@@ -14,7 +14,6 @@ before_script:
 script:
   - ../configure --enable-sce
   - build-wrapper-linux-x86-64 --out-dir bw-output make all || true  # Will always fail builds on forked repositories.
-  - make -k check VERBOSE=true
   - cd .. && sonar-scanner || true  # Will always fail builds on forked repositories.
 
 
