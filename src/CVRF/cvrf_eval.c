@@ -89,10 +89,14 @@ struct cvrf_session *cvrf_session_new_from_source_model(struct oscap_source *sou
 	if (source == NULL)
 		return NULL;
 
+	struct cvrf_model *model = cvrf_model_import(source);
+	if (model == NULL) {
+		return NULL;
+	}
 	struct cvrf_session *ret = malloc(sizeof(struct cvrf_session));
 	ret->source = source;
 	ret->index = NULL;
-	ret->model = cvrf_model_import(source);
+	ret->model = model;
 	ret->os_name = NULL;
 	ret->product_ids = oscap_stringlist_new();
 	ret->def_model = oval_definition_model_new();
@@ -225,6 +229,9 @@ struct oscap_source *cvrf_model_get_results_source(struct oscap_source *import_s
 	if (import_source == NULL)
 		return NULL;
 	struct cvrf_session *session = cvrf_session_new_from_source_model(import_source);
+	if (session == NULL) {
+		return NULL;
+	}
 	cvrf_session_set_os_name(session, os_name);
 
 	if (find_all_cvrf_product_ids_from_cpe(session) != 0) {
