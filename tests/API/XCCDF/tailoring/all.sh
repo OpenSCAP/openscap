@@ -116,6 +116,23 @@ function test_api_xccdf_tailoring_profile_include_in_arf {
     rm -f $result
 }
 
+function test_api_xccdf_tailoring_profile_generate_fix {
+    local INPUT=$srcdir/$1
+    local TAILORING=$srcdir/$2
+
+    tailoring_result='tailoring_res'
+    fix_result='fix_res'
+    # tailoring profile only with "always fail" rule and generate bash fix
+    $OSCAP xccdf eval --tailoring-file $TAILORING --profile "xccdf_com.example.www_profile_customized" --results-arf $tailoring_result $INPUT || [ "$?" == "2" ]
+    $OSCAP xccdf generate fix --tailoring-id "scap_org.open-scap_cref_tests--API--XCCDF--tailoring--baseline.tailoring.xml_tailoring" --result-id xccdf_org.open-scap_test-result_xccdf-com.example.www_profile_customized --results $fix_result $tailoring_result
+
+    if ! grep -q "echo \"Fix the first rule\"" $fix_result; then
+        return 1
+    fi
+
+    rm -f $tailoring_result $fix_result
+}
+
 # Testing.
 
 test_init "test_api_xccdf_tailoring.log"
