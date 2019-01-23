@@ -751,6 +751,8 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 			tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
 		}
 
+		free(mangled_tailoring_filepath);
+
 		xmlDOMWrapCtxtPtr tailoring_wrap_ctxt = xmlDOMWrapNewCtxt();
 		xmlNodePtr tailoring_res_node = NULL;
 		xmlDOMWrapCloneNode(tailoring_wrap_ctxt, tailoring_doc, xmlDocGetRootElement(tailoring_doc),
@@ -762,14 +764,29 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		xmlAddChild(tailoring_component, tailoring_res_node);
 		xmlAddChild(sds_res_node, tailoring_component);
 
+		xmlNodePtr checklists_element = NULL;
 		xmlNodePtr datastream_element = node_get_child_element(sds_res_node, "data-stream");
-		// TODO: error checking
-		xmlNodePtr checklists_element = node_get_child_element(datastream_element, "checklists");
-		// erorr cehcking
+		if (datastream_element == NULL) {
+			datastream_element = xmlNewNode(sds_ns, "data-stream");
+			xmlAddChild(sds_res_node, datastream_element);
+			checklists_element = xmlNewNode(sds_ns, "checklists");
+			xmlAddChild(datastream_element, checklists_element);
+		}
+		else {
+			checklists_element = node_get_child_element(datastream_element, "checklists");
+		}
+
 		xmlNodePtr tailoring_component_ref = xmlNewNode(sds_ns, BAD_CAST "component-ref");
 		xmlSetProp(tailoring_component_ref, BAD_CAST "id", BAD_CAST tailoring_component_ref_id);
 		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
 		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
+		if (!xlink_ns) {
+			oscap_seterr(OSCAP_EFAMILY_GLIBC,
+					"Unable to find namespace '%s' in the XML DOM tree. "
+					"This is most likely an internal error!.",
+					xlink_ns_uri);
+			return -1;
+		}
 		xmlSetNsProp(tailoring_component_ref, xlink_ns, BAD_CAST "href", BAD_CAST tailoring_cref_href);
 		free(tailoring_cref_href);
 		xmlAddChild(checklists_element, tailoring_component_ref);
