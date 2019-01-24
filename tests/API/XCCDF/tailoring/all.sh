@@ -124,7 +124,7 @@ function test_api_xccdf_tailoring_profile_generate_fix {
     fix_result=`mktemp`
     # tailoring profile only with "always fail" rule and generate bash fix
     $OSCAP xccdf eval --tailoring-file $TAILORING --profile "xccdf_com.example.www_profile_customized" --results-arf $tailoring_result $INPUT || [ "$?" == "2" ]
-    tailoring_id=$(xpath -q -e 'string(//ds:component-ref[contains(@id, "_tailoring")]/@id)' $tailoring_result)
+    tailoring_id=$($XPATH $tailoring_result 'string(//ds:component-ref[contains(@id, "_tailoring")]/@id)')
     $OSCAP xccdf generate fix --tailoring-id $tailoring_id --result-id xccdf_org.open-scap_test-result_xccdf-com.example.www_profile_customized --results $fix_result $tailoring_result
 
     if ! grep -q "echo \"Fix the first rule\"" $fix_result; then
