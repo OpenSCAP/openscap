@@ -120,11 +120,12 @@ function test_api_xccdf_tailoring_profile_generate_fix {
     local INPUT=$srcdir/$1
     local TAILORING=$srcdir/$2
 
-    tailoring_result='tailoring_res'
-    fix_result='fix_res'
+    tailoring_result=`mktemp`
+    fix_result=`mktemp`
     # tailoring profile only with "always fail" rule and generate bash fix
     $OSCAP xccdf eval --tailoring-file $TAILORING --profile "xccdf_com.example.www_profile_customized" --results-arf $tailoring_result $INPUT || [ "$?" == "2" ]
-    $OSCAP xccdf generate fix --tailoring-id "scap_org.open-scap_cref_tests--API--XCCDF--tailoring--baseline.tailoring.xml_tailoring" --result-id xccdf_org.open-scap_test-result_xccdf-com.example.www_profile_customized --results $fix_result $tailoring_result
+    tailoring_id=$(xpath -q -e 'string(//ds:component-ref[contains(@id, "_tailoring")]/@id)' $tailoring_result)
+    $OSCAP xccdf generate fix --tailoring-id $tailoring_id --result-id xccdf_org.open-scap_test-result_xccdf-com.example.www_profile_customized --results $fix_result $tailoring_result
 
     if ! grep -q "echo \"Fix the first rule\"" $fix_result; then
         return 1
@@ -152,6 +153,7 @@ test_run "test_api_xccdf_tailoring_oscap_info_12" test_api_xccdf_tailoring_oscap
 test_run "test_api_xccdf_tailoring_autonegotiation" test_api_xccdf_tailoring_autonegotiation simple-tailoring-autonegotiation.xml xccdf_org.open-scap_profile_default 1
 test_run "test_api_xccdf_tailoring_simple_include_in_arf" test_api_xccdf_tailoring_simple_include_in_arf simple-xccdf.xml simple-tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_include_in_arf" test_api_xccdf_tailoring_profile_include_in_arf baseline.xccdf.xml baseline.tailoring.xml
+test_run "test_api_xccdf_tailoring_profile_generate_fix" test_api_xccdf_tailoring_profile_generate_fix baseline.xccdf.xml baseline.tailoring.xml
 
 
 test_exit

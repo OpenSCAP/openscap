@@ -781,7 +781,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
 		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
 		if (!xlink_ns) {
-			oscap_seterr(OSCAP_EFAMILY_GLIBC,
+			oscap_seterr(OSCAP_EFAMILY_XML,
 					"Unable to find namespace '%s' in the XML DOM tree. "
 					"This is most likely an internal error!.",
 					xlink_ns_uri);
