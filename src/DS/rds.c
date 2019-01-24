@@ -733,7 +733,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
 	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
 
-	if (tailoring_doc) {
+	if (tailoring_doc && strcmp(tailoring_filepath, "NONEXISTENT")) {
 		char *mangled_tailoring_filepath = ds_sds_mangle_filepath(tailoring_filepath);
 		char *tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring", mangled_tailoring_filepath);
 		char *tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring", mangled_tailoring_filepath);
@@ -849,8 +849,6 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 			const size_t max_timestamp_len = 32;
 			tailoring_doc_timestamp = malloc(max_timestamp_len);
 			strftime(tailoring_doc_timestamp, max_timestamp_len, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
-		} else {
-			return NULL;
 		}
 	}
 
