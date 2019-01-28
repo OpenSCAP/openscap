@@ -851,10 +851,14 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 
 	struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 	const char *profile_id = xccdf_profile_get_id(profile);
+
 	// Title
 	struct oscap_text_iterator *title_iterator = xccdf_profile_get_title(profile);
-	char *profile_title = oscap_textlist_get_preferred_plaintext(title_iterator, NULL);
+	char *raw_profile_title = oscap_textlist_get_preferred_plaintext(title_iterator, NULL);
 	oscap_text_iterator_free(title_iterator);
+	char *profile_title = _comment_multiline_text(raw_profile_title);
+	free(raw_profile_title);
+
 	if (result == NULL) {
 		// Profile-based remediation fix
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
