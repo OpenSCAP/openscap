@@ -802,6 +802,34 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 	return ret;
 }
 
+static char *_comment_multiline_text(char *text)
+{
+	if (text == NULL) {
+		return oscap_strdup("Not available");
+	}
+	size_t new_lines = 0;
+	size_t text_length = 1;
+	for (const char *c = text; *c != '\0'; ++c, ++text_length) {
+		if (*c == '\n') {
+			++new_lines;
+		}
+	}
+	if (new_lines > 0) {
+		const char filler[] = "# ";
+		char *commented_text = malloc(text_length + new_lines * (sizeof filler - 1));
+		for (size_t i = 0, j = 0; j < text_length; ++i, ++j) {
+			commented_text[i] = text[j];
+			if (text[j] == '\n') {
+				for (size_t k = 0; k < (sizeof filler - 1); ++k)
+					commented_text[++i] = filler[k];
+			}
+		}
+		return commented_text;
+	} else {
+		return oscap_strdup(text);
+	}
+}
+
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
@@ -838,33 +866,13 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		char *profile_description = description_iterator != NULL ?
 				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : NULL;
 		oscap_text_iterator_free(description_iterator);
+		char *commented_profile_description = _comment_multiline_text(profile_description);
+		free(profile_description);
 
 		const char *benchmark_version_info = xccdf_benchmark_get_version(benchmark);
 		const char *benchmark_id = xccdf_benchmark_get_id(benchmark);
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
-
-		if (NULL != profile_description) {
-			size_t new_lines = 0;
-			size_t description_length = 1;
-			for (const char *c = profile_description; *c != '\0'; ++c, ++description_length)
-				if (*c == '\n')
-					++new_lines;
-
-			if (new_lines > 0) {
-				const char filler[] = "# ";
-				char *commented_description = malloc(description_length + new_lines * (sizeof filler - 1));
-				for (size_t i = 0, j = 0; j < description_length; ++i, ++j) {
-					commented_description[i] = profile_description[j];
-					if (profile_description[j] == '\n') {
-						for (size_t k = 0; k < (sizeof filler - 1); ++k)
-							commented_description[++i] = filler[k];
-					}
-				}
-				free(profile_description);
-				profile_description = commented_description;
-			}
-		}
 
 		fix_header = oscap_sprintf(
 			"###############################################################################\n"
@@ -890,13 +898,13 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"#\n"
 			"###############################################################################\n\n",
 			remediation_type, profile_title,
-			profile_description != NULL ? profile_description : "Not available",
+			commented_profile_description,
 			profile_id, benchmark_id, benchmark_version_info, xccdf_version_name,
 			oscap_version, profile_id, template, format, remediation_type,
 			remediation_type, how_to_apply
 		);
 
-		free(profile_description);
+		free(commented_profile_description);
 
 	} else {
 		// Results-based remediation fix
