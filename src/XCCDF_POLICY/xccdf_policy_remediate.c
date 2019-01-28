@@ -674,7 +674,7 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 		memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
 		variable_value[ovector[5] - ovector[4]] = '\0';
 
-		char *var_line = oscap_sprintf("      %s: %s\n", variable_name, variable_value);
+		char *var_line = oscap_sprintf("    %s: %s\n", variable_name, variable_value);
 
 		free(variable_name);
 		free(variable_value);
