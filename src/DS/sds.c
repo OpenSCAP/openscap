@@ -116,7 +116,7 @@ xmlNode *containter_get_component_ref_by_id(xmlNode *container, const char *comp
 	return NULL;
 }
 
-static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
+xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
 {
 	/* This searches for a ds:component-ref (XLink) element with a given id.
 	 * It returns a first such element in a given ds:data-stream.
@@ -136,7 +136,7 @@ static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* i
 	return NULL;
 }
 
-static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
+xmlNodePtr lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr component = NULL;
@@ -278,7 +278,7 @@ static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* compo
 	if (component_id == NULL) {
 		component = (xmlNodePtr)doc;
 	} else {
-		component = _lookup_component_in_collection(doc, component_id);
+		component = lookup_component_in_collection(doc, component_id);
 		if (component == NULL)
 		{
 			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
@@ -745,7 +745,7 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 
 // takes given relative filepath and mangles it so that it's acceptable
 // as a component id
-static char* ds_sds_mangle_filepath(const char* filepath)
+char* ds_sds_mangle_filepath(const char* filepath)
 {
 	if (filepath == NULL)
 		return NULL;
@@ -1036,7 +1036,7 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 		extended_component ? "e" : "", mangled_filepath);
 
 	int counter = 0;
-	while (_lookup_component_in_collection(doc, comp_id) != NULL) {
+	while (lookup_component_in_collection(doc, comp_id) != NULL) {
 		// While a component of the given ID already exists, generate a new one
 		free(comp_id);
 		comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s%03d",
