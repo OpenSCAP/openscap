@@ -248,6 +248,14 @@ Authors:
                             </xsl:call-template>
                         </div></td></tr>
 
+                        <tr>
+                            <td><span class="label label-primary">Rule ID:</span></td>
+                            <td>
+                                <xsl:value-of select="$item/@id"/>
+                            </td>
+                        </tr>
+
+
                         <tr><td>Identifiers and References</td><td class="identifiers">
                             <xsl:call-template name="item-idents-refs">
                                 <xsl:with-param name="item" select="$item"/>
