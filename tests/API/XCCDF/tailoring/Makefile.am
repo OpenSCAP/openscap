@@ -15,4 +15,7 @@ EXTRA_DIST = \
 	simple-tailoring.xml \
 	simple-tailoring11.xml \
 	simple-tailoring-autonegotiation.xml \
-	simple-ds.xml
+	simple-ds.xml \
+	baseline.xccdf.xml \
+	baseline.oval.xml \
+	baseline.tailoring.xml

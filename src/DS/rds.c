@@ -38,6 +38,7 @@
 #include "ds_rds_session.h"
 #include "ds_rds_session_priv.h"
 #include "rds_priv.h"
+#include "sds_priv.h"
 #include "source/public/oscap_source.h"
 #include "source/oscap_source_priv.h"
 
@@ -55,6 +56,8 @@ static const char* arf_ns_uri = "http://scap.nist.gov/schema/asset-reporting-for
 static const char* core_ns_uri = "http://scap.nist.gov/schema/reporting-core/1.1";
 static const char* arfvocab_ns_uri = "http://scap.nist.gov/specifications/arf/vocabulary/relationships/1.0#";
 static const char* ai_ns_uri = "http://scap.nist.gov/schema/asset-identification/1.1";
+static const char* xlink_ns_uri = "http://www.w3.org/1999/xlink";
+
 
 xmlNode *ds_rds_lookup_container(xmlDocPtr doc, const char *container_name)
 {
@@ -693,7 +696,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
+static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailoring_doc, const char* tailoring_filepath, char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
 {
 	*ret = NULL;
 
@@ -730,6 +733,68 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
 	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
 
+	if (tailoring_doc && strcmp(tailoring_filepath, "NONEXISTENT")) {
+		char *mangled_tailoring_filepath = ds_sds_mangle_filepath(tailoring_filepath);
+		char *tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring", mangled_tailoring_filepath);
+		char *tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring", mangled_tailoring_filepath);
+
+		// Need unique id (ref_id) - if generated already exists, then create new one
+		int counter = 0;
+		while (lookup_component_in_collection(sds_doc, tailoring_component_id) != NULL) {
+			free(tailoring_component_id);
+			tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
+		}
+
+		counter = 0;
+		while (ds_sds_find_component_ref(xmlDocGetRootElement(sds_res_node)->children, tailoring_component_ref_id) != NULL) {
+			free(tailoring_component_ref_id);
+			tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
+		}
+
+		free(mangled_tailoring_filepath);
+
+		xmlDOMWrapCtxtPtr tailoring_wrap_ctxt = xmlDOMWrapNewCtxt();
+		xmlNodePtr tailoring_res_node = NULL;
+		xmlDOMWrapCloneNode(tailoring_wrap_ctxt, tailoring_doc, xmlDocGetRootElement(tailoring_doc),
+				&tailoring_res_node, doc, NULL, 1, 0);
+		xmlNsPtr sds_ns = sds_res_node->ns;
+		xmlNodePtr tailoring_component = xmlNewNode(sds_ns, BAD_CAST "component");
+		xmlSetProp(tailoring_component, BAD_CAST "id", BAD_CAST tailoring_component_id);
+		xmlSetProp(tailoring_component, BAD_CAST "timestamp", BAD_CAST tailoring_doc_timestamp);
+		xmlAddChild(tailoring_component, tailoring_res_node);
+		xmlAddChild(sds_res_node, tailoring_component);
+
+		xmlNodePtr checklists_element = NULL;
+		xmlNodePtr datastream_element = node_get_child_element(sds_res_node, "data-stream");
+		if (datastream_element == NULL) {
+			datastream_element = xmlNewNode(sds_ns, "data-stream");
+			xmlAddChild(sds_res_node, datastream_element);
+			checklists_element = xmlNewNode(sds_ns, "checklists");
+			xmlAddChild(datastream_element, checklists_element);
+		}
+		else {
+			checklists_element = node_get_child_element(datastream_element, "checklists");
+		}
+
+		xmlNodePtr tailoring_component_ref = xmlNewNode(sds_ns, BAD_CAST "component-ref");
+		xmlSetProp(tailoring_component_ref, BAD_CAST "id", BAD_CAST tailoring_component_ref_id);
+		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
+		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
+		if (!xlink_ns) {
+			oscap_seterr(OSCAP_EFAMILY_XML,
+					"Unable to find namespace '%s' in the XML DOM tree. "
+					"This is most likely an internal error!.",
+					xlink_ns_uri);
+			return -1;
+		}
+		xmlSetNsProp(tailoring_component_ref, xlink_ns, BAD_CAST "href", BAD_CAST tailoring_cref_href);
+		free(tailoring_cref_href);
+		xmlAddChild(checklists_element, tailoring_component_ref);
+
+		xmlDOMWrapReconcileNamespaces(tailoring_wrap_ctxt, tailoring_res_node, 0);
+		xmlDOMWrapFreeCtxt(tailoring_wrap_ctxt);
+	}
+
 	xmlAddChild(report_request, arf_content);
 
 	xmlAddChild(report_requests, report_request);
@@ -758,22 +823,43 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr x
 	return 0;
 }
 
-struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
+struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *tailoring_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
 {
 	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
 	if (sds_doc == NULL) {
 		return NULL;
 	}
+
 	xmlDoc *result_file_doc = oscap_source_get_xmlDoc(xccdf_result_source);
 	if (result_file_doc == NULL) {
 		return NULL;
 	}
 
+	xmlDoc *tailoring_doc = NULL;
+	char *tailoring_doc_timestamp = NULL;
+	char *tailoring_filepath = NULL;
+	if (tailoring_source) {
+		tailoring_doc = oscap_source_get_xmlDoc(tailoring_source);
+		if (tailoring_doc == NULL) {
+			return NULL;
+		}
+		tailoring_filepath = oscap_source_get_filepath(tailoring_source);
+		struct stat file_stat;
+		if (stat(tailoring_filepath, &file_stat) == 0) {
+			const size_t max_timestamp_len = 32;
+			tailoring_doc_timestamp = malloc(max_timestamp_len);
+			strftime(tailoring_doc_timestamp, max_timestamp_len, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+		}
+	}
+
 	xmlDocPtr rds_doc = NULL;
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, result_file_doc,
+
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
 				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
+		free(tailoring_doc_timestamp);
 		return NULL;
 	}
+	free(tailoring_doc_timestamp);
 	return oscap_source_new_from_xmlDoc(rds_doc, target_file);
 }
 
@@ -803,7 +889,7 @@ int ds_rds_create(const char* sds_file, const char* xccdf_result_file, const cha
 		}
 	}
 	if (result == 0) {
-		struct oscap_source *target_rds = ds_rds_create_source(sds_source, xccdf_result_source, oval_result_sources, oval_result_mapping, arf_report_mapping, target_file);
+		struct oscap_source *target_rds = ds_rds_create_source(sds_source, NULL, xccdf_result_source, oval_result_sources, oval_result_mapping, arf_report_mapping, target_file);
 		result = target_rds == NULL;
 		if (result == 0) {
 			result = oscap_source_save_as(target_rds, NULL);
