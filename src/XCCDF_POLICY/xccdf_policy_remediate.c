@@ -807,27 +807,50 @@ static char *_comment_multiline_text(char *text)
 	if (text == NULL) {
 		return oscap_strdup("Not available");
 	}
-	size_t new_lines = 0;
-	size_t text_length = 1;
-	for (const char *c = text; *c != '\0'; ++c, ++text_length) {
-		if (*c == '\n') {
-			++new_lines;
+	const char *filler = "\n# ";
+	size_t buffer_size = strlen(text) + 1; // +1 for terminating '\0'
+	char *buffer = malloc(buffer_size);
+	char *saveptr, *str;
+	size_t filler_len = strlen(filler);
+	size_t result_len = 0;
+	bool first = true;
+	for (str = text; ; str = NULL) {
+		char *token = oscap_strtok_r(str, "\n", &saveptr);
+		if (token == NULL) {
+			break;
 		}
-	}
-	if (new_lines > 0) {
-		const char filler[] = "# ";
-		char *commented_text = malloc(text_length + new_lines * (sizeof filler - 1));
-		for (size_t i = 0, j = 0; j < text_length; ++i, ++j) {
-			commented_text[i] = text[j];
-			if (text[j] == '\n') {
-				for (size_t k = 0; k < (sizeof filler - 1); ++k)
-					commented_text[++i] = filler[k];
+		while (isspace(*token)) {
+			token++;
+		}
+		size_t token_len = strlen(token);
+		if (token_len > 0) {
+			char *token_last_char = token + token_len - 1;
+			while(isspace(*token_last_char)) {
+				token_last_char--;
 			}
+			*(token_last_char + 1) = '\0';
+			token_len = strlen(token);
 		}
-		return commented_text;
-	} else {
-		return oscap_strdup(text);
+		if (token_len > 0) {
+			if (!first) {
+				if (buffer_size < result_len + filler_len + 1) {
+					buffer_size += filler_len;
+					buffer = realloc(buffer, buffer_size);
+				}
+				strncpy(buffer + result_len, filler, filler_len);
+				result_len += filler_len;
+			}
+			if (buffer_size < result_len + token_len + 1) {
+					buffer_size += token_len;
+					buffer = realloc(buffer, buffer_size);
+			}
+			strncpy(buffer + result_len, token, token_len);
+			result_len += token_len;
+			first = false;
+		}
 	}
+	*(buffer + result_len) = '\0';
+	return buffer;
 }
 
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
