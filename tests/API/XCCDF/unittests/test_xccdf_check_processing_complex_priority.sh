@@ -1,7 +1,9 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
+touch not_executable
 
 name=$(basename $0 .sh)
 
@@ -33,3 +35,5 @@ for args in "" "--profile xccdf_moc.elpmaxe.www_profile_1"; do
 	assert_exists 1 '//rule-result/complex-check[@operator="AND"]'
 	rm $result
 done
+
+rm not_executable

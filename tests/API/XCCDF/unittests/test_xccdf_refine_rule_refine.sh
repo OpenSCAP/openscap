@@ -1,4 +1,5 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 # Test <refine-rule> element
 # 1st phase use xccdf profile with refine-rules

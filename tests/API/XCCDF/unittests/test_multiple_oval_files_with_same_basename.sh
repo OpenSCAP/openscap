@@ -1,4 +1,7 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
+
+touch not_executable
 
 set -e
 set -o pipefail
@@ -90,3 +93,5 @@ $OSCAP xccdf validate $split/${mangle}${name}.xccdf.xml 2> $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 rm $split/${mangle}${name}.xccdf.xml
 rmdir $split
+
+rm not_executable

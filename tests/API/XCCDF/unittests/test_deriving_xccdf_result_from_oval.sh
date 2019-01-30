@@ -1,7 +1,10 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
+
+touch not_executable
 
 name=$(basename $0 .sh)
 
@@ -31,3 +34,5 @@ assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:default"][text()=
 assert_exists 1 '//TestResult/score[@system="urn:xccdf:scoring:flat"][text()="8.000000"]'
 
 rm $result
+
+rm not_executable
