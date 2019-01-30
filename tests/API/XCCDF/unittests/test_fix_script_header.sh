@@ -31,8 +31,8 @@ profile_header6="# XCCDF Version:  $xccdf_version"
 result_header1a="# Bash Remediation Script generated from evaluation of $title"
 result_header1b="# Ansible Playbook generated from evaluation of $title"
 result_header2="# XCCDF Version:  $xccdf_version"
-result_header3a="# $ oscap xccdf generate fix --result-id $result_id --template $bash_template xccdf-results.xml"
-result_header3b="# $ oscap xccdf generate fix --result-id $result_id --template $ansible_template xccdf-results.xml"
+result_header3a="# $ oscap xccdf generate fix --result-id $result_id --fix-type bash xccdf-results.xml"
+result_header3b="# $ oscap xccdf generate fix --result-id $result_id --fix-type ansible xccdf-results.xml"
 
 
 # Create an ARF
