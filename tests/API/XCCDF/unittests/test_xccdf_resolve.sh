@@ -1,4 +1,5 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 ########################################################################
 ### Test "oscap xccdf resolve" command

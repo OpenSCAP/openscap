@@ -1,4 +1,5 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 # Test loading of OVAL results files located referenced absolutely
 
