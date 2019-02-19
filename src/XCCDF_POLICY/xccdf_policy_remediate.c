@@ -841,14 +841,14 @@ static char *_comment_multiline_text(char *text)
 					buffer_size += filler_len;
 					buffer = realloc(buffer, buffer_size);
 				}
-				strncpy(buffer + result_len, filler, filler_len);
+				strncpy(buffer + result_len, filler, filler_len + 1);
 				result_len += filler_len;
 			}
 			if (buffer_size < result_len + token_len + 1) {
 					buffer_size += token_len;
 					buffer = realloc(buffer, buffer_size);
 			}
-			strncpy(buffer + result_len, token, token_len);
+			strncpy(buffer + result_len, token, token_len + 1);
 			result_len += token_len;
 			first = false;
 		}
