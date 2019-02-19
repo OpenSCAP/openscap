@@ -824,19 +824,22 @@ static char *_comment_multiline_text(char *text)
 		if (token == NULL) {
 			break;
 		}
+		/* Strip leading whitespace */
 		while (isspace(*token)) {
 			token++;
 		}
 		size_t token_len = strlen(token);
 		if (token_len > 0) {
+			/* Strip trailing whitespace */
 			char *token_last_char = token + token_len - 1;
-			while(isspace(*token_last_char)) {
+			while (isspace(*token_last_char)) {
 				token_last_char--;
 			}
 			*(token_last_char + 1) = '\0';
 			token_len = strlen(token);
 		}
 		if (token_len > 0) {
+			/* Copy filler to output buffer */
 			if (!first) {
 				if (buffer_size < result_len + filler_len + 1) {
 					buffer_size += filler_len;
@@ -849,6 +852,7 @@ static char *_comment_multiline_text(char *text)
 					buffer_size += token_len;
 					buffer = realloc(buffer, buffer_size);
 			}
+			/* Copy token to output buffer */
 			strncpy(buffer + result_len, token, token_len + 1);
 			result_len += token_len;
 			first = false;
