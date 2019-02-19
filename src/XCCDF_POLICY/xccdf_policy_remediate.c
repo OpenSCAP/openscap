@@ -802,6 +802,10 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 	return ret;
 }
 
+/* Handles multiline strings in profile title and description.
+ * Puts a '#' at the beginning of each line.
+ * Also removes trailing and leading whitespaces on each line.
+ */
 static char *_comment_multiline_text(char *text)
 {
 	if (text == NULL) {
