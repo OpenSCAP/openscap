@@ -802,6 +802,15 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 	return ret;
 }
 
+static void _comment_multiline_text_strip_trailing_whitespace(char *token, size_t token_len)
+{
+	char *token_last_char = token + token_len - 1;
+	while (isspace(*token_last_char)) {
+		token_last_char--;
+	}
+	*(token_last_char + 1) = '\0';
+}
+
 /* Handles multiline strings in profile title and description.
  * Puts a '#' at the beginning of each line.
  * Also removes trailing and leading whitespaces on each line.
@@ -831,11 +840,7 @@ static char *_comment_multiline_text(char *text)
 		size_t token_len = strlen(token);
 		if (token_len > 0) {
 			/* Strip trailing whitespace */
-			char *token_last_char = token + token_len - 1;
-			while (isspace(*token_last_char)) {
-				token_last_char--;
-			}
-			*(token_last_char + 1) = '\0';
+			_comment_multiline_text_strip_trailing_whitespace(token, token_len);
 			token_len = strlen(token);
 		}
 		if (token_len > 0) {
