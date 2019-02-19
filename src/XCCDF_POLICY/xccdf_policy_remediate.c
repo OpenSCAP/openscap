@@ -814,11 +814,12 @@ static char *_comment_multiline_text(char *text)
 	const char *filler = "\n# ";
 	size_t buffer_size = strlen(text) + 1; // +1 for terminating '\0'
 	char *buffer = malloc(buffer_size);
-	char *saveptr, *str;
+	char *saveptr;
 	size_t filler_len = strlen(filler);
 	size_t result_len = 0;
 	bool first = true;
-	for (str = text; ; str = NULL) {
+	char *str = text;
+	while (true) {
 		char *token = oscap_strtok_r(str, "\n", &saveptr);
 		if (token == NULL) {
 			break;
@@ -852,6 +853,7 @@ static char *_comment_multiline_text(char *text)
 			result_len += token_len;
 			first = false;
 		}
+		str = NULL;
 	}
 	*(buffer + result_len) = '\0';
 	return buffer;
