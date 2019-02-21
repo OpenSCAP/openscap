@@ -674,7 +674,7 @@ static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *va
 		memcpy(variable_value, &fix_text[ovector[4]], ovector[5] - ovector[4]);
 		variable_value[ovector[5] - ovector[4]] = '\0';
 
-		char *var_line = oscap_sprintf("      %s: %s\n", variable_name, variable_value);
+		char *var_line = oscap_sprintf("    %s: %s\n", variable_name, variable_value);
 
 		free(variable_name);
 		free(variable_value);
@@ -802,6 +802,72 @@ static int _xccdf_item_recursive_gather_selected_rules(struct xccdf_policy *poli
 	return ret;
 }
 
+static void _trim_trailing_whitespace(char *str, size_t str_len)
+{
+	char *last_char = str + str_len - 1;
+	while (isspace(*last_char)) {
+		*last_char = '\0';
+		last_char--;
+	}
+}
+
+/* Handles multiline strings in profile title and description.
+ * Puts a '#' at the beginning of each line.
+ * Also removes trailing and leading whitespaces on each line.
+ */
+static char *_comment_multiline_text(char *text)
+{
+	if (text == NULL) {
+		return oscap_strdup("Not available");
+	}
+	const char *filler = "\n# ";
+	size_t buffer_size = strlen(text) + 1; // +1 for terminating '\0'
+	char *buffer = malloc(buffer_size);
+	char *saveptr;
+	size_t filler_len = strlen(filler);
+	size_t result_len = 0;
+	bool first = true;
+	char *str = text;
+	while (true) {
+		char *token = oscap_strtok_r(str, "\n", &saveptr);
+		if (token == NULL) {
+			break;
+		}
+		/* Strip leading whitespace */
+		while (isspace(*token)) {
+			token++;
+		}
+		size_t token_len = strlen(token);
+		if (token_len > 0) {
+			/* Strip trailing whitespace */
+			_trim_trailing_whitespace(token, token_len);
+			token_len = strlen(token);
+		}
+		if (token_len > 0) {
+			/* Copy filler to output buffer */
+			if (!first) {
+				if (buffer_size < result_len + filler_len + 1) {
+					buffer_size += filler_len;
+					buffer = realloc(buffer, buffer_size);
+				}
+				strncpy(buffer + result_len, filler, filler_len + 1);
+				result_len += filler_len;
+			}
+			if (buffer_size < result_len + token_len + 1) {
+					buffer_size += token_len;
+					buffer = realloc(buffer, buffer_size);
+			}
+			/* Copy token to output buffer */
+			strncpy(buffer + result_len, token, token_len + 1);
+			result_len += token_len;
+			first = false;
+		}
+		str = NULL;
+	}
+	*(buffer + result_len) = '\0';
+	return buffer;
+}
+
 static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_result *result, const char *sys, int output_fd)
 {
 	if (!(oscap_streq(sys, "") || oscap_streq(sys, "urn:xccdf:fix:script:sh") || oscap_streq(sys, "urn:xccdf:fix:commands") ||
@@ -815,18 +881,21 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		"# $ ansible-playbook -i inventory.ini playbook.yml" :
 		"# $ sudo ./remediation-script.sh";
 	const char *oscap_version = oscap_get_version();
-	const char *format = sys != NULL ? sys : "";
-	const char *template = sys != NULL ? " --template " : "";
+	const char *format = ansible_script ? "ansible" : "bash";
 	const char *remediation_type = ansible_script ? "Ansible Playbook" : "Bash Remediation Script";
 
 	char *fix_header;
 
 	struct xccdf_profile *profile = xccdf_policy_get_profile(policy);
 	const char *profile_id = xccdf_profile_get_id(profile);
+
 	// Title
 	struct oscap_text_iterator *title_iterator = xccdf_profile_get_title(profile);
-	char *profile_title = oscap_textlist_get_preferred_plaintext(title_iterator, NULL);
+	char *raw_profile_title = oscap_textlist_get_preferred_plaintext(title_iterator, NULL);
 	oscap_text_iterator_free(title_iterator);
+	char *profile_title = _comment_multiline_text(raw_profile_title);
+	free(raw_profile_title);
+
 	if (result == NULL) {
 		// Profile-based remediation fix
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
@@ -838,33 +907,13 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		char *profile_description = description_iterator != NULL ?
 				oscap_textlist_get_preferred_plaintext(description_iterator, NULL) : NULL;
 		oscap_text_iterator_free(description_iterator);
+		char *commented_profile_description = _comment_multiline_text(profile_description);
+		free(profile_description);
 
 		const char *benchmark_version_info = xccdf_benchmark_get_version(benchmark);
 		const char *benchmark_id = xccdf_benchmark_get_id(benchmark);
 		const struct xccdf_version_info *xccdf_version = xccdf_benchmark_get_schema_version(benchmark);
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
-
-		if (NULL != profile_description) {
-			size_t new_lines = 0;
-			size_t description_length = 1;
-			for (const char *c = profile_description; *c != '\0'; ++c, ++description_length)
-				if (*c == '\n')
-					++new_lines;
-
-			if (new_lines > 0) {
-				const char filler[] = "# ";
-				char *commented_description = malloc(description_length + new_lines * (sizeof filler - 1));
-				for (size_t i = 0, j = 0; j < description_length; ++i, ++j) {
-					commented_description[i] = profile_description[j];
-					if (profile_description[j] == '\n') {
-						for (size_t k = 0; k < (sizeof filler - 1); ++k)
-							commented_description[++i] = filler[k];
-					}
-				}
-				free(profile_description);
-				profile_description = commented_description;
-			}
-		}
 
 		fix_header = oscap_sprintf(
 			"###############################################################################\n"
@@ -880,7 +929,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# XCCDF Version:  %s\n"
 			"#\n"
 			"# This file was generated by OpenSCAP %s using:\n"
-			"# $ oscap xccdf generate fix --profile %s%s%s xccdf-file.xml\n"
+			"# $ oscap xccdf generate fix --profile %s --fix-type %s xccdf-file.xml\n"
 			"#\n"
 			"# This %s is generated from an OpenSCAP profile without preliminary evaluation.\n"
 			"# It attempts to fix every selected rule, even if the system is already compliant.\n"
@@ -890,13 +939,13 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"#\n"
 			"###############################################################################\n\n",
 			remediation_type, profile_title,
-			profile_description != NULL ? profile_description : "Not available",
+			commented_profile_description,
 			profile_id, benchmark_id, benchmark_version_info, xccdf_version_name,
-			oscap_version, profile_id, template, format, remediation_type,
+			oscap_version, profile_id, format, remediation_type,
 			remediation_type, how_to_apply
 		);
 
-		free(profile_description);
+		free(commented_profile_description);
 
 	} else {
 		// Results-based remediation fix
@@ -916,7 +965,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"# Evaluation Start Time:  %s\n"
 			"# Evaluation End Time:  %s\n#\n"
 			"# This file was generated by OpenSCAP %s using:\n"
-			"# $ oscap xccdf generate fix --result-id %s%s%s xccdf-results.xml\n"
+			"# $ oscap xccdf generate fix --result-id %s --fix-type %s xccdf-results.xml\n"
 			"#\n"
 			"# This %s is generated from the results of a profile evaluation.\n"
 			"# It attempts to remediate all issues from the selected rules that failed the test.\n"
@@ -927,7 +976,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"###############################################################################\n\n",
 			remediation_type, profile_title, profile_id, xccdf_version_name,
 			start_time != NULL ? start_time : "Unknown", end_time, oscap_version,
-			result_id, template, format, remediation_type, remediation_type, how_to_apply
+			result_id, format, remediation_type, remediation_type, how_to_apply
 		);
 	}
 	free(profile_title);
