@@ -14,13 +14,15 @@ function test_oval_details_implicit {
   # Tests if OVAL Details are present in HTML report by default
   # without specifing --oval-results --results (new behavior)
   xccdffile=$srcdir/$1.xccdf.xml
-  resultfile=$output_dir/$1.result.xml
   reportfile=$output_dir/$1.report.html
+  resultfile="$1.result.xml"
   oval_resultfile="$1.oval.xml.result.xml"
   $OSCAP xccdf eval --report $reportfile $xccdffile
   [ -f $reportfile ]
   [ ! -f $resultfile ]
+  [ ! -f $output_dir/$resultfile ]
   [ ! -f $oval_resultfile ]
+  [ ! -f $output_dir/$oval_resultfile ]
   grep -i $2 $reportfile >/dev/null && grep -i $3 $reportfile >/dev/null
   rm $reportfile
 }
