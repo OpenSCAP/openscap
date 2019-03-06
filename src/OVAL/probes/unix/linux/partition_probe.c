@@ -219,6 +219,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
                                  "total_space",   OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_blocks,
                                  "space_used",    OVAL_DATATYPE_INTEGER, (int64_t)(stvfs.f_blocks - stvfs.f_bfree),
                                  "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
+                                 "block_size",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_frsize,
                                  NULL);
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
