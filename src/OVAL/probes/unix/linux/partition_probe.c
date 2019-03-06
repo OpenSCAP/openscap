@@ -219,8 +219,13 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
                                  "total_space",   OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_blocks,
                                  "space_used",    OVAL_DATATYPE_INTEGER, (int64_t)(stvfs.f_blocks - stvfs.f_bfree),
                                  "space_left",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_bfree,
-                                 "block_size",    OVAL_DATATYPE_INTEGER, (int64_t)stvfs.f_frsize,
                                  NULL);
+
+        if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.11.2)) >= 0) {
+            SEXP_t *block_size = SEXP_number_newi_64(stvfs.f_frsize);
+            probe_item_ent_add(item, "block_size", NULL, block_size);
+            SEXP_free(block_size);
+        }
 
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
         /*
