@@ -43,7 +43,7 @@ matrix:
       before_install:
         - brew update
         - brew upgrade python
-        - brew install doxygen --with-graphviz
+        - brew install doxygen
         - brew install opendbx
         - brew install popt
         - brew install swig
