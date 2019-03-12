@@ -1325,18 +1325,13 @@ int xccdf_session_export_xccdf(struct xccdf_session *session)
 	if (session->export.report_file == NULL)
 		return 0;
 
-	struct oscap_source* results = session->xccdf.result_source;
-	struct oscap_source* arf = NULL;
-	if (session->export.oval_results || session->export.arf_file) {
-		arf = xccdf_session_create_arf_source(session);
-		if (arf == NULL) {
-			return 1;
-		}
-		results = arf;
+	struct oscap_source* arf = xccdf_session_create_arf_source(session);
+	if (arf == NULL) {
+		return 1;
 	}
 
 	/* generate report */
-	_xccdf_gen_report(results,
+	_xccdf_gen_report(arf,
 			xccdf_result_get_id(session->xccdf.result),
 			session->export.report_file,
 			"",
@@ -1530,21 +1525,19 @@ static int _build_oval_result_sources(struct xccdf_session *session)
 
 int xccdf_session_export_oval(struct xccdf_session *session)
 {
-	if (session->export.oval_results || session->export.arf_file != NULL) {
-		if (_build_oval_result_sources(session) != 0) {
+	if (_build_oval_result_sources(session) != 0) {
+		return 1;
+	}
+	struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->oval.result_sources);
+	while (oscap_htable_iterator_has_more(hit)) {
+		struct oscap_source *source = oscap_htable_iterator_next_value(hit);
+		if (oscap_source_save_as(source, NULL) != 0) {
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
+			oscap_htable_iterator_free(hit);
 			return 1;
 		}
-		struct oscap_htable_iterator *hit = oscap_htable_iterator_new(session->oval.result_sources);
-		while (oscap_htable_iterator_has_more(hit)) {
-			struct oscap_source *source = oscap_htable_iterator_next_value(hit);
-			if (oscap_source_save_as(source, NULL) != 0) {
-				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s", oscap_source_readable_origin(source));
-				oscap_htable_iterator_free(hit);
-				return 1;
-			}
-		}
-		oscap_htable_iterator_free(hit);
 	}
+	oscap_htable_iterator_free(hit);
 
 	/* Export variables */
 	if (session->export.oval_variables && session->oval.agents != NULL) {
