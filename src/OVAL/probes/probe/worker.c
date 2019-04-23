@@ -1083,24 +1083,30 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			dE("fchdir failed: %s", strerror(errno));
 			close(probe->real_root_fd);
 			close(probe->real_cwd_fd);
+			probe->real_root_fd = -1;
+			probe->real_cwd_fd = -1;
 			SEXP_free(probe_out);
 			return NULL;
 		}
 		close(probe->real_root_fd);
+		probe->real_root_fd = -1;
 		dI("Leaving chroot mode");
 		if (chroot(".") == -1) {
 			dE("chroot(\".\") failed: %s", strerror(errno));
 			close(probe->real_cwd_fd);
+			probe->real_cwd_fd = -1;
 			SEXP_free(probe_out);
 			return NULL;
 		}
 		if (fchdir(probe->real_cwd_fd) != 0) {
 			dE("fchdir failed: %s", strerror(errno));
 			close(probe->real_cwd_fd);
+			probe->real_cwd_fd = -1;
 			SEXP_free(probe_out);
 			return NULL;
 		}
 		close(probe->real_cwd_fd);
+		probe->real_cwd_fd = -1;
 	}
 #endif
 
