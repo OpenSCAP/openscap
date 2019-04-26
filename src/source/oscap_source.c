@@ -58,8 +58,8 @@
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML file supplied by user
 	OSCAP_SRC_FROM_USER_MEMORY,                     ///< The source originated from memory supplied by user
-	OSCAP_SRC_FROM_XML_DOM,                         ///< The source originated from XML DOM (most often from DataStream).
-	// TODO: downloaded from an http address (XCCDF can refer to remote sources)
+	OSCAP_SRC_FROM_XML_DOM,                         ///< The source originated from XML DOM (most often from DataStream.
+	OSCAP_SRC_FROM_URL,                             ///< The source originated from a URL.
 } oscap_source_type_t;
 
 struct oscap_source {
@@ -75,6 +75,14 @@ struct oscap_source {
 		xmlDoc *doc;                            /// DOM
 	} xml;
 };
+
+struct oscap_source *oscap_source_new_from_url(const char *url)
+{
+	struct oscap_source *source = (struct oscap_source *) calloc(1, sizeof(struct oscap_source));
+	source->origin.filepath = oscap_strdup(url);
+	source->origin.type = OSCAP_SRC_FROM_URL;
+	return source;
+}
 
 struct oscap_source *oscap_source_new_from_file(const char *filepath)
 {
