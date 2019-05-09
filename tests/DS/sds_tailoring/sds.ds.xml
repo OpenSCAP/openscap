@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_cdf_collection_fedora.zip" schematron-version="1.0" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2-draft.xsd">
+<data-stream-collection xmlns="http://scap.nist.gov/schema/scap/source/1.2" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_cdf_collection_fedora.zip" schematron-version="1.2" xsi:schemaLocation="http://scap.nist.gov/schema/scap/source/1.2 http://scap.nist.gov/schema/scap/1.2/scap-source-data-stream_1.2-draft.xsd">
 
   <!-- Data Stream with XCCDF checklist -->
   <data-stream id="scap_com.example_datastream_with_checklist" scap-version="1.2" timestamp="2016-09-26T15:00:00" use-case="CONFIGURATION">
