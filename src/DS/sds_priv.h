@@ -26,6 +26,7 @@
 #endif
 
 #include <libxml/tree.h>
+#include <libxml/xmlreader.h>
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_sds_session.h"
@@ -50,5 +51,8 @@ xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char *id);
 
 char *ds_sds_mangle_filepath(const char *filepath);
 
+char *ds_sds_detect_version(xmlTextReader *reader);
+
 OSCAP_HIDDEN_END;
+
 #endif
