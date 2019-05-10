@@ -18,7 +18,9 @@ function test_validation {
 
 test_init test_validation.log
 test_run "valid-sds" test_validation sds sds-valid.xml 0
+test_run "valid-1.3-sds" test_validation sds sds-1.3-valid.xml 0
 test_run "invalid-sds" test_validation sds sds-invalid.xml 1
+test_run "invalid-1.3-sds" test_validation sds sds-1.3-invalid.xml 1
 test_run "invalid-xccdf-sds" test_validation sds sds-invalid-xccdf.xml 1
 test_run "invalid-oval-sds" test_validation sds sds-invalid-oval.xml 1
 
