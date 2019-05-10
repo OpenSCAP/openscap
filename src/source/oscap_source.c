@@ -363,7 +363,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 		}
 		switch (oscap_source_get_scap_type(source)) {
 			case OSCAP_DOCUMENT_SDS:
-				source->origin.version = oscap_strdup("1.2");
+				source->origin.version = ds_sds_detect_version(reader);
 				break;
 			case OSCAP_DOCUMENT_ARF:
 				source->origin.version = oscap_strdup("1.1");

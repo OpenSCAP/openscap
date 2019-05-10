@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:cpe-dict="http://cpe.mitre.org/dictionary/2.0" xmlns:ocil="http://scap.nist.gov/schema/ocil/2.0" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.2">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2"
+  xmlns:xccdf="http://checklists.nist.gov/xccdf/1.2" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+  xmlns:cpe-dict="http://cpe.mitre.org/dictionary/2.0" xmlns:ocil="http://scap.nist.gov/schema/ocil/2.0"
+  xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" targetNamespace="http://scap.nist.gov/schema/scap/source/1.2"
+  xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink"
+  elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.3">
   <xs:annotation>
     <xs:appinfo>
-      <schema>SCAP 1.2 Source Data Stream Collection</schema>
+      <schema>SCAP 1.3 Source Data Stream Collection</schema>
       <author>Adam Halbardier, David Waltermire</author>
-      <version>1.2</version>
-      <date>2011-10-10</date>
+      <version>1.3</version>
+      <date>2016-12-01</date>
     </xs:appinfo>
   </xs:annotation>
-  <xs:import namespace="http://checklists.nist.gov/xccdf/1.2" schemaLocation="../../xccdf/1.2/xccdf_1.2.xsd"/>
-  <!-- This changes the original schema. Original schema imports OVAL 5.10. -->
-  <xs:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5" schemaLocation="../../oval/5.11.1/oval-definitions-schema.xsd"/>
-  <xs:import namespace="http://cpe.mitre.org/dictionary/2.0" schemaLocation="cpe-dictionary_2.3.xsd"/>
-  <xs:import namespace="http://scap.nist.gov/schema/ocil/2.0" schemaLocation="../../ocil/2.0/ocil-2.0.xsd"/>
-  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
-  <xs:import namespace="urn:oasis:names:tc:entity:xmlns:xml:catalog" schemaLocation="../../common/catalog.xsd"/>
+  <xs:import namespace="http://checklists.nist.gov/xccdf/1.2"
+    schemaLocation="../../xccdf/1.2/xccdf_1.2.xsd"/>
+  <xs:import namespace="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+    schemaLocation="../../oval/5.11.2/oval-definitions-schema.xsd"/>
+  <xs:import namespace="http://cpe.mitre.org/dictionary/2.0"
+    schemaLocation="../../cpe/2.3/cpe-dictionary_2.3.xsd"/>
+  <xs:import namespace="http://scap.nist.gov/schema/ocil/2.0"
+    schemaLocation="../../ocil/2.0/ocil-2.0.xsd"/>
+  <xs:import namespace="http://www.w3.org/2000/09/xmldsig#"
+    schemaLocation="../../common/xmldsig-core-schema.xsd"/>
+  <xs:import namespace="urn:oasis:names:tc:entity:xmlns:xml:catalog"
+    schemaLocation="../../common/catalog.xsd"/>
   <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="../../common/xlink.xsd"/>
   <xs:element name="data-stream-collection">
     <xs:annotation>
@@ -206,6 +216,7 @@
       <xs:enumeration value="1.0"/>
       <xs:enumeration value="1.1"/>
       <xs:enumeration value="1.2"/>
+      <xs:enumeration value="1.3"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:complexType name="contentSourceType">
