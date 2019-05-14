@@ -11,6 +11,8 @@ TESTS_ENVIRONMENT= \
 TESTS = test_ds.sh
 
 EXTRA_DIST = test_ds.sh \
+		ds_continue_without_remote_resources/remote_content_1.2.ds.xml \
+		ds_continue_without_remote_resources/remote_content_1.3.ds.xml \
 		eval_invalid/sds.xml \
 		eval_invalid/sds-oval.xml \
 		eval_simple/sds.xml \
