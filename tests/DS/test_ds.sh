@@ -414,6 +414,21 @@ function test_sds_tailoring {
 	rm -f "$result"
 }
 
+function test_ds_continue_without_remote_resources() {
+	local DS="${srcdir}/$1"
+	local PROFILE="$2"
+	local result=$(mktemp)
+
+	$OSCAP xccdf eval --profile "$PROFILE" --results "$result" "$DS"
+
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-remote_res"]/result[text()="notchecked"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass2"]/result[text()="pass"]'
+
+	rm -f "$result"
+}
+
+
 # Testing.
 test_init "test_ds.log"
 
@@ -454,6 +469,8 @@ test_run "rds_split_simple" test_rds_split rds_split_simple report-request.xml r
 
 test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
+test_run "test_ds_1_2_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.2.ds.xml xccdf_com.example.www_profile_test_remote_res
+test_run "test_ds_1_3_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.3.ds.xml xccdf_com.example.www_profile_test_remote_res
 
 test_exit
 
