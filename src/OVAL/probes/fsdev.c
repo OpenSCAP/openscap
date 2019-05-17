@@ -194,9 +194,6 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	struct mntent *ment;
 	struct stat st;
 
-	const char **fs = NULL;
-	size_t fs_cnt = 0;
-
 	fp = setmntent(_PATH_MOUNTED, "r");
 	if (fp == NULL) {
 		e = errno;
@@ -219,12 +216,8 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	i = 0;
 
 	while ((ment = getmntent(fp)) != NULL) {
-		if (fs == NULL) {
-			if (!is_local_fs(ment))
-				continue;
-		} else if (!match_fs(ment->mnt_type, fs, fs_cnt)) {
-				continue;
-		}
+		if (!is_local_fs(ment))
+			continue;
 		if (stat(ment->mnt_dir, &st) != 0)
 			continue;
 		if (i >= lfs->cnt) {
@@ -248,26 +241,14 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	struct stat st;
 	int i;
 
-	const char **fs = NULL;
-	size_t fs_cnt = 0;
-
 	lfs->cnt = getmntinfo(&mntbuf, (fs == NULL ? MNT_LOCAL : 0) | MNT_NOWAIT);
 	lfs->ids = malloc(sizeof(dev_t) * lfs->cnt);
 
-	if (fs == NULL) {
-		for (i = 0; i < lfs->cnt; ++i) {
-			if (stat(mntbuf[i].f_mntonname, &st) != 0)
-				continue;
+	for (i = 0; i < lfs->cnt; ++i) {
+		if (stat(mntbuf[i].f_mntonname, &st) != 0)
+			continue;
 
-			memcpy(&(lfs->ids[i]), &st.st_dev, sizeof(dev_t));
-		}
-	} else {
-		for (i = 0; i < lfs->cnt; ++i) {
-			if (!match_fs(mntbuf[i].f_fstypename, fs, fs_cnt))
-				continue;
-
-			memcpy(&(lfs->ids[i]), &st.st_dev, sizeof(dev_t));
-		}
+		memcpy(&(lfs->ids[i]), &st.st_dev, sizeof(dev_t));
 	}
 
 	if (i != lfs->cnt) {
@@ -291,9 +272,6 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	struct mnttab mentbuf;
 	struct stat st;
 
-	const char **fs = NULL;
-	size_t fs_cnt = 0;
-
 	fp = fopen(MNTTAB, "r");
 	if (fp == NULL) {
 		e = errno;
@@ -315,31 +293,16 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	lfs->cnt = DEVID_ARRAY_SIZE;
 	i = 0;
 
-	if (fs == NULL) {
-		while ((getmntent(fp, &mentbuf)) == 0) {
-                        /* TODO: Is this check reliable? */
-                        if (stat (mentbuf.mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
+	while ((getmntent(fp, &mentbuf)) == 0) {
+		/* TODO: Is this check reliable? */
+		if (stat(mentbuf.mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
 
-				if (i >= lfs->cnt) {
-					lfs->cnt += DEVID_ARRAY_ADD;
-					lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
-				}
-
-				memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
+			if (i >= lfs->cnt) {
+				lfs->cnt += DEVID_ARRAY_ADD;
+				lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
 			}
-		}
-	} else {
-		while ((getmntent(fp, &mentbuf)) == 0) {
 
-			if (match_fs(mentbuf.mnt_fstype, fs, fs_cnt)) {
-
-				if (i >= lfs->cnt) {
-					lfs->cnt += DEVID_ARRAY_ADD;
-					lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
-				}
-
-				memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
-			}
+			memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
 		}
 	}
 
