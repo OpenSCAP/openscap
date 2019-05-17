@@ -73,14 +73,6 @@ static int fsdev_cmp(const void *a, const void *b)
 	return memcmp(a, b, sizeof(dev_t));
 }
 
-/**
- * Compare two strings.
- */
-static int fsname_cmp(const void *a, const void *b)
-{
-	return strcmp(a, b);
-}
-
 #if defined(__linux__) || defined(_AIX)
 
 #define DEVID_ARRAY_SIZE 16
