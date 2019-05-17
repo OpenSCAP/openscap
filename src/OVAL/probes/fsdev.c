@@ -81,37 +81,6 @@ static int fsname_cmp(const void *a, const void *b)
 	return strcmp(a, b);
 }
 
-/**
- * Search for a filesystem name in a sorted array using binary search.
- * @param fsname name
- * @param fs_arr sorted array of filesystem names
- * @param fs_cnt number of names in the array
- * @retval 1 if found
- * @retval 0 otherwise
- */
-static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
-{
-	size_t w, s;
-	int cmp;
-
-	w = fs_cnt;
-	s = 0;
-
-	while (w > 0) {
-		cmp = fsname_cmp(fsname, fs_arr[s + w / 2]);
-		if (cmp > 0) {
-			s += w / 2 + 1;
-			w = w - w / 2 - 1;
-		} else if (cmp < 0) {
-			w = w / 2;
-		} else {
-			return (1);
-		}
-	}
-
-	return (0);
-}
-
 #if defined(__linux__) || defined(_AIX)
 
 #define DEVID_ARRAY_SIZE 16
