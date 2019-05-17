@@ -48,7 +48,7 @@ typedef struct {
  * Initialize the fsdev_t structure from an array of filesystem
  * names.
  */
-fsdev_t *fsdev_init(const char **fs, size_t fs_cnt);
+fsdev_t *fsdev_init(void);
 
 /**
  * Free the fsdev_t structure.

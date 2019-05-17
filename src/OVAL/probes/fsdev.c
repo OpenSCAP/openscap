@@ -343,8 +343,10 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 }
 #endif
 
-fsdev_t *fsdev_init(const char **fs, size_t fs_cnt)
+fsdev_t *fsdev_init()
 {
+	const char **fs = NULL;
+	size_t fs_cnt = 0;
 	fsdev_t *lfs;
 
 	lfs = malloc(sizeof(fsdev_t));
