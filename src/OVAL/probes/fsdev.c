@@ -366,53 +366,6 @@ static inline int isfschar(int c)
 	return (isalpha(c) || isdigit(c) || c == '-' || c == '_');
 }
 
-fsdev_t *fsdev_strinit(const char *fs_names)
-{
-	fsdev_t *lfs;
-	char *pstr, **fs_arr;
-	size_t fs_cnt;
-	int state, e;
-
-	pstr = strdup(fs_names);
-	state = 0;
-	fs_arr = NULL;
-	fs_cnt = 0;
-
-	while (*pstr != '\0') {
-		switch (state) {
-		case 0:
-			if (isfschar(*pstr)) {
-				state = 1;
-				++fs_cnt;
-				fs_arr = realloc(fs_arr, sizeof(char *) * fs_cnt);
-				fs_arr[fs_cnt - 1] = pstr;
-			}
-
-			++pstr;
-
-			break;
-		case 1:
-			if (!isfschar(*pstr) && *pstr != '\0') {
-				state = 0;
-				*pstr = '\0';
-				++pstr;
-			}
-			break;
-		}
-	}
-
-	if (fs_arr != NULL && fs_cnt > 0)
-		qsort(fs_arr, fs_cnt, sizeof(char *), fsname_cmp);
-
-	lfs = fsdev_init((const char **)fs_arr, fs_cnt);
-	e = errno;
-	free(fs_arr);
-	errno = e;
-	free(pstr);
-
-	return (lfs);
-}
-
 void fsdev_free(fsdev_t * lfs)
 {
 	if (lfs != NULL) {

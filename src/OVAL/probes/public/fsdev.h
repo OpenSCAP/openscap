@@ -51,12 +51,6 @@ typedef struct {
 fsdev_t *fsdev_init(const char **fs, size_t fs_cnt);
 
 /**
- * Initialize the fsdev_t structure from a string containing filesystem
- * names.
- */
-fsdev_t *fsdev_strinit(const char *fs_names);
-
-/**
  * Free the fsdev_t structure.
  */
 void fsdev_free(fsdev_t * lfs);
