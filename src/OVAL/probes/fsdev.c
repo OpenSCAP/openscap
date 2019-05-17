@@ -185,7 +185,7 @@ is_local_fs(struct mntent *ment)
 
 #endif /* _AIX */
 
-static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
+static fsdev_t *__fsdev_init(fsdev_t *lfs)
 {
 	int e;
 	FILE *fp;
@@ -193,6 +193,9 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	struct mntent *ment;
 	struct stat st;
+
+	const char **fs = NULL;
+	size_t fs_cnt = 0;
 
 	fp = setmntent(_PATH_MOUNTED, "r");
 	if (fp == NULL) {
@@ -239,11 +242,14 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 	return (lfs);
 }
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
+static fsdev_t *__fsdev_init(fsdev_t *lfs)
 {
 	struct statfs *mntbuf = NULL;
 	struct stat st;
 	int i;
+
+	const char **fs = NULL;
+	size_t fs_cnt = 0;
 
 	lfs->cnt = getmntinfo(&mntbuf, (fs == NULL ? MNT_LOCAL : 0) | MNT_NOWAIT);
 	lfs->ids = malloc(sizeof(dev_t) * lfs->cnt);
@@ -276,7 +282,7 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 #define DEVID_ARRAY_SIZE 16
 #define DEVID_ARRAY_ADD  8
 
-static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
+static fsdev_t *__fsdev_init(fsdev_t *lfs)
 {
 	int e;
 	FILE *fp;
@@ -284,6 +290,9 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 	struct mnttab mentbuf;
 	struct stat st;
+
+	const char **fs = NULL;
+	size_t fs_cnt = 0;
 
 	fp = fopen(MNTTAB, "r");
 	if (fp == NULL) {
@@ -345,8 +354,6 @@ static fsdev_t *__fsdev_init(fsdev_t * lfs, const char **fs, size_t fs_cnt)
 
 fsdev_t *fsdev_init()
 {
-	const char **fs = NULL;
-	size_t fs_cnt = 0;
 	fsdev_t *lfs;
 
 	lfs = malloc(sizeof(fsdev_t));
@@ -354,7 +361,7 @@ fsdev_t *fsdev_init()
 	if (lfs == NULL)
 		return (NULL);
 
-	if (__fsdev_init(lfs, fs, fs_cnt) == NULL)
+	if (__fsdev_init(lfs) == NULL)
 		return (NULL);
 
         if (lfs->ids != NULL && lfs->cnt > 1)
