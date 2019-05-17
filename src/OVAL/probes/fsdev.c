@@ -118,8 +118,7 @@ static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
 #define DEVID_ARRAY_ADD  8
 
 #if defined(__linux__)
-static int
-is_local_fs(struct mntent *ment)
+int is_local_fs(struct mntent *ment)
 {
 // todo: would it be usefull to provide the choice during build-time?
 #if 1
@@ -169,8 +168,7 @@ is_local_fs(struct mntent *ment)
 }
 
 #elif defined(_AIX)
-static int
-is_local_fs(struct mntent *ment)
+int is_local_fs(struct mntent *ment)
 {
 	int i;
 	struct vfs_ent *e;

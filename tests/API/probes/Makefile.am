@@ -26,14 +26,16 @@ TESTS_ENVIRONMENT = \
 		$(top_builddir)/run
 
 TESTS = all.sh
-check_PROGRAMS = test_api_probes_smoke oval_fts_list
+check_PROGRAMS = test_api_probes_smoke oval_fts_list test_fsdev_is_local_fs
 
 test_api_probes_smoke_SOURCES = test_api_probes_smoke.c
 oval_fts_list_CFLAGS= -I$(top_srcdir)/src/OVAL/probes
 oval_fts_list_SOURCES= oval_fts_list.c
+test_fsdev_is_local_fs_SOURCES = test_fsdev_is_local_fs.c
 
 EXTRA_DIST += \
 	all.sh \
 	fts.sh \
 	gentree.sh \
-	test_api_probes_smoke.c
+	test_api_probes_smoke.c \
+	test_fsdev_is_local_fs.c
