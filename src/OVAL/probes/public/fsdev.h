@@ -36,6 +36,10 @@
 #include <stdint.h>
 #include <sys/stat.h>
 
+#if defined(__linux__) || defined(_AIX)
+#include <mntent.h>
+#endif
+
 /**
  * Filesystem device structure.
  */
@@ -87,6 +91,16 @@ int fsdev_path(fsdev_t * lfs, const char *path);
  * @retval -1 error
  */
 int fsdev_fd(fsdev_t * lfs, int fd);
+
+#if defined(__linux__) || defined(_AIX)
+/**
+ * Detemines whether a given mtab entry is a local file system.
+ * @param ment Structure returned by getmntent (see `man 3 getmntent`).
+ * @retval 1 if local
+ * @retval 0 otherwise
+ */
+int is_local_fs(struct mntent *ment);
+#endif
 
 #endif				/* FSDEV_H */
 /// @}

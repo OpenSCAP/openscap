@@ -118,12 +118,25 @@ static int match_fs(const char *fsname, const char **fs_arr, size_t fs_cnt)
 #define DEVID_ARRAY_ADD  8
 
 #if defined(__linux__)
-static int
-is_local_fs(struct mntent *ment)
+int is_local_fs(struct mntent *ment)
 {
 // todo: would it be usefull to provide the choice during build-time?
 #if 1
 	char *s;
+
+	/*
+	 * When type of the filesystem is autofs, it means the mtab entry
+	 * describes the autofs configuration, which means ment->mnt_fsname
+	 * is a path to the relevant autofs map, eg. /etc/auto.misc. In this
+	 * situation, the following code which analyses ment->mnt_type would
+	 * not work. When the filesystem handled by autofs is mounted, there
+	 * is another different entry in mtab which contains the real block
+	 * special device or remote filesystem in ment->mnt_fsname, and that
+	 * will be parsed in a different call of this function.
+	 */
+	if (!strcmp(ment->mnt_type, "autofs")) {
+		return 0;
+	}
 
 	s = ment->mnt_fsname;
 	/* If the fsname begins with "//", it is probably CIFS. */
@@ -155,8 +168,7 @@ is_local_fs(struct mntent *ment)
 }
 
 #elif defined(_AIX)
-static int
-is_local_fs(struct mntent *ment)
+int is_local_fs(struct mntent *ment)
 {
 	int i;
 	struct vfs_ent *e;
