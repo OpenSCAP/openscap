@@ -122,7 +122,7 @@ int find_files(SEXP_t * spath, SEXP_t * sfilename, SEXP_t * behaviors,
 	stmp = probe_ent_getattrval(behaviors, "recurse_file_system");
 
 	if (stmp && !SEXP_strncmp(stmp, "local", 6)) {
-		if ((setting->dev_list = fsdev_init(NULL, 0)) == NULL) {
+		if ((setting->dev_list = fsdev_init()) == NULL) {
 			SEXP_free(stmp);
 			goto error;
 		}

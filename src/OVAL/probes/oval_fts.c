@@ -878,7 +878,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 #if   defined(__SVR4) && defined(__sun)
 		ofts->localdevs = NULL;
 #else
-		ofts->localdevs = fsdev_init(NULL, 0);
+		ofts->localdevs = fsdev_init();
 		if (ofts->localdevs == NULL) {
 			dE("fsdev_init() failed.");
 			/* One dummy read to get rid of an uninitialized
