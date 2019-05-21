@@ -420,6 +420,7 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 			}
 
 			ds_sds_session_remote_resources_progress(session)(true, "WARNING: Skipping '%s' file which is referenced from datastream\n", url);
+			// -2 means that remote resources were not downloaded
 			return -2;
 		}
 
@@ -452,8 +453,12 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	xmlFree(xlink_href);
 	xmlFree(cref_id);
 
-	if (ret != 0) {
-
+	if (ret == -2) {
+		// A remote component was not dumped
+		// It should be ok to continue without it
+		free(target_filename_dirname);
+		return 0;
+	} else if (ret != 0) {
 		free(target_filename_dirname);
 		return -1;
 	}

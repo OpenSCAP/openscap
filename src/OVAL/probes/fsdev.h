@@ -35,6 +35,10 @@
 #include <sys/stat.h>
 #include "oscap_export.h"
 
+#if defined(__linux__) || defined(_AIX)
+#include <mntent.h>
+#endif
+
 /**
  * Filesystem device structure.
  */
@@ -47,13 +51,7 @@ typedef struct {
  * Initialize the fsdev_t structure from an array of filesystem
  * names.
  */
-fsdev_t *fsdev_init(const char **fs, size_t fs_cnt);
-
-/**
- * Initialize the fsdev_t structure from a string containing filesystem
- * names.
- */
-fsdev_t *fsdev_strinit(const char *fs_names);
+fsdev_t *fsdev_init(void);
 
 /**
  * Free the fsdev_t structure.
@@ -86,5 +84,15 @@ int fsdev_path(fsdev_t *lfs, const char *path);
  * @retval -1 error
  */
 int fsdev_fd(fsdev_t *lfs, int fd);
+
+#if defined(__linux__) || defined(_AIX)
+/**
+ * Detemines whether a given mtab entry is a local file system.
+ * @param ment Structure returned by getmntent (see `man 3 getmntent`).
+ * @retval 1 if local
+ * @retval 0 otherwise
+ */
+int is_local_fs(struct mntent *ment);
+#endif
 
 #endif				/* FSDEV_H */
