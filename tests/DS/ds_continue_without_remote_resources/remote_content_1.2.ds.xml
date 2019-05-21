@@ -43,6 +43,13 @@
       <var_ref>oval:x:var:1</var_ref>
     </variable_object>
     </objects>
+
+    <variables>
+      <constant_variable id="oval:x:var:1" version="1" comment="x" datatype="int">
+        <value>100</value>
+      </constant_variable>
+    </variables>
+
 </oval_definitions>
 </ds:component>
 
