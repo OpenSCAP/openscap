@@ -29,12 +29,42 @@
 #include <mntent.h>
 #include "fsdev.h"
 
-int main(int argc, char *argv[])
+static int test_single_call()
 {
 	struct mntent ment;
 	ment.mnt_type = "autofs";
 	int ret = is_local_fs(&ment);
-	if (ret != 0) {
+	/* autofs entry is never considered local */
+	return (ret == 0);
+}
+
+static int test_multiple_calls()
+{
+	/* fake mtab contains only 1 local filesystem */
+	FILE *f = setmntent(DATADIR "fake_mtab", "r");
+	if (f == NULL) {
+		fprintf(stderr, "fake_mtab could not be open\n");
+		return 0;
+	}
+	struct mntent *ment;
+	unsigned int locals = 0;
+	while ((ment = getmntent(f)) != NULL) {
+		if (is_local_fs(ment)) {
+			locals++;
+		}
+	}
+	endmntent(f);
+	return (locals == 1);
+}
+
+int main(int argc, char *argv[])
+{
+	if (!test_single_call()) {
+		fprintf(stderr, "test_single_call has failed\n");
+		return 1;
+	}
+	if (!test_multiple_calls()) {
+		fprintf(stderr, "test_multiple_calls has failed\n");
 		return 1;
 	}
 	return 0;
