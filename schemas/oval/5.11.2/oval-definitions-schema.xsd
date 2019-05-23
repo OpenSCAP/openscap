@@ -1450,7 +1450,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="binary"/>                                                
             </xsd:restriction>
@@ -1463,7 +1463,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="boolean"/>                                                
             </xsd:restriction>
@@ -1476,7 +1476,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="float"/>                                                
             </xsd:restriction>
@@ -1489,7 +1489,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntitySimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="int"/>                                
             </xsd:restriction>
@@ -1656,7 +1656,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:hexBinary oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="binary"/>                                
             </xsd:restriction>
@@ -1669,7 +1669,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:boolean oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="boolean"/>                                
             </xsd:restriction>
@@ -1682,7 +1682,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:float oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="float"/>                                                
             </xsd:restriction>
@@ -1695,7 +1695,7 @@
         <xsd:simpleContent>
             <xsd:restriction base="oval-def:EntityStateSimpleBaseType">
                 <xsd:simpleType>
-                    <xsd:union memberTypes="xsd:integer oval:EmptyStringType"/>
+                    <xsd:restriction base="xsd:string"/>
                 </xsd:simpleType>
                 <xsd:attribute name="datatype" type="oval:SimpleDatatypeEnumeration" use="required" fixed="int"/>                
             </xsd:restriction>
