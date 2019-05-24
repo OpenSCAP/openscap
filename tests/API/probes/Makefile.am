@@ -1,4 +1,5 @@
 AM_CPPFLAGS = \
+	-DDATADIR=\"$(srcdir)/\" \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/CCE/public \
 	-I$(top_srcdir)/src/CPE/public \
@@ -35,6 +36,7 @@ test_fsdev_is_local_fs_SOURCES = test_fsdev_is_local_fs.c
 
 EXTRA_DIST += \
 	all.sh \
+	fake_mtab \
 	fts.sh \
 	gentree.sh \
 	test_api_probes_smoke.c \
