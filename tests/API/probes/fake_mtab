@@ -1,3 +1,7 @@
 /dev/mapper/fedora-root / ext4 rw,seclabel,relatime 0 0
+tmpfs /tmp tmpfs rw,seclabel,nosuid,nodev 0 0
 /etc/mount.map /nfs/test autofs rw,relatime,fd=17,pgrp=11111,timeout=5,minproto=5,maxproto=5,direct,pipe_ino=1246883 0 0
 192.168.122.231:/test /nfs/test nfs4 rw,relatime,vers=4.2,rsize=262144,wsize=262144,namlen=255,hard,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=192.168.122.1,local_lock=none,addr=192.168.122.231 0 0
+/dev/mapper/fedora-home /home ext4 rw,seclabel,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+//192.168.0.5/storage /media/movies cifs guest,uid=myuser,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm 0 0

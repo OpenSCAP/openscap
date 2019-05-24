@@ -40,7 +40,10 @@ static int test_single_call()
 
 static int test_multiple_calls()
 {
-	/* fake mtab contains only 1 local filesystem */
+	/*
+	 * fake mtab contains only 4 local filesystems:
+	 * /, /tmp, /home and /proc
+	 */
 	FILE *f = setmntent(DATADIR "fake_mtab", "r");
 	if (f == NULL) {
 		fprintf(stderr, "fake_mtab could not be open\n");
@@ -54,7 +57,7 @@ static int test_multiple_calls()
 		}
 	}
 	endmntent(f);
-	return (locals == 1);
+	return (locals == 4);
 }
 
 int main(int argc, char *argv[])
