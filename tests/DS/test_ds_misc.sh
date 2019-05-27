@@ -222,14 +222,15 @@ function test_ds_continue_without_remote_resources() {
 	local DS="${srcdir}/$1"
 	local PROFILE="$2"
 	local result=$(mktemp)
+	local oval_result="test_single_rule.oval.xml.result.xml"
 
-	$OSCAP xccdf eval --profile "$PROFILE" --results "$result" "$DS"
+	$OSCAP xccdf eval --oval-results --profile "$PROFILE" --results "$result" "$DS"
 
 	assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
 	assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-remote_res"]/result[text()="notchecked"]'
 	assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass2"]/result[text()="pass"]'
 
-	rm -f "$result"
+	rm -f "$result" "$oval_result"
 }
 
 

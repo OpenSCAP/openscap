@@ -54,6 +54,7 @@
 #include "source/validate_priv.h"
 #include "XCCDF/elements.h"
 #include "XCCDF/public/xccdf_benchmark.h"
+#include "DS/sds_priv.h"
 
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML file supplied by user
