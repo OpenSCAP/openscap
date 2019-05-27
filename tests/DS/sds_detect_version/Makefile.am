@@ -9,5 +9,4 @@ TESTS_ENVIRONMENT= \
 TESTS = test_detect_version.sh
 
 EXTRA_DIST = test_detect_version.sh \
-			 scap-1.2-ds.xml \
-			 scap-1.3-ds.xml
+			 scap-ds.xml
