@@ -9,9 +9,11 @@ TESTS_ENVIRONMENT= \
 TESTS = all.sh
 
 EXTRA_DIST = all.sh \
-			  sds-valid.xml \
-			  sds-invalid.xml \
-			  sds-invalid-xccdf.xml \
-			  sds-invalid-oval.xml \
-			  rds-valid.xml \
-			  rds-invalid.xml
+			 rds-invalid.xml \
+			 rds-valid.xml \
+			 sds-1.3-invalid.xml \
+			 sds-1.3-valid.xml \
+			 sds-invalid-oval.xml \
+			 sds-invalid-xccdf.xml \
+			 sds-invalid.xml \
+			 sds-valid.xml

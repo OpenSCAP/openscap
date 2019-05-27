@@ -728,6 +728,7 @@ AC_CONFIG_FILES([Makefile
                  src/DS/Makefile
                  tests/DS/Makefile
                  tests/DS/ds_sds_index/Makefile
+                 tests/DS/sds_detect_version/Makefile
                  tests/DS/signed/Makefile
                  tests/DS/validate/Makefile
 

@@ -1265,3 +1265,29 @@ int ds_sds_compose_from_xccdf(const char *xccdf_file, const char *target_datastr
 	xmlFreeDoc(doc);
 	return 0;
 }
+
+char *ds_sds_detect_version(xmlTextReader *reader)
+{
+	/* find root element */
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
+		;
+
+	char *element_name = (char *) xmlTextReaderConstLocalName(reader);
+	if (!element_name) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	if (strcmp(element_name, "data-stream-collection")) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Expected root element name for SCAP source datastream is" \
+			"'data-stream-collection' but actual root element name is '%s'.",
+			element_name);
+		return NULL;
+	}
+	char *schematron_version = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "schematron-version");
+	if (!schematron_version) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	return schematron_version;
+}

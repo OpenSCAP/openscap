@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<ns0:data-stream-collection xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://scap.nist.gov/schema/scap/source/1.2" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns10="http://checklists.nist.gov/xccdf/1.2" xmlns:ns13="http://cpe.mitre.org/dictionary/2.0" xmlns:ns2="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:ns3="http://scap.nist.gov/schema/ocil/2.0" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns6="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns7="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ns9="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_org.open-scap_collection_from_xccdf_ssg-rhel8-xccdf-1.2.xml" schematron-version="1.3">
+  <ns0:data-stream id="scap_org.open-scap_datastream_from_xccdf_ssg-rhel8-xccdf-1.2.xml" scap-version="1.3" use-case="OTHER">
+    <ns0:checks>
+      <ns0:component-ref id="scap_org.open-scap_cref_ssg-rhel8-oval.xml" ns1:href="#scap_org.open-scap_comp_ssg-rhel8-oval.xml"/>
+    </ns0:checks>
+  </ns0:data-stream>
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel8-oval.xml" timestamp="2019-05-10T08:18:44">
+    <ns4:oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+      <ns4:generator>
+        <ns6:product_name>combine_ovals.py from SCAP Security Guide</ns6:product_name>
+        <ns6:product_version>ssg: [0, 1, 44], python: 3.7.3</ns6:product_version>
+        <ns6:schema_version>5.11.2</ns6:schema_version>
+        <ns6:timestamp>2019-05-10T06:18:18</ns6:timestamp>
+      </ns4:generator>
+      <ns4:definitions>
+        <ns4:definition class="inventory" id="oval:ssg-installed_OS_is_rhel8:def:1" version="1">
+          <ns4:metadata>
+            <ns4:title>Red Hat Enterprise Linux 8</ns4:title>
+            <ns4:affected family="unix">
+              <ns4:platform>Red Hat Enterprise Linux 8</ns4:platform>
+            </ns4:affected>
+            <ns4:reference ref_id="cpe:/o:redhat:enterprise_linux:8" source="CPE"/>
+            <ns4:description>The operating system installed on the system is
+      Red Hat Enterprise Linux 8</ns4:description>
+            <ns4:reference ref_id="installed_OS_is_rhel8" source="ssg"/>
+          </ns4:metadata>
+          <ns4:criteria>
+            <ns4:criterion comment="RHEL 8 is installed" test_ref="oval:ssg-test_rhel8:tst:1"/>
+          </ns4:criteria>
+        </ns4:definition>
+      </ns4:definitions>
+      <ns4:tests>
+        <ns9:rpminfo_test check="all" check_existence="at_least_one_exists" comment="redhat-release is version 8" id="oval:ssg-test_rhel8:tst:1" version="1">
+          <ns9:object object_ref="oval:ssg-obj_rhel8:obj:1"/>
+          <ns9:state state_ref="oval:ssg-state_rhel8:ste:1"/>
+        </ns9:rpminfo_test>
+      </ns4:tests>
+      <ns4:objects>
+        <ns9:rpminfo_object id="oval:ssg-obj_rhel8:obj:1" version="1">
+          <ns9:name>redhat-release</ns9:name>
+        </ns9:rpminfo_object>
+      </ns4:objects>
+      <ns4:states>
+        <ns9:rpminfo_state id="oval:ssg-state_rhel8:ste:1" version="1">
+          <ns9:version operation="pattern match">^8.*$</ns9:version>
+        </ns9:rpminfo_state>
+      </ns4:states>
+    </ns4:oval_definitions>
+  </ns0:component>
+</ns0:data-stream-collection>

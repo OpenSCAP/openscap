@@ -15,6 +15,7 @@ xccdf11dir = $(pkgdatadir)/schemas/xccdf/1.1/
 xccdf11tailoringdir = $(pkgdatadir)/schemas/xccdf/1.1-tailoring/
 xccdf12dir = $(pkgdatadir)/schemas/xccdf/1.2/
 sds12dir = $(pkgdatadir)/schemas/sds/1.2/
+sds13dir = $(pkgdatadir)/schemas/sds/1.3/
 arf11dir = $(pkgdatadir)/schemas/arf/1.1/
 ocil20dir = $(pkgdatadir)/schemas/ocil/2.0/
 cpe20dir = $(pkgdatadir)/schemas/cpe/2.0/
@@ -46,6 +47,7 @@ xccdf11tailoring_DATA = $(wildcard $(srcdir)/xccdf/1.1-tailoring/*.xsd $(srcdir)
 xccdf12_DATA = $(wildcard $(srcdir)/xccdf/1.2/*.xsd $(srcdir)/xccdf/1.2/*.dtd $(srcdir)/xccdf/1.2/*.xsl)
 
 sds12_DATA = $(wildcard $(srcdir)/sds/1.2/*.xsd $(srcdir)/sds/1.2/*.dtd)
+sds13_DATA = $(wildcard $(srcdir)/sds/1.3/*.xsd $(srcdir)/sds/1.3/*.dtd)
 arf11_DATA = $(wildcard $(srcdir)/arf/1.1/*.xsd)
 
 ocil20_DATA = $(wildcard $(srcdir)/ocil/2.0/*.xsd $(srcdir)/sds/2.0/*.dtd)
@@ -77,6 +79,7 @@ EXTRA_DIST = \
 	$(xccdf11tailoring_DATA) \
 	$(xccdf12_DATA) \
 	$(sds12_DATA) \
+	$(sds13_DATA) \
 	$(arf11_DATA) \
 	$(ocil20_DATA) \
 	$(cpe20_DATA) \

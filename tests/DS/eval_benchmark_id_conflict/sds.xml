@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_first-xccdf.xml" schematron-version="1.0">
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_first-xccdf.xml" schematron-version="1.2">
   <ds:data-stream id="scap_org.open-scap_datastream_tst" scap-version="1.2" use-case="OTHER">
     <ds:checklists>
       <ds:component-ref id="scap_org.open-scap_cref_first-xccdf.xml" xlink:href="#scap_org.open-scap_comp_first-xccdf.xml">
