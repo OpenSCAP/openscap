@@ -28,7 +28,7 @@ function test_oscap_info {
 	rm $ds
 }
 
-SDS=$(find $builddir/schemas/sds -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
+SDS=$(find $srcdir/schemas/sds -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
 
 for sds_version in $SDS
 do
