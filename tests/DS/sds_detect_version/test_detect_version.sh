@@ -12,12 +12,14 @@
 
 set -e -o pipefail
 
+echo $srcdir
+
 function test_oscap_info {
 	version="$1"
 	stdout="$(mktemp)"
 	stderr="$(mktemp)"
 	ds="$(mktemp)"
-	cp scap-ds.xml $ds
+	cp $srcdir/scap-ds.xml $ds
 	sed -i "s/X.X/${version}/g" $ds
 
 	$OSCAP info $ds > $stdout 2> $stderr
@@ -28,7 +30,7 @@ function test_oscap_info {
 	rm $ds
 }
 
-SDS=$(find $srcdir/schemas/sds -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
+SDS=$(find $top_srcdir/schemas/sds -maxdepth 1 -mindepth 1 -type d -printf '%f\n')
 
 for sds_version in $SDS
 do

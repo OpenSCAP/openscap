@@ -3,7 +3,7 @@ CLEANFILES = *.log *.results oscap_debug.log.*
 
 TESTS_ENVIRONMENT= \
 		builddir=$(top_builddir) \
-		srcdir=$(top_srcdir) \
+		top_srcdir=$(top_srcdir) \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
