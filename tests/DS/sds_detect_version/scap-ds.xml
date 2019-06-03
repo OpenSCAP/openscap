@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ns0:data-stream-collection xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://scap.nist.gov/schema/scap/source/1.2" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns10="http://checklists.nist.gov/xccdf/1.2" xmlns:ns13="http://cpe.mitre.org/dictionary/2.0" xmlns:ns2="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:ns3="http://scap.nist.gov/schema/ocil/2.0" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns6="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns7="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ns9="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_org.open-scap_collection_from_xccdf_ssg-rhel8-xccdf-1.2.xml" schematron-version="1.2">
-  <ns0:data-stream id="scap_org.open-scap_datastream_from_xccdf_ssg-rhel8-xccdf-1.2.xml" scap-version="1.2" use-case="OTHER">
+<ns0:data-stream-collection xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns0="http://scap.nist.gov/schema/scap/source/1.2" xmlns:ns1="http://www.w3.org/1999/xlink" xmlns:ns10="http://checklists.nist.gov/xccdf/1.2" xmlns:ns13="http://cpe.mitre.org/dictionary/2.0" xmlns:ns2="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:ns3="http://scap.nist.gov/schema/ocil/2.0" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns6="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns7="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ns9="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="scap_org.open-scap_collection_from_xccdf_ssg-rhel8-xccdf-1.2.xml" schematron-version="X.X">
+  <ns0:data-stream id="scap_org.open-scap_datastream_from_xccdf_ssg-rhel8-xccdf-1.2.xml" scap-version="X.X" use-case="OTHER">
     <ns0:checks>
       <ns0:component-ref id="scap_org.open-scap_cref_ssg-rhel8-oval.xml" ns1:href="#scap_org.open-scap_comp_ssg-rhel8-oval.xml"/>
     </ns0:checks>
@@ -10,7 +10,7 @@
       <ns4:generator>
         <ns6:product_name>combine_ovals.py from SCAP Security Guide</ns6:product_name>
         <ns6:product_version>ssg: [0, 1, 44], python: 3.7.3</ns6:product_version>
-        <ns6:schema_version>5.10</ns6:schema_version>
+        <ns6:schema_version>5.11.2</ns6:schema_version>
         <ns6:timestamp>2019-05-10T06:18:18</ns6:timestamp>
       </ns4:generator>
       <ns4:definitions>

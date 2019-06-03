@@ -1048,7 +1048,7 @@
                   <lin-def:name>redhat-release</lin-def:name>
             </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.fedora-release:obj:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <lin-def:name>fedora-release</lin-def:name>
+                  <lin-def:name operation="pattern match">^fedora-release.*</lin-def:name>
             </lin-def:rpminfo_object>
             <lin-def:rpmverifyfile_object id="oval:org.open-scap.cpe.redhat-release:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <!-- Sadly, OVAL cannot do the right query (rpm -q -whatprovides system-release). Let's check the filename instead. -->

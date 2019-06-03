@@ -20,6 +20,7 @@ SYSCTL_BLACKLIST='
 	kernel.usermodehelper.inheritable
 	net.core.bpf_jit_harden
 	net.core.bpf_jit_kallsyms
+	net.core.bpf_jit_limit
 	net.ipv4.tcp_fastopen_key
 	stable_secret
 	vm.mmap_rnd_bits
