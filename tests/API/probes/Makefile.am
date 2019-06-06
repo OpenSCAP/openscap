@@ -5,8 +5,9 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/CPE/public \
 	-I$(top_srcdir)/src/CVE/public \
 	-I${top_srcdir}/src/CVSS/public \
-	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
+	-I$(top_srcdir)/src/OVAL/probes \
 	-I$(top_srcdir)/src/OVAL/probes/public \
+	-I$(top_srcdir)/src/OVAL/probes/SEAP/public \
 	-I$(top_srcdir)/src/OVAL/public \
 	-I$(top_srcdir)/src/XCCDF/public \
 	-I$(top_srcdir)/src/common/public \
