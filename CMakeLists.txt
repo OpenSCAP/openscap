@@ -494,7 +494,13 @@ add_subdirectory("schemas")
 add_subdirectory("xsl")
 add_subdirectory("cpe")
 add_subdirectory("swig")
-configure_file("run.in" "run" @ONLY)
+configure_file("run.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/run @ONLY)
+configure_file("oscap_wrapper.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap_wrapper @ONLY)
+file(
+	COPY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/run" "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap_wrapper"
+	DESTINATION ${CMAKE_BINARY_DIR}
+	FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
 
 if(NOT WIN32)
 	# pkgconfig file
