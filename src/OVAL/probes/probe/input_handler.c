@@ -38,6 +38,11 @@
 #include "input_handler.h"
 #include "common/compat_pthread_barrier.h"
 
+static void cleanup_handler(void *arg)
+{
+	pthread_attr_destroy(arg);
+}
+
 /*
  * The input handler waits for incomming eval requests and either returns
  * a result immediately if it is found in the result cache or spawns a new
@@ -74,7 +79,7 @@ void *probe_input_handler(void *arg)
                 return (NULL);
         }
 
-        pthread_cleanup_push((void(*)(void *))pthread_attr_destroy, (void *)&pth_attr);
+	pthread_cleanup_push(cleanup_handler, (void *)&pth_attr);
         
         switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
         {
