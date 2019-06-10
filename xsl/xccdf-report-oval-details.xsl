@@ -44,35 +44,31 @@ Authors:
 
 <xsl:template mode='brief' match='ovalres:oval_results'>
     <xsl:param name='definition-id' />
-    <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+    <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief' />
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:extend_definition'>
-    <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
+    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief' />
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:criterion'>
+    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
+        <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
     </xsl:apply-templates>
 </xsl:template>
 
-<xsl:template mode='brief' match='ovalres:definition|ovalres:criteria|ovalres:criterion'>
-    <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
-        <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+<xsl:template mode='brief' match='ovalres:criteria'>
     <!-- descend deeper into the logic formula -->
-    <xsl:apply-templates mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+    <xsl:apply-templates mode='brief' />
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:definition'>
+    <xsl:apply-templates mode='brief' select="ovalres:criteria" />
 </xsl:template>
 
 <!-- OVAL items dump -->
 <xsl:template mode='brief' match='ovalres:test'>
     <xsl:param name='title'/>
-    <xsl:param name='result'/>
     <xsl:variable name='items' select='ovalres:tested_item'/>
     <xsl:choose>
         <!-- if there are items to display, go ahead -->
@@ -85,10 +81,19 @@ Authors:
                     </xsl:choose>
                 </span><!-- #160 is nbsp -->&#160;
                 <xsl:choose>
-                    <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because of these items:</xsl:when>
-                    <xsl:otherwise><span class="label label-danger">failed</span> because of these items:</xsl:otherwise>
+                    <xsl:when test="@result='true'">
+                        <span class="label label-success">
+                            <xsl:value-of select="@result"/>
+                        </span>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <span class="label label-danger">
+                            <xsl:value-of select="@result"/>
+                        </span>
+                    </xsl:otherwise>
                 </xsl:choose>
             </h4>
+            <h5>Following items have been found on the system:</h5>
 
             <table class="table table-striped table-bordered">
                 <!-- table head (possibly item-type-specific) -->
@@ -124,10 +129,19 @@ Authors:
                 <h4>
                     <span class="label label-primary"><xsl:value-of select="$title"/></span><!-- #160 is nbsp -->&#160;
                     <xsl:choose>
-                        <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because these items were not found:</xsl:when>
-                        <xsl:otherwise><span class="label label-danger">failed</span> because these items were missing:</xsl:otherwise>
+                        <xsl:when test="@result='true'">
+                            <span class="label label-success">
+                                <xsl:value-of select="@result"/>
+                            </span>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <span class="label label-danger">
+                                <xsl:value-of select="@result"/>
+                            </span>
+                        </xsl:otherwise>
                     </xsl:choose>
                 </h4>
+                <h5>No items have been found conforming to the following objects:</h5>
                 <h5>Object <strong><abbr>
                 <xsl:if test='$comment'>
                     <xsl:attribute name='title'>
