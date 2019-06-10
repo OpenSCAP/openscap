@@ -123,7 +123,6 @@ Authors:
             <xsl:variable name='object_id' select='key("oval-testdef", @test_id)/*[local-name()="object"]/@object_ref'/>
             <xsl:variable name='object_info' select='key("oval-objectdef",$object_id)'/>
             <xsl:variable name='state_id' select='key("oval-testdef", @test_id)/*[local-name()="state"]/@state_ref'/>
-            <xsl:variable name='state_info' select='key("oval-statedef",$state_id)'/>
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
                 <h4>
@@ -176,27 +175,6 @@ Authors:
                         </tr>
                     </tbody>
                 </table>
-                <xsl:if test="$state_info">
-                    <h5>State <strong><xsl:value-of select='$state_id'/></strong> of type
-                    <strong><xsl:value-of select='local-name($state_info)'/></strong></h5>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <xsl:apply-templates mode='item-head' select='$state_info[1]'/>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
-                                <xsl:if test='$variable_id'>
-                                    <td>
-                                        <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
-                                        <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
-                                    </td>
-                                </xsl:if>
-                                <xsl:apply-templates mode='state' select='$state_info[1]'/>
-                            </tr>
-                       </tbody>
-                    </table>
-                </xsl:if>
             </xsl:if>
         </xsl:otherwise>
     </xsl:choose>
