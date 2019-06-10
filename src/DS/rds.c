@@ -713,7 +713,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		}
 
 		counter = 0;
-		while (ds_sds_find_component_ref(xmlDocGetRootElement(sds_res_node)->children, tailoring_component_ref_id) != NULL) {
+		while (ds_sds_find_component_ref(xmlDocGetRootElement((xmlDocPtr) sds_res_node)->children, tailoring_component_ref_id) != NULL) {
 			free(tailoring_component_ref_id);
 			tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
 		}
