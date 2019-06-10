@@ -153,13 +153,20 @@ void oval_generator_update_timestamp(struct oval_generator *generator)
 {
 	time_t et;
 	struct tm *lt;
-	char timestamp[] = "yyyy-mm-ddThh:mm:ss";
 
 	time(&et);
 	lt = localtime(&et);
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+	int timestamp_size = snprintf(NULL, 0, "%4d-%02d-%02dT%02d:%02d:%02d",
+		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
+	if (timestamp_size < 0) {
+		return;
+	}
+	timestamp_size++; // +1 for terminating '\0' byte
+	char *timestamp = malloc(timestamp_size);
+	snprintf(timestamp, timestamp_size, "%4d-%02d-%02dT%02d:%02d:%02d",
 		 1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday, lt->tm_hour, lt->tm_min, lt->tm_sec);
 	oval_generator_set_timestamp(generator, timestamp);
+	free(timestamp);
 }
 
 void oval_generator_add_platform_schema_version(struct oval_generator *generator, const char *platform, const char *schema_version)
