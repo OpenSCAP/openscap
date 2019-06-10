@@ -734,9 +734,9 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		xmlNodePtr checklists_element = NULL;
 		xmlNodePtr datastream_element = node_get_child_element(sds_res_node, "data-stream");
 		if (datastream_element == NULL) {
-			datastream_element = xmlNewNode(sds_ns, "data-stream");
+			datastream_element = xmlNewNode(sds_ns, BAD_CAST "data-stream");
 			xmlAddChild(sds_res_node, datastream_element);
-			checklists_element = xmlNewNode(sds_ns, "checklists");
+			checklists_element = xmlNewNode(sds_ns, BAD_CAST "checklists");
 			xmlAddChild(datastream_element, checklists_element);
 		}
 		else {
