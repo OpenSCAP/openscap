@@ -10,7 +10,6 @@ target_include_directories(test_api_probes_smoke PUBLIC
 )
 add_oscap_test_executable(test_fsdev_is_local_fs
 	"test_fsdev_is_local_fs.c"
-	"${CMAKE_SOURCE_DIR}/src/OVAL/probes/fsdev.c"
 )
 target_include_directories(test_fsdev_is_local_fs PUBLIC
 	"${CMAKE_SOURCE_DIR}/src/OVAL/probes"

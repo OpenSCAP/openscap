@@ -28,6 +28,7 @@
 #include <string.h>
 #include <mntent.h>
 #include "fsdev.h"
+#include "fsdev.c"
 
 static int test_single_call()
 {

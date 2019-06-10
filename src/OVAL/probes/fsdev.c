@@ -77,7 +77,7 @@ static int fsdev_cmp(const void *a, const void *b)
 #define DEVID_ARRAY_ADD  8
 
 #if defined(OS_LINUX)
-int is_local_fs(struct mntent *ment)
+static int is_local_fs(struct mntent *ment)
 {
 // todo: would it be usefull to provide the choice during build-time?
 #if 1
@@ -127,7 +127,7 @@ int is_local_fs(struct mntent *ment)
 }
 
 #elif defined(OS_AIX)
-int is_local_fs(struct mntent *ment)
+static int is_local_fs(struct mntent *ment)
 {
 	int i;
 	struct vfs_ent *e;
