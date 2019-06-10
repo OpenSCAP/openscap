@@ -91,7 +91,7 @@ struct oval_syschar_model *oval_syschar_model_new(struct oval_definition_model *
 	return newmodel;
 }
 
-typedef void (*_oval_clone_func) (void *, struct oval_syschar_model *);
+typedef void *(*_oval_clone_func) (void *, struct oval_syschar_model *);
 
 static void _oval_syschar_model_clone(struct oval_string_map *oldmap,
 				      struct oval_syschar_model *newmodel, _oval_clone_func cloner)
