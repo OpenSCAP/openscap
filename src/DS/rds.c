@@ -804,7 +804,7 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 
 	xmlDoc *tailoring_doc = NULL;
 	char *tailoring_doc_timestamp = NULL;
-	char *tailoring_filepath = NULL;
+	const char *tailoring_filepath = NULL;
 	if (tailoring_source) {
 		tailoring_doc = oscap_source_get_xmlDoc(tailoring_source);
 		if (tailoring_doc == NULL) {
