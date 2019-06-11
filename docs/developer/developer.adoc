@@ -111,7 +111,7 @@ After building the library you might want to run library self-checks. To do
 that you need to have these additional packages installed:
 
 ----
-wget lua which procps-ng initscripts chkconfig sendmail
+wget lua which procps-ng initscripts chkconfig sendmail bzip2
 ----
 
 and it is also required to have `sendmail` service running on the system:
