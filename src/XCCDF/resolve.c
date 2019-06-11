@@ -286,7 +286,7 @@ static void xccdf_resolve_group(struct xccdf_item *child, struct xccdf_item *par
 {
 	// TODO: resolve requires properly (how?)
 	//xccdf_resolve_appendlist(&child->sub.group.requires, parent->sub.group.requires, xccdf_incomparable, xccdf_strlist_clone, false);
-	xccdf_resolve_appendlist(&child->sub.group.conflicts, parent->sub.group.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup, false);
+	xccdf_resolve_appendlist(&child->sub.group.conflicts, parent->sub.group.conflicts, (oscap_cmp_func)oscap_streq, (oscap_clone_func)oscap_strdup, false);
 	
 	OSCAP_FOR(xccdf_item, item, xccdf_group_get_content(XGROUP(parent)))
 		xccdf_group_add_content(XGROUP(child), xccdf_resolve_copy_item(item));
@@ -314,7 +314,7 @@ static void xccdf_resolve_rule(struct xccdf_item *child, struct xccdf_item *pare
 {
 	// TODO: resolve requires properly (how?)
 	//xccdf_resolve_appendlist(&child->sub.rule.requires, parent->sub.rule.requires, xccdf_incomparable, xccdf_strlist_clone);
-	xccdf_resolve_appendlist(&child->sub.rule.conflicts, parent->sub.rule.conflicts, (oscap_cmp_func)oscap_strcmp, (oscap_clone_func)oscap_strdup, false);
+	xccdf_resolve_appendlist(&child->sub.rule.conflicts, parent->sub.rule.conflicts, (oscap_cmp_func)oscap_streq, (oscap_clone_func)oscap_strdup, false);
 	xccdf_resolve_appendlist(&child->sub.rule.idents, parent->sub.rule.idents, (oscap_cmp_func)xccdf_ident_idcmp, (oscap_clone_func)xccdf_ident_clone, false);
 	xccdf_resolve_appendlist(&child->sub.rule.fixes, parent->sub.rule.fixes, (oscap_cmp_func)xccdf_incomparable, (oscap_clone_func)xccdf_fix_clone, false);
 
