@@ -1575,9 +1575,12 @@ static inline const char *_get_timestamp(void)
 
 	tm = time(NULL);
 	lt = localtime(&tm);
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+	int ret = snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
 		1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday,
 		lt->tm_hour, lt->tm_min, lt->tm_sec);
+	if (ret < 0) {
+		return NULL;
+	}
 	return timestamp;
 }
 
