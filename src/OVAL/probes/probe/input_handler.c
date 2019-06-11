@@ -38,7 +38,7 @@
 #include "input_handler.h"
 #include "common/compat_pthread_barrier.h"
 
-static void cleanup_handler(void *arg)
+static void pthread_attr_cleanup_handler(void *arg)
 {
 	pthread_attr_destroy(arg);
 }
@@ -79,7 +79,7 @@ void *probe_input_handler(void *arg)
                 return (NULL);
         }
 
-	pthread_cleanup_push(cleanup_handler, (void *)&pth_attr);
+	pthread_cleanup_push(pthread_attr_cleanup_handler, (void *)&pth_attr);
         
         switch (errno = pthread_barrier_wait(&OSCAP_GSYM(th_barrier)))
         {
