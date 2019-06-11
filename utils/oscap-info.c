@@ -87,7 +87,10 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 		if (date_time != 0) {
 			struct tm *date = localtime(&date_time);
 			char date_str[] = "YYYY-DD-MM";
-			snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+			int ret = snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+			if (ret < 0) {
+				return;
+			}
 			printf("%sGenerated: %s\n", prefix, date_str);
 		}
 	}
