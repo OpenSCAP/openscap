@@ -1275,7 +1275,7 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 
 	/* Build oscap_source of XCCDF TestResult only when needed */
 	if (session->export.xccdf_file != NULL || session->export.report_file != NULL || session->export.arf_file != NULL || session->export.xccdf_stig_viewer_file != NULL) {
-		const struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
+		struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(session->xccdf.policy_model);
 
 		if (session->xccdf.result == NULL) {
 			// Attempt to export session before evaluation
