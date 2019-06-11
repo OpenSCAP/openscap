@@ -263,11 +263,11 @@ static int collect_process_info(llist *l)
 			pathname_len++; // +1 for terminating '\0'
 			char *pathname = malloc(pathname_len);
 			snprintf(pathname, pathname_len, "%s/%s", buf, ent->d_name);
-			if ((lnlen = readlink(pathname, line, sizeof(line) - 1)) < 0) {
-				free(pathname);
+			lnlen = readlink(pathname, line, sizeof(line) - 1);
+			free(pathname);
+			if (lnlen < 0) {
 				continue;
 			}
-			free(pathname);
 			line[lnlen] = 0;
 
 			// Only look at the socket entries
