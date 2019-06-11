@@ -132,6 +132,7 @@ if(RPM_FOUND)
 	check_library_exists("${RPM_LIBRARY}" headerFormat "" HAVE_HEADERFORMAT)
 	check_library_exists("${RPMIO_LIBRARY}" rpmFreeCrypto "" HAVE_RPMFREECRYPTO)
 	check_library_exists("${RPM_LIBRARY}" rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
+	check_library_exists("${RPM_LIBRARY}" rpmVerifyFile "" HAVE_RPMVERIFYFILE)
 	set(HAVE_RPMVERCMP 1)
 endif()
 

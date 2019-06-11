@@ -87,6 +87,11 @@ int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data);
 #define DISABLE_PLUGINS(ts) rpmDefineMacro(NULL,"__plugindir \"\"", 0);
 #endif
 
+#ifndef HAVE_RPMVERIFYFILE
+int rpmVerifyFile(const rpmts ts, const rpmfi fi,
+                rpmVerifyAttrs * res, rpmVerifyAttrs omitMask);
+#endif
+
 /**
  * Preload libraries required by rpm
  * It destroy error callback!
