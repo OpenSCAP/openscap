@@ -70,29 +70,31 @@ Authors:
 <xsl:template mode='brief' match='ovalres:test'>
     <xsl:param name='title'/>
     <xsl:variable name='items' select='ovalres:tested_item'/>
+    <h4>
+        <xsl:if test='$title'>
+            <span class="label label-primary">
+                 <xsl:value-of select='$title'/>
+            </span><!-- #160 is nbsp -->&#160;
+        </xsl:if>
+        <span class="label label-default">
+            <xsl:value-of select='@test_id'/>
+        </span><!-- #160 is nbsp -->&#160;
+        <xsl:choose>
+            <xsl:when test="@result='true'">
+                <span class="label label-success">
+                    <xsl:value-of select="@result"/>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <span class="label label-danger">
+                    <xsl:value-of select="@result"/>
+                </span>
+            </xsl:otherwise>
+        </xsl:choose>
+    </h4>
     <xsl:choose>
         <!-- if there are items to display, go ahead -->
         <xsl:when test='$items'>
-            <h4>
-                <span class="label label-primary">
-                    <xsl:choose>
-                        <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
-                        <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
-                    </xsl:choose>
-                </span><!-- #160 is nbsp -->&#160;
-                <xsl:choose>
-                    <xsl:when test="@result='true'">
-                        <span class="label label-success">
-                            <xsl:value-of select="@result"/>
-                        </span>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <span class="label label-danger">
-                            <xsl:value-of select="@result"/>
-                        </span>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </h4>
             <h5>Following items have been found on the system:</h5>
 
             <table class="table table-striped table-bordered">
@@ -125,21 +127,6 @@ Authors:
             <xsl:variable name='state_id' select='key("oval-testdef", @test_id)/*[local-name()="state"]/@state_ref'/>
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
-                <h4>
-                    <span class="label label-primary"><xsl:value-of select="$title"/></span><!-- #160 is nbsp -->&#160;
-                    <xsl:choose>
-                        <xsl:when test="@result='true'">
-                            <span class="label label-success">
-                                <xsl:value-of select="@result"/>
-                            </span>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <span class="label label-danger">
-                                <xsl:value-of select="@result"/>
-                            </span>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </h4>
                 <h5>No items have been found conforming to the following objects:</h5>
                 <h5>Object <strong><abbr>
                 <xsl:if test='$comment'>
