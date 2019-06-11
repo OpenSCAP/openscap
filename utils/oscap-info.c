@@ -270,7 +270,7 @@ static inline void _print_xccdf_tailoring_header(struct xccdf_tailoring *tailori
 	if (tailoring == NULL) {
 		return;
 	}
-	printf("%sBenchmark Hint: %s\n", prefix, xccdf_tailoring_get_benchmark_ref(tailoring));
+	printf("%sBenchmark Hint: %s\n", prefix ? prefix : "", xccdf_tailoring_get_benchmark_ref(tailoring));
 }
 
 static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))
