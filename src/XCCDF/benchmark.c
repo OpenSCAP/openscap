@@ -687,8 +687,7 @@ char *xccdf_benchmark_gen_id(struct xccdf_benchmark *benchmark, xccdf_type_t typ
 	assert(prefix != NULL);
 
 	const char *fmt = "%s%03d";
-	char foo[2];
-	int length = snprintf(foo, 1, fmt, prefix, 0);
+	int length = snprintf(NULL, 0, fmt, prefix, 0);
 	if (length < 0)
 		return NULL;
 	length++;

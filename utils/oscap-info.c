@@ -87,7 +87,10 @@ static inline void _print_xccdf_status(struct xccdf_status *status, const char *
 		if (date_time != 0) {
 			struct tm *date = localtime(&date_time);
 			char date_str[] = "YYYY-DD-MM";
-			snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+			int ret = snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+			if (ret < 0) {
+				return;
+			}
 			printf("%sGenerated: %s\n", prefix, date_str);
 		}
 	}
@@ -267,7 +270,7 @@ static inline void _print_xccdf_tailoring_header(struct xccdf_tailoring *tailori
 	if (tailoring == NULL) {
 		return;
 	}
-	printf("%sBenchmark Hint: %s\n", prefix, xccdf_tailoring_get_benchmark_ref(tailoring));
+	printf("%sBenchmark Hint: %s\n", prefix ? prefix : "", xccdf_tailoring_get_benchmark_ref(tailoring));
 }
 
 static inline void _print_xccdf_tailoring(struct oscap_source *source, const char *prefix, void (*print_one_profile)(const struct xccdf_profile *, const char *))

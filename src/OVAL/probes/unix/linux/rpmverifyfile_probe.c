@@ -303,11 +303,6 @@ ret:
 	return (ret);
 }
 
-void rpmverifyfile_probe_preload()
-{
-	rpmLibsPreload();
-}
-
 int rpmverifyfile_probe_offline_mode_supported()
 {
 	// TODO: Switch this to OFFLINE_MODE_OWN once rpmtsSetRootDir is fully supported by librpm

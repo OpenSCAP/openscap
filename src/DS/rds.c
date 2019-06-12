@@ -713,7 +713,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		}
 
 		counter = 0;
-		while (ds_sds_find_component_ref(xmlDocGetRootElement(sds_res_node)->children, tailoring_component_ref_id) != NULL) {
+		while (ds_sds_find_component_ref(xmlDocGetRootElement((xmlDocPtr) sds_res_node)->children, tailoring_component_ref_id) != NULL) {
 			free(tailoring_component_ref_id);
 			tailoring_component_ref_id = oscap_sprintf("scap_org.open-scap_cref_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
 		}
@@ -734,9 +734,9 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 		xmlNodePtr checklists_element = NULL;
 		xmlNodePtr datastream_element = node_get_child_element(sds_res_node, "data-stream");
 		if (datastream_element == NULL) {
-			datastream_element = xmlNewNode(sds_ns, "data-stream");
+			datastream_element = xmlNewNode(sds_ns, BAD_CAST "data-stream");
 			xmlAddChild(sds_res_node, datastream_element);
-			checklists_element = xmlNewNode(sds_ns, "checklists");
+			checklists_element = xmlNewNode(sds_ns, BAD_CAST "checklists");
 			xmlAddChild(datastream_element, checklists_element);
 		}
 		else {
@@ -804,7 +804,7 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 
 	xmlDoc *tailoring_doc = NULL;
 	char *tailoring_doc_timestamp = NULL;
-	char *tailoring_filepath = NULL;
+	const char *tailoring_filepath = NULL;
 	if (tailoring_source) {
 		tailoring_doc = oscap_source_get_xmlDoc(tailoring_source);
 		if (tailoring_doc == NULL) {
