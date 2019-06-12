@@ -1,6 +1,6 @@
-version=1.2.17
-previous_version=1.2.16
-latest_fedora=29
-latest_rhel=7
+version=1.2.18
+previous_version=1.2.17
+latest_fedora=31
+latest_rhel=8
 
 version_major_minor="${version%.*}"
