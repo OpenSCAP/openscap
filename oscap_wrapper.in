@@ -1,6 +1,6 @@
 #!/bin/bash -
 # openscap 'run' programs locally script
-# Copyright (C) 2011-2013 Red Hat Inc.
+# Copyright (C) 2011-2019 Red Hat Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,6 @@
 # install the utility first.  You just have to do for example:
 #
 #   ./oscap_wrapper [oscap args ...]
-#
-# This works for any C program or test that uses the openscap
-# libraries.
 
 #----------------------------------------------------------------------
 
