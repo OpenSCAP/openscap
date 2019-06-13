@@ -289,6 +289,7 @@ endif()
 cmake_dependent_option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this lets you package SCAP data as RPMs" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this lets you scan remote machines over ssh" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this lets you scan VMs and VM storage images" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_PODMAN "enables the oscap-podman utility, this lets you scan Podman containers and container images" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this lets you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
 
 # ---------- TEST-SUITE SWITCHES
@@ -355,6 +356,7 @@ message(STATUS "oscap-docker: ${ENABLE_OSCAP_UTIL_DOCKER}")
 message(STATUS "scap-as-rpm: ${ENABLE_OSCAP_UTIL_AS_RPM}")
 message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
+message(STATUS "oscap-podman: ${ENABLE_OSCAP_UTIL_PODMAN}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
 message(STATUS " ")
 
