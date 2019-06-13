@@ -1,5 +1,5 @@
-version=1.3.1
-previous_version=1.3.0
+version=1.3.2
+previous_version=1.3.1
 latest_fedora=31
 latest_rhel=8
 
