@@ -1,0 +1,29 @@
+.TH oscap-podman "8" "June 2019" "Red Hat, Inc." "System Administration Utilities"
+
+.SH NAME
+oscap-podman \- Tool for offline SCAP evaluation of Podman container images and Podman containers
+.SH DESCRIPTION
+oscap-podman runs oscap tool on a given container image or container.
+
+This script cannot run in rootless mode.
+
+.SH USAGE
+
+Usage of the tool mimics usage and options of oscap(8) tool.
+
+.SS Compliance scan of Podman container image:
+oscap-podman IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
+
+.SS Compliance scan of Podman container:
+oscap-podman CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
+
+Refer to oscap(8) to learn about OSCAP_ARGUMENT options.
+
+.SH REPORTING BUGS
+.nf
+Please report bugs using https://github.com/OpenSCAP/openscap/issues
+
+.SH AUTHORS
+.nf
+Jan Černý <jcerny@redhat.com>
+.fi

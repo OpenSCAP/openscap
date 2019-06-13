@@ -75,9 +75,9 @@ if(ENABLE_OSCAP_UTIL_PODMAN)
 	install(PROGRAMS "oscap-podman"
 		DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
-#	install(FILES "oscap-podman.8"
-#		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
-#	)
+	install(FILES "oscap-podman.8"
+		DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
+	)
 endif()
 if(ENABLE_OSCAP_UTIL_AS_RPM)
 	install(PROGRAMS "scap-as-rpm"
