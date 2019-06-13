@@ -426,30 +426,32 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system * sys,
 
 	struct oval_smc *tstmap = oval_smc_new();
 
-	xmlNode *definitions_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "definitions", NULL);
 	struct oval_definition_model *definition_model = oval_results_model_get_definition_model(results_model);
 	struct oval_definition_iterator *oval_definitions = oval_definition_model_get_definitions(definition_model);
-	while(oval_definition_iterator_has_more(oval_definitions)) {
-		struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
+	if(oval_definition_iterator_has_more(oval_definitions)) {
+		xmlNode *definitions_node = xmlNewTextChild(system_node, ns_results, BAD_CAST "definitions", NULL);
+		while(oval_definition_iterator_has_more(oval_definitions)) {
+			struct oval_definition *oval_definition = oval_definition_iterator_next(oval_definitions);
 
-		oval_definition_class_t def_class = oval_definition_get_class(oval_definition);
-		class_dirs = oval_directives_model_get_classdir(directives_model, def_class);
-		directives = class_dirs ? class_dirs : def_dirs;
+			oval_definition_class_t def_class = oval_definition_get_class(oval_definition);
+			class_dirs = oval_directives_model_get_classdir(directives_model, def_class);
+			directives = class_dirs ? class_dirs : def_dirs;
 
-		bool exported = false;
-		struct oval_iterator *rslt_definitions_it = oval_smc_get_all_it(sys->definitions, oval_definition_get_id(oval_definition));
-		if (rslt_definitions_it != NULL) {
-			while (oval_collection_iterator_has_more(rslt_definitions_it)) {
-				struct oval_result_definition *rslt_definition = oval_collection_iterator_next(rslt_definitions_it);
-				_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
-				exported = true;
+			bool exported = false;
+			struct oval_iterator *rslt_definitions_it = oval_smc_get_all_it(sys->definitions, oval_definition_get_id(oval_definition));
+			if (rslt_definitions_it != NULL) {
+				while (oval_collection_iterator_has_more(rslt_definitions_it)) {
+					struct oval_result_definition *rslt_definition = oval_collection_iterator_next(rslt_definitions_it);
+					_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+					exported = true;
+				}
+				oval_collection_iterator_free(rslt_definitions_it);
 			}
-			oval_collection_iterator_free(rslt_definitions_it);
-		}
-		if (!exported) {
-			struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, 1);
-			if (rslt_definition) {
-				_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+			if (!exported) {
+				struct oval_result_definition *rslt_definition = oval_result_system_get_new_definition(sys, oval_definition, 1);
+				if (rslt_definition) {
+					_oval_result_definition_to_dom_based_on_directives(rslt_definition, directives, doc, definitions_node, tstmap);
+				}
 			}
 		}
 	}

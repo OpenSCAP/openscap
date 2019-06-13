@@ -1298,6 +1298,7 @@ int op_merge_u16(void *dst, void *src, int type)
 
 int op_assign_str(void *var, char *val)
 {
+	char *strend = NULL;
 	if (var == NULL) {
 		return -1;
 	}
@@ -1306,7 +1307,16 @@ int op_assign_str(void *var, char *val)
 	while(isspace(*val)) ++val;
 
 	if (*val != '\0') {
-		*((char **)(var)) = strdup(val);
+		strend = strrchr(val, '\0');
+		/* strip trailing whitespaces */
+		do {
+			strend--;
+		} while(isspace(*strend));
+		if((strend-val) < 0) {
+			dE("Error stripping white space from string '%s'", val);
+			return (-1);
+		}
+		*((char **)(var)) = strndup(val, (strend-val+1));
 		return (0);
 	} else
 		return (-1);

@@ -543,9 +543,16 @@ xmlNode *xccdf_status_to_dom(struct xccdf_status *status, xmlDoc *doc, xmlNode *
 	time_t date_time = xccdf_status_get_date(status);
 	if (date_time) {
 		struct tm *date = localtime(&date_time);
-		char date_str[] = "YYYY-DD-MM";
-		snprintf(date_str, sizeof(date_str), "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+		/* "YYYY-DD-MM" */
+		int date_len = snprintf(NULL, 0, "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
+		if (date_len < 0) {
+			return status_node;
+		}
+		date_len++; // +1 for terminating '\0'
+		char *date_str = malloc(date_len);
+		snprintf(date_str, date_len, "%04d-%02d-%02d", date->tm_year + 1900, date->tm_mon + 1, date->tm_mday);
 		xmlNewProp(status_node, BAD_CAST "date", BAD_CAST date_str);
+		free(date_str);
 	}
 
 	return status_node;

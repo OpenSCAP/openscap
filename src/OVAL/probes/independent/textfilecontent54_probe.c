@@ -356,37 +356,6 @@ int textfilecontent54_probe_main(probe_ctx *ctx, void *arg)
 		goto cleanup;
 	}
 
-	/* reset filebehavior attributes if 'filepath' entity is used */
-	if (filepath_ent != NULL && bh_ent != NULL) {
-		SEXP_t *r1, *r2, *r3;
-		r1 = r2 = r3 = NULL;
-		if (probe_ent_attrexists(bh_ent, "ignore_case")) {
-			r1 = probe_ent_getattrval(bh_ent, "ignore_case");
-		}
-		if (probe_ent_attrexists(bh_ent, "multiline")) {
-			r2 = probe_ent_getattrval(bh_ent, "multiline");
-		}
-		if (probe_ent_attrexists(bh_ent, "singleline")) {
-			r3 = probe_ent_getattrval(bh_ent, "singleline");
-		}
-		r0 = SEXP_list_new(NULL);
-		SEXP_free(bh_ent);
-		bh_ent = probe_ent_creat1("behaviors", r0, NULL);
-		SEXP_free(r0);
-		if (r1) {
-			probe_ent_attr_add(bh_ent, "ignore_case", r1);
-			SEXP_free(r1);
-		}
-		if (r2) {
-			probe_ent_attr_add(bh_ent, "multiline", r2);
-			SEXP_free(r2);
-		}
-		if (r3) {
-			probe_ent_attr_add(bh_ent, "singleline", r3);
-			SEXP_free(r3);
-		}
-	}
-
 	probe_tfc54behaviors_canonicalize(&bh_ent);
 
 	pfd.instance_ent = inst_ent;

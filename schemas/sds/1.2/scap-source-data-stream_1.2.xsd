@@ -14,8 +14,8 @@
   <xs:import namespace="http://cpe.mitre.org/dictionary/2.0" schemaLocation="cpe-dictionary_2.3.xsd"/>
   <xs:import namespace="http://scap.nist.gov/schema/ocil/2.0" schemaLocation="../../ocil/2.0/ocil-2.0.xsd"/>
   <xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="../../common/xmldsig-core-schema.xsd"/>
-  <xs:import namespace="urn:oasis:names:tc:entity:xmlns:xml:catalog" schemaLocation="catalog.xsd"/>
-  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="xlink.xsd"/>
+  <xs:import namespace="urn:oasis:names:tc:entity:xmlns:xml:catalog" schemaLocation="../../common/catalog.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="../../common/xlink.xsd"/>
   <xs:element name="data-stream-collection">
     <xs:annotation>
       <xs:documentation>Holds a collection of data streams and components.</xs:documentation>

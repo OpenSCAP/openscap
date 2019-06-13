@@ -1918,7 +1918,7 @@ int SEXP_datatype_set_nth (SEXP_t *list, uint32_t n, const char *name)
         SEXP_val_t v_dsc;
         SEXP_t    *s_nth;
 
-	if (list == NULL || name == NULL) {
+	if (list == NULL) {
 		errno = EFAULT;
 		return -1;
 	}

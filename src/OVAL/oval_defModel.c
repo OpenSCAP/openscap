@@ -84,7 +84,7 @@ struct oval_definition_model *oval_definition_model_new()
 	return newmodel;
 }
 
-typedef void (*_oval_clone_func) (void *, struct oval_definition_model *);
+typedef void *(*_oval_clone_func) (void *, struct oval_definition_model *);
 
 static void _oval_definition_model_clone(struct oval_string_map *oldmap,
 					 struct oval_definition_model *newmodel,

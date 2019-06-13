@@ -18,10 +18,10 @@
 
 #----------------------------------------------------------------------
 
-# With this script you can run oscap without needing to
+# With this script you can run oscap (or valgrind, gdb, ...) without needing to
 # install the utility first.  You just have to do for example:
 #
-#   ./run ./utils/oscap [args ...]
+#   ./run program [program args ...]
 #
 # This works for any C program or test that uses the openscap
 # libraries.

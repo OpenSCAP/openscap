@@ -1,7 +1,10 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
+
+touch not_executable
 
 profile="xccdf_moc.elpmaxe.www_profile_standard"
 result_id="xccdf_org.open-scap_testresult_xccdf_moc.elpmaxe.www_profile_standard"
@@ -64,3 +67,5 @@ grep -q "$ansible_task2b" $playbook
 rm $results_arf
 rm $script
 rm $playbook
+
+rm not_executable

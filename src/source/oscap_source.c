@@ -54,6 +54,7 @@
 #include "source/validate_priv.h"
 #include "XCCDF/elements.h"
 #include "XCCDF/public/xccdf_benchmark.h"
+#include "DS/sds_priv.h"
 
 typedef enum oscap_source_type {
 	OSCAP_SRC_FROM_USER_XML_FILE = 1,               ///< The source originated from XML file supplied by user
@@ -363,7 +364,7 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 		}
 		switch (oscap_source_get_scap_type(source)) {
 			case OSCAP_DOCUMENT_SDS:
-				source->origin.version = oscap_strdup("1.2");
+				source->origin.version = ds_sds_detect_version(reader);
 				break;
 			case OSCAP_DOCUMENT_ARF:
 				source->origin.version = oscap_strdup("1.1");

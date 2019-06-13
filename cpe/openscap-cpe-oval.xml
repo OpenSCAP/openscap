@@ -68,6 +68,19 @@
                          </criteria>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:8" version="1">
+                  <metadata>
+                        <title>Red Hat Enterprise Linux 8</title>
+                        <affected family="unix">
+                              <platform>Red Hat Enterprise Linux 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:redhat:enterprise_linux:8" source="CPE"/>
+                        <description>The operating system installed on the system is Red Hat Enterprise Linux 8</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Red Hat Enterprise Linux 8 is installed" test_ref="oval:org.open-scap.cpe.rhel:tst:8"/>
+                  </criteria>
+            </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.ol:def:5" version="1">
                   <metadata>
                         <title>Oracle Linux 5</title>
@@ -105,6 +118,19 @@
                   </metadata>
                   <criteria>
                         <criterion comment="Oracle Linux 7 is installed" test_ref="oval:org.open-scap.cpe.ol:tst:7"/>
+                  </criteria>
+            </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.ol:def:8" version="1">
+                  <metadata>
+                        <title>Oracle Linux 8</title>
+                        <affected family="unix">
+                              <platform>Oracle Linux 8</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:oracle:linux:8" source="CPE"/>
+                        <description>The operating system installed on the system is Oracle Linux 8</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Oracle Linux 8 is installed" test_ref="oval:org.open-scap.cpe.ol:tst:8"/>
                   </criteria>
             </definition>
             <definition class="inventory" id="oval:org.open-scap.cpe.rhel:def:1005" version="1">
@@ -380,6 +406,20 @@
                         <criterion comment="Fedora 30 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:30"/>
                   </criteria>
             </definition>
+            <definition class="inventory" id="oval:org.open-scap.cpe.fedora:def:31" version="1">
+                  <metadata>
+                        <title>Fedora 31</title>
+                        <affected family="unix">
+                            <platform>Fedora 31</platform>
+                        </affected>
+                        <reference ref_id="cpe:/o:fedoraproject:fedora:31" source="CPE"/>
+                        <description>The operating system installed on the system is Fedora 31</description>
+                  </metadata>
+                  <criteria>
+                        <criterion comment="Fedora 31 is installed" test_ref="oval:org.open-scap.cpe.fedora:tst:31"/>
+                  </criteria>
+            </definition>
+
 
             <definition class="inventory" id="oval:org.open-scap.cpe.sle:def:1" version="1">
                   <metadata>
@@ -724,6 +764,11 @@
                   <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
                   <state state_ref="oval:org.open-scap.cpe.rhel:ste:7"/>
             </rpmverifyfile_test>
+            <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:8" version="1" check="at least one" comment="redhat-release is version 8"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.redhat-release:obj:3"/>
+                  <state state_ref="oval:org.open-scap.cpe.rhel:ste:8"/>
+            </rpmverifyfile_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.ol:tst:5" version="1" check="at least one" comment="oraclelinux-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.oraclelinux-release:obj:1"/>
@@ -738,6 +783,11 @@
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.oraclelinux-release:obj:1"/>
                   <state state_ref="oval:org.open-scap.cpe.ol:ste:7"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.ol:tst:8" version="1" check="at least one" comment="oraclelinux-release is version 8"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.oraclelinux-release:obj:1"/>
+                  <state state_ref="oval:org.open-scap.cpe.ol:ste:8"/>
             </rpminfo_test>
             <rpmverifyfile_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.rhel:tst:1005" version="1" check="at least one" comment="centos-release is version 5"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -843,6 +893,11 @@
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
                   <state state_ref="oval:org.open-scap.cpe.fedora:ste:30"/>
+            </rpminfo_test>
+            <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.fedora:tst:31" version="1" check="at least one" comment="fedora-release is version Fedora 31"
+                  xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <object object_ref="oval:org.open-scap.cpe.fedora-release:obj:2"/>
+                  <state state_ref="oval:org.open-scap.cpe.fedora:ste:31"/>
             </rpminfo_test>
             <rpminfo_test check_existence="at_least_one_exists" id="oval:org.open-scap.cpe.sles:tst:1" version="1" check="at least one" comment="/etc/sles-release is provided by sles-release package"
                   xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -993,7 +1048,7 @@
                   <lin-def:name>redhat-release</lin-def:name>
             </lin-def:rpminfo_object>
             <lin-def:rpminfo_object id="oval:org.open-scap.cpe.fedora-release:obj:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
-                  <lin-def:name>fedora-release</lin-def:name>
+                  <lin-def:name operation="pattern match">^fedora-release.*</lin-def:name>
             </lin-def:rpminfo_object>
             <lin-def:rpmverifyfile_object id="oval:org.open-scap.cpe.redhat-release:obj:3" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <!-- Sadly, OVAL cannot do the right query (rpm -q -whatprovides system-release). Let's check the filename instead. -->
@@ -1063,6 +1118,10 @@
                   <name operation="pattern match">^redhat-release</name>
                   <version operation="pattern match">^7[^\d]</version>
             </rpmverifyfile_state>
+            <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^redhat-release</name>
+                  <version operation="pattern match">^8[^\d]</version>
+            </rpmverifyfile_state>
             <rpmverifyfile_state id="oval:org.open-scap.cpe.rhel:ste:1005" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^centos-release</name>
                   <version operation="pattern match">^5</version>
@@ -1098,6 +1157,10 @@
             <rpminfo_state id="oval:org.open-scap.cpe.ol:ste:7" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^oraclelinux-release</name>
                   <version operation="pattern match">^7</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.ol:ste:8" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <name operation="pattern match">^oraclelinux-release</name>
+                  <version operation="pattern match">^8</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:16" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^16$</version>
@@ -1143,6 +1206,9 @@
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:30" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <version operation="pattern match">^30$</version>
+            </rpminfo_state>
+            <rpminfo_state id="oval:org.open-scap.cpe.fedora:ste:31" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+                  <version operation="pattern match">^31$</version>
             </rpminfo_state>
             <rpminfo_state id="oval:org.open-scap.cpe.sles:ste:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
                   <name operation="pattern match">^sles-release</name>

@@ -26,7 +26,7 @@ endif()
 set(LT_CURRENT 25)
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-set(LT_REVISION 0)
+set(LT_REVISION 1)
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
@@ -122,6 +122,9 @@ endif()
 # version by default with a consistent version of PYTHON_LIBRARIES.
 find_package(PythonInterp 3)
 find_package(PythonLibs 3)
+
+set(PREFERRED_PYTHON_PATH "${PYTHON_EXECUTABLE}")
+set(PYTHON3_PATH "${PYTHON_EXECUTABLE}")
 
 find_package(RPM)
 if(RPM_FOUND)
@@ -286,6 +289,7 @@ endif()
 cmake_dependent_option(ENABLE_OSCAP_UTIL_AS_RPM "enable the scap-as-rpm utility, this lets you package SCAP data as RPMs" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_SSH "enables the oscap-ssh utility, this lets you scan remote machines over ssh" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_VM "enables the oscap-vm utility, this lets you scan VMs and VM storage images" ON "NOT WIN32" OFF)
+cmake_dependent_option(ENABLE_OSCAP_UTIL_PODMAN "enables the oscap-podman utility, this lets you scan Podman containers and container images" ON "NOT WIN32" OFF)
 cmake_dependent_option(ENABLE_OSCAP_UTIL_CHROOT "enables the oscap-chroot utility, this lets you scan entire chroots using offline scanning" ON "NOT WIN32" OFF)
 
 # ---------- TEST-SUITE SWITCHES
@@ -352,6 +356,7 @@ message(STATUS "oscap-docker: ${ENABLE_OSCAP_UTIL_DOCKER}")
 message(STATUS "scap-as-rpm: ${ENABLE_OSCAP_UTIL_AS_RPM}")
 message(STATUS "oscap-ssh: ${ENABLE_OSCAP_UTIL_SSH}")
 message(STATUS "oscap-vm: ${ENABLE_OSCAP_UTIL_VM}")
+message(STATUS "oscap-podman: ${ENABLE_OSCAP_UTIL_PODMAN}")
 message(STATUS "oscap-chroot: ${ENABLE_OSCAP_UTIL_CHROOT}")
 message(STATUS " ")
 
@@ -491,7 +496,13 @@ add_subdirectory("schemas")
 add_subdirectory("xsl")
 add_subdirectory("cpe")
 add_subdirectory("swig")
-configure_file("run.in" "run" @ONLY)
+configure_file("run.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/run @ONLY)
+configure_file("oscap_wrapper.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap_wrapper @ONLY)
+file(
+	COPY "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/run" "${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap_wrapper"
+	DESTINATION ${CMAKE_BINARY_DIR}
+	FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
 
 if(NOT WIN32)
 	# pkgconfig file
@@ -526,14 +537,16 @@ set(CPACK_SOURCE_IGNORE_FILES
 	"~$"
 	"\\\\CMakeLists.txt.user"
 )
-set(CPACK_GENERATOR WIX)
+if(WIN32)
+	set(CPACK_GENERATOR WIX)
+	set(CPACK_WIX_PATCH_FILE "${CMAKE_SOURCE_DIR}/wix_patch.xml")
+endif()
 set(CPACK_PACKAGE_NAME "OpenSCAP")
 set(CPACK_PACKAGE_VENDOR "OpenSCAP Project")
 set(CPACK_PACKAGE_VERSION_MAJOR "${OPENSCAP_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${OPENSCAP_VERSION_MINOR}")
 set(CPACK_PACKAGE_VERSION_PATCH "${OPENSCAP_VERSION_PATCH}")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/lgpl-2.1.rtf")
-set(CPACK_WIX_PATCH_FILE "${CMAKE_SOURCE_DIR}/wix_patch.xml")
 set(CPACK_PACKAGE_CHECKSUM SHA512)
 
 include(CPack)

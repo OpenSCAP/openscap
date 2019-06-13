@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Copyright 2019 Red Hat Inc., Durham, North Carolina.
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+
+function die()
+{
+    echo "$*" >&2
+    exit 1
+}
+
+function usage()
+{
+    echo "oscap-podman -- Tool for SCAP evaluation of Podman images and containers."
+    echo
+    echo "Compliance scan of Podman image:"
+    echo "$ sudo oscap-podman IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
+    echo
+    echo "Compliance scan of Podman container:"
+    echo "$ sudo oscap-podman CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
+    echo
+    echo "See \`man oscap\` to learn more about semantics of OSCAP_ARGUMENT options."
+}
+
+if [ $# -lt 1 ]; then
+    echo "No arguments provided."
+    usage
+    die
+elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
+    usage
+    die
+elif [ "$#" -gt 1 ]; then
+    true
+else
+    echo "Invalid arguments provided."
+    usage
+    die
+fi
+
+if [ $(id -u) -ne 0 ]; then
+    echo "This script cannot run in rootless mode." >&2
+    die
+fi
+if grep -q "\-\-remediate" <<< "$@"; then
+    echo "This script does not support '--remediate' option." >&2
+    die
+fi
+
+# Check if the target of scan is image or container.
+CLEANUP=0
+if podman images | grep -q $1; then
+    ID=$(podman create $1) || die
+    IMG_NAME=$(podman images --format "{{.ID}} ({{.Repository}}:{{.Tag}})" | grep -m1 $1)
+    TARGET="podman-image://$IMG_NAME"
+    CLEANUP=1
+else
+    # If the target was not found in images we suppose it is a container.
+    ID=$1
+    TARGET="podman-container://$1"
+fi
+DIR=$(podman mount $ID) || die
+
+export OSCAP_PROBE_ROOT="$(cd "$DIR"; pwd)"
+export OSCAP_PROBE_OS_NAME="Linux"
+export OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)"
+export OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)"
+export OSCAP_EVALUATION_TARGET="$TARGET"
+shift 1
+
+oscap "$@"
+EXIT_CODE=$?
+podman umount $ID > /dev/null || die
+if [ $CLEANUP -eq 1 ]; then
+    podman rm $ID > /dev/null || die
+fi
+exit $EXIT_CODE

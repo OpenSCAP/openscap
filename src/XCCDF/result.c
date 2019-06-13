@@ -1065,12 +1065,67 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 	}
 	xccdf_setvalue_iterator_free(setvalues);
 
+	struct oscap_htable *nodes_by_rule_id = oscap_htable_new();
+
 	struct xccdf_rule_result_iterator *rule_results = xccdf_result_get_rule_results(result);
+	if (use_stig_rule_id) {
+		while (xccdf_rule_result_iterator_has_more(rule_results)) {
+			struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
+
+			const char *idref = xccdf_rule_result_get_idref(rule_result);
+			if (!idref)
+				continue;
+
+			xccdf_test_result_type_t test_res = xccdf_rule_result_get_result(rule_result);
+
+			const struct xccdf_item *item = xccdf_benchmark_get_member(associated_benchmark, XCCDF_RULE, idref);
+			if (!item)
+				continue;
+
+			struct oscap_reference_iterator *references = xccdf_item_get_references(item);
+			while (oscap_reference_iterator_has_more(references)) {
+				struct oscap_reference *ref = oscap_reference_iterator_next(references);
+				if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
+					const char *stig_rule_id = oscap_reference_get_title(ref);
+
+					xccdf_test_result_type_t other_res = (xccdf_test_result_type_t)oscap_htable_detach(nodes_by_rule_id, stig_rule_id);
+					xccdf_test_result_type_t wanted_res;
+					if (other_res == 0) {
+						wanted_res = test_res;
+					} else {
+						// if one test passed, and the other didn't, the other one should win
+						if (test_res == XCCDF_RESULT_PASS) {
+							wanted_res = other_res;
+						} else if (other_res == XCCDF_RESULT_PASS) {
+							wanted_res = test_res;
+						// if one had an error, that should win
+						} else if (test_res == XCCDF_RESULT_ERROR || other_res == XCCDF_RESULT_ERROR) {
+							wanted_res = XCCDF_RESULT_ERROR;
+						// next prio: failures
+						} else if (test_res == XCCDF_RESULT_FAIL || other_res == XCCDF_RESULT_FAIL) {
+							wanted_res = XCCDF_RESULT_FAIL;
+						// next prio: unknown
+						} else if (test_res == XCCDF_RESULT_UNKNOWN || other_res == XCCDF_RESULT_UNKNOWN) {
+							wanted_res = XCCDF_RESULT_UNKNOWN;
+						// otherwise, just pick the lower one (more or less arbitrarily)
+						} else {
+							wanted_res = (test_res < other_res) ? test_res : other_res;
+						}
+					}
+					oscap_htable_add(nodes_by_rule_id, stig_rule_id, (void*)wanted_res);
+				}
+			}
+			oscap_reference_iterator_free(references);
+		}
+		xccdf_rule_result_iterator_reset(rule_results);
+	}
 	while (xccdf_rule_result_iterator_has_more(rule_results)) {
 		struct xccdf_rule_result *rule_result = xccdf_rule_result_iterator_next(rule_results);
-		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info, associated_benchmark, use_stig_rule_id);
+		xccdf_rule_result_to_dom(rule_result, doc, result_node, version_info, associated_benchmark, use_stig_rule_id, nodes_by_rule_id);
 	}
 	xccdf_rule_result_iterator_free(rule_results);
+
+	oscap_htable_free0(nodes_by_rule_id);
 
 	struct xccdf_score_iterator *scores = xccdf_result_get_scores(result);
 	while (xccdf_score_iterator_has_more(scores)) {
@@ -1221,36 +1276,39 @@ xmlNode *xccdf_target_identifier_to_dom(const struct xccdf_target_identifier *ti
 		return target_idref_node;
 	}
 }
-
-xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, bool use_stig_rule_id)
+static void _xccdf_rule_result_to_dom_idref(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, const char *idref);
+void xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, bool use_stig_rule_id, struct oscap_htable *nodes_by_rule_id)
 {
 	const char *idref = xccdf_rule_result_get_idref(result);
 	if (use_stig_rule_id) {
 		// Don't output rules with no stig ids
 		if (!idref || !benchmark)
-			return NULL;
+			return;
 
-		struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
+		const struct xccdf_item *item = xccdf_benchmark_get_member(benchmark, XCCDF_RULE, idref);
 		if (!item)
-			return NULL;
+			return;
 
-		const char *stig_rule_id = NULL;		
-		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
+		struct oscap_reference_iterator *references = xccdf_item_get_references(item);
 		while (oscap_reference_iterator_has_more(references)) {
 			struct oscap_reference *ref = oscap_reference_iterator_next(references);
 			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
-				stig_rule_id = oscap_reference_get_title(ref);
-				break;
+				const char *stig_rule_id = oscap_reference_get_title(ref);
+
+				xccdf_test_result_type_t expected_res = (xccdf_test_result_type_t)oscap_htable_get(nodes_by_rule_id, stig_rule_id);
+				xccdf_test_result_type_t test_res = xccdf_rule_result_get_result(result);
+				if (expected_res == test_res) {
+					oscap_htable_detach(nodes_by_rule_id, stig_rule_id);
+					_xccdf_rule_result_to_dom_idref(result, doc, parent, version_info, benchmark, stig_rule_id);
+				}
 			}
 		}
 		oscap_reference_iterator_free(references);
-
-		if (!stig_rule_id)
-			return NULL;
-
-		idref = stig_rule_id;
+	} else {
+		_xccdf_rule_result_to_dom_idref(result, doc, parent, version_info, benchmark, idref);
 	}
-
+}
+static void _xccdf_rule_result_to_dom_idref(struct xccdf_rule_result *result, xmlDoc *doc, xmlNode *parent, const struct xccdf_version_info* version_info, struct xccdf_benchmark *benchmark, const char *idref) {
 	xmlNs *ns_xccdf = lookup_xccdf_ns(doc, parent, version_info);
 
 	xmlNode *result_node = xmlNewTextChild(parent, ns_xccdf, BAD_CAST "rule-result", NULL);
@@ -1343,8 +1401,6 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		xccdf_check_to_dom(check, doc, result_node, version_info);
 	}
 	xccdf_check_iterator_free(checks);
-
-	return result_node;
 }
 
 bool xccdf_rule_result_override(struct xccdf_rule_result *rule_result, xccdf_test_result_type_t new_result, const char *waiver_time, const char *authority, struct oscap_text *remark)
@@ -1519,9 +1575,12 @@ static inline const char *_get_timestamp(void)
 
 	tm = time(NULL);
 	lt = localtime(&tm);
-	snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+	int ret = snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
 		1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday,
 		lt->tm_hour, lt->tm_min, lt->tm_sec);
+	if (ret < 0) {
+		return NULL;
+	}
 	return timestamp;
 }
 

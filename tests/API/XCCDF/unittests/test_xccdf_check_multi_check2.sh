@@ -1,7 +1,10 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
+
+touch not_executable
 
 name=$(basename $0 .sh)
 
@@ -37,3 +40,4 @@ assert_exists 1 '//rule-result[result/text()="fail"]/check/check-content-ref[@na
 assert_exists 1 '//rule-result/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
 assert_exists 1 '//rule-result[result/text()="pass"]/check/check-content-ref[@name="oval:moc.elpmaxe.www:def:1"]'
 rm $result
+rm not_executable

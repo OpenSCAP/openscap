@@ -17,6 +17,10 @@
             <title xml:lang="en-us">Red Hat Enterprise Linux 7</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:7</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:8">
+            <title xml:lang="en-us">Red Hat Enterprise Linux 8</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:8</check>
+      </cpe-item>
       <cpe-item name="cpe:/o:oracle:linux:5">
             <title xml:lang="en-us">Oracle Linux 5</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:5</check>
@@ -28,6 +32,10 @@
       <cpe-item name="cpe:/o:oracle:linux:7">
             <title xml:lang="en-us">Oracle Linux 7</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:7</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:oracle:linux:8">
+            <title xml:lang="en-us">Oracle Linux 8</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:8</check>
       </cpe-item>
       <cpe-item name="cpe:/o:centos:centos:5">
             <title xml:lang="en-us">Community Enterprise Operating System 5</title>
@@ -112,6 +120,10 @@
       <cpe-item name="cpe:/o:fedoraproject:fedora:30">
             <title xml:lang="en-us">Fedora 30</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:30</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:31">
+            <title xml:lang="en-us">Fedora 31</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:31</check>
       </cpe-item>
       <cpe-item name="cpe:/o:suse:sle">
             <title xml:lang="en-us">SUSE Linux Enterprise all versions</title>

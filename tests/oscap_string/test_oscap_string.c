@@ -79,7 +79,7 @@ int test_append_string()
 	return retval;
 }
 
-#define ASSERT_LENGTH(STR, LENGTH) if (oscap_buffer_get_length(STR) != (LENGTH)) { fprintf(stderr, "Length of result does not match the required length.\n"); return 1;}
+#define ASSERT_LENGTH(STR, LENGTH) if (oscap_buffer_get_length(STR) != (LENGTH)) { fprintf(stderr, "Length of result does not match the required length.\n"); oscap_buffer_free(STR); return 1;}
 
 int test_append_binary_data()
 {
@@ -113,10 +113,12 @@ int test_append_binary_data()
 		char expected = expected_result[i];
 		char got = result[i];
 		if ( expected != got ) {
+			oscap_buffer_free(s);
 			fprintf(stderr, "Invalid character at index %d, expected %x and got %x\n", i, expected, got);
 			return 1;
 		}
 	}
+	oscap_buffer_free(s);
 
 	return 0;
 }
@@ -127,6 +129,7 @@ int test_null_parameters() {
 
 	if (oscap_buffer_get_length(s) != 0) {
 		fprintf(stderr, "Appended NULL changed the length of string\n");
+		oscap_buffer_free(s);
 		return 1;
 	}
 	oscap_buffer_free(NULL);

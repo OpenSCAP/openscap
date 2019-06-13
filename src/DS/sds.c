@@ -116,7 +116,7 @@ xmlNode *containter_get_component_ref_by_id(xmlNode *container, const char *comp
 	return NULL;
 }
 
-static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
+xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
 {
 	/* This searches for a ds:component-ref (XLink) element with a given id.
 	 * It returns a first such element in a given ds:data-stream.
@@ -136,7 +136,7 @@ static xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* i
 	return NULL;
 }
 
-static xmlNodePtr _lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
+xmlNodePtr lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
 {
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr component = NULL;
@@ -278,7 +278,7 @@ static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* compo
 	if (component_id == NULL) {
 		component = (xmlNodePtr)doc;
 	} else {
-		component = _lookup_component_in_collection(doc, component_id);
+		component = lookup_component_in_collection(doc, component_id);
 		if (component == NULL)
 		{
 			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
@@ -420,6 +420,7 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 			}
 
 			ds_sds_session_remote_resources_progress(session)(true, "WARNING: Skipping '%s' file which is referenced from datastream\n", url);
+			// -2 means that remote resources were not downloaded
 			return -2;
 		}
 
@@ -452,8 +453,12 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 	xmlFree(xlink_href);
 	xmlFree(cref_id);
 
-	if (ret != 0) {
-
+	if (ret == -2) {
+		// A remote component was not dumped
+		// It should be ok to continue without it
+		free(target_filename_dirname);
+		return 0;
+	} else if (ret != 0) {
 		free(target_filename_dirname);
 		return -1;
 	}
@@ -745,7 +750,7 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 
 // takes given relative filepath and mangles it so that it's acceptable
 // as a component id
-static char* ds_sds_mangle_filepath(const char* filepath)
+char* ds_sds_mangle_filepath(const char* filepath)
 {
 	if (filepath == NULL)
 		return NULL;
@@ -1036,7 +1041,7 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 		extended_component ? "e" : "", mangled_filepath);
 
 	int counter = 0;
-	while (_lookup_component_in_collection(doc, comp_id) != NULL) {
+	while (lookup_component_in_collection(doc, comp_id) != NULL) {
 		// While a component of the given ID already exists, generate a new one
 		free(comp_id);
 		comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s%03d",
@@ -1232,4 +1237,30 @@ int ds_sds_compose_from_xccdf(const char *xccdf_file, const char *target_datastr
 
 	xmlFreeDoc(doc);
 	return 0;
+}
+
+char *ds_sds_detect_version(xmlTextReader *reader)
+{
+	/* find root element */
+	while (xmlTextReaderRead(reader) == 1 && xmlTextReaderNodeType(reader) != XML_READER_TYPE_ELEMENT)
+		;
+
+	char *element_name = (char *) xmlTextReaderConstLocalName(reader);
+	if (!element_name) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	if (strcmp(element_name, "data-stream-collection")) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Expected root element name for SCAP source datastream is" \
+			"'data-stream-collection' but actual root element name is '%s'.",
+			element_name);
+		return NULL;
+	}
+	char *schematron_version = (char *) xmlTextReaderGetAttribute(reader, BAD_CAST "schematron-version");
+	if (!schematron_version) {
+		oscap_setxmlerr(xmlGetLastError());
+		return NULL;
+	}
+	return schematron_version;
 }

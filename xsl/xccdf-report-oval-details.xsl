@@ -44,44 +44,58 @@ Authors:
 
 <xsl:template mode='brief' match='ovalres:oval_results'>
     <xsl:param name='definition-id' />
-    <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
+    <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief' />
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:extend_definition'>
+    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief' />
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:criterion'>
+    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
+        <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
     </xsl:apply-templates>
 </xsl:template>
 
-<xsl:template mode='brief' match='ovalres:definition|ovalres:criteria|ovalres:criterion|ovalres:extend_definition'>
-    <xsl:param name='result'/>
-    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
-        <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+<xsl:template mode='brief' match='ovalres:criteria'>
     <!-- descend deeper into the logic formula -->
-    <xsl:apply-templates mode='brief'>
-        <xsl:with-param name='result' select='$result'/>
-    </xsl:apply-templates>
+    <xsl:apply-templates mode='brief' />
+</xsl:template>
+
+<xsl:template mode='brief' match='ovalres:definition'>
+    <xsl:apply-templates mode='brief' select="ovalres:criteria" />
 </xsl:template>
 
 <!-- OVAL items dump -->
 <xsl:template mode='brief' match='ovalres:test'>
     <xsl:param name='title'/>
-    <xsl:param name='result'/>
     <xsl:variable name='items' select='ovalres:tested_item'/>
+    <h4>
+        <xsl:if test='$title'>
+            <span class="label label-primary">
+                 <xsl:value-of select='$title'/>
+            </span><!-- #160 is nbsp -->&#160;
+        </xsl:if>
+        <span class="label label-default">
+            <xsl:value-of select='@test_id'/>
+        </span><!-- #160 is nbsp -->&#160;
+        <xsl:choose>
+            <xsl:when test="@result='true'">
+                <span class="label label-success">
+                    <xsl:value-of select="@result"/>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <span class="label label-danger">
+                    <xsl:value-of select="@result"/>
+                </span>
+            </xsl:otherwise>
+        </xsl:choose>
+    </h4>
     <xsl:choose>
         <!-- if there are items to display, go ahead -->
         <xsl:when test='$items'>
-            <h4>
-                <span class="label label-primary">
-                    <xsl:choose>
-                        <xsl:when test='$title'><xsl:value-of select='$title'/></xsl:when>
-                        <xsl:otherwise>OVAL test <xsl:value-of select='@test_id'/></xsl:otherwise>
-                    </xsl:choose>
-                </span><!-- #160 is nbsp -->&#160;
-                <xsl:choose>
-                    <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because of these items:</xsl:when>
-                    <xsl:otherwise><span class="label label-danger">failed</span> because of these items:</xsl:otherwise>
-                </xsl:choose>
-            </h4>
+            <h5>Following items have been found on the system:</h5>
 
             <table class="table table-striped table-bordered">
                 <!-- table head (possibly item-type-specific) -->
@@ -111,16 +125,9 @@ Authors:
             <xsl:variable name='object_id' select='key("oval-testdef", @test_id)/*[local-name()="object"]/@object_ref'/>
             <xsl:variable name='object_info' select='key("oval-objectdef",$object_id)'/>
             <xsl:variable name='state_id' select='key("oval-testdef", @test_id)/*[local-name()="state"]/@state_ref'/>
-            <xsl:variable name='state_info' select='key("oval-statedef",$state_id)'/>
             <xsl:variable name='comment' select='$object_info[1]/@comment'/>
             <xsl:if test="$object_info">
-                <h4>
-                    <span class="label label-primary"><xsl:value-of select="$title"/></span><!-- #160 is nbsp -->&#160;
-                    <xsl:choose>
-                        <xsl:when test='$result="pass"'><span class="label label-success">passed</span> because these items were not found:</xsl:when>
-                        <xsl:otherwise><span class="label label-danger">failed</span> because these items were missing:</xsl:otherwise>
-                    </xsl:choose>
-                </h4>
+                <h5>No items have been found conforming to the following objects:</h5>
                 <h5>Object <strong><abbr>
                 <xsl:if test='$comment'>
                     <xsl:attribute name='title'>
@@ -155,27 +162,6 @@ Authors:
                         </tr>
                     </tbody>
                 </table>
-                <xsl:if test="$state_info">
-                    <h5>State <strong><xsl:value-of select='$state_id'/></strong> of type
-                    <strong><xsl:value-of select='local-name($state_info)'/></strong></h5>
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <xsl:apply-templates mode='item-head' select='$state_info[1]'/>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <xsl:variable name='variable_id' select='$state_info/*/@var_ref'/>
-                                <xsl:if test='$variable_id'>
-                                    <td>
-                                        <xsl:apply-templates mode='normal' select='ovalres:tested_variable'/>
-                                        <xsl:apply-templates mode='message' select='key("ovalsys-object",$object_id)'/>
-                                    </td>
-                                </xsl:if>
-                                <xsl:apply-templates mode='state' select='$state_info[1]'/>
-                            </tr>
-                       </tbody>
-                    </table>
-                </xsl:if>
             </xsl:if>
         </xsl:otherwise>
     </xsl:choose>

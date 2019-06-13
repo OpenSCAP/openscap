@@ -635,7 +635,7 @@ Authors:
                 <xsl:otherwise>arf:report with id='<xsl:value-of select="$arf_results/parent::arf:content/parent::arf:report/@id"/>'</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <span class="label label-default"><abbr title="OVAL details taken from {$details_origin}">OVAL details</abbr></span>
+        <span class="label label-default"><abbr title="OVAL details taken from {$details_origin}">OVAL test results details</abbr></span>
         <div class="panel panel-default">
             <div class="panel-body">
                 <xsl:copy-of select="$details"/>

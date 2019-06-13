@@ -26,6 +26,7 @@
 #endif
 
 #include <libxml/tree.h>
+#include <libxml/xmlreader.h>
 #include "common/public/oscap.h"
 #include "common/util.h"
 #include "ds_sds_session.h"
@@ -43,5 +44,12 @@ int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_s
 
 xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file);
 xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_source);
+
+xmlNodePtr lookup_component_in_collection(xmlDocPtr doc, const char *component_id);
+xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char *id);
+
+char *ds_sds_mangle_filepath(const char *filepath);
+
+char *ds_sds_detect_version(xmlTextReader *reader);
 
 #endif

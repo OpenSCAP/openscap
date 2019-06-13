@@ -1,6 +1,6 @@
 #!/bin/bash
+. $builddir/tests/test_common.sh
 
-set -x
 set -e
 set -o pipefail
 
@@ -21,19 +21,19 @@ stderr=$(mktemp -t ${name}.out.XXXXXX)
 script=$(mktemp -t ${name}.sh.XXXXXX)
 playbook=$(mktemp -t ${name}.yml.XXXXXX)
 
-profile_header1a="# Bash remediation role for profile $profile"
-profile_header1b="# Ansible remediation role for profile $profile"
-profile_header2="# Profile Title:  $title"
-profile_header3="# $description"
+profile_header1a="# Bash Remediation Script for $title"
+profile_header1b="# Ansible Playbook for $title"
+profile_header2="# $description"
+profile_header3="# Profile ID:  $profile"
 profile_header4="# Benchmark ID:  $benchmark"
 profile_header5="# Benchmark Version:  $version"
 profile_header6="# XCCDF Version:  $xccdf_version"
 
-result_header1a="# Bash remediation role for the results of evaluation of profile $profile"
-result_header1b="# Ansible remediation role for the results of evaluation of profile $profile"
+result_header1a="# Bash Remediation Script generated from evaluation of $title"
+result_header1b="# Ansible Playbook generated from evaluation of $title"
 result_header2="# XCCDF Version:  $xccdf_version"
-result_header3a="# 	$ oscap xccdf generate fix --result-id $result_id --template $bash_template xccdf-results.xml"
-result_header3b="# 	$ oscap xccdf generate fix --result-id $result_id --template $ansible_template xccdf-results.xml"
+result_header3a="# $ oscap xccdf generate fix --result-id $result_id --fix-type bash xccdf-results.xml"
+result_header3b="# $ oscap xccdf generate fix --result-id $result_id --fix-type ansible xccdf-results.xml"
 
 
 # Create an ARF

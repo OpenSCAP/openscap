@@ -249,16 +249,25 @@ static int collect_process_info(llist *l)
 		}
 		// For each file in the fd dir...
 		while (( ent = readdir(f) )) {
-			char line[256], ln[256], *s, *e;
+			char line[256], *s, *e;
 			unsigned long inode;
 			lnode node;
 			int lnlen;
 
 			if (ent->d_name[0] == '.')
 				continue;
-			snprintf(ln, 256, "%s/%s", buf, ent->d_name);
-			if ((lnlen = readlink(ln, line, sizeof(line)-1)) < 0)
+			int pathname_len = snprintf(NULL, 0, "%s/%s", buf, ent->d_name);
+			if (pathname_len < 0) {
 				continue;
+			}
+			pathname_len++; // +1 for terminating '\0'
+			char *pathname = malloc(pathname_len);
+			snprintf(pathname, pathname_len, "%s/%s", buf, ent->d_name);
+			lnlen = readlink(pathname, line, sizeof(line) - 1);
+			free(pathname);
+			if (lnlen < 0) {
+				continue;
+			}
 			line[lnlen] = 0;
 
 			// Only look at the socket entries

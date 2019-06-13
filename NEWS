@@ -1,3 +1,49 @@
+openscap-1.3.1                                                  12-06-2018
+  - New features
+    - Support for SCAP 1.3 Source Datastreams (evaluating, XML schemas,
+      validation)
+    - Introduced `oscap-podman` -- a tool for SCAP evaluation of Podman
+      images and containers (rhbz#1642373)
+    - Tailoring files are included in ARF result files (#902)
+    - OVAL details are always shown in HTML report, users do not have to
+      provide `--oval-results` on command line
+    - HTML report displays OVAL test details also for OVAL tests included
+      from other OVAL definitions using `extend_definition` (#916, #954)
+    - OVAL test IDs are shown in HTML report
+    - Rule IDs are shown in HTML guide (#1293)
+    - Added `block_size` in Linux `partition_state` defined in OVAL 5.11.2
+    - Added `oscap_wrapper` that can be used to comfortably execute custom
+      compiled oscap tool
+  - Maintenance, bug fixes
+    - Remote filesystems mounted using `autofs` direct maps are not
+      recognized as local filesystems (rhbz#1655943)
+    - SCAP source datastreams containing remote components can be
+      evaluated without downloading remote data (rhbz#1709423)
+    - Fixed duplicated variables in generated Ansible Playbooks
+    - Fixed trailing whitespace characters in Ansible Playbooks
+    - Correctly handle multiline profile titles and profile descriptions
+      in generated Ansible Playbooks (#1112)
+    - Fixed STIG Viewer output (--stig-viewer) to handle multiple rules
+      that have the same STIG ID
+    - Fixed incorrect displaying of OVAL test results in HTML report
+    - Fixed segmentation fault in offline mode caused by usage of `chroot`
+      file descriptor after closing (rhbz#1636431)
+    - Fixed textfilecontent54 probe to not ignore `max_depth`, `recurse`,
+      `recurse_direction` and `recurse_file_system` attributes of
+      `behaviors` element when `filepath` element is given (rhbz#1655943)
+    - Added CMake policies (CMP0078 and CMP0086) related to UseSWIG
+    - Added RHEL 8 CPE, Fedora 31 CPE, Oracle Linux 8 CPE
+    - Fedora CPEs fixed to work also on Fedora >= 30
+    - Fixed segmentation fault in CVRF module (rhbz#1642283)
+    - Fixed unresolved symbols in libopenscap_sce.so
+    - Fixed memory leaks in Windows registry probe (#1269)
+    - Fixed many GCC compiler warnings
+    - Removed dead code from `fsdev` module
+    - Many new test cases in upstream test suite
+    - Refactoring
+    - Updated Developer Guide
+    - Updated manual pages
+
 openscap-1.3.0                                                  09-10-2018
   - New features
     - Introduced a virtual '(all)' profile selecting all rules

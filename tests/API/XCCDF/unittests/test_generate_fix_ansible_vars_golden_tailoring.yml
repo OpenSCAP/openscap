@@ -1,9 +1,9 @@
 ---
- - hosts: all
-   vars:
-      www_value_val1: 200
-      www_value_val3: "dummy value"
-   tasks:
+- hosts: all
+  vars:
+    www_value_val1: 200
+    www_value_val3: "dummy value"
+  tasks:
     - name: default1
       lineinfile:
         dest: /foo/bar
