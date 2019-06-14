@@ -23,6 +23,7 @@ Choose *1a* or *1b* depending on whether you want sources from a release tarball
 wget https://github.com/OpenSCAP/openscap/releases/download/${version}/openscap-${version}.tar.gz
 tar -xzpf openscap-${version}.tar.gz
 cd openscap-${version}
+mkdir -p build
 ----
 +
 **OR**
