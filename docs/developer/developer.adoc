@@ -160,11 +160,12 @@ $ make install
 
 == Running oscap
 It is important to use your compiled `libopenscap.so` library with your `oscap` tool.
-The easiest way how to achieve that without need to install `libopenscap.so` to the system path, is to use a shell script called *run* in the OpenSCAP build directory.
+The easiest way how to achieve that without need to install `libopenscap.so` to the system path, is to use a shell script called *oscap_wrapper* or *run* in the OpenSCAP build directory.
 
 -------------------------------------------------
 $ cd build/
-$ bash ./run utils/oscap xccdf eval ... whatever
+$ ./oscap_wrapper xccdf eval ... whatever
+$ ./run valgrind utils/oscap xccdf eval ... whatever
 -------------------------------------------------
 
 The *run* script is generated at configure time by CMake and it sets the following environment variables:
@@ -175,6 +176,9 @@ The *run* script is generated at configure time by CMake and it sets the followi
 * *OSCAP_XSLT_PATH* - path to XSLT transformations. (required if you want
 to generate html documents from xml)
 * *OSCAP_CPE_PATH* - path to the OpenSCAP CPE dictionary.
+
+The *oscap_wrapper* script is a convenience shortcut for `run utils/oscap` call.
+
 
 == Debugging
 Developers and users who intend to help find and fix possible bugs in OpenSCAP
