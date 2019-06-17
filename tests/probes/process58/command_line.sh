@@ -90,7 +90,7 @@ echo "stderr file: $stderr"
 	CMDLINE_REGEX='/(\w+/)+bash.*stopped_process\.sh param1 param2 param3$'
 
 	# Run zombie process (without full cmdline)
-	( SHELL_PID=$BASHPID && ( kill -STOP $SHELL_PID ) ) &
+	( SHELL_PID=$BASHPID && ( kill -STOP $SHELL_PID && sleep 1 ) ) &
 	ZOMBIE_PPID=$!
 	ZOMBIE_PID=$(get_zombie_pid_from_ppid ${ZOMBIE_PPID})
 	[ -n "${ZOMBIE_PPID}" ]
