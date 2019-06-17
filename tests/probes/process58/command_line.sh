@@ -24,10 +24,14 @@ function get_process_cmdline() {
 # We can scan processes before process's exec() and get wrong command_line
 function wait_for_process() {
 	local PID="$1"
+	local PROC_NAME="$2"
+	if [[ -z "$PROC_NAME" ]]; then
+		PROC_NAME="$PROC"
+	fi
 	for i in $(seq 1 100); # wait max 100 * 300ms
 		do
 			PROCESS_CMDLINE=$(get_process_cmdline "$PID")
-			[[ "${PROCESS_CMDLINE}" == *${PROC}* ]] && break
+			[[ "${PROCESS_CMDLINE}" == *${PROC_NAME}* ]] && break
 			sleep 0.3s
 		done
 }
@@ -86,7 +90,7 @@ echo "stderr file: $stderr"
 	CMDLINE_REGEX='/(\w+/)+bash.*stopped_process\.sh param1 param2 param3$'
 
 	# Run zombie process (without full cmdline)
-	( : & exec "${PROC}" ) &
+	( SHELL_PID=$BASHPID && ( kill -STOP $SHELL_PID ) ) &
 	ZOMBIE_PPID=$!
 	ZOMBIE_PID=$(get_zombie_pid_from_ppid ${ZOMBIE_PPID})
 	[ -n "${ZOMBIE_PPID}" ]
@@ -104,7 +108,7 @@ echo "stderr file: $stderr"
 ### Wait for start of all processes (all processes have done exec())
 ########################################################################
 	wait_for_process $PID
-	wait_for_process ${ZOMBIE_PID}
+	wait_for_process ${ZOMBIE_PID} "command_line.sh"
 	wait_for_process ${ESCAPED_PID}
 
 ########################################################################
