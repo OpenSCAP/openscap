@@ -127,6 +127,9 @@ void MurmurHash3_x86_32 ( const void * key, int len,
 
   uint32_t k1 = 0;
 
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
   switch(len & 3)
   {
   case 3: k1 ^= tail[2] << 16;
@@ -134,6 +137,8 @@ void MurmurHash3_x86_32 ( const void * key, int len,
   case 1: k1 ^= tail[0];
           k1 *= c1; k1 = ROTL32(k1,15); k1 *= c2; h1 ^= k1;
   };
+#pragma GCC diagnostic pop
+#endif
 
   //----------
   // finalization
@@ -202,6 +207,9 @@ void MurmurHash3_x86_128 ( const void * key, const int len,
   uint32_t k3 = 0;
   uint32_t k4 = 0;
 
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
   switch(len & 15)
   {
   case 15: k4 ^= tail[14] << 16;
@@ -227,6 +235,8 @@ void MurmurHash3_x86_128 ( const void * key, const int len,
   case  1: k1 ^= tail[ 0] << 0;
            k1 *= c1; k1  = ROTL32(k1,15); k1 *= c2; h1 ^= k1;
   };
+#pragma GCC diagnostic pop
+#endif
 
   //----------
   // finalization
@@ -291,6 +301,9 @@ void MurmurHash3_x64_128 ( const void * key, const int len,
   uint64_t k1 = 0;
   uint64_t k2 = 0;
 
+#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
   switch(len & 15)
   {
   case 15: k2 ^= (uint64_t)(tail[14]) << 48;
@@ -312,6 +325,8 @@ void MurmurHash3_x64_128 ( const void * key, const int len,
   case  1: k1 ^= (uint64_t)(tail[ 0]) << 0;
            k1 *= c1; k1  = ROTL64(k1,31); k1 *= c2; h1 ^= k1;
   };
+#pragma GCC diagnostic pop
+#endif
 
   //----------
   // finalization
