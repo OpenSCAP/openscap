@@ -900,6 +900,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		// Profile-based remediation fix
 		struct xccdf_benchmark *benchmark = xccdf_policy_get_benchmark(policy);
 		if (benchmark == NULL) {
+			free(profile_title);
 			return 1;
 		}
 		// Description

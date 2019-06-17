@@ -94,13 +94,14 @@ static struct oscap_module* CVRF_SUBMODULES[] = {
 	NULL
 };
 
-
 static int app_cvrf_evaluate(const struct oscap_action *action) {
 	int result = OSCAP_OK;
 	// Temporary hardcoded CPE until CPE name can be found without input by CVRF functions
 	// themselves
 	const char *os_name = "Red Hat Enterprise Linux Desktop Supplementary (v. 6)";
 	struct oscap_source *import_source = oscap_source_new_from_file(action->cvrf_action->f_cvrf);
+	if (import_source == NULL)
+		return OSCAP_ERROR;
 
 	int ret = oscap_source_validate(import_source, reporter, (void *) action);
 	if (ret != 0) {
@@ -116,14 +117,13 @@ static int app_cvrf_evaluate(const struct oscap_action *action) {
 
 	if (oscap_source_save_as(export_source, action->cvrf_action->f_results) == -1) {
 		result = OSCAP_ERROR;
-		goto cleanup;
 	}
 	oscap_source_free(export_source);
 
-	cleanup:
-		if (oscap_err())
-			fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
-
+cleanup:
+	if (oscap_err())
+		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_source_free(import_source);
 	free(action->cvrf_action);
 	return result;
 }
