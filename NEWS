@@ -1,4 +1,4 @@
-openscap-1.3.1                                                  12-06-2018
+openscap-1.3.1                                                  12-06-2019
   - New features
     - Support for SCAP 1.3 Source Datastreams (evaluating, XML schemas,
       validation)
