@@ -9,9 +9,12 @@
 
 #include <apt-pkg/init.h>
 #include <apt-pkg/error.h>
+#include <apt-pkg/configuration.h>
+#include <apt-pkg/fileutl.h>
 #include <apt-pkg/mmap.h>
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
+#include <apt-pkg/pkgsystem.h>
 
 #include "dpkginfo-helper.h"
 
