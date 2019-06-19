@@ -425,6 +425,9 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		if (value == NULL)
 		{
 			value = xccdf_value_binding_get_value(binding);
+			if (value == NULL) {
+				value = "";
+			}
 		}
 		xccdf_operator_t operator = xccdf_value_binding_get_operator(binding);
 
