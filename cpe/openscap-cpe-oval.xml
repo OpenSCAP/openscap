@@ -914,7 +914,7 @@
                             id="oval:org.open-scap.cpe.wrlinux:tst:1019"
                             check="all"
                             check_existence="all_exist"
-                            comment="Check /etc/wrlinux10-release for VERSION 10 specification."
+                            comment="Check /etc/os-release for VERSION 1019 specification."
                             version="1"
                             xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
                             >
@@ -972,13 +972,13 @@
             </textfilecontent54_object>
             <textfilecontent54_object
                             id="oval:org.open-scap.cpe.wrlinux-release:obj:3"
-                            comment="Check VERSION specification in /etc/wrlinux10-release."
+                            comment="Check VERSION specification in /etc/os-release."
                             version="1"
                             xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
                             >
                 <path>/etc</path>
-                <filename>wrlinux10-release</filename>
-                <pattern operation="pattern match">^VERSION=.([[:digit:]]*)</pattern>
+                <filename>os-release</filename>
+                <pattern operation="pattern match">^VERSION=.(\d*.\d*)</pattern>
                 <instance operation="greater than or equal" datatype="int">1</instance>
             </textfilecontent54_object>
             <rpminfo_object id="oval:org.open-scap.cpe.rhevh:obj:1" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
@@ -1157,11 +1157,11 @@
             </textfilecontent54_state>
             <textfilecontent54_state
                             id="oval:org.open-scap.cpe.wrlinux-release:ste:10"
-                            comment="Check the /etc/wrlinux-release file for VERSION 10 specification."
+                            comment="Check the /etc/os-release file for VERSION 1019 specification."
                             version="1"
                             xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent"
                             >
-                  <subexpression operation="pattern match">10</subexpression>
+                  <subexpression operation="pattern match">10.19</subexpression>
             </textfilecontent54_state>
             <textfilecontent54_state id="oval:org.open-scap.cpe.rhevh:ste:2" version="1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent">
                   <subexpression operation="pattern match">7</subexpression>
