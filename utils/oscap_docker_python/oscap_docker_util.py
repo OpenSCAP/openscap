@@ -79,8 +79,9 @@ class OscapHelpers(object):
     CPE = 'oval:org.open-scap.cpe.rhel:def:'
     DISTS = ["7", "6", "5"]
 
-    def __init__(self, cve_input_dir):
+    def __init__(self, cve_input_dir, oscap_binary):
         self.cve_input_dir = cve_input_dir
+        self.oscap_binary = oscap_binary or 'oscap'
 
     @staticmethod
     def _mk_tmp_dir(tmp_dir):
@@ -152,7 +153,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
         os.environ["OSCAP_EVALUATION_TARGET"] = self._get_target_name(target)
-        cmd = ['oscap'] + [x for x in oscap_args]
+        cmd = [self.oscap_binary] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
         return OscapResult(oscap_process.returncode,
@@ -207,9 +208,9 @@ def mount_image_filesystem():
 
 class OscapScan(object):
     def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=None,
-                 hours_old=2):
+                 hours_old=2, oscap_binary=''):
         self.tmp_dir = tmp_dir
-        self.helper = OscapHelpers(tmp_dir)
+        self.helper = OscapHelpers(tmp_dir, oscap_binary)
         self.mnt_dir = mnt_dir
         self.hours_old = hours_old
 
