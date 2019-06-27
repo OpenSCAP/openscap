@@ -39,7 +39,12 @@ if(ENABLE_OSCAP_UTIL_CHROOT)
 	)
 endif()
 if(ENABLE_OSCAP_UTIL_DOCKER)
-	configure_file("oscap-docker.in" "oscap-docker" @ONLY)
+	configure_file("oscap-docker.in" "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap-docker" @ONLY)
+	file(
+		COPY "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap-docker"
+		DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
+		FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	)
 	execute_process(COMMAND
 		${OSCAP_DOCKER_PYTHON} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(False, False, prefix='${CMAKE_INSTALL_PREFIX}'))"
 		OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_INSTALL_DIR

@@ -26,20 +26,6 @@ import sys
 from requests import exceptions
 
 
-def cve_scan(scan_target, other_scan_args):
-    ''' Wrapper function for container/image scanning '''
-    OS = OscapScan()
-    result = OS.scan_cve(scan_target, other_scan_args)
-    return result
-
-
-def scan(scan_target, other_scan_args):
-    ''' Wrapper function to scan with openscap'''
-    OS = OscapScan()
-    result = OS.scan(scan_target, other_scan_args)
-    return result
-
-
 def ping_docker():
     ''' Simple check if the docker daemon is running '''
     # Class docker.Client was renamed to docker.APIClient in
@@ -55,12 +41,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='oscap docker',
                                      epilog='See `man oscap` to learn \
                                      more about OSCAP-ARGUMENTS')
+    parser.add_argument('--oscap', dest='oscap_binary', default='', help='Set the oscap binary to use')
     subparser = parser.add_subparsers(help="commands")
 
     # Scan CVEs in image
     image_cve = subparser.add_parser('image-cve', help='Scan a docker image \
                                     for known vulnerabilities.')
-    image_cve.set_defaults(func=cve_scan)
+    image_cve.set_defaults(func=OscapScan.scan_cve)
     image_cve.add_argument('scan_target', help='Container or image to scan')
 
     # Scan an Image
@@ -68,20 +55,20 @@ if __name__ == '__main__':
     image.add_argument('scan_target',
                        help='Container or image to scan')
 
-    image.set_defaults(func=scan)
+    image.set_defaults(func=OscapScan.scan)
     # Scan a container
     container = subparser.add_parser('container', help='Scan a running docker\
                                       container of given name.')
     container.add_argument('scan_target',
                            help='Container or image to scan')
-    container.set_defaults(func=scan)
+    container.set_defaults(func=OscapScan.scan)
 
     # Scan CVEs in container
     container_cve = subparser.add_parser('container-cve', help='Scan a \
                                          running container for known \
                                          vulnerabilities.')
 
-    container_cve.set_defaults(func=cve_scan)
+    container_cve.set_defaults(func=OscapScan.scan_cve)
     container_cve.add_argument('scan_target',
                                help='Container or image to scan')
 
@@ -99,7 +86,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     try:
-        rc = args.func(args.scan_target, leftover_args)
+        OS = OscapScan(oscap_binary=args.oscap_binary)
+        rc = args.func(OS, args.scan_target, leftover_args)
     except Exception as exc:
         sys.exit(255)
         raise exc
