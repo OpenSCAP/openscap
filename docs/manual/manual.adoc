@@ -2047,3 +2047,8 @@ reference manual: http://static.open-scap.org/openscap-1.2/[OpenSCAP
 reference manual]. This manual is included in a release tarball and can be
 regenerated from project sources by Doxygen documentation system.
 
+== Frequently Asked Questions (FAQs)
+*Why do I get "notchecked" results when I use e.g. https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_Red_Hat_Enterprise_Linux_7_V2R3_STIG.zip[STIG checklist]?*
+
+The downloaded guidance contains rule descriptions, but it doesn't contain OVAL checks which could be used for evaluation by OpenSCAP.
+
