@@ -2050,5 +2050,5 @@ regenerated from project sources by Doxygen documentation system.
 == Frequently Asked Questions (FAQs)
 *Why do I get "notchecked" results when I use e.g. https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_Red_Hat_Enterprise_Linux_7_V2R3_STIG.zip[STIG checklist]?*
 
-The downloaded guidance contains rule descriptions, but it doesn't contain OVAL checks which could be used for evaluation by OpenSCAP.
+The downloaded guidance contains rule descriptions, but it doesn't contain OVAL checks which could be used for evaluation by OpenSCAP. You can find guidances with implemented OVAL checks and also with remediations at https://github.com/ComplianceAsCode/content[ComplianceAsCode] project, which contains wide range of profiles.
 
