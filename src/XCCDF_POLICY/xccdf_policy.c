@@ -592,10 +592,10 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 
 		// Only print a warning if we didn't select a check but could've otherwise.
 		if (print_oval_warning) {
-			printf("WARNING: Skipping rule that uses OVAL but is possibly malformed; "
+			dW("Skipping rule that uses OVAL but is possibly malformed; "
 			       "an incorrect content reference prevents this check from being evaluated.\n");
 		} else if (print_general_warning && result == NULL) {
-			printf("WARNING: Skipping rule that requires an unregistered check system "
+			dW("Skipping rule that requires an unregistered check system "
 			       "or incorrect content reference to evaluate. "
 			       "Please consider providing a valid SCAP/OVAL instead of %s\n",
 				warning_check_system);

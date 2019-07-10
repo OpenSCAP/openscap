@@ -10,7 +10,8 @@ $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_without_content_ref
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+[ -f $stderr ]
+rm $stderr
 
 $OSCAP xccdf validate-xml $result
 
