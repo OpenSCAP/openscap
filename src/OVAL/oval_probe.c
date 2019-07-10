@@ -141,15 +141,16 @@ int oval_probe_query_object(oval_probe_session_t *psess, struct oval_object *obj
 
 	ph = oval_probe_handler_get(psess->ph, type);
 
-        if (ph == NULL) {
-                char *msg = "OVAL object not supported.";
+	if (ph == NULL) {
+		char *msg = oscap_sprintf("OVAL object '%s_object' is not supported.", type_name);
 
 		dW("%s", msg);
 		oval_syschar_add_new_message(sysc, msg, OVAL_MESSAGE_LEVEL_WARNING);
+		free(msg);
 		oval_syschar_set_flag(sysc, SYSCHAR_FLAG_NOT_COLLECTED);
 
 		return 1;
-        }
+	}
 
 	if ((ret = oval_probe_ext_handler(type, ph->uptr, PROBE_HANDLER_ACT_EVAL, sysc, flags)) != 0) {
 		return ret;
