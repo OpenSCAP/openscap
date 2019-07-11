@@ -2096,3 +2096,7 @@ regenerated from project sources by Doxygen documentation system.
 
 The downloaded guidance contains rule descriptions, but it doesn't contain OVAL checks which could be used for evaluation by OpenSCAP. You can find guidances with implemented OVAL checks and also with remediations at https://github.com/ComplianceAsCode/content[ComplianceAsCode] project, which contains wide range of profiles.
 
+*I try to apply a tailoring file, but OpenSCAP still evaluates rules that I have unselected. How can I enforce my changes of the profile?*
+
+Make sure that you provide the ID of the customized profile in `--profile` option instead of the ID of the original profile.
+If you created the tailoring file using SCAP Workbench, you were prompted to choose the ID of the customized profile. You can display the ID of the customized profile by running `oscap info <your_tailoring_file>`. By default, the ID of the customized profile ends with `_customized` suffix.
