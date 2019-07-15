@@ -33,6 +33,7 @@
 # include <pthread.h>
 #endif
 
+#include "oscap_helpers.h"
 #include "oval_probe.h"
 #include "oval_system_characteristics.h"
 #include "common/_error.h"
