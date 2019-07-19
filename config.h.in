@@ -39,6 +39,7 @@
 #cmakedefine HAVE_HEADERFORMAT
 #cmakedefine HAVE_RPMFREECRYPTO
 #cmakedefine HAVE_RPMFREEFILESYSTEMS
+#cmakedefine HAVE_RPMVERIFYFILE
 
 #cmakedefine HAVE_RPMVERCMP
 #cmakedefine RPM46_FOUND

@@ -32,6 +32,18 @@ int rpmErrorCb (rpmlogRec rec, rpmlogCallbackData data)
 }
 #endif
 
+#ifndef HAVE_RPMVERIFYFILE
+int rpmVerifyFile(const rpmts ts, const rpmfi fi,
+		rpmVerifyAttrs * res, rpmVerifyAttrs omitMask)
+{
+    rpmVerifyAttrs vfy = rpmfiVerify(fi, omitMask);
+    if (res)
+	*res = vfy;
+
+    return (vfy & RPMVERIFY_LSTATFAIL) ? 1 : 0;
+}
+#endif
+
 void rpmLibsPreload()
 {
 	// Don't load rpmrc files. The are useless for us,

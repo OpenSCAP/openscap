@@ -69,9 +69,7 @@ typedef struct {
 
 const rpmverifypackage_bhmap_t rpmverifypackage_bhmap[] = {
 	{ "nodeps",        (uint64_t)VERIFY_DEPS      , "--nodeps"},
-	{ "nodigest",      (uint64_t)VERIFY_DIGEST    , "--nodigest"},
 	{ "noscripts",     (uint64_t)VERIFY_SCRIPT    , "--noscript"},
-	{ "nosignature",   (uint64_t)VERIFY_SIGNATURE , "--nosignature"}
 };
 
 struct rpmverify_res {
@@ -408,22 +406,10 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 		probe_item_ent_add(item, "dependency_check_passed", NULL, value);
 		SEXP_free(value);
 	}
-	if (res->vflags & VERIFY_DIGEST) {
-		dI("VERIFY_DIGEST %d", res->vresults & VERIFY_DIGEST);
-		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DIGEST ? "1" : "0"), 1);
-		probe_item_ent_add(item, "digest_check_passed", NULL, value);
-		SEXP_free(value);
-	}
 	if (res->vflags & VERIFY_SCRIPT) {
 		dI("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SCRIPT ? "1" : "0"), 1);
 		probe_item_ent_add(item, "verification_script_successful", NULL, value);
-		SEXP_free(value);
-	}
-	if (res->vflags & VERIFY_SIGNATURE) {
-		dI("VERIFY_SIGNATURE %d", res->vresults & VERIFY_SIGNATURE);
-		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SIGNATURE ? "1" : "0"), 1);
-		probe_item_ent_add(item, "signature_check_passed", NULL, value);
 		SEXP_free(value);
 	}
 

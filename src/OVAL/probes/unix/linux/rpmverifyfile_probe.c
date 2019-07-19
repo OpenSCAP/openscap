@@ -83,11 +83,10 @@ struct rpmverify_res {
 	 * They all have the same value (1) - see 'rpm/rpmvf.h'.
 	 */
 	#define RPMVERIFY_FILEDIGEST RPMVERIFY_MD5
-	#define VERIFY_FILEDIGEST VERIFY_MD5
-	/* VERIFY_CAPS is not supported in older rpmlib.
+	/* RPMVERIFY_CAPS is not supported in older rpmlib.
 	 * We can set it to 0 because 0 is neutral to bit OR operation.
 	 */
-	#define VERIFY_CAPS 0
+	#define RPMVERIFY_CAPS 0
 #endif
 
 #define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm->mutex)
@@ -418,18 +417,18 @@ typedef struct {
 } rpmverifyfile_bhmap_t;
 
 const rpmverifyfile_bhmap_t rpmverifyfile_bhmap[] = {
-	{ "nolinkto",      (uint64_t)VERIFY_LINKTO    },
-	{ "nomd5",	 (uint64_t)VERIFY_MD5       }, // deprecated since OVAL 5.11.1
-	{ "nosize",	(uint64_t)VERIFY_SIZE      },
-	{ "nouser",	(uint64_t)VERIFY_USER      },
-	{ "nogroup",       (uint64_t)VERIFY_GROUP     },
-	{ "nomtime",       (uint64_t)VERIFY_MTIME     },
-	{ "nomode",	(uint64_t)VERIFY_MODE      },
-	{ "nordev",	(uint64_t)VERIFY_RDEV      },
+	{ "nolinkto",      (uint64_t)RPMVERIFY_LINKTO    },
+	{ "nomd5",	 (uint64_t)RPMVERIFY_MD5       }, // deprecated since OVAL 5.11.1
+	{ "nosize",	(uint64_t)RPMVERIFY_FILESIZE      },
+	{ "nouser",	(uint64_t)RPMVERIFY_USER      },
+	{ "nogroup",       (uint64_t)RPMVERIFY_GROUP     },
+	{ "nomtime",       (uint64_t)RPMVERIFY_MTIME     },
+	{ "nomode",	(uint64_t)RPMVERIFY_MODE      },
+	{ "nordev",	(uint64_t)RPMVERIFY_RDEV      },
 	{ "noconfigfiles", RPMVERIFY_SKIP_CONFIG      },
 	{ "noghostfiles",  RPMVERIFY_SKIP_GHOST       },
-	{ "nofiledigest", (uint64_t)VERIFY_FILEDIGEST },
-	{ "nocaps", (uint64_t)VERIFY_CAPS }
+	{ "nofiledigest", (uint64_t)RPMVERIFY_FILEDIGEST },
+	{ "nocaps", (uint64_t)RPMVERIFY_CAPS }
 };
 
 int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
