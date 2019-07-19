@@ -82,6 +82,7 @@ be applied to them. Only bugfixes are permitted in frozen branches.
 
 == Maintenance status
 
+	* 1.3.x: supported
 	* 1.2.x: supported
 	* 1.1.x: unsupported since 2015-10-16
 	* 1.0.x: unsupported since 2017-06-01
