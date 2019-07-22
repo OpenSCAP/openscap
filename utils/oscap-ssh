@@ -114,6 +114,13 @@ function scp_retreive_from_temp_dir {
     scp -o ControlPath="$MASTER_SOCKET" -P "$SSH_PORT" $SSH_ADDITIONAL_OPTIONS "$SSH_HOST:$REMOTE_TEMP_DIR/$1" "$2"
 }
 
+# $1: The name of the array holding command elements
+# Returns: String, where individual command components are double-quoted, so they are not interpreted by the shell.
+#  For example, an array ('-p' '(all)') will be transformed to "\"-p\" \"(all)\"", so after the shell expansion, it will end up as "-p" "(all)".
+function command_array_to_string {
+	eval "printf '\"%s\" ' \"\${$1[@]}\""
+}
+
 function first_argument_is_sudo {
 	[ "$1" == "sudo" ] || [ "$1" == "--sudo" ]
 	return $?
@@ -272,7 +279,7 @@ echo "Starting the evaluation..."
 # changing directory because of --oval-results support. oval results files are
 # dumped into PWD, and we can't be sure by the file names - we need controlled
 # environment
-ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap ${oscap_args[*]}" "$SSH_TTY_ALLOCATION_OPTION"
+ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap $(command_array_to_string oscap_args)" "$SSH_TTY_ALLOCATION_OPTION"
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 
