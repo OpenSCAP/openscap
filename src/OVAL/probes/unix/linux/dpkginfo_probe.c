@@ -57,6 +57,8 @@
 #include "common/debug_priv.h"
 #include "public/oval_schema_version.h"
 
+#include <probe/probe.h>
+
 #include "dpkginfo-helper.h"
 
 #include "dpkginfo_probe.h"
@@ -70,6 +72,9 @@ static struct dpkginfo_global g_dpkg = {
         .init_done = -1,
 };
 
+int dpkginfo_probe_offline_mode_supported(void) {
+        return PROBE_OFFLINE_OWN;
+}
 
 void *dpkginfo_probe_init(void)
 {

@@ -28,7 +28,10 @@ static int opencache (void) {
         if (pkgInitConfig (*_config) == false) return 0;
         if (pkgInitSystem (*_config, _system) == false) return 0;
 
-        FileFd *fd = new FileFd (_config->FindFile ("Dir::Cache::pkgcache"),
+        const char* root = getenv("OSCAP_PROBE_ROOT");
+        string pkgCacheRoot(root != NULL ? root : "");
+
+        FileFd *fd = new FileFd (pkgCacheRoot + _config->FindFile ("Dir::Cache::pkgcache"),
                         FileFd::ReadOnly);
 
         dpkg_mmap = new MMap (*fd, MMap::Public|MMap::ReadOnly);
