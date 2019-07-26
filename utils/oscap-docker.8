@@ -3,19 +3,19 @@
 oscap-docker \- Tool for running oscap within docker container or image
 .SH DESCRIPTION
 oscap-docker tool can asses vulnerabilities or security compliance of running Docker
-containers or cold Docker images. OpenSCAP tool (oscap) is used underneath. Definition
+containers or cold Docker images. OpenSCAP tool \fBoscap(8)\fR is used underneath. Definition
 of vulnerabilities (CVE stream) is downloaded from product vendor.
 
 .SS Compliance scan of Docker image
 Usage: oscap-docker image IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
 
-Run any OpenSCAP (oscap) command within chroot of mounted docker image. Learn more
-about oscap arguments in oscap(8) man page.
+Run any OpenSCAP \fBoscap(8)\fR command within chroot of mounted docker image. Learn more
+about arguments in \fBoscap(8)\fR man page.
 
 .SS Compliance scan of Docker container
 Usage: oscap-docker container CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
 
-Run any OpenSCAP (oscap) command within chroot of mounted docker container. Result
+Run any OpenSCAP \fBoscap(8)\fR command within chroot of mounted docker container. Result
 of this command may differ from scanning just an image due to defined mount points.
 
 .SS "Vulnerability scan of Docker image"
@@ -29,6 +29,8 @@ Usage: oscap-docker container-cve CONTAINER_NAME [--results oval-results-file.xm
 
 Chroot to running container, determine OS variant/version, download CVE stream applicable
 to the given OS and finally run a vulnerability scan.
+
+In order to use different \fBoscap(8)\fR binary pass it like --oscap=<path/to/oscap>, as the first argument.
 
 .SH SECURITY POLICIES
 .TP
