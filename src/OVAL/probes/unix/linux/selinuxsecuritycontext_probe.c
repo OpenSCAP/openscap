@@ -330,11 +330,6 @@ int selinuxsecuritycontext_probe_main(probe_ctx *ctx, void *arg)
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 
-	if ( ! is_selinux_enabled()) {
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_NOT_APPLICABLE);
-		return 0;
-	}
-
 	probe_in  = probe_ctx_getobject(ctx);
 
 	behaviors = probe_obj_getent (probe_in, "behaviors", 1);
