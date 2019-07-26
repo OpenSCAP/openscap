@@ -4,9 +4,9 @@
 oscap-vm \- Tool for offline SCAP evaluation of virtual machines.
 
 .SH SYNOPSIS
-\fBoscap-vm domain\fR \fIVM_DOMAIN [OSCAP_OPTIONS] INPUT_CONTENT
+\fBoscap-vm\fR \fI[--oscap=<oscap_binary>]\fR \fBdomain\fR \fIVM_DOMAIN [OSCAP_OPTIONS] INPUT_CONTENT
 
-\fBoscap-vm image\fR \fIVM_STORAGE_IMAGE [OSCAP_OPTIONS] INPUT_CONTENT
+\fBoscap-vm\fR \fI[--oscap=<oscap_binary>]\fR \fBimage\fR \fIVM_STORAGE_IMAGE [OSCAP_OPTIONS] INPUT_CONTENT
 
 .SH DESCRIPTION
 \fBoscap-vm\fR performs SCAP evaluation of virtual machine domains or virtual machine images.
@@ -25,6 +25,8 @@ Usage of the tool mimics usage and options of \fBoscap(8)\fR tool.
 
 The type of scan target (either \fIdomain\fR or \fIimage\fR) has to be specified first. Then identify the target by the domain name (name of a named libvirt domain) or the image path, respectively.
 Domain UUIDs can be used instead of names. Any domains including the running domains can be scanned.
+
+Optionally, as the very first argument, different \fBoscap(8)\fR binary could be chosen to perform the scan, like --oscap=<path/to/oscap>.
 
 The rest of the options are passed directly to \fBoscap(8)\fR utility. For the detailed description of its options please refer to \fBoscap(8)\fR manual page. However some of its options are not supported in \fBoscap-vm\fR because offline evaluation is used.
 
