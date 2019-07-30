@@ -56,9 +56,6 @@ Authors:
                     <xsl:when test="$oval_severity = 'Important' or $oval_severity = 'Critical'">
                         <xsl:text>high</xsl:text>
                     </xsl:when>
-                    <xsl:when test="$oval_severity = 'Critical'">
-                        <xsl:text>high</xsl:text>
-                    </xsl:when>
                     <xsl:otherwise>
                         <xsl:text>unknown</xsl:text>
                     </xsl:otherwise>
