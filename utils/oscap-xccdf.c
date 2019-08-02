@@ -835,7 +835,7 @@ int app_generate_fix(const struct oscap_action *action)
 		} else if (strcmp(action->fix_type, "puppet") == 0) {
 			template = "urn:xccdf:fix:script:puppet";
 		} else if (strcmp(action->fix_type, "anaconda") == 0) {
-			template = "urn:xccdf:fix:script:anaconda";
+			template = "urn:redhat:anaconda:pre";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
