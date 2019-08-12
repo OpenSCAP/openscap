@@ -115,7 +115,7 @@ class OscapHelpers(object):
             if "{0}{1}: true".format(self.CPE, dist) in result.stdout:
                 return dist
 
-    def _get_target_name(self, target):
+    def _get_target_name_and_config(self, target):
         '''
         Determines if target is image or container. For images returns full
         image name if exists or image ID otherwise. For containers returns
@@ -131,7 +131,7 @@ class OscapHelpers(object):
                 name = ", ".join(image["RepoTags"])
             else:
                 name = image["Id"][len("sha256:"):][:10]
-            return "docker-image://{}".format(name)
+            return "docker-image://{}".format(name), image["Config"]
         except docker.errors.NotFound:
             try:
                 container = client.inspect_container(target)
@@ -139,20 +139,23 @@ class OscapHelpers(object):
                     name = container["Name"].lstrip("/")
                 else:
                     name = container["Id"][:10]
-                return "docker-container://{}".format(name)
+                return "docker-container://{}".format(name), container["Config"]
             except docker.errors.NotFound:
-                return "unknown"
+                return "unknown", {}
 
     def oscap_chroot(self, chroot_path, target, *oscap_args):
         '''
         Wrapper function for executing oscap in a subprocess
         '''
-
         os.environ["OSCAP_PROBE_ARCHITECTURE"] = platform.processor()
         os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
         os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-        os.environ["OSCAP_EVALUATION_TARGET"] = self._get_target_name(target)
+        name, conf = self._get_target_name_and_config(target)
+        os.environ["OSCAP_EVALUATION_TARGET"] = name
+        for var in config.get("Env", []):
+            vname, val = var.split("=", 1)
+            os.environ[vname] = val
         cmd = [self.oscap_binary] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()

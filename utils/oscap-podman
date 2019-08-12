@@ -79,6 +79,10 @@ else
 fi
 DIR=$(podman mount $ID) || die
 
+for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
+    eval "export $VAR"
+done
+
 export OSCAP_PROBE_ROOT="$(cd "$DIR"; pwd)"
 export OSCAP_PROBE_OS_NAME="Linux"
 export OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)"
