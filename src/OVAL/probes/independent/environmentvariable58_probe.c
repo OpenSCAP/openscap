@@ -51,6 +51,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include <probe/probe.h>
 #include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
@@ -192,6 +193,11 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	return err;
 }
 
+int environmentvariable58_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
+}
+
 int environmentvariable58_probe_main(probe_ctx *ctx, void *arg)
 {
 	SEXP_t *probe_in, *name_ent, *pid_ent;
@@ -229,9 +235,16 @@ int environmentvariable58_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free(nref);
 		SEXP_free(nval);
 		pid_ent = new_pid_ent;
+	} else {
+		if (ctx->offline_mode != PROBE_OFFLINE_NONE) {
+			err = PROBE_EINVAL;
+			goto cleanup;
+		}
 	}
 
 	err = read_environment(pid_ent, name_ent, ctx);
+
+cleanup:
 	SEXP_free(name_ent);
 	SEXP_free(pid_ent);
 
