@@ -155,7 +155,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_EVALUATION_TARGET"] = name
         for var in config.get("Env", []):
             vname, val = var.split("=", 1)
-            os.environ[vname] = val
+            os.environ["OSCAP_OFFLINE_"+vname] = val
         cmd = [self.oscap_binary] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()

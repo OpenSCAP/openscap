@@ -80,7 +80,7 @@ fi
 DIR=$(podman mount $ID) || die
 
 for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
-    eval "export $VAR"
+    eval "export OSCAP_OFFLINE_$VAR"
 done
 
 export OSCAP_PROBE_ROOT="$(cd "$DIR"; pwd)"
