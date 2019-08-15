@@ -28,13 +28,15 @@ function usage()
     echo "oscap-podman -- Tool for SCAP evaluation of Podman images and containers."
     echo
     echo "Compliance scan of Podman image:"
-    echo "$ sudo oscap-podman IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
+    echo "$ sudo oscap-podman [--oscap=<OSCAP_BINARY>] IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
     echo
     echo "Compliance scan of Podman container:"
-    echo "$ sudo oscap-podman CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
+    echo "$ sudo oscap-podman [--oscap=<OSCAP_BINARY>] CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
     echo
     echo "See \`man oscap\` to learn more about semantics of OSCAP_ARGUMENT options."
 }
+
+OSCAP_BINARY=oscap
 
 if [ $# -lt 1 ]; then
     echo "No arguments provided."
@@ -43,6 +45,9 @@ if [ $# -lt 1 ]; then
 elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     usage
     die
+elif [[ "$1" == --oscap=* ]] && [ $# -gt 2 ]; then
+    OSCAP_BINARY=${1#"--oscap="}
+    shift
 elif [ "$#" -gt 1 ]; then
     true
 else
@@ -74,6 +79,10 @@ else
 fi
 DIR=$(podman mount $ID) || die
 
+for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
+    eval "export OSCAP_OFFLINE_$VAR"
+done
+
 export OSCAP_PROBE_ROOT="$(cd "$DIR"; pwd)"
 export OSCAP_PROBE_OS_NAME="Linux"
 export OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)"
@@ -81,7 +90,7 @@ export OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)"
 export OSCAP_EVALUATION_TARGET="$TARGET"
 shift 1
 
-oscap "$@"
+$OSCAP_BINARY "$@"
 EXIT_CODE=$?
 podman umount $ID > /dev/null || die
 if [ $CLEANUP -eq 1 ]; then

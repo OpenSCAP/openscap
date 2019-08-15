@@ -25,6 +25,7 @@
 
 #include "probe-api.h"
 
+int environmentvariable58_probe_offline_mode_supported(void);
 int environmentvariable58_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_ENVIRONMENTVARIABLE58_PROBE_H */
