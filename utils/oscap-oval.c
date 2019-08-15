@@ -113,7 +113,8 @@ static struct oscap_module OVAL_EVAL = {
 	"                                   (only applicable for source datastreams)\n"
 	"   --oval-id <id>                - ID of the OVAL component ref in the datastream to use.\n"
 	"                                   (only applicable for source datastreams)\n"
-	"   --fetch-remote-resources      - Download remote content referenced by OVAL Definitions.\n",
+	"   --fetch-remote-resources      - Download remote content referenced by OVAL Definitions.\n"
+	"                                   (only applicable for source datastreams)\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
