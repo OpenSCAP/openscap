@@ -55,8 +55,8 @@ Authors:
         <xsl:when test="starts-with(@system, 'http://cve.mitre.org')">
             <a href="{concat('https://cve.mitre.org/cgi-bin/cvename.cgi?name=', text())}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
         </xsl:when>
-        <xsl:when test="starts-with(@system, 'https://rhn.redhat.com/errata')">
-            <a href="{concat('https://rhn.redhat.com/errata/', concat(text(), '.html'))}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
+        <xsl:when test="starts-with(@system, 'https://access.redhat.com/errata')">
+            <a href="{concat('https://access.redhat.com/errata/', concat(text(), '.html'))}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
         </xsl:when>
         <xsl:otherwise>
             <abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr>

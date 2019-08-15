@@ -86,9 +86,9 @@ Authors:
     </xsl:template>
 
     <xsl:template match="oval-def:reference[@source='RHSA']">
-        <xsl:if test="starts-with(@ref_url, 'https://rhn.redhat.com/errata')">
-            <xccdf:ident system="https://rhn.redhat.com/errata">
-                <xsl:copy-of select="substring-before(substring-after(@ref_url, 'https://rhn.redhat.com/errata/'), '.html')"/>
+        <xsl:if test="starts-with(@ref_url, 'https://access.redhat.com/errata')">
+            <xccdf:ident system="https://access.redhat.com/errata">
+                <xsl:copy-of select="substring-after(@ref_url, 'https://access.redhat.com/errata/')"/>
             </xccdf:ident>
         </xsl:if>
     </xsl:template>
