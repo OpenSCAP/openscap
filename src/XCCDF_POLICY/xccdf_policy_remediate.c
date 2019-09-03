@@ -808,6 +808,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	const char *format = sys != NULL ? sys : "";
 	const char *template = sys != NULL ? " --template " : "";
 	const char *remediation_type = ansible_script ? "Ansible Playbook" : "Bash Remediation Script";
+	const char *shebang_with_newline = ansible_script ? "" : "#!/bin/bash\n";
 
 	char *fix_header;
 
@@ -857,6 +858,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		}
 
 		fix_header = oscap_sprintf(
+			"%s"
 			"###############################################################################\n"
 			"#\n"
 			"# %s for %s\n"
@@ -879,7 +881,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"%s\n"
 			"#\n"
 			"###############################################################################\n\n",
-			remediation_type, profile_title,
+			shebang_with_newline, remediation_type, profile_title,
 			profile_description != NULL ? profile_description : "Not available",
 			profile_id, benchmark_id, benchmark_version_info, xccdf_version_name,
 			oscap_version, profile_id, template, format, remediation_type,
@@ -897,6 +899,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 		const char *xccdf_version_name = xccdf_version_info_get_version(xccdf_version);
 
 		fix_header = oscap_sprintf(
+			"%s"
 			"###############################################################################\n"
 			"#\n"
 			"# %s generated from evaluation of %s\n"
@@ -915,7 +918,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 			"%s\n"
 			"#\n"
 			"###############################################################################\n\n",
-			remediation_type, profile_title, profile_id, xccdf_version_name,
+			shebang_with_newline, remediation_type, profile_title, profile_id, xccdf_version_name,
 			start_time != NULL ? start_time : "Unknown", end_time, oscap_version,
 			result_id, template, format, remediation_type, remediation_type, how_to_apply
 		);

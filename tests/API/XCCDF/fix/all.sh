@@ -14,18 +14,20 @@ function test_generate_fix {
 
     # grep to strip out whitespace and comments
     # `tail -n +2` to skip the first line with progress reporting
-    local GENERATED_FIX=$($OSCAP xccdf generate fix --result-id "$TESTRESULT_ID" "$INPUT" | grep -v -E "^([\t ]*|[\t ]*#.*)$" | tail -n +2)
+    local GENERATED_FIX RELEVANT_FIX_CONTENTS
+    GENERATED_FIX=$($OSCAP xccdf generate fix --result-id "$TESTRESULT_ID" "$INPUT")
+    RELEVANT_FIX_CONTENTS=$(grep -v -E "^([\t ]*|[\t ]*#.*)$" <<< "$GENERATED_FIX" | tail -n +2)
     if [ "$?" != "0" ]; then
         return 1
     fi
     echo "$GENERATED_FIX"
 
-    if [ "$GENERATED_FIX" == "$EXPECTED_FIX" ]; then
+    if [ "$RELEVANT_FIX_CONTENTS" == "$EXPECTED_FIX" ]; then
         return 0
     fi
 
     echo "Generated fix doesn't match expected fix!"
-    echo "'$GENERATED_FIX' != '$EXPECTED_FIX'"
+    echo "'$RELEVANT_FIX_CONTENTS' != '$EXPECTED_FIX'"
 
     return 1
 }
