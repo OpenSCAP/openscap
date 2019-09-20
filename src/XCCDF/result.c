@@ -70,7 +70,8 @@
 #define XCCDF_NUMERIC_SIZE 32
 
 // References containing STIG Rule IDs can be found by their href attribute, it must match the following url
-static const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
+static const char *DISA_STIG_VIEWER_HREF[] = { "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx",
+					       "https://public.cyber.mil/stigs/srg-stig-tools/" };
 
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
@@ -1085,7 +1086,8 @@ void xccdf_result_to_dom(struct xccdf_result *result, xmlNode *result_node, xmlD
 			struct oscap_reference_iterator *references = xccdf_item_get_references(item);
 			while (oscap_reference_iterator_has_more(references)) {
 				struct oscap_reference *ref = oscap_reference_iterator_next(references);
-				if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
+				if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[0]) == 0 ||
+				    strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[1]) == 0) {
 					const char *stig_rule_id = oscap_reference_get_title(ref);
 
 					xccdf_test_result_type_t other_res = (xccdf_test_result_type_t)oscap_htable_detach(nodes_by_rule_id, stig_rule_id);
@@ -1292,7 +1294,8 @@ void xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc, xml
 		struct oscap_reference_iterator *references = xccdf_item_get_references(item);
 		while (oscap_reference_iterator_has_more(references)) {
 			struct oscap_reference *ref = oscap_reference_iterator_next(references);
-			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
+			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[0]) == 0 ||
+			    strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[1]) == 0) {
 				const char *stig_rule_id = oscap_reference_get_title(ref);
 
 				xccdf_test_result_type_t expected_res = (xccdf_test_result_type_t)oscap_htable_get(nodes_by_rule_id, stig_rule_id);
