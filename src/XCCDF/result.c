@@ -47,7 +47,8 @@
 #include "source/oscap_source_priv.h"
 
 // References containing STIG Rule IDs can be found by their href attribute, it must match the following url
-static const char *DISA_STIG_VIEWER_HREF = "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx";
+static const char *DISA_STIG_VIEWER_HREF[] = { "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx",
+					       "https://public.cyber.mil/stigs/srg-stig-tools/" };
 
 // constants
 static const xccdf_numeric XCCDF_SCORE_MAX_DAFAULT = 100.0f;
@@ -1096,7 +1097,8 @@ xmlNode *xccdf_rule_result_to_dom(struct xccdf_rule_result *result, xmlDoc *doc,
 		struct oscap_reference_iterator *references = xccdf_item_get_references(XRULE(item));
 		while (oscap_reference_iterator_has_more(references)) {
 			struct oscap_reference *ref = oscap_reference_iterator_next(references);
-			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF) == 0) {
+			if (strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[0]) == 0 ||
+			    strcmp(oscap_reference_get_href(ref), DISA_STIG_VIEWER_HREF[1]) == 0) {
 				stig_rule_id = oscap_reference_get_title(ref);
 				break;
 			}
