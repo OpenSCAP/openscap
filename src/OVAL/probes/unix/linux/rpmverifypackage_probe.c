@@ -369,12 +369,12 @@ void rpmverifypackage_probe_fini(void *ptr)
 	rpmFreeMacros(NULL);
 	rpmlogClose();
 
-	// This will be always set by probe_init(), lets free it
-	probe_chroot_free(&r->chr);
-
 	// If r is null, probe_init() failed during chroot
 	if (r == NULL)
 		return;
+
+	// This will be always set by probe_init(), lets free it
+	probe_chroot_free(&r->chr);
 
 	// If r->rpm.rpmts was not initialized the mutex was not as well
 	if (r->rpm.rpmts == NULL)
@@ -401,7 +401,7 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 NULL);
 
 	if (res->vflags & VERIFY_DEPS) {
-		dI("VERIFY_DEPS %d", res->vresults & VERIFY_DEPS);
+		dI("VERIFY_DEPS %lu", res->vresults & VERIFY_DEPS);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DEPS ? "1" : "0"), 1);
 		probe_item_ent_add(item, "dependency_check_passed", NULL, value);
 		SEXP_free(value);

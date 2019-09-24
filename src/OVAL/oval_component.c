@@ -1950,7 +1950,7 @@ static long unsigned int _parse_datetime(char *datetime, const char *fmt[], size
                 }
         }
 
-        dE("Unable to interpret \"%s\" as a datetime string");
+        dE("Unable to interpret \"%s\" as a datetime string", datetime);
 
         return (0);
 }

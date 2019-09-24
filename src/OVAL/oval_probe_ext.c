@@ -365,7 +365,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		case  0:
 			break;
 		case  1: /* no error found */
-			dE("Internal error: An error was signaled on sd=%d but the error queue is empty.");
+			dE("Internal error: An error was signaled on sd=%d but the error queue is empty.", pd->sd);
 			oscap_seterr(OSCAP_EFAMILY_OVAL, "SEAP_recverr_byid: internal error: empty error queue.");
 			return (-1);
 		case -1: /* internal error */

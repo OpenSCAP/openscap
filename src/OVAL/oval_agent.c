@@ -94,7 +94,7 @@ oval_agent_session_t * oval_agent_new_session(struct oval_definition_model *mode
 	struct oval_generator *generator;
 	int ret;
 
-	dI("Started new OVAL agent.", name);
+	dI("Started new OVAL agent %s.", name);
 
 	/* Optimalization */
 	oval_definition_model_optimize_by_filter_propagation(model);

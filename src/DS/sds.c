@@ -904,6 +904,9 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 				if (ret < 0) {
 					// oscap_seterr has already been called
 					oscap_htable_free0(exported);
+					xmlXPathFreeObject(xpathObj);
+					xmlXPathFreeContext(xpathCtx);
+					free(filepath_cpy);
 					free(dir);
 					return -1;
 				}

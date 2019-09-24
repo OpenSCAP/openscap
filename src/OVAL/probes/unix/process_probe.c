@@ -421,7 +421,7 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
 			int fixfmt_year;
 
 			r.scheduling_class = malloc(PRCLSZ);
-			strncpy(r.scheduling_class, (psinfo->pr_lwp).pr_clname, sizeof(r.scheduling_class));
+			strncpy(r.scheduling_class, (psinfo->pr_lwp).pr_clname, PRCLSZ);
 
 			// Get the start time
 			s_time = time(NULL);

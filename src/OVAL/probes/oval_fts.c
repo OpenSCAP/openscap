@@ -389,7 +389,7 @@ static int badpartial_check_slash(const char *pattern)
 	if (regex == NULL) {
 		dE("Failed to validate the pattern: pcre_compile(): "
 		   "error: '%s', error offset: %d, pattern: '%s'.\n",
-		   errofs, errptr, pattern);
+		   errptr, errofs, pattern);
 		return -1;
 	}
 	ret = pcre_fullinfo(regex, NULL, PCRE_INFO_FIRSTBYTE, &fb);
