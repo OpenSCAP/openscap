@@ -270,7 +270,7 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 				source->xml.doc = xmlReadMemory(source->origin.memory, source->origin.memory_size, NULL, NULL, 0);
 				if (source->xml.doc == NULL) {
 					if (memory_file_is_executable(source->origin.memory, source->origin.memory_size)) {
-						dI("oscap-source in memory was detected as executable file. Skipped XML parsing", oscap_source_readable_origin(source));
+						dI("oscap-source in memory was detected as executable file '%s'. Skipped XML parsing", oscap_source_readable_origin(source));
 						oscap_string_clear(xml_error_string);
 					} else {
 						oscap_setxmlerr(xmlGetLastError());
@@ -299,7 +299,7 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 					source->xml.doc = xmlReadFd(fd, NULL, NULL, 0);
 					if (source->xml.doc == NULL) {
 						if (fd_file_is_executable(fd)) {
-							dI("oscap-source file was detected as executable file. Skipped XML parsing", oscap_source_readable_origin(source));
+							dI("oscap-source file was detected as executable file '%s'. Skipped XML parsing", oscap_source_readable_origin(source));
 							oscap_string_clear(xml_error_string);
 						} else {
 							oscap_setxmlerr(xmlGetLastError());

@@ -113,7 +113,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 
                 attr_name = SEXP_list_nth (sexp_msg, msg_n);
                 if (attr_name == NULL) {
-                        dI("Unexpected error: No S-exp (attr_name) at position %u in the message (%p).",
+                        dI("Unexpected error: No S-exp (attr_name) at position %lu in the message (%p).",
                            msg_n, sexp_msg);
 
 		free(seap_msg->attrs);
@@ -126,7 +126,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
 
                                 attr_val = SEXP_list_nth (sexp_msg, msg_n + 1);
                                 if (attr_val == NULL) {
-                                        dI("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).",
+                                        dI("Unexpected error: \"%s\": No attribute value at position %lu in the message (%p).",
                                            "id", msg_n + 1, sexp_msg);
 
 					free(seap_msg->attrs);
@@ -170,7 +170,7 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
                                 seap_msg->attrs[attr_i].value = SEXP_list_nth (sexp_msg, msg_n + 1);
 
                                 if (seap_msg->attrs[attr_i].value == NULL) {
-                                        dI("Unexpected error: \"%s\": No attribute value at position %u in the message (%p).",
+                                        dI("Unexpected error: \"%s\": No attribute value at position %lu in the message (%p).",
                                            seap_msg->attrs[attr_i].name, msg_n + 1, sexp_msg);
 
 					free(seap_msg->attrs[attr_i].name);
