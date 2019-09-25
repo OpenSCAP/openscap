@@ -27,6 +27,7 @@ __author__ = 'Maros Barabas'
 __version__ = '1.0'
 
 import logging                  # Logger for debug/info/error messages
+import re
 logger = logging.getLogger("openscap")
 
 from sys import version_info
@@ -135,8 +136,9 @@ class OSCAP_Object(object):
     @staticmethod
     def new(retobj):
         if type(retobj).__name__ in ('SwigPyObject', 'PySwigObject'):
-            # Extract the name of structure from "<num>_p_<name>"
-            structure = retobj.__str__()[retobj.__str__().find("_p_")+3:]
+            # Extract the name of structure from the representation of the object
+            # "<Swig Object of type 'struct xccdf_result_iterator *' at 0x7f8f65fc1390>"
+            structure = re.findall(r"type 'struct (\b\S*\b)", retobj.__repr__())[0]
             return OSCAP_Object(structure, retobj)
         else:
             return retobj
