@@ -138,7 +138,8 @@ class OSCAP_Object(object):
         if type(retobj).__name__ in ('SwigPyObject', 'PySwigObject'):
             # Extract the name of structure from the representation of the object
             # "<Swig Object of type 'struct xccdf_result_iterator *' at 0x7f8f65fc1390>"
-            structure = re.findall(r"type 'struct (\b\S*\b)", retobj.__repr__())[0]
+            # or "<Swig Object of type 'oval_agent_session_t *' at 0x7f9aa2cdf360>"
+            structure = re.findall(r"type '(struct )?(\b\S*\b)", retobj.__repr__())[0][1]
             return OSCAP_Object(structure, retobj)
         else:
             return retobj
