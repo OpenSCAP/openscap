@@ -24,11 +24,14 @@ add_custom_command(OUTPUT ${PYTHON_COMPILED_FILES}
 )
 add_custom_target(python3_compile ALL DEPENDS ${PYTHON_COMPILED_FILES})
 
+if(NOT PYTHON_SITE_PACKAGES_INSTALL_DIR)
 execute_process(COMMAND
 	${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(True, prefix='${CMAKE_INSTALL_PREFIX}'))"
 	OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_INSTALL_DIR
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+endif()
+
 install(TARGETS ${SWIG_MODULE_openscap_py_REAL_NAME}
 	DESTINATION ${PYTHON_SITE_PACKAGES_INSTALL_DIR}
 )
