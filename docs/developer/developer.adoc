@@ -98,11 +98,11 @@ $ cmake ../
 $ make
 ----
 
-On Ubuntu 18.04 and potentially other distro, the python3 install path is wrong.
+On Ubuntu 18.04 and potentially other distro, the python3 dist-packages path is wrong.
 If the following command:
 
 ----
-$ python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(True))"
+$ python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
 ----
 
 return "/usr/local/lib/python3/dist-packages" instead of a path like
