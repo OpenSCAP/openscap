@@ -56,6 +56,7 @@ del version_info
 
 import os
 
+
 def extract_type_from_obj(obj):
     # Extract the name of structure from the representation of the object
     # "<Swig Object of type 'struct xccdf_result_iterator *' at 0x7f8f65fc1390>"
@@ -324,7 +325,8 @@ class OSCAP_Object(object):
         return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])
 
     def __output_callback(self, result, obj):
-        # the returned object can be a rule_result or an oval_definition_result, so I extract the right name from the object repr.
+        # the returned object can be a rule_result or an oval_definition_result,
+        # so I extract the right name from the object repr.
         return obj[0](OSCAP_Object(extract_type_from_obj(result), result), obj[1])
 
     def register_start_callback(self, cb, usr):
