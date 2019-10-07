@@ -321,8 +321,10 @@ class OSCAP_Object(object):
     def __start_callback(self, rule, obj):
         return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])
 
-    def __output_callback(self, rule_result, obj):
-        return obj[0](OSCAP_Object("xccdf_rule_result", rule_result), obj[1])
+    def __output_callback(self, result, obj):
+		# the returned object can be a rule_result or an oval_definition_result, so I extract the right name from the object repr.
+        structure = re.findall(r"type '(struct )?(\b\S*\b)", result.__repr__())[0][1]
+        return obj[0](OSCAP_Object(structure, rule_result), obj[1])
 
     def register_start_callback(self, cb, usr):
         if self.object != "xccdf_policy_model":
