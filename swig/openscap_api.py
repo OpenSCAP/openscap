@@ -56,6 +56,12 @@ del version_info
 
 import os
 
+def extract_type_from_obj(obj):
+    # Extract the name of structure from the representation of the object
+    # "<Swig Object of type 'struct xccdf_result_iterator *' at 0x7f8f65fc1390>"
+    # or "<Swig Object of type 'oval_agent_session_t *' at 0x7f9aa2cdf360>"
+    return re.findall(r"type '(struct )?(\b\S*\b)", obj.__repr__())[0][1]
+
 class OSCAP_List(list):
     """OSCAP List class is designed to store lists generated from openscap iterators. All functions that return iterators
     are preprocessed by creation of OSCAP List instance and move all objects given by oscap list iteration loop to list.
@@ -136,11 +142,7 @@ class OSCAP_Object(object):
     @staticmethod
     def new(retobj):
         if type(retobj).__name__ in ('SwigPyObject', 'PySwigObject'):
-            # Extract the name of structure from the representation of the object
-            # "<Swig Object of type 'struct xccdf_result_iterator *' at 0x7f8f65fc1390>"
-            # or "<Swig Object of type 'oval_agent_session_t *' at 0x7f9aa2cdf360>"
-            structure = re.findall(r"type '(struct )?(\b\S*\b)", retobj.__repr__())[0][1]
-            return OSCAP_Object(structure, retobj)
+            return OSCAP_Object(extract_type_from_obj(retobj), retobj)
         else:
             return retobj
 
@@ -322,9 +324,8 @@ class OSCAP_Object(object):
         return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])
 
     def __output_callback(self, result, obj):
-		# the returned object can be a rule_result or an oval_definition_result, so I extract the right name from the object repr.
-        structure = re.findall(r"type '(struct )?(\b\S*\b)", result.__repr__())[0][1]
-        return obj[0](OSCAP_Object(structure, rule_result), obj[1])
+        # the returned object can be a rule_result or an oval_definition_result, so I extract the right name from the object repr.
+        return obj[0](OSCAP_Object(extract_type_from_obj(result), result), obj[1])
 
     def register_start_callback(self, cb, usr):
         if self.object != "xccdf_policy_model":
