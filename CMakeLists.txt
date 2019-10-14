@@ -353,12 +353,6 @@ message(STATUS "Unix gconf probe: ${OPENSCAP_PROBE_UNIX_GCONF}")
 message(STATUS "Unix process58 probe: ${OPENSCAP_PROBE_UNIX_PROCESS58}")
 message(STATUS " ")
 
-message(STATUS "UNIX PROBES (depending of specific libs):")
-message(STATUS "Unix fileextendedattribute probe: ${OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE}")
-message(STATUS "Unix gconf probe: ${OPENSCAP_PROBE_UNIX_GCONF}")
-message(STATUS "Unix process58 probe: ${OPENSCAP_PROBE_UNIX_PROCESS58}")
-message(STATUS " ")
-
 message(STATUS "LINUX PROBES (depending of specific libs):")
 message(STATUS "Linux systemdunitproperty probe (depends of dbus): ${OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY}")
 message(STATUS "Linux systemdunitdependency probe (depends of dbus): ${OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY}")
