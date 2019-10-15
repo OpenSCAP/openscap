@@ -10,6 +10,8 @@ CMakeLists.txt.user
 build/
 *~
 
+*.pyc
+
 *.o
 *.lo
 *.a
