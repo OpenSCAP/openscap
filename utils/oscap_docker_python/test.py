@@ -25,6 +25,7 @@ from oscap_docker_util import OscapDockerScan
 import docker
 import sys
 from requests import exceptions
+import traceback
 
 
 def ping_docker():
@@ -87,11 +88,15 @@ if __name__ == '__main__':
         sys.exit(1)
 
     try:
-        print("...");
         ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
         rc = args.func(ODS, leftover_args)
+    except ValueError as e:
+        raise e
+        sys.exit(255)
     except Exception as exc:
-        raise exc
+        traceback.print_exc(file=sys.stdout)
+        sys.stderr.write("!!! WARNING !!! This software have crash, so you should \
+        check that no temporary container is still running\n")
         sys.exit(255)
 
     sys.exit(rc)

@@ -29,6 +29,13 @@ from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
 import collections
+import random
+import string
+
+def randomString(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
 
 
 class OscapError(Exception):
@@ -120,38 +127,74 @@ class OscapDockerScan(object):
         #init docker high level API (to deal with start/stop/run containers/image)
         self.client_api = docker.from_env()
         self.is_image=is_image
-        self.stop_after = False #stop the container after scan if True
+        self.stop_at_end = False #stop the container after scan if True
         self.oscap_binary = oscap_binary or 'oscap';
+        self.container_name=None
+        self.image_name=None
         
-        print("ok1");
         if self.is_image:
-            print("Runing given image in a temporary container ...");
-            self._mount_img()
-            self.name, self.config=self._get_image_name_and_config(target)
-        else:
-            self.name, self.config=self._get_container_name_and_config(target)
- 
-            if int(self.config["State"]["Pid"]) == 0:
-                #TODO ask to the user if he want to run temporarily the container
-                print("Container {0} is stopped, running it temporarily ..."
-                    .format(self.name));
+            self.image_name, self.config=self._get_image_name_and_config(target)
+            if self.image_name:
+                print("Runing given image in a temporary container ...");
+                self.container_name="tmp_oscap_"+randomString()
+                
+                try:
+                    tmp_cont=self.client.create_container(
+                        self.image_name, 'bash', name=self.container_name, tty=True)
+                    #tty=True is required in order to keep the container running
+                    self.client.start(container=tmp_cont.get('Id'))
                     
-                self.client_api.containers.get(self.name).start();
-                self.name, self.config=self._get_container_name_and_config(target)
+                    self.config=self.client.inspect_container(self.container_name)
+                    if int(self.config["State"]["Pid"]) == 0:
+                        sys.stderr.write("Cannot run image {0}.\n".format(self.image_name))
+                    else:
+                        self.pid=int(self.config["State"]["Pid"])
+                except Exception as e:
+                    sys.stderr.write("Cannot run image {0}.\n".format(self.image_name))
+                    raise e
+                    
+            else:
+                raise ValueError("Image {0} not found.\n".format(target));
+            
+        else:
+            self.container_name, self.config=self._get_container_name_and_config(target)
+ 
+            if int(self.config["State"]["Pid"]) == 0: #is the container running ?
+                print("Container {0} is stopped, running it temporarily ..."
+                    .format(self.container_name));
+                    
+                self.client_api.containers.get(self.container_name).start();
+                self.container_name, self.config=self._get_container_name_and_config(target)
                 if int(self.config["State"]["Pid"]) == 0:
                     sys.stderr.write(
                     "Cannot keep running container {0}, skip it.\n \
-                    Consider to change the container entry point to scan it.\n"
-                    .format(self.name)
+                    Please start this container before scan it.\n"
+                    .format(self.container_name)
                     )
-                    
+                else:
+                    self.stop_at_end=True
+            
+            #now we are sure that the container is running, get its PID
             self.pid=int(self.config["State"]["Pid"])
-        print("ok2");
+     
         if self._check_container_mountpoint():
-            print("Docker container {0} ready to be scanned !".format(self.name));            
+            print("Docker container {0} ready to be scanned !"
+                .format(self.container_name));            
         else:
             sys.stderr.write(
-                "Cannot mount the container {0}, skip it.\n".format(self.name))
+                "Cannot mount the container {0}, skip it.\n".format(self.container_name))
+                
+    def _end(self):
+        if self.is_image:
+            # stop and remove the temporary container
+            self.client.stop(self.container_name)
+            self.client.remove_container(self.container_name)
+            print("Temporary container {0} cleaned".format(self.container_name))
+        else:
+            if self.stop_at_end:
+                # just stop the container if the tool have started it.
+                self.client.stop(self.container_name)
+        
 
     def _get_image_name_and_config(self, target):
         '''
@@ -169,7 +212,7 @@ class OscapDockerScan(object):
                 name = image["Id"][len("sha256:"):][:10]
             return name, image
         except docker.errors.NotFound:
-            return "unknown", {}
+            return None, {}
             
     def _get_container_name_and_config(self, target):
         '''
@@ -184,7 +227,7 @@ class OscapDockerScan(object):
                 name = container["Id"][:10]
             return name, container
         except docker.errors.NotFound:
-            return "unknown", {}
+            return None, {}
 
     def _check_container_mountpoint(self):
         '''
@@ -192,23 +235,6 @@ class OscapDockerScan(object):
         '''
         # TODO
         return True
-
-    def _destroy_container(self, mnt_dir, force=False):
-        '''
-        Stop and remove the container 
-        (use only on temporary container created by the tool)
-        set force=True to destroy an existing container
-        '''
-        if self.image or force:
-            #TODO
-            return True
-        else:
-           sys.stderr.write(
-            "Ignoring destroy {0} because it's not a temporary container.\n"
-            .format(self.target)
-            )
-           return False
-
 
     def scan_cve(self, scan_args):
         '''
@@ -237,10 +263,15 @@ class OscapDockerScan(object):
         '''
         Wrapper function forwarding oscap args for an offline scan
         '''
-        scan_result=self.oscap_chroot("/proc/{0}/root".format(self.pid), self.oscap_binary, scan_args)
+        scan_result=self.oscap_chroot(
+            "/proc/{0}/root".format(self.pid), 
+            self.oscap_binary, scan_args
+        )
         print(scan_result.stdout)
         print(scan_result.stderr, file=sys.stderr)
-
+        
+        self._end()
+        
         return scan_result.returncode
         
     def oscap_chroot(self, chroot_path, oscap_binary, oscap_args):
@@ -252,13 +283,15 @@ class OscapDockerScan(object):
         os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
         
-        os.environ["OSCAP_EVALUATION_TARGET"] = self.name
-        for var in self.config["Config"].get("Env", []):
-            vname, val = var.split("=", 1)
-            os.environ["OSCAP_OFFLINE_"+vname] = val
+        os.environ["OSCAP_EVALUATION_TARGET"] = self.container_name
+        
+        if self.config["Config"].get("Env"): # Env can be exists but be None
+            for var in self.config["Config"].get("Env", []):
+                vname, val = var.split("=", 1)
+                os.environ["OSCAP_OFFLINE_"+vname] = val
         
         cmd = [oscap_binary] + [x for x in oscap_args]
-        print("starting ... {0}".format(cmd));
+
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
         return OscapResult(oscap_process.returncode,
