@@ -210,9 +210,12 @@ class OscapDockerScan(object):
         
         print("CVEs downloaded in "+cve_file)
    
-        scan_result=self.oscap_chroot(self.mountpoint, 
-            #TODO : deal with scan args
-            self.oscap_binary, ("oval", "eval", cve_file))
+        args=("oval", "eval")
+        for a in scan_args:
+            args+=(a,)
+        args+=(cve_file,)
+   
+        scan_result=self.oscap_chroot(self.mountpoint, self.oscap_binary, args)
   
         print(scan_result.stdout)
         print(scan_result.stderr, file=sys.stderr)
