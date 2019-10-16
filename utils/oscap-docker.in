@@ -21,7 +21,7 @@
 ''' oscap docker command '''
 
 import argparse
-from oscap_docker_util import OscapDockerScan
+from oscap_docker_python.oscap_docker_util import OscapDockerScan
 import docker
 import sys
 from requests import exceptions
@@ -94,7 +94,7 @@ if __name__ == '__main__':
         raise e
         sys.exit(255)
     except RuntimeError as e:
-         raise e
+        raise e
         sys.exit(255)
     except Exception as exc:
         traceback.print_exc(file=sys.stdout)

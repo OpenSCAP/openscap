@@ -45,34 +45,6 @@ class OscapError(Exception):
 
 OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "stderr"))
 
-
-class OscapHelpers(object):
-    ''' oscap class full of helpers for scanning '''
-
-
-    def __init__(self, cve_input_dir="", oscap_binary=False):
-        self.cve_input_dir = cve_input_dir
-        self.oscap_binary = oscap_binary or 'oscap'
-
-    @staticmethod
-    def _mk_tmp_dir(tmp_dir):
-        '''
-        Creates a temporary directory and returns the whole
-        path name
-        '''
-        tempfile.tempdir = tmp_dir
-        return tempfile.mkdtemp()
-
-    def resolve_image(self, image):
-        '''
-        Given an image or container name, uuid, or partial, return the
-        uuid or iid or False if cannot be identified
-        '''
-        # TODO
-        pass
-
-
-
 class OscapDockerScan(object):
     CPE_RHEL = 'oval:org.open-scap.cpe.rhel:def:'
     DISTS = ["7", "6", "5"]
