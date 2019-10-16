@@ -144,8 +144,9 @@ class OscapDockerScan(object):
             print("Docker container {0} ready to be scanned !"
                 .format(self.container_name));            
         else:
-            sys.stderr.write(
-                "Cannot mount the container {0}, skip it.\n".format(self.container_name))
+            self._end()
+            raise RuntimeError("Cannot access mountpoint of container {0}, "
+             "please RUN WITH ROOT privileges.\n".format(self.container_name))
                 
     def _end(self):
         if self.is_image:
@@ -196,8 +197,7 @@ class OscapDockerScan(object):
         '''
         Ensure that the container fs is well mounted and return its path
         '''
-        # TODO
-        return True
+        return os.access("/proc/{0}/root".format(self.pid), os.R_OK)
         
     #TODO replace by _get_cpe (in order to indentify any containerized system)
     def _get_dist(self):
@@ -222,7 +222,7 @@ class OscapDockerScan(object):
         '''
         Wrapper function for scanning cve of a mounted container
         '''
-        tmp_dir=tempfile.gettempdir()
+        tmp_dir=tempfile.mkdtemp()
         
         # Figure out which RHEL dist is in the chroot
         dist = self._get_dist()
@@ -236,7 +236,7 @@ class OscapDockerScan(object):
         fetch = getInputCVE(tmp_dir)
         cve_file=fetch._fetch_single(dist)
         
-        print(cve_file)
+        print("CVEs downloaded in "+cve_file)
    
         scan_result=self.oscap_chroot(self.mountpoint, 
             #TODO : deal with scan args
@@ -246,6 +246,8 @@ class OscapDockerScan(object):
         print(scan_result.stderr, file=sys.stderr)
         
         #cleanup
+        
+        print("Cleaning temporary files ...");
         shutil.rmtree(tmp_dir)
         self._end();
         
@@ -284,7 +286,6 @@ class OscapDockerScan(object):
         
         cmd = [oscap_binary] + [x for x in oscap_args]
         
-        print(cmd)
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
         return OscapResult(oscap_process.returncode,

@@ -1,6 +1,7 @@
 #!@OSCAP_DOCKER_PYTHON@
 
 # Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
+# Copyright (C) 2015 Brent Baude <contact@d0m.tech>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -20,10 +21,11 @@
 ''' oscap docker command '''
 
 import argparse
-from oscap_docker_python.oscap_docker_util import OscapScan
+from oscap_docker_util import OscapDockerScan
 import docker
 import sys
 from requests import exceptions
+import traceback
 
 
 def ping_docker():
@@ -47,7 +49,7 @@ if __name__ == '__main__':
     # Scan CVEs in image
     image_cve = subparser.add_parser('image-cve', help='Scan a docker image \
                                     for known vulnerabilities.')
-    image_cve.set_defaults(func=OscapScan.scan_cve)
+    image_cve.set_defaults(func=OscapDockerScan.scan_cve, is_image=True)
     image_cve.add_argument('scan_target', help='Container or image to scan')
 
     # Scan an Image
@@ -55,24 +57,25 @@ if __name__ == '__main__':
     image.add_argument('scan_target',
                        help='Container or image to scan')
 
-    image.set_defaults(func=OscapScan.scan)
+    image.set_defaults(func=OscapDockerScan.scan, is_image=True)
     # Scan a container
     container = subparser.add_parser('container', help='Scan a running docker\
                                       container of given name.')
     container.add_argument('scan_target',
                            help='Container or image to scan')
-    container.set_defaults(func=OscapScan.scan)
+    container.set_defaults(func=OscapDockerScan.scan, is_image=False)
 
     # Scan CVEs in container
     container_cve = subparser.add_parser('container-cve', help='Scan a \
                                          running container for known \
                                          vulnerabilities.')
 
-    container_cve.set_defaults(func=OscapScan.scan_cve)
+    container_cve.set_defaults(func=OscapDockerScan.scan_cve, is_image=False)
     container_cve.add_argument('scan_target',
                                help='Container or image to scan')
 
     args, leftover_args = parser.parse_known_args()
+    
 
     if "func" not in args:
         parser.print_help()
@@ -80,16 +83,23 @@ if __name__ == '__main__':
 
     try:
         ping_docker()
-
     except exceptions.ConnectionError:
         print("The docker daemon does not appear to be running")
         sys.exit(1)
 
     try:
-        OS = OscapScan(oscap_binary=args.oscap_binary)
-        rc = args.func(OS, args.scan_target, leftover_args)
-    except Exception as exc:
+        ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
+        rc = args.func(ODS, leftover_args)
+    except ValueError as e:
+        raise e
         sys.exit(255)
-        raise exc
+    except RuntimeError as e:
+         raise e
+        sys.exit(255)
+    except Exception as exc:
+        traceback.print_exc(file=sys.stdout)
+        sys.stderr.write("!!! WARNING !!! This software have crash, so you should "
+        "check that no temporary container is still running\n")
+        sys.exit(255)
 
     sys.exit(rc)
