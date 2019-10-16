@@ -105,7 +105,7 @@ If the following command:
 $ python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
 ----
 
-return "/usr/local/lib/python3/dist-packages" instead of a path like
+returns "/usr/local/lib/python3/dist-packages" instead of a path like
 "/usr/local/lib/python3.6/dist-packages", you must override this path,
 otherwise you will not be able to import openscap_api.
 
