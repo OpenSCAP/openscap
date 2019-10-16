@@ -48,8 +48,7 @@ OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "st
 
 class OscapHelpers(object):
     ''' oscap class full of helpers for scanning '''
-    CPE_RHEL = 'oval:org.open-scap.cpe.rhel:def:'
-    DISTS = ["7", "6", "5"]
+
 
     def __init__(self, cve_input_dir="", oscap_binary=False):
         self.cve_input_dir = cve_input_dir
@@ -64,47 +63,6 @@ class OscapHelpers(object):
         tempfile.tempdir = tmp_dir
         return tempfile.mkdtemp()
 
-    @staticmethod
-    def _rm_tmp_dir(tmp_dir):
-        '''
-        Deletes the temporary directory created for the purposes
-        of mount
-        '''
-        shutil.rmtree(tmp_dir)
-
-    #TODO replace by _get_cpe (in order to indentify any containerized system)
-    def _get_dist(self, chroot, target):
-        '''
-        Test the chroot and determine what RHEL dist it is; returns
-        an integer representing the dist
-        '''
-        cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
-        if not os.path.exists(cpe_dict):
-            raise OscapError()
-        for dist in self.DISTS:
-            result = self.oscap_chroot(chroot, target, 'oval', 'eval',
-                                       '--id', self.CPE_RHEL + dist, cpe_dict,
-                                       '2>&1', '>', '/dev/null')
-            if "{0}{1}: true".format(self.CPE_RHEL, dist) in result.stdout:
-                return dist
-
-
-    def _scan_cve(self, chroot, target, dist, scan_args):
-        '''
-        Scan a chroot for cves
-        '''
-        cve_input = getInputCVE.dist_cve_name.format(dist)
-        tmp_tuple = ('oval', 'eval') + tuple(scan_args) + \
-            (os.path.join(self.cve_input_dir, cve_input),)
-        return self.oscap_chroot(chroot, target, *tmp_tuple)
-
-    def _scan(self, chroot, target, scan_args):
-        '''
-        Scan a container or image
-        '''
-        tmp_tuple = tuple(scan_args)
-        return self.oscap_chroot(chroot, target, *tmp_tuple)
-
     def resolve_image(self, image):
         '''
         Given an image or container name, uuid, or partial, return the
@@ -116,6 +74,10 @@ class OscapHelpers(object):
 
 
 class OscapDockerScan(object):
+    CPE_RHEL = 'oval:org.open-scap.cpe.rhel:def:'
+    DISTS = ["7", "6", "5"]
+    
+    
     def __init__(self, target, is_image=False, oscap_binary='oscap'):
         
         #init docker low level api (usefull for deep details like container pid)
@@ -178,6 +140,7 @@ class OscapDockerScan(object):
             self.pid=int(self.config["State"]["Pid"])
      
         if self._check_container_mountpoint():
+            self.mountpoint="/proc/{0}/root".format(self.pid);
             print("Docker container {0} ready to be scanned !"
                 .format(self.container_name));            
         else:
@@ -235,28 +198,57 @@ class OscapDockerScan(object):
         '''
         # TODO
         return True
+        
+    #TODO replace by _get_cpe (in order to indentify any containerized system)
+    def _get_dist(self):
+        '''
+        Test the chroot and determine what RHEL dist it is; returns
+        an integer representing the dist
+        '''
+        cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
+        if not os.path.exists(cpe_dict):
+            raise OscapError()
+        for dist in self.DISTS:
+            result = self.oscap_chroot(self.mountpoint, self.oscap_binary,
+                ("oval",  "eval", "--id", self.CPE_RHEL + dist, cpe_dict,
+                self.mountpoint, "2>&1", ">", "/dev/null")
+            )
+            
+            if "{0}{1}: true".format(self.CPE_RHEL, dist) in result.stdout:
+                print("RHEL{0} detected !".format(dist))
+                return dist
 
     def scan_cve(self, scan_args):
         '''
-        Wrapper function for scanning a container or image
+        Wrapper function for scanning cve of a mounted container
         '''
-
+        tmp_dir=tempfile.gettempdir()
+        
         # Figure out which RHEL dist is in the chroot
-        dist = self.helper._get_dist(self.mountpoint)
+        dist = self._get_dist()
 
         if dist is None:
-            sys.stderr.write("{0} is not based on RHEL\n".format(image))
+            sys.stderr.write("{0} is not based on RHEL\n"
+                .format(self.image_name or self.container_name))
             return None
 
         # Fetch the CVE input data for the dist
-        fetch = getInputCVE(self.mountpoint)
-        fetch._fetch_single(dist)
-
-        # Scan the chroot
-        scan_result = self.helper._scan_cve(self.mountpoint, dist, scan_args)
+        fetch = getInputCVE(tmp_dir)
+        cve_file=fetch._fetch_single(dist)
+        
+        print(cve_file)
+   
+        scan_result=self.oscap_chroot(self.mountpoint, 
+            #TODO : deal with scan args
+            self.oscap_binary, ("oval", "eval", cve_file))
+  
         print(scan_result.stdout)
         print(scan_result.stderr, file=sys.stderr)
-
+        
+        #cleanup
+        shutil.rmtree(tmp_dir)
+        self._end();
+        
         return scan_result.returncode
 
     def scan(self, scan_args):
@@ -291,7 +283,8 @@ class OscapDockerScan(object):
                 os.environ["OSCAP_OFFLINE_"+vname] = val
         
         cmd = [oscap_binary] + [x for x in oscap_args]
-
+        
+        print(cmd)
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
         return OscapResult(oscap_process.returncode,
