@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Benchmark xmlns="http://checklists.nist.gov/xccdf/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="R-1" resolved="1">
+  <status>incomplete</status>
+  <version>1.0</version>
+  <model system="urn:xccdf:scoring:default"/>
+  <Rule id="R-1" selected="true">
+    <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+      <check-content-ref name="oval:x:def:1" href="oval_sample.xml"/>
+    </check>
+  </Rule>
+  <TestResult id="xccdf_org.open-scap_testresult_default-profile" start-time="2019-10-17T21:27:46" end-time="2019-10-17T21:27:46" version="1.0" test-system="cpe:/a:redhat:openscap:1.3.2">
+    <benchmark href="xccdf_sample.xml"/>
+    <title>OSCAP Scan Result</title>
+    <identity authenticated="false" privileged="false"/>
+    <target>X</target>
+    <target-address>127.0.0.1</target-address>
+    <target-facts>
+      <fact name="urn:xccdf:fact:scanner:name" type="string">OpenSCAP</fact>
+      <fact name="urn:xccdf:fact:scanner:version" type="string">1.3.2</fact>
+      <fact name="urn:xccdf:fact:ethernet:MAC" type="string">00:00:00:00:00:00</fact>
+    </target-facts>
+    <rule-result idref="R-1" time="2019-10-17T21:27:46" weight="1.000000">
+      <result>pass</result>
+      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+        <check-content-ref name="oval:x:def:1" href="oval_sample.xml"/>
+      </check>
+    </rule-result>
+    <score system="urn:xccdf:scoring:default" maximum="100.000000">100.000000</score>
+  </TestResult>
+</Benchmark>
