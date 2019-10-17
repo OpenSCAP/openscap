@@ -379,9 +379,11 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 #if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
+	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
+		dI( "No fix available.");
 		return 1;
-
+	}
+	
 	const char *interpret = NULL;
 	if ((interpret = _get_supported_interpret(xccdf_fix_get_system(fix), NULL)) == NULL) {
 		_rule_add_info_message(rr, "Not supported xccdf:fix/@system='%s' or missing interpreter.",
@@ -391,7 +393,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 
 	char *fix_text = NULL;
 	if (_xccdf_fix_decode_xml(fix, &fix_text) != 0) {
-		_rule_add_info_message(rr, "Fix element contains unresolved child elements.");
+		dI("Fix element contains unresolved child elements.");
 		return 1;
 	}
 
@@ -478,16 +480,19 @@ cleanup:
 #else
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL))
+	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
+		dI("No fix available.");
 		return 1;
-	else
+	} else {
 		_rule_add_info_message(rr, "Cannot execute the fix script: not implemented");
+	}
+	
 	return 1;
 }
 #endif
 
 int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf_rule_result *rr, struct xccdf_fix *fix, struct xccdf_result *test_result)
-{
+{	
 	if (policy == NULL || rr == NULL)
 		return 1;
 	if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
@@ -495,9 +500,10 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 
 	if (fix == NULL) {
 		fix = _find_suitable_fix(policy, rr);
-		if (fix == NULL)
-			// We may want to append xccdf:message about missing fix.
+		if (fix == NULL) {
+			dI("%s: No suitable fix found (_find_suitable_fix returns NULL).", xccdf_rule_result_get_idref(rr));
 			return 0;
+		}
 	}
 
 	struct xccdf_check *check = NULL;
@@ -505,9 +511,11 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	while (xccdf_check_iterator_has_more(check_it))
 		check = xccdf_check_iterator_next(check_it);
 	xccdf_check_iterator_free(check_it);
-	if (check != NULL && xccdf_check_get_multicheck(check))
+	if (check != NULL && xccdf_check_get_multicheck(check)) {
 		// Do not try to apply fix for multi-check.
+		dI("%s: cannot apply fix for multicheck.", xccdf_rule_result_get_idref(rr));
 		return 0;
+	}
 
 	/* Initialize the fix. */
 	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
