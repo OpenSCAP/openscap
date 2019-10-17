@@ -492,7 +492,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 #endif
 
 int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf_rule_result *rr, struct xccdf_fix *fix, struct xccdf_result *test_result)
-{	
+{
 	if (policy == NULL || rr == NULL)
 		return 1;
 	if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
