@@ -393,7 +393,7 @@ static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_
 
 	char *fix_text = NULL;
 	if (_xccdf_fix_decode_xml(fix, &fix_text) != 0) {
-		dI("Fix element contains unresolved child elements.");
+		_rule_add_info_message(rr, "Fix element contains unresolved child elements.");
 		return 1;
 	}
 
