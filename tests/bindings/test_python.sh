@@ -33,6 +33,7 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "python_import" test_python_import
     
     test_run "python_benchmark_import_results" run_pyfile benchmark_import_results.py
+    test_run "python_oval_eval" run_pyfile oval_eval.py
 fi
 
 test_exit
