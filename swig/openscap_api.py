@@ -206,6 +206,20 @@ class OSCAP_Object(object):
 
         return __getter_wrapper
 
+    def introspect_all(self):
+        """ Listing all builtin functions accessible through SWIG """
+        return OSCAP.__dict__
+
+    def introspect(self):
+        ''' Returns all builtin function accessible through SWIG 
+            which is corresponding to the current object
+        '''
+        funcs=dict();
+        for (k, v) in OSCAP.__dict__.items():
+            if k.startswith(self.object):
+                funcs[k]=v
+        return funcs
+
     def __getattr__(self, name):
         """ Called when an attribute lookup has not found the attribute in the usual places (i.e.
         it is not an instance attribute nor is it found in the class tree for self). name is
@@ -788,7 +802,7 @@ class DS_Class(OSCAP_Object):
 
     def __init__(self):
         dict.__setattr__(self, "object", "ds")
-        #dict.__setattr__(self, "version", OSCAP.oval_definition_model_supported())
+        # dict.__setattr__(self, "version", OSCAP.oval_definition_model_supported())
 
     def __repr__(self):
         return "<Oscap Object of type 'DS Class' at %s>" % (hex(id(self)),)
