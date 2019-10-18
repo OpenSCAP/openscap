@@ -75,13 +75,13 @@ pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel sw
 bzip2-devel gcc-c++
 ----
 
-On Ubuntu 16.04, the command to install the build dependencies is:
+On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependencies is:
 
 ----
 sudo apt-get install -y cmake libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev \
 libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev \
 libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl \
-libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++
+libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libapt-pkg-dev
 ----
 
 When you have all the build dependencies installed you can build the library.
@@ -97,6 +97,22 @@ $ cd build/
 $ cmake ../
 $ make
 ----
+
+On Ubuntu 18.04 and potentially other distro, the python3 dist-packages path is wrong.
+If the following command:
+
+----
+$ python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+----
+
+returns "/usr/local/lib/python3/dist-packages" instead of a path like
+"/usr/local/lib/python3.6/dist-packages", you must override this path,
+otherwise you will not be able to import openscap_api.
+
+----
+$ cmake ../ -DPYTHON_SITE_PACKAGES_INSTALL_DIR=/usr/local/lib/python3.6/dist-packages
+----
+
 --
 
 . *Build the HTML documentation*
