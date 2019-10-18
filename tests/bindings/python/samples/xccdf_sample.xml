@@ -3,9 +3,14 @@
   <status>incomplete</status>
   <version>1.0</version>
   <model system="urn:xccdf:scoring:default"/>
-  <Rule selected="true" id="R-1">
+  <Rule selected="true" id="R-SHOULD_PASS">
 	<check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-	  <check-content-ref name="oval:x:def:1" href="oval_sample.xml"/>
+	  <check-content-ref name="oval:foo_pass:def:1" href="oval_sample.xml"/>
+	</check>
+  </Rule>
+  <Rule selected="true" id="R-SHOULD_FAIL">
+	<check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+	  <check-content-ref name="oval:foo_fail:def:1" href="oval_sample.xml"/>
 	</check>
   </Rule>
 </Benchmark>
