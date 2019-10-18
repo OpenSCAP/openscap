@@ -32,7 +32,7 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
 	# first test only the openscap_api module loading
     test_run "python_import" test_python_import
     
-    test_run "python_benchmark_import_browse" run_pyfile benchmark_import_browse.py
+    test_run "python_benchmark_import_results" run_pyfile benchmark_import_results.py
 fi
 
 test_exit

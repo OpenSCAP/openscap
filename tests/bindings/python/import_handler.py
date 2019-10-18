@@ -48,3 +48,14 @@ def rule_result2str(result):
         return "INFORMATIONAL"
     elif result == oscap.xccdf.XCCDF_RESULT_FIXED:
         return "FIXED"
+
+
+'''
+Return the absolute path of a relative path (located in this folder)
+Required because the tests are runned from the build directory,
+so you need to use this functions for all relative paths.
+'''
+
+
+def get_path(path_str):
+    return os.path.join(os.path.dirname(__file__), path_str)

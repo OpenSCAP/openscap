@@ -4,7 +4,7 @@
 #   Dominique Blaze <contact@d0m.tech>
 
 import os
-from import_handler import oscap, rule_result2str
+from import_handler import oscap, rule_result2str, get_path
 
 
 '''
@@ -12,11 +12,9 @@ Import and browse benchmark results
 
 '''
 
-abs_path = os.path.join(os.path.dirname(__file__), "samples/xccdf_sample_results.arf")
-
-benchmark = oscap.xccdf.benchmark_import(abs_path)
+benchmark = oscap.xccdf.benchmark_import(get_path("samples/xccdf_sample_results.xml"))
 if benchmark.instance is None:
-    raise Exception("Cannot import the benchmark {0}".format(abs_path))
+    raise Exception("Cannot import the benchmark {0}".format(get_path("samples/xccdf_sample_results.xml")))
 else:
     print("Benchmark id: ", benchmark.get_id())
     results = benchmark.get_results()
