@@ -4,7 +4,7 @@
 #   Dominique Blaze <contact@d0m.tech>
 
 import os
-from import_handler import oscap, rule_result2str, get_path
+from import_handler import oscap, result2str, get_path
 
 
 '''
@@ -23,21 +23,21 @@ else:
     print(test_result.get_id())
 
     for rs in test_result.get_rule_results():
-        print(rs.get_idref(), rule_result2str(rs.get_result()))
+        print(rs.get_idref(), result2str(rs.get_result()))
 
         if (rs.get_idref() == "R-SHOULD_PASS" and
            rs.get_result() != oscap.xccdf.XCCDF_RESULT_PASS):
             
             raise Exception("Rule result for {0} should be PASS but is currently {1}."
                             .format(rs.get_idref(),
-                                    rule_result2str(rs.get_result())))
+                                    result2str(rs.get_result())))
                                     
         elif (rs.get_idref() == "R-SHOULD_FAIL" and
              rs.get_result() != oscap.xccdf.XCCDF_RESULT_FAIL):
                  
             raise Exception("Rule result for {0} should be FAIL but is currently {1}."
                             .format(rs.get_idref(),
-                                    rule_result2str(rs.get_result())))
+                                    result2str(rs.get_result())))
                  
 
 # Now ensure that benchmark_import return None if the file doesn't exists

@@ -29,7 +29,7 @@ Return the string corresponding to the oscap result (PASS, FAIL etc.)
 '''
 
 
-def rule_result2str(result):
+def result2str(result):
     if result == oscap.xccdf.XCCDF_RESULT_PASS:
         return "PASS"
     elif result == oscap.xccdf.XCCDF_RESULT_FAIL:
