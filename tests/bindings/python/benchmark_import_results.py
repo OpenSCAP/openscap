@@ -26,19 +26,19 @@ else:
         print(rs.get_idref(), result2str(rs.get_result()))
 
         if (rs.get_idref() == "R-SHOULD_PASS" and
-           rs.get_result() != oscap.xccdf.XCCDF_RESULT_PASS):
-            
+                rs.get_result() != oscap.xccdf.XCCDF_RESULT_PASS):
+
             raise Exception("Rule result for {0} should be PASS but is currently {1}."
                             .format(rs.get_idref(),
                                     result2str(rs.get_result())))
-                                    
+
         elif (rs.get_idref() == "R-SHOULD_FAIL" and
-             rs.get_result() != oscap.xccdf.XCCDF_RESULT_FAIL):
-                 
+              rs.get_result() != oscap.xccdf.XCCDF_RESULT_FAIL):
+
             raise Exception("Rule result for {0} should be FAIL but is currently {1}."
                             .format(rs.get_idref(),
                                     result2str(rs.get_result())))
-                 
+
 
 # Now ensure that benchmark_import return None if the file doesn't exists
 

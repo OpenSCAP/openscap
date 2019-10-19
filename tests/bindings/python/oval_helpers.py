@@ -9,6 +9,7 @@
 #   to provide convenience utilities.
 #
 
+
 def browse_criteria(crit_node, mode=0):
     '''
     Browse recursively criteria of an oval test and build a representation of it
