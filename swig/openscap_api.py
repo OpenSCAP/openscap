@@ -270,7 +270,7 @@ class OSCAP_Object(object):
         # them in getattr has IMO not been the right call, they would just
         # clutter everything...
 
-        for key in OSCAP.__dict__.iterkeys():
+        for key, v in OSCAP.__dict__.iteritems():
             if key.startswith(self.object + "_"):
                 # the getattr wrapper only deals with callables
                 if callable(OSCAP.__dict__[key]):
