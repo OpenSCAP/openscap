@@ -220,6 +220,14 @@ class OSCAP_Object(object):
                 funcs[k]=v
         return funcs
 
+    def introspect_constants(value=None, prefix=None):
+        '''
+            Returns constants names / values, given a value and/or a name filter (regex)
+            Example, introspect_constants(1, "XCCDF_RESULT") returns {XCCDF_RESULT_PASS: 1}
+        '''
+        return {k: v for k, v in points.items() if (value is None or v == value) and
+                (prefix is None or k.startswith(prefix))}
+
     def __getattr__(self, name):
         """ Called when an attribute lookup has not found the attribute in the usual places (i.e.
         it is not an instance attribute nor is it found in the class tree for self). name is
@@ -270,7 +278,7 @@ class OSCAP_Object(object):
         # them in getattr has IMO not been the right call, they would just
         # clutter everything...
 
-        for key, v in OSCAP.__dict__.iteritems():
+        for key, v in OSCAP.__dict__.items():
             if key.startswith(self.object + "_"):
                 # the getattr wrapper only deals with callables
                 if callable(OSCAP.__dict__[key]):
