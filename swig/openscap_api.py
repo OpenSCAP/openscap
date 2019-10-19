@@ -220,13 +220,15 @@ class OSCAP_Object(object):
                 funcs[k]=v
         return funcs
 
-    def introspect_constants(value=None, prefix=None):
+    def introspect_constants(self, value=None, prefix=None):
         '''
             Returns constants names / values, given a value and/or a name filter (regex)
             Example, introspect_constants(1, "XCCDF_RESULT") returns {XCCDF_RESULT_PASS: 1}
+
+            !!! constants are here designated by C enums (=> numeric value)
         '''
-        return {k: v for k, v in points.items() if (value is None or v == value) and
-                (prefix is None or k.startswith(prefix))}
+        return {k: v for k, v in OSCAP.__dict__.items() if (value is None or v == value) and
+                (isinstance(v, int)) and (prefix is None or k.startswith(prefix))}
 
     def __getattr__(self, name):
         """ Called when an attribute lookup has not found the attribute in the usual places (i.e.
