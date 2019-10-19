@@ -8,61 +8,39 @@
 Basic OVAL evaluation:
 
 Import an oval file with oscap.oval.definition_model_import_source
-and run evalutation of some sample checks with oscap.oval.agent_new_session
-and oscap.oval.agent_eval_system using a callback
+and run evalutation of some sample checks using a callback
+
+Tested functions:
+    - oscap.oval.definition_model_import_source
+    - oscap.common.source_new_from_file
+    - TODO oscap.oval.import_model
+    - oscap.oval.agent_new_session
+    - oscap.oval.agent_eval_system + associated callback
+    - oval_result_definition.get_id()
+    - oval_result_definition.get_result()
+    - oval_result_definition.get_criteria()
+
+Tested in oval_helpers.browse_criteria:
+    - oval_result_criteria.get_type() + some of associated constants OVAL_NODETYPE_*
+    - oval_result_criteria.get_subnodes()
+    - oval_result_criteria.get_test()
+
+    - oval_result_test.get_test()
+    - oval_result_test.get_result()
+
+    - oval_test.get_subtype() + some of associated constants OVAL_SUBYTPE_*
+    - oval_test.get_family() + some of associated constants
 '''
 
 import os
 import time
 from import_handler import oscap, result2str, get_path
-from pprint import pprint
-import inspect
+from oval_helpers import browse_criteria
 
 
 '''
 Intermediate functions
 '''
-
-
-def browse_criteria(crit_node, mode=0):
-    '''
-    Browse recursively criteria of an oval test and build a representation of it
-    First list item is the operator, and the next ones are the tests
-    If the item is a list, it's a criteria (else a criterion, or string for an
-    extended defintion , or None for OVAL_NODETYPE_UNKNOWN
-
-    Ex: [operator, "extended def", [operator, test_result2, test_result3]]
-
-    Mode : with mode = 0, test_result is the swig object oval_test_result
-    with mode = 1, test result is a a tuple like (test_subtype, test_result)
-    for instance (oscap.oval.OVAL_LINUX_DPKG_INFO, OVAL_FAMILY_LINUX
-    oscap.xccdf.XCCDF_RESULT_PASS)
-    '''
-
-    # init the critria list
-    rs = list()
-
-    if crit_node.get_type() == oscap.oval.OVAL_NODETYPE_CRITERIA:
-        for c in crit_node.get_subnodes():
-            rs.append(browse_criteria(c, mode))
-
-    elif crit_node.get_type() == oscap.oval.OVAL_NODETYPE_CRITERION:
-        if mode == 0:
-            rs.append(crit_node.get_test())
-        elif mode == 1:
-            rs.append((crit_node.get_test().get_test().get_family(),
-                       crit_node.get_test().get_test().get_subtype(),
-                       crit_node.get_test().get_result()))
-        else:
-            raise ValueError("param mode in browse_criteria should be 0 or 1")
-
-    elif crit_node.get_type() == oscal.oval.OVAL_NODETYPE_EXTENDDEF:  # !!! TODO !!!
-        rs.append("extended def")
-
-    else:
-        rs.append(None)
-
-    return rs
 
 
 # if you return something in callback else than 0, the current session stops
@@ -99,8 +77,8 @@ def oval_sample_callback(ovdef, usr):
                                                                 tests_tree))
     else:
         raise ValueError("Tests tree of {0} doesn't match with the expected tree.\n"
-              "Extracted tree: {1}\nExpected tree: {2}"
-              .format(ovdef.get_id(), tests_tree, expected_tree))
+                         "Extracted tree: {1}\nExpected tree: {2}"
+                         .format(ovdef.get_id(), tests_tree, expected_tree))
 
     return 0
 
@@ -113,8 +91,9 @@ def oval_eval_sample(oval_defs):
     sess = oscap.oval.agent_new_session(oval_defs, "")
     ret = oscap.oval.agent_eval_system(sess, oval_sample_callback, states)
 
+
 '''
-Main test
+       ================        MAIN TEST           ====================
 '''
 
 
@@ -125,5 +104,3 @@ oval_defs = oscap.oval.definition_model_import_source(
 oval_eval_sample(oval_defs)
 
 # TODO: do the same thing with oval_import
-
-
