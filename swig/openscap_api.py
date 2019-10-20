@@ -28,6 +28,7 @@ __version__ = '1.0'
 
 import logging                  # Logger for debug/info/error messages
 import re
+from pprint import pprint
 logger = logging.getLogger("openscap")
 
 from sys import version_info
@@ -272,9 +273,10 @@ class OSCAP_Object(object):
                 return self.__func_wrapper(obj)
 
         """ There is not function with the name 'name' let return the OSCAP_Object
-        This should return None, why is this here ? TODO
+        This should return None, why is this here ?
         """
-        return OSCAP_Object(self.object + "_" + name)
+        raise AttributeError("Attribute {0} not found for object {1}"
+                             .format(name, self.object))
 
     def __dir__(self):
         """Lists all attributes inside this object.
@@ -412,6 +414,7 @@ class OSCAP_Object(object):
 
     def get_all_values(self):
 
+        # first ensure that we are using an item (or convert to it otherwise)
         if self.object != "xccdf_item":
             item = self.to_item()
             if item is None:
@@ -520,8 +523,8 @@ class OSCAP_Object(object):
         if self.profile is not None:
             for r_value in self.profile.refine_values:
                 if r_value.item == value.id:
-                    item["selected"] = (
-                        r_value.selector, item["options"][r_value.selector])
+                    item["selected"] = (  # will return None if invalid selector TODO: raise err ?
+                        r_value.selector, item["options"].get(r_value.selector))
             for s_value in self.profile.setvalues:
                 if s_value.item == value.id:
                     item["selected"] = ('', s_value.value)
@@ -749,6 +752,7 @@ class OSCAP_Object(object):
         f_XCCDF = path
 
         benchmark = self.benchmark_import(f_XCCDF)
+
         if benchmark.instance is None:
             if OSCAP.oscap_err():
                 desc = OSCAP.oscap_err_desc()
@@ -756,7 +760,8 @@ class OSCAP_Object(object):
                 desc = "Unknown error, please report this bug (http://bugzilla.redhat.com/)"
             raise ImportError(
                 "Benchmark \"%s\" loading failed: %s" % (f_XCCDF, desc))
-        policy_model = self.policy_model(benchmark)
+
+        policy_model = self.policy_model_new(benchmark)
         files = policy_model.get_files()
         def_models = []
         sessions = {}
@@ -767,7 +772,8 @@ class OSCAP_Object(object):
             else:
                 f_OVAL = os.path.join(dirname, file)
             if os.path.exists(f_OVAL):
-                def_model = oval.definition_model_import(f_OVAL)
+                def_model = oval.definition_model_import_source(
+                    OSCAP.oscap_source_new_from_file(f_OVAL))
                 if def_model.instance is None:
                     if OSCAP.oscap_err():
                         desc = OSCAP.oscap_err_desc()
