@@ -29,6 +29,7 @@ __version__ = '1.0'
 import logging                  # Logger for debug/info/error messages
 import re
 from pprint import pprint
+
 logger = logging.getLogger("openscap")
 
 from sys import version_info
@@ -479,12 +480,21 @@ class OSCAP_Object(object):
 
         return items
 
+    
     def __parse_value(self, value):
-
+        ''' Used by get_tailoring_items()  '''
+        
+        # update the local lang lists
+        def __update_lang(item, lang):
+            if lang not in item["langs"]:
+                item["langs"].add(lang)
+                
+                
         # get value properties
         item = {}
         item["id"] = value.id
-        item["lang"] = self.model.benchmark.lang
+        item["langs"] = {self.model.benchmark.lang} # set of available langs
+        item["lang"] = self.model.benchmark.lang # legacy support of item["lang"]
         item["titles"] = {}
         item["descs"] = {}
         # Titles / Questions
@@ -493,11 +503,14 @@ class OSCAP_Object(object):
                 item["titles"][question.lang] = question.text
         else:
             for title in value.title:
+                __update_lang(item, title.lang)
                 item["titles"][title.lang] = title.text
+                
         if item["lang"] not in item["titles"]:
             item["titles"][item["lang"]] = ""
         # Descriptions
         for desc in value.description:
+            __update_lang(item, desc.lang)
             item["descs"][desc.lang] = desc.text
         if item["lang"] not in item["descs"]:
             item["descs"][item["lang"]] = ""
