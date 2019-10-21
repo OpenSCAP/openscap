@@ -28,7 +28,6 @@ __version__ = '1.0'
 
 import logging                  # Logger for debug/info/error messages
 import re
-from pprint import pprint
 
 logger = logging.getLogger("openscap")
 
@@ -320,7 +319,6 @@ class OSCAP_Object(object):
         # It's maybe looking for "new" ?
         obj = OSCAP.__dict__.get(self.object + "_new")
         if obj is not None:
-            print("obj not none !")
             return OSCAP_Object.new(obj(*newargs))
         else:
             raise NameError("name '" + self.object + "' is not defined")
@@ -620,7 +618,6 @@ class OSCAP_Object(object):
             selector = None
             value = self.model.benchmark.item(item["id"]).to_value()
             for instance in value.instances:
-                print("item = {0}".format(instance.value))
                 if item["value"] == instance.value:
                     selector = instance.selector
 
@@ -811,6 +808,7 @@ class OSCAP_Object(object):
                 names[file] = [sess, def_model]
                 policy_model.register_engine_oval(sess)
             else:
+                # TODO manage properly warnings/debug
                 print(
                     "WARNING: Skipping %s file which is referenced from XCCDF content" % (f_OVAL,))
         files.free()
