@@ -21,6 +21,7 @@ if os.path.dirname(oscap.__file__) not in os.getenv('PYTHONPATH'):
                     "instead of the tested environment.\n"
                     "Loaded module path = {0}".format(oscap.__file__))
 else:
+    print("openscap_api loaded from "+oscap.__file__)
     pass  # import is loaded from the right env
 
 
