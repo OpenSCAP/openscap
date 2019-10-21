@@ -273,9 +273,13 @@ class OSCAP_Object(object):
             except:
                 return self.__func_wrapper(obj)
 
-        """ There is not function with the name 'name' let return the OSCAP_Object
-        This should return None, why is this here ?
-        """
+        """ Looking if it's can be a constructor """
+        obj = OSCAP.__dict__.get(self.object + "_" + name + "_new")
+        if obj is not None:
+            # this will call the __call__ definition of OSCAP_Object
+            return OSCAP_Object(self.object + "_" + name)
+
+        """ There is not function with the name 'name' let return the OSCAP_Object    """
         raise AttributeError("Attribute {0} not found for object {1}"
                              .format(name, self.object))
 
@@ -316,6 +320,7 @@ class OSCAP_Object(object):
         # It's maybe looking for "new" ?
         obj = OSCAP.__dict__.get(self.object + "_new")
         if obj is not None:
+            print("obj not none !")
             return OSCAP_Object.new(obj(*newargs))
         else:
             raise NameError("name '" + self.object + "' is not defined")
@@ -480,21 +485,19 @@ class OSCAP_Object(object):
 
         return items
 
-    
     def __parse_value(self, value):
         ''' Used by get_tailoring_items()  '''
-        
+
         # update the local lang lists
         def __update_lang(item, lang):
             if lang not in item["langs"]:
                 item["langs"].add(lang)
-                
-                
+
         # get value properties
         item = {}
         item["id"] = value.id
-        item["langs"] = {self.model.benchmark.lang} # set of available langs
-        item["lang"] = self.model.benchmark.lang # legacy support of item["lang"]
+        item["langs"] = {self.model.benchmark.lang}  # set of available langs
+        item["lang"] = self.model.benchmark.lang  # legacy support of item["lang"]
         item["titles"] = {}
         item["descs"] = {}
         # Titles / Questions
@@ -505,7 +508,7 @@ class OSCAP_Object(object):
             for title in value.title:
                 __update_lang(item, title.lang)
                 item["titles"][title.lang] = title.text
-                
+
         if item["lang"] not in item["titles"]:
             item["titles"][item["lang"]] = ""
         # Descriptions
@@ -617,12 +620,13 @@ class OSCAP_Object(object):
             selector = None
             value = self.model.benchmark.item(item["id"]).to_value()
             for instance in value.instances:
+                print("item = {0}".format(instance.value))
                 if item["value"] == instance.value:
                     selector = instance.selector
 
             oper = remarks = setvalue = None
             for r_value in self.profile.refine_values[:]:
-                if r_value.item == item["id"]:
+                if r_value.item == item["id"] and r_value in self.profile.refine_values:
                     oper = r_value.oper
                     remarks = r_value.remarks
                     self.profile.refine_values.remove(r_value)
