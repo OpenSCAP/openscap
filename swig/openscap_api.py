@@ -84,28 +84,27 @@ class OSCAP_List(list):
                 litem = self.iterator.next()
                 if (type(item) == str and type(litem) == str and litem == item) or \
                         ("instance" in item.__dict__ and litem.instance == item.instance):
-                            
+
                     self.iterator.remove()
-                    
-                    
+
                     '''
                     Warning, list.remove(self, item) will fail because python yield
                     a new reference at each loop. So wee need to loop again into the python list,
                     get the new reference and remove it. Demo:
-                    
+
                     print(item.instance)
                     print(litem.instance)
-                    print(litem.instance == item.instance) 
-                    
-                    RETURNS: 
-                    
+                    print(litem.instance == item.instance)
+
+                    RETURNS:
+
                     <Swig Object of type 'struct xccdf_refine_value *' at 0x7ff85ed73bd0>
                     <Swig Object of type 'struct xccdf_refine_value *' at 0x7ff85ed73c90>
                     True
                     '''
-                    
+
                     for i in self[:]:
-                        if "instance" in item.__dict__  and i.instance == item.instance:
+                        if "instance" in item.__dict__ and i.instance == item.instance:
                             list.remove(self, i)
 
         except NameError:
@@ -124,8 +123,6 @@ class OSCAP_List(list):
 
         while iterator.has_more():
             list.append(self, iterator.next())
-            
-            
 
     def append(self, item, n=1):
         """This function is not allowed. Please use appropriate function from library."""
