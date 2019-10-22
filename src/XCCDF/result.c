@@ -532,8 +532,16 @@ void xccdf_message_free(struct xccdf_message *msg)
     }
 }
 
+bool xccdf_message_set_content(struct xccdf_message *obj, const char *newval){
+	// in debug mode, we handle all new messages in case where the xccdf_message is never displayed
+	dD("XCCDF_SET_MESSAGE: %s", newval);
+	free(obj->content);
+	obj->content=oscap_strdup(newval);
+	return true;
+}
+
 OSCAP_ACCESSOR_SIMPLE(xccdf_message_severity_t, xccdf_message, severity)
-OSCAP_ACCESSOR_STRING(xccdf_message, content)
+OSCAP_GETTER(const char*, xccdf_message, content)
 
 struct xccdf_target_fact* xccdf_target_fact_new(void)
 {

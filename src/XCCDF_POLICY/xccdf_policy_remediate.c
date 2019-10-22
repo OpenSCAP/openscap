@@ -63,6 +63,7 @@ static int _rule_add_info_message(struct xccdf_rule_result *rr, ...)
 
 	msg = xccdf_message_new();
 	xccdf_message_set_content(msg, text);
+	dI("[%s]->msg: %s", xccdf_rule_result_get_idref(rr), text);
 	free(text);
 	xccdf_message_set_severity(msg, XCCDF_MSG_INFO);
 	xccdf_rule_result_add_message(rr, msg);
@@ -380,7 +381,7 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
 	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
-		dI( "No fix available.");
+		_rule_add_info_message(rr, "No fix available.");
 		return 1;
 	}
 	
@@ -481,7 +482,7 @@ cleanup:
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
 	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
-		dI("No fix available.");
+		_rule_add_info_message(rr, "No fix available.");
 		return 1;
 	} else {
 		_rule_add_info_message(rr, "Cannot execute the fix script: not implemented");
@@ -498,11 +499,17 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	if (xccdf_rule_result_get_result(rr) != XCCDF_RESULT_FAIL)
 		return 0;
 
+	// if a miscellaneous error happens (fix unsuitable or if we want to skip it for any reason
+	// we set misc_error to one, and the fix will be reported as error (and not skipped without log like before)
+	int misc_error=0;
+
 	if (fix == NULL) {
 		fix = _find_suitable_fix(policy, rr);
 		if (fix == NULL) {
-			dI("%s: No suitable fix found (_find_suitable_fix returns NULL).", xccdf_rule_result_get_idref(rr));
-			return 0;
+			// We want to append xccdf:message about missing fix.
+			_rule_add_info_message(rr, "No suitable fix found.");
+			xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+			misc_error=1;
 		}
 	}
 
@@ -513,27 +520,33 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	xccdf_check_iterator_free(check_it);
 	if (check != NULL && xccdf_check_get_multicheck(check)) {
 		// Do not try to apply fix for multi-check.
-		dI("%s: cannot apply fix for multicheck.", xccdf_rule_result_get_idref(rr));
-		return 0;
+		_rule_add_info_message(rr, "cannot apply fix for multicheck.");
+		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+		misc_error=1;
 	}
 
-	/* Initialize the fix. */
-	struct xccdf_fix *cfix = xccdf_fix_clone(fix);
-	int res = xccdf_policy_resolve_fix_substitution(policy, cfix, rr, test_result);
-	xccdf_rule_result_add_fix(rr, cfix);
-	if (res != 0) {
-		_rule_add_info_message(rr, "Fix execution was aborted: Text substitution failed.");
-		return res;
+	if(misc_error == 0){
+		/* Initialize the fix. */
+		struct xccdf_fix *cfix = xccdf_fix_clone(fix);
+		int res = xccdf_policy_resolve_fix_substitution(policy, cfix, rr, test_result);
+		xccdf_rule_result_add_fix(rr, cfix);
+		if (res != 0) {
+			_rule_add_info_message(rr, "Fix execution was aborted: Text substitution failed.");
+			xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+			misc_error=1;
+		}else{
+
+			/* Execute the fix. */
+			res = _xccdf_fix_execute(rr, cfix);
+			if (res != 0) {
+				_rule_add_info_message(rr, "Fix was not executed. Execution was aborted.");
+				xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+				misc_error=1;
+			}
+		}
 	}
 
-	/* Execute the fix. */
-	res = _xccdf_fix_execute(rr, cfix);
-	if (res != 0) {
-		_rule_add_info_message(rr, "Fix was not executed. Execution was aborted.");
-		return res;
-	}
-
-	/* We report rule during remediation only when the fix was actually executed */
+	/* We report rule during remediation even if fix isn't executed due to a miscellaneous error */
 	int report = 0;
 	struct xccdf_rule *rule = _lookup_rule_by_rule_result(policy, rr);
 	if (rule == NULL) {
@@ -546,18 +559,20 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 			return report;
 	}
 
-	/* Verify applied fix by calling OVAL again */
-	if (check == NULL) {
-		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
-		_rule_add_info_message(rr, "Failed to verify applied fix: Missing xccdf:check.");
-	} else {
-		int new_result = xccdf_policy_check_evaluate(policy, check);
-		if (new_result == XCCDF_RESULT_PASS)
-			xccdf_rule_result_set_result(rr, XCCDF_RESULT_FIXED);
-		else {
+	if(misc_error == 0){
+		/* Verify fix if applied by calling OVAL again */
+		if (check == NULL) {
 			xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
-			_rule_add_info_message(rr, "Failed to verify applied fix: Checking engine returns: %s",
-				new_result <= 0 ? "internal error" : xccdf_test_result_type_get_text(new_result));
+			_rule_add_info_message(rr, "Failed to verify applied fix: Missing xccdf:check.");
+		} else {
+			int new_result = xccdf_policy_check_evaluate(policy, check);
+			if (new_result == XCCDF_RESULT_PASS)
+				xccdf_rule_result_set_result(rr, XCCDF_RESULT_FIXED);
+			else {
+				xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+				_rule_add_info_message(rr, "Failed to verify applied fix: Checking engine returns: %s",
+					new_result <= 0 ? "internal error" : xccdf_test_result_type_get_text(new_result));
+			}
 		}
 	}
 
