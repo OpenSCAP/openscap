@@ -21,9 +21,9 @@ $OSCAP xccdf validate $result
 
 assert_exists 1 '//rule-result'
 assert_exists 1 '//rule-result/result'
-assert_exists 1 '//rule-result/result[text()="fail"]'
+assert_exists 1 '//rule-result/result[text()="error"]'
 assert_exists 0 '//rule-result/fix'
-assert_exists 0 '//rule-result/message'
+assert_exists 1 '//rule-result/message[text()="No suitable fix found."]'
 assert_exists 1 '//score'
 assert_exists 1 '//score[text()="0.000000"]'
 
