@@ -508,7 +508,7 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 		if (fix == NULL) {
 			// We want to append xccdf:message about missing fix.
 			_rule_add_info_message(rr, "No suitable fix found.");
-			xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
+			xccdf_rule_result_set_result(rr, XCCDF_RESULT_FAIL);
 			misc_error=1;
 		}
 	}
@@ -518,16 +518,6 @@ int xccdf_policy_rule_result_remediate(struct xccdf_policy *policy, struct xccdf
 	while (xccdf_check_iterator_has_more(check_it))
 		check = xccdf_check_iterator_next(check_it);
 	xccdf_check_iterator_free(check_it);
-	
-	// this following condition seems to be unwanted, no standard specifies that
-	// a fix shouldn't be ran for a multicheck.
-	
-	/*if (check != NULL && xccdf_check_get_multicheck(check)) {
-		// Do not try to apply fix for multi-check.
-		_rule_add_info_message(rr, "cannot apply fix for multicheck.");
-		xccdf_rule_result_set_result(rr, XCCDF_RESULT_ERROR);
-		misc_error=1;
-	}*/
 
 	if(misc_error == 0){
 		/* Initialize the fix. */
