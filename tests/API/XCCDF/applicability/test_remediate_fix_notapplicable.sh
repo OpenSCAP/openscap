@@ -27,7 +27,9 @@ assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profil
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/result[text()="fail"]'
 assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/fix'
-assert_exists 0 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
+
+# one message expected signalling no suitable fix found.
+assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001"]/rule-result/message'
 
 #
 # Second, make sure that the fix is applied, when CPE is recognized as appplicable
