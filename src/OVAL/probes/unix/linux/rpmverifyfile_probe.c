@@ -44,6 +44,7 @@
 #include <pcre.h>
 
 #include "rpm-helper.h"
+#include "oscap_helpers.h"
 
 /* Individual RPM headers */
 #include <rpm/rpmfi.h>
@@ -134,6 +135,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 	Header pkgh;
 	pcre *re = NULL;
 	int  ret = -1;
+	char *file_realpath = NULL;
 
 	/* pre-compile regex if needed */
 	if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
@@ -150,7 +152,16 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 	RPMVERIFY_LOCK;
 
-	match = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_PACKAGES, NULL, 0);
+	if (file != NULL && file_op == OVAL_OPERATION_EQUALS) {
+		/*
+		 * When we know the exact file path we look for, we don't need to
+		 * filter all RPM packages, but we can ask the rpmdb directly for
+		 * the package which provides this file, similar to `rpm -q -f`.
+		 */
+		match = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_INSTFILENAMES, file, 0);
+	} else {
+		match = rpmtsInitIterator(g_rpm->rpmts, RPMDBI_PACKAGES, NULL, 0);
+	}
 	if (match == NULL) {
 		ret = 0;
 		goto ret;
@@ -181,6 +192,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 		return -1;
 	}
 
+	file_realpath = oscap_realpath(file, NULL);
+
 	while ((pkgh = rpmdbNextIterator (match)) != NULL) {
 		SEXP_t *ent;
 		rpmfi  fi;
@@ -188,6 +201,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 		struct rpmverify_res res;
 		errmsg_t rpmerr;
 		int i;
+		const char *current_file;
+		char *current_file_realpath;
 
 		/*
 +SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
@@ -229,43 +244,51 @@ static int rpmverify_collect(probe_ctx *ctx,
 			fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
 
 		  while (rpmfiNext(fi) != -1) {
-				res.file = oscap_strdup(rpmfiFN(fi));
+				current_file = rpmfiFN(fi);
+				current_file_realpath = oscap_realpath(current_file, NULL);
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
 
 		    if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
 					((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
-					free(res.file);
+					free(current_file_realpath);
 					continue;
 				}
 
 		    switch(file_op) {
 		    case OVAL_OPERATION_EQUALS:
-					if (strcmp(res.file, file) != 0) {
-						free(res.file);
+					if (strcmp(current_file, file) != 0 &&
+							current_file_realpath && file_realpath &&
+							strcmp(current_file_realpath, file_realpath) != 0) {
+						free(current_file_realpath);
 						continue;
 					}
+					res.file = oscap_strdup(file);
 		      break;
 		    case OVAL_OPERATION_NOT_EQUAL:
-					if (strcmp(res.file, file) == 0) {
-						free(res.file);
+					if (strcmp(current_file, file) == 0 ||
+							(current_file_realpath && file_realpath &&
+							strcmp(current_file_realpath, file_realpath) == 0)) {
+						free(current_file_realpath);
 						continue;
 					}
+					res.file = current_file_realpath ? current_file_realpath : strdup(current_file);
 		      break;
 		    case OVAL_OPERATION_PATTERN_MATCH:
-		      ret = pcre_exec(re, NULL, res.file, strlen(res.file), 0, 0, NULL, 0);
+					ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
 
 		      switch(ret) {
 		      case 0: /* match */
+						res.file = strdup(current_file);
 			break;
 		      case -1:
 			/* mismatch */
-			free(res.file);
+						free(current_file_realpath);
 			continue;
 		      default:
 			dE("pcre_exec() failed!");
 			ret = -1;
-			free(res.file);
+						free(current_file_realpath);
 			goto ret;
 		      }
 		      break;
@@ -273,7 +296,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      /* unsupported operation */
 		      dE("Operation \"%d\" on `filepath' not supported", file_op);
 		      ret = -1;
-					free(res.file);
+						free(current_file_realpath);
 		      goto ret;
 		    }
 
@@ -299,6 +322,7 @@ ret:
 		pcre_free(re);
 
 	RPMVERIFY_UNLOCK;
+	free(file_realpath);
 	return (ret);
 }
 
