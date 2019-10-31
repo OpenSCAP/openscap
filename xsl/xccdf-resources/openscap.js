@@ -2,6 +2,8 @@ function openRuleDetailsDialog(rule_result_id)
 {
     $("#detail-modal").remove();
 
+    /*DO NOT remove the aria-hidden="false" attribute from the following lines!
+    This attribute ensures that rule detail can be accessed by accessibility technologies such as screenreaders.*/
     var closebutton = $('<button type="button" class="close btn btn-sm btn-default" data-dismiss="modal" aria-hidden="false" title="Close">&#x274c;</button>');
     var modal = $('<div id="detail-modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="false"><div id="detail-modal-body" class="modal-body"></div></div>');
 
