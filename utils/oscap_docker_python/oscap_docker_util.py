@@ -87,6 +87,10 @@ else:
           " (requires root privileges)")
 
 
+def isAtomicLoaded():
+    return atomic_loaded
+
+
 class OscapError(Exception):
     ''' oscap Error'''
     pass
@@ -230,7 +234,7 @@ def mount_image_filesystem():
     _tmp_mnt_dir = DM.mount(image)
 
 
-class OscapScan(object):
+class OscapAtomicScan(object):
     def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=None,
                  hours_old=2, oscap_binary=''):
         self.tmp_dir = tmp_dir

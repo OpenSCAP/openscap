@@ -20,7 +20,8 @@
 ''' oscap docker command '''
 
 import argparse
-from oscap_docker_python.oscap_docker_util import OscapScan
+from oscap_docker_python.oscap_docker_util import OscapAtomicScan,\
+OscapDockerScan, isAtomicLoaded
 import docker
 import sys
 from requests import exceptions
