@@ -5,6 +5,7 @@
 .libs/
 .*.swp
 tags
+*.pyc
 
 CMakeLists.txt.user
 build/

@@ -1,4 +1,5 @@
 # Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
+# Copyright (C) 2019 Dominique Blaze <contact@d0m.tech>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,7 +29,7 @@ from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
 import collections
-from oscap_docker_util_noatomic import OscapDockerScan
+from oscap_docker_python.oscap_docker_util_noatomic import OscapDockerScan
 
 atomic_loaded = False
 
@@ -76,6 +77,7 @@ except ImportError:
         "Failed to import \"Atomic.mount.DockerMount\". It seems Atomic has "
         "not been installed.\n"
     )
+
 except AtomicError as err:
     sys.stderr.write(err.message)
 
