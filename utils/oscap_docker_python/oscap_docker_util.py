@@ -28,6 +28,7 @@ from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
 import collections
+from oscap_docker_util_noatomic import OscapDockerScan
 
 atomic_loaded=False
 
