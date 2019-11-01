@@ -30,7 +30,8 @@ import docker
 import collections
 from oscap_docker_util_noatomic import OscapDockerScan
 
-atomic_loaded=False
+atomic_loaded = False
+
 
 class AtomicError(Exception):
     """Exception raised when an error happens in atomic import
@@ -55,7 +56,8 @@ try:
     member_methods = [
         x[0] for x in
         inspect.getmembers(
-            DockerMount, predicate=lambda member: inspect.isfunction(member) or inspect.ismethod(member)
+            DockerMount, predicate=lambda member:
+                inspect.isfunction(member) or inspect.ismethod(member)
         )
     ]
 
@@ -65,9 +67,9 @@ try:
             "it doesn't have the _clean_temp_container_by_path method. Please "
             "upgrade your Atomic installation to 1.4 or higher.\n"
         )
-    
-    #if all imports are ok we can use atomic
-    atomic_loaded=True
+
+    # if all imports are ok we can use atomic
+    atomic_loaded = True
 
 except ImportError:
     sys.stderr.write(
@@ -75,7 +77,7 @@ except ImportError:
         "not been installed.\n"
     )
 except AtomicError as err:
-    sys.stderr.write(err.message);
+    sys.stderr.write(err.message)
 
 ''' print state of atomic import '''
 if atomic_loaded:
@@ -174,7 +176,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_EVALUATION_TARGET"] = name
         for var in config.get("Env", []):
             vname, val = var.split("=", 1)
-            os.environ["OSCAP_OFFLINE_"+vname] = val
+            os.environ["OSCAP_OFFLINE_" + vname] = val
         cmd = [self.oscap_binary] + [x for x in oscap_args]
         oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         oscap_stdout, oscap_stderr = oscap_process.communicate()
