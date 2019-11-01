@@ -29,18 +29,26 @@ import sys
 import docker
 import collections
 
+atomic_loaded=False
+
+class AtomicError(Exception):
+    """Exception raised when an error happens in atomic import
+    """
+    def __init__(self, message):
+        self.message = message
+
+
 try:
     from Atomic.mount import DockerMount
     from Atomic.mount import MountError
     import inspect
 
     if "mnt_mkdir" not in inspect.getargspec(DockerMount.__init__).args:
-        sys.stderr.write(
+        raise AtomicError(
             "\"Atomic.mount.DockerMount\" has been successfully imported but "
             "it doesn't support the mnt_mkdir argument. Please upgrade your "
             "Atomic installation to 1.4 or higher.\n"
         )
-        sys.exit(1)
 
     # we only care about method names
     member_methods = [
@@ -51,19 +59,29 @@ try:
     ]
 
     if "_clean_temp_container_by_path" not in member_methods:
-        sys.stderr.write(
+        raise AtomicError(
             "\"Atomic.mount.DockerMount\" has been successfully imported but "
             "it doesn't have the _clean_temp_container_by_path method. Please "
             "upgrade your Atomic installation to 1.4 or higher.\n"
         )
-        sys.exit(1)
+    
+    #if all imports are ok we can use atomic
+    atomic_loaded=True
 
 except ImportError:
     sys.stderr.write(
         "Failed to import \"Atomic.mount.DockerMount\". It seems Atomic has "
         "not been installed.\n"
     )
-    sys.exit(1)
+except AtomicError as err:
+    sys.stderr.write(err.message);
+
+''' print state of atomic import '''
+if atomic_loaded:
+    print("Atomic seems well installed and ready for use")
+else:
+    print("Cannot load Atomic, native docker api will be used instead"
+          " (requires root privileges)")
 
 
 class OscapError(Exception):
