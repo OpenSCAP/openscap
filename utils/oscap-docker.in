@@ -24,6 +24,7 @@ import argparse
 from oscap_docker_python.oscap_docker_util import OscapAtomicScan,\
 OscapDockerScan, isAtomicLoaded
 import docker
+import traceback
 import sys
 from requests import exceptions
 
@@ -98,11 +99,11 @@ if __name__ == '__main__':
             else:
                 parser.print_help()
                 sys.exit(2)
-                
+
         else:  # without atomic
             if args.noatomic:
                 print("Running oscap-docker with native docker api instead of atomic ...")
-                
+
             ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
             if args.action == "scan":
                 rc = OscapDockerScan.scan(ODS, leftover_args)
@@ -112,7 +113,7 @@ if __name__ == '__main__':
             else:
                 parser.print_help()
                 sys.exit(2)
-    
+
     except ValueError as e:
         raise e
         sys.exit(255)

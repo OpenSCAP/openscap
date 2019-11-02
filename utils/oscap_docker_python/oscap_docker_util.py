@@ -180,7 +180,7 @@ class OscapHelpers(object):
         os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
         name, conf = self._get_target_name_and_config(target)
         os.environ["OSCAP_EVALUATION_TARGET"] = name
-        for var in config.get("Env", []):
+        for var in conf.get("Env", []):
             vname, val = var.split("=", 1)
             os.environ["OSCAP_OFFLINE_" + vname] = val
         cmd = [self.oscap_binary] + [x for x in oscap_args]
