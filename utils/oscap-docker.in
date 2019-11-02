@@ -1,7 +1,7 @@
 #!@OSCAP_DOCKER_PYTHON@
 
 # Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
-# Copyright (C) 2019 Dominique Blaze <contact@d0m.tech>
+# Copyright (C) 2019 Dominique Blaze <bbaude@redhat.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -44,12 +44,13 @@ if __name__ == '__main__':
                                      epilog='See `man oscap` to learn \
                                      more about OSCAP-ARGUMENTS')
     parser.add_argument('--oscap', dest='oscap_binary', default='', help='Set the oscap binary to use')
+    parser.add_argument('--disable-atomic', dest='noatomic', action='store_true', help="Force to use native docker API instead of atomic")
     subparser = parser.add_subparsers(help="commands")
 
     # Scan CVEs in image
     image_cve = subparser.add_parser('image-cve', help='Scan a docker image \
                                     for known vulnerabilities.')
-    image_cve.set_defaults(func=OscapScan.scan_cve)
+    image_cve.set_defaults(action="scan_cve", is_image=True)
     image_cve.add_argument('scan_target', help='Container or image to scan')
 
     # Scan an Image
@@ -57,26 +58,26 @@ if __name__ == '__main__':
     image.add_argument('scan_target',
                        help='Container or image to scan')
 
-    image.set_defaults(func=OscapScan.scan)
+    image.set_defaults(action="scan", is_image=True)
     # Scan a container
     container = subparser.add_parser('container', help='Scan a running docker\
                                       container of given name.')
     container.add_argument('scan_target',
                            help='Container or image to scan')
-    container.set_defaults(func=OscapScan.scan)
+    container.set_defaults(action="scan", is_image=False)
 
     # Scan CVEs in container
     container_cve = subparser.add_parser('container-cve', help='Scan a \
                                          running container for known \
                                          vulnerabilities.')
 
-    container_cve.set_defaults(func=OscapScan.scan_cve)
+    container_cve.set_defaults(action="scan_cve", is_image=False)
     container_cve.add_argument('scan_target',
                                help='Container or image to scan')
 
     args, leftover_args = parser.parse_known_args()
 
-    if "func" not in args:
+    if "action" not in args:
         parser.print_help()
         sys.exit(2)
 
@@ -88,10 +89,40 @@ if __name__ == '__main__':
         sys.exit(1)
 
     try:
-        OS = OscapScan(oscap_binary=args.oscap_binary)
-        rc = args.func(OS, args.scan_target, leftover_args)
-    except Exception as exc:
+        if isAtomicLoaded and not args.noatomic:
+            OS = OscapAtomicScan(oscap_binary=args.oscap_binary)
+            if args.action == "scan":
+                rc = OscapAtomicScan.scan(OS, args.scan_target, leftover_args)
+            elif args.action == "scan_cve":
+                rc = OscapAtomicScan.scan_cve(OS, args.scan_target, leftover_args)
+            else:
+                parser.print_help()
+                sys.exit(2)
+                
+        else:  # without atomic
+            if args.noatomic:
+                print("Running oscap-docker with native docker api instead of atomic ...")
+                
+            ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
+            if args.action == "scan":
+                rc = OscapDockerScan.scan(ODS, leftover_args)
+            elif args.action == "scan_cve":
+                print("Scan cve !")
+                rc = OscapDockerScan.scan_cve(ODS, leftover_args)
+            else:
+                parser.print_help()
+                sys.exit(2)
+    
+    except ValueError as e:
+        raise e
         sys.exit(255)
-        raise exc
+    except RuntimeError as e:
+        raise e
+        sys.exit(255)
+    except Exception as exc:
+        traceback.print_exc(file=sys.stdout)
+        sys.stderr.write("!!! WARNING !!! This software have crash, so you should "
+        "check that no temporary container is still running\n")
+        sys.exit(255)
 
     sys.exit(rc)
