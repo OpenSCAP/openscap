@@ -392,10 +392,10 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 	char* argvp[3] = {
 		tmp_href,
-		tmp_href,
-		NULL
+		tmp_href, // the second tmp_href is added in case we use the wrapper (oscap-run-sce-script)
+		NULL      // which need the path of the script to eval as first parameter.
 	};
-	dI("arvp[0] = %s", argvp[0]);
+
 	// bound values in KEY=VALUE form, ready to be passed as environment variables
 	char ** env_values = malloc(10 * sizeof(char * ));
 	size_t env_value_count = 10;
@@ -491,7 +491,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		env_values[env_value_count] = env_operator_entry;
 		env_value_count++;
 	}
-	dI("debug0 ..");
+    
 	env_values = realloc(env_values, (env_value_count + 1) * sizeof(char*));
 	env_values[env_value_count] = NULL;
 
@@ -507,8 +507,6 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 	// FIXME: We definitely want to impose security restrictions in the forked child process in the future.
 	//        This would prevent scripts from writing to files or deleting them.
-
-	dI("debug1 ..");
 	
 	int fork_result = fork();
 	if (fork_result >= 0)
@@ -517,21 +515,21 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 		if (fork_result == 0)
 		{
-			dI("debug2 ..");
+
 			// we won't read from the pipes, so close the reading fd
 			close(stdout_pipefd[0]);
 			close(stderr_pipefd[0]);
-			dI("debug2.1 ..");
+            
 			// forward stdout and stderr to our custom opened pipes
-			//dup2(stdout_pipefd[1], fileno(stdout));
-			//dup2(stderr_pipefd[1], fileno(stderr));
-			dI("debug2.2 ..");
+			dup2(stdout_pipefd[1], fileno(stdout));
+			dup2(stderr_pipefd[1], fileno(stderr));
+
 			// we duplicated the file descriptors twice, we can close the original
 			// ones now, stdout and stderr will be closed properly after the execved
 			// script/executable finishes
 			close(stdout_pipefd[1]);
 			close(stderr_pipefd[1]);
-			dI("debug3 ..");
+
 			// before we execute the script, lets make sure we get SIGTERM when
 			// oscap is killed, crashes or otherwise terminates
 #ifdef PR_SET_PDEATHSIG
@@ -542,14 +540,14 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 #endif
 
 			// we are the child process
-			dI("argvp[0<] = %s", argvp[0]);
-			dI("env<(0 %s", env_values[0]);
-			
-			if(use_sce_wrapper)
-				execvp("oscap-run-sce-script", argvp, env_values);
-			else
-				execve(tmp_href, argvp, env_values);
 
+			if(use_sce_wrapper) {
+                dI("Eval sce script using oscap-run-sce-script because %s isn't +x", tmp_href);
+				execvpe("oscap-run-sce-script", argvp, env_values);
+			} else {
+                execve(tmp_href, argvp, env_values);
+            }
+            
 			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 
 			// no need to check the return value of execve, if it returned at all we are in trouble
