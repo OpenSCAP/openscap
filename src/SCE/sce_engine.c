@@ -541,12 +541,10 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 			// we are the child process
 
-			if(use_sce_wrapper) {
-                dI("Eval sce script using oscap-run-sce-script because %s isn't +x", tmp_href);
+			if(use_sce_wrapper)
 				execvpe("oscap-run-sce-script", argvp, env_values);
-			} else {
+			else
                 execve(tmp_href, argvp, env_values);
-            }
 
 			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 
