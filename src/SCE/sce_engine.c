@@ -491,7 +491,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		env_values[env_value_count] = env_operator_entry;
 		env_value_count++;
 	}
-    
+
 	env_values = realloc(env_values, (env_value_count + 1) * sizeof(char*));
 	env_values[env_value_count] = NULL;
 
@@ -507,7 +507,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 	// FIXME: We definitely want to impose security restrictions in the forked child process in the future.
 	//        This would prevent scripts from writing to files or deleting them.
-	
+
 	int fork_result = fork();
 	if (fork_result >= 0)
 	{
@@ -519,7 +519,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			// we won't read from the pipes, so close the reading fd
 			close(stdout_pipefd[0]);
 			close(stderr_pipefd[0]);
-            
+
 			// forward stdout and stderr to our custom opened pipes
 			dup2(stdout_pipefd[1], fileno(stdout));
 			dup2(stderr_pipefd[1], fileno(stderr));
@@ -547,7 +547,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			} else {
                 execve(tmp_href, argvp, env_values);
             }
-            
+
 			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 
 			// no need to check the return value of execve, if it returned at all we are in trouble
