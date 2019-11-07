@@ -40,7 +40,7 @@ OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "st
 
 class OscapDockerScan(object):
     CPE_RHEL = 'oval:org.open-scap.cpe.rhel:def:'
-    DISTS = ["7", "6", "5"]
+    DISTS = ["8", "7", "6", "5"]
 
     def __init__(self, target, is_image=False, oscap_binary='oscap'):
 
@@ -174,7 +174,10 @@ class OscapDockerScan(object):
         '''
         cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
         if not os.path.exists(cpe_dict):
-            raise OscapError()
+            cpe_dict = '/usr/local/share/openscap/cpe/openscap-cpe-oval.xml'
+            if not os.path.exists(cpe_dict):
+                raise OscapError()
+                
         for dist in self.DISTS:
             result = self.oscap_chroot(
                 self.mountpoint, self.oscap_binary,

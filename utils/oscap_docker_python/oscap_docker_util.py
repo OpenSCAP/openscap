@@ -81,14 +81,6 @@ except ImportError:
 except AtomicError as err:
     sys.stderr.write(err.message)
 
-''' print state of atomic import '''
-if atomic_loaded:
-    print("Atomic seems well installed and ready for use")
-else:
-    print("Cannot load Atomic, native docker api will be used instead"
-          " (requires root privileges)")
-
-
 def isAtomicLoaded():
     return atomic_loaded
 
@@ -104,7 +96,7 @@ OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "st
 class OscapHelpers(object):
     ''' oscap class full of helpers for scanning '''
     CPE = 'oval:org.open-scap.cpe.rhel:def:'
-    DISTS = ["7", "6", "5"]
+    DISTS = ["8", "7", "6", "5"]
 
     def __init__(self, cve_input_dir, oscap_binary):
         self.cve_input_dir = cve_input_dir
@@ -134,7 +126,10 @@ class OscapHelpers(object):
         '''
         cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
         if not os.path.exists(cpe_dict):
-            raise OscapError()
+            cpe_dict = '/usr/local/share/openscap/cpe/openscap-cpe-oval.xml'
+            if not os.path.exists(cpe_dict):
+                raise OscapError()
+                
         for dist in self.DISTS:
             result = self.oscap_chroot(chroot, target, 'oval', 'eval',
                                        '--id', self.CPE + dist, cpe_dict,
