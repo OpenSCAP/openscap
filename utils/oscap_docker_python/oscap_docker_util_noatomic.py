@@ -177,7 +177,7 @@ class OscapDockerScan(object):
             cpe_dict = '/usr/local/share/openscap/cpe/openscap-cpe-oval.xml'
             if not os.path.exists(cpe_dict):
                 raise OscapError()
-                
+
         for dist in self.DISTS:
             result = self.oscap_chroot(
                 self.mountpoint, self.oscap_binary,
@@ -186,7 +186,7 @@ class OscapDockerScan(object):
             )
 
             if "{0}{1}: true".format(self.CPE_RHEL, dist) in result.stdout:
-                print("RHEL{0} detected !".format(dist))
+                print("This system seems bases on RHEL{0}.".format(dist))
                 return dist
 
     def scan_cve(self, scan_args):

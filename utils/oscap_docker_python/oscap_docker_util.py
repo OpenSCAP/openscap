@@ -81,6 +81,7 @@ except ImportError:
 except AtomicError as err:
     sys.stderr.write(err.message)
 
+
 def isAtomicLoaded():
     return atomic_loaded
 
@@ -129,7 +130,7 @@ class OscapHelpers(object):
             cpe_dict = '/usr/local/share/openscap/cpe/openscap-cpe-oval.xml'
             if not os.path.exists(cpe_dict):
                 raise OscapError()
-                
+
         for dist in self.DISTS:
             result = self.oscap_chroot(chroot, target, 'oval', 'eval',
                                        '--id', self.CPE + dist, cpe_dict,
