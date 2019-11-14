@@ -30,6 +30,8 @@ import sys
 import docker
 import collections
 from oscap_docker_python.oscap_docker_util_noatomic import OscapDockerScan
+from oscap_docker_python.oscap_docker_common import oscap_chroot, get_dist, \
+    OscapResult, OscapError
 
 atomic_loaded = False
 
@@ -86,14 +88,6 @@ def isAtomicLoaded():
     return atomic_loaded
 
 
-class OscapError(Exception):
-    ''' oscap Error'''
-    pass
-
-
-OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "stderr"))
-
-
 class OscapHelpers(object):
     ''' oscap class full of helpers for scanning '''
     CPE = 'oval:org.open-scap.cpe.rhel:def:'
@@ -119,24 +113,6 @@ class OscapHelpers(object):
         of mount
         '''
         shutil.rmtree(tmp_dir)
-
-    def _get_dist(self, chroot, target):
-        '''
-        Test the chroot and determine what RHEL dist it is; returns
-        an integer representing the dist
-        '''
-        cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
-        if not os.path.exists(cpe_dict):
-            cpe_dict = '/usr/local/share/openscap/cpe/openscap-cpe-oval.xml'
-            if not os.path.exists(cpe_dict):
-                raise OscapError()
-
-        for dist in self.DISTS:
-            result = self.oscap_chroot(chroot, target, 'oval', 'eval',
-                                       '--id', self.CPE + dist, cpe_dict,
-                                       '2>&1', '>', '/dev/null')
-            if "{0}{1}: true".format(self.CPE, dist) in result.stdout:
-                return dist
 
     def _get_target_name_and_config(self, target):
         '''
@@ -166,40 +142,30 @@ class OscapHelpers(object):
             except docker.errors.NotFound:
                 return "unknown", {}
 
-    def oscap_chroot(self, chroot_path, target, *oscap_args):
-        '''
-        Wrapper function for executing oscap in a subprocess
-        '''
-        os.environ["OSCAP_PROBE_ARCHITECTURE"] = platform.processor()
-        os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
-        os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
-        os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-        name, conf = self._get_target_name_and_config(target)
-        os.environ["OSCAP_EVALUATION_TARGET"] = name
-        for var in conf.get("Env", []):
-            vname, val = var.split("=", 1)
-            os.environ["OSCAP_OFFLINE_" + vname] = val
-        cmd = [self.oscap_binary] + [x for x in oscap_args]
-        oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        oscap_stdout, oscap_stderr = oscap_process.communicate()
-        return OscapResult(oscap_process.returncode,
-                           oscap_stdout.decode("utf-8"), oscap_stderr.decode("utf-8"))
-
     def _scan_cve(self, chroot, target, dist, scan_args):
         '''
         Scan a chroot for cves
         '''
         cve_input = getInputCVE.dist_cve_name.format(dist)
-        tmp_tuple = ('oval', 'eval') + tuple(scan_args) + \
-            (os.path.join(self.cve_input_dir, cve_input),)
-        return self.oscap_chroot(chroot, target, *tmp_tuple)
+
+        args = ("oval", "eval")
+        for a in scan_args:
+            args += (a,)
+        args += (os.path.join(self.cve_input_dir, cve_input),)
+
+        name, conf = self._get_target_name_and_config(target)
+
+        return oscap_chroot(chroot, self.oscap_binary, args, name,
+                            conf.get("Env", []) or [])
 
     def _scan(self, chroot, target, scan_args):
         '''
         Scan a container or image
         '''
-        tmp_tuple = tuple(scan_args)
-        return self.oscap_chroot(chroot, target, *tmp_tuple)
+
+        name, conf = self._get_target_name_and_config(target)
+        return oscap_chroot(chroot, target, scan_args, name,
+                            conf.get("Env", []) or [])
 
     def resolve_image(self, image):
         '''
@@ -287,7 +253,8 @@ class OscapAtomicScan(object):
             chroot = self._find_chroot_path(_tmp_mnt_dir)
 
             # Figure out which RHEL dist is in the chroot
-            dist = self.helper._get_dist(chroot, image)
+            name, conf = self.helper._get_target_name_and_config(image)
+            dist = get_dist(chroot, self.helper.oscap_binary, conf.get("Env", []) or [])
 
             if dist is None:
                 sys.stderr.write("{0} is not based on RHEL\n".format(image))

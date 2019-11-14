@@ -21,8 +21,9 @@
 ''' oscap docker command '''
 
 import argparse
-from oscap_docker_python.oscap_docker_util import OscapAtomicScan,\
-OscapDockerScan, isAtomicLoaded
+from oscap_docker_python.oscap_docker_util import OscapAtomicScan, \
+    OscapDockerScan, isAtomicLoaded
+
 import docker
 import traceback
 import sys
@@ -44,8 +45,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='oscap docker',
                                      epilog='See `man oscap` to learn \
                                      more about OSCAP-ARGUMENTS')
-    parser.add_argument('--oscap', dest='oscap_binary', default='', help='Set the oscap binary to use')
-    parser.add_argument('--disable-atomic', dest='noatomic', action='store_true', help="Force to use native docker API instead of atomic")
+    parser.add_argument('--oscap', dest='oscap_binary', default='',
+                        help='Set the oscap binary to use')
+
+    parser.add_argument('--disable-atomic', dest='noatomic', action='store_true',
+                        help="Force to use native docker API instead of atomic")
     subparser = parser.add_subparsers(help="commands")
 
     # Scan CVEs in image
@@ -91,6 +95,7 @@ if __name__ == '__main__':
 
     try:
         if isAtomicLoaded and not args.noatomic:
+            print("Using Atomic API")
             OS = OscapAtomicScan(oscap_binary=args.oscap_binary)
             if args.action == "scan":
                 rc = OscapAtomicScan.scan(OS, args.scan_target, leftover_args)
@@ -102,7 +107,7 @@ if __name__ == '__main__':
 
         else:  # without atomic
             if args.noatomic:
-                print("Running oscap-docker with native docker api instead of atomic ...")
+                print("Using native Docker API")
 
             ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
             if args.action == "scan":
@@ -113,16 +118,13 @@ if __name__ == '__main__':
                 parser.print_help()
                 sys.exit(2)
 
-    except ValueError as e:
-        raise e
-        sys.exit(255)
-    except RuntimeError as e:
+    except (ValueError, RuntimeError) as e:
         raise e
         sys.exit(255)
     except Exception as exc:
         traceback.print_exc(file=sys.stdout)
-        sys.stderr.write("!!! WARNING !!! This software have crashed, so you should "
-        "check that no temporary container is still running\n")
+        sys.stderr.write("!!! WARNING !!! This software has crashed, so you should "
+                         "check that no temporary container is still running\n")
         sys.exit(255)
 
     sys.exit(rc)

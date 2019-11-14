@@ -20,14 +20,14 @@ from __future__ import print_function
 
 import os
 import tempfile
-import subprocess
-import platform
 import shutil
 from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
 import uuid
 import collections
+from oscap_docker_python.oscap_docker_common import oscap_chroot, get_dist, \
+    OscapResult, OscapError
 
 
 class OscapError(Exception):
@@ -39,8 +39,6 @@ OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "st
 
 
 class OscapDockerScan(object):
-    CPE_RHEL = 'oval:org.open-scap.cpe.rhel:def:'
-    DISTS = ["8", "7", "6", "5"]
 
     def __init__(self, target, is_image=False, oscap_binary='oscap'):
 
@@ -107,7 +105,7 @@ class OscapDockerScan(object):
 
         if self._check_container_mountpoint():
             self.mountpoint = "/proc/{0}/root".format(self.pid)
-            print("Docker container {0} ready to be scanned !"
+            print("Docker container {0} ready to be scanned."
                   .format(self.container_name))
         else:
             self._end()
@@ -166,29 +164,6 @@ class OscapDockerScan(object):
         '''
         return os.access("/proc/{0}/root".format(self.pid), os.R_OK)
 
-    # TODO replace by _get_cpe (in order to indentify any containerized system)
-    def _get_dist(self):
-        '''
-        Test the chroot and determine what RHEL dist it is; returns
-        an integer representing the dist
-        '''
-        cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
-        if not os.path.exists(cpe_dict):
-            cpe_dict = '/usr/local/share/openscap/cpe/openscap-cpe-oval.xml'
-            if not os.path.exists(cpe_dict):
-                raise OscapError()
-
-        for dist in self.DISTS:
-            result = self.oscap_chroot(
-                self.mountpoint, self.oscap_binary,
-                ("oval", "eval", "--id", self.CPE_RHEL + dist, cpe_dict,
-                 self.mountpoint, "2>&1", ">", "/dev/null")
-            )
-
-            if "{0}{1}: true".format(self.CPE_RHEL, dist) in result.stdout:
-                print("This system seems bases on RHEL{0}.".format(dist))
-                return dist
-
     def scan_cve(self, scan_args):
         '''
         Wrapper function for scanning cve of a mounted container
@@ -197,7 +172,8 @@ class OscapDockerScan(object):
         tmp_dir = tempfile.mkdtemp()
 
         # Figure out which RHEL dist is in the chroot
-        dist = self._get_dist()
+        dist = get_dist(self.mountpoint, self.oscap_binary,
+                        self.config["Config"].get("Env", []) or [])
 
         if dist is None:
             sys.stderr.write("{0} is not based on RHEL\n"
@@ -215,8 +191,11 @@ class OscapDockerScan(object):
             args += (a,)
         args += (cve_file,)
 
-        scan_result = self.oscap_chroot(
-            self.mountpoint, self.oscap_binary, args)
+        scan_result = oscap_chroot(
+            self.mountpoint, self.oscap_binary, args,
+            self.image_name or self.container_name,
+            self.config["Config"].get("Env", []) or []  # because Env can exists but be None
+        )
 
         print(scan_result.stdout)
         print(scan_result.stderr, file=sys.stderr)
@@ -233,38 +212,16 @@ class OscapDockerScan(object):
         '''
         Wrapper function forwarding oscap args for an offline scan
         '''
-        scan_result = self.oscap_chroot(
+        scan_result = oscap_chroot(
             "/proc/{0}/root".format(self.pid),
-            self.oscap_binary, scan_args
+            self.oscap_binary, scan_args,
+            self.image_name or self.container_name,
+            self.config["Config"].get("Env", []) or []  # because Env can exists but be None
         )
+
         print(scan_result.stdout)
         print(scan_result.stderr, file=sys.stderr)
 
         self._end()
 
         return scan_result.returncode
-
-    def oscap_chroot(self, chroot_path, oscap_binary, oscap_args):
-        '''
-        Wrapper running oscap_chroot on an OscapDockerScan object
-        '''
-        os.environ["OSCAP_PROBE_ARCHITECTURE"] = platform.processor()
-        os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
-        os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
-        os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-
-        os.environ["OSCAP_EVALUATION_TARGET"] = self.container_name
-
-        if self.config["Config"].get("Env"):  # Env can be exists but be None
-            for var in self.config["Config"].get("Env", []):
-                vname, val = var.split("=", 1)
-                os.environ["OSCAP_OFFLINE_" + vname] = val
-
-        cmd = [oscap_binary] + [x for x in oscap_args]
-
-        oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE)
-        oscap_stdout, oscap_stderr = oscap_process.communicate()
-        return OscapResult(oscap_process.returncode,
-                           oscap_stdout.decode("utf-8"),
-                           oscap_stderr.decode("utf-8"))
