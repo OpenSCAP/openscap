@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Authors:
+#      Dominique Blaze <contact@d0m.tech>
+#
+# use by oscap for evaluate a SCE file when +x rights are missing
+
+if [ ! -z $1 ] && [ -f $1 ] 
+then
+	# file exists. first check if shebang is here 
+	
+	firstline=$(head -n1 $1)
+	if [ ${firstline:0:2} = "#!" ]
+	then  # it's a shebang
+		cmd=${firstline:2}  # remove the begin (#!)
+		cmd=${cmd##*( )}  # trim whitespaces
+		eval $cmd $1 > /dev/stdout
+	else  # no shebang, trying bash by default ...
+		/usr/bin/env bash $1 > /dev/stdout
+	fi
+	
+else
+	echo "Script file not found: $1" > /dev/stderr
+fi
