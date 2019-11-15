@@ -384,7 +384,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	{
 		// use the sce wrapper if it's not possible to acquire +x rights
 		use_sce_wrapper = true;
-		dI("%s isn't executable, oscap-run-sce-script will be use.", tmp_href);
+		dI("%s isn't executable, oscap-run-sce-script will be used.", tmp_href);
 	}
 
 	// all the result codes are shifted by 100, because otherwise syntax errors in scripts
@@ -515,7 +515,6 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 		if (fork_result == 0)
 		{
-
 			// we won't read from the pipes, so close the reading fd
 			close(stdout_pipefd[0]);
 			close(stderr_pipefd[0]);
@@ -544,7 +543,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 			if(use_sce_wrapper)
 				execvpe("oscap-run-sce-script", argvp, env_values);
 			else
-                execve(tmp_href, argvp, env_values);
+				execve(tmp_href, argvp, env_values);
 
 			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 
