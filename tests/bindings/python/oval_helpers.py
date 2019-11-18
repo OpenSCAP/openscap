@@ -9,6 +9,8 @@
 #   to provide convenience utilities.
 #
 
+from import_handler import oscap
+
 
 def browse_criteria(crit_node, mode=0):
     '''

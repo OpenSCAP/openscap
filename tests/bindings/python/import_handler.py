@@ -53,7 +53,7 @@ def result2str(result):
 
 '''
 Return the absolute path of a relative path (located in this folder)
-Required because the tests are runned from the build directory,
+Required because the tests are run from the build directory,
 so you need to use this functions for all relative paths.
 '''
 

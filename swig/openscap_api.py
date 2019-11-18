@@ -242,7 +242,7 @@ class OSCAP_Object(object):
         """ Listing all builtin functions accessible through SWIG """
         return OSCAP.__dict__
 
-    def introspect(self):
+    def introspect_functions(self):
         ''' Returns all builtin function accessible through SWIG
             which is corresponding to the current object
         '''
@@ -292,7 +292,7 @@ class OSCAP_Object(object):
             except:
                 return self.__func_wrapper(obj)
 
-        """ Looking if it's can be a constructor """
+        """ Looking if it can be a constructor """
         obj = OSCAP.__dict__.get(self.object + "_" + name + "_new")
         if obj is not None:
             # this will call the __call__ definition of OSCAP_Object

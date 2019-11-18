@@ -38,4 +38,6 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "python_xccdf_policy" run_pyfile xccdf_policy.py
 fi
 
+rm /tmp/foo_python.txt
+
 test_exit

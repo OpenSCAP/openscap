@@ -46,7 +46,7 @@ Intermediate functions
 # if you return something in callback else than 0, the current session stops
 def oval_sample_callback(ovdef, usr):
     # .eval or .get_result return the same thing
-    print(ovdef.get_id()+" => "+result2str(ovdef.get_result()))
+    print(ovdef.get_id() + " => " + result2str(ovdef.get_result()))
 
     # retrieve the tests tree and replace test_results by [subtype => result]
     tests_tree = browse_criteria(ovdef.get_criteria(), 1)

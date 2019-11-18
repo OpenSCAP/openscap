@@ -34,12 +34,12 @@
   </definitions>
 
   <tests>
-    <ind:textfilecontent54_test id="oval:foo_pass:tst:1" version="1" comment="File /tmp/foo_python.txt must contains at least one 'Hello'"  check="at least one">
+    <ind:textfilecontent54_test id="oval:foo_pass:tst:1" version="1" comment="File /tmp/foo_python.txt must contain at least one 'Hello'"  check="at least one">
       <ind:object object_ref="oval:foo:obj:1"/>
       <ind:state state_ref="oval:foo_pass:ste:1"/>
     </ind:textfilecontent54_test>
 
-    <ind:textfilecontent54_test id="oval:foo_fail:tst:1" version="1" comment="File /tmp/foo_python.txt must not contains 'Hello'"  check="all">
+    <ind:textfilecontent54_test id="oval:foo_fail:tst:1" version="1" comment="File /tmp/foo_python.txt must not contain 'Hello'"  check="all">
       <ind:object object_ref="oval:foo:obj:1"/>
       <ind:state state_ref="oval:foo_fail:ste:1"/>
     </ind:textfilecontent54_test>

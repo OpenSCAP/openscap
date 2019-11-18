@@ -61,7 +61,7 @@ pm = benchmark_components['policy_model']
 benchmark = pm.get_benchmark()
 expected_benchmark_id = "xccdf_com.example.www_benchmark_test"
 if benchmark.get_id() != expected_benchmark_id:
-    raise Exception("Benchmark id should be {0} but is currently {0}"
+    raise Exception("Benchmark id should be {0} but is currently {1}"
                     .format(expected_benchmark_id, benchmark.get_id()))
 
 print("Browsing profiles ...")

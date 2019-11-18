@@ -4,7 +4,7 @@
 #   Dominique Blaze <contact@d0m.tech>
 #
 # Description:
-#   Test introspection features of python the api
+#   Test introspection features of Python API
 #    - Test the presence or the absence of expected builtins functions
 #    - Indentify a constant name by its value and prefix (prefix XCCDF_RESULT
 #       with value 1 (usually) should identify XCCDF_RESULT_PASS
@@ -16,15 +16,15 @@
 from import_handler import oscap
 from pprint import pprint
 
-oval_funcs = oscap.oval.introspect()
+oval_funcs = oscap.oval.introspect_functions()
 
 if oval_funcs.get('oval_variable_get_values') is None:
     raise Exception("method 'oval_variable_get_values' not found in builtins"
-                    "functions of oval object (should be in oscap.oval.introspect())")
+                    "functions of oval object (should be in oscap.oval.introspect_functions())")
 
 if oval_funcs.get('xccdf_check_get_id') is not None:
     raise Exception("method 'xccdf_check_get_id' should not be found in "
-                    "oscap.oval.introspect(), because the prefix isn't 'oval')")
+                    "oscap.oval.introspect_functions(), because the prefix isn't 'oval')")
 
 if oscap.oval.introspect_all().get('xccdf_check_get_id') is None:
     raise Exception("method 'xccdf_check_get_id' should be present in "
