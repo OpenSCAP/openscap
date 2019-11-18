@@ -164,7 +164,7 @@ class OscapHelpers(object):
         '''
 
         name, conf = self._get_target_name_and_config(target)
-        return oscap_chroot(chroot, target, scan_args, name,
+        return oscap_chroot(chroot, self.oscap_binary, scan_args, name,
                             conf.get("Env", []) or [])
 
     def resolve_image(self, image):

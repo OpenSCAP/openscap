@@ -121,6 +121,9 @@ if __name__ == '__main__':
     except (ValueError, RuntimeError) as e:
         raise e
         sys.exit(255)
+    except(FileNotFoundError) as e:
+        sys.stderr.write("Target {0} not found.\n".format(target))
+        sys.exit(255)
     except Exception as exc:
         traceback.print_exc(file=sys.stdout)
         sys.stderr.write("!!! WARNING !!! This software has crashed, so you should "
