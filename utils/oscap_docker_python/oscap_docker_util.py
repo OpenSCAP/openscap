@@ -1,4 +1,5 @@
 # Copyright (C) 2015 Brent Baude <bbaude@redhat.com>
+# Copyright (C) 2019 Dominique Blaze <contact@d0m.tech>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,19 @@ from oscap_docker_python.get_cve_input import getInputCVE
 import sys
 import docker
 import collections
+from oscap_docker_python.oscap_docker_util_noatomic import OscapDockerScan
+from oscap_docker_python.oscap_docker_common import oscap_chroot, get_dist, \
+    OscapResult, OscapError
+
+atomic_loaded = False
+
+
+class AtomicError(Exception):
+    """Exception raised when an error happens in atomic import
+    """
+    def __init__(self, message):
+        self.message = message
+
 
 try:
     from Atomic.mount import DockerMount
@@ -35,49 +49,49 @@ try:
     import inspect
 
     if "mnt_mkdir" not in inspect.getargspec(DockerMount.__init__).args:
-        sys.stderr.write(
+        raise AtomicError(
             "\"Atomic.mount.DockerMount\" has been successfully imported but "
             "it doesn't support the mnt_mkdir argument. Please upgrade your "
             "Atomic installation to 1.4 or higher.\n"
         )
-        sys.exit(1)
 
     # we only care about method names
     member_methods = [
         x[0] for x in
         inspect.getmembers(
-            DockerMount, predicate=lambda member: inspect.isfunction(member) or inspect.ismethod(member)
+            DockerMount, predicate=lambda member:
+                inspect.isfunction(member) or inspect.ismethod(member)
         )
     ]
 
     if "_clean_temp_container_by_path" not in member_methods:
-        sys.stderr.write(
+        raise AtomicError(
             "\"Atomic.mount.DockerMount\" has been successfully imported but "
             "it doesn't have the _clean_temp_container_by_path method. Please "
             "upgrade your Atomic installation to 1.4 or higher.\n"
         )
-        sys.exit(1)
+
+    # if all imports are ok we can use atomic
+    atomic_loaded = True
 
 except ImportError:
     sys.stderr.write(
         "Failed to import \"Atomic.mount.DockerMount\". It seems Atomic has "
         "not been installed.\n"
     )
-    sys.exit(1)
+
+except AtomicError as err:
+    sys.stderr.write(err.message)
 
 
-class OscapError(Exception):
-    ''' oscap Error'''
-    pass
-
-
-OscapResult = collections.namedtuple("OscapResult", ("returncode", "stdout", "stderr"))
+def isAtomicLoaded():
+    return atomic_loaded
 
 
 class OscapHelpers(object):
     ''' oscap class full of helpers for scanning '''
     CPE = 'oval:org.open-scap.cpe.rhel:def:'
-    DISTS = ["7", "6", "5"]
+    DISTS = ["8", "7", "6", "5"]
 
     def __init__(self, cve_input_dir, oscap_binary):
         self.cve_input_dir = cve_input_dir
@@ -99,21 +113,6 @@ class OscapHelpers(object):
         of mount
         '''
         shutil.rmtree(tmp_dir)
-
-    def _get_dist(self, chroot, target):
-        '''
-        Test the chroot and determine what RHEL dist it is; returns
-        an integer representing the dist
-        '''
-        cpe_dict = '/usr/share/openscap/cpe/openscap-cpe-oval.xml'
-        if not os.path.exists(cpe_dict):
-            raise OscapError()
-        for dist in self.DISTS:
-            result = self.oscap_chroot(chroot, target, 'oval', 'eval',
-                                       '--id', self.CPE + dist, cpe_dict,
-                                       '2>&1', '>', '/dev/null')
-            if "{0}{1}: true".format(self.CPE, dist) in result.stdout:
-                return dist
 
     def _get_target_name_and_config(self, target):
         '''
@@ -143,40 +142,30 @@ class OscapHelpers(object):
             except docker.errors.NotFound:
                 return "unknown", {}
 
-    def oscap_chroot(self, chroot_path, target, *oscap_args):
-        '''
-        Wrapper function for executing oscap in a subprocess
-        '''
-        os.environ["OSCAP_PROBE_ARCHITECTURE"] = platform.processor()
-        os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
-        os.environ["OSCAP_PROBE_OS_NAME"] = platform.system()
-        os.environ["OSCAP_PROBE_OS_VERSION"] = platform.release()
-        name, conf = self._get_target_name_and_config(target)
-        os.environ["OSCAP_EVALUATION_TARGET"] = name
-        for var in config.get("Env", []):
-            vname, val = var.split("=", 1)
-            os.environ["OSCAP_OFFLINE_"+vname] = val
-        cmd = [self.oscap_binary] + [x for x in oscap_args]
-        oscap_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        oscap_stdout, oscap_stderr = oscap_process.communicate()
-        return OscapResult(oscap_process.returncode,
-                           oscap_stdout.decode("utf-8"), oscap_stderr.decode("utf-8"))
-
     def _scan_cve(self, chroot, target, dist, scan_args):
         '''
         Scan a chroot for cves
         '''
         cve_input = getInputCVE.dist_cve_name.format(dist)
-        tmp_tuple = ('oval', 'eval') + tuple(scan_args) + \
-            (os.path.join(self.cve_input_dir, cve_input),)
-        return self.oscap_chroot(chroot, target, *tmp_tuple)
+
+        args = ("oval", "eval")
+        for a in scan_args:
+            args += (a,)
+        args += (os.path.join(self.cve_input_dir, cve_input),)
+
+        name, conf = self._get_target_name_and_config(target)
+
+        return oscap_chroot(chroot, self.oscap_binary, args, name,
+                            conf.get("Env", []) or [])
 
     def _scan(self, chroot, target, scan_args):
         '''
         Scan a container or image
         '''
-        tmp_tuple = tuple(scan_args)
-        return self.oscap_chroot(chroot, target, *tmp_tuple)
+
+        name, conf = self._get_target_name_and_config(target)
+        return oscap_chroot(chroot, self.oscap_binary, scan_args, name,
+                            conf.get("Env", []) or [])
 
     def resolve_image(self, image):
         '''
@@ -209,7 +198,7 @@ def mount_image_filesystem():
     _tmp_mnt_dir = DM.mount(image)
 
 
-class OscapScan(object):
+class OscapAtomicScan(object):
     def __init__(self, tmp_dir=tempfile.gettempdir(), mnt_dir=None,
                  hours_old=2, oscap_binary=''):
         self.tmp_dir = tmp_dir
@@ -264,7 +253,8 @@ class OscapScan(object):
             chroot = self._find_chroot_path(_tmp_mnt_dir)
 
             # Figure out which RHEL dist is in the chroot
-            dist = self.helper._get_dist(chroot, image)
+            name, conf = self.helper._get_target_name_and_config(image)
+            dist = get_dist(chroot, self.helper.oscap_binary, conf.get("Env", []) or [])
 
             if dist is None:
                 sys.stderr.write("{0} is not based on RHEL\n".format(image))
