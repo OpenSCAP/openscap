@@ -986,7 +986,6 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	 * evaluated is not equal to the selected rule, do not evaluate it and
 	 * mark it as notselected. */
 	if (policy->rule != NULL) {
-		dI("Policy selects only 1 rule");
 		if (strcmp(policy->rule, rule_id) != 0) {
 			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 		}
@@ -1001,9 +1000,9 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	xccdf_role_t role = xccdf_get_final_role(rule, r_rule);
 
 	if (!is_selected) {
-		dI("Rule '%s' is not selected.", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 	}
+	dI("Evaluating XCCDF rule '%s'.", rule_id);
 
 	if (role == XCCDF_ROLE_UNCHECKED)
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
@@ -1131,14 +1130,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
     switch (itype) {
         case XCCDF_RULE:{
-			const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *)item);
-			dI("Evaluating XCCDF rule '%s'.", rule_id);
 			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result);
         } break;
 
         case XCCDF_GROUP:{
-			const char *group_id = xccdf_group_get_id((const struct xccdf_group *)item);
-			dI("Evaluating XCCDF group '%s'.", group_id);
 			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
 			while (xccdf_item_iterator_has_more(child_it)) {
 				child = xccdf_item_iterator_next(child_it);
