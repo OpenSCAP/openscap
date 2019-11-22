@@ -205,7 +205,7 @@ static int process_line_ip4(char *line, struct route_info *rt)
 #define TOK_flags  token[3]
 #define TOK_ifname token[0]
 
-    dI("name=%s, dst=%s, gw=%s, flags=%s", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
+    dD("name=%s, dst=%s, gw=%s, flags=%s", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
 
     if (proc_ip4_to_string(TOK_dst, strlen(TOK_dst), rt->ip_dst, sizeof rt->ip_dst) != 0 ||
         proc_ip4_to_string(TOK_gw, strlen(TOK_gw), rt->ip_gw, sizeof rt->ip_gw) != 0)
@@ -270,7 +270,7 @@ static int process_line_ip6(char *line, struct route_info *rt)
 #define TOK_flags  token[8]
 #define TOK_ifname token[9]
 
-    dI("name=%s, dst=%s, gw=%s, flags=%s", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
+    dD("name=%s, dst=%s, gw=%s, flags=%s", TOK_ifname, TOK_dst, TOK_gw, TOK_flags);
 
     if (proc_ip6_to_string(TOK_dst, strlen(TOK_dst), rt->ip_dst, sizeof rt->ip_dst) != 0 ||
         proc_ip6_to_string(TOK_gw, strlen(TOK_gw), rt->ip_gw, sizeof rt->ip_gw) != 0)

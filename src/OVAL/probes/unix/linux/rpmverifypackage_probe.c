@@ -339,7 +339,7 @@ void *rpmverifypackage_probe_init(void)
 	}
 
 	if (rpmReadConfigFiles (NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+		dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		g_rpm->rpm.rpmts = NULL;
 		return ((void *)g_rpm);
 	}
@@ -401,13 +401,13 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 NULL);
 
 	if (res->vflags & VERIFY_DEPS) {
-		dI("VERIFY_DEPS %lu", res->vresults & VERIFY_DEPS);
+		dD("VERIFY_DEPS %lu", res->vresults & VERIFY_DEPS);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DEPS ? "1" : "0"), 1);
 		probe_item_ent_add(item, "dependency_check_passed", NULL, value);
 		SEXP_free(value);
 	}
 	if (res->vflags & VERIFY_SCRIPT) {
-		dI("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
+		dD("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SCRIPT ? "1" : "0"), 1);
 		probe_item_ent_add(item, "verification_script_successful", NULL, value);
 		SEXP_free(value);
@@ -458,7 +458,7 @@ int rpmverifypackage_probe_main(probe_ctx *ctx, void *arg)
 
 			if (aval != NULL) {
 				if (SEXP_strcmp(aval, "true") == 0) {
-					dI("omit verify attr: %s", rpmverifypackage_bhmap[i].a_name);
+					dD("omit verify attr: %s", rpmverifypackage_bhmap[i].a_name);
 					collect_flags |= rpmverifypackage_bhmap[i].a_flag;
 				}
 

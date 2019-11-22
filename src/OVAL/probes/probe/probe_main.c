@@ -199,7 +199,7 @@ void *probe_common_main(void *arg)
 # endif
 #endif
 
-	dI("probe_common_main started");
+	dD("probe_common_main started");
 
 	const unsigned thread_count = 2; // input and icache threads
 	if ((errno = pthread_barrier_init(&OSCAP_GSYM(th_barrier), NULL, thread_count)) != 0) {

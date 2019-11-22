@@ -986,6 +986,7 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	 * evaluated is not equal to the selected rule, do not evaluate it and
 	 * mark it as notselected. */
 	if (policy->rule != NULL) {
+		dI("Policy selects only 1 rule");
 		if (strcmp(policy->rule, rule_id) != 0) {
 			return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 		}

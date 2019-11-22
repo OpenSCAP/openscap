@@ -99,7 +99,7 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 	/*
 	* Maybe a cache HIT
 	*/
-	dI("cache HIT #1");
+	dD("cache HIT #1");
 
 	register uint16_t i;
 	for (i = 0; i < cached->count; ++i) {
@@ -123,7 +123,7 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 		/*
 		* Cache MISS
 		*/
-		dI("cache MISS");
+		dD("cache MISS");
 
 		cached->item = realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
 		cached->item[cached->count - 1] = pair->p.item;
@@ -134,7 +134,7 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 		/*
 		* Cache HIT
 		*/
-		dI("cache HIT #2 -> real HIT");
+		dD("cache HIT #2 -> real HIT");
 		SEXP_free(pair->p.item);
 		pair->p.item = cached->item[i];
 	}
@@ -206,7 +206,7 @@ static void *probe_icache_worker(void *arg)
 				return NULL;
 			}
         do {
-                dI("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"", cache->queue_cnt, cache->queue_beg);
+                dD("Extracting item from the cache queue: cnt=%"PRIu16", beg=%"PRIu16"", cache->queue_cnt, cache->queue_beg);
                 /*
                  * Extract an item from the queue and update queue beg, end & cnt
                  */
@@ -274,7 +274,7 @@ static void *probe_icache_worker(void *arg)
                                 /*
                                  * Cache MISS
                                  */
-                                dI("cache MISS");
+                                dD("cache MISS");
                                 icache_add_to_tree(cache->tree, item_ID, pair);
                         }
 

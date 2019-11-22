@@ -437,7 +437,7 @@ SEXP_t *probe_obj_getent(const SEXP_t * obj, const char *name, uint32_t n)
 #if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
 			char buf[128];
 			SEXP_string_cstr_r(ent_name, buf, sizeof buf);
-			dI("1=\"%s\", 2=\"%s\", n=%u", buf, name, n);
+			dD("1=\"%s\", 2=\"%s\", n=%u", buf, name, n);
 #endif
 
 			if (SEXP_strcmp(ent_name, name) == 0 && (--n == 0)) {

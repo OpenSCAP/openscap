@@ -202,7 +202,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 	tmp = NULL;
 
 	while ((tok = strsep (&copy, ";")) != NULL) {
-		dI("tok: '%s'.", tok);
+		dD("tok: '%s'.", tok);
 		switch (tolower(*tok)) {
 			matchitem1(tok, 's',
 				  "erver", info->host); break;

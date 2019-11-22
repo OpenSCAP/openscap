@@ -72,7 +72,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
 }
 
 int read_sysinfo(probe_ctx *ctx) {
-	dI("In read_sysinfo for isainfo probe");
+	dD("In read_sysinfo for isainfo probe");
 
 	int err = 1;
 	int ret = 0;

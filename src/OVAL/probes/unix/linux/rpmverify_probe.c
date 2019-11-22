@@ -231,7 +231,7 @@ void *rpmverify_probe_init(void)
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-                dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+                dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
         }
 	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
@@ -383,7 +383,7 @@ int rpmverify_probe_main(probe_ctx *ctx, void *arg)
 
                         if (aval != NULL) {
                                 if (SEXP_strcmp(aval, "true") == 0) {
-                                        dI("omit verify attr: %s", rpmverify_bhmap[i].a_name);
+                                        dD("omit verify attr: %s", rpmverify_bhmap[i].a_name);
                                         collect_flags |= rpmverify_bhmap[i].a_flag;
                                 }
 

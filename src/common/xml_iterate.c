@@ -84,7 +84,7 @@ int xml_iterate_dfs(const char *input_text, char **output_text, xml_iterate_call
 				dE("xmlNodeDump failed!");
 			}
 			else if (size == 0) {
-				dI("xmlNodeDump returned zero.");
+				dD("xmlNodeDump returned zero.");
 			}
 
 			child = child->next;

@@ -176,7 +176,7 @@ void *probe_init (void)
         case 0:
                 return ((void *)&__filemd5_probe_mutex);
         default:
-                dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
+                dD("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
 
         return (NULL);
@@ -233,7 +233,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
         case 0:
                 break;
         default:
-                dI("Can't lock mutex(%p): %u, %s.", &__filemd5_probe_mutex, errno, strerror (errno));
+                dD("Can't lock mutex(%p): %u, %s.", &__filemd5_probe_mutex, errno, strerror (errno));
 
 		SEXP_free (behaviors);
 		SEXP_free (path);
@@ -261,7 +261,7 @@ int probe_main (SEXP_t *probe_in, SEXP_t *probe_out, void *mutex, SEXP_t *filter
         case 0:
                 break;
         default:
-                dI("Can't unlock mutex(%p): %u, %s.", &__filemd5_probe_mutex, errno, strerror (errno));
+                dD("Can't unlock mutex(%p): %u, %s.", &__filemd5_probe_mutex, errno, strerror (errno));
 
 		return (PROBE_EFATAL);
         }
