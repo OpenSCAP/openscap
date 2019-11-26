@@ -420,6 +420,13 @@ static int callback_scr_result_progress(struct xccdf_rule_result *rule_result, v
 	return 0;
 }
 
+static int callback_scr_multicheck(struct oval_definition *definition, void *arg)
+{
+	printf("OVAL Definition ID\t%s\n", oval_definition_get_id(definition));
+	printf("OVAL Definition Title\t%s\n", oval_definition_get_title(definition));
+	return 0;
+}
+
 /*
  * Send XCCDF Rule Results info message to syslog
  *
@@ -462,6 +469,7 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
 				(void *) xccdf_session_get_xccdf_policy(session));
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+		xccdf_policy_model_register_multicheck_callback(policy_model, callback_scr_multicheck, NULL);
 	}
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }

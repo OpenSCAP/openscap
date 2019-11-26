@@ -17,11 +17,11 @@
 	</generator>
 	<definitions>
 		<definition class="compliance" id="oval:moc.elpmaxe.www:def:1" version="1">
-			<metadata><title>PASS</title><description>Bla.</description></metadata>
+			<metadata><title>DEFINITION_1_TITLE_EXPECTED_PASS</title><description>Bla.</description></metadata>
 			<criteria><criterion test_ref="oval:moc.elpmaxe.www:tst:1" comment="Is executable"/></criteria>
 		</definition>
 		<definition class="compliance" id="oval:moc.elpmaxe.www:def:2" version="1">
-			<metadata><title>FAIL</title><description>Bla.</description></metadata>
+			<metadata><title>DEFINITION_2_TITLE_EXPECTED_FAIL</title><description>Bla.</description></metadata>
 			<criteria><criterion test_ref="oval:moc.elpmaxe.www:tst:2" comment="Is not executable"/></criteria>
 		</definition>
 	</definitions>

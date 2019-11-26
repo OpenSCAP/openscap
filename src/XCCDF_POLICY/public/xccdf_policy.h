@@ -36,6 +36,7 @@
 #include <time.h>
 #include <oscap.h>
 #include "oscap_export.h"
+#include "oval_definitions.h"
 
 /**
  * @struct xccdf_policy_model
@@ -70,6 +71,7 @@ struct xccdf_policy_iterator;
  */
 typedef enum {
 	POLICY_ENGINE_QUERY_NAMES_FOR_HREF = 1,		/// Considering xccdf:check-content-ref, what are possible @name attributes for given href?
+	POLICY_ENGINE_QUERY_OVAL_DEFS_FOR_HREF = 2,	/// Considering xccdf:check-content-ref, what are OVAL definitions for given href?
 } xccdf_policy_engine_query_t;
 
 /**
@@ -81,9 +83,11 @@ typedef enum {
  * is always user data as registered. Second argument defines the query. Third argument is
  * dependent on query and defined as follows:
  *  - (const char *)href -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
+ *  - (const char *)href -- for POLICY_ENGINE_QUERY_OVAL_DEFS_FOR_HREF
  *
  * Expected return type depends also on query as follows:
- *  - (struct oscap_stringlists *) -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
+ *  - (struct oscap_stringlist *) -- for POLICY_ENGINE_QUERY_NAMES_FOR_HREF
+ *  - (struct oscap_list *) -- for POLICY_ENGINE_QUERY_OVAL_DEFS_FOR_HREF
  *  - NULL shall be returned if the function doesn't understand the query.
  */
 typedef void *(*xccdf_policy_engine_query_fn) (void *, xccdf_policy_engine_query_t, void *);
@@ -258,6 +262,18 @@ typedef int (*policy_reporter_start)(struct xccdf_rule *, void *);
  * @return true if callback registered succesfully, false otherwise
  */
 OSCAP_API bool xccdf_policy_model_register_start_callback(struct xccdf_policy_model * model, policy_reporter_start func, void * usr);
+
+typedef int (*policy_reporter_multicheck)(struct oval_definition*, void *);
+/**
+ * Function to register callback for checking system that will be called
+ * DURING each rule evaluation if rule sets multi-check="true".
+ * @param model XCCDF Policy Model
+ * @param func Callback - pointer to function called by XCCDF Policy system when rule parsed
+ * @param usr optional parameter for passing user data to callback
+ * @memberof xccdf_policy_model
+ * @return true if callback registered successfully, false otherwise
+ */
+OSCAP_API bool xccdf_policy_model_register_multicheck_callback(struct xccdf_policy_model *model, policy_reporter_multicheck func, void *usr);
 
 /************************************************************/
 /**
