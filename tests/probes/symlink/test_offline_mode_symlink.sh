@@ -36,7 +36,7 @@ function test_offline_mode_symlink {
     ln -s ../../../../../file_in_root $tmpdir/path_traversal_symlink
     ln -s ./some_file $tmpdir/symlink_with_period_in_path
     touch /tmp/symlinktarget
-    ln -s /tmp/symlinktest /tmp/symlinktarget
+    ln -s /tmp/symlinktarget /tmp/symlinktest
 
 
 
