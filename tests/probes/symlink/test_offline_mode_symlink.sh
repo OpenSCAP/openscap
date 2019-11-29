@@ -13,11 +13,11 @@ function test_offline_mode_symlink {
     probecheck "symlink" || return 255
 
     DF="test_offline_mode_symlink.xml"
-    RF="results.xml"
+    RF="offline_mode_results.xml"
 
     rm -f $RF
 
-    tmpdir=$(mktemp -t -d "test_symlink.XXXXXX")
+    tmpdir=$(mktemp -t -d "test_offline_mode_symlink.XXXXXX")
     touch $tmpdir/some_file
     touch $tmpdir/file_to_remove
     ln -s /some_file $tmpdir/normal_symlink
@@ -46,6 +46,11 @@ function test_offline_mode_symlink {
 
     result=$RF
 
+    rm -f $DF
+    rm -f /tmp/symlinktest
+    rm -f /tmp/symlinktarget
+    rm -rf $tmpdir
+
     p='oval_results/results/system/oval_system_characteristics/'
     assert_exists 12 $p'collected_objects/object'
     assert_exists 6 $p'collected_objects/object[@flag="complete"]'
@@ -68,11 +73,8 @@ function test_offline_mode_symlink {
     assert_exists 3 $p'collected_objects/object[@flag="does not exist"]'
     assert_exists 6 $p'collected_objects/object/message'
 
-    rm -rf $tmpdir
     rm -f $RF
-    rm -f $DF
-    rm -f /tmp/symlinktest
-    rm -f /tmp/symlinktarget
+
 }
 
 test_init "test_offline_mode_symlink.log"
