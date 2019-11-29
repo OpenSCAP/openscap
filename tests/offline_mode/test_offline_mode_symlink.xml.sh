@@ -18,18 +18,18 @@ cat <<EOF
         </affected>
       </metadata>
       <criteria>
-          <criterion test_ref="oval:x:tst:1" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:2" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:3" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:4" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:5" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:6" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:7" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:8" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:9" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:10" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:11" comment="always pass"/>
-          <criterion test_ref="oval:x:tst:12" comment="always pass"/>
+          <criterion test_ref="oval:x:tst:1" comment="correct symlink"/>
+          <criterion test_ref="oval:x:tst:2" comment="points to a broken symlink, target deleted"/>
+          <criterion test_ref="oval:x:tst:3" comment="points to nonexisting file, not a symlink"/>
+          <criterion test_ref="oval:x:tst:4" comment="is a regular file, not a symlink"/>
+          <criterion test_ref="oval:x:tst:5" comment="circular symlink"/>
+          <criterion test_ref="oval:x:tst:6" comment="two chained symlinks pointing to an existing file"/>
+          <criterion test_ref="oval:x:tst:7" comment="symlink to an existing file, but the file name is well-known and should produce error if ran outside the container"/>
+          <criterion test_ref="oval:x:tst:8" comment="valid symlink with relative path"/>
+          <criterion test_ref="oval:x:tst:9" comment="broken symlink with relative path"/>
+          <criterion test_ref="oval:x:tst:10" comment="valid symlink with lots of .. in the path, tests if we can't get out of the container"/>
+          <criterion test_ref="oval:x:tst:11" comment="symlink with . in the path"/>
+          <criterion test_ref="oval:x:tst:12" comment="tests for a symlink which exists only outside the container"/>
       </criteria>
     </definition>
   </definitions>
