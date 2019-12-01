@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
 
 RPM_A_NAME=$1
-RPM_B_NAME=$2
+RPM_A_ARCH=$2
+RPM_A_VERSION=$3
+RPM_A_RELEASE=$4
 
-RPM_A_ARCH=`rpm --qf "%{ARCH}" -q $RPM_A_NAME`
-RPM_B_ARCH=`rpm --qf "%{ARCH}" -q $RPM_B_NAME`
-
-RPM_A_VERSION=`rpm --qf "%{VERSION}" -q $RPM_A_NAME`
-RPM_B_VERSION=`rpm --qf "%{VERSION}" -q $RPM_B_NAME`
-
-RPM_A_RELEASE=`rpm --qf "%{RELEASE}" -q $RPM_A_NAME`
-RPM_B_RELEASE=`rpm --qf "%{RELEASE}" -q $RPM_B_NAME`
+RPM_B_NAME=$5
+RPM_B_ARCH=$6
+RPM_B_VERSION=$7
+RPM_B_RELEASE=$8
 
 cat <<EOF
 <?xml version="1.0"?>
