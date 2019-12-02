@@ -982,12 +982,16 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 	 */
 	rootdir = getenv("OSCAP_PROBE_ROOT");
 	if ((rootdir != NULL) && (strlen(rootdir) > 0)) {
-		probe->offline_mode = true;
-
 		preload_libraries_before_chroot(); // todo - maybe useless for own mode
 
-		if (probe->supported_offline_mode & PROBE_OFFLINE_OWN) {
+		if (probe->supported_offline_mode == PROBE_OFFLINE_NONE) {
+			dW("Requested offline mode is not supported by %s probe.", oval_subtype_get_text(probe->subtype));
+			*ret = 0;
+			return probe_cobj_new(SYSCHAR_FLAG_NOT_APPLICABLE, NULL, NULL, NULL);
+
+		} else if (probe->supported_offline_mode & PROBE_OFFLINE_OWN) {
 			dI("Switching probe to PROBE_OFFLINE_OWN mode.");
+			probe->offline_mode = true;
 			probe->selected_offline_mode = PROBE_OFFLINE_OWN;
 
 		} else if (probe->supported_offline_mode & PROBE_OFFLINE_CHROOT) {
@@ -1008,12 +1012,14 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			 * mechanism to control this behaviour in the future.
 			 */
 			dI("Switching probe to PROBE_OFFLINE_CHROOT mode.");
+			probe->offline_mode = true;
 			probe->selected_offline_mode = PROBE_OFFLINE_CHROOT;
 		}
 	}
 
 	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
 		dI("Switching probe to PROBE_OFFLINE_RPMDB mode.");
+		probe->offline_mode = true;
 		probe->selected_offline_mode = PROBE_OFFLINE_RPMDB;
 	}
 #endif
