@@ -25,6 +25,8 @@
 #endif
 
 #include "_seap.h"
+#include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
@@ -40,6 +42,29 @@
 
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);
+
+
+static int fail(int err, const char *who, int line)
+{
+	fprintf(stderr, "FAIL: %d:%s: %d, %s\n", line, who, err, strerror(err));
+	exit(err);
+}
+
+// Dummy pthread routine
+static void *dummy_routine(void *dummy_param)
+{
+	return NULL;
+}
+
+static void preload_libraries_before_chroot()
+{
+	// Force to load dynamic libraries used by pthread_cancel
+	pthread_t t;
+	if (pthread_create(&t, NULL, dummy_routine, NULL))
+		fail(errno, "pthread_create(probe_preload)", __LINE__ - 1);
+	pthread_cancel(t);
+	pthread_join(t, NULL);
+}
 
 void *probe_worker_runfn(void *arg)
 {
@@ -945,6 +970,54 @@ static SEXP_t *probe_set_eval(probe_t *probe, SEXP_t *set, size_t depth)
  */
 SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 {
+#ifndef OS_WINDOWS
+	char *rootdir = NULL;
+	probe_offline_mode_function_t offline_mode_function = probe_table_get_offline_mode_function(probe->subtype);
+	if (offline_mode_function != NULL) {
+		probe->supported_offline_mode = offline_mode_function();
+	}
+
+	/*
+	 * Setup offline mode(s)
+	 */
+	rootdir = getenv("OSCAP_PROBE_ROOT");
+	if ((rootdir != NULL) && (strlen(rootdir) > 0)) {
+		probe->offline_mode = true;
+
+		preload_libraries_before_chroot(); // todo - maybe useless for own mode
+
+		if (probe->supported_offline_mode & PROBE_OFFLINE_OWN) {
+			dI("Switching probe to PROBE_OFFLINE_OWN mode.");
+			probe->selected_offline_mode = PROBE_OFFLINE_OWN;
+
+		} else if (probe->supported_offline_mode & PROBE_OFFLINE_CHROOT) {
+			probe->real_root_fd = open("/", O_RDONLY);
+			probe->real_cwd_fd = open(".", O_RDONLY);
+			if (chdir(rootdir) != 0) {
+				fail(errno, "chdir", __LINE__ -1);
+			}
+
+			if (chroot(rootdir) != 0) {
+				fail(errno, "chroot", __LINE__ - 1);
+			}
+			/* NOTE: We're running in a different root directory.
+			 * Unless /proc, /sys are somehow emulated for the new
+			 * environment, they are not relevant and so are other
+			 * runtime only things (e.g. getenv, uname, ...).
+			 * Switch to offline mode. We may add a separate
+			 * mechanism to control this behaviour in the future.
+			 */
+			dI("Switching probe to PROBE_OFFLINE_CHROOT mode.");
+			probe->selected_offline_mode = PROBE_OFFLINE_CHROOT;
+		}
+	}
+
+	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
+		dI("Switching probe to PROBE_OFFLINE_RPMDB mode.");
+		probe->selected_offline_mode = PROBE_OFFLINE_RPMDB;
+	}
+#endif
+
 	SEXP_t *probe_in, *probe_out, *set;
 
 	if (msg_in == NULL) {
