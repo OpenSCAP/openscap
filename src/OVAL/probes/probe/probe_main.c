@@ -158,7 +158,6 @@ static void probe_common_main_cleanup(void *arg)
 	rbt_i32_free(probe->workers);
 	SEAP_CTX_free(probe->SEAP_ctx);
 	free(probe->option);
-	free(probe->name);
 
 	dD("probe_common_main_cleanup finished");
 }
@@ -193,7 +192,6 @@ void *probe_common_main(void *arg)
 	probe.selected_offline_mode = PROBE_OFFLINE_NONE;
 	probe.flags = 0;
 	probe.pid   = getpid();
-	probe.name = (char *) arg;
         probe.probe_exitcode = 0;
 
 	/*

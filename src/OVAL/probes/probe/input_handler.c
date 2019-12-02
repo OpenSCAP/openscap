@@ -124,7 +124,7 @@ void *probe_input_handler(void *arg)
 			SEXP_VALIDATE(oid);
 
 			if (probe->offline_mode && probe->supported_offline_mode == PROBE_OFFLINE_NONE) {
-				dW("Requested offline mode is not supported by %s.", probe->name);
+				dW("Requested offline mode is not supported by %s probe.", oval_subtype_get_text(probe->subtype));
 				/* Return a dummy. */
 				probe_out = probe_cobj_new(SYSCHAR_FLAG_NOT_APPLICABLE, NULL, NULL, NULL);
 				probe_ret = 0;
