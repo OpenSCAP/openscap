@@ -1,3 +1,5 @@
 if(ENABLE_PROBES_UNIX)
 	add_oscap_test("all.sh")
+	add_oscap_test("test_offline_mode_symlink.sh")
+	set_tests_properties("probes/symlink/test_offline_mode_symlink.sh" PROPERTIES WILL_FAIL true)
 endif()
