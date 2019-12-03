@@ -35,7 +35,10 @@ function test_offline_mode_symlink {
     touch $tmpdir/file_in_root
     ln -s ../../../../../file_in_root $tmpdir/path_traversal_symlink
     ln -s ./some_file $tmpdir/symlink_with_dot_in_path
+#temporary ugly solution trying to ensure that files don't exist before being created
+    rm -f /tmp/symlinktarget
     touch /tmp/symlinktarget
+    rm -f /tmp/symlinktest
     ln -s /tmp/symlinktarget /tmp/symlinktest
 
 
