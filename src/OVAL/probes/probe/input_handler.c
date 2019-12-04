@@ -128,7 +128,7 @@ void *probe_input_handler(void *arg)
 				SEXP_t *skip_flag, *obj_mask;
 
 				skip_flag = probe_obj_getattrval(probe_in, "skip_eval");
-								obj_mask  = probe_obj_getmask(probe_in);
+				obj_mask = probe_obj_getmask(probe_in);
 				SEXP_free(probe_in);
 				probe_in = NULL;
 
@@ -145,8 +145,8 @@ void *probe_input_handler(void *arg)
 
 					probe_ret = 0;
 					SEXP_free(oid);
-										SEXP_free(skip_flag);
-										SEXP_free(obj_mask);
+					SEXP_free(skip_flag);
+					SEXP_free(obj_mask);
 				} else {
 
 					SEXP_free(oid);
@@ -155,7 +155,7 @@ void *probe_input_handler(void *arg)
 
 					probe_pwpair_t *pair = malloc(sizeof(probe_pwpair_t));
 					pair->probe = probe;
-					pair->pth   = probe_worker_new();
+					pair->pth = probe_worker_new();
 					pair->pth->sid = SEAP_msg_id(seap_request);
 					pair->pth->msg = seap_request;
 					pair->pth->msg_handler = &probe_worker;
