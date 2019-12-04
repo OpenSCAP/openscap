@@ -43,13 +43,6 @@
 extern bool  OSCAP_GSYM(varref_handling);
 extern void *OSCAP_GSYM(probe_arg);
 
-
-static int fail(int err, const char *who, int line)
-{
-	fprintf(stderr, "FAIL: %d:%s: %d, %s\n", line, who, err, strerror(err));
-	exit(err);
-}
-
 // Dummy pthread routine
 static void *dummy_routine(void *dummy_param)
 {
@@ -60,8 +53,9 @@ static void preload_libraries_before_chroot()
 {
 	// Force to load dynamic libraries used by pthread_cancel
 	pthread_t t;
-	if (pthread_create(&t, NULL, dummy_routine, NULL))
-		fail(errno, "pthread_create(probe_preload)", __LINE__ - 1);
+	if (pthread_create(&t, NULL, dummy_routine, NULL)) {
+		dE("pthread_create failed: %s", strerror(errno));
+	}
 	pthread_cancel(t);
 	pthread_join(t, NULL);
 }
@@ -998,11 +992,11 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			probe->real_root_fd = open("/", O_RDONLY);
 			probe->real_cwd_fd = open(".", O_RDONLY);
 			if (chdir(rootdir) != 0) {
-				fail(errno, "chdir", __LINE__ -1);
+				dE("chdir failed: %s", strerror(errno));
 			}
 
 			if (chroot(rootdir) != 0) {
-				fail(errno, "chroot", __LINE__ - 1);
+				dE("chroot failed: %s", strerror(errno));
 			}
 			/* NOTE: We're running in a different root directory.
 			 * Unless /proc, /sys are somehow emulated for the new
