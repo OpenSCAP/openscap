@@ -45,7 +45,12 @@ function test_offline_mode_symlink {
 
     bash ${srcdir}/test_offline_mode_symlink.xml.sh "" > "$DF"
     export OSCAP_PROBE_ROOT="$tmpdir"
-    $OSCAP oval eval --results $RF $DF
+    if test -x "$OSCAP_CHROOTABLE_EXEC"; then
+	    $OSCAP_CHROOTABLE oval eval --results $RF $DF
+    else
+	    echo "Skipping test '${FUNCNAME[0]}' as '$OSCAP_CHROOTABLE_EXEC' oscap with chroot capability doesn't exist."
+	    return
+    fi
 
     result=$RF
 

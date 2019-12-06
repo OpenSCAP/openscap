@@ -29,6 +29,8 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     else
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash @CMAKE_BINARY_DIR@/run @CMAKE_BINARY_DIR@/utils/oscap"
     fi
+    [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE_EXEC="@CMAKE_BINARY_DIR@/utils/oscap-chrootable"
+    [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE="bash @CMAKE_BINARY_DIR@/run $OSCAP_CHROOTABLE_EXEC"
 else
     export OSCAP=${CUSTOM_OSCAP}
 fi

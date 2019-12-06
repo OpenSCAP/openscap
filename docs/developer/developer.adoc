@@ -169,7 +169,21 @@ It's also possible to use `ctest` to test any other oscap binary present in the 
 $ export CUSTOM_OSCAP=/usr/bin/oscap; ctest
 ----
 
-Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
+Some tests that use the so-called offline mode of probes need to chroot during the test execution.
+Some of those probes use the chroot syscall, which an unprivileged process is not allowed to do.
+This is not a problem during the scanning itself, as oscap is usually scanning as root.
+However, we don't want to run oscap as root during tests, as the whole test suite would have to use root privileges to clean up.
+
+Instead, build the `oscap-chrootable` target as superuser.
+This target creates the chroot-enabled binary that the test suite will use for some of those offline tests.
+Internally, the binary is stored under `OSCAP_CHROOTABLE_EXEC` variable, and the invocation suitable for tests can be done using by unquoted expansion of the `OSCAP_CHROOTABLE` variable.
+Therefore, it is recommended to run
+
+----
+$ sudo make oscap-chrootable
+----
+
+Not every check tests the oscap tool, however, when the `CUSTOM_OSCAP` variable is set, only the checks which do are executed.
 
 To enable the MITRE tests, use the `ENABLE_MITRE` flag:
 
