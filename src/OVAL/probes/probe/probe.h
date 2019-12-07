@@ -47,7 +47,6 @@ typedef struct {
 	pthread_rwlock_t rwlock;
 	uint32_t         flags;
 
-	char       *name;
 	pid_t       pid;
 
         void       *probe_arg;
