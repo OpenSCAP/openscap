@@ -44,8 +44,12 @@ function test_offline_mode_symlink {
 
 
     bash ${srcdir}/test_offline_mode_symlink.xml.sh "" > "$DF"
-    export OSCAP_PROBE_ROOT="$tmpdir"
+
+    set_chroot_offline_test_mode "$tmpdir"
+
     $OSCAP oval eval --results $RF $DF
+
+    unset_chroot_offline_test_mode
 
     result=$RF
 

@@ -33,6 +33,18 @@ if(ENABLE_OSCAP_UTIL)
 			DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 		)
 	endif()
+
+	add_custom_target(oscap-chrootable-nocap
+		COMMAND cp oscap oscap-chrootable
+		COMMENT "Copying oscap binary to a buddy binary that awaits chroot blessing by setcap"
+		DEPENDS oscap
+	)
+
+	add_custom_target(oscap-chrootable
+		COMMAND setcap cap_sys_chroot+ep oscap-chrootable
+		COMMENT "Generating chroot-capable oscap buddy"
+		DEPENDS oscap-chrootable
+	)
 endif()
 if(ENABLE_OSCAP_UTIL_CHROOT)
 	install(PROGRAMS "oscap-chroot"
@@ -49,7 +61,7 @@ if(ENABLE_OSCAP_UTIL_DOCKER)
 		DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
 		FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 	)
-	
+
 	if(NOT PYTHON_SITE_PACKAGES_INSTALL_DIR)
 	execute_process(COMMAND
 		${OSCAP_DOCKER_PYTHON} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib(False, False, prefix='${CMAKE_INSTALL_PREFIX}'))"
@@ -57,7 +69,7 @@ if(ENABLE_OSCAP_UTIL_DOCKER)
 		OUTPUT_STRIP_TRAILING_WHITESPACE
 	)
 	endif()
-	
+
 	install(DIRECTORY oscap_docker_python
 		DESTINATION ${PYTHON_SITE_PACKAGES_INSTALL_DIR}
 	)
