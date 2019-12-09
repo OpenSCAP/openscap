@@ -44,13 +44,12 @@ function test_offline_mode_symlink {
 
 
     bash ${srcdir}/test_offline_mode_symlink.xml.sh "" > "$DF"
-    export OSCAP_PROBE_ROOT="$tmpdir"
-    if test -x "$OSCAP_CHROOTABLE_EXEC"; then
-	    $OSCAP_CHROOTABLE oval eval --results $RF $DF
-    else
-	    echo "Skipping test '${FUNCNAME[0]}' as '$OSCAP_CHROOTABLE_EXEC' oscap with chroot capability doesn't exist."
-	    return
-    fi
+
+    set_chroot_offline_test_mode "$tmpdir"
+
+    $OSCAP oval eval --results $RF $DF
+
+    unset_chroot_offline_test_mode
 
     result=$RF
 

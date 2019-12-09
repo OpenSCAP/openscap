@@ -174,9 +174,9 @@ Some of those probes use the chroot syscall, which an unprivileged process is no
 This is not a problem during the scanning itself, as oscap is usually scanning as root.
 However, we don't want to run oscap as root during tests, as the whole test suite would have to use root privileges to clean up.
 
-Instead, build the `oscap-chrootable` target as superuser.
-This target creates the chroot-enabled binary that the test suite will use for some of those offline tests.
-Internally, the binary is stored under `OSCAP_CHROOTABLE_EXEC` variable, and the invocation suitable for tests can be done using by unquoted expansion of the `OSCAP_CHROOTABLE` variable.
+Instead, build the `oscap-chrootable` target as superuser, or build `oscap-chrootable-nocap` first and then grant the capability manually.
+This target creates the binary that the test suite will use for some of those offline tests.
+In offline tests, use the `set_offline_test_mode [chroot directory]` and `unset_offline_test_mode` functions from the common test module - those will set variables in such way that the unquoted `$OSCAP` invocation will use the chroot-capable binary, or it will exit with an error code, aborting the test.
 Therefore, it is recommended to run
 
 ----
