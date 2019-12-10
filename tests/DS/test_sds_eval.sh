@@ -99,6 +99,15 @@ function test_eval_complex()
 	rm $arf
 }
 
+function test_eval_depends {
+    # only run test if dependency file exists
+    if [ -f "$2" ]; then
+        return test_eval $1
+    else
+        return 255
+    fi
+}
+
 function test_oval_eval {
 
     $OSCAP oval eval "${srcdir}/$1"
@@ -162,7 +171,6 @@ test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_ext
 test_run "sds_tailoring" test_sds_tailoring sds_tailoring sds_tailoring/sds.ds.xml scap_com.example_datastream_with_tailoring xccdf_com.example_cref_tailoring_01 xccdf_com.example_profile_tailoring
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
-test_run "cpe_in_ds" test_eval cpe_in_ds/sds.xml
 test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
 test_run "eval_invalid_oval" test_invalid_oval_eval eval_invalid/sds-oval.xml
 test_run "eval_xccdf_id1" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_first-xccdf.xml first
@@ -176,5 +184,6 @@ test_run "eval_oval_id2" test_oval_eval_id eval_oval_id/sds.xml scap_org.open-sc
 test_run "eval_cpe" test_eval_cpe eval_cpe/sds.xml
 
 test_run "test_eval_complex" test_eval_complex
+test_run "cpe_in_ds" test_eval_depends cpe_in_ds/sds.xml /etc/sysconfig/prelink
 
 test_exit

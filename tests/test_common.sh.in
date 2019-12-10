@@ -131,6 +131,42 @@ function probecheck {
     return 0
 }
 
+# Check for package names and return a version number
+function package_version {
+    # loop through multiple potential package names
+    # return first version number found
+    for package in $@; do
+        ver=""
+
+        # check rpm for package version first
+        if [ -f "/usr/bin/rpm" ]; then
+            ver=$(rpm -q $package --qf="%{version}" 2> /dev/null)
+
+            # rpm returns error messages on stdout, check return code
+            if [ ! "$?" -eq "0" ]; then
+                ver=""
+            fi
+        fi
+
+        # fall back to dpkg for debian systems
+        if [ "${ver}" == "" ] && [ -f "/usr/bin/dpkg-query" ]; then
+            # for Debian-based systems, return the upstream version
+            ver="$(dpkg-query -f '${source:Upstream-Version}' -W $package 2> /dev/null)"
+        fi
+
+        # return the first match found
+        if [ "${ver}" != "" ]; then
+            echo "${ver}"
+            return 0
+        fi
+    done
+
+    # package not found
+    if [ "${ver}" == "" ]; then
+        return 255
+    fi
+}
+
 function verify_results {
 
     require "grep" || return 255
