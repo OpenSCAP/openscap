@@ -1010,12 +1010,6 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 			probe->selected_offline_mode = PROBE_OFFLINE_CHROOT;
 		}
 	}
-
-	if (getenv("OSCAP_PROBE_RPMDB_PATH") != NULL) {
-		dI("Switching probe to PROBE_OFFLINE_RPMDB mode.");
-		probe->offline_mode = true;
-		probe->selected_offline_mode = PROBE_OFFLINE_RPMDB;
-	}
 #endif
 
 	SEXP_t *probe_in, *probe_out, *set;

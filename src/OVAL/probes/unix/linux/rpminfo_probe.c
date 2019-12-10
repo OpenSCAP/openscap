@@ -272,7 +272,7 @@ ret:
 
 int rpminfo_probe_offline_mode_supported()
 {
-	return PROBE_OFFLINE_CHROOT | PROBE_OFFLINE_RPMDB;
+	return PROBE_OFFLINE_CHROOT;
 }
 
 void *rpminfo_probe_init(void)
@@ -289,11 +289,6 @@ void *rpminfo_probe_init(void)
 
 	g_rpm->rpmts = rpmtsCreate();
 	pthread_mutex_init (&(g_rpm->mutex), NULL);
-
-	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
-	if (dbpath) {
-		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
-	}
 
 	return ((void *)g_rpm);
 }
