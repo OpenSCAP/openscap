@@ -32,19 +32,18 @@ if(ENABLE_OSCAP_UTIL)
 		install(FILES "oscap.8"
 			DESTINATION "${CMAKE_INSTALL_MANDIR}/man8"
 		)
+
+		add_custom_target(oscap-chrootable-nocap
+			COMMAND cp oscap oscap-chrootable
+			COMMENT "Copying oscap binary to a buddy binary that awaits chroot blessing by setcap"
+			DEPENDS oscap
+		)
+		add_custom_target(oscap-chrootable
+			COMMAND setcap cap_sys_chroot+ep oscap-chrootable
+			COMMENT "Generating chroot-capable oscap buddy"
+			DEPENDS oscap-chrootable-nocap
+		)
 	endif()
-
-	add_custom_target(oscap-chrootable-nocap
-		COMMAND cp oscap oscap-chrootable
-		COMMENT "Copying oscap binary to a buddy binary that awaits chroot blessing by setcap"
-		DEPENDS oscap
-	)
-
-	add_custom_target(oscap-chrootable
-		COMMAND setcap cap_sys_chroot+ep oscap-chrootable
-		COMMENT "Generating chroot-capable oscap buddy"
-		DEPENDS oscap-chrootable
-	)
 endif()
 if(ENABLE_OSCAP_UTIL_CHROOT)
 	install(PROGRAMS "oscap-chroot"
