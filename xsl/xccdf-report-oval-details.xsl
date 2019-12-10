@@ -26,13 +26,15 @@ Authors:
 <xsl:stylesheet version="1.1"
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:ovaldef="http://oval.mitre.org/XMLSchema/oval-definitions-5"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:ovalsys="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5"
     xmlns:ovalunixsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#unix"
     xmlns:ovalindsc="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent"
     exclude-result-prefixes="xsl ovalres ovalsys ovalunixsc ovalindsc">
 
-<xsl:key name='oval-definition' match='ovalres:definition'    use='@definition_id' />
+<xsl:key name='ovaldef-definition' match='ovaldef:definition' use='@id' />
+<xsl:key name='ovalres-definition' match='ovalres:definition' use='@definition_id' />
 <xsl:key name='oval-test'       match='ovalres:test'          use='@test_id'       />
 <xsl:key name='oval-items'      match='ovalsys:system_data/*' use='@id'            />
 
@@ -44,11 +46,11 @@ Authors:
 
 <xsl:template mode='brief' match='ovalres:oval_results'>
     <xsl:param name='definition-id' />
-    <xsl:apply-templates select='key("oval-definition", $definition-id)' mode='brief' />
+    <xsl:apply-templates select='key("ovalres-definition", $definition-id)' mode='brief' />
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:extend_definition'>
-    <xsl:apply-templates select='key("oval-definition", @definition_ref)' mode='brief' />
+    <xsl:apply-templates select='key("ovalres-definition", @definition_ref)' mode='brief' />
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:criterion'>
@@ -63,6 +65,30 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
+    <xsl:variable name="definition" select="key('ovaldef-definition', ./@definition_id)" />
+    <xsl:variable name="title" select="$definition/ovaldef:metadata/ovaldef:title/text()" />
+    <h4>
+        <xsl:if test='$title'>
+            <span class="label label-primary">
+                 <xsl:value-of select='$title'/>
+            </span><!-- #160 is nbsp -->&#160;
+        </xsl:if>
+        <span class="label label-default">
+            <xsl:value-of select="$definition/@id"/>
+        </span><!-- #160 is nbsp -->&#160;
+        <xsl:choose>
+            <xsl:when test="@result='true'">
+                <span class="label label-success">
+                    <xsl:value-of select="@result"/>
+                </span>
+            </xsl:when>
+            <xsl:otherwise>
+                <span class="label label-danger">
+                    <xsl:value-of select="@result"/>
+                </span>
+            </xsl:otherwise>
+        </xsl:choose>
+    </h4>
     <xsl:apply-templates mode='brief' select="ovalres:criteria" />
 </xsl:template>
 
