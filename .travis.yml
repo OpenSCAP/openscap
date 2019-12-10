@@ -39,7 +39,6 @@ matrix:
       after_success:
         - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
     - os: osx
-      osx_image: xcode8.3
       before_install:
         - brew update
         - brew upgrade python
