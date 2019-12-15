@@ -25,6 +25,7 @@
 
 #include "probe-api.h"
 
+int dpkginfo_probe_offline_mode_supported(void);
 void *dpkginfo_probe_init(void);
 int dpkginfo_probe_main(probe_ctx *ctx, void *arg);
 void dpkginfo_probe_fini(void *arg);

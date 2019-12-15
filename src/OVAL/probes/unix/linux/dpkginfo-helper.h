@@ -40,7 +40,7 @@ int dpkginfo_fini();
 
 struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err);
 
-void * dpkginfo_free_reply(struct dpkginfo_reply_t *reply);
+void dpkginfo_free_reply(struct dpkginfo_reply_t *reply);
 
 #ifdef __cplusplus
 }

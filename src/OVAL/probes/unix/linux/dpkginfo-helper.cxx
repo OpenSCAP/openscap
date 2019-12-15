@@ -28,7 +28,10 @@ static int opencache (void) {
         if (pkgInitConfig (*_config) == false) return 0;
         if (pkgInitSystem (*_config, _system) == false) return 0;
 
-        FileFd *fd = new FileFd (_config->FindFile ("Dir::Cache::pkgcache"),
+        const char* root = getenv("OSCAP_PROBE_ROOT");
+        string pkgCacheRoot(root != NULL ? root : "");
+
+        FileFd *fd = new FileFd (pkgCacheRoot + _config->FindFile ("Dir::Cache::pkgcache"),
                         FileFd::ReadOnly);
 
         dpkg_mmap = new MMap (*fd, MMap::Public|MMap::ReadOnly);
@@ -112,7 +115,7 @@ struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err)
         return reply;
 }
 
-void * dpkginfo_free_reply(struct dpkginfo_reply_t *reply)
+void dpkginfo_free_reply(struct dpkginfo_reply_t *reply)
 {
         if (reply) {
                 free(reply->name);
