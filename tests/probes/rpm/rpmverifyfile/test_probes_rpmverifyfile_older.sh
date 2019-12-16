@@ -78,4 +78,8 @@ function test_probes_rpmverifyfile {
     rm -f $RF
 }
 
-test_probes_rpmverifyfile
+test_init
+
+test_run "rpmverifyfile probe test with OVAL 5.11" test_probes_rpmverifyfile
+
+test_exit

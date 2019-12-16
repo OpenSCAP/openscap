@@ -196,12 +196,14 @@ set_chroot_offline_test_mode() {
 			echo "Skipping test '${FUNCNAME[1]}' as '$OSCAP_CHROOTABLE_EXEC' doesn't have the chroot capability." >&2
 			return 255
 		fi
+		_OSCAP_BEFORE="$OSCAP"
+		OSCAP="$OSCAP_CHROOTABLE"
+	elif test $(id -u) -eq 0; then
+		: # Running offline tests as root is acceptable too
 	else
 		echo "Skipping test '${FUNCNAME[1]}' as '$OSCAP_CHROOTABLE_EXEC' oscap which is supposed to have chroot capability doesn't exist." >&2
 		return 255
 	fi
-	_OSCAP_BEFORE="$OSCAP"
-	OSCAP="$OSCAP_CHROOTABLE"
 	set_offline_chroot_dir "$1"
 	return 0
 }
@@ -216,13 +218,11 @@ set_offline_chroot_dir() {
 }
 
 unset_chroot_offline_test_mode() {
-	if ! test -n "$_OSCAP_BEFORE"; then
-		echo "Not in the offline test mode!" >&2
-		return
+	if test -n "$_OSCAP_BEFORE"; then
+		OSCAP="$_OSCAP_BEFORE"
+		_OSCAP_BEFORE=
 	fi
-	OSCAP="$_OSCAP_BEFORE"
 	set_offline_chroot_dir ""
-	_OSCAP_BEFORE=
 }
 
 export -f assert_exists
