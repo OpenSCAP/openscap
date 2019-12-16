@@ -84,9 +84,6 @@ for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
 done
 
 export OSCAP_PROBE_ROOT="$(cd "$DIR"; pwd)"
-export OSCAP_PROBE_OS_NAME="Linux"
-export OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)"
-export OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)"
 export OSCAP_EVALUATION_TARGET="$TARGET"
 shift 1
 
