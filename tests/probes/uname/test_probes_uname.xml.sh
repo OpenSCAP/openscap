@@ -846,6 +846,7 @@ cat <<EOF
       <os_name>`uname -s`</os_name>
       <os_release>`uname -r`</os_release>
       <os_version>`uname -v`</os_version>
+      <processor_type>`uname -m`</processor_type>
     </uname_state>
 
     <!-- FULLY FALSE STATE -->
@@ -855,6 +856,7 @@ cat <<EOF
       <os_name>X`uname -s`</os_name>
       <os_release>X`uname -r`</os_release>
       <os_version>X`uname -v`</os_version>
+      <processor_type>X`uname -m`</processor_type>
     </uname_state>
 
     <!-- MIXED STATE :-) -->
@@ -864,6 +866,7 @@ cat <<EOF
       <os_name>`uname -s`</os_name>
       <os_release>`uname -r`</os_release>
       <os_version>`uname -v`</os_version>
+      <processor_type>X`uname -m`</processor_type>
     </uname_state>
 
   </states>
