@@ -76,6 +76,7 @@ sds_add_multiple_twice(){
 }
 
 function test_eval {
+    probecheck "rpminfo" || return 255
     local stderr=$(mktemp -t ${name}.out.XXXXXX)
     $OSCAP xccdf eval "${srcdir}/$1" 2> $stderr
     diff /dev/null $stderr; rm $stderr
@@ -164,15 +165,6 @@ function test_eval_complex()
 	rm $arf
 }
 
-function test_eval_depends {
-    # only run test if dependency file exists
-    if [ -f "$2" ]; then
-        return test_eval $1
-    else
-        return 255
-    fi
-}
-
 function test_oval_eval {
 
     $OSCAP oval eval "${srcdir}/$1"
@@ -251,6 +243,7 @@ test_run "sds_external_xccdf" test_sds_external_xccdf sds_external_xccdf sds_ext
 test_run "sds_tailoring" test_sds_tailoring sds_tailoring sds_tailoring/sds.ds.xml scap_com.example_datastream_with_tailoring xccdf_com.example_cref_tailoring_01 xccdf_com.example_profile_tailoring
 
 test_run "eval_simple" test_eval eval_simple/sds.xml
+test_run "cpe_in_ds" test_eval cpe_in_ds/sds.xml
 test_run "eval_invalid" test_invalid_eval eval_invalid/sds.xml
 test_run "eval_invalid_oval" test_invalid_oval_eval eval_invalid/sds-oval.xml
 test_run "eval_xccdf_id1" test_eval_id eval_xccdf_id/sds.xml scap_org.open-scap_datastream_tst scap_org.open-scap_cref_first-xccdf.xml first
@@ -267,7 +260,6 @@ test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 test_run "test_ds_1_2_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.2.ds.xml xccdf_com.example.www_profile_test_remote_res
 test_run "test_ds_1_3_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.3.ds.xml xccdf_com.example.www_profile_test_remote_res
-test_run "cpe_in_ds" test_eval_depends cpe_in_ds/sds.xml /etc/sysconfig/prelink
 
 test_exit
 
