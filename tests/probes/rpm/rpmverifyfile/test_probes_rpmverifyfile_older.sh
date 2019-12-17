@@ -11,6 +11,7 @@ set -e -o pipefail
 
 function test_probes_rpmverifyfile {
     probecheck "rpmverifyfile" || return 255
+    require "rpm" || return 255
 
     DF="$srcdir/test_probes_rpmverifyfile_older.xml"
     RF="results.xml"
