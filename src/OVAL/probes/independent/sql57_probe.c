@@ -202,7 +202,7 @@ static int dbURIInfo_parse(dbURIInfo_t *info, const char *conn)
 	tmp = NULL;
 
 	while ((tok = strsep (&copy, ";")) != NULL) {
-		dI("tok: '%s'.", tok);
+		dD("tok: '%s'.", tok);
 		switch (tolower(*tok)) {
 			matchitem1(tok, 's',
 				  "erver", info->host); break;
@@ -358,7 +358,7 @@ static int dbSQL_eval(const char *engine, const char *version,
                                                 col_type = OVAL_DATATYPE_UNKNOWN;
                                                 field    = NULL;
 
-						dI("Column type: %d.", odbx_column_type(sql_dbr, ci));
+						dD("Column type: %d.", odbx_column_type(sql_dbr, ci));
                                                 switch(odbx_column_type(sql_dbr, ci)) {
                                                 case ODBX_TYPE_BOOLEAN:
                                                         break;

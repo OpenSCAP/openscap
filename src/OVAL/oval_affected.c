@@ -217,7 +217,7 @@ static int _oval_affected_parse_tag(xmlTextReaderPtr reader, struct oval_parser_
 			free(product);
 		}
 	} else {
-		dI("Skipping tag: %s", tagname);
+		dD("Skipping tag: %s", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	free(tagname);

@@ -552,7 +552,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 		return (-1);
 	}
 
-	dI("Reading included file: %s", path);
+	dD("Reading included file: %s", path);
 	xifile = xiconf_read (path, 0);
 
 	if (xifile == NULL) {
@@ -564,7 +564,7 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	xiconf->cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
-	dI("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);
+	dD("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);
 
 	return (0);
 }
@@ -729,7 +729,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 				switch (inctype) {
 				case XICONF_INCTYPE_FILE:
-					dI("includefile: %s", pathbuf);
+					dD("includefile: %s", pathbuf);
 
 					if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0) {
 						tmpbuf_free(buffer);
@@ -742,7 +742,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 					DIR           *dirfp;
 					struct dirent  dent, *dentp = NULL;
 
-					dI("includedir open: %s", inclarg);
+					dD("includedir open: %s", inclarg);
 					dirfp = opendir (inclarg);
 
 					if (dirfp == NULL) {
@@ -777,7 +777,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 						if (fnmatch ("*~",  dent.d_name, FNM_PATHNAME) == 0 ||
 						    fnmatch ("*.*", dent.d_name, FNM_PATHNAME) == 0)
 						{
-							dI("Skipping: %s", dent.d_name);
+							dD("Skipping: %s", dent.d_name);
 							continue;
 						}
 
@@ -787,7 +787,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 							continue;
 					}
 
-					dI("includedir close: %s", inclarg);
+					dD("includedir close: %s", inclarg);
 					closedir(dirfp);
 					break;
 				}}
@@ -810,7 +810,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 
 int xiconf_update(xiconf_t *xiconf)
 {
-	dI("Not implemented yet.");
+	dD("Not implemented yet.");
 	return (0);
 }
 
@@ -971,11 +971,11 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 			switch (xiattr->pass_arg) {
 			case XIATTR_OPARG_LOCAL:
 				opvar = (void *)xiattr_ptr(snew, xiattr->offset);
-				dI("local opvar");
+				dD("local opvar");
 				break;
 			case XIATTR_OPARG_GLOBAL:
 				opvar = (void *)xiconf;
-				dI("global opvar");
+				dD("global opvar");
 				break;
 			default:
 				abort ();
@@ -985,21 +985,21 @@ int xiconf_parse_section(xiconf_t *xiconf, xiconf_file_t *xifile, int type, char
 				opfun = xiattr->op_assign;
 				opval = op + 1;
 
-				dI("assign(%p): var=%s (at %p+%zu = %p), val=%s",
+				dD("assign(%p): var=%s (at %p+%zu = %p), val=%s",
 				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 
 			} else if (*op == '+' && *(op+1) == '=') {
 				opfun = xiattr->op_insert;
 				opval = op + 2;
 
-				dI("insert(%p): var=%s (at %p+%zu = %p), val=%s",
+				dD("insert(%p): var=%s (at %p+%zu = %p), val=%s",
 				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 
 			} else if (*op == '-' && *(op+1) == '=') {
 				opfun = xiattr->op_remove;
 				opval = op + 2;
 
-				dI("remove(%p): var=%s (at %p+%zu = %p), val=%s",
+				dD("remove(%p): var=%s (at %p+%zu = %p), val=%s",
 				   opfun, xiattr->name, snew, xiattr->offset, opvar, opval);
 			} else
 				goto fail;
@@ -1077,21 +1077,21 @@ finish_section:
 			// If we still don't know the protocol, then get the default from /etc/services
 			if (scur->protocol == NULL) {
 				struct servent *service = getservbyname(scur->name, NULL);
-				dI("protocol is empty, trying to guess from /etc/services for %s", scur->name);
+				dD("protocol is empty, trying to guess from /etc/services for %s", scur->name);
 				if (service != NULL) {
 					scur->protocol = strdup(service->s_proto);
-					dI("service %s has default protocol=%s", scur->name, scur->protocol);
+					dD("service %s has default protocol=%s", scur->name, scur->protocol);
 				}
 				endservent();
 			}
 		}
 		if (scur->port == 0) {
 			struct servent *service = getservbyname(scur->name, scur->protocol);
-			dI("port not set, trying to guess from /etc/services for %s", scur->name);
+			dD("port not set, trying to guess from /etc/services for %s", scur->name);
 			if (service != NULL) {
 				if (service->s_port > 0 && service->s_port < 65536) {
 					scur->port = ntohs((uint16_t)service->s_port);
-					dI("service %s has default port=%hu/%s",
+					dD("service %s has default port=%hu/%s",
 					   scur->name, scur->port, scur->protocol);
 				}
 			}
@@ -1127,7 +1127,7 @@ finish_section:
 		rbt_str_get(xiconf->ttree, st_key, (void *)&st);
 
 		if (st == NULL) {
-			dI("new strans record: k=%s", st_key);
+			dD("new strans record: k=%s", st_key);
 
 			st = malloc(sizeof(xiconf_strans_t));
 			st->cnt = 1;
@@ -1140,7 +1140,7 @@ finish_section:
 				return (-1);
 			}
 		} else {
-			dI("adding new strans record to an exiting one: k=%s, cnt=%u+1",
+			dD("adding new strans record to an exiting one: k=%s, cnt=%u+1",
 			   st_key, st->cnt);
 
 			st->srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
@@ -1361,7 +1361,7 @@ int op_assign_strl(void *var, char *val)
 		if (*tok == '\0') {
 			continue;
 		}
-		dI("Adding new member to string array: %s", tok);
+		dD("Adding new member to string array: %s", tok);
 		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
@@ -1382,7 +1382,7 @@ int op_insert_strl(void *var, char *val)
 		while(string_array[string_array_size]) {
 			++string_array_size;
 		}
-		dI("String array has %zu members", string_array_size);
+		dD("String array has %zu members", string_array_size);
 	}
 	str = val;
 	while ((tok = strsep(&str, " ")) != NULL) {
@@ -1392,7 +1392,7 @@ int op_insert_strl(void *var, char *val)
 		if (*tok == '\0') {
 			continue;
 		}
-		dI("Adding new member to string array: %s", tok);
+		dD("Adding new member to string array: %s", tok);
 		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
@@ -1416,7 +1416,7 @@ int op_remove_strl(void *var, char *val)
 		while(string_array[string_array_size]) {
 			++string_array_size;
 		}
-		dI("String array has %zu members", string_array_size);
+		dD("String array has %zu members", string_array_size);
 	}
 
 	if (string_array_size < 1) {
@@ -1438,7 +1438,7 @@ int op_remove_strl(void *var, char *val)
 		if (*tok == '\0') {
 			continue;
 		}
-		dI("Adding new member to string array: %s", tok);
+		dD("Adding new member to string array: %s", tok);
 		valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
@@ -1451,10 +1451,10 @@ int op_remove_strl(void *var, char *val)
 
 		for (valstr_array_pos = 0; valstr_array[valstr_array_pos]; ++valstr_array_pos) {
 			char *delete_val = valstr_array[valstr_array_pos];
-			dI("Removing: %s", delete_val);
+			dD("Removing: %s", delete_val);
 			// Destroy the string if it matches a string from the value string array
 			// Otherwise move it to the new string array
-			dI("cmp: %s ?= %s", string_array_val, delete_val);
+			dD("cmp: %s ?= %s", string_array_val, delete_val);
 			if (strcmp(string_array_val, delete_val) == 0) {
 				free(string_array_val);
 				string_array_val = NULL;
@@ -1500,7 +1500,7 @@ int op_assign_disabled(void *var, char *val)
 			srv->id = strdup (tok);
 			srv->def_disabled = 1;
 
-			dI("new: def_disabled: = 1: %s", srv->id);
+			dD("new: def_disabled: = 1: %s", srv->id);
 
 			if (rbt_str_add (xiconf->stree, srv->id, srv) != 0) {
 				dE("Can't add service (%s) into the service tree (%p)",
@@ -1510,7 +1510,7 @@ int op_assign_disabled(void *var, char *val)
 				return (-1);
 			}
 		} else {
-			dI("mod: def_disabled: %u -> 1: %s", srv->def_disabled, srv->id);
+			dD("mod: def_disabled: %u -> 1: %s", srv->def_disabled, srv->id);
 			srv->def_disabled = 1;
 		}
 	}
@@ -1541,7 +1541,7 @@ int op_assign_enabled(void *var, char *val)
 			srv->id = strdup (tok);
 			srv->def_enabled = 1;
 
-			dI("new: def_enabled: = 1: %s", srv->id);
+			dD("new: def_enabled: = 1: %s", srv->id);
 
 			if (rbt_str_add (xiconf->stree, srv->id, srv) != 0) {
 				dE("Can't add service (%s) into the service tree (%p)",
@@ -1551,7 +1551,7 @@ int op_assign_enabled(void *var, char *val)
 				return (-1);
 			}
 		} else {
-			dI("mod: def_enabled: %u -> 1: %s", srv->def_disabled, srv->id);
+			dD("mod: def_enabled: %u -> 1: %s", srv->def_disabled, srv->id);
 			srv->def_enabled = 1;
 		}
 	}
@@ -1675,7 +1675,7 @@ int xinetd_probe_main(probe_ctx *ctx, void *arg)
 
 	SEXP_free (eval);
 
-	dI("Updating xinetd configuration cache");
+	dD("Updating xinetd configuration cache");
 
 	if (xiconf_update(arg) != 0) {
 		err = PROBE_EUNKNOWN;

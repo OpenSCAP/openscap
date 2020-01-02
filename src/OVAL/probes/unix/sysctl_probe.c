@@ -134,7 +134,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 		}
 		/* the sysctl utility uses same condition in sysctl.c in ReadSetting() */
 		if ((file_stat.st_mode & S_IRUSR) == 0) {
-			dI("Skipping write-only file %s", mibpath);
+			dD("Skipping write-only file %s", mibpath);
 			oval_ftsent_free(ofts_ent);
 			continue;
 		}
@@ -148,7 +148,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
                         --miblen;
                 }
 
-                dI("MIB: %s", mib);
+                dD("MIB: %s", mib);
                 se_mib = SEXP_string_new(mib, strlen(mib));
                 free(mib);
 
@@ -160,7 +160,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
                         long i, l;
                         size_t s;
 
-                        dI("MIB match");
+                        dD("MIB match");
 
                         /*
                          * read sysctl value
@@ -182,7 +182,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 				 */
 				if (strncmp(ofts_ent->path, ipv6_conf_path, ipv6_conf_path_len) == 0 &&
 						strcmp(ofts_ent->file, "stable_secret") == 0) {
-					dI("Skipping file %s", mibpath);
+					dD("Skipping file %s", mibpath);
 					oval_ftsent_free(ofts_ent);
 					SEXP_free(se_mib);
 					fclose(fp);
@@ -200,7 +200,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 			 * See https://bugzilla.redhat.com/show_bug.cgi?id=1473207
 			 */
 			if (l == 0) {
-				dI("Skipping file '%s' because it has no value.", mibpath);
+				dD("Skipping file '%s' because it has no value.", mibpath);
 				oval_ftsent_free(ofts_ent);
 				SEXP_free(se_mib);
 				continue;

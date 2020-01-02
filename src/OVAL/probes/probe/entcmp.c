@@ -434,7 +434,7 @@ oval_result_t probe_entobj_cmp(SEXP_t * ent_obj, SEXP_t * val)
 	valcnt = probe_ent_getvals(ent_obj, &r0);
 	SEXP_free(r0);
 	if (valcnt == 0) {
-		dI("valcnt == 0.");
+		dD("valcnt == 0.");
 		return OVAL_RESULT_FALSE;
 	}
 

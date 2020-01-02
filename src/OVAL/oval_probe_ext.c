@@ -219,7 +219,7 @@ static SEXP_t *oval_probe_cmd_obj_eval(SEXP_t *sexp, void *arg)
 	obj    = oval_definition_model_get_object(defs, id_str);
 	ret    = SEXP_list_new (sexp, NULL);
 
-	dI("Get_object: %s.", id_str);
+	dD("Get_object: %s.", id_str);
 
 	if (obj == NULL) {
 		dE("Can't find obj: id=%s.", id_str);
@@ -448,7 +448,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 }
 
 				if (++retry <= OVAL_PROBE_MAXRETRY) {
-					dI("Connect: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
+					dD("Connect: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
 					continue;
 				} else {
                                         char errbuf[__ERRBUF_SIZE];
@@ -523,7 +523,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 			pd->sd = -1;
 
 			if (++retry <= OVAL_PROBE_MAXRETRY) {
-				dI("Send: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
+				dD("Send: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
 				continue;
 			} else {
                                 char errbuf[__ERRBUF_SIZE];
@@ -555,11 +555,11 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 				SEAP_msg_free(s_omsg);
 			}
 			if (errno == ECONNABORTED) {
-				dI("Connection was aborted.");
+				dD("Connection was aborted.");
 				return (-2);
 			} else {
 				if (++retry <= OVAL_PROBE_MAXRETRY) {
-					dI("Recv: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
+					dD("Recv: retry %u/%u.", retry, OVAL_PROBE_MAXRETRY);
 					continue;
 				} else {
 					protect_errno {
@@ -643,12 +643,12 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                 val = probe_obj_getentval (obj, #name, 1);     \
                                                                         \
                 if (val == NULL) {                                      \
-                        dI("No entity or value: %s", #name); \
+                        dD("No entity or value: %s", #name); \
                         goto fail;                                      \
                 }                                                       \
                                                                         \
                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                        dI("Value too large: %s", #name);    \
+                        dD("Value too large: %s", #name);    \
                         SEXP_free (val);                                \
                         goto fail;                                      \
                 }                                                       \
@@ -679,12 +679,12 @@ static int oval_probe_sys_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, struct oval_sysch
                                 val = probe_ent_getattrval (ent, #name); \
                                                                         \
                                 if (val == NULL) {                      \
-                                        dI("No value: %s", #name); \
+                                        dD("No value: %s", #name); \
                                         goto fail;                      \
                                 }                                       \
                                                                         \
                                 if (SEXP_string_cstr_r (val, buf, sizeof buf) >= sizeof buf) { \
-                                        dI("Value too large: %s", #name); \
+                                        dD("Value too large: %s", #name); \
                                         SEXP_free (val);                \
                                         goto fail;                      \
                                 }                                       \
@@ -983,7 +983,7 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	if (ret != 0) {
 		switch (errno) {
 		case ECONNABORTED:
-			dI("Closing sd=%d (pd=%p) after abort", pd->sd, pd);
+			dD("Closing sd=%d (pd=%p) after abort", pd->sd, pd);
 
 			SEAP_close(ctx, pd->sd);
 			pd->sd = -1;

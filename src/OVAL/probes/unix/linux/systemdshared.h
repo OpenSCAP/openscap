@@ -84,7 +84,7 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 		"LoadUnit"
 	);
 	if (msg == NULL) {
-		dI("Failed to create dbus_message via dbus_message_new_method_call!");
+		dD("Failed to create dbus_message via dbus_message_new_method_call!");
 		goto cleanup;
 	}
 
@@ -92,16 +92,16 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 
 	dbus_message_iter_init_append(msg, &args);
 	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &unit)) {
-		dI("Failed to append unit '%s' string parameter to dbus message!", unit);
+		dD("Failed to append unit '%s' string parameter to dbus message!", unit);
 		goto cleanup;
 	}
 
 	if (!dbus_connection_send_with_reply(conn, msg, &pending, -1)) {
-		dI("Failed to send message via dbus!");
+		dD("Failed to send message via dbus!");
 		goto cleanup;
 	}
 	if (pending == NULL) {
-		dI("Invalid dbus pending call!");
+		dD("Invalid dbus pending call!");
 		goto cleanup;
 	}
 
@@ -111,18 +111,18 @@ static char *get_path_by_unit(DBusConnection *conn, const char *unit)
 	dbus_pending_call_block(pending);
 	msg = dbus_pending_call_steal_reply(pending);
 	if (msg == NULL) {
-		dI("Failed to steal dbus pending call reply.");
+		dD("Failed to steal dbus pending call reply.");
 		goto cleanup;
 	}
 	dbus_pending_call_unref(pending); pending = NULL;
 
 	if (!dbus_message_iter_init(msg, &args)) {
-		dI("Failed to initialize iterator over received dbus message.");
+		dD("Failed to initialize iterator over received dbus message.");
 		goto cleanup;
 	}
 
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_OBJECT_PATH) {
-		dI("Expected string argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		dD("Expected string argument in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
 		goto cleanup;
 	}
 
@@ -153,7 +153,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 		"ListUnits"
 	);
 	if (msg == NULL) {
-		dI("Failed to create dbus_message via dbus_message_new_method_call!");
+		dD("Failed to create dbus_message via dbus_message_new_method_call!");
 		goto cleanup;
 	}
 
@@ -163,11 +163,11 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 	dbus_message_iter_init_append(msg, &args);
 
 	if (!dbus_connection_send_with_reply(conn, msg, &pending, -1)) {
-		dI("Failed to send message via dbus!");
+		dD("Failed to send message via dbus!");
 		goto cleanup;
 	}
 	if (pending == NULL) {
-		dI("Invalid dbus pending call!");
+		dD("Invalid dbus pending call!");
 		goto cleanup;
 	}
 
@@ -177,25 +177,25 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 	dbus_pending_call_block(pending);
 	msg = dbus_pending_call_steal_reply(pending);
 	if (msg == NULL) {
-		dI("Failed to steal dbus pending call reply.");
+		dD("Failed to steal dbus pending call reply.");
 		goto cleanup;
 	}
 	dbus_pending_call_unref(pending); pending = NULL;
 
 	if (!dbus_message_iter_init(msg, &args)) {
-		dI("Failed to initialize iterator over received dbus message.");
+		dD("Failed to initialize iterator over received dbus message.");
 		goto cleanup;
 	}
 
 	if (dbus_message_iter_get_arg_type(&args) != DBUS_TYPE_ARRAY) {
-		dI("Expected array of structs in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
+		dD("Expected array of structs in reply. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&args)));
 		goto cleanup;
 	}
 
 	dbus_message_iter_recurse(&args, &unit_iter);
 	do {
 		if (dbus_message_iter_get_arg_type(&unit_iter) != DBUS_TYPE_STRUCT) {
-			dI("Expected unit struct as elements in returned array. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_iter)));
+			dD("Expected unit struct as elements in returned array. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_iter)));
 			goto cleanup;
 		}
 
@@ -203,7 +203,7 @@ static int get_all_systemd_units(DBusConnection* conn, int(*callback)(const char
 		dbus_message_iter_recurse(&unit_iter, &unit_name);
 
 		if (dbus_message_iter_get_arg_type(&unit_name) != DBUS_TYPE_STRING) {
-			dI("Expected string as the first element in the unit struct. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_name)));
+			dD("Expected string as the first element in the unit struct. Instead received: %s.", dbus_message_type_to_string(dbus_message_iter_get_arg_type(&unit_name)));
 			goto cleanup;
 		}
 
@@ -285,7 +285,7 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 			//	return oscap_sprintf("%i", value.fd);
 
 			default:
-				dI("Encountered unknown dbus basic type!");
+				dD("Encountered unknown dbus basic type!");
 				return oscap_strdup("error, unknown basic type!");
 		}
 	}
@@ -331,17 +331,17 @@ static DBusConnection *connect_dbus()
 
 	conn = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
 	if (dbus_error_is_set(&err)) {
-		dI("Failed to get DBUS_BUS_SYSTEM connection - %s", err.message);
+		dD("Failed to get DBUS_BUS_SYSTEM connection - %s", err.message);
 		goto cleanup;
 	}
 	if (conn == NULL) {
-		dI("DBusConnection == NULL!");
+		dD("DBusConnection == NULL!");
 		goto cleanup;
 	}
 
 	dbus_bus_register(conn, &err);
 	if (dbus_error_is_set(&err)) {
-		dI("Failed to register on dbus - %s", err.message);
+		dD("Failed to register on dbus - %s", err.message);
 		goto cleanup;
 	}
 

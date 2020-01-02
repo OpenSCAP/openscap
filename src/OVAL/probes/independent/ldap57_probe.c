@@ -261,7 +261,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
 
                                         switch(bertag & LBER_ENCODING_MASK) {
                                         case LBER_PRIMITIVE:
-                                                dI("Found primitive value, bertag = %u", bertag);
+                                                dD("Found primitive value, bertag = %u", bertag);
 						break;
                                         case LBER_CONSTRUCTED:
                                                 dW("Don't know how to handle LBER_CONSTRUCTED values");
@@ -336,7 +336,7 @@ int probe_main(probe_ctx *ctx, void *mutex)
                                         }       break;
                                         case LBER_NULL:
                                                 /* XXX: no equivalent LDAPTYPE_? or empty */
-                                                dI("LBER_NULL: skipped");
+                                                dD("LBER_NULL: skipped");
                                                 continue;
                                         case LBER_ENUMERATED:
                                                 /* XXX: no equivalent LDAPTYPE_? */

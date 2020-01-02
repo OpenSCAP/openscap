@@ -1175,7 +1175,7 @@ int oval_component_parse_tag(xmlTextReaderPtr reader,
 		component = oval_component_new(model, OVAL_FUNCTION_REGEX_CAPTURE);
 		return_code = _oval_component_parse_REGEX_CAPTURE_tag(reader, context, component);
 	} else {
-		dI("Tag <%s> not handled, line: %d.", tagname,
+		dD("Tag <%s> not handled, line: %d.", tagname,
                               xmlTextReaderGetParserLineNumber(reader));
 		return_code = oval_parser_skip_tag(reader, context);
 	}
@@ -1934,16 +1934,16 @@ static long unsigned int _parse_datetime(char *datetime, const char *fmt[], size
         size_t    i;
         char     *r;
 
-        dI("Parsing datetime string \"%s\"", datetime);
+        dD("Parsing datetime string \"%s\"", datetime);
 
         for (i = 0; i < fmtcnt; ++i) {
-                dI("%s", fmt[i]);
+                dD("%s", fmt[i]);
                 memset(&t, 0, sizeof t);
                 r = strptime(datetime, fmt[i], &t);
 
                 if (r != NULL) {
                         if (*r == '\0') {
-                                dI("Success!");
+                                dD("Success!");
                                 return _comp_sec(t.tm_year, t.tm_mon, t.tm_mday,
                                                  t.tm_hour, t.tm_min, t.tm_sec);
                         }

@@ -198,7 +198,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
             add_mnt_opt(&mnt_opts, ++mnt_ocnt, "move");
         }
 
-        dI("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p", mnt_ocnt, mnt_opts[mnt_ocnt]);
+        dD("mnt_ocnt = %d, mnt_opts[mnt_ocnt]=%p", mnt_ocnt, mnt_opts[mnt_ocnt]);
 
 	/*
 	 * "Correct" the type (this won't be (hopefully) needed in a later version

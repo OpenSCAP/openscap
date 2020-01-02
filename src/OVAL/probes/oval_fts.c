@@ -562,7 +562,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		   OVAL definitions that use ".*" as 'path' and then
 		   uncomment this.
 
-		dI("pcre_exec() returned PCRE_ERROR_PARTIAL for pattern '%s' "
+		dD("pcre_exec() returned PCRE_ERROR_PARTIAL for pattern '%s' "
 		   "and test path '%s'.\n", pattern, test_path1);
 		ret = pcre_exec(regex, NULL, test_path2, strlen(test_path2),
 			0, PCRE_PARTIAL, NULL, 0);
@@ -578,7 +578,7 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 		*/
 		break;
 	case PCRE_ERROR_BADPARTIAL:
-		dI("pcre_exec() returned PCRE_ERROR_BADPARTIAL for pattern "
+		dD("pcre_exec() returned PCRE_ERROR_BADPARTIAL for pattern "
 		   "'%s' and a test path '%s'. Falling back to "
 		   "pcre_fullinfo().\n", pattern, test_path1);
 		pcre_free(regex);
@@ -643,9 +643,9 @@ static int process_pattern_match(const char *path, pcre **regex_out)
 	}
 
 	if (regex == NULL) {
-		dI("Disabling partial match optimization.");
+		dD("Disabling partial match optimization.");
 	} else {
-		dI("Enabling partial match optimization using "
+		dD("Enabling partial match optimization using "
 		   "pattern: '%s'.", pattern);
 		if (regex_out != NULL)
 			*regex_out = regex;
@@ -708,7 +708,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		path_op = OVAL_OPERATION_EQUALS;
 	}
 #if defined(OSCAP_FTS_DEBUG)
-	dI("path_op: %u, '%s'.", path_op, oval_operation_get_text(path_op));
+	dD("path_op: %u, '%s'.", path_op, oval_operation_get_text(path_op));
 #endif
 	if (path) { /* filepath == NULL */
 		PROBE_ENT_STRVAL(path, cstr_path, sizeof cstr_path,
@@ -736,7 +736,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		return (NULL);
 	}
 #if defined(OSCAP_FTS_DEBUG)
-	dI("bh.max_depth: %s => max_depth: %d", cstr_buff, max_depth);
+	dD("bh.max_depth: %s => max_depth: %d", cstr_buff, max_depth);
 #endif
 	SEXP_free(r0);
 
@@ -756,7 +756,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		return (NULL);
 	}
 #if defined(OSCAP_FTS_DEBUG)
-	dI("bh.direction: %s => direction: %d", cstr_buff, direction);
+	dD("bh.direction: %s => direction: %d", cstr_buff, direction);
 #endif
 	SEXP_free(r0);
 
@@ -782,7 +782,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		recurse = OVAL_RECURSE_SYMLINKS_AND_DIRS;
 	}
 #if defined(OSCAP_FTS_DEBUG)
-	dI("bh.recurse: %s => recurse: %d", cstr_buff, recurse);
+	dD("bh.recurse: %s => recurse: %d", cstr_buff, recurse);
 #endif
 	SEXP_free(r0);
 
@@ -808,7 +808,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		filesystem = OVAL_RECURSE_FS_ALL;
 	}
 #if defined(OSCAP_FTS_DEBUG)
-	dI("bh.filesystem: %s => filesystem: %d", cstr_buff, filesystem);
+	dD("bh.filesystem: %s => filesystem: %d", cstr_buff, filesystem);
 #endif
 	SEXP_free(r0);
 
@@ -825,7 +825,7 @@ OVAL_FTS *oval_fts_open_prefixed(const char *prefix, SEXP_t *path, SEXP_t *filen
 		if (process_pattern_match(cstr_path, &regex) != 0)
 			return NULL;
 		paths[0] = extract_fixed_path_prefix(cstr_path);
-		dI("Extracted fixed path: '%s'.", paths[0]);
+		dD("Extracted fixed path: '%s'.", paths[0]);
 	} else {
 		paths[0] = strdup("/");
 	}
@@ -963,7 +963,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		}
 
 #if defined(OSCAP_FTS_DEBUG)
-		dI("fts_path: '%s' (l=%d)."
+		dD("fts_path: '%s' (l=%d)."
 		   "fts_name: '%s' (l=%d).\n"
 		   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
 		   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
@@ -971,7 +971,7 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 
 		if (fts_ent->fts_info == FTS_SL) {
 #if defined(OSCAP_FTS_DEBUG)
-			dI("Only the target of a symlink gets reported, skipping '%s'.", fts_ent->fts_path, fts_ent->fts_name);
+			dD("Only the target of a symlink gets reported, skipping '%s'.", fts_ent->fts_path, fts_ent->fts_name);
 #endif
 			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_FOLLOW);
 			continue;
@@ -1071,7 +1071,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 			char * const paths[2] = { ofts->ofts_match_path_fts_ent->fts_path, NULL };
 
 #if defined(OSCAP_FTS_DEBUG)
-			dI("fts_open args: path: \"%s\", options: %d.",
+			dD("fts_open args: path: \"%s\", options: %d.",
 				paths[0], ofts->ofts_recurse_path_fts_opts);
 #endif
 			/* reset errno as fts_open() doesn't do it itself. */
@@ -1118,7 +1118,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 			}
 
 #if defined(OSCAP_FTS_DEBUG)
-			dI("fts_path: '%s' (l=%d)."
+			dD("fts_path: '%s' (l=%d)."
 			   "fts_name: '%s' (l=%d).\n"
 			   "fts_info: %u.\n", fts_ent->fts_path, fts_ent->fts_pathlen,
 			   fts_ent->fts_name, fts_ent->fts_namelen, fts_ent->fts_info);
@@ -1206,7 +1206,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				char * const paths[2] = { ofts->ofts_recurse_path_curpth, NULL };
 
 #if defined(OSCAP_FTS_DEBUG)
-				dI("fts_open args: path: \"%s\", options: %d.",
+				dD("fts_open args: path: \"%s\", options: %d.",
 					paths[0], ofts->ofts_recurse_path_fts_opts);
 #endif
 				/* reset errno as fts_open() doesn't do it itself. */
@@ -1319,7 +1319,7 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 	FTSENT *fts_ent;
 
 #if defined(OSCAP_FTS_DEBUG)
-	dI("ofts: %p.", ofts);
+	dD("ofts: %p.", ofts);
 #endif
 
 	if (ofts == NULL)

@@ -338,7 +338,7 @@ void *rpmverifyfile_probe_init(void)
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+		dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		return (NULL);
 	}
 
@@ -537,7 +537,7 @@ int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free(bh_ent);
 	}
 
-	dI("Collecting rpmverifyfile data, query: f=\"%s\" (%d)",
+	dD("Collecting rpmverifyfile data, query: f=\"%s\" (%d)",
 	   file, file_op);
 
 	if (rpmverify_collect(ctx,

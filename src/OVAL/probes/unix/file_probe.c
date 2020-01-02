@@ -327,7 +327,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
 	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
 	if (lstat(st_path_with_prefix, &st) == -1) {
-                dI("lstat failed when processing %s: errno=%u, %s.", st_path, errno, strerror (errno));
+                dD("lstat failed when processing %s: errno=%u, %s.", st_path, errno, strerror (errno));
 		/*
 		 * Whatever the reason of this lstat error (for example the file may
 		 * have disappeared) we don't want it to stop the whole file tree walk;
@@ -432,7 +432,7 @@ void *file_probe_init(void)
 		return ((void *)file_probe_mutex);
         default:
 		free(file_probe_mutex);
-                dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
+                dD("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
 #if 0
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
@@ -486,7 +486,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                dI("Can't lock mutex(%p): %u, %s.", mutex, errno, strerror (errno));
+                dD("Can't lock mutex(%p): %u, %s.", mutex, errno, strerror (errno));
 
 		SEXP_free(path);
 		SEXP_free(filename);
@@ -532,7 +532,7 @@ int file_probe_main(probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-                dI("Can't unlock mutex(%p): %u, %s.", mutex, errno, strerror (errno));
+                dD("Can't unlock mutex(%p): %u, %s.", mutex, errno, strerror (errno));
 
                 return PROBE_EFATAL;
         }

@@ -422,7 +422,7 @@ static int _oval_definition_parse_tag(xmlTextReaderPtr reader, struct oval_parse
 	} else if ((strcmp(tagname, "criteria") == 0)) {
 		return_code = oval_criteria_parse_tag(reader, context, &_oval_definition_criteria_consumer, definition);
 	} else {
-		dI("Skipping tag: %s.", tagname);
+		dD("Skipping tag: %s.", tagname);
 		return_code = oval_parser_skip_tag(reader, context);
 	}
 	free(tagname);

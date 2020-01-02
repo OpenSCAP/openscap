@@ -282,7 +282,7 @@ void *rpminfo_probe_init(void)
 #endif
 	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+		dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		g_rpm->rpmts = NULL;
 		return ((void *)g_rpm);
         }
@@ -422,7 +422,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
         val = probe_ent_getval (ent);
 
         if (val == NULL) {
-                dI("%s: no value", "name");
+                dD("%s: no value", "name");
                 SEXP_free (ent);
                 return (PROBE_ENOVAL);
         }
@@ -456,11 +456,11 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free (ent);
                 switch (errno) {
                 case EINVAL:
-                        dI("%s: invalid value type", "name");
+                        dD("%s: invalid value type", "name");
 			return PROBE_EINVAL;
                         break;
                 case EFAULT:
-                        dI("%s: element not found", "name");
+                        dD("%s: element not found", "name");
 			return PROBE_ENOELM;
                         break;
 		default:
@@ -476,7 +476,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
                 dI("Package \"%s\" not found.", request_st.name);
                 break;
         case -1: /* Error */
-                dI("get_rpminfo failed");
+                dD("get_rpminfo failed");
 
                 item = probe_item_create(OVAL_LINUX_RPM_INFO, NULL,
                                          "name", OVAL_DATATYPE_STRING, request_st.name,
