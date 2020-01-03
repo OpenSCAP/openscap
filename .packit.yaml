@@ -1,0 +1,33 @@
+downstream_package_name: openscap
+jobs:
+- job: copr_build
+  metadata:
+    targets:
+    - fedora-all-x86_64
+  trigger: pull_request
+- job: tests
+  metadata:
+    targets:
+    - fedora-all-x86_64
+  trigger: pull_request
+- job: propose_downstream
+  metadata:
+    dist-git-branch: fedora-all
+  trigger: release
+specfile_path: openscap.spec
+synced_files:
+- .packit.yaml
+upstream_package_name: openscap
+actions:
+  post-upstream-clone:
+    - "wget -N https://src.fedoraproject.org/rpms/openscap/raw/rawhide/f/openscap.spec"
+    - "sed -i '/^Patch/d' openscap.spec"
+    - "sed -i '23 a BuildRequires: xmlsec1-devel xmlsec1-openssl-devel' openscap.spec"
+    - "sed -i '24 a Requires: xmlsec1 xmlsec1-openssl' openscap.spec"
+    - "sed -i '127 a %undefine __cmake_in_source_build' openscap.spec"
+    # use git_am instead of patch since packit patches are generated with git-format-patch
+    # - "sed -E -i 's/^%autosetup(.+)$/%autosetup -Sgit_am \\1/' openscap.spec"
+    # which means, that we need git in the buildroot
+    # - "sed '23 a BuildRequires: git-core' openscap.spec"
+    # - "git add openscap.spec"
+    # - "git -c user.name=packit_integration -c user.email=noreply@fedoraproject.org commit -m 'apply rawhide specfile'"
