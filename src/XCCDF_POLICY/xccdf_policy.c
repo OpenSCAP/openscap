@@ -584,6 +584,10 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 				result = check;
 			} else if (strcmp("http://oval.mitre.org/XMLSchema/oval-definitions-5", check->system) == 0) {
 				print_oval_warning = true;
+			} else if (strcmp("http://scap.nist.gov/schema/ocil/2", check->system) == 0) {
+				dI("This rule requires an OCIL check. OCIL checks are not supported by OpenSCAP.");
+			} else if (strcmp("http://open-scap.org/page/SCE", check->system) == 0) {
+				dI("This rule requires a SCE check but the SCE plugin was disabled.");
 			} else {
 				print_general_warning = true;
 				warning_check_system = check->system;
