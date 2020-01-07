@@ -32,6 +32,7 @@
 
 #define XCCDF_POLICY_OUTCB_START "urn:xccdf:system:callback:start"
 #define XCCDF_POLICY_OUTCB_END "urn:xccdf:system:callback:output"
+#define XCCDF_POLICY_OUTCB_MULTICHECK "urn:xccdf:system:callback:multicheck"
 
 /**
  * Remove checking engines with given system from xccdf_policy_model

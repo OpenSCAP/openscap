@@ -630,19 +630,34 @@ _oval_agent_list_definitions(void *usr, xccdf_policy_engine_query_t query_type, 
 {
 	__attribute__nonnull__(usr);
 	struct oval_agent_session *sess = (struct oval_agent_session *) usr;
-	if (query_type != POLICY_ENGINE_QUERY_NAMES_FOR_HREF || (query_data != NULL && strcmp(sess->filename, (const char *) query_data)))
+	if (query_data != NULL && strcmp(sess->filename, (const char *) query_data)) {
 		return NULL;
-	struct oval_definition_iterator *iterator = oval_definition_model_get_definitions(sess->def_model);
-	struct oscap_stringlist *result = oscap_stringlist_new();
-	struct oval_definition *oval_def;
-
-	while (oval_definition_iterator_has_more(iterator)) {
-		oval_def = oval_definition_iterator_next(iterator);
-		oscap_stringlist_add_string(result, oval_definition_get_id(oval_def));
 	}
+	if (query_type == POLICY_ENGINE_QUERY_NAMES_FOR_HREF) {
+		struct oval_definition_iterator *iterator = oval_definition_model_get_definitions(sess->def_model);
+		struct oscap_stringlist *result = oscap_stringlist_new();
 
-	oval_definition_iterator_free(iterator);
-	return result;
+		while (oval_definition_iterator_has_more(iterator)) {
+			struct oval_definition *oval_def = oval_definition_iterator_next(iterator);
+			oscap_stringlist_add_string(result, oval_definition_get_id(oval_def));
+		}
+
+		oval_definition_iterator_free(iterator);
+		return result;
+	} else if (query_type == POLICY_ENGINE_QUERY_OVAL_DEFS_FOR_HREF) {
+		struct oval_definition_iterator *iterator = oval_definition_model_get_definitions(sess->def_model);
+		struct oscap_list *result = oscap_list_new();
+
+		while (oval_definition_iterator_has_more(iterator)) {
+			struct oval_definition *oval_def = oval_definition_iterator_next(iterator);
+			oscap_list_add(result, oval_def);
+		}
+
+		oval_definition_iterator_free(iterator);
+		return result;
+	} else {
+		return NULL;
+	}
 }
 
 bool xccdf_policy_model_register_engine_oval(struct xccdf_policy_model * model, struct oval_agent_session * usr)

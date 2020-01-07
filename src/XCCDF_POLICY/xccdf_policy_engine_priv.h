@@ -74,7 +74,7 @@ xccdf_test_result_type_t xccdf_policy_engine_eval(struct xccdf_policy_engine *en
  * @param query_data Additional data for the checking engine query.
  * @returns list of query results
  */
-struct oscap_stringlist *xccdf_policy_engine_query(struct xccdf_policy_engine *engine, xccdf_policy_engine_query_t query_type, void *query_data);
+struct oscap_list *xccdf_policy_engine_query(struct xccdf_policy_engine *engine, xccdf_policy_engine_query_t query_type, void *query_data);
 
 
 #endif
