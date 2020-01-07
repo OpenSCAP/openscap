@@ -284,7 +284,7 @@ Authors:
         </xsl:choose>
     </xsl:variable>
 
-    <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>&#160;&#160;&#160;<a data-toggle="collapse" data-target="#{generate-id($fix)}">(show)</a><br />
+    <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>&#160;&#160;&#160;<a data-toggle="collapse" data-target="#{generate-id($fix)}" tabindex="0" role="link" aria-expanded="false" href="#!">(show)</a><br />
     <div class="panel-collapse collapse" id="{generate-id($fix)}">
         <xsl:if test="$fix/@complexity or $fix/@disruption or $fix/@reboot or $fix/@strategy">
             <table class="table table-striped table-bordered table-condensed">
