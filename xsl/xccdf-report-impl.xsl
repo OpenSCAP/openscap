@@ -891,7 +891,7 @@ Authors:
                     </div></td></tr>
                 </xsl:for-each>
                 <xsl:for-each select="$item/cdf:fix">
-                    <tr><td colspan="2"><div class="remediation">
+                    <tr class="noprint"><td colspan="2"><div class="remediation">
                         <xsl:call-template name="show-fix">
                             <xsl:with-param name="fix" select="."/>
                             <xsl:with-param name="testresult" select="$testresult"/>
@@ -991,7 +991,7 @@ Authors:
             <xsl:with-param name="item" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
-        <a href="#result-details"><button type="button" class="btn btn-secondary">Scroll back to the first rule</button></a>
+        <a href="#result-details"><button type="button" class="btn btn-secondary noprint">Scroll back to the first rule</button></a>
     </div>
 </xsl:template>
 
