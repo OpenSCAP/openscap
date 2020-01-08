@@ -847,20 +847,6 @@ Authors:
                     </xsl:for-each>
                 </td></tr>
             </xsl:if>
-            <xsl:variable name="check_system_details_ret">
-                <xsl:call-template name="check-system-details">
-                    <xsl:with-param name="check" select="cdf:check"/>
-                    <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
-                    <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
-                    <xsl:with-param name="result" select="$result"/>
-                </xsl:call-template>
-            </xsl:variable>
-
-            <xsl:if test="normalize-space($check_system_details_ret)">
-                <tr><td colspan="2"><div class="check-system-details">
-                    <xsl:copy-of select="$check_system_details_ret"/>
-                </div></td></tr>
-            </xsl:if>
             <xsl:if test="cdf:message">
                 <tr><td colspan="2"><div class="evaluation-messages">
                     <span class="label label-default"><abbr title="Messages taken from rule-result">Evaluation messages</abbr></span>
@@ -891,7 +877,7 @@ Authors:
                     </div></td></tr>
                 </xsl:for-each>
                 <xsl:for-each select="$item/cdf:fix">
-                    <tr><td colspan="2"><div class="remediation">
+                    <tr class="noprint"><td colspan="2"><div class="remediation">
                         <xsl:call-template name="show-fix">
                             <xsl:with-param name="fix" select="."/>
                             <xsl:with-param name="testresult" select="$testresult"/>
@@ -947,6 +933,20 @@ Authors:
                             <xsl:with-param name="profile" select="$profile"/>
                             <xsl:with-param name="result" select="$result"/>
                     </xsl:call-template>
+                    <xsl:variable name="check_system_details_ret">
+                        <xsl:call-template name="check-system-details">
+                            <xsl:with-param name="check" select="cdf:check"/>
+                            <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+                            <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
+                            <xsl:with-param name="result" select="$result"/>
+                        </xsl:call-template>
+                    </xsl:variable>
+
+                    <xsl:if test="normalize-space($check_system_details_ret)">
+                        <div class="check-system-details">
+                            <xsl:copy-of select="$check_system_details_ret"/>
+                        </div>
+                    </xsl:if>
                 </div>
             </div>
         </xsl:if>
@@ -991,7 +991,7 @@ Authors:
             <xsl:with-param name="item" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
-        <a href="#result-details"><button type="button" class="btn btn-secondary">Scroll back to the first rule</button></a>
+        <a href="#result-details"><button type="button" class="btn btn-secondary noprint">Scroll back to the first rule</button></a>
     </div>
 </xsl:template>
 
