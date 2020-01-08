@@ -23,7 +23,7 @@ pre
     white-space: pre-wrap;
 }
 
-div.check-system-details, div.remediation, div.description { display: inline-block; width: 0; min-width: 100%; overflow-x: auto }
+div.check-system-details, div.remediation, div.description { width: 0; min-width: 100%; overflow-x: auto }
 
 div.profile-description
 {
@@ -54,5 +54,5 @@ div.top-spacer-10
     abbr[title] { border: none; text-decoration: none }
     div.progress { overflow: visible ; height: auto }
     div.progress-bar { width: auto; float: none ; width: auto !important; text-align: left }
-    div.panel-body { padding: 0px }
+    div.panel-body { padding: 4px }
 }

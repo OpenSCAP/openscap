@@ -847,20 +847,6 @@ Authors:
                     </xsl:for-each>
                 </td></tr>
             </xsl:if>
-            <xsl:variable name="check_system_details_ret">
-                <xsl:call-template name="check-system-details">
-                    <xsl:with-param name="check" select="cdf:check"/>
-                    <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
-                    <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
-                    <xsl:with-param name="result" select="$result"/>
-                </xsl:call-template>
-            </xsl:variable>
-
-            <xsl:if test="normalize-space($check_system_details_ret)">
-                <tr><td colspan="2"><div class="check-system-details">
-                    <xsl:copy-of select="$check_system_details_ret"/>
-                </div></td></tr>
-            </xsl:if>
             <xsl:if test="cdf:message">
                 <tr><td colspan="2"><div class="evaluation-messages">
                     <span class="label label-default"><abbr title="Messages taken from rule-result">Evaluation messages</abbr></span>
@@ -947,6 +933,20 @@ Authors:
                             <xsl:with-param name="profile" select="$profile"/>
                             <xsl:with-param name="result" select="$result"/>
                     </xsl:call-template>
+                    <xsl:variable name="check_system_details_ret">
+                        <xsl:call-template name="check-system-details">
+                            <xsl:with-param name="check" select="cdf:check"/>
+                            <xsl:with-param name="oval-tmpl" select="$oval-tmpl"/>
+                            <xsl:with-param name="sce-tmpl" select="$sce-tmpl"/>
+                            <xsl:with-param name="result" select="$result"/>
+                        </xsl:call-template>
+                    </xsl:variable>
+
+                    <xsl:if test="normalize-space($check_system_details_ret)">
+                        <div class="check-system-details">
+                            <xsl:copy-of select="$check_system_details_ret"/>
+                        </div>
+                    </xsl:if>
                 </div>
             </div>
         </xsl:if>
