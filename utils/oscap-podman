@@ -77,7 +77,16 @@ else
     ID=$1
     TARGET="podman-container://$1"
 fi
+
+# podman init creates required files such as: /run/.containerenv - we don't care about output and exit code
+podman init $ID &> /dev/null || true
+
 DIR=$(podman mount $ID) || die
+
+if [ ! -f "$DIR/run/.containerenv" ]; then
+    # ubi8-init image does not create .containerenv when running podman init, but we need to make sure that the file is there
+    touch "$DIR/run/.containerenv"
+fi
 
 for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
     eval "export OSCAP_OFFLINE_$VAR"
