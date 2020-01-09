@@ -3,12 +3,10 @@ language: c
 matrix:
   include:
     - os: linux
+      dist: bionic
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
-            - cmake
             - lcov
             - libdbus-1-dev
             - libdbus-glib-1-dev
@@ -28,14 +26,13 @@ matrix:
             - swig
             - librtmp-dev
             - xsltproc
-            - gcc-7
       before_script:
-        - export CC=gcc-7 GCOV=gcov-7
         - cd build
       script:
         - cmake -DCMAKE_BUILD_TYPE=Debug ../
-        - build-wrapper-linux-x86-64 --out-dir bw-output make all || true  # Will always fail builds on forked repositories.
-        - cd .. && sonar-scanner || true  # Will always fail builds on forked repositories.
+        - build-wrapper-linux-x86-64 --out-dir bw-output make all || make all  # build-wrapper won't work on forked repositories.
+        - ctest --output-on-failure || true  # Tests won't pass on Ubuntu.
+        - (cd .. && sonar-scanner) || true  # Will always fail builds on forked repositories.
       after_success:
         - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
     - os: osx
@@ -54,12 +51,6 @@ matrix:
 addons:
   sonarcloud:
     organization: "openscap"
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - gcc-7
-
 
 cache:
   directories:
