@@ -969,6 +969,8 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 	probe_offline_mode_function_t offline_mode_function = probe_table_get_offline_mode_function(probe->subtype);
 	if (offline_mode_function != NULL) {
 		probe->supported_offline_mode = offline_mode_function();
+	} else {
+		probe->supported_offline_mode = PROBE_OFFLINE_NONE;
 	}
 
 	/*
