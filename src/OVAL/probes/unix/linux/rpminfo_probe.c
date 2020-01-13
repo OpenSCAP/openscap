@@ -334,7 +334,8 @@ static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep, struct
 		ret = -1;
 		goto cleanup;
 	}
-	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, rep->epoch) != 0) {
+	char *epoch_override = oscap_streq(rep->epoch, "(none)") ? "0" : rep->epoch;
+	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, epoch_override) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
