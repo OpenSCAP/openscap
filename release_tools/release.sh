@@ -101,7 +101,7 @@ make_dist()
 check_abi()
 {
     rpm -q abi-compliance-checker || sudo dnf install abi-compliance-checker
-    test -d openscap-abi-check || git clone https://github.com/OpenSCAP/openscap-abi-check
+    test -d openscap-abi-check || git clone git@github.com:OpenSCAP/openscap-abi-check.git
     openscap_git_branch=$(git branch | grep '^\* ' | cut -f2 -d' ')
     (
         cd openscap-abi-check
