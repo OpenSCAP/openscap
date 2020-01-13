@@ -15,6 +15,8 @@
 
 . $builddir/tests/test_common.sh
 
+set -e -o pipefail
+
 # Test Cases.
 
 function test_probes_password {
