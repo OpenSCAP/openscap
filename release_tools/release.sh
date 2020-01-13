@@ -183,7 +183,7 @@ apply_triplets_to_file()
 # $1: Strategy (backwards_compatible, bugfix, breaking_change)
 increment_ltversions()
 {
-    local _cmake_file="$OSCAP_REPO_ROOT/src/CMakeLists.txt" _old_versions _new_versions _new_soname _old_soname
+    local _cmake_file="$OSCAP_REPO_ROOT/CMakeLists.txt" _old_versions _new_versions _new_soname _old_soname
     # check_for_clean_repo
     _old_versions="$(get_lt_triplet_from_file "$_cmake_file")" || die "Unable to get current LT versions"
     _new_versions="$(increment_on_$1 "$_old_versions")" || die  "Unable to get calculate refreshed LT version with strategy '$1'"
