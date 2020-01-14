@@ -49,12 +49,22 @@ Update the `AUTHORS` file for missing authors and the `naming.sh` file if there 
 +
 Use it to update the `NEWS` file and commit it.
 +
-The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.2.17`).
+The last commit before the release has to have the `openscap-<version>` message (e.g. `openscap-1.3.2`).
+
+. Create tarballs and GitHub release.
++
+In a clean copy of the release branch run `cmake .. && make package_source` in the `build` directory.
++
+Create new GitHub release with the name of the vesrion (e.g. 1.3.2) being released.
++
+Add relevant part of the NEWS file as a release description. 
++
+Attach `openscap-X.Y.Z.tar.gz` and `openscap-X.Y.Z.tag.gz.sha512` files to the GH release, created against the release tag.
 
 . Run `new-release.sh`.
 +
 This will create and push version tags, create new GitHub release and handle milestones swap.
-Finally, it will bump version numbers in `versions.sh` to be ready for the next upstream release.
+Finally, it will bump version numbers in `versions.sh` to be ready for the next (e.g. 1.3.3) upstream release.
 
 . Build OpenSCAP for Windows
 +
