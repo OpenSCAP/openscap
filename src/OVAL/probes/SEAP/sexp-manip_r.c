@@ -266,11 +266,6 @@ SEXP_t *SEXP_string_newf_rv(SEXP_t *sexp_mem, const char *format, va_list ap)
 		return NULL;
 	}
 
-        if (v_strlen < 0) {
-                /* TODO: handle this */
-                return (NULL);
-        }
-
         if (SEXP_val_new (&v_dsc, sizeof (char) * v_strlen,
                           SEXP_VALTYPE_STRING) != 0)
         {
@@ -421,7 +416,7 @@ void __SEXP_free_r (SEXP_t *s_exp, const char *file, uint32_t line, const char *
 #endif
 {
 #if !defined(NDEBUG) && defined(SEAP_VERBOSE_DEBUG)
-        dI("s_exp=%p (%s:%u:%s)", s_exp, file, line, func);
+        dD("s_exp=%p (%s:%u:%s)", s_exp, file, line, func);
 #endif
         if (s_exp == NULL)
                 return;

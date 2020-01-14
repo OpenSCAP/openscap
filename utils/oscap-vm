@@ -28,8 +28,8 @@ function usage()
     echo
     echo "Usage:"
     echo
-    echo "$ oscap-vm image VM_STORAGE_IMAGE xccdf eval [options] INPUT_CONTENT"
-    echo "$ oscap-vm domain VM_DOMAIN xccdf eval [options] INPUT_CONTENT"
+    echo "$ oscap-vm [--oscap=<oscap_binary>] image VM_STORAGE_IMAGE xccdf eval [options] INPUT_CONTENT"
+    echo "$ oscap-vm [--oscap=<oscap_binary>] domain VM_DOMAIN xccdf eval [options] INPUT_CONTENT"
     echo
     echo "supported oscap xccdf eval options are:"
     echo "  --profile"
@@ -73,6 +73,8 @@ function usage()
     echo "See \`man oscap\` to learn more about semantics of these options."
 }
 
+OSCAP_BINARY=oscap
+
 if [ $# -lt 1 ]; then
     echo "No arguments provided."
     usage
@@ -80,6 +82,9 @@ if [ $# -lt 1 ]; then
 elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     usage
     die
+elif [[ "$1" == --oscap=* ]] && [ $# -gt 3 ]; then
+    OSCAP_BINARY=${1#"--oscap="}
+    shift
 elif [ "$1" == "image" ] && [ $# -gt 2 ]; then
     true
 elif [ "$1" == "domain" ] && [ $# -gt 2 ]; then
@@ -124,15 +129,10 @@ fi
 # Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
 export OSCAP_PROBE_ROOT
 OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT"; pwd)"
-export OSCAP_PROBE_OS_NAME="Linux" # TODO: This may be wrong!
-export OSCAP_PROBE_OS_VERSION
-OSCAP_PROBE_OS_VERSION="$(uname --kernel-release)" # TODO
-export OSCAP_PROBE_ARCHITECTURE
-OSCAP_PROBE_ARCHITECTURE="$(uname --hardware-platform)" # TODO
 export OSCAP_EVALUATION_TARGET="oscap-vm $1 $2"
 shift 2
 
-oscap "$@"
+$OSCAP_BINARY "$@"
 EXIT_CODE=$?
 echo "Unmounting '$MOUNTPOINT'..."
 $UNMOUNT_COMMAND "$MOUNTPOINT"

@@ -32,7 +32,7 @@
 
 static int test_single_call()
 {
-	struct mntent ment;
+	struct mntent ment = {0};
 	ment.mnt_type = "autofs";
 	int ret = is_local_fs(&ment);
 	/* autofs entry is never considered local */

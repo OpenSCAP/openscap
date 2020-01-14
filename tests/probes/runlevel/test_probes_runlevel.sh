@@ -82,6 +82,7 @@ function test_probes_runlevel_A {
 function test_probes_runlevel_B {
 
     probecheck "runlevel" || return 255
+    require "chkconfig" || return 255
 
     local ret_val=0;
     local DF="test_probes_runlevel_B.xml"
@@ -109,6 +110,7 @@ function test_probes_runlevel_B {
 
 function test_probes_runlevel_C {
     probecheck "runlevel" || return 255
+    require "chkconfig" || return 255
 
     local ret_val=0;
     local definition="test_probes_runlevel_C.xml"

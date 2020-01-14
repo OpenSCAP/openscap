@@ -4,7 +4,9 @@
 .gdb_history
 .libs/
 .*.swp
+*.pyc
 tags
+*.pyc
 
 CMakeLists.txt.user
 build/

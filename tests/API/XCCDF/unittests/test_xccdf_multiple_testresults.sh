@@ -17,7 +17,7 @@ tmpdir=$(dirname $result)
 for i in {1..5}; do
 	$OSCAP xccdf eval --results $result $result 2> $stderr
 	[ -f $stderr ]
-	[ "`cat $stderr`" == "WARNING: Skipping $tmpdir/non_existent.oval.xml file which is referenced from XCCDF content" ]
+	grep "Skipping $tmpdir/non_existent\.oval\.xml file which is referenced from XCCDF content" $stderr
 	:> $stderr
 
 	$OSCAP xccdf validate $result

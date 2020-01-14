@@ -213,7 +213,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE, NULL, environmentvariable_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58
-	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL, environmentvariable58_probe_main, NULL, NULL},
+	{OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL, environmentvariable58_probe_main, NULL, environmentvariable58_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_INDEPENDENT_FAMILY
 	{OVAL_INDEPENDENT_FAMILY, NULL, family_probe_main, NULL, family_probe_offline_mode_supported},
@@ -246,7 +246,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT, xmlfilecontent_probe_init, xmlfilecontent_probe_main, xmlfilecontent_probe_fini, xmlfilecontent_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_DPKGINFO
-	{OVAL_LINUX_DPKG_INFO, dpkginfo_probe_init, dpkginfo_probe_main, NULL, NULL},
+	{OVAL_LINUX_DPKG_INFO, dpkginfo_probe_init, dpkginfo_probe_main, dpkginfo_probe_fini, dpkginfo_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_IFLISTENERS
 	{OVAL_LINUX_IFLISTENERS, NULL, iflisteners_probe_main, NULL, NULL},

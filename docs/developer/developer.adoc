@@ -23,6 +23,7 @@ Choose *1a* or *1b* depending on whether you want sources from a release tarball
 wget https://github.com/OpenSCAP/openscap/releases/download/${version}/openscap-${version}.tar.gz
 tar -xzpf openscap-${version}.tar.gz
 cd openscap-${version}
+mkdir -p build
 ----
 +
 **OR**
@@ -44,7 +45,7 @@ Build dependencies may vary depending on enabled features (by the `cmake` comman
 Some of the dependencies are optional, if they are not detected, openscap will be compiled
 without respective optional features.
 
-On RHEL / Fedora / CentOS, the command to install the build dependencies is:
+On RHEL 7 / Fedora 23 / CentOS 7, the command to install the build dependencies is:
 
 ----
 sudo yum install \
@@ -54,13 +55,33 @@ pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig
 bzip2-devel gcc-c++
 ----
 
-On Ubuntu 16.04, the command to install the build dependencies is:
+On Fedora 24+, the command to install the build dependencies is:
+
+----
+sudo yum install \
+cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
+libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
+pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig \
+bzip2-devel gcc-c++
+----
+
+On RHEL 8 / CentOS 8, the command to install the build dependencies is:
+
+----
+sudo yum install \
+cmake dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
+libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
+pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel swig \
+bzip2-devel gcc-c++
+----
+
+On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependencies is:
 
 ----
 sudo apt-get install -y cmake libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev \
 libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev \
 libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl \
-libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++
+libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libapt-pkg-dev
 ----
 
 When you have all the build dependencies installed you can build the library.
@@ -76,6 +97,22 @@ $ cd build/
 $ cmake ../
 $ make
 ----
+
+On Ubuntu 18.04 and potentially other distro, the python3 dist-packages path is wrong.
+If the following command:
+
+----
+$ python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())"
+----
+
+returns "/usr/local/lib/python3/dist-packages" instead of a path like
+"/usr/local/lib/python3.6/dist-packages", you must override this path,
+otherwise you will not be able to import openscap_api.
+
+----
+$ cmake ../ -DPYTHON_SITE_PACKAGES_INSTALL_DIR=/usr/local/lib/python3.6/dist-packages
+----
+
 --
 
 . *Build the HTML documentation*
@@ -111,7 +148,7 @@ After building the library you might want to run library self-checks. To do
 that you need to have these additional packages installed:
 
 ----
-wget lua which procps-ng initscripts chkconfig sendmail bzip2
+wget lua which procps-ng initscripts chkconfig sendmail bzip2 rpm-build
 ----
 
 and it is also required to have `sendmail` service running on the system:
@@ -132,7 +169,21 @@ It's also possible to use `ctest` to test any other oscap binary present in the 
 $ export CUSTOM_OSCAP=/usr/bin/oscap; ctest
 ----
 
-Not every check tests the oscap tool, however, when the CUSTOM_OSCAP variable is set, only the checks which do are executed.
+Some tests that use the so-called offline mode of probes need to chroot during the test execution.
+Some of those probes use the chroot syscall, which an unprivileged process is not allowed to do.
+This is not a problem during the scanning itself, as oscap is usually scanning as root.
+However, we don't want to run oscap as root during tests, as the whole test suite would have to use root privileges to clean up.
+
+Instead, build the `oscap-chrootable` target as superuser, or build `oscap-chrootable-nocap` first and then grant the capability manually.
+This target creates the binary that the test suite will use for some of those offline tests.
+In offline tests, use the `set_offline_test_mode [chroot directory]` and `unset_offline_test_mode` functions from the common test module - those will set variables in such way that the unquoted `$OSCAP` invocation will use the chroot-capable binary, or it will exit with an error code, aborting the test.
+Therefore, it is recommended to run
+
+----
+$ sudo make oscap-chrootable
+----
+
+Not every check tests the oscap tool, however, when the `CUSTOM_OSCAP` variable is set, only the checks which do are executed.
 
 To enable the MITRE tests, use the `ENABLE_MITRE` flag:
 
@@ -160,11 +211,12 @@ $ make install
 
 == Running oscap
 It is important to use your compiled `libopenscap.so` library with your `oscap` tool.
-The easiest way how to achieve that without need to install `libopenscap.so` to the system path, is to use a shell script called *run* in the OpenSCAP build directory.
+The easiest way how to achieve that without need to install `libopenscap.so` to the system path, is to use a shell script called *oscap_wrapper* or *run* in the OpenSCAP build directory.
 
 -------------------------------------------------
 $ cd build/
-$ bash ./run utils/oscap xccdf eval ... whatever
+$ ./oscap_wrapper xccdf eval ... whatever
+$ ./run valgrind utils/oscap xccdf eval ... whatever
 -------------------------------------------------
 
 The *run* script is generated at configure time by CMake and it sets the following environment variables:
@@ -175,6 +227,9 @@ The *run* script is generated at configure time by CMake and it sets the followi
 * *OSCAP_XSLT_PATH* - path to XSLT transformations. (required if you want
 to generate html documents from xml)
 * *OSCAP_CPE_PATH* - path to the OpenSCAP CPE dictionary.
+
+The *oscap_wrapper* script is a convenience shortcut for `run utils/oscap` call.
+
 
 == Debugging
 Developers and users who intend to help find and fix possible bugs in OpenSCAP

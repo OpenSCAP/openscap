@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2015 Red Hat Inc., Durham, North Carolina.
+# Copyright 2015-2019 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
 #
 # OpenSCAP Probes Test Suite.
@@ -8,35 +8,34 @@
 #
 # Authors:
 #      Jan Černý <jcerny@redhat.com>
+#      Evgenii Kolesnikov <ekolesni@redhat.com>
 
-. $builddir/tests/test_common.sh
-
-set -e -o pipefail
-set -x
-
-[ -f /etc/os-release ] && . /etc/os-release
+. $srcdir/../rpm_common.sh
 
 function test_probes_rpmverifypackage {
 
     probecheck "rpmverifypackage" || return 255
     require "rpm" || return 255
     DF="test_probes_rpmverifypackage.xml"
-    RF="results.xml"
+    RF="${builddir}/tests/probes/rpm/rpmverifypackage/results.xml"
 
     RPM_NAME=$1
-    RPM_EPOCH=`rpm --qf "%{EPOCH}\n" -q $RPM_NAME | head -1`
-    RPM_ARCH=`rpm --qf "%{ARCH}\n" -q $RPM_NAME | head -1`
-    RPM_VERSION=`rpm --qf "%{VERSION}\n" -q $RPM_NAME | head -1`
-    RPM_RELEASE=`rpm --qf "%{RELEASE}\n" -q $RPM_NAME | head -1`
+    RPM_EPOCH=`rpm_query $RPM_NAME EPOCH`
+    RPM_ARCH=`rpm_query $RPM_NAME ARCH`
+    RPM_VERSION=`rpm_query $RPM_NAME VERSION`
+    RPM_RELEASE=`rpm_query $RPM_NAME RELEASE`
 
-
-    bash ${srcdir}/test_probes_rpmverifypackage.xml.sh \
+    bash ${srcdir}/rpmverifypackage.xml.sh \
         $RPM_NAME $RPM_EPOCH $RPM_ARCH $RPM_VERSION $RPM_RELEASE > $DF
 
-    [ -f $RF ] && rm -f $RF
+    rm -f $RF
+
     $OSCAP oval eval --results $RF $DF
 
     result=$RF
+
+    $OSCAP oval validate $RF
+
     p="/oval_results/results/system/"
     q=$p"oval_system_characteristics/system_data/"
     assert_exists 1 '/oval_results/generator/oval:schema_version[text()="5.11"]'
@@ -59,31 +58,6 @@ function test_probes_rpmverifypackage {
     assert_exists 1 $q'lin-sys:rpmverifypackage_item/lin-sys:verification_script_successful'
     assert_exists 1 $q'lin-sys:rpmverifypackage_item/lin-sys:verification_script_successful[@datatype="boolean"]'
 
-    $OSCAP oval validate $RF
-
-    rm $RF
-    rm $DF
+    rm -f $RF
+    rm -f $DF
 }
-
-# Test Cases.
-
-function test_probes_rpmverifypackage_epoch {
-    RPM_package_1=$(rpm -qa --qf "%{NAME}\t%{EPOCH}\n" | grep -v "(none)" | sort -u | head -1 | cut -f 1) || ret=$?
-    test_probes_rpmverifypackage $RPM_package_1
-}
-
-function test_probes_rpmverifypackage_noepoch {
-    RPM_package_2=$(rpm -qa --qf "%{NAME}\t%{EPOCH}\n" | grep "(none)" | sort -u | head -1 | cut -f 1) || ret=$?
-    test_probes_rpmverifypackage $RPM_package_2
-}
-
-# Testing.
-
-test_init
-
-if [[ $ID != *"sle"* && $ID != *"suse"* ]]; then
-test_run "test_probes_rpmverifypackage_epoch" test_probes_rpmverifypackage_epoch
-fi
-test_run "test_probes_rpmverifypackage_noepoch" test_probes_rpmverifypackage_noepoch
-
-test_exit

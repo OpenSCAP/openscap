@@ -113,7 +113,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
 		if (xattr_count < 0) {
 			free(st_path_with_prefix);
-				dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+				dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
 				return 0;
 		}
 
@@ -128,7 +128,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 	} while (errno == ERANGE);
 
         if (xattr_count < 0) {
-                dI("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+                dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
                 free(xattr_buf);
         }
 
@@ -182,7 +182,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
                                 free(xattr_val);
                         } else {
-                                dI("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
+                                dD("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
 
                                 item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL, NULL);
                                 probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
@@ -222,7 +222,7 @@ void *fileextendedattribute_probe_init(void)
         case 0:
 		return ((void *)mutex);
         default:
-                dI("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
+                dD("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
         }
 #if 0
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
@@ -280,7 +280,7 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-		dI("Can't lock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
+		dD("Can't lock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
 
 		SEXP_free(path);
 		SEXP_free(filename);
@@ -320,7 +320,7 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
         case 0:
                 break;
         default:
-		dI("Can't unlock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
+		dD("Can't unlock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
 
                 return PROBE_EFATAL;
         }

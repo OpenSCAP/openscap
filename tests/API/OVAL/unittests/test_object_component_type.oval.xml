@@ -30,7 +30,7 @@
             <ind:object object_ref="oval:oscap:obj:2" />
             <ind:state state_ref="oval:oscap:ste:1" />
         </ind:variable_test>
-        <ind:variable_test id="oval:oscap:tst:3" check="all" comment="The value of PASS_MIN_LEN should be set appropriately in /etc/login.defs" version="1">
+        <ind:variable_test id="oval:oscap:tst:3" check="all" comment="The value of PASS_MIN_DAYS should be set appropriately in /etc/login.defs" version="1">
             <ind:object object_ref="oval:oscap:obj:3" />
             <ind:state state_ref="oval:oscap:ste:1" />
         </ind:variable_test>
@@ -47,11 +47,11 @@
             <ind:var_ref>oval:oscap:var:3</ind:var_ref>
         </ind:variable_object>
         <ind:textfilecontent54_object id="oval:oscap:obj:10" version="1">
-            <!-- Read whole /etc/login.defs as single line so we can retrieve last PASS_MIN_LEN directive occurrence -->
+            <!-- Read whole /etc/login.defs as single line so we can retrieve last PASS_MIN_DAYS directive occurrence -->
             <ind:behaviors singleline="true" />
             <ind:filepath>/etc/login.defs</ind:filepath>
-            <!-- Retrieve last (uncommented) occurrence of PASS_MIN_LEN directive -->
-            <ind:pattern operation="pattern match">.*\n[^#]*(PASS_MIN_LEN\s+\d+)\s*\n</ind:pattern>
+            <!-- Retrieve last (uncommented) occurrence of PASS_MIN_DAYS directive -->
+            <ind:pattern operation="pattern match">.*\n[^#]*(PASS_MIN_DAYS\s+\d+)\s*\n</ind:pattern>
             <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
         </ind:textfilecontent54_object>
     </objects>
@@ -64,20 +64,20 @@
 
     <variables>
         <!-- variable with a meaningfully specified object_component/@item_field attribute -->
-        <local_variable id="oval:oscap:var:1" datatype="int" comment="The value of last PASS_MIN_LEN directive in /etc/login.defs" version="1">
-            <regex_capture pattern="PASS_MIN_LEN\s+(\d+)">
+        <local_variable id="oval:oscap:var:1" datatype="int" comment="The value of last PASS_MIN_DAYS directive in /etc/login.defs" version="1">
+            <regex_capture pattern="PASS_MIN_DAYS\s+(\d+)">
                <object_component item_field="subexpression" object_ref="oval:oscap:obj:10" />
             </regex_capture>
         </local_variable>
         <!-- variable with a nonsense in the object_component/@item_field attribute -->
         <local_variable id="oval:oscap:var:2" datatype="int" comment="Reference to not existing entity within textfilecontent_item. Should report an error when evaluating." version="1">
-            <regex_capture pattern="PASS_MIN_LEN\s+(\d+)">
+            <regex_capture pattern="PASS_MIN_DAYS\s+(\d+)">
                <object_component item_field="something_bogus" object_ref="oval:oscap:obj:10" />
             </regex_capture>
         </local_variable>
         <!-- variable that requires a record data type in OVAL Item -->
         <local_variable id="oval:oscap:var:3" datatype="int" comment="Record_field attribute suggest than an record data type is expected, but actually string data type will be provided. Should report an error when evaluating." version="1">
-            <regex_capture pattern="PASS_MIN_LEN\s+(\d+)">
+            <regex_capture pattern="PASS_MIN_DAYS\s+(\d+)">
                <object_component item_field="subexpression" record_field="some_record_field_name" object_ref="oval:oscap:obj:10" />
             </regex_capture>
         </local_variable>

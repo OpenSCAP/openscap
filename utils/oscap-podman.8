@@ -12,10 +12,10 @@ This script cannot run in rootless mode.
 Usage of the tool mimics usage and options of oscap(8) tool.
 
 .SS Compliance scan of Podman container image:
-oscap-podman IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
+oscap-podman [--oscap=<OSCAP_BINARY>] IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
 
 .SS Compliance scan of Podman container:
-oscap-podman CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
+oscap-podman [--oscap=<OSCAP_BINARY>] CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]
 
 Refer to oscap(8) to learn about OSCAP_ARGUMENT options.
 

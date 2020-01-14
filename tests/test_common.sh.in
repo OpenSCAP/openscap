@@ -29,6 +29,8 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     else
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash @CMAKE_BINARY_DIR@/run @CMAKE_BINARY_DIR@/utils/oscap"
     fi
+    [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE_EXEC="@CMAKE_BINARY_DIR@/utils/oscap-chrootable"
+    [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE="bash @CMAKE_BINARY_DIR@/run $OSCAP_CHROOTABLE_EXEC"
 else
     export OSCAP=${CUSTOM_OSCAP}
 fi
@@ -129,6 +131,42 @@ function probecheck {
     return 0
 }
 
+# Check for package names and return a version number
+function package_version {
+    # loop through multiple potential package names
+    # return first version number found
+    for package in $@; do
+        ver=""
+
+        # check rpm for package version first
+        if [ -f "/usr/bin/rpm" ]; then
+            ver=$(rpm -q $package --qf="%{version}" 2> /dev/null)
+
+            # rpm returns error messages on stdout, check return code
+            if [ ! "$?" -eq "0" ]; then
+                ver=""
+            fi
+        fi
+
+        # fall back to dpkg for debian systems
+        if [ "${ver}" == "" ] && [ -f "/usr/bin/dpkg-query" ]; then
+            # for Debian-based systems, return the upstream version
+            ver="$(dpkg-query -f '${source:Upstream-Version}' -W $package 2> /dev/null)"
+        fi
+
+        # return the first match found
+        if [ "${ver}" != "" ]; then
+            echo "${ver}"
+            return 0
+        fi
+    done
+
+    # package not found
+    if [ "${ver}" == "" ]; then
+        return 255
+    fi
+}
+
 function verify_results {
 
     require "grep" || return 255
@@ -182,4 +220,45 @@ assert_exists() {
                 return 1
         fi
 }
+
+# $1: The chroot directory
+set_chroot_offline_test_mode() {
+	if test -n "$_OSCAP_BEFORE"; then
+		echo "Already in offline test mode!" >&2
+		return
+	fi
+	if test -x "$OSCAP_CHROOTABLE_EXEC"; then
+		if ! getcap "$OSCAP_CHROOTABLE_EXEC" | grep -q 'cap_sys_chroot+ep'; then
+			echo "Skipping test '${FUNCNAME[1]}' as '$OSCAP_CHROOTABLE_EXEC' doesn't have the chroot capability." >&2
+			return 255
+		fi
+		_OSCAP_BEFORE="$OSCAP"
+		OSCAP="$OSCAP_CHROOTABLE"
+	elif test $(id -u) -eq 0; then
+		: # Running offline tests as root is acceptable too
+	else
+		echo "Skipping test '${FUNCNAME[1]}' as '$OSCAP_CHROOTABLE_EXEC' oscap which is supposed to have chroot capability doesn't exist." >&2
+		return 255
+	fi
+	set_offline_chroot_dir "$1"
+	return 0
+}
+
+# $1: The chroot directory. If empty, unset the OSCAP_PROBE_ROOT variable
+set_offline_chroot_dir() {
+	if test -n "$1"; then
+		export OSCAP_PROBE_ROOT="$1"
+	else
+		unset OSCAP_PROBE_ROOT
+	fi
+}
+
+unset_chroot_offline_test_mode() {
+	if test -n "$_OSCAP_BEFORE"; then
+		OSCAP="$_OSCAP_BEFORE"
+		_OSCAP_BEFORE=
+	fi
+	set_offline_chroot_dir ""
+}
+
 export -f assert_exists

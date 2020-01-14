@@ -9,7 +9,8 @@ stderr=`mktemp`
 
 $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_unsupported_check_system.xml 2> $stderr
 echo "Stderr file = $stderr"
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+grep "Skipping rule that requires an unregistered check system or incorrect content reference to evaluate." $stderr
+rm $stderr
 
 $OSCAP xccdf validate $result
 

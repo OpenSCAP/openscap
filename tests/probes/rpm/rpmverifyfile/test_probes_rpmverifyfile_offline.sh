@@ -6,13 +6,14 @@
 # OpenScap Probes Test Suite.
 
 . $builddir/tests/test_common.sh
+. $srcdir/../rpm_common.sh
 
 set -e -o pipefail
 
 function test_probes_rpmverifyfile {
     probecheck "rpmverifyfile" || return 255
 
-    DF="$srcdir/test_probes_rpmverifyfile.xml"
+    DF="$srcdir/test_probes_rpmverifyfile_offline.xml"
     RF="results.xml"
 
     rm -f $RF
@@ -40,7 +41,7 @@ function test_probes_rpmverifyfile {
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:release'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:arch'
     assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:filepath'
-    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:filepath[text()="/etc/os-release"]'
+    assert_exists 1 'oval_results/oval_definitions/objects/lin-def:rpmverifyfile_object/lin-def:filepath[text()="/etc/foobar"]'
     sc='oval_results/results/system/oval_system_characteristics/'
     sd=$sc'system_data/'
     assert_exists 1 $sc'collected_objects/object'
@@ -82,4 +83,12 @@ function test_probes_rpmverifyfile {
     rm -f $RF
 }
 
-test_probes_rpmverifyfile
+test_init
+
+rpm_prepare_offline
+
+test_run "rpmverifyfile probe test with OVAL 5.11.1 (offline)" test_probes_rpmverifyfile
+
+rpm_cleanup_offline
+
+test_exit

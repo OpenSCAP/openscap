@@ -13,7 +13,8 @@ $OSCAP xccdf eval --profile xccdf_moc.elpmaxe.www_profile_1 --results $result $s
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+grep "Skipping rule that requires an unregistered check system or incorrect content reference to evaluate." $stderr
+rm $stderr
 
 $OSCAP xccdf validate $result
 

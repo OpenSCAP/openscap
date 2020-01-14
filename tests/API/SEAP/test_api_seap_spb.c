@@ -203,6 +203,7 @@ int main (int argc, char *argv[])
         {
                 uint8_t b;
                 spb_iterate (spb, 0, b, abort ());
+                (void) b; // It is technically unused, we know
         }
         spb_free (spb, 0);
         //////////////////////////////////////////////////////////////////////////        

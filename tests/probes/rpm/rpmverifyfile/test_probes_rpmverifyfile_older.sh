@@ -11,6 +11,7 @@ set -e -o pipefail
 
 function test_probes_rpmverifyfile {
     probecheck "rpmverifyfile" || return 255
+    require "rpm" || return 255
 
     DF="$srcdir/test_probes_rpmverifyfile_older.xml"
     RF="results.xml"
@@ -78,4 +79,8 @@ function test_probes_rpmverifyfile {
     rm -f $RF
 }
 
-test_probes_rpmverifyfile
+test_init
+
+test_run "rpmverifyfile probe test with OVAL 5.11" test_probes_rpmverifyfile
+
+test_exit

@@ -55,8 +55,8 @@ Authors:
         <xsl:when test="starts-with(@system, 'http://cve.mitre.org')">
             <a href="{concat('https://cve.mitre.org/cgi-bin/cvename.cgi?name=', text())}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
         </xsl:when>
-        <xsl:when test="starts-with(@system, 'https://rhn.redhat.com/errata')">
-            <a href="{concat('https://rhn.redhat.com/errata/', concat(text(), '.html'))}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
+        <xsl:when test="starts-with(@system, 'https://access.redhat.com/errata')">
+            <a href="{concat('https://access.redhat.com/errata/', concat(text(), '.html'))}"><abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr></a>
         </xsl:when>
         <xsl:otherwise>
             <abbr title="{concat(@system, concat(': ', text()))}"><xsl:value-of select="text()"/></abbr>
@@ -284,7 +284,7 @@ Authors:
         </xsl:choose>
     </xsl:variable>
 
-    <span class="label label-success">Remediation <xsl:value-of select="$fix_type"/>:</span>&#160;&#160;&#160;<a data-toggle="collapse" data-target="#{generate-id($fix)}">(show)</a><br />
+    <a class="btn btn-success" data-toggle="collapse" data-target="#{generate-id($fix)}" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation <xsl:value-of select="$fix_type"/> &#8690;</a><br />
     <div class="panel-collapse collapse" id="{generate-id($fix)}">
         <xsl:if test="$fix/@complexity or $fix/@disruption or $fix/@reboot or $fix/@strategy">
             <table class="table table-striped table-bordered table-condensed">

@@ -11,7 +11,9 @@ $OSCAP xccdf eval --results $result $srcdir/test_xccdf_check_without_content_ref
 
 echo "Stderr file = $stderr"
 echo "Result file = $result"
-[ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
+[ -f $stderr ]
+grep "Skipping rule that uses OVAL but is possibly malformed; an incorrect content reference prevents this check from being evaluated." $stderr
+rm $stderr
 
 $OSCAP xccdf validate $result
 

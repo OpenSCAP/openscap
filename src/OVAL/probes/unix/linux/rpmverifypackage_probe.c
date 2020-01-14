@@ -69,9 +69,7 @@ typedef struct {
 
 const rpmverifypackage_bhmap_t rpmverifypackage_bhmap[] = {
 	{ "nodeps",        (uint64_t)VERIFY_DEPS      , "--nodeps"},
-	{ "nodigest",      (uint64_t)VERIFY_DIGEST    , "--nodigest"},
 	{ "noscripts",     (uint64_t)VERIFY_SCRIPT    , "--noscript"},
-	{ "nosignature",   (uint64_t)VERIFY_SIGNATURE , "--nosignature"}
 };
 
 struct rpmverify_res {
@@ -314,8 +312,7 @@ ret:
 
 int rpmverifypackage_probe_offline_mode_supported()
 {
-	// TODO: Switch this to OFFLINE_MODE_OWN once rpmtsSetRootDir is fully supported by librpm
-	return PROBE_OFFLINE_CHROOT;
+	return PROBE_OFFLINE_OWN;
 }
 
 void *rpmverifypackage_probe_init(void)
@@ -342,7 +339,7 @@ void *rpmverifypackage_probe_init(void)
 	}
 
 	if (rpmReadConfigFiles (NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+		dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		g_rpm->rpm.rpmts = NULL;
 		return ((void *)g_rpm);
 	}
@@ -372,12 +369,12 @@ void rpmverifypackage_probe_fini(void *ptr)
 	rpmFreeMacros(NULL);
 	rpmlogClose();
 
-	// This will be always set by probe_init(), lets free it
-	probe_chroot_free(&r->chr);
-
 	// If r is null, probe_init() failed during chroot
 	if (r == NULL)
 		return;
+
+	// This will be always set by probe_init(), lets free it
+	probe_chroot_free(&r->chr);
 
 	// If r->rpm.rpmts was not initialized the mutex was not as well
 	if (r->rpm.rpmts == NULL)
@@ -404,27 +401,15 @@ static int rpmverifypackage_additem(probe_ctx *ctx, struct rpmverify_res *res)
 				 NULL);
 
 	if (res->vflags & VERIFY_DEPS) {
-		dI("VERIFY_DEPS %d", res->vresults & VERIFY_DEPS);
+		dD("VERIFY_DEPS %lu", res->vresults & VERIFY_DEPS);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DEPS ? "1" : "0"), 1);
 		probe_item_ent_add(item, "dependency_check_passed", NULL, value);
 		SEXP_free(value);
 	}
-	if (res->vflags & VERIFY_DIGEST) {
-		dI("VERIFY_DIGEST %d", res->vresults & VERIFY_DIGEST);
-		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_DIGEST ? "1" : "0"), 1);
-		probe_item_ent_add(item, "digest_check_passed", NULL, value);
-		SEXP_free(value);
-	}
 	if (res->vflags & VERIFY_SCRIPT) {
-		dI("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
+		dD("VERIFY_SCRIPT %d", res->vresults & VERIFY_SCRIPT);
 		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SCRIPT ? "1" : "0"), 1);
 		probe_item_ent_add(item, "verification_script_successful", NULL, value);
-		SEXP_free(value);
-	}
-	if (res->vflags & VERIFY_SIGNATURE) {
-		dI("VERIFY_SIGNATURE %d", res->vresults & VERIFY_SIGNATURE);
-		value = probe_entval_from_cstr(OVAL_DATATYPE_BOOLEAN, (res->vresults & VERIFY_SIGNATURE ? "1" : "0"), 1);
-		probe_item_ent_add(item, "signature_check_passed", NULL, value);
 		SEXP_free(value);
 	}
 
@@ -473,7 +458,7 @@ int rpmverifypackage_probe_main(probe_ctx *ctx, void *arg)
 
 			if (aval != NULL) {
 				if (SEXP_strcmp(aval, "true") == 0) {
-					dI("omit verify attr: %s", rpmverifypackage_bhmap[i].a_name);
+					dD("omit verify attr: %s", rpmverifypackage_bhmap[i].a_name);
 					collect_flags |= rpmverifypackage_bhmap[i].a_flag;
 				}
 

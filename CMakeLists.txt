@@ -23,15 +23,15 @@ endif()
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-set(LT_CURRENT 25)
+set(LT_CURRENT 26)
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
-set(LT_REVISION 1)
+set(LT_REVISION 0)
 
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
 ## precedence over adding, so set to 0 if both happened.
-set(LT_AGE 0)
+set(LT_AGE 1)
 
 math(EXPR LT_CURRENT_MINUS_AGE "${LT_CURRENT} - ${LT_AGE}")
 
@@ -132,6 +132,7 @@ if(RPM_FOUND)
 	check_library_exists("${RPM_LIBRARY}" headerFormat "" HAVE_HEADERFORMAT)
 	check_library_exists("${RPMIO_LIBRARY}" rpmFreeCrypto "" HAVE_RPMFREECRYPTO)
 	check_library_exists("${RPM_LIBRARY}" rpmFreeFilesystems "" HAVE_RPMFREEFILESYSTEMS)
+	check_library_exists("${RPM_LIBRARY}" rpmVerifyFile "" HAVE_RPMVERIFYFILE)
 	set(HAVE_RPMVERCMP 1)
 endif()
 
@@ -339,11 +340,71 @@ message(STATUS " ")
 message(STATUS "OVAL:")
 message(STATUS "base probe support: ${ENABLE_PROBES}")
 message(STATUS "SEAP msgid bit-size: ${SEAP_MSGID_BITS}")
-message(STATUS "independent probes: ${ENABLE_PROBES_INDEPENDENT}")
-message(STATUS "unix probes: ${ENABLE_PROBES_UNIX}")
-message(STATUS "linux probes: ${ENABLE_PROBES_LINUX}")
-message(STATUS "solaris probes: ${ENABLE_PROBES_SOLARIS}")
+
+message(STATUS "")
+message(STATUS "Independent probes: ${ENABLE_PROBES_INDEPENDENT}")
+message(STATUS "  Independent family probe: ${OPENSCAP_PROBE_INDEPENDENT_FAMILY}")
+message(STATUS "  Independent system info probe: ${OPENSCAP_PROBE_INDEPENDENT_SYSTEM_INFO}")
+message(STATUS "  Independent variable probe: ${OPENSCAP_PROBE_INDEPENDENT_VARIABLE}")
+
+message(STATUS "")
+message(STATUS "Independent probes incompatible with WIN32 (WIN32 status: ${IS_WIN32})")
+message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}") 
+message(STATUS "  Independent environmentvariable58 probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58}")
+message(STATUS "  Independent filehash probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH}")
+message(STATUS "  Independent filehash58 probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH58}")
+message(STATUS "  Independent sql probe (depends on opendbx): ${OPENSCAP_PROBE_INDEPENDENT_SQL}")
+message(STATUS "  Independent sql57 probe (depends on opendbx): ${OPENSCAP_PROBE_INDEPENDENT_SQL57}")
+message(STATUS "  Independent textfilecontent probe: ${OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT}")
+message(STATUS "  Independent textfilecontent54 probe: ${OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT54}")
+message(STATUS "  Independent xmlfilecontent probe: ${OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT}")
 message(STATUS " ")
+
+
+message(STATUS "Unix probes: ${ENABLE_PROBES_UNIX}")
+message(STATUS "  Unix dnscache probe: ${OPENSCAP_PROBE_UNIX_DNSCACHE}")
+message(STATUS "  Unix file probe: ${OPENSCAP_PROBE_UNIX_FILE}")
+message(STATUS "  Unix fileextendedattribute probe (depends on xattrh): ${OPENSCAP_PROBE_UNIX_FILEEXTENDEDATTRIBUTE}")
+message(STATUS "  Unix gconf probe (depends on gconf): ${OPENSCAP_PROBE_UNIX_GCONF}")
+message(STATUS "  Unix interface probe: ${OPENSCAP_PROBE_UNIX_INTERFACE}")
+message(STATUS "  Unix password probe: ${OPENSCAP_PROBE_UNIX_PASSWORD}")
+message(STATUS "  Unix process probe: ${OPENSCAP_PROBE_UNIX_PROCESS}")
+message(STATUS "  Unix process58 probe (depends on CAP): ${OPENSCAP_PROBE_UNIX_PROCESS58}")
+message(STATUS "  Unix routingtable probe: ${OPENSCAP_PROBE_UNIX_ROUTINGTABLE}")
+message(STATUS "  Unix runlevel probe: ${OPENSCAP_PROBE_UNIX_RUNLEVEL}")
+message(STATUS "  Unix shadow probe: ${OPENSCAP_PROBE_UNIX_SHADOW}")
+message(STATUS "  Unix symlink probe: ${OPENSCAP_PROBE_UNIX_SYMLINK}")
+message(STATUS "  Unix sysctl probe: ${OPENSCAP_PROBE_UNIX_SYSCTL}")
+message(STATUS "  Unix uname probe: ${OPENSCAP_PROBE_UNIX_UNAME}")
+message(STATUS "  Unix xinetd probe: ${OPENSCAP_PROBE_UNIX_XINETD}")
+message(STATUS " ")
+
+message(STATUS "Linux probes: ${ENABLE_PROBES_LINUX}")
+message(STATUS "  Linux dpkginfo probe (depends on aptpkg): ${OPENSCAP_PROBE_LINUX_DPKGINFO}")
+message(STATUS "  Linux iflisteners probe: ${OPENSCAP_PROBE_LINUX_IFLISTENERS}")
+message(STATUS "  Linux inetlisteningservers probe: ${OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS}")
+message(STATUS "  Linux partition probe (depends on blkid): ${OPENSCAP_PROBE_LINUX_PARTITION}")
+message(STATUS "  Linux rpminfo probe (depends on rpm): ${OPENSCAP_PROBE_LINUX_RPMINFO}")
+message(STATUS "  Linux rpmverify probe (depends on rpm): ${OPENSCAP_PROBE_LINUX_RPMVERIFY}")
+message(STATUS "  Linux rpmverifyfile probe (depends on rpm): ${OPENSCAP_PROBE_LINUX_RPMVERIFYFILE}")
+message(STATUS "  Linux rpmverifypackage probe (depends on rpm): ${OPENSCAP_PROBE_LINUX_RPMVERIFYPACKAGE}")
+message(STATUS "  Linux selinuxboolean probe (depends on selinux): ${OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN}")
+message(STATUS "  Linux selinuxsecuritycontext probe (depends on selinux): ${OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT}")
+message(STATUS "  Linux systemdunitdependency probe (depends on dbus): ${OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY}")
+message(STATUS "  Linux systemdunitproperty probe (depends on dbus): ${OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY}")
+message(STATUS " ")
+
+message(STATUS "Solaris probes: ${ENABLE_PROBES_SOLARIS}")
+message(STATUS "  Solaris isainfo probe: ${OPENSCAP_PROBE_SOLARIS_ISAINFO}")
+message(STATUS " ")
+
+
+message(STATUS "Windows probes: ${ENABLE_PROBES_WINDOWS}")
+message(STATUS "  Windows accesstoken probe: ${OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN}")
+message(STATUS "  Windows registry probe: ${OPENSCAP_PROBE_WINDOWS_REGISTRY}")
+message(STATUS "  Windows wmi57 probe: ${OPENSCAP_PROBE_WINDOWS_WMI57}")
+message(STATUS " ")
+
 
 message(STATUS "Language bindings:")
 message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")

@@ -58,7 +58,8 @@ grep unix-sys:name "$result" | grep -v $SYSCTL_BLACKLIST_REGEX | sed -E 's;.*>(.
 # If procps_ver > 3.3.12 we need to filter *stable_secret and vm.stat_refresh
 # options from the sysctl output, for more details see
 # https://github.com/OpenSCAP/openscap/issues/1152.
-procps_ver=$(rpm -q procps-ng --qf="%{version}")
+procps_ver="$(package_version procps-ng procps)"
+
 lowest_ver=$(echo -e "3.3.12\n$procps_ver" | sort -V | head -n1)
 if [ "$procps_ver" != "$lowest_ver" ]; then
 	sed -i '/net.ipv6.conf.*stable_secret$/d' "$sysctlNames"

@@ -378,20 +378,19 @@ xccdf_policy_evaluate_cb(struct xccdf_policy * policy, const char * sysname, con
 }
 
 /**
- * Find all posible names for given check-content-ref/@href, considering also the check/@system.
- * This is usefull for multi-check="true" feature.
- * @return list of names (even empty) if the given href found, NULL otherwise.
+ * Find all possible names for given check-content-ref/@href, considering also the check/@system.
+ * This is useful for multi-check="true" feature.
+ * @return list of OVAL definitions if the given href found, NULL otherwise.
  */
-static struct oscap_stringlist *
-_xccdf_policy_get_namesfor_href(struct xccdf_policy *policy, const char *sysname, const char *href)
+static struct oscap_list *_xccdf_policy_get_oval_definitions_for_href(struct xccdf_policy *policy, const char *sysname, const char *href)
 {
 	struct oscap_iterator *cb_it = _xccdf_policy_get_engines_by_sysname(policy, sysname);
-	struct oscap_stringlist *result = NULL;
+	struct oscap_list *result = NULL;
 	while (oscap_iterator_has_more(cb_it) && result == NULL) {
 		struct xccdf_policy_engine *engine = (struct xccdf_policy_engine *) oscap_iterator_next(cb_it);
 		if (engine == NULL)
 			break;
-		result = xccdf_policy_engine_query(engine, POLICY_ENGINE_QUERY_NAMES_FOR_HREF, (void *) href);
+		result = xccdf_policy_engine_query(engine, POLICY_ENGINE_QUERY_OVAL_DEFS_FOR_HREF, (void *) href);
 	}
 	oscap_iterator_free(cb_it);
 	return result;
@@ -584,6 +583,10 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 				result = check;
 			} else if (strcmp("http://oval.mitre.org/XMLSchema/oval-definitions-5", check->system) == 0) {
 				print_oval_warning = true;
+			} else if (strcmp("http://scap.nist.gov/schema/ocil/2", check->system) == 0) {
+				dI("This rule requires an OCIL check. OCIL checks are not supported by OpenSCAP.");
+			} else if (strcmp("http://open-scap.org/page/SCE", check->system) == 0) {
+				dI("This rule requires a SCE check but the SCE plugin was disabled.");
 			} else {
 				print_general_warning = true;
 				warning_check_system = check->system;
@@ -592,10 +595,10 @@ _xccdf_policy_rule_get_applicable_check(struct xccdf_policy *policy, struct xccd
 
 		// Only print a warning if we didn't select a check but could've otherwise.
 		if (print_oval_warning) {
-			printf("WARNING: Skipping rule that uses OVAL but is possibly malformed; "
+			dW("Skipping rule that uses OVAL but is possibly malformed; "
 			       "an incorrect content reference prevents this check from being evaluated.\n");
 		} else if (print_general_warning && result == NULL) {
-			printf("WARNING: Skipping rule that requires an unregistered check system "
+			dW("Skipping rule that requires an unregistered check system "
 			       "or incorrect content reference to evaluate. "
 			       "Please consider providing a valid SCAP/OVAL instead of %s\n",
 				warning_check_system);
@@ -1000,9 +1003,9 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 	xccdf_role_t role = xccdf_get_final_role(rule, r_rule);
 
 	if (!is_selected) {
-		dI("Rule '%s' is not selected.", rule_id);
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_SELECTED, NULL);
 	}
+	dI("Evaluating XCCDF rule '%s'.", rule_id);
 
 	if (role == XCCDF_ROLE_UNCHECKED)
 		return _xccdf_policy_report_rule_result(policy, result, rule, NULL, XCCDF_RESULT_NOT_CHECKED, NULL);
@@ -1048,24 +1051,27 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 
 		if (content_name == NULL && xccdf_check_get_multicheck(check)) {
 			// parent element is Rule, @multi-check is required
-			struct oscap_stringlist *names = _xccdf_policy_get_namesfor_href(policy, system_name, href);
-			if (names != NULL) {
+			struct oscap_list *oval_definition_list = _xccdf_policy_get_oval_definitions_for_href(policy, system_name, href);
+			if (oval_definition_list != NULL) {
 				// multi-check is supported by checking-engine
-				struct oscap_string_iterator *name_it = oscap_stringlist_get_strings(names);
-				if (!oscap_string_iterator_has_more(name_it)) {
+				struct oscap_iterator *oval_definition_iterator = oscap_iterator_new(oval_definition_list);
+				if (!oscap_iterator_has_more(oval_definition_iterator)) {
 					// Super special case when oval file contains no definitions
 					// thus multi-check shall yield zero rule-results.
 					report = _xccdf_policy_report_rule_result(policy, result, rule, check, XCCDF_RESULT_UNKNOWN, "No definitions found for @multi-check.");
-					oscap_string_iterator_free(name_it);
-					oscap_stringlist_free(names);
+					oscap_iterator_free(oval_definition_iterator);
+					oscap_list_free(oval_definition_list, NULL);
 					xccdf_check_content_ref_iterator_free(content_it);
 					oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
 					return report;
 				}
-				while (oscap_string_iterator_has_more(name_it)) {
-					const char *name = oscap_string_iterator_next(name_it);
+				while (oscap_iterator_has_more(oval_definition_iterator)) {
+					struct oval_definition *oval_definition = oscap_iterator_next(oval_definition_iterator);
+					if ((report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_MULTICHECK, (void *) oval_definition)) != 0) {
+						break;
+					}
 					struct xccdf_check *cloned_check = xccdf_check_clone(check);
-					xccdf_check_inject_content_ref(cloned_check, content, name);
+					xccdf_check_inject_content_ref(cloned_check, content, oval_definition_get_id(oval_definition));
 					int inner_ret = xccdf_policy_check_evaluate(policy, cloned_check);
 					if (inner_ret == -1) {
 						xccdf_check_free(cloned_check);
@@ -1074,12 +1080,13 @@ _xccdf_policy_rule_evaluate(struct xccdf_policy * policy, const struct xccdf_rul
 					}
 					if ((report = _xccdf_policy_report_rule_result(policy, result, rule, cloned_check, inner_ret, NULL)) != 0)
 						break;
-					if (oscap_string_iterator_has_more(name_it))
+					if (oscap_iterator_has_more(oval_definition_iterator)) {
 						if ((report = xccdf_policy_report_cb(policy, XCCDF_POLICY_OUTCB_START, (void *) rule)) != 0)
 							break;
+					}
 				}
-				oscap_string_iterator_free(name_it);
-				oscap_stringlist_free(names);
+				oscap_iterator_free(oval_definition_iterator);
+				oscap_list_free(oval_definition_list, NULL);
 				xccdf_check_content_ref_iterator_free(content_it);
 				oscap_list_free(bindings, (oscap_destruct_func) xccdf_value_binding_free);
 				xccdf_check_free(check);
@@ -1130,14 +1137,10 @@ static int xccdf_policy_item_evaluate(struct xccdf_policy * policy, struct xccdf
 
     switch (itype) {
         case XCCDF_RULE:{
-			const char *rule_id = xccdf_rule_get_id((const struct xccdf_rule *)item);
-			dI("Evaluating XCCDF rule '%s'.", rule_id);
 			return _xccdf_policy_rule_evaluate(policy, (struct xccdf_rule *) item, result);
         } break;
 
         case XCCDF_GROUP:{
-			const char *group_id = xccdf_group_get_id((const struct xccdf_group *)item);
-			dI("Evaluating XCCDF group '%s'.", group_id);
 			child_it = xccdf_group_get_content((const struct xccdf_group *)item);
 			while (xccdf_item_iterator_has_more(child_it)) {
 				child = xccdf_item_iterator_next(child_it);
@@ -1598,6 +1601,13 @@ bool xccdf_policy_model_register_output_callback(struct xccdf_policy_model * mod
         __attribute__nonnull__(model);
 	struct reporter *reporter = reporter_new(XCCDF_POLICY_OUTCB_END, func, usr);
         return oscap_list_add(model->callbacks, reporter);
+}
+
+bool xccdf_policy_model_register_multicheck_callback(struct xccdf_policy_model *model, policy_reporter_multicheck func, void *usr)
+{
+	__attribute__nonnull__(model);
+	struct reporter *reporter = reporter_new(XCCDF_POLICY_OUTCB_MULTICHECK, func, usr);
+	return oscap_list_add(model->callbacks, reporter);
 }
 
 struct xccdf_result * xccdf_policy_get_result_by_id(struct xccdf_policy * policy, const char * id) {

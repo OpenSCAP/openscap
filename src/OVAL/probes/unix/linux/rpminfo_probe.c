@@ -272,7 +272,7 @@ ret:
 
 int rpminfo_probe_offline_mode_supported()
 {
-	return PROBE_OFFLINE_CHROOT | PROBE_OFFLINE_RPMDB;
+	return PROBE_OFFLINE_CHROOT;
 }
 
 void *rpminfo_probe_init(void)
@@ -282,18 +282,13 @@ void *rpminfo_probe_init(void)
 #endif
 	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
 	if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-		dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+		dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
 		g_rpm->rpmts = NULL;
 		return ((void *)g_rpm);
         }
 
 	g_rpm->rpmts = rpmtsCreate();
 	pthread_mutex_init (&(g_rpm->mutex), NULL);
-
-	char *dbpath = getenv("OSCAP_PROBE_RPMDB_PATH");
-	if (dbpath) {
-		addMacro(NULL, "_dbpath", NULL, dbpath, 0);
-	}
 
 	return ((void *)g_rpm);
 }
@@ -339,7 +334,8 @@ static int collect_rpm_files(SEXP_t *item, const struct rpminfo_rep *rep, struct
 		ret = -1;
 		goto cleanup;
 	}
-	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, rep->epoch) != 0) {
+	char *epoch_override = oscap_streq(rep->epoch, "(none)") ? "0" : rep->epoch;
+	if (rpmdbSetIteratorRE(ts, RPMTAG_EPOCH, RPMMIRE_STRCMP, epoch_override) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
@@ -427,7 +423,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
         val = probe_ent_getval (ent);
 
         if (val == NULL) {
-                dI("%s: no value", "name");
+                dD("%s: no value", "name");
                 SEXP_free (ent);
                 return (PROBE_ENOVAL);
         }
@@ -461,11 +457,11 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free (ent);
                 switch (errno) {
                 case EINVAL:
-                        dI("%s: invalid value type", "name");
+                        dD("%s: invalid value type", "name");
 			return PROBE_EINVAL;
                         break;
                 case EFAULT:
-                        dI("%s: element not found", "name");
+                        dD("%s: element not found", "name");
 			return PROBE_ENOELM;
                         break;
 		default:
@@ -481,7 +477,7 @@ int rpminfo_probe_main(probe_ctx *ctx, void *arg)
                 dI("Package \"%s\" not found.", request_st.name);
                 break;
         case -1: /* Error */
-                dI("get_rpminfo failed");
+                dD("get_rpminfo failed");
 
                 item = probe_item_create(OVAL_LINUX_RPM_INFO, NULL,
                                          "name", OVAL_DATATYPE_STRING, request_st.name,

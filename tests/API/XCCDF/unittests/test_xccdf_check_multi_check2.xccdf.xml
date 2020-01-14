@@ -3,6 +3,7 @@
   <status>incomplete</status>
   <version>1.0</version>
   <Rule selected="true" id="xccdf_moc.elpmaxe.www_rule_1">
+    <title>The only rule in this benchmark</title>
     <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" multi-check="true">
       <check-content-ref href="test_xccdf_check_content_ref_without_name_attr.oval.xml"/>
     </check>

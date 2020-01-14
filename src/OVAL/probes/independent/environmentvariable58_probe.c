@@ -51,6 +51,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include <probe/probe.h>
 #include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
@@ -58,6 +59,7 @@
 #include "environmentvariable58_probe.h"
 
 #define BUFFER_SIZE 256
+#define VAR_OFFLINE_PREFIX "OSCAP_OFFLINE_"
 
 extern char **environ;
 
@@ -156,16 +158,28 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 					continue;
 				}
 
-				env_name_size =  eq_char - buffer;
-				env_name = SEXP_string_new(buffer, env_name_size);
+				env_name_size = eq_char - buffer;
+				if (ctx->offline_mode == PROBE_OFFLINE_OWN) {
+					// We are not processing unprefixed (i.e. originated from the host) variables in offline mode
+					if (memmem(buffer, env_name_size, VAR_OFFLINE_PREFIX, strlen(VAR_OFFLINE_PREFIX)) != buffer
+						|| strlen(VAR_OFFLINE_PREFIX) >= env_name_size) {
+						buffer_used -= null_char + 1 - buffer;
+						memmove(buffer, null_char + 1, buffer_used);
+						continue;
+					}
+					env_name = SEXP_string_new(buffer + strlen(VAR_OFFLINE_PREFIX), env_name_size - strlen(VAR_OFFLINE_PREFIX));
+				} else {
+					env_name = SEXP_string_new(buffer, env_name_size);
+				}
 				env_value = SEXP_string_newf("%s", buffer + env_name_size + 1);
+
 				if (probe_entobj_cmp(name_ent, env_name) == OVAL_RESULT_TRUE) {
 					item = probe_item_create(
 						OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
 						"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
 						"name",  OVAL_DATATYPE_SEXP, env_name,
 						"value", OVAL_DATATYPE_SEXP, env_value,
-					      NULL);
+						NULL);
 					probe_item_collect(ctx, item);
 					err = 0;
 				}
@@ -190,6 +204,11 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	}
 
 	return err;
+}
+
+int environmentvariable58_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int environmentvariable58_probe_main(probe_ctx *ctx, void *arg)
@@ -229,9 +248,16 @@ int environmentvariable58_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free(nref);
 		SEXP_free(nval);
 		pid_ent = new_pid_ent;
+	} else {
+		if (ctx->offline_mode != PROBE_OFFLINE_NONE) {
+			err = PROBE_EINVAL;
+			goto cleanup;
+		}
 	}
 
 	err = read_environment(pid_ent, name_ent, ctx);
+
+cleanup:
 	SEXP_free(name_ent);
 	SEXP_free(pid_ent);
 

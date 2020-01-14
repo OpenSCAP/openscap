@@ -745,7 +745,6 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 		xmlNodePtr tailoring_component_ref = xmlNewNode(sds_ns, BAD_CAST "component-ref");
 		xmlSetProp(tailoring_component_ref, BAD_CAST "id", BAD_CAST tailoring_component_ref_id);
-		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
 		xmlNsPtr xlink_ns = xmlSearchNsByHref(doc, sds_res_node, BAD_CAST xlink_ns_uri);
 		if (!xlink_ns) {
 			oscap_seterr(OSCAP_EFAMILY_XML,
@@ -754,6 +753,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 					xlink_ns_uri);
 			return -1;
 		}
+		char *tailoring_cref_href = oscap_sprintf("#%s", tailoring_component_id);
 		xmlSetNsProp(tailoring_component_ref, xlink_ns, BAD_CAST "href", BAD_CAST tailoring_cref_href);
 		free(tailoring_cref_href);
 		xmlAddChild(checklists_element, tailoring_component_ref);

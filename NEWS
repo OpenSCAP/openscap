@@ -1,4 +1,24 @@
-openscap-1.3.1                                                  12-06-2018
+openscap-1.3.2                                                  13-01-2020
+  - New features
+    - Offline mode support for environmentvariable58 probe
+    - The oscap-docker wrapper is available without Atomic
+  - Maintenance, bug fixes
+    - Improved support of multi-check rules (report, remediations, console output)
+    - Improved HTML report look and feel, including printed version
+    - Less clutter in verbose mode output; some warnings and errors demoted to verbose mode levels
+    - Probe rpmverifyfile uses and returns canonical paths
+    - Improved a11y of HTML reports and guides
+    - Fixes and improvements for SWIG Python bindings
+    - #1403 fixed: Scanner would not apply remediation for multicheck rules (verbosity)
+    - Fixed URL link mechanism for Red Hat Errata
+    - New STIG Viewer URI: public.cyber.mil
+    - Probe selinuxsecuritycontext would not check if SELinux is enabled
+    - Scanner would provide information about unsupported OVAL objects
+    - Added more tests for offline mode (probes, remediation)
+    - #528 fixed: Eval SCE script when /tmp is in mode noexec
+    - #1173, RHBZ#1603347 fixed: Double chdir/chroot in probe rpmverifypackage
+
+openscap-1.3.1                                                  12-06-2019
   - New features
     - Support for SCAP 1.3 Source Datastreams (evaluating, XML schemas,
       validation)

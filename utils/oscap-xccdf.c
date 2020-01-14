@@ -402,21 +402,6 @@ static int callback_scr_result(struct xccdf_rule_result *rule_result, void *arg)
 	return 0;
 }
 
-static int callback_scr_rule_progress(struct xccdf_rule *rule, void *arg)
-{
-	const char * rule_id = xccdf_rule_get_id(rule);
-
-	/* is rule selected? we print only selected rules */
-	const bool selected = xccdf_policy_is_item_selected((struct xccdf_policy *) arg, rule_id);
-	if (!selected)
-		return 0;
-
-	printf("%s:", rule_id);
-	fflush(stdout);
-
-	return 0;
-}
-
 static int callback_scr_result_progress(struct xccdf_rule_result *rule_result, void *arg)
 {
 	xccdf_test_result_type_t result = xccdf_rule_result_get_result(rule_result);
@@ -426,11 +411,19 @@ static int callback_scr_result_progress(struct xccdf_rule_result *rule_result, v
 		return 0;
 
 	/* print result */
-	const char * result_str = xccdf_test_result_type_get_text(result);
+	const char *rule_id = xccdf_rule_result_get_idref(rule_result);
+	const char *result_str = xccdf_test_result_type_get_text(result);
 
-	printf("%s\n", result_str);
+	printf("%s:%s\n", rule_id, result_str);
 	fflush(stdout);
 
+	return 0;
+}
+
+static int callback_scr_multicheck(struct oval_definition *definition, void *arg)
+{
+	printf("OVAL Definition ID\t%s\n", oval_definition_get_id(definition));
+	printf("OVAL Definition Title\t%s\n", oval_definition_get_title(definition));
 	return 0;
 }
 
@@ -470,14 +463,13 @@ static void _register_progress_callback(struct xccdf_session *session, bool prog
 {
 	struct xccdf_policy_model *policy_model = xccdf_session_get_policy_model(session);
 	if (progress) {
-		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule_progress,
-				(void *) xccdf_session_get_xccdf_policy(session));
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result_progress, NULL);
 	}
 	else {
 		xccdf_policy_model_register_start_callback(policy_model, callback_scr_rule,
 				(void *) xccdf_session_get_xccdf_policy(session));
 		xccdf_policy_model_register_output_callback(policy_model, callback_scr_result, NULL);
+		xccdf_policy_model_register_multicheck_callback(policy_model, callback_scr_multicheck, NULL);
 	}
 	/* xccdf_policy_model_register_output_callback(policy_model, callback_syslog_result, NULL); */
 }
@@ -871,7 +863,7 @@ int app_generate_fix(const struct oscap_action *action)
 		} else if (strcmp(action->fix_type, "puppet") == 0) {
 			template = "urn:xccdf:fix:script:puppet";
 		} else if (strcmp(action->fix_type, "anaconda") == 0) {
-			template = "urn:xccdf:fix:script:anaconda";
+			template = "urn:redhat:anaconda:pre";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"

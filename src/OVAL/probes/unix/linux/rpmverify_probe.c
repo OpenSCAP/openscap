@@ -231,7 +231,7 @@ void *rpmverify_probe_init(void)
 	rpmlogSetCallback(rpmErrorCb, NULL);
 #endif
         if (rpmReadConfigFiles ((const char *)NULL, (const char *)NULL) != 0) {
-                dI("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
+                dD("rpmReadConfigFiles failed: %u, %s.", errno, strerror (errno));
                 return (NULL);
         }
 	struct rpm_probe_global *g_rpm = malloc(sizeof(struct rpm_probe_global));
@@ -298,19 +298,14 @@ typedef struct {
 } rpmverify_bhmap_t;
 
 const rpmverify_bhmap_t rpmverify_bhmap[] = {
-        { "nodeps",        (uint64_t)VERIFY_DEPS      },
-        { "nodigest",      (uint64_t)VERIFY_DIGEST    },
-        { "nofiles",       (uint64_t)VERIFY_FILES     },
-        { "noscripts",     (uint64_t)VERIFY_SCRIPT    },
-        { "nosignature",   (uint64_t)VERIFY_SIGNATURE },
-        { "nolinkto",      (uint64_t)VERIFY_LINKTO    },
-        { "nomd5",         (uint64_t)VERIFY_MD5       },
-        { "nosize",        (uint64_t)VERIFY_SIZE      },
-        { "nouser",        (uint64_t)VERIFY_USER      },
-        { "nogroup",       (uint64_t)VERIFY_GROUP     },
-        { "nomtime",       (uint64_t)VERIFY_MTIME     },
-        { "nomode",        (uint64_t)VERIFY_MODE      },
-        { "nordev",        (uint64_t)VERIFY_RDEV      },
+        { "nolinkto",      (uint64_t)RPMVERIFY_LINKTO    },
+        { "nomd5",         (uint64_t)RPMVERIFY_MD5       },
+        { "nosize",        (uint64_t)RPMVERIFY_FILESIZE  },
+        { "nouser",        (uint64_t)RPMVERIFY_USER      },
+        { "nogroup",       (uint64_t)RPMVERIFY_GROUP     },
+        { "nomtime",       (uint64_t)RPMVERIFY_MTIME     },
+        { "nomode",        (uint64_t)RPMVERIFY_MODE      },
+        { "nordev",        (uint64_t)RPMVERIFY_RDEV      },
         { "noconfigfiles", RPMVERIFY_SKIP_CONFIG      },
         { "noghostfiles",  RPMVERIFY_SKIP_GHOST       }
 };
@@ -388,7 +383,7 @@ int rpmverify_probe_main(probe_ctx *ctx, void *arg)
 
                         if (aval != NULL) {
                                 if (SEXP_strcmp(aval, "true") == 0) {
-                                        dI("omit verify attr: %s", rpmverify_bhmap[i].a_name);
+                                        dD("omit verify attr: %s", rpmverify_bhmap[i].a_name);
                                         collect_flags |= rpmverify_bhmap[i].a_flag;
                                 }
 

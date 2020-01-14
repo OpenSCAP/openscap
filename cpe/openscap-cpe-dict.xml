@@ -125,6 +125,10 @@
             <title xml:lang="en-us">Fedora 31</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:31</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:32">
+            <title xml:lang="en-us">Fedora 32</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:32</check>
+      </cpe-item>
       <cpe-item name="cpe:/o:suse:sle">
             <title xml:lang="en-us">SUSE Linux Enterprise all versions</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:1</check>
@@ -213,6 +217,10 @@
       <cpe-item name="cpe:/o:windriver:wrlinux:8">
             <title xml:lang="en-us">Wind River Linux 8</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:8</check>
+      </cpe-item>
+      <cpe-item name="cpe:/o:windriver:wrlinux:1019">
+            <title xml:lang="en-us">Wind River Linux 1019</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:1019</check>
       </cpe-item>
       <cpe-item name="cpe:/o:microsoft:windows_7">
             <title xml:lang="en-us">Microsoft Windows 7</title>

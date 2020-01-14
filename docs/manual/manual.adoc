@@ -459,6 +459,50 @@ Ident   CCE-3967-7
 Result  pass
 ----
 
+The meaning of results is defined by https://csrc.nist.gov/CSRC/media/Publications/nistir/7275/rev-4/final/documents/nistir-7275r4_updated-march-2012_clean.pdf[XCCDF Specification].
+This table lists the possible results of a single rule:
+
+.XCCDF results
+|===
+|Result |Description |Example Situation
+
+|pass
+|The target system or system component satisfied all the conditions of the rule.
+|
+
+|fail
+|The target system or system component did not satisfy all the conditions of the rule.
+|
+
+|error
+|The checking engine could not complete the evaluation, therefore the status of the target’s compliance with the rule is not certain.
+|OpenSCAP was run with insufficient privileges and could not gather all of the necessary information.
+
+|unknown
+|The testing tool encountered some problem and the result is unknown.
+|OpenSCAP was unable to interpret the output of the checking engine (the output has no meaning to OpenSCAP).
+
+|notapplicable
+|The rule was not applicable to the target of the test.
+|The rule might have been specific to a different version of the target OS, or it might have been a test against a platform feature that was not installed.
+
+|notchecked
+|The rule was not evaluated by the checking engine. This status is designed for rules that have no <xccdf:check> elements or that correspond to an unsupported checking system. It may also correspond to a status returned by a checking engine if the checking engine does not support the indicated check code.
+|The rule does not reference any OVAL check.
+
+|notselected
+|The rule was not selected in the benchmark. OpenSCAP does not display rules that were not selected.
+|The rule exists in the benchmark, but is not a part of selected profile.
+
+|informational
+|The rule was checked, but the output from the checking engine is simply information for auditors or administrators; it is not a compliance category. This status value is designed for rules whose main purpose is to extract information from the target rather than test the target.
+|
+
+|fixed
+|The rule had failed, but was then fixed by automated remediation.
+|
+|===
+
 The CPE dictionary is used to determine whether the content is
 applicable on the target platform or not. Any content that is not
 applicable will result in each relevant XCCDF rule being evaluated to
@@ -1859,3 +1903,12 @@ Again, usage of the tool mimics usage and options of `oscap` tool.
 
 
 
+== Frequently Asked Questions (FAQs)
+*Why do I get "notchecked" results when I use e.g. https://dl.dod.cyber.mil/wp-content/uploads/stigs/zip/U_Red_Hat_Enterprise_Linux_7_V2R3_STIG.zip[STIG checklist]?*
+
+The downloaded guidance contains rule descriptions, but it doesn't contain OVAL checks which could be used for evaluation by OpenSCAP. You can find guidances with implemented OVAL checks and also with remediations at https://github.com/ComplianceAsCode/content[ComplianceAsCode] project, which contains wide range of profiles.
+
+*I try to apply a tailoring file, but OpenSCAP still evaluates rules that I have unselected. How can I enforce my changes of the profile?*
+
+Make sure that you provide the ID of the customized profile in `--profile` option instead of the ID of the original profile.
+If you created the tailoring file using SCAP Workbench, you were prompted to choose the ID of the customized profile. You can display the ID of the customized profile by running `oscap info <your_tailoring_file>`. By default, the ID of the customized profile ends with `_customized` suffix.

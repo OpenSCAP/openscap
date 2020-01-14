@@ -20,6 +20,12 @@ echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 grep '^Result.*pass$' $stdout
 grep '^Result.*fail$' $stdout
+[ $(grep -c '^Rule.*xccdf_moc.elpmaxe.www_rule_1' $stdout) == 2 ]
+[ $(grep -c '^Title.*The only rule in this benchmark' $stdout) == 2 ]
+grep '^OVAL Definition ID.*oval:moc.elpmaxe.www:def:1$' $stdout
+grep '^OVAL Definition Title.*DEFINITION_1_TITLE_EXPECTED_PASS$' $stdout
+grep '^OVAL Definition ID.*oval:moc.elpmaxe.www:def:2$' $stdout
+grep '^OVAL Definition Title.*DEFINITION_2_TITLE_EXPECTED_FAIL$' $stdout
 rm $stdout
 
 $OSCAP xccdf validate $result
