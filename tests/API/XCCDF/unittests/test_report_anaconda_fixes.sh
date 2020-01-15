@@ -23,6 +23,16 @@ grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
 [ "`grep -v "$line1" $result | grep -v "$line2" | sed 's/\W//g'`"x == x ]
 :> $result
 
+# use --fix-type instead of URN template to generate the same fix
+$OSCAP xccdf generate fix --fix-type anaconda \
+	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
+[ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+grep "$line1" $result
+grep "$line2" $result
+grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
+[ "`grep -v "$line1" $result | grep -v "$line2" | sed 's/\W//g'`"x == x ]
+:> $result
+
 $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 	--profile xccdf_moc.elpmaxe.www_profile_1 \
 	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
