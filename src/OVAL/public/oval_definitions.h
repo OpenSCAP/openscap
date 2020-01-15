@@ -1669,7 +1669,7 @@ OSCAP_API void oval_variable_possible_value_iterator_free(struct oval_variable_p
  * @param hint A short description of what the value means or represents.
  * @memberof oval_variable_possible_restriction
  */
-OSCAP_API struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t operator, const char *hint);
+OSCAP_API struct oval_variable_possible_restriction *oval_variable_possible_restriction_new(oval_operator_t, const char *);
 
 
 /**
