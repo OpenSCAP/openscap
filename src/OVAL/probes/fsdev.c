@@ -97,6 +97,10 @@ static int is_local_fs(struct mntent *ment)
 		return 0;
 	}
 
+	if (ment->mnt_fsname == NULL) {
+		return 0;
+	}
+
 	s = ment->mnt_fsname;
 	/* If the fsname begins with "//", it is probably CIFS. */
 	if (s[0] == '/' && s[1] == '/')
