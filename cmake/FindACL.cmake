@@ -8,17 +8,17 @@
 include(LibFindMacros)
 
 # Use pkg-config to get hints about paths
-libfind_pkg_check_modules(ACL_PKGCONF acl)
+libfind_pkg_check_modules(ACL_PKGCONF libacl)
 
 # Include dir
 find_path(ACL_INCLUDE_DIR
-	NAMES acl/libacl.h
+	NAMES "acl/libacl.h sys/libacl.h"
 	PATHS ${ACL_PKGCONF_INCLUDE_DIRS}
 )
 
 # Finally the library itself
 find_library(ACL_LIBRARY
-	NAMES acl
+	NAMES libacl
 	PATHS ${ACL_PKGCONF_LIBRARY_DIRS}
 )
 
