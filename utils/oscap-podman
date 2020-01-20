@@ -65,17 +65,30 @@ if grep -q "\-\-remediate" <<< "$@"; then
     die
 fi
 
+IMAGE_NAME=$(podman image exists "$1" \
+    && podman image inspect --format "{{.Id}} {{.RepoTags}}" "$1")
+CONTAINER_NAME=$(podman container exists "$1" \
+    && podman container inspect --format "{{.Id}} {{.Name}}" "$1")
+
+if [ -n "$IMAGE_NAME" ] && [ -n "$CONTAINER_NAME" ]; then
+    echo "Ambiguous target, container image and container with the same name detected: '$1'." >&2
+    echo "Please rather use an unique ID to specify the target of the scan." >&2
+    die
+fi
+
 # Check if the target of scan is image or container.
 CLEANUP=0
-if podman images | grep -q $1; then
+if [ -n "$IMAGE_NAME" ]; then
     ID=$(podman create $1) || die
-    IMG_NAME=$(podman images --format "{{.ID}} ({{.Repository}}:{{.Tag}})" | grep -m1 $1)
-    TARGET="podman-image://$IMG_NAME"
+    TARGET="podman-image://$IMAGE_NAME"
     CLEANUP=1
-else
+elif [ -n "$CONTAINER_NAME" ]; then
     # If the target was not found in images we suppose it is a container.
     ID=$1
-    TARGET="podman-container://$1"
+    TARGET="podman-container://$CONTAINER_NAME"
+else
+    echo "Target of the scan not found: '$1'." >&2
+    die
 fi
 
 # podman init creates required files such as: /run/.containerenv - we don't care about output and exit code
