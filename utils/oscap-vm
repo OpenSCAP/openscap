@@ -22,6 +22,13 @@ function die()
     exit 1
 }
 
+function invalid()
+{
+    echo -e "$*\n" >&2
+    usage
+    exit 1
+}
+
 function usage()
 {
     echo "oscap-vm -- Tool for offline SCAP evaluation of virtual machines."
@@ -76,12 +83,10 @@ function usage()
 OSCAP_BINARY=oscap
 
 if [ $# -lt 1 ]; then
-    echo "No arguments provided."
-    usage
-    die
+    invalid "No arguments provided."
 elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     usage
-    die
+    exit 0
 elif [[ "$1" == --oscap=* ]] && [ $# -gt 3 ]; then
     OSCAP_BINARY=${1#"--oscap="}
     shift
@@ -90,9 +95,7 @@ elif [ "$1" == "image" ] && [ $# -gt 2 ]; then
 elif [ "$1" == "domain" ] && [ $# -gt 2 ]; then
     true
 else
-    echo "Invalid arguments provided."
-    usage
-    die
+    invalid "Invalid arguments provided."
 fi
 
 hash guestmount 2> /dev/null || die "Cannot find guestmount, please install libguestfs utilities."
@@ -128,7 +131,7 @@ fi
 
 # Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
 export OSCAP_PROBE_ROOT
-OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT"; pwd)"
+OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT" && pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (MOUNTPOINT)."
 export OSCAP_EVALUATION_TARGET="oscap-vm $1 $2"
 shift 2
 

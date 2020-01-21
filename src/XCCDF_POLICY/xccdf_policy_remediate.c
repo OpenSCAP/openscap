@@ -380,7 +380,11 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 #if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
+	if (rr == NULL) {
+		return 1;
+	}
+
+	if (fix == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
 		_rule_add_info_message(rr, "No fix available.");
 		return 1;
 	}
@@ -481,7 +485,11 @@ cleanup:
 #else
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
+	if (rr == NULL) {
+		return 1;
+	}
+
+	if (fix == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
 		_rule_add_info_message(rr, "No fix available.");
 		return 1;
 	} else {
