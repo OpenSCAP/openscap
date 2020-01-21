@@ -107,12 +107,13 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
 		if (xattr_count == 0) {
 			free(st_path_with_prefix);
+			free(xattr_buf);
 			return 0;
 		}
 
 		if (xattr_count < 0) {
 			free(st_path_with_prefix);
-			dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+			dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s", st_path_with_prefix, NULL, 0, errno, strerror(errno));
 			return 0;
 		}
 
@@ -127,8 +128,10 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 	} while (errno == ERANGE);
 
 	if (xattr_count < 0) {
-		dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+		dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s", st_path_with_prefix, xattr_buf, xattr_buflen, errno, strerror(errno));
+		free(st_path_with_prefix);
 		free(xattr_buf);
+		return 0;
 	}
 
 	/* update lastpath if needed */
@@ -181,7 +184,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
 				free(xattr_val);
 			} else {
-				dD("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
+				dD("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s", st_path_with_prefix, xattr_buf + i, errno, strerror(errno));
 
 				item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL, NULL);
 				probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
@@ -222,6 +225,7 @@ void *fileextendedattribute_probe_init(void)
 		return (void *)mutex;
 	default:
 		dD("Can't initialize mutex: errno=%u, %s.", errno, strerror(errno));
+		free(mutex);
 	}
 #if 0
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
