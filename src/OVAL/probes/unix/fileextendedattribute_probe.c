@@ -69,21 +69,21 @@
 #define FILE_SEPARATOR '/'
 
 struct cbargs {
-        probe_ctx *ctx;
+	probe_ctx *ctx;
 	int        error;
-        SEXP_t    *attr_ent;
+	SEXP_t    *attr_ent;
 };
 
 static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
 {
-        char path_buffer[PATH_MAX];
-        SEXP_t *item, xattr_name;
-        struct cbargs *args = (struct cbargs *) ptr;
-        const char *st_path;
+	char path_buffer[PATH_MAX];
+	SEXP_t *item, xattr_name;
+	struct cbargs *args = (struct cbargs *) ptr;
+	const char *st_path;
 
-        ssize_t xattr_count = -1;
-        char   *xattr_buf = NULL;
-        size_t  xattr_buflen = 0, i;
+	ssize_t xattr_count = -1;
+	char   *xattr_buf = NULL;
+	size_t  xattr_buflen = 0, i;
 
 	if (f == NULL) {
 		st_path = p;
@@ -98,23 +98,22 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		st_path = path_buffer;
 	}
 
-        SEXP_init(&xattr_name);
+	SEXP_init(&xattr_name);
 
 	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
 	do {
 		/* estimate the size of the buffer */
-
 		xattr_count = llistxattr(st_path_with_prefix, NULL, 0);
 
 		if (xattr_count == 0) {
 			free(st_path_with_prefix);
-			return (0);
+			return 0;
 		}
 
 		if (xattr_count < 0) {
 			free(st_path_with_prefix);
-				dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
-				return 0;
+			dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+			return 0;
 		}
 
 		/* allocate space for xattr names */
@@ -127,12 +126,12 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		/* check & retry if needed */
 	} while (errno == ERANGE);
 
-        if (xattr_count < 0) {
-                dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
-                free(xattr_buf);
-        }
+	if (xattr_count < 0) {
+		dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s.", errno, strerror(errno));
+		free(xattr_buf);
+	}
 
-        /* update lastpath if needed */
+	/* update lastpath if needed */
 	if (!SEXP_emptyp(gr_lastpath)) {
 		if (SEXP_strcmp(gr_lastpath, p) != 0) {
 			SEXP_free_r(gr_lastpath);
@@ -142,18 +141,18 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		SEXP_string_new_r(gr_lastpath, p, strlen(p));
 	}
 
-        i = 0;
-        /* collect */
-        do {
-                SEXP_string_new_r(&xattr_name, xattr_buf + i, strlen(xattr_buf +i));
+	i = 0;
+	/* collect */
+	do {
+		SEXP_string_new_r(&xattr_name, xattr_buf + i, strlen(xattr_buf +i));
 
-                if (probe_entobj_cmp(args->attr_ent, &xattr_name) == OVAL_RESULT_TRUE) {
-                        ssize_t xattr_vallen = -1;
-                        char   *xattr_val = NULL;
+		if (probe_entobj_cmp(args->attr_ent, &xattr_name) == OVAL_RESULT_TRUE) {
+			ssize_t xattr_vallen = -1;
+			char   *xattr_val = NULL;
 
-                        xattr_vallen = lgetxattr(st_path_with_prefix, xattr_buf + i, NULL, 0);
-                retry_value:
-                        if (xattr_vallen >= 0) {
+			xattr_vallen = lgetxattr(st_path_with_prefix, xattr_buf + i, NULL, 0);
+		retry_value:
+			if (xattr_vallen >= 0) {
 				// Check possible buffer overflow
 				if (sizeof(char) * (xattr_vallen + 1) <= sizeof(char) * xattr_vallen) {
 					dE("Attribute is too long.");
@@ -161,50 +160,50 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 				}
 
 				// Allocate buffer, '+1' is for trailing '\0'
- 				xattr_val    = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+				xattr_val    = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
 
 				// we don't want to override space for '\0' by call of 'lgetxattr'
 				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'
-                                xattr_vallen = lgetxattr(st_path_with_prefix, xattr_buf + i, xattr_val, xattr_vallen);
+				xattr_vallen = lgetxattr(st_path_with_prefix, xattr_buf + i, xattr_val, xattr_vallen);
 
-                                if (xattr_vallen < 0 || errno == ERANGE)
-                                        goto retry_value;
+				if (xattr_vallen < 0 || errno == ERANGE)
+					goto retry_value;
 
 				xattr_val[xattr_vallen] = '\0';
 
-                                item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL,
-                                                         "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
-                                                         "path",     OVAL_DATATYPE_SEXP, gr_lastpath,
-                                                         "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
-                                                         "attribute_name", OVAL_DATATYPE_SEXP,   &xattr_name,
-                                                         "value",          OVAL_DATATYPE_STRING, xattr_val,
-                                                         NULL);
+				item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL,
+				                        "filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
+				                        "path",     OVAL_DATATYPE_SEXP, gr_lastpath,
+				                        "filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
+				                        "attribute_name", OVAL_DATATYPE_SEXP,   &xattr_name,
+				                        "value",          OVAL_DATATYPE_STRING, xattr_val,
+				                        NULL);
 
-                                free(xattr_val);
-                        } else {
-                                dD("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
+				free(xattr_val);
+			} else {
+				dD("FAIL: lgetxattr(%s, %s, NULL, 0): errno=%u, %s.", errno, strerror(errno));
 
-                                item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL, NULL);
-                                probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
+				item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL, NULL);
+				probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
 
-                                if (xattr_val != NULL)
-                                        free(xattr_val);
-                        }
+				if (xattr_val != NULL)
+					free(xattr_val);
+			}
 
-                        probe_item_collect(args->ctx, item); /* XXX: handle ENOMEM */
-                }
+			probe_item_collect(args->ctx, item); /* XXX: handle ENOMEM */
+		}
 
-                SEXP_free_r(&xattr_name);
+		SEXP_free_r(&xattr_name);
 
-                /* skip to next name */
-                while (i < xattr_buflen && xattr_buf[i] != '\0')
-                        ++i;
+		/* skip to next name */
+		while (i < xattr_buflen && xattr_buf[i] != '\0')
+			++i;
 		++i;
-        } while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
+	} while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
 
-        free(xattr_buf);
+	free(xattr_buf);
 	free(st_path_with_prefix);
-        return (0);
+	return 0;
 }
 
 int fileextendedattribute_probe_offline_mode_supported()
@@ -214,86 +213,82 @@ int fileextendedattribute_probe_offline_mode_supported()
 
 void *fileextendedattribute_probe_init(void)
 {
-        /*
-         * Initialize mutex.
-         */
+	/*
+	 * Initialize mutex.
+	 */
 	pthread_mutex_t *mutex = malloc(sizeof(pthread_mutex_t));
-	switch (pthread_mutex_init (mutex, NULL)) {
-        case 0:
-		return ((void *)mutex);
-        default:
-                dD("Can't initialize mutex: errno=%u, %s.", errno, strerror (errno));
-        }
+	switch (pthread_mutex_init(mutex, NULL)) {
+	case 0:
+		return (void *)mutex;
+	default:
+		dD("Can't initialize mutex: errno=%u, %s.", errno, strerror(errno));
+	}
 #if 0
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "path");
 	probe_setoption(PROBEOPT_VARREF_HANDLING, false, "filename");
 #endif
-        return (NULL);
+	return NULL;
 }
 
 void fileextendedattribute_probe_fini(void *arg)
 {
-        /*
-         * Destroy mutex.
-         */
+	/*
+	 * Destroy mutex.
+	 */
 	(void) pthread_mutex_destroy((pthread_mutex_t *)arg);
 	free(arg);
 }
 
 int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 {
-        SEXP_t *path, *filename, *behaviors;
-        SEXP_t *filepath, *attribute_, *probe_in;
+	SEXP_t *path, *filename, *behaviors;
+	SEXP_t *filepath, *attribute_, *probe_in;
 	int err;
-        struct cbargs cbargs;
+	struct cbargs cbargs;
 	OVAL_FTS    *ofts;
 	OVAL_FTSENT *ofts_ent;
 	SEXP_t gr_lastpath;
 
-        if (mutex == NULL)
-                return PROBE_EINIT;
+	if (mutex == NULL)
+		return PROBE_EINIT;
 
-        probe_in  = probe_ctx_getobject(ctx);
+	probe_in  = probe_ctx_getobject(ctx);
 
-        path       = probe_obj_getent (probe_in, "path",      1);
-        filename   = probe_obj_getent (probe_in, "filename",  1);
-        behaviors  = probe_obj_getent (probe_in, "behaviors", 1);
-        filepath   = probe_obj_getent (probe_in, "filepath", 1);
-        attribute_ = probe_obj_getent (probe_in, "attribute_name", 1);
+	path       = probe_obj_getent(probe_in, "path",      1);
+	filename   = probe_obj_getent(probe_in, "filename",  1);
+	behaviors  = probe_obj_getent(probe_in, "behaviors", 1);
+	filepath   = probe_obj_getent(probe_in, "filepath", 1);
+	attribute_ = probe_obj_getent (probe_in, "attribute_name", 1);
 
 	/* we want either path+filename or filepath */
-        if (((path == NULL || filename == NULL) && filepath == NULL)
-            || attribute_ == NULL)
-        {
-                SEXP_free (behaviors);
-                SEXP_free (path);
-                SEXP_free (filename);
-                SEXP_free (filepath);
-                SEXP_free (attribute_);
-
-                return PROBE_ENOELM;
-        }
+	if (((path == NULL || filename == NULL) && filepath == NULL) || attribute_ == NULL)
+	{
+		SEXP_free(behaviors);
+		SEXP_free(path);
+		SEXP_free(filename);
+		SEXP_free(filepath);
+		SEXP_free(attribute_);
+		return PROBE_ENOELM;
+	}
 
 	probe_filebehaviors_canonicalize(&behaviors);
 
 	switch (pthread_mutex_lock(mutex)) {
-        case 0:
-                break;
-        default:
+	case 0:
+		break;
+	default:
 		dD("Can't lock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
-
 		SEXP_free(path);
 		SEXP_free(filename);
 		SEXP_free(filepath);
 		SEXP_free(behaviors);
-                SEXP_free(attribute_);
+		SEXP_free(attribute_);
+		return PROBE_EFATAL;
+	}
 
-                return PROBE_EFATAL;
-        }
-
-        cbargs.ctx      = ctx;
+	cbargs.ctx      = ctx;
 	cbargs.error    = 0;
-        cbargs.attr_ent = attribute_;
+	cbargs.attr_ent = attribute_;
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	SEXP_init(&gr_lastpath);
@@ -305,6 +300,7 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 		}
 		oval_fts_close(ofts);
 	}
+
 	if (!SEXP_emptyp(&gr_lastpath))
 		SEXP_free_r(&gr_lastpath);
 
@@ -314,16 +310,15 @@ int fileextendedattribute_probe_main(probe_ctx *ctx, void *mutex)
 	SEXP_free(filename);
 	SEXP_free(filepath);
 	SEXP_free(behaviors);
-        SEXP_free(attribute_);
+	SEXP_free(attribute_);
 
 	switch (pthread_mutex_unlock(mutex)) {
-        case 0:
-                break;
-        default:
+	case 0:
+		break;
+	default:
 		dD("Can't unlock mutex(%p): %u, %s.", mutex, errno, strerror(errno));
+		return PROBE_EFATAL;
+	}
 
-                return PROBE_EFATAL;
-        }
-
-        return err;
+	return err;
 }
