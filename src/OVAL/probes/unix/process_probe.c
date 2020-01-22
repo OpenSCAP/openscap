@@ -58,7 +58,7 @@
 #include "process_probe.h"
 #include "oscap_helpers.h"
 
-oval_schema_version_t over;
+static oval_schema_version_t over;
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -106,7 +106,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
 
 #if defined(OS_LINUX)
 
-unsigned long ticks, boot;
+static unsigned long ticks, boot;
 
 static void get_boot_time(void)
 {
