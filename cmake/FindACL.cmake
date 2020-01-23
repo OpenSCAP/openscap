@@ -12,13 +12,13 @@ libfind_pkg_check_modules(ACL_PKGCONF libacl)
 
 # Include dir
 find_path(ACL_INCLUDE_DIR
-	NAMES "acl/libacl.h sys/libacl.h"
+	NAMES "acl/libacl.h" "sys/libacl.h"
 	PATHS ${ACL_PKGCONF_INCLUDE_DIRS}
 )
 
 # Finally the library itself
 find_library(ACL_LIBRARY
-	NAMES libacl
+	NAMES acl
 	PATHS ${ACL_PKGCONF_LIBRARY_DIRS}
 )
 
