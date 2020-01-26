@@ -27,6 +27,7 @@ matrix:
             - librtmp-dev
             - xsltproc
             - rpm-common
+            - lua50
       before_script:
         - cd build
       script:
