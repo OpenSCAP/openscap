@@ -26,6 +26,7 @@ matrix:
             - swig
             - librtmp-dev
             - xsltproc
+            - rpm-common
       before_script:
         - cd build
       script:
