@@ -33,7 +33,7 @@ matrix:
       script:
         - cmake -DCMAKE_BUILD_TYPE=Debug ../
         - build-wrapper-linux-x86-64 --out-dir bw-output make all || make all  # build-wrapper won't work on forked repositories.
-        - ctest --output-on-failure || true  # Tests won't pass on Ubuntu.
+        - ctest --output-on-failure
         - (cd .. && sonar-scanner) || true  # Will always fail builds on forked repositories.
       after_success:
         - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
