@@ -135,14 +135,19 @@ static bool is_unit_name_a_target(const char *unit)
 	return strncmp(unit + len - suffix_len, suffix, suffix_len) == 0;
 }
 
-static int add_unit_dependency(const char *dependency, SEXP_t *item)
+static int add_unit_dependency(const char *dependency, SEXP_t *item, struct oscap_htable *visited_units)
 {
+	if (oscap_htable_get(visited_units, dependency) != NULL) {
+		return 1;
+	}
+	oscap_htable_add(visited_units, dependency, (void *) true);
 	SEXP_t *se_dependency = SEXP_string_new(dependency, strlen(dependency));
 	probe_item_ent_add(item, "dependency", NULL, se_dependency);
+	SEXP_free(se_dependency);
 	return 0;
 }
 
-static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item)
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item, struct oscap_htable *visited_units)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
@@ -160,8 +165,8 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(requires[i], "") == 0)
 				continue;
 
-			if (add_unit_dependency(requires[i], item) == 0) {
-				get_all_dependencies_by_unit(conn, requires[i], item);
+			if (add_unit_dependency(requires[i], item, visited_units) == 0) {
+				get_all_dependencies_by_unit(conn, requires[i], item, visited_units);
 			}
 		}
 		free(requires);
@@ -176,8 +181,8 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(wants[i], "") == 0)
 				continue;
 
-			if (add_unit_dependency(wants[i], item) == 0) {
-				get_all_dependencies_by_unit(conn, wants[i], item);
+			if (add_unit_dependency(wants[i], item, visited_units) == 0) {
+				get_all_dependencies_by_unit(conn, wants[i], item, visited_units);
 			}
 		}
 		free(wants);
@@ -202,7 +207,9 @@ static int unit_callback(const char *unit, void *cbarg)
 					 "unit", OVAL_DATATYPE_SEXP, se_unit,
 					 NULL);
 
-	get_all_dependencies_by_unit(vars->dbus_conn, unit, item);
+	struct oscap_htable *visited_units = oscap_htable_new();
+	get_all_dependencies_by_unit(vars->dbus_conn, unit, item, visited_units);
+	oscap_htable_free(visited_units, NULL);
 
 	probe_item_collect(vars->ctx, item);
 	SEXP_free(se_unit);
