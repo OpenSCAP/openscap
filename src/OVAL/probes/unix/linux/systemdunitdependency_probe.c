@@ -37,6 +37,8 @@
 #include <string.h>
 #include "systemdunitdependency_probe.h"
 
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item, struct oscap_htable *visited_units);
+
 static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_path, const char *property)
 {
 	DBusMessage *msg = NULL;
@@ -147,6 +149,24 @@ static int add_unit_dependency(const char *dependency, SEXP_t *item, struct osca
 	return 0;
 }
 
+static void process_unit_property(const char *property, DBusConnection *conn, const char *path, SEXP_t *item, struct oscap_htable *visited_units)
+{
+	char *values_s = get_property_by_unit_path(conn, path, property);
+	if (values_s) {
+		char **values = oscap_split(values_s, ", ");
+		for (int i = 0; values[i] != NULL; ++i) {
+			if (oscap_strcmp(values[i], "") == 0)
+				continue;
+
+			if (add_unit_dependency(values[i], item, visited_units) == 0) {
+				get_all_dependencies_by_unit(conn, values[i], item, visited_units);
+			}
+		}
+		free(values);
+	}
+	free(values_s);
+}
+
 static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item, struct oscap_htable *visited_units)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
@@ -158,36 +178,8 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 
 	char *path = get_path_by_unit(conn, unit);
 
-	char *requires_s = get_property_by_unit_path(conn, path, "Requires");
-	if (requires_s) {
-		char **requires = oscap_split(requires_s, ", ");
-		for (int i = 0; requires[i] != NULL; ++i) {
-			if (oscap_strcmp(requires[i], "") == 0)
-				continue;
-
-			if (add_unit_dependency(requires[i], item, visited_units) == 0) {
-				get_all_dependencies_by_unit(conn, requires[i], item, visited_units);
-			}
-		}
-		free(requires);
-	}
-	free(requires_s);
-
-	char *wants_s = get_property_by_unit_path(conn, path, "Wants");
-	if (wants_s)
-	{
-		char **wants = oscap_split(wants_s, ", ");
-		for (int i = 0; wants[i] != NULL; ++i) {
-			if (oscap_strcmp(wants[i], "") == 0)
-				continue;
-
-			if (add_unit_dependency(wants[i], item, visited_units) == 0) {
-				get_all_dependencies_by_unit(conn, wants[i], item, visited_units);
-			}
-		}
-		free(wants);
-	}
-	free(wants_s);
+	process_unit_property("Requires", conn, path, item, visited_units);
+	process_unit_property("Wants", conn, path, item, visited_units);
 
 	free(path);
 }
