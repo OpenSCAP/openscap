@@ -7,6 +7,8 @@ set -e -o pipefail
 
 function perform_test {
     probecheck "rpmverify" || return 255
+    require rpm || return 255
+    rpm -qf /root || return 255
 
     DF="$srcdir/test_probes_rpmverify_not_equals_operation.xml"
     RF="results.xml"
