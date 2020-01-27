@@ -135,7 +135,14 @@ static bool is_unit_name_a_target(const char *unit)
 	return strncmp(unit + len - suffix_len, suffix, suffix_len) == 0;
 }
 
-static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, int(*callback)(const char *, void *), void *cbarg)
+static int add_unit_dependency(const char *dependency, SEXP_t *item)
+{
+	SEXP_t *se_dependency = SEXP_string_new(dependency, strlen(dependency));
+	probe_item_ent_add(item, "dependency", NULL, se_dependency);
+	return 0;
+}
+
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
@@ -153,9 +160,8 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(requires[i], "") == 0)
 				continue;
 
-			if (callback(requires[i], cbarg) == 0) {
-				get_all_dependencies_by_unit(conn, requires[i],
-								callback, cbarg);
+			if (add_unit_dependency(requires[i], item) == 0) {
+				get_all_dependencies_by_unit(conn, requires[i], item);
 			} else {
 				free(requires);
 				free(requires_s);
@@ -175,9 +181,8 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 			if (oscap_strcmp(wants[i], "") == 0)
 				continue;
 
-			if (callback(wants[i], cbarg) == 0) {
-				get_all_dependencies_by_unit(conn, wants[i],
-								callback, cbarg);
+			if (add_unit_dependency(wants[i], item) == 0) {
+				get_all_dependencies_by_unit(conn, wants[i], item);
 			} else {
 				free(wants);
 				free(wants_s);
@@ -190,14 +195,6 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 	free(wants_s);
 
 	free(path);
-}
-
-static int dependency_callback(const char *dependency, void *cbarg)
-{
-	SEXP_t *item = (SEXP_t *)cbarg;
-	SEXP_t *se_dependency = SEXP_string_new(dependency, strlen(dependency));
-	probe_item_ent_add(item, "dependency", NULL, se_dependency);
-	return 0;
 }
 
 static int unit_callback(const char *unit, void *cbarg)
@@ -215,8 +212,7 @@ static int unit_callback(const char *unit, void *cbarg)
 					 "unit", OVAL_DATATYPE_SEXP, se_unit,
 					 NULL);
 
-	get_all_dependencies_by_unit(vars->dbus_conn, unit,
-				     dependency_callback, item);
+	get_all_dependencies_by_unit(vars->dbus_conn, unit, item);
 
 	probe_item_collect(vars->ctx, item);
 	SEXP_free(se_unit);
