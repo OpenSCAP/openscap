@@ -135,7 +135,7 @@ static bool is_unit_name_a_target(const char *unit)
 	return strncmp(unit + len - suffix_len, suffix, suffix_len) == 0;
 }
 
-static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, int(*callback)(const char *, void *), void *cbarg, bool include_requires, bool include_wants)
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, int(*callback)(const char *, void *), void *cbarg)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
@@ -146,54 +146,48 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 
 	char *path = get_path_by_unit(conn, unit);
 
-	if (include_requires) {
-		char *requires_s = get_property_by_unit_path(conn, path, "Requires");
-		if (requires_s) {
-			char **requires = oscap_split(requires_s, ", ");
-			for (int i = 0; requires[i] != NULL; ++i) {
-				if (oscap_strcmp(requires[i], "") == 0)
-					continue;
+	char *requires_s = get_property_by_unit_path(conn, path, "Requires");
+	if (requires_s) {
+		char **requires = oscap_split(requires_s, ", ");
+		for (int i = 0; requires[i] != NULL; ++i) {
+			if (oscap_strcmp(requires[i], "") == 0)
+				continue;
 
-				if (callback(requires[i], cbarg) == 0) {
-					get_all_dependencies_by_unit(conn, requires[i],
-									callback, cbarg,
-									include_requires, include_wants);
-				} else {
-					free(requires);
-					free(requires_s);
-					free(path);
-					return;
-				}
+			if (callback(requires[i], cbarg) == 0) {
+				get_all_dependencies_by_unit(conn, requires[i],
+								callback, cbarg);
+			} else {
+				free(requires);
+				free(requires_s);
+				free(path);
+				return;
 			}
-			free(requires);
 		}
-		free(requires_s);
+		free(requires);
 	}
+	free(requires_s);
 
-	if (include_wants) {
-		char *wants_s = get_property_by_unit_path(conn, path, "Wants");
-		if (wants_s)
-		{
-			char **wants = oscap_split(wants_s, ", ");
-			for (int i = 0; wants[i] != NULL; ++i) {
-				if (oscap_strcmp(wants[i], "") == 0)
-					continue;
+	char *wants_s = get_property_by_unit_path(conn, path, "Wants");
+	if (wants_s)
+	{
+		char **wants = oscap_split(wants_s, ", ");
+		for (int i = 0; wants[i] != NULL; ++i) {
+			if (oscap_strcmp(wants[i], "") == 0)
+				continue;
 
-				if (callback(wants[i], cbarg) == 0) {
-					get_all_dependencies_by_unit(conn, wants[i],
-									callback, cbarg,
-									include_requires, include_wants);
-				} else {
-					free(wants);
-					free(wants_s);
-					free(path);
-					return;
-				}
+			if (callback(wants[i], cbarg) == 0) {
+				get_all_dependencies_by_unit(conn, wants[i],
+								callback, cbarg);
+			} else {
+				free(wants);
+				free(wants_s);
+				free(path);
+				return;
 			}
-			free(wants);
 		}
-		free(wants_s);
+		free(wants);
 	}
+	free(wants_s);
 
 	free(path);
 }
@@ -222,7 +216,7 @@ static int unit_callback(const char *unit, void *cbarg)
 					 NULL);
 
 	get_all_dependencies_by_unit(vars->dbus_conn, unit,
-				     dependency_callback, item, true, true);
+				     dependency_callback, item);
 
 	probe_item_collect(vars->ctx, item);
 	SEXP_free(se_unit);
