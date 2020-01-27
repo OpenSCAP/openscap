@@ -162,11 +162,6 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 
 			if (add_unit_dependency(requires[i], item) == 0) {
 				get_all_dependencies_by_unit(conn, requires[i], item);
-			} else {
-				free(requires);
-				free(requires_s);
-				free(path);
-				return;
 			}
 		}
 		free(requires);
@@ -183,11 +178,6 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 
 			if (add_unit_dependency(wants[i], item) == 0) {
 				get_all_dependencies_by_unit(conn, wants[i], item);
-			} else {
-				free(wants);
-				free(wants_s);
-				free(path);
-				return;
 			}
 		}
 		free(wants);
