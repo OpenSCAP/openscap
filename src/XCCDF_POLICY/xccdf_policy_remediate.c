@@ -650,6 +650,7 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 	}
 }
 
+
 static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *variables, struct oscap_list *tasks)
 {
 	// TODO: Tolerate different indentation styles in this regex
@@ -785,7 +786,6 @@ static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct x
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
 	return ret;
 }
-
 
 static int _xccdf_policy_rule_generate_ansible_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct oscap_list *variables, struct oscap_list *tasks)
 {

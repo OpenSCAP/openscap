@@ -864,10 +864,12 @@ int app_generate_fix(const struct oscap_action *action)
 			template = "urn:xccdf:fix:script:puppet";
 		} else if (strcmp(action->fix_type, "anaconda") == 0) {
 			template = "urn:redhat:anaconda:pre";
+		} else if (strcmp(action->fix_type, "ignition") == 0) {
+			template = "urn:xccdf:fix:script:ignition";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda, ignition.\n"
 					"Or provide a custom template using '--template' instead.\n",
 					action->fix_type);
 			return OSCAP_ERROR;
