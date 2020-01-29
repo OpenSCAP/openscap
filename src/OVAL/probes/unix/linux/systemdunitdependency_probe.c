@@ -155,8 +155,9 @@ static void process_unit_property(const char *property, DBusConnection *conn, co
 	if (values_s) {
 		char **values = oscap_split(values_s, ", ");
 		for (int i = 0; values[i] != NULL; ++i) {
-			if (oscap_strcmp(values[i], "") == 0)
+			if (oscap_strcmp(values[i], "") == 0) {
 				continue;
+			}
 
 			if (add_unit_dependency(values[i], item, visited_units) == 0) {
 				get_all_dependencies_by_unit(conn, values[i], item, visited_units);
