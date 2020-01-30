@@ -273,6 +273,10 @@ class OSCAP_Object(object):
         if name in self.__dict__:
             return self.__dict__[name]
 
+        ''' Also handle C functions overriden in this API (like xccdf_session_set_rule) '''
+        if self.object + "_get_" + name in self.__dict__:
+            return self.__dict__[self.object + "_get_" + name]
+
         # If attribute is not in a local dictionary, look for it in a library
         func = OSCAP.__dict__.get(name)
         if func is not None:
@@ -381,6 +385,10 @@ class OSCAP_Object(object):
                 raise Exception("Can't free %s" % (self.object,))
 
     """ ********* Implementation of non-trivial functions ********* """
+
+    def xccdf_session_set_rule(rule):
+        print("set_rule handled !") 
+        OSCAP.xccdf_session_set_rule_py(rule)
 
     def __start_callback(self, rule, obj):
         return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])

@@ -549,5 +549,11 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyO
     return oval_agent_eval_system(asess, agent_reporter_callback_wrapper, (void *) new_usrdata);
 }
 
+void xccdf_session_set_rule_py(struct xccdf_session  *sess, const char *rule) {
+    char *n_rule=(char*)malloc((strlen(rule)+1)*sizeof(char));
+    strcpy(n_rule, rule);
+    xccdf_session_set_rule(sess, n_rule);
+}
+
 %}
 #endif
