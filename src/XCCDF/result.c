@@ -1580,15 +1580,26 @@ void xccdf_result_dump(struct xccdf_result *res, int depth)
  */
 static inline const char *_get_timestamp(void)
 {
-	static char timestamp[] = "yyyy-mm-ddThh:mm:ss";
+	static char timestamp[] = "yyyy-mm-ddThh:mm:ss+zz:zz";
 	time_t tm;
 	struct tm *lt;
+	int tz_diff;
+	char tz_sign;
 
 	tm = time(NULL);
 	lt = localtime(&tm);
-	int ret = snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d",
+	/* timezone is a global variable set by localtime(3) */
+	if (timezone <= 0) {
+		tz_sign = '+';
+		tz_diff = -timezone;
+	} else {
+		tz_sign = '-';
+		tz_diff = timezone;
+	}
+	tz_diff /= 60;
+	int ret = snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
 		1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday,
-		lt->tm_hour, lt->tm_min, lt->tm_sec);
+		lt->tm_hour, lt->tm_min, lt->tm_sec, tz_sign, tz_diff / 60, tz_diff % 60);
 	if (ret < 0) {
 		return NULL;
 	}
