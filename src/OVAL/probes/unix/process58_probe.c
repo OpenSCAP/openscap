@@ -152,7 +152,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
 
 #if defined(OS_LINUX)
 
-unsigned long ticks, boot;
+static unsigned long ticks, boot;
 
 static void get_boot_time(void)
 {
