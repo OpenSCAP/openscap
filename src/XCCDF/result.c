@@ -69,6 +69,10 @@
 
 #define XCCDF_NUMERIC_SIZE 32
 
+#ifdef OS_WINDOWS
+#define timezone _timezone
+#endif
+
 // References containing STIG Rule IDs can be found by their href attribute, it must match the following url
 static const char *DISA_STIG_VIEWER_HREF[] = { "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx",
 					       "https://public.cyber.mil/stigs/srg-stig-tools/" };
