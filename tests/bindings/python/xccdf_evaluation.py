@@ -39,7 +39,7 @@ for rs in sess.get_xccdf_policy().get_results():
               .format(rr.get_idref(), result2str(rr.get_result())))
 
         if rules[rr.get_idref()] != rr.get_result():
-                raise ValueError("Result value of {0} should be {1} but is {2}"
-                                 .format(rr.get_idref(), rules[rr.get_idref()], rr.get_result()))
+            raise ValueError("Result value of {0} should be {1} but is {2}"
+                             .format(rr.get_idref(), rules[rr.get_idref()], rr.get_result()))
 
 sess.free()
