@@ -36,6 +36,7 @@ if [ -z ${CUSTOM_OSCAP+x} ] ; then
     test_run "python_oval_eval" run_pyfile oval_eval.py
     test_run "python_introspection_features" run_pyfile introspection_features.py
     test_run "python_xccdf_policy" run_pyfile xccdf_policy.py
+    test_run "python_xccdf_evaluation" run_pyfile xccdf_evaluation.py
     test_run "python_xccdf_single_evaluation" run_pyfile xccdf_single_evaluation.py
 fi
 

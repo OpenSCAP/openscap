@@ -276,8 +276,8 @@ class OSCAP_Object(object):
         # cache self.object + "_" + name for perf / clearness purpose
         obj_name = self.object + "_" + name
 
-        """ Catch functions potential C function overriden in OSCAP_Object
-        like xccdf_session_set_rule for instance. """
+        """ Catch  potential C function overriden in OSCAP_Object
+        like xccdf_session_set_rule ir xccdf_session_free for instance. """
         if obj_name in dir(OSCAP_Object):
             func = getattr(OSCAP_Object, obj_name)
             if callable(func):
@@ -397,7 +397,6 @@ class OSCAP_Object(object):
         OSCAP.xccdf_session_set_rule_py(self, rule)
 
     def xccdf_session_free(self):
-        print("free hanled!")
         OSCAP.xccdf_session_free_py(self)
 
     def __start_callback(self, rule, obj):

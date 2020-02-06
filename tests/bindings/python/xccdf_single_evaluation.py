@@ -37,7 +37,7 @@ for rule in rules:
         raise ValueError("Return value of xccdf_session_evaluate isn't 0 but {0} !".format(res))
 
     if sess.get_base_score() != rule[2]:
-        print("base score for {0} should be {1) but is {2} "
+        print("base score for {0} should be {1} but is {2} "
               .format(rule[0], rule[2], sess.get_base_score()))
 
     rs = sess.get_xccdf_policy().get_results()[-1]  # get last value
