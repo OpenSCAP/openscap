@@ -396,6 +396,15 @@ class OSCAP_Object(object):
     def xccdf_session_set_rule(self, rule):
         OSCAP.xccdf_session_set_rule_py(self, rule)
 
+    # helper function to find easily the result of a single rule
+    # should be called in the context of a xccdf_session_set_rule
+    def xccdf_session_get_rule_result(self, rule):
+        self = OSCAP_Object("xccdf_session", self)
+        rs = self.get_xccdf_policy().get_results()[-1]  # get last value
+        for rr in rs.get_rule_results():
+            if rule == rr.get_idref():
+                return rr
+
     def xccdf_session_free(self):
         OSCAP.xccdf_session_free_py(self)
 

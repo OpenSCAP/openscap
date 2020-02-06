@@ -42,12 +42,12 @@ for rule in rules:
 
     rs = sess.get_xccdf_policy().get_results()[-1]  # get last value
 
-    for rr in rs.get_rule_results():
-        if rule[0] == rr.get_idref():
-            print("Result = {0}".format(result2str(rr.get_result())))
-            if rule[1] != rr.get_result():
-                raise ValueError("Result value of {0} should be {1} but is {2}"
-                                 .format(rule[0], rule[1], rr.get_result()))
+    rr = sess.get_rule_result(rule[0])
+
+    print("Result = {0}".format(result2str(rr.get_result())))
+    if rule[1] != rr.get_result():
+        raise ValueError("Result value of {0} should be {1} but is {2}"
+                         .format(rule[0], rule[1], rr.get_result()))
 
 # release session
 sess.free()
