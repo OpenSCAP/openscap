@@ -30,7 +30,6 @@
 #else
 #include <unistd.h>
 #endif
-#include <syslog.h>
 
 #include <oscap.h>
 #include "oscap_source.h"
@@ -1185,9 +1184,6 @@ int xccdf_session_load_tailoring(struct xccdf_session *session)
 
 int xccdf_session_evaluate(struct xccdf_session *session)
 {
-	syslog(LOG_NOTICE, "sessio rule : ");
-	syslog(LOG_NOTICE, "= %s ", session->rule);
-
 	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
 	if (policy == NULL) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Cannot build xccdf_policy.");

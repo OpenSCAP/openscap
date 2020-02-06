@@ -273,9 +273,15 @@ class OSCAP_Object(object):
         if name in self.__dict__:
             return self.__dict__[name]
 
-        ''' Also handle C functions overriden in this API (like xccdf_session_set_rule) '''
-        if self.object + "_get_" + name in self.__dict__:
-            return self.__dict__[self.object + "_get_" + name]
+        # cache self.object + "_" + name for perf / clearness purpose
+        obj_name = self.object + "_" + name
+
+        """ Catch functions potential C function overriden in OSCAP_Object
+        like xccdf_session_set_rule for instance. """
+        if obj_name in dir(OSCAP_Object):
+            func = getattr(OSCAP_Object, obj_name)
+            if callable(func):
+                return self.__func_wrapper(func)
 
         # If attribute is not in a local dictionary, look for it in a library
         func = OSCAP.__dict__.get(name)
@@ -283,7 +289,8 @@ class OSCAP_Object(object):
             return func
 
         """ Looking for function object_subject() """
-        obj = OSCAP.__dict__.get(self.object + "_" + name)
+        obj = OSCAP.__dict__.get(obj_name)
+
         if obj is not None:
             if callable(obj):
                 return self.__func_wrapper(obj)
@@ -297,10 +304,10 @@ class OSCAP_Object(object):
                 return self.__func_wrapper(obj)
 
         """ Looking if it can be a constructor """
-        obj = OSCAP.__dict__.get(self.object + "_" + name + "_new")
+        obj = OSCAP.__dict__.get(obj_name + "_new")
         if obj is not None:
             # this will call the __call__ definition of OSCAP_Object
-            return OSCAP_Object(self.object + "_" + name)
+            return OSCAP_Object(obj_name)
 
         """ There is not function with the name 'name' let return the OSCAP_Object    """
         raise AttributeError("Attribute {0} not found for object {1}"
@@ -386,9 +393,12 @@ class OSCAP_Object(object):
 
     """ ********* Implementation of non-trivial functions ********* """
 
-    def xccdf_session_set_rule(rule):
-        print("set_rule handled !") 
-        OSCAP.xccdf_session_set_rule_py(rule)
+    def xccdf_session_set_rule(self, rule):
+        OSCAP.xccdf_session_set_rule_py(self, rule)
+
+    def xccdf_session_free(self):
+        print("free hanled!")
+        OSCAP.xccdf_session_free_py(self)
 
     def __start_callback(self, rule, obj):
         return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])
