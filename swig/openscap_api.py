@@ -277,7 +277,7 @@ class OSCAP_Object(object):
         obj_name = self.object + "_" + name
 
         """ Catch  potential C function overriden in OSCAP_Object
-        like xccdf_session_set_rule ir xccdf_session_free for instance. """
+        like xccdf_session_set_rule or xccdf_session_free for instance. """
         if obj_name in dir(OSCAP_Object):
             func = getattr(OSCAP_Object, obj_name)
             if callable(func):
