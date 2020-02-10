@@ -139,11 +139,10 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 					free(text);
 					return 1;
 				}
-
-				if (_write_text_to_fd(output_fd, "\n") != 0) {
-					free(text);
-					return 1;
-				}
+			}
+			if (_write_text_to_fd(output_fd, "\n") != 0) {
+				free(text);
+				return 1;
 			}
 
 			if (next_delim != NULL) {

@@ -18,6 +18,7 @@ if(PYTHONINTERP_FOUND)
 	add_oscap_test("all_python.sh")
 endif()
 
+add_oscap_test("test_ansible_yaml_block_scalar.sh")
 add_oscap_test("test_xccdf_shall_pass1.sh")
 add_oscap_test("test_xccdf_shall_pass2.sh")
 add_oscap_test("test_xccdf_shall_pass3.sh")
