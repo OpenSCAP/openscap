@@ -549,5 +549,24 @@ int oval_agent_eval_system_py(oval_agent_session_t * asess, PyObject * func, PyO
     return oval_agent_eval_system(asess, agent_reporter_callback_wrapper, (void *) new_usrdata);
 }
 
+/* we only recopy the first part of the struct, in order to free the rule property
+* since it's defined in xccdf_session.c and not xccdf_session.h, this struct is unknown
+* and so it's not possible to access to the rule property without defining it
+*/
+struct xccdf_session {
+        char *filename;
+        char *rule;
+};
+
+void xccdf_session_set_rule_py(struct xccdf_session  *sess, char *rule) {
+    char *n_rule = strdup(rule);
+    xccdf_session_set_rule(sess, n_rule);
+}
+
+void xccdf_session_free_py(struct xccdf_session *sess){
+    free(sess->rule);
+    xccdf_session_free(sess);
+}
+
 %}
 #endif
