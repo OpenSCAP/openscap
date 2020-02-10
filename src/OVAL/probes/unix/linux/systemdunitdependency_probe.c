@@ -37,6 +37,8 @@
 #include <string.h>
 #include "systemdunitdependency_probe.h"
 
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item, struct oscap_htable *visited_units);
+
 static char *get_property_by_unit_path(DBusConnection *conn, const char *unit_path, const char *property)
 {
 	DBusMessage *msg = NULL;
@@ -135,7 +137,38 @@ static bool is_unit_name_a_target(const char *unit)
 	return strncmp(unit + len - suffix_len, suffix, suffix_len) == 0;
 }
 
-static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, int(*callback)(const char *, void *), void *cbarg, bool include_requires, bool include_wants)
+static int add_unit_dependency(const char *dependency, SEXP_t *item, struct oscap_htable *visited_units)
+{
+	if (oscap_htable_get(visited_units, dependency) != NULL) {
+		return 1;
+	}
+	oscap_htable_add(visited_units, dependency, (void *) true);
+	SEXP_t *se_dependency = SEXP_string_new(dependency, strlen(dependency));
+	probe_item_ent_add(item, "dependency", NULL, se_dependency);
+	SEXP_free(se_dependency);
+	return 0;
+}
+
+static void process_unit_property(const char *property, DBusConnection *conn, const char *path, SEXP_t *item, struct oscap_htable *visited_units)
+{
+	char *values_s = get_property_by_unit_path(conn, path, property);
+	if (values_s) {
+		char **values = oscap_split(values_s, ", ");
+		for (int i = 0; values[i] != NULL; ++i) {
+			if (oscap_strcmp(values[i], "") == 0) {
+				continue;
+			}
+
+			if (add_unit_dependency(values[i], item, visited_units) == 0) {
+				get_all_dependencies_by_unit(conn, values[i], item, visited_units);
+			}
+		}
+		free(values);
+	}
+	free(values_s);
+}
+
+static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit, SEXP_t *item, struct oscap_htable *visited_units)
 {
 	if (!unit || strcmp(unit, "(null)") == 0)
 		return;
@@ -146,64 +179,10 @@ static void get_all_dependencies_by_unit(DBusConnection *conn, const char *unit,
 
 	char *path = get_path_by_unit(conn, unit);
 
-	if (include_requires) {
-		char *requires_s = get_property_by_unit_path(conn, path, "Requires");
-		if (requires_s) {
-			char **requires = oscap_split(requires_s, ", ");
-			for (int i = 0; requires[i] != NULL; ++i) {
-				if (oscap_strcmp(requires[i], "") == 0)
-					continue;
-
-				if (callback(requires[i], cbarg) == 0) {
-					get_all_dependencies_by_unit(conn, requires[i],
-									callback, cbarg,
-									include_requires, include_wants);
-				} else {
-					free(requires);
-					free(requires_s);
-					free(path);
-					return;
-				}
-			}
-			free(requires);
-		}
-		free(requires_s);
-	}
-
-	if (include_wants) {
-		char *wants_s = get_property_by_unit_path(conn, path, "Wants");
-		if (wants_s)
-		{
-			char **wants = oscap_split(wants_s, ", ");
-			for (int i = 0; wants[i] != NULL; ++i) {
-				if (oscap_strcmp(wants[i], "") == 0)
-					continue;
-
-				if (callback(wants[i], cbarg) == 0) {
-					get_all_dependencies_by_unit(conn, wants[i],
-									callback, cbarg,
-									include_requires, include_wants);
-				} else {
-					free(wants);
-					free(wants_s);
-					free(path);
-					return;
-				}
-			}
-			free(wants);
-		}
-		free(wants_s);
-	}
+	process_unit_property("Requires", conn, path, item, visited_units);
+	process_unit_property("Wants", conn, path, item, visited_units);
 
 	free(path);
-}
-
-static int dependency_callback(const char *dependency, void *cbarg)
-{
-	SEXP_t *item = (SEXP_t *)cbarg;
-	SEXP_t *se_dependency = SEXP_string_new(dependency, strlen(dependency));
-	probe_item_ent_add(item, "dependency", NULL, se_dependency);
-	return 0;
 }
 
 static int unit_callback(const char *unit, void *cbarg)
@@ -221,8 +200,9 @@ static int unit_callback(const char *unit, void *cbarg)
 					 "unit", OVAL_DATATYPE_SEXP, se_unit,
 					 NULL);
 
-	get_all_dependencies_by_unit(vars->dbus_conn, unit,
-				     dependency_callback, item, true, true);
+	struct oscap_htable *visited_units = oscap_htable_new();
+	get_all_dependencies_by_unit(vars->dbus_conn, unit, item, visited_units);
+	oscap_htable_free(visited_units, NULL);
 
 	probe_item_collect(vars->ctx, item);
 	SEXP_free(se_unit);
