@@ -151,7 +151,13 @@ that you need to have these additional packages installed:
 wget lua which procps-ng initscripts chkconfig sendmail bzip2 rpm-build
 ----
 
-and it is also required to have `sendmail` service running on the system:
+On Ubuntu 18.04, also install:
+
+----
+rpm-common
+----
+
+It is also required to have `sendmail` service running on the system:
 
 ----
 $ systemctl start sendmail.service

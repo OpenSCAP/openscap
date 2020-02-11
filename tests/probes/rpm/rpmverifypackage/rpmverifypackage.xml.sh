@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 
 # This template generates OVAL definitions for rpmverifypackage_object.
 
