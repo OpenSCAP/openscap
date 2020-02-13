@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+  <generator>
+    <oval:product_name>yamlfilecontent</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.10</oval:schema_version>
+    <oval:timestamp>2020-02-13T00:00:00-00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+
+    <definition class="compliance" version="1" id="oval:0:def:1"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="get_root_scalar" test_ref="oval:0:tst:1"/>
+        <criterion comment="get_nested_scalar" test_ref="oval:0:tst:2"/>
+        <criterion comment="filtered_get" test_ref="oval:0:tst:3"/>
+        <criterion comment="filtered_get_multiple" test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:2"> <!-- comment="error" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="non_scalar_get" test_ref="oval:0:tst:5"/>
+      </criteria>
+    </definition>
+
+  </definitions>
+
+  <tests>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:1" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:1"/>
+      <ind-def:state state_ref="oval:0:ste:1"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:2" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:2"/>
+      <ind-def:state state_ref="oval:0:ste:2"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:3"/>
+      <ind-def:state state_ref="oval:0:ste:3"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:4" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:4"/>
+      <ind-def:state state_ref="oval:0:ste:4"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:5" check="all" comment="error">
+      <ind-def:object object_ref="oval:0:obj:5"/>
+    </ind-def:yamlfilecontent_test>
+
+  </tests>
+
+  <objects>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:1">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>/kind</ind-def:yamlpath>
+      <ind-def:instance operation="greater than or equal" datatype="int">0</ind-def:instance>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:2">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>/metadata/namespace</ind-def:yamlpath>
+      <ind-def:instance operation="greater than or equal" datatype="int">0</ind-def:instance>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>/spec/outputs[type=forward]/name</ind-def:yamlpath>
+      <ind-def:instance operation="greater than or equal" datatype="int">0</ind-def:instance>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>/spec/outputs[type=elasticsearch]/name</ind-def:yamlpath>
+      <ind-def:instance operation="greater than or equal" datatype="int">0</ind-def:instance>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:5">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>/spec/outputs[type=elasticsearch]</ind-def:yamlpath>
+      <ind-def:instance operation="greater than or equal" datatype="int">0</ind-def:instance>
+    </ind-def:yamlfilecontent_object>
+
+  </objects>
+
+  <states>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
+      <ind-def:value-of datatype="string">LogForwarding</ind-def:value-of>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
+      <ind-def:value-of datatype="string">openshift-logging</ind-def:value-of>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:3">
+      <ind-def:value-of datatype="string">secureforward-offcluster</ind-def:value-of>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:4">
+      <ind-def:value-of datatype="string" var_ref="oval:0:var:4"/>
+    </ind-def:yamlfilecontent_state>
+
+  </states>
+
+  <variables>
+
+    <local_variable comment="oval:0:var:3" datatype="string" version="1" id="">
+        <!-- The use of split should force creation of a local variable with two values
+             NOTE: Wildly untested! -->
+      <split delimiter="|">
+        <literal_component>elasticsearch|elasticsearch-insecure</literal_component>
+      </split>
+    </local_variable>
+
+  </variables>
+</oval_definitions>
