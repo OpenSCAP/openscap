@@ -80,19 +80,19 @@
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
-      <ind-def:yamlpath>.spec.outputs[type=forward].name</ind-def:yamlpath>
+      <ind-def:yamlpath>.spec.outputs[2].name</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
-      <ind-def:yamlpath>.spec.outputs[type=elasticsearch].name</ind-def:yamlpath>
+      <ind-def:yamlpath>.spec.outputs[0:2].name</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:5">
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
-      <ind-def:yamlpath>.spec.outputs[type=elasticsearch]</ind-def:yamlpath>
+      <ind-def:yamlpath>.spec.outputs[0]</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
   </objects>

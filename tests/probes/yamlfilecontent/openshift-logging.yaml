@@ -9,18 +9,22 @@ spec:
    - type: "elasticsearch"
      name: elasticsearch
      endpoint: elasticsearch.openshift-logging.svc:9200
+     mode: 066
      secret:
         name: fluentd
    - type: "elasticsearch"
      name: elasticsearch-insecure
      endpoint: elasticsearch-insecure.svc.messaging.cluster.local
+     mode: "066"
      insecure: true
    - type: "forward"
      name: secureforward-offcluster
      endpoint: https://secureforward.offcluster.com:9200
+     mode: "067"
      secret:
         name: secureforward
   pipelines:
+   - inputSource: "hello"
    - name: container-logs
      inputSource: logs.app
      outputRefs:
