@@ -165,6 +165,7 @@ if(GCRYPT_FOUND OR NSS_FOUND)
 endif()
 
 find_package(Libyaml)
+find_package(Yamlpath)
 
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
@@ -237,7 +238,7 @@ cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT "Independent t
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT54 "Independent textfilecontent54 probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_VARIABLE "Independent variable probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT "Independent xmlfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
-cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT "Independent yamlfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; LIBYAML_FOUND; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT "Independent yamlfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; LIBYAML_FOUND; YAMLPATH_FOUND; NOT WIN32" OFF)
 
 # UNIX PROBES
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_DNSCACHE "Unix dnscache probe" ON "ENABLE_PROBES_UNIX" OFF)
@@ -361,7 +362,7 @@ message(STATUS "  Independent sql57 probe (depends on opendbx): ${OPENSCAP_PROBE
 message(STATUS "  Independent textfilecontent probe: ${OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT}")
 message(STATUS "  Independent textfilecontent54 probe: ${OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT54}")
 message(STATUS "  Independent xmlfilecontent probe: ${OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT}")
-message(STATUS "  Independent yamlfilecontent probe (depends on libyaml): ${OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT}")
+message(STATUS "  Independent yamlfilecontent probe (depends on libyaml, yaml-path): ${OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT}")
 message(STATUS " ")
 
 
