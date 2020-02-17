@@ -31,6 +31,16 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:3"> <!-- comment="false" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="get_non_existing_scalar" test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -47,6 +57,10 @@
 
     <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="error">
       <ind-def:object object_ref="oval:0:obj:3"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:4" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:4"/>
     </ind-def:yamlfilecontent_test>
 
   </tests>
@@ -69,6 +83,12 @@
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
       <ind-def:yamlpath>.metadata</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.doesnt.exist</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
   </objects>
