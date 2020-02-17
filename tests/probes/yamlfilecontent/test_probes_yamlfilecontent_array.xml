@@ -87,7 +87,7 @@
 
   <variables>
 
-    <local_variable comment="oval:0:var:2" datatype="string" version="1" id="">
+    <local_variable comment="variable with two values" datatype="string" version="1" id="oval:0:var:2">
         <!-- The use of split should force creation of a local variable with two values
              NOTE: Wildly untested! -->
       <split delimiter="|">
