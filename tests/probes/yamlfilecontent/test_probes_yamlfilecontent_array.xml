@@ -4,7 +4,7 @@
   <generator>
     <oval:product_name>yamlfilecontent</oval:product_name>
     <oval:product_version>1.0</oval:product_version>
-    <oval:schema_version>5.10</oval:schema_version>
+    <oval:schema_version>5.11.3</oval:schema_version>
     <oval:timestamp>2020-02-13T00:00:00-00:00</oval:timestamp>
   </generator>
 
