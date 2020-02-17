@@ -96,11 +96,11 @@
   <states>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
-      <ind-def:value-of datatype="string">LogForwarding</ind-def:value-of>
+      <ind-def:value_of datatype="string">LogForwarding</ind-def:value_of>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
-      <ind-def:value-of datatype="string">openshift-logging</ind-def:value-of>
+      <ind-def:value_of datatype="string">openshift-logging</ind-def:value_of>
     </ind-def:yamlfilecontent_state>
 
   </states>
