@@ -2003,6 +2003,180 @@
             </xsd:complexType>
       </xsd:element>
       <!-- =============================================================================== -->
+      <!-- ===========================  YAML FILE CONTENT TEST  ========================== -->
+      <!-- =============================================================================== -->
+      <xsd:element name="yamlfilecontent_test" substitutionGroup="oval-def:test">
+            <xsd:annotation>
+                  <xsd:documentation>The yamlfilecontent_test element is used to explore the contents of an YAML file. This test allows specific pieces of an YAML document specified using YAML Path to be tested. It extends the standard TestType as defined in the oval-definitions-schema and one should refer to the TestType description for more information. The required object element references a yamlfilecontent_object and the optional state element specifies the metadata to check.</xsd:documentation>
+                  <xsd:appinfo>
+                        <oval:element_mapping>
+                              <oval:test>yamlfilecontent_test</oval:test>
+                              <oval:object>yamlfilecontent_object</oval:object>
+                              <oval:state>yamlfilecontent_state</oval:state>
+                              <oval:item target_namespace="http://oval.mitre.org/XMLSchema/oval-system-characteristics-5#independent">yamlfilecontent_item</oval:item>
+                        </oval:element_mapping>
+                  </xsd:appinfo>
+                  <xsd:appinfo>
+                        <sch:pattern id="ind-def_yamltst">
+                              <sch:rule context="ind-def:yamlfilecontent_test/ind-def:object">
+                                    <sch:assert test="@object_ref=ancestor::oval-def:oval_definitions/oval-def:objects/ind-def:yamlfilecontent_object/@id"><sch:value-of select="../@id"/> - the object child element of a yamlfilecontent_test must reference a yamlfilecontent_object</sch:assert>
+                              </sch:rule>
+                              <sch:rule context="ind-def:yamlfilecontent_test/ind-def:state">
+                                    <sch:assert test="@state_ref=ancestor::oval-def:oval_definitions/oval-def:states/ind-def:yamlfilecontent_state/@id"><sch:value-of select="../@id"/> - the state child element of a yamlfilecontent_test must reference a yamlfilecontent_state</sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:TestType">
+                              <xsd:sequence>
+                                    <xsd:element name="object" type="oval-def:ObjectRefType" />
+                                    <xsd:element name="state" type="oval-def:StateRefType" minOccurs="0" maxOccurs="unbounded"/>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="yamlfilecontent_object" substitutionGroup="oval-def:object">
+            <xsd:annotation>
+                  <xsd:documentation>The yamlfilecontent_object element is used by a YAML file content test to define the specific piece of an YAML file(s) to be evaluated. The yamlfilecontent_object will only collect regular files on UNIX systems and FILE_TYPE_DISK files on Windows systems. Each object extends the standard ObjectType as defined in the oval-definitions-schema and one should refer to the ObjectType description for more information. The common set element allows complex objects to be created using filters and set logic. Again, please refer to the description of the set element in the oval-definitions-schema.</xsd:documentation>
+                  <xsd:documentation>The set of files to be evaluated may be identified with either a complete filepath or a path and filename. Only one of these options may be selected.</xsd:documentation>
+                  <xsd:documentation>It is important to note that the 'max_depth' and 'recurse_direction' attributes of the 'behaviors' element do not apply to the 'filepath' element, only to the 'path' and 'filename' elements.  This is because the 'filepath' element represents an absolute path to a particular file and it is not possible to recurse over a file.</xsd:documentation>
+                  <xsd:appinfo>
+                        <sch:pattern id="ind-def_yamlfilecontent_object_verify_filter_state">
+                              <sch:rule context="ind-def:yamlfilecontent_object//oval-def:filter">
+                                    <sch:let name="parent_object" value="ancestor::ind-def:yamlfilecontent_object"/>
+                                    <sch:let name="parent_object_id" value="$parent_object/@id"/>
+                                    <sch:let name="state_ref" value="."/>
+                                    <sch:let name="reffed_state" value="ancestor::oval-def:oval_definitions/oval-def:states/*[@id=$state_ref]"/>
+                                    <sch:let name="state_name" value="local-name($reffed_state)"/>
+                                    <sch:let name="state_namespace" value="namespace-uri($reffed_state)"/>
+                                    <sch:assert test="(($state_namespace='http://oval.mitre.org/XMLSchema/oval-definitions-5#independent') and ($state_name='yamlfilecontent_state'))">State referenced in filter for <sch:value-of select="name($parent_object)"/> '<sch:value-of select="$parent_object_id"/>' is of the wrong type. </sch:assert>
+                              </sch:rule>
+                        </sch:pattern>
+                  </xsd:appinfo>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:ObjectType">
+                              <xsd:sequence>
+                                    <xsd:choice>
+                                          <xsd:element ref="oval-def:set"/>
+                                          <xsd:sequence>
+                                                <xsd:element name="behaviors" type="ind-def:FileBehaviors" minOccurs="0" maxOccurs="1"/>
+                                                <xsd:choice>
+                                                      <xsd:element name="filepath" type="oval-def:EntityObjectStringType">
+                                                            <xsd:annotation>
+                                                                  <xsd:documentation>The filepath element specifies the absolute path for a file on the machine. A directory cannot be specified as a filepath.</xsd:documentation>
+                                                                  <xsd:appinfo>
+                                                                        <sch:pattern id="ind-def_yamlobjfilepath">
+                                                                              <sch:rule context="ind-def:yamlfilecontent_object/ind-def:filepath">
+                                                                                    <sch:assert test="not(preceding-sibling::ind-def:behaviors[@max_depth or @recurse_direction])"><sch:value-of select="../@id"/> - the max_depth and recurse_direction behaviors are not allowed with a filepath entity</sch:assert>
+                                                                              </sch:rule>
+                                                                        </sch:pattern>
+                                                                        <sch:pattern id="ind-def_yamlobjfilepath2">
+                                                                              <sch:rule context="ind-def:yamlfilecontent_object/ind-def:filepath[not(@operation='equals' or not(@operation))]">
+                                                                                    <sch:assert test="not(preceding-sibling::ind-def:behaviors[@recurse_file_system='defined'])"><sch:value-of select="../@id"/> - the recurse_file_system behavior MUST not be set to 'defined' when a pattern match is used with a filepath entity.</sch:assert>
+                                                                              </sch:rule>
+                                                                        </sch:pattern>
+                                                                  </xsd:appinfo>
+                                                            </xsd:annotation>
+                                                      </xsd:element>
+                                                      <xsd:sequence>
+                                                            <xsd:element name="path" type="oval-def:EntityObjectStringType">
+                                                                  <xsd:annotation>
+                                                                        <xsd:documentation>The path element specifies the directory component of the absolute path to a file on the machine.</xsd:documentation>
+                                                                        <xsd:appinfo>
+                                                                              <sch:pattern id="ind-def_yamlobjpath">
+                                                                                    <sch:rule context="ind-def:yamlfilecontent_object/ind-def:path[not(@operation='equals' or not(@operation))]">
+                                                                                          <sch:assert test="not(preceding-sibling::ind-def:behaviors[@recurse_file_system='defined'])"><sch:value-of select="../@id"/> - the recurse_file_system behavior MUST not be set to 'defined' when a pattern match is used with a path entity.</sch:assert>
+                                                                                          <sch:assert test="not(preceding-sibling::ind-def:behaviors[@max_depth])"><sch:value-of select="../@id"/> - the max_depth behavior MUST not be used when a pattern match is used with a path entity.</sch:assert>
+                                                                                          <sch:assert test="not(preceding-sibling::ind-def:behaviors[@recurse_direction])"><sch:value-of select="../@id"/> - the recurse_direction behavior MUST not be used when a pattern match is used with a path entity.</sch:assert>
+                                                                                          <sch:assert test="not(preceding-sibling::ind-def:behaviors[@recurse])"><sch:value-of select="../@id"/> - the recurse behavior MUST not be used when a pattern match is used with a path entity.</sch:assert>
+                                                                                    </sch:rule>
+                                                                              </sch:pattern>
+                                                                        </xsd:appinfo>
+                                                                  </xsd:annotation>
+                                                            </xsd:element>
+                                                            <xsd:element name="filename" type="oval-def:EntityObjectStringType">
+                                                                  <xsd:annotation>
+                                                                        <xsd:documentation>The filename element specifies the name of the file.</xsd:documentation>
+                                                                        <xsd:appinfo>
+                                                                              <sch:pattern id="ind-def_yamlobjfilename">
+                                                                                    <sch:rule context="ind-def:yamlfilecontent_object/ind-def:filename">
+                                                                                          <sch:assert test="(@var_ref and .='') or not(.='') or (.='' and @operation = 'pattern match')"><sch:value-of select="../@id"/> - filename entity cannot be empty unless the xsi:nil attribute is set to true or a var_ref is used</sch:assert>
+                                                                                    </sch:rule>
+                                                                              </sch:pattern>
+                                                                        </xsd:appinfo>
+                                                                  </xsd:annotation>
+                                                            </xsd:element>
+                                                      </xsd:sequence>
+                                                </xsd:choice>
+                                                <xsd:element name="yamlpath" type="oval-def:EntityObjectStringType">
+                                                      <xsd:annotation>
+                                                            <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. This YAML Path expression must evaluate to a list of zero or more scalar values which will be accessible in OVAL via instances of the value_of entity. Any results from evaluating the YAML Path expression other than a list of scalar values (e.g., a hash or list of lists) is considered an error. The intention is that the scalar values be drawn from instances of a single, uniquely named element. However, an OVAL interpreter is not required to verify this, so the author should define the YAML Path expression carefully. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
+                                                            <xsd:appinfo>
+                                                                  <sch:pattern id="ind-def_yamlobjyamlpath">
+                                                                        <sch:rule context="ind-def:yamlfilecontent_object/ind-def:yamlpath">
+                                                                              <sch:assert test="not(@operation) or @operation='equals'"><sch:value-of select="../@id"/> - operation attribute for the yamlpath entity of a yamlfilecontent_object should be 'equals', note that this overrules the general operation attribute validation (i.e. follow this one)</sch:assert>
+                                                                        </sch:rule>
+                                                                  </sch:pattern>
+                                                            </xsd:appinfo>
+                                                      </xsd:annotation>
+                                                </xsd:element>
+                                                <xsd:element ref="oval-def:filter" minOccurs="0" maxOccurs="unbounded"/>
+                                          </xsd:sequence>
+                                    </xsd:choice>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="yamlfilecontent_state" substitutionGroup="oval-def:state">
+            <xsd:annotation>
+                  <xsd:documentation>The yamlfilecontent_state element contains entities that are used to check the file path and name, as well as the YAML Path used and the value of the this YAML Path.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+                  <xsd:complexContent>
+                        <xsd:extension base="oval-def:StateType">
+                              <xsd:sequence>
+                                    <xsd:element name="filepath" type="oval-def:EntityStateStringType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The filepath element specifies the absolute path for a file on the machine. A directory cannot be specified as a filepath.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="path" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The path element specifies the directory component of the absolute path to a file on the machine.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="filename" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The filename element specifies the name of the file.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="yamlpath" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. This YAML Path expression must evaluate to a list of zero or more text values which will be accessible in OVAL via instances of the value_of entity. Any results from evaluating the YAML Path expression other than a list of text strings (e.g., a nodes set) is considered an error. The intention is that the text values be drawn from instances of a single, uniquely named element or attribute. However, an OVAL interpreter is not required to verify this, so the author should define the YAML Path expression carefully. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="value_of" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The value_of element checks the value(s) of the text node(s) or attribute(s) found.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="windows_view" type="ind-def:EntityStateWindowsViewType" minOccurs="0">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The windows view value to which this was targeted. This is used to indicate which view (32-bit or 64-bit), the associated State applies to.  This entity only applies to 64-bit Microsoft Windows operating systems.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                              </xsd:sequence>
+                        </xsd:extension>
+                  </xsd:complexContent>
+            </xsd:complexType>
+      </xsd:element>
+      <!-- =============================================================================== -->
       <!-- =============================================================================== -->
       <!-- =============================================================================== -->
       <xsd:complexType name="FileBehaviors">
