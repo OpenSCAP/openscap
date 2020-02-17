@@ -46,7 +46,7 @@
     </ind-def:yamlfilecontent_test>
 
     <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="error">
-      <ind-def:object object_ref="oval:0:obj:5"/>
+      <ind-def:object object_ref="oval:0:obj:3"/>
     </ind-def:yamlfilecontent_test>
 
   </tests>
