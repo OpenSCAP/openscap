@@ -6,7 +6,7 @@ function test_probes_yamlfilecontent_key {
 
     probecheck "yamlfilecontent" || return 255
 
-    local ret_val=0;
+    local ret_val=0
     local DF="${srcdir}/test_probes_yamlfilecontent_key.xml"
     local RF="results.xml"
 
@@ -19,10 +19,10 @@ function test_probes_yamlfilecontent_key {
     $OSCAP oval eval --results $RF $DF
 
     if [ -f $RF ]; then
-	verify_results "def" $DF $RF 2 && verify_results "tst" $DF $RF 3
-	ret_val=$?
+        verify_results "def" $DF $RF 2 && verify_results "tst" $DF $RF 3
+        ret_val=$?
     else
-	ret_val=1
+        ret_val=1
     fi
 
     rm -f $YAML_FILE
