@@ -32,9 +32,10 @@
 #include "sexp-manip.h"
 #include "debug_priv.h"
 #include "oval_fts.h"
+#include "list.h"
 
 
-static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, unsigned char *output_buffer, size_t output_buffer_size, probe_ctx *ctx)
+static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
 {
 	int ret = 0;
 	FILE *yaml_file = fopen(filepath, "r");
@@ -63,17 +64,9 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, uns
 	yaml_parser_initialize(&parser);
 	yaml_parser_set_input_file(&parser, yaml_file);
 
-	yaml_emitter_t emitter;
-	yaml_emitter_initialize(&emitter);
-	size_t size_written;
-	yaml_emitter_set_output_string(&emitter,
-		output_buffer, output_buffer_size, &size_written);
-	yaml_emitter_set_width(&emitter, -1);
-
 	yaml_event_t event;
-	bool done = false;
-
 	bool sequence = false;
+
 	do {
 		if (!yaml_parser_parse(&parser, &event)) {
 			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
@@ -85,7 +78,6 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, uns
 			ret = -1;
 			goto cleanup;
 		}
-		done = (event.type == YAML_STREAM_END_EVENT);
 		if (!yaml_path_filter_event(yaml_path, &parser, &event,
 				YAML_PATH_FILTER_RETURN_ALL)) {
 			yaml_event_delete(&event);
@@ -120,27 +112,13 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, uns
 				goto cleanup;
 			}
 		}
-
-		if (!yaml_emitter_emit(&emitter, &event)) {
-			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				"YAML emitter error: yaml_emitter_emit returned 0: %s",
-				emitter.problem);
-			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-			SEXP_free(msg);
-			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-			ret = -1;
-			goto cleanup;
-		} 
-
-	} while (!done);
-
-	/* string output_buffer contains '\n' at the end */
-	output_buffer[size_written - 1] = '\0';
+		if (event.type == YAML_SCALAR_EVENT) {
+			oscap_list_add(values, (void *) strdup((const char *) event.data.scalar.value));
+		}
+	} while (event.type != YAML_STREAM_END_EVENT);
 
 cleanup:
 	yaml_parser_delete(&parser);
-	yaml_emitter_delete(&emitter);
-
 	yaml_path_destroy(yaml_path);
 	fclose(yaml_file);
 
@@ -151,34 +129,37 @@ static int process_yaml_file(const char *path, const char *filename, const char 
 {
 	int ret = 0;
 	char *filepath = oscap_path_join(path, filename);
+	struct oscap_list *values = oscap_list_new();
 
-	size_t output_buffer_size = 1024;
-	unsigned char *output_buffer = calloc(output_buffer_size, sizeof(unsigned char));
-
-	if (yaml_path_query(filepath, yamlpath, output_buffer, output_buffer_size, ctx)) {
+	if (yaml_path_query(filepath, yamlpath, values, ctx)) {
 		ret = -1;
 		goto cleanup;
 	}
 
-	/* TODO: type conversion of output_buffer data */
+	struct oscap_iterator *values_it = oscap_iterator_new(values);
+	while (oscap_iterator_has_more(values_it)) {
+		char *value = oscap_iterator_next(values_it);
+		/* TODO: type conversion of 'value' data */
 
-	SEXP_t *item = probe_item_create(
-		OVAL_INDEPENDENT_YAML_FILE_CONTENT,
-		NULL,
-		"filepath", OVAL_DATATYPE_STRING, filepath,
-		"path", OVAL_DATATYPE_STRING, path,
-		"filename", OVAL_DATATYPE_STRING, filename,
-		"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
-		"value_of", OVAL_DATATYPE_STRING, output_buffer,
-		/*
-		"windows_view",
-		*/
-		NULL
-	);
-	probe_item_collect(ctx, item);
+		SEXP_t *item = probe_item_create(
+			OVAL_INDEPENDENT_YAML_FILE_CONTENT,
+			NULL,
+			"filepath", OVAL_DATATYPE_STRING, filepath,
+			"path", OVAL_DATATYPE_STRING, path,
+			"filename", OVAL_DATATYPE_STRING, filename,
+			"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
+			"value_of", OVAL_DATATYPE_STRING, value,
+			/*
+			"windows_view",
+			*/
+			NULL
+		);
+		probe_item_collect(ctx, item);
+	}
+	oscap_iterator_free(values_it);
 
 cleanup:
-	free(output_buffer);
+	oscap_list_free(values, free);
 	free(filepath);
 	return ret;
 }
