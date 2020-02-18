@@ -1,0 +1,3 @@
+[submodule "yaml-filter"]
+	path = yaml-filter
+	url = git@github.com:OpenSCAP/yaml-filter.git
