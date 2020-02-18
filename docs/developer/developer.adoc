@@ -31,7 +31,7 @@ mkdir -p build
 .. Use fresh sources from git repository.
 +
 ----
-$ git clone https://github.com/OpenSCAP/openscap.git
+$ git clone --recurse-submodules https://github.com/OpenSCAP/openscap.git
 $ cd openscap
 ----
 +
