@@ -75,54 +75,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, uns
 
 	bool sequence = false;
 	do {
-		if (yaml_parser_parse(&parser, &event)) {
-			done = (event.type == YAML_STREAM_END_EVENT);
-			if (yaml_path_filter_event(yaml_path, &parser, &event,
-					YAML_PATH_FILTER_RETURN_ALL)) {
-
-				if (sequence) {
-					if (event.type == YAML_SEQUENCE_END_EVENT) {
-						sequence = false;
-					} else if (event.type != YAML_SCALAR_EVENT) {
-						SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-							"YAML path '%s' contains non-scalar in a sequence.",
-							yaml_path_cstr);
-						probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-						SEXP_free(msg);
-						probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-						ret = -1;
-						goto cleanup;
-					}
-				} else {
-					if (event.type == YAML_SEQUENCE_START_EVENT) {
-						sequence = true;
-					}
-					if (event.type == YAML_MAPPING_START_EVENT) {
-						SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-							"YAML path '%s' matches a mapping.",
-							yaml_path_cstr);
-						probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-						SEXP_free(msg);
-						probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-						ret = -1;
-						goto cleanup;
-					}
-				}
-
-				if (!yaml_emitter_emit(&emitter, &event)) {
-					SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-						"YAML emitter error: yaml_emitter_emit returned 0: %s",
-						emitter.problem);
-					probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-					SEXP_free(msg);
-					probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-					ret = -1;
-					goto cleanup;
-				}
-			} else {
-				yaml_event_delete(&event);
-			}
-		} else {
+		if (!yaml_parser_parse(&parser, &event)) {
 			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 				"YAML parser error: yaml_parse_parse returned 0: %s",
 				parser.problem);
@@ -132,6 +85,53 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, uns
 			ret = -1;
 			goto cleanup;
 		}
+		done = (event.type == YAML_STREAM_END_EVENT);
+		if (!yaml_path_filter_event(yaml_path, &parser, &event,
+				YAML_PATH_FILTER_RETURN_ALL)) {
+			yaml_event_delete(&event);
+			continue;
+		}
+
+		if (sequence) {
+			if (event.type == YAML_SEQUENCE_END_EVENT) {
+				sequence = false;
+			} else if (event.type != YAML_SCALAR_EVENT) {
+				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+					"YAML path '%s' contains non-scalar in a sequence.",
+					yaml_path_cstr);
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				ret = -1;
+				goto cleanup;
+			}
+		} else {
+			if (event.type == YAML_SEQUENCE_START_EVENT) {
+				sequence = true;
+			}
+			if (event.type == YAML_MAPPING_START_EVENT) {
+				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+					"YAML path '%s' matches a mapping.",
+					yaml_path_cstr);
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				ret = -1;
+				goto cleanup;
+			}
+		}
+
+		if (!yaml_emitter_emit(&emitter, &event)) {
+			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+				"YAML emitter error: yaml_emitter_emit returned 0: %s",
+				emitter.problem);
+			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+			SEXP_free(msg);
+			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+			ret = -1;
+			goto cleanup;
+		} 
+
 	} while (!done);
 
 	/* string output_buffer contains '\n' at the end */
