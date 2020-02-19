@@ -2,6 +2,8 @@
 
 . $builddir/tests/test_common.sh
 
+set -e -o pipefail
+
 function test_probes_yamlfilecontent_offline_mode {
 
     probecheck "yamlfilecontent" || return 255
