@@ -33,7 +33,12 @@
 #include "debug_priv.h"
 #include "oval_fts.h"
 #include "list.h"
+#include "probe/probe.h"
 
+int yamlfilecontent_probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_OWN;
+}
 
 static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
 {
@@ -125,13 +130,14 @@ cleanup:
 	return ret;
 }
 
-static int process_yaml_file(const char *path, const char *filename, const char *yamlpath, probe_ctx *ctx)
+static int process_yaml_file(const char *prefix, const char *path, const char *filename, const char *yamlpath, probe_ctx *ctx)
 {
 	int ret = 0;
 	char *filepath = oscap_path_join(path, filename);
 	struct oscap_list *values = oscap_list_new();
+	char *filepath_with_prefix = oscap_path_join(prefix, filepath);
 
-	if (yaml_path_query(filepath, yamlpath, values, ctx)) {
+	if (yaml_path_query(filepath_with_prefix, yamlpath, values, ctx)) {
 		ret = -1;
 		goto cleanup;
 	}
@@ -160,6 +166,7 @@ static int process_yaml_file(const char *path, const char *filename, const char 
 
 cleanup:
 	oscap_list_free(values, free);
+	free(filepath_with_prefix);
 	free(filepath);
 	return ret;
 }
@@ -176,16 +183,17 @@ int yamlfilecontent_probe_main(probe_ctx *ctx, void *arg)
 	char *yamlpath_str = SEXP_string_cstr(yamlpath_val);
 
 	probe_filebehaviors_canonicalize(&behaviors_ent);
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	OVAL_FTS *ofts = oval_fts_open_prefixed(
-		NULL, path_ent, filename_ent, filepath_ent, behaviors_ent,
+		prefix, path_ent, filename_ent, filepath_ent, behaviors_ent,
 		probe_ctx_getresult(ctx));
 	if (ofts != NULL) {
 		OVAL_FTSENT *ofts_ent;
 		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
 			if (ofts_ent->fts_info == FTS_F
 			    || ofts_ent->fts_info == FTS_SL) {
-				process_yaml_file(
-					ofts_ent->path, ofts_ent->file, yamlpath_str, ctx);
+				process_yaml_file(prefix, ofts_ent->path, ofts_ent->file,
+					yamlpath_str, ctx);
 			}
 			oval_ftsent_free(ofts_ent);
 		}

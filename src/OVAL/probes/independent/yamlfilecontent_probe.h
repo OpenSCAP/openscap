@@ -25,6 +25,7 @@
 
 #include "probe-api.h"
 
+int yamlfilecontent_probe_offline_mode_supported(void);
 int yamlfilecontent_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_YAMLFILECONTENT_PROBE_H */
