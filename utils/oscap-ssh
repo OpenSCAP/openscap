@@ -282,7 +282,8 @@ echo "Starting the evaluation..."
 if [ -z "$OSCAP_SUDO" ]; then
     ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; oscap $(command_array_to_string oscap_args)" "$SSH_TTY_ALLOCATION_OPTION"
 else
-    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO sh -c 'oscap $(command_array_to_string oscap_args); rc=\$?; chown \$SUDO_USER $REMOTE_TEMP_DIR/*; exit \$rc'" "$SSH_TTY_ALLOCATION_OPTION"
+    OSCAP_CMD="oscap $(command_array_to_string oscap_args); rc=\$?; chown \$SUDO_USER $REMOTE_TEMP_DIR/*; exit \$rc"
+    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO sh -c '$OSCAP_CMD'" "$SSH_TTY_ALLOCATION_OPTION"
 fi
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
