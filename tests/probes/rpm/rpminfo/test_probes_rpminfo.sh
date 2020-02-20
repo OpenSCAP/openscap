@@ -17,10 +17,11 @@
 
 set -e -o pipefail
 
-require "rpm" || return 255
+require rpm || exit 255
 A_NAME=`rpm --qf "%{NAME}\n" -qa | sort | uniq -u | sed -n '1p'`
 B_NAME=`rpm --qf "%{NAME}\n" -qa | sort | uniq -u | sed -n '2p'`
 
+[ -n "$A_NAME" ] || exit 255
 
 test_init
 

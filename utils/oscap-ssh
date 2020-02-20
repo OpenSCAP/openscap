@@ -22,9 +22,12 @@ function die()
     exit 1
 }
 
-hash ssh 2> /dev/null || die "Cannot find ssh, please install the OpenSSH client."
-hash scp 2> /dev/null || die "Cannot find scp, please install the OpenSSH client."
-hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
+function invalid()
+{
+    echo -e "$*\n" >&2
+    usage
+    exit 1
+}
 
 function usage()
 {
@@ -87,10 +90,6 @@ function usage()
     echo "See \`man oscap\` to learn more about semantics of these options."
 }
 
-OSCAP_SUDO=""
-# SSH_ADDITIONAL_OPTIONS may be defined in the calling shell
-SSH_TTY_ALLOCATION_OPTION=""
-
 # $1, $2, ... SSH options (pass them as separate arguments)
 function ssh_execute_with_options {
     ssh -o ControlPath="$MASTER_SOCKET" $SSH_ADDITIONAL_OPTIONS "$@" -p "$SSH_PORT" "$SSH_HOST"
@@ -118,22 +117,20 @@ function scp_retreive_from_temp_dir {
 # Returns: String, where individual command components are double-quoted, so they are not interpreted by the shell.
 #  For example, an array ('-p' '(all)') will be transformed to "\"-p\" \"(all)\"", so after the shell expansion, it will end up as "-p" "(all)".
 function command_array_to_string {
-	eval "printf '\"%s\" ' \"\${$1[@]}\""
+    eval "printf '\"%s\" ' \"\${$1[@]}\""
 }
 
 function first_argument_is_sudo {
-	[ "$1" == "sudo" ] || [ "$1" == "--sudo" ]
-	return $?
+    [ "$1" == "sudo" ] || [ "$1" == "--sudo" ]
+    return $?
 }
 
 function sanity_check_arguments {
     if [ $# -lt 1 ]; then
-        echo "No arguments provided."
-        usage
-        die
+        invalid "No arguments provided."
     elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
         usage
-        die
+        exit 0
     elif first_argument_is_sudo "$@"; then
         OSCAP_SUDO="sudo"
         # force pseudo-tty allocation so that users can type their password if necessary
@@ -141,9 +138,7 @@ function sanity_check_arguments {
         shift
     fi
     if [ $# -lt 2 ]; then
-        echo "Missing ssh host and ssh port."
-        usage
-        die
+        invalid "Missing ssh host and ssh port."
     fi
 }
 
@@ -164,6 +159,16 @@ function check_oscap_arguments {
         die "This script only supports 'sudo' as first argument, '-h', '--help', '--v', '--version', 'info', 'xccdf eval', 'oval eval' and 'oval collect'."
     fi
 }
+
+
+hash ssh 2> /dev/null || die "Cannot find ssh, please install the OpenSSH client."
+hash scp 2> /dev/null || die "Cannot find scp, please install the OpenSSH client."
+hash mktemp 2> /dev/null || die "Cannot find mktemp, please install coreutils."
+
+
+OSCAP_SUDO=""
+# SSH_ADDITIONAL_OPTIONS may be defined in the calling shell
+SSH_TTY_ALLOCATION_OPTION=""
 
 sanity_check_arguments "$@"
 first_argument_is_sudo "$@" && shift
@@ -279,7 +284,12 @@ echo "Starting the evaluation..."
 # changing directory because of --oval-results support. oval results files are
 # dumped into PWD, and we can't be sure by the file names - we need controlled
 # environment
-ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO oscap $(command_array_to_string oscap_args)" "$SSH_TTY_ALLOCATION_OPTION"
+if [ -z "$OSCAP_SUDO" ]; then
+    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; oscap $(command_array_to_string oscap_args)" "$SSH_TTY_ALLOCATION_OPTION"
+else
+    OSCAP_CMD="oscap $(command_array_to_string oscap_args); rc=\$?; chown \$SUDO_USER $REMOTE_TEMP_DIR/*; exit \$rc"
+    ssh_execute_with_command_and_options "cd $REMOTE_TEMP_DIR; $OSCAP_SUDO sh -c '$OSCAP_CMD'" "$SSH_TTY_ALLOCATION_OPTION"
+fi
 OSCAP_EXIT_CODE=$?
 echo "oscap exit code: $OSCAP_EXIT_CODE"
 

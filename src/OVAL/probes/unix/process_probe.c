@@ -24,7 +24,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * Authors:
  *   Steve Grubb <sgrubb@redhat.com>
@@ -58,7 +58,7 @@
 #include "process_probe.h"
 #include "oscap_helpers.h"
 
-oval_schema_version_t over;
+static oval_schema_version_t over;
 
 /* Convenience structure for the results being reported */
 struct result_info {
@@ -106,7 +106,7 @@ static void report_finding(struct result_info *res, probe_ctx *ctx)
 
 #if defined(OS_LINUX)
 
-unsigned long ticks, boot;
+static unsigned long ticks, boot;
 
 static void get_boot_time(void)
 {

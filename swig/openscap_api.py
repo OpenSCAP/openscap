@@ -16,7 +16,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 # Authors:
 #      Maros Barabas  <mbarabas@redhat.com>
@@ -273,13 +273,24 @@ class OSCAP_Object(object):
         if name in self.__dict__:
             return self.__dict__[name]
 
+        # cache self.object + "_" + name for perf / clearness purpose
+        obj_name = self.object + "_" + name
+
+        """ Catch  potential C function overriden in OSCAP_Object
+        like xccdf_session_set_rule or xccdf_session_free for instance. """
+        if obj_name in dir(OSCAP_Object):
+            func = getattr(OSCAP_Object, obj_name)
+            if callable(func):
+                return self.__func_wrapper(func)
+
         # If attribute is not in a local dictionary, look for it in a library
         func = OSCAP.__dict__.get(name)
         if func is not None:
             return func
 
         """ Looking for function object_subject() """
-        obj = OSCAP.__dict__.get(self.object + "_" + name)
+        obj = OSCAP.__dict__.get(obj_name)
+
         if obj is not None:
             if callable(obj):
                 return self.__func_wrapper(obj)
@@ -293,10 +304,10 @@ class OSCAP_Object(object):
                 return self.__func_wrapper(obj)
 
         """ Looking if it can be a constructor """
-        obj = OSCAP.__dict__.get(self.object + "_" + name + "_new")
+        obj = OSCAP.__dict__.get(obj_name + "_new")
         if obj is not None:
             # this will call the __call__ definition of OSCAP_Object
-            return OSCAP_Object(self.object + "_" + name)
+            return OSCAP_Object(obj_name)
 
         """ There is not function with the name 'name' let return the OSCAP_Object    """
         raise AttributeError("Attribute {0} not found for object {1}"
@@ -381,6 +392,21 @@ class OSCAP_Object(object):
                 raise Exception("Can't free %s" % (self.object,))
 
     """ ********* Implementation of non-trivial functions ********* """
+
+    def xccdf_session_set_rule(self, rule):
+        OSCAP.xccdf_session_set_rule_py(self, rule)
+
+    # helper function to find easily the result of a single rule
+    # should be called in the context of a xccdf_session_set_rule
+    def xccdf_session_get_rule_result(self, rule):
+        self = OSCAP_Object("xccdf_session", self)
+        rs = self.get_xccdf_policy().get_results()[-1]  # get last value
+        for rr in rs.get_rule_results():
+            if rule == rr.get_idref():
+                return rr
+
+    def xccdf_session_free(self):
+        OSCAP.xccdf_session_free_py(self)
 
     def __start_callback(self, rule, obj):
         return obj[0](OSCAP_Object("xccdf_rule", rule), obj[1])

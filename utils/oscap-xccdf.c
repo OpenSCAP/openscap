@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * Authors:
  *      Peter Vrabec   <pvrabec@redhat.com>
@@ -864,10 +864,12 @@ int app_generate_fix(const struct oscap_action *action)
 			template = "urn:xccdf:fix:script:puppet";
 		} else if (strcmp(action->fix_type, "anaconda") == 0) {
 			template = "urn:redhat:anaconda:pre";
+		} else if (strcmp(action->fix_type, "ignition") == 0) {
+			template = "urn:xccdf:fix:script:ignition";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda, ignition.\n"
 					"Or provide a custom template using '--template' instead.\n",
 					action->fix_type);
 			return OSCAP_ERROR;

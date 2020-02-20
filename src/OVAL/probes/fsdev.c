@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  * Authors:
  *      "Daniel Kopecek" <dkopecek@redhat.com>
@@ -94,6 +94,10 @@ static int is_local_fs(struct mntent *ment)
 	 * will be parsed in a different call of this function.
 	 */
 	if (!strcmp(ment->mnt_type, "autofs")) {
+		return 0;
+	}
+
+	if (ment->mnt_fsname == NULL) {
 		return 0;
 	}
 

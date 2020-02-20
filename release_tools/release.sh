@@ -355,7 +355,7 @@ upload_to_git()
 # $3: The new version
 flip_milestones()
 {
-    "./$SCRIPT_DIR/move-milestones.py" --owner "$2" --api-token "$1" "$version" "$3"
+    "$SCRIPT_DIR/move-milestones.py" --owner "$2" --auth-token "$1" "$version" "$3"
 }
 
 
@@ -414,6 +414,6 @@ release_to_git_and_bump_release()
     check_release_is_ok
     release_to_git
     # upload_to_git  # to be done when https://github.com/PyGithub/PyGithub/pull/525 is merged.
-    flip_milestones --auth-token "$GITHUB_TOKEN" openscap "$_new_version"
+    flip_milestones "$GITHUB_TOKEN" openscap "$_new_version"
     bump_release "$_new_version"
 }

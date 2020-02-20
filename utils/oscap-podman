@@ -16,10 +16,16 @@
 # License along with this library; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-
 function die()
 {
     echo "$*" >&2
+    exit 1
+}
+
+function invalid()
+{
+    echo -e "$*\n" >&2
+    usage
     exit 1
 }
 
@@ -39,49 +45,54 @@ function usage()
 OSCAP_BINARY=oscap
 
 if [ $# -lt 1 ]; then
-    echo "No arguments provided."
-    usage
-    die
+    invalid "No arguments provided."
 elif [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     usage
-    die
+    exit 0
 elif [[ "$1" == --oscap=* ]] && [ $# -gt 2 ]; then
     OSCAP_BINARY=${1#"--oscap="}
     shift
 elif [ "$#" -gt 1 ]; then
     true
 else
-    echo "Invalid arguments provided."
-    usage
-    die
+    invalid "Invalid arguments provided."
 fi
 
 if [ $(id -u) -ne 0 ]; then
-    echo "This script cannot run in rootless mode." >&2
-    die
+    die "This script cannot run in rootless mode."
 fi
 if grep -q "\-\-remediate" <<< "$@"; then
-    echo "This script does not support '--remediate' option." >&2
-    die
+    die "This script does not support '--remediate' option."
+fi
+
+IMAGE_NAME=$(podman image exists "$1" \
+    && podman image inspect --format "{{.Id}} {{.RepoTags}}" "$1")
+CONTAINER_NAME=$(podman container exists "$1" \
+    && podman container inspect --format "{{.Id}} {{.Name}}" "$1")
+
+if [ -n "$IMAGE_NAME" ] && [ -n "$CONTAINER_NAME" ]; then
+    echo "Ambiguous target, container image and container with the same name detected: '$1'." >&2
+    die  "Please rather use an unique ID to specify the target of the scan."
 fi
 
 # Check if the target of scan is image or container.
 CLEANUP=0
-if podman images | grep -q $1; then
-    ID=$(podman create $1) || die
-    IMG_NAME=$(podman images --format "{{.ID}} ({{.Repository}}:{{.Tag}})" | grep -m1 $1)
-    TARGET="podman-image://$IMG_NAME"
+if [ -n "$IMAGE_NAME" ]; then
+    ID=$(podman create $1) || die "Unable to create a container."
+    TARGET="podman-image://$IMAGE_NAME"
     CLEANUP=1
-else
+elif [ -n "$CONTAINER_NAME" ]; then
     # If the target was not found in images we suppose it is a container.
     ID=$1
-    TARGET="podman-container://$1"
+    TARGET="podman-container://$CONTAINER_NAME"
+else
+    die "Target of the scan not found: '$1'."
 fi
 
 # podman init creates required files such as: /run/.containerenv - we don't care about output and exit code
 podman init $ID &> /dev/null || true
 
-DIR=$(podman mount $ID) || die
+DIR=$(podman mount $ID) || die "Failed to mount."
 
 if [ ! -f "$DIR/run/.containerenv" ]; then
     # ubi8-init image does not create .containerenv when running podman init, but we need to make sure that the file is there
@@ -92,14 +103,16 @@ for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
     eval "export OSCAP_OFFLINE_$VAR"
 done
 
-export OSCAP_PROBE_ROOT="$(cd "$DIR"; pwd)"
+export OSCAP_PROBE_ROOT
+OSCAP_PROBE_ROOT="$(cd "$DIR" && pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (DIR)."
 export OSCAP_EVALUATION_TARGET="$TARGET"
 shift 1
 
 $OSCAP_BINARY "$@"
 EXIT_CODE=$?
-podman umount $ID > /dev/null || die
+
+podman umount $ID > /dev/null || die "Failed to unmount."
 if [ $CLEANUP -eq 1 ]; then
-    podman rm $ID > /dev/null || die
+    podman rm $ID > /dev/null || die "Failed to clean up."
 fi
 exit $EXIT_CODE

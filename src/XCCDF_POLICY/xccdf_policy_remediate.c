@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  */
 #ifdef HAVE_CONFIG_H
@@ -139,11 +139,10 @@ static int _write_remediation_to_fd_and_free(int output_fd, const char* template
 					free(text);
 					return 1;
 				}
-
-				if (_write_text_to_fd(output_fd, "\n") != 0) {
-					free(text);
-					return 1;
-				}
+			}
+			if (_write_text_to_fd(output_fd, "\n") != 0) {
+				free(text);
+				return 1;
 			}
 
 			if (next_delim != NULL) {
@@ -380,7 +379,11 @@ static inline int _xccdf_fix_decode_xml(struct xccdf_fix *fix, char **result)
 #if defined(unix) || defined(__unix__) || defined(__unix)
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
+	if (rr == NULL) {
+		return 1;
+	}
+
+	if (fix == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
 		_rule_add_info_message(rr, "No fix available.");
 		return 1;
 	}
@@ -481,7 +484,11 @@ cleanup:
 #else
 static inline int _xccdf_fix_execute(struct xccdf_rule_result *rr, struct xccdf_fix *fix)
 {
-	if (fix == NULL || rr == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
+	if (rr == NULL) {
+		return 1;
+	}
+
+	if (fix == NULL || oscap_streq(xccdf_fix_get_content(fix), NULL)) {
 		_rule_add_info_message(rr, "No fix available.");
 		return 1;
 	} else {
@@ -642,6 +649,7 @@ static int _write_fix_missing_warning_to_fd(const char *sys, int output_fd, stru
 	}
 }
 
+
 static inline int _parse_ansible_fix(const char *fix_text, struct oscap_list *variables, struct oscap_list *tasks)
 {
 	// TODO: Tolerate different indentation styles in this regex
@@ -777,7 +785,6 @@ static int _xccdf_policy_rule_generate_fix(struct xccdf_policy *policy, struct x
 	ret = _write_fix_footer_to_fd(template, output_fd, rule);
 	return ret;
 }
-
 
 static int _xccdf_policy_rule_generate_ansible_fix(struct xccdf_policy *policy, struct xccdf_rule *rule, const char *template, struct oscap_list *variables, struct oscap_list *tasks)
 {
