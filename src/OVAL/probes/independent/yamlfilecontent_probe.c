@@ -143,10 +143,7 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	}
 
 	struct oscap_iterator *values_it = oscap_iterator_new(values);
-	while (oscap_iterator_has_more(values_it)) {
-		char *value = oscap_iterator_next(values_it);
-		/* TODO: type conversion of 'value' data */
-
+	if (oscap_iterator_has_more(values_it)) {
 		SEXP_t *item = probe_item_create(
 			OVAL_INDEPENDENT_YAML_FILE_CONTENT,
 			NULL,
@@ -154,12 +151,18 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 			"path", OVAL_DATATYPE_STRING, path,
 			"filename", OVAL_DATATYPE_STRING, filename,
 			"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
-			"value_of", OVAL_DATATYPE_STRING, value,
 			/*
 			"windows_view",
 			*/
 			NULL
 		);
+		while (oscap_iterator_has_more(values_it)) {
+			char *value = oscap_iterator_next(values_it);
+			/* TODO: type conversion of 'value' data */
+			SEXP_t *value_sexp = SEXP_string_new(value, strlen(value));
+			probe_item_ent_add(item, "value_of", NULL, value_sexp);
+			SEXP_free(value_sexp);
+		}
 		probe_item_collect(ctx, item);
 	}
 	oscap_iterator_free(values_it);
