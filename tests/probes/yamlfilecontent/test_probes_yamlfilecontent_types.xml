@@ -1,0 +1,421 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+
+  <generator>
+    <oval:product_name>yamlfilecontent</oval:product_name>
+    <oval:product_version>1.0</oval:product_version>
+    <oval:schema_version>5.11.3</oval:schema_version>
+    <oval:timestamp>2020-02-13T00:00:00-00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+
+    <definition class="compliance" version="1" id="oval:0:def:1">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:1"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:2">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:2"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:3">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:3"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:4">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:4"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:5">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:5"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:6">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:6"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:7">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:7"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:8">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:8"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:9">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:9"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:10">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:10"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:11">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:11"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:12">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:12"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:13">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:13"/>
+      </criteria>
+    </definition>
+
+
+   <definition class="compliance" version="1" id="oval:0:def:14">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:14"/>
+      </criteria>
+    </definition>
+
+
+   <definition class="compliance" version="1" id="oval:0:def:15">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:15"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:16">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:16"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:17">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:17"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:18">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:18"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:19">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:19"/>
+      </criteria>
+    </definition>
+
+   <definition class="compliance" version="1" id="oval:0:def:20">
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="comment" test_ref="oval:0:tst:20"/>
+      </criteria>
+    </definition>
+
+  </definitions>
+  <tests>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:1" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:1"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:2" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:2"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="error">
+      <ind-def:object object_ref="oval:0:obj:3"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:4" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:4"/>
+    </ind-def:yamlfilecontent_test>
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:5" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:5"/>
+    </ind-def:yamlfilecontent_test>
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:6" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:6"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:7" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:7"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:8" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:8"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:9" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:9"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:10" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:10"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:11" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:11"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:12" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:12"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:13" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:13"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:14" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:14"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:15" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:15"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:16" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:16"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:17" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:17"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:18" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:18"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:19" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:19"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:20" check="all" comment="false">
+      <ind-def:object object_ref="oval:0:obj:20"/>
+    </ind-def:yamlfilecontent_test>
+
+  </tests>
+
+  <objects>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:1">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_true_1</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:2">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_true_2</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_true_3</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_false_1</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:5">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_false_2</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:6">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_false_3</ind-def:yamlpath>
+  </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:7">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.int_10</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:8">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.int_10_neg</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:9">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.int_8</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:10">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.int_16</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:11">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:12">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float_neg</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:13">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float_exp</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:14">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float_exp_neg</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:15">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float_inf</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:16">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float_nan</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:17">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_true_cast</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:18">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.bool_false_cast</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:19">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.int_cast</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:20">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>types.yaml</ind-def:filename>
+      <ind-def:yamlpath>.float_cast</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+  </objects>
+
+</oval_definitions>

@@ -24,7 +24,9 @@
 #include <config.h>
 #endif
 
+#include <math.h>
 #include <errno.h>
+#include <pcre.h>
 #include <yaml.h>
 #include <yaml-path.h>
 
@@ -35,9 +37,105 @@
 #include "list.h"
 #include "probe/probe.h"
 
+#define OSCAP_YAML_STRING_TAG "tag:yaml.org,2002:str"
+#define OSCAP_YAML_BOOL_TAG "tag:yaml.org,2002:bool"
+#define OSCAP_YAML_FLOAT_TAG "tag:yaml.org,2002:float"
+#define OSCAP_YAML_INT_TAG "tag:yaml.org,2002:int"
+
+#define OVECCOUNT 30 /* should be a multiple of 3 */
+
 int yamlfilecontent_probe_offline_mode_supported()
 {
 	return PROBE_OFFLINE_OWN;
+}
+
+static bool match_regex(const char *pattern, const char *value)
+{
+	const char *errptr;
+	int erroroffset;
+	pcre *re = pcre_compile(pattern, 0, &errptr, &erroroffset, NULL);
+	if (re == NULL) {
+		dE("pcre_compile failed on pattern '%s': %s at %d", pattern,
+			errptr, erroroffset);
+		return false;
+	}
+	int ovector[OVECCOUNT];
+	int rc = pcre_exec(re, NULL, value, strlen(value), 0, 0, ovector, OVECCOUNT);
+	if (rc > 0) {
+		return true;
+	}
+	return false;
+}
+
+static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t event)
+{
+	char *tag = (char *) event.data.scalar.tag;
+	char *value = (char *) event.data.scalar.value;
+
+	/* nodes lacking an explicit tag are given a non-specific tag:
+	 * “!” for non-plain scalars, and “?” for all other nodes
+	 */
+	if (tag == NULL) {
+		if (event.data.scalar.style != YAML_PLAIN_SCALAR_STYLE) {
+			tag = "!";
+		} else {
+			tag = "?";
+		}
+	}
+
+	/* Nodes with "!" tag can be sequences, maps or strings, but we process
+	 * only scalars in this functions, so they can only be strings. */
+	if (!strcmp(tag, "!")) {
+		tag = OSCAP_YAML_STRING_TAG;
+	}
+
+	bool question = !strcmp(tag, "?");
+
+	/* Regular expressions based on https://yaml.org/spec/1.2/spec.html#id2804923 */
+
+	if (question || !strcmp(tag, OSCAP_YAML_BOOL_TAG)) {
+		if (match_regex("^true|True|TRUE$", value)) {
+			return SEXP_number_newb(true);
+		} else if (match_regex("^false|False|FALSE$", value)) {
+			return SEXP_number_newb(false);
+		} else if (!question) {
+			return NULL;
+		}
+	}
+	if (question || !strcmp(tag, OSCAP_YAML_INT_TAG)) {
+		if (match_regex("^[+-]?[0-9]+$", value)) {
+			int int_value = strtol(value, NULL, 10);
+			return SEXP_number_newi(int_value);
+		} else if (match_regex("^0o[0-7]+$", value)) {
+			/* strtol doesn't understand 0o as octal prefix, it wants 0 */
+			int int_value = strtol(value + 2, NULL, 8);
+			return SEXP_number_newi(int_value);
+		} else if (match_regex("^0x[0-9a-fA-F]+$", value)) {
+			int int_value = strtol(value, NULL, 16);
+			return SEXP_number_newi(int_value);
+		} else if (!question) {
+			return NULL;
+		}
+	}
+	if (question || !strcmp(tag, OSCAP_YAML_FLOAT_TAG)) {
+		if (match_regex("^[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?$", value)) {
+			double double_value = strtod(value, NULL);
+			return SEXP_number_newf(double_value);
+		} else if (match_regex("^[-+]?(\\.inf|\\.Inf|\\.INF)$", value)) {
+			double double_value = INFINITY;
+			if (value[0] == '-') {
+				double_value = -INFINITY;
+			}
+			return SEXP_number_newf(double_value);
+		} else if (match_regex("^\\.nan|\\.NaN|\\.NAN$", value)) {
+			double double_value = NAN;
+			return SEXP_number_newf(double_value);
+		} else if (!question) {
+			return NULL;
+		}
+	}
+
+	return SEXP_string_new(value, strlen(value));
 }
 
 static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
@@ -118,7 +216,17 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			}
 		}
 		if (event.type == YAML_SCALAR_EVENT) {
-			oscap_list_add(values, (void *) strdup((const char *) event.data.scalar.value));
+			SEXP_t *sexp = yaml_scalar_event_to_sexp(event);
+			if (sexp == NULL) {
+				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
+					"Can't convert '%s' to SEXP", event.data.scalar.tag);
+				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
+				SEXP_free(msg);
+				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+				ret = -1;
+				goto cleanup;
+			}
+			oscap_list_add(values, sexp);
 		}
 	} while (event.type != YAML_STREAM_END_EVENT);
 
@@ -157,18 +265,15 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 			NULL
 		);
 		while (oscap_iterator_has_more(values_it)) {
-			char *value = oscap_iterator_next(values_it);
-			/* TODO: type conversion of 'value' data */
-			SEXP_t *value_sexp = SEXP_string_new(value, strlen(value));
+			SEXP_t *value_sexp = oscap_iterator_next(values_it);
 			probe_item_ent_add(item, "value_of", NULL, value_sexp);
-			SEXP_free(value_sexp);
 		}
 		probe_item_collect(ctx, item);
 	}
 	oscap_iterator_free(values_it);
 
 cleanup:
-	oscap_list_free(values, free);
+	oscap_list_free(values, (oscap_destruct_func) SEXP_free);
 	free(filepath_with_prefix);
 	free(filepath);
 	return ret;
