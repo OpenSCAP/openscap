@@ -94,9 +94,9 @@ static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t event)
 	/* Regular expressions based on https://yaml.org/spec/1.2/spec.html#id2804923 */
 
 	if (question || !strcmp(tag, OSCAP_YAML_BOOL_TAG)) {
-		if (match_regex("^true|True|TRUE$", value)) {
+		if (match_regex("^(true|True|TRUE)$", value)) {
 			return SEXP_number_newb(true);
-		} else if (match_regex("^false|False|FALSE$", value)) {
+		} else if (match_regex("^(false|False|FALSE)$", value)) {
 			return SEXP_number_newb(false);
 		} else if (!question) {
 			return NULL;
@@ -127,7 +127,7 @@ static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t event)
 				double_value = -INFINITY;
 			}
 			return SEXP_number_newf(double_value);
-		} else if (match_regex("^\\.nan|\\.NaN|\\.NAN$", value)) {
+		} else if (match_regex("^(\\.nan|\\.NaN|\\.NAN)$", value)) {
 			double double_value = NAN;
 			return SEXP_number_newf(double_value);
 		} else if (!question) {
@@ -219,7 +219,8 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			SEXP_t *sexp = yaml_scalar_event_to_sexp(event);
 			if (sexp == NULL) {
 				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-					"Can't convert '%s' to SEXP", event.data.scalar.tag);
+					"Can't convert '%s %s' to SEXP", event.data.scalar.tag,
+					event.data.scalar.value);
 				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 				SEXP_free(msg);
 				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
