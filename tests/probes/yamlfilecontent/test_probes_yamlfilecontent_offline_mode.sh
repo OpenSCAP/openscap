@@ -2,6 +2,8 @@
 
 . $builddir/tests/test_common.sh
 
+set -e -o pipefail
+
 function test_probes_yamlfilecontent_offline_mode {
 
     probecheck "yamlfilecontent" || return 255
@@ -20,7 +22,7 @@ function test_probes_yamlfilecontent_offline_mode {
     cp "${srcdir}/${YAML_FILE}" "${tmpdir}/tmp"
 
     cp "${srcdir}/${YAML_FILE}" /tmp
-    sed -i 's/name: instance/name: outstance/' "${tmpdir}/tmp/${YAML_FILE}"
+    sed -i 's/name: instance/name: outstance/' "/tmp/${YAML_FILE}"
     cp "${srcdir}/${YAML_FILE}" "/tmp/host-${YAML_FILE}"
 
     set_chroot_offline_test_mode "$tmpdir"

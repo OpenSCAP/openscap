@@ -9,7 +9,7 @@
 
 . Clone a clean `openscap` repository:
 
-   git clone https://github.com/OpenSCAP/openscap.git
+   git clone --recurse-submodules https://github.com/OpenSCAP/openscap.git
 
 . Create `.env` file
 +

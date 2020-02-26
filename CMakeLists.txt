@@ -164,6 +164,15 @@ if(GCRYPT_FOUND OR NSS_FOUND)
 	set(CRYPTO_FOUND TRUE)
 endif()
 
+find_package(Libyaml)
+if(EXISTS ${CMAKE_SOURCE_DIR}/yaml-filter/CMakeLists.txt)
+	message(STATUS "yaml-filter was found")
+	set(YAML_FILTER_FOUND TRUE)
+else()
+	message(STATUS "yaml-filter was not found")
+	set(YAML_FILTER_FOUND FALSE)
+endif()
+
 check_library_exists(rt clock_gettime "" HAVE_CLOCK_GETTIME)
 check_function_exists(posix_memalign HAVE_POSIX_MEMALIGN)
 check_function_exists(memalign HAVE_MEMALIGN)
@@ -235,6 +244,7 @@ cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT "Independent t
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT54 "Independent textfilecontent54 probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_VARIABLE "Independent variable probe" ON "ENABLE_PROBES_INDEPENDENT" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT "Independent xmlfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; NOT WIN32" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT "Independent yamlfilecontent probe" ON "ENABLE_PROBES_INDEPENDENT; LIBYAML_FOUND; YAML_FILTER_FOUND; NOT WIN32" OFF)
 
 # UNIX PROBES
 cmake_dependent_option(OPENSCAP_PROBE_UNIX_DNSCACHE "Unix dnscache probe" ON "ENABLE_PROBES_UNIX" OFF)
@@ -358,6 +368,7 @@ message(STATUS "  Independent sql57 probe (depends on opendbx): ${OPENSCAP_PROBE
 message(STATUS "  Independent textfilecontent probe: ${OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT}")
 message(STATUS "  Independent textfilecontent54 probe: ${OPENSCAP_PROBE_INDEPENDENT_TEXTFILECONTENT54}")
 message(STATUS "  Independent xmlfilecontent probe: ${OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT}")
+message(STATUS "  Independent yamlfilecontent probe (depends on libyaml, yaml-path): ${OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT}")
 message(STATUS " ")
 
 
@@ -526,6 +537,7 @@ include_directories(
 	"src/XCCDF/public/"
 	"src/XCCDF_POLICY/"
 	"src/XCCDF_POLICY/public/"
+	"yaml-filter"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
 )
@@ -547,6 +559,11 @@ function(set_oscap_generic_properties TARGET_OBJECT)
 	)
 	target_compile_definitions(${TARGET_OBJECT} PRIVATE OSCAP_BUILD_SHARED)
 endfunction()
+
+if(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT)
+	add_library(yamlfilter_object OBJECT yaml-filter/yaml-path.c yaml-filter/yaml-path.h)
+	set_oscap_generic_properties(yamlfilter_object)
+endif()
 
 add_subdirectory("compat")
 add_subdirectory("src")

@@ -492,6 +492,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_INDEPENDENT_MAP[] = {
 	{OVAL_INDEPENDENT_UNKNOWN, "unknown"},
 	{OVAL_INDEPENDENT_VARIABLE, "variable"},
 	{OVAL_INDEPENDENT_XML_FILE_CONTENT, "xmlfilecontent"},
+	{OVAL_INDEPENDENT_YAML_FILE_CONTENT, "yamlfilecontent"},
 	{OVAL_INDEPENDENT_SYSCHAR_SUBTYPE, "system_info"},
 	{OVAL_INDEPENDENT_LDAP57, "ldap57"},
 	{OVAL_INDEPENDENT_LDAP, "ldap"},

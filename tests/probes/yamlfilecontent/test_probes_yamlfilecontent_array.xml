@@ -80,7 +80,7 @@
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
-      <ind-def:value_of datatype="string" var_ref="oval:0:var:2"/>
+      <ind-def:value_of datatype="string" var_ref="oval:0:var:2" var_check="at least one" />
     </ind-def:yamlfilecontent_state>
 
   </states>

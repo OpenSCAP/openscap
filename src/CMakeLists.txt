@@ -31,6 +31,9 @@ set(OBJECTS_TO_LINK_AGAINST
 if (TARGET "compat_object")
 	list(APPEND OBJECTS_TO_LINK_AGAINST $<TARGET_OBJECTS:compat_object>)
 endif()
+if (TARGET "yamlfilter_object")
+	list(APPEND OBJECTS_TO_LINK_AGAINST $<TARGET_OBJECTS:yamlfilter_object>)
+endif()
 if (ENABLE_PROBES)
 	list(APPEND OBJECTS_TO_LINK_AGAINST
 		$<TARGET_OBJECTS:probe_object>
@@ -120,6 +123,9 @@ if(ACL_FOUND)
 endif()
 if(CAP_FOUND)
 	target_link_libraries(openscap ${CAP_LIBRARIES})
+endif()
+if(LIBYAML_FOUND)
+	target_link_libraries(openscap ${LIBYAML_LIBRARIES})
 endif()
 
 if(WIN32)

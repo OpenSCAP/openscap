@@ -31,10 +31,14 @@ mkdir -p build
 .. Use fresh sources from git repository.
 +
 ----
-$ git clone https://github.com/OpenSCAP/openscap.git
+$ git clone --recurse-submodules https://github.com/OpenSCAP/openscap.git
 $ cd openscap
 ----
 +
+
+NOTE: We include https://github.com/OpenSCAP/yaml-filter[yaml-filter] library
+as a git submodule. To get more information about using git submodules, read
+https://git-scm.com/book/en/v2/Git-Tools-Submodules[Git Tools - Submodules].
 
 . *Get the build dependencies*
 +
@@ -52,7 +56,7 @@ sudo yum install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python-devel rpm-devel swig \
-bzip2-devel gcc-c++
+bzip2-devel gcc-c++ libyaml-devel
 ----
 
 On Fedora 24+, the command to install the build dependencies is:
@@ -62,7 +66,7 @@ sudo yum install \
 cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig \
-bzip2-devel gcc-c++
+bzip2-devel gcc-c++ libyaml-devel
 ----
 
 On RHEL 8 / CentOS 8, the command to install the build dependencies is:
@@ -72,7 +76,7 @@ sudo yum install \
 cmake dbus-devel libacl-devel libblkid-devel libcap-devel libcurl-devel \
 libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel \
 pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python36-devel rpm-devel swig \
-bzip2-devel gcc-c++
+bzip2-devel gcc-c++ libyaml-devel
 ----
 
 On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependencies is:
@@ -81,7 +85,7 @@ On Ubuntu 16.04, Debian 8 or Debian 9, the command to install the build dependen
 sudo apt-get install -y cmake libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev \
 libgcrypt20-dev libselinux1-dev libxslt1-dev libgconf2-dev libacl1-dev libblkid-dev \
 libcap-dev libxml2-dev libldap2-dev libpcre3-dev python-dev swig libxml-parser-perl \
-libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libapt-pkg-dev
+libxml-xpath-perl libperl-dev libbz2-dev librpm-dev g++ libapt-pkg-dev libyaml-dev
 ----
 
 When you have all the build dependencies installed you can build the library.

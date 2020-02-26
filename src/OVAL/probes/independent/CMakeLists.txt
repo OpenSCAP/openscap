@@ -82,5 +82,12 @@ if(OPENSCAP_PROBE_INDEPENDENT_XMLFILECONTENT)
 	)
 endif()
 
+if(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT)
+	list(APPEND INDEPENDENT_PROBES_SOURCES
+		"yamlfilecontent_probe.c"
+		"yamlfilecontent_probe.h"
+	)
+endif()
+
 add_library(independent_probes_object OBJECT ${INDEPENDENT_PROBES_SOURCES})
 set_oscap_generic_properties(independent_probes_object)
