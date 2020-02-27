@@ -488,11 +488,9 @@ OSCAP_API SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t 
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-			dW("Entity has no value!");		\
 			invalid_exp				\
 		} else {					\
 			if (!SEXP_stringp(___r)) {		\
-				dE("Invalid type");		\
 				SEXP_free(___r);		\
 				invalid_exp			\
 			}					\
@@ -511,11 +509,9 @@ OSCAP_API SEXP_t *probe_item_create(oval_subtype_t item_subtype, probe_elmatr_t 
 		SEXP_t *___r;					\
 								\
 		if ((___r = probe_ent_getval(ent)) == NULL) {	\
-			dW("Entity has no value!");		\
 			nil_exp;				\
 		} else {					\
 			if (!SEXP_numberp(___r)) {		\
-				dE("Invalid type");		\
 				SEXP_free(___r);		\
 				invalid_exp;			\
 			} else {				\
