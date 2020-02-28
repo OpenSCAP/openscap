@@ -77,6 +77,7 @@ static bool getopt_xccdf(int argc, char **argv, struct oscap_action *action);
 static bool getopt_generate(int argc, char **argv, struct oscap_action *action);
 static int app_xccdf_xslt(const struct oscap_action *action);
 static int app_generate_fix(const struct oscap_action *action);
+static int app_generate_guide(const struct oscap_action *action);
 
 #define XCCDF_SUBMODULES_NUM		7
 #define XCCDF_GEN_SUBMODULES_NUM	5 /* See actual arrays
@@ -244,12 +245,18 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
     .help = GEN_OPTS
 		"\nGuide Options:\n"
 		"   --output <file>               - Write the document into file.\n"
-		"   --hide-profile-info           - Do not output additional information about selected profile.\n"
+		"   --hide-profile-info           - This option has no effect.\n"
 		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
+		"                                   (only applicable for source datastreams)\n"
+		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
 		"                                   (only applicable for source datastreams)\n",
     .opt_parser = getopt_xccdf,
-    .user = "xccdf-guide.xsl",
-    .func = app_xccdf_xslt
+    .user = NULL,
+    .func = app_generate_guide
 };
 
 static struct oscap_module XCCDF_GEN_FIX = {
@@ -968,6 +975,50 @@ cleanup2:
 		close(output_fd);
 cleanup:
 	ds_rds_session_free(arf_session);
+	xccdf_session_free(session);
+	oscap_print_error();
+	return ret;
+}
+
+int app_generate_guide(const struct oscap_action *action)
+{
+	int ret = OSCAP_ERROR;
+
+	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
+	struct xccdf_session *session = xccdf_session_new_from_source(source);
+	if (session == NULL) {
+		goto cleanup;
+	}
+
+	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
+	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
+	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
+	if (xccdf_session_is_sds(session)) {
+		xccdf_session_set_component_id(session, action->f_xccdf_id);
+		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
+	}
+	xccdf_session_set_loading_flags(session, XCCDF_SESSION_LOAD_XCCDF);
+
+	if (xccdf_session_load(session) != 0) {
+		goto cleanup;
+	}
+
+	if (!xccdf_session_set_profile_id(session, action->profile)) {
+		if (action->profile != NULL) {
+			if (xccdf_set_profile_or_report_bad_id(session, action->profile, action->f_xccdf) == OSCAP_ERROR)
+				goto cleanup;
+		} else {
+			fprintf(stderr, "No Policy was found for default profile.\n");
+			goto cleanup;
+		}
+	}
+
+	if (xccdf_session_generate_guide(session, action->f_results) == 0) {
+		ret = OSCAP_OK;
+	}
+
+cleanup:
 	xccdf_session_free(session);
 	oscap_print_error();
 	return ret;

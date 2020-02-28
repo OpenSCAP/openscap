@@ -1746,3 +1746,44 @@ int xccdf_session_add_report_from_source(struct xccdf_session *session, struct o
 	session->xccdf.result = result;
 	return 0;
 }
+
+int xccdf_session_generate_guide(struct xccdf_session *session, const char *outfile)
+{
+	struct xccdf_policy *policy = xccdf_session_get_xccdf_policy(session);
+	if (policy == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not get XCCDF policy.");
+		return 1;
+	}
+	struct xccdf_policy_model *model = xccdf_policy_get_model(policy);
+	if (model == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not get XCCDF policy model.");
+		return 1;
+	}
+	struct xccdf_benchmark *benchmark = xccdf_policy_model_get_benchmark(model);
+	if (benchmark == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not get XCCDF benchmark.");
+		return 1;
+	}
+	xccdf_benchmark_include_tailored_profiles(benchmark);
+	const char *params[] = {
+		"oscap-version",     oscap_get_version(),
+		"benchmark_id",      xccdf_benchmark_get_id(benchmark),
+		"profile_id",        xccdf_session_get_profile_id(session),
+		NULL
+	};
+	struct oscap_source *benchmark_source = xccdf_benchmark_export_source(benchmark, NULL);
+	if (benchmark_source == NULL) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP,
+			"Failed to export source from XCCDF benchmark %s.",
+			xccdf_benchmark_get_id(benchmark));
+		return 1;
+	}
+	int ret = oscap_source_apply_xslt_path(benchmark_source,
+		"xccdf-guide.xsl", outfile, params, oscap_path_to_xslt());
+	oscap_source_free(benchmark_source);
+	if (ret < 0) {
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not apply XSLT.");
+		return 1;
+	}
+	return 0;
+}
