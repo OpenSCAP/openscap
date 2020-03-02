@@ -134,6 +134,21 @@ function test_api_xccdf_tailoring_profile_generate_fix {
     rm -f $tailoring_result $fix_result
 }
 
+function test_api_xccdf_tailoring_profile_generate_guide {
+    local INPUT=$srcdir/$1
+    local TAILORING=$srcdir/$2
+
+    guide=`mktemp`
+    # tailoring profile only with "always fail" rule and generate HTML guide
+    $OSCAP xccdf generate guide --tailoring-file $TAILORING --profile "xccdf_com.example.www_profile_customized" --output $guide $INPUT
+
+    grep -q "Baseline Testing Profile 1 \[CUSTOMIZED\]" $guide
+    # profile 'customized' selects first rule and deselects the second
+    grep -q "xccdf_com.example.www_rule_first" $guide
+    grep -v "xccdf_com.example.www_rule_second" $guide
+    rm -f $guide
+}
+
 # Testing.
 
 test_init "test_api_xccdf_tailoring.log"
@@ -154,6 +169,7 @@ test_run "test_api_xccdf_tailoring_autonegotiation" test_api_xccdf_tailoring_aut
 test_run "test_api_xccdf_tailoring_simple_include_in_arf" test_api_xccdf_tailoring_simple_include_in_arf simple-xccdf.xml simple-tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_include_in_arf" test_api_xccdf_tailoring_profile_include_in_arf baseline.xccdf.xml baseline.tailoring.xml
 test_run "test_api_xccdf_tailoring_profile_generate_fix" test_api_xccdf_tailoring_profile_generate_fix baseline.xccdf.xml baseline.tailoring.xml
+test_run "test_api_xccdf_tailoring_profile_generate_guide" test_api_xccdf_tailoring_profile_generate_guide baseline.xccdf.xml baseline.tailoring.xml
 
 
 test_exit
