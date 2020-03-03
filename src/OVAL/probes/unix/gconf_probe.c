@@ -222,6 +222,7 @@ int gconf_probe_main(probe_ctx *ctx, void *probe_arg)
 						collect_item_direct(ctx, gconf_addr, gconf_engine, gconf_key);
 						break;
 					case OVAL_OPERATION_PATTERN_MATCH:
+						/* FIXME: This is a NOOP call */
 						collect_item_regexp(ctx, gconf_addr, gconf_engine, gconf_key);
 						break;
 					default:
@@ -249,6 +250,7 @@ int gconf_probe_main(probe_ctx *ctx, void *probe_arg)
 			collect_item_direct(ctx, NULL, gconf_engine, gconf_key);
 			break;
 		case OVAL_OPERATION_PATTERN_MATCH:
+			/* FIXME: This is a NOOP call */
 			collect_item_regexp(ctx, NULL, gconf_engine, gconf_key);
 			break;
 		default:
