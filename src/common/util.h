@@ -31,6 +31,7 @@
 #include "public/oscap.h"
 #include <stdarg.h>
 #include <string.h>
+#include <pcre.h>
 #include "oscap_export.h"
 
 #ifndef __attribute__nonnull__
@@ -466,6 +467,19 @@ int oscap_strncasecmp(const char *s1, const char *s2, size_t n);
  * @param buflen size of buffer
  */
 char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
+
+/**
+ * Match a regular expression and return substrings.
+ * Caller is responsible for freeing the returned array.
+ * @param str subject string
+ * @param ofs starting offset in str
+ * @param re compiled regular expression
+ * @param want_substrs if non-zero, substrings will be returned
+ * @param substrings contains returned substrings
+ * @return count of matched substrings, 0 if no match
+ * negative value on failure
+ */
+int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings);
 
 #ifdef OS_WINDOWS
 /**

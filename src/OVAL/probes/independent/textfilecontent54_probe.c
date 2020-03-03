@@ -52,67 +52,10 @@
 #include <probe/option.h>
 #include <oval_fts.h>
 #include "common/debug_priv.h"
+#include "common/util.h"
 #include "textfilecontent54_probe.h"
 
 #define FILE_SEPARATOR '/'
-
-static int get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings) {
-	int i, ret, rc;
-	int ovector[60], ovector_len = sizeof (ovector) / sizeof (ovector[0]);
-	char **substrs;
-
-	// todo: max match count check
-
-	for (i = 0; i < ovector_len; ++i)
-		ovector[i] = -1;
-
-#if defined(OS_SOLARIS)
-	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
-#else
-	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, 0, ovector, ovector_len);
-#endif
-
-	if (rc < -1) {
-		dE("Function pcre_exec() failed to match a regular expression with return code %d on string '%s'.", rc, str);
-		return rc;
-	} else if (rc == -1) {
-		/* no match */
-		return 0;
-	}
-
-	*ofs = (*ofs == ovector[1]) ? ovector[1] + 1 : ovector[1];
-
-	if (!want_substrs) {
-		/* just report successful match */
-		return 1;
-	}
-
-	ret = 0;
-	if (rc == 0) {
-		/* vector too small */
-		// todo: report partial results
-		rc = ovector_len / 3;
-	}
-
-	substrs = malloc(rc * sizeof (char *));
-	for (i = 0; i < rc; ++i) {
-		int len;
-		char *buf;
-
-		if (ovector[2 * i] == -1)
-			continue;
-		len = ovector[2 * i + 1] - ovector[2 * i];
-		buf = malloc(len + 1);
-		memcpy(buf, str + ovector[2 * i], len);
-		buf[len] = '\0';
-		substrs[ret] = buf;
-		++ret;
-	}
-
-	*substrings = substrs;
-
-	return ret;
-}
 
 static SEXP_t *create_item(const char *path, const char *filename, char *pattern,
 			   int instance, char **substrs, int substr_cnt, oval_schema_version_t over)
@@ -260,7 +203,7 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 			want_instance = 0;
 
 		SEXP_free(next_inst);
-		substr_cnt = get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
+		substr_cnt = oscap_get_substrings(buf, &ofs, pfd->compiled_regex, want_instance, &substrs);
 
 		if (substr_cnt < 0) {
 			SEXP_t *msg;
