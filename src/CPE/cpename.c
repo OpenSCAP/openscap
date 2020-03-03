@@ -303,9 +303,8 @@ struct cpe_name *cpe_name_new(const char *cpestr)
 
 			free(data_);
 			free(fields_);
-		}
-		else if (format == CPE_FORMAT_WFN)
-		{
+		} else if (format == CPE_FORMAT_WFN) {
+			/* FIXME: Do something here or remove the branch */
 		}
 	}
 	return cpe;
