@@ -67,16 +67,16 @@ static bool match_regex(const char *pattern, const char *value)
 	return false;
 }
 
-static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t event)
+static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t *event)
 {
-	char *tag = (char *) event.data.scalar.tag;
-	char *value = (char *) event.data.scalar.value;
+	char *tag = (char *) event->data.scalar.tag;
+	char *value = (char *) event->data.scalar.value;
 
 	/* nodes lacking an explicit tag are given a non-specific tag:
 	 * “!” for non-plain scalars, and “?” for all other nodes
 	 */
 	if (tag == NULL) {
-		if (event.data.scalar.style != YAML_PLAIN_SCALAR_STYLE) {
+		if (event->data.scalar.style != YAML_PLAIN_SCALAR_STYLE) {
 			tag = "!";
 		} else {
 			tag = "?";
@@ -216,7 +216,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			}
 		}
 		if (event.type == YAML_SCALAR_EVENT) {
-			SEXP_t *sexp = yaml_scalar_event_to_sexp(event);
+			SEXP_t *sexp = yaml_scalar_event_to_sexp(&event);
 			if (sexp == NULL) {
 				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 					"Can't convert '%s %s' to SEXP", event.data.scalar.tag,
