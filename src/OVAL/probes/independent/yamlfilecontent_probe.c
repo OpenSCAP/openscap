@@ -168,6 +168,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 	yaml_parser_set_input_file(&parser, yaml_file);
 
 	yaml_event_t event;
+	yaml_event_type_t event_type;
 	bool sequence = false;
 
 	do {
@@ -181,16 +182,16 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			ret = -1;
 			goto cleanup;
 		}
+
+		event_type = event.type;
 		if (!yaml_path_filter_event(yaml_path, &parser, &event,
 				YAML_PATH_FILTER_RETURN_ALL)) {
-			yaml_event_delete(&event);
-			continue;
+			goto next;
 		}
-
 		if (sequence) {
-			if (event.type == YAML_SEQUENCE_END_EVENT) {
+			if (event_type == YAML_SEQUENCE_END_EVENT) {
 				sequence = false;
-			} else if (event.type != YAML_SCALAR_EVENT) {
+			} else if (event_type != YAML_SCALAR_EVENT) {
 				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 					"YAML path '%s' contains non-scalar in a sequence.",
 					yaml_path_cstr);
@@ -201,10 +202,10 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 				goto cleanup;
 			}
 		} else {
-			if (event.type == YAML_SEQUENCE_START_EVENT) {
+			if (event_type == YAML_SEQUENCE_START_EVENT) {
 				sequence = true;
 			}
-			if (event.type == YAML_MAPPING_START_EVENT) {
+			if (event_type == YAML_MAPPING_START_EVENT) {
 				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
 					"YAML path '%s' matches a mapping.",
 					yaml_path_cstr);
@@ -215,7 +216,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 				goto cleanup;
 			}
 		}
-		if (event.type == YAML_SCALAR_EVENT) {
+		if (event_type == YAML_SCALAR_EVENT) {
 			SEXP_t *sexp = yaml_scalar_event_to_sexp(&event);
 			if (sexp == NULL) {
 				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
@@ -229,7 +230,9 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			}
 			oscap_list_add(values, sexp);
 		}
-	} while (event.type != YAML_STREAM_END_EVENT);
+next:
+		yaml_event_delete(&event);
+	} while (event_type != YAML_STREAM_END_EVENT);
 
 cleanup:
 	yaml_parser_delete(&parser);
