@@ -47,7 +47,7 @@
 #endif
 
 #define PATH_SEPARATOR '/'
-#define OSCAP_PCRE_EXEC_RECURSION_LIMIT 1000
+#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 5000
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
@@ -368,7 +368,14 @@ int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char *
 	}
 
 	struct pcre_extra extra;
-	extra.match_limit_recursion = OSCAP_PCRE_EXEC_RECURSION_LIMIT;
+	extra.match_limit_recursion = OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT;
+	char *limit_str = getenv("OSCAP_PCRE_EXEC_RECURSION_LIMIT");
+	if (limit_str != NULL) {
+		unsigned long limit;
+		if (sscanf(limit_str, "%lu", &limit) == 1) {
+			extra.match_limit_recursion = limit;
+		}
+	}
 	extra.flags = PCRE_EXTRA_MATCH_LIMIT_RECURSION;
 #if defined(OS_SOLARIS)
 	rc = pcre_exec(re, &extra, str, strlen(str), *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);

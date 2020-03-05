@@ -317,6 +317,8 @@ behaviour.
 
 * *OSCAP_FULL_VALIDATION=1* - validate all exported documents (slower)
 * *SEXP_VALIDATE_DISABLE=1* - do not validate SEXP expressions (faster)
+* *OSCAP_PCRE_EXEC_RECURSION_LIMIT* - override default recursion limit
+  for match in pcre_exec call in textfilecontent(54) probes.
 
 
 
