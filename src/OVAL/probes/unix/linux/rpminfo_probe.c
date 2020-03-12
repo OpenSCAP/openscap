@@ -177,7 +177,7 @@ static int get_rpminfo(struct rpminfo_req *req, struct rpminfo_rep **rep, struct
 	regex_t keyid_regex;
 
 	if (regcomp(&keyid_regex, g_keyid_regex_string, REG_EXTENDED) != 0) {
-		dE("regcomp(%s) failed.");
+		dE("regcomp(%s) failed.", g_keyid_regex_string);
 		return -1;
 	}
 

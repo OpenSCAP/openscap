@@ -10,6 +10,17 @@ if(ENABLE_OSCAP_UTIL)
 	add_executable(oscap ${UTILS_SOURCES})
 	target_link_libraries(oscap openscap)
 	if(WIN32)
+		find_path(GETOPT_INCLUDE_DIR getopt.h)
+		include(SelectLibraryConfigurations)
+		find_library(GETOPT_LIBRARY_RELEASE NAMES getopt)
+		find_library(GETOPT_LIBRARY_DEBUG NAMES getopt PATH_SUFFIXES debug/lib)
+		select_library_configurations(GETOPT)
+
+		message("GETOPT_INCLUDE_DIR: ${GETOPT_INCLUDE_DIR}")
+		message("GETOPT_LIBRARY: ${GETOPT_LIBRARY}")
+
+		target_include_directories(oscap PRIVATE ${GETOPT_INCLUDE_DIR})
+		target_link_libraries(oscap PRIVATE ${GETOPT_LIBRARY})
 		set(OSCAP_UTIL_DESTINATION ".")
 		# Install the 'oscap' utility
 		install(TARGETS "oscap"

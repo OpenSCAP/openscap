@@ -20,6 +20,9 @@
  *      Maros Barabas <mbarabas@redhat.com>
  */
 
+#pragma once
+#ifndef OSCAP_TOOL_H_
+#define OSCAP_TOOL_H_
 
 /* Standard header files */
 #include <stdio.h>
@@ -224,3 +227,5 @@ getopt_long(int ___argc, char *__getopt_argv_const *___argv,
 	const struct option *__longopts, int *__longind);
 
 #endif
+
+#endif //OSCAP_TOOL_H_

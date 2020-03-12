@@ -215,10 +215,18 @@ a `RESULTS_FILE`:
 [source,bash]
 ----
 verify_results TYPE CONTENT_FILE RESULTS_FILE COUNT
+
+verify_results "def" test_probe_foo.xml results.xml 13
 ----
+
+The function extracts the actual test/definition result, and compares it with the respective test/definition comment.
+For example, if the test contains `comment="true"`, the test passes only if result of the respective test is `true`,
+if `comment="false"`, a `false` result is expected.
+If the comment is missing or it has other value, it is assumed that the result should be neither `true` nor `false`.
 
 NOTE: This function expects that the OVAL `TYPE` is numbered from `1` to `COUNT`
 in the `RESULTS_FILE`.
+`TYPE` is typically `def` or `tst` for definitions and tests respectively.
 
 
 ==== assert_exists function
