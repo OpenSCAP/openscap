@@ -283,10 +283,10 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL, selinuxsecuritycontext_probe_main, NULL, selinuxsecuritycontext_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY
-	{OVAL_LINUX_SYSTEMDUNITDEPENDENCY, NULL, systemdunitdependency_probe_main, NULL, NULL},
+	{OVAL_LINUX_SYSTEMDUNITDEPENDENCY, NULL, systemdunitdependency_probe_main, NULL, systemdunitdependency_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY
-	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, NULL},
+	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, systemdunitproperty_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_SOLARIS_ISAINFO
 	{OVAL_SOLARIS_ISAINFO, NULL, isainfo_probe_main, NULL, NULL},

@@ -31,6 +31,8 @@
 #endif
 
 #include <probe-api.h>
+#include <probe/probe.h>
+
 #include "probe/entcmp.h"
 #include "systemdshared.h"
 #include "common/list.h"
@@ -208,6 +210,11 @@ static int unit_callback(const char *unit, void *cbarg)
 	SEXP_free(se_unit);
 
 	return 0;
+}
+
+int systemdunitdependency_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int systemdunitdependency_probe_main(probe_ctx *ctx, void *probe_arg)
