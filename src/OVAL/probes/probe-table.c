@@ -277,7 +277,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_LINUX_RPMVERIFYPACKAGE, rpmverifypackage_probe_init, rpmverifypackage_probe_main, rpmverifypackage_probe_fini, rpmverifypackage_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN
-	{OVAL_LINUX_SELINUXBOOLEAN, NULL, selinuxboolean_probe_main, NULL, NULL},
+	{OVAL_LINUX_SELINUXBOOLEAN, NULL, selinuxboolean_probe_main, NULL, selinuxboolean_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT
 	{OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL, selinuxsecuritycontext_probe_main, NULL, selinuxsecuritycontext_probe_offline_mode_supported},
