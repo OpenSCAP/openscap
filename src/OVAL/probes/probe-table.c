@@ -313,7 +313,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_PROCESS, NULL, process_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_PROCESS58
-	{OVAL_UNIX_PROCESS58, NULL, process58_probe_main, NULL, NULL},
+	{OVAL_UNIX_PROCESS58, NULL, process58_probe_main, NULL, process58_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_ROUTINGTABLE
 	{OVAL_UNIX_ROUTINGTABLE, NULL, routingtable_probe_main, NULL, NULL},

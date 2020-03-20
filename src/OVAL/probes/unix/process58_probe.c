@@ -95,6 +95,8 @@ extern char const *_cap_names[];
 #include "process58-capability.h"
 #endif /* CAP_FOUND */
 
+#include <probe/probe.h>
+
 #include "_seap.h"
 #include "probe-api.h"
 #include "probe/entcmp.h"
@@ -156,12 +158,14 @@ static unsigned long ticks, boot;
 
 static void get_boot_time(void)
 {
-	char buf[100];
+	char buf[PATH_MAX];
 	FILE *sf;
 	int line;
 
 	boot = 0;
-	sf = fopen("/proc/stat", "rt");
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(buf, sizeof(buf), "%s/proc/stat", prefix ? prefix : "");
+	sf = fopen(buf, "rt");
 	if (sf == NULL)
 		return;
 
@@ -182,14 +186,16 @@ static void get_boot_time(void)
 
 static int get_uids(int pid, struct result_info *r)
 {
-	char buf[100];
+	char buf[PATH_MAX];
 	FILE *sf;
 
 	r->ruid = -1;
 	r->user_id = -1;
 	r->loginuid = -1;
 
-	snprintf(buf, sizeof(buf), "/proc/%d/status", pid);
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+
+	snprintf(buf, sizeof(buf), "%s/proc/%d/status", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		int line = 0;
@@ -207,7 +213,7 @@ static int get_uids(int pid, struct result_info *r)
 		fclose(sf);
 	}
 
-	snprintf(buf, sizeof(buf), "/proc/%d/loginuid", pid);
+	snprintf(buf, sizeof(buf), "%s/proc/%d/loginuid", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		if (fscanf(sf, "%u", &r->loginuid) < 1) {
@@ -337,7 +343,7 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 /* get exec shield status according to http://people.redhat.com/sgrubb/files/lsexec
  * return value: -1 - not detected, 0 - disabled, 1 - enabled */
 static int get_exec_shield_status(int pid) {
-	char buf[501];
+	char buf[PATH_MAX];
 	FILE *sf;
 	long unsigned low, high, inode;
 	long long unsigned offset;
@@ -345,7 +351,8 @@ static int get_exec_shield_status(int pid) {
 	char perm[3], trim;
 	int ret = -1, read_items;
 
-	snprintf(buf, sizeof(buf), "/proc/%d/maps", pid);
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(buf, sizeof(buf), "%s/proc/%d/maps", prefix ? prefix : "", pid);
 	sf = fopen(buf, "rt");
 	if (sf) {
 		while (fgets(buf, 500, sf)) {
@@ -448,12 +455,15 @@ static inline char *make_defunc_str(char* const cmd_buffer){
 
 static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 {
+	char buf[PATH_MAX];
 	int err = 1, max_cap_id;
 	DIR *d;
 	struct dirent *ent;
 	oval_schema_version_t oval_version;
 
-	d = opendir("/proc");
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(buf, PATH_MAX, "%s/proc", prefix ? prefix : "");
+	d = opendir(buf);
 	if (d == NULL)
 		return err;
 
@@ -476,7 +486,6 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	// Scan the directories
 	while (( ent = readdir(d) )) {
 		int fd, len;
-		char buf[256];
 		char *tmp, state, tty_dev[128];
 		int pid, ppid, pgrp, session, tty_nr, tpgid;
 		unsigned flags, sched_policy;
@@ -494,7 +503,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 			continue;
 
 		// Parse up the stat file for the proc
-		snprintf(buf, 32, "/proc/%d/stat", pid);
+		snprintf(buf, PATH_MAX, "%s/proc/%d/stat", prefix ? prefix : "", pid);
 		fd = open(buf, O_RDONLY, 0);
 		if (fd < 0)
 			continue;
@@ -528,7 +537,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 		if (state == 'Z') { // zombie
 			cmd = make_defunc_str(cmd_buffer);
 		} else {
-			snprintf(buf, 32, "/proc/%d/cmdline", pid);
+			snprintf(buf, PATH_MAX, "%s/proc/%d/cmdline", prefix ? prefix : "", pid);
 			if (get_process_cmdline(buf, cmdline_buffer)) {
 				cmd = oscap_buffer_get_raw(cmdline_buffer); // use full cmdline
 			} else {
@@ -637,6 +646,11 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
         closedir(d);
 	oscap_buffer_free(cmdline_buffer);
 	return err;
+}
+
+int process58_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int process58_probe_main(probe_ctx *ctx, void *arg)
@@ -780,6 +794,11 @@ static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
         closedir(d);
 
 	return err;
+}
+
+int process58_probe_offline_mode_supported(void)
+{
+	return PROBE_OFFLINE_NONE;
 }
 
 int process58_probe_main(probe_ctx *ctx, void *arg)
