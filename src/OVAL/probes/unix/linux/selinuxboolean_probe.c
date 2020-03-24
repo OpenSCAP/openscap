@@ -131,20 +131,23 @@ static int selinuxfs_exists_prefixed(const char *prefix)
 	return exists;
 }
 
-static void init_selinuxmnt_prefixed(const char *prefix)
+static int init_selinuxmnt_prefixed(const char *prefix)
 {
 	char path[PATH_MAX] = {0};
 	char *buf = NULL, *p;
 	FILE *fp = NULL;
 	size_t len;
 	ssize_t num;
+	int res = -1;
 
 	if (!prefix)
-		return;
+		return res;
 
-	if (verify_selinuxmnt_prefixed(prefix, SELINUXMNT) == 0) return;
+	if (verify_selinuxmnt_prefixed(prefix, SELINUXMNT) == 0)
+		return 0;
 
-	if (verify_selinuxmnt_prefixed(prefix, OLDSELINUXMNT) == 0) return;
+	if (verify_selinuxmnt_prefixed(prefix, OLDSELINUXMNT) == 0)
+		return 0;
 
 	/* Drop back to detecting it the long way. */
 	if (!selinuxfs_exists_prefixed(prefix))
@@ -175,13 +178,13 @@ static void init_selinuxmnt_prefixed(const char *prefix)
 
 	/* If we found something, dup it */
 	if (num > 0)
-		verify_selinuxmnt_prefixed(prefix, p);
+		res = verify_selinuxmnt_prefixed(prefix, p);
 
 out:
 	free(buf);
 	if (fp)
 		fclose(fp);
-	return;
+	return res;
 }
 
 /* End of borrowing from SELinux */
@@ -239,7 +242,10 @@ int selinuxboolean_probe_main(probe_ctx *ctx, void *arg)
 
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	if (prefix != NULL) {
-		init_selinuxmnt_prefixed(prefix);
+		if (init_selinuxmnt_prefixed(prefix)) {
+			SEXP_free(name);
+			return PROBE_ESYSTEM;
+		}
 	}
 
 	err = get_selinuxboolean(name, ctx);
