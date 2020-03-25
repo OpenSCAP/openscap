@@ -25,7 +25,8 @@
 
 #include "probe-api.h"
 
-void *partition_probe_init(void);
+int patition_probe_offline_mode_supported(void);
+
 int partition_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_PARTITION_PROBE_H */

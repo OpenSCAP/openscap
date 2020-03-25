@@ -262,7 +262,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_LINUX_INET_LISTENING_SERVERS, NULL, inetlisteningservers_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_PARTITION
-	{OVAL_LINUX_PARTITION, partition_probe_init, partition_probe_main, NULL, NULL},
+	{OVAL_LINUX_PARTITION, NULL, partition_probe_main, NULL, patition_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_RPMINFO
 	{OVAL_LINUX_RPM_INFO, rpminfo_probe_init, rpminfo_probe_main, rpminfo_probe_fini, rpminfo_probe_offline_mode_supported},
