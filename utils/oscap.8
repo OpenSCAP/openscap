@@ -331,10 +331,19 @@ Generate a HTML document containing a security guide from an XCCDF Benchmark. Un
 Write the guide to this file instead of standard output.
 .TP
 \fB\-\-hide-profile-info\fR
-Information on chosen profile (e.g. rules selected by the profile) will be excluded from the document.
+This option has no effect and is kept only for backward compatibility purposes.
 .TP
 \fB\-\-benchmark-id ID\fR
 Selects a component ref from any datastream that references a component with XCCDF Benchmark such that its @id attribute matches given string exactly.
+.TP
+\fB\-\-xccdf-id ID\fR
+Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream. If none is given, the first component from the checklists element is used.
+.TP
+\fB\-\-tailoring-file TAILORING_FILE\fR
+Use given file for XCCDF tailoring. Select profile from tailoring file to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-tailoring-id COMPONENT_REF_ID\fR
+Use tailoring component in input source datastream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source datastream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
 .RE
 .TP
 .B \fBreport\fR  [\fIoptions\fR] xccdf-file

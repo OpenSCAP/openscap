@@ -558,6 +558,14 @@ OSCAP_API int xccdf_session_build_policy_from_testresult(struct xccdf_session *s
  */
 OSCAP_API int xccdf_session_add_report_from_source(struct xccdf_session *session, struct oscap_source *report_source);
 
+/**
+ * Generate HTML guide form a loaded XCCDF session
+ * @param session XCCDF Session
+ * @param outfile path to the output file
+ * @returns zero on success
+ */
+OSCAP_API int xccdf_session_generate_guide(struct xccdf_session *session, const char *outfile);
+
 /// @}
 /// @}
 #endif
