@@ -1,28 +1,31 @@
 #!/usr/bin/env bash
 
-. $builddir/tests/test_common.sh
-
 set -e -o pipefail
 
+. $builddir/tests/test_common.sh
+
 function test_probes_process58_offline_mode {
+    local VALID=$1
+
     probecheck "process58" || return 255
 
     local ret_val=0;
-    local DF="${srcdir}/test_probes_process58_offline_mode.xml"
-    local RF="test_probes_process58_offline_mode.results.xml"
+    local DF="test_probes_process58_offline_mode.xml"
+    local RF="test_probes_process58_offline_mode.results.${VALID}.xml"
     echo "result file: $RF"
-    local stderr=$(mktemp $1.err.XXXXXX)
-    echo "stderr file: $stderr"
 
     [ -f $RF ] && rm -f $RF
+    ${srcdir}/test_probes_process58_offline_mode.xml.sh $VALID > $DF
 
     tmpdir=$(mktemp -t -d "test_offline_mode_process58.XXXXXX")
 
-    ln -s /proc $tmpdir
+    if [[ "${VALID}" == "true" ]]; then
+        ln -s /proc $tmpdir
+    fi
 
     set_chroot_offline_test_mode "$tmpdir"
 
-    $OSCAP oval eval --results $RF $DF 2> $stderr
+    $OSCAP oval eval --results $RF $DF
 
     unset_chroot_offline_test_mode
 
@@ -33,10 +36,10 @@ function test_probes_process58_offline_mode {
         ret_val=1
     fi
 
-    rm $stderr
     rm -rf ${tmpdir}
 
     return $ret_val
 }
 
-test_probes_process58_offline_mode
+test_run "Ensure that probe handles \$OSCAP_CHROOT"      test_probes_process58_offline_mode "true"
+test_run "Ensure that probe handles empty \$SCAP_CHROOT" test_probes_process58_offline_mode "false"

@@ -26,4 +26,4 @@ function test_probes_selinuxsecuritycontext {
     return $ret_val
 }
 
-test_probes_selinuxsecuritycontext
+test_run "Basic selinuxsecuritycontext probe test" test_probes_selinuxsecuritycontext

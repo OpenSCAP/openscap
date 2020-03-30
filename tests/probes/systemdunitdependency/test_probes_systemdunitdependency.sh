@@ -13,10 +13,11 @@ function test_probes_systemdunitdependency {
     probecheck "systemdunitdependency" || return 255
     pidof systemd > /dev/null || return 255
 
-    local DF="${srcdir}/test_probes_systemdunitdependency.xml"
-    local RF="results.xml"
+    local DF="test_probes_systemdunitdependency.xml"
+    local RF="test_probes_systemdunitdependency.results.xml"
 
     [ -f $RF ] && rm -f $RF
+    ${srcdir}/test_probes_systemdunitdependency.xml.sh "true" > $DF
 
     $OSCAP oval eval --results $RF $DF
 
@@ -26,4 +27,4 @@ function test_probes_systemdunitdependency {
     rm $RF
 }
 
-test_probes_systemdunitdependency
+test_run "Probe systemdunitdependency general functionality" test_probes_systemdunitdependency

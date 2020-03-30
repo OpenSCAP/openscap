@@ -26,4 +26,4 @@ function test_probes_systemdunitproperty {
     rm $RF
 }
 
-test_probes_systemdunitproperty
+test_run "Probe systemdunitproperty general functionality" test_probes_systemdunitproperty

@@ -16,7 +16,7 @@ function test_probes_partition {
 
     [ -f $RF ] && rm -f $RF
 
-    $OSCAP oval --verbose=DEVEL eval --results $RF $DF 2> $stderr
+    $OSCAP oval eval --results $RF $DF 2> $stderr
 
     if [ -f $RF ]; then
         verify_results "def" $DF $RF 1 && verify_results "tst" $DF $RF 1
@@ -30,4 +30,4 @@ function test_probes_partition {
     return $ret_val
 }
 
-test_probes_partition
+test_run "Probe partition simple test (/proc mount point)" test_probes_partition
