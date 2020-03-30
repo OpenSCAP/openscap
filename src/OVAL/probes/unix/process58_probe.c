@@ -456,7 +456,7 @@ static inline char *make_defunc_str(char* const cmd_buffer){
 static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 {
 	char buf[PATH_MAX];
-	int err = 1, max_cap_id;
+	int err = PROBE_EACCESS, max_cap_id;
 	DIR *d;
 	struct dirent *ent;
 	oval_schema_version_t oval_version;
@@ -464,8 +464,9 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	snprintf(buf, PATH_MAX, "%s/proc", prefix ? prefix : "");
 	d = opendir(buf);
-	if (d == NULL)
-		return err;
+	if (d == NULL) {
+		return prefix ? PROBE_ESUCCESS : PROBE_EACCESS;
+	}
 
 	// Get the time tick hertz
 	ticks = (unsigned long)sysconf(_SC_CLK_TCK);
@@ -546,7 +547,7 @@ static int read_process(SEXP_t *cmd_ent, SEXP_t *pid_ent, probe_ctx *ctx)
 		}
 
 
-		err = 0; // If we get this far, no permission problems
+		err = PROBE_ESUCCESS; // If we get this far, no permission problems
 		dI("Have command: %s", cmd);
 		cmd_sexp = SEXP_string_newf("%s", cmd);
 		pid_sexp = SEXP_number_newu_32(pid);
@@ -663,10 +664,11 @@ int process58_probe_main(probe_ctx *ctx, void *arg)
 		return PROBE_ENOVAL;
 	}
 
-	if (read_process(command_line_ent, pid_ent, ctx)) {
+	int err = read_process(command_line_ent, pid_ent, ctx);
+	if (err) {
 		SEXP_free(command_line_ent);
 		SEXP_free(pid_ent);
-		return PROBE_EACCESS;
+		return err;
 	}
 
 	SEXP_free(command_line_ent);

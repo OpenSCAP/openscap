@@ -244,7 +244,7 @@ int selinuxboolean_probe_main(probe_ctx *ctx, void *arg)
 	if (prefix != NULL) {
 		if (init_selinuxmnt_prefixed(prefix)) {
 			SEXP_free(name);
-			return PROBE_ESYSTEM;
+			return PROBE_ESUCCESS;
 		}
 	}
 

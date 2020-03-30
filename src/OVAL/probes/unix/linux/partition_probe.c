@@ -276,31 +276,33 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         mnt_fd = open(mnt_path, O_RDONLY);
 
         if (mnt_fd < 0) {
-                dE("Can't open %s/"MTAB_PATH": errno=%d, %s.", prefix ? prefix : "", errno, strerror(errno));
-                return (PROBE_ESYSTEM);
+                dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 
         if (fstatfs(mnt_fd, &stfs) != 0) {
                 close(mnt_fd);
-                return (PROBE_ESYSTEM);
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 
         if (stfs.f_type != PROC_SUPER_MAGIC) {
                 close(mnt_fd);
-                return (PROBE_EFATAL);
+                return (prefix ? PROBE_ESUCCESS : PROBE_EFATAL);
         }
 
         mnt_fp = fdopen(mnt_fd, "r");
 
         if (mnt_fp == NULL) {
                 close(mnt_fd);
-                return (PROBE_ESYSTEM);
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 #else
         mnt_fp = fopen(mnt_path, "r");
 
-        if (mnt_fp == NULL)
-                return (PROBE_ESYSTEM);
+        if (mnt_fp == NULL) {
+                dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
+        }
 #endif
 
         probe_in   = probe_ctx_getobject(ctx);
