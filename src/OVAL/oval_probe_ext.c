@@ -998,7 +998,6 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
                          * The no-reply flag is set and oval_probe_comm returned some
                          * data. This is considered a non-fatal error.
                          */
-                        dW("Obtrusive data from probe!");
                         SEXP_free(s_sys);
 		}
 		return (0);
