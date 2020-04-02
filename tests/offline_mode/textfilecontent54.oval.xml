@@ -42,6 +42,54 @@
         <criterion test_ref="oval:x:tst:3" comment="textfilecontent54_test"/>
       </criteria>
     </definition>
+    <definition class="compliance" version="1" id="oval:x:def:4">
+      <metadata>
+        <title>Test filepath pattern matching in /tmp/</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:4" comment="textfilecontent54_test"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:5">
+      <metadata>
+        <title>Test filepath pattern matching in /tmp/zzz/</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:5" comment="textfilecontent54_test"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:6">
+      <metadata>
+        <title>Test filename pattern matching in /tmp</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:6" comment="textfilecontent54_test"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:7">
+      <metadata>
+        <title>Test filename pattern mathcing in /tmp/zzz/ </title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:7" comment="textfilecontent54_test"/>
+      </criteria>
+    </definition>
   </definitions>
 
   <tests>
@@ -53,6 +101,18 @@
     </ind:textfilecontent54_test>
     <ind:textfilecontent54_test id="oval:x:tst:3" version="1" comment="File /tmp/only_outside.txt must not exist inside chroot"  check="all" check_existence="none_exist">
       <ind:object object_ref="oval:x:obj:3"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:4" version="1" comment="Test for files using patter match"  check="all">
+      <ind:object object_ref="oval:x:obj:4"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:5" version="1" comment="Test for files using patter match"  check="all">
+      <ind:object object_ref="oval:x:obj:5"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:6" version="1" comment="Test for files using patter match"  check="all">
+      <ind:object object_ref="oval:x:obj:6"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:7" version="1" comment="Test for files using patter match"  check="all">
+      <ind:object object_ref="oval:x:obj:7"/>
     </ind:textfilecontent54_test>
   </tests>
 
@@ -70,6 +130,28 @@
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:x:obj:3" version="1" comment="Object representing file">
       <ind:filepath>/tmp/only_outside.txt</ind:filepath>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:x:obj:4" version="1" comment="Object representing file">
+      <ind:filepath operation="pattern match">^/tmp/.*\.filepath$</ind:filepath>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:x:obj:5" version="1" comment="Object representing file">
+      <ind:filepath operation="pattern match">^/tmp/zzz/.*\.filepath$</ind:filepath>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:x:obj:6" version="1" comment="Object representing file">
+      <ind:path>/tmp/</ind:path>
+      <ind:filename operation="pattern match">.*\.filename</ind:filename>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:x:obj:7" version="1" comment="Object representing file">
+      <ind:path>/tmp/zzz</ind:path>
+      <ind:filename operation="pattern match">.*\.filename</ind:filename>
       <ind:pattern operation="pattern match">^.*$</ind:pattern>
       <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
     </ind:textfilecontent54_object>
