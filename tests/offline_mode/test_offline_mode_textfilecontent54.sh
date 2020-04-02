@@ -38,9 +38,9 @@ function test_offline_mode_textfilecontent54 {
     echo "foo filename pattern" > "$temp_dir/tmp/zzz/foo.filename"
     result="$(mktemp)"
 
-    export OSCAP_PROBE_ROOT
-    OSCAP_PROBE_ROOT="$temp_dir"
+    set_chroot_offline_test_mode "$temp_dir"
     $OSCAP oval eval --results $result $srcdir/textfilecontent54.oval.xml
+    unset_chroot_offline_test_mode
 
     [ -s "$result" ]
 
