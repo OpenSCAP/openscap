@@ -27,6 +27,8 @@ function test_offline_mode_textfilecontent54 {
     echo "Bye from the inside" > "$temp_dir/tmp/zzz/foo.txt"
     echo "Bye from the outside" > "/tmp/zzz/foo.txt"
 
+    # prepare file that is available only outside
+    echo "I'm outside" > "/tmp/only_outside.txt"
     result="$(mktemp)"
 
     export OSCAP_PROBE_ROOT
@@ -50,9 +52,11 @@ function test_offline_mode_textfilecontent54 {
     assert_exists 1 $tfc_item'/ind-sys:filename[text()="foo.txt"]'
     assert_exists 1 $tfc_item'/ind-sys:text[text()="Bye from the inside"]'
 
+    assert_exists 1 '/oval_results/results/system/definitions/definition[@definition_id="oval:x:def:3" and @result="true"]'
+
     rm -rf "$temp_dir"
     rm -f "$result"
-    rm -f "/tmp/bar.txt"
+    rm -f "/tmp/bar.txt" "/tmp/only_outside.txt"
     rm -rf "/tmp/zzz"
 }
 

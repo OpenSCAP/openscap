@@ -30,6 +30,18 @@
         <criterion test_ref="oval:x:tst:2" comment="textfilecontent54_test"/>
       </criteria>
     </definition>
+    <definition class="compliance" version="1" id="oval:x:def:3">
+      <metadata>
+        <title>Test when file only exists outside of chroot.</title>
+        <description>x</description>
+        <affected family="unix">
+          <platform>x</platform>
+        </affected>
+      </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:3" comment="textfilecontent54_test"/>
+      </criteria>
+    </definition>
   </definitions>
 
   <tests>
@@ -38,6 +50,9 @@
     </ind:textfilecontent54_test>
     <ind:textfilecontent54_test id="oval:x:tst:2" version="1" comment="File /tmp/zzz/foo.txt must contain something"  check="all">
       <ind:object object_ref="oval:x:obj:2"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test id="oval:x:tst:3" version="1" comment="File /tmp/only_outside.txt must not exist inside chroot"  check="all" check_existence="none_exist">
+      <ind:object object_ref="oval:x:obj:3"/>
     </ind:textfilecontent54_test>
   </tests>
 
@@ -50,6 +65,11 @@
     <ind:textfilecontent54_object id="oval:x:obj:2" version="1" comment="Object representing file">
       <ind:path>/tmp/zzz</ind:path>
       <ind:filename>foo.txt</ind:filename>
+      <ind:pattern operation="pattern match">^.*$</ind:pattern>
+      <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:x:obj:3" version="1" comment="Object representing file">
+      <ind:filepath>/tmp/only_outside.txt</ind:filepath>
       <ind:pattern operation="pattern match">^.*$</ind:pattern>
       <ind:instance datatype="int" operation="greater than or equal">1</ind:instance>
     </ind:textfilecontent54_object>
