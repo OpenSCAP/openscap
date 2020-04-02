@@ -15,12 +15,17 @@ set -e -o pipefail
 function test_offline_mode_textfilecontent54 {
     temp_dir="$(mktemp -d)"
 
+    mkdir -p $temp_dir/tmp/zzz
+    mkdir -p /tmp/zzz
+
     # prepare /bar.txt
-    echo "Hello" > "$temp_dir/bar.txt"
+    echo "Hello from the inside" > "$temp_dir/tmp/bar.txt"
+    echo "Hello from the outside" > "/tmp/bar.txt"
 
     # prepare /zzz/foo.txt
-    mkdir -p "$temp_dir/zzz"
-    echo "Bye" > "$temp_dir/zzz/foo.txt"
+    mkdir -p "$temp_dir/tmp/zzz"
+    echo "Bye from the inside" > "$temp_dir/tmp/zzz/foo.txt"
+    echo "Bye from the outside" > "/tmp/zzz/foo.txt"
 
     result="$(mktemp)"
 
@@ -35,18 +40,20 @@ function test_offline_mode_textfilecontent54 {
     tfc_item='/oval_results/results/system/oval_system_characteristics/system_data/ind-sys:textfilecontent_item'
     assert_exists 2 $tfc_item
 
-    assert_exists 1 $tfc_item'/ind-sys:filepath[text()="/bar.txt"]'
-    assert_exists 1 $tfc_item'/ind-sys:path[text()="/"]'
+    assert_exists 1 $tfc_item'/ind-sys:filepath[text()="/tmp/bar.txt"]'
+    assert_exists 1 $tfc_item'/ind-sys:path[text()="/tmp"]'
     assert_exists 1 $tfc_item'/ind-sys:filename[text()="bar.txt"]'
-    assert_exists 1 $tfc_item'/ind-sys:text[text()="Hello"]'
+    assert_exists 1 $tfc_item'/ind-sys:text[text()="Hello from the inside"]'
 
-    assert_exists 1 $tfc_item'/ind-sys:filepath[text()="/zzz/foo.txt"]'
-    assert_exists 1 $tfc_item'/ind-sys:path[text()="/zzz"]'
+    assert_exists 1 $tfc_item'/ind-sys:filepath[text()="/tmp/zzz/foo.txt"]'
+    assert_exists 1 $tfc_item'/ind-sys:path[text()="/tmp/zzz"]'
     assert_exists 1 $tfc_item'/ind-sys:filename[text()="foo.txt"]'
-    assert_exists 1 $tfc_item'/ind-sys:text[text()="Bye"]'
+    assert_exists 1 $tfc_item'/ind-sys:text[text()="Bye from the inside"]'
 
     rm -rf "$temp_dir"
     rm -f "$result"
+    rm -f "/tmp/bar.txt"
+    rm -rf "/tmp/zzz"
 }
 
 # Testing.
