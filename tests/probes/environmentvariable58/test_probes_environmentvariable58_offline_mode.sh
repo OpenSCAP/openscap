@@ -31,9 +31,7 @@ function test_probes_environmentvariable58_offline_mode {
         ret_val=1
     fi
 
-    # Test fails if there are any warnings or "Entity has no value" on stderr.
-    echo "Verify that there are no warnings on stderr"
-    grep -Ei "(W:|Entity has no value)" $stderr && ret_val=1
+    grep -Ei "(W: |E: )" $stderr && ret_val=1 && echo "There is an error and/or a warning in the output!"
 
     rm $stderr
 
@@ -42,4 +40,4 @@ function test_probes_environmentvariable58_offline_mode {
     return $ret_val
 }
 
-test_probes_environmentvariable58_offline_mode
+test_run "test_probes_environmentvariable58_offline_mode" test_probes_environmentvariable58_offline_mode
