@@ -37,7 +37,7 @@
     <selinuxsecuritycontext_object version="1" id="oval:1:obj:1" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
       <behaviors recurse_direction="down" />
       <path>/dev</path>
-      <filename>null</filename>
+      <filename operation="pattern match">^.*$</filename>
     </selinuxsecuritycontext_object>
 
   </objects>

@@ -10,7 +10,7 @@ function test_probes_selinuxsecuritycontext_offline_mode {
 
     probecheck "selinuxboolean" || return 255
 
-    local DF="${srcdir}/test_probes_selinuxsecuritycontext_offline_mode.xml"
+    local DF="${srcdir}/test_probes_selinuxsecuritycontext.xml"
     local RF="test_probes_selinuxsecuritycontext_offline_mode.results.xml"
 
     [ -f $RF ] && rm -f $RF

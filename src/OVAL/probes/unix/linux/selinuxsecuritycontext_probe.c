@@ -269,6 +269,11 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 	pbuf[plen+flen] = '\0';
 
 	char *path_with_prefix = oscap_path_join(prefix, pbuf);
+	if (access(path_with_prefix, F_OK) == -1 ) {
+		dD("File does not exists anymore (could happen to /dev/fd/X)");
+		free(path_with_prefix);
+		return 0;
+	}
 	file_context_size = getfilecon(path_with_prefix, &file_context);
 	free(path_with_prefix);
 	if (file_context_size == -1) {
