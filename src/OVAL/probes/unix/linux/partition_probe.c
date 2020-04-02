@@ -276,7 +276,8 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         mnt_fd = open(mnt_path, O_RDONLY);
 
         if (mnt_fd < 0) {
-                dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                if (!prefix)
+                        dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
                 return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 
@@ -300,7 +301,8 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         mnt_fp = fopen(mnt_path, "r");
 
         if (mnt_fp == NULL) {
-                dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                if (!prefix)
+                        dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
                 return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 #endif

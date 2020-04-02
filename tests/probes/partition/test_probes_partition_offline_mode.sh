@@ -9,9 +9,12 @@ function test_probes_partition {
 
     probecheck "partition" || return 255
 
+    local ret_val=0;
     local DF="${srcdir}/test_probes_partition.xml"
     local RF="test_probes_partition_offline_mode.results.xml"
     echo "result file: $RF"
+    local stderr=$(mktemp $1.err.XXXXXX)
+    echo "stderr file: $stderr"
 
     [ -f $RF ] && rm -f $RF
 
@@ -23,7 +26,7 @@ function test_probes_partition {
 
     set_chroot_offline_test_mode "$tmpdir"
 
-    $OSCAP oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF 2>$stderr
 
     unset_chroot_offline_test_mode
 
@@ -38,7 +41,12 @@ function test_probes_partition {
         assert_exists 1 '/oval_results/results/system/tests/test[@result="false"][@test_id="oval:1:tst:1"]'
     fi
 
+    grep -Ei "(W: |E: )" $stderr && ret_val=1 && echo "There is an error and/or a warning in the output!"
+    rm $stderr
+
     rm -rf ${tmpdir}
+
+    return $ret_val
 }
 
 test_run "Probe partition simple offline test (/proc mount point)"                  test_probes_partition "true"
