@@ -13,6 +13,8 @@ function test_probes_process58_offline_mode {
     local DF="test_probes_process58_offline_mode.xml"
     local RF="test_probes_process58_offline_mode.results.${VALID}.xml"
     echo "result file: $RF"
+    local stderr=$(mktemp $1.err.XXXXXX)
+    echo "stderr file: $stderr"
 
     [ -f $RF ] && rm -f $RF
     ${srcdir}/test_probes_process58_offline_mode.xml.sh $VALID > $DF
@@ -25,7 +27,7 @@ function test_probes_process58_offline_mode {
 
     set_chroot_offline_test_mode "$tmpdir"
 
-    $OSCAP oval eval --results $RF $DF
+    $OSCAP oval eval --results $RF $DF 2>$stderr
 
     unset_chroot_offline_test_mode
 
@@ -35,6 +37,9 @@ function test_probes_process58_offline_mode {
     else
         ret_val=1
     fi
+
+    grep -Ei "(W: |E: )" $stderr && ret_val=1 && echo "There is an error and/or a warning in the output!"
+    rm $stderr
 
     rm -rf ${tmpdir}
 
