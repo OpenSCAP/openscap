@@ -989,12 +989,13 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 			continue;
 		}
 
+		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 		/* partial match optimization for OVAL_OPERATION_PATTERN_MATCH operation on path and filepath */
 		if (ofts->ofts_path_regex != NULL && fts_ent->fts_info == FTS_D) {
 			int ret, svec[3];
 
 			ret = pcre_exec(ofts->ofts_path_regex, ofts->ofts_path_regex_extra,
-					fts_ent->fts_path, fts_ent->fts_pathlen, 0, PCRE_PARTIAL,
+					fts_ent->fts_path+shift, fts_ent->fts_pathlen-shift, 0, PCRE_PARTIAL,
 					svec, sizeof(svec) / sizeof(svec[0]));
 			if (ret < 0) {
 				switch (ret) {
@@ -1016,7 +1017,6 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 		    || (!ofts->ofts_sfilepath && fts_ent->fts_info != FTS_D))
 			continue;
 
-		const size_t shift = ofts->prefix ? strlen(ofts->prefix) : 0;
 		stmp = SEXP_string_newf("%s", fts_ent->fts_path + shift);
 
 		if (ofts->ofts_sfilepath)
