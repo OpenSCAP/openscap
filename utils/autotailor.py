@@ -119,7 +119,8 @@ class Tailoring:
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="This script produces XCCDF 1.2 tailoring files to be used by SCAP scanners and SCAP datastreams.")
+        description="This script produces XCCDF 1.2 tailoring files "
+        "to be used by SCAP scanners and SCAP datastreams.")
     parser.add_argument(
         "datastream", metavar="DS-FILENAME",
         help="The datastream filename is just informational, "
