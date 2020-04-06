@@ -35,6 +35,8 @@
 #include <config.h>
 #endif
 
+#include <limits.h>
+#include <stdio.h>
 #include <dbus/dbus.h>
 #include "common/debug_priv.h"
 #include "oscap_helpers.h"
@@ -328,6 +330,15 @@ static DBusConnection *connect_dbus()
 
 	DBusError err;
 	dbus_error_init(&err);
+
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	if (prefix != NULL) {
+		char dbus_address[PATH_MAX] = {0};
+		snprintf(dbus_address, PATH_MAX, "unix:path=%s/run/dbus/system_bus_socket", prefix);
+		setenv("DBUS_SYSTEM_BUS_ADDRESS", dbus_address, 0);
+		/* We won't overwrite DBUS_SYSTEM_BUS_ADDRESS so that
+		 * user could have a way to define some non-standard system bus socket location */
+	}
 
 	conn = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
 	if (dbus_error_is_set(&err)) {

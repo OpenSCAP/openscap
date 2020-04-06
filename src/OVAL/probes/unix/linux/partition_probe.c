@@ -154,14 +154,19 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
 {
         SEXP_t *item;
         char   *uuid = "", *tok, *save = NULL, **mnt_opts = NULL;
+        char path[PATH_MAX];
         uint8_t mnt_ocnt;
         struct statvfs stvfs;
 
         /*
          * Get FS stats
          */
-        if (statvfs(mnt_ent->mnt_dir, &stvfs) != 0)
+        const char *prefix = getenv("OSCAP_PROBE_ROOT");
+        snprintf(path, PATH_MAX, "%s%s", prefix ? prefix : "", mnt_ent->mnt_dir);
+        if (statvfs(path, &stvfs) != 0) {
+                dE("Can't statvfs %s: errno=%d, %s.", path, errno, strerror(errno));
                 return (-1);
+        }
 
         /*
          * Get UUID
@@ -247,9 +252,9 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         return (0);
 }
 
-void *partition_probe_init(void)
+int patition_probe_offline_mode_supported(void)
 {
-	return (NULL);
+        return PROBE_OFFLINE_OWN;
 }
 
 int partition_probe_main(probe_ctx *ctx, void *probe_arg)
@@ -260,37 +265,48 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
         oval_operation_t mnt_op;
         FILE *mnt_fp;
         oval_schema_version_t obj_over;
+
+        const char *prefix = getenv("OSCAP_PROBE_ROOT");
+        snprintf(mnt_path, PATH_MAX, "%s"MTAB_PATH, prefix ? prefix : "");
+
 #if defined(PROC_CHECK) && defined(OS_LINUX)
         int   mnt_fd;
         struct statfs stfs;
 
-        mnt_fd = open(MTAB_PATH, O_RDONLY);
+        mnt_fd = open(mnt_path, O_RDONLY);
 
-        if (mnt_fd < 0)
-                return (PROBE_ESYSTEM);
+        if (mnt_fd < 0) {
+                if (!prefix)
+                        dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
+        }
 
         if (fstatfs(mnt_fd, &stfs) != 0) {
                 close(mnt_fd);
-                return (PROBE_ESYSTEM);
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 
         if (stfs.f_type != PROC_SUPER_MAGIC) {
                 close(mnt_fd);
-                return (PROBE_EFATAL);
+                return (prefix ? PROBE_ESUCCESS : PROBE_EFATAL);
         }
 
         mnt_fp = fdopen(mnt_fd, "r");
 
         if (mnt_fp == NULL) {
                 close(mnt_fd);
-                return (PROBE_ESYSTEM);
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
         }
 #else
-        mnt_fp = fopen(MTAB_PATH, "r");
+        mnt_fp = fopen(mnt_path, "r");
 
-        if (mnt_fp == NULL)
-                return (PROBE_ESYSTEM);
+        if (mnt_fp == NULL) {
+                if (!prefix)
+                        dE("Can't open %s: errno=%d, %s.", mnt_path, errno, strerror(errno));
+                return (prefix ? PROBE_ESUCCESS : PROBE_ESYSTEM);
+        }
 #endif
+
         probe_in   = probe_ctx_getobject(ctx);
         obj_over   = probe_obj_get_platform_schema_version(probe_in);
         mnt_entity = probe_obj_getent(probe_in, "mount_point", 1);

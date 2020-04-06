@@ -25,6 +25,8 @@
 
 #include "probe-api.h"
 
+int process58_probe_offline_mode_supported(void);
+
 int process58_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_PROCESS58_PROBE_H */

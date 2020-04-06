@@ -262,7 +262,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_LINUX_INET_LISTENING_SERVERS, NULL, inetlisteningservers_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_PARTITION
-	{OVAL_LINUX_PARTITION, partition_probe_init, partition_probe_main, NULL, NULL},
+	{OVAL_LINUX_PARTITION, NULL, partition_probe_main, NULL, patition_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_RPMINFO
 	{OVAL_LINUX_RPM_INFO, rpminfo_probe_init, rpminfo_probe_main, rpminfo_probe_fini, rpminfo_probe_offline_mode_supported},
@@ -277,16 +277,16 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_LINUX_RPMVERIFYPACKAGE, rpmverifypackage_probe_init, rpmverifypackage_probe_main, rpmverifypackage_probe_fini, rpmverifypackage_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN
-	{OVAL_LINUX_SELINUXBOOLEAN, NULL, selinuxboolean_probe_main, NULL, NULL},
+	{OVAL_LINUX_SELINUXBOOLEAN, NULL, selinuxboolean_probe_main, NULL, selinuxboolean_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT
 	{OVAL_LINUX_SELINUXSECURITYCONTEXT, NULL, selinuxsecuritycontext_probe_main, NULL, selinuxsecuritycontext_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY
-	{OVAL_LINUX_SYSTEMDUNITDEPENDENCY, NULL, systemdunitdependency_probe_main, NULL, NULL},
+	{OVAL_LINUX_SYSTEMDUNITDEPENDENCY, NULL, systemdunitdependency_probe_main, NULL, systemdunitdependency_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY
-	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, NULL},
+	{OVAL_LINUX_SYSTEMDUNITPROPERTY, NULL, systemdunitproperty_probe_main, NULL, systemdunitproperty_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_SOLARIS_ISAINFO
 	{OVAL_SOLARIS_ISAINFO, NULL, isainfo_probe_main, NULL, NULL},
@@ -313,7 +313,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_PROCESS, NULL, process_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_PROCESS58
-	{OVAL_UNIX_PROCESS58, NULL, process58_probe_main, NULL, NULL},
+	{OVAL_UNIX_PROCESS58, NULL, process58_probe_main, NULL, process58_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_ROUTINGTABLE
 	{OVAL_UNIX_ROUTINGTABLE, NULL, routingtable_probe_main, NULL, NULL},

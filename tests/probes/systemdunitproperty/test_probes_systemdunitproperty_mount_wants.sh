@@ -27,4 +27,4 @@ function test_probes_systemdunitproperty_mount_wants {
     rm $RF
 }
 
-test_probes_systemdunitproperty_mount_wants
+test_run "Probe systemdunitproperty mount Wants - only on some systems" test_probes_systemdunitproperty_mount_wants

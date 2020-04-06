@@ -99,9 +99,8 @@ if [ ! -f "$DIR/run/.containerenv" ]; then
     touch "$DIR/run/.containerenv"
 fi
 
-for VAR in `podman inspect $ID --format '{{join .Config.Env " "}}'`; do
-    eval "export OSCAP_OFFLINE_$VAR"
-done
+export OSCAP_CONTAINER_VARS
+OSCAP_CONTAINER_VARS=`podman inspect $ID --format '{{join .Config.Env "\n"}}'`
 
 export OSCAP_PROBE_ROOT
 OSCAP_PROBE_ROOT="$(cd "$DIR" && pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (DIR)."

@@ -59,26 +59,69 @@
 #include "environmentvariable58_probe.h"
 
 #define BUFFER_SIZE 256
-#define VAR_OFFLINE_PREFIX "OSCAP_OFFLINE_"
 
 extern char **environ;
+
+static int collect_variable(char *buffer, size_t env_name_size, int pid, SEXP_t *name_ent, probe_ctx *ctx)
+{
+	int res = 1;
+
+	SEXP_t *env_name = SEXP_string_new(buffer, env_name_size);
+	SEXP_t *env_value = SEXP_string_newf("%s", buffer + env_name_size + 1);
+
+	if (probe_entobj_cmp(name_ent, env_name) == OVAL_RESULT_TRUE) {
+		SEXP_t *item = probe_item_create(
+			OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
+			"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
+			"name",  OVAL_DATATYPE_SEXP, env_name,
+			"value", OVAL_DATATYPE_SEXP, env_value,
+			NULL);
+		probe_item_collect(ctx, item);
+		res = 0;
+	}
+	SEXP_free(env_name);
+	SEXP_free(env_value);
+
+	return res;
+}
 
 static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 {
 	int err = 1, pid, fd;
 	bool empty;
-	size_t env_name_size;
-	SEXP_t *env_name, *env_value, *item, *pid_sexp;
+	SEXP_t *item, *pid_sexp;
 	DIR *d;
 	struct dirent *d_entry;
-	char *buffer, env_file[256], *null_char;
+	char *buffer, *null_char, path[PATH_MAX] = {0};
 	ssize_t buffer_used;
 	size_t buffer_size;
 
-	d = opendir("/proc");
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf(path, PATH_MAX, "%s/proc", prefix ? prefix : "");
+	d = opendir(path);
 	if (d == NULL) {
-		dE("Can't read /proc: errno=%d, %s.", errno, strerror (errno));
-		return PROBE_EACCESS;
+		const char *extra_vars = getenv("OSCAP_CONTAINER_VARS");
+		if (!extra_vars) {
+			dE("Can't read %s/proc: errno=%d, %s.", prefix ? prefix : "", errno, strerror(errno));
+			return PROBE_EACCESS;
+		} else {
+			char *vars = strdup(extra_vars);
+			char *tok, *eq_chr, *str, *strp;
+
+			for (str = vars; ; str = NULL) {
+				tok = strtok_r(str, "\n", &strp);
+				if (tok == NULL)
+					break;
+				eq_chr = strchr(tok, '=');
+				if (eq_chr == NULL)
+					continue;
+				PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;, pid = 0;);
+				collect_variable(tok, eq_chr - tok, pid, name_ent, ctx);
+			}
+
+			free(vars);
+			return 0;
+		}
 	}
 
 	if ((buffer = realloc(NULL, BUFFER_SIZE)) == NULL) {
@@ -101,10 +144,9 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 		}
 		SEXP_free(pid_sexp);
 
-		sprintf(env_file, "/proc/%d/environ", pid);
-
-		if ((fd = open(env_file, O_RDONLY)) == -1) {
-			dE("Can't open \"%s\": errno=%d, %s.", env_file, errno, strerror (errno));
+		snprintf(path, PATH_MAX, "%s/proc/%d/environ", prefix ? prefix : "", pid);
+		if ((fd = open(path, O_RDONLY)) == -1) {
+			dE("Can't open \"%s\": errno=%d, %s.", path, errno, strerror (errno));
 			item = probe_item_create(
 					OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
 					"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
@@ -113,7 +155,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 
 			probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
 			probe_item_add_msg(item, OVAL_MESSAGE_LEVEL_ERROR,
-					   "Can't open \"%s\": errno=%d, %s.", env_file, errno, strerror (errno));
+					   "Can't open \"%s\": errno=%d, %s.", path, errno, strerror (errno));
 			probe_item_collect(ctx, item);
 			continue;
 		}
@@ -158,33 +200,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 					continue;
 				}
 
-				env_name_size = eq_char - buffer;
-				if (ctx->offline_mode == PROBE_OFFLINE_OWN) {
-					// We are not processing unprefixed (i.e. originated from the host) variables in offline mode
-					if (memmem(buffer, env_name_size, VAR_OFFLINE_PREFIX, strlen(VAR_OFFLINE_PREFIX)) != buffer
-						|| strlen(VAR_OFFLINE_PREFIX) >= env_name_size) {
-						buffer_used -= null_char + 1 - buffer;
-						memmove(buffer, null_char + 1, buffer_used);
-						continue;
-					}
-					env_name = SEXP_string_new(buffer + strlen(VAR_OFFLINE_PREFIX), env_name_size - strlen(VAR_OFFLINE_PREFIX));
-				} else {
-					env_name = SEXP_string_new(buffer, env_name_size);
-				}
-				env_value = SEXP_string_newf("%s", buffer + env_name_size + 1);
-
-				if (probe_entobj_cmp(name_ent, env_name) == OVAL_RESULT_TRUE) {
-					item = probe_item_create(
-						OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
-						"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
-						"name",  OVAL_DATATYPE_SEXP, env_name,
-						"value", OVAL_DATATYPE_SEXP, env_value,
-						NULL);
-					probe_item_collect(ctx, item);
-					err = 0;
-				}
-				SEXP_free(env_name);
-				SEXP_free(env_value);
+				collect_variable(buffer, eq_char - buffer, pid, name_ent, ctx);
 
 				buffer_used -= null_char + 1 - buffer;
 				memmove(buffer, null_char + 1, buffer_used);
@@ -248,16 +264,10 @@ int environmentvariable58_probe_main(probe_ctx *ctx, void *arg)
 		SEXP_free(nref);
 		SEXP_free(nval);
 		pid_ent = new_pid_ent;
-	} else {
-		if (ctx->offline_mode != PROBE_OFFLINE_NONE) {
-			err = PROBE_EINVAL;
-			goto cleanup;
-		}
 	}
 
 	err = read_environment(pid_ent, name_ent, ctx);
 
-cleanup:
 	SEXP_free(name_ent);
 	SEXP_free(pid_ent);
 

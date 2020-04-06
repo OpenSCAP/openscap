@@ -25,6 +25,8 @@
 
 #include "probe-api.h"
 
+int selinuxboolean_probe_offline_mode_supported(void);
+
 int selinuxboolean_probe_main(probe_ctx *ctx, void *arg);
 
 #endif /* OPENSCAP_SELINUXBOOLEAN_PROBE_H */

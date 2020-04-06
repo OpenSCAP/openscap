@@ -165,7 +165,7 @@ static SEXP_t *create_file_probe_item_with_range(
 }
 
 static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
-
+	char path[PATH_MAX];
 	SEXP_t *pid_sexp, *item;
 	security_context_t pid_context;
 	context_t context;
@@ -174,8 +174,10 @@ static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 	struct dirent *dir_entry;
 	const char *user, *role, *type, *range;
 
-	if ((proc = opendir("/proc")) == NULL) {
-		dE("Can't open /proc dir: %s", strerror(errno));
+	const char *prefix = getenv("OSCAP_PROBE_ROOT");
+	snprintf (path, PATH_MAX, "%s/proc", prefix ? prefix : "");
+	if ((proc = opendir(path)) == NULL) {
+		dE("Can't open '%s' dir: %s", path, strerror(errno));
 
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
 		return errno;
@@ -267,6 +269,11 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 	pbuf[plen+flen] = '\0';
 
 	char *path_with_prefix = oscap_path_join(prefix, pbuf);
+	if (access(path_with_prefix, F_OK) == -1 ) {
+		dD("File does not exists anymore (could happen to /dev/fd/X)");
+		free(path_with_prefix);
+		return 0;
+	}
 	file_context_size = getfilecon(path_with_prefix, &file_context);
 	free(path_with_prefix);
 	if (file_context_size == -1) {
@@ -332,11 +339,11 @@ int selinuxsecuritycontext_probe_main(probe_ctx *ctx, void *arg)
 
 	probe_in  = probe_ctx_getobject(ctx);
 
-	behaviors = probe_obj_getent (probe_in, "behaviors", 1);
-	path      = probe_obj_getent (probe_in, "path",      1);
-	filename  = probe_obj_getent (probe_in, "filename",  1);
-	filepath  = probe_obj_getent (probe_in, "filepath", 1);
-	pid       = probe_obj_getent (probe_in, "pid", 1);
+	behaviors = probe_obj_getent(probe_in, "behaviors", 1);
+	path      = probe_obj_getent(probe_in, "path",      1);
+	filename  = probe_obj_getent(probe_in, "filename",  1);
+	filepath  = probe_obj_getent(probe_in, "filepath",  1);
+	pid       = probe_obj_getent(probe_in, "pid",       1);
 
 	if (((path == NULL || filename == NULL) && filepath==NULL ) && pid == NULL) {
 		err = PROBE_ENOENT;
@@ -364,15 +371,20 @@ int selinuxsecuritycontext_probe_main(probe_ctx *ctx, void *arg)
 			goto cleanup;
 
 		if (process_pid == 0) {
-			SEXP_t *nref, *nval, *pid2;
+			if (ctx->offline_mode == PROBE_OFFLINE_NONE) {
+				SEXP_t *nref, *nval, *pid2;
 
-			nref = SEXP_list_first(probe_in);
-			nval = SEXP_number_newu_32(getpid());
-			pid2 = SEXP_list_new(nref, nval, NULL);
-			SEXP_free(pid);
-			SEXP_free(nref);
-			SEXP_free(nval);
-			pid = pid2;
+				nref = SEXP_list_first(probe_in);
+				nval = SEXP_number_newu_32(getpid());
+				pid2 = SEXP_list_new(nref, nval, NULL);
+				SEXP_free(pid);
+				SEXP_free(nref);
+				SEXP_free(nval);
+				pid = pid2;
+			} else {
+				err = PROBE_EINVAL;
+				goto cleanup;
+			}
 		}
 
 		selinuxsecuritycontext_process_cb(pid, ctx);
