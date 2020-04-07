@@ -20,6 +20,7 @@
 import argparse
 import datetime
 import re
+import sys
 import xml.etree.ElementTree as ET
 
 
@@ -30,8 +31,8 @@ ALL_NS = {
 DEFAULT_PROFILE_SUFFIX = "_customized"
 
 
-def id_is_full(string):
-    return re.match(r"^xccdf_org\.", string) is not None
+def is_valid_xccdf_id(string):
+    return re.match(r"^xccdf_", string) is not None
 
 
 class Tailoring:
@@ -52,7 +53,7 @@ class Tailoring:
         self.rules_to_unselect = []
 
     def _full_id(self, string, default_prefix):
-        if id_is_full(string):
+        if is_valid_xccdf_id(string):
             return string
         return default_prefix + string
 
@@ -107,14 +108,10 @@ class Tailoring:
             change.set("idref", self._full_var_id(varname))
             change.text = str(value)
 
-        if location:
-            ET.ElementTree(root).write(location)
-        else:
-            try:
-                # Python >= 3.9
-                ET.indent(root)
-            except AttributeError:
-                ET.dump(root)
+        if location == "-":
+            location = sys.stdout.buffer
+
+        ET.ElementTree(root).write(location)
 
 
 def parse_args():
@@ -160,7 +157,9 @@ def parse_args():
         "If left out, the new ID will be obtained "
         "by appending '{suffix}' to the tailored profile ID."
         .format(prefix=Tailoring.PROFILES_PREFIX, suffix=DEFAULT_PROFILE_SUFFIX))
-    parser.add_argument("-o", "--output")
+    parser.add_argument(
+        "-o", "--output", default="-",
+        help="Where to save the tailoring file. If not supplied, write to standard output.")
     args = parser.parse_args()
     return args
 
