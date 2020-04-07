@@ -1,0 +1,5 @@
+if(ENABLE_PROBES_INDEPENDENT)
+	add_oscap_test_executable(test_probes_system_info "test_probes_system_info.c")
+	add_oscap_test("test_probes_system_info.sh")
+	add_oscap_test("test_probes_system_info_offline_mode.sh")
+endif()
