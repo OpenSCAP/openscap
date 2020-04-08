@@ -21,6 +21,7 @@ import argparse
 import datetime
 import re
 import sys
+import pathlib
 import xml.etree.ElementTree as ET
 
 
@@ -36,9 +37,7 @@ def is_valid_xccdf_id(string):
 
 
 class Tailoring:
-    PROFILES_PREFIX = "xccdf_org.ssgproject.content_profile_"
-    RULES_PREFIX = "xccdf_org.ssgproject.content_rule_"
-    VARS_PREFIX = "xccdf_org.ssgproject.content_value_"
+    ID_NAMESPACE = "org.ssgproject.content"
 
     def __init__(self):
         self.id_suffix = "auto_tailoring_default"
@@ -52,19 +51,21 @@ class Tailoring:
         self.rules_to_select = []
         self.rules_to_unselect = []
 
-    def _full_id(self, string, default_prefix):
+    def _full_id(self, string, el_type):
         if is_valid_xccdf_id(string):
             return string
+        default_prefix = "xccdf_{namespace}_{el_type}_".format(
+            namespace=self.ID_NAMESPACE, el_type=el_type)
         return default_prefix + string
 
     def _full_profile_id(self, string):
-        return self._full_id(string, self.PROFILES_PREFIX)
+        return self._full_id(string, "profile")
 
     def _full_var_id(self, string):
-        return self._full_id(string, self.VARS_PREFIX)
+        return self._full_id(string, "value")
 
     def _full_rule_id(self, string):
-        return self._full_id(string, self.RULES_PREFIX)
+        return self._full_id(string, "rule")
 
     def add_value_change(self, varname, value):
         self.value_changes.append((varname, value))
@@ -75,7 +76,8 @@ class Tailoring:
         root.set("id", "xccdf_" + self.id_suffix)
 
         benchmark = ET.SubElement(root, "xccdf-1.2:benchmark")
-        benchmark.set("href", self.original_ds_filename)
+        datastream_uri = pathlib.Path(self.original_ds_filename).absolute().as_uri()
+        benchmark.set("href", datastream_uri)
 
         version = ET.SubElement(root, "xccdf-1.2:version")
         version.set("time", datetime.datetime.now().isoformat())
@@ -120,31 +122,31 @@ def parse_args():
         "to be used by SCAP scanners and SCAP datastreams.")
     parser.add_argument(
         "datastream", metavar="DS-FILENAME",
-        help="The datastream filename is just informational, "
-        "it doesn't have any key role in the tailoring composition.")
+        help="The datastream filename, "
+        "which is needed to fully define the benchmark component.")
     parser.add_argument(
         "profile", metavar="BASE_PROFILE_ID",
         help="Specify ID of the base profile. "
         "ID of the profile can be either its full ID, or the suffix, in which case "
-        "the '{prefix}' prefix will be prepended internally."
-        .format(prefix=Tailoring.PROFILES_PREFIX))
+        "the 'xccdf_<id-namespace>_profile' prefix will be prepended internally.")
     parser.add_argument(
         "--title", default="",
         help="Title of the new profile.")
     parser.add_argument(
+        "--id-namespace", default="org.ssgproject.content",
+        help="The reverse-DNS style string that is part of entities IDs in the corresponding datastream.")
+    parser.add_argument(
         "-v", "--var-value", metavar="VAR=VALUE", action="append", default=[],
         help="Specify modification of the XCCDF value in form <varname>=<value>. "
         "Name of the variable can be either its full name, or the suffix, in which case "
-        "the '{prefix}' prefix will be prepended internally. "
-        "Specify the argument multiple times if needed."
-        .format(prefix=Tailoring.VARS_PREFIX))
+        "the 'xccdf_<id-namespace>_value' prefix will be prepended internally. "
+        "Specify the argument multiple times if needed.")
     parser.add_argument(
         "-s", "--select", metavar="RULE_ID", action="append", default=[],
         help="Specify what rules to select. "
         "The rule ID can be either full, or just the suffix, in which case "
-        "the '{prefix}' prefix will be prepended internally. "
-        "Specify the argument multiple times if needed."
-        .format(prefix=Tailoring.RULES_PREFIX))
+        "the 'xccdf_<id-namespace>_rule' prefix will be prepended internally. "
+        "Specify the argument multiple times if needed.")
     parser.add_argument(
         "-u", "--unselect", metavar="RULE_ID", action="append", default=[],
         help="Specify what rules to unselect. "
@@ -153,10 +155,10 @@ def parse_args():
         "-p", "--new-profile-id",
         help="Specify the ID of the tailored profile. "
         "The ID of the new profile can be either its full ID, or the suffix, in which case "
-        "the '{prefix}' prefix will be prepended internally. "
+        "the 'xccdf_<id-namespace>_profile_' prefix will be prepended internally. "
         "If left out, the new ID will be obtained "
         "by appending '{suffix}' to the tailored profile ID."
-        .format(prefix=Tailoring.PROFILES_PREFIX, suffix=DEFAULT_PROFILE_SUFFIX))
+        .format(suffix=DEFAULT_PROFILE_SUFFIX))
     parser.add_argument(
         "-o", "--output", default="-",
         help="Where to save the tailoring file. If not supplied, write to standard output.")
@@ -175,6 +177,7 @@ if __name__ == "__main__":
         ET.register_namespace(prefix, uri)
 
     t = Tailoring()
+    t.ID_NAMESPACE = args.id_namespace
     t.extends = args.profile
     if args.new_profile_id:
         t.profile_name = args.new_profile_id
