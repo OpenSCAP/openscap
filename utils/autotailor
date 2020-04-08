@@ -122,8 +122,7 @@ def parse_args():
         "to be used by SCAP scanners and SCAP datastreams.")
     parser.add_argument(
         "datastream", metavar="DS-FILENAME",
-        help="The datastream filename, "
-        "which is needed to fully define the benchmark component.")
+        help="The tailored datastream filename.")
     parser.add_argument(
         "profile", metavar="BASE_PROFILE_ID",
         help="Specify ID of the base profile. "
