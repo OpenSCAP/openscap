@@ -39,7 +39,7 @@ function test_offline_mode_textfilecontent54 {
     result="$(mktemp)"
 
     set_chroot_offline_test_mode "$temp_dir"
-    $OSCAP oval eval --results $result $srcdir/textfilecontent54.oval.xml
+    $OSCAP oval eval --results $result $srcdir/test_offline_mode_textfilecontent54.xml
     unset_chroot_offline_test_mode
 
     [ -s "$result" ]
