@@ -121,7 +121,7 @@ def parse_args():
         description="This script produces XCCDF 1.2 tailoring files "
         "to be used by SCAP scanners and SCAP datastreams.")
     parser.add_argument(
-        "datastream", metavar="DS-FILENAME",
+        "datastream", metavar="DS_FILENAME",
         help="The tailored datastream filename.")
     parser.add_argument(
         "profile", metavar="BASE_PROFILE_ID",
