@@ -133,7 +133,7 @@ def parse_args():
         help="Title of the new profile.")
     parser.add_argument(
         "--id-namespace", default="org.ssgproject.content",
-        help="The reverse-DNS style string that is part of entities IDs in the corresponding datastream.")
+        help="The reverse-DNS style string that is part of entities IDs in the corresponding datastream. If left out, the default value 'org.ssgproject.content' is used.")
     parser.add_argument(
         "-v", "--var-value", metavar="VAR=VALUE", action="append", default=[],
         help="Specify modification of the XCCDF value in form <varname>=<value>. "

@@ -1,4 +1,4 @@
-.TH oscap-chroot "8" "April 2020" "Red Hat, Inc." "System Administration Utilities"
+.TH autotailor "8" "April 2020" "Red Hat, Inc." "System Administration Utilities"
 .SH NAME
 autotailor \- CLI tool for tailoring of SCAP datastreams.
 .SH DESCRIPTION
@@ -9,7 +9,7 @@ Tailoring can add or remove rules, and it can redefine contents of XCCDF variabl
 
 The tool requires datastream location and ID of the base profile as inputs.
 Note however, that the referenced datastream is not opened, and the validity of tailoring is not checked against it.
-The tool doesn't prevent you to extend non-existent profiles, select non-existent rules, and so on.
+The tool doesn't prevent you from extending non-existent profiles, selecting non-existent rules, and so on.
 
 .SH USAGE
 .SS Modify a variable value
@@ -37,4 +37,3 @@ Please report bugs using https://github.com/OpenSCAP/openscap/issues
 .nf
 Matěj Týč <matyc@redhat.com>
 .fi
-
