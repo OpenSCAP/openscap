@@ -992,7 +992,16 @@ SEXP_t *probe_worker(probe_t *probe, SEAP_msg_t *msg_in, int *ret)
 
 		} else if (probe->supported_offline_mode & PROBE_OFFLINE_CHROOT) {
 			probe->real_root_fd = open("/", O_RDONLY);
+			if (probe->real_root_fd == -1) {
+				dE("open(\"/\") failed: %s", strerror(errno));
+				return NULL;
+			}
 			probe->real_cwd_fd = open(".", O_RDONLY);
+			if (probe->real_cwd_fd == -1) {
+				close(probe->real_root_fd);
+				dE("open(\".\") failed: %s", strerror(errno));
+				return NULL;
+			}
 			if (chdir(rootdir) != 0) {
 				dE("chdir failed: %s", strerror(errno));
 			}
