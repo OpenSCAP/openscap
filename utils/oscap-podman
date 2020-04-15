@@ -58,7 +58,7 @@ else
     invalid "Invalid arguments provided."
 fi
 
-if [ $(id -u) -ne 0 ]; then
+if [ "$(id -u)" -ne 0 ]; then
     die "This script cannot run in rootless mode."
 fi
 if grep -q "\-\-remediate" <<< "$@"; then
