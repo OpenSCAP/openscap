@@ -94,7 +94,6 @@ fi
 # Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
 export OSCAP_PROBE_ROOT
 OSCAP_PROBE_ROOT="$(cd "$1" && pwd)" || die "Invalid CHROOT_PATH argument."
-export OSCAP_EVALUATION_TARGET="chroot://$OSCAP_PROBE_ROOT"
 shift 1
 
 oscap "$@"

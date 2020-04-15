@@ -132,7 +132,6 @@ fi
 # Learn more at https://www.redhat.com/archives/open-scap-list/2013-July/msg00000.html
 export OSCAP_PROBE_ROOT
 OSCAP_PROBE_ROOT="$(cd "$MOUNTPOINT" && pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (MOUNTPOINT)."
-export OSCAP_EVALUATION_TARGET="oscap-vm $1 $2"
 shift 2
 
 $OSCAP_BINARY "$@"

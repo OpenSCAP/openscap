@@ -224,14 +224,8 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 
 	_xccdf_result_clear_metadata(XITEM(result));
 
-	/* override target name by environment variable */
-	const char *target_hostname = getenv("OSCAP_EVALUATION_TARGET");
-	if (target_hostname == NULL) {
-		target_hostname = sname.nodename;
-	}
-
 	/* store target name */
-	xccdf_result_add_target(result, target_hostname);
+	xccdf_result_add_target(result, sname.nodename);
 #elif defined(OS_WINDOWS)
 	TCHAR computer_name[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD computer_name_size = MAX_COMPUTERNAME_LENGTH + 1;

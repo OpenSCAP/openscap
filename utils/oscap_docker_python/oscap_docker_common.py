@@ -34,7 +34,6 @@ def oscap_chroot(chroot_path, oscap_binary, oscap_args, target_name, local_env=[
         Wrapper running oscap_chroot on an OscapDockerScan OscapAtomicScan object
         '''
         os.environ["OSCAP_PROBE_ROOT"] = os.path.join(chroot_path)
-        os.environ["OSCAP_EVALUATION_TARGET"] = target_name
         os.environ["OSCAP_CONTAINER_VARS"] = '\n'.join(local_env)
 
         cmd = [oscap_binary] + [x for x in oscap_args]
