@@ -105,7 +105,10 @@ find_package(Doxygen)
 find_package(GConf)
 find_package(Ldap)
 find_package(OpenDbx)
+
 find_package(PCRE REQUIRED)
+include_directories(${PCRE_INCLUDE_DIRS})
+
 find_package(PerlLibs)
 find_package(Popt)
 
