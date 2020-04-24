@@ -105,10 +105,7 @@ find_package(Doxygen)
 find_package(GConf)
 find_package(Ldap)
 find_package(OpenDbx)
-
 find_package(PCRE REQUIRED)
-include_directories(${PCRE_INCLUDE_DIRS})
-
 find_package(PerlLibs)
 find_package(Popt)
 
@@ -551,6 +548,7 @@ include_directories(
 	"yaml-filter"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
+	${PCRE_INCLUDE_DIRS}
 )
 
 # Honor visibility properties for all target types
