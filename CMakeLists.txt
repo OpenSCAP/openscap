@@ -548,6 +548,7 @@ include_directories(
 	"yaml-filter"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
+	${PCRE_INCLUDE_DIRS}
 )
 
 # Honor visibility properties for all target types
