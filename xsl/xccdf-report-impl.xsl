@@ -384,6 +384,7 @@ Authors:
         <td class="rule-severity" style="text-align: center">
             <xsl:call-template name="item-severity">
                 <xsl:with-param name="item" select="." />
+                <xsl:with-param name="profile" select="$profile" />
             </xsl:call-template>
         </td>
         <td class="rule-result rule-result-{$result}">
@@ -784,7 +785,15 @@ Authors:
                 </tr>
             </xsl:if>
             <tr><td>Time</td><td><xsl:value-of select="@time"/></td></tr>
-            <tr><td>Severity</td><td><xsl:call-template name="item-severity"><xsl:with-param name="item" select="." /></xsl:call-template></td></tr>
+            <tr>
+                <td>Severity</td>
+                <td>
+                    <xsl:call-template name="item-severity">
+                        <xsl:with-param name="item" select="." />
+                        <xsl:with-param name="profile" select="$profile" />
+                    </xsl:call-template>
+                </td>
+            </tr>
             <tr><td>Identifiers and References</td><td class="identifiers">
                 <!-- XCCDF 1.2 spec says that idents in rule-result should be copied from
                     the Rule itself. That means that we can just use the same code as guide

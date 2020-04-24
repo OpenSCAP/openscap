@@ -245,6 +245,7 @@ Authors:
                         <tr><td><span class="label label-warning">Severity:</span>&#160;</td><td><div class="severity">
                             <xsl:call-template name="item-severity">
                                 <xsl:with-param name="item" select="$item" />
+                                <xsl:with-param name="profile" select="$profile"/>
                             </xsl:call-template>
                         </div></td></tr>
 

@@ -128,7 +128,21 @@ Authors:
 <!-- works for both XCCDF Rule elements and rule-result elements -->
 <xsl:template name="item-severity">
     <xsl:param name="item"/>
-    <xsl:choose><xsl:when test="$item/@severity"><xsl:value-of select="$item/@severity"/></xsl:when><xsl:otherwise>unknown</xsl:otherwise></xsl:choose>
+    <xsl:param name="profile"/>
+    <xsl:variable name="refine-rule" select="$profile/cdf:refine-rule[@idref=$item/@id]" />
+    <xsl:choose>
+        <xsl:when test="$refine-rule/@severity">
+            <xsl:value-of select="$refine-rule/@severity"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:choose>
+                <xsl:when test="$item/@severity">
+                    <xsl:value-of select="$item/@severity"/>
+                </xsl:when>
+                <xsl:otherwise>unknown</xsl:otherwise>
+            </xsl:choose>
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <!-- substitution for testresults, used in HTML report -->
