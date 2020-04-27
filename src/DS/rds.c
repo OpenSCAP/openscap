@@ -354,6 +354,11 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 		}
 	}
 
+	if (xmlGetLastChild(connections) == NULL) {
+		xmlUnlinkNode(connections);
+		xmlFreeNode(connections);
+	}
+
 	return asset;
 }
 

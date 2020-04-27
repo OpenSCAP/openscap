@@ -472,25 +472,12 @@ static ssize_t __sysinfo_saneval(const char *s)
 }
 
 #ifndef OS_WINDOWS
-static FILE *_fopen_with_prefix(const char *prefix, const char *path)
-{
-	FILE *fp;
-	if (prefix != NULL) {
-		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
-		fp = fopen(path_with_prefix, "r");
-		free(path_with_prefix);
-	} else {
-		fp = fopen(path, "r");
-	}
-	return fp;
-}
-
 static char *_get_os_release(const char *oscap_probe_root)
 {
 	char os_release_data[MAX_BUFFER_SIZE+1];
 	char *ret = NULL;
 
-	FILE *fp = _fopen_with_prefix(oscap_probe_root, "/etc/os-release");
+	FILE *fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/os-release");
 	if (fp == NULL)
 		goto fail;
 
@@ -544,7 +531,7 @@ static char *_offline_get_hname(const char *oscap_probe_root)
 	char *ret = NULL;
 	int rc;
 
-	fp = _fopen_with_prefix(oscap_probe_root, "/etc/hostname");
+	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/hostname");
 
 	if (fp == NULL)
 		goto fail;

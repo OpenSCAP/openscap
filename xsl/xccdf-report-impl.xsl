@@ -82,6 +82,12 @@ Authors:
                             <xsl:value-of select="$testresult/cdf:target/text()"/>
                         </td>
                     </tr>
+                    <xsl:if test="$testresult/cdf:target-facts/cdf:fact[@name = 'urn:xccdf:fact:identifier']">
+                        <tr>
+                            <th>Target ID</th>
+                            <td><xsl:value-of select="$testresult/cdf:target-facts/cdf:fact[@name = 'urn:xccdf:fact:identifier']/text()"/></td>
+                        </tr>
+                    </xsl:if>
                     <xsl:if test="$testresult/cdf:benchmark">
                         <tr>
                             <th>Benchmark URL</th>

@@ -209,29 +209,56 @@ static inline void _xccdf_result_clear_metadata(struct xccdf_item *result)
 		NULL);
 }
 
+#ifdef OSCAP_UNIX
+static char *_get_etc_hostname(const char *oscap_probe_root)
+{
+	FILE *fp;
+	char hname[HOST_NAME_MAX+1] = { '\0' };
+	char *ret = NULL;
+	int rc;
+
+	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/hostname");
+
+	if (fp == NULL)
+		goto fail;
+
+	rc = fread(hname, 1, HOST_NAME_MAX, fp);
+	/* If file is empty, we don't want to allocate an empty string for it */
+	if (ferror(fp) || rc == 0 )
+		goto finish;
+
+	hname[strcspn(hname, "\n")] = '\0';
+	ret = strdup(hname);
+
+finish:
+	fclose(fp);
+fail:
+	return ret;
+}
+#endif
+
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
 #if defined(OS_LINUX)
 	struct ifaddrs *ifaddr, *ifa;
 	int fd;
 #endif
+	struct xccdf_target_fact *fact = NULL;
+	const char *probe_root = getenv("OSCAP_PROBE_ROOT");
 
 #ifdef OSCAP_UNIX
-	struct utsname sname;
-
-	if (uname(&sname) == -1)
-		return;
-
 	_xccdf_result_clear_metadata(XITEM(result));
-
-	/* override target name by environment variable */
-	const char *target_hostname = getenv("OSCAP_EVALUATION_TARGET");
-	if (target_hostname == NULL) {
-		target_hostname = sname.nodename;
+	char *hostname = NULL;
+	if (probe_root) {
+		hostname = _get_etc_hostname(probe_root);
+	} else {
+		struct utsname sname;
+		if (uname(&sname) != -1)
+			hostname = strdup(sname.nodename);
 	}
-
 	/* store target name */
-	xccdf_result_add_target(result, target_hostname);
+	xccdf_result_add_target(result, hostname ? hostname : "Unknown");
+	free(hostname);
 #elif defined(OS_WINDOWS)
 	TCHAR computer_name[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD computer_name_size = MAX_COMPUTERNAME_LENGTH + 1;
@@ -240,68 +267,79 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	xccdf_result_add_target(result, computer_name);
 #endif
 
+	const char *ev_target = getenv("OSCAP_EVALUATION_TARGET");
+	if (ev_target) {
+		fact = xccdf_target_fact_new();
+		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:identifier");
+		xccdf_target_fact_set_string(fact, ev_target);
+		xccdf_result_add_target_fact(result, fact);
+	}
+
 	_xccdf_result_fill_scanner(result);
-	_xccdf_result_fill_identity(result);
+
+	if (!probe_root)
+		_xccdf_result_fill_identity(result);
 
 #if defined(OS_LINUX)
 
-	/* get network interfaces */
-	if (getifaddrs(&ifaddr) == -1)
-		return;
+	if (!probe_root) {
+		/* get network interfaces */
+		if (getifaddrs(&ifaddr) == -1)
+			return;
 
-	fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
-	if (fd == -1)
-		goto out1;
+		fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+		if (fd == -1)
+			goto out1;
 
-	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
-		int family;
-		char hostip[NI_MAXHOST];
-		struct ifreq ifr;
+		for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+			int family;
+			char hostip[NI_MAXHOST];
+			struct ifreq ifr;
 
-		if (!ifa->ifa_addr)
-			continue;
-		family = ifa->ifa_addr->sa_family;
-		if (family != AF_INET && family != AF_INET6)
-			continue;
+			if (!ifa->ifa_addr)
+				continue;
+			family = ifa->ifa_addr->sa_family;
+			if (family != AF_INET && family != AF_INET6)
+				continue;
 
-		if (family == AF_INET) {
-			if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-					hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
-				goto out2;
-		} else {
-			struct sockaddr_in6 *sin6;
+			if (family == AF_INET) {
+				if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+						hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
+					goto out2;
+			} else {
+				struct sockaddr_in6 *sin6;
 
-			sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
-			if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
-				       hostip, sizeof(hostip)))
-				goto out2;
+				sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
+				if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
+						   hostip, sizeof(hostip)))
+					goto out2;
+			}
+			/* store ip address */
+			xccdf_result_add_target_address(result, hostip);
+
+			memset(&ifr, 0, sizeof(ifr));
+			strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
+			ifr.ifr_name[IFNAMSIZ - 1] = 0;
+			if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
+				unsigned char mac[6];
+				char macbuf[20];
+
+				memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
+				snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
+					 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
+				xccdf_target_fact_set_string(fact, macbuf);
+				/* store mac address */
+				xccdf_result_add_target_fact(result, fact);
+			}
 		}
-		/* store ip address */
-		xccdf_result_add_target_address(result, hostip);
 
-		memset(&ifr, 0, sizeof(ifr));
-		strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
-		ifr.ifr_name[IFNAMSIZ - 1] = 0;
-		if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
-			struct xccdf_target_fact *fact;
-			unsigned char mac[6];
-			char macbuf[20];
-
-			memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
-			snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
-				 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
-			fact = xccdf_target_fact_new();
-			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
-			xccdf_target_fact_set_string(fact, macbuf);
-			/* store mac address */
-			xccdf_result_add_target_fact(result, fact);
-		}
+	out2:
+		close(fd);
+	out1:
+		freeifaddrs(ifaddr);
 	}
-
- out2:
-	close(fd);
- out1:
-	freeifaddrs(ifaddr);
 
 #elif defined(OS_WINDOWS)
 

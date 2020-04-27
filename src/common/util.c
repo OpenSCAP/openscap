@@ -426,6 +426,21 @@ int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char *
 	return ret;
 }
 
+#ifndef OS_WINDOWS
+FILE *oscap_fopen_with_prefix(const char *prefix, const char *path)
+{
+	FILE *fp;
+	if (prefix != NULL) {
+		char *path_with_prefix = oscap_sprintf("%s%s", prefix, path);
+		fp = fopen(path_with_prefix, "r");
+		free(path_with_prefix);
+	} else {
+		fp = fopen(path, "r");
+	}
+	return fp;
+}
+#endif
+
 #ifdef OS_WINDOWS
 char *oscap_windows_wstr_to_str(const wchar_t *wstr)
 {

@@ -26,6 +26,7 @@
 
 #include "oscap_platforms.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <assert.h>
 #include "public/oscap.h"
@@ -480,6 +481,19 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen);
  * negative value on failure
  */
 int oscap_get_substrings(char *str, int *ofs, pcre *re, int want_substrs, char ***substrings);
+
+
+#ifndef OS_WINDOWS
+/**
+ * Open file for reading with prefix added to its name.
+ * Caller is responsible for closing the handle.
+ * @param prefix the prefix, might be NULL or empty
+ * @param path the file name with the path
+ * @return FILE* handle of opened file
+ * NULL on failure
+ */
+FILE *oscap_fopen_with_prefix(const char *prefix, const char *path);
+#endif
 
 #ifdef OS_WINDOWS
 /**
