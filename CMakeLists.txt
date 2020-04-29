@@ -23,7 +23,7 @@ endif()
 # See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
 
 ## increment if the interface has additions, changes, removals.
-set(LT_CURRENT 26)
+set(LT_CURRENT 27)
 
 ## increment any time the source changes; set 0 to if you increment CURRENT
 set(LT_REVISION 0)
@@ -31,7 +31,7 @@ set(LT_REVISION 0)
 ## increment if any interfaces have been added; set to 0
 ## if any interfaces have been changed or removed. removal has
 ## precedence over adding, so set to 0 if both happened.
-set(LT_AGE 1)
+set(LT_AGE 2)
 
 math(EXPR LT_CURRENT_MINUS_AGE "${LT_CURRENT} - ${LT_AGE}")
 

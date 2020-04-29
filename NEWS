@@ -1,3 +1,24 @@
+openscap-1.3.3                                                  29-04-2020
+  - New features
+    - Added a Python script that can be used for CLI tailoring (autotailor)
+    - Added timezone to XCCDF TestResult start/end time
+    - Added yamlfilecontent independent probe (proposal/draft implementation),
+      see https://github.com/OVAL-Community/OVAL/issues/91 for more information
+    - Introduced `urn:xccdf:fix:script:kubernetes` fix type in XCCDF
+    - Added ability to generate `machineconfig` fix
+  - Maintenance, bug fixes
+    - utils/oscap-podman: Detect ambiguous scan target
+    - Fixed #170: The rpmverifyfile probe can't verify files from '/bin' directory
+    - The data system_info probe return for offline and online modes is consistent and actual
+    - Prevent crashes when complicated regexes are executed in textfilecontent58 probe
+    - Fixed #1512: Severity refinement lost in generated guide
+    - Fixed #1453: Pointer lost in Swig API
+    - Evaluation Characteristics of the XCCDF report are now consistent with OVAL entities
+      from system_info probe
+    - Fixed filepath pattern matching in offline mode in textfilecontent58 probe
+    - Fixed infinite recursion in systemdunitdependency probe
+    - Fixed the case when CMake couldn't find libacl or xattr.h
+
 openscap-1.3.2                                                  13-01-2020
   - New features
     - Offline mode support for environmentvariable58 probe
