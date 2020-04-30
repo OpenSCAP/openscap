@@ -106,8 +106,7 @@ if __name__ == '__main__':
                 sys.exit(2)
 
         else:  # without atomic
-            if args.noatomic:
-                print("Using native Docker API")
+            print("Using native Docker API")
 
             ODS = OscapDockerScan(args.scan_target, args.is_image, args.oscap_binary)
             if args.action == "scan":
