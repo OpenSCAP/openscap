@@ -94,7 +94,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     try:
-        if isAtomicLoaded and not args.noatomic:
+        if isAtomicLoaded() and not args.noatomic:
             print("Using Atomic API")
             OS = OscapAtomicScan(oscap_binary=args.oscap_binary)
             if args.action == "scan":
