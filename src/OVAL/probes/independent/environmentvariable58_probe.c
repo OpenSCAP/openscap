@@ -96,32 +96,32 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	ssize_t buffer_used;
 	size_t buffer_size;
 
+	const char *extra_vars = getenv("OSCAP_CONTAINER_VARS");
+	if (extra_vars && *extra_vars) {
+		char *vars = strdup(extra_vars);
+		char *tok, *eq_chr, *str, *strp;
+
+		for (str = vars; ; str = NULL) {
+			tok = strtok_r(str, "\n", &strp);
+			if (tok == NULL)
+				break;
+			eq_chr = strchr(tok, '=');
+			if (eq_chr == NULL)
+				continue;
+			PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;, pid = 0;);
+			collect_variable(tok, eq_chr - tok, pid, name_ent, ctx);
+		}
+
+		free(vars);
+		return 0;
+	}
+
 	const char *prefix = getenv("OSCAP_PROBE_ROOT");
 	snprintf(path, PATH_MAX, "%s/proc", prefix ? prefix : "");
 	d = opendir(path);
 	if (d == NULL) {
-		const char *extra_vars = getenv("OSCAP_CONTAINER_VARS");
-		if (!extra_vars) {
-			dE("Can't read %s/proc: errno=%d, %s.", prefix ? prefix : "", errno, strerror(errno));
-			return PROBE_EACCESS;
-		} else {
-			char *vars = strdup(extra_vars);
-			char *tok, *eq_chr, *str, *strp;
-
-			for (str = vars; ; str = NULL) {
-				tok = strtok_r(str, "\n", &strp);
-				if (tok == NULL)
-					break;
-				eq_chr = strchr(tok, '=');
-				if (eq_chr == NULL)
-					continue;
-				PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;, pid = 0;);
-				collect_variable(tok, eq_chr - tok, pid, name_ent, ctx);
-			}
-
-			free(vars);
-			return 0;
-		}
+		dE("Can't read %s/proc: errno=%d, %s.", prefix ? prefix : "", errno, strerror(errno));
+		return PROBE_EACCESS;
 	}
 
 	if ((buffer = realloc(NULL, BUFFER_SIZE)) == NULL) {
