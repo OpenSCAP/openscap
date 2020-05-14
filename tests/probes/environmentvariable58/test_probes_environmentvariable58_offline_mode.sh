@@ -17,6 +17,7 @@ function test_probes_environmentvariable58_offline_mode {
     [ -f $RF ] && rm -f $RF
 
     tmpdir=$(mktemp -t -d "test_offline_mode_environmentvariable58.XXXXXX")
+    mkdir -p "$tmpdir/proc/1"
 
     set_chroot_offline_test_mode "$tmpdir"
 
