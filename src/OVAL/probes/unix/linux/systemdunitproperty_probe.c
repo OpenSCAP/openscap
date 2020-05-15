@@ -50,7 +50,7 @@ struct unit_callback_vars {
 
 static int collect_property(const char *property, const char *value, struct unit_callback_vars *vars);
 
-static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, void *vars)
+static int get_all_properties_by_unit_path_using_interface(DBusConnection *conn, const char *unit_path, const char *interface, void *vars)
 {
 	int ret = 1;
 	DBusMessage *msg = NULL;
@@ -69,7 +69,6 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 
 	DBusMessageIter args, property_iter;
 
-	const char *interface = "org.freedesktop.systemd1.Unit";
 
 	dbus_message_iter_init_append(msg, &args);
 	if (!dbus_message_iter_append_basic(&args, DBUS_TYPE_STRING, &interface)) {
@@ -178,6 +177,13 @@ cleanup:
 	if (msg != NULL)
 		dbus_message_unref(msg);
 
+	return ret;
+}
+
+static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, void *vars)
+{
+	const char *interface = "org.freedesktop.systemd1.Unit";
+	int ret = get_all_properties_by_unit_path_using_interface(conn, unit_path, interface, vars);
 	return ret;
 }
 
