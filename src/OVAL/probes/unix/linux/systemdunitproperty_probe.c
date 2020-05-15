@@ -38,7 +38,19 @@
 #include "systemdshared.h"
 #include "systemdunitproperty_probe.h"
 
-static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, int(*callback)(const char *name, const char *value, void *arg), void *cbarg)
+struct unit_callback_vars {
+	DBusConnection *dbus_conn;
+	probe_ctx *ctx;
+	SEXP_t *unit_entity;
+	SEXP_t *property_entity;
+	SEXP_t *se_unit;
+	SEXP_t *se_property;
+	SEXP_t *item;
+};
+
+static int collect_property(const char *property, const char *value, struct unit_callback_vars *vars);
+
+static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, void *vars)
 {
 	int ret = 1;
 	DBusMessage *msg = NULL;
@@ -135,7 +147,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 				if (element == NULL)
 					continue;
 
-				const int elementcbret = callback(property_name, element, cbarg);
+				const int elementcbret = collect_property(property_name, element, vars);
 				if (elementcbret > cbret)
 					cbret = elementcbret;
 
@@ -145,7 +157,7 @@ static int get_all_properties_by_unit_path(DBusConnection *conn, const char *uni
 		}
 		else {
 			char *property_value = dbus_value_to_string(&value_variant);
-			cbret = callback(property_name, property_value, cbarg);
+			cbret = collect_property(property_name, property_value, vars);
 			free(property_value);
 		}
 
@@ -169,20 +181,8 @@ cleanup:
 	return ret;
 }
 
-struct unit_callback_vars {
-	DBusConnection *dbus_conn;
-	probe_ctx *ctx;
-	SEXP_t *unit_entity;
-	SEXP_t *property_entity;
-	SEXP_t *se_unit;
-	SEXP_t *se_property;
-	SEXP_t *item;
-};
-
-static int property_callback(const char *property, const char *value, void *cbarg)
+static int collect_property(const char *property, const char *value, struct unit_callback_vars *vars)
 {
-	struct unit_callback_vars *vars = (struct unit_callback_vars *)cbarg;
-
 	if (vars->se_property != NULL) {
 		//
 		// Compare the previously matched entity to the current one
@@ -240,8 +240,7 @@ static int unit_callback(const char *unit, void *cbarg)
 		return 1;
 	}
 
-	get_all_properties_by_unit_path(vars->dbus_conn, unit_path,
-					property_callback, vars);
+	get_all_properties_by_unit_path(vars->dbus_conn, unit_path, vars);
 
 	if (vars->item != NULL) {
 		probe_item_collect(vars->ctx, vars->item);
