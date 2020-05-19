@@ -159,6 +159,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
 		SEXP_free(msg);
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+		yaml_path_destroy(yaml_path);
 		fclose(yaml_file);
 		return -1;
 	};
