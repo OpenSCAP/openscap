@@ -180,10 +180,53 @@ cleanup:
 	return ret;
 }
 
-static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit_path, void *vars)
+static int get_all_properties_by_unit_path(DBusConnection *conn, const char *unit, const char *unit_path, void *vars)
 {
 	const char *interface = "org.freedesktop.systemd1.Unit";
 	int ret = get_all_properties_by_unit_path_using_interface(conn, unit_path, interface, vars);
+	if (ret != 0) {
+		return ret;
+	}
+
+	/* All Unit objects implement the generic org.freedesktop.systemd1.Unit
+	 * interface. But, depending on the unit type they also implement one
+	 * unit-type-specific interface.
+	 * https://www.freedesktop.org/wiki/Software/systemd/dbus/
+	 */
+	char *sep = strrchr(unit, '.');
+	if (sep == NULL) {
+		return ret;
+	}
+	char *unit_type = sep + 1;
+	if (!strcmp(unit_type, "service")) {
+		interface = "org.freedesktop.systemd1.Service";
+	} else if (!strcmp(unit_type, "socket")) {
+		interface = "org.freedesktop.systemd1.Socket";
+	} else if (!strcmp(unit_type, "target")) {
+		/* Target units have neither type-specific methods nor properties. */
+		return ret;
+	} else if (!strcmp(unit_type, "device")) {
+		interface = "org.freedesktop.systemd1.Device";
+	} else if (!strcmp(unit_type, "mount")) {
+		interface = "org.freedesktop.systemd1.Mount";
+	} else if (!strcmp(unit_type, "automount")) {
+		interface = "org.freedesktop.systemd1.Automount";
+	} else if (!strcmp(unit_type, "snapshot")) {
+		interface = "org.freedesktop.systemd1.Snapshot";
+	} else if (!strcmp(unit_type, "timer")) {
+		interface = "org.freedesktop.systemd1.Timer";
+	} else if (!strcmp(unit_type, "swap")) {
+		interface = "org.freedesktop.systemd1.Swap";
+	} else if (!strcmp(unit_type, "path")) {
+		interface = "org.freedesktop.systemd1.Path";
+	} else if (!strcmp(unit_type, "slice")) {
+		interface = "org.freedesktop.systemd1.Slice";
+	} else if (!strcmp(unit_type, "scope")) {
+		interface = "org.freedesktop.systemd1.Scope";
+	} else {
+		return ret;
+	}
+	ret = get_all_properties_by_unit_path_using_interface(conn, unit_path, interface, vars);
 	return ret;
 }
 
@@ -246,7 +289,7 @@ static int unit_callback(const char *unit, void *cbarg)
 		return 1;
 	}
 
-	get_all_properties_by_unit_path(vars->dbus_conn, unit_path, vars);
+	get_all_properties_by_unit_path(vars->dbus_conn, unit, unit_path, vars);
 
 	if (vars->item != NULL) {
 		probe_item_collect(vars->ctx, vars->item);
