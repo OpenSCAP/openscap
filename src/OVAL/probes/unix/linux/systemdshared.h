@@ -247,7 +247,7 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 				return oscap_sprintf("0x%x", value.byt);
 
 			case DBUS_TYPE_BOOLEAN:
-				return oscap_strdup(value.bool_val ? "true" : "false");
+				return oscap_strdup(value.bool_val ? "yes" : "no");
 
 			case DBUS_TYPE_INT16:
 				return oscap_sprintf("%i", value.i16);
