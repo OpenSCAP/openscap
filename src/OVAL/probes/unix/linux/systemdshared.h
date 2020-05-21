@@ -277,12 +277,6 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 			case DBUS_TYPE_SIGNATURE:
 				return oscap_strdup(value.str);
 
-			// non-basic types
-			//case DBUS_TYPE_ARRAY:
-			//case DBUS_TYPE_STRUCT:
-			//case DBUS_TYPE_DICT_ENTRY:
-			//case DBUS_TYPE_VARIANT:
-
 			//case DBUS_TYPE_UNIX_FD:
 			//	return oscap_sprintf("%i", value.fd);
 
@@ -291,7 +285,19 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 				return oscap_strdup("error, unknown basic type!");
 		}
 	}
-	else if (arg_type == DBUS_TYPE_ARRAY) {
+	else if (arg_type == DBUS_TYPE_ARRAY || arg_type == DBUS_TYPE_STRUCT ||
+			arg_type == DBUS_TYPE_VARIANT || arg_type == DBUS_TYPE_DICT_ENTRY) {
+		/* OVAL specification for systemdunitproperty_item says: "The value
+		 * of the property associated with a systemd unit. Exactly one value
+		 * shall be used for all property types except dbus arrays - each
+		 * array element shall be represented by one value."
+		 * The properties that are dbus arrays are handled by the caller
+		 * (get_all_properties_by_unit_path_using_interface). Therefore this
+		 * code handles only dbus arrays that are part of a different top
+		 * level dbus type. Also it handles other dbus container types which
+		 * are not mentioned in the OVAL specification. We assume that these
+		 * types should be serialized into a single value.
+		 */
 		DBusMessageIter array;
 		dbus_message_iter_recurse(iter, &array);
 
