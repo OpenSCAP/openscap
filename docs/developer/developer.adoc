@@ -152,7 +152,7 @@ After building the library you might want to run library self-checks. To do
 that you need to have these additional packages installed:
 
 ----
-wget lua which procps-ng initscripts chkconfig sendmail bzip2 rpm-build
+wget lua which procps-ng initscripts chkconfig sendmail bzip2 rpm-build strace
 ----
 
 On Ubuntu 18.04, also install:
