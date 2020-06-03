@@ -152,7 +152,7 @@ static const struct oscap_string_map OVAL_DATETIME_FORMAT_MAP[] = {
 };
 
 oval_datetime_format_t oval_datetime_format_parse(xmlTextReaderPtr reader,
-						  char *attname, oval_arithmetic_operation_t defval)
+						  char *attname, oval_datetime_format_t defval)
 {
 	return oval_enumeration_attr(reader, attname, OVAL_DATETIME_FORMAT_MAP, defval);
 }
