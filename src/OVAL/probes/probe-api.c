@@ -894,7 +894,7 @@ oval_syschar_collection_flag_t probe_cobj_compute_flag(SEXP_t *cobj)
 			break;
 		default:
 			SEXP_free(item);
-			flag = SYSCHAR_STATUS_ERROR;
+			flag = SYSCHAR_FLAG_ERROR;
 			goto cleanup;
 		}
 	}
