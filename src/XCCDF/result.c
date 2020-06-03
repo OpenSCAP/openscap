@@ -1419,8 +1419,8 @@ static void _xccdf_rule_result_to_dom_idref(struct xccdf_rule_result *result, xm
 		xmlNode *message_node = xmlNewChild(result_node, ns_xccdf, BAD_CAST "message", encoded_content);
 		xmlFree(encoded_content);
 
-                xccdf_level_t message_severity = xccdf_message_get_severity(message);
-		if (message_severity != XCCDF_LEVEL_NOT_DEFINED)
+		xccdf_message_severity_t message_severity = xccdf_message_get_severity(message);
+		if (message_severity != XCCDF_MSG_NOT_DEFINED)
                     xmlNewProp(message_node, BAD_CAST "severity", BAD_CAST XCCDF_LEVEL_MAP[message_severity - 1].string);
 	}
 	xccdf_message_iterator_free(messages);
