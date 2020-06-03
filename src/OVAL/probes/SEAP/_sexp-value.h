@@ -41,7 +41,7 @@ typedef uint8_t SEXP_valtype_t;
 typedef struct {
         uint32_t refs;
         size_t   size;
-} __attribute__ ((packed)) SEXP_valhdr_t;
+} SEXP_valhdr_t;
 
 typedef struct {
         uintptr_t      ptr;
@@ -95,7 +95,7 @@ struct SEXP_val_lblk {
         uint16_t  real;
         uint16_t  refs;
         SEXP_t    memb[];
-} __attribute__ ((packed));
+};
 
 size_t    SEXP_rawval_list_length (struct SEXP_val_list *list);
 uintptr_t SEXP_rawval_list_copy (uintptr_t s_valp);
