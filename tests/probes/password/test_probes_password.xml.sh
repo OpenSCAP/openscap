@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 
-LINES_COUNT=`cat /etc/passwd | wc -l`
+
+passwd_file=`mktemp`
+
+# getpwent returns duplicate entries for root and nobody users
+# due to a bug in systemd-userdb.service that occurs
+# in systemd 245
+# https://github.com/systemd/systemd/issues/15160
+if which -q rpm &>/dev/null && \
+		[[ "$(rpm -q --qf "%{VERSION}" systemd)" =~ ^245 ]] ; then
+	grep -Ev '^(root|nobody)' /etc/passwd > "$passwd_file"
+else
+	cp /etc/passwd "$passwd_file"
+fi
+
+LINES_COUNT=`cat "$passwd_file" | wc -l`
 
 function getField {
-    LINE=`sed -n "${I}p" /etc/passwd`
+    LINE=`sed -n "${I}p" "$passwd_file"`
     case $1 in 
 	'username' )
 	    echo $LINE | awk -F':' '{print $1}'
