@@ -312,7 +312,7 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 			if (old_ret == NULL)
 				ret = oscap_sprintf("%s", element);
 			else
-				ret = oscap_sprintf("%s, %s", old_ret, element);
+				ret = oscap_sprintf("%s ; %s", old_ret, element);
 
 			free(old_ret);
 			free(element);
