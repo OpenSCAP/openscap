@@ -112,8 +112,8 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		}
 
 		if (xattr_count < 0) {
+			dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s", st_path_with_prefix, NULL, (size_t)0, errno, strerror(errno));
 			free(st_path_with_prefix);
-			dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s", st_path_with_prefix, NULL, 0, errno, strerror(errno));
 			return 0;
 		}
 

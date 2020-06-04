@@ -545,7 +545,7 @@ include_directories(
 	"src/XCCDF/public/"
 	"src/XCCDF_POLICY/"
 	"src/XCCDF_POLICY/public/"
-	"yaml-filter"
+	"yaml-filter/src/"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
 	${PCRE_INCLUDE_DIRS}
@@ -570,7 +570,7 @@ function(set_oscap_generic_properties TARGET_OBJECT)
 endfunction()
 
 if(OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT)
-	add_library(yamlfilter_object OBJECT yaml-filter/yaml-path.c yaml-filter/yaml-path.h)
+	add_library(yamlfilter_object OBJECT yaml-filter/src/yaml-path.c yaml-filter/src/yaml-path.h)
 	set_oscap_generic_properties(yamlfilter_object)
 endif()
 
