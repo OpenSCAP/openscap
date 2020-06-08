@@ -62,7 +62,7 @@ uintptr_t SEXP_val_ptr (SEXP_val_t *dsc);
 uintptr_t SEXP_rawval_incref (uintptr_t valp);
 int       SEXP_rawval_decref (uintptr_t valp);
 
-#define SEXP_DEFNUM(s,T)   struct SEXP_val_num_##s { T n; SEXP_numtype_t t; } __attribute__ ((packed))
+#define SEXP_DEFNUM(s,T)   struct SEXP_val_num_##s { T n; SEXP_numtype_t t; }
 #define SEXP_NCASTP(s,p) ((struct SEXP_val_num_##s *)(p))
 #define SEXP_NTYPEP(sz,p) *((SEXP_numtype_t *)(((uint8_t *)(p)) + (sz) - sizeof (SEXP_numtype_t)))
 
@@ -86,7 +86,7 @@ SEXP_DEFNUM(u64, uint64_t);
 struct SEXP_val_list {
         void    *b_addr;
         uint16_t offset;
-} __attribute__ ((packed));
+};
 
 #define SEXP_LCASTP(p) ((struct SEXP_val_list *)(p))
 
