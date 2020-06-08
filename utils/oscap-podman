@@ -110,8 +110,11 @@ shift 1
 $OSCAP_BINARY "$@"
 EXIT_CODE=$?
 
-podman umount $ID > /dev/null || die "Failed to unmount."
 if [ $CLEANUP -eq 1 ]; then
-    podman rm $ID > /dev/null || die "Failed to clean up."
+    # podman-rm should handle also unmounting of the container filesystem.
+    podman rm -f $ID > /dev/null || die "Failed to clean up."
+else
+    # If a running container is target of the scan just unmount its filesystem.
+    podman umount $ID > /dev/null || die "Failed to unmount."
 fi
 exit $EXIT_CODE
