@@ -327,12 +327,7 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 		while (dbus_message_iter_next(&array));
 
 		return ret;
-	}/*
-	else if (arg_type == DBUS_TYPE_VARIANT) {
-		DBusMessageIter inner;
-		dbus_message_iter_recurse(iter, &inner);
-		return dbus_value_to_string(&inner);
-	}*/
+	}
 
 	return NULL;
 }
