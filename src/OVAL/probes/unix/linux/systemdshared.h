@@ -236,6 +236,13 @@ cleanup:
 
 static char *dbus_value_to_string(DBusMessageIter *iter)
 {
+	/* Unfortunately we don't know anything about semantics of data that we
+	 * recieved from DBus. We can only use conversion that fits in most generic
+	 * cases. This is a difference from behavior of systemctl show command.
+	 * Systemd knows semantics of DBus data and in some situation it uses a
+	 * different conversion, for example converts integer values to date and
+	 * time.
+	 */
 	const int arg_type = dbus_message_iter_get_arg_type(iter);
 	if (dbus_type_is_basic(arg_type)) {
 		_DBusBasicValue value;
