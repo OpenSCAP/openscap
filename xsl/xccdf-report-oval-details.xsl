@@ -50,18 +50,43 @@ Authors:
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:extend_definition'>
-    <xsl:apply-templates select='key("ovalres-definition", @definition_ref)' mode='brief' />
+    <li>
+        <xsl:apply-templates select='key("ovalres-definition", @definition_ref)' mode='brief' />
+    </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:criterion'>
-    <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
-        <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
-    </xsl:apply-templates>
+    <li>
+        <xsl:apply-templates select='key("oval-test", @test_ref)' mode='brief'>
+            <xsl:with-param name='title' select='key("oval-testdef", @test_ref)/@comment'/>
+        </xsl:apply-templates>
+    </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:criteria'>
-    <!-- descend deeper into the logic formula -->
-    <xsl:apply-templates mode='brief' />
+    <li>
+        <h4>
+            <span class="label label-primary">
+                <xsl:value-of select="@operator"/>
+            </span><!-- #160 is nbsp -->&#160;
+            <xsl:choose>
+                <xsl:when test="@result='true'">
+                    <span class="label label-success">
+                        <xsl:value-of select="@result"/>
+                    </span>
+                </xsl:when>
+                <xsl:otherwise>
+                    <span class="label label-danger">
+                        <xsl:value-of select="@result"/>
+                    </span>
+                </xsl:otherwise>
+            </xsl:choose>
+        </h4>
+        <ul>
+            <!-- descend deeper into the logic formula -->
+            <xsl:apply-templates mode='brief' />
+        </ul>
+    </li>
 </xsl:template>
 
 <xsl:template mode='brief' match='ovalres:definition'>
@@ -89,7 +114,9 @@ Authors:
             </xsl:otherwise>
         </xsl:choose>
     </h4>
-    <xsl:apply-templates mode='brief' select="ovalres:criteria" />
+    <ul>
+        <xsl:apply-templates mode='brief' select="ovalres:criteria" />
+    </ul>
 </xsl:template>
 
 <!-- OVAL items dump -->
