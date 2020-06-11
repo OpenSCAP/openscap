@@ -66,8 +66,6 @@
 #define __NAME_PREFIX__ ___rb_
 #define __TREETYPE_PREFIX rbtree_
 #define __NODETYPE_PREFIX rbnode_
-#define __NODETYPE_ATTRS__  __attribute__ ((packed))
-#define __TREETYPE_ATTRS__  __attribute__ ((packed))
 
 typedef uint8_t side_t;
 typedef uint8_t color_t;
@@ -146,12 +144,12 @@ typedef uint8_t color_t;
                 side_t  ___s: 1; /* Node side relative to parent */     \
                 /* USER data */						\
                 __u_nitem;                                              \
-        } __NODETYPE_ATTRS__;                                           \
+        };                                                              \
                                                                         \
         TREETYPE(__t_name) {						\
                 NODETYPE(__t_name) *root;                               \
                 size_t size;                                            \
-        } __TREETYPE_ATTRS__;                                           \
+        };                                                              \
                                                                         \
         DEF_RBN_NODEJOIN(__t_name);					\
         DEF_RBN_NODECMP(__t_name);					\

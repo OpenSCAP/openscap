@@ -92,7 +92,7 @@ cvrf_doc_status_type_t cvrf_doc_status_type_parse(xmlTextReaderPtr reader) {
 	if (valuestr) {
 		return oscap_string_to_enum(CVRF_DOC_STATUS_TYPE_MAP, valuestr);
 	}
-	return CVRF_DOC_PUBLISHER_UNKNOWN;
+	return CVRF_DOC_STATUS_UNKNOWN;
 }
 const char *cvrf_doc_status_type_get_text(cvrf_doc_status_type_t doc_status_type) {
 	return oscap_enum_to_string(CVRF_DOC_STATUS_TYPE_MAP, doc_status_type);

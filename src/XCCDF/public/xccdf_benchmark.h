@@ -126,6 +126,7 @@ typedef enum {
 
 /// Severity of an xccdf_message.
 typedef enum {
+	XCCDF_MSG_NOT_DEFINED = 0,
 	XCCDF_MSG_INFO = XCCDF_INFO,	///< Info.
 	XCCDF_MSG_WARNING = XCCDF_LOW,	///< Warning.
 	XCCDF_MSG_ERROR = XCCDF_HIGH,	///< Error
