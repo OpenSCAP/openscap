@@ -145,6 +145,9 @@ find_package(BZip2)
 # PThread
 if (WIN32)
 	find_package(ZLIB REQUIRED)
+endif()
+
+if (WIN32 AND NOT MINGW)
 	find_package(pthread CONFIG REQUIRED)
 	set(CMAKE_THREAD_LIBS_INIT ${PThreads4W_LIBRARY})
 else()
@@ -366,7 +369,7 @@ message(STATUS "  Independent variable probe: ${OPENSCAP_PROBE_INDEPENDENT_VARIA
 
 message(STATUS "")
 message(STATUS "Independent probes incompatible with WIN32 (WIN32 status: ${IS_WIN32})")
-message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}") 
+message(STATUS "  Independent environmentvariable probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE}")
 message(STATUS "  Independent environmentvariable58 probe: ${OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE58}")
 message(STATUS "  Independent filehash probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH}")
 message(STATUS "  Independent filehash58 probe: ${OPENSCAP_PROBE_INDEPENDENT_FILEHASH58}")
