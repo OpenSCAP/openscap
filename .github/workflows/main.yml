@@ -6,16 +6,52 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [ master, maint-1.3 ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, maint-1.3 ]
+
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  ubuntu:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+
+    # Runs a single command using the runners shell
+    - name: Install packages
+      run: |
+        sudo apt-get update
+        sudo apt-get upgrade
+        sudo apt-get install lcov swig xsltproc rpm-common lua50 libyaml-dev libapt-pkg-dev libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libxslt1-dev libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev librtmp-dev 
+        sudo apt-get remove rpm
+
+    # Runs a set of commands using the runners shell
+    - name: Build
+      run: |
+        cd $GITHUB_WORKSPACE/build
+        cmake -DCMAKE_BUILD_TYPE=Debug ../
+        make all
+
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE/build
+        ctest --output-on-failure
+
+  macos:
+    # The type of runner that the job will run on
+    runs-on: macos-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -24,12 +60,22 @@ jobs:
 
     # Runs a single command using the runners shell
     - name: Install packages
-      run: sudo apt-get install lcov swig xsltproc rpm-common lua50 libdbus-1-dev libdbus-glib-1-dev libcurl4-openssl-dev libgcrypt-dev libselinux1-dev libgconf2-dev libacl1-dev libblkid-dev libcap-dev libxml2-dev libxml-parser-perl libxml-xpath-perl libperl-dev librpm-dev librtmp-dev 
+      run: |
+        brew update
+        brew remove python@2
+        brew install doxygen
+        brew install opendbx
+        brew install popt
+        brew install swig
 
     # Runs a set of commands using the runners shell
     - name: Build
       run: |
-        cd $GITHUB_WORKSPACE
-        cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug ../
+        cd $GITHUB_WORKSPACE/build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_PROBES=false ../
         make all
+
+    - name: Test
+      run: |
+        cd $GITHUB_WORKSPACE/build
+        echo "Tests are so broken for MacOS :("
