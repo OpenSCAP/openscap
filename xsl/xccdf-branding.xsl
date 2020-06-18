@@ -29,9 +29,9 @@ logo to the HTML report / guide header.
 -->
 
 <xsl:stylesheet version="1.1"
-	xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2">
+	xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
+	exclude-result-prefixes="xsl cdf">
 
 <xsl:param name="oscap-version"/>
 
