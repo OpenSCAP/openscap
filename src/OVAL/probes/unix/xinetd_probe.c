@@ -740,7 +740,7 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 				case XICONF_INCTYPE_DIR:
 				{
 					DIR           *dirfp;
-					struct dirent  dent, *dentp = NULL;
+					struct dirent *dent = NULL;
 
 					dD("includedir open: %s", inclarg);
 					dirfp = opendir (inclarg);
@@ -766,22 +766,22 @@ xiconf_t *xiconf_parse(const char *path, unsigned int max_depth)
 					}
 
 					for (;;) {
-						if (readdir_r (dirfp, &dent, &dentp) != 0) {
-							dW("Can't read directory: %s; %d, %s.", inclarg, errno, strerror (errno));
+						errno = 0;
+						dent = readdir (dirfp);
+						if (dent == NULL) {
+							if (errno)
+								dW("Can't read directory: %s; %d, %s.", inclarg, errno, strerror (errno));
 							break;
 						}
 
-						if (dentp == NULL)
-							break;
-
-						if (fnmatch ("*~",  dent.d_name, FNM_PATHNAME) == 0 ||
-						    fnmatch ("*.*", dent.d_name, FNM_PATHNAME) == 0)
+						if (fnmatch ("*~",  dent->d_name, FNM_PATHNAME) == 0 ||
+						    fnmatch ("*.*", dent->d_name, FNM_PATHNAME) == 0)
 						{
-							dD("Skipping: %s", dent.d_name);
+							dD("Skipping: %s", dent->d_name);
 							continue;
 						}
 
-						strcpy(pathbuf + incllen, dent.d_name);
+						strcpy(pathbuf + incllen, dent->d_name);
 
 						if (xiconf_add_cfile (xiconf, pathbuf, xifile->depth + 1) != 0)
 							continue;
