@@ -572,14 +572,14 @@ Authors:
                             </xsl:otherwise>
                         </xsl:choose>
                     </a>
+                    <xsl:if test="cdf:Group and $levels&gt;1">
+                        <xsl:call-template name="table-of-contents-items">
+                            <xsl:with-param name="item" select="."/>
+                            <xsl:with-param name="levels" select="$levels - 1"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:call-template>
+                    </xsl:if>
                 </li>
-                <xsl:if test="cdf:Group and $levels&gt;1">
-                    <xsl:call-template name="table-of-contents-items">
-                        <xsl:with-param name="item" select="."/>
-                        <xsl:with-param name="levels" select="$levels - 1"/>
-                        <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:call-template>
-                </xsl:if>
             </xsl:if>
         </xsl:for-each>
     </ol>
