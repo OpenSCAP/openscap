@@ -1001,7 +1001,7 @@ Authors:
             <xsl:with-param name="item" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
-        <a href="#result-details"><button type="button" class="btn btn-secondary noprint">Scroll back to the first rule</button></a>
+        <a href="#result-details" class="btn btn-info noprint">Scroll back to the first rule</a>
     </div>
 </xsl:template>
 
