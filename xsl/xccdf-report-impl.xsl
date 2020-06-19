@@ -826,24 +826,20 @@ Authors:
             </xsl:if>
             <xsl:if test="$item/cdf:description">
                 <tr><td>Description</td><td><div class="description">
-                    <p>
                         <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                             <xsl:with-param name="testresult" select="$testresult"/>
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
-                    </p>
                 </div></td></tr>
             </xsl:if>
             <xsl:if test="$item/cdf:rationale">
                 <tr><td>Rationale</td><td><div class="rationale">
-                    <p>
                         <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
                             <xsl:with-param name="testresult" select="$testresult"/>
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
-                    </p>
                 </div></td></tr>
             </xsl:if>
             <xsl:if test="$item/cdf:warning">
