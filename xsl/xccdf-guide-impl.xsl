@@ -209,12 +209,12 @@ Authors:
 
                         <tr><td colspan="2">
                             <xsl:if test="$item/cdf:description">
-                                <div class="description"><p>
+                                <div class="description">
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
                                     </xsl:apply-templates>
-                                 </p></div>
+                                 </div>
                             </xsl:if>
 
                             <xsl:for-each select="$item/cdf:warning">
@@ -232,12 +232,10 @@ Authors:
 
                         <xsl:if test="$item/cdf:rationale">
                             <tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">
-                                <p>
                                     <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
                                         <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                                         <xsl:with-param name="profile" select="$profile"/>
                                     </xsl:apply-templates>
-                                </p>
                             </div></td></tr>
                         </xsl:if>
 
@@ -462,7 +460,7 @@ Authors:
                 </xsl:attribute>
             </xsl:if>
 
-            <td style="padding-left: {$indent * 19}px" colspan="2">
+            <td style="padding-left: {$indent * 19}px">
                 <xsl:attribute name="id">
                     <xsl:value-of select="$item/@id"/>
                 </xsl:attribute>
@@ -492,14 +490,14 @@ Authors:
                     </xsl:attribute>
                 </xsl:if>
 
-                <td style="padding-left: {$indent * 19}px" colspan="2">
-                    <p>
+                <td style="padding-left: {$indent * 19}px">
+                    <div>
                         <a class="small" href="{concat('#', $item/@id)}">[ref]</a>&#160;&#160;
                         <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
-                    </p>
+                    </div>
 
                     <xsl:for-each select="$item/cdf:warning">
                         <div class="panel panel-warning">
