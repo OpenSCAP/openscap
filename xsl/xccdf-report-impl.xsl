@@ -226,6 +226,7 @@ Authors:
         <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass' or cdf:result/text() = 'fixed'])"/>
         <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
         <xsl:variable name="uncertain_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'error' or cdf:result/text() = 'unknown'])"/>
+        <xsl:variable name="not_ignored_rules_count" select="$total_rules_count - $ignored_rules_count"/>
 
         <xsl:choose>
             <xsl:when test="$failed_rules_count > 0">
@@ -251,17 +252,24 @@ Authors:
         </xsl:choose>
 
         <h3>Rule results</h3>
-        <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were {$total_rules_count - $ignored_rules_count} rules taken into account.">
-            <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
-                <xsl:value-of select="$passed_rules_count"/> passed
-            </div>
-            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
-                <xsl:value-of select="$failed_rules_count"/> failed
-            </div>
-            <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div ($total_rules_count - $ignored_rules_count)) * 100}%">
-                <xsl:value-of select="$total_rules_count - $ignored_rules_count - $passed_rules_count - $failed_rules_count"/> other
-            </div>
-        </div>
+        <xsl:choose>
+            <xsl:when test="$not_ignored_rules_count > 0" >
+                <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were $not_ignored_rules_count rules taken into account.">
+                    <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div $not_ignored_rules_count * 100}%">
+                        <xsl:value-of select="$passed_rules_count"/> passed
+                    </div>
+                    <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div $not_ignored_rules_count * 100}%">
+                        <xsl:value-of select="$failed_rules_count"/> failed
+                    </div>
+                    <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div $not_ignored_rules_count) * 100}%">
+                        <xsl:value-of select="$not_ignored_rules_count - $passed_rules_count - $failed_rules_count"/> other
+                    </div>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div>No rules were evaluated.</div>
+            </xsl:otherwise>
+        </xsl:choose>
 
         <xsl:variable name="failed_rules_low_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'low')])"/>
         <xsl:variable name="failed_rules_medium_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'medium')])"/>
@@ -269,21 +277,23 @@ Authors:
 
         <xsl:variable name="failed_rules_other_severity" select="$failed_rules_count - $failed_rules_high_severity - $failed_rules_medium_severity - $failed_rules_low_severity"/>
 
-        <h3>Severity of failed rules</h3>
-        <div class="progress" title="Displays proportion of high, medium, low, and other severity failed rules (in that order). There were {$failed_rules_count} total failed rules.">
-            <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_other_severity"/> other
+        <xsl:if test="$failed_rules_count > 0">
+            <h3>Severity of failed rules</h3>
+            <div class="progress" title="Displays proportion of high, medium, low, and other severity failed rules (in that order). There were {$failed_rules_count} total failed rules.">
+                <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_other_severity"/> other
+                </div>
+                <div class="progress-bar progress-bar-info" style="width: {$failed_rules_low_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_low_severity"/> low
+                </div>
+                <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_medium_severity"/> medium
+                </div>
+                <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_high_severity"/> high
+                </div>
             </div>
-            <div class="progress-bar progress-bar-info" style="width: {$failed_rules_low_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_low_severity"/> low
-            </div>
-            <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_medium_severity"/> medium
-            </div>
-            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_high_severity"/> high
-            </div>
-        </div>
+        </xsl:if>
 
         <h3 title="As per the XCCDF specification">Score</h3>
         <table class="table table-striped table-bordered">
