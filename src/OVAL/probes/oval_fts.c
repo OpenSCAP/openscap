@@ -1029,6 +1029,15 @@ static FTSENT *oval_fts_read_match_path(OVAL_FTS *ofts)
 
 		if (ores == OVAL_RESULT_TRUE)
 			break;
+		if (ofts->ofts_path_op == OVAL_OPERATION_EQUALS) {
+			/* At this point the comparison result isn't OVAL_RESULT_TRUE. Since
+			we passed the exact path (from filepath or path elements) to
+			fts_open() we surely know that we can't find other items that would
+			be equal. Therefore we can terminate the matching. This can happen
+			if the filepath or path element references a variable that has
+			multiple different values. */
+			return NULL;
+		}
 	} /* for (;;) */
 
 	/*
