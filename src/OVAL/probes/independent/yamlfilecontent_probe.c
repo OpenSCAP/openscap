@@ -73,7 +73,7 @@ static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t *event)
 	char *tag = (char *) event->data.scalar.tag;
 	char *value = (char *) event->data.scalar.value;
 
-	/* nodes lacking an explicit tag are given a non-specific tag:
+	/* Nodes lacking an explicit tag are given a non-specific tag:
 	 * “!” for non-plain scalars, and “?” for all other nodes
 	 */
 	if (tag == NULL) {
@@ -139,30 +139,30 @@ static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t *event)
 	return SEXP_string_new(value, strlen(value));
 }
 
+#define result_error(fmt, args...)                                       \
+do {                                                                     \
+	SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, fmt, args); \
+	probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);                   \
+	SEXP_free(msg);                                                      \
+	probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);   \
+	ret = -1;                                                            \
+} while (0)
+
 static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
 {
 	int ret = 0;
 	FILE *yaml_file = fopen(filepath, "r");
 	if (yaml_file == NULL) {
-		SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-			"Unable to open file '%s': %s", filepath, strerror(errno));
-		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-		return -1;
+		result_error("Unable to open file '%s': %s", filepath, strerror(errno));
+		return ret;
 	}
 
 	yaml_path_t *yaml_path = yaml_path_create();
 	if (yaml_path_parse(yaml_path, (char *) yaml_path_cstr)) {
-		SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-			"Invalid YAML path '%s' (%s)\n", yaml_path_cstr,
-			yaml_path_error_get(yaml_path)->message);
-		probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-		SEXP_free(msg);
-		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
+		result_error("Invalid YAML path '%s': %s", yaml_path_cstr, yaml_path_error_get(yaml_path)->message);
 		yaml_path_destroy(yaml_path);
 		fclose(yaml_file);
-		return -1;
+		return ret;
 	};
 
 	yaml_parser_t parser;
@@ -172,76 +172,109 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 	yaml_event_t event;
 	yaml_event_type_t event_type;
 	bool sequence = false;
+	bool mapping = false;
+	int index = 0;
+	char *key = strdup("");
+
+	struct oscap_htable *record = NULL;
 
 	do {
 		if (!yaml_parser_parse(&parser, &event)) {
-			SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-				"YAML parser error: yaml_parse_parse returned 0: %s",
-				parser.problem);
-			probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-			SEXP_free(msg);
-			probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-			ret = -1;
+			result_error("YAML parser error: %s", parser.problem);
 			goto cleanup;
 		}
-
-		event_type = event.type;
 		if (!yaml_path_filter_event(yaml_path, &parser, &event,
 				YAML_PATH_FILTER_RETURN_ALL)) {
 			goto next;
 		}
+
+		event_type = event.type;
+
 		if (sequence) {
 			if (event_type == YAML_SEQUENCE_END_EVENT) {
 				sequence = false;
-			} else if (event_type != YAML_SCALAR_EVENT) {
-				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-					"YAML path '%s' contains non-scalar in a sequence.",
-					yaml_path_cstr);
-				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-				SEXP_free(msg);
-				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-				ret = -1;
+			} else if (event_type == YAML_SEQUENCE_START_EVENT) {
+				result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);
 				goto cleanup;
 			}
 		} else {
 			if (event_type == YAML_SEQUENCE_START_EVENT) {
 				sequence = true;
 			}
-			if (event_type == YAML_MAPPING_START_EVENT) {
-				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-					"YAML path '%s' matches a mapping.",
-					yaml_path_cstr);
-				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-				SEXP_free(msg);
-				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-				ret = -1;
+		}
+
+		if (mapping) {
+			if (event_type == YAML_MAPPING_END_EVENT) {
+				mapping = false;
+				oscap_list_add(values, record);
+				record = NULL;
+			} else if (event_type == YAML_MAPPING_START_EVENT) {
+				result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);
 				goto cleanup;
+			}
+		} else {
+			if (event_type == YAML_MAPPING_START_EVENT) {
+				if (record) {
+					result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);
+					goto cleanup;
+				}
+				mapping = true;
+				sequence = false;
+				index = 0;
+				record = oscap_htable_new();
 			}
 		}
+
 		if (event_type == YAML_SCALAR_EVENT) {
+			if (mapping) {
+				if (!sequence) {
+					if (index++ % 2 == 0) {
+						free(key);
+						key = strdup((const char *) event.data.scalar.value);
+						goto next;
+					}
+				}
+			}
+
 			SEXP_t *sexp = yaml_scalar_event_to_sexp(&event);
 			if (sexp == NULL) {
-				SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR,
-					"Can't convert '%s %s' to SEXP", event.data.scalar.tag,
-					event.data.scalar.value);
-				probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);
-				SEXP_free(msg);
-				probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
-				ret = -1;
+				result_error("Can't convert '%s %s' to SEXP", event.data.scalar.tag, event.data.scalar.value);
 				goto cleanup;
 			}
-			oscap_list_add(values, sexp);
+
+			if (!record)
+				record = oscap_htable_new();
+			struct oscap_list *field = oscap_htable_get(record, key);
+			if (!field) {
+				field = oscap_list_new();
+				oscap_htable_add(record, key, field);
+			}
+
+			oscap_list_add(field, sexp);
 		}
 next:
 		yaml_event_delete(&event);
 	} while (event_type != YAML_STREAM_END_EVENT);
 
 cleanup:
+	if (record)
+		oscap_list_add(values, record);
+	free(key);
 	yaml_parser_delete(&parser);
 	yaml_path_destroy(yaml_path);
 	fclose(yaml_file);
 
 	return ret;
+}
+
+static void record_free(struct oscap_list *items)
+{
+	oscap_list_free(items, (oscap_destruct_func) SEXP_free);
+}
+
+static void values_free(struct oscap_htable *record)
+{
+	oscap_htable_free(record, (oscap_destruct_func) record_free);
 }
 
 static int process_yaml_file(const char *prefix, const char *path, const char *filename, const char *yamlpath, probe_ctx *ctx)
@@ -265,21 +298,37 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 			"path", OVAL_DATATYPE_STRING, path,
 			"filename", OVAL_DATATYPE_STRING, filename,
 			"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
-			/*
-			"windows_view",
-			*/
+			// TODO: Implement "windows_view",
 			NULL
 		);
 		while (oscap_iterator_has_more(values_it)) {
-			SEXP_t *value_sexp = oscap_iterator_next(values_it);
-			probe_item_ent_add(item, "value_of", NULL, value_sexp);
+			SEXP_t *result_ent = probe_ent_creat1("value", NULL, NULL);
+			probe_ent_setdatatype(result_ent, OVAL_DATATYPE_RECORD);
+			struct oscap_htable *record = oscap_iterator_next(values_it);
+			struct oscap_htable_iterator *record_it = oscap_htable_iterator_new(record);
+			while(oscap_htable_iterator_has_more(record_it)) {
+				const struct oscap_htable_item *record_item = oscap_htable_iterator_next(record_it);
+				struct oscap_iterator *item_value_it = oscap_iterator_new(record_item->value);
+				SEXP_t se_tmp_mem;
+				SEXP_t *key = SEXP_string_new_r(&se_tmp_mem, record_item->key, strlen(record_item->key));
+				while(oscap_iterator_has_more(item_value_it)) {
+					SEXP_t *value_sexp = oscap_iterator_next(item_value_it);
+					SEXP_t *field = probe_ent_creat1("field", NULL, value_sexp);
+					probe_item_attr_add(field, "name", key);
+					SEXP_list_add(result_ent, field);
+				}
+				oscap_iterator_free(item_value_it);
+				SEXP_free_r(&se_tmp_mem);
+			}
+			oscap_htable_iterator_free(record_it);
+			SEXP_list_add(item, result_ent);
 		}
 		probe_item_collect(ctx, item);
 	}
 	oscap_iterator_free(values_it);
 
 cleanup:
-	oscap_list_free(values, (oscap_destruct_func) SEXP_free);
+	oscap_list_free(values, (oscap_destruct_func) values_free);
 	free(filepath_with_prefix);
 	free(filepath);
 	return ret;

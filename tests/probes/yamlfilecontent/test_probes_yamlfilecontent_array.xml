@@ -76,11 +76,15 @@
   <states>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
-      <ind-def:value_of datatype="string">secureforward-offcluster</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="" datatype="string">secureforward-offcluster</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
-      <ind-def:value_of datatype="string" var_ref="oval:0:var:2" var_check="at least one" />
+      <ind-def:value datatype="record">
+        <field name="" datatype="string" var_ref="oval:0:var:2" var_check="at least one" entity_check="at least one"/>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
   </states>

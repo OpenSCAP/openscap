@@ -21,7 +21,7 @@
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="oval:0:def:2"> <!-- comment="error" -->
+    <definition class="compliance" version="1" id="oval:0:def:2"> <!-- comment="true" -->
       <metadata>
         <title></title>
         <description></description>
@@ -41,6 +41,26 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:4"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="multiple_mapping_values" test_ref="oval:0:tst:5"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:5"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="map_target" test_ref="oval:0:tst:6"/>
+      </criteria>
+    </definition>
+
   </definitions>
 
   <tests>
@@ -55,12 +75,22 @@
       <ind-def:state state_ref="oval:0:ste:2"/>
     </ind-def:yamlfilecontent_test>
 
-    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="error">
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="true">
       <ind-def:object object_ref="oval:0:obj:3"/>
     </ind-def:yamlfilecontent_test>
 
     <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:4" check="all" comment="false">
       <ind-def:object object_ref="oval:0:obj:4"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:5" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:5"/>
+      <ind-def:state state_ref="oval:0:ste:5"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:6" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:6"/>
+      <ind-def:state state_ref="oval:0:ste:6"/>
     </ind-def:yamlfilecontent_test>
 
   </tests>
@@ -91,16 +121,48 @@
       <ind-def:yamlpath>.doesnt.exist</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:5">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.status.conditions[:]['status','type']</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:6">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.status.conditions[:]</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
   </objects>
 
   <states>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
-      <ind-def:value_of datatype="string">LogForwarding</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="" datatype="string">LogForwarding</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
-      <ind-def:value_of datatype="string">openshift-logging</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="" datatype="string">openshift-logging</field>
+      </ind-def:value>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:5">
+      <ind-def:value datatype="record" entity_check="at least one">
+        <field name="status" datatype="string">True</field>
+        <field name="type" datatype="string">Upgradeable</field>
+      </ind-def:value>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:6">
+      <ind-def:value datatype="record" entity_check="at least one">
+        <field name="status" datatype="string">True</field>
+        <field name="reason" datatype="string">AsExpected</field>
+        <field name="type" datatype="string">Upgradeable</field>
+        <field name="lastTransitionTime" datatype="string" operation="pattern match">^\d+-\d+-.*Z$</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
   </states>
