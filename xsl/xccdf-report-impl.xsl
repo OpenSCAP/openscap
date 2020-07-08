@@ -24,14 +24,13 @@ Authors:
 -->
 
 <xsl:stylesheet version="1.1"
-    xmlns="http://www.w3.org/1999/xhtml"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:cdf="http://checklists.nist.gov/xccdf/1.2"
     xmlns:ovalres="http://oval.mitre.org/XMLSchema/oval-results-5"
     xmlns:sceres="http://open-scap.org/page/SCE_result_file"
     xmlns:exsl="http://exslt.org/common"
     xmlns:arf="http://scap.nist.gov/schema/asset-reporting-format/1.1"
-    exclude-result-prefixes="xsl cdf ovalres sceres exsl">
+    exclude-result-prefixes="xsl cdf ovalres sceres exsl arf">
 
 <!-- This selects all the references, even if the SDS has multiple benchmarks.
      That is fine because we will go through just the benchmark references
@@ -227,6 +226,7 @@ Authors:
         <xsl:variable name="passed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'pass' or cdf:result/text() = 'fixed'])"/>
         <xsl:variable name="failed_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'fail'])"/>
         <xsl:variable name="uncertain_rules_count" select="count($testresult/cdf:rule-result[cdf:result/text() = 'error' or cdf:result/text() = 'unknown'])"/>
+        <xsl:variable name="not_ignored_rules_count" select="$total_rules_count - $ignored_rules_count"/>
 
         <xsl:choose>
             <xsl:when test="$failed_rules_count > 0">
@@ -252,17 +252,24 @@ Authors:
         </xsl:choose>
 
         <h3>Rule results</h3>
-        <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were {$total_rules_count - $ignored_rules_count} rules taken into account.">
-            <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
-                <xsl:value-of select="$passed_rules_count"/> passed
-            </div>
-            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div ($total_rules_count - $ignored_rules_count) * 100}%">
-                <xsl:value-of select="$failed_rules_count"/> failed
-            </div>
-            <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div ($total_rules_count - $ignored_rules_count)) * 100}%">
-                <xsl:value-of select="$total_rules_count - $ignored_rules_count - $passed_rules_count - $failed_rules_count"/> other
-            </div>
-        </div>
+        <xsl:choose>
+            <xsl:when test="$not_ignored_rules_count > 0" >
+                <div class="progress" title="Displays proportion of passed/fixed, failed/error, and other rules (in that order). There were $not_ignored_rules_count rules taken into account.">
+                    <div class="progress-bar progress-bar-success" style="width: {$passed_rules_count div $not_ignored_rules_count * 100}%">
+                        <xsl:value-of select="$passed_rules_count"/> passed
+                    </div>
+                    <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_count div $not_ignored_rules_count * 100}%">
+                        <xsl:value-of select="$failed_rules_count"/> failed
+                    </div>
+                    <div class="progress-bar progress-bar-warning" style="width: {(1 - ($passed_rules_count + $failed_rules_count) div $not_ignored_rules_count) * 100}%">
+                        <xsl:value-of select="$not_ignored_rules_count - $passed_rules_count - $failed_rules_count"/> other
+                    </div>
+                </div>
+            </xsl:when>
+            <xsl:otherwise>
+                <div>No rules were evaluated.</div>
+            </xsl:otherwise>
+        </xsl:choose>
 
         <xsl:variable name="failed_rules_low_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'low')])"/>
         <xsl:variable name="failed_rules_medium_severity" select="count($testresult/cdf:rule-result[(cdf:result/text() = 'fail') and (@severity = 'medium')])"/>
@@ -270,21 +277,23 @@ Authors:
 
         <xsl:variable name="failed_rules_other_severity" select="$failed_rules_count - $failed_rules_high_severity - $failed_rules_medium_severity - $failed_rules_low_severity"/>
 
-        <h3>Severity of failed rules</h3>
-        <div class="progress" title="Displays proportion of high, medium, low, and other severity failed rules (in that order). There were {$failed_rules_count} total failed rules.">
-            <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_other_severity"/> other
+        <xsl:if test="$failed_rules_count > 0">
+            <h3>Severity of failed rules</h3>
+            <div class="progress" title="Displays proportion of high, medium, low, and other severity failed rules (in that order). There were {$failed_rules_count} total failed rules.">
+                <div class="progress-bar progress-bar-success" style="width: {$failed_rules_other_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_other_severity"/> other
+                </div>
+                <div class="progress-bar progress-bar-info" style="width: {$failed_rules_low_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_low_severity"/> low
+                </div>
+                <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_medium_severity"/> medium
+                </div>
+                <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
+                    <xsl:value-of select="$failed_rules_high_severity"/> high
+                </div>
             </div>
-            <div class="progress-bar progress-bar-info" style="width: {$failed_rules_low_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_low_severity"/> low
-            </div>
-            <div class="progress-bar progress-bar-warning" style="width: {$failed_rules_medium_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_medium_severity"/> medium
-            </div>
-            <div class="progress-bar progress-bar-danger" style="width: {$failed_rules_high_severity div $failed_rules_count * 100}%">
-                <xsl:value-of select="$failed_rules_high_severity"/> high
-            </div>
-        </div>
+        </xsl:if>
 
         <h3 title="As per the XCCDF specification">Score</h3>
         <table class="table table-striped table-bordered">
@@ -827,24 +836,20 @@ Authors:
             </xsl:if>
             <xsl:if test="$item/cdf:description">
                 <tr><td>Description</td><td><div class="description">
-                    <p>
                         <xsl:apply-templates mode="sub-testresult" select="$item/cdf:description">
                             <xsl:with-param name="testresult" select="$testresult"/>
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
-                    </p>
                 </div></td></tr>
             </xsl:if>
             <xsl:if test="$item/cdf:rationale">
                 <tr><td>Rationale</td><td><div class="rationale">
-                    <p>
                         <xsl:apply-templates mode="sub-testresult" select="$item/cdf:rationale">
                             <xsl:with-param name="testresult" select="$testresult"/>
                             <xsl:with-param name="benchmark" select="$item/ancestor::cdf:Benchmark"/>
                             <xsl:with-param name="profile" select="$profile"/>
                         </xsl:apply-templates>
-                    </p>
                 </div></td></tr>
             </xsl:if>
             <xsl:if test="$item/cdf:warning">
@@ -1006,7 +1011,7 @@ Authors:
             <xsl:with-param name="item" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
-        <a href="#result-details"><button type="button" class="btn btn-secondary noprint">Scroll back to the first rule</button></a>
+        <a href="#result-details" class="btn btn-info noprint">Scroll back to the first rule</a>
     </div>
 </xsl:template>
 
@@ -1019,7 +1024,6 @@ Authors:
     <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html></xsl:text>
     <html lang="en">
     <head>
-        <meta charset="utf-8"/>
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title><xsl:value-of select="$testresult/@id"/> | OpenSCAP Evaluation Report</title>
