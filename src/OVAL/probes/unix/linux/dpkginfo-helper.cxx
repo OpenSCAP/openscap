@@ -15,33 +15,30 @@
 #include <apt-pkg/pkgcache.h>
 #include <apt-pkg/pkgrecords.h>
 #include <apt-pkg/pkgsystem.h>
+#include <apt-pkg/cachefile.h>
 
 #include "dpkginfo-helper.h"
 
 using namespace std;
 
 static int _init_done = 0;
-static pkgCache *cgCache = NULL;
+static pkgCacheFile *cgCache = NULL;
+
 static MMap *dpkg_mmap = NULL;
 
 static int opencache (void) {
         if (pkgInitConfig (*_config) == false) return 0;
-        if (pkgInitSystem (*_config, _system) == false) return 0;
 
         const char* root = getenv("OSCAP_PROBE_ROOT");
-        string pkgCacheRoot(root != NULL ? root : "");
-
-        FileFd *fd = new FileFd (pkgCacheRoot + _config->FindFile ("Dir::Cache::pkgcache"),
-                        FileFd::ReadOnly);
-
-        dpkg_mmap = new MMap (*fd, MMap::Public|MMap::ReadOnly);
-        if (_error->PendingError () == true) {
-                _error->DumpErrors ();
-                return 0;
+        if (root != NULL) {
+            string pkgCacheRoot(root);
+            _config->Set("RootDir", pkgCacheRoot);
         }
 
-        cgCache = new pkgCache (dpkg_mmap);
-        if (0 == cgCache) return 0;
+        if (pkgInitSystem (*_config, _system) == false) return 0;
+
+        if (!cgCache->ReadOnlyOpen(NULL)) return 0;
+
         if (_error->PendingError () == true) {
                 _error->DumpErrors ();
                 return 0;
@@ -52,7 +49,7 @@ static int opencache (void) {
 
 struct dpkginfo_reply_t * dpkginfo_get_by_name(const char *name, int *err)
 {
-        pkgCache &cache = *cgCache;
+        pkgCache &cache = *cgCache->GetPkgCache();
         pkgRecords Recs (cache);
         struct dpkginfo_reply_t *reply = NULL;
 
@@ -125,6 +122,7 @@ void dpkginfo_free_reply(struct dpkginfo_reply_t *reply)
 
 int dpkginfo_init()
 {
+        cgCache = new pkgCacheFile;
         if (_init_done == 0)
                 if (opencache() != 1) {
                         return -1;
@@ -135,6 +133,8 @@ int dpkginfo_init()
 
 int dpkginfo_fini()
 {
+        cgCache->Close();
+
         delete cgCache;
         cgCache = NULL;
 
