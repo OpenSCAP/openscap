@@ -176,7 +176,7 @@ cleanup:
 
 bool getopt_cve(int argc, char **argv, struct oscap_action *action)
 {
-        if( (action->module == &CVE_VALIDATE_MODULE)) {
+        if (action->module == &CVE_VALIDATE_MODULE) {
                 if( argc != 4 ) {
                         oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
                         return false;
