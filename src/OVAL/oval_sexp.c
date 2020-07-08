@@ -911,7 +911,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 				break;
 			default:
 				dE("Unexpected SEXP number datatype: %d, name: '%s'.", sndt, key);
-				valp = '\0';
+				valp = NULL;
 				break;
 			}
 			break;
@@ -926,7 +926,7 @@ static struct oval_sysent *oval_sexp_to_sysent(struct oval_syschar_model *model,
 		default:
 			dE("Unexpected OVAL datatype: %d, '%s', name: '%s'.",
 			   dt, oval_datatype_get_text(dt), key);
-			valp = '\0';
+			valp = NULL;
 			break;
 		}
 
