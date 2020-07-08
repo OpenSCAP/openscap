@@ -1129,7 +1129,7 @@ oval_result_t oval_result_test_eval(struct oval_result_test *rtest)
 	dI("Evaluating %s test '%s': %s.", type, test_id, comment);
 
 	if (rtest->result == OVAL_RESULT_NOT_EVALUATED) {
-		if ((oval_independent_subtype_t)oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN ) {
+		if (oval_test_get_subtype(oval_result_test_get_test(rtest)) != OVAL_INDEPENDENT_UNKNOWN) {
 			struct oval_string_map *tmp_map = oval_string_map_new();
 			void *args[] = { rtest->system, rtest, tmp_map };
 			dIndent(1);
