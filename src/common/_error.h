@@ -55,6 +55,6 @@ struct oscap_err_t {
 /**
  * Set an error
  */
-void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, ...);
+void __oscap_seterr(const char *file, uint32_t line, const char *func, oscap_errfamily_t family, const char *fmt, ...);
 
 #endif				/* _OSCAP_ERROR_H */
