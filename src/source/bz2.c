@@ -60,7 +60,7 @@ static struct bz2_file *bz2_fd_open(int fd)
 		b->file = BZ2_bzReadOpen(&bzerror, f, 0, 0, NULL, 0);
 		b->eof = false;
 		if (bzerror != BZ_OK) {
-			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not build BZ2FILE from %s: %s",
+			oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not build BZ2FILE: %s",
 					BZ2_bzerror(b->file, &bzerror));
 			BZ2_bzReadClose(&bzerror, b->file);
 			free(b);

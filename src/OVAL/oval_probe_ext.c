@@ -399,7 +399,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to receive a message to probe");
 		else
-			oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+			oscap_seterr (OSCAP_EFAMILY_OVAL, "%s", errbuf);
 
 		return (-1);
 	}
@@ -414,7 +414,7 @@ static inline int _handle_SEAP_receive_failure(SEAP_CTX_t *ctx, oval_pd_t *pd, S
 		if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
 			oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to close probe sd");
 		else
-			oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+			oscap_seterr (OSCAP_EFAMILY_OVAL, "%s", errbuf);
 	}
 
 	pd->sd = -1;
@@ -460,7 +460,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                         if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                                 oscap_seterr (OSCAP_EFAMILY_OVAL, "Can't connect to the probe");
                                         else
-                                                oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+                                                oscap_seterr (OSCAP_EFAMILY_OVAL, "%s", errbuf);
 
 					return (-1);
 				}
@@ -497,7 +497,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to send a message to probe");
                                 else
-					oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+					oscap_seterr (OSCAP_EFAMILY_OVAL, "%s", errbuf);
 
 				SEAP_msg_free(s_omsg);
 				return (-1);
@@ -514,7 +514,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, "Can't close sd");
                                 else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "%s", errbuf);
 
 				pd->sd = -1;
 				return (-1);
@@ -536,7 +536,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
                                 if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) != 0)
                                         oscap_seterr (OSCAP_EFAMILY_OVAL, "Unable to send a message to probe");
                                 else
-                                        oscap_seterr (OSCAP_EFAMILY_OVAL, errbuf);
+                                        oscap_seterr (OSCAP_EFAMILY_OVAL, "%s", errbuf);
 
 				return (ret);
 			}
@@ -568,7 +568,7 @@ static int oval_probe_comm(SEAP_CTX_t *ctx, oval_pd_t *pd, const SEXP_t *s_iobj,
 
 					char errbuf[__ERRBUF_SIZE];
 					if (oscap_strerror_r (errno, errbuf, sizeof errbuf - 1) == 0)
-						oscap_seterr(OSCAP_EFAMILY_OVAL, errbuf);
+						oscap_seterr(OSCAP_EFAMILY_OVAL, "%s", errbuf);
 					oscap_seterr(OSCAP_EFAMILY_OVAL, "Unable to receive a message from probe");
 
 					return ret;

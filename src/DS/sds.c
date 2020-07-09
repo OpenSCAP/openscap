@@ -1102,7 +1102,7 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 			oscap_sprintf("Could not find any datastream of id '%s'", datastream_id) :
 			oscap_sprintf("Could not find any datastream inside the file");
 
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s", error);
 		free(error);
 		oscap_source_free(sds_source);
 		return 1;

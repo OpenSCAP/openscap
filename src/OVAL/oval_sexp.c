@@ -84,11 +84,11 @@ SEXP_t *oval_value_to_sexp(struct oval_value *val, oval_datatype_t dtype)
 	case OVAL_DATATYPE_FILESET_REVISION:
 	case OVAL_DATATYPE_IOS_VERSION:
 		// todo:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unsupported datatype: %s.", dtype);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unsupported datatype: %u.", dtype);
 		val_sexp = NULL;
 		break;
 	default:
-		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown datatype: %s.", dtype);
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Unknown datatype: %u.", dtype);
 		val_sexp = NULL;
 		break;
 	}

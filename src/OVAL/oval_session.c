@@ -273,7 +273,7 @@ static int oval_session_load_variables(struct oval_session *session)
 
 			if (session->var_model == NULL) {
 				oscap_seterr(OSCAP_EFAMILY_OVAL, "Failed to import the OVAL Variables "
-						"from '%s'.", session->oval.variables);
+						"from '%s'.", oscap_source_get_filepath(session->oval.variables));
 				return 1;
 			}
 

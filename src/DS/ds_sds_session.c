@@ -238,7 +238,7 @@ xmlNode *ds_sds_session_get_selected_datastream(struct ds_sds_session *session)
 		char *error = session->datastream_id ?
 			oscap_sprintf("Could not find any datastream of id '%s'", session->datastream_id) :
 			oscap_sprintf("Could not find any datastream inside the file");
-		oscap_seterr(OSCAP_EFAMILY_XML, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s", error);
 		free(error);
 	}
 	return datastream;

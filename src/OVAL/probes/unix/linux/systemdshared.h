@@ -263,10 +263,10 @@ static char *dbus_value_to_string(DBusMessageIter *iter)
 
 #ifdef DBUS_HAVE_INT64
 			case DBUS_TYPE_INT64:
-				return oscap_sprintf("%lli", value.i64);
+				return oscap_sprintf("%li", value.i64);
 
 			case DBUS_TYPE_UINT64:
-				return oscap_sprintf("%llu", value.u64);
+				return oscap_sprintf("%lu", value.u64);
 #endif
 
 			case DBUS_TYPE_DOUBLE:
