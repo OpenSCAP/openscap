@@ -40,6 +40,7 @@ matrix:
     - os: osx
       before_install:
         - brew update
+        - brew remove python@2
         - brew install doxygen
         - brew install opendbx
         - brew install popt

@@ -7,8 +7,8 @@ passwd_file=`mktemp`
 # due to a bug in systemd-userdb.service that occurs
 # in systemd 245
 # https://github.com/systemd/systemd/issues/15160
-if which -q rpm &>/dev/null && \
-		[[ "$(rpm -q --qf "%{VERSION}" systemd)" =~ ^245 ]] ; then
+if which systemctl &>/dev/null && \
+		[[ `systemctl --version | grep "systemd 245"` =~ "245" ]] ; then
 	grep -Ev '^(root|nobody)' /etc/passwd > "$passwd_file"
 else
 	cp /etc/passwd "$passwd_file"

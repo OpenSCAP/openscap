@@ -21,6 +21,8 @@ function rpm_build {
 }
 
 function rpm_prepare_offline {
+    set_chroot_offline_test_mode "$RPMTEST"
+    require "rpm" || return 255
     rm -rf ${RPMTEST}
     mkdir -p ${RPMTEST}/usr/lib/rpm
     cp /usr/lib/rpm/rpmrc ${RPMTEST}/usr/lib/rpm/rpmrc
@@ -28,12 +30,11 @@ function rpm_prepare_offline {
     rpm_build
     rpm -i ${RPMBUILD}/RPMS/noarch/foobar-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}/var/lib/rpm/"
     rpm -i ${RPMBUILD}/RPMS/noarch/foo-1.0-1.noarch.rpm --badreloc --relocate="/etc=${RPMTEST}/etc/" --dbpath="${RPMTEST}/var/lib/rpm/"
-    set_chroot_offline_test_mode "$RPMTEST"
 }
 
 function rpm_cleanup_offline {
-    unset_chroot_offline_test_mode
     rm -rf ${RPMTEST}
+    unset_chroot_offline_test_mode
 }
 
 function rpm_query {
