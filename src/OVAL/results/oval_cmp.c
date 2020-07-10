@@ -105,14 +105,14 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 
 		if (!cstr_to_intmax(state_data, &state_val)) {
 			oscap_seterr(OSCAP_EFAMILY_OVAL,
-				"Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
+				"Conversion of the string \"%s\" to an integer (%zu bits) failed: %s",
 				state_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}
 
 		if (!cstr_to_intmax(sys_data, &syschar_val)) {
 			oscap_seterr(OSCAP_EFAMILY_OVAL,
-				"Conversion of the string \"%s\" to an integer (%u bits) failed: %s",
+				"Conversion of the string \"%s\" to an integer (%zu bits) failed: %s",
 				sys_data, sizeof(intmax_t)*8, strerror(errno));
 			return OVAL_RESULT_ERROR;
 		}

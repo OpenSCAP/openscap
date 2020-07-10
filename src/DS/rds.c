@@ -663,7 +663,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 				"Unknown root element '%s' in given XCCDF result document, expected TestResult or Benchmark.",
 				(const char*)root_element->name);
 
-		oscap_seterr(OSCAP_EFAMILY_XML, 0, error);
+		oscap_seterr(OSCAP_EFAMILY_XML, "%s", error);
 		free(error);
 	}
 }

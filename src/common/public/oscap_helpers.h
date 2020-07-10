@@ -31,6 +31,7 @@
  * @param fmt printf-like format string
  * @return a string
  */
+__attribute__((format (printf, 1, 2)))
 OSCAP_API char *oscap_sprintf(const char *fmt, ...);
 
 /**

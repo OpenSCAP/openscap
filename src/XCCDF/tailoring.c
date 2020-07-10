@@ -255,7 +255,8 @@ xmlNodePtr xccdf_tailoring_to_dom(struct xccdf_tailoring *tailoring, xmlDocPtr d
 #endif
 		oscap_seterr(OSCAP_EFAMILY_XML, "XCCDF Tailoring isn't supported in XCCDF version '%s',"
 			"nor does openscap have a custom extension for this scenario. "
-			"XCCDF Tailoring requires XCCDF 1.1 and higher, 1.2 is recommended.");
+			"XCCDF Tailoring requires XCCDF 1.1 and higher, 1.2 is recommended.",
+			xccdf_version);
 
 		xmlFreeNode(tailoring_node);
 		return NULL;

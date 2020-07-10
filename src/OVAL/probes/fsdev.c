@@ -308,11 +308,6 @@ fsdev_t *fsdev_init()
 	return (lfs);
 }
 
-static inline int isfschar(int c)
-{
-	return (isalpha(c) || isdigit(c) || c == '-' || c == '_');
-}
-
 void fsdev_free(fsdev_t * lfs)
 {
 	if (lfs != NULL) {

@@ -223,7 +223,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if( (action->module == &DS_SDS_VALIDATE_MODULE) ) {
+	else if (action->module == &DS_SDS_VALIDATE_MODULE) {
 		if(  argc != 4 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
@@ -240,7 +240,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->file = argv[optind];
 		action->ds_action->target = argv[optind + 1];
 	}
-	else if( (action->module == &DS_RDS_CREATE_MODULE) ) {
+	else if (action->module == &DS_RDS_CREATE_MODULE) {
 		if(argc - optind < 3 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
@@ -252,7 +252,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		action->ds_action->oval_results = &argv[optind + 3];
 		action->ds_action->oval_result_count = argc - optind - 3;
 	}
-	else if( (action->module == &DS_RDS_VALIDATE_MODULE) ) {
+	else if (action->module == &DS_RDS_VALIDATE_MODULE) {
 		if(optind >= argc) {
 			oscap_module_usage(action->module, stderr, "Result DataStream file need to be specified!\n");
 			return false;

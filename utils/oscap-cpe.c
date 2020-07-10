@@ -94,7 +94,7 @@ static struct oscap_module* CPE_SUBMODULES[CPE_SUBMODULES_NUM] = {
 
 bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 
-	if( (action->module == &CPE_MATCH_MODULE) ) {
+	if (action->module == &CPE_MATCH_MODULE) {
 		if(  argc != 5 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
@@ -104,7 +104,7 @@ bool getopt_cpe(int argc, char **argv, struct oscap_action *action) {
 		action->cpe_action->dict=argv[4];
 	}
 
-	if( (action->module == &CPE_CHECK_MODULE)) {
+	if (action->module == &CPE_CHECK_MODULE) {
 		if( argc != 4 ) {
 			oscap_module_usage(action->module, stderr, "Wrong number of parameters.\n");
 			return false;
