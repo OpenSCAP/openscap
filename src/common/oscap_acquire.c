@@ -49,6 +49,7 @@
 #include "common/_error.h"
 #include "oscap_string.h"
 #include "oscap_helpers.h"
+#include "debug_priv.h"
 
 #ifndef OSCAP_TEMP_DIR
 #define OSCAP_TEMP_DIR "/tmp"
@@ -288,6 +289,34 @@ oscap_acquire_url_to_filename(const char *url)
 	return filename;
 }
 
+static int _curl_trace(CURL *handle, curl_infotype type, char *data, size_t size, void *userp)
+{
+	const char *title;
+
+	switch (type) {
+	case CURLINFO_TEXT:
+		title = "== cURL info";
+		break;
+	case CURLINFO_HEADER_OUT:
+		title = "=> cURL header (out)";
+		break;
+	case CURLINFO_HEADER_IN:
+		title = "<= cURL header (in)";
+		break;
+	case CURLINFO_DATA_OUT:
+	case CURLINFO_SSL_DATA_OUT:
+	case CURLINFO_DATA_IN:
+	case CURLINFO_SSL_DATA_IN:
+	default:
+		return 0;
+		break;
+	}
+
+	dD("%s: %s", title, data);
+
+	return 0;
+}
+
 char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 {
 	CURL *curl;
@@ -303,7 +332,10 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 	curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
+	curl_easy_setopt(curl, CURLOPT_TRANSFER_ENCODING, true);
 	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
+	curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
+	curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, _curl_trace);
 
 	CURLcode res = curl_easy_perform(curl);
 	curl_easy_cleanup(curl);
