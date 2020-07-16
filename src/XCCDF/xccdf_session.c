@@ -1811,3 +1811,22 @@ int xccdf_session_generate_guide(struct xccdf_session *session, const char *outf
 	}
 	return 0;
 }
+
+int xccdf_session_export_and_free(struct xccdf_session *session)
+{
+	int ret = 0;
+
+	if (xccdf_session_export_xccdf(session) != 0) {
+		ret = 1;
+		goto cleanup;
+	}
+
+	if (xccdf_session_export_arf(session) != 0) {
+		ret = 1;
+		goto cleanup;
+	}
+
+cleanup:
+	xccdf_session_free(session);
+	return ret;
+}
