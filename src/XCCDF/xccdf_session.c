@@ -245,6 +245,24 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 	return session->oval.arf_report;
 }
 
+static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_session *session)
+{
+	struct oscap_source *sds_source = NULL;
+
+	if (xccdf_session_is_sds(session)) {
+		sds_source = session->source;
+	} else {
+		xmlDocPtr sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
+		sds_source = oscap_source_new_from_xmlDoc(sds_doc, NULL);
+	}
+
+	struct oscap_source *rds_source = ds_rds_create_source(sds_source, session->tailoring.user_file, session->xccdf.result_source, session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping, session->export.arf_file);
+	if (!xccdf_session_is_sds(session)) {
+		oscap_source_free(sds_source);
+	}
+	return rds_source;
+}
+
 void xccdf_session_free(struct xccdf_session *session)
 {
 	if (session == NULL)
@@ -1815,6 +1833,7 @@ int xccdf_session_generate_guide(struct xccdf_session *session, const char *outf
 int xccdf_session_export_and_free(struct xccdf_session *session)
 {
 	int ret = 0;
+	struct oscap_source *arf_source = NULL;
 
 	if (_build_xccdf_result_source(session)) {
 		ret = 1;
@@ -1825,7 +1844,7 @@ int xccdf_session_export_and_free(struct xccdf_session *session)
 		goto cleanup;
 	}
 
-	struct oscap_source* arf_source = xccdf_session_create_arf_source(session);
+	arf_source = xccdf_session_extract_arf_source(session);
 	if (arf_source == NULL) {
 		ret = 1;
 		goto cleanup;
@@ -1856,6 +1875,7 @@ int xccdf_session_export_and_free(struct xccdf_session *session)
 	}
 
 cleanup:
+	oscap_source_free(arf_source);
 	xccdf_session_free(session);
 	return ret;
 }
