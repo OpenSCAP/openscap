@@ -1816,9 +1816,26 @@ int xccdf_session_export_and_free(struct xccdf_session *session)
 {
 	int ret = 0;
 
-	if (xccdf_session_export_xccdf(session) != 0) {
+	if (_build_xccdf_result_source(session)) {
 		ret = 1;
 		goto cleanup;
+	}
+
+	if (session->export.report_file != NULL) {
+		struct oscap_source *arf = xccdf_session_create_arf_source(session);
+		if (arf == NULL) {
+			ret = 1;
+			goto cleanup;
+		}
+
+		/* generate report */
+		_xccdf_gen_report(arf,
+				xccdf_result_get_id(session->xccdf.result),
+				session->export.report_file,
+				"",
+				(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+				session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+		);
 	}
 
 	if (xccdf_session_export_arf(session) != 0) {
