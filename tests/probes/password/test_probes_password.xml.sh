@@ -32,7 +32,7 @@ function getField {
 	    echo $LINE | awk -F':' '{print $4}'
 	    ;;
 	'gcos' )
-	    echo $LINE | awk -F':' '{print $5}'
+	    echo $LINE | awk -F':' '{gsub(/&/,"&amp;",$5); print $5}'
 	    ;;
 	'home_dir' )
 	    echo $LINE | awk -F':' '{print $6}'
