@@ -1838,9 +1838,26 @@ int xccdf_session_export_and_free(struct xccdf_session *session)
 		);
 	}
 
-	if (xccdf_session_export_arf(session) != 0) {
-		ret = 1;
-		goto cleanup;
+	if (session->export.arf_file != NULL) {
+		struct oscap_source* arf_source = xccdf_session_create_arf_source(session);
+		if (arf_source == NULL) {
+			ret = 1;
+			goto cleanup;
+		}
+
+		if (oscap_source_save_as(arf_source, NULL) != 0) {
+			oscap_source_free(arf_source);
+			session->oval.arf_report = NULL;
+			ret = 1;
+			goto cleanup;
+		}
+		if (session->full_validation) {
+			if (oscap_source_validate(arf_source, _reporter, NULL) != 0) {
+				oscap_source_free(arf_source);
+				ret = 1;
+				goto cleanup;
+			}
+		}
 	}
 
 cleanup:
