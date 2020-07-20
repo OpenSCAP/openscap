@@ -1576,6 +1576,7 @@ AC_CONFIG_FILES([Makefile
 		tests/nist/Makefile
 		tests/offline_mode/Makefile
 
+		tests/curl/Makefile
                  src/SCE/Makefile
                  tests/sce/Makefile])
 
