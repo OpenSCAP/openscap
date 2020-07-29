@@ -134,22 +134,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 	rpmdbMatchIterator match;
 	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
-	pcre *re = NULL;
 	int  ret = -1;
 	char *file_realpath = NULL;
-
-	/* pre-compile regex if needed */
-	if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
-		const char *errmsg;
-		int erroff;
-
-		re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
-
-		if (re == NULL) {
-			/* TODO */
-			return (-1);
-		}
-	}
 
 	RPMVERIFY_LOCK;
 
@@ -255,6 +241,9 @@ static int rpmverify_collect(probe_ctx *ctx,
 					free(current_file_realpath);
 					continue;
 				}
+				pcre *re = NULL;
+				const char *errmsg;
+				int erroff;
 
 		    switch(file_op) {
 		    case OVAL_OPERATION_EQUALS:
@@ -276,7 +265,15 @@ static int rpmverify_collect(probe_ctx *ctx,
 					res.file = current_file_realpath ? oscap_strdup(current_file_realpath) : oscap_strdup(current_file);
 		      break;
 		    case OVAL_OPERATION_PATTERN_MATCH:
+					re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
+					if (re == NULL) {
+						dE("pcre_compile pattern='%s': %s", file, errmsg);
+						free(current_file_realpath);
+						ret = -1;
+						goto ret;
+					}
 					ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
+					pcre_free(re);
 
 		      switch(ret) {
 		      case 0: /* match */
@@ -331,9 +328,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 	match = rpmdbFreeIterator (match);
 	ret   = 0;
 ret:
-	if (re != NULL)
-		pcre_free(re);
-
 	RPMVERIFY_UNLOCK;
 	free(file_realpath);
 	return (ret);
