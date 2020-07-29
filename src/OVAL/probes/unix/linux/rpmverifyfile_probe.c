@@ -135,7 +135,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
 	int  ret = -1;
-	char *file_realpath = NULL;
 
 	RPMVERIFY_LOCK;
 
@@ -179,7 +178,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		return -1;
 	}
 
-	file_realpath = oscap_realpath(file, NULL);
 
 	while ((pkgh = rpmdbNextIterator (match)) != NULL) {
 		SEXP_t *ent;
@@ -241,6 +239,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 				pcre *re = NULL;
 				const char *errmsg;
 				int erroff;
+				char *file_realpath = oscap_realpath(file, NULL);
 				char *current_file_realpath = oscap_realpath(current_file, NULL);
 
 		    switch(file_op) {
@@ -248,6 +247,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 					if (strcmp(current_file, file) != 0 &&
 							current_file_realpath && file_realpath &&
 							strcmp(current_file_realpath, file_realpath) != 0) {
+						free(file_realpath);
 						free(current_file_realpath);
 						continue;
 					}
@@ -257,6 +257,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 					if (strcmp(current_file, file) == 0 ||
 							(current_file_realpath && file_realpath &&
 							strcmp(current_file_realpath, file_realpath) == 0)) {
+						free(file_realpath);
 						free(current_file_realpath);
 						continue;
 					}
@@ -266,6 +267,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 					re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
 					if (re == NULL) {
 						dE("pcre_compile pattern='%s': %s", file, errmsg);
+						free(file_realpath);
 						free(current_file_realpath);
 						ret = -1;
 						goto ret;
@@ -277,11 +279,13 @@ static int rpmverify_collect(probe_ctx *ctx,
 						res.file = oscap_strdup(current_file);
 					} else if (ret == -1) {
 						/* no match */
+						free(file_realpath);
 						free(current_file_realpath);
 						continue;
 					} else {
 						dE("pcre_exec() failed!");
 						ret = -1;
+						free(file_realpath);
 						free(current_file_realpath);
 						goto ret;
 					}
@@ -290,10 +294,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 		      /* unsupported operation */
 		      dE("Operation \"%d\" on `filepath' not supported", file_op);
 		      ret = -1;
+						free(file_realpath);
 						free(current_file_realpath);
 		      goto ret;
 		    }
-		    free(current_file_realpath);
+				free(file_realpath);
+				free(current_file_realpath);
 
 			if (rpmVerifyFile(g_rpm->rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
@@ -325,7 +331,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 	ret   = 0;
 ret:
 	RPMVERIFY_UNLOCK;
-	free(file_realpath);
 	return (ret);
 }
 
