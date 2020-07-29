@@ -94,6 +94,8 @@ struct rpmverify_res {
 
 #define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm->mutex)
 
+static int rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res);
+
 /* modify passed-in iterator to test also given entity */
 static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_tag) {
 	oval_operation_t ent_op;
@@ -127,7 +129,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 			     const char *file, oval_operation_t file_op,
 			     SEXP_t *name_ent, SEXP_t *epoch_ent, SEXP_t *version_ent, SEXP_t *release_ent, SEXP_t *arch_ent,
 			     uint64_t flags,
-		int (*callback)(probe_ctx *, struct rpmverify_res *),
 		struct rpm_probe_global *g_rpm)
 {
 	rpmdbMatchIterator match;
@@ -304,7 +305,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 			if (rpmVerifyFile(g_rpm->rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
 
-		    if (callback(ctx, &res) != 0) {
+		    if (rpmverify_additem(ctx, &res) != 0) {
 			    ret = 0;
 					free(res.name);
 					free(res.epoch);
@@ -556,7 +557,7 @@ int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
 			      file, file_op,
 			      name_ent, epoch_ent, version_ent, release_ent, arch_ent,
 			      collect_flags,
-			rpmverify_additem, g_rpm) != 0)
+			g_rpm) != 0)
 	{
 		dE("An error ocured while collecting rpmverifyfile data");
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
