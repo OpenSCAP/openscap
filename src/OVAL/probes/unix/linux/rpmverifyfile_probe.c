@@ -189,7 +189,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		errmsg_t rpmerr;
 		int i;
 		const char *current_file;
-		char *current_file_realpath;
 
 		/*
 +SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
@@ -232,18 +231,17 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 		  while (rpmfiNext(fi) != -1) {
 				current_file = rpmfiFN(fi);
-				current_file_realpath = oscap_realpath(current_file, NULL);
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
 
 		    if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
 					((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
-					free(current_file_realpath);
 					continue;
 				}
 				pcre *re = NULL;
 				const char *errmsg;
 				int erroff;
+				char *current_file_realpath = oscap_realpath(current_file, NULL);
 
 		    switch(file_op) {
 		    case OVAL_OPERATION_EQUALS:
