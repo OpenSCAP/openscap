@@ -197,7 +197,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		struct rpm_probe_global *g_rpm)
 {
 	rpmdbMatchIterator match;
-	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
 	int  ret = -1;
 
@@ -246,12 +245,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 	while ((pkgh = rpmdbNextIterator (match)) != NULL) {
 		SEXP_t *ent;
-		rpmfi  fi;
-		rpmTag tag[2] = { RPMTAG_BASENAMES, RPMTAG_DIRNAMES };
 		struct rpmverify_res res;
 		errmsg_t rpmerr;
-		int i;
-		const char *current_file;
 
 		/*
 +SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
@@ -289,11 +284,13 @@ static int rpmverify_collect(probe_ctx *ctx,
 		/*
 		 * Inspect package files & directories
 		 */
-		for (i = 0; i < 2; ++i) {
-			fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
+		rpmTag tag[2] = { RPMTAG_BASENAMES, RPMTAG_DIRNAMES };
+		rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
+		for (int i = 0; i < 2; ++i) {
+			rpmfi fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
 
 		  while (rpmfiNext(fi) != -1) {
-				current_file = rpmfiFN(fi);
+				const char *current_file = rpmfiFN(fi);
 		    res.fflags = rpmfiFFlags(fi);
 		    res.oflags = omit;
 
