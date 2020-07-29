@@ -125,6 +125,71 @@ static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_ta
 	return ret;
 }
 
+/*
+ * Compare file with item iterated over.
+ * Returns 0 when they match, 1 when don't match, -1 on error.
+ * Returns the matched file path in result_file.
+ */
+static int _compare_file_with_current_file(oval_operation_t file_op, const char *file, const char *current_file, char **result_file)
+{
+	int ret = 0;
+
+	char *file_realpath = oscap_realpath(file, NULL);
+	char *current_file_realpath = oscap_realpath(current_file, NULL);
+
+	if (file_op == OVAL_OPERATION_EQUALS) {
+		if (strcmp(current_file, file) != 0 &&
+				current_file_realpath && file_realpath &&
+				strcmp(current_file_realpath, file_realpath) != 0) {
+			ret = 1;
+			goto cleanup;
+		}
+		*result_file = oscap_strdup(file);
+	} else if (file_op == OVAL_OPERATION_NOT_EQUAL) {
+		if (strcmp(current_file, file) == 0 ||
+				(current_file_realpath && file_realpath &&
+				strcmp(current_file_realpath, file_realpath) == 0)) {
+			ret = 1;
+			goto cleanup;
+		}
+		*result_file = current_file_realpath ? oscap_strdup(current_file_realpath) : oscap_strdup(current_file);
+	} else if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
+		const char *errmsg;
+		int erroff;
+		pcre *re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
+		if (re == NULL) {
+			dE("pcre_compile pattern='%s': %s", file, errmsg);
+			ret = -1;
+			goto cleanup;
+		}
+		int pcre_ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
+		pcre_free(re);
+		if (pcre_ret == 0) {
+			/* match */
+			*result_file = oscap_strdup(current_file);
+		} else if (pcre_ret == -1) {
+			/* no match */
+			ret = 1;
+			goto cleanup;
+		} else {
+			dE("pcre_exec() failed!");
+			ret = -1;
+			goto cleanup;
+		}
+	} else {
+		/* unsupported operation */
+		dE("Operation \"%d\" on `filepath' not supported", file_op);
+		ret = -1;
+		goto cleanup;
+	}
+
+cleanup:
+	free(file_realpath);
+	free(current_file_realpath);
+
+	return ret;
+}
+
 static int rpmverify_collect(probe_ctx *ctx,
 			     const char *file, oval_operation_t file_op,
 			     SEXP_t *name_ent, SEXP_t *epoch_ent, SEXP_t *version_ent, SEXP_t *release_ent, SEXP_t *arch_ent,
@@ -236,66 +301,15 @@ static int rpmverify_collect(probe_ctx *ctx,
 					((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
 					continue;
 				}
-				pcre *re = NULL;
-				const char *errmsg;
-				int erroff;
-				char *file_realpath = oscap_realpath(file, NULL);
-				char *current_file_realpath = oscap_realpath(current_file, NULL);
-
-				if (file_op == OVAL_OPERATION_EQUALS) {
-					if (strcmp(current_file, file) != 0 &&
-							current_file_realpath && file_realpath &&
-							strcmp(current_file_realpath, file_realpath) != 0) {
-						free(file_realpath);
-						free(current_file_realpath);
-						continue;
-					}
-					res.file = oscap_strdup(file);
-				} else if (file_op == OVAL_OPERATION_NOT_EQUAL) {
-					if (strcmp(current_file, file) == 0 ||
-							(current_file_realpath && file_realpath &&
-							strcmp(current_file_realpath, file_realpath) == 0)) {
-						free(file_realpath);
-						free(current_file_realpath);
-						continue;
-					}
-					res.file = current_file_realpath ? oscap_strdup(current_file_realpath) : oscap_strdup(current_file);
-				} else if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
-					re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
-					if (re == NULL) {
-						dE("pcre_compile pattern='%s': %s", file, errmsg);
-						free(file_realpath);
-						free(current_file_realpath);
-						ret = -1;
-						goto ret;
-					}
-					ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
-					pcre_free(re);
-					if (ret == 0) {
-						/* match */
-						res.file = oscap_strdup(current_file);
-					} else if (ret == -1) {
-						/* no match */
-						free(file_realpath);
-						free(current_file_realpath);
-						continue;
-					} else {
-						dE("pcre_exec() failed!");
-						ret = -1;
-						free(file_realpath);
-						free(current_file_realpath);
-						goto ret;
-					}
-				} else {
-		      /* unsupported operation */
-		      dE("Operation \"%d\" on `filepath' not supported", file_op);
-		      ret = -1;
-						free(file_realpath);
-						free(current_file_realpath);
-		      goto ret;
+				int cmp_res = _compare_file_with_current_file(file_op, file, current_file, &res.file);
+				if (cmp_res == 1) {
+					/* no match */
+					continue;
 				}
-				free(file_realpath);
-				free(current_file_realpath);
+				if (cmp_res == -1) {
+					ret = -1;
+					goto ret;
+				}
 
 			if (rpmVerifyFile(g_rpm->rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
