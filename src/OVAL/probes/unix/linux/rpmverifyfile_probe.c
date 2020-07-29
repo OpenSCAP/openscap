@@ -274,22 +274,20 @@ static int rpmverify_collect(probe_ctx *ctx,
 					}
 					ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
 					pcre_free(re);
-
-		      switch(ret) {
-		      case 0: /* match */
+					if (ret == 0) {
+						/* match */
 						res.file = oscap_strdup(current_file);
-			break;
-		      case -1:
-			/* mismatch */
+					} else if (ret == -1) {
+						/* no match */
 						free(current_file_realpath);
-			continue;
-		      default:
-			dE("pcre_exec() failed!");
-			ret = -1;
+						continue;
+					} else {
+						dE("pcre_exec() failed!");
+						ret = -1;
 						free(current_file_realpath);
-			goto ret;
-		      }
-		      break;
+						goto ret;
+					}
+					break;
 		    default:
 		      /* unsupported operation */
 		      dE("Operation \"%d\" on `filepath' not supported", file_op);
