@@ -242,8 +242,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 				char *file_realpath = oscap_realpath(file, NULL);
 				char *current_file_realpath = oscap_realpath(current_file, NULL);
 
-		    switch(file_op) {
-		    case OVAL_OPERATION_EQUALS:
+				if (file_op == OVAL_OPERATION_EQUALS) {
 					if (strcmp(current_file, file) != 0 &&
 							current_file_realpath && file_realpath &&
 							strcmp(current_file_realpath, file_realpath) != 0) {
@@ -252,8 +251,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 						continue;
 					}
 					res.file = oscap_strdup(file);
-		      break;
-		    case OVAL_OPERATION_NOT_EQUAL:
+				} else if (file_op == OVAL_OPERATION_NOT_EQUAL) {
 					if (strcmp(current_file, file) == 0 ||
 							(current_file_realpath && file_realpath &&
 							strcmp(current_file_realpath, file_realpath) == 0)) {
@@ -262,8 +260,7 @@ static int rpmverify_collect(probe_ctx *ctx,
 						continue;
 					}
 					res.file = current_file_realpath ? oscap_strdup(current_file_realpath) : oscap_strdup(current_file);
-		      break;
-		    case OVAL_OPERATION_PATTERN_MATCH:
+				} else if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
 					re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
 					if (re == NULL) {
 						dE("pcre_compile pattern='%s': %s", file, errmsg);
@@ -289,15 +286,14 @@ static int rpmverify_collect(probe_ctx *ctx,
 						free(current_file_realpath);
 						goto ret;
 					}
-					break;
-		    default:
+				} else {
 		      /* unsupported operation */
 		      dE("Operation \"%d\" on `filepath' not supported", file_op);
 		      ret = -1;
 						free(file_realpath);
 						free(current_file_realpath);
 		      goto ret;
-		    }
+				}
 				free(file_realpath);
 				free(current_file_realpath);
 
