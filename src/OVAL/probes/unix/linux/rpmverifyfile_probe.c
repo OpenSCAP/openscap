@@ -190,50 +190,48 @@ cleanup:
 	return ret;
 }
 
-static int inspect_package_files_and_directories(
+static int rpmverify_collect_package_files_or_directories(
 		struct rpm_probe_global *g_rpm, probe_ctx *ctx, Header pkgh,
-		const char *file, oval_operation_t file_op,
+		const char *file, oval_operation_t file_op, rpmTag tag,
 		struct rpmverify_res *res, uint64_t flags)
 {
 	int ret = 0;
-	rpmTag tag[2] = {RPMTAG_BASENAMES, RPMTAG_DIRNAMES};
 	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
-	for (int i = 0; i < 2; ++i) {
-		rpmfi fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
+	rpmfi fi = rpmfiNew(g_rpm->rpmts, pkgh, tag, 1);
 
-		while (rpmfiNext(fi) != -1) {
-			const char *current_file = rpmfiFN(fi);
-			res->fflags = rpmfiFFlags(fi);
-			res->oflags = omit;
+	while (rpmfiNext(fi) != -1) {
+		const char *current_file = rpmfiFN(fi);
+		res->fflags = rpmfiFFlags(fi);
+		res->oflags = omit;
 
-			if (((res->fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
-					((res->fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
-					continue;
-				}
-				int cmp_res = _compare_file_with_current_file(file_op, file, current_file, &res->file);
-				if (cmp_res == 1) {
-					/* no match */
-					continue;
-				}
-				if (cmp_res == -1) {
-					ret = -1;
-					goto cleanup;
-				}
-
-			if (rpmVerifyFile(g_rpm->rpmts, fi, &res->vflags, omit) != 0)
-				res->vflags = RPMVERIFY_FAILURES;
-
-			if (rpmverify_additem(ctx, res) != 0) {
-				ret = -1;
-				free(res->file);
-				goto cleanup;
-			}
-			free(res->file);
+		if (((res->fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
+				((res->fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
+			continue;
 		}
-		rpmfiFree(fi);
+		int cmp_res = _compare_file_with_current_file(file_op, file, current_file, &res->file);
+		if (cmp_res == 1) {
+			/* no match */
+			continue;
+		}
+		if (cmp_res == -1) {
+			ret = -1;
+			goto cleanup;
+		}
+
+		if (rpmVerifyFile(g_rpm->rpmts, fi, &res->vflags, omit) != 0) {
+			res->vflags = RPMVERIFY_FAILURES;
+		}
+
+		if (rpmverify_additem(ctx, res) != 0) {
+			ret = -1;
+			free(res->file);
+			goto cleanup;
+		}
+		free(res->file);
 	}
 
 cleanup:
+	rpmfiFree(fi);
 	return ret;
 }
 
@@ -328,10 +326,11 @@ static int rpmverify_collect(probe_ctx *ctx,
 			oscap_streq(res.epoch, "(none)") ? "0" : res.epoch,
 			res.version, res.release, res.arch);
 
-
-		if (inspect_package_files_and_directories(g_rpm, ctx, pkgh, file, file_op, &res, flags) != 0) {
+		if (rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_BASENAMES, &res, flags) != 0) {
 			ret = -1;
-			goto ret;
+		}
+		if (rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_DIRNAMES, &res, flags) != 0) {
+			ret = -1;
 		}
 
 		free(res.name);
@@ -339,6 +338,9 @@ static int rpmverify_collect(probe_ctx *ctx,
 		free(res.version);
 		free(res.release);
 		free(res.arch);
+		if (ret == -1) {
+			goto ret;
+		}
 	}
 
 	match = rpmdbFreeIterator (match);
