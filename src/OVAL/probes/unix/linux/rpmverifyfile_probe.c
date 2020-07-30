@@ -293,11 +293,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		struct rpmverify_res res;
 		errmsg_t rpmerr;
 
-		/*
-+SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
-+                            const char *value, size_t vallen)
-		 */
-
 #define COMPARE_ENT(XXX) \
 		if (XXX ## _ent != NULL) { \
 			ent = probe_entval_from_cstr( \
