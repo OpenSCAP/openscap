@@ -248,18 +248,56 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_session *session)
 {
 	struct oscap_source *sds_source = NULL;
+	struct oscap_source *rds_source = NULL;
 
 	if (xccdf_session_is_sds(session)) {
 		sds_source = session->source;
+		session->source = NULL;
 	} else {
-		xmlDocPtr sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
-		sds_source = oscap_source_new_from_xmlDoc(sds_doc, NULL);
+		xmlDocPtr tmp_sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
+		sds_source = oscap_source_new_from_xmlDoc(tmp_sds_doc, NULL);
 	}
 
-	struct oscap_source *rds_source = ds_rds_create_source(sds_source, session->tailoring.user_file, session->xccdf.result_source, session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping, session->export.arf_file);
-	if (!xccdf_session_is_sds(session)) {
-		oscap_source_free(sds_source);
+	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
+	if (sds_doc == NULL) {
+		goto cleanup;
 	}
+
+	xmlDoc *result_file_doc = oscap_source_get_xmlDoc(session->xccdf.result_source);
+	if (result_file_doc == NULL) {
+		goto cleanup;
+	}
+
+	xmlDoc *tailoring_doc = NULL;
+	char *tailoring_doc_timestamp = NULL;
+	const char *tailoring_filepath = NULL;
+	if (session->tailoring.user_file) {
+		tailoring_doc = oscap_source_get_xmlDoc(session->tailoring.user_file);
+		if (tailoring_doc == NULL) {
+			goto cleanup;
+		}
+		tailoring_filepath = oscap_source_get_filepath(session->tailoring.user_file);
+		struct stat file_stat;
+		if (stat(tailoring_filepath, &file_stat) == 0) {
+			const size_t max_timestamp_len = 32;
+			tailoring_doc_timestamp = malloc(max_timestamp_len);
+			strftime(tailoring_doc_timestamp, max_timestamp_len,
+					"%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+		}
+	}
+
+	xmlDocPtr rds_doc = NULL;
+
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
+				session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping) != 0) {
+		goto cleanup;
+	}
+
+	rds_source = oscap_source_new_from_xmlDoc(rds_doc, session->export.arf_file);
+
+cleanup:
+	free(tailoring_doc_timestamp);
+	oscap_source_free(sds_source);
 	return rds_source;
 }
 
