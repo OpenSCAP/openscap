@@ -247,18 +247,17 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 
 static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_session *session)
 {
-	struct oscap_source *sds_source = NULL;
 	struct oscap_source *rds_source = NULL;
+	xmlDoc *sds_doc = NULL;
 
 	if (xccdf_session_is_sds(session)) {
-		sds_source = session->source;
-		session->source = NULL;
+		sds_doc = oscap_source_pop_xmlDoc(session->source);
 	} else {
-		xmlDocPtr tmp_sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
-		sds_source = oscap_source_new_from_xmlDoc(tmp_sds_doc, NULL);
+		sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
 	}
+	oscap_source_free(session->source);
+	session->source = NULL;
 
-	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
 	if (sds_doc == NULL) {
 		goto cleanup;
 	}
@@ -297,7 +296,7 @@ static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_sessio
 
 cleanup:
 	free(tailoring_doc_timestamp);
-	oscap_source_free(sds_source);
+	xmlFreeDoc(sds_doc);
 	return rds_source;
 }
 

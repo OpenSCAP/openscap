@@ -325,6 +325,13 @@ xmlDoc *oscap_source_get_xmlDoc(struct oscap_source *source)
 	return source->xml.doc;
 }
 
+xmlDoc *oscap_source_pop_xmlDoc(struct oscap_source *source)
+{
+	xmlDoc *doc = oscap_source_get_xmlDoc(source);
+	source->xml.doc = NULL;
+	return doc;
+}
+
 int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, void *user)
 {
 	int ret;
