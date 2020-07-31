@@ -206,7 +206,12 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 		if (mapping) {
 			if (event_type == YAML_MAPPING_END_EVENT) {
 				mapping = false;
-				oscap_list_add(values, record);
+				if (record->itemcount > 0) {
+					oscap_list_add(values, record);
+				} else {
+					// Do not collect empty records
+					oscap_htable_free0(record);
+				}
 				record = NULL;
 			} else if (event_type == YAML_MAPPING_START_EVENT) {
 				result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);

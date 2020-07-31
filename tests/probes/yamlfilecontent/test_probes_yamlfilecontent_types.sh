@@ -66,9 +66,7 @@ function test_probes_yamlfilecontent_types {
     assert_exists 3 $co'/object[@flag="error"]'
     assert_exists 3 $co'/object[@flag="error"]/message'
 
-    #rm -f $result
     rm -f $YAML_FILE
-
 }
 
 test_probes_yamlfilecontent_types

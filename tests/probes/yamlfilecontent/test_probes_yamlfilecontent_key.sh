@@ -19,7 +19,7 @@ function test_probes_yamlfilecontent_key {
     $OSCAP oval eval --results $RF $DF
 
     if [ -f $RF ]; then
-        verify_results "def" $DF $RF 5 && verify_results "tst" $DF $RF 6
+        verify_results "def" $DF $RF 6 && verify_results "tst" $DF $RF 7
         ret_val=$?
     else
         ret_val=1
