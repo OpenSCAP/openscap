@@ -53,6 +53,26 @@
 OSCAP_API int ds_sds_compose_from_xccdf(const char* xccdf_file, const char* target_datastream);
 
 /**
+ * @brief takes given xccdf file and constructs a source datastream of given version
+ *
+ * @param xccdf_file
+ *      Path to the XCCDF file that should be included in the datastream
+ *      (including its dependencies).
+ *
+ * @param target_datastream
+ *      ID of the datastream that should contain the XCCDF file. It will be
+ *      the only datastream in the resulting data-stream-collection.
+ *
+ * @param version
+ *      OCAP version
+ *
+ * @returns
+ * 	    0 if no errors were encountered
+ * 	   -1 in case of errors
+ */
+OSCAP_API int ds_sds_compose_from_xccdf_version(const char* xccdf_file, const char* target_datastream, oscap_document_version_t version);
+
+/**
  * @brief append a new given component to the existing source datastream
  *
  * @param target_datastream

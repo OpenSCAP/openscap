@@ -92,6 +92,7 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.summary = "Compose SourceDataStream from given XCCDF",
 	.usage = "[options] xccdf-file.xml target_datastream.xml",
 	.help = "Options:\n"
+		"   --scap-version <version>      - Compose a datastream compatible with given SCAP version (default is 1.2).\n"
 		"   --skip-valid                  - Skips validating of given XCCDF.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
@@ -166,7 +167,8 @@ static struct oscap_module* DS_SUBMODULES[DS_SUBMODULES_NUM] = {
 enum ds_opt {
 	DS_OPT_DATASTREAM_ID = 1,
 	DS_OPT_XCCDF_ID,
-	DS_OPT_REPORT_ID
+	DS_OPT_REPORT_ID,
+	DS_OPT_SCAP_VERSION
 };
 
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
@@ -180,6 +182,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"scap-version",	required_argument, NULL, DS_OPT_SCAP_VERSION},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -191,6 +194,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		case DS_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
 		case DS_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case DS_OPT_REPORT_ID:	action->f_report_id = optarg; break;
+		case DS_OPT_SCAP_VERSION:	action->f_scap_version = optarg; break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -345,6 +349,22 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 		goto cleanup;
 	}
 
+	oscap_document_version_t ver = OSCAP_DOCUMENT_VERSION_UNKNOWN;
+	if (action->f_scap_version) {
+		if (!strcmp(action->f_scap_version, "1.1"))
+			ver = OSCAP_DOCUMENT_VERSION_1_1;
+		if (!strcmp(action->f_scap_version, "1.2"))
+			ver = OSCAP_DOCUMENT_VERSION_1_2;
+		if (!strcmp(action->f_scap_version, "1.3"))
+			ver = OSCAP_DOCUMENT_VERSION_1_3;
+		if (ver == OSCAP_DOCUMENT_VERSION_UNKNOWN) {
+			fprintf(stdout, "SCAP version '%s' is invalid or not supported\n.", action->f_scap_version);
+			goto cleanup;
+		}
+	} else {
+		ver = OSCAP_DOCUMENT_VERSION_1_2;
+	}
+
 	char target_abs_path[PATH_MAX + 1];
 
 	// if the path is already absolute we just use it as it is
@@ -361,7 +381,7 @@ int app_ds_sds_compose(const struct oscap_action *action) {
 
 	char* source_xccdf = strdup(action->ds_action->file);
 	char *base_name = oscap_basename(source_xccdf);
-	ds_sds_compose_from_xccdf(base_name, target_abs_path);
+	ds_sds_compose_from_xccdf_version(base_name, target_abs_path, ver);
 	free(base_name);
 	free(source_xccdf);
 

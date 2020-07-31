@@ -234,7 +234,8 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 	if (xccdf_session_is_sds(session)) {
 		sds_source = session->source;
 	} else {
-		xmlDocPtr sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
+		// TODO: Version?
+		xmlDocPtr sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source, OSCAP_DOCUMENT_VERSION_1_2);
 		sds_source = oscap_source_new_from_xmlDoc(sds_doc, NULL);
 	}
 

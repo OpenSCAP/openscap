@@ -1128,8 +1128,9 @@ int ds_sds_compose_add_component(const char *target_datastream, const char *data
 	return 0;
 }
 
-xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_source)
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_source, oscap_document_version_t version)
 {
+	const char *vers = oscap_document_version_to_string(version);
 	xmlDocPtr doc = xmlNewDoc(BAD_CAST "1.0");
 	xmlNodePtr root = xmlNewNode(NULL, BAD_CAST "data-stream-collection");
 	xmlDocSetRootElement(doc, root);
@@ -1147,7 +1148,7 @@ xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_sou
 	xmlSetProp(root, BAD_CAST "id", BAD_CAST collection_id);
 	free(collection_id);
 
-	xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST "1.2");
+	xmlSetProp(root, BAD_CAST "schematron-version", BAD_CAST vers);
 
 	// we will need this namespace later when creating component-ref
 	// dependency catalog
@@ -1160,7 +1161,7 @@ xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_sou
 	xmlSetProp(datastream, BAD_CAST "id", BAD_CAST datastream_id);
 	free(datastream_id);
 
-	xmlSetProp(datastream, BAD_CAST "scap-version", BAD_CAST "1.2");
+	xmlSetProp(datastream, BAD_CAST "scap-version", BAD_CAST vers);
 
 	xmlSetProp(datastream, BAD_CAST "use-case", BAD_CAST "OTHER");
 
@@ -1217,17 +1218,22 @@ xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_sou
 	return doc;
 }
 
-xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file)
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file, oscap_document_version_t version)
 {
 	struct oscap_source *xccdf_source = oscap_source_new_from_file(xccdf_file);
-	xmlDocPtr doc = ds_sds_compose_xmlDoc_from_xccdf_source(xccdf_source);
+	xmlDocPtr doc = ds_sds_compose_xmlDoc_from_xccdf_source(xccdf_source, version);
 	oscap_source_free(xccdf_source);
 	return doc;
 }
 
 int ds_sds_compose_from_xccdf(const char *xccdf_file, const char *target_datastream)
 {
-	xmlDocPtr doc = ds_sds_compose_xmlDoc_from_xccdf(xccdf_file);
+	return ds_sds_compose_from_xccdf_version(xccdf_file, target_datastream, OSCAP_DOCUMENT_VERSION_1_2);
+}
+
+int ds_sds_compose_from_xccdf_version(const char *xccdf_file, const char *target_datastream, oscap_document_version_t version)
+{
+	xmlDocPtr doc = ds_sds_compose_xmlDoc_from_xccdf(xccdf_file, version);
 	if (doc == NULL) {
 		return -1;
 	}

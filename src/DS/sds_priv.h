@@ -42,8 +42,8 @@ int ds_sds_dump_component_ref(const xmlNodePtr component_ref, struct ds_sds_sess
 
 int ds_sds_dump_component_ref_as(const xmlNodePtr component_ref, struct ds_sds_session *session, const char *sub_dir, const char *relative_filepath);
 
-xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file);
-xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_source);
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf(const char *xccdf_file, oscap_document_version_t version);
+xmlDocPtr ds_sds_compose_xmlDoc_from_xccdf_source(struct oscap_source *xccdf_source, oscap_document_version_t version);
 
 xmlNodePtr lookup_component_in_collection(xmlDocPtr doc, const char *component_id);
 xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char *id);

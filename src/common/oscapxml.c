@@ -133,6 +133,25 @@ int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const char *outf
 	return ret;
 }
 
+const char *oscap_document_version_to_string(oscap_document_version_t version)
+{
+	switch (version) {
+	case OSCAP_DOCUMENT_VERSION_1_0:
+		return "1.0";
+	case OSCAP_DOCUMENT_VERSION_1_1:
+		return "1.1";
+	case OSCAP_DOCUMENT_VERSION_1_2:
+		return "1.2";
+	case OSCAP_DOCUMENT_VERSION_1_3:
+		return "1.3";
+	case OSCAP_DOCUMENT_VERSION_2_0:
+		return "2.0";
+	case OSCAP_DOCUMENT_VERSION_UNKNOWN:
+	default:
+		return NULL;
+	}
+}
+
 const char *oscap_document_type_to_string(oscap_document_type_t type)
 {
 	switch (type) {

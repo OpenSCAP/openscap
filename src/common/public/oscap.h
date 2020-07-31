@@ -102,6 +102,25 @@ typedef enum oscap_document_type {
 	// to utils/oscap-info.c!
 } oscap_document_type_t;
 
+/// SCAP versions
+typedef enum oscap_document_version {
+	OSCAP_DOCUMENT_VERSION_UNKNOWN = 0,
+	OSCAP_DOCUMENT_VERSION_1_0 = 10,
+	OSCAP_DOCUMENT_VERSION_1_1 = 11,
+	OSCAP_DOCUMENT_VERSION_1_2 = 12,
+	OSCAP_DOCUMENT_VERSION_1_3 = 13,
+	OSCAP_DOCUMENT_VERSION_2_0 = 20,
+} oscap_document_version_t;
+
+/**
+ * Convert @ref oscap_document_version_t constant to a string
+ * @param version OpenSCAP Document Version
+ * @returns String with the document version.
+ * @retval Returned value might be pointer to static memory and must not be modified.
+ * @retval NULL in case of unrecognized document version
+ */
+OSCAP_API const char *oscap_document_version_to_string(oscap_document_version_t version);
+
 /**
  * Convert @ref oscap_document_type_t constant to human readable (english)
  * representation.
