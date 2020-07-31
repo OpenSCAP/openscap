@@ -833,6 +833,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 		struct oscap_htable *exported = oscap_htable_new();
 		char* filepath_cpy = oscap_strdup(oscap_source_readable_origin(component_source));
 		char *dir = oscap_dirname(filepath_cpy);
+		bool href_is_remote = false;
 
 		for (int i = 0; i < nodeset->nodeNr; i++)
 		{
@@ -853,17 +854,28 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 
 				if (oscap_acquire_url_is_supported(href)) {
 					/* If the referenced component is remote one, do not include
-					 * it within the DataStream. Such component shall only be
-					 * downloaded once the scan is run. */
-					xmlFree(href);
-					continue;
+					* it within the DataStream. Such component shall only be
+					* downloaded once the scan is run.
+					* Add the component to the catalog and */
+					href_is_remote = true;
 				}
 
-				// skip over file:// if it's used in the file href
-				const char *altered_href = oscap_str_startswith(href, "file://") ? href + 7 : href;
+				char *real_path = NULL;
+				if (href_is_remote) {
+					// TODO: Orignal PR proposed to use filename as the identifier,
+					// but that might not be correct. DS could contain multiple remote
+					// files with the same name, or even same path (but different hosts).
+					real_path = oscap_acquire_url_extract_path(href);
+					//real_path = oscap_acquire_url_to_filename(href);
+					// TODO: Fix, how do we make sure that source type is OVAL?
+					oscap_source_set_scap_type(component_source, OSCAP_DOCUMENT_OVAL_DEFINITIONS);
+				} else {
+					// skip over file:// if it's used in the file href
+					const char *altered_href = oscap_str_startswith(href, "file://") ? href + 7 : href;
 
-				char* real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0 || altered_href[0] == '/') ?
-					oscap_strdup(altered_href) : oscap_sprintf("%s/%s", dir, altered_href);
+					real_path = (strcmp(dir, "") == 0 || strcmp(dir, ".") == 0 || altered_href[0] == '/') ?
+						oscap_strdup(altered_href) : oscap_sprintf("%s/%s", dir, altered_href);
+				}
 
 				char* mangled_path = ds_sds_mangle_filepath(real_path);
 				char* cref_id = oscap_sprintf("scap_org.open-scap_cref_%s", mangled_path);
@@ -976,6 +988,7 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 	xmlNsPtr cat_ns = xmlSearchNsByHref(doc, datastream, BAD_CAST cat_ns_uri);
 	const char *filepath = oscap_source_get_filepath(component_source);
 
+
 	// In case we already have this component we just return, no need to add
 	// it twice. We will typically have many references to OVAL files, adding
 	// component for each reference would create unnecessarily huge datastreams
@@ -996,6 +1009,7 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 	xmlNodePtr cref_parent;
 
 	bool extended_component = false;
+	bool source_is_remote = oscap_source_is_remote(component_source);
 
 	oscap_document_type_t doc_type = oscap_source_get_scap_type(component_source);
 	if (doc_type == OSCAP_DOCUMENT_XCCDF)
@@ -1053,13 +1067,17 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 
 	free(mangled_filepath);
 
-	result = ds_sds_compose_add_component_internal(doc, datastream, component_source, comp_id, extended_component);
+	// skip adding the component if remote
+	result = 0;
+	if (!source_is_remote) {
+		result = ds_sds_compose_add_component_internal(doc, datastream, component_source, comp_id, extended_component);
+	}
 	if (result == 0) {
 		xmlNodePtr cref = xmlNewNode(ds_ns, BAD_CAST "component-ref");
 		xmlAddChild(cref, cref_catalog);
 		xmlSetProp(cref, BAD_CAST "id", BAD_CAST cref_id);
 
-		char *xlink_href = oscap_sprintf("#%s", comp_id);
+		char *xlink_href = oscap_sprintf(source_is_remote ? "%s" : "#%s", comp_id);
 		xmlSetNsProp(cref, xlink_ns, BAD_CAST "href", BAD_CAST xlink_href);
 		free(xlink_href);
 

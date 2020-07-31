@@ -26,12 +26,15 @@
 #include <config.h>
 #endif
 
+#include <stdbool.h>
+
 #include <libxml/parser.h>
 #include <libxml/xmlreader.h>
 
 #include "common/util.h"
 #include "oscap.h"
 #include "oscap_source.h"
+
 
 
 /**
@@ -57,6 +60,12 @@ struct oscap_source *oscap_source_new_take_memory(char *buffer, size_t size, con
  * @returns newly created oscap_source
  */
 struct oscap_source *oscap_source_new_from_xmlDoc(xmlDoc *doc, const char *filepath);
+
+struct oscap_source *oscap_source_new_from_url(const char *url);
+
+bool oscap_source_is_remote(const struct oscap_source *source);
+
+void oscap_source_set_scap_type(struct oscap_source *source, oscap_document_type_t document_type);
 
 /**
  * Get an xmlTextReader assigned with this resource. The reader needs to be

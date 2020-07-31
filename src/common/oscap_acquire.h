@@ -59,6 +59,8 @@ int oscap_acquire_temp_file(const char *dir, const char *template, char **filena
  */
 bool oscap_acquire_url_is_supported(const char *url);
 
+char *oscap_acquire_url_extract_path(const char *url);
+
 /**
  * Escape characters in the url so it can be used as POSIX filename.
  * @param url Requested url

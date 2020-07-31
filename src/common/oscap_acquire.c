@@ -258,6 +258,27 @@ oscap_acquire_url_is_supported(const char *url)
 }
 
 char *
+oscap_acquire_url_extract_path(const char *url)
+{
+	char *path = NULL;
+
+	CURLUcode rc;
+	CURLU *curl = curl_url();
+	rc = curl_url_set(curl, CURLUPART_URL, url, 0);
+	if (!rc) {
+		char *cpath;
+		rc = curl_url_get(curl, CURLUPART_PATH, &cpath, 0);
+		if (!rc) {
+			path = strdup(cpath);
+			curl_free(cpath);
+		}
+		curl_url_cleanup(curl);
+	}
+
+	return path;
+}
+
+char *
 oscap_acquire_url_to_filename(const char *url)
 {
 	/* RFC 3986: 2.1. Percent-Encoding */
