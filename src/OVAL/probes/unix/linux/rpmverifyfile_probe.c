@@ -61,10 +61,10 @@
 
 struct rpmverify_res {
 	char *name;  /**< package name */
-	const char *epoch;
-	const char *version;
-	const char *release;
-	const char *arch;
+	char *epoch;
+	char *version;
+	char *release;
+	char *arch;
 	char *file;  /**< filepath */
 	char extended_name[1024];
 	rpmVerifyAttrs vflags; /**< rpm verify flags */
@@ -272,14 +272,14 @@ static int rpmverify_collect(probe_ctx *ctx,
 						free(current_file_realpath);
 						continue;
 					}
-					res.file = current_file_realpath ? current_file_realpath : strdup(current_file);
+					res.file = current_file_realpath ? oscap_strdup(current_file_realpath) : oscap_strdup(current_file);
 		      break;
 		    case OVAL_OPERATION_PATTERN_MATCH:
 					ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
 
 		      switch(ret) {
 		      case 0: /* match */
-						res.file = strdup(current_file);
+						res.file = oscap_strdup(current_file);
 			break;
 		      case -1:
 			/* mismatch */
@@ -299,12 +299,18 @@ static int rpmverify_collect(probe_ctx *ctx,
 						free(current_file_realpath);
 		      goto ret;
 		    }
+		    free(current_file_realpath);
 
 			if (rpmVerifyFile(g_rpm->rpmts, fi, &res.vflags, omit) != 0)
 		      res.vflags = RPMVERIFY_FAILURES;
 
 		    if (callback(ctx, &res) != 0) {
 			    ret = 0;
+					free(res.name);
+					free(res.epoch);
+					free(res.version);
+					free(res.release);
+					free(res.arch);
 					free(res.file);
 			    goto ret;
 		    }
@@ -313,6 +319,12 @@ static int rpmverify_collect(probe_ctx *ctx,
 
 		  rpmfiFree(fi);
 		}
+
+		free(res.name);
+		free(res.epoch);
+		free(res.version);
+		free(res.release);
+		free(res.arch);
 	}
 
 	match = rpmdbFreeIterator (match);
