@@ -208,7 +208,7 @@ void oval_record_field_set_mask(struct oval_record_field *rf, int mask)
 void oval_record_field_set_operation(struct oval_record_field *rf, oval_operation_t operation)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (set operation): %d.", rf->record_field_type);
 		return;
 	}
 
@@ -218,7 +218,7 @@ void oval_record_field_set_operation(struct oval_record_field *rf, oval_operatio
 void oval_record_field_set_variable(struct oval_record_field *rf, struct oval_variable *var)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (set variable): %d.", rf->record_field_type);
 		return;
 	}
 
@@ -228,7 +228,7 @@ void oval_record_field_set_variable(struct oval_record_field *rf, struct oval_va
 void oval_record_field_set_var_check(struct oval_record_field *rf, oval_check_t var_check)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (set var_check): %d.", rf->record_field_type);
 		return;
 	}
 
@@ -238,7 +238,7 @@ void oval_record_field_set_var_check(struct oval_record_field *rf, oval_check_t 
 void oval_record_field_set_ent_check(struct oval_record_field *rf, oval_check_t ent_check)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (set ent_check): %d.", rf->record_field_type);
 		return;
 	}
 
@@ -248,7 +248,7 @@ void oval_record_field_set_ent_check(struct oval_record_field *rf, oval_check_t 
 void oval_record_field_set_status(struct oval_record_field *rf, oval_syschar_status_t status)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_ITEM) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (set status): %d.", rf->record_field_type);
 		return;
 	}
 
@@ -283,7 +283,7 @@ int oval_record_field_get_mask(struct oval_record_field *rf)
 oval_operation_t oval_record_field_get_operation(struct oval_record_field *rf)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (get operation): %d.", rf->record_field_type);
 		return OVAL_OPERATION_UNKNOWN;
 	}
 
@@ -293,7 +293,7 @@ oval_operation_t oval_record_field_get_operation(struct oval_record_field *rf)
 struct oval_variable *oval_record_field_get_variable(struct oval_record_field *rf)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (get variable): %d.", rf->record_field_type);
 		return NULL;
 	}
 
@@ -303,7 +303,7 @@ struct oval_variable *oval_record_field_get_variable(struct oval_record_field *r
 oval_check_t oval_record_field_get_var_check(struct oval_record_field *rf)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (get var_check): %d.", rf->record_field_type);
 		return OVAL_CHECK_UNKNOWN;
 	}
 
@@ -313,7 +313,7 @@ oval_check_t oval_record_field_get_var_check(struct oval_record_field *rf)
 oval_check_t oval_record_field_get_ent_check(struct oval_record_field *rf)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_STATE) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (get ent_check): %d.", rf->record_field_type);
 		return OVAL_CHECK_UNKNOWN;
 	}
 
@@ -323,7 +323,7 @@ oval_check_t oval_record_field_get_ent_check(struct oval_record_field *rf)
 oval_syschar_status_t oval_record_field_get_status(struct oval_record_field *rf)
 {
 	if (rf->record_field_type != OVAL_RECORD_FIELD_ITEM) {
-		dE("Wrong record field type: %d.", rf->record_field_type);
+		dE("Wrong record field type (get status): %d.", rf->record_field_type);
 		return SYSCHAR_STATUS_UNKNOWN;
 	}
 
