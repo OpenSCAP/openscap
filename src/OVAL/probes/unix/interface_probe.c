@@ -60,6 +60,7 @@
 
 #include <probe-api.h>
 #include <probe/entcmp.h>
+#include "interface_probe.h"
 
 #if defined(OS_LINUX)
 #include <unistd.h>
@@ -71,7 +72,6 @@
 #include <net/if.h>
 #include <net/if_arp.h>
 #include <arpa/inet.h>
-#include "interface_probe.h"
 
 static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 {
