@@ -52,6 +52,11 @@
 #include <bfind.h>
 #include <common/debug_priv.h>
 #include <netdb.h>
+
+#if defined(OS_FREEBSD)
+#include <arpa/inet.h>
+#endif
+
 #include "../SEAP/generic/rbt/rbt.h"
 #include "xinetd_probe.h"
 
