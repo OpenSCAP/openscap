@@ -51,8 +51,10 @@
 #include <errno.h>
 #include <pwd.h>
 #include <paths.h>
-#ifdef OS_APPLE
+#if defined(OS_APPLE)
 #include <utmp.h>
+#elif defined(OS_FREEBSD)
+#include <utmpx.h>
 #else
 #include <lastlog.h>
 #endif
@@ -101,6 +103,26 @@ static void report_finding(struct result_info *res, probe_ctx *ctx, oval_schema_
         probe_item_collect(ctx, item);
 }
 
+#if defined(OS_FREEBSD)
+static time_t get_last_login(char *username) {
+        struct utmpx *ut;
+        time_t t = 0;
+
+        /* Iterate over the entries of the utx.log file */
+        while ((ut = getutxent()) != NULL) {
+                if (strcmp(username,ut->ut_user) == 0) {
+                        t = ut->ut_tv.tv_sec;
+                        break;
+                }
+        }
+
+        endutxent();
+
+        return t;
+}
+#endif
+
+
 static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
         struct passwd *pw;
@@ -123,7 +145,11 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t o
                         r.last_login = -1;
 
                         if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
-	                        FILE *ll_fp = fopen(_PATH_LASTLOG, "r");
+
+#if defined(OS_FREEBSD)
+				r.last_login = get_last_login(pw->pw_name);
+#else
+				FILE *ll_fp = fopen(_PATH_LASTLOG, "r");
 
 	                        if (ll_fp != NULL) {
 		                        struct lastlog ll;
@@ -133,7 +159,8 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t o
 				                        r.last_login = (int64_t)ll.ll_time;
 		                        fclose(ll_fp);
 	                        }
-                        }
+#endif
+			}
 
                         report_finding(&r, ctx, over);
                 }
