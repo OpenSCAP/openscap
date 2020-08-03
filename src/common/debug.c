@@ -60,7 +60,7 @@
 #if defined(OS_WINDOWS)
 # include <windows.h>
 # define GET_PROGRAM_NAME get_program_name()
-#elif defined(OS_APPLE)
+#elif defined(OS_APPLE) || defined(OS_FREEBSD)
 # define GET_PROGRAM_NAME getprogname()
 #else
 # define GET_PROGRAM_NAME program_invocation_short_name
@@ -76,8 +76,12 @@ static const struct oscap_string_map OSCAP_VERBOSITY_LEVELS[] = {
 
 #  if defined(OSCAP_THREAD_SAFE)
 #   include <pthread.h>
+#  if defined(OS_FREEBSD)
+#   include <pthread_np.h>
+#  endif /* OS_FREEBSD */
 static pthread_mutex_t __debuglog_mutex = PTHREAD_MUTEX_INITIALIZER;
-#  endif
+#  endif /* OSCAP_THREAD_SAFE */
+
 FILE *__debuglog_fp = NULL;
 oscap_verbosity_levels __debuglog_level = DBG_UNKNOWN;
 
