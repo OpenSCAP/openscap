@@ -85,6 +85,13 @@
 #include "system_info_probe.h"
 #include "oscap_helpers.h"
 
+#define _REGEX_RES_VECSIZE     12
+#define MAX_BUFFER_SIZE        4096
+
+#if !defined(HOST_NAME_MAX)
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#endif
+
 #if defined(OS_LINUX)
 #include <sys/socket.h>
 #include <ifaddrs.h>
@@ -94,11 +101,17 @@
 #include <net/if.h>
 #include <arpa/inet.h>
 #include <sys/types.h>
-
 #include <pcre.h>
-#define _REGEX_RES_VECSIZE     12
-#define MAX_BUFFER_SIZE        4096
+#elif defined(OS_FREEBSD)
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <sys/ioctl.h>
+#endif
 
+#if defined(OS_LINUX)
 static char *get_mac(const struct ifaddrs *ifa, int fd)
 {
        struct ifreq ifr;
@@ -180,9 +193,32 @@ static char *get_mac(const struct ifaddrs *ifa, int fd)
 	}
 	return mac_buf;
 }
+
+#elif defined(OS_FREEBSD)
+static char *get_mac(const struct ifaddrs *ifa, int fd)
+{
+	struct ifreq ifr;
+	unsigned char mac[6];
+	static char mac_buf[20];
+
+	memset(&ifr, 0, sizeof(struct ifreq));
+	strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
+	ifr.ifr_name[IFNAMSIZ-1] = 0;
+
+	if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
+		memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
+		snprintf(mac_buf, sizeof(mac_buf),
+				"%02X:%02X:%02X:%02X:%02X:%02X",
+				mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	} else {
+		mac_buf[0] = 0;
+	}
+
+    return mac_buf;
+}
 #endif
 
-#if defined(OS_LINUX) || (defined(OS_SOLARIS))
+#if defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_FREEBSD)
 static int get_ifs(SEXP_t *item)
 {
        struct ifaddrs *ifaddr, *ifa;
@@ -524,6 +560,39 @@ finish:
 	return ret;
 }
 
+#if defined(OS_FREEBSD)
+static char *_offline_get_hname(const char *oscap_probe_root)
+{
+	FILE *fp;
+	size_t len;
+	char *strp;
+	char *entry;
+	char *hname;
+	char *ret = NULL;
+	char *line = NULL;
+	const char *sep = "\"";
+	const char *expected_entry = "hostname=";
+
+	fp = oscap_fopen_with_prefix(oscap_probe_root, "/etc/rc.conf");
+
+	if (!fp)
+		goto fail;
+
+	while (getline(&line, &len, fp) > 0) {
+		entry = strtok_r(line, sep, &strp);
+		if (strcmp(entry, expected_entry) == 0) {
+			hname = strtok_r(NULL, sep, &strp);
+			ret = strdup(hname);
+			break;
+		}
+	}
+
+	fclose(fp);
+fail:
+	return ret;
+}
+
+#else
 static char *_offline_get_hname(const char *oscap_probe_root)
 {
 	FILE *fp;
@@ -549,7 +618,8 @@ finish:
 fail:
 	return ret;
 }
-#endif
+#endif /* ifdef OS_FREEBSD */
+#endif /* ifndef OS_WINDOWS */
 
 #ifdef OS_WINDOWS
 static char *get_windows_version()
