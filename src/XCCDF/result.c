@@ -73,6 +73,10 @@
 #define timezone _timezone
 #endif
 
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#endif
+
 // References containing STIG Rule IDs can be found by their href attribute, it must match the following url
 static const char *DISA_STIG_VIEWER_HREF[] = { "http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx",
 					       "https://public.cyber.mil/stigs/srg-stig-tools/" };
@@ -1630,6 +1634,27 @@ static inline const char *_get_timestamp(void)
 
 	tm = time(NULL);
 	lt = localtime(&tm);
+
+	if (!lt)
+		return NULL;
+
+#if defined(OS_FREEBSD)
+	tz_diff = lt->tm_gmtoff;
+
+        if (tz_diff < 0) {
+                tz_sign = '-';
+                tz_diff *= -1;
+        }
+        else {
+                tz_sign = '+';
+        }
+
+        /*  glibc's timezone offset does not account for daylight savings time.
+         *  So we match that behavior here by adding an 3600 seconds
+         */
+        if (lt->tm_isdst)
+                tz_diff += 3600;
+#else
 	/* timezone is a global variable set by localtime(3) */
 	if (timezone <= 0) {
 		tz_sign = '+';
@@ -1638,13 +1663,17 @@ static inline const char *_get_timestamp(void)
 		tz_sign = '-';
 		tz_diff = timezone;
 	}
+#endif
 	tz_diff /= 60;
+
 	int ret = snprintf(timestamp, sizeof(timestamp), "%4d-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
 		1900 + lt->tm_year, 1 + lt->tm_mon, lt->tm_mday,
 		lt->tm_hour, lt->tm_min, lt->tm_sec, tz_sign, tz_diff / 60, tz_diff % 60);
+
 	if (ret < 0) {
 		return NULL;
 	}
+
 	return timestamp;
 }
 
