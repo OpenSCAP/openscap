@@ -333,9 +333,9 @@ static int rpmverify_collect(probe_ctx *ctx,
 		}
 	}
 
-	match = rpmdbFreeIterator (match);
 	ret   = 0;
 ret:
+	match = rpmdbFreeIterator(match);
 	RPMVERIFY_UNLOCK;
 	return (ret);
 }
