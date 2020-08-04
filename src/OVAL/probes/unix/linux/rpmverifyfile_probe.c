@@ -316,10 +316,8 @@ static int rpmverify_collect(probe_ctx *ctx,
 			oscap_streq(res.epoch, "(none)") ? "0" : res.epoch,
 			res.version, res.release, res.arch);
 
-		if (rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_BASENAMES, &res, flags) != 0) {
-			ret = -1;
-		}
-		if (rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_DIRNAMES, &res, flags) != 0) {
+		if (rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_BASENAMES, &res, flags) != 0 ||
+				rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_DIRNAMES, &res, flags) != 0) {
 			ret = -1;
 		}
 
