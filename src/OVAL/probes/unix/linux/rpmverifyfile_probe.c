@@ -61,10 +61,10 @@
 
 struct rpmverify_res {
 	char *name;  /**< package name */
-	const char *epoch;
-	const char *version;
-	const char *release;
-	const char *arch;
+	char *epoch;
+	char *version;
+	char *release;
+	char *arch;
 	char *file;  /**< filepath */
 	char extended_name[1024];
 	rpmVerifyAttrs vflags; /**< rpm verify flags */
@@ -93,6 +93,8 @@ struct rpmverify_res {
 #define RPMVERIFY_LOCK   RPM_MUTEX_LOCK(&g_rpm->mutex)
 
 #define RPMVERIFY_UNLOCK RPM_MUTEX_UNLOCK(&g_rpm->mutex)
+
+static int rpmverify_additem(probe_ctx *ctx, struct rpmverify_res *res);
 
 /* modify passed-in iterator to test also given entity */
 static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_tag) {
@@ -123,32 +125,125 @@ static int adjust_filter(rpmdbMatchIterator iterator, SEXP_t *ent, rpmTag rpm_ta
 	return ret;
 }
 
+/*
+ * Compare file with item iterated over.
+ * Returns 0 when they match, 1 when don't match, -1 on error.
+ * Returns the matched file path in result_file.
+ */
+static int _compare_file_with_current_file(oval_operation_t file_op, const char *file, const char *current_file, char **result_file)
+{
+	int ret = 0;
+
+	char *file_realpath = oscap_realpath(file, NULL);
+	char *current_file_realpath = oscap_realpath(current_file, NULL);
+
+	if (file_op == OVAL_OPERATION_EQUALS) {
+		if (strcmp(current_file, file) != 0 &&
+				current_file_realpath && file_realpath &&
+				strcmp(current_file_realpath, file_realpath) != 0) {
+			ret = 1;
+			goto cleanup;
+		}
+		*result_file = oscap_strdup(file);
+	} else if (file_op == OVAL_OPERATION_NOT_EQUAL) {
+		if (strcmp(current_file, file) == 0 ||
+				(current_file_realpath && file_realpath &&
+				strcmp(current_file_realpath, file_realpath) == 0)) {
+			ret = 1;
+			goto cleanup;
+		}
+		*result_file = current_file_realpath ? oscap_strdup(current_file_realpath) : oscap_strdup(current_file);
+	} else if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
+		const char *errmsg;
+		int erroff;
+		pcre *re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
+		if (re == NULL) {
+			dE("pcre_compile pattern='%s': %s", file, errmsg);
+			ret = -1;
+			goto cleanup;
+		}
+		int pcre_ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
+		pcre_free(re);
+		if (pcre_ret == 0) {
+			/* match */
+			*result_file = oscap_strdup(current_file);
+		} else if (pcre_ret == -1) {
+			/* no match */
+			ret = 1;
+			goto cleanup;
+		} else {
+			dE("pcre_exec() failed!");
+			ret = -1;
+			goto cleanup;
+		}
+	} else {
+		/* unsupported operation */
+		dE("Operation \"%d\" on `filepath' not supported", file_op);
+		ret = -1;
+		goto cleanup;
+	}
+
+cleanup:
+	free(file_realpath);
+	free(current_file_realpath);
+
+	return ret;
+}
+
+static int rpmverify_collect_package_files_or_directories(
+		struct rpm_probe_global *g_rpm, probe_ctx *ctx, Header pkgh,
+		const char *file, oval_operation_t file_op, rpmTag tag,
+		struct rpmverify_res *res, uint64_t flags)
+{
+	int ret = 0;
+	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
+	rpmfi fi = rpmfiNew(g_rpm->rpmts, pkgh, tag, 1);
+
+	while (rpmfiNext(fi) != -1) {
+		const char *current_file = rpmfiFN(fi);
+		res->fflags = rpmfiFFlags(fi);
+		res->oflags = omit;
+
+		if (((res->fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
+				((res->fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
+			continue;
+		}
+		int cmp_res = _compare_file_with_current_file(file_op, file, current_file, &res->file);
+		if (cmp_res == 1) {
+			/* no match */
+			continue;
+		}
+		if (cmp_res == -1) {
+			ret = -1;
+			goto cleanup;
+		}
+
+		if (rpmVerifyFile(g_rpm->rpmts, fi, &res->vflags, omit) != 0) {
+			res->vflags = RPMVERIFY_FAILURES;
+		}
+
+		if (rpmverify_additem(ctx, res) != 0) {
+			ret = -1;
+			free(res->file);
+			goto cleanup;
+		}
+		free(res->file);
+	}
+
+cleanup:
+	rpmfiFree(fi);
+	return ret;
+}
+
 static int rpmverify_collect(probe_ctx *ctx,
 			     const char *file, oval_operation_t file_op,
 			     SEXP_t *name_ent, SEXP_t *epoch_ent, SEXP_t *version_ent, SEXP_t *release_ent, SEXP_t *arch_ent,
 			     uint64_t flags,
-		int (*callback)(probe_ctx *, struct rpmverify_res *),
 		struct rpm_probe_global *g_rpm)
 {
 	rpmdbMatchIterator match;
-	rpmVerifyAttrs omit = (rpmVerifyAttrs)(flags & RPMVERIFY_RPMATTRMASK);
 	Header pkgh;
-	pcre *re = NULL;
 	int  ret = -1;
-	char *file_realpath = NULL;
-
-	/* pre-compile regex if needed */
-	if (file_op == OVAL_OPERATION_PATTERN_MATCH) {
-		const char *errmsg;
-		int erroff;
-
-		re = pcre_compile(file, PCRE_UTF8, &errmsg,  &erroff, NULL);
-
-		if (re == NULL) {
-			/* TODO */
-			return (-1);
-		}
-	}
 
 	RPMVERIFY_LOCK;
 
@@ -188,26 +283,10 @@ static int rpmverify_collect(probe_ctx *ctx,
 		goto ret;
 	}
 
-	if (RPMTAG_BASENAMES == 0 || RPMTAG_DIRNAMES == 0) {
-		return -1;
-	}
-
-	file_realpath = oscap_realpath(file, NULL);
-
 	while ((pkgh = rpmdbNextIterator (match)) != NULL) {
 		SEXP_t *ent;
-		rpmfi  fi;
-		rpmTag tag[2] = { RPMTAG_BASENAMES, RPMTAG_DIRNAMES };
 		struct rpmverify_res res;
 		errmsg_t rpmerr;
-		int i;
-		const char *current_file;
-		char *current_file_realpath;
-
-		/*
-+SEXP_t *probe_ent_from_cstr(const char *name, oval_datatype_t type,
-+                            const char *value, size_t vallen)
-		 */
 
 #define COMPARE_ENT(XXX) \
 		if (XXX ## _ent != NULL) { \
@@ -237,92 +316,25 @@ static int rpmverify_collect(probe_ctx *ctx,
 			oscap_streq(res.epoch, "(none)") ? "0" : res.epoch,
 			res.version, res.release, res.arch);
 
-		/*
-		 * Inspect package files & directories
-		 */
-		for (i = 0; i < 2; ++i) {
-			fi = rpmfiNew(g_rpm->rpmts, pkgh, tag[i], 1);
-
-		  while (rpmfiNext(fi) != -1) {
-				current_file = rpmfiFN(fi);
-				current_file_realpath = oscap_realpath(current_file, NULL);
-		    res.fflags = rpmfiFFlags(fi);
-		    res.oflags = omit;
-
-		    if (((res.fflags & RPMFILE_CONFIG) && (flags & RPMVERIFY_SKIP_CONFIG)) ||
-					((res.fflags & RPMFILE_GHOST)  && (flags & RPMVERIFY_SKIP_GHOST))) {
-					free(current_file_realpath);
-					continue;
-				}
-
-		    switch(file_op) {
-		    case OVAL_OPERATION_EQUALS:
-					if (strcmp(current_file, file) != 0 &&
-							current_file_realpath && file_realpath &&
-							strcmp(current_file_realpath, file_realpath) != 0) {
-						free(current_file_realpath);
-						continue;
-					}
-					res.file = oscap_strdup(file);
-		      break;
-		    case OVAL_OPERATION_NOT_EQUAL:
-					if (strcmp(current_file, file) == 0 ||
-							(current_file_realpath && file_realpath &&
-							strcmp(current_file_realpath, file_realpath) == 0)) {
-						free(current_file_realpath);
-						continue;
-					}
-					res.file = current_file_realpath ? current_file_realpath : strdup(current_file);
-		      break;
-		    case OVAL_OPERATION_PATTERN_MATCH:
-					ret = pcre_exec(re, NULL, current_file, strlen(current_file), 0, 0, NULL, 0);
-
-		      switch(ret) {
-		      case 0: /* match */
-						res.file = strdup(current_file);
-			break;
-		      case -1:
-			/* mismatch */
-						free(current_file_realpath);
-			continue;
-		      default:
-			dE("pcre_exec() failed!");
+		if (rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_BASENAMES, &res, flags) != 0 ||
+				rpmverify_collect_package_files_or_directories(g_rpm, ctx, pkgh, file, file_op, RPMTAG_DIRNAMES, &res, flags) != 0) {
 			ret = -1;
-						free(current_file_realpath);
+		}
+
+		free(res.name);
+		free(res.epoch);
+		free(res.version);
+		free(res.release);
+		free(res.arch);
+		if (ret == -1) {
 			goto ret;
-		      }
-		      break;
-		    default:
-		      /* unsupported operation */
-		      dE("Operation \"%d\" on `filepath' not supported", file_op);
-		      ret = -1;
-						free(current_file_realpath);
-		      goto ret;
-		    }
-
-			if (rpmVerifyFile(g_rpm->rpmts, fi, &res.vflags, omit) != 0)
-		      res.vflags = RPMVERIFY_FAILURES;
-
-		    if (callback(ctx, &res) != 0) {
-			    ret = 0;
-					free(res.file);
-			    goto ret;
-		    }
-			free(res.file);
-		  }
-
-		  rpmfiFree(fi);
 		}
 	}
 
-	match = rpmdbFreeIterator (match);
 	ret   = 0;
 ret:
-	if (re != NULL)
-		pcre_free(re);
-
+	match = rpmdbFreeIterator(match);
 	RPMVERIFY_UNLOCK;
-	free(file_realpath);
 	return (ret);
 }
 
@@ -544,7 +556,7 @@ int rpmverifyfile_probe_main(probe_ctx *ctx, void *arg)
 			      file, file_op,
 			      name_ent, epoch_ent, version_ent, release_ent, arch_ent,
 			      collect_flags,
-			rpmverify_additem, g_rpm) != 0)
+			g_rpm) != 0)
 	{
 		dE("An error ocured while collecting rpmverifyfile data");
 		probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);
