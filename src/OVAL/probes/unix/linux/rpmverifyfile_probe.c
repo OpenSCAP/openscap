@@ -283,11 +283,6 @@ static int rpmverify_collect(probe_ctx *ctx,
 		goto ret;
 	}
 
-	if (RPMTAG_BASENAMES == 0 || RPMTAG_DIRNAMES == 0) {
-		return -1;
-	}
-
-
 	while ((pkgh = rpmdbNextIterator (match)) != NULL) {
 		SEXP_t *ent;
 		struct rpmverify_res res;
