@@ -668,7 +668,13 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailoring_doc, const char* tailoring_filepath, char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
+int ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping,
+		bool clone)
 {
 	*ret = NULL;
 
@@ -699,8 +705,13 @@ int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailorin
 
 	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
 	xmlNodePtr sds_res_node = NULL;
-	xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
-			&sds_res_node, doc, NULL, 1, 0);
+	if (clone) {
+		xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
+				&sds_res_node, doc, NULL, 1, 0);
+	} else {
+		sds_res_node = xmlDocGetRootElement(sds_doc);
+		xmlDOMWrapAdoptNode(sds_wrap_ctxt, sds_doc, sds_res_node, doc, NULL, 0);
+	}
 	xmlAddChild(arf_content, sds_res_node);
 	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
 	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
@@ -827,7 +838,7 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 	xmlDocPtr rds_doc = NULL;
 
 	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
-				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
+			oval_result_sources, oval_result_mapping, arf_report_mapping, true) != 0) {
 		free(tailoring_doc_timestamp);
 		return NULL;
 	}

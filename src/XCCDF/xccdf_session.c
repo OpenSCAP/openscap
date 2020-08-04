@@ -287,8 +287,10 @@ static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_sessio
 
 	xmlDocPtr rds_doc = NULL;
 
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
-				session->oval.result_sources, session->oval.results_mapping, session->oval.arf_report_mapping) != 0) {
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
+			session->oval.result_sources, session->oval.results_mapping,
+			session->oval.arf_report_mapping, false) != 0) {
 		goto cleanup;
 	}
 
