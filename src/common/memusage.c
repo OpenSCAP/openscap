@@ -32,6 +32,26 @@
 #include <errno.h>
 #include <stdint.h>
 
+#if defined(OS_FREEBSD)
+#include <fcntl.h>
+#include <kvm.h>
+#include <limits.h>
+#include <paths.h>
+#include <sys/param.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
+#include <unistd.h>
+
+#define GET_VM_PAGE_SIZE        "vm.stats.vm.v_page_size"
+#define GET_VM_TOTAL_PAGE_COUNT "vm.stats.vm.v_page_count"
+#define GET_VM_FREE_PAGE_COUNT  "vm.stats.vm.v_free_count"
+#define GET_VM_INACT_PAGE_COUNT "vm.stats.vm.v_inactive_count"
+#define GET_VM_ACT_PAGE_COUNT   "vm.stats.vm.v_active_count"
+
+#define BYTES_TO_KIB(x) (x >> 10)
+#endif
+
 #include "debug_priv.h"
 #include "memusage.h"
 #include "bfind.h"
@@ -174,6 +194,98 @@ struct stat_parser __proc_stat_ptable[] = {
 
 #endif /* OS_LINUX */
 
+#if defined(OS_FREEBSD)
+static int freebsd_sys_memusage(struct sys_memusage *mu)
+{
+	size_t size;
+	size_t page_size = 0;
+	unsigned int total_page_count = 0;
+	unsigned int free_page_count = 0;
+	unsigned int active_page_count = 0;
+	unsigned int inactive_page_count = 0;
+
+        /* Page size */
+	size = sizeof(page_size);
+	if (sysctlbyname(GET_VM_PAGE_SIZE, &page_size, &size, NULL, 0) < 0) {
+		return -1;
+	}
+
+        /* Total pages */
+        size = sizeof(total_page_count);
+	if (sysctlbyname(GET_VM_TOTAL_PAGE_COUNT, &total_page_count, &size, NULL, 0) < 0) {
+		return -1;
+	}
+
+        /* Total free pages */
+	size = sizeof(free_page_count);
+	if (sysctlbyname(GET_VM_FREE_PAGE_COUNT, &free_page_count, &size, NULL, 0) < 0) {
+		return -1;
+	}
+
+        /* Total active pages */
+	size = sizeof(active_page_count);
+	if (sysctlbyname(GET_VM_ACT_PAGE_COUNT, &active_page_count , &size, NULL, 0) < 0) {
+		return -1;
+	}
+
+	/* Total inactive pages */
+	size = sizeof(inactive_page_count);
+	if (sysctlbyname(GET_VM_INACT_PAGE_COUNT, &inactive_page_count , &size, NULL, 0) < 0) {
+		return -1;
+	}
+
+	mu->mu_total = BYTES_TO_KIB(total_page_count * page_size);
+	mu->mu_free = BYTES_TO_KIB(free_page_count * page_size);
+	mu->mu_active = BYTES_TO_KIB(active_page_count * page_size);
+	mu->mu_inactive = BYTES_TO_KIB(inactive_page_count * page_size);
+	mu->mu_realfree = mu->mu_free + mu->mu_inactive;
+
+	/* FreeBSD does not report these values */
+	mu->mu_buffers = 0;
+	mu->mu_cached = 0;
+
+	return 0;
+}
+
+static int freebsd_proc_memusage(struct proc_memusage *mu)
+{
+	int count;
+	kvm_t *kd;
+	pid_t mypid;
+        char errbuf[LINE_MAX];
+        struct kinfo_proc *procinfo;
+
+        mypid = getpid();
+        kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, errbuf);
+
+        if (!kd)
+                return -1;
+
+        procinfo = kvm_getprocs(kd, KERN_PROC_PID, mypid, &count);
+
+        if(!procinfo)
+                return -1;
+
+        mu->mu_rss = procinfo->ki_rssize;
+        mu->mu_text = procinfo->ki_tsize;
+        mu->mu_data = procinfo->ki_dsize;
+        mu->mu_stack = procinfo->ki_ssize;
+
+        /* ki_swrss is the resident set size before last swap, this
+         * is the closest approximation to Linux's "VmHWM" which is the
+         * peak resident set size of the process.
+         */
+        mu->mu_hwm = procinfo->ki_swrss;
+
+        /* Not exposed on FreeBSD */
+        mu->mu_lib = 0;
+        mu->mu_lock = 0;
+
+        return 0;
+}
+
+#endif /* OS_FREEBSD */
+
 int oscap_sys_memusage(struct sys_memusage *mu)
 {
 	if (mu == NULL)
@@ -187,6 +299,9 @@ int oscap_sys_memusage(struct sys_memusage *mu)
 	}
 
 	mu->mu_realfree = mu->mu_free + mu->mu_cached + mu->mu_buffers;
+#elif defined(OS_FREEBSD)
+	if (freebsd_sys_memusage(mu))
+		return -1;
 #else
 	errno = EOPNOTSUPP;
 	return -1;
@@ -205,6 +320,9 @@ int oscap_proc_memusage(struct proc_memusage *mu)
 	{
 		return -1;
 	}
+#elif defined(OS_FREEBSD)
+	if (freebsd_proc_memusage(mu))
+		return -1;
 #else
 	errno = EOPNOTSUPP;
 	return -1;
