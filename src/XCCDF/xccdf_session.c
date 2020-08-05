@@ -280,8 +280,15 @@ static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_sessio
 		if (stat(tailoring_filepath, &file_stat) == 0) {
 			const size_t max_timestamp_len = 32;
 			tailoring_doc_timestamp = malloc(max_timestamp_len);
+			struct tm *tm_mtime = malloc(sizeof(struct tm));
+#ifdef OS_WINDOWS
+			tm_mtime = localtime_s(tm_mtime, &file_stat.st_mtime);
+#else
+			tm_mtime = localtime_r(&file_stat.st_mtime, tm_mtime);
+#endif
 			strftime(tailoring_doc_timestamp, max_timestamp_len,
-					"%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
+					"%Y-%m-%dT%H:%M:%S", tm_mtime);
+			free(tm_mtime);
 		}
 	}
 
