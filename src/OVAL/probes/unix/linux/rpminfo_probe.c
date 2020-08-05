@@ -247,6 +247,7 @@ static int get_rpminfo(struct rpminfo_req *req, struct rpminfo_rep **rep, struct
 			pkgh2rep(pkgh, (*rep) + i, &keyid_regex);
                         else {
                                 /* XXX: emit warning */
+                                memset((*rep) + i, 0, sizeof(struct rpminfo_rep));
                                 break;
                         }
                 }
