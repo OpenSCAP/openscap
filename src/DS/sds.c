@@ -136,9 +136,8 @@ xmlNodePtr ds_sds_find_component_ref(xmlNodePtr datastream, const char* id)
 	return NULL;
 }
 
-xmlNodePtr lookup_component_in_collection(xmlDocPtr doc, const char *component_id)
+xmlNodePtr lookup_component_in_collection(xmlNodePtr root, const char *component_id)
 {
-	xmlNodePtr root = xmlDocGetRootElement(doc);
 	xmlNodePtr component = NULL;
 	xmlNodePtr candidate = root->children;
 
@@ -278,7 +277,8 @@ static xmlNodePtr ds_sds_get_component_root_by_id(xmlDoc *doc, const char* compo
 	if (component_id == NULL) {
 		component = (xmlNodePtr)doc;
 	} else {
-		component = lookup_component_in_collection(doc, component_id);
+		xmlNodePtr root = xmlDocGetRootElement(doc);
+		component = lookup_component_in_collection(root, component_id);
 		if (component == NULL)
 		{
 			oscap_seterr(OSCAP_EFAMILY_XML, "Component of given id '%s' was not found in the document.", component_id);
@@ -1044,7 +1044,8 @@ static int ds_sds_compose_add_component_source_with_ref(xmlDocPtr doc, xmlNodePt
 		extended_component ? "e" : "", mangled_filepath);
 
 	int counter = 0;
-	while (lookup_component_in_collection(doc, comp_id) != NULL) {
+	xmlNodePtr root = xmlDocGetRootElement(doc);
+	while (lookup_component_in_collection(root, comp_id) != NULL) {
 		// While a component of the given ID already exists, generate a new one
 		free(comp_id);
 		comp_id = oscap_sprintf("scap_org.open-scap_%scomp_%s%03d",

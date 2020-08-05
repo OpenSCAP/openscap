@@ -712,7 +712,7 @@ int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailorin
 
 		// Need unique id (ref_id) - if generated already exists, then create new one
 		int counter = 0;
-		while (lookup_component_in_collection(sds_doc, tailoring_component_id) != NULL) {
+		while (lookup_component_in_collection(sds_res_node, tailoring_component_id) != NULL) {
 			free(tailoring_component_id);
 			tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
 		}
