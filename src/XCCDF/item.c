@@ -773,6 +773,7 @@ void xccdf_item_add_applicable_platform(struct xccdf_item *item, xmlTextReaderPt
 	pcre *regex = pcre_compile("^(cpe:/o:microsoft:windows)(7.*)", 0, &pcreerror, &erroffset, NULL);
 	int ovector[OVECTOR_LEN];
 	int rc = pcre_exec(regex, NULL, platform_idref, strlen(platform_idref), 0, 0, ovector, OVECTOR_LEN);
+	pcre_free(regex);
 	/* 1 pattern + 2 groups = 3 */
 	if (rc == 3) {
 		const int first_group_start = ovector[2];
