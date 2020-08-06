@@ -153,6 +153,7 @@ static void probe_common_main_cleanup(void *arg)
 		fini_function(probe->probe_arg);
 	}
 
+	probe_ncache_free(probe->ncache);
 	probe_rcache_free(probe->rcache);
 	probe_icache_free(probe->icache);
 	rbt_i32_free(probe->workers);

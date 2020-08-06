@@ -49,74 +49,6 @@
 #include "probe-table.h"
 #include "oval_types.h"
 
-#if defined(OSCAP_THREAD_SAFE)
-#include <pthread.h>
-static pthread_once_t __oval_probe_session_init_once = PTHREAD_ONCE_INIT;
-#else
-static volatile int __oval_probe_session_init_once = 0;
-#endif /* OSCAP_THREAD_SAFE */
-
-/**
- * Entity name cache exit hook. This hook is registered using
- * atexit(3) during initialization and ensures that the element
- * name cache is freed before exit.
- */
-static void ncache_libfree(void)
-{
-        probe_ncache_free(OSCAP_GSYM(ncache));
-}
-
-/**
- * Initialize element name cache and register an exit hook.
- */
-static void ncache_libinit(void)
-{
-        if (OSCAP_GSYM(ncache) == NULL) {
-                OSCAP_GSYM(ncache) = probe_ncache_new();
-                atexit(ncache_libfree);
-        }
-}
-
-static void oval_probe_session_libinit(void)
-{
-	/* HACK: Make sure S-exps are initialized before we initialize anything else
-	 * that uses them. This is needed only if the S-exp library is compiled without
-	 * atomic builtins. In that case it uses a fallback locking mechanism that uses
-	 * a mutex array which needs to be initialized before S-exp are used and freed
-	 * at exit(3). The later is done by registering an atexit(3) function.
-	 * The ncache_libinit function also registers an atexit(3) function and we need
-	 * to make sure that the S-exps are not deinitialized before the ncache atexit
-	 * handler is called.
-	 * TODO: Implement SEXP_libinit() and call it from oscap_init()?
-	 */
-	volatile SEXP_t *exp = SEXP_string_new("magic", 5);
-	SEXP_free((SEXP_t *)exp);
-
-        ncache_libinit();
-}
-
-/**
- * Initialize the element name cache. This function can be called repeatedly
- * from various probe system entry points to ensure that the cache is initialized.
- * If OSCAP_THREAD_SAFE is defined at compilation time, the pthread_once call
- * is used to ensure that the initialization is done just once. Otherwise a
- * volatile integer flag is used.
- */
-static void __init_once(void)
-{
-#if defined(OSCAP_THREAD_SAFE)
-        if (pthread_once(&__oval_probe_session_init_once,
-			 &oval_probe_session_libinit) != 0)
-                abort();
-#else
-        if (__oval_probe_session_init_once == 0) {
-                oval_probe_session_libinit();
-                __oval_probe_session_init_once = 1;
-        }
-#endif
-        return;
-}
-
 static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_syschar_model *model)
 {
         sess->ph = oval_phtbl_new();
@@ -125,8 +57,6 @@ static void oval_probe_session_init(oval_probe_session_t *sess, struct oval_sysc
         sess->pext = oval_pext_new();
         sess->pext->model    = &sess->sys_model;
         sess->pext->sess_ptr = sess;
-
-        __init_once();
 
 	oval_probe_handler_t *probe_handler;
 	int probe_count = probe_table_size();
