@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 passwd_file=`mktemp`
 
 # getpwent returns duplicate entries for root and nobody users
@@ -11,7 +10,15 @@ if which systemctl &>/dev/null && \
 		[[ `systemctl --version | grep "systemd 245"` =~ "245" ]] ; then
 	grep -Ev '^(root|nobody)' /etc/passwd > "$passwd_file"
 else
-	cp /etc/passwd "$passwd_file"
+	case `uname` in
+		# The first two lines of /etc/passwd on FreeBSD are not account entries
+		FreeBSD)
+			sed 1,2d /etc/passwd > $passwd_file
+			;;
+		*)
+			cp /etc/passwd "$passwd_file"
+			;;
+	esac
 fi
 
 LINES_COUNT=`cat "$passwd_file" | wc -l`
