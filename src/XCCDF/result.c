@@ -58,6 +58,17 @@
 #include <sys/ioctl.h>
 #endif
 
+#if defined(OS_FREEBSD)
+#include <arpa/inet.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/sockio.h>
+#include <sys/ioctl.h>
+#endif
+
 #include "item.h"
 #include "helpers.h"
 #include "xccdf_impl.h"
@@ -243,7 +254,7 @@ fail:
 
 void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 {
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(OS_FREEBSD)
 	struct ifaddrs *ifaddr, *ifa;
 	int fd;
 #endif
@@ -284,8 +295,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	if (!probe_root)
 		_xccdf_result_fill_identity(result);
 
-#if defined(OS_LINUX)
-
+#if defined(OS_LINUX) || defined(OS_FREEBSD)
 	if (!probe_root) {
 		/* get network interfaces */
 		if (getifaddrs(&ifaddr) == -1)
@@ -324,6 +334,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 			memset(&ifr, 0, sizeof(ifr));
 			strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
 			ifr.ifr_name[IFNAMSIZ - 1] = 0;
+#if defined(OS_LINUX)
 			if (ioctl(fd, SIOCGIFHWADDR, &ifr) >= 0) {
 				unsigned char mac[6];
 				char macbuf[20];
@@ -331,6 +342,15 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 				memcpy(mac, ifr.ifr_hwaddr.sa_data, sizeof(mac));
 				snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
 					 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#elif defined(OS_FREEBSD)
+			if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
+				unsigned char mac[6];
+				char macbuf[20];
+
+				memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
+				snprintf(macbuf, sizeof(macbuf), "%02X:%02X:%02X:%02X:%02X:%02X",
+					 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+#endif
 				fact = xccdf_target_fact_new();
 				xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
 				xccdf_target_fact_set_string(fact, macbuf);
@@ -344,7 +364,6 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	out1:
 		freeifaddrs(ifaddr);
 	}
-
 #elif defined(OS_WINDOWS)
 
 #define VERSION_LEN 32
@@ -1641,19 +1660,18 @@ static inline const char *_get_timestamp(void)
 #if defined(OS_FREEBSD)
 	tz_diff = lt->tm_gmtoff;
 
-        if (tz_diff < 0) {
-                tz_sign = '-';
-                tz_diff *= -1;
-        }
-        else {
-                tz_sign = '+';
-        }
+	if (tz_diff < 0) {
+		tz_sign = '-';
+		tz_diff *= -1;
+	} else {
+		tz_sign = '+';
+	}
 
         /*  glibc's timezone offset does not account for daylight savings time.
-         *  So we match that behavior here by adding an 3600 seconds
+         *  So we match that behavior here by adding 3600 seconds
          */
         if (lt->tm_isdst)
-                tz_diff += 3600;
+		tz_diff += 3600;
 #else
 	/* timezone is a global variable set by localtime(3) */
 	if (timezone <= 0) {
