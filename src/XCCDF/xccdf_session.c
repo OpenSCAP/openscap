@@ -1876,7 +1876,7 @@ int xccdf_session_generate_guide(struct xccdf_session *session, const char *outf
 	return 0;
 }
 
-int xccdf_session_export_and_free(struct xccdf_session *session)
+int xccdf_session_export_all(struct xccdf_session *session)
 {
 	int ret = 0;
 	struct oscap_source *arf_source = NULL;
@@ -1922,6 +1922,5 @@ int xccdf_session_export_and_free(struct xccdf_session *session)
 
 cleanup:
 	oscap_source_free(arf_source);
-	xccdf_session_free(session);
 	return ret;
 }

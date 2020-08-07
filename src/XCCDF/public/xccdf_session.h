@@ -567,11 +567,11 @@ OSCAP_API int xccdf_session_add_report_from_source(struct xccdf_session *session
 OSCAP_API int xccdf_session_generate_guide(struct xccdf_session *session, const char *outfile);
 
 /**
- * Export XCCDF, ARF, HTML and then free the session.
+ * Export XCCDF, ARF, HTML
  * @param session XCCDF Session
  * @returns zero on success
  */
-OSCAP_API int xccdf_session_export_and_free(struct xccdf_session *session);
+OSCAP_API int xccdf_session_export_all(struct xccdf_session *session);
 
 /// @}
 /// @}

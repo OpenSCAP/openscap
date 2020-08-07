@@ -617,7 +617,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	xccdf_session_set_xccdf_export(session, action->f_results);
 	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
 	xccdf_session_set_report_export(session, action->f_report);
-	if (xccdf_session_export_and_free(session) != 0)
+	if (xccdf_session_export_all(session) != 0)
 		goto cleanup;
 
 	if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
@@ -630,6 +630,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	result = evaluation_result;
 
 cleanup:
+	xccdf_session_free(session);
 	oscap_print_error();
 	return result;
 }
@@ -736,12 +737,13 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
 	int evaluation_result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 
-	if (xccdf_session_export_and_free(session) != 0)
+	if (xccdf_session_export_all(session) != 0)
 		goto cleanup;
 
 	result = evaluation_result;
 
 cleanup:
+	xccdf_session_free(session);
 	oscap_print_error();
 	return result;
 }
