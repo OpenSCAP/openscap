@@ -47,7 +47,7 @@
 #endif
 
 #define PATH_SEPARATOR '/'
-#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 5000
+#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 3500
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
