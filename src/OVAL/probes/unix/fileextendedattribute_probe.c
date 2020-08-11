@@ -45,8 +45,10 @@
 #  include <sys/xattr.h>
 #elif defined(HAVE_ATTR_XATTR_H)
 #  include <attr/xattr.h>
+#elif defined(HAVE_SYS_EXTATTR_H)
+#include <sys/extattr.h>
 #else
-#  error "This probe requires sys/xattr.h or attr/xattr.h, none were found!"
+#  error "This probe requires sys/xattr.h, attr/xattr.h, or sys/extattr.h, and none were found!"
 #endif
 
 #include <probe/probe.h>
@@ -74,6 +76,136 @@ struct cbargs {
 	SEXP_t    *attr_ent;
 };
 
+#if defined(OS_FREEBSD)
+static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
+{
+	return 0;
+	char path_buffer[PATH_MAX];
+	SEXP_t *item;
+	struct cbargs *args = (struct cbargs *) ptr;
+	const char *st_path;
+
+	ssize_t byte_count = 0;
+	ssize_t index;
+	ssize_t value_len;
+	ssize_t name_len;
+
+	char *xattr_list = malloc(LINE_MAX);
+
+	if (!xattr_list)
+		return PROBE_ENOMEM;
+
+	char *name_buf = NULL;
+	char *value_buf = NULL;
+
+	if (f == NULL) {
+		st_path = p;
+	} else {
+		const size_t p_len = strlen(p);
+		/* Avoid 2 slashes */
+		if (p_len >= 1 && p[p_len - 1] == FILE_SEPARATOR) {
+			snprintf(path_buffer, sizeof path_buffer, "%s%s", p, f);
+		} else {
+			snprintf(path_buffer, sizeof path_buffer, "%s%c%s", p, FILE_SEPARATOR, f);
+		}
+		st_path = path_buffer;
+	}
+
+	char *st_path_with_prefix = oscap_path_join(prefix, st_path);
+
+	/* update lastpath if needed */
+	if (!SEXP_emptyp(gr_lastpath)) {
+		if (SEXP_strcmp(gr_lastpath, p) != 0) {
+			SEXP_free_r(gr_lastpath);
+			SEXP_string_new_r(gr_lastpath, p, strlen(p));
+		}
+	} else {
+		SEXP_string_new_r(gr_lastpath, p, strlen(p));
+	}
+
+	byte_count = extattr_list_file(st_path_with_prefix, EXTATTR_NAMESPACE_USER, xattr_list, LINE_MAX);
+
+	if (byte_count < 0) {
+		dD("FAIL: extattr_list_file(%s, EXTATTR_NAMESPACE_USER, %p, %d), errno=%u, %s", st_path_with_prefix, xattr_list, LINE_MAX, errno, strerror(errno));
+		free(st_path_with_prefix);
+		free(xattr_list);
+		return PROBE_EFATAL;
+	}
+
+	index = 0;
+
+	while (index < byte_count) {
+		name_len = xattr_list[index] + 1;
+
+		/* We should be able to trust the output of extattr_list_file(), however
+		 * let's be safe and ensure it doesn't try to read past the end of the array.
+		 */
+		if ((name_len < 1) || (name_len > byte_count - index - 1)) {
+			dD("FAIL: out of bounds name_len value: %d, at index: %d, in array of size: %d", name_len, index, byte_count);
+			free(st_path_with_prefix);
+			free(xattr_list);
+			return PROBE_EFAULT;
+		}
+
+		name_buf = malloc(name_len);
+		value_buf = malloc(LINE_MAX);
+
+		if ((name_buf == NULL) || (value_buf == NULL)) {
+			dD("FAIL: Could not allocate memory for xattr name and value buffers.\n");
+			free(name_buf);
+			free(value_buf);
+			free(st_path_with_prefix);
+			free(xattr_list);
+			return PROBE_ENOMEM;
+		}
+
+		snprintf(name_buf, name_len, "%s", xattr_list + index + 1);
+
+		value_len = extattr_get_file(st_path_with_prefix, EXTATTR_NAMESPACE_USER, name_buf, value_buf, LINE_MAX);
+
+		if (value_len < 0) {
+			free(name_buf);
+			free(value_buf);
+			free(st_path_with_prefix);
+			free(xattr_list);
+			return PROBE_EFATAL;
+		}
+
+		value_buf[value_len] = '\0';
+
+		item = probe_item_create(OVAL_UNIX_FILEEXTENDEDATTRIBUTE, NULL,
+					"filepath", OVAL_DATATYPE_STRING, f == NULL ? NULL : st_path,
+					"path",     OVAL_DATATYPE_SEXP, gr_lastpath,
+					"filename", OVAL_DATATYPE_STRING, f == NULL ? "" : f,
+					"attribute_name", OVAL_DATATYPE_STRING, name_buf,
+					"value",          OVAL_DATATYPE_STRING, value_buf,
+					NULL);
+
+		if (!item) {
+			dD("FAIL: Could not create new probe item.\n");
+			free(name_buf);
+			free(value_buf);
+			free(st_path_with_prefix);
+			free(xattr_list);
+			return PROBE_EFATAL;
+		}
+
+		probe_item_collect(args->ctx, item);
+
+		free(name_buf);
+		free(value_buf);
+		name_buf = NULL;
+		value_buf = NULL;
+
+		index += name_len;
+	}
+
+	free(xattr_list);
+	free(st_path_with_prefix);
+	return 0;
+}
+
+#else
 static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
 {
 	char path_buffer[PATH_MAX];
@@ -208,6 +340,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 	free(st_path_with_prefix);
 	return 0;
 }
+#endif
 
 int fileextendedattribute_probe_offline_mode_supported()
 {
