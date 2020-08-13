@@ -27,12 +27,15 @@ function compare_time(){
 }
 
 name=$(basename $0 .sh)
-stderr=$(mktemp -t ${name}.out.XXXXXX)
-tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
+stderr=$(make_temp_file /tmp ${name}.out)
+tmpdir=$(make_temp_dir /tmp ${name}.out)
+
 oval=test_remediation_simple.oval.xml
 cp $srcdir/$oval $tmpdir # Accomodate scanning by xccdf placed in the same temp dir.
 chmod u+w $tmpdir/$oval
-result=$(mktemp -p $tmpdir ${name}.out.XXXXXX)
+
+result=$(make_temp_file $tmpdir ${name}.out)
+
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 rm -f test_file

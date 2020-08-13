@@ -12,13 +12,15 @@
 #      David Niemoller
 #      Ondrej Moris, <omoris@redhat.com>
 
+
 . $builddir/tests/test_common.sh
 
 # Test Cases.
 
 function test_crapi_digest {
+    local TEMPDIR="$(make_temp_dir /tmp tmp)"
+
     local ret_val=0;
-    local TEMPDIR="$(mktemp -d -t -q tmp.XXXXXX)"
     local sum_md5="";
     local sum_sha1="";
     local sum_sha256="";
@@ -49,8 +51,9 @@ function test_crapi_digest {
 }
 
 function test_crapi_mdigest {
+    local TEMPDIR="$(make_temp_dir /tmp tmp)"
+
     local ret_val=0;
-    local TEMPDIR="$(mktemp -d -t -q tmp.XXXXXX)"
     local sum_md5="";
     local sum_sha1="";
     local sum_sha256="";

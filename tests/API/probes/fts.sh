@@ -7,6 +7,8 @@
 #      Daniel Kopecek <dkopecek@redhat.com>
 #      Tomas Heinrich <theinric@redhat.com>
 
+. $builddir/tests/test_common.sh
+
 function gen_tree {
 	echo "Generating tree for traversal" >&2
 
@@ -39,7 +41,8 @@ function oval_fts {
 set -e -o pipefail
 
 name=$(basename $0 .sh)
-tmpdir=$(mktemp -t -d "${name}.XXXXXX")
+tmpdir=$(make_temp_dir /tmp ${name})
+
 ROOT=${tmpdir}/ftsroot
 echo "Temp dir: ${tmpdir}."
 gen_tree $ROOT

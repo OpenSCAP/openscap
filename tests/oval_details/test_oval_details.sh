@@ -6,7 +6,7 @@
 
 . $builddir/tests/test_common.sh
 
-output_dir=`mktemp -d -t oval_details_XXXXXX`
+output_dir=$(make_temp_dir /tmp oval_details)
 
 # Test cases.
 

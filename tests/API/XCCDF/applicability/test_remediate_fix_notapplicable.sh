@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
-stderr=$(mktemp -t ${name}.out.XXXXXX)
-tmpdir=$(mktemp -d -t ${name}.out.XXXXXX)
-result=$(mktemp -p $tmpdir ${name}.out.XXXXXX)
+stderr=$(make_temp_file /tmp ${name}.out)
+tmpdir=$(make_temp_dir /tmp ${name}.out)
+result=$(make_temp_file ${tmpdir} ${name}.out)
+
 echo "Stderr file = $stderr"
 echo "Result file = $stderr"
 rm -f test_file
@@ -19,6 +21,7 @@ $OSCAP xccdf remediate --results $result $srcdir/${name}.xccdf.xml 2> $stderr ||
 [ $ret -eq 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
+
 $OSCAP xccdf validate $result
 assert_exists 2 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile"]'

@@ -13,9 +13,9 @@ function testInDirectory(){
 
 	pushd "$directory"
 
-	local result=$(mktemp -t ${name}.out.result.XXXXXX)
-	local report=$(mktemp -t ${name}.out.report.XXXXXX)
-	local stderr=$(mktemp -t ${name}.err.XXXXXX)
+	local result=$(make_temp_file /tmp ${name}.out.result)
+	local report=$(make_temp_file /tmp ${name}.out.report)
+	local stderr=$(make_temp_file /tmp ${name}.err)
 
 	echo "Stderr file = $stderr"
 	echo "Result file = $result"
@@ -41,18 +41,18 @@ function testInDirectory(){
 }
 
 name=$(basename $0 .sh)
-ORIGINAL_XCCDF="$(readlink -e "$srcdir/${name}.xccdf.xml")"
+ORIGINAL_XCCDF="$(readlink -f "$srcdir/${name}.xccdf.xml")"
 
 ### test in XCCDF's directory
 
 # We don't have write access to directory with XCCDF (after make distcheck),
 # so we have to copy required files to directory with right access and do tests there
-testDir=`mktemp -d`
+testDir=$(make_temp_dir /tmp tmp)
 mkdir -p "$testDir/oval/always-fail"
 cp "$ORIGINAL_XCCDF" "$srcdir/test_default_selector.oval.xml" "$testDir"
 cp "$srcdir/oval/always-fail/oval.xml" "$testDir/oval/always-fail"
 
-XCCDF="$(readlink -e "$testDir/${name}.xccdf.xml")"
+XCCDF="$(readlink -f "$testDir/${name}.xccdf.xml")"
 testInDirectory "$testDir" "$XCCDF"
 rm -rf "$testDir"
 
