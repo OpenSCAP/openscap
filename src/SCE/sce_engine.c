@@ -41,7 +41,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+
+#if defined(OS_FREEBSD)
+#include <sys/procctl.h>
+#include <signal.h>
+#include <sys/wait.h>
+#else
 #include <wait.h>
+#endif
+
 #include <unistd.h>
 #include <sys/stat.h>
 #include <assert.h>
@@ -53,6 +61,8 @@
 #include <limits.h>
 #include <unistd.h>
 #include <libgen.h>
+
+#define SCE_SCRIPT "oscap-run-sce-script"
 
 struct sce_check_result
 {
@@ -531,19 +541,33 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 
 			// before we execute the script, lets make sure we get SIGTERM when
 			// oscap is killed, crashes or otherwise terminates
-#ifdef PR_SET_PDEATHSIG
+#if defined(PR_SET_PDEATHSIG)
 			// requires Linux 2.1.57 or later
 			prctl(PR_SET_PDEATHSIG, SIGTERM);
+#elif defined(OS_FREEBSD)
+			int sig = SIGTERM;
+			procctl(P_PID, getpid(), PROC_PDEATHSIG_CTL, &sig);
 #else
 			// TODO: Please provide alternatives
 #endif
 
 			// we are the child process
+			if(use_sce_wrapper) {
+#if defined(OS_FREEBSD)
+				size_t k;
 
-			if(use_sce_wrapper)
+				// Setup environment beforehand as FreeBSD does not have execvpe()
+				for (k = 0; k < env_value_count; k++) {
+					putenv(env_values[k]);
+				}
+
+				execvp("oscap-run-sce-script", argvp);
+#else
 				execvpe("oscap-run-sce-script", argvp, env_values);
-			else
+#endif
+			} else {
 				execve(tmp_href, argvp, env_values);
+			}
 
 			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 
