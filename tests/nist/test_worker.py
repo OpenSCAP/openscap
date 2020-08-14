@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import xml.etree.ElementTree as etree
 import subprocess

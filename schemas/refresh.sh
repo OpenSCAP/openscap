@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Fetches schema and schematron files from remote locations.
 # Currently supports only Schematron for XCCDF.

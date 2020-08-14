@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 lines=${XCCDF_VALUE_LINES}
 
 # padding numbers so one line is exactly 10 bytes - 9 numbers and newline

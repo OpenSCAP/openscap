@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 LST_VALID="
 	tfc54-def-5.4-valid.xml
