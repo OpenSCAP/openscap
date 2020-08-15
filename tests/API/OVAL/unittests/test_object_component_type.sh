@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-stderr=`mktemp`
-
 set -o pipefail
+
+# This test is dependent on /etc/login.defs being present, so skip this test if it doesn't exist.
+[ ! -f "/etc/login.defs" ] && exit 255
+
+stderr=`mktemp`
 
 $OSCAP oval eval $srcdir/test_object_component_type.oval.xml 2> $stderr
 ret=$?

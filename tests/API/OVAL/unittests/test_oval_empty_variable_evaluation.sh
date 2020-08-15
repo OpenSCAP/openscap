@@ -2,6 +2,9 @@
 
 set -e -o pipefail
 
+# This test is dependent on /etc/issue being present, so skip this test if it doesn't exist.
+[ ! -f "/etc/issue" ] && exit 255
+
 name=$(basename $0 .sh)
 result=$(mktemp ${name}.out.XXXXXX)
 echo "Result file: $result"
