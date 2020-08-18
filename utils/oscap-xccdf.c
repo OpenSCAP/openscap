@@ -610,7 +610,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 
 	/* syslog message */
 #if defined(HAVE_SYSLOG_H)
-	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
+	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", evaluation_result,
 		session == NULL ? 0 : xccdf_session_get_base_score(session));
 #endif
 
