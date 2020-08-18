@@ -54,6 +54,7 @@ int sch_queue_connect(SEAP_desc_t *desc)
 	struct probe_common_main_argument *arg = malloc(sizeof(struct probe_common_main_argument));
 	arg->subtype = desc->subtype;
 	arg->queuedata = data;
+	desc->arg = arg;
 
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -130,7 +131,8 @@ int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 	sch_queuedata_t *data = (sch_queuedata_t *) desc->scheme_data;
 	if (pthread_cancel(data->probe_thread_id) != 0) {
 		dE("Could not cancel %s_probe main thread.", oval_subtype_get_text(desc->subtype));
-		return -1;
+		ret = -1;
+		goto cleanup;
 	}
 	void *status;
 	const char *subtype_str = oval_subtype_get_text(desc->subtype);
@@ -138,7 +140,10 @@ int sch_queue_close(SEAP_desc_t *desc, uint32_t flags)
 	if (ret != 0) {
 		dE("Return code of %s_probe main thread is %d.", subtype_str, ret);
 	}
+cleanup:
 	oscap_queue_free(data->to_probe_queue, NULL);
 	oscap_queue_free(data->from_probe_queue, NULL);
+	free(data);
+	free(desc->arg);
 	return ret;
 }
