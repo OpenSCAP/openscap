@@ -62,6 +62,7 @@
 #endif
 
 #include "fsdev.h"
+#include "common/util.h"
 
 /**
  * Compare two dev_t variables.
@@ -79,10 +80,6 @@ static int fsdev_cmp(const void *a, const void *b)
 #if defined(OS_LINUX)
 static int is_local_fs(struct mntent *ment)
 {
-// todo: would it be usefull to provide the choice during build-time?
-#if 1
-	char *s;
-
 	/*
 	 * When type of the filesystem is autofs, it means the mtab entry
 	 * describes the autofs configuration, which means ment->mnt_fsname
@@ -97,37 +94,36 @@ static int is_local_fs(struct mntent *ment)
 		return 0;
 	}
 
-	if (ment->mnt_fsname == NULL) {
-		return 0;
+	const char *fstype = ment->mnt_type;
+	if (oscap_str_startswith(fstype, "fuse.")) {
+		fstype += strlen("fuse.");
 	}
-
-	s = ment->mnt_fsname;
-	/* If the fsname begins with "//", it is probably CIFS. */
-	if (s[0] == '/' && s[1] == '/')
-		return 0;
-
-	/* If there's a ':' in the fsname and it occurs before any
-	 * '/', then this is probably NFS and the file system is
-	 * considered "remote".
-	 */
-	s = strpbrk(s, "/:");
-	if (s && *s == ':')
-		return 0;
-
+	const char *network_fs[] = {
+		"afs",
+		"ceph",
+		"cifs",
+		"smb3",
+		"smbfs",
+		"sshfs",
+		"ncpfs",
+		"ncp",
+		"nfs",
+		"nfs4",
+		"gfs",
+		"gfs2",
+		"glusterfs",
+		"pvfs2", /* OrangeFS */
+		"ocfs2",
+		"lustre",
+		"davfs",
+		NULL
+	};
+	for (int i = 0; network_fs[i]; i++) {
+		if (!strcmp(network_fs[i], fstype)) {
+			return 0;
+		}
+	}
 	return 1;
-#else
-	struct stat st;
-
-	/* If the file system is not backed-up by a real file, it is
-	   considered remote. A notable exception is "tmpfs" to allow
-	   traversal of /tmp et al. */
-	if (strcmp(ment->mnt_fsname, "tmpfs") != 0
-	    && (stat(ment->mnt_fsname, &st) != 0
-		|| !(S_ISBLK(st.st_mode))))
-		return 0;
-	else
-		return 1;
-#endif
 }
 
 #elif defined(OS_AIX)
