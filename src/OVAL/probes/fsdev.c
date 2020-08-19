@@ -117,6 +117,7 @@ static int is_local_fs(struct mntent *ment)
 		"gfs",
 		"gfs2",
 		"glusterfs",
+		"gpfs",
 		"pvfs2", /* OrangeFS */
 		"ocfs2",
 		"lustre",
