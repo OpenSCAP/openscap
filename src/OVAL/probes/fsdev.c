@@ -94,6 +94,11 @@ static int is_local_fs(struct mntent *ment)
 		return 0;
 	}
 
+	/*
+	 * The following code is inspired by systemd, function fstype_is_network:
+	 * https://github.com/systemd/systemd/blob/21fd6bc263f49b57867d90d2e1f9f255e5509134/src/basic/mountpoint-util.c#L290
+	 */
+
 	const char *fstype = ment->mnt_type;
 	if (oscap_str_startswith(fstype, "fuse.")) {
 		fstype += strlen("fuse.");
