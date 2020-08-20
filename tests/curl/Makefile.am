@@ -6,7 +6,11 @@ TESTS_ENVIRONMENT = \
 		OSCAP_FULL_VALIDATION=1 \
 		$(top_builddir)/run
 
-TESTS = test_curl_encoding.sh
+TESTS =
+
+if CURLOPT_ACCEPT_ENCODING
+TESTS += test_curl_encoding.sh
+endif
 
 EXTRA_DIST =	test_curl_encoding.sh \
 		ds.xml
