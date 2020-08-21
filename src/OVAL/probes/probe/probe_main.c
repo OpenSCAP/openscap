@@ -210,10 +210,9 @@ void *probe_common_main(void *arg)
 	 * Initialize result & name caching
 	 */
 	probe.rcache = probe_rcache_new();
-	probe.ncache = probe_ncache_new();
-        probe.icache = probe_icache_new();
-
-        OSCAP_GSYM(ncache) = probe.ncache;
+	probe.icache = probe_icache_new();
+	probe_ncache_clear(OSCAP_GSYM(ncache));
+	probe.ncache = OSCAP_GSYM(ncache);
 
 	/*
 	 * Initialize probe option handlers

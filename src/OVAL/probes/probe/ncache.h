@@ -57,6 +57,18 @@ probe_ncache_t *probe_ncache_new (void);
 void probe_ncache_free (probe_ncache_t *cache);
 
 /**
+ * Mark memory used by the element name cache as
+ * free, effectively emptying the cache (but not
+ * altering the amount of memomory allocated for it).
+ * The S-exp objects stored in the cache are
+ * also freed. However, if they are referenced
+ * somewhere else, the memory won't be freed, just
+ * the reference count will be decremented.
+ * @param cache the cache to be emptied
+ */
+void probe_ncache_clear (probe_ncache_t *cache);
+
+/**
  * Add a name to the cache. This will create a new S-exp
  * object and return a reference to it. Reference count
  * of such object will be 2 because the cache hold it's

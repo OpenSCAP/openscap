@@ -111,6 +111,23 @@ void probe_ncache_free (probe_ncache_t *cache)
         return;
 }
 
+void probe_ncache_clear (probe_ncache_t *cache)
+{
+        size_t i;
+
+        if (cache == NULL)
+                return;
+
+        if (pthread_rwlock_wrlock(&(cache)->lock))
+                return;
+        for (i = 0; i < cache->real; ++i)
+                if (cache->name[i] != NULL)
+                        SEXP_free(cache->name[i]);
+        cache->real = 0;
+        if (pthread_rwlock_unlock(&(cache)->lock))
+                abort();
+}
+
 static int probe_ncache_cmp1 (const char *name, const SEXP_t **sexp)
 {
         return ((-1) * SEXP_strcmp (*sexp, name));
