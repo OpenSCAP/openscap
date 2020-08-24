@@ -311,6 +311,21 @@ AC_SUBST([PTHREAD_LIBS])
 PKG_CHECK_MODULES([curl], [libcurl >= 7.12.0],[],
                           AC_MSG_FAILURE([libcurl devel support is missing]))
 
+AC_MSG_CHECKING([whether libcurl supports CURLOPT_ACCEPT_ENCODING and CURLOPT_TRANSFER_ENCODING])
+AC_COMPILE_IFELSE(
+	[AC_LANG_PROGRAM(
+		[[#include <curl/curl.h>
+		#include <curl/easy.h>]],
+		[[CURL *curl; curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, ""); curl_easy_setopt(curl, CURLOPT_TRANSFER_ENCODING, 0);]])],
+	[AC_DEFINE([HAVE_CURL_WITH_COMPRESSION], 1, [libcurl is new enough to have support for data compression])
+	AC_MSG_RESULT([yes])]
+	curl_accepts_encoding=yes,
+	[AC_MSG_RESULT([no])
+	AC_MSG_NOTICE([libcurl doesnt support any compression with CURLOPT_ACCEPT_ENCODING])
+	curl_accepts_encoding=no]
+)
+AM_CONDITIONAL([CURLOPT_ACCEPT_ENCODING], [test "$curl_accepts_encoding" = yes])
+
 PKG_CHECK_MODULES([xml2], [libxml-2.0 >= 2.0],[],
 			  AC_MSG_FAILURE([libxml-2.0 devel support is missing]))
 
@@ -1576,6 +1591,7 @@ AC_CONFIG_FILES([Makefile
 		tests/nist/Makefile
 		tests/offline_mode/Makefile
 
+		tests/curl/Makefile
                  src/SCE/Makefile
                  tests/sce/Makefile])
 

@@ -22,6 +22,7 @@ SUBDIRS = \
 	bz2 \
 	codestyle \
 	CPE \
+	curl \
 	DS \
 	sources \
 	schemas \
