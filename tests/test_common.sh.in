@@ -261,4 +261,54 @@ unset_chroot_offline_test_mode() {
 	set_offline_chroot_dir ""
 }
 
+# Wrapper functions to deal with differences across platforms
+make_temp_dir() {
+	PARENT_DIR=${1}
+	TEMP_NAME=${2}
+
+	[ -z "$PARENT_DIR" ] && PARENT_DIR=$(pwd)
+	[ -z "$TEMP_NAME" ] && TEMP_NAME="tmp"
+
+	TEMP_NAME="${TEMP_NAME}.XXXXXX"
+
+	case $(uname) in
+		FreeBSD)
+			mktemp -d ${PARENT_DIR}/${TEMP_NAME}
+			;;
+		*)
+			mktemp -d -p ${PARENT_DIR} -t ${TEMP_NAME}
+			;;
+	esac
+}
+
+make_temp_file() {
+	PARENT_DIR=${1}
+	TEMP_NAME=${2}
+
+	[ -z "$PARENT_DIR" ] && PARENT_DIR=$(pwd)
+	[ -z "$TEMP_NAME" ] && TEMP_NAME="tmp"
+
+	TEMP_NAME="${TEMP_NAME}.XXXXXX"
+
+	case $(uname) in
+		FreeBSD)
+			mktemp ${PARENT_DIR}/${TEMP_NAME}
+			;;
+		*)
+			mktemp -p ${PARENT_DIR} -t ${TEMP_NAME}
+			;;
+	esac
+}
+
+xsed() {
+	case $(uname) in
+		FreeBSD)
+			gsed "$@"
+			;;
+		*)
+			sed "$@"
+			;;
+	esac
+}
+
 export -f assert_exists
