@@ -38,6 +38,7 @@ struct oval_string_map;
 
 struct oval_string_map *oval_string_map_new(void);
 void oval_string_map_put(struct oval_string_map *, const char *, void *);
+void oval_string_map_del(struct oval_string_map *, const char *);
 
 void oval_string_map_put_string(struct oval_string_map *, const char *, const char *);
 struct oval_iterator *oval_string_map_keys(struct oval_string_map *);

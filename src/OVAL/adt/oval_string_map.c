@@ -213,6 +213,16 @@ void oval_string_map_put(struct oval_string_map *map, const char *key, void *val
         }
 }
 
+void oval_string_map_del(struct oval_string_map *map, const char *key)
+{
+	if (map == NULL || key == NULL) {
+		return;
+	}
+	if (rbt_str_del((rbt_t *)map, key, NULL) != 0) {
+		dD("rbt_str_del: non-zero return code");
+	}
+}
+
 void oval_string_map_put_string(struct oval_string_map *map, const char *key, const char *val)
 {
 	if (map == NULL || key == NULL) {
