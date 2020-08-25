@@ -58,6 +58,20 @@
 #include "process_probe.h"
 #include "oscap_helpers.h"
 
+#if defined(OS_FREEBSD)
+#include <kvm.h>
+#include <sys/param.h>
+#include <sys/sysctl.h>
+#include <sys/user.h>
+#include <limits.h>
+#include <paths.h>
+
+#define SEC_PER_YR  31557600
+#define SEC_PER_DAY 86400
+#define SEC_PER_HR  3600
+#define SEC_PER_MIN 60
+#endif
+
 static oval_schema_version_t over;
 
 /* Convenience structure for the results being reported */
@@ -485,6 +499,170 @@ int process_probe_main(probe_ctx *ctx, void *arg)
 	return 0;
 }
 
+#elif defined(OS_FREEBSD)
+static char *convert_time(time_t t, char *tbuf, int tb_size)
+{
+	unsigned int days = t / SEC_PER_DAY;
+	unsigned int hrs = (t - days*SEC_PER_DAY) / SEC_PER_HR;
+	unsigned int min = (t - days*SEC_PER_DAY - hrs*SEC_PER_HR) / SEC_PER_MIN;
+	unsigned int sec = (t - days*SEC_PER_DAY - hrs*SEC_PER_HR - min*SEC_PER_MIN);
+
+	if (days) {
+		snprintf(tbuf, tb_size, "%u-%02u:%02u:%02u", days, hrs, min, sec);
+	} else {
+		snprintf(tbuf, tb_size,	"%02u:%02u:%02u", hrs, min, sec);
+	}
+
+	return tbuf;
+}
+
+static int read_process(SEXP_t *cmd_ent, probe_ctx *ctx)
+{
+	struct kinfo_proc *proclist, *proc;
+	struct result_info r;
+	char buf[LINE_MAX];
+	int i, j, count;
+	kvm_t *kd;
+
+	kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, buf);
+
+	if (!kd) {
+		dE("Can't obtain kvm handle");
+		return (PROBE_EFATAL);
+	}
+
+	proclist = kvm_getprocs(kd, KERN_PROC_PROC, 0, &count);
+
+	if (!proclist) {
+		dE("Can't obtain process list");
+		kvm_close(kd);
+		return (PROBE_EFATAL);
+	}
+
+	proc = proclist;
+
+	for (i = 0; i < count; i++, proc++) {
+		// Skip kthreads
+		if (proc->ki_ppid == 0)
+			continue;
+
+		SEXP_t *cmd_sexp;
+		char **argbuf = NULL;
+		char arg_dest[LINE_MAX] = {0};
+		argbuf = kvm_getargv(kd, proc, LINE_MAX);
+
+		if (!argbuf) {
+			r.command = "";
+		} else {
+			for (j = 0; argbuf[j] != NULL; j++) {
+				strncat(arg_dest, argbuf[j], LINE_MAX - strlen(arg_dest) - 1);
+				strncat(arg_dest, " ", LINE_MAX - strlen(arg_dest) - 1);
+			}
+
+			arg_dest[strlen(arg_dest)-1] = '\0';
+			r.command = arg_dest;
+		}
+
+		dD("Have command: %s", r.command);
+		cmd_sexp = SEXP_string_newf("%s", r.command);
+
+		if (probe_entobj_cmp(cmd_ent, cmd_sexp) == OVAL_RESULT_TRUE) {
+			const char *fmt;
+			char tty_buf[64];
+			char exec_buf[64];
+			char start_buf[64];
+
+			time_t curr_year;
+			time_t curr_day;
+			time_t start_year;
+			time_t start_day;
+			time_t exec_time_diff;
+
+			time_t start_time = proc->ki_start.tv_sec;
+			struct timeval current_time;
+
+			gettimeofday(&current_time, NULL);
+			exec_time_diff = current_time.tv_sec - proc->ki_start.tv_sec;
+
+			curr_year = current_time.tv_sec / SEC_PER_YR;
+			curr_day = current_time.tv_sec / SEC_PER_DAY;
+			start_year = start_time / SEC_PER_YR;
+			start_day = start_time / SEC_PER_DAY;
+
+			if (curr_year != start_year || curr_day != start_day) {
+				fmt = "%b_%d";
+			} else {
+				fmt = "%H:%M:%S";
+			}
+
+			struct tm *loc_time = localtime(&start_time);
+			strftime(start_buf, sizeof(start_buf), fmt, loc_time);
+
+			switch(proc->ki_tdev) {
+				case NODEV:
+					r.tty = "?";
+					break;
+				default:
+					snprintf(tty_buf, sizeof(tty_buf), "%ld", proc->ki_tdev);
+					r.tty = tty_buf; 
+					break;
+			}
+
+			switch (proc->ki_pri.pri_class) {
+				case SCHED_OTHER:
+					r.scheduling_class = "TS";
+					break;
+				case SCHED_FIFO:
+					r.scheduling_class = "FF";
+					break;
+				case SCHED_RR:
+					r.scheduling_class = "RR";
+					break;
+				default:
+					r.scheduling_class = "?";
+					break;
+			}
+
+			r.exec_time = convert_time(exec_time_diff, exec_buf, sizeof(exec_buf));
+			r.pid = proc->ki_pid;
+			r.ppid = proc->ki_ppid;
+			r.priority = proc->ki_pri.pri_level;
+			r.ruid = proc->ki_ruid;
+			r.user_id = proc->ki_uid;
+			r.start_time = start_buf;
+
+			report_finding(&r, ctx);
+		}
+		SEXP_free(cmd_sexp);
+	}
+
+	if (kvm_close(kd)) {
+		dE("Error closing kvm handle");
+		return (PROBE_EFAULT);
+	}
+
+	return 0;
+}
+
+int process_probe_main(probe_ctx *ctx, void *arg)
+{
+	SEXP_t *ent;
+
+	ent = probe_obj_getent(probe_ctx_getobject(ctx), "command", 1);
+
+	if (ent == NULL) {
+		return PROBE_ENOVAL;
+	}
+
+	if (read_process(ent, ctx)) {
+		SEXP_free(ent);
+		return PROBE_EACCESS;
+	}
+
+	SEXP_free(ent);
+
+	return 0;
+}
 #else
 int process_probe_main(probe_ctx *ctx, void *arg)
 {

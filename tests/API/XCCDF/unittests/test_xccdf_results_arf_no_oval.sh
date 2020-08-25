@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 . $builddir/tests/test_common.sh
 
 set -e
@@ -19,17 +19,17 @@ echo "Result file = $result"
 $OSCAP xccdf validate $result
 $OSCAP ds rds-validate $resultArf
 
-$OSCAP info $resultArf > $stdout 2> $stderr
+$OSCAP info $resultArf | sed 's/^[[:space:]]*//' > $stdout 2> $stderr
 grep "^Asset: asset0" $stdout
-grep "^\s*ARF report: xccdf1$" $stdout
-grep "^\s*Report request: collection1$" $stdout
-grep "^\s*Result ID: xccdf_org.open-scap_testresult_default-profile$" $stdout
-grep "^\s*Source benchmark: .*test_xccdf_results_arf_no_oval.xccdf.xml$" $stdout
-grep "^\s*Source profile: (default)$" $stdout
-grep "^\s*Evaluation started: .*$" $stdout
-grep "^\s*Evaluation finished: .*$" $stdout
-grep "^\s*Platform CPEs:$" $stdout
-grep "^\s*(none)$" $stdout
+grep "^ARF report: xccdf1$" $stdout
+grep "^Report request: collection1$" $stdout
+grep "^Result ID: xccdf_org.open-scap_testresult_default-profile$" $stdout
+grep "^Source benchmark: .*test_xccdf_results_arf_no_oval.xccdf.xml$" $stdout
+grep "^Source profile: (default)$" $stdout
+grep "^Evaluation started: .*$" $stdout
+grep "^Evaluation finished: .*$" $stdout
+grep "^Platform CPEs:$" $stdout
+grep "^(none)$" $stdout
 [ -f $stdout ]; [ -s $stdout ]; rm $stdout
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 

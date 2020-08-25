@@ -78,6 +78,7 @@
 #cmakedefine HAVE_UIO_H
 #cmakedefine HAVE_ATTR_XATTR_H
 #cmakedefine HAVE_SYS_XATTR_H
+#cmakedefine HAVE_SYS_EXTATTR_H
 
 #cmakedefine HAVE_STRSEP
 #cmakedefine HAVE_FLOCK

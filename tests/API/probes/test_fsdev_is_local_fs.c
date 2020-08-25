@@ -26,9 +26,11 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <mntent.h>
 #include "fsdev.h"
 #include "fsdev.c"
+
+#if defined(OS_LINUX) || defined(OS_AIX)
+#include <mntent.h>
 
 static int test_single_call()
 {
@@ -73,3 +75,13 @@ int main(int argc, char *argv[])
 	}
 	return 0;
 }
+
+#else
+
+int main(int argc, char *argv[])
+{
+	fprintf(stderr, "is_local is only defined and used by Linux and AIX\n");
+	return 0;
+}
+
+#endif

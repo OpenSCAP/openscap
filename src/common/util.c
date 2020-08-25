@@ -47,7 +47,7 @@
 #endif
 
 #define PATH_SEPARATOR '/'
-#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 5000
+#define OSCAP_PCRE_EXEC_RECURSION_LIMIT_DEFAULT 3500
 
 int oscap_string_to_enum(const struct oscap_string_map *map, const char *str)
 {
@@ -323,6 +323,9 @@ char *oscap_strerror_r(int errnum, char *buf, size_t buflen)
 {
 #ifdef OS_WINDOWS
 	strerror_s(buf, buflen, errnum);
+	return buf;
+#elif defined(OS_FREEBSD)
+	strerror_r(errnum, buf, buflen);
 	return buf;
 #else
 	return strerror_r(errnum, buf, buflen);

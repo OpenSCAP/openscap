@@ -61,8 +61,6 @@
 #include <probe/option.h>
 #include "shadow_probe.h"
 
-static oval_schema_version_t over;
-
 #ifndef HAVE_SHADOW_H
 int shadow_probe_main(probe_ctx *ctx, void *arg)
 {
@@ -79,6 +77,8 @@ int shadow_probe_main(probe_ctx *ctx, void *arg)
 #else
 /* shadow.h is present */
 #include <shadow.h>
+
+static oval_schema_version_t over;
 
 /* Convenience structure for the results being reported */
 struct result_info {

@@ -45,6 +45,10 @@
 #include <oscap_debug.h>
 #include "debug_priv.h"
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #ifdef OS_WINDOWS
 #define STDIN_FILENO _fileno(stdin)
 #define STDOUT_FILENO _fileno(stdout)

@@ -51,6 +51,16 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#if defined(OS_FREEBSD)
+#include <limits.h>
+#include <sys/user.h>
+#include <kvm.h>
+#include <sys/param.h>
+#include <paths.h>
+#include <libprocstat.h>
+#include <sys/sysctl.h>
+#endif
+
 #include <probe/probe.h>
 #include "_seap.h"
 #include "probe-api.h"
@@ -58,6 +68,169 @@
 #include "common/debug_priv.h"
 #include "environmentvariable58_probe.h"
 
+#if defined(OS_FREEBSD)
+static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
+{
+	struct kinfo_proc *proclist, *proc;
+	int i, j, count, pid;
+	char *name, *value;
+	const char *SEP = "=";
+	struct procstat *stat = NULL;
+	char buf[LINE_MAX];
+	SEXP_t *pid_sexp;
+	char **env = NULL;
+	kvm_t *kd;
+
+	const char *extra_vars = getenv("OSCAP_CONTAINER_VARS");
+	if (extra_vars && *extra_vars) {
+		char *vars = strdup(extra_vars);
+		char *tok, *eq_chr, *str, *strp;
+
+		for (str = vars; ; str = NULL) {
+			tok = strtok_r(str, "\n", &strp);
+			if (tok == NULL)
+				break;
+			eq_chr = strchr(tok, '=');
+			if (eq_chr == NULL)
+				continue;
+			PROBE_ENT_I32VAL(pid_ent, pid, pid = -1;, pid = 0;);
+
+			size_t extra_env_name_size = eq_chr - tok;
+			SEXP_t *extra_env_name = SEXP_string_new(tok, extra_env_name_size);
+			SEXP_t *extra_env_value = SEXP_string_newf("%s", tok + extra_env_name_size + 1);
+
+			if (probe_entobj_cmp(name_ent, extra_env_name) == OVAL_RESULT_TRUE) {
+				SEXP_t *extra_item = probe_item_create(
+					OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
+					"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
+					"name",  OVAL_DATATYPE_SEXP, extra_env_name,
+					"value", OVAL_DATATYPE_SEXP, extra_env_value,
+					NULL);
+
+				if (!extra_item) {
+					dE("Failed to create new probem item");
+					SEXP_free(extra_env_name);
+					SEXP_free(extra_env_value);
+					free(vars);
+					return (PROBE_EFAULT);
+				}
+
+				probe_item_collect(ctx, extra_item);
+			} else {
+				SEXP_free(extra_env_name);
+				SEXP_free(extra_env_value);
+			}
+		}
+
+		free(vars);
+		return 0;
+	}
+
+	kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, buf);
+
+	if (!kd)
+		return (PROBE_EFAULT);
+
+	proclist = kvm_getprocs(kd, KERN_PROC_PROC, 0, &count);
+
+	if (!proclist) {
+		dE("Failed to obtain process list handle");
+		kvm_close(kd);
+		return (PROBE_EFAULT);
+	}
+
+	proc = proclist;
+
+	/* Loop until we find a matching PID */
+	for (i = 0; i < count; i++, proc++) {
+		pid = proc->ki_pid;
+		pid_sexp = SEXP_number_newi_32(pid);
+
+		if (!pid_sexp) {
+			dE("Failed to allocate pid_sexp");
+			kvm_close(kd);
+			return (PROBE_EFATAL);
+		}
+
+		/* PID doesn't match */
+		if (probe_entobj_cmp(pid_ent, pid_sexp) != OVAL_RESULT_TRUE) {
+			SEXP_free(pid_sexp);
+			continue;
+		}
+
+		/* PID matches */
+		stat = procstat_open_sysctl();
+
+		if (!stat) {
+			dE("NULL procstat handle returned");
+			SEXP_free(pid_sexp);
+			kvm_close(kd);
+			return (PROBE_EFAULT);
+		}
+
+		env = procstat_getenvv(stat, proc, ARG_MAX);
+
+		/* Found matching process, so stop searching */
+		SEXP_free(pid_sexp);
+		break;
+	}
+
+	if (!env) {
+		dE("NULL env returned");
+		procstat_freeenvv(stat);
+		kvm_close(kd);
+		return (PROBE_EFATAL);
+	}
+
+	for (j = 0; env[j] != NULL; j++) {
+		char *strp;
+		name = strtok_r(env[j], SEP, &strp);
+
+		if (!name) {
+			dE("Error parsing environment string");
+			procstat_freeenvv(stat);
+			kvm_close(kd);
+			return (PROBE_EFAULT);
+		}
+
+		value = strtok_r(NULL, SEP, &strp);
+
+		if (value != NULL) {
+			SEXP_t *env_name = SEXP_string_new(name, strlen(name) + 1);
+			SEXP_t *env_value = SEXP_string_new(value, strlen(value) + 1);
+
+			if (probe_entobj_cmp(name_ent, env_name) == OVAL_RESULT_TRUE) {
+
+				SEXP_t *item = probe_item_create(
+					OVAL_INDEPENDENT_ENVIRONMENT_VARIABLE58, NULL,
+					"pid", OVAL_DATATYPE_INTEGER, (int64_t)pid,
+					"name",  OVAL_DATATYPE_SEXP, env_name,
+					"value", OVAL_DATATYPE_SEXP, env_value,
+					NULL);
+
+				if (!item) {
+					dE("Failed to create new probe item");
+					SEXP_free(env_name);
+					SEXP_free(env_value);
+					procstat_freeenvv(stat);
+					kvm_close(kd);
+					return (PROBE_EFAULT);
+				}
+
+				probe_item_collect(ctx, item);
+			} else {
+				SEXP_free(env_name);
+				SEXP_free(env_value);
+			}
+		}
+	}
+
+	procstat_freeenvv(stat);
+	kvm_close(kd);
+	return 0;
+}
+
+#else
 #define BUFFER_SIZE 256
 
 extern char **environ;
@@ -221,6 +394,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 
 	return err;
 }
+#endif
 
 int environmentvariable58_probe_offline_mode_supported(void)
 {

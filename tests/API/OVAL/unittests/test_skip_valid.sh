@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 result=`mktemp`
 stderr=`mktemp`

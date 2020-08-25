@@ -30,6 +30,11 @@
 #include <ctype.h>
 #include <pthread.h>
 #include <errno.h>
+
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #include "_seap.h"
 #include "generic/common.h"
 #include "_sexp-types.h"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e -o pipefail
 
@@ -11,7 +11,14 @@ function curl_accept_encoding {
 
 	$OSCAP xccdf --verbose=DEVEL eval --fetch-remote-resources --results $RF $DF 2>$LOG || echo "OK"
 
-	grep -P "Accept-Encoding.*gzip" $LOG
+	case $(uname) in
+		FreeBSD)
+			grep -E "Accept-Encoding.*gzip" $LOG
+			;;
+		*)
+			grep -P "Accept-Encoding.*gzip" $LOG
+			;;
+	esac
 
 	return 0
 }

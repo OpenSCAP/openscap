@@ -1,11 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
+. $builddir/tests/test_common.sh
 
 set -e
 set -o pipefail
 
 name=$(basename $0 .sh)
-result=$(mktemp -t ${name}.out.XXXXXX)
-stderr=$(mktemp -t ${name}.out.XXXXXX)
+result=$(make_temp_file /tmp ${name}.out)
+stderr=$(make_temp_file /tmp ${name}.out)
 echo "Stderr file = $stderr"
 echo "Result file = $result"
 
@@ -37,7 +38,8 @@ $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 grep "$line1" $result
 grep "$line2" $result
 grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
-[ "`grep -v "$line1" $result | grep -v "$line2" | sed 's/\W//g'`"x == x ]
+
+[ "`grep -v "$line1" $result | grep -v "$line2" | xsed 's/\W//g'`"x == x ]
 
 # To test permissions of newly created files
 rm $result
@@ -49,10 +51,21 @@ $OSCAP xccdf generate fix --template urn:redhat:anaconda:pre \
 	--profile xccdf_moc.elpmaxe.www_profile_1 \
 	--output $result $srcdir/${name}.xccdf.xml 2>&1 > $stderr
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
-stat $result | grep 'Access: (..../-rw.------)'
+
+case $(uname) in
+	FreeBSD)
+		stat $result| tr ' ' '\n' | grep '^-rw'
+		;;
+	*)
+		stat $result | grep 'Access: (..../-rw.------)'
+		;;
+esac
+
 grep "$line1" $result
 grep "$line2" $result
 grep "$line3" $result
 grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3"
-[ "`grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3" | sed 's/\W//g'`"x == x ]
+
+[ "`grep -v "$line1" $result | grep -v "$line2" | grep -v "$line3" | xsed 's/\W//g'`"x == x ]
+
 rm $result

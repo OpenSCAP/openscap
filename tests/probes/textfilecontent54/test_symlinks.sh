@@ -1,9 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
+. $builddir/tests/test_common.sh
 
 set -e -o pipefail
 
 name=$(basename $0 .sh)
-tmpdir=$(mktemp -t -d "${name}.XXXXXX")
+tmpdir=$(make_temp_dir /tmp ${name})
 tpl=${srcdir}/${name}.xml.tpl
 input=${tmpdir}/${name}.xml
 result=${tmpdir}/${name}.results.xml

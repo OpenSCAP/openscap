@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # OpenSCAP test suite
 # Tests a subset of NIST validation requirements

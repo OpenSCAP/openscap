@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Test to check there are output streams separated
 #
@@ -15,8 +15,8 @@ function test_sce_streams_fill {
     local result=$(mktemp)
 
     # the test is actually pretty slow, which means it takes ~10 seconds on
-    # my laptop. 60s is safe margin in case of slow virtual jenkins nodes
-    timeout "60s" $OSCAP xccdf eval --results "$result" "$xccdf_file" 2> $stderr
+    # my laptop. 100s is safe margin in case of slow virtual jenkins nodes
+    timeout "100s" $OSCAP xccdf eval --results "$result" "$xccdf_file" 2> $stderr
     echo "===== result ====="
     # zero is generated into stdout, 1 is stderr
     grep "001999990" $result && grep "101999990" $result

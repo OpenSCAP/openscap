@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e -o pipefail
 set -x
@@ -86,8 +86,8 @@ echo "stderr file: $stderr"
 	"${PROC}" param1 param2 param3 &
 	PID=$!
 	[ -n "${PID}" ]
-	# "/bin/bash ./stopped_process.sh param1 param2 param3"
-	CMDLINE_REGEX='/(\w+/)+bash.*stopped_process\.sh param1 param2 param3$'
+	# "/usr/bin/env bash ./stopped_process.sh param1 param2 param3"
+	CMDLINE_REGEX=$(printf "%s" "bash.*stopped_process.sh.*param1.param2.param3")
 
 	# Run zombie process (without full cmdline)
 	( SHELL_PID=$BASHPID && ( kill -STOP $SHELL_PID && sleep 1 ) ) &
@@ -95,14 +95,14 @@ echo "stderr file: $stderr"
 	ZOMBIE_PID=$(get_zombie_pid_from_ppid ${ZOMBIE_PPID})
 	[ -n "${ZOMBIE_PPID}" ]
 	# "[command_line.sh] <defunct>"
-	ZOMBIE_CMDLINE_REGEX='^\[command_line.sh\] <defunct>$'
+	ZOMBIE_CMDLINE_REGEX='\[bash]\ <defunct>'
 
 	# Run process with special characters in parameters
 	"${PROC}" escaped "$(echo -ne "\e\n\E[1;33m") \\\n\e" &
 	ESCAPED_PID=$!
 	[ -n "${ESCAPED_PID}" ]
-	# "/bin/bash ./stopped_process.sh escaped . .[1;33m \\n\e"
-	ESCAPED_CMDLINE_REGEX='/(\w+/)+bash.*stopped_process\.sh escaped \. \.\[1;33m \\\\n\\e$'
+	# "/usr/bin/env bash ./stopped_process.sh escaped . .[1;33m \\n\e"
+	ESCAPED_CMDLINE_REGEX=$(printf "%s" "bash.*stopped_process.sh.*escaped.?.?*\n.\e")
 
 ########################################################################
 ### Wait for start of all processes (all processes have done exec())

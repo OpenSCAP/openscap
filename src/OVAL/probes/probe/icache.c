@@ -31,6 +31,10 @@
 #include <inttypes.h>
 #include <stdlib.h>
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #include "../SEAP/generic/rbt/rbt.h"
 #include "probe-api.h"
 #include "common/debug_priv.h"
@@ -173,10 +177,11 @@ static void *probe_icache_worker(void *arg)
 	}
 
 #if defined(HAVE_PTHREAD_SETNAME_NP)
+const char* thread_name = "icache_worker";
 # if defined(OS_APPLE)
-	pthread_setname_np("icache_worker");
+	pthread_setname_np(thread_name);
 # else
-	pthread_setname_np(pthread_self(), "icache_worker");
+	pthread_setname_np(pthread_self(), thread_name);
 # endif
 #endif
 

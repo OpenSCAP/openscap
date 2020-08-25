@@ -183,9 +183,16 @@ static const char *_search_interpret_map(const char *sys, const struct _interpre
 static const char *_get_supported_interpret(const char *sys, const struct _interpret_map *unused)
 {
 	static const struct _interpret_map _openscap_supported_interprets[] = {
+#if defined(OS_FREEBSD)
+		{"urn:xccdf:fix:commands",		"/usr/local/bin/bash"},
+		{"urn:xccdf:fix:script:sh",		"/usr/local/bin/bash"},
+		{"urn:xccdf:fix:script:perl",		"/usr/local/bin/perl"},
+#else
 		{"urn:xccdf:fix:commands",		"/bin/bash"},
 		{"urn:xccdf:fix:script:sh",		"/bin/bash"},
 		{"urn:xccdf:fix:script:perl",		"/usr/bin/perl"},
+#endif
+
 #ifdef PREFERRED_PYTHON_PATH
 		{"urn:xccdf:fix:script:python",		PREFERRED_PYTHON_PATH},
 #endif
@@ -907,7 +914,7 @@ static int _write_script_header_to_fd(struct xccdf_policy *policy, struct xccdf_
 	const char *oscap_version = oscap_get_version();
 	const char *format = ansible_script ? "ansible" : "bash";
 	const char *remediation_type = ansible_script ? "Ansible Playbook" : "Bash Remediation Script";
-	const char *shebang_with_newline = ansible_script ? "" : "#!/bin/bash\n";
+	const char *shebang_with_newline = ansible_script ? "" : "#!/usr/bin/env bash\n";
 
 	char *fix_header;
 

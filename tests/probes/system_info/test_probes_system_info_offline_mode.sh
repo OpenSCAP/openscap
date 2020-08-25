@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Copyright 2018 Red Hat Inc., Durham, North Carolina.
 # All Rights Reserved.
@@ -28,7 +28,15 @@ function test_offline_mode_system_info_offline {
 	[ -s "$result" ]
 
 	. /etc/os-release
-	HOSTNAME=`cat /etc/hostname`
+
+	case $(uname) in
+		FreeBSD)
+			HOSTNAME=`grep hostname= /etc/rc.conf | cut -d '"' -f 2`
+			;;
+		*)
+			HOSTNAME=`cat /etc/hostname`
+			;;
+	esac
 
 	assert_exists 1 '/oval_results/results/system/oval_system_characteristics/system_info'
 	assert_exists 1 "/oval_results/results/system/oval_system_characteristics/system_info/os_name[text()=\"${NAME}\"]"

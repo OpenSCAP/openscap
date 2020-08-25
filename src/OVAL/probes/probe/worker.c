@@ -32,6 +32,10 @@
 #include <pthread.h>
 #include <errno.h>
 
+#if defined(OS_FREEBSD)
+#include <pthread_np.h>
+#endif
+
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
