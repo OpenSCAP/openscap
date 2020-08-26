@@ -386,6 +386,20 @@ xmlNode *oval_syschar_model_to_dom(struct oval_syschar_model * syschar_model, xm
 			struct oval_sysitem *sysitem = (struct oval_sysitem *)
 			    oval_collection_iterator_next(sysitems);
 			oval_sysitem_to_dom(sysitem, doc, tag_items);
+			/*
+			 * WARNING: Memory optimization
+			 * Once the sysitem has been converted to DOM we don't need to keep
+			 * the original data. We can free the sysitem to prevent duplication
+			 * of information in memory. Normally, the sysitem would be freed in
+			 * oval_syschar_model_free. To prevent double frees we need to
+			 * remove the sysitem from the sysitem_map in the
+			 * oval_syschar_model. The local sysitem_map contains pointers to
+			 * same items, so freeing sysitem_map doesn't free the items. The
+			 * users of sysitems collection in oval_syschar structure are also
+			 * not responsible from freeing the sysitem.
+			 */
+			oval_string_map_del(syschar_model->sysitem_map, oval_sysitem_get_id(sysitem));
+			oval_sysitem_free(sysitem);
 		}
 	}
 	oval_collection_iterator_free(sysitems);
