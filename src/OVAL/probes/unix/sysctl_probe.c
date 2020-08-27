@@ -284,21 +284,21 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 #elif defined(OS_FREEBSD)
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 {
-        FILE *fp;
-        char output[LINE_MAX];
-        const char* SEP = "=";
-        char* mib;
-        char* sysval;
-        SEXP_t *se_mib;
-        SEXP_t *name_entity, *probe_in;
+	FILE *fp;
+	char output[LINE_MAX];
+	const char* SEP = "=";
+	char* mib;
+	char* sysval;
+	SEXP_t *se_mib;
+	SEXP_t *name_entity, *probe_in;
 
-        probe_in    = probe_ctx_getobject(ctx);
-        name_entity = probe_obj_getent(probe_in, "name", 1);
+	probe_in    = probe_ctx_getobject(ctx);
+	name_entity = probe_obj_getent(probe_in, "name", 1);
 
-        if (name_entity == NULL) {
-                dE("Missing \"name\" entity in the input object");
-                return (PROBE_ENOENT);
-        }
+	if (name_entity == NULL) {
+		dE("Missing \"name\" entity in the input object");
+		return (PROBE_ENOENT);
+	}
 
 	/* FreeBSD's sysctl(8) uses undocumented, and potentially unstable,
 	 * kernel interfaces to obtain the list of system properties and values.
@@ -306,14 +306,14 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 	 * implement the functionality ourselves which risks breakage if/when
 	 * the interfaces change.
 	 */
-        fp = popen(SYSCTL_CMD, "r");
+	fp = popen(SYSCTL_CMD, "r");
 
-        if (!fp) {
+	if (!fp) {
 		dE("Failed to open output of %s", SYSCTL_CMD);
 		return (PROBE_EFATAL);
-        }
+	}
 
-        while (fgets(output, sizeof(output), fp)) {
+	while (fgets(output, sizeof(output), fp)) {
 		char *strp;
 		mib = strtok_r(output, SEP, &strp);
 		sysval = strtok_r(NULL, SEP, &strp);
@@ -356,8 +356,8 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
 		SEXP_free(se_mib);
         }
 
-        pclose(fp);
-        return (0);
+	pclose(fp);
+	return (0);
 }
 #else
 int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
