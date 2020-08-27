@@ -204,25 +204,25 @@ static int freebsd_sys_memusage(struct sys_memusage *mu)
 	unsigned int active_page_count = 0;
 	unsigned int inactive_page_count = 0;
 
-        /* Page size */
+	/* Page size */
 	size = sizeof(page_size);
 	if (sysctlbyname(GET_VM_PAGE_SIZE, &page_size, &size, NULL, 0) < 0) {
 		return -1;
 	}
 
-        /* Total pages */
-        size = sizeof(total_page_count);
+	/* Total pages */
+	size = sizeof(total_page_count);
 	if (sysctlbyname(GET_VM_TOTAL_PAGE_COUNT, &total_page_count, &size, NULL, 0) < 0) {
 		return -1;
 	}
 
-        /* Total free pages */
+	/* Total free pages */
 	size = sizeof(free_page_count);
 	if (sysctlbyname(GET_VM_FREE_PAGE_COUNT, &free_page_count, &size, NULL, 0) < 0) {
 		return -1;
 	}
 
-        /* Total active pages */
+	/* Total active pages */
 	size = sizeof(active_page_count);
 	if (sysctlbyname(GET_VM_ACT_PAGE_COUNT, &active_page_count , &size, NULL, 0) < 0) {
 		return -1;
@@ -252,36 +252,36 @@ static int freebsd_proc_memusage(struct proc_memusage *mu)
 	int count;
 	kvm_t *kd;
 	pid_t mypid;
-        char errbuf[LINE_MAX];
-        struct kinfo_proc *procinfo;
+	char errbuf[LINE_MAX];
+	struct kinfo_proc *procinfo;
 
-        mypid = getpid();
-        kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, errbuf);
+	mypid = getpid();
+	kd = kvm_openfiles(NULL, _PATH_DEVNULL, NULL, O_RDONLY, errbuf);
 
-        if (!kd)
-                return -1;
+	if (!kd)
+		return -1;
 
-        procinfo = kvm_getprocs(kd, KERN_PROC_PID, mypid, &count);
+	procinfo = kvm_getprocs(kd, KERN_PROC_PID, mypid, &count);
 
-        if(!procinfo)
-                return -1;
+	if (!procinfo)
+		return -1;
 
-        mu->mu_rss = procinfo->ki_rssize;
-        mu->mu_text = procinfo->ki_tsize;
-        mu->mu_data = procinfo->ki_dsize;
-        mu->mu_stack = procinfo->ki_ssize;
+	mu->mu_rss = procinfo->ki_rssize;
+	mu->mu_text = procinfo->ki_tsize;
+	mu->mu_data = procinfo->ki_dsize;
+	mu->mu_stack = procinfo->ki_ssize;
 
-        /* ki_swrss is the resident set size before last swap, this
-         * is the closest approximation to Linux's "VmHWM" which is the
-         * peak resident set size of the process.
-         */
-        mu->mu_hwm = procinfo->ki_swrss;
+	/* ki_swrss is the resident set size before last swap, this
+	 * is the closest approximation to Linux's "VmHWM" which is the
+	 * peak resident set size of the process.
+	 */
+	mu->mu_hwm = procinfo->ki_swrss;
 
-        /* Not exposed on FreeBSD */
-        mu->mu_lib = 0;
-        mu->mu_lock = 0;
+	/* Not exposed on FreeBSD */
+	mu->mu_lib = 0;
+	mu->mu_lock = 0;
 
-        return 0;
+	return 0;
 }
 
 #endif /* OS_FREEBSD */
