@@ -180,7 +180,6 @@ char *cpe_dict_detect_version_priv(xmlTextReader *reader)
 	const char* elm_name = (const char *) xmlTextReaderConstLocalName(reader);
 	if (!elm_name || strcmp("cpe-list", elm_name)) {
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Expected root element name 'cpe-list', found '%s'.", elm_name);
-		xmlFreeTextReader(reader);
 		return NULL;
 	}
 	const char* ns_uri = (const char *) xmlTextReaderConstNamespaceUri(reader);
