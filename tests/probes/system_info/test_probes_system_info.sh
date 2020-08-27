@@ -19,6 +19,9 @@
 function test_probes_system_info {
 	probecheck "system_info" || return 255
 
+	# This test is dependent on /etc/os-release being present, so skip this test if it doesn't exist.
+	[ -f "/etc/os-release" ] || return 255
+
 	local ret_val=0;
 	local LOGFILE="test_probes_system_info.log"
 
