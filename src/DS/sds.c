@@ -240,9 +240,40 @@ static int ds_sds_register_sce(struct ds_sds_session *session, xmlNodePtr compon
 	return ret;
 }
 
-static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char *relative_filepath)
+static xmlDoc *ds_sds_doc_from_foreign_node(xmlNode *node, xmlDoc *parent)
 {
-	xmlDoc *new_doc = ds_doc_from_foreign_node(component_inner_root, doc);
+	xmlDOMWrapCtxtPtr wrap_ctxt = xmlDOMWrapNewCtxt();
+	xmlDocPtr new_doc = xmlNewDoc(BAD_CAST "1.0");
+	if (xmlDOMWrapAdoptNode(wrap_ctxt, parent, node, new_doc, NULL, 0) != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error when adopting node '%s' while "
+				"dumping component from DataStream", node->name);
+		xmlFreeDoc(new_doc);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+		return NULL;
+	}
+	xmlDocSetRootElement(new_doc, node);
+	if (xmlDOMWrapReconcileNamespaces(wrap_ctxt, node, 0) != 0)
+	{
+		oscap_seterr(OSCAP_EFAMILY_XML,
+				"Internal libxml error when reconciling namespaces for node "
+				"'%s' while dumping component.", node->name);
+		xmlFreeDoc(new_doc);
+		xmlDOMWrapFreeCtxt(wrap_ctxt);
+		return NULL;
+	}
+	xmlDOMWrapFreeCtxt(wrap_ctxt);
+	return new_doc;
+}
+
+static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char *relative_filepath, bool clone)
+{
+	xmlDoc *new_doc;
+	if (clone) {
+		new_doc = ds_doc_from_foreign_node(component_inner_root, doc);
+	} else {
+		new_doc = ds_sds_doc_from_foreign_node(component_inner_root, doc);
+	}
 	if (new_doc == NULL) {
 		return -1;
 	}
@@ -253,7 +284,7 @@ static int ds_sds_register_xmlDoc(struct ds_sds_session *session, xmlDoc* doc, x
 	return 0; // TODO: Return value of ds_sds_session_register_component_source(). (commit message)
 }
 
-static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath)
+static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc, xmlNodePtr component_inner_root, const char* component_id, const char* target_filename_dirname, const char* relative_filepath, bool clone)
 {
 	if (component_inner_root == NULL)
 	{
@@ -268,7 +299,7 @@ static int ds_sds_register_component(struct ds_sds_session *session, xmlDoc* doc
 		// Otherwise we create a new XML doc we will dump the contents to.
 		// We can't just dump node "innerXML" because namespaces have to be
 		// handled.
-		return ds_sds_register_xmlDoc(session, doc, component_inner_root, relative_filepath);
+		return ds_sds_register_xmlDoc(session, doc, component_inner_root, relative_filepath, clone);
 	}
 }
 
@@ -295,7 +326,7 @@ static int ds_sds_dump_local_component(const char* component_id, struct ds_sds_s
 
 	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
 
-	return ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath);
+	return ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath, false);
 }
 
 static int ds_sds_dump_file_component(const char* external_file, const char* component_id, struct ds_sds_session *session, const char *target_filename_dirname, const char *relative_filepath)
@@ -312,7 +343,7 @@ static int ds_sds_dump_file_component(const char* external_file, const char* com
 
 	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
 
-	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath, true) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
@@ -347,7 +378,7 @@ static int ds_dsd_dump_remote_component(const char* url, const char* component_i
 
 	xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
 
-	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+	if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath, true) != 0) {
 		ret = -1;
 		goto cleanup;
 	}
