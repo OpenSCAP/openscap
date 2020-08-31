@@ -391,7 +391,9 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 				"has_extended_acl", OVAL_DATATYPE_SEXP, se_acl,
                                          NULL);
 		if (se_acl == NULL) {
-			probe_item_ent_add(item, "has_extended_acl", NULL, SEXP_number_newb(true));
+			SEXP_t *sexp_true = SEXP_number_newb(true);
+			probe_item_ent_add(item, "has_extended_acl", NULL, sexp_true);
+			SEXP_free(sexp_true);
 			probe_itement_setstatus(item, "has_extended_acl", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
 		} else {
 			SEXP_free(se_acl);
