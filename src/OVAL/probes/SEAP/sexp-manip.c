@@ -1399,7 +1399,10 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
          */
         list_it_count = 1;
         list_it_alloc = SEXP_LISTIT_ARRAY_INIT;
-	list_it = malloc(sizeof(SEXP_list_it) * list_it_alloc);
+        list_it = malloc(sizeof(SEXP_list_it) * list_it_alloc);
+        if (list_it == NULL) {
+                return (NULL);
+        }
 
         list_it[0].block = SEXP_LCASTP(v_dsc.mem)->b_addr;
 
@@ -1421,7 +1424,14 @@ SEXP_t *SEXP_list_sort(SEXP_t *list, int(*compare)(const SEXP_t *, const SEXP_t 
                            list_it_alloc, list_it_alloc + SEXP_LISTIT_ARRAY_INC);
 
                         list_it_alloc += SEXP_LISTIT_ARRAY_INC;
-			list_it = realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
+                        void *new_list_it = realloc(list_it, sizeof(SEXP_list_it) * list_it_alloc);
+                        if (new_list_it == NULL) {
+                                int e = errno;
+                                free(list_it);
+                                errno = e;
+                                return (NULL);
+                        }
+                        list_it = new_list_it;
                 }
 
                 /* skip to the next block */
@@ -1530,12 +1540,18 @@ void SEXP_lstack_free (SEXP_lstack_t *stack)
 SEXP_t *SEXP_lstack_push (SEXP_lstack_t *stack, SEXP_t *s_exp)
 {
         if (stack->l_real == stack->l_size) {
+
                 if (stack->l_size < SEXP_LSTACK_GROWFAST_TRESH)
                         stack->l_size <<= 1;
                 else
                         stack->l_size += SEXP_LSTACK_GROWSLOW_DIFF;
 
-		stack->l_sref = realloc(stack->l_sref, sizeof(SEXP_t *) * stack->l_size);
+                void *new_l_sref = realloc(stack->l_sref, sizeof(SEXP_t *) * stack->l_size);
+                if (new_l_sref == NULL) {
+                        stack->l_size = stack->l_real;
+                        return NULL;
+                }
+                stack->l_sref = new_l_sref;
         }
 
         stack->l_sref[stack->l_real++] = s_exp;
@@ -1564,8 +1580,12 @@ SEXP_t *SEXP_lstack_pop (SEXP_lstack_t *stack)
         }
 
         return (ref);
-resize:
-	stack->l_sref = realloc(stack->l_sref, sizeof(SEXP_t *) * stack->l_size);
+resize: ; // Yes, this is an empty statement. Only statements can be labeled
+        void *new_l_sref = realloc(stack->l_sref, sizeof(SEXP_t *) * stack->l_size);
+        if (new_l_sref == NULL && stack->l_size > 0)
+                stack->l_size = stack->l_real;
+        else
+                stack->l_sref = new_l_sref;
         return (ref);
 }
 

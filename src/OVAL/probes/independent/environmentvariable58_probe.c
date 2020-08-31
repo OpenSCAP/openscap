@@ -298,7 +298,7 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 	}
 
 	if ((buffer = realloc(NULL, BUFFER_SIZE)) == NULL) {
-		dE("Can't allocate memory");
+		dE("Can't re-allocate memory");
 		closedir(d);
 		return PROBE_EFAULT;
 	}
@@ -344,12 +344,15 @@ static int read_environment(SEXP_t *pid_ent, SEXP_t *name_ent, probe_ctx *ctx)
 				ssize_t s;
 				if ((size_t)buffer_used >= buffer_size) {
 					buffer_size += BUFFER_SIZE;
-					buffer = realloc(buffer, buffer_size);
-					if (buffer == NULL) {
-						dE("Can't allocate memory");
-						exit(ENOMEM);
+					void *new_buffer = realloc(buffer, buffer_size);
+					if (new_buffer == NULL) {
+						dE("Can't re-allocate memory");
+						free(buffer);
+						closedir(d);
+						close(fd);
+						return PROBE_ENOMEM;
 					}
-
+					buffer = new_buffer;
 				}
 				s = read(fd, buffer + buffer_used, buffer_size - buffer_used);
 				if (s <= 0) {

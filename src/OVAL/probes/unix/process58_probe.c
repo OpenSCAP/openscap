@@ -322,7 +322,15 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 
 				cap_id = oscap_string_to_enum(CapabilityType, cap_name);
 				if (cap_id > -1 && cap_id <= max_cap_id) {
-					ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+					void *new_ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+					if (new_ret == NULL) {
+						dE("Unable to re-allocate memory for ret");
+						cap_free(cap_name);
+						free(ret);
+						ret = NULL;
+						goto exit;
+					}
+					ret = new_ret;
 					ret[ret_index] = strdup(cap_name);
 					ret_index++;
 				}
@@ -330,9 +338,17 @@ static char **get_posix_capability(int pid, int max_cap_id) {
 			}
 		}
 	}
-	ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+	void *new_ret = realloc(ret, (ret_index + 1) * sizeof(char *));
+	if (new_ret == NULL) {
+		dE("Unable to re-allocate memory for ret");
+		free(ret);
+		ret = NULL;
+		goto exit;
+	}
+	ret = new_ret;
 	ret[ret_index] = NULL;
 
+exit:
 	cap_free(pid_caps);
 	return ret;
 #else

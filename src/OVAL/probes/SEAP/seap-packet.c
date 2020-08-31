@@ -206,8 +206,10 @@ static int SEAP_packet_sexp2msg (SEXP_t *sexp_msg, SEAP_msg_t *seap_msg)
         _A(attr_i >= (SEXP_list_length (sexp_msg) - 4)/2);
 
         seap_msg->attrs_cnt = attr_i;
-	seap_msg->attrs = realloc(seap_msg->attrs, sizeof(SEAP_attr_t) * seap_msg->attrs_cnt);
-        seap_msg->sexp      = SEXP_list_last (sexp_msg);
+        void *new_attrs = realloc(seap_msg->attrs, sizeof(SEAP_attr_t) * seap_msg->attrs_cnt);
+        if (new_attrs != NULL || seap_msg->attrs_cnt == 0)
+                seap_msg->attrs = new_attrs;
+        seap_msg->sexp = SEXP_list_last (sexp_msg);
 
         return (0);
 }

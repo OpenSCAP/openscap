@@ -85,8 +85,14 @@ void oscap_buffer_append_binary_data(struct oscap_buffer *s, const char *data, c
 		 * rather than only needed capacity in order to not fragment
 		 * the memory.
 		 */
+		size_t current_capacity = s->capacity;
 		s->capacity = ((s->capacity + append_length - 1) / INITIAL_CAPACITY + 1) * INITIAL_CAPACITY;
-		s->data = realloc(s->data, s->capacity);
+		void *new_data = realloc(s->data, s->capacity);
+		if (new_data == NULL) {
+			s->capacity = current_capacity;
+			return;
+		}
+		s->data = new_data;
 	}
 
 	memcpy(s->data + s->length, data, append_length);

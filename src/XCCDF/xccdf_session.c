@@ -854,8 +854,12 @@ void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **o
 	if (oval_filenames == NULL)
 		return;
 
-	struct oval_content_resource **resources = malloc(sizeof(struct oval_content_resource *));
-	resources[0] = NULL;
+	size_t count;
+	for (count = 0; oval_filenames[count];)
+		count++;
+	struct oval_content_resource **resources = malloc((count + 1) * sizeof(struct oval_content_resource *));
+	if (resources == NULL)
+		return;
 
 	for (int i = 0; oval_filenames[i];) {
 		resources[i] = malloc(sizeof(struct oval_content_resource));
@@ -863,7 +867,6 @@ void xccdf_session_set_custom_oval_files(struct xccdf_session *session, char **o
 		resources[i]->source = oscap_source_new_from_file(oval_filenames[i]);
 		resources[i]->source_owned = true;
 		i++;
-		resources = realloc(resources, (i + 1) * sizeof(struct oval_content_resource *));
 		resources[i] = NULL;
 	}
 	session->oval.custom_resources = resources;
@@ -880,6 +883,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 	bool fetch_option_suggested = false;
 	char *xccdf_path_cpy = NULL;
 	char *dir_path = NULL;
+	int res = 0;
 
 	_oval_content_resources_free(session->oval.resources);
 
@@ -930,7 +934,14 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 			}
 			resources[idx]->source = source;
 			idx++;
-			resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
+			void *new_resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
+			if (new_resources == NULL) {
+				_oval_content_resources_free(resources);
+				free(tmp_path);
+				res = -1;
+				goto cleanup;
+			}
+			resources = new_resources;
 			resources[idx] = NULL;
 		}
 		else {
@@ -953,7 +964,14 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 						resources[idx]->source = oscap_source_new_take_memory(data, data_size, printable_path);
 						resources[idx]->source_owned = true;
 						idx++;
-						resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
+						void * new_resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));
+						if (new_resources == NULL) {
+							_oval_content_resources_free(resources);
+							free(tmp_path);
+							res = -1;
+							goto cleanup;
+						}
+						resources = new_resources;
 						resources[idx] = NULL;
 						free(tmp_path);
 						continue;
@@ -971,12 +989,13 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 		}
 		free(tmp_path);
 	}
+	session->oval.resources = resources;
+cleanup:
 	free(dir_path);
 	oscap_file_entry_iterator_free(files_it);
 	oscap_file_entry_list_free(files);
 	free(xccdf_path_cpy);
-	session->oval.resources = resources;
-	return 0;
+	return res;
 }
 
 static void _xccdf_session_free_oval_agents(struct xccdf_session *session)
@@ -1057,7 +1076,12 @@ int xccdf_session_load_oval(struct xccdf_session *session)
 				session->oval.product_cpe : (char *) oscap_productname);
 
 		/* remember sessions */
-		session->oval.agents = realloc(session->oval.agents, (idx + 2) * sizeof(struct oval_agent_session *));
+		void *new_oval_agents = realloc(session->oval.agents, (idx + 2) * sizeof(struct oval_agent_session *));
+		if (new_oval_agents == NULL) {
+			oval_agent_destroy_session(tmp_sess);
+			return -1;
+		}
+		session->oval.agents = new_oval_agents;
 		session->oval.agents[idx] = tmp_sess;
 		session->oval.agents[idx+1] = NULL;
 

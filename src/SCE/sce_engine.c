@@ -427,7 +427,13 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	{
 		struct xccdf_value_binding* binding = xccdf_value_binding_iterator_next(value_binding_it);
 
-		env_values = realloc(env_values, (env_value_count + 3) * sizeof(char*));
+		void *new_env_values = realloc(env_values, (env_value_count + 3) * sizeof(char *));
+		if (new_env_values == NULL) {
+			dE("Unable to re-allocate memory");
+			free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
+			return XCCDF_RESULT_ERROR;
+		}
+		env_values = new_env_values;
 
 		char* name = xccdf_value_binding_get_name(binding);
 		xccdf_value_type_t type = xccdf_value_binding_get_type(binding);
@@ -502,7 +508,13 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 		env_value_count++;
 	}
 
-	env_values = realloc(env_values, (env_value_count + 1) * sizeof(char*));
+	void *new_env_values = realloc(env_values, (env_value_count + 1) * sizeof(char*));
+	if (new_env_values == NULL) {
+		dE("Unable to re-allocate memory");
+		free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
+		return XCCDF_RESULT_ERROR;
+	}
+	env_values = new_env_values;
 	env_values[env_value_count] = NULL;
 
 	// We open a pipe for communication with the forked process
@@ -510,7 +522,7 @@ xccdf_test_result_type_t sce_engine_eval_rule(struct xccdf_policy *policy, const
 	int stderr_pipefd[2];
 	if (pipe(stdout_pipefd) == -1 || pipe(stderr_pipefd) == -1)
 	{
-		perror("pipe");
+		dE("Error in pipe");
 		free_env_values(env_values, index_of_first_env_value_not_compiled_in, env_value_count);
 		return XCCDF_RESULT_ERROR;
 	}

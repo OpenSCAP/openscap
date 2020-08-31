@@ -1148,8 +1148,14 @@ finish_section:
 			dD("adding new strans record to an exiting one: k=%s, cnt=%u+1",
 			   st_key, st->cnt);
 
-			st->srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
-			st->srv[st->cnt - 1] = scur;
+			void *new_srv = realloc(st->srv, sizeof (xiconf_service_t *) * ++(st->cnt));
+			if (new_srv == NULL) {
+				dE("Failed to re-allocate memory for st->srv");
+				return (-1);
+			} else {
+				st->srv = new_srv;
+				st->srv[st->cnt - 1] = scur;
+			}
 		}
 
 		/*
@@ -1367,7 +1373,12 @@ int op_assign_strl(void *var, char *val)
 			continue;
 		}
 		dD("Adding new member to string array: %s", tok);
-		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		void *new_string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		if (new_string_array == NULL) {
+			*aptr = string_array;
+			return -1;
+		}
+		string_array = new_string_array;
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1398,7 +1409,12 @@ int op_insert_strl(void *var, char *val)
 			continue;
 		}
 		dD("Adding new member to string array: %s", tok);
-		string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		void *new_string_array = realloc(string_array, sizeof(char *) * (++string_array_size + 1));
+		if (new_string_array == NULL) {
+			*aptr = string_array;
+			return -1;
+		}
+		string_array = new_string_array;
 		string_array[string_array_size-1] = strdup(tok);
 		string_array[string_array_size] = NULL;
 	}
@@ -1430,6 +1446,8 @@ int op_remove_strl(void *var, char *val)
 	} else {
 		// Allocate the new string array
 		newstr_array = malloc(sizeof(char *) * (string_array_size + 1));
+		if (newstr_array == NULL)
+			return -1;
 	}
 
 	// Create an array of strings to be removed from the array
@@ -1444,7 +1462,13 @@ int op_remove_strl(void *var, char *val)
 			continue;
 		}
 		dD("Adding new member to string array: %s", tok);
-		valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		void *new_valstr_array = realloc(valstr_array, sizeof(char *) * (++valstr_array_size + 1));
+		if (new_valstr_array == NULL) {
+			free(newstr_array);
+			free(valstr_array);
+			return -2;
+		}
+		valstr_array = new_valstr_array;
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
 	}
@@ -1477,7 +1501,9 @@ int op_remove_strl(void *var, char *val)
 	newstr_array[newstr_array_size] = NULL;
 	free(string_array);
 	free(valstr_array);
-	newstr_array = realloc(newstr_array, sizeof(char*) * (newstr_array_size + 1));
+	void *new_newstr_array = realloc(newstr_array, sizeof(char *) * (newstr_array_size + 1));
+	if (new_newstr_array != NULL)
+		newstr_array = new_newstr_array;
 	*aptr = newstr_array;
 	return 0;
 }
