@@ -388,7 +388,7 @@ cd c:\devel
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 .\bootstrap-vcpkg.bat
-.\vcpkg install curl libxml2 libxslt bzip2 pcre pthreads
+.\vcpkg install curl libxml2 libxslt bzip2 pcre pthreads getopt-win32
 .\vcpkg integrate install
 ----
 
