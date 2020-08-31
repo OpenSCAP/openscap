@@ -13,6 +13,9 @@
 set -e -o pipefail
 
 function test_offline_mode_system_info_offline {
+	# This test is dependent on /etc/os-release being present, so skip this test if it doesn't exist.
+	[ -f "/etc/os-release" ] || return 255
+
 	temp_dir="$(mktemp -d)"
 
 	ln -s /etc $temp_dir

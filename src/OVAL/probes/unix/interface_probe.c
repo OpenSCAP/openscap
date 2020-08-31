@@ -122,11 +122,11 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 			break;
 		}
 #elif defined(OS_FREEBSD)
-        if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
-                memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
-                snprintf(mac_buf, sizeof(mac_buf),
-                                "%02X:%02X:%02X:%02X:%02X:%02X",
-                                mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+	if (ioctl(fd, SIOCGHWADDR, &ifr) >= 0) {
+		memcpy(mac, ifr.ifr_addr.sa_data, sizeof(mac));
+		snprintf(mac_buf, sizeof(mac_buf),
+			"%02X:%02X:%02X:%02X:%02X:%02X",
+			mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 		switch(ifr.ifr_addr.sa_family) {
 
 		case ARPHRD_ETHER:
@@ -140,7 +140,6 @@ static void get_l2_info(const struct ifaddrs *ifa, char **mp, char **tp, int fd)
 	} else
 		mac_buf[0] = 0;
 }
-
 
 #if defined(OS_LINUX)
 static void get_flags(const struct ifaddrs *ifa, char ***fp) {
@@ -438,12 +437,12 @@ static int get_ifs(SEXP_t *name_ent, probe_ctx *ctx, oval_schema_version_t over)
 			}
 #elif defined(OS_FREEBSD)
 			for (byte = 0; byte < 4 && sin6p->sin6_addr.__u6_addr.__u6_addr32[byte] == 0xffffffff; byte++) {
-			        prefix += 32;
+				prefix += 32;
 			}
 			if (byte < 4) {
-			        tmp = ntohl(sin6p->sin6_addr.__u6_addr.__u6_addr32[byte]);
-			        for (bit = 31; tmp & (1 << bit); bit--)
-			                prefix++;
+				tmp = ntohl(sin6p->sin6_addr.__u6_addr.__u6_addr32[byte]);
+				for (bit = 31; tmp & (1 << bit); bit--)
+					prefix++;
 			}
 #endif
 			host_len = strlen(host);

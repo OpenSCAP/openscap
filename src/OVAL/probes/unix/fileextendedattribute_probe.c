@@ -79,7 +79,6 @@ struct cbargs {
 #if defined(OS_FREEBSD)
 static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, SEXP_t *gr_lastpath)
 {
-	return 0;
 	char path_buffer[PATH_MAX];
 	SEXP_t *item;
 	struct cbargs *args = (struct cbargs *) ptr;
