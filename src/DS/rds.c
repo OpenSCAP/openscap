@@ -668,7 +668,7 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-int ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
 		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
 		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
 		struct oscap_htable *oval_result_sources,
@@ -806,6 +806,32 @@ int ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
 	return 0;
 }
 
+int ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping)
+{
+	return _ds_rds_create_from_dom(ret, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp,
+			xccdf_result_file_doc, oval_result_sources, oval_result_mapping,
+			arf_report_mapping, false);
+}
+
+static int ds_rds_create_from_dom_clone(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping)
+{
+	return _ds_rds_create_from_dom(ret, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp,
+			xccdf_result_file_doc, oval_result_sources, oval_result_mapping,
+			arf_report_mapping, true);
+}
+
 struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *tailoring_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
 {
 	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
@@ -837,8 +863,8 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 
 	xmlDocPtr rds_doc = NULL;
 
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
-			oval_result_sources, oval_result_mapping, arf_report_mapping, true) != 0) {
+	if (ds_rds_create_from_dom_clone(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
+			oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
 		free(tailoring_doc_timestamp);
 		return NULL;
 	}
