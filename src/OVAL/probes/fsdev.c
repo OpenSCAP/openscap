@@ -42,6 +42,9 @@
 #if defined(OS_LINUX)
 # include <mntent.h>
 # include <unistd.h>
+# ifndef _PATH_MOUNTED
+#  define _PATH_MOUNTED MOUNTED
+# endif
 #elif defined(OS_SOLARIS)
 # include <sys/mnttab.h>
 # include <sys/mntent.h>

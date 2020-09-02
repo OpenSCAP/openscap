@@ -47,6 +47,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdio_ext.h>
+#include <limits.h>
 #include <errno.h>
 #include <dirent.h>
 #include <fcntl.h>
