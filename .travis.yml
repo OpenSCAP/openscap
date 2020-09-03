@@ -1,45 +1,42 @@
 language: c
+dist: bionic
+arch:
+    - amd64
+    - arm64
+    - ppc64le
 
+cache:
+  directories:
+    - '$HOME/.sonar/cache'
+
+addons:
+    sonarcloud:
+       organization: "openscap"
+    apt:
+       packages:
+           - lcov
+           - libdbus-1-dev
+           - libdbus-glib-1-dev
+           - libcurl4-openssl-dev
+           - libgcrypt-dev
+           - libselinux1-dev
+           - libgconf2-dev
+           - libacl1-dev
+           - libblkid-dev
+           - libcap-dev
+           - libxml2-dev
+           - swig
+           - libxml-parser-perl
+           - libxml-xpath-perl
+           - libperl-dev
+           - librpm-dev
+           - swig
+           - librtmp-dev
+           - xsltproc
+           - rpm-common
+           - lua50
 matrix:
   include:
-    - os: linux
-      dist: bionic
-      arch:
-         - amd64
-         - ppc64le
-      addons:
-        apt:
-          packages:
-            - lcov
-            - libdbus-1-dev
-            - libdbus-glib-1-dev
-            - libcurl4-openssl-dev
-            - libgcrypt-dev
-            - libselinux1-dev
-            - libgconf2-dev
-            - libacl1-dev
-            - libblkid-dev
-            - libcap-dev
-            - libxml2-dev
-            - swig
-            - libxml-parser-perl
-            - libxml-xpath-perl
-            - libperl-dev
-            - librpm-dev
-            - swig
-            - librtmp-dev
-            - xsltproc
-            - rpm-common
-            - lua50
-      before_script:
-        - cd build
-      script:
-        - cmake -DCMAKE_BUILD_TYPE=Debug ../
-        - build-wrapper-linux-x86-64 --out-dir bw-output make all || make all  # build-wrapper won't work on forked repositories.
-        - ctest --output-on-failure
-        - (cd .. && sonar-scanner) || true  # Will always fail builds on forked repositories.
-      after_success:
-        - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
     - os: osx
       before_install:
         - brew update
@@ -53,11 +50,19 @@ matrix:
       script:
         - cmake -DENABLE_PROBES=false ../
         - make -j 4
+before_script:
+  - cd build
+script:
+  - cmake -DCMAKE_BUILD_TYPE=Debug ../
+  - if [[ "${TRAVIS_CPU_ARCH}" == "arm64" ]]; then
+      build-wrapper-linux-aarch64 --out-dir bw-output make all || make all;
+    else
+      build-wrapper-linux-x86_64 --out-dir bw-output make all || make all;
+    fi
+  - ctest --output-on-failure
+  - (cd .. && sonar-scanner) || true  # Will always fail builds on forked repositories.
 
-addons:
-  sonarcloud:
-    organization: "openscap"
-
-cache:
-  directories:
-    - '$HOME/.sonar/cache'
+after_success:
+  - if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+      curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV";
+    fi
