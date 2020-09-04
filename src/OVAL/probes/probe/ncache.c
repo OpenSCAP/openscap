@@ -154,15 +154,15 @@ SEXP_t *probe_ncache_add (probe_ncache_t *cache, const char *name)
         PROBE_NCACHE_WLOCK(cache, NULL);
 
         if (cache->size <= cache->real) {
+                void *new_name = realloc (cache->name, sizeof (SEXP_t *) * (cache->size + PROBE_NCACHE_ADD_SIZE));
+                if (new_name == NULL) {
+                        SEXP_free(ref);
+                        PROBE_NCACHE_WUNLOCK(cache);
+                        return NULL;
+                }
+                cache->name  = new_name;
                 cache->size += PROBE_NCACHE_ADD_SIZE;
-                cache->name  = realloc (cache->name, sizeof (SEXP_t *) * cache->size);
         }
-
-	/* TODO: check if this is really needed */
-	if (cache->name == NULL || cache->size <= cache->real) {
-		SEXP_free(ref);
-		return NULL;
-	}
 
         cache->name[cache->real] = ref;
         ++cache->real;

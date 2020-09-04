@@ -173,7 +173,13 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 
 	do {
 		buf_size += buf_inc;
-		buf = realloc(buf, buf_size);
+		void *new_buf = realloc(buf, buf_size);
+		if (new_buf == NULL) {
+			dE("Can't re-allocate memory for file-processing buffer");
+			ret = PROBE_ENOMEM;
+			goto cleanup;
+		}
+		buf = new_buf;
 		ret = read(fd, buf + buf_used, buf_inc);
 		if (ret == -1) {
 			SEXP_t *msg;
@@ -188,8 +194,15 @@ static int process_file(const char *prefix, const char *path, const char *file, 
 		buf_used += ret;
 	} while (ret == buf_inc);
 
-	if (buf_used == buf_size)
-		buf = realloc(buf, ++buf_size);
+	if (buf_used == buf_size) {
+		void *new_buf = realloc(buf, ++buf_size);
+		if (new_buf == NULL) {
+			dE("Can't re-allocate memory");
+			ret = PROBE_ENOMEM;
+			goto cleanup;
+		}
+		buf = new_buf;
+	}
 	buf[buf_used++] = '\0';
 
 	do {

@@ -129,7 +129,13 @@ static int icache_lookup(rbt_t *tree, int64_t item_id, probe_iqpair_t *pair) {
 		*/
 		dD("cache MISS");
 
-		cached->item = realloc(cached->item, sizeof(SEXP_t *) * ++cached->count);
+		void *new_item = realloc(cached->item, sizeof(SEXP_t *) * (cached->count + 1));
+		if (new_item == NULL) {
+			dE("Unable to re-allocate memory for cache");
+			return -1;
+		}
+		cached->count++;
+		cached->item = new_item;
 		cached->item[cached->count - 1] = pair->p.item;
 
 		/* Assign an unique item ID */

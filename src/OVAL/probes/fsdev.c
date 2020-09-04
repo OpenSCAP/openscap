@@ -202,15 +202,32 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 			continue;
 		if (i >= lfs->cnt) {
 			lfs->cnt += DEVID_ARRAY_ADD;
-			lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+			void *new_ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+			if (new_ids == NULL) {
+				e = errno;
+				free(lfs->ids);
+				free(lfs);
+				endmntent(fp);
+				errno = e;
+				return (NULL);
+			}
+			lfs->ids = new_ids;
 		}
 		memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
 	}
 
 	endmntent(fp);
 
-	lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
-	lfs->cnt = (lfs->ids == NULL ? 0 : i);
+	void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
+	if (new_ids == NULL) {
+		e = errno;
+		free(lfs->ids);
+		free(lfs);
+		errno = e;
+		return (NULL);
+	}
+	lfs->ids = new_ids;
+	lfs->cnt = i;
 
 	return (lfs);
 }
@@ -233,7 +250,15 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	}
 
 	if (i != lfs->cnt) {
-		lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
+		void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
+		if (new_ids == NULL) {
+			e = errno;
+			free(lfs->ids);
+			free(lfs);
+			errno = e;
+			return (NULL);
+		}
+		lfs->ids = new_ids;
 		lfs->cnt = i;
 	}
 
@@ -266,7 +291,7 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	if (lfs->ids == NULL) {
 		e = errno;
 		free(lfs);
-                fclose(fp);
+		fclose(fp);
 		errno = e;
 		return (NULL);
 	}
@@ -280,7 +305,16 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 
 			if (i >= lfs->cnt) {
 				lfs->cnt += DEVID_ARRAY_ADD;
-				lfs->ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+				void *new_ids = realloc(lfs->ids, sizeof(dev_t) * lfs->cnt);
+				if (new_ids == NULL) {
+					e = errno;
+					free(lfs->ids);
+					free(lfs);
+					fclose(fp);
+					errno = e;
+					return (NULL);
+				}
+				lfs->ids = new_ids;
 			}
 
 			memcpy(&(lfs->ids[i++]), &st.st_dev, sizeof(dev_t));
@@ -289,8 +323,16 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 
 	fclose(fp);
 
-	lfs->ids = realloc(lfs->ids, sizeof(dev_t) * i);
-	lfs->cnt = (lfs->ids == NULL ? 0 : i);
+	void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
+	if (new_ids == NULL) {
+		e = errno;
+		free(lfs->ids);
+		free(lfs);
+		errno = e;
+		return (NULL);
+	}
+	lfs->ids = new_ids;
+	lfs->cnt = i;
 
 	return (lfs);
 }

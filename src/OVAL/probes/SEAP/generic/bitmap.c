@@ -97,11 +97,12 @@ int bitmap_set (bitmap_t *bitmap, bitmap_bitn_t bitn)
 
         if (i > bitmap->realsize) {
                 if (i <= bitmap->size) {
-			bitmap->cells = realloc(bitmap->cells, sizeof(uint32_t) * i);
-
+                        void *new_cells = realloc(bitmap->cells, sizeof(uint32_t) * i);
+                        if (new_cells == NULL)
+                                return (-1);
+                        bitmap->cells = new_cells;
                         memset (bitmap->cells + bitmap->realsize, 0,
                                 sizeof (bitmap_cell_t) * (i - bitmap->realsize));
-
                         bitmap->realsize = i;
                 } else {
                         return (1);
@@ -138,11 +139,17 @@ int bitmap_unset (bitmap_t *bitmap, bitmap_bitn_t bitn)
                 bitmap->cells[i - 1] &= ~(1 << (bitn % BITMAP_CELLSIZE));
                 --bitmap->count;
 
+                bitmap_size_t current_realsize = bitmap->realsize;
                 if (bitmap->realsize - i == 0) {
                         while (bitmap->cells[bitmap->realsize - 1] == 0)
                                 --bitmap->realsize;
 
-			bitmap->cells = realloc(bitmap->cells, sizeof(uint32_t) * bitmap->realsize);
+                        void *new_cells = realloc(bitmap->cells, sizeof(uint32_t) * bitmap->realsize);
+                        if (new_cells == NULL && bitmap->realsize > 0) {
+                                bitmap->realsize = current_realsize;
+                                return (-1);
+                        }
+                        bitmap->cells = new_cells;
                 }
         }
 

@@ -137,13 +137,13 @@ static int oval_pdtbl_add(oval_pdtbl_t *tbl, oval_subtype_t type, int sd, const 
 	pd->sd      = sd;
 	pd->uri     = oscap_strdup(uri);
 
-	tbl->memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
-
-	if (tbl->memb == NULL) {
+	void *new_memb = realloc(tbl->memb, sizeof(oval_pd_t *) * (++tbl->count));
+	if (new_memb == NULL) {
 		free(pd->uri);
 		free(pd);
 		return -1;
 	}
+	tbl->memb = new_memb;
 
 	tbl->memb[tbl->count - 1] = pd;
 

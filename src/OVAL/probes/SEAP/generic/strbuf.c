@@ -297,7 +297,14 @@ ssize_t strbuf_write (strbuf_t *buf, int fd)
 			iot  = 0;
 		}
 
-		iov = realloc (iov, sizeof (struct iovec) * iow);
+		void *new_iov = realloc (iov, sizeof (struct iovec) * iow);
+		if (new_iov == NULL) {
+			int e = errno;
+			free(iov);
+			errno = e;
+			return -1;
+		}
+		iov = new_iov;
 		ioc = 0;
 
 		while (cur != NULL && ioc < iow) {

@@ -854,6 +854,8 @@ static char *_comment_multiline_text(char *text)
 	const char *filler = "\n# ";
 	size_t buffer_size = strlen(text) + 1; // +1 for terminating '\0'
 	char *buffer = malloc(buffer_size);
+	if (buffer == NULL)
+		return NULL;
 	char *saveptr;
 	size_t filler_len = strlen(filler);
 	size_t result_len = 0;
@@ -879,14 +881,24 @@ static char *_comment_multiline_text(char *text)
 			if (!first) {
 				if (buffer_size < result_len + filler_len + 1) {
 					buffer_size += filler_len;
-					buffer = realloc(buffer, buffer_size);
+					void *new_buffer = realloc(buffer, buffer_size);
+					if (new_buffer == NULL) {
+						free(buffer);
+						return NULL;
+					}
+					buffer = new_buffer;
 				}
 				strncpy(buffer + result_len, filler, filler_len + 1);
 				result_len += filler_len;
 			}
 			if (buffer_size < result_len + token_len + 1) {
 					buffer_size += token_len;
-					buffer = realloc(buffer, buffer_size);
+					void *new_buffer = realloc(buffer, buffer_size);
+					if (new_buffer == NULL) {
+						free(buffer);
+						return NULL;
+					}
+					buffer = new_buffer;
 			}
 			/* Copy token to output buffer */
 			strncpy(buffer + result_len, token, token_len + 1);

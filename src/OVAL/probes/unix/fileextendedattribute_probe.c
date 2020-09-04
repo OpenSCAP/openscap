@@ -237,20 +237,22 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		xattr_count = llistxattr(st_path_with_prefix, NULL, 0);
 
 		if (xattr_count == 0) {
-			free(st_path_with_prefix);
-			free(xattr_buf);
-			return 0;
+			goto exit;
 		}
 
 		if (xattr_count < 0) {
 			dD("FAIL: llistxattr(%s, %p, %zu): errno=%u, %s", st_path_with_prefix, NULL, (size_t)0, errno, strerror(errno));
-			free(st_path_with_prefix);
-			return 0;
+			goto exit;
 		}
 
 		/* allocate space for xattr names */
 		xattr_buflen = xattr_count;
-		xattr_buf    = realloc(xattr_buf, sizeof(char) * xattr_buflen);
+		void *new_xattr_buf = realloc(xattr_buf, sizeof(char) * xattr_buflen);
+		if (new_xattr_buf == NULL) {
+			dE("Failed to re-allocate memory for xattr_buf");
+			goto exit;
+		}
+		xattr_buf = new_xattr_buf;
 
 		/* fill the buffer */
 		xattr_count = llistxattr(st_path_with_prefix, xattr_buf, xattr_buflen);
@@ -290,11 +292,18 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 				// Check possible buffer overflow
 				if (sizeof(char) * (xattr_vallen + 1) <= sizeof(char) * xattr_vallen) {
 					dE("Attribute is too long.");
-					abort();
+					free(xattr_val);
+					goto exit;
 				}
 
 				// Allocate buffer, '+1' is for trailing '\0'
-				xattr_val    = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+				void *new_xattr_val = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
+				if (xattr_val == NULL) {
+					dE("Failed to allocate memory for xattr_val");
+					free(xattr_val);
+					goto exit;
+				}
+				xattr_val = new_xattr_val;
 
 				// we don't want to override space for '\0' by call of 'lgetxattr'
 				// we pass only 'xattr_vallen' instead of 'xattr_vallen + 1'
@@ -335,6 +344,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 		++i;
 	} while (xattr_buf + i < xattr_buf + xattr_buflen - 1);
 
+exit:
 	free(xattr_buf);
 	free(st_path_with_prefix);
 	return 0;

@@ -94,12 +94,18 @@ int spb_add (spb_t *spb, void *buffer, size_t buflen)
         spb_size_t gend;
 
         if (spb->btotal >= spb->balloc) {
+                uint32_t current_balloc = spb->balloc;
                 if (spb->balloc < SPB_BALLOC_HIGHTRESH)
                         spb->balloc <<= 1;
                 else
                         spb->balloc  += SPB_BALLOC_ADD;
 
-		spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * spb->balloc);
+                void *new_buffer = realloc(spb->buffer, sizeof(spb_item_t) * spb->balloc);
+                if (new_buffer == NULL) {
+                        spb->balloc = current_balloc;
+                        return (-1);
+                }
+                spb->buffer = new_buffer;
         }
 
         /* XXX: assume that btotal > 0 if btotal > balloc? */
@@ -261,12 +267,17 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
                         if (flags & SPB_FLAG_FREE) {
                                 register uint32_t i;
 
-                                for (i = spb->btotal; i > 0; --i)
-					free(spb->buffer[i - 1].base);
+                                for (i = spb->btotal; i > 0; --i) {
+                                        free(spb->buffer[i - 1].base);
+                                        spb->buffer[i - 1].base = NULL;
+                                }
                         }
-
-			spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * SPB_DEFAULT_BALLOC);
                         spb->btotal = 0;
+
+                        void *new_buffer = realloc(spb->buffer, sizeof(spb_item_t) * SPB_DEFAULT_BALLOC);
+                        if (new_buffer == NULL)
+                                return (0);
+                        spb->buffer = new_buffer;
                         spb->balloc = SPB_DEFAULT_BALLOC;
                 } else {
                         /* free buffer 0..(b_idx - 1) */
@@ -275,27 +286,35 @@ spb_size_t spb_drop_head (spb_t *spb, spb_size_t size, spb_flags_t flags)
                         e_sub = spb->buffer[b_idx - 1].gend + 1;
 
                         if (flags & SPB_FLAG_FREE) {
-                                for (i = b_idx - 1; i > 0; --i)
-					free(spb->buffer[i - 1].base);
+                                for (i = b_idx - 1; i > 0; --i) {
+                                        free(spb->buffer[i - 1].base);
+                                        spb->buffer[i - 1].base = NULL;
+                                }
                         }
 
                         spb->btotal -= b_idx;
                         memmove (spb->buffer, spb->buffer + b_idx, sizeof (spb_item_t) * spb->btotal);
 
                         /*
-                         * Shrink the pre-allocated memory if it's more than 2 times larger than
-                         * the space needed for the remaining buffers.
-                         */
-                        if ((spb->balloc >> 1) > spb->btotal) {
-                                spb->balloc >>= 1;
-					spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * spb->balloc);
-                        }
-
-                        /*
                          * Update the global end index member in each remaining buffer item
                          */
                         for (i = spb->btotal; i > 0; --i)
                                 spb->buffer[i - 1].gend -= e_sub;
+
+                        /*
+                         * Shrink the pre-allocated memory if it's more than 2 times larger than
+                         * the space needed for the remaining buffers.
+                         */
+                        if ((spb->balloc >> 1) > spb->btotal) {
+                                uint32_t current_balloc = spb->balloc;
+                                spb->balloc >>= 1;
+                                void *new_buffer = spb->buffer = realloc(spb->buffer, sizeof(spb_item_t) * spb->balloc);
+                                if (new_buffer == NULL && spb->balloc > 0) {
+                                        spb->balloc = current_balloc;
+                                } else {
+                                        spb->buffer = new_buffer;
+                                }
+                        }
                 }
         }
 

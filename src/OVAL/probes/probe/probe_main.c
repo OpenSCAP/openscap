@@ -119,8 +119,12 @@ static int probe_opthandler_varref(int option, int op, va_list args)
 	if (o_temp != NULL)
 		return (0);
 
-	OSCAP_GSYM(no_varref_ents) = realloc(OSCAP_GSYM(no_varref_ents),
-						   sizeof (char *) * ++OSCAP_GSYM(no_varref_ents_cnt));
+	void *new_no_varref_ents = realloc(OSCAP_GSYM(no_varref_ents),
+						   sizeof (char *) * (OSCAP_GSYM(no_varref_ents_cnt)+1));
+	if (new_no_varref_ents == NULL)
+		return -2;
+	OSCAP_GSYM(no_varref_ents_cnt)++;
+	OSCAP_GSYM(no_varref_ents) = new_no_varref_ents;
 	OSCAP_GSYM(no_varref_ents)[OSCAP_GSYM(no_varref_ents_cnt) - 1] = strdup(o_name);
 
 	qsort(OSCAP_GSYM(no_varref_ents), OSCAP_GSYM(no_varref_ents_cnt),
