@@ -4,6 +4,8 @@ matrix:
   include:
     - os: linux
       dist: bionic
+      arch:
+         - ppc64le
       addons:
         apt:
           packages:
