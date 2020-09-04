@@ -27,3 +27,21 @@
    fun:curl_global_init
    ...
 }
+
+{
+   dl_init
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:_dl_init
+   ...
+}
+
+{
+   curl_multi_perform
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:curl_multi_perform
+   ...
+}

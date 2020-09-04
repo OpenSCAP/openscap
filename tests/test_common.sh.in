@@ -21,13 +21,13 @@ OSCAP_FULL_VALIDATION=1
 export OSCAP_FULL_VALIDATION
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
+    export OSCAP_EXEC="@CMAKE_BINARY_DIR@/utils/oscap"
+    export RUN_WRAPPER="@CMAKE_BINARY_DIR@/run"
     enable_valgrind="@ENABLE_VALGRIND@"
     if [ $enable_valgrind != "OFF" ] ; then
-        actualdir=@CMAKE_BINARY_DIR@
-        export actualdir
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="@CMAKE_SOURCE_DIR@/tests/valgrind_test.sh"
     else
-        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash @CMAKE_BINARY_DIR@/run @CMAKE_BINARY_DIR@/utils/oscap"
+        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash $RUN_WRAPPER $OSCAP_EXEC"
     fi
     [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE_EXEC="@CMAKE_BINARY_DIR@/utils/oscap-chrootable"
     [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE="bash @CMAKE_BINARY_DIR@/run $OSCAP_CHROOTABLE_EXEC"
