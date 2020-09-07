@@ -1324,8 +1324,10 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 			if (oscap_source_save_as(stig_result, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
 						oscap_source_readable_origin(stig_result));
+				oscap_source_free(stig_result);
 				return -1;
 			}
+			oscap_source_free(stig_result);
 		}
 
 		/* validate XCCDF Results */
