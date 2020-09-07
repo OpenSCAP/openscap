@@ -242,6 +242,7 @@ static int unit_callback(const char *unit, void *cbarg)
 
 	get_all_properties_by_unit_path(vars->dbus_conn, unit_path,
 					property_callback, vars);
+	free(unit_path);
 
 	if (vars->item != NULL) {
 		probe_item_collect(vars->ctx, vars->item);
