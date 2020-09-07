@@ -1493,8 +1493,12 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 	char *report_id = oscap_sprintf("oval%d", counter++);
 	const char *original_name = oval_agent_get_filename(oval_session);
 	char *results_file_name = oscap_strdup(name);
-	oscap_htable_add(session->oval.results_mapping, original_name, results_file_name);
-	oscap_htable_add(session->oval.arf_report_mapping, original_name, report_id);
+	if (!oscap_htable_add(session->oval.results_mapping, original_name, results_file_name)){
+		free(results_file_name);
+	}
+	if (!oscap_htable_add(session->oval.arf_report_mapping, original_name, report_id)) {
+		free(report_id);
+	};
 
 	/* validate OVAL Results */
 	if (session->validate && session->full_validation) {
