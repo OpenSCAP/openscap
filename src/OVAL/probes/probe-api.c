@@ -138,6 +138,11 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 {
 	SEXP_t *n_ref, *ns;
 
+	if (val == NULL)
+		ns = SEXP_string_new(name, strlen(name));
+	else
+		ns = SEXP_string_newf(":%s", name);
+
 	n_ref = SEXP_listref_first(item);
 
 	if (SEXP_listp(n_ref)) {
@@ -145,13 +150,7 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 		 * There are already some attributes.
 		 * Just add the new to the list.
 		 */
-		if (val == NULL)
-			ns = SEXP_string_new(name, strlen(name));
-		else
-			ns = SEXP_string_newf(":%s", name);
-
 		SEXP_list_add(n_ref, ns);
-		SEXP_free(ns);
 
 		if (val != NULL)
 			SEXP_list_add(n_ref, val);
@@ -163,22 +162,20 @@ SEXP_t *probe_item_attr_add(SEXP_t * item, const char *name, SEXP_t * val)
 		 * S-exp and the attribute.
 		 */
 		SEXP_t *nl;
+		SEXP_t *x_ref;
 
-		if (val == NULL)
-			ns = SEXP_string_new(name, strlen(name));
-		else
-			ns = SEXP_string_newf(":%s", name);
+		x_ref = SEXP_list_nth(item, 1);
+		nl = SEXP_list_new(x_ref, ns, val, NULL);
+		SEXP_free(x_ref);
 
-		nl = SEXP_list_new(n_ref, ns, val, NULL);
-
-		SEXP_free(n_ref);
-		SEXP_free(ns);
-
-		n_ref = SEXP_list_replace(item, 1, nl);
+		x_ref = SEXP_list_replace(item, 1, nl);
+		SEXP_free(x_ref);
 		SEXP_free(nl);
 	}
 
 	SEXP_free(n_ref);
+
+	SEXP_free(ns);
 
 	return (val);
 }
