@@ -106,6 +106,7 @@ int sysctl_probe_main(probe_ctx *ctx, void *probe_arg)
         path_entity = probe_ent_creat1("path", ent_attrs, r1 = SEXP_string_new(PROC_SYS_DIR, strlen(PROC_SYS_DIR)));
 	SEXP_free(r0);
 	SEXP_free(r1);
+	SEXP_free(ent_attrs);
 
         ent_attrs = probe_attr_creat("operation", r0 = SEXP_number_newi(OVAL_OPERATION_PATTERN_MATCH),
                                      NULL);
