@@ -361,6 +361,9 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
 
                         if (re == NULL) {
                                 endmntent(mnt_fp);
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                                blkid_put_cache(blkcache);
+#endif
                                 return (PROBE_EINVAL);
                         }
                 }
@@ -415,6 +418,9 @@ int partition_probe_main(probe_ctx *ctx, void *probe_arg)
 
                 if (mnt_op == OVAL_OPERATION_PATTERN_MATCH)
                         pcre_free(re);
+#if defined(HAVE_BLKID_GET_TAG_VALUE)
+                blkid_put_cache(blkcache);
+#endif
         }
 
         return (probe_ret);

@@ -1388,8 +1388,10 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 			if (oscap_source_save_as(stig_result, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
 						oscap_source_readable_origin(stig_result));
+				oscap_source_free(stig_result);
 				return -1;
 			}
+			oscap_source_free(stig_result);
 		}
 
 		/* validate XCCDF Results */
@@ -1557,8 +1559,12 @@ static char *_xccdf_session_export_oval_result_file(struct xccdf_session *sessio
 	char *report_id = oscap_sprintf("oval%d", counter++);
 	const char *original_name = oval_agent_get_filename(oval_session);
 	char *results_file_name = oscap_strdup(name);
-	oscap_htable_add(session->oval.results_mapping, original_name, results_file_name);
-	oscap_htable_add(session->oval.arf_report_mapping, original_name, report_id);
+	if (!oscap_htable_add(session->oval.results_mapping, original_name, results_file_name)){
+		free(results_file_name);
+	}
+	if (!oscap_htable_add(session->oval.arf_report_mapping, original_name, report_id)) {
+		free(report_id);
+	};
 
 	/* validate OVAL Results */
 	if (session->validate && session->full_validation) {

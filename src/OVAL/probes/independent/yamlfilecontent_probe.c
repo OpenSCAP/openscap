@@ -61,6 +61,7 @@ static bool match_regex(const char *pattern, const char *value)
 	}
 	int ovector[OVECCOUNT];
 	int rc = pcre_exec(re, NULL, value, strlen(value), 0, 0, ovector, OVECCOUNT);
+	pcre_free(re);
 	if (rc > 0) {
 		return true;
 	}
