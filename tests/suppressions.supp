@@ -45,3 +45,12 @@
    fun:curl_multi_perform
    ...
 }
+
+{
+   g_hash_table_insert
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:g_hash_table_insert
+   ...
+}
