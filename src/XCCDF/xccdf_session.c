@@ -245,6 +245,70 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 	return session->oval.arf_report;
 }
 
+static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_session *session)
+{
+	struct oscap_source *rds_source = NULL;
+	xmlDoc *sds_doc = NULL;
+
+	if (xccdf_session_is_sds(session)) {
+		sds_doc = oscap_source_pop_xmlDoc(session->source);
+	} else {
+		sds_doc = ds_sds_compose_xmlDoc_from_xccdf_source(session->source);
+	}
+	oscap_source_free(session->source);
+	session->source = NULL;
+
+	if (sds_doc == NULL) {
+		goto cleanup;
+	}
+
+	xmlDoc *result_file_doc = oscap_source_get_xmlDoc(session->xccdf.result_source);
+	if (result_file_doc == NULL) {
+		goto cleanup;
+	}
+
+	xmlDoc *tailoring_doc = NULL;
+	char *tailoring_doc_timestamp = NULL;
+	const char *tailoring_filepath = NULL;
+	if (session->tailoring.user_file) {
+		tailoring_doc = oscap_source_get_xmlDoc(session->tailoring.user_file);
+		if (tailoring_doc == NULL) {
+			goto cleanup;
+		}
+		tailoring_filepath = oscap_source_get_filepath(session->tailoring.user_file);
+		struct stat file_stat;
+		if (stat(tailoring_filepath, &file_stat) == 0) {
+			const size_t max_timestamp_len = 32;
+			tailoring_doc_timestamp = malloc(max_timestamp_len);
+			struct tm *tm_mtime = malloc(sizeof(struct tm));
+#ifdef OS_WINDOWS
+			tm_mtime = localtime_s(tm_mtime, &file_stat.st_mtime);
+#else
+			tm_mtime = localtime_r(&file_stat.st_mtime, tm_mtime);
+#endif
+			strftime(tailoring_doc_timestamp, max_timestamp_len,
+					"%Y-%m-%dT%H:%M:%S", tm_mtime);
+			free(tm_mtime);
+		}
+	}
+
+	xmlDocPtr rds_doc = NULL;
+
+	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
+			session->oval.result_sources, session->oval.results_mapping,
+			session->oval.arf_report_mapping) != 0) {
+		goto cleanup;
+	}
+
+	rds_source = oscap_source_new_from_xmlDoc(rds_doc, session->export.arf_file);
+
+cleanup:
+	free(tailoring_doc_timestamp);
+	xmlFreeDoc(sds_doc);
+	return rds_source;
+}
+
 void xccdf_session_free(struct xccdf_session *session)
 {
 	if (session == NULL)
@@ -1810,4 +1874,53 @@ int xccdf_session_generate_guide(struct xccdf_session *session, const char *outf
 		return 1;
 	}
 	return 0;
+}
+
+int xccdf_session_export_all(struct xccdf_session *session)
+{
+	int ret = 0;
+	struct oscap_source *arf_source = NULL;
+
+	if (_build_xccdf_result_source(session)) {
+		ret = 1;
+		goto cleanup;
+	}
+
+	if (session->export.report_file == NULL && session->export.arf_file == NULL) {
+		goto cleanup;
+	}
+
+	arf_source = xccdf_session_extract_arf_source(session);
+	if (arf_source == NULL) {
+		ret = 1;
+		goto cleanup;
+	}
+
+	if (session->export.report_file != NULL) {
+		/* generate report */
+		_xccdf_gen_report(arf_source,
+				xccdf_result_get_id(session->xccdf.result),
+				session->export.report_file,
+				"",
+				(session->export.check_engine_plugins_results ? "%.result.xml" : ""),
+				session->xccdf.profile_id == NULL ? "" : session->xccdf.profile_id
+		);
+	}
+
+	if (session->export.arf_file != NULL) {
+		if (oscap_source_save_as(arf_source, NULL) != 0) {
+			ret = 1;
+			goto cleanup;
+		}
+		if (session->full_validation) {
+			if (oscap_source_validate(arf_source, _reporter, NULL) != 0) {
+				ret = 1;
+				goto cleanup;
+			}
+		}
+	}
+
+cleanup:
+	oscap_source_free(arf_source);
+	return ret;
 }

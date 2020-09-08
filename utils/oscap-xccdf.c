@@ -605,35 +605,33 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		xccdf_session_remediate(session);
 	}
 
-	xccdf_session_set_xccdf_export(session, action->f_results);
-	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
-	xccdf_session_set_report_export(session, action->f_report);
-	if (xccdf_session_export_xccdf(session) != 0)
-		goto cleanup;
-	else if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
-		(action->f_results || action->f_report || action->f_results_arf || action->f_results_stig))
-		fprintf(stdout, "XCCDF Results are exported correctly.\n");
-
-	if (xccdf_session_export_arf(session) != 0)
-		goto cleanup;
-	else if (action->f_results_arf && getenv("OSCAP_FULL_VALIDATION") != NULL)
-		fprintf(stdout, "Result DataStream exported correctly.\n");
-
 	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
-
-cleanup:
-	oscap_print_error();
+	int evaluation_result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
 
 	/* syslog message */
 #if defined(HAVE_SYSLOG_H)
-	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", result,
+	syslog(priority, "Evaluation finished. Return code: %d, Base score %f.", evaluation_result,
 		session == NULL ? 0 : xccdf_session_get_base_score(session));
 #endif
 
-	if (session != NULL)
-		xccdf_session_free(session);
+	xccdf_session_set_xccdf_export(session, action->f_results);
+	xccdf_session_set_xccdf_stig_viewer_export(session, action->f_results_stig);
+	xccdf_session_set_report_export(session, action->f_report);
+	if (xccdf_session_export_all(session) != 0)
+		goto cleanup;
 
+	if (action->validate && getenv("OSCAP_FULL_VALIDATION") != NULL &&
+		(action->f_results || action->f_report || action->f_results_arf || action->f_results_stig))
+		fprintf(stdout, "XCCDF Results are exported correctly.\n");
+
+	if (action->f_results_arf && getenv("OSCAP_FULL_VALIDATION") != NULL)
+		fprintf(stdout, "Result DataStream exported correctly.\n");
+
+	result = evaluation_result;
+
+cleanup:
+	xccdf_session_free(session);
+	oscap_print_error();
 	return result;
 }
 
@@ -736,16 +734,17 @@ int app_xccdf_remediate(const struct oscap_action *action)
 	if (xccdf_session_export_check_engine_plugins(session) != 0)
 		goto cleanup;
 
-	if (xccdf_session_export_xccdf(session) != 0)
-		goto cleanup;
-	if (xccdf_session_export_arf(session) != 0)
+	/* Get the result from TestResult model and decide if end with error or with correct return code */
+	int evaluation_result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
+
+	if (xccdf_session_export_all(session) != 0)
 		goto cleanup;
 
-	/* Get the result from TestResult model and decide if end with error or with correct return code */
-	result = xccdf_session_contains_fail_result(session) ? OSCAP_FAIL : OSCAP_OK;
+	result = evaluation_result;
+
 cleanup:
-	oscap_print_error();
 	xccdf_session_free(session);
+	oscap_print_error();
 	return result;
 }
 

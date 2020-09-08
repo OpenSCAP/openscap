@@ -668,7 +668,13 @@ static void ds_rds_add_xccdf_test_results(xmlDocPtr doc, xmlNodePtr reports,
 	}
 }
 
-static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr tailoring_doc, const char* tailoring_filepath, char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc, struct oscap_htable* oval_result_sources, struct oscap_htable* oval_result_mapping, struct oscap_htable *arf_report_mapping)
+static int _ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping,
+		bool clone)
 {
 	*ret = NULL;
 
@@ -699,8 +705,13 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 	xmlDOMWrapCtxtPtr sds_wrap_ctxt = xmlDOMWrapNewCtxt();
 	xmlNodePtr sds_res_node = NULL;
-	xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
-			&sds_res_node, doc, NULL, 1, 0);
+	if (clone) {
+		xmlDOMWrapCloneNode(sds_wrap_ctxt, sds_doc, xmlDocGetRootElement(sds_doc),
+				&sds_res_node, doc, NULL, 1, 0);
+	} else {
+		sds_res_node = xmlDocGetRootElement(sds_doc);
+		xmlDOMWrapAdoptNode(sds_wrap_ctxt, sds_doc, sds_res_node, doc, NULL, 0);
+	}
 	xmlAddChild(arf_content, sds_res_node);
 	xmlDOMWrapReconcileNamespaces(sds_wrap_ctxt, sds_res_node, 0);
 	xmlDOMWrapFreeCtxt(sds_wrap_ctxt);
@@ -712,7 +723,7 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 
 		// Need unique id (ref_id) - if generated already exists, then create new one
 		int counter = 0;
-		while (lookup_component_in_collection(sds_doc, tailoring_component_id) != NULL) {
+		while (lookup_component_in_collection(sds_res_node, tailoring_component_id) != NULL) {
 			free(tailoring_component_id);
 			tailoring_component_id = oscap_sprintf("scap_org.open-scap_comp_%s_tailoring%03d", mangled_tailoring_filepath, counter++);
 		}
@@ -795,6 +806,32 @@ static int ds_rds_create_from_dom(xmlDocPtr* ret, xmlDocPtr sds_doc, xmlDocPtr t
 	return 0;
 }
 
+int ds_rds_create_from_dom(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping)
+{
+	return _ds_rds_create_from_dom(ret, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp,
+			xccdf_result_file_doc, oval_result_sources, oval_result_mapping,
+			arf_report_mapping, false);
+}
+
+static int ds_rds_create_from_dom_clone(xmlDocPtr *ret, xmlDocPtr sds_doc,
+		xmlDocPtr tailoring_doc, const char *tailoring_filepath,
+		char *tailoring_doc_timestamp, xmlDocPtr xccdf_result_file_doc,
+		struct oscap_htable *oval_result_sources,
+		struct oscap_htable *oval_result_mapping,
+		struct oscap_htable *arf_report_mapping)
+{
+	return _ds_rds_create_from_dom(ret, sds_doc, tailoring_doc,
+			tailoring_filepath, tailoring_doc_timestamp,
+			xccdf_result_file_doc, oval_result_sources, oval_result_mapping,
+			arf_report_mapping, true);
+}
+
 struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struct oscap_source *tailoring_source, struct oscap_source *xccdf_result_source, struct oscap_htable *oval_result_sources, struct oscap_htable *oval_result_mapping, struct oscap_htable *arf_report_mapping, const char *target_file)
 {
 	xmlDoc *sds_doc = oscap_source_get_xmlDoc(sds_source);
@@ -826,8 +863,8 @@ struct oscap_source *ds_rds_create_source(struct oscap_source *sds_source, struc
 
 	xmlDocPtr rds_doc = NULL;
 
-	if (ds_rds_create_from_dom(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
-				oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
+	if (ds_rds_create_from_dom_clone(&rds_doc, sds_doc, tailoring_doc, tailoring_filepath, tailoring_doc_timestamp, result_file_doc,
+			oval_result_sources, oval_result_mapping, arf_report_mapping) != 0) {
 		free(tailoring_doc_timestamp);
 		return NULL;
 	}

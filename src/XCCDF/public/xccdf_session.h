@@ -566,6 +566,17 @@ OSCAP_API int xccdf_session_add_report_from_source(struct xccdf_session *session
  */
 OSCAP_API int xccdf_session_generate_guide(struct xccdf_session *session, const char *outfile);
 
+/**
+ * Export XCCDF results, ARF results and HTML report from the given XCCDF
+ * session based on values set in the XCCDF session. This is a destructive
+ * operation that modifies the oscap_source structures, specifically the XML
+ * trees. Callers must not perform any operation with the session after this
+ * call and they must free the session immediately.
+ * @param session XCCDF Session
+ * @returns zero on success
+ */
+OSCAP_API int xccdf_session_export_all(struct xccdf_session *session);
+
 /// @}
 /// @}
 #endif
