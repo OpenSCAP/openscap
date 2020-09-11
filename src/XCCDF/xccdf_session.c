@@ -248,6 +248,7 @@ static struct oscap_source* xccdf_session_create_arf_source(struct xccdf_session
 static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_session *session)
 {
 	struct oscap_source *rds_source = NULL;
+	char *tailoring_doc_timestamp = NULL;
 	xmlDoc *sds_doc = NULL;
 
 	if (xccdf_session_is_sds(session)) {
@@ -268,7 +269,6 @@ static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_sessio
 	}
 
 	xmlDoc *tailoring_doc = NULL;
-	char *tailoring_doc_timestamp = NULL;
 	const char *tailoring_filepath = NULL;
 	if (session->tailoring.user_file) {
 		tailoring_doc = oscap_source_get_xmlDoc(session->tailoring.user_file);
@@ -280,6 +280,10 @@ static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_sessio
 		if (stat(tailoring_filepath, &file_stat) == 0) {
 			const size_t max_timestamp_len = 32;
 			tailoring_doc_timestamp = malloc(max_timestamp_len);
+			if (tailoring_doc_timestamp == NULL) {
+				oscap_seterr(OSCAP_EFAMILY_GLIBC, "Failed to allocate %zu bytes for tailoring_doc_timestamp: %s", max_timestamp_len, strerror(errno));
+				goto cleanup;
+			}
 			struct tm *tm_mtime = malloc(sizeof(struct tm));
 #ifdef OS_WINDOWS
 			tm_mtime = localtime_s(tm_mtime, &file_stat.st_mtime);
