@@ -83,7 +83,7 @@ then the following must be available:
 === Installation
 
 You can either build the OpenSCAP library and the `oscap` tool from
-{oscap_git}[source] (for details please refer to the <<devs-compiling,compiling>> section),
+{oscap_git}[source] (for details please refer to the <<../developer/developer.adoc#,Developer Documentation>>),
 or you can use an existing build for your Linux distribution. Use the
 following yum command if you want to install the oscap tool on your
 Fedora or Red Hat Enterprise Linux distribution:
