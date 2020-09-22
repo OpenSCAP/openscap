@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 set -e -o pipefail
+. $builddir/tests/test_common.sh
 
 name=$(basename $0 .sh)
 result=$(mktemp ${name}.out.XXXXXX)
