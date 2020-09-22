@@ -40,6 +40,10 @@ function oval_fts {
 
 set -e -o pipefail
 
+if [ -n "${CUSTOM_OSCAP+x}" ] ; then
+	exit 255
+fi
+
 name=$(basename $0 .sh)
 tmpdir=$(make_temp_dir /tmp ${name})
 
