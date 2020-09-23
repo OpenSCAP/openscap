@@ -1553,8 +1553,13 @@
             <xsd:extension base="xsd:anySimpleType">
                 <xsd:attribute name="name" use="required">
                     <xsd:annotation>
-                        <xsd:documentation>A string.</xsd:documentation>
+                        <xsd:documentation>A string restricted to disallow upper case characters.</xsd:documentation>
                     </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[^A-Z]+"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
                 </xsd:attribute>
                 <xsd:attributeGroup ref="oval-def:EntityAttributeGroup"/>
                 <xsd:attribute name="entity_check" type="oval:CheckEnumeration" use="optional" default="all"/>
@@ -1819,8 +1824,13 @@
             <xsd:extension base="xsd:anySimpleType">
                 <xsd:attribute name="name" use="required">
                     <xsd:annotation>
-                        <xsd:documentation>A string.</xsd:documentation>
+                        <xsd:documentation>A string restricted to disallow upper case characters.</xsd:documentation>
                     </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="[^A-Z]+"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
                 </xsd:attribute>
                 <xsd:attributeGroup ref="oval-def:EntityAttributeGroup"/>
                 <xsd:attribute name="entity_check" type="oval:CheckEnumeration" use="optional" default="all"/>

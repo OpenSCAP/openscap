@@ -71,6 +71,15 @@
       </criteria>
     </definition>
 
+    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="array_of_maps" test_ref="oval:0:tst:8"/>
+      </criteria>
+    </definition>
   </definitions>
 
   <tests>
@@ -107,6 +116,9 @@
       <ind-def:object object_ref="oval:0:obj:7"/>
     </ind-def:yamlfilecontent_test>
 
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:8" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:8"/>
+    </ind-def:yamlfilecontent_test>
   </tests>
 
   <objects>
@@ -153,19 +165,24 @@
       <ind-def:yamlpath>.status.conditions[:]['nonexistent','dummy']</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:8">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.spec.outputs</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
   </objects>
 
   <states>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
       <ind-def:value datatype="record">
-        <field name="" datatype="string">LogForwarding</field>
+        <field name="#" datatype="string">LogForwarding</field>
       </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
       <ind-def:value datatype="record">
-        <field name="" datatype="string">openshift-logging</field>
+        <field name="#" datatype="string">openshift-logging</field>
       </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
@@ -181,7 +198,7 @@
         <field name="status" datatype="string">True</field>
         <field name="reason" datatype="string">AsExpected</field>
         <field name="type" datatype="string">Upgradeable</field>
-        <field name="lastTransitionTime" datatype="string" operation="pattern match">^\d+-\d+-.*Z$</field>
+        <field name="last^transition^time" datatype="string" operation="pattern match">^\d+-\d+-.*Z$</field>
       </ind-def:value>
     </ind-def:yamlfilecontent_state>
 

@@ -606,12 +606,12 @@
                               </xsd:element>
                               <xsd:element name="yamlpath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. This YAML Path expression must evaluate to a list or a map (part of a map) of zero or more scalar values which will be accessible in OVAL via instances of the result entity. Any results from evaluating the YAML Path expression other than a list of scalar values (or a map with scalar values) at the bottom level (e.g. list of lists, list of maps, map with maps or lists) is considered an error, so the author should define the YAML Path expression carefully. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
+                                        <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="value" type="oval-sc:EntityItemRecordType" minOccurs="0" maxOccurs="unbounded">
                                    <xsd:annotation>
-                                        <xsd:documentation>The value entity holds the target(s) of the specified YAML Path. If YAML Path target is a signle scalar value or a list of scalar values, the field child element's name would be empty (''). The check is entirely controlled by operator attributes of the field element.</xsd:documentation>
+                                        <xsd:documentation>The value entity holds the target(s) of the specified YAML Path. To define tests for a signle scalar value or a list of scalar values (where there is no key to associate), set the name attribute of the field element to '#'. Due to the limitation of the record type field names could not contain uppercase letters, they will be converted to the lowercase and escaped using the '^' symbol (the '^' symbol would be escaped as well). For example 'myCamelCase^Key' would be collected as 'my^camel^case^^^key'. The check is entirely controlled by operator attributes of the field element.</xsd:documentation>
                                         <xsd:appinfo>
                                              <sch:pattern id="ind-sc_yamlfile_itemvalue">
                                                   <sch:rule context="ind-sc:yamlfile_item/ind-sc:value">

@@ -148,6 +148,39 @@ do {                                                                     \
 	ret = -1;                                                            \
 } while (0)
 
+static char *escape_key(char *key)
+{
+	if (key == NULL)
+		return NULL;
+
+	size_t cap_letters = 0;
+	size_t key_len = strlen(key);
+	for (size_t i = 0; i < key_len; i++)
+		if ((key[i] >= 'A' && key[i] <= 'Z') || key[i] == '^')
+			cap_letters++;
+
+	if (cap_letters == 0)
+		return key;
+
+	char *new_key = realloc(key, key_len + 1 + cap_letters);
+	if (new_key == NULL)
+		return key;
+	new_key[key_len + cap_letters] = '\0';
+
+	for (ssize_t i = key_len; i >= 0; i--) {
+		if ((new_key[i] >= 'A' && new_key[i] <= 'Z') || new_key[i] == '^') {
+			if (new_key[i] != '^')
+				new_key[i] += 32;
+			memmove(new_key + i + cap_letters, new_key + i, key_len - i);
+			new_key[i + cap_letters - 1] = '^';
+			cap_letters--;
+			key_len = i;
+		}
+	}
+
+	return new_key;
+}
+
 static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
 {
 	int ret = 0;
@@ -174,7 +207,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 	bool sequence = false;
 	bool mapping = false;
 	int index = 0;
-	char *key = strdup("");
+	char *key = strdup("#");
 
 	struct oscap_htable *record = NULL;
 
@@ -194,7 +227,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			if (event_type == YAML_SEQUENCE_END_EVENT) {
 				sequence = false;
 			} else if (event_type == YAML_SEQUENCE_START_EVENT) {
-				result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);
+				result_error("YAML path '%s' points to a multi-dimensional structure (sequence containing another sequence)", yaml_path_cstr);
 				goto cleanup;
 			}
 		} else {
@@ -214,13 +247,13 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 				}
 				record = NULL;
 			} else if (event_type == YAML_MAPPING_START_EVENT) {
-				result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);
+				result_error("YAML path '%s' points to a multi-dimensional structure (map containing another map)", yaml_path_cstr);
 				goto cleanup;
 			}
 		} else {
 			if (event_type == YAML_MAPPING_START_EVENT) {
 				if (record) {
-					result_error("YAML path '%s' points to a multi-dimensional structure", yaml_path_cstr);
+					result_error("YAML path '%s' points to an invalid structure (map containing another map)", yaml_path_cstr);
 					goto cleanup;
 				}
 				mapping = true;
@@ -235,7 +268,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 				if (!sequence) {
 					if (index++ % 2 == 0) {
 						free(key);
-						key = strdup((const char *) event.data.scalar.value);
+						key = escape_key(strdup((const char *) event.data.scalar.value));
 						goto next;
 					}
 				}
