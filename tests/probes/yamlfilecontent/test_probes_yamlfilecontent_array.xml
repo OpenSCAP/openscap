@@ -62,7 +62,7 @@
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:2">
       <ind-def:path>/tmp</ind-def:path>
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
-      <ind-def:yamlpath>.spec.outputs[0:2].name</ind-def:yamlpath>
+      <ind-def:yamlpath>.spec.outputs[:].name</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
