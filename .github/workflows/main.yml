@@ -62,7 +62,6 @@ jobs:
     - name: Install packages
       run: |
         brew update
-        brew remove python@2
         brew install doxygen
         brew install opendbx
         brew install popt
