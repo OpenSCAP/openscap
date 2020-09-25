@@ -2,6 +2,9 @@
 
 set -e -o pipefail
 
+. $builddir/tests/test_common.sh
+probecheck "process58" || exit 255
+
 name=$(basename $0 .sh)
 result=$(mktemp ${name}.out.XXXXXX)
 echo "result file: $result"

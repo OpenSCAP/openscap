@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 set -e -o pipefail
-set -x
+
+. $builddir/tests/test_common.sh
+probecheck "process58" || exit 255
 
 function clean_processes {
 	# Processes are in stopped state. SIGCONT cause their exiting
