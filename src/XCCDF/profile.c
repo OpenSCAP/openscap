@@ -319,7 +319,8 @@ void xccdf_profile_to_dom(struct xccdf_profile *profile, xmlNode *profile_node, 
         struct oscap_string_iterator *platforms = xccdf_profile_get_platforms(profile);
         while (oscap_string_iterator_has_more(platforms)) {
                 const char *platform = oscap_string_iterator_next(platforms);
-                xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "platform", BAD_CAST platform);
+                xmlNode *platform_node = xmlNewTextChild(profile_node, ns_xccdf, BAD_CAST "platform", NULL);
+                xmlNewProp(platform_node, BAD_CAST "idref", BAD_CAST platform);
         }   
         oscap_string_iterator_free(platforms);
 
