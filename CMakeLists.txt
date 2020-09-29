@@ -109,6 +109,7 @@ find_package(OpenDbx)
 find_package(PCRE REQUIRED)
 find_package(PerlLibs)
 find_package(Popt)
+find_package(libaudit)
 
 find_package(Procps)
 if(PROCPS_FOUND)
@@ -287,6 +288,7 @@ cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXBOOLEAN "Linux selinuxboolean
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SELINUXSECURITYCONTEXT "Linux selinuxsecuritycontext probe" ON "ENABLE_PROBES_LINUX; SELINUX_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITDEPENDENCY "Linux systemdunitdependency probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_LINUX_SYSTEMDUNITPROPERTY "Linux systemdunitproperty probe" ON "ENABLE_PROBES_LINUX; DBUS_FOUND" OFF)
+cmake_dependent_option(OPENSCAP_PROBE_LINUX_AUDIDLINE "Linux auditdline probe" ON "ENABLE_PROBES_LINUX; LIBAUDIT_FOUND" OFF)
 
 # SOLARIS PROBES
 cmake_dependent_option(OPENSCAP_PROBE_SOLARIS_ISAINFO "Solaris isainfo probe" ON "ENABLE_PROBES_SOLARIS" OFF)
@@ -403,6 +405,7 @@ message(STATUS "  Unix xinetd probe: ${OPENSCAP_PROBE_UNIX_XINETD}")
 message(STATUS " ")
 
 message(STATUS "Linux probes: ${ENABLE_PROBES_LINUX}")
+message(STATUS "  Linux auditdline : ${OPENSCAP_PROBE_LINUX_AUDIDLINE}")
 message(STATUS "  Linux dpkginfo probe (depends on aptpkg): ${OPENSCAP_PROBE_LINUX_DPKGINFO}")
 message(STATUS "  Linux iflisteners probe: ${OPENSCAP_PROBE_LINUX_IFLISTENERS}")
 message(STATUS "  Linux inetlisteningservers probe: ${OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS}")

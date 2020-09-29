@@ -121,6 +121,11 @@ typedef enum {
 	OVAL_FAMILY_JUNOS = 19000,
 	OVAL_FAMILY_NETCONF = 20000,
 	OVAL_FAMILY_SHAREPOINT = 21000,
+	/**
+	 * DGA mi family
+	 * 
+	 */
+	OVAL_FAMILY_DGAMI = 22000
 } oval_family_t;
 
 /// Unknown subtypes
@@ -412,6 +417,9 @@ typedef enum {
 	OVAL_WINDOWS_AUDIT_EVENT_SUBCATEGORIES = OVAL_FAMILY_WINDOWS + 4,
 	// deprecated, use OVAL_WINDOWS_UAC instead
 	OVAL_WINDOWS_USER_ACCESS_CONTROL = OVAL_FAMILY_WINDOWS + 27,
+
+// DGA mi subtype
+	OVAL_DGAMI_AUDITDLINE = OVAL_FAMILY_DGAMI + 1,	
 } oval_subtype_t;
 
 /// severity level
