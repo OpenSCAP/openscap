@@ -359,6 +359,7 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 			}
 			oscap_htable_iterator_free(record_it);
 			SEXP_list_add(item, result_ent);
+			SEXP_free(result_ent);
 		}
 		probe_item_collect(ctx, item);
 	}
