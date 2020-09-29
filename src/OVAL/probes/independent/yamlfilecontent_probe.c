@@ -139,15 +139,6 @@ static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t *event)
 	return SEXP_string_new(value, strlen(value));
 }
 
-#define result_error(fmt, args...)                                       \
-do {                                                                     \
-	SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, fmt, args); \
-	probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);                   \
-	SEXP_free(msg);                                                      \
-	probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);   \
-	ret = -1;                                                            \
-} while (0)
-
 static char *escape_key(char *key)
 {
 	if (key == NULL)
@@ -180,6 +171,15 @@ static char *escape_key(char *key)
 
 	return new_key;
 }
+
+#define result_error(fmt, args...)                                       \
+do {                                                                     \
+	SEXP_t *msg = probe_msg_creatf(OVAL_MESSAGE_LEVEL_ERROR, fmt, args); \
+	probe_cobj_add_msg(probe_ctx_getresult(ctx), msg);                   \
+	SEXP_free(msg);                                                      \
+	probe_cobj_set_flag(probe_ctx_getresult(ctx), SYSCHAR_FLAG_ERROR);   \
+	ret = -1;                                                            \
+} while (0)
 
 static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
 {
