@@ -50,6 +50,7 @@
 #include "common/debug_priv.h"
 #include "common/_error.h"
 #include "common/util.h"
+#include "common/list.h"
 
 typedef struct oval_result_system {
 	struct oval_results_model *model;
@@ -195,6 +196,14 @@ struct oval_result_test *oval_result_system_get_test(struct oval_result_system *
 
 struct oval_result_definition *oval_result_system_get_new_definition
     (struct oval_result_system *sys, struct oval_definition *oval_definition, int variable_instance) {
+
+	return oval_result_system_get_new_definition_with_check(sys, oval_definition, NULL, variable_instance);
+
+}
+
+struct oval_result_definition *oval_result_system_get_new_definition_with_check
+		(struct oval_result_system *sys, struct oval_definition *oval_definition, struct oscap_list *visited_definitions, int variable_instance)
+{
 	// This function is used from multiple different places which might not be sustainable.
 	// variable_instance=0 means that caller has no special preference for variable_instance
 	// 	and the very last definition shall be returned. Additionally, we should create
@@ -205,14 +214,20 @@ struct oval_result_definition *oval_result_system_get_new_definition
 		char *id = oval_definition_get_id(oval_definition);
 		rslt_definition = oval_result_system_get_definition(sys, id);
 		if (rslt_definition == NULL) {
-			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition,
+			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions,
 				variable_instance ? variable_instance : 1);
+			if (rslt_definition == NULL) {
+				return NULL;
+			}
 			oval_result_system_add_definition(sys, rslt_definition);
 		}
 		else if (oval_result_definition_get_variable_instance_hint(rslt_definition) != oval_result_definition_get_instance(rslt_definition)) {
 			int hint = oval_result_definition_get_variable_instance_hint(rslt_definition);
 			dI("Creating another result-definition for id=%s based on variable_instance: %d", id, hint);
-			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, hint);
+			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions, hint);
+			if (rslt_definition == NULL) {
+				return NULL;
+			}
 			oval_result_system_add_definition(sys, rslt_definition);
 		}
 	}
@@ -376,17 +391,26 @@ struct oval_result_definition *oval_result_system_prepare_definition(struct oval
 		return NULL;
 	}
 
+	struct oscap_list *visited_definitions = oscap_list_new();
         rslt_definition = oval_result_system_get_definition(sys, id);
         if (rslt_definition == NULL) {
-		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, 1);
+		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions, 1);
+		if (rslt_definition == NULL) {
+			goto cleanup;
+		}
                 oval_result_system_add_definition(sys, rslt_definition);
         }
 	else if (oval_result_definition_get_variable_instance_hint(rslt_definition) != oval_result_definition_get_instance(rslt_definition)) {
 		int hint = oval_result_definition_get_variable_instance_hint(rslt_definition);
 		dI("Creating another result-definition for id=%s based on variable_instance: %d", id, hint);
-		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, hint);
+		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions, hint);
+		if (rslt_definition == NULL) {
+			goto cleanup;
+		}
 		oval_result_system_add_definition(sys, rslt_definition);
 	}
+cleanup:
+	oscap_list_free(visited_definitions, free);
 	return rslt_definition;
 }
 
