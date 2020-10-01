@@ -216,18 +216,16 @@ struct oval_result_definition *oval_result_system_get_new_definition_with_check
 		if (rslt_definition == NULL) {
 			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions,
 				variable_instance ? variable_instance : 1);
-			if (rslt_definition == NULL) {
+			if (rslt_definition == NULL)
 				return NULL;
-			}
 			oval_result_system_add_definition(sys, rslt_definition);
 		}
 		else if (oval_result_definition_get_variable_instance_hint(rslt_definition) != oval_result_definition_get_instance(rslt_definition)) {
 			int hint = oval_result_definition_get_variable_instance_hint(rslt_definition);
 			dI("Creating another result-definition for id=%s based on variable_instance: %d", id, hint);
 			rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions, hint);
-			if (rslt_definition == NULL) {
+			if (rslt_definition == NULL)
 				return NULL;
-			}
 			oval_result_system_add_definition(sys, rslt_definition);
 		}
 	}
@@ -395,18 +393,16 @@ struct oval_result_definition *oval_result_system_prepare_definition(struct oval
         rslt_definition = oval_result_system_get_definition(sys, id);
         if (rslt_definition == NULL) {
 		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions, 1);
-		if (rslt_definition == NULL) {
+		if (rslt_definition == NULL)
 			goto cleanup;
-		}
                 oval_result_system_add_definition(sys, rslt_definition);
         }
 	else if (oval_result_definition_get_variable_instance_hint(rslt_definition) != oval_result_definition_get_instance(rslt_definition)) {
 		int hint = oval_result_definition_get_variable_instance_hint(rslt_definition);
 		dI("Creating another result-definition for id=%s based on variable_instance: %d", id, hint);
 		rslt_definition = make_result_definition_from_oval_definition(sys, oval_definition, visited_definitions, hint);
-		if (rslt_definition == NULL) {
+		if (rslt_definition == NULL)
 			goto cleanup;
-		}
 		oval_result_system_add_definition(sys, rslt_definition);
 	}
 cleanup:
