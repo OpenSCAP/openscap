@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns3:oval_definitions xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+  <ns3:generator>
+    <ns5:product_name xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-common-5">combine_ovals.py from SCAP Security Guide</ns5:product_name>
+    <ns5:product_version xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-common-5">ssg: [0, 1, 49], python: 3.7.6</ns5:product_version>
+    <ns5:schema_version xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-common-5">5.11</ns5:schema_version>
+    <ns5:timestamp xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-common-5">2020-03-11T10:34:56</ns5:timestamp>
+  </ns3:generator>
+  <ns3:definitions>
+    <ns3:definition class="compliance" id="oval:x:def:1" version="1">
+      <ns3:metadata>
+        <ns3:title>Definition 1</ns3:title>
+        <ns3:description>Definition 1</ns3:description>
+      </ns3:metadata>
+      <ns3:criteria comment="one criterion" operator="AND">
+        <ns3:extend_definition comment="the other definition" definition_ref="oval:x:def:2"/>
+      </ns3:criteria>
+    </ns3:definition>
+    <ns3:definition class="compliance" id="oval:x:def:2" version="1">
+      <ns3:metadata>
+        <ns3:title>Definition 2</ns3:title>
+        <ns3:description>Definition 2</ns3:description>
+      </ns3:metadata>
+      <ns3:criteria comment="two criteria" operator="AND">
+        <ns3:extend_definition comment="points back to definition 1 - makes circular dependency" definition_ref="oval:x:def:1"/>
+        <ns3:criterion comment="some test" test_ref="oval:x:tst:1"/>
+      </ns3:criteria>
+    </ns3:definition>
+  </ns3:definitions>
+  <ns3:tests>
+    <ns8:file_test xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check="all" check_existence="any_exist" comment="file test" id="oval:x:tst:1" version="1">
+      <ns8:object object_ref="oval:x:obj:1"/>
+    </ns8:file_test>
+  </ns3:tests>
+  <ns3:objects>
+    <ns8:file_object xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" comment="dummy file" id="oval:x:obj:1" version="1">
+      <ns8:filepath>/tmp/xxx</ns8:filepath>
+    </ns8:file_object>
+  </ns3:objects>
+</ns3:oval_definitions>

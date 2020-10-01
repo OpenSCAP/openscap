@@ -37,6 +37,7 @@
 #include "OVAL/oval_system_characteristics_impl.h"
 #include "OVAL/adt/oval_smc_impl.h"
 
+#include "common/list.h"
 #include "common/util.h"
 #include "source/oscap_source_priv.h"
 
@@ -47,9 +48,9 @@ xmlNode *oval_result_system_to_dom(struct oval_result_system *, struct oval_resu
 struct oval_result_test *oval_result_system_get_new_test(struct oval_result_system *, struct oval_test *, int variable_instance);
 
 int oval_result_definition_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, void *);
-struct oval_result_definition *make_result_definition_from_oval_definition(struct oval_result_system *,
-									   struct oval_definition *,
-									   int variable_instance);
+struct oval_result_definition *make_result_definition_from_oval_definition(
+		struct oval_result_system *, struct oval_definition *,
+		struct oscap_list *, int variable_instance);
 xmlNode *oval_result_definition_to_dom(struct oval_result_definition *, oval_result_directive_content_t, xmlDocPtr, xmlNode *);
 int oval_result_definition_get_variable_instance_hint(const struct oval_result_definition *definition);
 void oval_result_definition_set_variable_instance_hint(struct oval_result_definition *definition, int new_hint_value);
@@ -63,7 +64,7 @@ xmlNode *oval_result_test_to_dom(struct oval_result_test *, xmlDocPtr, xmlNode *
 int oval_result_item_parse_tag(xmlTextReaderPtr, struct oval_parser_context *, struct oval_result_system *, oscap_consumer_func, void *);
 xmlNode *oval_result_item_to_dom(struct oval_result_item *, xmlDocPtr, xmlNode *);
 
-struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node(struct oval_result_system *, struct oval_criteria_node *, int variable_instance);
+struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_node(struct oval_result_system *, struct oval_criteria_node *, struct oscap_list *, int variable_instance);
 
 int oval_result_criteria_node_parse(xmlTextReaderPtr, struct oval_parser_context *, struct oval_result_system *, oscap_consumer_func, void *);
 oval_result_t oval_result_criteria_node_negate(struct oval_result_criteria_node *node, oval_result_t result);
@@ -74,6 +75,8 @@ oval_result_t oval_result_parse(xmlTextReaderPtr, char *, oval_result_t);
 struct oval_result_definition *oval_result_system_get_new_definition(struct oval_result_system *,
 								     struct oval_definition *,
 								     int variable_instance);
+struct oval_result_definition *oval_result_system_get_new_definition_with_check(struct oval_result_system *, struct oval_definition *, struct oscap_list *, int);
+
 struct oval_result_test *oval_result_system_get_test(struct oval_result_system *, char *);
 
 struct oresults {
