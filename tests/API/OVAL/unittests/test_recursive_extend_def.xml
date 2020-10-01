@@ -38,19 +38,13 @@
     </ns3:definition>
   </ns3:definitions>
   <ns3:tests>
-    <ns8:systemdunitdependency_test xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" check="all" check_existence="any_exist" comment="systemd test" id="oval:ssg-test_multi_user_wants_chronyd:tst:1" version="1">
+    <ns8:file_test xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check="all" check_existence="any_exist" comment="systemd test" id="oval:ssg-test_multi_user_wants_chronyd:tst:1" version="1">
       <ns8:object object_ref="oval:ssg-object_multi_user_target_for_chronyd_enabled:obj:1"/>
-      <ns8:state state_ref="oval:ssg-state_systemd_chronyd_on:ste:1"/>
-    </ns8:systemdunitdependency_test>
+    </ns8:file_test>
   </ns3:tests>
   <ns3:objects>
-    <ns8:systemdunitdependency_object xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="list of dependencies of multi-user.target" id="oval:ssg-object_multi_user_target_for_chronyd_enabled:obj:1" version="1">
-      <ns8:unit>multi-user.target</ns8:unit>
-    </ns8:systemdunitdependency_object>
+    <ns8:file_object xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" comment="list of dependencies of multi-user.target" id="oval:ssg-object_multi_user_target_for_chronyd_enabled:obj:1" version="1">
+      <ns8:filepath>/tmp/xxx</ns8:filepath>
+    </ns8:file_object>
   </ns3:objects>
-  <ns3:states>
-    <ns8:systemdunitdependency_state xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" comment="chronyd listed at least once in the dependencies" id="oval:ssg-state_systemd_chronyd_on:ste:1" version="1">
-      <ns8:dependency entity_check="at least one">chronyd.service</ns8:dependency>
-    </ns8:systemdunitdependency_state>
-  </ns3:states>
 </ns3:oval_definitions>
