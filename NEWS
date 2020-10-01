@@ -1,3 +1,25 @@
+openscap-1.3.4                                                  01-10-2020
+  - New features
+    - Add support for FreeBSD
+    - Make a use of HTTP header content-encoding: gzip if available
+    - Improved yamlfilecontent: updated yaml-filter, extend the schema and probe to be able to work with a set of values in maps
+  - Maintenance, bug fixes
+    - Fixed a lot of warnings (GCC and Clang)
+    - Cmake now can find mingw32-winpthreads
+    - A lot of memory managements fixes
+    - A lot of memory leaks have been plugged
+    - Refactored rpmverifyfile probe and fixed memory leaks
+    - Fixed SEGFAULT caused by recursive and circular dependencies between OVAL definitions
+    - Fixed DOM representation of the profile platform
+    - Test suit: better portability, more granularity in results, inclusion of memory-related tests
+    - Compatibility with uClibc
+    - Local and remote file system detection method was improved
+    - Fixed dpkginfo probe to use pkgCacheFile instead of manually opening the cache
+    - Make the report a valid HTML5 document
+    - oscap-podman: force unmount and removal of temporary container
+    - Fixed unwanted recursion in file probe
+    - oscap-docker: fixed for the case when Atomic is not present
+
 openscap-1.3.3                                                  29-04-2020
   - New features
     - Added a Python script that can be used for CLI tailoring (autotailor)
