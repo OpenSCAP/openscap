@@ -7,43 +7,33 @@
     <ns5:timestamp xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-common-5">2020-03-11T10:34:56</ns5:timestamp>
   </ns3:generator>
   <ns3:definitions>
-    <ns3:definition class="compliance" id="oval:ssg-chronyd_specify_remote_server:def:1" version="1">
+    <ns3:definition class="compliance" id="oval:x:def:1" version="1">
       <ns3:metadata>
-        <ns3:title>Specify Remote NTP chronyd Server for Time Data</ns3:title>
-        <ns3:affected family="unix">
-          <ns3:platform>Red Hat Enterprise Linux 8</ns3:platform>
-        </ns3:affected>
-        <ns3:description>A remote chronyd NTP Server for time synchronization should be specified (and dependencies are met)</ns3:description>
-        <ns3:reference ref_id="CCE-82734-5" source="CCE"/>
-        <ns3:reference ref_id="chronyd_specify_remote_server" source="ssg"/>
+        <ns3:title>Definition 1</ns3:title>
+        <ns3:description>Definition 1</ns3:description>
       </ns3:metadata>
-      <ns3:criteria comment="service chronyd enabled" operator="AND">
-        <ns3:extend_definition comment="service chronyd enabled" definition_ref="oval:ssg-service_chronyd_enabled:def:1"/>
+      <ns3:criteria comment="one criterion" operator="AND">
+        <ns3:extend_definition comment="the other definition" definition_ref="oval:x:def:2"/>
       </ns3:criteria>
     </ns3:definition>
-    <ns3:definition class="compliance" id="oval:ssg-service_chronyd_enabled:def:1" version="1">
+    <ns3:definition class="compliance" id="oval:x:def:2" version="1">
       <ns3:metadata>
-        <ns3:title>Service chronyd Enabled</ns3:title>
-        <ns3:affected family="unix">
-          <ns3:platform>Red Hat Enterprise Linux 8</ns3:platform>
-        </ns3:affected>
-        <ns3:description>The chronyd service should be enabled if possible.</ns3:description>
-        <ns3:reference ref_id="CCE-82729-5" source="CCE"/>
-        <ns3:reference ref_id="service_chronyd_enabled" source="ssg"/>
+        <ns3:title>Definition 2</ns3:title>
+        <ns3:description>Definition 2</ns3:description>
       </ns3:metadata>
-      <ns3:criteria comment="chronyd remote server specified and service chronyd is configured to start" operator="AND">
-        <ns3:extend_definition comment="chronyd remote server specified" definition_ref="oval:ssg-chronyd_specify_remote_server:def:1"/>
-        <ns3:criterion comment="multi-user.target wants chronyd" test_ref="oval:ssg-test_multi_user_wants_chronyd:tst:1"/>
+      <ns3:criteria comment="two criteria" operator="AND">
+        <ns3:extend_definition comment="points back to definition 1 - makes circular dependency" definition_ref="oval:x:def:1"/>
+        <ns3:criterion comment="some test" test_ref="oval:x:tst:1"/>
       </ns3:criteria>
     </ns3:definition>
   </ns3:definitions>
   <ns3:tests>
-    <ns8:file_test xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check="all" check_existence="any_exist" comment="systemd test" id="oval:ssg-test_multi_user_wants_chronyd:tst:1" version="1">
-      <ns8:object object_ref="oval:ssg-object_multi_user_target_for_chronyd_enabled:obj:1"/>
+    <ns8:file_test xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" check="all" check_existence="any_exist" comment="file test" id="oval:x:tst:1" version="1">
+      <ns8:object object_ref="oval:x:obj:1"/>
     </ns8:file_test>
   </ns3:tests>
   <ns3:objects>
-    <ns8:file_object xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" comment="list of dependencies of multi-user.target" id="oval:ssg-object_multi_user_target_for_chronyd_enabled:obj:1" version="1">
+    <ns8:file_object xmlns:ns8="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" comment="dummy file" id="oval:x:obj:1" version="1">
       <ns8:filepath>/tmp/xxx</ns8:filepath>
     </ns8:file_object>
   </ns3:objects>
