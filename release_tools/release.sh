@@ -412,7 +412,7 @@ release_to_git_and_bump_release()
     test -n "$GITHUB_TOKEN" || die "We don't know your GitHub token, so we can't proceed. Get one on https://github.com/settings/tokens and put it in the .env file, so it contains the line GITHUB_TOKEN='<your token here>'"
     test "$1" = "$version" && die "The new version is the same as current version, I am not doing anything."
     check_release_is_ok
-    release_to_git
+    # release_to_git  # GH now add tags to the release automatically
     # upload_to_git  # to be done when https://github.com/PyGithub/PyGithub/pull/525 is merged.
     flip_milestones "$GITHUB_TOKEN" openscap "$_new_version"
     bump_release "$_new_version"
