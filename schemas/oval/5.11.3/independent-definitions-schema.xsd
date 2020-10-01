@@ -2115,7 +2115,7 @@
                                                 </xsd:choice>
                                                 <xsd:element name="yamlpath" type="oval-def:EntityObjectStringType">
                                                       <xsd:annotation>
-                                                            <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. This YAML Path expression must evaluate to a list of zero or more scalar values which will be accessible in OVAL via instances of the value_of entity. Any results from evaluating the YAML Path expression other than a list of scalar values (e.g., a hash or list of lists) is considered an error. The intention is that the scalar values be drawn from instances of a single, uniquely named element. However, an OVAL interpreter is not required to verify this, so the author should define the YAML Path expression carefully. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
+                                                            <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. This YAML Path expression must evaluate to a sequence or a map (part of a map) of scalar values which will be accessible in OVAL via instances of the value entity. Any results from evaluating the YAML Path expression other than a sequence (or a map) of scalar values (e.g. sequence of sequences, sequence of maps, map of maps etc.) are considered as incorrect, so the author should define the YAML Path expression carefully. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
                                                             <xsd:appinfo>
                                                                   <sch:pattern id="ind-def_yamlobjyamlpath">
                                                                         <sch:rule context="ind-def:yamlfilecontent_object/ind-def:yamlpath">
@@ -2158,13 +2158,24 @@
                                     </xsd:element>
                                     <xsd:element name="yamlpath" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
                                           <xsd:annotation>
-                                                <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. This YAML Path expression must evaluate to a list of zero or more text values which will be accessible in OVAL via instances of the value_of entity. Any results from evaluating the YAML Path expression other than a list of text strings (e.g., a nodes set) is considered an error. The intention is that the text values be drawn from instances of a single, uniquely named element or attribute. However, an OVAL interpreter is not required to verify this, so the author should define the YAML Path expression carefully. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
+                                                <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
                                           </xsd:annotation>
                                     </xsd:element>
-                                    <xsd:element name="value_of" type="oval-def:EntityStateAnySimpleType" minOccurs="0" maxOccurs="1">
+                                    <xsd:element name="value" type="oval-def:EntityStateRecordType" minOccurs="0">
                                           <xsd:annotation>
-                                                <xsd:documentation>The value_of element checks the value(s) of the text node(s) or attribute(s) found.</xsd:documentation>
+                                                <xsd:documentation>The value entity specifies how to test objects in the value set of the specified YAML Path. To define tests for a single scalar value or a list of scalar values (where there is no key to associate), set the name attribute of the field element to '#'. Due to the limitation of the record type field names could not contain uppercase letters, they should be converted to the lowercase and escaped using the '^' symbol (the '^' symbol should be escaped as well). For example, to check a value associated with 'myCamelCase^Key' set the name attribute of the field to 'my^camel^case^^^key'. The check is entirely controlled by operator attributes of the field element.</xsd:documentation>
+                                                <xsd:appinfo>
+                                                      <sch:pattern id="ind-def_yamlfilestevalue">
+                                                            <sch:rule context="ind-def:yamlfile_state/ind-def:value">
+                                                                  <sch:assert test="@datatype='record'"><sch:value-of select="../@id"/> - datatype attribute for the value entity of a yamlfile_state must be 'record'</sch:assert>
+                                                            </sch:rule>
+                                                      </sch:pattern>
+                                                </xsd:appinfo>
                                           </xsd:annotation>
+                                          <xsd:unique name="UniqueYamlFileValueFieldName">
+                                                <xsd:selector xpath="./oval-def:field"/>
+                                                <xsd:field xpath="@name"/>
+                                          </xsd:unique>
                                     </xsd:element>
                                     <xsd:element name="windows_view" type="ind-def:EntityStateWindowsViewType" minOccurs="0">
                                           <xsd:annotation>

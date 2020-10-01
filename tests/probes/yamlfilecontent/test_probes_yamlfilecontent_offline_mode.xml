@@ -85,15 +85,21 @@
   <states>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:1">
-      <ind-def:value_of datatype="string">instance</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="#" datatype="string">instance</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:2">
-      <ind-def:value_of datatype="string">outstance</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="#" datatype="string">outstance</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
     <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:3">
-      <ind-def:value_of datatype="string">instance</ind-def:value_of>
+      <ind-def:value datatype="record">
+        <field name="#" datatype="string">instance</field>
+      </ind-def:value>
     </ind-def:yamlfilecontent_state>
 
   </states>

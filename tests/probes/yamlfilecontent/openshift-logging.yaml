@@ -38,3 +38,31 @@ spec:
      inputSource: logs.audit
      outputRefs:
      - secureforward-offcluster
+status:
+  conditions:
+  - lastTransitionTime: "2020-06-08T04:54:58Z"
+    reason: AsExpected
+    status: "False"
+    type: Degraded
+  - lastTransitionTime: "2020-06-08T06:34:00Z"
+    reason: AsExpected
+    status: "False"
+    type: Progressing
+  - lastTransitionTime: "2020-06-08T04:51:08Z"
+    reason: AsExpected
+    status: "True"
+    type: Available
+  - lastTransitionTime: "2020-06-08T04:45:45Z"
+    reason: AsExpected
+    status: "True"
+    type: Upgradeable
+  extension: null
+  relatedObjects:
+  - group: operator.openshift.io
+    name: cluster
+    resource: openshiftapiservers
+  versions:
+  - name: operator
+    version: 4.5.0-0.nightly-2020-06-04-214605
+  - name: openshift-apiserver
+    version: 4.5.0-0.nightly-2020-06-04-214605

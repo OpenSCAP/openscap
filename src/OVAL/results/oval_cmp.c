@@ -161,9 +161,3 @@ oval_result_t oval_str_cmp_str(char *state_data, oval_datatype_t state_data_type
 	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid OVAL data type: %d.", state_data_type);
 	return OVAL_RESULT_ERROR;
 }
-
-oval_result_t oval_ent_cmp_str(char *state_data, oval_datatype_t state_data_type, struct oval_sysent *sysent, oval_operation_t operation)
-{
-	const char *sys_data = oval_sysent_get_value(sysent);
-	return oval_str_cmp_str(state_data, state_data_type, sys_data, operation);
-}
