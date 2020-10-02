@@ -1,11 +1,9 @@
 # A horrible little script that builds and minifies CSS and JS we bundle with HTML report and guide
 
-for cmd in csstidy slimit; do
-	if ! type $cmd > /dev/null; then
-		echo "Please install '$cmd' utility"
-		exit 1
-	fi
-done
+if ! type yuicompressor > /dev/null; then
+	echo "Please install yuicompressor utility"
+	exit 1
+fi
 
 ALL_CSS=`mktemp`
 ALL_CSS_MIN=`mktemp`
@@ -16,13 +14,13 @@ echo "" > $ALL_CSS
 cat xccdf-resources/jquery.treetable.css >> $ALL_CSS
 cat xccdf-resources/jquery.treetable.theme.css >> $ALL_CSS
 cat xccdf-resources/openscap.css >> $ALL_CSS
-csstidy $ALL_CSS --template=highest $ALL_CSS_MIN
+yuicompressor --type css $ALL_CSS > $ALL_CSS_MIN
 rm $ALL_CSS
 echo "" > $ALL_JS
 cat xccdf-resources/jquery.treetable.js >> $ALL_JS
 cat xccdf-resources/bootstrap.min.js >> $ALL_JS
 cat xccdf-resources/openscap.js >> $ALL_JS
-slimit $ALL_JS > $ALL_JS_MIN
+yuicompressor --type js $ALL_JS > $ALL_JS_MIN
 rm $ALL_JS
 
 XCCDF_RESOURCES="xccdf-resources.xsl"
