@@ -1,4 +1,6 @@
-# A horrible little script that builds and minifies CSS and JS we bundle with HTML report and guide
+#!/bin/sh
+# This script builds and minifies CSS and JS that we bundle to HTML report and guide.
+set -e 
 
 if ! type yuicompressor > /dev/null; then
 	echo "Please install yuicompressor utility"
