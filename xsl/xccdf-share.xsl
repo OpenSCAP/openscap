@@ -294,6 +294,7 @@ Authors:
             <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:ansible'">Ansible snippet</xsl:when>
             <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:puppet'">Puppet snippet</xsl:when>
             <xsl:when test="$fix/@system = 'urn:redhat:anaconda:pre'">Anaconda snippet</xsl:when>
+            <xsl:when test="$fix/@system = 'urn:xccdf:fix:script:kubernetes'">Kubernetes snippet</xsl:when>
             <xsl:otherwise>script</xsl:otherwise>
         </xsl:choose>
     </xsl:variable>
