@@ -258,8 +258,11 @@ struct oval_result_criteria_node *make_result_criteria_node_from_oval_criteria_n
 					    = oval_criteria_node_iterator_next(oval_subnodes);
 					struct oval_result_criteria_node *rslt_subnode
 						= make_result_criteria_node_from_oval_criteria_node(sys, oval_subnode, visited_definitions, variable_instance);
-					if (rslt_subnode == NULL)
+					if (rslt_subnode == NULL) {
+						oval_criteria_node_iterator_free(oval_subnodes);
+						oval_result_criteria_node_free(rslt_node);
 						return NULL;
+					}
 					oval_result_criteria_node_add_subnode(rslt_node, rslt_subnode);
 				}
 				oval_criteria_node_iterator_free(oval_subnodes);
