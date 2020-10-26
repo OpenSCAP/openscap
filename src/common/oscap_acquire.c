@@ -330,42 +330,49 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 
 	res = curl_easy_setopt(curl, CURLOPT_URL, url);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_URL to '%s': %s", url, curl_easy_strerror(res));
 		return NULL;
 	}
 
 	res = curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_memory_callback);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_WRITEFUNCTION to write_to_memory_callback: %s", curl_easy_strerror(res));
 		return NULL;
 	}
 
 	res = curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_ACCEPT_ENCODING to an empty string: %s", curl_easy_strerror(res));
 		return NULL;
 	}
 
 	res = curl_easy_setopt(curl, CURLOPT_TRANSFER_ENCODING, true);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_TRANSFER_ENCODING to true: %s", curl_easy_strerror(res));
 		return NULL;
 	}
 
 	res = curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_FOLLOWLOCATION to true: %s", curl_easy_strerror(res));
 		return NULL;
 	}
 
 	res = curl_easy_setopt(curl, CURLOPT_VERBOSE, true);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_VERBOSE to true: %s", curl_easy_strerror(res));
 		return NULL;
 	}
 
 	res = curl_easy_setopt(curl, CURLOPT_DEBUGFUNCTION, _curl_trace);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_DEBUGFUNCTION to _curl_trace: %s", curl_easy_strerror(res));
 		return NULL;
 	}
@@ -373,6 +380,7 @@ char* oscap_acquire_url_download(const char *url, size_t* memory_size)
 	struct oscap_buffer *buffer = oscap_buffer_new();
 	res = curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 	if (res != 0) {
+		curl_easy_cleanup(curl);
 		oscap_seterr(OSCAP_EFAMILY_NET, "Failed to set CURLOPT_WRITEDATA as buffer: %s", curl_easy_strerror(res));
 		oscap_buffer_free(buffer);
 		return NULL;
