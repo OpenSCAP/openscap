@@ -298,7 +298,7 @@ static int file_cb(const char *prefix, const char *p, const char *f, void *ptr, 
 
 				// Allocate buffer, '+1' is for trailing '\0'
 				void *new_xattr_val = realloc(xattr_val, sizeof(char) * (xattr_vallen + 1));
-				if (xattr_val == NULL) {
+				if (new_xattr_val == NULL) {
 					dE("Failed to allocate memory for xattr_val");
 					free(xattr_val);
 					goto exit;

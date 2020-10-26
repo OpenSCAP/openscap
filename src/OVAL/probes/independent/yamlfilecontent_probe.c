@@ -216,11 +216,12 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			result_error("YAML parser error: %s", parser.problem);
 			goto cleanup;
 		}
+
+		event_type = event.type;
+
 		if (yaml_path_filter_event(yaml_path, &parser, &event) == YAML_PATH_FILTER_RESULT_OUT) {
 			goto next;
 		}
-
-		event_type = event.type;
 
 		if (sequence) {
 			if (event_type == YAML_SEQUENCE_END_EVENT) {

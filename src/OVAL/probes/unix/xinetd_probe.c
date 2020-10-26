@@ -566,7 +566,12 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	}
 
 	xifile->depth = depth;
-	xiconf->cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
+	void *cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
+	if (cfile == NULL) {
+		dE("Failed re-allocate memory for cfile");
+		return (-1);
+	}
+	xiconf->cfile = cfile;
 	xiconf->cfile[xiconf->count - 1] = xifile;
 
 	dD("Added new file to the cfile queue: %s; fi=%zu", path, xiconf->count - 1);

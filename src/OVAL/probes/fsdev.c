@@ -219,7 +219,7 @@ static fsdev_t *__fsdev_init(fsdev_t *lfs)
 	endmntent(fp);
 
 	void *new_ids = realloc(lfs->ids, sizeof(dev_t) * i);
-	if (new_ids == NULL) {
+	if (new_ids == NULL && i > 0) {
 		e = errno;
 		free(lfs->ids);
 		free(lfs);
