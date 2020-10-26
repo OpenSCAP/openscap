@@ -286,9 +286,9 @@ static struct oscap_source *xccdf_session_extract_arf_source(struct xccdf_sessio
 			}
 			struct tm *tm_mtime = malloc(sizeof(struct tm));
 #ifdef OS_WINDOWS
-			tm_mtime = localtime_s(tm_mtime, &file_stat.st_mtime);
+			localtime_s(tm_mtime, &file_stat.st_mtime);
 #else
-			tm_mtime = localtime_r(&file_stat.st_mtime, tm_mtime);
+			localtime_r(&file_stat.st_mtime, tm_mtime);
 #endif
 			strftime(tailoring_doc_timestamp, max_timestamp_len,
 					"%Y-%m-%dT%H:%M:%S", tm_mtime);

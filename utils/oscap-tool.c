@@ -315,7 +315,10 @@ static void getopt_parse_env(struct oscap_module *module, int *argc, char ***arg
 	opt = oscap_strtok_r(opts, delim, &state);
 	while (opt != NULL) {
 		eargc++;
-		eargv = realloc(eargv, eargc * sizeof(char *));
+		void *new_eargv = realloc(eargv, eargc * sizeof(char *));
+		if (new_eargv == NULL)
+			goto exit;
+		eargv = new_eargv;
 		eargv[eargc - 1] = strdup(opt);
 		opt = oscap_strtok_r(NULL, delim, &state);
 	}
@@ -334,6 +337,7 @@ static void getopt_parse_env(struct oscap_module *module, int *argc, char ***arg
 
 	*argc = nargc;
 	*argv = nargv;
+exit:
 	free(opts);
 	free(eargv);
 }
