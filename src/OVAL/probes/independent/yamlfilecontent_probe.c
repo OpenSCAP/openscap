@@ -206,6 +206,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 	yaml_event_type_t event_type;
 	bool sequence = false;
 	bool mapping = false;
+	bool fake_mapping = false;
 	int index = 0;
 	char *key = strdup("#");
 
@@ -225,21 +226,39 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 
 		if (sequence) {
 			if (event_type == YAML_SEQUENCE_END_EVENT) {
-				sequence = false;
+				if (fake_mapping) {
+					fake_mapping = false;
+					if (record && record->itemcount > 0) {
+						oscap_list_add(values, record);
+					} else {
+						// Do not collect empty records
+						oscap_htable_free0(record);
+					}
+					record = NULL;
+				} else {
+					sequence = false;
+				}
 			} else if (event_type == YAML_SEQUENCE_START_EVENT) {
-				result_error("YAML path '%s' points to a multi-dimensional structure (sequence containing another sequence)", yaml_path_cstr);
-				goto cleanup;
+				if (mapping || fake_mapping) {
+					result_error("YAML path '%s' points to a multi-dimensional structure (a map or a sequence containing other sequences)", yaml_path_cstr);
+					goto cleanup;
+				} else {
+					fake_mapping = true;
+					record = oscap_htable_new();
+				}
 			}
 		} else {
 			if (event_type == YAML_SEQUENCE_START_EVENT) {
 				sequence = true;
+				if (mapping)
+					index++;
 			}
 		}
 
 		if (mapping) {
 			if (event_type == YAML_MAPPING_END_EVENT) {
 				mapping = false;
-				if (record->itemcount > 0) {
+				if (record && record->itemcount > 0) {
 					oscap_list_add(values, record);
 				} else {
 					// Do not collect empty records
@@ -254,6 +273,10 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			if (event_type == YAML_MAPPING_START_EVENT) {
 				if (record) {
 					result_error("YAML path '%s' points to an invalid structure (map containing another map)", yaml_path_cstr);
+					goto cleanup;
+				}
+				if (fake_mapping) {
+					result_error("YAML path '%s' points to a multi-dimensional structure (two-dimensional sequence containing a map)", yaml_path_cstr);
 					goto cleanup;
 				}
 				mapping = true;

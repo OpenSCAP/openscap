@@ -71,13 +71,33 @@
       </criteria>
     </definition>
 
-    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="true" -->
+    <definition class="compliance" version="1" id="oval:0:def:7"> <!-- comment="error" -->
       <metadata>
         <title></title>
         <description></description>
       </metadata>
       <criteria operator="AND">
         <criterion comment="array_of_maps" test_ref="oval:0:tst:8"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:8"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="array_of_maps_of_array" test_ref="oval:0:tst:9"/>
+      </criteria>
+    </definition>
+
+    <definition class="compliance" version="1" id="oval:0:def:9"> <!-- comment="true" -->
+      <metadata>
+        <title></title>
+        <description></description>
+      </metadata>
+      <criteria operator="AND">
+        <criterion comment="array_of_maps_of_array_2" test_ref="oval:0:tst:10"/>
       </criteria>
     </definition>
   </definitions>
@@ -116,8 +136,18 @@
       <ind-def:object object_ref="oval:0:obj:7"/>
     </ind-def:yamlfilecontent_test>
 
-    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:8" check="all" comment="true">
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:8" check="all" comment="error">
       <ind-def:object object_ref="oval:0:obj:8"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:9" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:9"/>
+      <ind-def:state state_ref="oval:0:ste:9"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:10" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:10"/>
+      <ind-def:state state_ref="oval:0:ste:10"/>
     </ind-def:yamlfilecontent_test>
   </tests>
 
@@ -170,6 +200,18 @@
       <ind-def:filename>openshift-logging.yaml</ind-def:filename>
       <ind-def:yamlpath>.spec.outputs</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:9">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.items[:]['requiredDropCapabilities','name','q','z'][:]</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:10">
+      <ind-def:path>/tmp</ind-def:path>
+      <ind-def:filename>openshift-logging.yaml</ind-def:filename>
+      <ind-def:yamlpath>.items[:].requiredDropCapabilities[:]</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
   </objects>
 
   <states>
@@ -199,6 +241,19 @@
         <field name="reason" datatype="string">AsExpected</field>
         <field name="type" datatype="string">Upgradeable</field>
         <field name="last^transition^time" datatype="string" operation="pattern match">^\d+-\d+-.*Z$</field>
+      </ind-def:value>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:9">
+      <ind-def:value datatype="record" entity_check="at least one">
+        <field name="required^drop^capabilities" operation="pattern match" entity_check="at least one">^KILL$</field>
+        <field name="name" entity_check="at least one">Name</field>
+      </ind-def:value>
+    </ind-def:yamlfilecontent_state>
+
+    <ind-def:yamlfilecontent_state version="1" id="oval:0:ste:10">
+      <ind-def:value datatype="record" entity_check="at least one">
+        <field name="#" operation="pattern match" entity_check="at least one">^KILL$</field>
       </ind-def:value>
     </ind-def:yamlfilecontent_state>
 

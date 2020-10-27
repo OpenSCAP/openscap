@@ -3,6 +3,18 @@ kind: "LogForwarding"
 metadata:
   name: instance
   namespace: openshift-logging
+arrs:
+- [1, 2, 3]
+- [4, 5, 6]
+items:
+- allowHostDirVolumePlugin: false
+  defaultAddCapabilities: null
+  requiredDropCapabilities: ['KILL', 'ALL']
+  name: ['Name', 'Oth']
+- allowHostDirVolumePlugin: false
+  defaultAddCapabilities: null
+  requiredDropCapabilities: ['OPS', 'KILL', 'ALL']
+  name: ['2 Name', '2 Oth']
 spec:
   disableDefaultForwarding: true
   outputs:
