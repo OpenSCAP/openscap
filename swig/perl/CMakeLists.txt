@@ -13,7 +13,7 @@ if (${CMAKE_C_COMPILER_ID} STREQUAL "GNU" OR ${CMAKE_C_COMPILER_ID} STREQUAL "Cl
 	target_compile_options(${SWIG_MODULE_openscap_pm_REAL_NAME} PUBLIC "-w")
 endif()
 
-if (APPLE)
+if (APPLE OR (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD"))
         install(TARGETS ${SWIG_MODULE_openscap_pm_REAL_NAME}
                 DESTINATION ${CMAKE_INSTALL_LIBDIR}/perl5/vendor_perl)
         install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/openscap_pm.pm
