@@ -31,14 +31,10 @@
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
+#include <unistd.h>
 
 #if defined(OS_FREEBSD)
 #include <pthread_np.h>
-#endif
-
-#if defined(OS_OSX)
-#undef _POSIX_SOURCE
-#include <unistd.h>
 #endif
 
 #include "probe-api.h"
