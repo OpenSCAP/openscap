@@ -31,10 +31,13 @@
 #include <string.h>
 #include <pthread.h>
 #include <errno.h>
-#include <unistd.h>
 
 #if defined(OS_FREEBSD)
 #include <pthread_np.h>
+#endif
+
+#if defined(OS_OSX)
+external int chroot(const char *);
 #endif
 
 #include "probe-api.h"
