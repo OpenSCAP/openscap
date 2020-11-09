@@ -37,7 +37,7 @@
 #endif
 
 #if defined(OS_OSX)
-external int chroot(const char *);
+extern int chroot(const char *);
 #endif
 
 #include "probe-api.h"
