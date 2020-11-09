@@ -63,7 +63,6 @@ int SEAP_desc_add(SEAP_desctable_t *sd_table, SEAP_scheme_t scheme,
                 /* sd_dsc->sexpcnt = 0; */
                 sd_dsc->scheme  = scheme;
                 sd_dsc->scheme_data = scheme_data;
-                sd_dsc->ostate  = NULL;
                 sd_dsc->next_cid = 0;
                 sd_dsc->cmd_c_table = SEAP_cmdtbl_new ();
                 sd_dsc->cmd_w_table = SEAP_cmdtbl_new ();
