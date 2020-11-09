@@ -36,6 +36,10 @@
 #include <pthread_np.h>
 #endif
 
+#if defined(OS_OSX)
+#include <unistd.h>
+#endif
+
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
