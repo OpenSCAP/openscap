@@ -37,6 +37,7 @@
 #endif
 
 #if defined(OS_OSX)
+#undef _POSIX_SOURCE
 #include <unistd.h>
 #endif
 
