@@ -94,7 +94,7 @@ struct SEXP_val_lblk {
         uintptr_t nxsz;
         uint16_t  real;
         uint16_t  refs;
-        SEXP_t    memb[];
+	SEXP_t *memb;
 };
 
 size_t    SEXP_rawval_list_length (struct SEXP_val_list *list);
