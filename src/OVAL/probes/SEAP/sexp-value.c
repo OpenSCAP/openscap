@@ -106,10 +106,8 @@ uintptr_t SEXP_rawval_lblk_new (uint8_t sz)
 {
         _A(sz < 16);
 
-	struct SEXP_val_lblk *lblk = oscap_aligned_malloc(
-		sizeof(uintptr_t) + (2 * sizeof(uint16_t)) + (sizeof(SEXP_t) * (1 << sz)),
-		SEXP_LBLK_ALIGN
-	);
+	struct SEXP_val_lblk *lblk = malloc(sizeof(struct SEXP_val_lblk));
+	lblk->memb = malloc(sizeof(SEXP_t) * (1 << sz));
 
         lblk->nxsz = ((uintptr_t)(NULL) & SEXP_LBLKP_MASK) | ((uintptr_t)sz & SEXP_LBLKS_MASK);
         lblk->refs = 1;
@@ -519,7 +517,8 @@ void SEXP_rawval_lblk_free (uintptr_t lblkp, void (*func) (SEXP_t *))
                         func (lblk->memb + lblk->real);
                 }
 
-		oscap_aligned_free(lblk);
+		free(lblk->memb);
+		free(lblk);
 
                 if (next != NULL)
                         SEXP_rawval_lblk_free ((uintptr_t)next, func);
@@ -540,7 +539,8 @@ void SEXP_rawval_lblk_free1 (uintptr_t lblkp, void (*func) (SEXP_t *))
                         func (lblk->memb + lblk->real);
                 }
 
-		oscap_aligned_free(lblk);
+		free(lblk->memb);
+		free(lblk);
         }
 
         return;
