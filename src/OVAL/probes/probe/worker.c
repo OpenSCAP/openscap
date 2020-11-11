@@ -36,6 +36,14 @@
 #include <pthread_np.h>
 #endif
 
+#if defined(OS_OSX)
+/* XXX: please see https://github.com/OpenSCAP/openscap/pull/1626 for the
+ *      reason of explicitly defining an external here instead of simply
+ *      including the unistd.h header file.
+ */
+extern int chroot(const char *);
+#endif
+
 #include "probe-api.h"
 #include "common/debug_priv.h"
 #include "entcmp.h"
