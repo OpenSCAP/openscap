@@ -41,7 +41,7 @@ jobs:
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/build
-        cmake -DCMAKE_BUILD_TYPE=Debug ../
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
         make all
 
     - name: Test
@@ -71,7 +71,7 @@ jobs:
     - name: Build
       run: |
         cd $GITHUB_WORKSPACE/build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DENABLE_PROBES=false ../
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DENABLE_PROBES=false ../
         make all
 
     - name: Test
