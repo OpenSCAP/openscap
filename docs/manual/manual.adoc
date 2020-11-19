@@ -1146,8 +1146,8 @@ With `oscap`, there are two possible ways how two or more values can be
 specified for a variable used by one OVAL definition. The approach you choose
 depends on what mode you want to use, multival or multiset.
 
-The `oscap` handles multiple OVAL values seemlessly; such that user doesn't
-need to do anything differently than what she (or he) does for a normal scan.
+The `oscap` handles multiple OVAL values seamlessly. Users don't need to do
+anything differently than for a normal scan.
 The command below demonstrates evaluation of DataStream, which may include
 multiset, multival, or both concepts combined, or none of them.
 ----
