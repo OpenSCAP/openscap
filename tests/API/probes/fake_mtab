@@ -5,3 +5,4 @@ tmpfs /tmp tmpfs rw,seclabel,nosuid,nodev 0 0
 /dev/mapper/fedora-home /home ext4 rw,seclabel,relatime 0 0
 proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
 //192.168.0.5/storage /media/movies cifs guest,uid=myuser,iocharset=utf8,file_mode=0777,dir_mode=0777,noperm 0 0
+/dev/gpfsdev /gpfs gpfs rw,relatime 0 0
