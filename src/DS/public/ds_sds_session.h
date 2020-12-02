@@ -120,6 +120,14 @@ OSCAP_API const char *ds_sds_session_get_datastream_id(const struct ds_sds_sessi
 OSCAP_API const char *ds_sds_session_get_checklist_id(const struct ds_sds_session *session);
 
 /**
+ * Return URI of currently selected component representing XCCDF within the DataStream
+ * @memberof ds_sds_session
+ * @param session The Source DataStream session
+ * @returns URI of selected component or NULL
+ */
+OSCAP_API const char *ds_sds_session_get_checklist_uri(const struct ds_sds_session *session);
+
+/**
  * Get component from Source DataStream by its href. This assumes that the component
  * has been already cached by the session. You can cache component or its dependencies
  * by calling ds_sds_session_select_checklist or ds_sds_session_register_component_with_dependencies.

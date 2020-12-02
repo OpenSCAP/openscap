@@ -1374,21 +1374,28 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 			oscap_seterr(OSCAP_EFAMILY_OSCAP, "No XCCDF results to export.");
 			return 1;
 		}
-		struct xccdf_result* cloned_result = xccdf_result_clone(session->xccdf.result);
-		xccdf_benchmark_add_result(benchmark, cloned_result);
-		session->xccdf.result_source = xccdf_benchmark_export_source(benchmark, session->export.xccdf_file);
 
 		if (session->export.xccdf_file != NULL) {
+			struct xccdf_benchmark *cloned_benchmark = xccdf_benchmark_clone(benchmark);
+			struct xccdf_result *cloned_result = xccdf_result_clone(session->xccdf.result);
+			xccdf_benchmark_add_result(cloned_benchmark, cloned_result);
+			struct oscap_source *xccdf_result_source = xccdf_benchmark_export_source(cloned_benchmark, session->export.xccdf_file);
+			// cloned_result is freed during xccdf_benchmark_free
+			xccdf_benchmark_free(cloned_benchmark);
 			// Export XCCDF result file only when explicitly requested
-			if (oscap_source_save_as(session->xccdf.result_source, NULL) != 0) {
+			if (oscap_source_save_as(xccdf_result_source, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
-						oscap_source_readable_origin(session->xccdf.result_source));
+						oscap_source_readable_origin(xccdf_result_source));
+				oscap_source_free(xccdf_result_source);
 				return -1;
 			}
+			oscap_source_free(xccdf_result_source);
 		}
 
 		if (session->export.xccdf_stig_viewer_file != NULL) {
+			struct xccdf_result *cloned_result = xccdf_result_clone(session->xccdf.result);
 			struct oscap_source * stig_result = xccdf_result_stig_viewer_export_source(cloned_result, session->export.xccdf_stig_viewer_file);
+			xccdf_result_free(cloned_result);
 			if (oscap_source_save_as(stig_result, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
 						oscap_source_readable_origin(stig_result));
@@ -1398,6 +1405,14 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 			oscap_source_free(stig_result);
 		}
 
+		struct xccdf_result *cloned_result = xccdf_result_clone(session->xccdf.result);
+		if (xccdf_session_is_sds(session)) {
+			struct ds_sds_session *sds_session = xccdf_session_get_ds_sds_session(session);
+			const char *benchmark_uri = ds_sds_session_get_checklist_uri(sds_session);
+			xccdf_result_set_benchmark_uri(cloned_result, benchmark_uri);
+		}
+		xccdf_benchmark_add_result(benchmark, cloned_result);
+		session->xccdf.result_source = xccdf_benchmark_export_source(benchmark, session->export.xccdf_file);
 		/* validate XCCDF Results */
 		if (session->validate && session->full_validation) {
 			if (oscap_source_validate(session->xccdf.result_source, _reporter, NULL)) {
