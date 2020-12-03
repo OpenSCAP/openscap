@@ -241,6 +241,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			} else if (event_type == YAML_SEQUENCE_START_EVENT) {
 				if (mapping || fake_mapping) {
 					result_error("YAML path '%s' points to a multi-dimensional structure (a map or a sequence containing other sequences)", yaml_path_cstr);
+					yaml_event_delete(&event);
 					goto cleanup;
 				} else {
 					fake_mapping = true;
@@ -267,16 +268,19 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 				record = NULL;
 			} else if (event_type == YAML_MAPPING_START_EVENT) {
 				result_error("YAML path '%s' points to a multi-dimensional structure (map containing another map)", yaml_path_cstr);
+				yaml_event_delete(&event);
 				goto cleanup;
 			}
 		} else {
 			if (event_type == YAML_MAPPING_START_EVENT) {
 				if (record) {
 					result_error("YAML path '%s' points to an invalid structure (map containing another map)", yaml_path_cstr);
+					yaml_event_delete(&event);
 					goto cleanup;
 				}
 				if (fake_mapping) {
 					result_error("YAML path '%s' points to a multi-dimensional structure (two-dimensional sequence containing a map)", yaml_path_cstr);
+					yaml_event_delete(&event);
 					goto cleanup;
 				}
 				mapping = true;
@@ -300,6 +304,7 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 			SEXP_t *sexp = yaml_scalar_event_to_sexp(&event);
 			if (sexp == NULL) {
 				result_error("Can't convert '%s %s' to SEXP", event.data.scalar.tag, event.data.scalar.value);
+				yaml_event_delete(&event);
 				goto cleanup;
 			}
 
@@ -377,6 +382,7 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 					SEXP_t *field = probe_ent_creat1("field", NULL, value_sexp);
 					probe_item_attr_add(field, "name", key);
 					SEXP_list_add(result_ent, field);
+					SEXP_free(field);
 				}
 				oscap_iterator_free(item_value_it);
 				SEXP_free_r(&se_tmp_mem);
