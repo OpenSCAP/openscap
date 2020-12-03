@@ -64,6 +64,14 @@
    fun:xmlfilecontent_probe_main
    ...
 }
+{
+   process_file_with_compiler_optimization
+   Memcheck:Addr2
+   ...
+   fun:process_file.isra.0
+   fun:xmlfilecontent_probe_main
+   ...
+}
 
 {
    xmlDictFree
@@ -87,8 +95,20 @@
 {
    curl_cond
    Memcheck:Cond
-   fun:strlen
+   ...
+   fun:buffered_vfprintf
    fun:__vfprintf_internal
+   fun:__oscap_dlprintf
+   fun:_curl_trace
+   ...
+   fun:curl_multi_perform
+   fun:curl_easy_perform
+}
+
+{
+   curl_addr1
+   Memcheck:Addr1
+   ...
    fun:buffered_vfprintf
    fun:__vfprintf_internal
    fun:__oscap_dlprintf
@@ -101,6 +121,20 @@
 {
    driver_name_cond
    Memcheck:Cond
+   ...
+   fun:driver_name
+   fun:dev_to_tty
+   fun:read_process
+   fun:process58_probe_main
+   fun:probe_worker
+   fun:probe_worker_runfn
+   fun:start_thread
+   fun:clone
+}
+
+{
+   driver_name_addr1
+   Memcheck:Addr1
    ...
    fun:driver_name
    fun:dev_to_tty
