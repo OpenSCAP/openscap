@@ -178,7 +178,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
 #if defined(HAVE_BLKID_GET_TAG_VALUE)
         uuid = blkid_get_tag_value(blkcache, "UUID", mnt_ent->mnt_fsname);
         if (uuid == NULL) {
-	        uuid = "";
+		uuid = strdup("");
         }
 #endif
         /*
@@ -245,6 +245,7 @@ static int collect_item(probe_ctx *ctx, oval_schema_version_t over, struct mnten
         if (strcmp(uuid, "") == 0) {
 	        probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_DOES_NOT_EXIST);
         }
+	free(uuid);
 #else
 	/* Compiled without blkid library, we don't collect UUID */
 	probe_itement_setstatus(item, "uuid", 1, SYSCHAR_STATUS_NOT_COLLECTED);
