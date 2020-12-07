@@ -49,5 +49,18 @@ oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_opera
 
 oval_result_t oval_versiontype_cmp(const char *state, const char *syschar, oval_operation_t operation);
 
+oval_result_t oval_debian_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation);
+
+/*
+ * Code copied from lib/dpkg/version.h
+ */
+struct dpkg_version {
+	/** The epoch. It will be zero if no epoch is present. */
+	unsigned int epoch;
+	/** The upstream part of the version. */
+	const char *version;
+	/** The Debian revision part of the version. */
+	const char *revision;
+};
 
 #endif
