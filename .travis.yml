@@ -40,6 +40,7 @@ matrix:
       after_success:
         - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
     - os: osx
+      osx_image: xcode12.2
       before_install:
         - brew update
         - brew remove python@2
