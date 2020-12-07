@@ -569,6 +569,12 @@ static int xiconf_add_cfile(xiconf_t *xiconf, const char *path, int depth)
 	void *cfile = realloc(xiconf->cfile, sizeof(xiconf_file_t *) * ++xiconf->count);
 	if (cfile == NULL) {
 		dE("Failed re-allocate memory for cfile");
+		xiconf->count--;
+		if (xifile->cpath)
+			free(xifile->cpath);
+		if (xifile->inmem)
+			free(xifile->inmem);
+		free(xifile);
 		return (-1);
 	}
 	xiconf->cfile = cfile;
