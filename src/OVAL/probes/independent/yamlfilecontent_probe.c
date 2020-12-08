@@ -318,6 +318,8 @@ next:
 	} while (event_type != YAML_STREAM_END_EVENT);
 
 cleanup:
+	if (event.type != 0)
+		yaml_event_delete(&event);
 	if (record)
 		oscap_list_add(values, record);
 	free(key);
@@ -377,6 +379,7 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 					SEXP_t *field = probe_ent_creat1("field", NULL, value_sexp);
 					probe_item_attr_add(field, "name", key);
 					SEXP_list_add(result_ent, field);
+					SEXP_free(field);
 				}
 				oscap_iterator_free(item_value_it);
 				SEXP_free_r(&se_tmp_mem);
