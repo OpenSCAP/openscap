@@ -1730,7 +1730,7 @@ Tailoring file can be easily generated using {workbench_url}[SCAP Workbench].
 2) List profiles of tailoring file
 
 ----
-$ oscap info
+$ oscap info ssg-rhel6-ds-tailoring.xml
 Document type: XCCDF Tailoring
 Imported: 2016-08-31T11:08:16
 Benchmark Hint: /usr/share/xml/scap/ssg/content/ssg-rhel6-ds.xml
