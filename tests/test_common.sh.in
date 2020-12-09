@@ -22,12 +22,13 @@ export MALLOC_CHECK_
 
 OSCAP_FULL_VALIDATION=1
 export OSCAP_FULL_VALIDATION
+ENABLE_VALGRIND="@ENABLE_VALGRIND@"
+export ENABLE_VALGRIND
 
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     export OSCAP_EXEC="@CMAKE_BINARY_DIR@/utils/oscap"
     export RUN_WRAPPER="@CMAKE_BINARY_DIR@/run"
-    enable_valgrind="@ENABLE_VALGRIND@"
-    if [ $enable_valgrind != "OFF" ] ; then
+    if [ $ENABLE_VALGRIND != "OFF" ] ; then
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="@CMAKE_SOURCE_DIR@/tests/valgrind_test.sh"
     else
         [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash $RUN_WRAPPER $OSCAP_EXEC"

@@ -1,7 +1,7 @@
 function(add_oscap_test TEST_SCRIPT)
 	string(REPLACE "${CMAKE_SOURCE_DIR}/tests/" "" TEST_NAME "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}")
 	add_test(NAME ${TEST_NAME}
-		COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}
+		COMMAND "${CMAKE_SOURCE_DIR}/tests/test_wrapper.sh" "${CMAKE_CURRENT_SOURCE_DIR}/${TEST_SCRIPT}"
 	)
 	set_tests_properties(${TEST_NAME}
 		PROPERTIES
