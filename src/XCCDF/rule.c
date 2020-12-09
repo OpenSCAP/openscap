@@ -273,8 +273,6 @@ void xccdf_group_free(struct xccdf_item *group)
 struct xccdf_item *xccdf_rule_new_internal(struct xccdf_item *parent)
 {
 	struct xccdf_item *rule = xccdf_item_new(XCCDF_RULE, parent);
-	rule->sub.rule.role = 0;
-	rule->sub.rule.severity = 0;
 	rule->sub.rule.role = XCCDF_ROLE_FULL;
 	rule->sub.rule.severity = XCCDF_UNKNOWN;
 
