@@ -95,6 +95,9 @@ function test_eval_complex()
 	local result="$arf"
 	assert_exists 1 '//rule-result'
 	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second" and @role="full"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second" and @severity="unknown"]'
+	assert_exists 1 '//rule-result[@idref="xccdf_moc.elpmaxe.www_rule_second" and @weight]'
 	assert_exists 1 '//rule-result/result'
 	assert_exists 1 '//rule-result/result[text()="pass"]'
 	rm $arf
