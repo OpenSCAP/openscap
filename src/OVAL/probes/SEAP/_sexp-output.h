@@ -28,14 +28,12 @@
 #include <stdint.h>
 #include "public/sexp-types.h"
 #include "public/sexp-output.h"
-#include "_sexp-manip.h"
 #include "../../../common/util.h"
 #include "generic/strbuf.h"
 
 
 struct SEXP_ostate {
         SEXP_t        *s_exp;   /* ref to the S-exp that we are writing */
-        SEXP_lstack_t *l_stack; /* list stack */
         uint32_t      *p_stack; /* list position stack */
         uint8_t       *s_part;  /* S-exp part */
         size_t        *s_pos;   /* S-exp position */
