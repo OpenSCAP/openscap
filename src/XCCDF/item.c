@@ -1155,6 +1155,7 @@ struct xccdf_benchmark_item * xccdf_benchmark_item_clone(struct xccdf_item *pare
 	clone->items_dict = oscap_htable_new();
 	clone->profiles_dict = oscap_htable_new();
 	clone->results_dict = oscap_htable_new();
+	clone->clusters_dict = oscap_htable_new();
 	clone->notices = oscap_list_clone(item->notices, (oscap_clone_func) xccdf_notice_clone);
 	clone->plain_texts = oscap_list_clone(item->plain_texts, (oscap_clone_func) xccdf_plain_text_clone);
 	
