@@ -51,7 +51,7 @@
       </cpe-item>
       <cpe-item name="cpe:/o:centos:centos:8">
             <title xml:lang="en-us">Community Enterprise Operating System 8</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1008</check>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.centos:def:8</check>
       </cpe-item>
       <cpe-item name="cpe:/o:scientificlinux:scientificlinux:5">
             <title xml:lang="en-us">Scientific Linux 5</title>
