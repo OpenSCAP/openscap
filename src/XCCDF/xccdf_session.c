@@ -1393,9 +1393,12 @@ static int _build_xccdf_result_source(struct xccdf_session *session)
 		}
 
 		if (session->export.xccdf_stig_viewer_file != NULL) {
+			struct xccdf_benchmark *cloned_benchmark = xccdf_benchmark_clone(benchmark);
 			struct xccdf_result *cloned_result = xccdf_result_clone(session->xccdf.result);
+			xccdf_benchmark_add_result(cloned_benchmark, cloned_result);
 			struct oscap_source * stig_result = xccdf_result_stig_viewer_export_source(cloned_result, session->export.xccdf_stig_viewer_file);
-			xccdf_result_free(cloned_result);
+			// cloned_result is freed during xccdf_benchmark_free
+			xccdf_benchmark_free(cloned_benchmark);
 			if (oscap_source_save_as(stig_result, NULL) != 0) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not save file: %s",
 						oscap_source_readable_origin(stig_result));
