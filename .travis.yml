@@ -1,11 +1,13 @@
 language: c
 
-matrix:
+jobs:
   include:
     - os: linux
       dist: bionic
       arch:
          - amd64
+         - arm64
+         - ppc64le
       addons:
         apt:
           packages:
@@ -34,11 +36,18 @@ matrix:
         - cd build
       script:
         - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
-        - build-wrapper-linux-x86-64 --out-dir bw-output make all || make all  # build-wrapper won't work on forked repositories.
+        # The build-wrapper tool won't work on forked repositories.
+        - case ${TRAVIS_CPU_ARCH} in
+            amd64) build-wrapper-linux-x86-64 --out-dir bw-output make all || make all ;;
+            arm64) build-wrapper-linux-aarch64 --out-dir bw-output make all || make all ;;
+            *) make all ;;
+          esac
         - ctest --output-on-failure
-        - (cd .. && sonar-scanner) || true  # Will always fail builds on forked repositories.
+        # Will always fail builds on forked repositories.
+        - (cd .. && sonar-scanner) || true
       after_success:
         - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
+
     - os: osx
       osx_image: xcode12.2
       before_install:
