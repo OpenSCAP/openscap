@@ -1,7 +1,8 @@
 # OpenSCAP
 
-[![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/master?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap/branch/master)
-[![Build Status](https://travis-ci.org/OpenSCAP/openscap.svg?branch=master)](https://travis-ci.org/OpenSCAP/openscap)
+[![Build status](https://github.com/OpenSCAP/openscap/workflows/CI/badge.svg)](https://github.com/OpenSCAP/openscap/actions)
+[![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/maint-1.3?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap)
+[![Build Status](https://travis-ci.org/OpenSCAP/openscap.svg?branch=maint-1.3)](https://travis-ci.org/OpenSCAP/openscap)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/OpenSCAP/openscap.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenSCAP/openscap/context:cpp)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/OpenSCAP/openscap.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenSCAP/openscap/alerts/)
 
