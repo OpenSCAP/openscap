@@ -1,72 +1,57 @@
 language: c
 
-jobs:
-  include:
-    - os: linux
-      dist: bionic
-      arch:
-         - amd64
-         - arm64
-         - ppc64le
-      addons:
-        apt:
-          packages:
-            - lcov
-            - libdbus-1-dev
-            - libdbus-glib-1-dev
-            - libcurl4-openssl-dev
-            - libgcrypt-dev
-            - libselinux1-dev
-            - libgconf2-dev
-            - libacl1-dev
-            - libblkid-dev
-            - libcap-dev
-            - libxml2-dev
-            - swig
-            - libxml-parser-perl
-            - libxml-xpath-perl
-            - libperl-dev
-            - librpm-dev
-            - swig
-            - librtmp-dev
-            - xsltproc
-            - rpm-common
-            - lua50
-      before_script:
-        - cd build
-      script:
-        - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
-        # The build-wrapper tool won't work on forked repositories.
-        - case ${TRAVIS_CPU_ARCH} in
-            amd64) build-wrapper-linux-x86-64 --out-dir bw-output make all || make all ;;
-            arm64) build-wrapper-linux-aarch64 --out-dir bw-output make all || make all ;;
-            *) make all ;;
-          esac
-        - ctest --output-on-failure
-        # Will always fail builds on forked repositories.
-        - (cd .. && sonar-scanner) || true
-      after_success:
-        - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
-
-    - os: osx
-      osx_image: xcode12.2
-      before_install:
-        - brew update
-        - brew remove python@2
-        - brew install doxygen
-        - brew install opendbx
-        - brew install popt
-        - brew install swig
-      before_script:
-        - cd build
-      script:
-        - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DENABLE_PROBES=false ../
-        - make -j 4
+os: linux
+dist: bionic
+arch:
+  - arm64
+  - ppc64le
+  - amd64
 
 addons:
   sonarcloud:
     organization: "openscap"
+  apt:
+    packages:
+      - lcov
+      - libdbus-1-dev
+      - libdbus-glib-1-dev
+      - libcurl4-openssl-dev
+      - libgcrypt-dev
+      - libselinux1-dev
+      - libgconf2-dev
+      - libacl1-dev
+      - libblkid-dev
+      - libcap-dev
+      - libxml2-dev
+      - swig
+      - libxml-parser-perl
+      - libxml-xpath-perl
+      - libperl-dev
+      - librpm-dev
+      - swig
+      - librtmp-dev
+      - xsltproc
+      - rpm-common
+      - lua50
 
 cache:
   directories:
     - '$HOME/.sonar/cache'
+
+before_script:
+  - cd build
+
+script:
+  - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
+  # The build-wrapper tool won't work on forked repositories.
+  - case ${TRAVIS_CPU_ARCH} in
+      amd64) build-wrapper-linux-x86-64 --out-dir bw-output make all || make all ;;
+      arm64) build-wrapper-linux-aarch64 --out-dir bw-output make all || make all ;;
+      *) make all ;;
+    esac
+  - ctest --output-on-failure
+  # Will always fail builds on forked repositories.
+  - (cd .. && sonar-scanner) || true
+
+after_success:
+  - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
