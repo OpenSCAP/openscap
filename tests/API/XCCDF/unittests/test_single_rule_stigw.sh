@@ -24,5 +24,5 @@ $OSCAP xccdf eval --stig-viewer "$result" "$srcdir/${name}.xccdf.xml" 2> "$stder
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ -s "$result" ]
 
-"${PYTHON:-python}" "$srcdir/stig-viewer-equivalence.py" "$result" "$srcdir/correct_stigw_result.xml" 2> "$stderr"
+"$PREFERRED_PYTHON" "$srcdir/stig-viewer-equivalence.py" "$result" "$srcdir/correct_stigw_result.xml" 2> "$stderr"
 rm "$result"
