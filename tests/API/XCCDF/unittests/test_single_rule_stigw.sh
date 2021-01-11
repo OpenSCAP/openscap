@@ -19,8 +19,10 @@ echo "Result file = $result"
 # evaluated when '--rule' option is not specified.
 
 # One of the rules is supposed to fail, so the return code of this line has to be 0 so the test can continue
-$OSCAP xccdf eval --stig-viewer "$result" "$srcdir/${name}.xccdf.xml" 2> "$stderr" || true
+$OSCAP xccdf eval --stig-viewer "$result" "$srcdir/${name}.xccdf.xml" 2> "$stderr" || ret=$?
+[ $ret == 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
+[ -s "$result" ]
 
-"${PYTHON:-python}" "$srcdir/stig-viewer-equivalence.py" "$result" "$srcdir/correct_stigw_result.xml" 2> "$stderr" || ret=$?
+"$PREFERRED_PYTHON" "$srcdir/stig-viewer-equivalence.py" "$result" "$srcdir/correct_stigw_result.xml" 2> "$stderr"
 rm "$result"
