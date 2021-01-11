@@ -18,5 +18,3 @@ rm -f "$logfile"
 "$RUN_WRAPPER" valgrind $valgrind_args "$OSCAP_EXEC" "$@"
 ret_val=$?
 exit $ret_val
-
-exit $result
