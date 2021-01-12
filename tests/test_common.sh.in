@@ -25,16 +25,21 @@ export OSCAP_FULL_VALIDATION
 ENABLE_VALGRIND="@ENABLE_VALGRIND@"
 export ENABLE_VALGRIND
 
+valgrind_logfile=$builddir/tests/valgrind_test.log
+valgrind_error_code=66
+suppfile=$top_srcdir/tests/suppressions.supp
+valgrind_args="--trace-children=yes --free-fill=55 --malloc-fill=55 --leak-check=full --show-reachable=yes --show-leak-kinds=all --log-file=$valgrind_logfile --suppressions=$suppfile --error-exitcode=$valgrind_error_code"
+
 if [ -z ${CUSTOM_OSCAP+x} ] ; then
     export OSCAP_EXEC="@CMAKE_BINARY_DIR@/utils/oscap"
     export RUN_WRAPPER="@CMAKE_BINARY_DIR@/run"
     if [ $ENABLE_VALGRIND != "OFF" ] ; then
-        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="@CMAKE_SOURCE_DIR@/tests/valgrind_test.sh"
+        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="$RUN_WRAPPER valgrind $valgrind_args $OSCAP_EXEC"
     else
-        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="bash $RUN_WRAPPER $OSCAP_EXEC"
+        [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP="$RUN_WRAPPER $OSCAP_EXEC"
     fi
     [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE_EXEC="@CMAKE_BINARY_DIR@/utils/oscap-chrootable"
-    [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE="bash @CMAKE_BINARY_DIR@/run $OSCAP_CHROOTABLE_EXEC"
+    [ -z "@CMAKE_BINARY_DIR@" ] || export OSCAP_CHROOTABLE="$RUN_WRAPPER $OSCAP_CHROOTABLE_EXEC"
 else
     export OSCAP=${CUSTOM_OSCAP}
 fi
