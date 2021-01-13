@@ -368,7 +368,7 @@ static int verrevcmp(const char *a, const char *b)
  * @retval <0 If a is smaller than b.
  * @retval >0 If a is greater than b.
  */
-int dpkg_version_compare(struct dpkg_version *a, struct dpkg_version *b)
+static int dpkg_version_compare(struct dpkg_version *a, struct dpkg_version *b)
 {
 	int rc;
 
@@ -441,9 +441,10 @@ oval_result_t oval_debian_evr_string_cmp(const char *state, const char *sys, ova
 		return ((result < 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
 	case OVAL_OPERATION_LESS_THAN_OR_EQUAL:
 		return ((result <= 0) ? OVAL_RESULT_TRUE : OVAL_RESULT_FALSE);
+	default:
+		oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in rpm version comparison: %d.", operation);
 	}
 
-	oscap_seterr(OSCAP_EFAMILY_OVAL, "Invalid type of operation in rpm version comparison: %d.", operation);
 	return OVAL_RESULT_ERROR;
 }
 
