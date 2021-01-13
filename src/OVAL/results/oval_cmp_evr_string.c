@@ -368,7 +368,7 @@ static int verrevcmp(const char *a, const char *b)
  * @retval <0 If a is smaller than b.
  * @retval >0 If a is greater than b.
  */
-int dpkg_version_compare(struct dpkg_version *a, struct dpkg_version *b)
+static int dpkg_version_compare(struct dpkg_version *a, struct dpkg_version *b)
 {
 	int rc;
 
