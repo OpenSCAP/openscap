@@ -1284,7 +1284,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 						break;
 					}
 				} else {
-					if (fts_ent->fts_info != FTS_D) {
+					if (fts_ent->fts_info != FTS_D && fts_ent->fts_info != FTS_DP && fts_ent->fts_info != FTS_DC) {
 						SEXP_t *stmp;
 
 						stmp = SEXP_string_newf("%s", fts_ent->fts_name);
