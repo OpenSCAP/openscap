@@ -1172,10 +1172,11 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 				/* limit recursion only to selected file types */
 				switch (fts_ent->fts_info) {
 				case FTS_D:
-					if (!(ofts->recurse & OVAL_RECURSE_DIRS)) {
+					if (!(ofts->recurse & OVAL_RECURSE_DIRS) && !(ofts->recurse & OVAL_RECURSE_SYMLINKS && ofts->following)) {
 						fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
 						continue;
 					}
+					ofts->following = 0;
 					break;
 				case FTS_SL:
 					if (!(ofts->recurse & OVAL_RECURSE_SYMLINKS)) {
@@ -1183,6 +1184,7 @@ static FTSENT *oval_fts_read_recurse_path(OVAL_FTS *ofts)
 						continue;
 					}
 					fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_FOLLOW);
+					ofts->following = 1;
 					break;
 				default:
 					continue;
