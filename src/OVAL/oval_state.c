@@ -299,8 +299,12 @@ int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 	struct oval_definition_model *model = context->definition_model;
 	char *id = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "id");
 	struct oval_state *state = oval_definition_model_get_new_state(model, id);
-	free(id);
 	oval_subtype_t subtype = oval_subtype_parse(reader);
+	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+		dI("Unknown state type %s, using independent/unknown", id);
+		subtype = OVAL_INDEPENDENT_UNKNOWN;
+	}
+	free(id);
 	oval_state_set_subtype(state, subtype);
 	char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 	if (comm != NULL) {
