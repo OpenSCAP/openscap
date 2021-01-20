@@ -443,8 +443,8 @@ xmlNode *oval_test_to_dom(struct oval_test *test, xmlDoc * doc, xmlNode * parent
 
 	/* skip unknown test */
 	oval_subtype_t subtype = oval_test_get_subtype(test);
-	if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
-		dE("Unknown Test %s.", oval_test_get_id(test));
+	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+		dW("Unable to convert unknown test %s, skipping", oval_test_get_id(test));
 		return test_node;
 	}
 

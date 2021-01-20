@@ -382,8 +382,8 @@ xmlNode *oval_object_to_dom(struct oval_object *object, xmlDoc * doc, xmlNode * 
 
 	/* skip unknown object */
 	oval_subtype_t subtype = oval_object_get_subtype(object);
-        if ( subtype == OVAL_SUBTYPE_UNKNOWN ) {
-                dE("Unknown Object %s.", oval_object_get_id(object));
+        if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+                dW("Unable to convert unknown object %s, skipping", oval_object_get_id(object));
                 return object_node;
         }
 

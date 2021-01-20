@@ -326,8 +326,15 @@ int oval_state_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context *co
 
 xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * parent)
 {
+	xmlNode *state_node = NULL;
+
 	/* get state name */
 	oval_subtype_t subtype = oval_state_get_subtype(state);
+	if (subtype == OVAL_SUBTYPE_UNKNOWN) {
+		dW("Unable to export unknown state %s, skipping", oval_state_get_id(state));
+		return state_node;
+	}
+
 	const char *subtype_text = oval_subtype_get_text(subtype);
 	char *state_name = malloc(strlen(subtype_text) + 7);
 	sprintf(state_name, "%s_state", subtype_text);
@@ -336,7 +343,7 @@ xmlNode *oval_state_to_dom(struct oval_state *state, xmlDoc * doc, xmlNode * par
 
 	/* search namespace & create child */ 
 	xmlNs *ns_family = oval_family_to_namespace(family, (const char *) OVAL_DEFINITIONS_NAMESPACE, doc, parent);
-	xmlNode *state_node = xmlNewTextChild(parent, ns_family, BAD_CAST state_name, NULL);
+	state_node = xmlNewTextChild(parent, ns_family, BAD_CAST state_name, NULL);
 	free(state_name);
 
 	char *id = oval_state_get_id(state);
