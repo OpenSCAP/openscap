@@ -580,30 +580,59 @@ command-line argument. You can use `--results-arf` to generate a Result DataStre
 $ oscap xccdf eval --benchmark-id benchmark_id --results-arf arf-results.xml scap-ds.xml
 --------------------------------------------------------------------------------------
 
-==== Result STIG Viewer
+==== Results for STIG Viewer
 
-If you want to import the XCCDF scan results to DISA STIG Viewer but your Rule IDs don't
-match the DISA's ones, you can use the `--stig-viewer` command-line argument along with
-a special reference in your Rules to generate XCCDF result files that can be imported by
-DISA STIG Viewer.
+DISA STIG Viewer is a graphical user interface (GUI) application that enables
+easy viewing of SCAP formatted Security Technical Implementation Guides
+(STIGs).  For more information on DISA STIG Viewer go to
+https://public.cyber.mil/stigs/srg-stig-tools/[SRG / STIG Tools].
 
---------------------------------------------------------------------------------------
-$ oscap xccdf eval --profile stig-rhel7-disa --stig-viewer results-stig.xml ssg-rhel7-ds.xml
---------------------------------------------------------------------------------------
+OpenSCAP can generate results compatible with DISA STIG Viewer when evaluating
+SCAP content not provided by DISA that uses different Rule IDs than official
+DISA STIG, for example `scap-security-guide` or third party content.
 
-Each rule in the input XCCDF must contain a reference to its STIG Rule ID, and its 
-href attribute must be exactly `http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx`.
+To be able to produce results compatible with DISA STIG Viewer, each rule in
+the input SCAP source data stream must contain a reference to a STIG Rule ID,
+and its `href` attribute must be either
+`http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx` or
+`https://public.cyber.mil/stigs/srg-stig-tools/`.
 
 For example:
 ----
 <Rule id="rpm_verify_permissions">
   ...
-  <reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-86473r2_rule</reference>
+  <reference href="https://public.cyber.mil/stigs/srg-stig-tools/">SV-86473r2_rule</reference>
   ...
 </Rule>
 ----
 
-For more information on DISA STIG Viewer click link:http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx[here].
+A good example of SCAP source data stream that meets this assumption is the
+`/usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml` provided by
+`scap-security-guide` RPM package. We will use this file to demonstrate its
+usage with DISA STIG Viewer.
+
+1) Scan your system using `oscap` with `--stig-viewer` option.
+
+----
+$ oscap xccdf eval --profile xccdf_org.ssgproject.content_profile_stig --stig-viewer results-stig.xml /usr/share/xml/scap/ssg/content/ssg-rhel7-ds.xml
+----
+
+2) Get the STIG, eg. from https://public.cyber.mil/stigs/downloads/[STIGs
+document library] and extract it.  The version of STIG must conform to the
+version of `xccdf_org.ssgproject.content_profile_stig` profile.
+
+3) In STIG Viewer, click on `File` and then on `Import STIG`. Then, select the
+STIG in `STIGs` panel on the left side. Click on `Checklists` and then on
+`Create Checklists - Check Marked STIG(s)`.
+
+4) Import the OpenSCAP scan results by clicking on `Import` and then on `XCCDF
+Results File`. Locate the `results-stig.xml` from step 1. The results will be
+shown in STIG Viewer.
+
+NOTE: The `--stig-viewer` option is intended for evaluating SCAP content in
+which the XCCDF Rule IDs aren't the same as STIG IDs, mainly
+`scap-security-guide`. When using SCAP content provided by DISA, use
+`--results` instead.
 
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
