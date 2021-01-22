@@ -629,10 +629,14 @@ STIG in `STIGs` panel on the left side. Click on `Checklists` and then on
 Results File`. Locate the `results-stig.xml` from step 1. The results will be
 shown in STIG Viewer.
 
-NOTE: The `--stig-viewer` option is intended for evaluating SCAP content in
-which the XCCDF Rule IDs aren't the same as STIG IDs, mainly
-`scap-security-guide`. When using SCAP content provided by DISA, use
-`--results` instead.
+NOTE: The `--stig-viewer` option is intended for evaluating SCAP source
+datastream other than STIG provided by DISA, in which the XCCDF Rule IDs aren't
+the same as STIG IDs, for example `scap-security-guide` content, and then
+loading the generated file in STIG Viewer into checklist created from STIG
+provided by DISA.  When evaluating STIG provided by DISA using `oscap`, use
+`--results` instead. Similarly, when creating checklists based on
+`scap-security-guide` content in STIG Viewer and evaluating
+`scap-security-guide` by `oscap`, use `--results` instead.
 
 === Remediate System
 OpenSCAP allows to automatically remediate systems that have been found in a
