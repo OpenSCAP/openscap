@@ -1338,20 +1338,20 @@ using the `oval-def:extend_definition` element where the extended definition
 searches for the presence of a matching SWID tag.
 
 The `oscap` command handles the SWID tag detection transparently. The detection
-is using OVAL `xmlfilecontent_test`. The OVAL inventory class definitions can be
+algorithm is using OVAL's `xmlfilecontent` test. The OVAL inventory class definitions can be
 evaluated in a standard way, i.e. by using the `oscap oval eval` for a
 standalone OVAL Definition file or `oscap xccdf eval` for definitions that are
 part of an SCAP source data stream.
 
 For example, the following command can be used to evaluate an SCAP source data
 stream that contains OVAL inventory class definitions that search for the
-presence of a matching SWID tag:
+presence of a matching SWID tag (referenced XML files can be obtained from the [SCAP 1.3 validation test suite](https://csrc.nist.gov/CSRC/media/Projects/scap-validation-program/documents/SCAP1.3ValidationTestContent_1-3.0.0.0.zip)):
 
 ----
 $ oscap xccdf eval --results-arf arf.xml --profile xccdf_gov.nist.validation_profile_r2850-rhel r2850-rhel-datastream.xml
 ----
 
-For example, the following command can be used to evaluate a standalone OVAL
+As another example, the following command can be used to evaluate a standalone OVAL
 Definition file that contains OVAL inventory class definitions that search for
 the presence of a matching SWID tag:
 
