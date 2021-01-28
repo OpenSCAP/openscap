@@ -592,7 +592,7 @@ SCAP content that uses different rule IDs than the official DISA STIG format,
 for example, content from the `scap-security-guide` package or third-party
 content.
 
-To produce results compatible with STIG Viewer, each rule in a SCAP source data
+To produce results compatible with STIG Viewer, each rule in an SCAP source data
 stream must contain a reference to a STIG Rule ID, and the value of the `href`
 attribute must be either
 `http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx` or
@@ -631,7 +631,7 @@ STIG in `STIGs` panel on the left side. Click on `Checklists` and then on
 Results File`. Locate the `results-stig.xml` file obtained in step 1. STIG
 Viewer shows the results subsequently.
 
-NOTE: The `--stig-viewer` option serves for evaluating a SCAP source data stream
+NOTE: The `--stig-viewer` option serves for evaluating an SCAP source data stream
 other than a STIG provided by DISA, for example, `scap-security-guide` content
 and loading the generated file in STIG Viewer into a checklist created from a
 STIG by DISA. When evaluating a STIG provided by DISA using `oscap`, use the
