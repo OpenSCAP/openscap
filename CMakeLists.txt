@@ -141,6 +141,15 @@ find_package(SELinux)
 find_package(SWIG)
 find_package(LibXml2 REQUIRED)
 find_package(LibXslt REQUIRED)
+find_package(XMLSEC REQUIRED)
+if (APPLE)
+	set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl/")
+endif()
+find_package(OpenSSL REQUIRED)
+add_definitions(${XMLSEC_DEFINITIONS})
+if (WIN32)
+	add_compile_definitions("XMLSEC_CRYPTO_OPENSSL")
+endif()
 find_package(BZip2)
 
 # PThread
@@ -559,6 +568,8 @@ include_directories(
 	"yaml-filter/src/"
 	${CMAKE_BINARY_DIR} # config.h is generated to build directory
 	${LIBXML2_INCLUDE_DIR}
+	${XMLSEC_INCLUDE_DIRS}
+	${OPENSSL_INCLUDE_DIR}
 	${PCRE_INCLUDE_DIRS}
 )
 
