@@ -993,13 +993,19 @@ int oval_probe_ext_eval(SEAP_CTX_t *ctx, oval_pd_t *pd, oval_pext_t *pext, struc
 	}
 
 	if (flags & OVAL_PDFLAG_NOREPLY) {
-		if (SEXP_typeof(s_sys) != SEXP_TYPE_LIST || SEXP_list_length(s_sys) != 0) {
+		if (s_sys != NULL) {
+			if (SEXP_typeof(s_sys) != SEXP_TYPE_LIST || SEXP_list_length(s_sys) != 0) {
                         /*
                          * The no-reply flag is set and oval_probe_comm returned some
                          * data. This is considered a non-fatal error.
                          */
                         dW("Obtrusive data from probe!");
-                        SEXP_free(s_sys);
+			}
+			if (SEXP_typeof(s_sys) == SEXP_TYPE_LIST) {
+				SEXP_list_free(s_sys);
+			} else {
+				SEXP_free(s_sys);
+			}
 		}
 		return (0);
 	}
