@@ -6,45 +6,31 @@
 . $builddir/tests/test_common.sh
 
 CPE_OVAL="cpe-oval.xml"
-FEDORA_XCCDF="fedoraX-xccdf.xml"
-FEDORA_CPE="cpe:/o:fedoraproject:fedora:"
-RHEL_XCCDF="rhelX-xccdf.xml"
-RHEL_CPE="cpe:/o:redhat:enterprise_linux:"
+CPE_DICT="cpe-dict.xml"
+XCCDF="xccdf.xml"
 SYSTEM_CPE_FILE="/etc/system-release-cpe"
+SYSTEM_CPE=$(cat $SYSTEM_CPE_FILE)
+NA_CPE="cpe:/o:example:not_applicable:5"
 
-# System specific version variable is filled with system version number only
-# if this test runs on the specific system. Otherwise it is left empty.
-FEDORA_VERSION=$(grep "${FEDORA_CPE}" $SYSTEM_CPE_FILE \
-	| sed "s|${FEDORA_CPE}\([0-9]\+\).*|\1|")
-RHEL_VERSION=$(grep "${RHEL_CPE}" $SYSTEM_CPE_FILE \
-	| sed "s|${RHEL_CPE}\([0-9]\+\).*|\1|")
-# In case the version variable is empty we set some default values to also
-# test notapplicable result.
-[ -z "$FEDORA_VERSION" ] && FEDORA_VERSION=28
-[ -z "$RHEL_VERSION" ] && RHEL_VERSION=7
+function test_cpe_setup() {
+	local CPE=$1
+	cp $srcdir/$CPE_OVAL $builddir/$CPE_OVAL
+	cp $srcdir/$CPE_DICT $builddir/$CPE_DICT
+	sed -i "s|<<CPE>>|${CPE}|" $builddir/$CPE_DICT
+}
 
-
-function test_cpe_fedora_rhel {
-	local VERSION=$1
-	local INPUT_TEMPLATE=$2
-	local CPE=$3
-	local INPUT=$(echo "$INPUT_TEMPLATE" | sed "s|X|${VERSION}|")
+function test_cpe {
+	local CPE=$1
+	local EXPECTED_NA=$2
 	local TMP_RESULTS=`mktemp`
-	local EXPECTED_NA=0
-	local SYSTEM_CPE=$(cat $SYSTEM_CPE_FILE)
 
 	# Create XCCDF file with CPE based on RHEL/FEDORA version.
-	cat $srcdir/$INPUT_TEMPLATE > $builddir/$INPUT
-	cp $srcdir/$CPE_OVAL $builddir/$CPE_OVAL
-	sed -i "s|${CPE}X|${CPE}${VERSION}|" $builddir/$INPUT
-
-	if ! echo "$SYSTEM_CPE" | grep -q "${CPE}${VERSION}"; then
-		EXPECTED_NA=1
-	fi
+	cp $srcdir/$XCCDF $builddir/$XCCDF
+	sed -i "s|<<CPE>>|${CPE}|" $builddir/$XCCDF
 
 	echo "System CPE: ${SYSTEM_CPE}"
-	echo "Tested CPE: ${CPE}${VERSION}"
-	$OSCAP xccdf eval --results $TMP_RESULTS $builddir/$INPUT
+	echo "Tested CPE: ${CPE}"
+	$OSCAP xccdf eval --cpe $builddir/$CPE_DICT --results $TMP_RESULTS $builddir/$XCCDF
 	if [ $? -ne 0 ]; then
 		return 1
 	fi
@@ -62,10 +48,11 @@ function test_cpe_fedora_rhel {
 # Testing.
 
 test_init "test_api_xccdf_default_cpe.log"
+test_cpe_setup $SYSTEM_CPE
 
-test_run "test_api_xccdf_default_cpe_fedora" test_cpe_fedora_rhel \
-	$FEDORA_VERSION $FEDORA_XCCDF $FEDORA_CPE
-test_run "test_api_xccdf_default_cpe_rhel" test_cpe_fedora_rhel \
-	$RHEL_VERSION $RHEL_XCCDF $RHEL_CPE
+test_run "test_api_xccdf_default_cpe" test_cpe \
+	$SYSTEM_CPE 0
+test_run "test_api_xccdf_notapplicable_cpe" test_cpe \
+	$NA_CPE 1
 
 test_exit
