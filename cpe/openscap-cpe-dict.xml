@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-      <cpe-item name="cpe:/o:redhat:enterprise_linux">
+      <cpe-item name="cpe:/o:redhat:enterprise_linux:-">
             <title xml:lang="en-us">Red Hat Enterprise Linux</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:1</check>
       </cpe-item>
@@ -21,19 +21,19 @@
             <title xml:lang="en-us">Red Hat Enterprise Linux 8</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:8</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:oracle:linux:5">
+      <cpe-item name="cpe:/o:oracle:linux:5:-">
             <title xml:lang="en-us">Oracle Linux 5</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:5</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:oracle:linux:6">
+      <cpe-item name="cpe:/o:oracle:linux:6:-">
             <title xml:lang="en-us">Oracle Linux 6</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:6</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:oracle:linux:7">
+      <cpe-item name="cpe:/o:oracle:linux:7:-">
             <title xml:lang="en-us">Oracle Linux 7</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:7</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:oracle:linux:8">
+      <cpe-item name="cpe:/o:oracle:linux:8:-">
             <title xml:lang="en-us">Oracle Linux 8</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.ol:def:8</check>
       </cpe-item>
@@ -53,74 +53,6 @@
             <title xml:lang="en-us">Community Enterprise Operating System 8</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.centos:def:8</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:5">
-            <title xml:lang="en-us">Scientific Linux 5</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.scientific:def:5</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:6">
-            <title xml:lang="en-us">Scientific Linux 6</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.scientific:def:6</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:scientificlinux:scientificlinux:7">
-            <title xml:lang="en-us">Scientific Linux 7</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.scientific:def:7</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:16">
-            <title xml:lang="en-us">Fedora 16</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:16</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:17">
-            <title xml:lang="en-us">Fedora 17</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:17</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:18">
-            <title xml:lang="en-us">Fedora 18</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:18</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:19">
-            <title xml:lang="en-us">Fedora 19</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:19</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:20">
-            <title xml:lang="en-us">Fedora 20</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:20</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:21">
-            <title xml:lang="en-us">Fedora 21</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:21</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:22">
-            <title xml:lang="en-us">Fedora 22</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:22</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:23">
-            <title xml:lang="en-us">Fedora 23</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:23</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:24">
-            <title xml:lang="en-us">Fedora 24</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:24</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:25">
-            <title xml:lang="en-us">Fedora 25</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:25</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:26">
-            <title xml:lang="en-us">Fedora 26</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:26</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:27">
-            <title xml:lang="en-us">Fedora 27</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:27</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:28">
-            <title xml:lang="en-us">Fedora 28</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:28</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:fedoraproject:fedora:29">
-            <title xml:lang="en-us">Fedora 29</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:29</check>
-      </cpe-item>
       <cpe-item name="cpe:/o:fedoraproject:fedora:30">
             <title xml:lang="en-us">Fedora 30</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:30</check>
@@ -137,34 +69,6 @@
             <title xml:lang="en-us">Fedora 33</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:33</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:suse:sle">
-            <title xml:lang="en-us">SUSE Linux Enterprise all versions</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:1</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:suse:sles:10">
-            <title xml:lang="en-us">SUSE Linux Enterprise Server 10</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sles:def:10</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:suse:sled:10">
-            <title xml:lang="en-us">SUSE Linux Enterprise Desktop 10</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sled:def:10</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:suse:linux_enterprise_server:11">
-            <title xml:lang="en-us">SUSE Linux Enterprise Server 11</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:11</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:suse:linux_enterprise_desktop:11">
-            <title xml:lang="en-us">SUSE Linux Enterprise Desktop 11</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sle:def:11</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:suse:sles:12">
-            <title xml:lang="en-us">SUSE Linux Enterprise Server 12</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sles:def:12</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:suse:sled:12">
-            <title xml:lang="en-us">SUSE Linux Enterprise Desktop 12</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.sled:def:12</check>
-      </cpe-item>
       <cpe-item name="cpe:/o:opensuse:opensuse:11.4">
             <title xml:lang="en-us">openSUSE 11.4</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:114</check>
@@ -177,17 +81,9 @@
             <title xml:lang="en-us">openSUSE 13.2</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:132</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:novell:leap:42.1">
-            <title xml:lang="en-us">openSUSE 42.1</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:421</check>
-      </cpe-item>
       <cpe-item name="cpe:/o:opensuse:leap:42.1">
             <title xml:lang="en-us">openSUSE Leap 42.1</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:421</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:novell:leap:42.2">
-            <title xml:lang="en-us">openSUSE 42.2</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.opensuse:def:422</check>
       </cpe-item>
       <cpe-item name="cpe:/o:opensuse:leap:42.2">
             <title xml:lang="en-us">openSUSE Leap 42.2</title>
@@ -207,7 +103,7 @@
       </cpe-item>
 
       <!-- Add-ons -->
-      <cpe-item name="cpe:/a:redhat:rhel_productivity">
+      <cpe-item name="cpe:/a:redhat:rhel_productivity:-">
             <title xml:lang="en-us">Red Hat Enterprise Linux Optional Productivity Applications</title>
             <!-- The cpe:/a:redhat:rhel_productivity:5 is the only released version. -->
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:5</check>
@@ -218,43 +114,27 @@
                  We assume that the productivity is equal to RHEL5. We are unable to write a better OVAL check. -->
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.rhel:def:5</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:windriver:wrlinux">
-            <title xml:lang="en-us">Wind River Linux all versions</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:1</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:windriver:wrlinux:8">
-            <title xml:lang="en-us">Wind River Linux 8</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:8</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:windriver:wrlinux:1019">
-            <title xml:lang="en-us">Wind River Linux 1019</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.wrlinux:def:1019</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_7">
+      <cpe-item name="cpe:/o:microsoft:windows_7:-">
             <title xml:lang="en-us">Microsoft Windows 7</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:7</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_8">
+      <cpe-item name="cpe:/o:microsoft:windows_8.0:-">
             <title xml:lang="en-us">Microsoft Windows 8</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:8</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_8.1">
+      <cpe-item name="cpe:/o:microsoft:windows_8.1:-">
             <title xml:lang="en-us">Microsoft Windows 8.1</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:81</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_10">
-            <title xml:lang="en-us">Microsoft Windows 10</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:10</check>
-      </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_server_2008">
+      <cpe-item name="cpe:/o:microsoft:windows_server_2008:-">
             <title xml:lang="en-us">Microsoft Windows Server 2008</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2008</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_server_2012">
+      <cpe-item name="cpe:/o:microsoft:windows_server_2012:-">
             <title xml:lang="en-us">Microsoft Windows Server 2012</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2012</check>
       </cpe-item>
-      <cpe-item name="cpe:/o:microsoft:windows_server_2016">
+      <cpe-item name="cpe:/o:microsoft:windows_server_2016:-">
             <title xml:lang="en-us">Microsoft Windows Server 2016</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.windows:def:2016</check>
       </cpe-item>
