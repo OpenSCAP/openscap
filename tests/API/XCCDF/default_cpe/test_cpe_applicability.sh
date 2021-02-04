@@ -8,15 +8,13 @@
 CPE_OVAL="cpe-oval.xml"
 CPE_DICT="cpe-dict.xml"
 XCCDF="xccdf.xml"
-SYSTEM_CPE_FILE="/etc/system-release-cpe"
-SYSTEM_CPE=$(cat $SYSTEM_CPE_FILE)
+CPE="cpe:/o:example:applicable:1"
 NA_CPE="cpe:/o:example:not_applicable:5"
 
 function test_cpe_setup() {
-	local CPE=$1
 	cp $srcdir/$CPE_OVAL $builddir/$CPE_OVAL
 	cp $srcdir/$CPE_DICT $builddir/$CPE_DICT
-	sed -i "s|<<CPE>>|${CPE}|" $builddir/$CPE_DICT
+	echo "Applicable CPE (set in '$CPE_DICT'): $CPE"
 }
 
 function test_cpe {
@@ -25,11 +23,11 @@ function test_cpe {
 	local TMP_RESULTS=`mktemp`
 
 	# Create XCCDF file with CPE based on RHEL/FEDORA version.
+	rm -f $builddir/$XCCDF
 	cp $srcdir/$XCCDF $builddir/$XCCDF
 	sed -i "s|<<CPE>>|${CPE}|" $builddir/$XCCDF
 
-	echo "System CPE: ${SYSTEM_CPE}"
-	echo "Tested CPE: ${CPE}"
+	echo "Tested CPE: $CPE"
 	$OSCAP xccdf eval --cpe $builddir/$CPE_DICT --results $TMP_RESULTS $builddir/$XCCDF
 	if [ $? -ne 0 ]; then
 		return 1
@@ -47,12 +45,12 @@ function test_cpe {
 
 # Testing.
 
-test_init "test_api_xccdf_default_cpe.log"
-test_cpe_setup $SYSTEM_CPE
+test_init "test_api_xccdf_cpe_applicability.log"
+test_cpe_setup
 
-test_run "test_api_xccdf_default_cpe" test_cpe \
-	$SYSTEM_CPE 0
-test_run "test_api_xccdf_notapplicable_cpe" test_cpe \
+test_run "test_api_xccdf_cpe_applicable" test_cpe \
+	$CPE 0
+test_run "test_api_xccdf_cpe_notapplicable" test_cpe \
 	$NA_CPE 1
 
 test_exit
