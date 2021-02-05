@@ -203,7 +203,7 @@
 #include "windows/wmi57_probe.h"
 #endif
 
-#ifdef OPENSCAP_PROBE_DGAMI_AUDITDLINE
+#ifdef OPENSCAP_PROBE_LINUX_AUDIDLINE
 #include "unix/linux/auditdline_probe.h"
 #endif
 
@@ -256,7 +256,7 @@ static const probe_table_entry_t probe_table[] = {
 #ifdef OPENSCAP_PROBE_INDEPENDENT_YAMLFILECONTENT
 	{OVAL_INDEPENDENT_YAML_FILE_CONTENT, NULL, yamlfilecontent_probe_main, NULL, yamlfilecontent_probe_offline_mode_supported},
 #endif
-#ifdef OPENSCAP_PROBE_DGAMI_AUDITDLINE
+#ifdef OPENSCAP_PROBE_LINUX_AUDIDLINE
 	{OVAL_DGAMI_AUDITDLINE, NULL, auditdline_probe_main, NULL, auditdline_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_DPKGINFO
