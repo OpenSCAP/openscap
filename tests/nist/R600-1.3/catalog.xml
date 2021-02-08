@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bundleId="G2.r600" bundleVersion="1" xsi:noNamespaceSchemaLocation="scap-validation-catalog-schema.xsd">
+	<bundleName>r600</bundleName>
+	<bundleGuiName>r600 Test</bundleGuiName>
+	<testSuite version="1" suiteId="G2.scap_gov.nist_comp_r600_1-xccdf">
+		<suiteName>Checklist 1 - no profile</suiteName>
+		<guiName>Checklist 1 - no profile</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r600-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_gov.nist_comp_r600-cpe-oval</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_gov.nist_comp_r600-cpe-dictionary</cpeDictionaryFilename>
+		<ovalFilename>scap_gov.nist_comp_r600-oval</ovalFilename>
+		<xccdfFilename>scap_gov.nist_comp_r600_1-xccdf</xccdfFilename>
+		<xccdfProfile>n/a</xccdfProfile>
+		<benchmarkID>xccdf_gov.nist_benchmark_r600_1</benchmarkID>
+		<!--<preparation ordered="false" platform="TODO">
+			<command commandType="shell" order="1" revision="1">
+				<command>TODO</command>
+			</command>
+		</preparation>-->
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_xccdf_gov.nist_rule-1" expectedResult="unknown" oval_definition_id="oval:nist.validation:def:1"/>
+		</expectedResults>
+	</testSuite>
+	<testSuite version="1" suiteId="G2.scap_gov.nist_comp_r600_2-xccdf">
+		<suiteName>Checklist 2 - no profile</suiteName>
+		<guiName>Checklist 2 - no profile</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r600-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_gov.nist_comp_r600-cpe-oval</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_gov.nist_comp_r600-cpe-dictionary</cpeDictionaryFilename>
+		<ovalFilename>scap_gov.nist_comp_r600-oval</ovalFilename>
+		<xccdfFilename>scap_gov.nist_comp_r600_2-xccdf</xccdfFilename>
+		<xccdfProfile>n/a</xccdfProfile>
+		<benchmarkID>xccdf_gov.nist_benchmark_r600_2</benchmarkID>
+		<!--<preparation ordered="false" platform="TODO">
+			<command commandType="shell" order="1" revision="1">
+				<command>TODO</command>
+			</command>
+		</preparation>-->
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist_rule_xccdf_gov.nist_rule-1" expectedResult="unknown" oval_definition_id="oval:nist.validation:def:1"/>
+			<result definition="xccdf_gov.nist_rule_xccdf_gov.nist_rule-2" expectedResult="pass" oval_definition_id="oval:nist.validation:def:1000"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>
