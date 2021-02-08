@@ -5,6 +5,9 @@ import subprocess
 import sys
 import os
 import argparse
+# It is deprecated since 3.4, but it would be present in 3.x
+import imp
+
 
 xccdf_ns = "http://checklists.nist.gov/xccdf/1.2"
 xccdf_1_1_ns = "http://checklists.nist.gov/xccdf/1.1"
@@ -17,6 +20,12 @@ def get_test_property(test, property_name):
             return property_element.text
     else:
         return None
+
+def get_set_up_script(test):
+    return get_test_property(test, "setUpScript")
+
+def get_tear_down_script(test):
+    return get_test_property(test, "tearDownScript")
 
 def get_datastream_file_name(test):
     return get_test_property(test, "datastreamFile")
@@ -55,6 +64,8 @@ def run_test(test, scanner, output_dir):
     tailoring_id = get_tailoring_id(test)
     benchmark_id = get_benchmark_id(test)
     profile = get_profile_name(test)
+    set_up = get_set_up_script(test)
+    tear_down = get_tear_down_script(test)
     command = scanner
     if datastream:
         results_file = os.path.join(output_dir, test_id + ".results_arf.xml")
@@ -80,6 +91,8 @@ def run_test(test, scanner, output_dir):
         sys.stderr.write("Unable to run the test! Check the catalog.xml.\n")
         return None
     print(command)
+    if set_up:
+        imp.load_source('setup', 'configuration_scripts/' + set_up).performConfig()
     with open(os.path.join(output_dir, test_id + ".stdout"), "w") as stdout_file:
         oscap_return_code = subprocess.call(["bash", "-c", command],
                                             stdout=stdout_file)
@@ -88,7 +101,8 @@ def run_test(test, scanner, output_dir):
             sys.stderr.write(
                 "oscap returned an invalid exit code '%i'" % (oscap_return_code)
             )
-            return None
+    if tear_down:
+        imp.load_source('teardown', 'configuration_scripts/' + tear_down).performConfig()
 
 
 def find_actual_result_in_arf(arf_root, rule_id):
