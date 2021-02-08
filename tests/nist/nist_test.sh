@@ -21,7 +21,7 @@ function test_nist {
 		fi
 		# workaround for missing idref in <platform> in an internally used
 		# XCCDF. this XCCDF is never exported and only used internally.
-		if [ "x$test_dir" == "xR1200" ]; then
+		if [[ "x$test_dir" == "xR1200" || "x$test_dir" == "xR1200-1.3" ]]; then
 			unset OSCAP_FULL_VALIDATION
 		fi
 		"$PREFERRED_PYTHON" "${srcdir}/test_worker.py" --scanner "$OSCAP" --outputdir "${builddir}/tests/nist/$test_dir/" "${srcdir}/$test_dir/"
@@ -100,6 +100,7 @@ test_run "R500" test_nist "R500"
 test_run "R600" test_nist "R600"
 test_run "R1100" test_nist "R1100"
 test_run "R1200" test_nist "R1200"
+test_run "R1200-1.3" test_nist "R1200-1.3"
 test_run "R2000" test_results_directive "R2000"
 test_run "R2920" test_nist "R2940"
 test_run "R3005" test_nist "R3005"
