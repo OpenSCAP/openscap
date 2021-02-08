@@ -13,7 +13,8 @@ oval_result_ns = "http://oval.mitre.org/XMLSchema/oval-results-5"
 def get_test_property(test, property_name):
     property_element = test.find(property_name)
     if property_element is not None:
-        return property_element.text
+        if property_element.text != "n/a":
+            return property_element.text
     else:
         return None
 
@@ -181,7 +182,7 @@ if __name__ == "__main__":
         test_id = test.get("suiteId")
         print("# " + test_id)
         schema = get_schema(test)
-        if schema == "windows":
+        if schema in ["windows", "microsoft windows"]:
             print("SKIPPED")
             continue
         if "remote" in test_id:
