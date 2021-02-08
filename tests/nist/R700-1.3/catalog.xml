@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testBundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bundleId="G2.r700" bundleVersion="1" xsi:noNamespaceSchemaLocation="scap-validation-catalog-schema.xsd">
+	<bundleName>R700</bundleName>
+	<bundleGuiName>R700 Test</bundleGuiName>
+	<testSuite version="1" suiteId="G2.datastream.profile1">
+		<suiteName>R700 Data Stream - profile1</suiteName>
+		<guiName>R700 Data Stream - profile1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r700-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_gov.nist_comp_r700-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_gov.nist_comp_r700-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>scap_gov.nist_comp_r700-oval.xml</ovalFilename>
+		<xccdfFilename>scap_gov.nist_comp_r700-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r700_1</xccdfProfile>
+		<setUpScript>linux_text_file_test_config_1.py</setUpScript>
+		<tearDownScript>linux_text_file_content_test_cleanup.py</tearDownScript>
+		<!--<preparation ordered="false" platform="TODO">
+			<command commandType="shell" order="1" revision="1">
+				<command>TODO</command>
+			</command>
+		</preparation>-->
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist.validation_rule_r700_1" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:1"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_2" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:2"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_3" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:3"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_4" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:4"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_5" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:5"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_6" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:6"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_7" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:7"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_8" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:8"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_9" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:9"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_10" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:10"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_11" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:11"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_13" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:13"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_14" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:14"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_15" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:15"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_16" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:16"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_17" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:17"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_18" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:18"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_19" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:19"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_20" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:20"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_21" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:21"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_22" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:22"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_23" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:23"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_25" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:25"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_26" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:26"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_27" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:27"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_28" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:28"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_29" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:29"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_30" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:30"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_31" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:31"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_32" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:32"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_33" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:33"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_34" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:34"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_36" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:36"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_37" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:37"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_38" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:38"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_39" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:39"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_40" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:40"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_41" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:41"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_42" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:42"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_43" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:43"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_44" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:44"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_45" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:45"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_47" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:47"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_48" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:48"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_49" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:49"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_50" expectedResult="fail" oval_definition_id="oval:nist.validation.r700:def:50"/>
+		</expectedResults>
+	</testSuite>
+
+	<testSuite version="1" suiteId="G2.datastream.profile2">
+		<suiteName>R700 Data Stream - profile1</suiteName>
+		<guiName>R700 Data Stream - profile1</guiName>
+		<schema>independent</schema>
+		<datastreamFile>r700-datastream.xml</datastreamFile>
+		<cpeOvalFilename>scap_gov.nist_comp_r700-cpe-oval.xml</cpeOvalFilename>
+		<cpeDictionaryFilename>scap_gov.nist_comp_r700-cpe-dictionary.xml</cpeDictionaryFilename>
+		<ovalFilename>scap_gov.nist_comp_r700-oval.xml</ovalFilename>
+		<xccdfFilename>scap_gov.nist_comp_r700-xccdf.xml</xccdfFilename>
+		<xccdfProfile>xccdf_gov.nist.validation_profile_r700_2</xccdfProfile>
+		<setUpScript>linux_text_file_test_config_1.py</setUpScript>
+		<tearDownScript>linux_text_file_content_test_cleanup.py</tearDownScript>
+		<!--<preparation ordered="false" platform="TODO">
+			<command commandType="shell" order="1" revision="1">
+				<command>TODO</command>
+			</command>
+		</preparation>-->
+		<expectedResults reportType="arf">
+			<result definition="xccdf_gov.nist.validation_rule_r700_1" expectedResult="pass" oval_definition_id="oval:nist.validation.r700:def:1"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_2" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:2"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_3" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:3"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_4" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:4"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_5" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:5"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_6" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:6"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_7" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:7"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_8" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:8"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_9" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:9"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_10" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:10"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_11" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:11"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_13" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:13"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_14" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:14"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_15" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:15"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_16" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:16"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_17" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:17"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_18" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:18"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_19" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:19"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_20" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:20"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_21" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:21"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_22" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:22"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_23" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:23"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_25" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:25"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_26" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:26"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_27" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:27"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_28" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:28"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_29" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:29"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_30" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:30"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_31" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:31"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_32" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:32"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_33" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:33"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_34" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:34"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_36" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:36"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_37" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:37"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_38" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:38"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_39" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:39"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_40" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:40"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_41" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:41"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_42" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:42"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_43" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:43"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_44" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:44"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_45" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:45"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_47" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:47"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_48" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:48"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_49" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:49"/>
+			<result definition="xccdf_gov.nist.validation_rule_r700_50" expectedResult="notselected" oval_definition_id="oval:nist.validation.r700:def:50"/>
+		</expectedResults>
+	</testSuite>
+</testBundle>

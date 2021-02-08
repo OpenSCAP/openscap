@@ -9,6 +9,9 @@
 
 set -e -o pipefail
 
+PYTHONDONTWRITEBYTECODE=1
+export PYTHONDONTWRITEBYTECODE
+
 function test_nist {
 	test_dir="$1"
 	# make sure the output dir in builddir exists
@@ -101,6 +104,7 @@ test_run "R500" test_nist "R500"
 test_run "R500-1.3" test_nist "R500-1.3"
 test_run "R600" test_nist "R600"
 test_run "R600-1.3" test_nist "R600-1.3"
+test_run "R700-1.3" test_nist "R700-1.3"
 test_run "R1100" test_nist "R1100"
 test_run "R1200" test_nist "R1200"
 test_run "R1200-1.3" test_nist "R1200-1.3"
