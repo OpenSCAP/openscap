@@ -901,62 +901,17 @@ NOTE: Please note that for the rest of `oscap` functionality, unless you specify
 Therefore, you do not need to explicitly validate a datastream before
 use.
 
+=== Validating digital signature in SCAP source data stream
 
-=== SCAP Content Signing and Signature Verification
-The `oscap` itself does not do signature verification. It skips over the
-respective elements. This is due to the fact that there are way too many options
-when it comes to keystores and crypto choices. Instead we recommend users to use
-{xmlsec}[xmlsec1] to verify their SCAP content.  Safely evaluating signed
-content (with signature verification) involves the following steps:
+When evaluating a digitally signed SCAP source data stream OpenSCAP validates
+the digital signature of the data stream. The signature validation is performed
+automatically while loading the file. Data streams with invalid signature are
+rejected and OpenSCAP doesn't evaluate the content. OpenSCAP uses
+https://www.aleksey.com/xmlsec/[XML Security Library] with OpenSSL backend to
+validate the digital signature.
 
-1) Install xmlsec1 and at least one of its crypto engines
--------------------------------------
-# yum install xmlsec1 xmlsec1-openssl
--------------------------------------
-
-2) Run `xmlsec1 --verify` on the content:
-
-This simple example will only show 2 specific cases of verifying the
-signature, the steps may vary depending on which technique was used to
-sign the datastream.
-
-Assuming the datastream was signed with a private key and we have the
-respective public key to verify it with:
-
-------------------------------------------------------
-$ xmlsec1 --verify --pubkey-pem pub.key datastream.xml
-------------------------------------------------------
-
-Assuming the datastream was signed with a certificate and we have the
-respective public part of the certificate to verify it with:
-
----------------------------------------------------------------
-$ xmlsec1 --verify --pubkey-cert-pem pubcert.key datastream.xml
----------------------------------------------------------------
-
-There are countless other options, for more details see: `xmlsec1
---help-verify`
-
-Successful output should look similar to this:
-
------------------------------------------------------
-$ xmlsec1 verify --pubkey-pem key.pub datastream.xml
-OK
-SignedInfo References (ok/all): 1/1
-Manifests References (ok/all): 0/0
------------------------------------------------------
-
-And the exit code must be 0 before proceeding.
-
-3) If the previous steps resulted in successful verification, proceed
-by evaluating the datastream:
-
----------------------------------
-$ oscap xccdf eval datastream.xml
----------------------------------
-
-NOTE: If you want to experiment with various crypto engines of xmlsec1, see
- `xmlsec1-config --help`
+The signature validation can be skipped by adding the
+`--skip-signature-validation` option to the `oscap xccdf eval` command.
 
 
 === Generating Reports and Guides
