@@ -270,7 +270,7 @@ xmlDoc *ds_sds_session_get_xmlDoc(struct ds_sds_session *session)
 int ds_sds_session_register_component_source(struct ds_sds_session *session, const char *relative_filepath, struct oscap_source *component)
 {
 	if (!oscap_htable_add(session->component_sources, relative_filepath, component)) {
-		dW("File %s has already been registered in Source DataStream session: %s",
+		dI("File %s has already been registered in Source DataStream session: %s",
 			relative_filepath, oscap_source_readable_origin(session->source));
 		return -1;
 	}
