@@ -43,6 +43,8 @@ stderr=$(mktemp)
 verbose=$(mktemp)
 result=$(mktemp)
 $OSCAP xccdf eval --skip-signature-validation --results-arf $result $srcdir/simple_ds_invalid_sign.xml >$stdout 2>$stderr
+! [ -s $stderr ]
+! grep -q "Validating XML signature" $verbose
 assert_exists 1 '//TestResult/rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
 rm -f $stdout
 rm -f $stderr
