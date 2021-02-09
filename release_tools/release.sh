@@ -34,12 +34,6 @@ clean_repository_aggressively()
 }
 
 
-check_cpe()
-{
-    grep -q "cpe:/o:fedoraproject:fedora:$latest_fedora" "$OSCAP_REPO_ROOT/cpe/openscap-cpe-dict.xml" || die "Couldn't find Fedora $latest_fedora CPE"
-    grep -q "cpe:/o:redhat:enterprise_linux:$latest_rhel" "$OSCAP_REPO_ROOT/cpe/openscap-cpe-dict.xml" || die "Couldn't find RHEL $latest_rhel CPE"
-}
-
 # Args:
 # $1: Python version
 check_python_binding()

@@ -1,8 +1,14 @@
 This folder contains the default CPE dictionary and its associated OVAL file.
 
-The CPE names inside are taken from official CPE dictionary found at
-https://nvd.nist.gov/cpe.cfm with the following exceptions:
+Synchronized with the official NIST NVD CPE Dictionary v2.3
+from https://nvd.nist.gov/products/cpe with the following exceptions,
+that are kept for backward-compatibility:
 
-1) cpe:/o:redhat:enterprise_linux:6 (adapted from RHEL5 CPE name)
-2) cpe:/o:fedoraproject:fedora:16 (taken from CPE_NAME in /etc/os-release on F16)
-3) cpe:/o:fedoraproject:fedora:17 (taken from CPE_NAME in /etc/os-release on F17)
+cpe:/o:redhat:enterprise_linux:6          deprecated
+cpe:/o:redhat:enterprise_linux:7          no cover-all name for 7.x versions
+cpe:/o:redhat:enterprise_linux:8          no cover-all name for 8.x versions
+cpe:/o:centos:centos:7                    no cover-all name for 7.x versions
+cpe:/o:centos:centos:8                    no cover-all name for 8.x versions
+
+In the next API-breaking version the internal CPE dictionary will be removed
+completely.
