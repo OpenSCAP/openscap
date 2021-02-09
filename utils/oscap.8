@@ -185,6 +185,11 @@ Selects a component ref from any datastream that references a component with XCC
 Do not validate input/output files.
 .RE
 .TP
+\fB\-\-skip-signature-validation\fR
+.RS
+Do not validate digital signatures in digitally signed SCAP source data streams.
+.RE
+.TP
 \fB\-\-fetch-remote-resources\fR
 .RS
 Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
@@ -345,6 +350,9 @@ Use given file for XCCDF tailoring. Select profile from tailoring file to apply 
 .TP
 \fB\-\-tailoring-id COMPONENT_REF_ID\fR
 Use tailoring component in input source datastream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source datastream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-skip-signature-validation\fR
+Do not validate digital signatures in digitally signed SCAP source data streams.
 .RE
 .TP
 .B \fBreport\fR  [\fIoptions\fR] xccdf-file
@@ -395,6 +403,9 @@ Use given file for XCCDF tailoring. Select profile from tailoring file to apply 
 .TP
 \fB\-\-tailoring-id COMPONENT_REF_ID\fR
 Use tailoring component in input source datastream for XCCDF tailoring. The tailoring component must be specified by its Ref-ID (value of component-ref/@id attribute in input source datastream). Select profile from tailoring component to apply using --profile. If both --tailoring-file and --tailoring-id are specified, --tailoring-file takes priority.
+.TP
+\fB\-\-skip-signature-validation\fR
+Do not validate digital signatures in digitally signed SCAP source data streams.
 .RE
 .TP
 .B \fBcustom\fR  --stylesheet xslt-file [\fIoptions\fR] xccdf-file
