@@ -81,6 +81,7 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
 		"   --xccdf-id <id>               - ID of XCCDF in the datastream that should be evaluated.\n"
 		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
@@ -92,7 +93,8 @@ static struct oscap_module DS_SDS_COMPOSE_MODULE = {
 	.summary = "Compose SourceDataStream from given XCCDF",
 	.usage = "[options] xccdf-file.xml target_datastream.xml",
 	.help = "Options:\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_compose
 };
@@ -104,7 +106,8 @@ static struct oscap_module DS_SDS_ADD_MODULE = {
 	.usage = "[options] new-component.xml existing_datastream.xml",
 	.help =	"Options:\n"
 		"   --datastream-id <id>          - ID of the datastream in the collection for adding to.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_add
 };
@@ -126,7 +129,8 @@ static struct oscap_module DS_RDS_SPLIT_MODULE = {
 	.usage = "[OPTIONS] rds.xml TARGET_DIRECTORY",
 	.help =	"Options:\n"
 		"   --report-id <id>              - ID of report inside ARF that should be split.\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_split
 };
@@ -137,7 +141,8 @@ static struct oscap_module DS_RDS_CREATE_MODULE = {
 	.summary = "Create a ResultDataStream from given SourceDataStream, XCCDF results and one or more OVAL results",
 	.usage = "[options] sds.xml target-arf.xml results-xccdf.xml [results-oval1.xml [results-oval2.xml]]",
 	.help =	"Options:\n"
-		"   --skip-valid                  - Skips validating of given XCCDF.\n",
+		"   --skip-valid                  - Skips validating of given XCCDF.\n"
+		"   --skip-validation\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_rds_create
 };
@@ -176,6 +181,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 	const struct option long_options[] = {
 	// options
 		{"skip-valid",      no_argument, &action->validate, 0},
+		{"skip-validation",      no_argument, &action->validate, 0},
 		{"datastream-id",		required_argument, NULL, DS_OPT_DATASTREAM_ID},
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},

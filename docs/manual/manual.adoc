@@ -897,7 +897,7 @@ $ oscap oval validate --schematron oval-file.xml
 The results of validation are printed to standard error stream (stderr).
 
 NOTE: Please note that for the rest of `oscap` functionality, unless you specify
---skip-valid, validation will automatically occur before files are used.
+--skip-validation (--skip-valid), validation will automatically occur before files are used.
 Therefore, you do not need to explicitly validate a datastream before
 use.
 

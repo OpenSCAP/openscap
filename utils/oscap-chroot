@@ -51,6 +51,7 @@ function usage()
     echo "  --results-arf"
     echo "  --report"
     echo "  --skip-valid"
+    echo "  --skip-validation"
     echo "  --fetch-remote-resources"
     echo "  --progress"
     echo "  --datastream-id"
@@ -66,6 +67,7 @@ function usage()
     echo "  --results"
     echo "  --report"
     echo "  --skip-valid"
+    echo "  --skip-validation"
     echo "  --datastream-id"
     echo "  --oval-id"
     echo
@@ -76,6 +78,7 @@ function usage()
     echo "  --syschar"
     echo "  --variables"
     echo "  --skip-valid"
+    echo "  --skip-validation"
     echo
     echo "See \`man oscap\` to learn more about semantics of these options."
 }

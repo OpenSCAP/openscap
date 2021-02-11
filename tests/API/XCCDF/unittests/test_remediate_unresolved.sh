@@ -12,7 +12,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $stderr"
 rm -f test_file
 
-$OSCAP xccdf remediate --skip-valid --results $result $srcdir/${name}.xccdf.xml 2> $stderr || ret=$?
+$OSCAP xccdf remediate --skip-validation --results $result $srcdir/${name}.xccdf.xml 2> $stderr || ret=$?
 [ $ret -eq 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 
