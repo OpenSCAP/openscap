@@ -459,15 +459,11 @@ static int print_arch(unsigned int value, int op, struct audit_line *audit_line)
 	return machine;
 }
 
-/*
- *  This function prints 1 rule from the kernel reply
- */
 struct audit_line *get_rule(const struct audit_rule_data *r)
 {
-	unsigned int i, count = 0, sc = 0;
+	unsigned int i, sc = 0;
 	size_t boffset = 0;
-	int mach = -1, watch = is_watch(r);
-	unsigned long long a0 = 0, a1 = 0;
+	int watch = is_watch(r);
 	struct audit_line *audit_line = audit_line_new();
 
 	if (!watch)
@@ -492,11 +488,11 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 			if (field == AUDIT_ARCH)
 			{
 				int op = r->fieldflags[i] & AUDIT_OPERATORS;
-				mach = print_arch(r->values[i], op, audit_line);
+				print_arch(r->values[i], op, audit_line);
 			}
 		}
 		// And last do the syscalls
-		count = print_syscall(r, &sc, audit_line);
+		print_syscall(r, &sc, audit_line);
 	}
 
 	// Now iterate over the fields
@@ -698,7 +694,7 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 			{
 				print_field_cmp(r->values[i], op, audit_line);
 			}
-			// This section is based on internal libaudit and auparse component
+			// This section is based on internal libaudit and auparse component, it's keep here for information
 			/* else if (field >= AUDIT_ARG0 && field <= AUDIT_ARG3)
 			{
 				if (field == AUDIT_ARG0)
@@ -828,7 +824,7 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 /*
  * A reply from the kernel is expected. Get and display it.
  */
-static struct oscap_list *get_reply(int fd)
+static struct oscap_list *get_reply(int fd, probe_ctx *ctx)
 {
 	struct oscap_list *audit_list = oscap_list_new();
 	int i, retval;
@@ -862,7 +858,20 @@ static struct oscap_list *get_reply(int fd)
 			{
 				break;
 			}
-			// TODO gestion des types de messages n'�tant pas des rules
+			else if (rep.type == NLMSG_ERROR)
+			{
+				int errnum = rep.error->error;
+				dE("Error while reading audit rules packets from the kernel : %d", errnum);
+				SEXP_t *item = probe_item_create(
+					OVAL_DGAMI_AUDITDLINE, NULL,
+					"filter_key", OVAL_DATATYPE_STRING, "",
+					NULL);
+
+				probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
+				probe_item_add_msg(item, OVAL_MESSAGE_LEVEL_ERROR,
+								   "Error while reading audit rules packets from the kernel : %d", errnum);
+				probe_item_collect(ctx, item);
+			}
 			struct audit_line *audit_line = get_rule(rep.ruledata);
 			audit_line->line_number = line_number;
 			oscap_list_add(audit_list, audit_line);
@@ -888,7 +897,7 @@ static struct oscap_list *get_all_audit_rules(probe_ctx *ctx)
 
 			dD("Successfull request to get the kernel audit rules.");
 
-			struct oscap_list *audit_list = get_reply(audit_fd);
+			struct oscap_list *audit_list = get_reply(audit_fd, ctx);
 			audit_close(audit_fd);
 			return audit_list;
 		}
@@ -936,7 +945,9 @@ int auditdline_probe_main(probe_ctx *ctx, void *arg)
 
 	SEXP_t *probe_in = probe_ctx_getobject(ctx);
 	SEXP_t *key_filter = probe_obj_getent(probe_in, "filter_key", 1);
-	bool isNil = probe_ent_getval(key_filter) == NULL;
+	SEXP_t *nil_attr = probe_ent_getval(key_filter);
+	bool isNil = nil_attr == NULL;
+	free(nil_attr);
 
 	struct oscap_list *audit_list = get_all_audit_rules(ctx);
 
