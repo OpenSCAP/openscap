@@ -392,7 +392,6 @@ static const struct oscap_string_map OVAL_FAMILY_MAP[] = {
 	{OVAL_FAMILY_SOLARIS, "solaris"},
 	{OVAL_FAMILY_UNIX, "unix"},
 	{OVAL_FAMILY_WINDOWS, "windows"},
-	{OVAL_FAMILY_DGAMI, "x-dgami"},
 	{OVAL_ENUMERATION_INVALID, NULL}
 };
 
@@ -611,6 +610,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
         {OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"},
         {OVAL_LINUX_SYSTEMDUNITPROPERTY, "systemdunitproperty"},
         {OVAL_LINUX_SYSTEMDUNITDEPENDENCY, "systemdunitdependency"},
+		{OVAL_LINUX_AUDITDLINE, "auditdline"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
@@ -762,10 +762,6 @@ static const struct oscap_string_map OVAL_SUBTYPE_WINDOWS_MAP[] = {
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
-static const struct oscap_string_map OVAL_SUBTYPE_DGAMI_MAP[] = {
-	{OVAL_DGAMI_AUDITDLINE, "auditdline"},
-};
-
 static const struct oscap_string_map *get_map_for_family(oval_family_t family)
 {
 	const struct oscap_string_map *map = NULL;
@@ -832,9 +828,6 @@ static const struct oscap_string_map *get_map_for_family(oval_family_t family)
 		break;
 	case OVAL_FAMILY_WINDOWS:
 		map = OVAL_SUBTYPE_WINDOWS_MAP;
-		break;
-	case OVAL_FAMILY_DGAMI:
-		map = OVAL_SUBTYPE_DGAMI_MAP;
 		break;
 	default:
 		map = NULL;

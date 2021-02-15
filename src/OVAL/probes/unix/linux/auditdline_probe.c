@@ -863,7 +863,7 @@ static struct oscap_list *get_reply(int fd, probe_ctx *ctx)
 				int errnum = rep.error->error;
 				dE("Error while reading audit rules packets from the kernel : %d", errnum);
 				SEXP_t *item = probe_item_create(
-					OVAL_DGAMI_AUDITDLINE, NULL,
+					OVAL_LINUX_AUDITDLINE, NULL,
 					"filter_key", OVAL_DATATYPE_STRING, "",
 					NULL);
 
@@ -906,7 +906,7 @@ static struct oscap_list *get_all_audit_rules(probe_ctx *ctx)
 			int errnum = errno;
 			dE("Failed to request the kernel for audit rules : %s", strerror(errnum));
 			SEXP_t *item = probe_item_create(
-				OVAL_DGAMI_AUDITDLINE, NULL,
+				OVAL_LINUX_AUDITDLINE, NULL,
 				"filter_key", OVAL_DATATYPE_STRING, "",
 				NULL);
 
@@ -921,7 +921,7 @@ static struct oscap_list *get_all_audit_rules(probe_ctx *ctx)
 		int errnum = errno;
 		dE("Failed to get a handle for the audit system : %s", strerror(errnum));
 		SEXP_t *item = probe_item_create(
-			OVAL_DGAMI_AUDITDLINE, NULL,
+			OVAL_LINUX_AUDITDLINE, NULL,
 			"filter_key", OVAL_DATATYPE_STRING, "",
 			NULL);
 
@@ -967,7 +967,7 @@ int auditdline_probe_main(probe_ctx *ctx, void *arg)
 					if (probe_entobj_cmp(key_filter, sexp_filter_key) == OVAL_RESULT_TRUE)
 					{
 						SEXP_t *item = probe_item_create(
-							OVAL_DGAMI_AUDITDLINE, NULL,
+							OVAL_LINUX_AUDITDLINE, NULL,
 							"filter_key", OVAL_DATATYPE_STRING, filter_key,
 							"auditline", OVAL_DATATYPE_STRING, oscap_string_get_cstr(audit_line->audit_line),
 							"line_number", OVAL_DATATYPE_INTEGER, audit_line->line_number,
@@ -984,7 +984,7 @@ int auditdline_probe_main(probe_ctx *ctx, void *arg)
 			else
 			{
 				SEXP_t *item = probe_item_create(
-					OVAL_DGAMI_AUDITDLINE, NULL,
+					OVAL_LINUX_AUDITDLINE, NULL,
 					"auditline", OVAL_DATATYPE_STRING, oscap_string_get_cstr(audit_line->audit_line),
 					"line_number", OVAL_DATATYPE_INTEGER, audit_line->line_number,
 					NULL);
