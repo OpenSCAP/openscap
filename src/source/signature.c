@@ -208,14 +208,14 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 	int good = 0;
 	xmlSecDSigReferenceCtxPtr dsigRefCtx;
 	int size = xmlSecPtrListGetSize(&(dsigCtx->signedInfoReferences));
-	for (int i = good = 0; i < size; ++i) {
+	for (int i = good = 0; i < size; i++) {
 		dsigRefCtx = (xmlSecDSigReferenceCtxPtr)xmlSecPtrListGetItem(&(dsigCtx->signedInfoReferences), i);
 		if(dsigRefCtx == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Reference ctx is null");
 			goto cleanup;
 		}
 		if (dsigRefCtx->status == xmlSecDSigStatusSucceeded)
-			++good;
+			good++;
 	}
 	dI("SignedInfo references (ok/all): %d/%d", good, size);
 	if (good != size) {
@@ -224,14 +224,14 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 
 	/* compare good/bad manifests */
 	size = xmlSecPtrListGetSize(&(dsigCtx->manifestReferences));
-	for (int i = good = 0; i < size; ++i) {
+	for (int i = good = 0; i < size; i++) {
 		dsigRefCtx = (xmlSecDSigReferenceCtxPtr)xmlSecPtrListGetItem(&(dsigCtx->manifestReferences), i);
 		if (dsigRefCtx == NULL) {
 			oscap_seterr(OSCAP_EFAMILY_XML, "Reference ctx is null");
 			goto cleanup;
 		}
 		if (dsigRefCtx->status == xmlSecDSigStatusSucceeded)
-			++good;
+			good++;
 	}
 	dI("Manifests references (ok/all): %d/%d", good, size);
 	if (good != size) {
