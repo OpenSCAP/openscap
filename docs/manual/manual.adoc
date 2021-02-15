@@ -905,10 +905,17 @@ use.
 
 When evaluating a digitally signed SCAP source data stream OpenSCAP validates
 the digital signature of the data stream. The signature validation is performed
-automatically while loading the file. Data streams with invalid signature are
-rejected and OpenSCAP doesn't evaluate the content. OpenSCAP uses
+automatically while loading the file. Data streams with invalid signatures would
+be rejected and would not be evaluated. OpenSCAP uses
 https://www.aleksey.com/xmlsec/[XML Security Library] with OpenSSL backend to
 validate the digital signature.
+
+The signature validation only checks that the datastream hasn't been altered
+since its latest signature. OpenSCAP doesn't address trustworthiness of
+certificates or public keys that are part of the `KeyInfo` signature element and
+that are used to verify the signature. You should verify those keys yourself to
+prevent evaluation of datastreams that have been modified and signed by bad
+actors.
 
 The signature validation can be skipped by adding the
 `--skip-signature-validation` option to the `oscap xccdf eval` command.
