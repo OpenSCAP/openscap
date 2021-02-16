@@ -610,7 +610,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_LINUX_MAP[] = {
         {OVAL_LINUX_SELINUXSECURITYCONTEXT, "selinuxsecuritycontext"},
         {OVAL_LINUX_SYSTEMDUNITPROPERTY, "systemdunitproperty"},
         {OVAL_LINUX_SYSTEMDUNITDEPENDENCY, "systemdunitdependency"},
-		{OVAL_LINUX_AUDITDLINE, "auditdline"},
+	{OVAL_LINUX_AUDITDLINE, "auditdline"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 
