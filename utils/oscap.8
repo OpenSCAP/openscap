@@ -89,7 +89,7 @@ Perform evaluation of XCCDF document file given as INPUT_FILE. Print result of e
 oscap returns 0 if all rules pass. If there is an error during evaluation, the return code is 1. If there is at least one rule with either fail or unknown result, oscap-scan finishes with return code 2.
 .PP
 .PP
-Unless --skip-valid is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
+Unless --skip-validation (--skip-valid) is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
 .PP
 You may specify OVAL Definition files as the last parameter, XCCDF evaluation will then proceed only with those specified files. Otherwise, when \fIoval-definitions-files\fR parameter is missing, oscap tool will try to load all OVAL Definition files referenced from XCCDF automatically (search in the same path as XCCDF).
 .PP
@@ -180,6 +180,7 @@ Selects a component ref from any datastream that references a component with XCC
 .RE
 .TP
 \fB\-\-skip-valid\fR
+\fB\-\-skip-validation\fR
 .RS
 Do not validate input/output files.
 .RE
@@ -205,6 +206,7 @@ ID of the XCCDF TestResult element which shall be remedied. If this option is mi
 .RE
 .TP
 \fB\-\-skip-valid\fR
+\fB\-\-skip-validation\fR
 .RS
 Do not validate input/output files.
 .RE
@@ -292,6 +294,7 @@ Allow download of remote OVAL content referenced from XCCDF by check-content-ref
 .RE
 .TP
 \fB\-\-skip-valid\fR
+\fB\-\-skip-validation\fR
 .RS
 Do not validate input/output files.
 .RE
@@ -413,7 +416,7 @@ Probe the system and evaluate all definitions from OVAL Definition file. Print r
 .PP
 INPUT_FILE can be either OVAL Definition File or SCAP Source Datastream, it depends on used options.
 .PP
-Unless --skip-valid is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
+Unless --skip-validation (--skip-valid) is used, the INPUT_FILE is validated using XSD schemas (depending on document type of INPUT_FILE) and rejected if invalid.
 .TP
 \fB\-\-id DEFINITION-ID\fR
 Evaluate ONLY specified OVAL Definition from OVAL Definition File.
@@ -440,6 +443,7 @@ Uses a datastream with that particular ID from the given datastream collection. 
 Takes component ref with given ID from checks. This allows to select a particular OVAL component even in cases where there are 2 OVALs in one datastream.
 .TP
 \fB\-\-skip-valid\fR
+\fB\-\-skip-validation\fR
 Do not validate input/output files.
 .TP
 \fB\-\-fetch-remote-resources\fR
@@ -462,6 +466,7 @@ Provide external variables expected by OVAL Definitions.
 Write OVAL System Characteristic into file.
 .TP
 \fB\-\-skip-valid\fR
+\fB\-\-skip-validation\fR
 Do not validate input/output files.
 .TP
 .RE
@@ -478,6 +483,7 @@ Provide external variables expected by OVAL Definitions.
 Use OVAL Directives content to specify desired results content.
 .TP
 \fB\-\-skip-valid\fR
+\fB\-\-skip-validation\fR
 Do not validate input/output files.
 .RE
 
@@ -576,6 +582,7 @@ AR:[ND|L|M|H]         E   Availability requirement: Not Defined, Low, Medium, Hi
 Creates a source datastream from the XCCDF file given in SOURCE_XCCDF and stores the result in TARGET_SDS. Dependencies like OVAL files are automatically detected and bundled in target source datastream.
 .TP
 \fB\-\-skip-valid
+\fB\-\-skip-validation
 Do not validate input/output files.
 .RE
 .TP
@@ -587,6 +594,7 @@ Adds given NEW_COMPONENT file to the existing source datastream (EXISTING_SDS). 
 Uses a datastream with that particular ID from the given datastream collection. If not given the first datastream is used.
 .TP
 \fB\-\-skip-valid
+\fB\-\-skip-validation
 Do not validate input/output files.
 .RE
 .TP
@@ -601,6 +609,7 @@ Uses a datastream with that particular ID from the given datastream collection. 
 Takes component ref with given ID from checklists. This allows to select a particular XCCDF component even in cases where there are 2 XCCDFs in one datastream.
 .TP
 \fB\-\-skip-valid
+\fB\-\-skip-validation
 Do not validate input/output files.
 .TP
 \fB\-\-fetch-remote-resources\fR
@@ -617,6 +626,7 @@ Validate given source datastream file against a XML schema. Every found error is
 Takes given source datastream, XCCDF and OVAL results and creates a result datastream (in Asset Reporting Format) and saves it to file given in TARGET_ARF.
 .TP
 \fB\-\-skip-valid
+\fB\-\-skip-validation
 Do not validate input/output files.
 .RE
 .TP
@@ -625,6 +635,7 @@ Do not validate input/output files.
 Takes given result datastream (also called ARF = asset reporting format) and splits given report and its respective report-request to given target directory. If no report-id is given, we assume user wants the first applicable report in top-down order in the file.
 .TP
 \fB\-\-skip-valid
+\fB\-\-skip-validation
 Do not validate input/output files.
 .RE
 .TP

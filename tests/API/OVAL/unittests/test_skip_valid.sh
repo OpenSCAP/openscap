@@ -7,7 +7,7 @@ stderr=`mktemp`
 set -e
 set -o pipefail
 
-$OSCAP oval eval --results $result --skip-valid $srcdir/test_skip_valid.oval.xml 2> $stderr
+$OSCAP oval eval --results $result --skip-validation $srcdir/test_skip_valid.oval.xml 2> $stderr
 
 grep -q "Unable to export unknown state" $stderr
 

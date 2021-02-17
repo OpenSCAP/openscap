@@ -127,6 +127,7 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 	.help =	"Options:\n"
 		"   --profile <name>              - The name of Profile to be evaluated.\n"
 		"   --skip-valid                  - Skip validation.\n"
+		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
 		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
 		"                                   (only applicable for source datastreams)\n"
@@ -165,6 +166,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --without-syschar             - Don't provide system characteristic in OVAL/ARF result files.\n"
 		"   --report <file>               - Write HTML report into file.\n"
 		"   --skip-valid                  - Skip validation.\n"
+		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
@@ -190,6 +192,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"Options:\n"
 		"   --result-id                   - TestResult ID to be processed. Default is the most recent one.\n"
 		"   --skip-valid                  - Skip validation.\n"
+		"   --skip-validation\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
@@ -1141,6 +1144,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"oval-results",	no_argument, &action->oval_results, 1},
 		{"check-engine-results", no_argument, &action->check_engine_results, 1},
 		{"skip-valid",		no_argument, &action->validate, 0},
+		{"skip-validation",		no_argument, &action->validate, 0},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"progress", no_argument, &action->progress, 1},
 		{"remediate", no_argument, &action->remediate, 1},
