@@ -278,25 +278,67 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	struct xccdf_target_fact *fact = NULL;
 	const char *probe_root = getenv("OSCAP_PROBE_ROOT");
 
-#ifdef OSCAP_UNIX
 	_xccdf_result_clear_metadata(XITEM(result));
+	_xccdf_result_fill_scanner(result);
+
+#ifdef OSCAP_UNIX
 	char *hostname = NULL;
+	char *fqdn = NULL;
 	if (probe_root) {
 		hostname = _get_etc_hostname(probe_root);
 	} else {
 		struct utsname sname;
 		if (uname(&sname) != -1)
 			hostname = strdup(sname.nodename);
+
+		if (hostname) {
+			struct addrinfo hints, *info, *p;
+			int gai_res;
+
+			memset(&hints, 0, sizeof hints);
+			hints.ai_family = AF_UNSPEC;
+			hints.ai_socktype = SOCK_STREAM;
+			hints.ai_flags = AI_CANONNAME;
+
+			if (!(gai_res = getaddrinfo(hostname, NULL, &hints, &info))) {
+				for(p = info; p != NULL; p = p->ai_next) {
+					fact = xccdf_target_fact_new();
+					xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:fqdn");
+					xccdf_target_fact_set_string(fact, p->ai_canonname);
+					/* store FQDN under XCCDF1.2 (6.6.3) predefined name */
+					_xccdf_result_add_target_fact_uniq(result, fact);
+					if (!fqdn)
+						fqdn = strdup(p->ai_canonname);
+				}
+				freeaddrinfo(info);
+			} else {
+				dI("Unable to get FQDN(s) via getaddrinfo: %s\n", gai_strerror(gai_res));
+			}
+		}
 	}
-	/* store target name */
-	xccdf_result_add_target(result, hostname ? hostname : "Unknown");
+	/* store target's host name */
+	xccdf_result_add_target(result, fqdn ? fqdn : (hostname ? hostname : "unknown"));
+	if (hostname) {
+		fact = xccdf_target_fact_new();
+		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:host_name");
+		xccdf_target_fact_set_string(fact, hostname);
+		/* store host name under XCCDF1.2 (6.6.3) predefined name */
+		xccdf_result_add_target_fact(result, fact);
+	}
 	free(hostname);
+	free(fqdn);
 #elif defined(OS_WINDOWS)
 	TCHAR computer_name[MAX_COMPUTERNAME_LENGTH + 1];
 	DWORD computer_name_size = MAX_COMPUTERNAME_LENGTH + 1;
 	GetComputerName(computer_name, &computer_name_size);
 	/* store target name */
 	xccdf_result_add_target(result, computer_name);
+
+	fact = xccdf_target_fact_new();
+	xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:host_name");
+	xccdf_target_fact_set_string(fact, computer_name);
+	/* store host name under XCCDF1.2 (6.6.3) predefined name */
+	xccdf_result_add_target_fact(result, fact);
 #endif
 
 	const char *ev_target = getenv("OSCAP_EVALUATION_TARGET");
@@ -305,9 +347,13 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:identifier");
 		xccdf_target_fact_set_string(fact, ev_target);
 		xccdf_result_add_target_fact(result, fact);
-	}
 
-	_xccdf_result_fill_scanner(result);
+		fact = xccdf_target_fact_new();
+		xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:ein");
+		xccdf_target_fact_set_string(fact, ev_target);
+		/* store target id under XCCDF1.2 (6.6.3) predefined name */
+		xccdf_result_add_target_fact(result, fact);
+	}
 
 	if (!probe_root)
 		_xccdf_result_fill_identity(result);
