@@ -174,6 +174,23 @@ XCCDF_LISTMANIP(result, score, scores)
 OSCAP_ITERATOR_GEN(xccdf_result)
 OSCAP_ITERATOR_REMOVE_F(xccdf_result)
 
+static inline void _xccdf_result_add_target_fact_uniq(struct xccdf_result *result, struct xccdf_target_fact *fact)
+{
+	struct xccdf_target_fact_iterator *target_facts = xccdf_result_get_target_facts(result);
+	while (xccdf_target_fact_iterator_has_more(target_facts)) {
+			struct xccdf_target_fact *target_fact = xccdf_target_fact_iterator_next(target_facts);
+			if (target_fact->type == fact->type)
+				if (target_fact->name != NULL && fact->name != NULL && !strcmp(target_fact->name, fact->name))
+					if (target_fact->value != NULL && fact->value != NULL && !strcmp(target_fact->value, fact->value)) {
+						xccdf_target_fact_free(fact);
+						goto exit;
+					}
+	}
+	xccdf_result_add_target_fact(result, fact);
+exit:
+	xccdf_target_fact_iterator_free(target_facts);
+}
+
 static inline void _xccdf_result_fill_scanner(struct xccdf_result *result)
 {
 	struct xccdf_target_fact *fact = NULL;
