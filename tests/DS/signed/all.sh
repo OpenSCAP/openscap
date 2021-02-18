@@ -1,24 +1,69 @@
 #!/usr/bin/env bash
 
 . $builddir/tests/test_common.sh
+set -e -o pipefail
 
-function test_eval_no_verify {
+# Test a signed SCAP source data stream with a valid signature
+stdout=$(mktemp)
+stderr=$(mktemp)
+verbose=$(mktemp)
+result=$(mktemp)
+$OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --results-arf $result $srcdir/simple_ds_valid_sign.xml >$stdout 2>$stderr
+! [ -s $stderr ]
+grep -q "Validating XML signature" $verbose
+grep -q "Signature is OK" $verbose
+grep -q "SignedInfo references (ok/all): 3/3" $verbose
+grep -q "Manifests references (ok/all): 2/2" $verbose
+assert_exists 1 '//TestResult/rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
+rm -f $stdout
+rm -f $stderr
+rm -f $verbose
 
-	$OSCAP xccdf eval "${srcdir}/$1"
-}
+# Test a signed SCAP source data stream with an invalid signature
+stdout=$(mktemp)
+stderr=$(mktemp)
+verbose=$(mktemp)
+result=$(mktemp)
+$OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --results-arf $result $srcdir/simple_ds_invalid_sign.xml >$stdout 2>$stderr || ret=$?
+[ $ret = 1 ]
+[ -s $stderr ]
+! [ -s $arf ]
+grep -q "OpenSCAP Error: Invalid signature in SCAP Source Datastream (1.3) content in $srcdir/simple_ds_invalid_sign.xml" $stderr
+grep -q "Validating XML signature" $verbose
+grep -q "Signature is invalid" $verbose
+grep -q "SignedInfo references (ok/all): 3/3" $verbose
+grep -q "Manifests references (ok/all): 2/2" $verbose
+rm -f $stdout
+rm -f $stderr
+rm -f $verbose
 
-function test_verify {
-	# just for reference and not used for now
-	xmlsec1 verify --pubkey-pem "$2" "$1"
-}
+# Test skipping signature validation on a signed SCAP source data stream with an invalid signature
+stdout=$(mktemp)
+stderr=$(mktemp)
+verbose=$(mktemp)
+result=$(mktemp)
+$OSCAP xccdf eval --skip-signature-validation --results-arf $result $srcdir/simple_ds_invalid_sign.xml >$stdout 2>$stderr
+! [ -s $stderr ]
+! grep -q "Validating XML signature" $verbose
+assert_exists 1 '//TestResult/rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
+rm -f $stdout
+rm -f $stderr
+rm -f $verbose
 
-test_init test_signed.log
-
-test_run "signed-sds-no-verification" test_eval_no_verify sds-signed.xml
-test_run "signed-sds-fake-x509-no-verification" test_eval_no_verify sds-signed-fake-x509.xml
-
-#if [ -z ${CUSTOM_OSCAP+x} ] ; then
-    # test_run "signed-sds-verify" test_verify sds-signed.xml sds-signed-key.pub  
-#fi
-
-test_exit
+# Test a signed SCAP source data stream with modified SCAP content
+stdout=$(mktemp)
+stderr=$(mktemp)
+verbose=$(mktemp)
+result=$(mktemp)
+$OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --results-arf $result $srcdir/simple_ds_modified.xml >$stdout 2>$stderr || ret=$?
+[ $ret = 1 ]
+[ -s $stderr ]
+! [ -s $arf ]
+grep -q "OpenSCAP Error: Invalid signature in SCAP Source Datastream (1.3) content in $srcdir/simple_ds_modified.xml" $stderr
+grep -q "Validating XML signature" $verbose
+grep -q "Signature is OK" $verbose
+grep -q "SignedInfo references (ok/all): 3/3" $verbose
+grep -q "Manifests references (ok/all): 1/2" $verbose
+rm -f $stdout
+rm -f $stderr
+rm -f $verbose

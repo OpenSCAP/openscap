@@ -33,6 +33,8 @@ addons:
       - xsltproc
       - rpm-common
       - lua50
+      - libxmlsec1-dev
+      - libxmlsec1-openssl
 
 cache:
   directories:

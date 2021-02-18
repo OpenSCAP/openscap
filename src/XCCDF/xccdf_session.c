@@ -50,6 +50,7 @@
 #include "DS/sds_priv.h"
 #include "OVAL/results/oval_results_impl.h"
 #include "source/xslt_priv.h"
+#include "source/signature_priv.h"
 #include "XCCDF/xccdf_impl.h"
 #include "XCCDF_POLICY/public/xccdf_policy.h"
 #include "XCCDF_POLICY/xccdf_policy_priv.h"
@@ -115,6 +116,8 @@ struct xccdf_session {
 	} tailoring;
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
+	bool validate_signature;		///< False value indicates to skip XML signature validation.
+	struct oscap_signature_ctx *signature_ctx; ///< Paths to public keys, certificates, signature related info
 
 	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
 	xccdf_session_loading_flags_t loading_flags; ///< Load referenced files while loading XCCDF
@@ -151,6 +154,8 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 		return NULL;
 	}
 	session->validate = true;
+	session->validate_signature = true;
+	session->signature_ctx = oscap_signature_ctx_new();
 	session->xccdf.base_score = 0;
 	session->oval.progress = download_progress_empty_calllback;
 	session->check_engine_plugins = oscap_list_new();
@@ -345,6 +350,7 @@ void xccdf_session_free(struct xccdf_session *session)
 	free(session->tailoring.user_component_id);
 	oscap_htable_free(session->oval.results_mapping, (oscap_destruct_func) free);
 	oscap_htable_free(session->oval.arf_report_mapping, (oscap_destruct_func) free);
+	oscap_signature_ctx_free(session->signature_ctx);
 	free(session);
 }
 
@@ -367,6 +373,11 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
 {
 	session->validate = validate;
 	session->full_validation = full_validation;
+}
+
+void xccdf_session_set_signature_validation(struct xccdf_session *session, bool validate)
+{
+	session->validate_signature = validate;
 }
 
 void xccdf_session_set_thin_results(struct xccdf_session *session, bool thin_results)
@@ -792,6 +803,15 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 		if (session->validate) {
 			if (oscap_source_validate(session->source, _reporter, NULL)) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s",
+						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
+						oscap_source_get_schema_version(session->source),
+						oscap_source_readable_origin(session->source));
+				return 1;
+			}
+		}
+		if (session->validate_signature) {
+			if (oscap_signature_validate(session->source, session->signature_ctx)) {
+				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid signature in %s (%s) content in %s",
 						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
 						oscap_source_get_schema_version(session->source),
 						oscap_source_readable_origin(session->source));
