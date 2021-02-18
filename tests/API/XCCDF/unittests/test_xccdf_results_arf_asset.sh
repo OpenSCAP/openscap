@@ -21,20 +21,24 @@ function test_xccdf_results_arf_asset {
     local asset='/arf:asset-report-collection/arf:assets/arf:asset[@id="asset0"]/ai:computing-device'
 
     local hostname=`hostname`
+    echo $asset'/ai:hostname[text()="'$hostname'"]'
     assert_exists 1 $asset'/ai:hostname[text()="'$hostname'"]'
 
-    # We are not using --fqdn here because oscap in fact fills ai:fqdn from
-    # the XCCDF's <target> entity, which is a plain hostname
-    local fqdn=`hostname`
+    local fqdn=`hostname --fqdn`
+    echo $asset'/ai:fqdn[text()="'$fqdn'"]'
     assert_exists 1 $asset'/ai:fqdn[text()="'$fqdn'"]'
 
-    # TODO: oscap does not collect MACs from all interfaces that are UP
-    #macs=`ifconfig | grep ether | awk -F ' ' '{print toupper($2);}'`
-    #for mac in "$macs"; do
-    #    assert_exists 1 $asset'/ai:connections/ai:connection/ai:mac-address[text()="'$mac'"]'
-    #done
+    local macs=`ifconfig -a | grep ether | uniq | awk -F ' ' '{print toupper($2);}'`
+    for mac in $macs; do
+        echo $asset'/ai:connections/ai:connection/ai:mac-address[text()="'${mac}'"]'
+        assert_exists 1 $asset'/ai:connections/ai:connection/ai:mac-address[text()="'$mac'"]'
+    done
 
-    assert_exists 1 $asset'/ai:connections/ai:connection/ai:ip-address/ai:ip-v4[text()="127.0.0.1"]'
+    local ip4s=`ifconfig -a | grep 'inet ' | uniq | awk -F ' ' '{print $2;}'`
+    for ip in $ip4s; do
+        echo $asset'/ai:connections/ai:connection/ai:mac-address[text()="'$ip'"]'
+        assert_exists 1 $asset'/ai:connections/ai:connection/ai:ip-address/ai:ip-v4[text()="'$ip'"]'
+    done
 
     rm $result
 }
