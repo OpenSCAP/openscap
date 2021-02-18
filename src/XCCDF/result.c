@@ -372,7 +372,13 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 				xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
 				xccdf_target_fact_set_string(fact, macbuf);
 				/* store mac address */
-				xccdf_result_add_target_fact(result, fact);
+				_xccdf_result_add_target_fact_uniq(result, fact);
+
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:mac");
+				xccdf_target_fact_set_string(fact, macbuf);
+				/* store mac address under XCCDF1.2 (6.6.3) predefined name */
+				_xccdf_result_add_target_fact_uniq(result, fact);
 			}
 		}
 
@@ -455,12 +461,19 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 				}
 			}
 
-			/* Add the IP address to XCCDF TestResult/target-facts */
+			/* Add the MAC address to XCCDF TestResult/target-facts */
 			struct xccdf_target_fact *fact = xccdf_target_fact_new();
 			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:ethernet:MAC");
 			xccdf_target_fact_set_string(fact, mac_address_str);
 			/* store mac address */
-			xccdf_result_add_target_fact(result, fact);
+			_xccdf_result_add_target_fact_uniq(result, fact);
+
+			fact = xccdf_target_fact_new();
+			xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:mac");
+			xccdf_target_fact_set_string(fact, mac_address_str);
+			/* store mac address under XCCDF1.2 (6.6.3) predefined name */
+			_xccdf_result_add_target_fact_uniq(result, fact);
+
 			free(mac_address_str);
 		}
 
