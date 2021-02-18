@@ -330,23 +330,28 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 			if (!ifa->ifa_addr)
 				continue;
 			family = ifa->ifa_addr->sa_family;
-			if (family != AF_INET && family != AF_INET6)
-				continue;
 
-			if (family == AF_INET) {
-				if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
-						hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
-					goto out2;
-			} else {
-				struct sockaddr_in6 *sin6;
+			if (family == AF_INET || family == AF_INET6) {
+				if (family == AF_INET) {
+					if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+							hostip, sizeof(hostip), NULL, 0, NI_NUMERICHOST))
+						goto out2;
+				} else if (family == AF_INET6) {
+					struct sockaddr_in6 *sin6;
 
-				sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
-				if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
-						   hostip, sizeof(hostip)))
-					goto out2;
+					sin6 = (struct sockaddr_in6 *) ifa->ifa_addr;
+					if (!inet_ntop(family, (const void *) &sin6->sin6_addr,
+							hostip, sizeof(hostip)))
+						goto out2;
+				}
+				/* store ip address */
+				xccdf_result_add_target_address(result, hostip);
+				fact = xccdf_target_fact_new();
+				xccdf_target_fact_set_name(fact, family == AF_INET ? "urn:xccdf:fact:asset:identifier:ipv4" : "urn:xccdf:fact:asset:identifier:ipv6");
+				xccdf_target_fact_set_string(fact, hostip);
+				/* store ipv4(6) address under XCCDF1.2 (6.6.3) predefined name */
+				_xccdf_result_add_target_fact_uniq(result, fact);
 			}
-			/* store ip address */
-			xccdf_result_add_target_address(result, hostip);
 
 			memset(&ifr, 0, sizeof(ifr));
 			strncpy(ifr.ifr_name, ifa->ifa_name, IFNAMSIZ);
@@ -493,6 +498,13 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 			/* Add the IP address to XCCDF TestResult/target-address */
 			char *ip_address_str = oscap_windows_wstr_to_str(ip_address_wstr);
 			xccdf_result_add_target_address(result, ip_address_str);
+
+			fact = xccdf_target_fact_new();
+			xccdf_target_fact_set_name(fact, socket_address.lpSockaddr->sa_family == AF_INET ? "urn:xccdf:fact:asset:identifier:ipv4" : "urn:xccdf:fact:asset:identifier:ipv6");
+			xccdf_target_fact_set_string(fact, ip_address_str);
+			/* store ipv4(6) address under XCCDF1.2 (6.6.3) predefined name */
+			_xccdf_result_add_target_fact_uniq(result, fact);
+
 			free(ip_address_str);
 
 			unicast_address = unicast_address->Next;
