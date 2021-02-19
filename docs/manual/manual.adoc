@@ -1951,7 +1951,7 @@ $ oscap-ssh root@192.168.1.13 22 xccdf eval \
 /usr/share/xml/scap/ssg/content/ssg-fedora-ds.xml
 ----
 
-=== Scanning containers and containers images using oscap-podman
+=== Scanning containers and container images using oscap-podman
 
 The `oscap-podman` tool can be used to scan Linux containers and container images.
 Usage of the tool mimics usage and options of `oscap` tool.
