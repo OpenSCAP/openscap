@@ -339,7 +339,7 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 					continue;
 
 				xmlChar *name = xmlGetProp(target_fact_child, BAD_CAST "name");
-				if (!name || strcmp((const char*)name, "urn:xccdf:fact:ethernet:MAC") != 0) {
+				if (!name || strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:mac") != 0) {
 					xmlFree(name);
 					continue;
 				}
