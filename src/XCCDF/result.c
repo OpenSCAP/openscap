@@ -312,7 +312,7 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 				}
 				freeaddrinfo(info);
 			} else {
-				dI("Unable to get FQDN(s) via getaddrinfo: %s\n", gai_strerror(gai_res));
+				dI("Unable to get FQDN(s) via getaddrinfo: %s", gai_strerror(gai_res));
 			}
 		}
 	}
