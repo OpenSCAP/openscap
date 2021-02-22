@@ -592,7 +592,7 @@ This table lists the possible results of a single rule:
 |
 
 |fixed
-|The rule had failed, but was then fixed by automated remediation.
+|The rule had initially evaluated to "fail", but was then fixed by automated remediation and therefore it now evaluates as "pass".
 |
 |===
 
