@@ -40,6 +40,15 @@ function test_xccdf_results_arf_asset {
         assert_exists 1 $asset'/ai:connections/ai:connection/ai:ip-address/ai:ip-v4[text()="'$ip'"]'
     done
 
+    if require ipcalc; then
+        local ip6s=`ifconfig -a | grep 'inet6' | uniq | awk -F ' ' '{print $2;}'`
+        for ip in $ip6s; do
+            local ipf=`ipcalc $ip | grep Full | awk -F ' ' '{print gensub(/(^|:)0+([0-9a-f])/,"\\\1\\\2","g",$3);}'`
+            echo $asset'/ai:connections/ai:connection/ai:mac-address[text()="'$ipf'"]'
+            assert_exists 1 $asset'/ai:connections/ai:connection/ai:ip-address/ai:ip-v6[text()="'$ipf'"]'
+        done
+    fi
+
     rm $result
 }
 
