@@ -78,6 +78,13 @@ bool audit_line_add_filter_key(struct audit_line *audit_line,
 }
 
 // The following code is a modified version of auditctl's code
+// Link to auditctl sources used : 
+//      https://github.com/linux-audit/audit-userspace/blob/master/src/auditctl.c
+//      https://github.com/linux-audit/audit-userspace/blob/master/src/auditctl-listing.c
+// The original author of this code are :
+//     Steve Grubb <sgrubb@redhat.com>
+//     Rickard E. (Rik) Faith <faith@redhat.com>
+//     Richard Guy Briggs <rgb@redhat.com>
 
 /*
  * This function detects if we have a watch. A watch is detected when we
@@ -493,6 +500,8 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 	size_t boffset = 0;
 	int watch = is_watch(r);
 	struct audit_line *audit_line = audit_line_new();
+    unsigned long long a0 = 0, a1 = 0;
+    int count = 0;
 
 	if (!watch) { /* This is syscall auditing */
 		size_t buf_len = 0;
@@ -517,7 +526,7 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 			}
 		}
 		// And last do the syscalls
-		print_syscall(r, &sc, audit_line);
+		count = print_syscall(r, &sc, audit_line);
 	}
 
 	// Now iterate over the fields
@@ -748,8 +757,7 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 			} else if (field == AUDIT_FIELD_COMPARE) {
 				print_field_cmp(r->values[i], op, audit_line);
 			}
-			// This section is based on internal libaudit and auparse component, it's keep here for information
-			/* else if (field >= AUDIT_ARG0 && field <= AUDIT_ARG3)
+			else if (field >= AUDIT_ARG0 && field <= AUDIT_ARG3)
 			{
 				if (field == AUDIT_ARG0)
 					a0 = r->values[i];
@@ -757,11 +765,19 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 					a1 = r->values[i];
 
 				// Show these as hex
-				if (count > 1 || interpret == 0)
-					printf(" -F %s%s0x%X", name, 
+				if (count > 1 || interpret == 0) {
+					field_value_len = snprintf(NULL, 0, " -F %s%s0x%X", name, 
 						audit_operator_to_symbol(op),
 						r->values[i]);
-				else {	// Use ignore to mean interpret
+                    char *audit_field = malloc(field_value_len + 1);
+                    snprintf(audit_field, field_value_len + 1, " -F %s%s0x%X", name, 
+						audit_operator_to_symbol(op),
+						r->values[i]);
+                    audit_line_push(audit_line, audit_field);
+                    free(audit_field);
+                }
+			    // This section is based on internal libaudit and auparse component, it's keep here for information
+				/* else {	// Use ignore to mean interpret
 					const char *out;
 					idata id;
 					char val[32];
@@ -784,8 +800,8 @@ struct audit_line *get_rule(const struct audit_rule_data *r)
 						audit_operator_to_symbol(op),
 								out);
 					free((void *)out);
-				}
-			} */
+				}*/
+			}
 			else if (field == AUDIT_EXIT) {
 				int e = abs((int)r->values[i]);
 				const char *err = audit_errno_to_name(e);
@@ -973,6 +989,7 @@ static struct oscap_list *get_all_audit_rules(probe_ctx *ctx)
 				strerror(errnum));
 			probe_item_collect(ctx, item);
 		}
+        audit_close(audit_fd);
 	} else {
 		int errnum = errno;
 		dE("Failed to get a handle for the audit system : %s",
@@ -990,7 +1007,6 @@ static struct oscap_list *get_all_audit_rules(probe_ctx *ctx)
 		probe_item_collect(ctx, item);
 	}
 
-	audit_close(audit_fd);
 	return NULL;
 }
 
