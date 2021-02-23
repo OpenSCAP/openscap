@@ -287,9 +287,12 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 	if (probe_root) {
 		hostname = _get_etc_hostname(probe_root);
 	} else {
-		struct utsname sname;
-		if (uname(&sname) != -1)
-			hostname = strdup(sname.nodename);
+		char hname[_POSIX_HOST_NAME_MAX+1] = {0};
+		if (gethostname(hname, _POSIX_HOST_NAME_MAX)) {
+			dW("Unable to get hostname: %s", strerror(errno));
+		} else {
+			hostname = strdup(hname);
+		}
 
 		if (hostname) {
 			struct addrinfo hints, *info, *p;
