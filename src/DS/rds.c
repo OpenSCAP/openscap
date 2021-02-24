@@ -271,39 +271,13 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 	xmlNodePtr test_result_child = test_result->children;
 
 	xmlNodePtr last_fqdn = NULL;
+	xmlNodePtr last_hostname = NULL;
 	for (; test_result_child != NULL; test_result_child = test_result_child->next)
 	{
 		if (test_result_child->type != XML_ELEMENT_NODE)
 			continue;
 
-		// Order for the output to be valid:
-		// 1) All fqdn-s
-		// 2) All hostnames
-		if (strcmp((const char*)(test_result_child->name), "target") == 0)
-		{
-			// content is a full copy
-			char *content = (char*)xmlNodeGetContent(test_result_child);
-			xmlNodePtr fqdn = xmlNewNode(ai_ns, BAD_CAST "fqdn");
-			xmlNodeSetContent(fqdn, BAD_CAST content);
-
-			if (!last_fqdn) {
-				xmlAddChild(computing_device, fqdn);
-			}
-			else {
-				xmlAddNextSibling(last_fqdn, fqdn);
-			}
-			last_fqdn = fqdn;
-
-			// now we need to change content so that it represents just the hostname part of FQDN
-			char *delimiter = strchr(content, '.');
-			if (delimiter)
-				*delimiter = '\0';
-
-			xmlNewTextChild(computing_device, ai_ns, BAD_CAST "hostname", BAD_CAST content);
-
-			free(content);
-		}
-		else if (strcmp((const char*)(test_result_child->name), "target-address") == 0)
+		if (strcmp((const char*)(test_result_child->name), "target-address") == 0)
 		{
 			xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
 			xmlAddChild(connections, connection);
@@ -339,17 +313,36 @@ static xmlNodePtr ds_rds_add_ai_from_xccdf_results(xmlDocPtr doc, xmlNodePtr ass
 					continue;
 
 				xmlChar *name = xmlGetProp(target_fact_child, BAD_CAST "name");
-				if (!name || strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:mac") != 0) {
-					xmlFree(name);
-					continue;
+				if (name) {
+					if (!strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:mac")) {
+						xmlChar *content = xmlNodeGetContent(target_fact_child);
+						xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
+						xmlAddChild(connections, connection);
+						xmlNewTextChild(connection, ai_ns, BAD_CAST "mac-address", content);
+						xmlFree(content);
+					}
+
+					// Order for the output to be valid: fqdn then hostname, just one of each kind
+
+					if (!strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:fqdn")) {
+						xmlChar *content = xmlNodeGetContent(target_fact_child);
+						xmlNodePtr fqdn = xmlNewNode(ai_ns, BAD_CAST "fqdn");
+						xmlNodeSetContent(fqdn, BAD_CAST content);
+						if (!last_fqdn)
+							last_fqdn = last_hostname ? xmlAddPrevSibling(last_hostname, fqdn) : xmlAddChild(computing_device, fqdn);
+						xmlFree(content);
+					}
+
+					if (!strcmp((const char*)name, "urn:xccdf:fact:asset:identifier:host_name")) {
+						xmlChar *content = xmlNodeGetContent(target_fact_child);
+						xmlNodePtr hostname = xmlNewNode(ai_ns, BAD_CAST "hostname");
+						xmlNodeSetContent(hostname, BAD_CAST content);
+						if (!last_hostname)
+							last_hostname = last_fqdn ? xmlAddNextSibling(last_fqdn, hostname) : xmlAddChild(computing_device, hostname);
+						xmlFree(content);
+					}
 				}
 				xmlFree(name);
-
-				xmlChar *content = xmlNodeGetContent(target_fact_child);
-				xmlNodePtr connection = xmlNewNode(ai_ns, BAD_CAST "connection");
-				xmlAddChild(connections, connection);
-				xmlNewTextChild(connection, ai_ns, BAD_CAST "mac-address", content);
-				xmlFree(content);
 			}
 		}
 	}
