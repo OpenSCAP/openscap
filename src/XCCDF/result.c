@@ -305,6 +305,8 @@ void xccdf_result_fill_sysinfo(struct xccdf_result *result)
 
 			if (!(gai_res = getaddrinfo(hostname, NULL, &hints, &info))) {
 				for(p = info; p != NULL; p = p->ai_next) {
+					if (!p->ai_canonname)
+						continue;
 					fact = xccdf_target_fact_new();
 					xccdf_target_fact_set_name(fact, "urn:xccdf:fact:asset:identifier:fqdn");
 					xccdf_target_fact_set_string(fact, p->ai_canonname);
