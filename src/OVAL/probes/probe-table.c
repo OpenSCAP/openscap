@@ -135,6 +135,12 @@
 #include "unix/dnscache_probe.h"
 #endif
 
+
+#ifdef OPENSCAP_PROBE_UNIX_NETWORKFIREWALL
+#include "unix/linux/networkfirewall_probe.h"
+#endif
+
+
 #ifdef OPENSCAP_PROBE_UNIX_FILE
 #include "unix/file_probe.h"
 #endif
@@ -260,6 +266,9 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS
 	{OVAL_LINUX_INET_LISTENING_SERVERS, NULL, inetlisteningservers_probe_main, NULL, NULL},
+#endif
+#ifdef OPENSCAP_PROBE_UNIX_NETWORKFIREWALL
+    {OVAL_UNIX_NETWORKFIREWALL, NULL, networkfirewall_probe_main, NULL, networkfirewall_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_LINUX_PARTITION
 	{OVAL_LINUX_PARTITION, NULL, partition_probe_main, NULL, patition_probe_offline_mode_supported},
