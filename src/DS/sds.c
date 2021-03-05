@@ -626,9 +626,15 @@ static int ds_sds_compose_add_component_internal(xmlDocPtr doc, xmlNodePtr datas
 
 	const char *filepath = oscap_source_get_filepath(component_source);
 	struct stat file_stat;
-	if (stat(filepath, &file_stat) == 0)
-		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&file_stat.st_mtime));
-	else {
+	if (stat(filepath, &file_stat) == 0) {
+		time_t mtime;
+		char *source_date_epoch = getenv("SOURCE_DATE_EPOCH");
+		if (source_date_epoch == NULL ||
+			(mtime = (time_t)strtoll(source_date_epoch, NULL, 10)) <= 0 ||
+			mtime > file_stat.st_mtime)
+			mtime = file_stat.st_mtime;
+		strftime(file_timestamp, 32, "%Y-%m-%dT%H:%M:%S", localtime(&mtime));
+	} else {
 		oscap_seterr(OSCAP_EFAMILY_GLIBC, "Could not find file %s: %s.", filepath, strerror(errno));
 		// Return positive number, indicating less severe problem.
 		// Rationale: When an OVAL file is missing during a scan it it not considered
