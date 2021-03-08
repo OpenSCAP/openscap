@@ -39,6 +39,7 @@
       <sch:assert id="scap-general-xccdf-benchmark-version-update-req" test=".//xccdf:version[string(@update)]">SRC-341-1</sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-no-set-complex-value" test="not(.//xccdf:set-complex-value)">SRC-343-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-style" test="@style = 'SCAP_1.3'">SRC-4-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-missing" test="xccdf:metadata">SRC-8-2|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-xccdf-profile" context="xccdf:Profile">
       <sch:assert id="scap-general-xccdf-profile-description" test="xccdf:description">SRC-10-1|xccdf:Profile <sch:value-of select="@id"/></sch:assert>
