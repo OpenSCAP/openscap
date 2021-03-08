@@ -78,6 +78,9 @@
     <sch:rule id="scap-general-system-cpe-dict-check" context="cpe-dict:check">
       <sch:assert id="scap-general-system-cpe-dict-check2" test="@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system = 'http://scap.nist.gov/schema/ocil/2'">SRC-118-2|cpe-dict:cpe-item <sch:value-of select="ancestor::cpe-dict:cpe-item[1]/@name"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-system-cpe-lang-check" context="cpe-lang:check-fact-ref">
+      <sch:assert id="scap-general-system-cpe-lang-check2" test="@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system = 'http://scap.nist.gov/schema/ocil/2'">SRC-118-3|cpe-lang:platform <sch:value-of select="ancestor::cpe-lang:platform[1]/@id"/></sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
