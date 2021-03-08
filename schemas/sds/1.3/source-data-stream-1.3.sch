@@ -36,6 +36,7 @@
       <sch:assert id="scap-general-xccdf-benchmark-val-forbid" test="not(.//xccdf:Value//xccdf:source) and not(.//xccdf:Value//xccdf:complex-value) and not(.//xccdf:Value//xccdf:complex-default) and not(.//xccdf:Value//xccdf:choices//xccdf:complex-choice)">SRC-276-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-version-time-attribute-req" test="xccdf:version/@time">SRC-3-2</sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-no-xinclude" test="not(.//xinclude:include)">SRC-339-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-version-update-req" test=".//xccdf:version[string(@update)]">SRC-341-1</sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-xccdf-profile" context="xccdf:Profile">
       <sch:assert id="scap-general-xccdf-profile-description" test="xccdf:description">SRC-10-1|xccdf:Profile <sch:value-of select="@id"/></sch:assert>
