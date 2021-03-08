@@ -100,6 +100,7 @@ struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
 	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,        "5.11.2",       "oval/5.11.2/oval-directives-schematron.xsl"},
 	{OSCAP_DOCUMENT_OVAL_DIRECTIVES,        "5.11.3",       "oval/5.11.3/oval-directives-schematron.xsl"},
 	{OSCAP_DOCUMENT_XCCDF,                  "1.2",          "xccdf/1.2/xccdf_1.2-schematron.xsl"},
+	{OSCAP_DOCUMENT_SDS,                    "1.3",          "sds/1.3/source-data-stream-1.3.xsl"}
 };
 
 int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version, const char *outfile)
