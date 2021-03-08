@@ -88,6 +88,9 @@
     <sch:rule id="scap-general-scap-data-stream-collection" context="scap:data-stream-collection ">
       <sch:assert id="scap-general-latest-schematron-rules" test="current()[@schematron-version='1.3']">SRC-330-2|scap:data-stream-collection</sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-scap-content" context="scap:data-stream">
+      <sch:assert id="scap-general-scap-content-use-case" test="@use-case = 'CONFIGURATION' or @use-case = 'VULNERABILITY' or @use-case = 'INVENTORY' or @use-case = 'OTHER'" >SRC-324-1|scap:data-stream <sch:value-of select="@id"/></sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
