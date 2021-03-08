@@ -47,6 +47,7 @@
     </sch:rule>
     <sch:rule id="scap-general-xccdf-group" context="xccdf:Group">
       <sch:assert id="scap-general-xccdf-group-description" test="xccdf:description">SRC-10-1|xccdf:Group <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-no-group-extension" test="not(@extends)">SRC-354-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-xccdf-rule" context="xccdf:Rule">
       <sch:assert id="scap-general-xccdf-rule-description" test="xccdf:description">SRC-10-1|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
