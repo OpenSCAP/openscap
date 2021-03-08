@@ -31,6 +31,7 @@
   <sch:pattern id="scap-general">
     <sch:rule id="scap-general-xccdf-benchmark" context="xccdf:Benchmark">
       <sch:assert id="scap-general-xccdf-benchmark-description" test="xccdf:description">SRC-10-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-lang-required" test="@xml:lang">SRC-2-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-xccdf-profile" context="xccdf:Profile">
       <sch:assert id="scap-general-xccdf-profile-description" test="xccdf:description">SRC-10-1|xccdf:Profile <sch:value-of select="@id"/></sch:assert>
