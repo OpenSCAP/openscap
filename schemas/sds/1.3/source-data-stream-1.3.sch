@@ -83,6 +83,7 @@
     </sch:rule>
     <sch:rule id="scap-general-xccdf-check" context="xccdf:Rule/xccdf:check">
       <sch:assert id="scap-general-xccdf-check-sys-req" test="@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system = 'http://scap.nist.gov/schema/ocil/2'">SRC-118-1|xccdf:Rule <sch:value-of select="ancestor::xccdf:Rule[1]/@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-check-patches-ref-oval-only" test="not(current()/parent::xccdf:Rule[substring(@id, string-length(@id) - string-length('security_patches_up_to_date') + 1) = 'security_patches_up_to_date']) or current()/@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5'">SRC-169-2|xccdf:Rule <sch:value-of select="parent::xccdf:Rule/@id"/></sch:assert>
     </sch:rule>
   </sch:pattern>
 
