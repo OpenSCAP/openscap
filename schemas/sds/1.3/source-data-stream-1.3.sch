@@ -81,6 +81,9 @@
     <sch:rule id="scap-general-system-cpe-lang-check" context="cpe-lang:check-fact-ref">
       <sch:assert id="scap-general-system-cpe-lang-check2" test="@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system = 'http://scap.nist.gov/schema/ocil/2'">SRC-118-3|cpe-lang:platform <sch:value-of select="ancestor::cpe-lang:platform[1]/@id"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-xccdf-check" context="xccdf:Rule/xccdf:check">
+      <sch:assert id="scap-general-xccdf-check-sys-req" test="@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system = 'http://scap.nist.gov/schema/ocil/2'">SRC-118-1|xccdf:Rule <sch:value-of select="ancestor::xccdf:Rule[1]/@id"/></sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
