@@ -54,6 +54,12 @@
     <sch:rule id="scap-general-xccdf-rule" context="xccdf:Rule">
       <sch:assert id="scap-general-xccdf-rule-description" test="xccdf:description">SRC-10-1|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-xccdf-metadata" context="xccdf:Benchmark/xccdf:metadata">
+      <sch:assert id="scap-general-xccdf-metadata-populated-creator" test="dc:creator/text()">SRC-8-1</sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-publisher" test="dc:publisher/text()">SRC-8-1</sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-contributor" test="dc:contributor/text()">SRC-8-1</sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-source" test="dc:source/text()">SRC-8-1</sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
