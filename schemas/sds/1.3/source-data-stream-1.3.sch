@@ -94,6 +94,9 @@
     <sch:rule id="scap-general-scap-content" context="scap:data-stream">
       <sch:assert id="scap-general-scap-content-use-case" test="@use-case = 'CONFIGURATION' or @use-case = 'VULNERABILITY' or @use-case = 'INVENTORY' or @use-case = 'OTHER'" >SRC-324-1|scap:data-stream <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-oval-def" context="oval-def:definition">
+      <sch:assert id="scap-general-oval-def-rule-compliance-cce" test="@class != 'compliance' or oval-def:metadata/oval-def:reference[@source='http://cce.mitre.org' or @source='CCE']">SRC-207-1|oval-def:definition <sch:value-of select="@id"/></sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
