@@ -68,6 +68,7 @@
       <sch:assert id="scap-general-xccdf-rule-title-1" test="xccdf:title">SRC-9-1|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-rule-title-3" test="count(xccdf:title) &lt;= 1 or xccdf:title[@xml:lang = 'en-US']">SRC-9-3|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-rule-title-2" test="count(xccdf:title) &lt;= 1 or (count(xccdf:title) = count(xccdf:title[@xml:lang]))">SRC-9-3|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-rule-cve-cce-cpe" test="xccdf:ident[@system = 'http://cce.mitre.org' or @system = 'http://cve.mitre.org' or @system = 'http://cpe.mitre.org']">SRC-251-1|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-xccdf-metadata" context="xccdf:Benchmark/xccdf:metadata">
       <sch:assert id="scap-general-xccdf-metadata-populated-creator" test="dc:creator/text()">SRC-8-1</sch:assert>
