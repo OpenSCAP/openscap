@@ -100,6 +100,7 @@
     </sch:rule>
     <sch:rule id="scap-general-oval-generator" context="oval-def:generator/oval-com:schema_version">
       <sch:assert id="scap-general-oval-version" test="@platform or text()='5.3' or text()='5.4' or text()='5.5' or text()='5.6' or text()='5.7' or text()='5.8' or text()='5.9' or text()='5.10' or text()='5.10.1' or text()='5.11' or text()='5.11.1' or text()='5.11.2'">SRC-216-1</sch:assert>
+      <sch:assert id="scap-general-oval-platform-version" test="not(@platform) or text()='5.11.1:1.0' or text()='5.11.1:1.1' or text()='5.11.1:1.2' or text()='5.11.2:1.0' or text()='5.11.2:1.1' or text()='5.11.2:1.2'">SRC-216-2</sch:assert>
     </sch:rule>
   </sch:pattern>
 
