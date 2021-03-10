@@ -114,6 +114,9 @@
       <sch:assert id="scap-general-xccdf-status-rule-value-date-1" test="text()='draft' or text()= 'accepted'">SRC-5-1</sch:assert>
       <sch:assert id="scap-general-xccdf-status-rule-value-date-2" test="@date!=''">SRC-5-2</sch:assert>
     </sch:rule>
+    <sch:rule id="scap-cce-check-rule-1" context="xccdf:ident">
+      <sch:assert flag="WARNING" test="not(@system='http://cce.mitre.org' or @system='CCE') or text() != ''" id="scap-cce-check-assert-1">A-16-1|xccdf:Rule <sch:value-of select="ancestor::xccdf:Rule/@id"/></sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
