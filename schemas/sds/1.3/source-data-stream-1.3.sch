@@ -108,6 +108,7 @@
       <sch:assert id="scap-general-signature-sig-first-ref-ds" test="ancestor::ds:data-stream-collection[1]/ds:data-stream[concat('#',@id) = current()/dsig:SignedInfo/dsig:Reference[1]/@URI]">SRC-286-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
       <sch:assert id="scap-general-signature-sig-ref-sig-prop" test="dsig:Object/dsig:SignatureProperties[concat('#',@Id) = current()/dsig:SignedInfo/dsig:Reference[2]/@URI]">SRC-287-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
       <sch:assert id="scap-general-signature-sig-third-ref-manifest" test="dsig:Object/dsig:Manifest[concat('#',@Id) = current()/dsig:SignedInfo/dsig:Reference[3]/@URI]">SRC-288-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
+      <sch:assert id="scap-general-signature-sig-key-info" test="dsig:KeyInfo">SRC-290-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
     </sch:rule>
   </sch:pattern>
 
