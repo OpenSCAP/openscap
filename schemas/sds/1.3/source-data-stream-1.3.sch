@@ -122,6 +122,9 @@
       <sch:assert flag="WARNING" test="not(@source='http://cce.mitre.org' or @source='CCE') or @ref_id!=''" id="scap-cce-check-assert-5">A-16-1|oval-def:definition <sch:value-of select="ancestor::oval-def:definition/@id"/></sch:assert>
       <sch:assert flag="ERROR" test="not(@source='http://cce.mitre.org' or @source='CCE') or startswith(@ref_id, 'CCE-')" id="scap-cce-check-assert-6">A-17-1|<sch:value-of select="@ref_id"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-check-system-content-match-rule" context="scap:check-system-content">
+      <sch:assert flag="ERROR" test="not(@content-type='OVAL_COMPLIANCE' or @content-type='OVAL_PATCH' or @content-type='CPE_INVENTORY' or @content-type='OVAL_VULNERABILITY') or oval-def:oval_definitions" id="scap-check-system-content-match-assert-1">A-18-1</sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
