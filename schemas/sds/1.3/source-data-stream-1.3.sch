@@ -34,9 +34,9 @@
       <sch:assert id="scap-general-xccdf-benchmark-lang-required" test="@xml:lang">SRC-2-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-no-check-content-check" test="not(.//xccdf:check-content)">SRC-25-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-val-forbid" test="not(.//xccdf:Value//xccdf:source) and not(.//xccdf:Value//xccdf:complex-value) and not(.//xccdf:Value//xccdf:complex-default) and not(.//xccdf:Value//xccdf:choices//xccdf:complex-choice)">SRC-276-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
-      <sch:assert id="scap-general-xccdf-benchmark-version-time-attribute-req" test="xccdf:version/@time">SRC-3-2</sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-version-time-attribute-req" test="xccdf:version/@time">SRC-3-|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-no-xinclude" test="not(.//xinclude:include)">SRC-339-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
-      <sch:assert id="scap-general-xccdf-benchmark-version-update-req" test=".//xccdf:version[string(@update)]">SRC-341-1</sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-version-update-req" test=".//xccdf:version[string(@update)]">SRC-341-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-no-set-complex-value" test="not(.//xccdf:set-complex-value)">SRC-343-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-style" test="@style = 'SCAP_1.3'">SRC-4-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-metadata-missing" test="xccdf:metadata">SRC-8-2|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
@@ -58,7 +58,7 @@
     </sch:rule>
     <sch:rule id="scap-general-xccdf-group" context="xccdf:Group">
       <sch:assert id="scap-general-xccdf-group-description" test="xccdf:description">SRC-10-1|xccdf:Group <sch:value-of select="@id"/></sch:assert>
-      <sch:assert id="scap-general-xccdf-benchmark-no-group-extension" test="not(@extends)">SRC-354-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-no-group-extension" test="not(@extends)">SRC-354-1|xccdf:Group <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-group-title-1" test="xccdf:title">SRC-9-1|xccdf:Group <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-group-title-3" test="count(xccdf:title) &lt;= 1 or xccdf:title[@xml:lang = 'en-US']">SRC-9-3|xccdf:Group <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-group-title-2" test="count(xccdf:title) &lt;= 1 or (count(xccdf:title) = count(xccdf:title[@xml:lang]))">SRC-9-3|xccdf:Group <sch:value-of select="@id"/></sch:assert>
@@ -72,10 +72,10 @@
       <sch:assert id="scap-general-xccdf-rule-attributes-exists" test="@selected and @weight and @role and @severity">A-26-1|xccdf:Rule <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-xccdf-metadata" context="xccdf:Benchmark/xccdf:metadata">
-      <sch:assert id="scap-general-xccdf-metadata-populated-creator" test="dc:creator/text()">SRC-8-1</sch:assert>
-      <sch:assert id="scap-general-xccdf-metadata-populated-publisher" test="dc:publisher/text()">SRC-8-1</sch:assert>
-      <sch:assert id="scap-general-xccdf-metadata-populated-contributor" test="dc:contributor/text()">SRC-8-1</sch:assert>
-      <sch:assert id="scap-general-xccdf-metadata-populated-source" test="dc:source/text()">SRC-8-1</sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-creator" test="dc:creator/text()">SRC-8-1|xccdf:Benchmark <sch:value-of select="parent::xccdf:Benchmark/@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-publisher" test="dc:publisher/text()">SRC-8-1|xccdf:Benchmark <sch:value-of select="parent::xccdf:Benchmark/@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-contributor" test="dc:contributor/text()">SRC-8-1|xccdf:Benchmark <sch:value-of select="parent::xccdf:Benchmark/@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-metadata-populated-source" test="dc:source/text()">SRC-8-1|xccdf:Benchmark <sch:value-of select="parent::xccdf:Benchmark/@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-system-cpe-dict-check" context="cpe-dict:check">
       <sch:assert id="scap-general-system-cpe-dict-check2" test="@system = 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system = 'http://scap.nist.gov/schema/ocil/2'">SRC-118-2|cpe-dict:cpe-item <sch:value-of select="ancestor::cpe-dict:cpe-item[1]/@name"/></sch:assert>
