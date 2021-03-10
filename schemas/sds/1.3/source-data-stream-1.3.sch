@@ -124,6 +124,7 @@
     </sch:rule>
     <sch:rule id="scap-check-system-content-match-rule" context="scap:check-system-content">
       <sch:assert flag="ERROR" test="not(@content-type='OVAL_COMPLIANCE' or @content-type='OVAL_PATCH' or @content-type='CPE_INVENTORY' or @content-type='OVAL_VULNERABILITY') or oval-def:oval_definitions" id="scap-check-system-content-match-assert-1">A-18-1</sch:assert>
+      <sch:assert flag="ERROR" test="@content-type != 'OCIL_QUESTIONS' or ocil:ocil" id="scap-check-system-content-match-assert-2">A-18-1</sch:assert>
     </sch:rule>
   </sch:pattern>
 
