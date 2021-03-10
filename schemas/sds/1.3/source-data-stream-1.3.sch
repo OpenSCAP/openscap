@@ -118,6 +118,9 @@
       <sch:assert flag="WARNING" test="not(@system='http://cce.mitre.org' or @system='CCE') or text() != ''" id="scap-cce-check-assert-1">A-16-1|xccdf:Rule <sch:value-of select="ancestor::xccdf:Rule/@id"/></sch:assert>
       <sch:assert flag="ERROR" test="not(@system='http://cce.mitre.org' or @system='CCE') or startswith(text(), 'CCE-')" id="scap-cce-check-assert-2">A-17-1|<sch:value-of select="."/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-cce-check-rule-2" context="oval-def:reference">
+      <sch:assert flag="WARNING" test="not(@source='http://cce.mitre.org' or @source='CCE') or @ref_id!=''" id="scap-cce-check-assert-5">A-16-1|oval-def:definition <sch:value-of select="ancestor::oval-def:definition/@id"/></sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
