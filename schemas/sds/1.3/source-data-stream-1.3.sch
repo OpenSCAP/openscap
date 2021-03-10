@@ -98,6 +98,9 @@
       <sch:assert id="scap-general-oval-def-rule-compliance-cce" test="@class != 'compliance' or oval-def:metadata/oval-def:reference[@source='http://cce.mitre.org' or @source='CCE']">SRC-207-1|oval-def:definition <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-oval-def-vulnerability-cve-ref" test="@class != 'vulnerability' or oval-def:metadata/oval-def:reference[@source='http://cve.mitre.org' or source='CVE']">SRC-214-1|oval-def:definition <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-oval-generator" context="oval-def:generator/oval-com:schema_version">
+      <sch:assert id="scap-general-oval-version" test="@platform or text()='5.3' or text()='5.4' or text()='5.5' or text()='5.6' or text()='5.7' or text()='5.8' or text()='5.9' or text()='5.10' or text()='5.10.1' or text()='5.11' or text()='5.11.1' or text()='5.11.2'">SRC-216-1</sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
