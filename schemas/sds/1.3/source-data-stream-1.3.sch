@@ -110,6 +110,10 @@
       <sch:assert id="scap-general-signature-sig-third-ref-manifest" test="dsig:Object/dsig:Manifest[concat('#',@Id) = current()/dsig:SignedInfo/dsig:Reference[3]/@URI]">SRC-288-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
       <sch:assert id="scap-general-signature-sig-key-info" test="dsig:KeyInfo">SRC-290-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
     </sch:rule>
+    <sch:rule id="scap-general-xccdf-status-rule-value-date" context="xccdf:status">
+      <sch:assert id="scap-general-xccdf-status-rule-value-date-1" test="text()='draft' or text()= 'accepted'">SRC-5-1</sch:assert>
+      <sch:assert id="scap-general-xccdf-status-rule-value-date-2" test="@date!=''">SRC-5-2</sch:assert>
+    </sch:rule>
   </sch:pattern>
 
 </sch:schema>
