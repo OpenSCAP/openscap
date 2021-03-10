@@ -120,6 +120,7 @@
     </sch:rule>
     <sch:rule id="scap-cce-check-rule-2" context="oval-def:reference">
       <sch:assert flag="WARNING" test="not(@source='http://cce.mitre.org' or @source='CCE') or @ref_id!=''" id="scap-cce-check-assert-5">A-16-1|oval-def:definition <sch:value-of select="ancestor::oval-def:definition/@id"/></sch:assert>
+      <sch:assert flag="ERROR" test="not(@source='http://cce.mitre.org' or @source='CCE') or startswith(@ref_id, 'CCE-')" id="scap-cce-check-assert-6">A-17-1|<sch:value-of select="@ref_id"/></sch:assert>
     </sch:rule>
   </sch:pattern>
 
