@@ -104,6 +104,7 @@
     </sch:rule>
     <sch:rule id="scap-general-signature-sig" context="dsig:Signature">
       <sch:assert id="scap-general-signature-sig-manifest-req" test="dsig:Object/dsig:Manifest">SRC-284-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
+      <sch:assert id="scap-general-signature-sig-tmsad" test="dsig:Object/dsig:SignatureProperties/dsig:SignatureProperty/tmsad:signature-info">SRC-285-1|dsig:Signature <sch:value-of select="@Id"/></sch:assert>
     </sch:rule>
   </sch:pattern>
 
