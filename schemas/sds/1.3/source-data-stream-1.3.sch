@@ -34,7 +34,7 @@
       <sch:assert id="scap-general-xccdf-benchmark-lang-required" test="@xml:lang">SRC-2-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-no-check-content-check" test="not(.//xccdf:check-content)">SRC-25-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-val-forbid" test="not(.//xccdf:Value//xccdf:source) and not(.//xccdf:Value//xccdf:complex-value) and not(.//xccdf:Value//xccdf:complex-default) and not(.//xccdf:Value//xccdf:choices//xccdf:complex-choice)">SRC-276-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
-      <sch:assert id="scap-general-xccdf-benchmark-version-time-attribute-req" test="xccdf:version/@time">SRC-3-|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-xccdf-benchmark-version-time-attribute-req" test="xccdf:version/@time">SRC-3-2|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-no-xinclude" test="not(.//xinclude:include)">SRC-339-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-version-update-req" test=".//xccdf:version[string(@update)]">SRC-341-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
       <sch:assert id="scap-general-xccdf-benchmark-no-set-complex-value" test="not(.//xccdf:set-complex-value)">SRC-343-1|xccdf:Benchmark <sch:value-of select="@id"/></sch:assert>
