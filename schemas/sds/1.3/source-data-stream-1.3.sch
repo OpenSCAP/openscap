@@ -96,7 +96,7 @@
     </sch:rule>
     <sch:rule id="scap-general-oval-def" context="oval-def:definition">
       <sch:assert id="scap-general-oval-def-rule-compliance-cce" test="@class != 'compliance' or oval-def:metadata/oval-def:reference[@source='http://cce.mitre.org' or @source='CCE']">SRC-207-1|oval-def:definition <sch:value-of select="@id"/></sch:assert>
-      <sch:assert id="scap-general-oval-def-vulnerability-cve-ref" test="@class != 'vulnerability' or oval-def:metadata/oval-def:reference[@source='http://cve.mitre.org' or source='CVE']">SRC-214-1|oval-def:definition <sch:value-of select="@id"/></sch:assert>
+      <sch:assert id="scap-general-oval-def-vulnerability-cve-ref" test="@class != 'vulnerability' or oval-def:metadata/oval-def:reference[@source='http://cve.mitre.org' or @source='CVE']">SRC-214-1|oval-def:definition <sch:value-of select="@id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-general-oval-generator" context="oval-def:generator/oval-com:schema_version">
       <sch:assert id="scap-general-oval-version" test="@platform or text()='5.3' or text()='5.4' or text()='5.5' or text()='5.6' or text()='5.7' or text()='5.8' or text()='5.9' or text()='5.10' or text()='5.10.1' or text()='5.11' or text()='5.11.1' or text()='5.11.2'">SRC-216-1</sch:assert>
@@ -116,11 +116,11 @@
     </sch:rule>
     <sch:rule id="scap-cce-check-rule-1" context="xccdf:ident">
       <sch:assert flag="WARNING" test="not(@system='http://cce.mitre.org' or @system='CCE') or text() != ''" id="scap-cce-check-assert-1">A-16-1|xccdf:Rule <sch:value-of select="ancestor::xccdf:Rule/@id"/></sch:assert>
-      <sch:assert flag="ERROR" test="not(@system='http://cce.mitre.org' or @system='CCE') or startswith(text(), 'CCE-')" id="scap-cce-check-assert-2">A-17-1|<sch:value-of select="."/></sch:assert>
+      <sch:assert flag="ERROR" test="not(@system='http://cce.mitre.org' or @system='CCE') or starts-with(text(), 'CCE-')" id="scap-cce-check-assert-2">A-17-1|<sch:value-of select="."/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-cce-check-rule-2" context="oval-def:reference">
       <sch:assert flag="WARNING" test="not(@source='http://cce.mitre.org' or @source='CCE') or @ref_id!=''" id="scap-cce-check-assert-5">A-16-1|oval-def:definition <sch:value-of select="ancestor::oval-def:definition/@id"/></sch:assert>
-      <sch:assert flag="ERROR" test="not(@source='http://cce.mitre.org' or @source='CCE') or startswith(@ref_id, 'CCE-')" id="scap-cce-check-assert-6">A-17-1|<sch:value-of select="@ref_id"/></sch:assert>
+      <sch:assert flag="ERROR" test="not(@source='http://cce.mitre.org' or @source='CCE') or starts-with(@ref_id, 'CCE-')" id="scap-cce-check-assert-6">A-17-1|<sch:value-of select="@ref_id"/></sch:assert>
     </sch:rule>
     <sch:rule id="scap-check-system-content-match-rule" context="scap:check-system-content">
       <sch:assert flag="ERROR" test="not(@content-type='OVAL_COMPLIANCE' or @content-type='OVAL_PATCH' or @content-type='CPE_INVENTORY' or @content-type='OVAL_VULNERABILITY') or oval-def:oval_definitions" id="scap-check-system-content-match-assert-1">A-18-1</sch:assert>
