@@ -303,6 +303,7 @@ abbrev:
   if((flags&ABBREV_PTS) && !strncmp(tmp,"pts/", 4) && tmp[4]) tmp += 4;
   /* gotta check before we chop or we may chop someone else's memory */
   if(chop + (unsigned long)(tmp-buf) <= sizeof buf)
+    // coverity[-Wstringop-overflow= : FALSE]
     tmp[chop] = '\0';
   /* replace non-ASCII characters with '?' and return the number of chars */
   for(;;){
