@@ -69,6 +69,7 @@ int ds_dump_component_sources(struct oscap_htable *component_sources, const char
 				: oscap_sprintf("%s/%s", target_dir, oscap_source_readable_origin(s));
 		int ret = oscap_acquire_ensure_parent_dir(filename);
 		if (ret != 0) {
+			free(filename);
 			oscap_htable_iterator_free(hit);
 			return ret;
 		}
