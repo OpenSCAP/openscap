@@ -253,8 +253,9 @@ function test_ds_continue_without_remote_resources() {
 function test_source_date_epoch() {
 	local xccdf="$srcdir/sds_multiple_oval/multiple-oval-xccdf.xml"
 	local result="$(mktemp)"
-	local timestamp="2020-03-05T13:09:37"
+	local timestamp="2020-03-05T12:09:37"
 	export SOURCE_DATE_EPOCH="1583410177"
+	export TZ=UTC
 	$OSCAP ds sds-compose "$xccdf" "$result"
 	assert_exists 3 '//ds:component[@timestamp="'$timestamp'"]'
 	rm -f "$result"
