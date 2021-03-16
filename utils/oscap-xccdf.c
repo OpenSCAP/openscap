@@ -129,12 +129,12 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 		"   --skip-valid                  - Skip validation.\n"
 		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
-		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
@@ -168,16 +168,16 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --skip-valid                  - Skip validation.\n"
 		"   --skip-validation\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
-		"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"                                   (only applicable when datastream-id AND xccdf-id are not specified)\n"
 		"   --remediate                   - Automatically execute XCCDF fix elements for failed rules.\n"
 		"                                   Use of this option is always at your own risk.\n",
@@ -251,16 +251,16 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
 		"\nGuide Options:\n"
 		"   --output <file>               - Write the document into file.\n"
 		"   --hide-profile-info           - This option has no effect.\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
-		"                                   (only applicable for source datastreams)\n",
+		"                                   (only applicable for source data streams)\n",
     .opt_parser = getopt_xccdf,
     .user = NULL,
     .func = app_generate_guide
@@ -277,16 +277,16 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"   --output <file>               - Write the script into file.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --template <id|filename>      - Fix template. (default: bash)\n"
-		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the datastream that should be used.\n"
-		"                                   (only applicable for source datastreams)\n"
-		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the datastream that should be evaluated.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"   --benchmark-id <id>           - ID of XCCDF Benchmark in some component in the data stream that should be used.\n"
+		"                                   (only applicable for source data streams)\n"
+		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --tailoring-file <file>       - Use given XCCDF Tailoring file.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
-		"                                   (only applicable for source datastreams)\n"
+		"                                   (only applicable for source data streams)\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
-		"                                   (only applicable for source datastreams)\n",
+		"                                   (only applicable for source data streams)\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -634,7 +634,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		fprintf(stdout, "XCCDF Results are exported correctly.\n");
 
 	if (action->f_results_arf && getenv("OSCAP_FULL_VALIDATION") != NULL)
-		fprintf(stdout, "Result DataStream exported correctly.\n");
+		fprintf(stdout, "Result data stream exported correctly.\n");
 
 	result = evaluation_result;
 

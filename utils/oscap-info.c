@@ -62,7 +62,7 @@ struct oscap_module OSCAP_INFO_MODULE = {
 	.summary = "Print information about a SCAP file.",
     .usage = "some-file.xml",
 	.help = "Options:\n"
-		"   --fetch-remote-resources      - Download remote content referenced by DataStream.\n"
+		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n",
     .opt_parser = getopt_info,

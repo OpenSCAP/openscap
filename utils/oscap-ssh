@@ -38,7 +38,7 @@ function usage()
     echo "$ oscap-ssh user@host 22 info INPUT_CONTENT"
     echo "$ oscap-ssh user@host 22 xccdf eval [options] INPUT_CONTENT"
     echo
-    echo "Only source datastreams are supported as INPUT_CONTENT!"
+    echo "Only source data streams are supported as INPUT_CONTENT!"
     echo
     echo "supported oscap xccdf eval options are:"
     echo "  --profile"
