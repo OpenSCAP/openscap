@@ -403,6 +403,9 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 			case OSCAP_DOCUMENT_SCE_RESULT:
 				source->origin.version = oscap_strdup("1.0");
 				break;
+			case OSCAP_DOCUMENT_OCIL:
+				source->origin.version = oscap_strdup("2.0");
+				break;
 			default:
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not determine origin.version for document %s: Unknown type: %s",
 					oscap_source_readable_origin(source),
