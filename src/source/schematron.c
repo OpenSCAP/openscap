@@ -30,7 +30,10 @@
 #endif
 
 #include "common/_error.h"
+#include "common/list.h"
 #include "common/util.h"
+#include "ds_sds_session.h"
+#include "DS/ds_sds_session_priv.h"
 #include "oscap.h"
 #include "oscap_source.h"
 #include "source/oscap_source_priv.h"
@@ -103,6 +106,30 @@ struct oscap_schema_table_entry OSCAP_SCHEMATRON_TABLE[] = {
 	{OSCAP_DOCUMENT_SDS,                    "1.3",          "sds/1.3/source-data-stream-1.3.xsl"}
 };
 
+static int _validate_sds_components(struct oscap_source *source)
+{
+	int ret = 0;
+	struct ds_sds_session *session = ds_sds_session_new_from_source(source);
+	if (ds_sds_session_register_component_with_dependencies(session, "checklists", NULL, NULL) != 0) {
+		return -1;
+	}
+	if (ds_sds_session_register_component_with_dependencies(session, "checks", NULL, NULL) != 0) {
+		return -1;
+	}
+	struct oscap_htable *component_sources = ds_sds_session_get_component_sources(session);
+	struct oscap_htable_iterator *it = oscap_htable_iterator_new(component_sources);
+	while (oscap_htable_iterator_has_more(it)) {
+		struct oscap_source *cs = oscap_htable_iterator_next_value(it);
+		int component_result = oscap_source_validate_schematron(cs, NULL);
+		if (component_result != 0) {
+			ret = component_result;
+		}
+	}
+	oscap_htable_iterator_free(it);
+	ds_sds_session_free(session);
+	return ret;
+}
+
 int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version, const char *outfile)
 {
 	const char *params[] = { NULL };
@@ -113,13 +140,28 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 		return -1;
 	}
 
+	int ret = 0;
+	if (scap_type == OSCAP_DOCUMENT_SDS) {
+		int component_validity = _validate_sds_components(source);
+		if (component_validity != 0) {
+			ret = component_validity;
+		}
+	}
+
 	/* find a right schematron file */
 	for (struct oscap_schema_table_entry *entry = OSCAP_SCHEMATRON_TABLE; entry->doc_type != 0; ++entry) {
 		if (entry->doc_type != scap_type || strcmp(entry->schema_version, version))
 			continue;
 
 		/* validate */
-		return oscap_source_apply_xslt_path(source, entry->schema_path, outfile, params, oscap_path_to_schemas());
+		const char *origin = oscap_source_readable_origin(source);
+		printf("Starting schematron validation of '%s':\n", origin);
+		int validity = oscap_source_apply_xslt_path(source, entry->schema_path, outfile, params, oscap_path_to_schemas());
+		if (validity != 0) {
+			ret = 1;
+		}
+		printf("Schematron validation of '%s': %s\n\n", origin, validity == 0 ? "PASS" : "FAIL");
+		return ret;
 	}
 
 	oscap_seterr(OSCAP_EFAMILY_OSCAP, "Schematron rules not found when trying to validate '%s'", oscap_source_readable_origin(source));
