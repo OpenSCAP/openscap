@@ -253,8 +253,9 @@ function test_ds_continue_without_remote_resources() {
 function test_source_date_epoch() {
 	local xccdf="$srcdir/sds_multiple_oval/multiple-oval-xccdf.xml"
 	local result="$(mktemp)"
-	local timestamp="2020-03-05T13:09:37"
+	local timestamp="2020-03-05T12:09:37"
 	export SOURCE_DATE_EPOCH="1583410177"
+	export TZ=UTC
 	$OSCAP ds sds-compose "$xccdf" "$result"
 	assert_exists 3 '//ds:component[@timestamp="'$timestamp'"]'
 	rm -f "$result"
@@ -286,7 +287,7 @@ test_run "test_eval_complex" test_eval_complex
 test_run "sds_add_multiple_oval_twice_in_row" sds_add_multiple_twice
 test_run "test_ds_1_2_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.2.ds.xml xccdf_com.example.www_profile_test_remote_res
 test_run "test_ds_1_3_continue_without_remote_resources" test_ds_continue_without_remote_resources ds_continue_without_remote_resources/remote_content_1.3.ds.xml xccdf_com.example.www_profile_test_remote_res
-test_run "test_source_date_epoch"test_source_date_epoch
+test_run "test_source_date_epoch" test_source_date_epoch
 
 test_exit
 
