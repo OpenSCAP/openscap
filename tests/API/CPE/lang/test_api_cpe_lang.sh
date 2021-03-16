@@ -29,13 +29,15 @@ function test_api_cpe_lang_import_key {
     KEY_123="123::Microsoft Windows XP with Adobe Reader.en,:(AND(cpe:/o:microsoft:windows_xp)(cpe:/a:adobe:reader))"
     KEY_456="456::Sun Solaris 5.8 or 5.9 or 5.10.,ľščťžýýáíéúôä.,:(OR(cpe:/o:sun:solaris:5.8)(cpe:/o:sun:solaris:5.9)(cpe:/o:sun:solaris:5.10))"
     KEY_789="789:Foolish Remark:Microsoft Windows XP with Office 2003 or 2007.,:(AND(cpe:/o:microsoft:windows_xp)(OR(cpe:/a:microsoft:office:2003)(cpe:/a:microsoft:office:2007)))"
+    KEY_1011="1011:Foolish Remark:NOT Microsoft Windows XP and Sun Solaris 5.8.,:(!AND(cpe:/o:microsoft:windows_xp)(cpe:/o:sun:solaris:5.8))"
     
     echo "" > get-all.out
     echo $KEY_123 >> get-all.out
     echo $KEY_456 >> get-all.out
     echo $KEY_789 >> get-all.out
+    echo $KEY_1011 >> get-all.out
 
-    for K in "$KEY_123" "$KEY_456" "$KEY_789"; do
+    for K in "$KEY_123" "$KEY_456" "$KEY_789" "$KEY_1011"; do
 	N=`echo $K | awk -F':' '{print $1}'`
 	./test_api_cpe_lang --get-key $srcdir/lang.xml "UTF-8" $N > get-key.out
 	if [ $? -eq 0 ]; then

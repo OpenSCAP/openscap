@@ -31,5 +31,14 @@
 		</cpe:logical-test>
 	</cpe:platform>
 
+	<cpe:platform id="1011">
+	<cpe:title>NOT Microsoft Windows XP and Sun Solaris 5.8</cpe:title>
+		<cpe:remark>Foolish Remark</cpe:remark>
+		<cpe:logical-test operator="AND" negate="TRUE">
+			<cpe:fact-ref name="cpe:/o:microsoft:windows_xp" />
+			<cpe:fact-ref name="cpe:/o:sun:solaris:5.8" />
+		</cpe:logical-test>
+	</cpe:platform>
+
 </cpe:platform-specification>
 
