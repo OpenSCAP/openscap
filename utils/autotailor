@@ -119,10 +119,10 @@ class Tailoring:
 def parse_args():
     parser = argparse.ArgumentParser(
         description="This script produces XCCDF 1.2 tailoring files "
-        "to be used by SCAP scanners and SCAP datastreams.")
+        "to be used by SCAP scanners and SCAP data streams.")
     parser.add_argument(
         "datastream", metavar="DS_FILENAME",
-        help="The tailored datastream filename.")
+        help="The tailored data stream filename.")
     parser.add_argument(
         "profile", metavar="BASE_PROFILE_ID",
         help="Specify ID of the base profile. "
@@ -133,7 +133,7 @@ def parse_args():
         help="Title of the new profile.")
     parser.add_argument(
         "--id-namespace", default="org.ssgproject.content",
-        help="The reverse-DNS style string that is part of entities IDs in the corresponding datastream. If left out, the default value 'org.ssgproject.content' is used.")
+        help="The reverse-DNS style string that is part of entities IDs in the corresponding data stream. If left out, the default value 'org.ssgproject.content' is used.")
     parser.add_argument(
         "-v", "--var-value", metavar="VAR=VALUE", action="append", default=[],
         help="Specify modification of the XCCDF value in form <varname>=<value>. "

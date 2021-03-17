@@ -110,12 +110,12 @@ static struct oscap_module OVAL_EVAL = {
 	"   --report <file>               - Create human readable (HTML) report from OVAL Results.\n"
 	"   --skip-valid                  - Skip validation.\n"
 	"   --skip-validation\n"
-	"   --datastream-id <id>          - ID of the datastream in the collection to use.\n"
-	"                                   (only applicable for source datastreams)\n"
-	"   --oval-id <id>                - ID of the OVAL component ref in the datastream to use.\n"
-	"                                   (only applicable for source datastreams)\n"
+	"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
+	"                                   (only applicable for source data streams)\n"
+	"   --oval-id <id>                - ID of the OVAL component ref in the data stream to use.\n"
+	"                                   (only applicable for source data streams)\n"
 	"   --fetch-remote-resources      - Download remote content referenced by OVAL Definitions.\n"
-	"                                   (only applicable for source datastreams)\n",
+	"                                   (only applicable for source data streams)\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
@@ -700,7 +700,7 @@ static bool valid_inputs(const struct oscap_action *action) {
 	struct oscap_source *definitions_source = oscap_source_new_from_file(action->f_oval);
 	if (oscap_source_get_scap_type(definitions_source) != OSCAP_DOCUMENT_OVAL_DEFINITIONS &&
 			oscap_source_get_scap_type(definitions_source) != OSCAP_DOCUMENT_SDS) {
-		fprintf(stderr, "Type mismatch: %s. Expecting OVAL Definition or Source DataStream, but found %s.\n",
+		fprintf(stderr, "Type mismatch: %s. Expecting OVAL Definition or source data stream, but found %s.\n",
 			action->f_oval, oscap_document_type_to_string(oscap_source_get_scap_type(definitions_source)));
 		result = false;
 	}
