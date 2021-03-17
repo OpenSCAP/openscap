@@ -1,0 +1,297 @@
+<?xml version="1.0"?>
+<oval_definitions xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:lin-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd">
+  <generator>
+    <oval:schema_version>5.11.1</oval:schema_version>
+    <oval:timestamp>0001-01-01T00:00:00+00:00</oval:timestamp>
+  </generator>
+
+  <definitions>
+    <!-- The readability of the metatada is not important -->
+    <definition class="compliance" version="1" id="oval:x:def:1">
+        <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:1" comment="always pass"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:2">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:2" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:3">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:3" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:4">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:4" comment="always pass"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:5">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:5" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:6">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:6" comment="always pass"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:7">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:7" comment="always pass"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:8">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:8" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:9">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:9" comment="always fail"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:10">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:10" comment="always pass"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" version="1" id="oval:x:def:11">
+      <metadata> <title>x</title> <description>x</description> <affected family="unix"> <platform>x</platform> </affected> </metadata>
+      <criteria>
+        <criterion test_ref="oval:x:tst:11" comment="always fail"/>
+      </criteria>
+    </definition>
+  </definitions>
+
+  <tests>
+    <unix-def:file_test comment="Test AND with all entities correct" check="all" id="oval:x:tst:1" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:1"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test AND with one entity wrong" check="all" id="oval:x:tst:2" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:2"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test AND with all entities wrong" check="all" id="oval:x:tst:3" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:3"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test ONE with one entity correct" check="all" id="oval:x:tst:4" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:4"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test ONE with all entities wrong" check="all" id="oval:x:tst:5" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:5"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test OR with all entities correct" check="all" id="oval:x:tst:6" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:6"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test OR with one entity correct" check="all" id="oval:x:tst:7" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:7"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test OR with all entities wrong" check="all" id="oval:x:tst:8" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:8"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test XOR with no entities correct" check="all" id="oval:x:tst:9" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:9"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test XOR with one entities correct" check="all" id="oval:x:tst:10" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:10"/>
+    </unix-def:file_test>
+    <unix-def:file_test comment="Test XOR with two entity correct" check="all" id="oval:x:tst:11" version="1">
+      <unix-def:object object_ref="oval:x:obj:1"/>
+      <unix-def:state state_ref="oval:x:ste:11"/>
+    </unix-def:file_test>
+  </tests>
+
+  <objects>
+    <unix-def:file_object id="oval:x:obj:1" version="1">
+      <unix-def:filepath>/tmp/foo.txt</unix-def:filepath>
+    </unix-def:file_object>
+  </objects>
+
+  <states>
+    <!-- All attributes are correct -->
+    <unix-def:file_state id="oval:x:ste:1" version="1" operator="AND">
+        <unix-def:suid datatype="boolean">false</unix-def:suid>
+        <unix-def:sgid datatype="boolean">false</unix-def:sgid>
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">true</unix-def:uexec>
+        <unix-def:gread datatype="boolean">false</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">false</unix-def:gexec>
+        <unix-def:oread datatype="boolean">false</unix-def:oread>
+        <unix-def:owrite datatype="boolean">false</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">false</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- The attribute uread is wrong -->
+    <unix-def:file_state id="oval:x:ste:2" version="1" operator="AND">
+        <unix-def:suid datatype="boolean">false</unix-def:suid>
+        <unix-def:sgid datatype="boolean">false</unix-def:sgid>
+        <unix-def:uread datatype="boolean">false</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">true</unix-def:uexec>
+        <unix-def:gread datatype="boolean">false</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">false</unix-def:gexec>
+        <unix-def:oread datatype="boolean">false</unix-def:oread>
+        <unix-def:owrite datatype="boolean">false</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">false</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- All attributes are wrong -->
+    <unix-def:file_state id="oval:x:ste:3" version="1" operator="AND">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">false</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- One attribute is correct (uread) -->
+    <unix-def:file_state id="oval:x:ste:4" version="1" operator="ONE">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- All attributes are wrong -->
+    <unix-def:file_state id="oval:x:ste:5" version="1" operator="ONE">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">false</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- All attributes are correct -->
+    <unix-def:file_state id="oval:x:ste:6" version="1" operator="OR">
+        <unix-def:suid datatype="boolean">false</unix-def:suid>
+        <unix-def:sgid datatype="boolean">false</unix-def:sgid>
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">true</unix-def:uexec>
+        <unix-def:gread datatype="boolean">false</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">false</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">false</unix-def:gexec>
+        <unix-def:oread datatype="boolean">false</unix-def:oread>
+        <unix-def:owrite datatype="boolean">false</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">false</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- One attributes is correct (uread) -->
+    <unix-def:file_state id="oval:x:ste:7" version="1" operator="OR">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- All attributes are wrong -->
+    <unix-def:file_state id="oval:x:ste:8" version="1" operator="OR">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">false</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- No attributes are correct -->
+    <unix-def:file_state id="oval:x:ste:9" version="1" operator="XOR">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">false</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- The uread attribute is correct -->
+    <unix-def:file_state id="oval:x:ste:10" version="1" operator="XOR">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">false</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+
+    <!-- The uread and uwrite attributes are correct -->
+    <unix-def:file_state id="oval:x:ste:11" version="1" operator="XOR">
+        <unix-def:suid datatype="boolean">true</unix-def:suid>
+        <unix-def:sgid datatype="boolean">true</unix-def:sgid>
+        <unix-def:uread datatype="boolean">true</unix-def:uread>
+        <unix-def:uwrite datatype="boolean">true</unix-def:uwrite>
+        <unix-def:uexec datatype="boolean">false</unix-def:uexec>
+        <unix-def:gread datatype="boolean">true</unix-def:gread>
+        <unix-def:gwrite datatype="boolean">true</unix-def:gwrite>
+        <unix-def:gexec datatype="boolean">true</unix-def:gexec>
+        <unix-def:oread datatype="boolean">true</unix-def:oread>
+        <unix-def:owrite datatype="boolean">true</unix-def:owrite>
+        <unix-def:oexec datatype="boolean">true</unix-def:oexec>
+    </unix-def:file_state>
+  </states>
+</oval_definitions>
