@@ -666,10 +666,14 @@ static oval_result_t eval_item(struct oval_syschar_model *syschar_model, struct 
 			dW("Entity name '%s' from state (id: '%s') not found in item (id: '%s').",
 			   state_entity_name, oval_state_get_id(state), oval_sysitem_get_id(cur_sysitem));
 
-		ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
-		ores_add_res(&ste_ores, ste_ent_res);
 		oval_result_t cres = oval_status_counter_get_result(&counter, check_existence);
-		ores_add_res(&ste_ores, cres);
+		/* The entity check results are only relevant when the check existence is satisfied */
+		if (cres == OVAL_RESULT_TRUE) {
+			ste_ent_res = ores_get_result_bychk(&ent_ores, entity_check);
+			ores_add_res(&ste_ores, ste_ent_res);
+		} else {
+			ores_add_res(&ste_ores, cres);
+		}
 	}
 	oval_state_content_iterator_free(state_contents_itr);
 
