@@ -264,8 +264,6 @@ cleanup:
 	 */
 	xsltSetDefaultSecurityPrefs(NULL);
 
-	xsltCleanupGlobals();
-
 	return res;
 }
 
