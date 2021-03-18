@@ -2112,6 +2112,18 @@
                                                                   </xsd:annotation>
                                                             </xsd:element>
                                                       </xsd:sequence>
+                                                      <xsd:element name="content" type="oval-def:EntityObjectStringType">
+                                                            <xsd:annotation>
+                                                                  <xsd:documentation>The content element specifies the YAML document body. It also could reference a variable containing the document using var_ref attribute. Note that "equals" is the only valid operator for the content entity.</xsd:documentation>
+                                                                  <xsd:appinfo>
+                                                                        <sch:pattern id="ind-def_yamlobjcontent">
+                                                                              <sch:rule context="ind-def:yamlfilecontent_object/ind-def:content">
+                                                                                    <sch:assert test="not(@operation) or @operation='equals'"><sch:value-of select="../@id"/> - operation attribute for the content entity of a yamlfilecontent_object should be 'equals', note that this overrules the general operation attribute validation (i.e. follow this one)</sch:assert>
+                                                                              </sch:rule>
+                                                                        </sch:pattern>
+                                                                  </xsd:appinfo>
+                                                            </xsd:annotation>
+                                                      </xsd:element>
                                                 </xsd:choice>
                                                 <xsd:element name="yamlpath" type="oval-def:EntityObjectStringType">
                                                       <xsd:annotation>
@@ -2154,6 +2166,11 @@
                                     <xsd:element name="filename" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
                                           <xsd:annotation>
                                                 <xsd:documentation>The filename element specifies the name of the file.</xsd:documentation>
+                                          </xsd:annotation>
+                                    </xsd:element>
+                                    <xsd:element name="content" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
+                                          <xsd:annotation>
+                                                <xsd:documentation>The content element specifies the YAML document body. Note that "equals" is the only valid operator for the content entity.</xsd:documentation>
                                           </xsd:annotation>
                                     </xsd:element>
                                     <xsd:element name="yamlpath" type="oval-def:EntityStateStringType" minOccurs="0" maxOccurs="1">
