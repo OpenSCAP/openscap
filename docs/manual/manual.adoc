@@ -1513,6 +1513,18 @@ the presence of a matching SWID tag:
 $ oscap oval eval --results results.xml r2860-rhel-oval.xml
 ----
 
+== List of accepted environment variables
+
+* `OSCAP_CHECK_ENGINE_PLUGIN_DIR` - Defines path to a directory that contains plug-in libraries implementing additonal check engines, eg. SCE.
+* `OSCAP_CONTAINER_VARS` - Additional environment variables read by environmentvariable58_probe. The variables are separated by `\n`. It is used by `oscap-podman` and `oscap-docker` scripts during container scanning.
+* `OSCAP_EVALUATION_TARGET` - Change value of target facts `urn:xccdf:fact:identifier` and `urn:xccdf:fact:asset:identifier:ein` in XCCDF results. Used during offline scanning to pass the name of the target system.
+* `OSCAP_FULL_VALIDATION` - If set, XML schema validation will be performed in every step of SCAP content processing.
+* `OSCAP_OVAL_COMMAND_OPTIONS` - Additional command line options for `oscap oval` module. The value of this environment variable is appended to the actual command line options of `oscap` command.
+* `OSCAP_PCRE_EXEC_RECURSION_LIMIT` - Set recursion limit of regular expression matching using `pcre_exec` function.
+* `OSCAP_PROBE_ROOT` - Path to a directory which contains mounted filesystem to be evaluated. Used for offline scanning.
+* `SEXP_VALIDATE_DISABLE` - If set, `oscap` will not validate SEXP expressions during its execution.
+* `SOURCE_DATE_EPOCH` - Timestamp in seconds since epoch. This timestamp will be used instead of the current time to populate `timestamp` attributes in SCAP source data streams created by `oscap ds sds-compose` sub-module. This is used for reproducible builds of data streams.
+
 
 == Using external or remote resources
 
