@@ -222,7 +222,7 @@ static int __SEAP_cmdexec_reply (SEAP_CTX_t *ctx, int sd, SEAP_cmd_t *cmd)
                 return (-1);
         }
 
-        if (res != NULL)
+        if (res != NULL && res != cmd->args)
                 SEXP_free(res);
 
         SEAP_packet_free (packet);

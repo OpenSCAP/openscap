@@ -2053,9 +2053,9 @@ struct xccdf_result * xccdf_policy_evaluate(struct xccdf_policy * policy)
 	if ((xccdf_policy_get_profile(policy) != NULL) && (xccdf_profile_get_id(xccdf_policy_get_profile(policy)) != NULL)) {
 		id = oscap_strdup(xccdf_profile_get_id(xccdf_policy_get_profile(policy)));
 		xccdf_result_set_profile(result, id);
+	} else {
+		id = oscap_strdup("default-profile");
 	}
-    else
-        id = oscap_strdup("default-profile");
 
 	dI("Evaluating a XCCDF policy with selected '%s' profile.", id);
 
