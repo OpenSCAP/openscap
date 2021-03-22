@@ -1525,6 +1525,7 @@ $ oscap oval eval --results results.xml r2860-rhel-oval.xml
 * `SEXP_VALIDATE_DISABLE` - If set, `oscap` will not validate SEXP expressions during its execution.
 * `SOURCE_DATE_EPOCH` - Timestamp in seconds since epoch. This timestamp will be used instead of the current time to populate `timestamp` attributes in SCAP source data streams created by `oscap ds sds-compose` sub-module. This is used for reproducible builds of data streams.
 
+Also, OpenSCAP uses `libcurl` library which also can be configured using environment variables. See https://curl.se/libcurl/c/libcurl-env.html[the list of libcurl environment variables].
 
 == Using external or remote resources
 
