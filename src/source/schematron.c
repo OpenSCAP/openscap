@@ -420,6 +420,156 @@ static bool _req_src_236_2(xmlXPathContextPtr context)
 	return res;
 }
 
+
+static bool _req_src_346_1_sub5(xmlNodePtr component, xmlXPathContextPtr context, const char *name)
+{
+	/* .//oval-def:definition[@id eq $n/@name]) */
+	bool exists_oval = false;
+	char *oval_xpath = oscap_sprintf(".//oval-def:definition[@id='%s']", name);
+	xmlXPathObjectPtr oval_definitions = xmlXPathNodeEval(component, BAD_CAST oval_xpath, context);
+	for (int m = 0; m < oval_definitions->nodesetval->nodeNr; m++) {
+		xmlNodePtr oval_definition = oval_definitions->nodesetval->nodeTab[m];
+		char *oval_def_id = (char *) xmlGetProp(oval_definition, BAD_CAST "id");
+		dD("Found OVAL definition id='%s'", oval_def_id);
+		free(oval_def_id);
+		exists_oval = true;
+	}
+	free(oval_xpath);
+	xmlXPathFreeObject(oval_definitions);
+	return exists_oval;
+}
+
+static bool _req_src_346_1_sub4(xmlNodePtr check_content_ref_node, xmlNodePtr catalog, xmlXPathContextPtr context)
+{
+
+	char *href = (char *) xmlGetProp(check_content_ref_node, BAD_CAST "href");
+	/* xcf:get-component(xcf:get-component-ref($m/cat:catalog, $o/@href) */
+	xmlNodePtr component_ref =  _xcf_get_component_ref(catalog, href, context);
+	free(href);
+	if (component_ref == NULL) {
+		dD("component_ref not found");
+		return false;
+	}
+	xmlNodePtr component = _xcf_get_component(component_ref, context);
+	if (component == NULL) {
+		dD("component not found\n");
+		return false;
+	}
+
+	/* not(exists($n/@name)) or exists(xcf:get-component(xcf:get-component-ref($m/cat:catalog, $n/@href))//oval-def:definition[@id eq $n/@name]) */
+	char *name = (char *) xmlGetProp(check_content_ref_node, BAD_CAST "name");
+	bool res = true;
+	if(name != NULL) {
+		res = _req_src_346_1_sub5(component, context, name);
+	}
+
+	free(name);
+	return res;
+}
+
+static bool _req_src_346_1_sub3(xmlNodePtr rule_node, xmlNodePtr catalog, xmlXPathContextPtr context)
+{
+	bool res = true;
+
+	/* xccdf:check[@system eq 'http://oval.mitre.org/XMLSchema/oval-definitions-5']//xccdf:check-content-ref[not(xcf:is-external-ref($m/cat:catalog, @href) cast as xsd:boolean)] */
+	xmlXPathObjectPtr check_content_refs = xmlXPathNodeEval(rule_node, BAD_CAST ".//xccdf:Rule/xccdf:check[@system='http://oval.mitre.org/XMLSchema/oval-definitions-5']/xccdf:check-content-ref", context);
+
+	if (check_content_refs == NULL) {
+		dD("There are no check-content-refs elements to be checked.");
+		return true;
+	}
+
+	/* ... (not(exists($n/@name)) or exists(xcf:get-component(xcf:get-component-ref($m/cat:catalog, $n/@href))//oval-def:definition[@id eq $n/@name])) */
+	bool found = true;
+	for (int l = 0; l < check_content_refs->nodesetval->nodeNr; l++) {
+		xmlNodePtr check_content_ref_node = check_content_refs->nodesetval->nodeTab[l];
+		char *href = (char *) xmlGetProp(check_content_ref_node, BAD_CAST "href");
+		if (_xcf_is_external_ref(catalog, href, context)) {
+			free(href);
+			continue;
+		}
+		if (!_req_src_346_1_sub4(check_content_ref_node, catalog, context)) {
+			found = false;
+			break;
+		}
+	}
+	if (!found) {
+		res = false;
+	}
+	xmlXPathFreeObject(check_content_refs);
+	return res;
+}
+
+static bool _req_src_346_1_sub2(xmlNodePtr component_ref_node, xmlNodePtr catalog, xmlXPathContextPtr context)
+{
+	/* every $n in xcf:get-component($m)//xccdf:check satisfies ... */
+	xmlNodePtr component_node = _xcf_get_component(component_ref_node, context);
+	if (component_node == NULL) {
+		char *xlink_href = (char *) xmlGetNsProp(component_ref_node, BAD_CAST "href", BAD_CAST "http://www.w3.org/1999/xlink");
+		dD("Can't find component using component-ref '%s'", xlink_href);
+		free(xlink_href);
+		return false;
+	}
+	if (!_req_src_346_1_sub3(component_node, catalog, context)) {
+		return false;
+	}
+	return true;
+}
+
+static bool _req_src_346_1_sub1(xmlNodePtr data_stream_node, xmlXPathContextPtr context)
+{
+	int res = true;
+	/* every $m in ds:checklists/ds:component-ref satisfies ... */
+	xmlXPathObjectPtr component_refs = xmlXPathNodeEval(data_stream_node, BAD_CAST "ds:checklists/ds:component-ref", context);
+	for (int i = 0; i < component_refs->nodesetval->nodeNr; i++) {
+		xmlNodePtr component_ref_node = component_refs->nodesetval->nodeTab[i];
+		char *component_ref_id = (char *) xmlGetProp(component_ref_node, BAD_CAST "id");
+		dD("Checking ds:component-ref id='%s'", component_ref_id);
+		free(component_ref_id);
+
+		/* find $m/catalog */
+		xmlNodePtr catalog = _find_catalog(component_ref_node);
+		if (catalog == NULL) {
+			res = false;
+			break;
+		}
+
+		if (!_req_src_346_1_sub2(component_ref_node, catalog, context)) {
+			res = false;
+			break;
+		}
+	}
+	xmlXPathFreeObject(component_refs);
+	return res;
+}
+
+static bool _req_src_346_1(xmlXPathContextPtr context)
+{
+	/*
+	 * This function implements the check for SCAPVAL requirement SRC-346-1
+	 * which is implemented in XML Schematron file 'source-data-stream-1.3.sch'
+	 * assert scap-general-scap-content-xccdf-check-content-ref-name-not-req.
+	 *
+	 * <sch:assert id="scap-general-scap-content-xccdf-check-content-ref-name-not-req" test="every $m in ds:checklists/ds:component-ref satisfies every $n in xcf:get-component($m)//xccdf:check[@system eq 'http://oval.mitre.org/XMLSchema/oval-definitions-5']//xccdf:check-content-ref[not(xcf:is-external-ref($m/cat:catalog, @href) cast as xsd:boolean)] satisfies (not(exists($n/@name)) or exists(xcf:get-component(xcf:get-component-ref($m/cat:catalog, $n/@href))//oval-def:definition[@id eq $n/@name]))">SRC-346-1|scap:data-stream <sch:value-of select="@id"/></sch:assert>
+	 */
+
+	bool res = true;
+	/* The parent rule element in the schematron matches all scap:data-stream elements */
+	xmlXPathObjectPtr data_streams = xmlXPathEval(BAD_CAST "//scap:data-stream", context);
+	for (int i = 0; i < data_streams->nodesetval->nodeNr; i++) {
+		xmlNodePtr data_stream_node = data_streams->nodesetval->nodeTab[i];
+		if (!_req_src_346_1_sub1(data_stream_node, context)) {
+			char *data_stream_id = (char *) xmlGetProp(data_stream_node, BAD_CAST "id");
+			printf("SRC-346-1|scap:data-stream %s\n", data_stream_id);
+			free(data_stream_id);
+			res = false;
+			break;
+		}
+	}
+	xmlXPathFreeObject(data_streams);
+	return res;
+}
+
 static int _additional_schematron_checks(struct oscap_source *source)
 {
 	xmlDocPtr doc = oscap_source_get_xmlDoc(source);
@@ -438,6 +588,9 @@ static int _additional_schematron_checks(struct oscap_source *source)
 	int res = 0;
 	/* Assert ID: scap-use-case-conf-verification-benchmark-one-rule-ref-oval-ocil */
 	if (!_req_src_236_2(context))
+		res = 1;
+	/* Assert ID: scap-general-scap-content-xccdf-check-content-ref-name-not-req */
+	if (!_req_src_346_1(context))
 		res = 1;
 
 	xmlXPathFreeContext(context);
