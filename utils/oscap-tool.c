@@ -258,24 +258,20 @@ static enum oscap_common_opts oscap_parse_common_opts(int argc, char **argv, str
     };
 
 	int r;
-	int optind_bak = optind;
-	int opterr_bak = opterr;
 	opterr = 0;
 	while ((r = getopt_long(argc, argv, "+h", opts, NULL)) != -1) {
 		switch (r) {
 		case OPT_VERBOSE:
-			optind_bak += 2;
 			action->verbosity_level = optarg;
 			break;
 		case OPT_VERBOSE_LOG_FILE:
-			optind_bak += 2;
 			action->f_verbose_log = optarg;
 			break;
 		case 0:
 			break;
 		case '?':
-			optind = optind_bak;
-			opterr = opterr_bak;
+			optind--;
+			opterr--;
 			return OPT_NONE;
 		default:
 			return r;
