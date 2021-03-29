@@ -137,7 +137,7 @@
 
 
 #ifdef OPENSCAP_PROBE_UNIX_NETWORKFIREWALL
-#include "unix/linux/networkfirewall_probe.h"
+#include "unix/networkfirewall_probe.h"
 #endif
 
 

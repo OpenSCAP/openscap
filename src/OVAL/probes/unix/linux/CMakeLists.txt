@@ -25,13 +25,6 @@ if(OPENSCAP_PROBE_LINUX_INETLISTENINGSERVERS)
 	)
 endif()
 
-if (OPENSCAP_PROBE_LINUX_NETWORKFIREWALL)
-    list(APPEND LINUX_PROBES_SOURCES
-        "networkfirewall_probe.h"
-        "networkfirewall_probe.c"
-    )
-endif()
-
 if(OPENSCAP_PROBE_LINUX_PARTITION)
 	list(APPEND LINUX_PROBES_SOURCES
 		"partition_probe.c"

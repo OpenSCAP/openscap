@@ -30,7 +30,7 @@
 struct ruleset {
     // JSON representation of the current system ruleset
     struct json_t *ruleset;
-    // List of the chain"s name that correspond to the packet_direction entity
+    // List of the chains name that correspond to the packet_direction entity
     struct oscap_stringlist *chain_list;
     // List of the rules filtered by the packet direction
     struct oscap_list *rules;
@@ -56,16 +56,78 @@ struct json_t *get_ruleset();
  */
 struct ruleset* ruleset_new(int filter);
 
+void ruleset_free(struct ruleset* ruleset);
+
 /**
  * Constructor for a rule object
  */
 struct rule* rule_new();
 
+void rule_free(struct rule *rule);
+
 /**
  * Method that try to get the iifname value in the rule
- * @return A list containing the iifname values
+ * @return The iifname value
  */
 const char* get_iifname(struct rule* rule);
+
+enum addr_type {
+    IPV4 = 0,
+    IPV6 = 1,
+    NULL_IP = 3
+};
+
+struct addr_info {
+    const char *addr;
+    enum addr_type type;
+};
+
+/**
+ * Method that try to get the source address value in the rule
+ * @return The iifname value
+ */
+struct addr_info get_saddr(struct rule* rule);
+
+/**
+ * Method that try to get the destination address value in the rule
+ * @return The iifname value
+ */
+struct addr_info get_daddr(struct rule* rule);
+
+/**
+ * Method that try to get the oifname value in the rule
+ * @return The oifname value
+ */
+const char* get_oifname(struct rule* rule);
+
+/**
+ * Method that try to get the source address value in the rule
+ * @return The iifname value
+ */
+const char *get_saddr(struct rule* rule);
+
+/**
+ * Method that return the protocol value in the rule
+ * @return The protocol value 
+ */
+const char *get_protocol(struct rule* rule);
+
+/**
+ * Method that return the source port in the rule
+ * @return The source value 
+ */
+const int get_sport(struct rule* rule);
+
+/**
+ * Method that return the destination port in the rule
+ * @return The destination value 
+ */
+const int get_dport(struct rule* rule);
+
+/**
+ * Method that return the rule filtering action
+ */
+const char *get_filtering_action(struct rule *rule);
 
 /**
  * Method that return a int corresponding to combinaison of the bitflag describe by the enum packet_direction
