@@ -410,7 +410,7 @@ static bool _req_src_236_2(xmlXPathContextPtr context)
 		free(use_case);
 		if (!_req_src_236_2_sub1(data_stream_node, context)) {
 			char *data_stream_id = (char *) xmlGetProp(data_stream_node, BAD_CAST "id");
-			printf("SRC-236-2|scap:data-stream %s\n", data_stream_id);
+			printf("Error: SRC-236-2|scap:data-stream %s\n", data_stream_id);
 			free(data_stream_id);
 			res = false;
 			break;
@@ -560,7 +560,7 @@ static bool _req_src_346_1(xmlXPathContextPtr context)
 		xmlNodePtr data_stream_node = data_streams->nodesetval->nodeTab[i];
 		if (!_req_src_346_1_sub1(data_stream_node, context)) {
 			char *data_stream_id = (char *) xmlGetProp(data_stream_node, BAD_CAST "id");
-			printf("SRC-346-1|scap:data-stream %s\n", data_stream_id);
+			printf("Error: SRC-346-1|scap:data-stream %s\n", data_stream_id);
 			free(data_stream_id);
 			res = false;
 			break;
