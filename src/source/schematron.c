@@ -597,6 +597,28 @@ static int _additional_schematron_checks(struct oscap_source *source)
 	return res;
 }
 
+static int _sds_schematron_validation(struct oscap_source *source, const char *schema_path)
+{
+	int validity = 0;
+	const char *params[] = { NULL };
+
+	if (_additional_schematron_checks(source) != 0) {
+		validity = 1;
+	}
+	char *xslt_output = oscap_source_apply_xslt_path_mem(source, schema_path, params, oscap_path_to_schemas());
+	if (xslt_output == NULL) {
+		validity = 1;
+	}
+	char *err_substr = strstr(xslt_output, "Error:");
+	if (err_substr != NULL) {
+		/* "Error:" found in schematron output */
+		validity = 1;
+	}
+	puts(xslt_output);
+	free(xslt_output);
+	return validity;
+}
+
 int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_document_type_t scap_type, const char *version, const char *outfile)
 {
 	const char *params[] = { NULL };
@@ -623,13 +645,14 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 		/* validate */
 		const char *origin = oscap_source_readable_origin(source);
 		printf("Starting schematron validation of '%s':\n", origin);
-		int validity = oscap_source_apply_xslt_path(source, entry->schema_path, outfile, params, oscap_path_to_schemas());
+		int validity = 0;
+		if (scap_type == OSCAP_DOCUMENT_SDS) {
+			validity = _sds_schematron_validation(source, entry->schema_path);
+		} else {
+			validity = oscap_source_apply_xslt_path(source, entry->schema_path, outfile, params, oscap_path_to_schemas());
+		}
 		if (validity != 0) {
 			ret = 1;
-		}
-		if (scap_type == OSCAP_DOCUMENT_SDS) {
-			if (_additional_schematron_checks(source) != 0)
-				ret = 1;
 		}
 		printf("Schematron validation of '%s': %s\n\n", origin, validity == 0 ? "PASS" : "FAIL");
 		return ret;
