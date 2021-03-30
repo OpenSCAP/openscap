@@ -19,3 +19,6 @@ sd='/oval_results/results/system/oval_system_characteristics/system_data'
 
 assert_exists 1 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="foo" and text()="bar"]'
 assert_exists 1 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="#" and @datatype="boolean" and text()="true"]'
+assert_exists 2 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="#" and text()="<value>"]'
+
+rm -f "$result"

@@ -18,6 +18,8 @@
       <criteria operator="AND">
         <criterion comment="comment" test_ref="oval:0:tst:1"/>
         <criterion comment="comment" test_ref="oval:0:tst:2"/>
+        <criterion comment="comment" test_ref="oval:0:tst:3"/>
+        <criterion comment="comment" test_ref="oval:0:tst:4"/>
       </criteria>
     </definition>
 
@@ -33,18 +35,36 @@
       <ind-def:object object_ref="oval:0:obj:2"/>
     </ind-def:yamlfilecontent_test>
 
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:3" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:3"/>
+    </ind-def:yamlfilecontent_test>
+
+    <ind-def:yamlfilecontent_test version="1" id="oval:0:tst:4" check="all" comment="true">
+      <ind-def:object object_ref="oval:0:obj:4"/>
+    </ind-def:yamlfilecontent_test>
+
   </tests>
 
   <objects>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:1">
-      <ind-def:content>{foo: bar, yaml: '{baz: true}'}</ind-def:content>
+      <ind-def:content>{foo: bar, yaml: '{baz: true, ancored: &amp;anc "&lt;value&gt;"}'}</ind-def:content>
       <ind-def:yamlpath>.*</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
     <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:2">
       <ind-def:content var_ref="oval:0:var:1"/>
       <ind-def:yamlpath>.baz</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:3">
+      <ind-def:content var_ref="oval:0:var:1"/>
+      <ind-def:yamlpath>.ancored</ind-def:yamlpath>
+    </ind-def:yamlfilecontent_object>
+
+    <ind-def:yamlfilecontent_object version="1" id="oval:0:obj:4">
+      <ind-def:content var_ref="oval:0:var:1"/>
+      <ind-def:yamlpath>&amp;anc</ind-def:yamlpath>
     </ind-def:yamlfilecontent_object>
 
   </objects>
