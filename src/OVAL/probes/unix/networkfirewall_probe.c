@@ -91,7 +91,7 @@ struct oscap_list* gather_chain(json_t * ruleset) {
     return chain_list;
 }
 
-struct json_t * get_ruleset() {
+struct json_t * get_ruleset(probe_ctx *ctx) {
     struct oscap_string * ruleset = oscap_string_new();
     FILE* cmd_ptr;
     char ruleset_buf[RULESET_BUF];
@@ -101,8 +101,19 @@ struct json_t * get_ruleset() {
     cmd_ptr = popen("nft -j -nn list ruleset", "r");
 
     if (cmd_ptr == NULL) {
-        dE("Erreur de récupération du ruleset");
-        return 0;
+        
+        int errnum = errno;
+        dE("Failed to request the kernel for ruleset : %s", strerror(errnum));
+        SEXP_t *item = probe_item_create(OVAL_UNIX_NETWORKFIREWALL,NULL
+        );
+
+        probe_item_setstatus(item, SYSCHAR_STATUS_ERROR);
+        probe_item_add_msg(
+        item, OVAL_MESSAGE_LEVEL_ERROR,
+        "Failed to request the kernel for ruleset : %s.",
+        strerror(errnum));
+        probe_item_collect(ctx, item);
+        return NULL;
     }
 
     while (fgets(ruleset_buf, sizeof(ruleset_buf), cmd_ptr) != NULL) {
@@ -525,13 +536,17 @@ const char * get_filtering_action(struct rule *rule) {
     return "";
 }
 
-struct ruleset *ruleset_new(int filter) {
+struct ruleset *ruleset_new(probe_ctx *ctx,int filter) {
     struct ruleset *ruleset = malloc(sizeof(struct ruleset));
     
     ruleset->rules = oscap_list_new();
     ruleset->chain_list = oscap_stringlist_new();
 
-    struct json_t* ruleset_json = get_ruleset();
+    struct json_t* ruleset_json = get_ruleset(ctx);
+
+    if(ruleset_json == NULL){
+        return 0;
+    }
     ruleset->ruleset = ruleset_json;
 
     //Gather the chain in the ruleset based on the packet_direction entity
@@ -598,7 +613,7 @@ int networkfirewall_probe_main(probe_ctx *ctx, void *arg) {
     }
     bool isInInterfaceNil = input_interface_nil == NULL;
     bool isOutInterfaceNil = output_interface_nil == NULL;
-    struct ruleset *ruleset = ruleset_new(get_packet_direction(packet_direction));
+    struct ruleset *ruleset = ruleset_new(ctx,get_packet_direction(packet_direction));
     struct oscap_iterator *ruleset_rule_it = oscap_iterator_new(ruleset->rules);
 
     while (oscap_iterator_has_more(ruleset_rule_it)) {

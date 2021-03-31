@@ -48,13 +48,13 @@ struct rule {
 };
 
 
-struct json_t *get_ruleset();
+struct json_t *get_ruleset(probe_ctx *ctx);
 
 /**
  * Constructor for a ruleset object
  * This methode allocate an oscap_list
  */
-struct ruleset* ruleset_new(int filter);
+struct ruleset* ruleset_new(probe_ctx *ctx,int filter);
 
 void ruleset_free(struct ruleset* ruleset);
 
