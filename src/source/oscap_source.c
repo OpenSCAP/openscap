@@ -358,8 +358,16 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 
 int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile)
 {
-	return oscap_source_validate_schematron_priv(source, oscap_source_get_scap_type(source),
-			oscap_source_get_schema_version(source), outfile);
+	FILE *outfile_fd = stdout;
+	if (outfile == NULL)
+		outfile_fd = stdout;
+	else
+		outfile_fd = fopen(outfile, "w");
+	int ret = oscap_source_validate_schematron_priv(source, oscap_source_get_scap_type(source),
+			oscap_source_get_schema_version(source), outfile_fd);
+	if (outfile != NULL)
+		fclose(outfile_fd);
+	return ret;
 }
 
 const char *oscap_source_get_schema_version(struct oscap_source *source)
