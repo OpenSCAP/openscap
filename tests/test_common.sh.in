@@ -231,7 +231,7 @@ set_chroot_offline_test_mode() {
 		return
 	fi
 	if test -x "$OSCAP_CHROOTABLE_EXEC"; then
-		if ! getcap "$OSCAP_CHROOTABLE_EXEC" | grep -q 'cap_sys_chroot+ep'; then
+		if ! getcap "$OSCAP_CHROOTABLE_EXEC" | grep -q -P 'cap_sys_chroot[=+]+ep'; then
 			echo "Skipping test '${FUNCNAME[1]}' as '$OSCAP_CHROOTABLE_EXEC' doesn't have the chroot capability." >&2
 			return 255
 		fi
