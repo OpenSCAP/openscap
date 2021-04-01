@@ -2,6 +2,7 @@
  * @file   networkfirewall_probe.c
  * @brief  networkfirewall probe
  * @author "Gwendal Didot" <gwendal.didot@soprasteria.com>
+ * @author "Antoine Orhant"  <antoine.orhant@soprasteria.com>
  *
  */
 
@@ -25,6 +26,7 @@
  *
  * Authors:
  *      "Gwendal Didot <gwendal.didot@soprasteria.com>"
+ *      "Antoine Orhant <antoine.orhant@soprasteria.com>" 
  */
 
 #ifdef HAVE_CONFIG_H
