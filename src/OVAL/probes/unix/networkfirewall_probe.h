@@ -80,6 +80,7 @@ enum addr_type {
 struct addr_info {
     const char *addr;
     enum addr_type type;
+    bool managed;
 };
 
 /**
@@ -116,13 +117,13 @@ const char *get_protocol(struct rule* rule);
  * Method that return the source port in the rule
  * @return The source value 
  */
-const int get_sport(struct rule* rule);
+int get_sport(struct rule* rule);
 
 /**
  * Method that return the destination port in the rule
  * @return The destination value 
  */
-const int get_dport(struct rule* rule);
+int get_dport(struct rule* rule);
 
 /**
  * Method that return the rule filtering action

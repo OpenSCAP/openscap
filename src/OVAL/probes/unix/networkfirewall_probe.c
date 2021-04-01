@@ -61,6 +61,9 @@ int get_packet_direction(SEXP_t *pck_dir) {
     if (probe_entobj_cmp(pck_dir, FORWARDING_SEXP) == OVAL_RESULT_TRUE) {
         result |= FORWARDING;
     }
+    SEXP_free(INCOMING_SEXP);
+    SEXP_free(OUTGOING_SEXP);
+    SEXP_free(FORWARDING_SEXP);
     return result;
 }
 
@@ -85,6 +88,7 @@ struct oscap_list* gather_chain(json_t * ruleset) {
     json_array_foreach(ruleset, index, nftable_child) {
         json_t *chain = json_object_get(nftable_child, "chain");
         if (chain != NULL) {
+            json_incref(chain);
             oscap_list_push(chain_list, chain);
         }
     }
@@ -124,6 +128,8 @@ struct json_t * get_ruleset(probe_ctx *ctx) {
     json_error_t error;
     struct json_t * ruleset_json = json_loads(oscap_string_get_cstr(ruleset), JSON_DECODE_ANY, &error);
 
+    oscap_string_free(ruleset);
+
     return ruleset_json;
 }
 
@@ -134,6 +140,9 @@ void filter_chain(struct ruleset* ruleset, struct oscap_list* chain_list, int fi
         const struct json_object *chain = oscap_iterator_next(chain_list_it);
         struct json_t *hook = json_object_get(chain, "hook");
         struct json_t *chain_name = json_object_get(chain, "name");
+        if(hook == NULL){
+            continue;
+        }
         enum packet_direction chain_pck_dir = convert_hook_to_packet_dir(json_string_value(hook));
         if (chain_pck_dir == UNSUPPORTED) {
             // If the hook is not a supported packet_direction, the chain is skipped
@@ -143,6 +152,7 @@ void filter_chain(struct ruleset* ruleset, struct oscap_list* chain_list, int fi
             oscap_stringlist_add_string(ruleset->chain_list, json_string_value(chain_name));
         }
     }
+    oscap_iterator_free(chain_list_it);
 }
 
 bool _rule_chain_cmp(const char* rule, const char * chain) {
@@ -296,10 +306,12 @@ struct addr_info get_saddr(struct rule* rule) {
 			        continue;
 		        }
                 if (strncmp(payload_name, "ip6", 3) != 0) {
-                    struct addr_info ip_addr = {.addr = field_value, .type = IPV4 };
+                    struct addr_info ip_addr = {.addr = field_value, .type = IPV4, .managed = true };
+                    free(ip_buf);
 		            return ip_addr;
                 } else {
-                    struct addr_info ip_addr = {.addr = field_value, .type = IPV6 };
+                    struct addr_info ip_addr = {.addr = field_value, .type = IPV6, .managed = true };
+                    free(ip_buf);
 		            return ip_addr;
                 }
             }
@@ -314,12 +326,13 @@ struct addr_info get_saddr(struct rule* rule) {
                 if (field_value[0] == '@') {
                     continue;
                 }
+
 		        snprintf(ip_buf, 512, "%s/%d", field_value, prefix_len);
                 if (strncmp(payload_name, "ip6", 3) != 0) {
-                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4 };
+                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4, .managed = false };
 		            return ip_addr;
                 } else {
-                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV6 };
+                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV6, .managed = false };
 		            return ip_addr;
                 }
             }
@@ -341,7 +354,8 @@ struct addr_info get_saddr(struct rule* rule) {
                 if (key_value[0] == '@') {
                     continue;
                 }
-                struct addr_info ip_addr = {.addr = key_value, .type = IPV4};
+                struct addr_info ip_addr = {.addr = key_value, .type = IPV4, .managed = true };
+                free(ip_buf);
                 return ip_addr;
             }
         }
@@ -360,13 +374,15 @@ struct addr_info get_saddr(struct rule* rule) {
                     continue;
                 }
                 snprintf(ip_buf, 512, "%s/%d", key_value, prefix_len);
-                struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4};
+                struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4, .managed = false };
                 return ip_addr;
             }
         }
     }
 
-    struct addr_info default_addr = { .addr = "",.type = NULL_IP};
+    free(ip_buf);
+
+    struct addr_info default_addr = { .addr = "",.type = NULL_IP, .managed = false };
 
     return default_addr;
 }
@@ -396,10 +412,12 @@ struct addr_info get_daddr(struct rule* rule) {
 			        continue;
 		        }
                 if (strncmp(payload_name, "ip6", 3) != 0) {
-                    struct addr_info ip_addr = {.addr = field_value, .type = IPV4 };
+                    struct addr_info ip_addr = {.addr = field_value, .type = IPV4, .managed = true };
+                    free(ip_buf);
 		            return ip_addr;
                 } else {
-                    struct addr_info ip_addr = {.addr = field_value, .type = IPV6 };
+                    struct addr_info ip_addr = {.addr = field_value, .type = IPV6, .managed = true };
+                    free(ip_buf);
 		            return ip_addr;
                 }
             }
@@ -416,10 +434,10 @@ struct addr_info get_daddr(struct rule* rule) {
                 }
 		        snprintf(ip_buf, 512, "%s/%d", field_value, prefix_len);
                 if (strncmp(payload_name, "ip6", 3) != 0) {
-                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4 };
+                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4, .managed = false };
 		            return ip_addr;
                 } else {
-                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV6 };
+                    struct addr_info ip_addr = {.addr = ip_buf, .type = IPV6, .managed = false };
 		            return ip_addr;
                 }
             }
@@ -441,7 +459,8 @@ struct addr_info get_daddr(struct rule* rule) {
                 if (key_value[0] == '@') {
                     continue;
                 }
-                struct addr_info ip_addr = {.addr = key_value, .type = IPV4};
+                struct addr_info ip_addr = {.addr = key_value, .type = IPV4, .managed = true };
+                free(ip_buf);
                 return ip_addr;
             }
         }
@@ -460,18 +479,20 @@ struct addr_info get_daddr(struct rule* rule) {
                     continue;
                 }
                 snprintf(ip_buf, 512, "%s/%d", key_value, prefix_len);
-                struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4};
-                return ip_addr;            }
+                struct addr_info ip_addr = {.addr = ip_buf, .type = IPV4, .managed = false };
+                return ip_addr;            
+            }
         }
     }
 
-    struct addr_info default_addr = { .addr = "",.type = NULL_IP};
+    free(ip_buf);
+
+    struct addr_info default_addr = { .addr = "",.type = NULL_IP, .managed = false };
 
     return default_addr;
 }
 
-
-const int get_sport(struct rule* rule) {
+int get_sport(struct rule* rule) {
     struct json_t * expr = json_object_get(rule->rule_json, "expr");
     json_t* expr_child;
     size_t index;
@@ -495,7 +516,7 @@ const int get_sport(struct rule* rule) {
     return -1;
 }
 
-const int get_dport(struct rule* rule) {
+int get_dport(struct rule* rule) {
     struct json_t * expr = json_object_get(rule->rule_json, "expr");
     json_t* expr_child;
     size_t index;
@@ -545,7 +566,7 @@ struct ruleset *ruleset_new(probe_ctx *ctx,int filter) {
     struct json_t* ruleset_json = get_ruleset(ctx);
 
     if(ruleset_json == NULL){
-        return 0;
+        return NULL;
     }
     ruleset->ruleset = ruleset_json;
 
@@ -555,11 +576,11 @@ struct ruleset *ruleset_new(probe_ctx *ctx,int filter) {
     struct oscap_list *chain_list = gather_chain(nftables);
 
     filter_chain(ruleset, chain_list, filter);
-    
+
     // Gather the rules in the ruleset base on the filtered chain the rules belong to
     json_t* nftables_child;
     size_t index;
-    
+
     json_array_foreach(nftables, index, nftables_child) {
         json_t *rule_json = json_object_get(nftables_child, "rule");
         if (rule_json == NULL) {
@@ -579,11 +600,12 @@ struct ruleset *ruleset_new(probe_ctx *ctx,int filter) {
             oscap_list_push(ruleset->rules, rule);
         }
     }
+    oscap_list_free(chain_list, json_decref);
     return ruleset;
 }
 
 void ruleset_free(struct ruleset* ruleset) {
-    oscap_list_free(ruleset->rules, rule_free);
+    oscap_list_free(ruleset->rules, (oscap_destruct_func) rule_free);
     oscap_stringlist_free(ruleset->chain_list);
 
     while (ruleset->ruleset->refcount > 1) {
@@ -605,7 +627,8 @@ int networkfirewall_probe_main(probe_ctx *ctx, void *arg) {
     SEXP_t *output_interface_nil = probe_ent_getval(output_interface);
     SEXP_t *filtering_action = probe_obj_getent(probe_in, "filtering_action", 1);
     SEXP_t *filtering_action_value = probe_ent_getval(filtering_action);
-    char * str_packet_direction = SEXP_string_cstr(probe_ent_getval(packet_direction));
+    SEXP_t * sexp_packet_dir_val = probe_ent_getval(packet_direction);
+    char * str_packet_direction = SEXP_string_cstr(sexp_packet_dir_val);
     bool isFilteringActionNil = filtering_action_value == NULL;
     char * str_filtering_action;
     if (!isFilteringActionNil) {
@@ -614,100 +637,128 @@ int networkfirewall_probe_main(probe_ctx *ctx, void *arg) {
     bool isInInterfaceNil = input_interface_nil == NULL;
     bool isOutInterfaceNil = output_interface_nil == NULL;
     struct ruleset *ruleset = ruleset_new(ctx,get_packet_direction(packet_direction));
-    struct oscap_iterator *ruleset_rule_it = oscap_iterator_new(ruleset->rules);
+    if(ruleset != NULL){
+        struct oscap_iterator *ruleset_rule_it = oscap_iterator_new(ruleset->rules);
 
-    while (oscap_iterator_has_more(ruleset_rule_it)) {
-        struct rule *current_rule = oscap_iterator_next(ruleset_rule_it);
-        const char * filtering_action_val = get_filtering_action(current_rule);
-        if (!isFilteringActionNil) {
-            if (strncmp(str_filtering_action, filtering_action_val, 5) != 0) {
-                // The rule does not match with the object, it get ignored
-                continue;
-            }
-        }
-
-        SEXP_t *new_item = probe_item_create(OVAL_UNIX_NETWORKFIREWALL, NULL,
-            "filtering_action", OVAL_DATATYPE_STRING, filtering_action_val,
-            "packet_direction", OVAL_DATATYPE_STRING, str_packet_direction            
-        );
-
-        if (!isInInterfaceNil) {
-            const char *iifname = get_iifname(current_rule);
-            if (iifname[0] != '\0') {
-                SEXP_t *sexp_iifname = SEXP_string_new(iifname, strlen(iifname));
-
-                if (probe_entobj_cmp(input_interface, sexp_iifname) == OVAL_RESULT_TRUE) {
-                    probe_item_ent_add(new_item, "input_interface", NULL, sexp_iifname);
+        while (oscap_iterator_has_more(ruleset_rule_it)) {
+            struct rule *current_rule = oscap_iterator_next(ruleset_rule_it);
+            const char * filtering_action_val = get_filtering_action(current_rule);
+            if (!isFilteringActionNil) {
+                if (strncmp(str_filtering_action, filtering_action_val, 5) != 0) {
+                    // The rule does not match with the object, it get ignored
+                    continue;
                 }
             }
-        }
-        if (!isOutInterfaceNil) {
-            const char *oifname = get_oifname(current_rule);
-            if (oifname[0] != '\0') {
-                SEXP_t *sexp_oifname = SEXP_string_new(oifname, strlen(oifname));
 
-                if (probe_entobj_cmp(output_interface, sexp_oifname) == OVAL_RESULT_TRUE) {
-                    probe_item_ent_add(new_item, "output_interface", NULL, sexp_oifname);
+            SEXP_t *new_item = probe_item_create(OVAL_UNIX_NETWORKFIREWALL, NULL,
+                "filtering_action", OVAL_DATATYPE_STRING, filtering_action_val,
+                "packet_direction", OVAL_DATATYPE_STRING, str_packet_direction            
+            );
+
+            if (!isInInterfaceNil) {
+                const char *iifname = get_iifname(current_rule);
+                if (iifname[0] != '\0') {
+                    SEXP_t *sexp_iifname = SEXP_string_new(iifname, strlen(iifname));
+
+                    if (probe_entobj_cmp(input_interface, sexp_iifname) == OVAL_RESULT_TRUE) {
+                        probe_item_ent_add(new_item, "input_interface", NULL, sexp_iifname);
+                    }
                 }
             }
-        }
+            if (!isOutInterfaceNil) {
+                const char *oifname = get_oifname(current_rule);
+                if (oifname[0] != '\0') {
+                    SEXP_t *sexp_oifname = SEXP_string_new(oifname, strlen(oifname));
 
-        const char *transport_protocol = get_protocol(current_rule);
-        if (transport_protocol[0] != '\0') {
-            SEXP_t *sexp_transport_protocol = SEXP_string_new(transport_protocol, strlen(transport_protocol));
-            probe_item_ent_add(new_item, "transport_protocol", NULL, sexp_transport_protocol);
-        }
-
-        struct addr_info src_addr = get_saddr(current_rule);
-        if (src_addr.addr[0] != '\0') {
-            SEXP_t *sexp_saddr = SEXP_string_new(src_addr.addr, strlen(src_addr.addr));
-            probe_item_ent_add(new_item, "source_inet_address", NULL, sexp_saddr);
-            SEXP_t *new_ent = probe_item_getent(new_item, "source_inet_address", 1);
-            switch (src_addr.type)
-            {
-            case IPV4:
-                probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV4ADDR);
-                break;
-            case IPV6:
-                probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV6ADDR);
-                break;
-            default:
-                break;
+                    if (probe_entobj_cmp(output_interface, sexp_oifname) == OVAL_RESULT_TRUE) {
+                        probe_item_ent_add(new_item, "output_interface", NULL, sexp_oifname);
+                    }
+                }
             }
-        }
 
-        struct addr_info dest_addr = get_daddr(current_rule);
-        if (dest_addr.addr[0] != '\0') {
-            SEXP_t *sexp_daddr = SEXP_string_new(dest_addr.addr, strlen(dest_addr.addr));
-            probe_item_ent_add(new_item, "destination_inet_address", NULL, sexp_daddr);
-            SEXP_t *new_ent = probe_item_getent(new_item, "destination_inet_address", 1);
-            switch (src_addr.type)
-            {
-            case IPV4:
-                probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV4ADDR);
-                break;
-            case IPV6:
-                probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV6ADDR);
-                break;
-            default:
-                break;
+            const char *transport_protocol = get_protocol(current_rule);
+            if (transport_protocol[0] != '\0') {
+                SEXP_t *sexp_transport_protocol = SEXP_string_new(transport_protocol, strlen(transport_protocol));
+                probe_item_ent_add(new_item, "transport_protocol", NULL, sexp_transport_protocol);
+                SEXP_string_free(sexp_transport_protocol);
             }
+
+            struct addr_info src_addr = get_saddr(current_rule);
+            if (src_addr.addr[0] != '\0') {
+                SEXP_t *sexp_saddr = SEXP_string_new(src_addr.addr, strlen(src_addr.addr));
+                probe_item_ent_add(new_item, "source_inet_address", NULL, sexp_saddr);
+                SEXP_string_free(sexp_saddr);
+                SEXP_t *new_ent = probe_item_getent(new_item, "source_inet_address", 1);
+                switch (src_addr.type)
+                {
+                case IPV4:
+                    probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV4ADDR);
+                    break;
+                case IPV6:
+                    probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV6ADDR);
+                    break;
+                default:
+                    break;
+                }
+                SEXP_free(new_ent);
+                if (!src_addr.managed) {
+                    free((char *)src_addr.addr);
+                }
+            }
+
+            struct addr_info dest_addr = get_daddr(current_rule);
+            if (dest_addr.addr[0] != '\0') {
+                SEXP_t *sexp_daddr = SEXP_string_new(dest_addr.addr, strlen(dest_addr.addr));
+                probe_item_ent_add(new_item, "destination_inet_address", NULL, sexp_daddr);
+                SEXP_string_free(sexp_daddr);
+                SEXP_t *new_ent = probe_item_getent(new_item, "destination_inet_address", 1);
+                switch (src_addr.type)
+                {
+                case IPV4:
+                    probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV4ADDR);
+                    break;
+                case IPV6:
+                    probe_ent_setdatatype(new_ent, OVAL_DATATYPE_IPV6ADDR);
+                    break;
+                default:
+                    break;
+                }
+                SEXP_free(new_ent);
+                if (!dest_addr.managed) {
+                    free((char *)dest_addr.addr);
+                }
+            }
+
+            const int src_port = get_sport(current_rule);
+            if (src_port >= 0 ) {
+                SEXP_t *sexp_sport = SEXP_number_newi_32(src_port);
+                probe_item_ent_add(new_item, "source_port", NULL, sexp_sport);
+                SEXP_number_free(sexp_sport);
+            }
+
+            const int dest_port = get_dport(current_rule);
+            if (dest_port >= 0) {
+                SEXP_t *sexp_dport = SEXP_number_newi_32(dest_port);
+                probe_item_ent_add(new_item, "destination_port", NULL, sexp_dport);
+                SEXP_number_free(sexp_dport);
+            }
+            
+            probe_item_collect(ctx, new_item);
         }
 
-        const int src_port = get_sport(current_rule);
-        if (src_port >= 0 ) {
-            SEXP_t *sexp_sport = SEXP_number_newi_32(src_port);
-            probe_item_ent_add(new_item, "source_port", NULL, sexp_sport);
-        }
-
-        const int dest_port = get_dport(current_rule);
-        if (dest_port >= 0) {
-            SEXP_t *sexp_dport = SEXP_number_newi_32(dest_port);
-            probe_item_ent_add(new_item, "destination_port", NULL, sexp_dport);
-        }
-        
-        probe_item_collect(ctx, new_item);
+        oscap_iterator_free(ruleset_rule_it);
     }
+    free(str_packet_direction);
+
+    SEXP_free(sexp_packet_dir_val);
+    SEXP_free(packet_direction);
+    SEXP_free(input_interface_nil);
+    SEXP_free(input_interface);
+    SEXP_free(output_interface_nil);
+    SEXP_free(output_interface);
+    SEXP_free(filtering_action_value);
+    SEXP_free(filtering_action);
+
     ruleset_free(ruleset);
     return 0;
 }
