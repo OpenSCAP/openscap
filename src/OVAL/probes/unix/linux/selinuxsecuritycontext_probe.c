@@ -167,7 +167,7 @@ static SEXP_t *create_file_probe_item_with_range(
 static int selinuxsecuritycontext_process_cb (SEXP_t *pid_ent, probe_ctx *ctx) {
 	char path[PATH_MAX];
 	SEXP_t *pid_sexp, *item;
-	security_context_t pid_context;
+	char *pid_context;
 	context_t context;
 	int pid_number;
 	DIR *proc;
@@ -236,7 +236,7 @@ static int selinuxsecuritycontext_file_cb(const char *prefix, const char *p, con
 	char   pbuf[PATH_MAX+1];
 	size_t plen, flen;
 
-	security_context_t file_context;
+	char *file_context;
 	int file_context_size;
 	context_t context;
 	const char *user, *role, *type, *range;
