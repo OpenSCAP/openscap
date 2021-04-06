@@ -246,7 +246,7 @@ static char *convert_time(unsigned long long t, char *tbuf, int tb_size)
 #ifdef SELINUX_FOUND
 static char *get_selinux_label(int pid) {
 	char *selinux_label;
-	security_context_t pid_context;
+	char *pid_context;
 	context_t context;
 
 	if (is_selinux_enabled() == 1) {
