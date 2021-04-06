@@ -169,6 +169,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"   --skip-validation\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
 		"                                   (only applicable for source data streams)\n"
+		"   --enforce-signature           - Process only signed data streams.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
@@ -260,7 +261,8 @@ static struct oscap_module XCCDF_GEN_GUIDE = {
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
 		"                                   (only applicable for source data streams)\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
-		"                                   (only applicable for source data streams)\n",
+		"                                   (only applicable for source data streams)\n"
+		"   --enforce-signature           - Process only signed data streams.\n",
     .opt_parser = getopt_xccdf,
     .user = NULL,
     .func = app_generate_guide
@@ -286,7 +288,8 @@ static struct oscap_module XCCDF_GEN_FIX = {
 		"   --tailoring-id <component-id> - Use given DS component as XCCDF Tailoring file.\n"
 		"                                   (only applicable for source data streams)\n"
 		"   --skip-signature-validation   - Skip data stream signature validation.\n"
-		"                                   (only applicable for source data streams)\n",
+		"                                   (only applicable for source data streams)\n"
+		"   --enforce-signature           - Process only signed data streams.\n",
     .opt_parser = getopt_xccdf,
     .user = "legacy-fix.xsl",
     .func = app_generate_fix
@@ -553,6 +556,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_signature_validation(session, action->validate_signature);
+	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
 	if (action->thin_results) {
 		xccdf_session_set_thin_results(session, true);
 		xccdf_session_set_without_sys_chars_export(session, true);
@@ -928,6 +932,7 @@ int app_generate_fix(const struct oscap_action *action)
 
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_signature_validation(session, action->validate_signature);
+	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
 	xccdf_session_set_user_cpe(session, action->cpe);
 	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
@@ -1003,6 +1008,7 @@ int app_generate_guide(const struct oscap_action *action)
 
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_signature_validation(session, action->validate_signature);
+	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
 	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
@@ -1155,6 +1161,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"skip-valid",		no_argument, &action->validate, 0},
 		{"skip-validation",		no_argument, &action->validate, 0},
 		{"skip-signature-validation", no_argument, &action->validate_signature, 0},
+		{"enforce-signature", no_argument, &action->enforce_signature, 1},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
 		{"progress", no_argument, &action->progress, 1},
 		{"remediate", no_argument, &action->remediate, 1},

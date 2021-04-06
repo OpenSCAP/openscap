@@ -125,6 +125,14 @@ OSCAP_API void xccdf_session_set_validation(struct xccdf_session *session, bool 
 OSCAP_API void xccdf_session_set_signature_validation(struct xccdf_session *session, bool validate);
 
 /**
+ * Set XML signature enforcement
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param enforce True value renders all unsigned XMLs invalid.
+ */
+OSCAP_API void xccdf_session_set_signature_enforcement(struct xccdf_session *session, bool enforce);
+
+/**
  * Set whether the thin results override is enabled.
  * If true the OVAL results put in ARF or separate files will have thin results.
  * Thin results do not contain details about the evaluated criteria, only

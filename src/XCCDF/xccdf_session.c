@@ -117,6 +117,7 @@ struct xccdf_session {
 	bool validate;					///< False value indicates to skip any XSD validation.
 	bool full_validation;				///< True value indicates that every possible step will be validated by XSD.
 	bool validate_signature;		///< False value indicates to skip XML signature validation.
+	bool enforce_signature; 		///< True value forces session to treat all XMLs without signature as invalid.
 	struct oscap_signature_ctx *signature_ctx; ///< Paths to public keys, certificates, signature related info
 
 	struct oscap_list *check_engine_plugins; ///< Extra non-OVAL check engines that may or may not have been loaded
@@ -155,6 +156,7 @@ struct xccdf_session *xccdf_session_new_from_source(struct oscap_source *source)
 	}
 	session->validate = true;
 	session->validate_signature = true;
+	session->enforce_signature = false;
 	session->signature_ctx = oscap_signature_ctx_new();
 	session->xccdf.base_score = 0;
 	session->oval.progress = download_progress_empty_calllback;
@@ -378,6 +380,11 @@ void xccdf_session_set_validation(struct xccdf_session *session, bool validate, 
 void xccdf_session_set_signature_validation(struct xccdf_session *session, bool validate)
 {
 	session->validate_signature = validate;
+}
+
+void xccdf_session_set_signature_enforcement(struct xccdf_session *session, bool enforce)
+{
+	session->enforce_signature = enforce;
 }
 
 void xccdf_session_set_thin_results(struct xccdf_session *session, bool thin_results)
@@ -809,8 +816,8 @@ int xccdf_session_load_xccdf(struct xccdf_session *session)
 				return 1;
 			}
 		}
-		if (session->validate_signature) {
-			if (oscap_signature_validate(session->source, session->signature_ctx)) {
+		if (session->validate_signature || session->enforce_signature) {
+			if (oscap_signature_validate(session->source, session->signature_ctx, session->enforce_signature)) {
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid signature in %s (%s) content in %s",
 						oscap_document_type_to_string(oscap_source_get_scap_type(session->source)),
 						oscap_source_get_schema_version(session->source),
