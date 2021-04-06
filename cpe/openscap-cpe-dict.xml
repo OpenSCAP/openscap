@@ -49,4 +49,8 @@
             <title xml:lang="en-us">Fedora 34</title>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:34</check>
       </cpe-item>
+      <cpe-item name="cpe:/o:fedoraproject:fedora:35">
+            <title xml:lang="en-us">Fedora 35</title>
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="openscap-cpe-oval.xml">oval:org.open-scap.cpe.fedora:def:35</check>
+      </cpe-item>
 </cpe-list>
