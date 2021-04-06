@@ -637,6 +637,16 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 		return -1;
 	}
 
+	/* Skip document types that don't have a schematron available */
+	if (scap_type == OSCAP_DOCUMENT_CPE_LANGUAGE ||
+			scap_type == OSCAP_DOCUMENT_CPE_DICTIONARY ||
+			scap_type == OSCAP_DOCUMENT_CVE_FEED ||
+			scap_type == OSCAP_DOCUMENT_SCE_RESULT ||
+			scap_type == OSCAP_DOCUMENT_OCIL ||
+			scap_type == OSCAP_DOCUMENT_CVRF_FEED) {
+		fprintf(outfile_fd, "Skipped\n");
+		return 0;
+	}
 
 	/* find a right schematron file */
 	const char *schematron_path = NULL;
