@@ -359,10 +359,13 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile)
 {
 	FILE *outfile_fd = stdout;
-	if (outfile == NULL)
-		outfile_fd = stdout;
-	else
+	if (outfile != NULL) {
 		outfile_fd = fopen(outfile, "w");
+		if (outfile_fd == NULL) {
+			dE("Can't open %s: %s", outfile, strerror(errno));
+			return -1;
+		}
+	}
 	int ret = oscap_source_validate_schematron_priv(source, oscap_source_get_scap_type(source),
 			oscap_source_get_schema_version(source), outfile_fd);
 	if (outfile != NULL)
