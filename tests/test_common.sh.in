@@ -314,4 +314,18 @@ xsed() {
 	esac
 }
 
+# Args:
+# $1: The text string to print to stderr
+# $2: The return code (optional, default is 1)
+log_and_fail() {
+	printf '%s' "$1" >&2
+	return ${2:-1}
+}
+
+# Args: Same as with log_and_fail
+die() {
+	log_and_fail "$1" "$2"
+	exit $?
+}
+
 export -f assert_exists

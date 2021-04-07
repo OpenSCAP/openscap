@@ -13,12 +13,12 @@ function curl_accept_encoding {
 
 	case $(uname) in
 		FreeBSD)
-			grep -iE "Accept-Encoding.*gzip" $LOG
+			grep -iE "Accept-Encoding.*gzip" "$LOG"
 			;;
 		*)
-			grep -iP "Accept-Encoding.*gzip" $LOG
+			grep -iP "Accept-Encoding.*gzip" "$LOG"
 			;;
-	esac
+	esac || die "Couldn't assert gzip encoding in the log: $(grep -i 'curl header' $LOG)"
 
 	return 0
 }
