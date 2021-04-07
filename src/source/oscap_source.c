@@ -358,8 +358,19 @@ int oscap_source_validate(struct oscap_source *source, xml_reporter reporter, vo
 
 int oscap_source_validate_schematron(struct oscap_source *source, const char *outfile)
 {
-	return oscap_source_validate_schematron_priv(source, oscap_source_get_scap_type(source),
-			oscap_source_get_schema_version(source), outfile);
+	FILE *outfile_fd = stdout;
+	if (outfile != NULL) {
+		outfile_fd = fopen(outfile, "w");
+		if (outfile_fd == NULL) {
+			dE("Can't open %s: %s", outfile, strerror(errno));
+			return -1;
+		}
+	}
+	int ret = oscap_source_validate_schematron_priv(source, oscap_source_get_scap_type(source),
+			oscap_source_get_schema_version(source), outfile_fd);
+	if (outfile != NULL)
+		fclose(outfile_fd);
+	return ret;
 }
 
 const char *oscap_source_get_schema_version(struct oscap_source *source)
@@ -402,6 +413,9 @@ const char *oscap_source_get_schema_version(struct oscap_source *source)
 				break;
 			case OSCAP_DOCUMENT_SCE_RESULT:
 				source->origin.version = oscap_strdup("1.0");
+				break;
+			case OSCAP_DOCUMENT_OCIL:
+				source->origin.version = oscap_strdup("2.0");
 				break;
 			default:
 				oscap_seterr(OSCAP_EFAMILY_OSCAP, "Could not determine origin.version for document %s: Unknown type: %s",
