@@ -949,6 +949,9 @@ actors.
 The signature validation can be skipped by adding the
 `--skip-signature-validation` option to the `oscap xccdf eval` command.
 
+Also, signature validation can be enforced (effectively rendering all unsigned
+data streams invalid) with the `--enforce-signature` option to the `oscap xccdf eval` command.
+
 == Generating reports, guides and scripts
 
 Another useful features of `oscap` is the ability to generate documents in a

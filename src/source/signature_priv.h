@@ -27,12 +27,16 @@
 #include <config.h>
 #endif
 
+#include <stdbool.h>
+
+#include "oscap_source_priv.h"
+
 struct oscap_signature_ctx;
 
 struct oscap_signature_ctx *oscap_signature_ctx_new(void);
 void oscap_signature_ctx_free(struct oscap_signature_ctx *ctx);
 void oscap_signature_ctx_set_pubkey_pem(struct oscap_signature_ctx *ctx, const char *path);
 void oscap_signature_ctx_set_pubkey_cert_pem(struct oscap_signature_ctx *ctx, const char *path);
-int oscap_signature_validate(struct oscap_source *source, struct oscap_signature_ctx *ctx);
+int oscap_signature_validate(struct oscap_source *source, struct oscap_signature_ctx *ctx, bool enforce_signature);
 
 #endif /* OSCAP_SIGNATURE_PRIV_H */

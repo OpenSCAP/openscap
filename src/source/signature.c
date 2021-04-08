@@ -111,7 +111,7 @@ static int _mark_sds_id_elements(xmlDocPtr doc)
 	return 0;
 }
 
-static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t scap_type, struct oscap_signature_ctx *ctx)
+static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t scap_type, struct oscap_signature_ctx *ctx, bool enforce_signature)
 {
 	int res = -1;
 	xmlNodePtr node = NULL;
@@ -159,6 +159,10 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 	xmlNodePtr root = xmlDocGetRootElement(doc);
 	node = xmlSecFindNode(root, xmlSecNodeSignature, xmlSecDSigNs);
 	if (node == NULL) {
+		if (enforce_signature) {
+			oscap_seterr(OSCAP_EFAMILY_XML, "Signature not found");
+			goto cleanup;
+		}
 		/* Non-fatal error, datastreams without signatures are accepted */
 		dI("Signature node not found");
 		res = 0;
@@ -267,7 +271,7 @@ cleanup:
 	return res;
 }
 
-int oscap_signature_validate(struct oscap_source *source, struct oscap_signature_ctx *ctx)
+int oscap_signature_validate(struct oscap_source *source, struct oscap_signature_ctx *ctx, bool enforce_signature)
 {
 	int ret = 0;
 	oscap_document_type_t scap_type = oscap_source_get_scap_type(source);
@@ -278,7 +282,7 @@ int oscap_signature_validate(struct oscap_source *source, struct oscap_signature
 		ret = -1;
 	} else if (scap_type == OSCAP_DOCUMENT_SDS) {
 		xmlDocPtr doc = oscap_source_get_xmlDoc(source);
-		ret = _oscap_signature_validate_doc(doc, scap_type, ctx);
+		ret = _oscap_signature_validate_doc(doc, scap_type, ctx, enforce_signature);
 	} else {
 		const char *type_name = oscap_document_type_to_string(scap_type);
 		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Unsupported document type %s for XML signature validation: %s", type_name, origin);

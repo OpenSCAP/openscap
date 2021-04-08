@@ -160,6 +160,7 @@ struct oscap_action {
 	int force;
 	int validate;
 	int validate_signature;
+	int enforce_signature;
 	int schematron;
 	int remote_resources;
 	int progress;
