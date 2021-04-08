@@ -604,9 +604,14 @@
                                         <xsd:documentation>The filename element specifies the name of the file.</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
+                              <xsd:element name="content" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
+                                   <xsd:annotation>
+                                        <xsd:documentation>The content element specifies the YAML document body.</xsd:documentation>
+                                   </xsd:annotation>
+                              </xsd:element>
                               <xsd:element name="yamlpath" type="oval-sc:EntityItemStringType" minOccurs="0" maxOccurs="1">
                                    <xsd:annotation>
-                                        <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity. Note that "equals" is the only valid operator for the yamlpath entity.</xsd:documentation>
+                                        <xsd:documentation>Specifies an YAML Path expression to evaluate against the YAML file specified by the filename entity.</xsd:documentation>
                                    </xsd:annotation>
                               </xsd:element>
                               <xsd:element name="value" type="oval-sc:EntityItemRecordType" minOccurs="0" maxOccurs="unbounded">

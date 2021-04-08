@@ -181,26 +181,16 @@ do {                                                                     \
 	ret = -1;                                                            \
 } while (0)
 
-static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
+static int yaml_path_query(yaml_parser_t *parser, const char *yaml_path_cstr, struct oscap_list *values, probe_ctx *ctx)
 {
 	int ret = 0;
-	FILE *yaml_file = fopen(filepath, "r");
-	if (yaml_file == NULL) {
-		result_error("Unable to open file '%s': %s", filepath, strerror(errno));
-		return ret;
-	}
 
 	yaml_path_t *yaml_path = yaml_path_create();
 	if (yaml_path_parse(yaml_path, (char *) yaml_path_cstr)) {
 		result_error("Invalid YAML path '%s': %s", yaml_path_cstr, yaml_path_error_get(yaml_path)->message);
 		yaml_path_destroy(yaml_path);
-		fclose(yaml_file);
 		return ret;
 	};
-
-	yaml_parser_t parser;
-	yaml_parser_initialize(&parser);
-	yaml_parser_set_input_file(&parser, yaml_file);
 
 	yaml_event_t event;
 	yaml_event_type_t event_type;
@@ -213,14 +203,14 @@ static int yaml_path_query(const char *filepath, const char *yaml_path_cstr, str
 	struct oscap_htable *record = NULL;
 
 	do {
-		if (!yaml_parser_parse(&parser, &event)) {
-			result_error("YAML parser error: %s", parser.problem);
+		if (!yaml_parser_parse(parser, &event)) {
+			result_error("YAML parser error: %s", parser->problem);
 			goto cleanup;
 		}
 
 		event_type = event.type;
 
-		if (yaml_path_filter_event(yaml_path, &parser, &event) == YAML_PATH_FILTER_RESULT_OUT) {
+		if (yaml_path_filter_event(yaml_path, parser, &event) == YAML_PATH_FILTER_RESULT_OUT) {
 			goto next;
 		}
 
@@ -323,9 +313,7 @@ cleanup:
 	if (record)
 		oscap_list_add(values, record);
 	free(key);
-	yaml_parser_delete(&parser);
 	yaml_path_destroy(yaml_path);
-	fclose(yaml_file);
 
 	return ret;
 }
@@ -340,30 +328,22 @@ static void values_free(struct oscap_htable *record)
 	oscap_htable_free(record, (oscap_destruct_func) record_free);
 }
 
-static int process_yaml_file(const char *prefix, const char *path, const char *filename, const char *yamlpath, probe_ctx *ctx)
+static int process_yaml(yaml_parser_t *parser, const char *yamlpath, SEXP_t *item, probe_ctx *ctx)
 {
 	int ret = 0;
-	char *filepath = oscap_path_join(path, filename);
-	struct oscap_list *values = oscap_list_new();
-	char *filepath_with_prefix = oscap_path_join(prefix, filepath);
 
-	if (yaml_path_query(filepath_with_prefix, yamlpath, values, ctx)) {
+	if (SEXP_typeof(item) != SEXP_TYPE_LIST)
+		return -1;
+
+	struct oscap_list *values = oscap_list_new();
+
+	if (yaml_path_query(parser, yamlpath, values, ctx)) {
 		ret = -1;
 		goto cleanup;
 	}
 
 	struct oscap_iterator *values_it = oscap_iterator_new(values);
 	if (oscap_iterator_has_more(values_it)) {
-		SEXP_t *item = probe_item_create(
-			OVAL_INDEPENDENT_YAML_FILE_CONTENT,
-			NULL,
-			"filepath", OVAL_DATATYPE_STRING, filepath,
-			"path", OVAL_DATATYPE_STRING, path,
-			"filename", OVAL_DATATYPE_STRING, filename,
-			"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
-			// TODO: Implement "windows_view",
-			NULL
-		);
 		while (oscap_iterator_has_more(values_it)) {
 			SEXP_t *result_ent = probe_ent_creat1("value", NULL, NULL);
 			probe_ent_setdatatype(result_ent, OVAL_DATATYPE_RECORD);
@@ -394,8 +374,79 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 
 cleanup:
 	oscap_list_free(values, (oscap_destruct_func) values_free);
+
+	return ret;
+}
+
+static int process_yaml_file(const char *prefix, const char *path, const char *filename, const char *yamlpath, probe_ctx *ctx)
+{
+	int ret = 0;
+
+	yaml_parser_t parser;
+	yaml_parser_initialize(&parser);
+
+	char *filepath = oscap_path_join(path, filename);
+	char *filepath_with_prefix = oscap_path_join(prefix, filepath);
+
+	FILE *yaml_file = fopen(filepath_with_prefix, "r");
+	if (yaml_file == NULL) {
+		result_error("Unable to open file '%s': %s", filepath_with_prefix, strerror(errno));
+		goto cleanup;
+	}
+
+	yaml_parser_set_input_file(&parser, yaml_file);
+
+	SEXP_t *item = probe_item_create(
+		OVAL_INDEPENDENT_YAML_FILE_CONTENT,
+		NULL,
+		"filepath", OVAL_DATATYPE_STRING, filepath,
+		"path", OVAL_DATATYPE_STRING, path,
+		"filename", OVAL_DATATYPE_STRING, filename,
+		"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
+		// TODO: Implement "windows_view",
+		NULL
+	);
+
+	if (process_yaml(&parser, yamlpath, item, ctx)) {
+		SEXP_free(item);
+		ret = -1;
+		goto cleanup;
+	}
+
+cleanup:
+	fclose(yaml_file);
+	yaml_parser_delete(&parser);
 	free(filepath_with_prefix);
 	free(filepath);
+
+	return ret;
+}
+
+static int process_yaml_content(const char *content, const char *yamlpath, probe_ctx *ctx)
+{
+	int ret = 0;
+
+	yaml_parser_t parser;
+	yaml_parser_initialize(&parser);
+	yaml_parser_set_input_string(&parser, (unsigned char *) content, strlen(content));
+
+	SEXP_t *item = probe_item_create(
+		OVAL_INDEPENDENT_YAML_FILE_CONTENT,
+		NULL,
+		"content", OVAL_DATATYPE_STRING, content,
+		"yamlpath", OVAL_DATATYPE_STRING, yamlpath,
+		NULL
+	);
+
+	if (process_yaml(&parser, yamlpath, item, ctx)) {
+		SEXP_free(item);
+		ret = -1;
+		goto cleanup;
+	}
+
+cleanup:
+	yaml_parser_delete(&parser);
+
 	return ret;
 }
 
@@ -409,25 +460,35 @@ int yamlfilecontent_probe_main(probe_ctx *ctx, void *arg)
 	SEXP_t *yamlpath_ent = probe_obj_getent(probe_in, "yamlpath", 1);
 	SEXP_t *yamlpath_val = probe_ent_getval(yamlpath_ent);
 	char *yamlpath_str = SEXP_string_cstr(yamlpath_val);
+	SEXP_t *content_ent = probe_obj_getent(probe_in, "content", 1);
+	SEXP_t *content_val = probe_ent_getval(content_ent);
+	char *content_str = SEXP_string_cstr(content_val);
 
-	probe_filebehaviors_canonicalize(&behaviors_ent);
-	const char *prefix = getenv("OSCAP_PROBE_ROOT");
-	OVAL_FTS *ofts = oval_fts_open_prefixed(
-		prefix, path_ent, filename_ent, filepath_ent, behaviors_ent,
-		probe_ctx_getresult(ctx));
-	if (ofts != NULL) {
-		OVAL_FTSENT *ofts_ent;
-		while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
-			if (ofts_ent->fts_info == FTS_F
-			    || ofts_ent->fts_info == FTS_SL) {
-				process_yaml_file(prefix, ofts_ent->path, ofts_ent->file,
-					yamlpath_str, ctx);
+	if (content_str != NULL) {
+		process_yaml_content(content_str, yamlpath_str, ctx);
+	} else {
+		probe_filebehaviors_canonicalize(&behaviors_ent);
+		const char *prefix = getenv("OSCAP_PROBE_ROOT");
+		OVAL_FTS *ofts = oval_fts_open_prefixed(
+			prefix, path_ent, filename_ent, filepath_ent, behaviors_ent,
+			probe_ctx_getresult(ctx));
+		if (ofts != NULL) {
+			OVAL_FTSENT *ofts_ent;
+			while ((ofts_ent = oval_fts_read(ofts)) != NULL) {
+				if (ofts_ent->fts_info == FTS_F
+					|| ofts_ent->fts_info == FTS_SL) {
+					process_yaml_file(prefix, ofts_ent->path, ofts_ent->file,
+						yamlpath_str, ctx);
+				}
+				oval_ftsent_free(ofts_ent);
 			}
-			oval_ftsent_free(ofts_ent);
+			oval_fts_close(ofts);
 		}
-		oval_fts_close(ofts);
 	}
 
+	free(content_str);
+	SEXP_free(content_val);
+	SEXP_free(content_ent);
 	free(yamlpath_str);
 	SEXP_free(yamlpath_val);
 	SEXP_free(yamlpath_ent);
