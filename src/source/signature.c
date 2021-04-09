@@ -241,6 +241,9 @@ static int _oscap_signature_validate_doc(xmlDocPtr doc, oscap_document_type_t sc
 	if (good != size) {
 		res = 1;
 	}
+	if (res == 0) {
+		printf("XML signature is valid.\n");
+	}
 
 cleanup:
 	/* cleanup */
