@@ -366,10 +366,20 @@ int oscap_source_validate_schematron(struct oscap_source *source, const char *ou
 			return -1;
 		}
 	}
-	int ret = oscap_source_validate_schematron_priv(source, oscap_source_get_scap_type(source),
-			oscap_source_get_schema_version(source), outfile_fd);
+	oscap_document_type_t scap_type = oscap_source_get_scap_type(source);
+	const char *schema_version = oscap_source_get_schema_version(source);
+	if (!schema_version) {
+			schema_version = "unknown schema version";
+	}
+	int ret = oscap_source_validate_schematron_priv(source, scap_type,
+		schema_version, outfile_fd);
 	if (outfile != NULL)
 		fclose(outfile_fd);
+	if (ret != 0) {
+		const char *type_name = oscap_document_type_to_string(scap_type);
+		const char *origin = oscap_source_readable_origin(source);
+		oscap_seterr(OSCAP_EFAMILY_OSCAP, "Invalid %s (%s) content in %s.", type_name, schema_version, origin);
+	}
 	return ret;
 }
 
