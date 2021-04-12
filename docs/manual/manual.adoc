@@ -1516,6 +1516,32 @@ the presence of a matching SWID tag:
 $ oscap oval eval --results results.xml r2860-rhel-oval.xml
 ----
 
+
+=== Notes on specifics of OVAL implementation
+
+==== Excluding non-local filesystems using the recurse_file_system="local" attribute of a FileBehaviors entity
+
+The scanner loosely follows the OVAL's idea behind this attribute to behave like
+the coreutils utility *df* (`df -l`). This is the list of filesystems, that are
+not considered local by the scanner:
+
+* proc, sysfs
+* afs
+* ceph
+* cifs
+* smb3, smbfs
+* sshfs
+* ncpfs, ncp
+* nfs, nfs4
+* gfs, gfs2
+* glusterfs
+* gpfs
+* pvfs2
+* ocfs2
+* lustre
+* davfs
+
+
 == List of accepted environment variables
 
 * `OSCAP_CHECK_ENGINE_PLUGIN_DIR` - Defines path to a directory that contains plug-in libraries implementing additonal check engines, eg. SCE.

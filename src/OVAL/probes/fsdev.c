@@ -106,6 +106,12 @@ static int is_local_fs(struct mntent *ment)
 	if (oscap_str_startswith(fstype, "fuse.")) {
 		fstype += strlen("fuse.");
 	}
+	// OVAL's idea behind 'local' is to follow the 'df -l' behaviour
+	const char *pseudo_fs[] = {
+		"proc",
+		"sysfs",
+		NULL
+	};
 	const char *network_fs[] = {
 		"afs",
 		"ceph",
@@ -127,10 +133,13 @@ static int is_local_fs(struct mntent *ment)
 		"davfs",
 		NULL
 	};
-	for (int i = 0; network_fs[i]; i++) {
-		if (!strcmp(network_fs[i], fstype)) {
+	for (int i = 0; pseudo_fs[i]; i++) {
+		if (!strcmp(pseudo_fs[i], fstype))
 			return 0;
-		}
+	}
+	for (int i = 0; network_fs[i]; i++) {
+		if (!strcmp(network_fs[i], fstype))
+			return 0;
 	}
 	return 1;
 }
