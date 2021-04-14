@@ -679,6 +679,8 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 			ret = 1;
 		}
 		fprintf(outfile_fd, "Complete result of schematron validation of '%s': %s\n", origin, ret == 0 ? "PASS" : "FAIL");
+	} else if (scap_type == OSCAP_DOCUMENT_XCCDF) {
+		ret = _run_schematron_with_warnings_and_errors(source, schematron_path, outfile_fd);
 	} else {
 		const char *params[] = { NULL };
 		char *xslt_output = oscap_source_apply_xslt_path_mem(source, schematron_path, params, oscap_path_to_schemas());
