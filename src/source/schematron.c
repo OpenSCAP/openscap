@@ -656,6 +656,10 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 		fprintf(outfile_fd, "Skipped\n");
 		return 0;
 	}
+	if (scap_type == OSCAP_DOCUMENT_XCCDF && !strcmp(version, "1.1")) {
+		fprintf(outfile_fd, "Skipped\n");
+		return 0;
+	}
 
 	/* find a right schematron file */
 	const char *schematron_path = NULL;
