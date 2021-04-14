@@ -10,6 +10,7 @@ verbose=$(mktemp)
 result=$(mktemp)
 $OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --results-arf $result $srcdir/simple_ds_valid_sign.xml >$stdout 2>$stderr
 ! [ -s $stderr ]
+grep -q "XML signature is valid." $stdout
 grep -q "Validating XML signature" $verbose
 grep -q "Signature is OK" $verbose
 grep -q "SignedInfo references (ok/all): 3/3" $verbose
@@ -29,6 +30,7 @@ $OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --results-arf $resu
 [ $ret = 1 ]
 [ -s $stderr ]
 ! [ -s $result ]
+! grep -q "XML signature is valid." $stdout
 grep -q "OpenSCAP Error: Invalid signature in SCAP Source Datastream (1.3) content in $srcdir/simple_ds_invalid_sign.xml" $stderr
 grep -q "Validating XML signature" $verbose
 grep -q "Signature is invalid" $verbose
@@ -46,6 +48,7 @@ verbose=$(mktemp)
 result=$(mktemp)
 $OSCAP xccdf eval --skip-signature-validation --results-arf $result $srcdir/simple_ds_invalid_sign.xml >$stdout 2>$stderr
 ! [ -s $stderr ]
+! grep -q "XML signature is valid." $stdout
 ! grep -q "Validating XML signature" $verbose
 assert_exists 1 '//TestResult/rule-result[@idref="xccdf_com.example.www_rule_test-pass"]/result[text()="pass"]'
 rm -f $stdout
@@ -62,6 +65,7 @@ $OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --results-arf $resu
 [ $ret = 1 ]
 [ -s $stderr ]
 ! [ -s $result ]
+! grep -q "XML signature is valid." $stdout
 grep -q "OpenSCAP Error: Invalid signature in SCAP Source Datastream (1.3) content in $srcdir/simple_ds_modified.xml" $stderr
 grep -q "Validating XML signature" $verbose
 grep -q "Signature is OK" $verbose
@@ -79,6 +83,7 @@ verbose=$(mktemp)
 result=$(mktemp)
 $OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --enforce-signature --results-arf $result $srcdir/simple_ds_no_sign.xml >$stdout 2>$stderr || ret=$?
 [ -s $stderr ]
+! grep -q "XML signature is valid." $stdout
 grep -q "OpenSCAP Error: Signature not found" $stderr
 grep -q "Validating XML signature" $verbose
 rm -f $stdout
