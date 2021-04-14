@@ -97,6 +97,7 @@ struct xccdf_refine_value * xccdf_refine_value_clone(const struct xccdf_refine_v
 struct xccdf_refine_rule *xccdf_refine_rule_new(void)
 {
 	struct xccdf_refine_rule *foo = calloc(1, sizeof(struct xccdf_refine_rule));
+	foo->role = XCCDF_ROLE_FULL;
 	foo->remarks = oscap_list_new();
 	return foo;
 }
