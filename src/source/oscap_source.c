@@ -369,7 +369,7 @@ int oscap_source_validate_schematron(struct oscap_source *source, const char *ou
 	oscap_document_type_t scap_type = oscap_source_get_scap_type(source);
 	const char *schema_version = oscap_source_get_schema_version(source);
 	if (!schema_version) {
-			schema_version = "unknown schema version";
+		schema_version = "unknown schema version";
 	}
 	int ret = oscap_source_validate_schematron_priv(source, scap_type,
 		schema_version, outfile_fd);
