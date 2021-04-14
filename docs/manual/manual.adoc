@@ -915,20 +915,26 @@ $ oscap ds sds-validate scap-ds.xml
 NOTE: Note that all SCAP components within the given data stream are validated
 automatically and none of the components is specified separately.
 
-You can also enable extra Schematron-based validation if you validate OVAL
-specification. This validation method is slower but it provides deeper analysis.
-Run the following command to validate an OVAL document using Schematron:
+There is an extra Schematron-based validation enabled when you validate OVAL or
+XCCDF specification. This validation method is slower but it provides deeper analysis.
+
+Run one of the following commands to validate an OVAL or XCCDF document without
+Schematron checks:
 
 ----
-$ oscap oval validate --schematron oval-file.xml
+$ oscap xccdf validate --skip-schematron xccdf-file.xml
+----
+
+----
+$ oscap oval validate --skip-schematron oval-file.xml
 ----
 
 The results of validation are printed to standard error stream (stderr).
 
 NOTE: Please note that for the rest of `oscap` functionality, unless you specify
 --skip-validation (--skip-valid), validation will automatically occur before
-files are used. Therefore, you do not need to explicitly validate a datastream
-before use.
+files are used. Therefore, you do not need to explicitly validate a data stream
+before use. Though it will not include the Schematron-based validation step.
 
 === Validating digital signature in SCAP source data stream
 

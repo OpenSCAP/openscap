@@ -20,7 +20,7 @@ for i in {1..5}; do
 	grep "Skipping $tmpdir/non_existent\.oval\.xml file which is referenced from XCCDF content" $stderr
 	:> $stderr
 
-	$OSCAP xccdf validate $result
+	$OSCAP xccdf validate --skip-schematron $result
 	assert_exists $i '//TestResult'
 	assert_exists $i '//TestResult/rule-result/result[text()="notchecked"]'
 	assert_exists $i '//TestResult/score'

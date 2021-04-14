@@ -16,6 +16,6 @@ echo "Result file = $result"
 grep -q "^OpenSCAP Error: Invalid selector '20' for xccdf:value/@id='var-passwd_min_len'. Using null value instead." $stderr
 rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 rm $result

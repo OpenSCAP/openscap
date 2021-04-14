@@ -15,7 +15,7 @@ echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ "`cat $stdout`" == "XCCDF Results are exported correctly." ]; rm $stdout
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 0 '//check[not(@multi-check)]'
 assert_exists 1 '//Rule[@id="xccdf_moc.elpmaxe.www_rule_1"]/check[@multi-check="true"]'

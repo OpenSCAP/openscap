@@ -17,7 +17,7 @@ xsltproc --stringparam reverse_DNS com.example.www $srcdir/../../../../xsl/xccdf
 
 [ -s $result ]
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 1 '//*[namespace::*="http://checklists.nist.gov/xccdf/1.2"]'
 
