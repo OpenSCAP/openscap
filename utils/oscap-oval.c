@@ -754,37 +754,30 @@ static bool valid_inputs(const struct oscap_action *action) {
 
 static int app_oval_validate(const struct oscap_action *action) {
 	int ret;
-	int result = OSCAP_ERROR;
+	int result = OSCAP_OK;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->f_oval);
 	ret = oscap_source_validate(source, reporter, (void *) action);
-	if (ret == -1) {
+
+	if (ret < 0) {
 		result = OSCAP_ERROR;
-		goto cleanup;
-	}
-	else {
-		result = ret == 1 ? OSCAP_FAIL : OSCAP_OK;
-	}
-
-	/* schematron-based validation requested
-	   We can only do schematron validation if the file isn't a source datastream
-	*/
-	if (action->schematron && oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
-		ret = oscap_source_validate_schematron(source, NULL);
-		if (ret==-1) {
-			result=OSCAP_ERROR;
-		}
-		else if (ret>0) {
-			result=OSCAP_FAIL;
+	} else if (ret > 0) {
+		result = OSCAP_FAIL;
+	} else {
+		// We can only do schematron validation if the file isn't a source datastream
+		if (action->schematron && oscap_source_get_scap_type(source) != OSCAP_DOCUMENT_SDS) {
+			ret = oscap_source_validate_schematron(source, NULL);
+			if (ret < 0) {
+				result = OSCAP_ERROR;
+			} else if (ret > 0) {
+				result = OSCAP_FAIL;
+			}
 		}
 	}
 
-cleanup:
 	oscap_source_free(source);
-	if (oscap_err())
-		fprintf(stderr, "%s %s\n", OSCAP_ERR_MSG, oscap_err_desc());
+	oscap_print_error();
 
 	return result;
-
 }
 
