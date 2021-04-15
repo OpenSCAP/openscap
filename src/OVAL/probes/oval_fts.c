@@ -1346,6 +1346,12 @@ OVAL_FTSENT *oval_fts_read(OVAL_FTS *ofts)
 		if (ofts->ofts_sfilepath) {
 			fts_ent = ofts->ofts_match_path_fts_ent;
 			ofts->ofts_match_path_fts_ent = NULL;
+			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+				&& (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+					(fts_ent->fts_statp != NULL) ?
+					&fts_ent->fts_statp->st_dev : NULL))) {
+				continue;
+			}
 			break;
 		} else {
 			fts_ent = oval_fts_read_recurse_path(ofts);
