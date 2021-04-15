@@ -604,18 +604,13 @@ static int _additional_schematron_checks(struct oscap_source *source, FILE *outf
 	return res;
 }
 
-static int _sds_schematron_validation(struct oscap_source *source, const char *schema_path, FILE *outfile_fd)
+static int _run_schematron_with_warnings_and_errors(struct oscap_source *source, const char *schema_path, FILE *outfile_fd)
 {
 	int validity = 0;
 	const char *params[] = { NULL };
-	fprintf(outfile_fd, "Starting global schematron validation using the source data stream schematron\n");
-
-	if (_additional_schematron_checks(source, outfile_fd) != 0) {
-		validity = 1;
-	}
 	char *xslt_output = oscap_source_apply_xslt_path_mem(source, schema_path, params, oscap_path_to_schemas());
 	if (xslt_output == NULL) {
-		validity = 1;
+		return 1;
 	}
 	char *err_substr = strstr(xslt_output, "Error:");
 	if (err_substr != NULL) {
@@ -624,6 +619,20 @@ static int _sds_schematron_validation(struct oscap_source *source, const char *s
 	}
 	fputs(xslt_output, outfile_fd);
 	free(xslt_output);
+	return validity;
+}
+
+static int _sds_schematron_validation(struct oscap_source *source, const char *schema_path, FILE *outfile_fd)
+{
+	int validity = 0;
+	fprintf(outfile_fd, "Starting global schematron validation using the source data stream schematron\n");
+
+	if (_additional_schematron_checks(source, outfile_fd) != 0) {
+		validity = 1;
+	}
+	if (_run_schematron_with_warnings_and_errors(source, schema_path, outfile_fd) != 0) {
+		validity = 1;
+	}
 	fprintf(outfile_fd, "Global schematron validation using the source data stream schematron: %s\n\n", validity == 0 ? "PASS" : "FAIL");
 	return validity;
 }
@@ -644,6 +653,10 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 			scap_type == OSCAP_DOCUMENT_SCE_RESULT ||
 			scap_type == OSCAP_DOCUMENT_OCIL ||
 			scap_type == OSCAP_DOCUMENT_CVRF_FEED) {
+		fprintf(outfile_fd, "Skipped\n");
+		return 0;
+	}
+	if (scap_type == OSCAP_DOCUMENT_XCCDF && !strcmp(version, "1.1")) {
 		fprintf(outfile_fd, "Skipped\n");
 		return 0;
 	}
@@ -670,6 +683,8 @@ int oscap_source_validate_schematron_priv(struct oscap_source *source, oscap_doc
 			ret = 1;
 		}
 		fprintf(outfile_fd, "Complete result of schematron validation of '%s': %s\n", origin, ret == 0 ? "PASS" : "FAIL");
+	} else if (scap_type == OSCAP_DOCUMENT_XCCDF) {
+		ret = _run_schematron_with_warnings_and_errors(source, schematron_path, outfile_fd);
 	} else {
 		const char *params[] = { NULL };
 		char *xslt_output = oscap_source_apply_xslt_path_mem(source, schematron_path, params, oscap_path_to_schemas());
