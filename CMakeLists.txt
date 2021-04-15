@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8...3.19)
 
 # Inspired and referenced from https://blog.kitware.com/cmake-and-the-default-build-type
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -101,7 +101,7 @@ if(CAP_FOUND)
 endif()
 
 find_package(CURL)
-find_package(DBus)
+find_package(DBUS)
 find_package(Doxygen)
 find_package(GConf)
 find_package(Ldap)

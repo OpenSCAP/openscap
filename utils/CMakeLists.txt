@@ -21,7 +21,7 @@ if(ENABLE_OSCAP_UTIL)
 			message("GETOPT_LIBRARY: ${GETOPT_LIBRARY}")
 
 			target_include_directories(oscap PRIVATE ${GETOPT_INCLUDE_DIR})
-			target_link_libraries(oscap PRIVATE ${GETOPT_LIBRARY})
+			target_link_libraries(oscap ${GETOPT_LIBRARY})
 		endif()
 		
 		set(OSCAP_UTIL_DESTINATION ".")
