@@ -113,7 +113,7 @@ static struct oscap_module XCCDF_VALIDATE = {
     .opt_parser = getopt_xccdf,
 	.func = app_xccdf_validate,
 	.help = "Options:\n"
-		"   --schematron                  - Use schematron-based validation in addition to XML Schema\n"
+		"   --skip-schematron             - Do not use schematron-based validation in addition to XML Schema\n"
 	,
 };
 
@@ -1167,7 +1167,9 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},
 		{"export-variables",	no_argument, &action->export_variables, 1},
+		//TODO: deprecate and remove
 		{"schematron",          no_argument, &action->schematron, 1},
+		{"skip-schematron",     no_argument, &action->schematron, 0},
 		{"without-syschar",    no_argument, &action->without_sys_chars, 1},
 		{"thin-results",        no_argument, &action->thin_results, 1},
 	// end
@@ -1249,34 +1251,28 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 
 int app_xccdf_validate(const struct oscap_action *action) {
 	int ret;
-	int result;
-
+	int result = OSCAP_OK;
 
 	struct oscap_source *source = oscap_source_new_from_file(action->f_xccdf);
 	ret = oscap_source_validate(source, reporter, (void *) action);
-        if (ret==-1) {
-                result=OSCAP_ERROR;
-                goto cleanup;
-        }
-        else if (ret==1) {
-                result=OSCAP_FAIL;
-        }
-        else
-                result=OSCAP_OK;
 
-	if (action->schematron) {
-		ret = oscap_source_validate_schematron(source, NULL);
-		if (ret == -1) {
-			result = OSCAP_ERROR;
-		} else if (ret > 0) {
-			result = OSCAP_FAIL;
+	if (ret < 0) {
+		result = OSCAP_ERROR;
+	} else if (ret > 0) {
+		result = OSCAP_FAIL;
+	} else {
+		if (action->schematron) {
+			ret = oscap_source_validate_schematron(source, NULL);
+			if (ret < 0) {
+				result = OSCAP_ERROR;
+			} else if (ret > 0) {
+				result = OSCAP_FAIL;
+			}
 		}
 	}
 
-cleanup:
 	oscap_source_free(source);
 	oscap_print_error();
 
-        return result;
-
+	return result;
 }

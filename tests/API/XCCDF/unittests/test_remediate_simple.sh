@@ -44,7 +44,7 @@ $OSCAP xccdf remediate --results $result  $srcdir/${name}.xccdf.xml 2> $stderr
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 4 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002001"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002001"]/@start-time)' < $result 2>/dev/null`
@@ -59,7 +59,7 @@ $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profil
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ ! -f test_file ]
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 5 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002002"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile002002"]/@start-time)' < $result 2>/dev/null`
@@ -77,7 +77,7 @@ daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ $ret -eq 2 ]
 [ -f $stderr ]; [ ! -s $stderr ]; :> $stderr
 [ -f test_file ]; rm test_file
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 6 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001001"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile001001"]/@start-time)' < $result 2>/dev/null`
@@ -97,7 +97,7 @@ $OSCAP xccdf remediate --result-id xccdf_org.open-scap_testresult_default-profil
 daytime="$(date +%Y-%m-%d)T$(date +%H:%M)" # Format like '2013-02-27T15:01:57'
 [ -f $stderr ]; [ ! -s $stderr ]; rm $stderr
 [ -f test_file ]; rm test_file
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 assert_exists 7 '//TestResult'
 assert_exists 1 '//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]'
 starttime=`$XPATH 'string(//TestResult[@id="xccdf_org.open-scap_testresult_default-profile003"]/@start-time)' < $result 2>/dev/null`

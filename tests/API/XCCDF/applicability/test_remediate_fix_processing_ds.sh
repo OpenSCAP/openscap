@@ -28,7 +28,7 @@ $OSCAP xccdf eval --remediate --results $resultx --results-arf $arf $sds 2> $std
 [ ! -f wrong_test_file ]
 [ -f test_file_cpe_na ]; rm test_file_cpe_na
 
-$OSCAP xccdf validate $resultx
+$OSCAP xccdf validate --skip-schematron $resultx
 $OSCAP ds rds-validate $arf
 
 result=$resultx
@@ -62,7 +62,7 @@ $OSCAP xccdf eval --cpe $srcdir/cpe-dict.xml --remediate --results $resultx --re
 [ ! -f wrong_test_file ]
 [ ! -f test_file_cpe_na ]
 
-$OSCAP xccdf validate $resultx
+$OSCAP xccdf validate --skip-schematron $resultx
 $OSCAP ds rds-validate $arf
 
 result=$resultx

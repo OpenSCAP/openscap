@@ -58,6 +58,7 @@ static void oscap_action_init(struct oscap_action *action)
     assert(action != NULL);
     memset(action, 0, sizeof(*action));
     action->validate = 1;
+    action->schematron = 1;
     action->validate_signature = 1;
 }
 

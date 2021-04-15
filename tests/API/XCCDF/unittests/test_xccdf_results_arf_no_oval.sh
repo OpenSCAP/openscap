@@ -16,7 +16,7 @@ echo "Stderr file = $stderr"
 echo "Result file = $result"
 [ -f $stderr ]; [ ! -s $stderr ]
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 $OSCAP ds rds-validate $resultArf
 
 $OSCAP info $resultArf | sed 's/^[[:space:]]*//' > $stdout 2> $stderr

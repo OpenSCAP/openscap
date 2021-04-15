@@ -17,7 +17,7 @@ echo "Result file = $result"
 [ "WARNING: Skipping $srcdir/_non_existent_.oval.xml file which is referenced from XCCDF content" == "`cat $stderr`" ]
 rm $stderr
 
-$OSCAP xccdf validate $result
+$OSCAP xccdf validate --skip-schematron $result
 
 assert_exists 2 '//complex-check'
 assert_exists 2 '//complex-check[@operator="AND"]'
