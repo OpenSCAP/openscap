@@ -2,7 +2,7 @@
 # It serves as Fedora CI configuration and as support for downstream updates.
 Name:           openscap
 Version:        1.3.4
-Release:        4%{?dist}
+Release:        0%{?dist}
 Epoch:          1
 Summary:        Set of open source libraries enabling integration of the SCAP line of standards
 License:        LGPLv2+
