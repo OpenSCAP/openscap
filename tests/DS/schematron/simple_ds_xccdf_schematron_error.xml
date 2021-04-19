@@ -63,10 +63,10 @@
         <description>This profile is for testing.</description>
         <select idref="xccdf_com.example.www_rule_test-pass" selected="true"/>
       </Profile>
-      <Profile id="xccdf_com.example.www_profile_test_single_rule2" extends="xccdf_com.example.www_rule_test-pass">
+      <Profile id="xccdf_com.example.www_profile_test_single_rule2">
         <title>xccdf_test_profile</title>
         <description>This profile is for testing.</description>
-        <select idref="xccdf_com.example.www_rule_test-pass" selected="true"/>
+        <select idref="xccdf_com.example.www_rule_test-pass2" selected="true"/>
       </Profile>
       <Rule selected="true" id="xccdf_com.example.www_rule_test-pass">
         <title>This rule always passes</title>
