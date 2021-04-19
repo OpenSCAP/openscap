@@ -186,7 +186,7 @@ static xmlNodePtr _xcf_get_component_ref(xmlNodePtr catalog, const char *uri, xm
 	xmlNodePtr component_ref_node = NULL;
 	char *xpath = oscap_sprintf("ancestor::ds:data-stream//ds:component-ref[@id='%s']", cref);
 	xmlXPathObjectPtr component_refs = xmlXPathNodeEval(catalog, BAD_CAST xpath, context);
-	if (component_refs->nodesetval->nodeNr == 1) {
+	if (component_refs != NULL && component_refs->nodesetval != NULL && component_refs->nodesetval->nodeNr == 1) {
 		component_ref_node = component_refs->nodesetval->nodeTab[0];
 	}
 	if (component_ref_node == NULL) {
@@ -206,7 +206,7 @@ static xmlNodePtr _xcf_get_component(xmlNodePtr component_ref_node, xmlXPathCont
 	free(xlink_href);
 	xmlXPathObjectPtr components = xmlXPathNodeEval(component_ref_node, BAD_CAST xpath, context);
 	xmlNodePtr component = NULL;
-	if (components->nodesetval->nodeNr == 1) {
+	if (components != NULL && components->nodesetval != NULL && components->nodesetval->nodeNr == 1) {
 		component = components->nodesetval->nodeTab[0];
 	}
 	free(xpath);
@@ -247,6 +247,8 @@ static bool _req_src_236_2_sub6(xmlNodePtr component, xmlXPathContextPtr context
 	bool exists_ocil = false;
 	char *ocil_xpath = oscap_sprintf(".//ocil:questionnaire[@id='%s']", name);
 	xmlXPathObjectPtr ocil_questionnaires = xmlXPathNodeEval(component, BAD_CAST ocil_xpath, context);
+	if (ocil_questionnaires == NULL || ocil_questionnaires->nodesetval == NULL)
+		goto cleanup;
 	for (int m = 0; m < ocil_questionnaires->nodesetval->nodeNr; m++) {
 		xmlNodePtr ocil_questionnaire = ocil_questionnaires->nodesetval->nodeTab[m];
 		char *ocil_questionnaire_id = (char *) xmlGetProp(ocil_questionnaire, BAD_CAST "id");
@@ -254,6 +256,7 @@ static bool _req_src_236_2_sub6(xmlNodePtr component, xmlXPathContextPtr context
 		free(ocil_questionnaire_id);
 		exists_ocil = true;
 	}
+cleanup:
 	free(ocil_xpath);
 	xmlXPathFreeObject(ocil_questionnaires);
 	return exists_ocil;
@@ -265,6 +268,8 @@ static bool _req_src_236_2_sub5(xmlNodePtr component, xmlXPathContextPtr context
 	bool exists_oval = false;
 	char *oval_xpath = oscap_sprintf(".//oval-def:definition[@id='%s' and (@class='compliance' or @class='patch')]", name);
 	xmlXPathObjectPtr oval_definitions = xmlXPathNodeEval(component, BAD_CAST oval_xpath, context);
+	if (oval_definitions == NULL || oval_definitions->nodesetval == NULL)
+		goto cleanup;
 	for (int m = 0; m < oval_definitions->nodesetval->nodeNr; m++) {
 		xmlNodePtr oval_definition = oval_definitions->nodesetval->nodeTab[m];
 		char *oval_def_id = (char *) xmlGetProp(oval_definition, BAD_CAST "id");
@@ -272,6 +277,7 @@ static bool _req_src_236_2_sub5(xmlNodePtr component, xmlXPathContextPtr context
 		free(oval_def_id);
 		exists_oval = true;
 	}
+cleanup:
 	free(oval_xpath);
 	xmlXPathFreeObject(oval_definitions);
 	return exists_oval;
@@ -311,9 +317,10 @@ static bool _req_src_236_2_sub3(xmlNodePtr rule_node, xmlNodePtr catalog, xmlXPa
 	/* if(exists($n/xccdf:check[@system eq 'http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system eq 'http://scap.nist.gov/schema/ocil/2']/xccdf:check-content-ref[exists(@name) and not(xcf:is-external-ref($m/cat:catalog, @href) cast as xsd:boolean)])) then ... else true() */
 	xmlXPathObjectPtr check_content_refs = xmlXPathNodeEval(rule_node, BAD_CAST "xccdf:check[@system='http://oval.mitre.org/XMLSchema/oval-definitions-5' or @system='http://scap.nist.gov/schema/ocil/2']/xccdf:check-content-ref[@name]", context);
 	/* TODO: external refs check */
-	if (check_content_refs == NULL) {
+	if (check_content_refs == NULL || check_content_refs->nodesetval == NULL) {
 		dD("Rule '%s' has no suitable check-content-refs", rule_id);
 		free(rule_id);
+		xmlXPathFreeObject(check_content_refs);
 		return true;
 	}
 
@@ -352,6 +359,10 @@ static bool _req_src_236_2_sub2(xmlNodePtr component_ref_node, xmlNodePtr catalo
 		return false;
 	}
 	xmlXPathObjectPtr rules = xmlXPathNodeEval(component_node, BAD_CAST ".//xccdf:Rule", context);
+	if (rules == NULL || rules->nodesetval == NULL) {
+		xmlXPathFreeObject(rules);
+		return res;
+	}
 	for (int i = 0; i < rules->nodesetval->nodeNr; i++) {
 		xmlNodePtr rule_node = rules->nodesetval->nodeTab[i];
 		char *rule_id = (char *) xmlGetProp(rule_node, BAD_CAST "id");
@@ -371,6 +382,10 @@ static bool _req_src_236_2_sub1(xmlNodePtr data_stream_node, xmlXPathContextPtr 
 	int res = true;
 	/* every $m in ds:checklists/ds:component-ref satisfies ... */
 	xmlXPathObjectPtr component_refs = xmlXPathNodeEval(data_stream_node, BAD_CAST "ds:checklists/ds:component-ref", context);
+	if (component_refs == NULL || component_refs->nodesetval == NULL) {
+		xmlXPathFreeObject(component_refs);
+		return res;
+	}
 	for (int i = 0; i < component_refs->nodesetval->nodeNr; i++) {
 		xmlNodePtr component_ref_node = component_refs->nodesetval->nodeTab[i];
 		char *component_ref_id = (char *) xmlGetProp(component_ref_node, BAD_CAST "id");
@@ -434,6 +449,8 @@ static bool _req_src_346_1_sub5(xmlNodePtr component, xmlXPathContextPtr context
 	bool exists_oval = false;
 	char *oval_xpath = oscap_sprintf(".//oval-def:definition[@id='%s']", name);
 	xmlXPathObjectPtr oval_definitions = xmlXPathNodeEval(component, BAD_CAST oval_xpath, context);
+	if (oval_definitions == NULL || oval_definitions->nodesetval == NULL)
+		goto cleanup;
 	for (int m = 0; m < oval_definitions->nodesetval->nodeNr; m++) {
 		xmlNodePtr oval_definition = oval_definitions->nodesetval->nodeTab[m];
 		char *oval_def_id = (char *) xmlGetProp(oval_definition, BAD_CAST "id");
@@ -441,6 +458,7 @@ static bool _req_src_346_1_sub5(xmlNodePtr component, xmlXPathContextPtr context
 		free(oval_def_id);
 		exists_oval = true;
 	}
+cleanup:
 	free(oval_xpath);
 	xmlXPathFreeObject(oval_definitions);
 	return exists_oval;
@@ -481,8 +499,9 @@ static bool _req_src_346_1_sub3(xmlNodePtr rule_node, xmlNodePtr catalog, xmlXPa
 	/* xccdf:check[@system eq 'http://oval.mitre.org/XMLSchema/oval-definitions-5']//xccdf:check-content-ref[not(xcf:is-external-ref($m/cat:catalog, @href) cast as xsd:boolean)] */
 	xmlXPathObjectPtr check_content_refs = xmlXPathNodeEval(rule_node, BAD_CAST ".//xccdf:Rule/xccdf:check[@system='http://oval.mitre.org/XMLSchema/oval-definitions-5']/xccdf:check-content-ref", context);
 
-	if (check_content_refs == NULL) {
+	if (check_content_refs == NULL || check_content_refs->nodesetval == NULL) {
 		dD("There are no check-content-refs elements to be checked.");
+		xmlXPathFreeObject(check_content_refs);
 		return true;
 	}
 
@@ -528,6 +547,9 @@ static bool _req_src_346_1_sub1(xmlNodePtr data_stream_node, xmlXPathContextPtr 
 	int res = true;
 	/* every $m in ds:checklists/ds:component-ref satisfies ... */
 	xmlXPathObjectPtr component_refs = xmlXPathNodeEval(data_stream_node, BAD_CAST "ds:checklists/ds:component-ref", context);
+	if (component_refs == NULL || component_refs->nodesetval == NULL) {
+		return res;
+	}
 	for (int i = 0; i < component_refs->nodesetval->nodeNr; i++) {
 		xmlNodePtr component_ref_node = component_refs->nodesetval->nodeTab[i];
 		char *component_ref_id = (char *) xmlGetProp(component_ref_node, BAD_CAST "id");
