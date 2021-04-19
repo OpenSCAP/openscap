@@ -54,6 +54,3 @@ script:
   - ctest --output-on-failure
   # Will always fail builds on forked repositories.
   - (cd .. && sonar-scanner) || true
-
-after_success:
-  - curl -s https://codecov.io/bash > cov.sh && bash cov.sh -x "$GCOV"
