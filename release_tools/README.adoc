@@ -21,7 +21,7 @@ Put your GitHub token in the `.env` file, so it contains the following line:
 
 . Check out that the information within `versions.sh` is accurate.
 +
-OpenSCAP versions are supposed to have correct values from the previous build (see the step 6), but e.g. the `latest_fedora` and `latest_rhel` may need to be updated if work on a distribution with new version has begun.
+OpenSCAP versions are supposed to have correct values from the previous build (see the step 6).
 
 . Run `up_to_compliance_check.sh`.
 +

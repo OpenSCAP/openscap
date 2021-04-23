@@ -1,3 +1,37 @@
+openscap-1.3.5                                                  23-04-2021
+  - New features
+    - Made schematron-based validation enabled by default for validate command of oval and xccdf modules
+    - Added SCAP 1.3 source data stream Schematron
+    - Added XML Signature Validation
+    - Added --enforce-signature option for eval, guide, and fix modules
+    - Added <content> entity support (OVAL/yamlfilecontent)
+    - Allowed to clamp mtime to SOURCE_DATE_EPOCH
+    - Added severity and role attributes
+    - Added support for requires/conflicts elements of the Rule and Group (XCCDF)
+    - Added Kubernetes remediation to HTML report
+  - Maintenance, bug fix
+    - Fixed CMake warnings
+    - Made 'gpfs', 'proc' and 'sysfs' filesystems non-local
+    - Fixed handling of '--arg=val'-styled common options
+    - Documented used environment variables
+    - Updated man page and help texts
+    - Added --skip-validation option synonym for --skip-valid
+    - Fixed behavior of StateType operator
+    - Fixed some of the coverity warnings
+    - Ignoring namespace in XPath expressions
+    - Fixed how oval_probe_ext_eval checks absence of the response from the probe (obtrusive data warning)
+    - Described SWID tags detection
+    - Improved documentation about --stig-viewer option
+    - File probe behaviour fixed (symlink traversal now behaves as defined by OVAL)
+    - Fixed multiple segfaults and broken test in --stig-viewer feature
+    - Added dpkg version comparison algorithm
+    - Pluged some memory leaks
+    - Fixed TestResult/benchmark/@href attribute
+    - Fixed memory allocation
+    - Fixed field names for cases where key selection section is followed by a set section (probes/yamfilecontent)
+    - Changing hard coded libperl path in favor of FindPerlLibs method
+    - Check local filesystems when using 'filepath' element
+
 openscap-1.3.4                                                  01-10-2020
   - New features
     - Add support for FreeBSD
