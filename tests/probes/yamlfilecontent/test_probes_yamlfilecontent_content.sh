@@ -4,7 +4,7 @@
 
 set -e -o pipefail
 
-probecheck "yamlfilecontent" || return 255
+probecheck "yamlfilecontent" || exit 255
 
 oval_file="${srcdir}/test_probes_yamlfilecontent_content.xml"
 result="results.xml"
