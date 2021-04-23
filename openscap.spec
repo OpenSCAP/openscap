@@ -8,7 +8,7 @@ Summary:        Set of open source libraries enabling integration of the SCAP li
 License:        LGPLv2+
 URL:            http://www.open-scap.org/
 Source0:        https://github.com/OpenSCAP/%{name}/releases/download/%{version}/%{name}-%{version}.tar.gz
-BuildRequires: make
+BuildRequires:  make
 BuildRequires:  cmake >= 2.6
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
@@ -26,7 +26,7 @@ BuildRequires:  openldap-devel
 BuildRequires:  glib2-devel
 BuildRequires:  dbus-devel
 BuildRequires:  libyaml-devel
-BuildRequires:	xmlsec1-devel xmlsec1-openssl-devel
+BuildRequires:  xmlsec1-devel xmlsec1-openssl-devel
 %if %{?_with_check:1}%{!?_with_check:0}
 BuildRequires:  perl-XML-XPath
 BuildRequires:  bzip2
@@ -43,7 +43,7 @@ Requires:       openldap
 Requires:       popt
 # Fedora has procps-ng, which provides procps
 Requires:       procps
-Requires:	xmlsec1 xmlsec1-openssl
+Requires:       xmlsec1 xmlsec1-openssl
 
 %description
 OpenSCAP is a set of open source libraries providing an easier path
