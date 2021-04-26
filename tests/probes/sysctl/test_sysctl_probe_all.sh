@@ -73,6 +73,10 @@ if [ "$procps_ver" != "$lowest_ver" ]; then
 	sed -i '/.*vm.stat_refresh/d' "$sysctlNames"
 fi
 
+if ! grep -q "hugepages" "$ourNames"; then
+	sed -i "/^.*hugepages.*$/d" "$sysctlNames"
+fi
+
 echo "Diff (sysctlNames / ourNames): ------"
 diff "$sysctlNames" "$ourNames"
 echo "-------------------------------------"
@@ -84,6 +88,7 @@ sed -i -E "/^E: oscap: +Can't read sysctl value from /d" "$stderr"
 # that can't fit into 8K buffer and result in errno 14
 # (for example /proc/sys/kernel/spl/hostid could be the case)
 sed -i -E "/^E: oscap: +An error.*14, Bad address/d" "$stderr"
+sed -i "/^.*hugepages.*$/d" "$stderr"
 
 echo "Errors (without messages related to permissions):"
 cat "$stderr"
