@@ -852,9 +852,13 @@ Authors:
                         </xsl:apply-templates>
                 </div></td></tr>
             </xsl:if>
-            <xsl:if test="$profile/cdf:select[@idref=$item/@id]/cdf:remark/text()">
-                <tr><td>Remark</td><td class="remark">
-                    <xsl:value-of select="$profile/cdf:select[@idref=$item/@id]/cdf:remark/text()" />
+            <xsl:if test="count($profile/cdf:select[@idref=$item/@id]/cdf:remark) > 0">
+                <tr><td>Remarks</td><td class="remarks">
+                    <xsl:for-each select="$profile/cdf:select[@idref=$item/@id]/cdf:remark">
+                        <blockquote class="small">
+                            <xsl:value-of select="text()" />
+                        </blockquote>
+                </xsl:for-each>
                 </td></tr>
             </xsl:if>
             <xsl:if test="$item/cdf:warning">
