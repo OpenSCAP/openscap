@@ -16,7 +16,6 @@ specarg_escaped="--report . .[1;33m\\\\n\\e"
 
 pcmdl="oval eval --results $result $srcdir/$name.oval.xml"
 
-echo "Eval:"
 $OSCAP oval eval --results $result $srcdir/$name.oval.xml $specarg 2> $stderr
 [ ! -s $stderr ]
 

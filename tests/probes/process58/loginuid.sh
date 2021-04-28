@@ -13,7 +13,6 @@ echo "stderr file: $stderr"
 
 ploginuid=`cat /proc/1/loginuid`
 
-echo "Eval:"
 $OSCAP oval eval --results $result $srcdir/$name.oval.xml 2> $stderr
 [ ! -s $stderr ]
 

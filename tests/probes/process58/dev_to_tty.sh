@@ -11,9 +11,8 @@ echo "result file: $result"
 stderr=$(mktemp ${name}.err.XXXXXX)
 echo "stderr file: $stderr"
 
-ptty=`ps 1 | grep " 1 " | awk -F ' ' '{print $2;}'`
+ptty=`ps -p 1 --no-headers -o tty`
 
-echo "Eval:"
 $OSCAP oval eval --results $result $srcdir/$name.oval.xml 2> $stderr
 [ ! -s $stderr ]
 
