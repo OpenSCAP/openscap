@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<oval_definitions
+	xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+	xmlns:oval-def="http://oval.mitre.org/XMLSchema/oval-definitions-5"
+	xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5">
+
+	<generator>
+		<oval:schema_version>5.10</oval:schema_version>
+		<oval:timestamp>2015-08-08T22:19:00+02:00</oval:timestamp>
+	</generator>
+
+	<definitions>
+		<definition id="oval:my:def:1" version="1" class="miscellaneous">
+
+			<metadata>
+				<title>Title</title>
+				<description>Nothing to say.</description>
+			</metadata>
+
+			<criteria>
+				<criterion test_ref="oval:my:tst:1" />
+			</criteria>
+
+		</definition>
+	</definitions>
+
+	<tests>
+
+		<process58_test xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:my:tst:1" version="1" comment="no-comment" check="all">
+			<object object_ref="oval:my:obj:1"/>
+		</process58_test>
+	</tests>
+
+	<objects>
+
+		<process58_object xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" id="oval:my:obj:1" version="1">
+			<command_line operation="not equal"/>
+			<pid datatype="int" operation="not equal">0</pid>
+		</process58_object>
+
+	</objects>
+
+</oval_definitions>

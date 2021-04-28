@@ -19,7 +19,6 @@
     <tests>
       <unix-def:process58_test id="oval:x:tst:1" version="1" check="all" comment="Test.">
         <unix-def:object object_ref="oval:x:obj:1"/>
-	<unix-def:state state_ref="oval:x:ste:1"/>
       </unix-def:process58_test>
     </tests>
     <objects>
@@ -28,9 +27,4 @@
         <unix-def:pid datatype="int">1</unix-def:pid>
       </unix-def:process58_object>
     </objects>
-    <states>
-      <unix-def:process58_state id="oval:x:ste:1" version="1">
-        <unix-def:loginuid datatype="int">4294967295</unix-def:loginuid>
-      </unix-def:process58_state>
-    </states>
 </oval_definitions>

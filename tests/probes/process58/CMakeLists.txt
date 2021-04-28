@@ -1,6 +1,7 @@
 if(ENABLE_PROBES_UNIX)
 	add_oscap_test("capability.sh")
 	add_oscap_test("command_line.sh")
+	add_oscap_test("command_line_extra.sh")
 	add_oscap_test("dev_to_tty.sh")
 	add_oscap_test("loginuid.sh")
 	add_oscap_test("selinux_domain_label.sh")
