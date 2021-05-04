@@ -548,6 +548,8 @@ static bool _req_src_346_1_sub1(xmlNodePtr data_stream_node, xmlXPathContextPtr 
 	/* every $m in ds:checklists/ds:component-ref satisfies ... */
 	xmlXPathObjectPtr component_refs = xmlXPathNodeEval(data_stream_node, BAD_CAST "ds:checklists/ds:component-ref", context);
 	if (component_refs == NULL || component_refs->nodesetval == NULL) {
+		if (component_refs != NULL)
+			xmlXPathFreeObject(component_refs);
 		return res;
 	}
 	for (int i = 0; i < component_refs->nodesetval->nodeNr; i++) {
