@@ -414,7 +414,8 @@ static int process_yaml_file(const char *prefix, const char *path, const char *f
 	}
 
 cleanup:
-	fclose(yaml_file);
+	if (yaml_file != NULL)
+		fclose(yaml_file);
 	yaml_parser_delete(&parser);
 	free(filepath_with_prefix);
 	free(filepath);
