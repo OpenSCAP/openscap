@@ -275,7 +275,8 @@ static struct oscap_module XCCDF_GEN_FIX = {
     .usage = "[options] xccdf-file.xml",
     .help = GEN_OPTS
         "\nFix Options:\n"
-		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda (default: bash).\n"
+		"   --fix-type <type>             - Fix type. Should be one of: bash, ansible, puppet, anaconda, ignition, kubernetes,\n"
+		"                                   blueprint (default: bash).\n"
 		"   --output <file>               - Write the script into file.\n"
 		"   --result-id <id>              - Fixes will be generated for failed rule-results of the specified TestResult.\n"
 		"   --template <id|filename>      - Fix template. (default: bash)\n"
@@ -887,10 +888,12 @@ int app_generate_fix(const struct oscap_action *action)
 			template = "urn:xccdf:fix:script:ignition";
 		} else if (strcmp(action->fix_type, "kubernetes") == 0) {
 			template = "urn:xccdf:fix:script:kubernetes";
+		} else if (strcmp(action->fix_type, "blueprint") == 0) {
+			template = "urn:redhat:osbuild:blueprint";
 		} else {
 			fprintf(stderr,
 					"Unknown fix type '%s'.\n"
-					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes.\n"
+					"Please provide one of: bash, ansible, puppet, anaconda, ignition, kubernetes, blueprint.\n"
 					"Or provide a custom template using '--template' instead.\n",
 					action->fix_type);
 			return OSCAP_ERROR;
