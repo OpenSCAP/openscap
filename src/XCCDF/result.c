@@ -217,7 +217,10 @@ static inline void _xccdf_result_fill_identity(struct xccdf_result *result)
 	xccdf_identity_set_authenticated(id, 0);
 	xccdf_identity_set_privileged(id, 0);
 #ifdef OSCAP_UNIX
-	xccdf_identity_set_name(id, getlogin());
+	char *name = getlogin();
+	if (name == NULL)
+		name = cuserid(NULL);
+	xccdf_identity_set_name(id, name);
 #elif defined(OS_WINDOWS)
 	GetUserName((TCHAR *) w32_username, &w32_usernamesize); /* XXX: Check the return value? */
 	xccdf_identity_set_name(id, w32_username);
