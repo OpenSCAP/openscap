@@ -706,6 +706,7 @@ static const struct oscap_string_map OVAL_SUBTYPE_UNIX_MAP[] = {
         {OVAL_UNIX_GCONF, "gconf"},
         {OVAL_UNIX_ROUTINGTABLE, "routingtable"},
 	{OVAL_UNIX_SYMLINK, "symlink"},
+        {OVAL_UNIX_NETWORKFIREWALL, "networkfirewall"},
 	{OVAL_SUBTYPE_UNKNOWN, NULL}
 };
 

@@ -61,6 +61,13 @@ if(OPENSCAP_PROBE_UNIX_PROCESS58)
 	)
 endif()
 
+if (OPENSCAP_PROBE_UNIX_NETWORKFIREWALL)
+    list(APPEND UNIX_PROBES_SOURCES
+        "networkfirewall_probe.h"
+        "networkfirewall_probe.c"
+    )
+endif()
+
 if(OPENSCAP_PROBE_UNIX_ROUTINGTABLE)
 	list(APPEND UNIX_PROBES_SOURCES
 		"routingtable_probe.c"
