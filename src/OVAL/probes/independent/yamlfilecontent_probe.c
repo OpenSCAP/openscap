@@ -41,6 +41,7 @@
 #define OSCAP_YAML_BOOL_TAG "tag:yaml.org,2002:bool"
 #define OSCAP_YAML_FLOAT_TAG "tag:yaml.org,2002:float"
 #define OSCAP_YAML_INT_TAG "tag:yaml.org,2002:int"
+#define OSCAP_YAML_NULL_TAG "tag:yaml.org,2002:null"
 
 #define OVECCOUNT 30 /* should be a multiple of 3 */
 
@@ -131,6 +132,14 @@ static SEXP_t *yaml_scalar_event_to_sexp(yaml_event_t *event)
 		} else if (match_regex("^(\\.nan|\\.NaN|\\.NAN)$", value)) {
 			double double_value = NAN;
 			return SEXP_number_newf(double_value);
+		} else if (!question) {
+			return NULL;
+		}
+	}
+	if (question || !strcmp(tag, OSCAP_YAML_NULL_TAG)) {
+		if (match_regex("^(null|Null|NULL|~|)$", value)) {
+			// TODO: Return real NULL when record's field will support nil="true"
+			return SEXP_string_new("(null)", strlen("(null)"));
 		} else if (!question) {
 			return NULL;
 		}
