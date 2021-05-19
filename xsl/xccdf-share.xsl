@@ -375,6 +375,21 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:template name="profile-description">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+    <xsl:if test="$profile/cdf:description/text()">
+        <div class="col-md-12 well well-lg horizontal-scroll">
+            <div class="description profile-description">
+                <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:description[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </div>
+        </div>
+    </xsl:if>
+</xsl:template>
+
 <xsl:template name="show-title-front-matter-description-notices">
     <!-- TODO: please invent a better name for this template -->
 
@@ -407,16 +422,10 @@ Authors:
                     <xsl:value-of select="$profile/@id"/>
                 </xsl:otherwise>
             </xsl:choose></mark>
-            <xsl:if test="$profile/cdf:description/text()">
-                <div class="col-md-12 well well-lg horizontal-scroll">
-                    <div class="description profile-description"><small>
-                        <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:description[1]">
-                            <xsl:with-param name="benchmark" select="$benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates></small>
-                    </div>
-                </div>
-            </xsl:if>
+            <xsl:call-template name="profile-description">
+                <xsl:with-param name="benchmark" select="$benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
         </blockquote>
     </xsl:if>
     <xsl:call-template name="benchmark-description">
