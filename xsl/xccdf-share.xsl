@@ -340,6 +340,41 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:template name="benchmark-description">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+    <div class="col-md-12 well well-lg horizontal-scroll">
+        <xsl:if test="$benchmark/cdf:front-matter">
+            <div class="front-matter">
+                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </div>
+        </xsl:if>
+        <xsl:if test="$benchmark/cdf:description/text()">
+            <div class="description">
+                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </div>
+        </xsl:if>
+        <xsl:if test="$benchmark/cdf:notice/text()">
+            <div class="top-spacer-10">
+                <xsl:for-each select="$benchmark/cdf:notice">
+                    <div class="alert alert-info">
+                        <xsl:apply-templates mode="sub-testresult" select=".">
+                            <xsl:with-param name="benchmark" select="$benchmark"/>
+                            <xsl:with-param name="profile" select="$profile"/>
+                        </xsl:apply-templates>
+                    </div>
+                </xsl:for-each>
+            </div>
+        </xsl:if>
+    </div>
+</xsl:template>
+
 <xsl:template name="show-title-front-matter-description-notices">
     <!-- TODO: please invent a better name for this template -->
 
@@ -384,37 +419,10 @@ Authors:
             </xsl:if>
         </blockquote>
     </xsl:if>
-
-    <div class="col-md-12 well well-lg horizontal-scroll">
-        <xsl:if test="$benchmark/cdf:front-matter">
-            <div class="front-matter">
-                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:front-matter[1]">
-                    <xsl:with-param name="benchmark" select="$benchmark"/>
-                    <xsl:with-param name="profile" select="$profile"/>
-                </xsl:apply-templates>
-            </div>
-        </xsl:if>
-        <xsl:if test="$benchmark/cdf:description/text()">
-            <div class="description">
-                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:description[1]">
-                    <xsl:with-param name="benchmark" select="$benchmark"/>
-                    <xsl:with-param name="profile" select="$profile"/>
-                </xsl:apply-templates>
-            </div>
-        </xsl:if>
-        <xsl:if test="$benchmark/cdf:notice/text()">
-            <div class="top-spacer-10">
-                <xsl:for-each select="$benchmark/cdf:notice">
-                    <div class="alert alert-info">
-                        <xsl:apply-templates mode="sub-testresult" select=".">
-                            <xsl:with-param name="benchmark" select="$benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates>
-                    </div>
-                </xsl:for-each>
-            </div>
-        </xsl:if>
-    </div>
+    <xsl:call-template name="benchmark-description">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:call-template>
 </xsl:template>
 
 <xsl:template name="rear-matter">
