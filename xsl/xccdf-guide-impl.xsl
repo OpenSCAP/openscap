@@ -47,10 +47,12 @@ Authors:
     <xsl:param name="profile"/>
     <div id="introduction">
         <h2>Introduction</h2>
+        <div class="row">
             <xsl:call-template name="benchmark-description">
                 <xsl:with-param name="benchmark" select="$benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
             </xsl:call-template>
+        </div>
     </div>
 </xsl:template>
 
