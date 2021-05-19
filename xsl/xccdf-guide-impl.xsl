@@ -56,66 +56,6 @@ Authors:
     </div>
 </xsl:template>
 
-<xsl:template name="profileinfo">
-    <xsl:param name="benchmark"/>
-    <xsl:param name="profile"/>
-
-    <div id="profileinfo">
-        <h2>Profile Information</h2>
-        <div class="row">
-            <div class="col-md-5 well well-lg horizontal-scroll">
-                <table class="table table-bordered">
-                    <xsl:if test="$profile/cdf:title">
-                        <tr>
-                            <th>Profile Title</th>
-                            <td>
-                                <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
-                                    <xsl:with-param name="benchmark" select="$benchmark"/>
-                                    <xsl:with-param name="profile" select="$profile"/>
-                                </xsl:apply-templates>
-                            </td>
-                        </tr>
-                    </xsl:if>
-
-                    <tr>
-                        <th>Profile ID</th>
-                        <td>
-                            <xsl:choose>
-                                <xsl:when test="$profile/@id">
-                                    <xsl:value-of select="$profile/@id"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <abbr title="No profile was selected.">(default)</abbr>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="col-md-3">
-                <h4>CPE Platforms</h4>
-                <xsl:choose>
-                    <xsl:when test="$benchmark/cdf:platform">
-                        <ul class="list-group">
-                            <xsl:for-each select="$benchmark/cdf:platform">
-                                <xsl:variable name="idref" select="@idref"/>
-                                <xsl:if test="$benchmark/cdf:platform[@idref=$idref]">
-                                  <li class="list-group-item">
-                                    <span class="label label-default" title="CPE platform {@idref} is applicable to this Benchmark"><xsl:value-of select="@idref"/></span>
-                                  </li>
-                                </xsl:if>
-                             </xsl:for-each>
-                        </ul>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        The benchmark does not specify applicable platforms.
-                    </xsl:otherwise>
-                </xsl:choose>
-            </div>
-        </div>
-    </div>
-</xsl:template>
-
 <xsl:template name="revisionhistory">
     <xsl:param name="benchmark"/>
 
