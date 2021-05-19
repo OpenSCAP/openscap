@@ -520,6 +520,10 @@ Authors:
                     </xsl:otherwise>
                 </xsl:choose>
             </div>
+            <xsl:call-template name="profile-description">
+                <xsl:with-param name="benchmark" select="$benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
         </div>
     </div>
 </xsl:template>
