@@ -637,7 +637,7 @@ Authors:
             <xsl:call-template name="item-title">
                 <xsl:with-param name="item" select="$benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
-            </xsl:call-template> | OpenSCAP Security Guide
+            </xsl:call-template>
         </title>
 
         <style><xsl:call-template name="css-sources"/></style>
