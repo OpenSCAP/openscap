@@ -45,14 +45,12 @@ Authors:
 <xsl:template name="introduction">
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
-
     <div id="introduction">
-        <div class="row">
-            <xsl:call-template name="show-title-front-matter-description-notices">
+        <h2>Introduction</h2>
+            <xsl:call-template name="benchmark-description">
                 <xsl:with-param name="benchmark" select="$benchmark"/>
                 <xsl:with-param name="profile" select="$profile"/>
             </xsl:call-template>
-        </div>
     </div>
 </xsl:template>
 
@@ -590,11 +588,11 @@ Authors:
     </xsl:call-template>
 
     <div class="container"><div id="content">
-        <xsl:call-template name="introduction">
+        <xsl:call-template name="profileinfo">
             <xsl:with-param name="benchmark" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
-        <xsl:call-template name="profileinfo">
+        <xsl:call-template name="introduction">
             <xsl:with-param name="benchmark" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>
