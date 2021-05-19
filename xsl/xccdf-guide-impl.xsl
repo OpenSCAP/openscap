@@ -645,7 +645,9 @@ Authors:
     </head>
 
     <body>
-    <xsl:call-template name="xccdf-guide-header"/>
+    <xsl:call-template name="xccdf-guide-header">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+    </xsl:call-template>
 
     <div class="container"><div id="content">
         <xsl:call-template name="introduction">

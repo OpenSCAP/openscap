@@ -72,12 +72,17 @@ logo to the HTML report / guide header.
 </xsl:template>
 
 <xsl:template name="xccdf-guide-header">
+    <xsl:param name="benchmark"/>
     <nav class="navbar navbar-default">
         <div class="navbar-header" style="float: none">
             <a class="navbar-brand" href="#">
                 <xsl:call-template name="xccdf-branding-logo"/>
             </a>
-            <div><h1>OpenSCAP Security Guide</h1></div>
+            <div>
+                <h1>
+                    <xsl:value-of select="$benchmark/cdf:title/text()"/>
+                </h1>
+            </div>
         </div>
     </nav>
 </xsl:template>
