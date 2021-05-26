@@ -794,13 +794,52 @@ $ oscap info results.xml
 
 == Tailoring
 
-This section describes tailoring of content using a tailoring file. This allows
-you to change behavior of content without its direct modification.
+This section describes tailoring of content using a tailoring file.
+Tailoring allows you to change behavior of SCAP content without its direct modification.
 
-. Create a tailoring file
-+
-Tailoring file can be easily created using {workbench_url}[SCAP Workbench].
-+
+=== Creating Tailoring files
+
+Tailoring files can be easily created using {workbench_url}[SCAP Workbench] which is a GUI application.
+
+On the command line, tailoring files can be created using the `autotailor` tool.
+This tool is a part of the `openscap-utils` package.
+
+The basic syntax is:
+
+----
+$ autotailor \
+--select RULE_ID --unselect RULE_ID --var-value VAR=VALUE \
+--output TAILORING_FILE --new_profile_id NEW_PROFILE_ID
+DS_FILENAME BASE_PROFILE_ID
+----
+
+Where:
+
+* `--select RULE_ID` adds a rule with `RULE_ID`. This argument can be
+added multiple times if needed.
+* `--unselect RULE_ID` adds a rule with `RULE_ID`. This argument can be
+added multiple times if needed.
+* `--var-value VAR=VALUE` specifies modification of the XCCDF value in the 
+form `<varname>=<value>`
+* `TAILORING_FILE` is a path to the file that will be created 
+* `NEW_PROFILE_ID` is the ID of the customized profile
+* `DS_FILENAME` is the path to SCAP source data stream that is tailored
+* `BASE_PROFILE_ID` is the original profile that we want to customize
+
+The script creates a new file with a new profile with ID in a form `BASE_PROFILE_ID_customized`.
+
+In the following example, we will create a customized profile with ID `custom` based on the OSPP profile from the SCAP Security Guide for Red Hat Enterprise Linux 8 (located in `/usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml` which is provided by the `scap-security-guide` RPM package) which will remove the rule `service_usbguard_enabled` and save it as a XCCDF Tailoring file into `/tmp/tailoring.xml`.
+
+----
+$ autotailor --unselect service_usbguard_enabled --output /tmp/tailoring.xml \
+--new-profile-id custom /usr/share/xml/scap/ssg/content/ssg-rhel8-ds.xml ospp
+----
+
+For more details about other options of the `autotailor` program please read the `autotailor(8)` man page or run `autotailor --help`.
+
+
+=== Using Tailoring files
+
 . List profiles in the tailoring file
 +
 ----
