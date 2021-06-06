@@ -1,17 +1,17 @@
 format_version: 10
 pipelines:
   oscap:
-    group: simple
+    group: opscap
     materials:
       oscap-maint-1.3:
         git: https://github.com/OpenSCAP/openscap
         shallow_clone: true
         branch: maint-1.3-gocd
     stages:
-    - build-and-test:
+    - build:
         fetch_materials: true
         keep_artifacts: false
-        clean_workspace: true
+        clean_workspace: false
         approval:
           type: success
           allow_only_on_success: false
@@ -29,3 +29,19 @@ pipelines:
                 command: make
                 working_directory: build
                 run_if: passed
+    - test:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: true
+        approval:
+          type: success
+          allow_only_on_success: true
+        jobs:
+          test:
+            timeout: 0
+            tasks:
+            - exec:
+                command: make
+                working_directory: build
+                run_if: passed
+
