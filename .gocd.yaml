@@ -1,18 +1,18 @@
 format_version: 10
 environments:
-  OpenSCAP:
+  oscap:
     pipelines:
     - oscap
     agents:
-    - 0703d527-7667-4e89-9bc9-31d3501c03a2
-    - 781900c5-909e-4410-8333-9467ab2d1a53
+    - 0703d527-7667-4e89-9bc9-31d3501c03a2 #wedos-fedora-ov1500
+    - 781900c5-909e-4410-8333-9467ab2d1a53 #wedos-rhel8-ov1670
 pipelines:
   oscap:
     group: oscap
-    environment: OpenSCAP
+    environment: oscap
     materials:
       oscap-maint-1.3:
-        git: git@github.com:OpenSCAP/openscap.git
+        git: https://github.com/OpenSCAP/openscap
         shallow_clone: true
         branch: maint-1.3-gocd
     stages:
@@ -21,26 +21,91 @@ pipelines:
         keep_artifacts: false
         approval:
           type: success
-          allow_only_on_success: false
         jobs:
           build-and-test:
+            run_instances: all
             tasks:
             - exec:
+                command: cmake
                 arguments:
                 - ..
-                command: cmake
+                - -DCMAKE_BUILD_TYPE=RelWithDebInfo
                 working_directory: build
-                run_if: passed
             - exec:
                 command: make
+                arguments:
+                - -j2
+                - all
                 working_directory: build
-                run_if: passed
             - exec:
+                command: make
+                arguments:
+                - -j2
+                - oscap-chrootable
+                working_directory: build
+            - exec:
+                command: ctest
                 arguments:
                 - --output-on-failure
-                - -R
-                - yaml
-                command: ctest
                 working_directory: build
-                run_if: passed
-
+    - build-and-test-memory-limit:
+        fetch_materials: true
+        keep_artifacts: false
+        approval:
+          type: success
+        jobs:
+          build-and-test:
+            resources:
+            - rhel8
+            tasks:
+            - exec:
+                command: cmake
+                arguments:
+                - ..
+                - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+                working_directory: build
+            - exec:
+                command: make
+                arguments:
+                - -j2
+                - all
+                working_directory: build
+            - exec:
+                command: ./cgroup_test_wrapper.sh
+                working_directory: tests/memory
+    - build-and-test-with-valgrind:
+        fetch_materials: true
+        keep_artifacts: false
+        approval:
+          type: success
+        jobs:
+          build-and-test-with-valgrind:
+            run_instances: all
+            artifacts:
+            - test:
+                source: build/tests/valgrind_test.log
+            tasks:
+            - exec:
+                command: cmake
+                arguments:
+                - ..
+                - -DCMAKE_BUILD_TYPE=RelWithDebInfo
+                - -DENABLE_VALGRIND=ON
+                working_directory: build
+            - exec:
+                command: make
+                arguments:
+                - -j2
+                - all
+                working_directory: build
+            - exec:
+                command: make
+                arguments:
+                - -j2
+                - oscap-chrootable
+                working_directory: build
+            - exec:
+                command: ctest
+                arguments:
+                - --output-on-failure
+                working_directory: build
