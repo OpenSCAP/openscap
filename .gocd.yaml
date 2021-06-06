@@ -1,7 +1,15 @@
 format_version: 10
+environments:
+  oscap:
+    pipelines:
+    - oscap
+    agents:
+    - 0703d527-7667-4e89-9bc9-31d3501c03a2 #wedos-fedora
+    - 781900c5-909e-4410-8333-9467ab2d1a53 #wedos-rhel8
 pipelines:
   oscap:
     group: oscap
+    environment: OpenSCAP
     materials:
       oscap-maint-1.3:
         git: https://github.com/OpenSCAP/openscap
