@@ -53,15 +53,17 @@ jobs:
         ctest --output-on-failure
 
   build-fedora:
-    name: Build, Test on Fedora 33 (Container)
+    name: Build, Test on Fedora Latest (Container)
     runs-on: ubuntu-latest
     container:
-      image: fedora:33
+      image: fedora:latest
     steps:
     - name: Install Deps
-      run: dnf install -y cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2
+      run: dnf install -y cmake git dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2 lua rpm-build which strace
     - name: Checkout
       uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - name: Build
       working-directory: ./build
       run: |
@@ -70,7 +72,6 @@ jobs:
     - name: Test
       working-directory: ./build
       run: |
-        cd $GITHUB_WORKSPACE/build
         ctest --output-on-failure
 
   build-macos:

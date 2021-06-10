@@ -16,6 +16,7 @@ SYSCTL_BLACKLIST='
 	fs.protected_symlinks
 	kernel.cad_pid
 	kernel.unprivileged_userns_apparmor_policy
+	kernel.apparmor_display_secid_mode
 	kernel.usermodehelper.bset
 	kernel.usermodehelper.inheritable
 	net.core.bpf_jit_harden
