@@ -1,12 +1,12 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Gating
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
   push:
-    branches: [ master, maint-1.3 ]
+    branches: [ '*' ]
   pull_request:
     branches: [ master, maint-1.3 ]
 
@@ -14,8 +14,9 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  ubuntu:
+  build-ubuntu:
     # The type of runner that the job will run on
+    name: Build, Test on Ubuntus
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -30,7 +31,7 @@ jobs:
         submodules: recursive
 
     # Runs a single command using the runners shell
-    - name: Install packages
+    - name: Install Deps
       env:
         ACCEPT_EULA: Y
       run: |
@@ -41,18 +42,40 @@ jobs:
 
     # Runs a set of commands using the runners shell
     - name: Build
+      working-directory: ./build
       run: |
-        cd $GITHUB_WORKSPACE/build
         cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
         make all
 
     - name: Test
+      working-directory: ./build
+      run: |
+        ctest --output-on-failure
+
+  build-fedora:
+    name: Build, Test on Fedora 33 (Container)
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:33
+    steps:
+    - name: Install Deps
+      run: dnf install -y cmake dbus-devel GConf2-devel libacl-devel libblkid-devel libcap-devel libcurl-devel libgcrypt-devel libselinux-devel libxml2-devel libxslt-devel libattr-devel make openldap-devel pcre-devel perl-XML-Parser perl-XML-XPath perl-devel python3-devel rpm-devel swig bzip2-devel gcc-c++ libyaml-devel xmlsec1-devel xmlsec1-openssl-devel hostname bzip2
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build
+      working-directory: ./build
+      run: |
+        cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ../
+        make all
+    - name: Test
+      working-directory: ./build
       run: |
         cd $GITHUB_WORKSPACE/build
         ctest --output-on-failure
 
-  macos:
+  build-macos:
     # The type of runner that the job will run on
+    name: Build, Test on MacOS X Latest
     runs-on: macos-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -61,7 +84,7 @@ jobs:
     - uses: actions/checkout@v2
 
     # Runs a single command using the runners shell
-    - name: Install packages
+    - name: Install Deps
       run: |
         brew update
         brew install doxygen
