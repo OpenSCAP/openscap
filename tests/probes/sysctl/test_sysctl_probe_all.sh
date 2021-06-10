@@ -83,6 +83,7 @@ echo "-------------------------------------"
 
 # remove oscap error message related to permissions from stderr
 sed -i -E "/^E: oscap: +Can't read sysctl value from /d" "$stderr"
+sed -i -E "/^E: oscap: +An error.*, Operation not permitted/d" "$stderr"
 
 # remove oscap error message related to gibberish binary entries
 # that can't fit into 8K buffer and result in errno 14
