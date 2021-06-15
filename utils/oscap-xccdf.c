@@ -129,6 +129,7 @@ static struct oscap_module XCCDF_EXPORT_OVAL_VARIABLES = {
 		"   --skip-valid                  - Skip validation.\n"
 		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n"
 		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
 		"                                   (only applicable for source data streams)\n"
 		"   --xccdf-id <id>               - ID of component-ref with XCCDF in the data stream that should be evaluated.\n"
@@ -171,6 +172,7 @@ static struct oscap_module XCCDF_EVAL = {
 		"                                   (only applicable for source data streams)\n"
 		"   --enforce-signature           - Process only signed data streams.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n"
 		"   --progress                    - Switch to sparse output suitable for progress reporting.\n"
 		"                                   Format is \"$rule_id:$result\\n\".\n"
 		"   --datastream-id <id>          - ID of the data stream in the collection to use.\n"
@@ -199,6 +201,7 @@ static struct oscap_module XCCDF_REMEDIATE = {
 		"   --cpe <name>                  - Use given CPE dictionary or language (autodetected)\n"
 		"                                   for applicability checks.\n"
 		"   --fetch-remote-resources      - Download remote content referenced by XCCDF.\n"
+		"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n"
 		"   --results <file>              - Write XCCDF Results into file.\n"
 		"   --results-arf <file>          - Write ARF (result data stream) into file.\n"
 		"   --stig-viewer <file>          - Writes XCCDF results into FILE in a format readable by DISA STIG Viewer\n"
@@ -573,7 +576,7 @@ int app_evaluate_xccdf(const struct oscap_action *action)
 	if (action->tailoring_file != NULL)
 		xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_product_cpe(session, OSCAP_PRODUCTNAME);
 	xccdf_session_set_rule(session, action->rule);
@@ -678,7 +681,7 @@ static int app_xccdf_export_oval_variables(const struct oscap_action *action)
 		xccdf_session_set_benchmark_id(session, action->f_benchmark_id);
 	}
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_custom_oval_eval_fn(session, resolve_variables_wrapper);
 
@@ -721,7 +724,7 @@ int app_xccdf_remediate(const struct oscap_action *action)
 		goto cleanup;
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 
 	if (xccdf_session_load(session) != 0)
@@ -937,7 +940,7 @@ int app_generate_fix(const struct oscap_action *action)
 	xccdf_session_set_signature_validation(session, action->validate_signature);
 	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
 	xccdf_session_set_user_cpe(session, action->cpe);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	xccdf_session_set_custom_oval_files(session, action->f_ovals);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
@@ -1012,7 +1015,7 @@ int app_generate_guide(const struct oscap_action *action)
 	xccdf_session_set_validation(session, action->validate, getenv("OSCAP_FULL_VALIDATION") != NULL);
 	xccdf_session_set_signature_validation(session, action->validate_signature);
 	xccdf_session_set_signature_enforcement(session, action->enforce_signature);
-	xccdf_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	xccdf_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	xccdf_session_set_user_tailoring_file(session, action->tailoring_file);
 	xccdf_session_set_user_tailoring_cid(session, action->tailoring_id);
 	if (xccdf_session_is_sds(session)) {
@@ -1166,6 +1169,7 @@ bool getopt_xccdf(int argc, char **argv, struct oscap_action *action)
 		{"skip-signature-validation", no_argument, &action->validate_signature, 0},
 		{"enforce-signature", no_argument, &action->enforce_signature, 1},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"use-local-file", no_argument, &action->use_local_file, 1},
 		{"progress", no_argument, &action->progress, 1},
 		{"remediate", no_argument, &action->remediate, 1},
 		{"hide-profile-info",	no_argument, &action->hide_profile_info, 1},

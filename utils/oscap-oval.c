@@ -115,7 +115,8 @@ static struct oscap_module OVAL_EVAL = {
 	"   --oval-id <id>                - ID of the OVAL component ref in the data stream to use.\n"
 	"                                   (only applicable for source data streams)\n"
 	"   --fetch-remote-resources      - Download remote content referenced by OVAL Definitions.\n"
-	"                                   (only applicable for source data streams)\n",
+	"                                   (only applicable for source data streams)\n"
+	"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
@@ -344,7 +345,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* set OVAL Variables */
 	oval_session_set_variables(session, action->f_variables);
 
-	oval_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	oval_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	/* load all necesary OVAL Definitions and bind OVAL Variables if provided */
 	if ((oval_session_load(session)) != 0)
 		goto cleanup;
@@ -520,6 +521,7 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		{ "skip-valid",	no_argument, &action->validate, 0 },
 		{ "skip-validation",	no_argument, &action->validate, 0 },
 		{ "fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{ "use-local-file", no_argument, &action->use_local_file, 1},
 		{ 0, 0, 0, 0 }
 	};
 

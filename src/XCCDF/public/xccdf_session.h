@@ -232,7 +232,20 @@ OSCAP_API void xccdf_session_set_user_tailoring_cid(struct xccdf_session *sessio
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-OSCAP_API void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API OSCAP_DEPRECATED(void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback));
+
+/**
+ * Set properties of remote content.
+ * @memberof xccdf_session
+ * @param session XCCDF Session
+ * @param allowed Whether is download od remote resources allowed in this
+ * session (defaults to false)
+ * @param use_local_file Allows to use a locally downloaded copy of the remote
+ * resource if it exists (defaults to false)
+ * @param callback used to notify user about download proceeds. This might be
+ * safely set to NULL -- ignoring user notification.
+ */
+OSCAP_API void xccdf_session_configure_remote_resources(struct xccdf_session *session, bool allowed, bool use_local_file, download_progress_calllback_t callback);
 
 /**
  * Disable or allow loading of depending content (OVAL, SCE, CPE)
