@@ -16,6 +16,7 @@ SYSCTL_BLACKLIST='
 	fs.protected_symlinks
 	kernel.cad_pid
 	kernel.unprivileged_userns_apparmor_policy
+	kernel.apparmor_display_secid_mode
 	kernel.usermodehelper.bset
 	kernel.usermodehelper.inheritable
 	net.core.bpf_jit_harden
@@ -83,6 +84,7 @@ echo "-------------------------------------"
 
 # remove oscap error message related to permissions from stderr
 sed -i -E "/^E: oscap: +Can't read sysctl value from /d" "$stderr"
+sed -i -E "/^E: oscap: +An error.*, Operation not permitted/d" "$stderr"
 
 # remove oscap error message related to gibberish binary entries
 # that can't fit into 8K buffer and result in errno 14
