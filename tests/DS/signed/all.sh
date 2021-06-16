@@ -46,7 +46,7 @@ stdout=$(mktemp)
 stderr=$(mktemp)
 verbose=$(mktemp)
 result=$(mktemp)
-$OSCAP xccdf eval --skip-signature-validation --results-arf $result $srcdir/simple_ds_invalid_sign.xml >$stdout 2>$stderr
+$OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --skip-signature-validation --results-arf $result $srcdir/simple_ds_invalid_sign.xml >$stdout 2>$stderr
 ! [ -s $stderr ]
 ! grep -q "XML signature is valid." $stdout
 ! grep -q "Validating XML signature" $verbose
@@ -82,6 +82,7 @@ stderr=$(mktemp)
 verbose=$(mktemp)
 result=$(mktemp)
 $OSCAP xccdf eval --verbose INFO --verbose-log-file $verbose --enforce-signature --results-arf $result $srcdir/simple_ds_no_sign.xml >$stdout 2>$stderr || ret=$?
+[ $ret = 1 ]
 [ -s $stderr ]
 ! grep -q "XML signature is valid." $stdout
 grep -q "OpenSCAP Error: Signature not found" $stderr
