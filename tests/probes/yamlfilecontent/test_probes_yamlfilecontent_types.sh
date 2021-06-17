@@ -60,6 +60,11 @@ function test_probes_yamlfilecontent_types {
     assert_exists 1 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="#" and @datatype!="boolean" and text()="true"]'
     # string_number
     assert_exists 1 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="#" and @datatype!="int" and text()="81"]'
+    # string_null
+    assert_exists 1 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="#" and text()="null"]'
+
+    # null_1_2_3
+    assert_exists 3 $sd'/ind-sys:yamlfilecontent_item/ind-sys:value/field[@name="#" and text()="(null)"]'
 
     # bool_error_cast, int_error_cast, float_error_cast
     co='/oval_results/results/system/oval_system_characteristics/collected_objects'
