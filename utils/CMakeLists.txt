@@ -53,7 +53,7 @@ if(ENABLE_OSCAP_UTIL)
 			DEPENDS oscap
 		)
 		add_custom_target(oscap-chrootable
-			COMMAND setcap cap_sys_chroot+ep oscap-chrootable
+			COMMAND sudo setcap cap_sys_chroot+ep oscap-chrootable
 			COMMENT "Generating chroot-capable oscap buddy"
 			DEPENDS oscap-chrootable-nocap
 		)
