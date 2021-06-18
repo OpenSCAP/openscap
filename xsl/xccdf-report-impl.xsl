@@ -1045,7 +1045,7 @@ Authors:
     <xsl:call-template name="xccdf-report-header"/>
 
     <div class="container"><div id="content">
-        <xsl:call-template name="introduction">
+        <xsl:call-template name="profileinfo">
             <xsl:with-param name="benchmark" select="$benchmark"/>
             <xsl:with-param name="profile" select="$profile"/>
         </xsl:call-template>

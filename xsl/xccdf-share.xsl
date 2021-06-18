@@ -340,51 +340,9 @@ Authors:
     </div>
 </xsl:template>
 
-<xsl:template name="show-title-front-matter-description-notices">
-    <!-- TODO: please invent a better name for this template -->
-
+<xsl:template name="benchmark-description">
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
-
-    <h2>
-        <xsl:choose>
-            <xsl:when test="$benchmark/cdf:title">
-                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title[1]">
-                    <xsl:with-param name="benchmark" select="$benchmark"/>
-                    <xsl:with-param name="profile" select="$profile"/>
-                </xsl:apply-templates>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="$benchmark/@id"/>
-            </xsl:otherwise>
-        </xsl:choose>
-    </h2>
-    <xsl:if test="$profile">
-        <blockquote>with profile <mark>
-            <xsl:choose>
-                <xsl:when test="$profile/cdf:title/text()">
-                    <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
-                        <xsl:with-param name="benchmark" select="$benchmark"/>
-                        <xsl:with-param name="profile" select="$profile"/>
-                    </xsl:apply-templates>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="$profile/@id"/>
-                </xsl:otherwise>
-            </xsl:choose></mark>
-            <xsl:if test="$profile/cdf:description/text()">
-                <div class="col-md-12 well well-lg horizontal-scroll">
-                    <div class="description profile-description"><small>
-                        <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:description[1]">
-                            <xsl:with-param name="benchmark" select="$benchmark"/>
-                            <xsl:with-param name="profile" select="$profile"/>
-                        </xsl:apply-templates></small>
-                    </div>
-                </div>
-            </xsl:if>
-        </blockquote>
-    </xsl:if>
-
     <div class="col-md-12 well well-lg horizontal-scroll">
         <xsl:if test="$benchmark/cdf:front-matter">
             <div class="front-matter">
@@ -417,6 +375,65 @@ Authors:
     </div>
 </xsl:template>
 
+<xsl:template name="profile-description">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+    <xsl:if test="$profile/cdf:description/text()">
+        <div class="col-md-12 well well-lg horizontal-scroll">
+            <div class="description profile-description">
+                <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:description[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </div>
+        </div>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template name="show-title-front-matter-description-notices">
+    <!-- TODO: please invent a better name for this template -->
+
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <h2>
+        <xsl:choose>
+            <xsl:when test="$benchmark/cdf:title">
+                <xsl:apply-templates mode="sub-testresult" select="$benchmark/cdf:title[1]">
+                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                    <xsl:with-param name="profile" select="$profile"/>
+                </xsl:apply-templates>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$benchmark/@id"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </h2>
+    <xsl:if test="$profile">
+        <blockquote>with profile <mark>
+            <xsl:choose>
+                <xsl:when test="$profile/cdf:title/text()">
+                    <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
+                        <xsl:with-param name="benchmark" select="$benchmark"/>
+                        <xsl:with-param name="profile" select="$profile"/>
+                    </xsl:apply-templates>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="$profile/@id"/>
+                </xsl:otherwise>
+            </xsl:choose></mark>
+            <xsl:call-template name="profile-description">
+                <xsl:with-param name="benchmark" select="$benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </blockquote>
+    </xsl:if>
+    <xsl:call-template name="benchmark-description">
+        <xsl:with-param name="benchmark" select="$benchmark"/>
+        <xsl:with-param name="profile" select="$profile"/>
+    </xsl:call-template>
+</xsl:template>
+
 <xsl:template name="rear-matter">
     <xsl:param name="benchmark"/>
     <xsl:param name="profile"/>
@@ -444,6 +461,71 @@ Authors:
         <xsl:message>WARNING: Processing an unresolved XCCDF document. This may have unexpected results.</xsl:message>
         <xsl:message>You can resolve the document using "oscap xccdf resolve -o resolved-xccdf.xml xccdf.xml"</xsl:message>
     </xsl:if>
+</xsl:template>
+
+
+<xsl:template name="profileinfo">
+    <xsl:param name="benchmark"/>
+    <xsl:param name="profile"/>
+
+    <div id="profileinfo">
+        <h2>Profile Information</h2>
+        <div class="row">
+            <div class="col-md-5 well well-lg horizontal-scroll">
+                <table class="table table-bordered">
+                    <xsl:if test="$profile/cdf:title">
+                        <tr>
+                            <th>Profile Title</th>
+                            <td>
+                                <xsl:apply-templates mode="sub-testresult" select="$profile/cdf:title[1]">
+                                    <xsl:with-param name="benchmark" select="$benchmark"/>
+                                    <xsl:with-param name="profile" select="$profile"/>
+                                </xsl:apply-templates>
+                            </td>
+                        </tr>
+                    </xsl:if>
+
+                    <tr>
+                        <th>Profile ID</th>
+                        <td>
+                            <xsl:choose>
+                                <xsl:when test="$profile/@id">
+                                    <xsl:value-of select="$profile/@id"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <abbr title="No profile was selected.">(default)</abbr>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-3">
+                <h4>CPE Platforms</h4>
+                <xsl:choose>
+                    <xsl:when test="$benchmark/cdf:platform">
+                        <ul class="list-group">
+                            <xsl:for-each select="$benchmark/cdf:platform">
+                                <xsl:variable name="idref" select="@idref"/>
+                                <xsl:if test="$benchmark/cdf:platform[@idref=$idref]">
+                                  <li class="list-group-item">
+                                    <span class="label label-default" title="CPE platform {@idref} is applicable to this Benchmark"><xsl:value-of select="@idref"/></span>
+                                  </li>
+                                </xsl:if>
+                             </xsl:for-each>
+                        </ul>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        The benchmark does not specify applicable platforms.
+                    </xsl:otherwise>
+                </xsl:choose>
+            </div>
+            <xsl:call-template name="profile-description">
+                <xsl:with-param name="benchmark" select="$benchmark"/>
+                <xsl:with-param name="profile" select="$profile"/>
+            </xsl:call-template>
+        </div>
+    </div>
 </xsl:template>
 
 </xsl:stylesheet>
