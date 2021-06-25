@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE xsl:stylesheet [
-<!-- check symbol -->
-<!ENTITY resultgood "&#x2713;">
-<!-- x symbol -->
-<!ENTITY resultbad "&#x2715;">
-]>
 <!--
 
 ****************************************************************************************
@@ -129,7 +123,7 @@
 						<tr class="LightRow">
 							<td class="resultbadA ColorBox"/>
 							<td class="resultbadB ColorBox"/>
-							<td class="Text" title="Non-Compliant/Vulnerable/Unpatched">&resultbad;</td>
+							<td class="Text" title="Non-Compliant/Vulnerable/Unpatched">&#x2715;</td>
 						</tr>
 					</table>
 				</td>
@@ -138,7 +132,7 @@
 						<tr class="LightRow">
 							<td class="resultgoodA ColorBox"/>
 							<td class="resultgoodB ColorBox"/>
-							<td class="Text" title="Compliant/Non-Vulnerable/Patched">&resultgood;</td>
+							<td class="Text" title="Compliant/Non-Vulnerable/Patched">&#x2713;</td>
 						</tr>
 					</table>
 				</td>
@@ -227,8 +221,8 @@
 					<table border="1">
 						<tr class="Title">
 							<td class="TitleLabel" align="center">Systems Analyzed</td>
-							<td class="TitleLabel" align="center" title="Non-Compliant/Vulnerable/Unpatched">&resultbad;</td>
-							<td class="TitleLabel" align="center" title="Compliant/Non-Vulnerable/Patched">&resultgood;</td>
+							<td class="TitleLabel" align="center" title="Non-Compliant/Vulnerable/Unpatched">&#x2715;</td>
+							<td class="TitleLabel" align="center" title="Compliant/Non-Vulnerable/Patched">&#x2713;</td>
 							<td class="TitleLabel" align="center">Errors</td>
 							<td class="TitleLabel" align="center">Unknown</td>
 							<td class="TitleLabel" align="center" title="Inventory/Miscellaneous class, or Not Applicable/Not Evaluated result">Other</td>
@@ -497,8 +491,8 @@
     <xsl:template name="GeneratorResTotals">
         <xsl:param name="resultsElm"/>
         <tr class="DarkRow Center">
-        	<td class="SmallLabel" style="width: 20%;" title="Non-Compliant/Vulnerable/Unpatched">#&resultbad;</td>
-        	<td class="SmallLabel" style="width: 20%;" title="Compliant/Non-Vulnerable/Patched">#&resultgood;</td>
+        	<td class="SmallLabel" style="width: 20%;" title="Non-Compliant/Vulnerable/Unpatched">#&#x2715;</td>
+        	<td class="SmallLabel" style="width: 20%;" title="Compliant/Non-Vulnerable/Patched">#&#x2713;</td>
         	<td class="SmallLabel" style="width: 20%;" title="Error">#Error</td>
         	<td class="SmallLabel" style="width: 20%;" title="Unknown">#Unknown</td>
         	<td class="SmallLabel" style="width: 20%;" title="Inventory/Miscellaneous class, or Not Applicable/Not Evaluated result">#Other</td>
