@@ -732,8 +732,13 @@ int system_info_probe_main(probe_ctx *ctx, void *arg)
 	if (!architecture)
 		architecture = strdup(unknown);
 
-	if (!hname || *hname == '\0')
+	if (hname && *hname == '\0') {
+		free(hname);
+		hname = NULL;
+	}
+	if (!hname) {
 		hname = strdup(unknown);
+	}
 
 	if (__sysinfo_saneval(os_name) < 1 ||
 		__sysinfo_saneval(os_version) < 1 ||
