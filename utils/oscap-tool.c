@@ -73,7 +73,8 @@ static size_t paramlist_size(const char **p) { size_t s = 0; if (!p) return s; w
 
 static size_t paramlist_cpy(const char **to, const char **p) {
     size_t s = 0;
-    if (!p) return s;
+    if (!to || !p)
+        return s;
     for (;p && p[s]; s += 2) to[s] = p[s], to[s+1] = p[s+1];
     to[s] = p[s];
     return s;
