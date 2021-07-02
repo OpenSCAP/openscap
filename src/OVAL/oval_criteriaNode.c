@@ -387,6 +387,11 @@ int oval_criteria_parse_tag(xmlTextReaderPtr reader, struct oval_parser_context 
 		assert(context != NULL);	/* This is not asserted as attribute, because we
 						   can pass NULL pointer in case of OVAL_NODETYPE_UNKNOWN */
 		struct oval_criteria_node *node = oval_criteria_node_new(context->definition_model, type);
+		if (node == NULL) {
+			free(tagname);
+			free(namespace);
+			return 1;
+		}
 		node->type = type;
 		char *comm = (char *)xmlTextReaderGetAttribute(reader, BAD_CAST "comment");
 		if (comm != NULL) {
