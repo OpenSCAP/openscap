@@ -117,6 +117,9 @@ struct rds_asset_index* rds_index_get_asset(struct rds_index *rds, const char *i
 {
 	struct rds_asset_index *ret = NULL;
 
+	if (id == NULL)
+		return ret;
+
 	struct rds_asset_index_iterator *it = rds_index_get_assets(rds);
 	while (rds_asset_index_iterator_has_more(it))
 	{
