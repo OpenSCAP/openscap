@@ -128,6 +128,9 @@ static void parseEVR(char *evr, const char **ep, const char **vp, const char **r
 	const char *release;
 	char *s, *se;
 
+	if (!evr)
+		return;
+
 	s = evr;
 	while (*s && risdigit(*s)) s++;		/* s points to epoch terminator */
 	se = strrchr(s, '-');			/* se points to version terminator */
