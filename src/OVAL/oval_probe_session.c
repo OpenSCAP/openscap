@@ -93,6 +93,11 @@ static void oval_probe_session_libinit(void)
 	SEXP_free((SEXP_t *)exp);
 
         ncache_libinit();
+	/*
+	 * Initialize crypto API
+	 */
+	if (crapi_init (NULL) != 0)
+		return (NULL);
 }
 
 /**
