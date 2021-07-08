@@ -4,7 +4,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/3o5fnld1m98bo0so/branch/maint-1.3?svg=true)](https://ci.appveyor.com/project/OpenSCAP/openscap)
 [![Build Status](https://travis-ci.org/OpenSCAP/openscap.svg?branch=maint-1.3)](https://travis-ci.org/OpenSCAP/openscap)
 [![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/OpenSCAP/openscap.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenSCAP/openscap/context:cpp)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/OpenSCAP/openscap.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenSCAP/openscap/alerts/)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/OpenSCAP/openscap.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/OpenSCAP/openscap/alerts/) [![Join the chat at https://gitter.im/OpenSCAP/openscap](https://badges.gitter.im/OpenSCAP/openscap.svg)](https://gitter.im/OpenSCAP/openscap?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Open Source Security Compliance Solution
 
