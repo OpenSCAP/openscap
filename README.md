@@ -10,7 +10,7 @@ Open Source Security Compliance Solution
 
 ## About
 
-The oscap program is a command line tool that allows users to load, scan,
+The `oscap` program is a command line tool that allows users to load, scan,
 validate, edit, and export SCAP documents.
 
  * Homepage of the project: [www.open-scap.org](http://www.open-scap.org)
