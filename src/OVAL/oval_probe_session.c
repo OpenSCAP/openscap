@@ -48,6 +48,7 @@
 #include "oval_probe_ext.h"
 #include "probe-table.h"
 #include "oval_types.h"
+#include "crapi/crapi.h"
 
 #if defined(OSCAP_THREAD_SAFE)
 #include <pthread.h>
