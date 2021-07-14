@@ -34,10 +34,10 @@ function usage()
     echo "oscap-podman -- Tool for SCAP evaluation of Podman images and containers."
     echo
     echo "Compliance scan of Podman image:"
-    echo "$ sudo oscap-podman [--oscap=<OSCAP_BINARY>] IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
+    echo "$ oscap-podman [--oscap=<OSCAP_BINARY>] IMAGE_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
     echo
     echo "Compliance scan of Podman container:"
-    echo "$ sudo oscap-podman [--oscap=<OSCAP_BINARY>] CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
+    echo "$ oscap-podman [--oscap=<OSCAP_BINARY>] CONTAINER_NAME OSCAP_ARGUMENT [OSCAP_ARGUMENT...]"
     echo
     echo "See \`man oscap\` to learn more about semantics of OSCAP_ARGUMENT options."
 }
@@ -58,8 +58,9 @@ else
     invalid "Invalid arguments provided."
 fi
 
+# rootless requires unshare prior to running certain commands
 if [ "$(id -u)" -ne 0 ]; then
-    die "This script cannot run in rootless mode."
+	ROOTLESS_CMD="podman unshare --"
 fi
 if grep -q "\-\-remediate" <<< "$@"; then
     die "This script does not support '--remediate' option."
@@ -92,29 +93,26 @@ fi
 # podman init creates required files such as: /run/.containerenv - we don't care about output and exit code
 podman init $ID &> /dev/null || true
 
-DIR=$(podman mount $ID) || die "Failed to mount."
+DIR=$($ROOTLESS_CMD podman mount $ID) || die "Failed to mount."
 
 if [ ! -f "$DIR/run/.containerenv" ]; then
     # ubi8-init image does not create .containerenv when running podman init, but we need to make sure that the file is there
-    touch "$DIR/run/.containerenv"
+    $ROOTLESS_CMD touch "$DIR/run/.containerenv"
 fi
 
 export OSCAP_CONTAINER_VARS
 OSCAP_CONTAINER_VARS=`podman inspect $ID --format '{{join .Config.Env "\n"}}'`
 
 export OSCAP_PROBE_ROOT
-OSCAP_PROBE_ROOT="$(cd "$DIR" && pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (DIR)."
+OSCAP_PROBE_ROOT="$($ROOTLESS_CMD cd "$DIR" && $ROOTLESS_CMD pwd)" || die "Unable to change current directory to OSCAP_PROBE_ROOT (DIR)."
 export OSCAP_EVALUATION_TARGET="$TARGET"
 shift 1
 
-$OSCAP_BINARY "$@"
+$ROOTLESS_CMD $OSCAP_BINARY "$@"
 EXIT_CODE=$?
 
+$ROOTLESS_CMD podman umount $ID > /dev/null || die "Failed to unmount."
 if [ $CLEANUP -eq 1 ]; then
-    # podman-rm should handle also unmounting of the container filesystem.
-    podman rm -f $ID > /dev/null || die "Failed to clean up."
-else
-    # If a running container is target of the scan just unmount its filesystem.
-    podman umount $ID > /dev/null || die "Failed to unmount."
+    podman rm $ID > /dev/null || die "Failed to clean up."
 fi
 exit $EXIT_CODE
