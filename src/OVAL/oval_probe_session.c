@@ -97,8 +97,10 @@ static void oval_probe_session_libinit(void)
 	/*
 	 * Initialize crypto API
 	 */
+#ifndef OS_WINDOWS
 	if (crapi_init (NULL) != 0)
 		return (NULL);
+#endif
 }
 
 /**
