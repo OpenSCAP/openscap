@@ -51,10 +51,14 @@ int crapi_digest_fd (int fd, crapi_alg_t alg, void *dst, size_t *size)
 	}
 
         switch (alg) {
+#ifdef OPENSCAP_ENABLE_MD5
         case CRAPI_DIGEST_MD5:
                 return crapi_md5_fd (fd, dst, size);
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
         case CRAPI_DIGEST_SHA1:
                 return crapi_sha1_fd (fd, dst, size);
+#endif
         case CRAPI_DIGEST_SHA224:
                 return crapi_sha224_fd (fd, dst, size);
         case CRAPI_DIGEST_SHA256:
@@ -100,18 +104,22 @@ int crapi_mdigest_fd (int fd, int num, ... /* crapi_alg_t alg, void *dst, size_t
                 size = va_arg (ap, size_t *);
 
                 switch (alg) {
+#ifdef OPENSCAP_ENABLE_MD5
                 case CRAPI_DIGEST_MD5:
                         ctbl[i].init   = &crapi_md5_init;
                         ctbl[i].update = &crapi_md5_update;
                         ctbl[i].fini   = &crapi_md5_fini;
                         ctbl[i].free   = &crapi_md5_free;
                         break;
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
                 case CRAPI_DIGEST_SHA1:
                         ctbl[i].init   = &crapi_sha1_init;
                         ctbl[i].update = &crapi_sha1_update;
                         ctbl[i].fini   = &crapi_sha1_fini;
                         ctbl[i].free   = &crapi_sha1_free;
                         break;
+#endif
                 case CRAPI_DIGEST_SHA224:
                         ctbl[i].init   = &crapi_sha224_init;
                         ctbl[i].update = &crapi_sha224_update;

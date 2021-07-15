@@ -96,7 +96,9 @@ function test_probes_filehash58_chroot_fail {
 
 test_init
 
-test_run "test_probes_filehash58" test_probes_filehash58
+if [[ "$OPENSCAP_ENABLE_MD5" == "ON" && "$OPENSCAP_ENABLE_SHA1" == "ON" ]] ; then
+    test_run "test_probes_filehash58" test_probes_filehash58
+fi
 
 test_run "test_probes_filehash58_chroot_fail" test_probes_filehash58_chroot_fail
 

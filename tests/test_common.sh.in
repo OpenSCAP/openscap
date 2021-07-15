@@ -329,3 +329,6 @@ die() {
 }
 
 export -f assert_exists
+
+export OPENSCAP_ENABLE_MD5="@OPENSCAP_ENABLE_MD5@"
+export OPENSCAP_ENABLE_SHA1="@OPENSCAP_ENABLE_SHA1@"

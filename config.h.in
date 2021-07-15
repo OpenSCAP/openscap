@@ -133,6 +133,9 @@
 #cmakedefine PYTHON2_PATH "@PYTHON2_PATH@"
 #cmakedefine PYTHON3_PATH "@PYTHON3_PATH@"
 
+#cmakedefine OPENSCAP_ENABLE_SHA1
+#cmakedefine OPENSCAP_ENABLE_MD5
+
 #include "oscap_platforms.h"
 #include "compat.h"
 
