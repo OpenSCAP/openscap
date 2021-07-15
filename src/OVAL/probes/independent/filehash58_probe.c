@@ -60,8 +60,12 @@
 #define CRAPI_INVALID -1
 
 static const struct oscap_string_map CRAPI_ALG_MAP[] = {
+#ifdef OPENSCAP_ENABLE_MD5
 	{CRAPI_DIGEST_MD5, "MD5"},
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
 	{CRAPI_DIGEST_SHA1, "SHA-1"},
+#endif
 	{CRAPI_DIGEST_SHA224, "SHA-224"},
 	{CRAPI_DIGEST_SHA256, "SHA-256"},
 	{CRAPI_DIGEST_SHA384, "SHA-384"},
@@ -71,8 +75,12 @@ static const struct oscap_string_map CRAPI_ALG_MAP[] = {
 };
 
 static const struct oscap_string_map CRAPI_ALG_MAP_SIZE[] = {
+#ifdef OPENSCAP_ENABLE_MD5
 	{16, "MD5"},
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
 	{20, "SHA-1"},
+#endif
 	{28, "SHA-224"},
 	{32, "SHA-256"},
 	{48, "SHA-384"},

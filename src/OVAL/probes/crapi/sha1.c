@@ -33,6 +33,8 @@
 #include "crapi.h"
 #include "sha1.h"
 
+#ifdef OPENSCAP_ENABLE_SHA1
+
 #if defined(HAVE_NSS3)
 #include <sechash.h>
 
@@ -226,3 +228,5 @@ int crapi_sha1_fd (int fd, void *dst, size_t *size)
         
         return (0);
 }
+
+#endif /* OPENSCAP_ENABLE_SHA1 */

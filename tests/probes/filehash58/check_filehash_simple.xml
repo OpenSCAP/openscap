@@ -28,13 +28,13 @@
   <ns0:objects>
     <ns3:filehash58_object id="oval:ssg-concerned_file:obj:1" version="1">
       <ns3:filepath>/oval-test</ns3:filepath>
-      <ns3:hash_type>SHA-1</ns3:hash_type>
+      <ns3:hash_type>SHA-256</ns3:hash_type>
     </ns3:filehash58_object>
   </ns0:objects>
   <ns0:states>
     <ns3:filehash58_state id="oval:ssg-hash_value:ste:1" version="1">
-      <ns3:hash_type>SHA-1</ns3:hash_type>
-      <ns3:hash>f1d2d2f924e986ac86fdf7b36c94bcdf32beec15</ns3:hash>
+      <ns3:hash_type>SHA-256</ns3:hash_type>
+      <ns3:hash>b5bb9d8014a0f9b1d61e21e796d78dccdf1352f23cd32812f4850b878ae4944c</ns3:hash>
     </ns3:filehash58_state>
   </ns0:states>
 </ns0:oval_definitions>

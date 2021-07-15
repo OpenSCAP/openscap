@@ -33,6 +33,8 @@
 #include "crapi.h"
 #include "md5.h"
 
+#ifdef OPENSCAP_ENABLE_MD5
+
 #if defined(HAVE_NSS3)
 #include <sechash.h>
 
@@ -230,3 +232,5 @@ int crapi_md5_fd (int fd, void *dst, size_t *size)
         }
         return (0);
 }
+
+#endif /* OPENSCAP_ENABLE_MD5 */
