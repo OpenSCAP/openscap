@@ -164,12 +164,6 @@ int probe_offline_mode_supported()
 void *probe_init (void)
 {
         /*
-         * Initialize crypto API
-         */
-        if (crapi_init (NULL) != 0)
-                return (NULL);
-
-        /*
          * Initialize mutex.
          */
         switch (pthread_mutex_init (&__filemd5_probe_mutex, NULL)) {

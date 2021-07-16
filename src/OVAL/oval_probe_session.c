@@ -48,6 +48,7 @@
 #include "oval_probe_ext.h"
 #include "probe-table.h"
 #include "oval_types.h"
+#include "crapi/crapi.h"
 
 #if defined(OSCAP_THREAD_SAFE)
 #include <pthread.h>
@@ -93,6 +94,13 @@ static void oval_probe_session_libinit(void)
 	SEXP_free((SEXP_t *)exp);
 
         ncache_libinit();
+	/*
+	 * Initialize crypto API
+	 */
+#ifndef OS_WINDOWS
+	if (crapi_init (NULL) != 0)
+		return (NULL);
+#endif
 }
 
 /**
