@@ -2368,6 +2368,9 @@ static oval_syschar_collection_flag_t _oval_component_evaluate_ARITHMETIC(oval_a
 	}
 	oval_component_iterator_free(subcomps);
 
+	if (vcl_root == NULL) {
+		return SYSCHAR_FLAG_ERROR;
+	}
 	val_itr = (struct oval_value_iterator *) oval_collection_iterator(vcl_root->val_col);
 	while (oval_value_iterator_has_more(val_itr)) {
 		struct oval_value *ov;

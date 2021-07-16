@@ -1483,6 +1483,10 @@ int op_remove_strl(void *var, char *val)
 		valstr_array[valstr_array_size-1] = tok;
 		valstr_array[valstr_array_size] = NULL;
 	}
+	if (valstr_array == NULL) {
+		free(newstr_array);
+		return -2;
+	}
 
 	// Remove the insersection from the string array
 	newstr_array_size = 0;
