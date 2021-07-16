@@ -4,7 +4,7 @@
 #
 # Example how to build it and run it:
 #     podman build -t oscap_test_suite -f Dockerfiles/test_suite
-#     podman run -e PR=ID --name pr_test oscap_test_suite
+#     podman run --cap-add=SYS_PTRACE -e PR=ID --name pr_test oscap_test_suite
 #
 # where ID in the $PR environment variable is the pull request (PR) ID,
 # if ID would not be set (-e option omitted) tests will be run from the
