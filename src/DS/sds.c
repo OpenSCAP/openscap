@@ -413,6 +413,28 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 		}
 
 		if (!ds_sds_session_fetch_remote_resources(session)) {
+			/*
+			 * If fetching remote resources isn't allowed by the user let's take
+			 * a look whether there exists a file whose file name is equal to
+			 * @name attribute of the uri element within the catalog of the
+			 * previously processed component-ref which pointed us to the
+			 * currently processed component-ref. Note that the @name attribute
+			 * value has been passed as relative_filepath in the recursive call
+			 * of ds_sds_dump_component_ref_as. If such file exists, we will
+			 * assume that it's a local copy of the remote component located at
+			 * the URL defined in @xlink:href. This way people can provide the
+			 * previously downloaded component which might be useful on systems
+			 * with limited internet access. This behavior is allowed only when
+			 * --use-local-file is used on the command line.
+			 * See: https://bugzilla.redhat.com/show_bug.cgi?id=1970527
+			 * See: https://access.redhat.com/solutions/5185891
+			 */
+			struct stat sb;
+			if (ds_sds_session_can_use_local_file(session) && stat(relative_filepath, &sb) == 0) {
+				dI("Using local file '%s' instead of '%s'", relative_filepath, xlink_href);
+				return ds_sds_dump_file_component(relative_filepath, *component_id, session, target_filename_dirname, relative_filepath);
+			}
+
 			static bool fetch_remote_resources_suggested = false;
 
 			if (!fetch_remote_resources_suggested) {

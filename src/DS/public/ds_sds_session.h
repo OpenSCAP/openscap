@@ -200,7 +200,20 @@ OSCAP_API void ds_sds_session_reset(struct ds_sds_session *session);
  * @param callback used to notify user about download proceeds. This might be safely set
  * to NULL -- ignoring user notification.
  */
-OSCAP_API void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback);
+OSCAP_API OSCAP_DEPRECATED(void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback));
+
+/**
+ * Set property of remote content.
+ * @memberof ds_sds_session
+ * @param session The source data stream session
+ * @param allowed Whether is download of remote resources allowed in this
+ * session (defaults to false)
+ * @param use_local_file Allows to use a locally downloaded copy of the remote
+ * resource if it exists (defaults to false)
+ * @param callback used to notify user about download proceeds. This might be
+ * safely set to NULL -- ignoring user notification.
+ */
+OSCAP_API void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, bool allowed, bool use_local_file, download_progress_calllback_t callback);
 
 /**
  * Returns HTML representation of selected checklist in form of OpenSCAP guide.

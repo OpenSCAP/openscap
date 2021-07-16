@@ -82,7 +82,8 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 		"   --xccdf-id <id>               - ID of XCCDF in the data stream that should be evaluated.\n"
 		"   --skip-valid                  - Skips validating of given XCCDF.\n"
 		"   --skip-validation\n"
-		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n",
+		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
+		"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
 };
@@ -186,6 +187,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
+		{"use-local-file", no_argument, &action->use_local_file, 1},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -308,7 +310,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	}
 	ds_sds_session_set_datastream_id(session, f_datastream_id);
 
-	ds_sds_session_set_remote_resources(session, action->remote_resources, download_reporting_callback);
+	ds_sds_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
 	ds_sds_session_set_target_dir(session, action->ds_action->target);
 	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
 		goto cleanup;

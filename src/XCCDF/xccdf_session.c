@@ -87,6 +87,7 @@ struct xccdf_session {
 	} ds;
 	struct {
 		bool fetch_remote_resources;		///< Allows download of remote resources (not applicable when user sets custom oval files)
+		bool use_local_file; ///< Use a locally downloaded copy of a remote resource if it exists
 		download_progress_calllback_t progress;	///< Callback to report progress of download.
 		struct oval_content_resource **custom_resources;///< OVAL files required by user
 		struct oval_content_resource **resources;///< OVAL files referenced from XCCDF
@@ -626,7 +627,8 @@ static struct ds_sds_session *xccdf_session_get_ds_sds_session(struct xccdf_sess
 	return session->ds.session;
 }
 
-void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
+
+void xccdf_session_configure_remote_resources(struct xccdf_session *session, bool allowed, bool use_local_file, download_progress_calllback_t callback)
 {
 	if (callback == NULL) {
 		// With empty cb we don't have to check for NULL
@@ -635,13 +637,19 @@ void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allo
 	}
 
 	session->oval.fetch_remote_resources = allowed;
+	session->oval.use_local_file = use_local_file;
 	session->oval.progress = callback;
 
 	if (xccdf_session_is_sds(session)) {
 		// We have to propagate this option to allow loading
 		// of external datastream components
-		ds_sds_session_set_remote_resources(xccdf_session_get_ds_sds_session(session), allowed, callback);
+		ds_sds_session_configure_remote_resources(xccdf_session_get_ds_sds_session(session), allowed, use_local_file, callback);
 	}
+}
+
+void xccdf_session_set_remote_resources(struct xccdf_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	xccdf_session_configure_remote_resources(session, allowed, false, callback);
 }
 
 void xccdf_session_set_loading_flags(struct xccdf_session *session, xccdf_session_loading_flags_t flags)
@@ -993,6 +1001,7 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 	while (oscap_file_entry_iterator_has_more(files_it)) {
 		struct oscap_file_entry *file_entry;
 		struct stat sb;
+		bool source_owned = false;
 
 		file_entry = (struct oscap_file_entry *) oscap_file_entry_iterator_next(files_it);
 
@@ -1002,9 +1011,6 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 
 		const char *file_path = oscap_file_entry_get_file(file_entry);
 		struct oscap_source *source = NULL;
-		if (xccdf_session_get_ds_sds_session(session) != NULL) {
-			source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), file_path);
-		}
 
 		tmp_path = malloc(PATH_MAX * sizeof(char));
 		if (file_path[0] == '/') { // it's a simple absolute path
@@ -1017,16 +1023,20 @@ static int _xccdf_session_get_oval_from_model(struct xccdf_session *session)
 			snprintf(tmp_path, PATH_MAX, "%s/%s", dir_path, file_path);
 		}
 
-		if (source != NULL || stat(tmp_path, &sb) == 0) {
+		if (xccdf_session_get_ds_sds_session(session) != NULL) {
+			source = ds_sds_session_get_component_by_href(xccdf_session_get_ds_sds_session(session), file_path);
+			source_owned = false;
+		} else {
+			if (stat(tmp_path, &sb) == 0) {
+				source = oscap_source_new_from_file(tmp_path);
+				source_owned = true;
+			}
+		}
+
+		if (source != NULL) {
 			resources[idx] = malloc(sizeof(struct oval_content_resource));
 			resources[idx]->href = oscap_strdup(oscap_file_entry_get_file(file_entry));
-			if (source == NULL) {
-				source = oscap_source_new_from_file(tmp_path);
-				resources[idx]->source_owned = true;
-			}
-			else {
-				resources[idx]->source_owned = false;
-			}
+			resources[idx]->source_owned = source_owned;
 			resources[idx]->source = source;
 			idx++;
 			void *new_resources = realloc(resources, (idx + 1) * sizeof(struct oval_content_resource *));

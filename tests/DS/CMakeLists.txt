@@ -4,6 +4,7 @@ add_oscap_test("test_sds_compose_split.sh")
 add_oscap_test("test_sds_eval.sh")
 add_oscap_test("test_sds_fix_from_results.sh")
 add_oscap_test("test_sds_fix_from_source.sh")
+add_oscap_test("test_ds_use_local_remote_resources.sh")
 
 add_subdirectory("ds_sds_index")
 add_subdirectory("schematron")
