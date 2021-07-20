@@ -168,12 +168,37 @@ static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t o
 {
         struct passwd *pw;
 
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char *root = getenv("OSCAP_PROBE_ROOT");
+		if (root == NULL)
+			return 1;
+		char *passwd_file_path = oscap_path_join(root, "/etc/passwd");
+		char *lastlog_file_path = oscap_path_join(root, _PATH_LASTLOG);
+		FILE *fp = fopen(passwd_file_path, "r");
+		if (fp == NULL) {
+			free(passwd_file_path);
+			free(lastlog_file_path);
+			return 1;
+		}
+		while ((pw = fgetpwent(fp))) {
+			_process_struct_passwd(pw, lastlog_file_path, un_ent, ctx, over);
+		}
+		fclose(fp);
+		free(passwd_file_path);
+		free(lastlog_file_path);
+	} else {
+		while ((pw = getpwent())) {
+			_process_struct_passwd(pw, _PATH_LASTLOG, un_ent, ctx, over);
+		}
+		endpwent();
+	}
 
-        while ((pw = getpwent())) {
-		_process_struct_passwd(pw, _PATH_LASTLOG, un_ent, ctx, over);
-        }
-        endpwent();
         return 0;
+}
+
+int password_probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int password_probe_main(probe_ctx *ctx, void *arg)
