@@ -122,49 +122,55 @@ static time_t get_last_login(char *username) {
 }
 #endif
 
+static void _process_struct_passwd(struct passwd *pw, const char *lastlog, SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t over)
+{
+	SEXP_t *un;
+	struct result_info r;
+
+	dI("Have user: %s", pw->pw_name);
+	un = SEXP_string_newf("%s", pw->pw_name);
+	if (probe_entobj_cmp(un_ent, un) != OVAL_RESULT_TRUE) {
+		SEXP_free(un);
+		return;
+	}
+
+	r.username = pw->pw_name;
+	r.password = pw->pw_passwd;
+	r.user_id = pw->pw_uid;
+	r.group_id = pw->pw_gid;
+	r.gcos = pw->pw_gecos;
+	r.home_dir = pw->pw_dir;
+	r.login_shell = pw->pw_shell;
+	r.last_login = -1;
+
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
+#if defined(OS_FREEBSD)
+		r.last_login = get_last_login(pw->pw_name);
+#else
+		FILE *ll_fp = fopen(lastlog, "r");
+
+		if (ll_fp != NULL) {
+			struct lastlog ll;
+
+			if (fseeko(ll_fp, (off_t)pw->pw_uid * sizeof(ll), SEEK_SET) == 0)
+				if (fread((char *)&ll, sizeof(ll), 1, ll_fp) == 1)
+					r.last_login = (int64_t)ll.ll_time;
+			fclose(ll_fp);
+		}
+#endif
+	}
+
+	report_finding(&r, ctx, over);
+	SEXP_free(un);
+}
 
 static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
         struct passwd *pw;
 
+
         while ((pw = getpwent())) {
-                SEXP_t *un;
-
-                dI("Have user: %s", pw->pw_name);
-                un = SEXP_string_newf("%s", pw->pw_name);
-                if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {
-                        struct result_info r;
-
-                        r.username = pw->pw_name;
-                        r.password = pw->pw_passwd;
-                        r.user_id = pw->pw_uid;
-                        r.group_id = pw->pw_gid;
-                        r.gcos = pw->pw_gecos;
-                        r.home_dir = pw->pw_dir;
-                        r.login_shell = pw->pw_shell;
-                        r.last_login = -1;
-
-                        if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
-
-#if defined(OS_FREEBSD)
-				r.last_login = get_last_login(pw->pw_name);
-#else
-				FILE *ll_fp = fopen(_PATH_LASTLOG, "r");
-
-	                        if (ll_fp != NULL) {
-		                        struct lastlog ll;
-
-		                        if (fseeko(ll_fp, (off_t)pw->pw_uid * sizeof(ll), SEEK_SET) == 0)
-			                        if (fread((char *)&ll, sizeof(ll), 1, ll_fp) == 1)
-				                        r.last_login = (int64_t)ll.ll_time;
-		                        fclose(ll_fp);
-	                        }
-#endif
-			}
-
-                        report_finding(&r, ctx, over);
-                }
-                SEXP_free(un);
+		_process_struct_passwd(pw, _PATH_LASTLOG, un_ent, ctx, over);
         }
         endpwent();
         return 0;
