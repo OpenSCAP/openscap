@@ -31,7 +31,7 @@ function test_probes_password {
 
     tmpdir=$(mktemp -t -d "test_password.XXXXXX")
     mkdir -p "$tmpdir/etc"
-    cp "/etc/passwd" "$tmpdir/etc"
+    echo "root:x:0:0:root:/root:/bin/bash" > "$tmpdir/etc/passwd"
     set_chroot_offline_test_mode "$tmpdir"
 
     $OSCAP oval eval --results $RF $DF
