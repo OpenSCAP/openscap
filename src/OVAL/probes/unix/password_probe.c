@@ -219,7 +219,10 @@ int password_probe_main(probe_ctx *ctx, void *arg)
         }
 
         // Now we check the file...
-        read_password(ent, ctx, over);
+	if (read_password(ent, ctx, over) != 0) {
+		SEXP_free(ent);
+		return PROBE_EINVAL;
+	}
         SEXP_free(ent);
 
         return 0;
