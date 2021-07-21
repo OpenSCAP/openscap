@@ -40,8 +40,6 @@ typedef enum {
         CRAPI_DIGEST_SHA384 = 0x40
 } crapi_alg_t;
 
-#define CRAPI_DIGEST_CNT 7
-
 #include "md5.h"
 #include "sha1.h"
 #include "sha2.h"
