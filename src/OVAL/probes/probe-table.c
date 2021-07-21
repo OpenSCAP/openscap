@@ -391,6 +391,21 @@ void probe_table_list(FILE *output)
 		fprintf(output, "%-14s", oval_family_get_text(oval_subtype_get_family(type)));
 		fprintf(output, "%-29s", oval_subtype_get_text(type));
 		fprintf(output, "probe_%s", oval_subtype_get_text(type));
+#if (defined(OPENSCAP_ENABLE_MD5) && defined(OPENSCAP_ENABLE_SHA1))
+		if (type == OVAL_INDEPENDENT_FILE_HASH) {
+			fprintf(output, " (MD5, SHA-1)");
+		}
+#endif
+		if (type == OVAL_INDEPENDENT_FILE_HASH58) {
+			fprintf(output, " (");
+#ifdef OPENSCAP_ENABLE_MD5
+			fprintf(output, "MD5, ");
+#endif
+#ifdef OPENSCAP_ENABLE_SHA1
+			fprintf(output, "SHA-1, ");
+#endif
+			fprintf(output, "SHA-224, SHA-256, SHA-384, SHA-512)");
+		}
 		fprintf(output, "\n");
 		entry++;
 	}
