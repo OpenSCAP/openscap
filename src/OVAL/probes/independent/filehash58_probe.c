@@ -249,12 +249,6 @@ int filehash58_probe_offline_mode_supported()
 void *filehash58_probe_init(void)
 {
 	/*
-	 * Initialize crypto API
-	 */
-	if (crapi_init (NULL) != 0)
-		return (NULL);
-
-	/*
 	 * Initialize mutex.
 	 */
 	pthread_mutex_t *filehash58_probe_mutex = malloc(sizeof(pthread_mutex_t));
