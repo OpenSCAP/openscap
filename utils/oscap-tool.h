@@ -174,7 +174,7 @@ struct oscap_action {
         int list_dynamic;
 	char *verbosity_level;
 	char *fix_type;
-	int use_local_file;
+	char *local_files;
 };
 
 int app_xslt(const char *infile, const char *xsltfile, const char *outfile, const char **params);

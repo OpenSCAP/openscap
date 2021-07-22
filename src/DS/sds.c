@@ -425,14 +425,35 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 			 * the URL defined in @xlink:href. This way people can provide the
 			 * previously downloaded component which might be useful on systems
 			 * with limited internet access. This behavior is allowed only when
-			 * --use-local-file is used on the command line.
+			 * --local-files is used on the command line.
 			 * See: https://bugzilla.redhat.com/show_bug.cgi?id=1970527
 			 * See: https://access.redhat.com/solutions/5185891
 			 */
-			struct stat sb;
-			if (ds_sds_session_can_use_local_file(session) && stat(relative_filepath, &sb) == 0) {
-				dI("Using local file '%s' instead of '%s'", relative_filepath, xlink_href);
-				return ds_sds_dump_file_component(relative_filepath, *component_id, session, target_filename_dirname, relative_filepath);
+			const char *local_files = ds_sds_session_local_files(session);
+			if (local_files != NULL) {
+				char *local_filepath = oscap_path_join(local_files, relative_filepath);
+				struct stat sb;
+				if (stat(local_filepath, &sb) == 0) {
+				//if (ds_sds_session_can_use_local_file(session)) {
+					dI("Using local file '%s' instead of '%s'", local_filepath, xlink_href);
+					struct oscap_source *source_file = oscap_source_new_from_file(local_filepath);
+					xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
+					if (doc == NULL) {
+						free(local_filepath);
+						return -1;
+					}
+					xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, *component_id);
+
+					if (ds_sds_register_component(session, doc, inner_root, *component_id, target_filename_dirname, relative_filepath) != 0) {
+						free(local_filepath);
+						return -1;
+					}
+					free(local_filepath);
+					return 0;
+				} else {
+					dW("Can't use local file '%s' instead of '%s'", local_filepath, xlink_href);
+				}
+				free(local_filepath);
 			}
 
 			static bool fetch_remote_resources_suggested = false;

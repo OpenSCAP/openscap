@@ -11,12 +11,14 @@ set -x
 PROFILE="xccdf_com.example.www_profile_test_remote_res"
 result=$(mktemp)
 stderr=$(mktemp)
-tmpdir=$(mktemp -d)
-cp "${srcdir}/ds_use_local_remote_resources/remote_content_1.3.ds.xml" "$tmpdir"
-cp "${srcdir}/ds_use_local_remote_resources/remote.oval.xml" "$tmpdir"
-pushd "$tmpdir"
+tmpdir1=$(mktemp -d)
+tmpdir2=$(mktemp -d)
+tmpdir3=$(mktemp -d)
+cp "${srcdir}/ds_use_local_remote_resources/remote_content_1.3.ds.xml" "$tmpdir2"
+cp "${srcdir}/ds_use_local_remote_resources/remote.oval.xml" "$tmpdir3"
+pushd "$tmpdir1"
 
-$OSCAP xccdf eval --use-local-file --profile "$PROFILE" --results "$result" "remote_content_1.3.ds.xml" 2>"$stderr" || ret=$?
+$OSCAP xccdf eval --local-files "$tmpdir3" --profile "$PROFILE" --results "$result" "$tmpdir2/remote_content_1.3.ds.xml" 2>"$stderr" || ret=$?
 [ "$ret" = 2 ]
 
 grep -q "WARNING: Datastream component 'scap_org.open-scap_cref_remote.oval.xml' points out to the remote 'https://www.example.com/security/data/oval/remote.oval.xml'. Use '--fetch-remote-resources' option to download it." "$stderr" && false
@@ -30,10 +32,9 @@ assert_exists 1 '//rule-result[@idref="xccdf_com.example.www_rule_test-pass2"]/r
 
 popd
 rm -f "$result" "$stderr"
-rm -rf "$tmpdir"
+rm -rf "$tmpdir1" "$tmpdir2" "$tmpdir3"
 
-
-# test the same without --use-local-file to make sure the $tmpdir/remote.oval.xml isn't loaded by oscap
+# test the same without --local-files to make sure the $tmpdir/remote.oval.xml isn't loaded by oscap
 
 result=$(mktemp)
 stderr=$(mktemp)

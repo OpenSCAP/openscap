@@ -1636,8 +1636,8 @@ Rule    xccdf_org.ssgproject.content_rule_partition_for_var_log
 ...
 ----
 
-On systems that don't have a direct internet access or if the user doesn't want OpenSCAP to connect to the network it's possible to download the remote content using other tools and then pass it to OpenSCAP as a file.
-To do that, use `--use-local-file` instead of `--fetch-remote-resources` as argument of the `oscap` command.
+On systems that don't have a direct internet access or if the user doesn't want OpenSCAP to connect to the network it's possible to download the remote content using other tools, save it to a directory and then pass it to OpenSCAP as a file.
+To do that, use `--local-files` instead of `--fetch-remote-resources` as argument of the `oscap` command.
 
 In place of the remote data stream component OpenSCAP  will attempt to use a file whose file name is equal to `name` attribute of the `uri` element within the `catalog` element within the `component-ref` element representing a checklist in the data stream if such file exists.
 
@@ -1645,15 +1645,15 @@ In the following example, the `ssg-rhel8-ds.xml` is an SCAP source datastream.
 It needs some checks from a remote component. The remote component's `component-ref` ID is `scap_org.open-scap_cref_security-data-oval-com.redhat.rhsa-RHEL8.xml`  and the `component-ref` is pointing to `https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL8.xml`.
 The checks from the remote component are used in the only checklist in the data stream.
 The `component-ref` of the checklist component contains a `catalog` where one of the `uri` elements maps the remote component's `component-ref` ID in the `uri` attribute to the actual name `security-data-oval-com.redhat.rhsa-RHEL8.xml` which is the value of the `name` attribute.
-Therefore, we can download the remote data from `https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL8.xml` and save it as `security-data-oval-com.redhat.rhsa-RHEL8.xml`.
-Then, we can optionally copy the file to the computer which we want to scan.
-Then, we execute `oscap` with `--use-local-file` in that directory.
+Therefore, we can download the remote data from `https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL8.xml` and save it as `security-data-oval-com.redhat.rhsa-RHEL8.xml` to some directory.
+Then, we execute `oscap` with `--local-files` and provide a path to the directory where it's located.
 It will pick the file and use it instead of the remote data and it won't connect to the network.
 
 ----
-$ wget -O security-data-oval-com.redhat.rhsa-RHEL8.xml https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL8.xml
+$ mkdir ~/scap-files
+$ wget -O ~/scap-files/security-data-oval-com.redhat.rhsa-RHEL8.xml https://www.redhat.com/security/data/oval/com.redhat.rhsa-RHEL8.xml
 ...
-$ oscap xccdf eval --use-local-file --profile ospp ssg-rhel8-ds.xml
+$ oscap xccdf eval --local-files ~/scap-files --profile ospp ssg-rhel8-ds.xml
 ----
 
 == Practical Examples
@@ -2158,5 +2158,5 @@ If you created the tailoring file using SCAP Workbench, you were prompted to cho
 *Can I download it separately and pass it to oscap?*
 
 Yes, it's possible, you can download the file on other computer that is connected to the internet and then copy the file to the system where you run `oscap`.
-Instead of the `--fetch-remote-resources` option you will use the `--use-local-file` option.
+Instead of the `--fetch-remote-resources` option you will use the `--local-files` option.
 For more information, please refer to section <<_using_external_or_remote_resources,Using external or remote resources>>.

@@ -116,7 +116,7 @@ static struct oscap_module OVAL_EVAL = {
 	"                                   (only applicable for source data streams)\n"
 	"   --fetch-remote-resources      - Download remote content referenced by OVAL Definitions.\n"
 	"                                   (only applicable for source data streams)\n"
-	"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n",
+	"   --local-files <dir>       - Use locally downloaded copies of remote resources stored in the given directory.\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
@@ -345,7 +345,7 @@ int app_evaluate_oval(const struct oscap_action *action)
 	/* set OVAL Variables */
 	oval_session_set_variables(session, action->f_variables);
 
-	oval_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
+	oval_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	/* load all necesary OVAL Definitions and bind OVAL Variables if provided */
 	if ((oval_session_load(session)) != 0)
 		goto cleanup;
@@ -500,7 +500,8 @@ enum oval_opt {
     OVAL_OPT_DIRECTIVES,
     OVAL_OPT_DATASTREAM_ID,
     OVAL_OPT_OVAL_ID,
-	OVAL_OPT_OUTPUT = 'o'
+	OVAL_OPT_OUTPUT = 'o',
+	OVAL_OPT_LOCAL_FILES
 };
 
 #if defined(OVAL_PROBES_ENABLED)
@@ -521,7 +522,7 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		{ "skip-valid",	no_argument, &action->validate, 0 },
 		{ "skip-validation",	no_argument, &action->validate, 0 },
 		{ "fetch-remote-resources", no_argument, &action->remote_resources, 1},
-		{ "use-local-file", no_argument, &action->use_local_file, 1},
+		{ "local-files", required_argument, NULL, OVAL_OPT_LOCAL_FILES},
 		{ 0, 0, 0, 0 }
 	};
 
@@ -535,6 +536,9 @@ bool getopt_oval_eval(int argc, char **argv, struct oscap_action *action)
 		case OVAL_OPT_DIRECTIVES: action->f_directives = optarg; break;
 		case OVAL_OPT_DATASTREAM_ID: action->f_datastream_id = optarg;	break;
 		case OVAL_OPT_OVAL_ID: action->f_oval_id = optarg;	break;
+		case OVAL_OPT_LOCAL_FILES:
+			action->local_files = optarg;
+			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}

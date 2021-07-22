@@ -172,7 +172,8 @@ static struct oscap_module* DS_SUBMODULES[DS_SUBMODULES_NUM] = {
 enum ds_opt {
 	DS_OPT_DATASTREAM_ID = 1,
 	DS_OPT_XCCDF_ID,
-	DS_OPT_REPORT_ID
+	DS_OPT_REPORT_ID,
+	DS_OPT_LOCAL_FILES
 };
 
 bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
@@ -187,7 +188,7 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		{"xccdf-id",		required_argument, NULL, DS_OPT_XCCDF_ID},
 		{"report-id",		required_argument, NULL, DS_OPT_REPORT_ID},
 		{"fetch-remote-resources", no_argument, &action->remote_resources, 1},
-		{"use-local-file", no_argument, &action->use_local_file, 1},
+		{"local-files", required_argument, NULL, DS_OPT_LOCAL_FILES},
 	// end
 		{0, 0, 0, 0}
 	};
@@ -199,6 +200,9 @@ bool getopt_ds(int argc, char **argv, struct oscap_action *action) {
 		case DS_OPT_DATASTREAM_ID:	action->f_datastream_id = optarg;	break;
 		case DS_OPT_XCCDF_ID:	action->f_xccdf_id = optarg; break;
 		case DS_OPT_REPORT_ID:	action->f_report_id = optarg; break;
+		case DS_OPT_LOCAL_FILES:
+			action->local_files = optarg;
+			break;
 		case 0: break;
 		default: return oscap_module_usage(action->module, stderr, NULL);
 		}
@@ -310,7 +314,7 @@ int app_ds_sds_split(const struct oscap_action *action) {
 	}
 	ds_sds_session_set_datastream_id(session, f_datastream_id);
 
-	ds_sds_session_configure_remote_resources(session, action->remote_resources, action->use_local_file, download_reporting_callback);
+	ds_sds_session_configure_remote_resources(session, action->remote_resources, action->local_files, download_reporting_callback);
 	ds_sds_session_set_target_dir(session, action->ds_action->target);
 	if (ds_sds_session_register_component_with_dependencies(session, "checklists", f_component_id, NULL) != 0) {
 		goto cleanup;

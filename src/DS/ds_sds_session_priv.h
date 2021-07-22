@@ -40,7 +40,7 @@ struct oscap_htable *ds_sds_session_get_component_sources(struct ds_sds_session 
 struct oscap_htable *ds_sds_session_get_component_uris(struct ds_sds_session *session);
 const char *ds_sds_session_get_readable_origin(const struct ds_sds_session *session);
 bool ds_sds_session_fetch_remote_resources(struct ds_sds_session *session);
-bool ds_sds_session_can_use_local_file(struct ds_sds_session *session);
+const char *ds_sds_session_local_files(struct ds_sds_session *session);
 download_progress_calllback_t ds_sds_session_remote_resources_progress(struct ds_sds_session *session);
 
 void download_progress_empty_calllback(bool warning, const char * format, ...);
