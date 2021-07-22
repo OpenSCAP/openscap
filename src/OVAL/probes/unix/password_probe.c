@@ -122,52 +122,83 @@ static time_t get_last_login(char *username) {
 }
 #endif
 
+static void _process_struct_passwd(struct passwd *pw, const char *lastlog, SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t over)
+{
+	SEXP_t *un;
+	struct result_info r;
+
+	dI("Have user: %s", pw->pw_name);
+	un = SEXP_string_newf("%s", pw->pw_name);
+	if (probe_entobj_cmp(un_ent, un) != OVAL_RESULT_TRUE) {
+		SEXP_free(un);
+		return;
+	}
+
+	r.username = pw->pw_name;
+	r.password = pw->pw_passwd;
+	r.user_id = pw->pw_uid;
+	r.group_id = pw->pw_gid;
+	r.gcos = pw->pw_gecos;
+	r.home_dir = pw->pw_dir;
+	r.login_shell = pw->pw_shell;
+	r.last_login = -1;
+
+	if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
+#if defined(OS_FREEBSD)
+		r.last_login = get_last_login(pw->pw_name);
+#else
+		FILE *ll_fp = fopen(lastlog, "r");
+
+		if (ll_fp != NULL) {
+			struct lastlog ll;
+
+			if (fseeko(ll_fp, (off_t)pw->pw_uid * sizeof(ll), SEEK_SET) == 0)
+				if (fread((char *)&ll, sizeof(ll), 1, ll_fp) == 1)
+					r.last_login = (int64_t)ll.ll_time;
+			fclose(ll_fp);
+		}
+#endif
+	}
+
+	report_finding(&r, ctx, over);
+	SEXP_free(un);
+}
 
 static int read_password(SEXP_t *un_ent, probe_ctx *ctx, oval_schema_version_t over)
 {
         struct passwd *pw;
 
-        while ((pw = getpwent())) {
-                SEXP_t *un;
+	if (ctx->offline_mode & PROBE_OFFLINE_OWN) {
+		const char *root = getenv("OSCAP_PROBE_ROOT");
+		if (root == NULL)
+			return 1;
+		char *passwd_file_path = oscap_path_join(root, "/etc/passwd");
+		char *lastlog_file_path = oscap_path_join(root, _PATH_LASTLOG);
+		FILE *fp = fopen(passwd_file_path, "r");
+		if (fp == NULL) {
+			free(passwd_file_path);
+			free(lastlog_file_path);
+			return 1;
+		}
+		while ((pw = fgetpwent(fp))) {
+			_process_struct_passwd(pw, lastlog_file_path, un_ent, ctx, over);
+		}
+		fclose(fp);
+		free(passwd_file_path);
+		free(lastlog_file_path);
+	} else {
+		while ((pw = getpwent())) {
+			_process_struct_passwd(pw, _PATH_LASTLOG, un_ent, ctx, over);
+		}
+		endpwent();
+	}
 
-                dI("Have user: %s", pw->pw_name);
-                un = SEXP_string_newf("%s", pw->pw_name);
-                if (probe_entobj_cmp(un_ent, un) == OVAL_RESULT_TRUE) {
-                        struct result_info r;
-
-                        r.username = pw->pw_name;
-                        r.password = pw->pw_passwd;
-                        r.user_id = pw->pw_uid;
-                        r.group_id = pw->pw_gid;
-                        r.gcos = pw->pw_gecos;
-                        r.home_dir = pw->pw_dir;
-                        r.login_shell = pw->pw_shell;
-                        r.last_login = -1;
-
-                        if (oval_schema_version_cmp(over, OVAL_SCHEMA_VERSION(5.10)) >= 0) {
-
-#if defined(OS_FREEBSD)
-				r.last_login = get_last_login(pw->pw_name);
-#else
-				FILE *ll_fp = fopen(_PATH_LASTLOG, "r");
-
-	                        if (ll_fp != NULL) {
-		                        struct lastlog ll;
-
-		                        if (fseeko(ll_fp, (off_t)pw->pw_uid * sizeof(ll), SEEK_SET) == 0)
-			                        if (fread((char *)&ll, sizeof(ll), 1, ll_fp) == 1)
-				                        r.last_login = (int64_t)ll.ll_time;
-		                        fclose(ll_fp);
-	                        }
-#endif
-			}
-
-                        report_finding(&r, ctx, over);
-                }
-                SEXP_free(un);
-        }
-        endpwent();
         return 0;
+}
+
+int password_probe_offline_mode_supported()
+{
+	return PROBE_OFFLINE_OWN;
 }
 
 int password_probe_main(probe_ctx *ctx, void *arg)
@@ -188,7 +219,10 @@ int password_probe_main(probe_ctx *ctx, void *arg)
         }
 
         // Now we check the file...
-        read_password(ent, ctx, over);
+	if (read_password(ent, ctx, over) != 0) {
+		SEXP_free(ent);
+		return PROBE_EINVAL;
+	}
         SEXP_free(ent);
 
         return 0;

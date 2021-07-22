@@ -307,7 +307,7 @@ static const probe_table_entry_t probe_table[] = {
 	{OVAL_UNIX_INTERFACE, NULL, interface_probe_main, NULL, NULL},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_PASSWORD
-	{OVAL_UNIX_PASSWORD, NULL, password_probe_main, NULL, NULL},
+	{OVAL_UNIX_PASSWORD, NULL, password_probe_main, NULL, password_probe_offline_mode_supported},
 #endif
 #ifdef OPENSCAP_PROBE_UNIX_PROCESS
 	{OVAL_UNIX_PROCESS, NULL, process_probe_main, NULL, NULL},
