@@ -16,19 +16,19 @@
 
 # Test Cases.
 
-function test_probes_filehash58 {
+function test_probes_filehash58_old_algos {
 
     probecheck "filehash58" || return 255
     require "md5sum" || return 255
     require "sha1sum" || return 255
 
     local ret_val=0;
-    local DF="test_probes_filehash58.xml"
+    local DF="test_probes_filehash58_old_algos.xml"
     local RF="results.xml"
 
     [ -f $RF ] && rm -f $RF
 
-    bash ${srcdir}/test_probes_filehash58.xml.sh > $DF
+    bash ${srcdir}/test_probes_filehash58_old_algos.xml.sh > $DF
     $OSCAP oval eval --results $RF $DF
     
     if [ -f $RF ]; then
@@ -38,7 +38,35 @@ function test_probes_filehash58 {
 	ret_val=1
     fi
 
-    # The file was created as a side-effect of test_probes_filehash58.xml.sh
+    # The file was created as a side-effect of test_probes_filehash58_old_algos.xml.sh
+    [ $ret_val -eq 0 ] && rm -f /tmp/test_probes_filehash58.tmp
+
+    return $ret_val
+}
+
+function test_probes_filehash58_new_algos {
+
+    probecheck "filehash58" || return 255
+    require "sha256sum" || return 255
+    require "sha512sum" || return 255
+
+    local ret_val=0
+    local DF="test_probes_filehash58_new_algos.xml"
+    local RF="results.xml"
+
+    [ -f $RF ] && rm -f $RF
+
+    bash ${srcdir}/test_probes_filehash58_new_algos.xml.sh > $DF
+    $OSCAP oval eval --results $RF $DF
+
+    if [ -f $RF ]; then
+        verify_results "def" $DF $RF 13 && verify_results "tst" $DF $RF 120
+        ret_val=$?
+    else
+        ret_val=1
+    fi
+
+    # The file was created as a side-effect of test_probes_filehash58_new_algos.xml.sh
     [ $ret_val -eq 0 ] && rm -f /tmp/test_probes_filehash58.tmp
 
     return $ret_val
@@ -96,7 +124,11 @@ function test_probes_filehash58_chroot_fail {
 
 test_init
 
-test_run "test_probes_filehash58" test_probes_filehash58
+if [[ "$OPENSCAP_ENABLE_MD5" == "ON" && "$OPENSCAP_ENABLE_SHA1" == "ON" ]] ; then
+    test_run "test_probes_filehash58_old_algos" test_probes_filehash58_old_algos
+fi
+
+test_run "test_probes_filehash58_new_algos" test_probes_filehash58_new_algos
 
 test_run "test_probes_filehash58_chroot_fail" test_probes_filehash58_chroot_fail
 
