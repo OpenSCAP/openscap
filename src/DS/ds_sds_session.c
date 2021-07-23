@@ -347,7 +347,7 @@ void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, b
 
 void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
 {
-	ds_sds_session_configure_remote_resources(session, allowed, false, callback);
+	ds_sds_session_configure_remote_resources(session, allowed, NULL, callback);
 }
 
 const char *ds_sds_session_local_files(struct ds_sds_session *session)
