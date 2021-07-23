@@ -451,7 +451,12 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 					free(local_filepath);
 					return 0;
 				} else {
-					dW("Can't use local file '%s' instead of '%s'", local_filepath, xlink_href);
+					ds_sds_session_remote_resources_progress(session)(true,
+						"WARNING: Data stream component '%s' points out to the remote '%s'. " \
+						"The option --local-files '%s' has been provided, but the file '%s' can't be used locally: %s.\n",
+						cref_id, url, local_files, local_filepath, strerror(errno));
+					free(local_filepath);
+					return -2;
 				}
 				free(local_filepath);
 			}
