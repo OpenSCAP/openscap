@@ -371,6 +371,66 @@ static char *compose_target_filename_dirname(const char *relative_filepath, cons
 	return target_filename_dirname;
 }
 
+static int _handle_disabled_downloads(struct ds_sds_session *session, const char *relative_filepath, const char *xlink_href, const char *component_id, const char *target_filename_dirname, const char *cref_id, const char *url)
+{
+	/*
+	 * If fetching remote resources isn't allowed by the user let's take a look
+	 * whether there exists a file whose file name is equal to @name attribute
+	 * of the uri element within the catalog of the previously processed
+	 * component-ref which pointed us to the currently processed component-ref.
+	 * Note that the @name attribute value has been passed as relative_filepath
+	 * in the recursive call of ds_sds_dump_component_ref_as. If such file
+	 * exists, we will assume that it's a local copy of the remote component
+	 * located at the URL defined in @xlink:href. This way people can provide
+	 * the previously downloaded component which might be useful on systems with
+	 * limited internet access. This behavior is allowed only when --local-files
+	 * is used on the command line.
+	 * See: https://bugzilla.redhat.com/show_bug.cgi?id=1970527
+	 * See: https://access.redhat.com/solutions/5185891
+	 */
+	const char *local_files = ds_sds_session_local_files(session);
+	if (local_files == NULL) {
+		static bool fetch_remote_resources_suggested = false;
+		if (!fetch_remote_resources_suggested) {
+			fetch_remote_resources_suggested = true;
+			ds_sds_session_remote_resources_progress(session)(true,
+				"WARNING: Datastream component '%s' points out to the remote '%s'. Use '--fetch-remote-resources' option to download it.\n",
+				cref_id, url);
+		}
+
+		ds_sds_session_remote_resources_progress(session)(true,
+			"WARNING: Skipping '%s' file which is referenced from datastream\n",
+			url);
+		// -2 means that remote resources were not downloaded
+		return -2;
+	}
+	char *local_filepath = oscap_path_join(local_files, relative_filepath);
+	struct stat sb;
+	if (stat(local_filepath, &sb) == 0) {
+		dI("Using local file '%s' instead of '%s'", local_filepath, xlink_href);
+		struct oscap_source *source_file = oscap_source_new_from_file(local_filepath);
+		xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
+		if (doc == NULL) {
+			free(local_filepath);
+			return -1;
+		}
+		xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, component_id);
+
+		if (ds_sds_register_component(session, doc, inner_root, component_id, target_filename_dirname, relative_filepath) != 0) {
+			free(local_filepath);
+			return -1;
+		}
+		free(local_filepath);
+		return 0;
+	}
+	ds_sds_session_remote_resources_progress(session)(true,
+		"WARNING: Data stream component '%s' points out to the remote '%s'. " \
+		"The option --local-files '%s' has been provided, but the file '%s' can't be used locally: %s.\n",
+		cref_id, url, local_files, local_filepath, strerror(errno));
+	free(local_filepath);
+	return -2;
+}
+
 static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* xlink_href, char *target_filename_dirname, const char* relative_filepath, char* cref_id, char **component_id)
 {
 	if (!xlink_href || strlen(xlink_href) < 2)
@@ -413,65 +473,9 @@ static int ds_sds_dump_component_by_href(struct ds_sds_session *session, char* x
 		}
 
 		if (!ds_sds_session_fetch_remote_resources(session)) {
-			/*
-			 * If fetching remote resources isn't allowed by the user let's take
-			 * a look whether there exists a file whose file name is equal to
-			 * @name attribute of the uri element within the catalog of the
-			 * previously processed component-ref which pointed us to the
-			 * currently processed component-ref. Note that the @name attribute
-			 * value has been passed as relative_filepath in the recursive call
-			 * of ds_sds_dump_component_ref_as. If such file exists, we will
-			 * assume that it's a local copy of the remote component located at
-			 * the URL defined in @xlink:href. This way people can provide the
-			 * previously downloaded component which might be useful on systems
-			 * with limited internet access. This behavior is allowed only when
-			 * --local-files is used on the command line.
-			 * See: https://bugzilla.redhat.com/show_bug.cgi?id=1970527
-			 * See: https://access.redhat.com/solutions/5185891
-			 */
-			const char *local_files = ds_sds_session_local_files(session);
-			if (local_files != NULL) {
-				char *local_filepath = oscap_path_join(local_files, relative_filepath);
-				struct stat sb;
-				if (stat(local_filepath, &sb) == 0) {
-				//if (ds_sds_session_can_use_local_file(session)) {
-					dI("Using local file '%s' instead of '%s'", local_filepath, xlink_href);
-					struct oscap_source *source_file = oscap_source_new_from_file(local_filepath);
-					xmlDoc *doc = oscap_source_get_xmlDoc(source_file);
-					if (doc == NULL) {
-						free(local_filepath);
-						return -1;
-					}
-					xmlNodePtr inner_root = ds_sds_get_component_root_by_id(doc, *component_id);
-
-					if (ds_sds_register_component(session, doc, inner_root, *component_id, target_filename_dirname, relative_filepath) != 0) {
-						free(local_filepath);
-						return -1;
-					}
-					free(local_filepath);
-					return 0;
-				} else {
-					ds_sds_session_remote_resources_progress(session)(true,
-						"WARNING: Data stream component '%s' points out to the remote '%s'. " \
-						"The option --local-files '%s' has been provided, but the file '%s' can't be used locally: %s.\n",
-						cref_id, url, local_files, local_filepath, strerror(errno));
-					free(local_filepath);
-					return -2;
-				}
-				free(local_filepath);
-			}
-
-			static bool fetch_remote_resources_suggested = false;
-
-			if (!fetch_remote_resources_suggested) {
-				fetch_remote_resources_suggested = true;
-				ds_sds_session_remote_resources_progress(session)(true, "WARNING: Datastream component '%s' points out to the remote '%s'. "
-									"Use '--fetch-remote-resources' option to download it.\n", cref_id, url);
-			}
-
-			ds_sds_session_remote_resources_progress(session)(true, "WARNING: Skipping '%s' file which is referenced from datastream\n", url);
-			// -2 means that remote resources were not downloaded
-			return -2;
+			return _handle_disabled_downloads(
+				session, relative_filepath, xlink_href, *component_id,
+				target_filename_dirname, cref_id, url);
 		}
 
 		return ds_dsd_dump_remote_component(url, *component_id, session, target_filename_dirname, relative_filepath);
