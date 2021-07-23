@@ -53,6 +53,7 @@ function usage()
     echo "  --skip-valid"
     echo "  --skip-validation"
     echo "  --fetch-remote-resources"
+    echo "  --local-files"
     echo "  --progress"
     echo "  --datastream-id"
     echo "  --xccdf-id"
