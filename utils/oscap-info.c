@@ -63,7 +63,7 @@ struct oscap_module OSCAP_INFO_MODULE = {
     .usage = "some-file.xml",
 	.help = "Options:\n"
 		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
-		"   --local-files <dir>       - Use locally downloaded copies of remote resources stored in the given directory.\n"
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n"
 		"   --profile <id>                - Show info of the profile with the given ID.\n"
 		"   --profiles                    - Show profiles from the input file in the <id>:<title> format, one line per profile.\n",
     .opt_parser = getopt_info,

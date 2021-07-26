@@ -83,7 +83,7 @@ static struct oscap_module DS_SDS_SPLIT_MODULE = {
 		"   --skip-valid                  - Skips validating of given XCCDF.\n"
 		"   --skip-validation\n"
 		"   --fetch-remote-resources      - Download remote content referenced by data stream.\n"
-		"   --use-local-file              - Use a locally downloaded copy of the remote resource if it exists.\n",
+		"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n",
 	.opt_parser = getopt_ds,
 	.func = app_ds_sds_split
 };

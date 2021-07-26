@@ -116,7 +116,7 @@ static struct oscap_module OVAL_EVAL = {
 	"                                   (only applicable for source data streams)\n"
 	"   --fetch-remote-resources      - Download remote content referenced by OVAL Definitions.\n"
 	"                                   (only applicable for source data streams)\n"
-	"   --local-files <dir>       - Use locally downloaded copies of remote resources stored in the given directory.\n",
+	"   --local-files <dir>           - Use locally downloaded copies of remote resources stored in the given directory.\n",
     .opt_parser = getopt_oval_eval,
     .func = app_evaluate_oval
 };
