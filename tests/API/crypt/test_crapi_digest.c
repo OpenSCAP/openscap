@@ -40,6 +40,10 @@ static int mem2hex (uint8_t *mem, size_t mlen, char *str, size_t slen)
 {
         const char ch[] = "0123456789abcdef";
         register size_t i;
+
+	if (str == NULL) {
+		return -1;
+	}
         
         if (slen < (mlen * 2) + 1) {
                 errno = ENOBUFS;
