@@ -55,6 +55,7 @@ struct ds_sds_session {
 	struct oscap_htable *component_uris;    ///< maps component refs to component URIs
 	bool fetch_remote_resources;            ///< Allows loading of external components;
 	download_progress_calllback_t progress;	///< Callback to report progress of download.
+	const char *local_files;            ///< Path to the directory where local copies of remote components are located
 };
 
 /**
@@ -337,10 +338,21 @@ int ds_sds_session_register_component_with_dependencies(struct ds_sds_session *s
 	return res;
 }
 
-void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
+void ds_sds_session_configure_remote_resources(struct ds_sds_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback)
 {
 	session->fetch_remote_resources = allowed;
+	session->local_files = local_files;
 	session->progress = (callback != NULL) ? callback : download_progress_empty_calllback;
+}
+
+void ds_sds_session_set_remote_resources(struct ds_sds_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	ds_sds_session_configure_remote_resources(session, allowed, NULL, callback);
+}
+
+const char *ds_sds_session_local_files(struct ds_sds_session *session)
+{
+	return session->local_files;
 }
 
 int ds_sds_session_dump_component_files(struct ds_sds_session *session)

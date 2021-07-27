@@ -84,6 +84,7 @@ struct oval_session {
 	bool full_validation;
 	bool fetch_remote_resources;
 	download_progress_calllback_t progress;
+	const char *local_files;
 };
 
 struct oval_session *oval_session_new(const char *filename)
@@ -223,7 +224,7 @@ static int oval_session_load_definitions(struct oval_session *session)
 		if ((session->sds_session = ds_sds_session_new_from_source(session->source)) == NULL) {
 			return 1;
 		}
-		ds_sds_session_set_remote_resources(session->sds_session,session->fetch_remote_resources ,session->progress);
+		ds_sds_session_configure_remote_resources(session->sds_session, session->fetch_remote_resources, session->local_files, session->progress);
 		ds_sds_session_set_datastream_id(session->sds_session, session->datastream_id);
 		if (ds_sds_session_register_component_with_dependencies(session->sds_session,
 					"checks", session->component_id, "oval.xml") != 0) {
@@ -451,10 +452,16 @@ void oval_session_set_export_system_characteristics(struct oval_session *session
 	session->export_sys_chars = export;
 }
 
-void oval_session_set_remote_resources(struct oval_session *session, bool allowed, download_progress_calllback_t callback)
+void oval_session_configure_remote_resources(struct oval_session *session, bool allowed, const char *local_files, download_progress_calllback_t callback)
 {
 	session->fetch_remote_resources = allowed;
+	session->local_files = local_files;
 	session->progress = callback;
+}
+
+void oval_session_set_remote_resources(struct oval_session *session, bool allowed, download_progress_calllback_t callback)
+{
+	oval_session_configure_remote_resources(session, allowed, NULL, callback);
 }
 
 void oval_session_free(struct oval_session *session)

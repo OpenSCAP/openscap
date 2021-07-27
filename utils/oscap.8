@@ -72,6 +72,11 @@ For XCCDF or SCAP source data stream files, the info module prints out IDs of in
 Allow download of remote components referenced from data stream.
 .RE
 .TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+.RE
+.TP
 \fB\-\-profile PROFILE\fR
 .RS
 Show info of the profile with the given ID.
@@ -201,6 +206,11 @@ Process only digitally signed SCAP source data streams. Data streams without a s
 Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
 .RE
 .TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
+.RE
+.TP
 \fB\-\-remediate\fR
 .RS
 Execute XCCDF remediation in the process of XCCDF evaluation. This option automatically executes content of XCCDF fix elements for failed rules, and thus this shall be avoided unless for trusted content. Use of this option is always at your own risk.
@@ -224,6 +234,11 @@ Do not validate input/output files.
 \fB\-\-fetch-remote-resources\fR
 .RS
 Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
+.RE
+.TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
 .RE
 .TP
 \fB\-\-cpe CPE_FILE\fR
@@ -301,6 +316,11 @@ Select a particular profile from XCCDF document.
 \fB\-\-fetch-remote-resources\fR
 .RS
 Allow download of remote OVAL content referenced from XCCDF by check-content-ref/@href.
+.RE
+.TP
+\fB\-\-local-files DIRECTORY\fR
+.RS
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
 .RE
 .TP
 \fB\-\-skip-valid\fR, \fB\-\-skip-validation\fR
@@ -473,6 +493,9 @@ Do not validate input/output files.
 .TP
 \fB\-\-fetch-remote-resources\fR
 Allow download of remote components referenced from data stream.
+.TP
+\fB\-\-local-files DIRECTORY\fR
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
 .RE
 
 .TP
@@ -634,6 +657,9 @@ Do not validate input/output files.
 .TP
 \fB\-\-fetch-remote-resources\fR
 Allow download of remote components referenced from data stream.
+.TP
+\fB\-\-local-files DIRECTORY\fR
+Instead of downloading remote data stream components from the network, use data stream components stored locally as files in the given directory. In place of the remote data stream component OpenSCAP will attempt to use a file whose file name is equal to @name attribute of the uri element within the catalog element within the component-ref element in the data stream if such file exists.
 .RE
 .TP
 .B \fBsds-validate\fR SOURCE_DS
