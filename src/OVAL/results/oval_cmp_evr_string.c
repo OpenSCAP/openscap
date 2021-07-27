@@ -57,6 +57,9 @@ static void parseEVR(char *evr, const char **ep, const char **vp, const char **r
 
 oval_result_t oval_evr_string_cmp(const char *state, const char *sys, oval_operation_t operation)
 {
+	if (state == NULL || sys == NULL) {
+		return OVAL_RESULT_ERROR;
+	}
 	int result = rpmevrcmp(sys, state);
 
 	if (operation == OVAL_OPERATION_EQUALS) {
