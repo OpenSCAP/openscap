@@ -67,6 +67,9 @@ Specific option for oscap-ssh (must be first argument):
 oscap-ssh checks out the SSH_ADDITIONAL_OPTIONS environment variable, and pastes its contents into the command-line of ssh to the location where options are expected.
 Supply the variable in form of a string that corresponds to a section of the ssh command-line and that consists of options you want to pass.
 
+.SS Using --local-files option
+The oscap-ssh command supports the --local-files option, but it isn't possible to pass './' and '../' as an argument. Use a full directory path instead.
+
 .SH EXAMPLE USAGE
 .SS Simple XCCDF evaluation
 The following command evaluates a remote Fedora machine as root. HTML report is written out as report.html on the local machine. Can be executed from any machine that has ssh, scp and bash. The local machine does not need to have openscap installed.
