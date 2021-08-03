@@ -40,4 +40,4 @@ case $(uname) in
 		grep -P '<a href="http://open-scap.org">OpenSCAP</a> (([0-9]+)\.){2}[0-9]+' $result
 		;;
 esac
-#rm $result
+rm $result
