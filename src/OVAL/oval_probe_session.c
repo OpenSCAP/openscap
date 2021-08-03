@@ -99,7 +99,7 @@ static void oval_probe_session_libinit(void)
 	 */
 #ifndef OS_WINDOWS
 	if (crapi_init (NULL) != 0)
-		return (NULL);
+		return;
 #endif
 }
 
