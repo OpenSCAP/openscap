@@ -20,7 +20,17 @@ function test_xccdf_results_arf_asset {
 
     local asset='/arf:asset-report-collection/arf:assets/arf:asset[@id="asset0"]/ai:computing-device'
 
-    local fqdn=`hostname --fqdn`
+    case $(uname) in
+	FreeBSD)
+		local name=`hostname`
+		local domain=`grep search /etc/resolv.conf | cut -d " " -f 2`
+		local fqdn=$name.$domain
+		;;
+	*)
+		local fqdn=`hostname --fqdn`
+		;;
+    esac
+
     echo $asset'/ai:fqdn[text()="'$fqdn'"]'
     assert_exists 1 $asset'/ai:fqdn[text()="'$fqdn'"]'
 
