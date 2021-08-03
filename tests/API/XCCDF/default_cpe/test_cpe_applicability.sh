@@ -25,7 +25,7 @@ function test_cpe {
 	# Create XCCDF file with CPE based on RHEL/FEDORA version.
 	rm -f $builddir/$XCCDF
 	cp $srcdir/$XCCDF $builddir/$XCCDF
-	sed -i "s|<<CPE>>|${CPE}|" $builddir/$XCCDF
+	xsed -i "s|<<CPE>>|${CPE}|" $builddir/$XCCDF
 
 	echo "Tested CPE: $CPE"
 	$OSCAP xccdf eval --cpe $builddir/$CPE_DICT --results $TMP_RESULTS $builddir/$XCCDF
