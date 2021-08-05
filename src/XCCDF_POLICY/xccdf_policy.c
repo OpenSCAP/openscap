@@ -1981,7 +1981,7 @@ static void xccdf_policy_add_final_setvalues(struct xccdf_policy *policy, struct
 
 /**
  * Evaluate XCCDF Policy
- * Iterate through Benchmark items and evalute one by one by calling 
+ * Iterate through Benchmark items and evaluate one by one by calling
  * callback for checking system that is defined by particular rules
  * Callbacks for checking systems have to be defined before calling this function, otherwise 
  * rules would not be evaluated and process ends with error.

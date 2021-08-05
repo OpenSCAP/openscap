@@ -168,7 +168,7 @@ void *probe_input_handler(void *arg)
 							*/
 						dW("Attempt to evaluate an object "
 							"(ID=%u) " // TODO: 64b IDs
-							"which is already being evaluated by an other thread.", pair->pth->sid);
+							"which is already being evaluated by another thread.", pair->pth->sid);
 
 						free(pair->pth);
 						free(pair);

@@ -606,7 +606,7 @@ For example:
 For more information on DISA STIG Viewer click link:http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx[here].
 
 === Remediate System
-OpenSCAP allows to automatically remediate systems that have been found in a
+OpenSCAP allows one to automatically remediate systems that have been found in a
 non-compliant state. For system remediation, an XCCDF file with instructions is
 required. The _scap-security-guide_ package contains certain remediation
 instructions.

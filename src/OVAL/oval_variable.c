@@ -966,7 +966,7 @@ int oval_variable_bind_ext_var(struct oval_variable *var, struct oval_variable_m
 	oval_variable_EXTERNAL_t *evar;
 
 	if (var->type != OVAL_VARIABLE_EXTERNAL) {
-		dW("Attemp to bind a non-external variable, id: %s, type: %s.", var->id, oval_variable_type_get_text(var->type));
+		dW("Attempt to bind a non-external variable, id: %s, type: %s.", var->id, oval_variable_type_get_text(var->type));
 		return 2;
 	}
 
