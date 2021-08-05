@@ -207,7 +207,7 @@ void oval_collection_iterator_add(struct oval_iterator *iterator, void *item)
 
 	struct _oval_collection_item_frame *newframe =
 	    (struct _oval_collection_item_frame *)malloc(sizeof(_oval_collection_item_frame_t));
-	if (newframe == NULL)	/* We don't have any information that error occured ! */
+	if (newframe == NULL)	/* We don't have any information that error occurred ! */
 		return;
 
 	newframe->next = iterator->item_iterator_frame;

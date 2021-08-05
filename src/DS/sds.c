@@ -793,7 +793,7 @@ static int ds_sds_compose_catalog_has_uri(xmlDocPtr doc, xmlNodePtr catalog, con
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evaluate XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return -1;
@@ -882,7 +882,7 @@ static int ds_sds_compose_add_component_dependencies(xmlDocPtr doc, xmlNodePtr d
 			xpathCtx);
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evaluate XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return -1;
@@ -1014,7 +1014,7 @@ static int ds_sds_compose_has_component_ref(xmlDocPtr doc, xmlNodePtr datastream
 
 	if (xpathObj == NULL)
 	{
-		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evalute XPath expression.");
+		oscap_seterr(OSCAP_EFAMILY_XML, "Error: Unable to evaluate XPath expression.");
 		xmlXPathFreeContext(xpathCtx);
 
 		return -1;

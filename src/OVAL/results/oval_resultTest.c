@@ -416,7 +416,7 @@ static inline oval_result_t _evaluate_sysent_with_variable(struct oval_syschar_m
 
 			var_val_res = oval_str_cmp_str(state_entity_val_text, state_entity_val_datatype, sys_data, state_entity_operation);
 			if (var_val_res == OVAL_RESULT_ERROR) {
-				dE("Error occured when comparing a variable '%s' value '%s' with collected item entity = '%s'",
+				dE("Error occurred when comparing a variable '%s' value '%s' with collected item entity = '%s'",
 					oval_variable_get_id(state_entity_var), state_entity_val_text, sys_data);
 			}
 			ores_add_res(&var_ores, var_val_res);
@@ -924,7 +924,7 @@ _oval_result_test_evaluate_items(struct oval_test *test, struct oval_syschar *sy
 
 	switch (flag) {
 	case SYSCHAR_FLAG_ERROR:
-		dI("An error occured while collecting items matching object '%s'. (flag=%s)", object_id, flag_text);
+		dI("An error occurred while collecting items matching object '%s'. (flag=%s)", object_id, flag_text);
 		if (test_check_existence == OVAL_ANY_EXIST
 		    && !hasstate) {
 			result = OVAL_RESULT_TRUE;

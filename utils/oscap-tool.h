@@ -75,7 +75,7 @@ struct oscap_module {
 // standard oscap CLI exit statuses
 enum oscap_exitcode {
     OSCAP_OK             =   0, // successful exit
-    OSCAP_ERROR          =   1, // an error occured
+    OSCAP_ERROR          =   1, // an error occurred
     OSCAP_FAIL           =   2, // a process (e.g. scan or validation) failed
     OSCAP_ERR_FETCH      =   1, // cold not fetch input file (same as error for now)
     OSCAP_BADARGS        = 100, // bad commandline arguments

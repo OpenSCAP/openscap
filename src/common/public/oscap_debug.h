@@ -51,7 +51,7 @@ OSCAP_API void __oscap_dlprintf(int level, const char *file, const char *fn, siz
  * @param verbosity_level Verbosity level
  * @param filename Name of file used as output file for store debugging
  *                 and other additional information.
- * @return When an error occured, returns false, otherwise true.
+ * @return When an error occurred, returns false, otherwise true.
  */
 OSCAP_API bool oscap_set_verbose(const char *verbosity_level, const char *filename);
 

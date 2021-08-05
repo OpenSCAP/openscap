@@ -119,7 +119,7 @@ Authors:
             </xsl:if>
         </xsl:when>
         <xsl:otherwise>
-            <!-- Applies when tested object doesn't exist or an error occured
+            <!-- Applies when tested object doesn't exist or an error occurred
                  while acessing object (permission denied etc.) -->
             <xsl:variable name='object_id' select='key("oval-testdef", @test_id)/*[local-name()="object"]/@object_ref'/>
             <xsl:variable name='object_info' select='key("oval-objectdef",$object_id)'/>
