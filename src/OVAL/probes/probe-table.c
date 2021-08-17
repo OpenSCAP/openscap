@@ -356,7 +356,9 @@ static const probe_table_entry_t probe_table[] = {
 static probe_table_entry_t* probe_table_mem = NULL;
 static probe_table_entry_t* probe_table_ptr = (probe_table_entry_t*)probe_table;
 static size_t probe_table_len = 0;
+#ifdef OPENSCAP_PLUGINS_WINDOWS
 static HINSTANCE* plugin_libs = NULL;
+#endif
 static size_t plugin_libs_len = 0;
 
 static const probe_table_entry_t *probe_table_get(oval_subtype_t type)
@@ -435,6 +437,7 @@ oval_subtype_t probe_table_at_index(int idx)
 
 static void probe_table_load_plugin(const char* path)
 {
+#ifdef OPENSCAP_PLUGINS_WINDOWS
 	HINSTANCE hinstLib = NULL;
 	if (NULL != (hinstLib = LoadLibrary(TEXT(path))))
 	{
@@ -509,6 +512,7 @@ static void probe_table_load_plugin(const char* path)
 		}
 		plugin_libs[plugin_libs_len++] = hinstLib;
 	}
+#endif
 }
 
 static void probe_table_load_plugins()
