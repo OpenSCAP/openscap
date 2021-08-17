@@ -562,7 +562,7 @@ static void probe_table_load_plugins()
 void probe_table_plugins_init()
 {
 	// get length of probe table
-	probe_table_len = probe_table_len = sizeof(probe_table) / sizeof(probe_table_entry_t);;
+	probe_table_len = sizeof(probe_table) / sizeof(probe_table_entry_t);;
 
 	// allocate probe table on the heap so that it can grow
 	probe_table_mem = (probe_table_entry_t*)calloc(probe_table_len, sizeof(probe_table_entry_t));
@@ -587,6 +587,13 @@ void probe_table_plugins_cleanup()
 			FreeLibrary(plugin_libs[i]);
 		}
 		free(plugin_libs);
+		plugin_libs = NULL;
 	}
 #endif
+	if (NULL != probe_table_mem)
+	{
+		free(probe_table_mem);
+		probe_table_mem = NULL;
+	}
+	probe_table_len = 0;
 }
