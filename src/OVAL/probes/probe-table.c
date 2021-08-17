@@ -589,6 +589,7 @@ void probe_table_plugins_cleanup()
 		free(plugin_libs);
 		plugin_libs = NULL;
 	}
+	plugin_libs_len = 0;
 #endif
 	if (NULL != probe_table_mem)
 	{
