@@ -42,4 +42,7 @@ OSCAP_API int probe_table_size(void);
 OSCAP_API bool probe_table_exists(oval_subtype_t type);
 OSCAP_API oval_subtype_t probe_table_at_index(int idx);
 
+OSCAP_API void probe_table_plugins_init();
+OSCAP_API void probe_table_plugins_cleanup();
+
 #endif /* OPENSCAP_OPENSCAP_PROBE_TABLE_H */

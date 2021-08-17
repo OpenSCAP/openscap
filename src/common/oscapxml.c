@@ -57,6 +57,7 @@
 const char *const OSCAP_SCHEMA_PATH = OSCAP_DEFAULT_SCHEMA_PATH;
 const char *const OSCAP_XSLT_PATH = OSCAP_DEFAULT_XSLT_PATH;
 const char *const OSCAP_CPE_PATH = OSCAP_DEFAULT_CPE_PATH;
+const char* const OSCAP_PLUGINS_PATH = OSCAP_DEFAULT_PLUGINS_PATH;
 
 #ifdef OS_WINDOWS
 static const char *_get_default_path(const char *defpath)
@@ -107,6 +108,10 @@ const char *oscap_path_to_xslt(void)
 
 const char * oscap_path_to_cpe() {
 	return oscap_path_to("OSCAP_CPE_PATH", OSCAP_CPE_PATH);
+}
+
+const char * oscap_path_to_plugins() {
+	return oscap_path_to("OSCAP_PLUGINS_PATH", OSCAP_PLUGINS_PATH);
 }
 
 void oscap_init(void)

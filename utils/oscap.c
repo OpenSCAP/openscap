@@ -40,10 +40,12 @@
 #include "oscap-tool.h"
 #include "check_engine_plugin.h"
 #include "oscap_source.h"
-#if defined(OVAL_PROBES_ENABLED)
+#if defined(OVAL_PROBES_ENABLED) || defined(OPENSCAP_PLUGINS_ENABLED)
 #  include "probe-table.h"
 #endif
 
+static void oscap_plugins_init();
+static void oscap_plugins_cleanup();
 static bool getopt_root(int argc, char **argv, struct oscap_action *action);
 static int print_versions(const struct oscap_action*);
 extern struct oscap_module OSCAP_VERSION_MODULE;
@@ -84,10 +86,26 @@ struct oscap_module OSCAP_VERSION_MODULE = {
 
 int main(int argc, char **argv)
 {
+	oscap_plugins_init();
     oscap_init();
     int ret = oscap_module_process(&OSCAP_ROOT_MODULE, argc, argv);
     oscap_cleanup();
+	oscap_plugins_cleanup();
     return ret;
+}
+
+void oscap_plugins_init()
+{
+#if defined(OPENSCAP_PLUGINS_ENABLED)
+	probe_table_plugins_init();
+#endif
+}
+
+void oscap_plugins_cleanup()
+{
+#if defined(OPENSCAP_PLUGINS_ENABLED)
+	probe_table_plugins_cleanup();
+#endif
 }
 
 bool getopt_root(int argc, char **argv, struct oscap_action *action)
@@ -112,7 +130,6 @@ bool getopt_root(int argc, char **argv, struct oscap_action *action)
 	}
     return true;
 }
-
 
 static int print_versions(const struct oscap_action *action)
 {

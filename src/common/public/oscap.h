@@ -134,6 +134,11 @@ OSCAP_API int oscap_apply_xslt(const char *xmlfile, const char *xsltfile, const 
 OSCAP_API const char * oscap_path_to_schemas(void);
 
 /**
+ * Function returns path used to locate OpenSCAP plugins
+ */
+OSCAP_API const char * oscap_path_to_plugins(void);
+
+/**
  * Function returns path used to locate OpenSCAP Default CPE files
  */
 OSCAP_API const char * oscap_path_to_cpe(void);

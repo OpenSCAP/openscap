@@ -219,8 +219,15 @@ else()
 	option(ENABLE_SCE "enables Script Check Engine - an alternative checking engine that lets you use executables instead of OVAL for checks" ON)
 endif()
 
-# ---------- OVAL FEATURE SWITCHES
+# ---------- PLUGIN FEATURE SWITCHES
+option(ENABLE_PLUGINS "enables plugin support" TRUE)
+cmake_dependent_option(ENABLE_PLUGINS_INDEPENDENT "enable support for independent (cross platform) plugins" ON "ENABLE_PLUGINS" OFF)
+if (WIN32)
+    set(IS_WIN32 TRUE)
+endif()
+cmake_dependent_option(ENABLE_PLUGINS_WINDOWS "enable support for Windows plugins" ${IS_WIN32} "ENABLE_PLUGINS" OFF)
 
+# ---------- OVAL FEATURE SWITCHES
 option(ENABLE_PROBES "build OVAL probes - each probe implements an OVAL test" TRUE)
 set(SEAP_MSGID_BITS 32 CACHE STRING "Size of SEAP_msgid_t in bits [32|64]")
 cmake_dependent_option(ENABLE_PROBES_INDEPENDENT "build OVAL probes for independent (cross platform) OVAL tests" ON "ENABLE_PROBES" OFF)
@@ -294,6 +301,11 @@ cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_ACCESSTOKEN "Windows accesstoken p
 cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_REGISTRY "Windows registry probe" ON "ENABLE_PROBES_WINDOWS" OFF)
 cmake_dependent_option(OPENSCAP_PROBE_WINDOWS_WMI57 "Windows wmi57 probe" ON "ENABLE_PROBES_WINDOWS" OFF)
 
+# INDEPENDENT PLUGINS
+cmake_dependent_option(OPENSCAP_PLUGINS_INDEPENDENT "Independent plugins" ON "ENABLE_PLUGINS_INDEPENDENT" OFF)
+
+# WINDOWS PLUGINS
+cmake_dependent_option(OPENSCAP_PLUGINS_WINDOWS "Windows plugins" ON "ENABLE_PLUGINS_WINDOWS" OFF)
 
 # ---------- EXECUTABLES / UTILITIES SWITCHES
 
@@ -354,6 +366,7 @@ message(STATUS " ")
 
 message(STATUS "Core features:")
 message(STATUS "SCE: ${ENABLE_SCE}")
+message(STATUS "Plugins: ${ENABLE_PLUGINS}")
 message(STATUS " ")
 
 message(STATUS "OVAL:")
@@ -426,6 +439,14 @@ message(STATUS "  Windows wmi57 probe: ${OPENSCAP_PROBE_WINDOWS_WMI57}")
 message(STATUS " ")
 
 
+message(STATUS "Independent plugins: ${ENABLE_PLUGINS_INDEPENDENT}")
+message(STATUS " ")
+
+
+message(STATUS "Windows plugins: ${ENABLE_PLUGINS_WINDOWS}")
+message(STATUS " ")
+
+
 message(STATUS "Language bindings:")
 message(STATUS "python3 bindings: ${ENABLE_PYTHON3}")
 message(STATUS "perl bindings: ${ENABLE_PERL}")
@@ -462,10 +483,12 @@ if(WIN32)
 	set(OSCAP_DEFAULT_SCHEMA_PATH "schemas")
 	set(OSCAP_DEFAULT_XSLT_PATH "xsl")
 	set(OSCAP_DEFAULT_CPE_PATH "cpe")
+	set(OSCAP_DEFAULT_PLUGINS_PATH "plugins")
 else()
 	set(OSCAP_DEFAULT_SCHEMA_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/schemas")
 	set(OSCAP_DEFAULT_XSLT_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/xsl")
 	set(OSCAP_DEFAULT_CPE_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/cpe")
+	set(OSCAP_DEFAULT_PLUGINS_PATH "${CMAKE_INSTALL_FULL_DATADIR}/openscap/plugins")
 endif()
 set(OSCAP_TEMP_DIR "/tmp" CACHE STRING "use different temporary directory to execute sce scripts (default=/tmp)")
 
@@ -583,6 +606,9 @@ add_subdirectory("schemas")
 add_subdirectory("xsl")
 add_subdirectory("cpe")
 add_subdirectory("swig")
+if(ENABLE_PLUGINS)
+	add_subdirectory("plugin")
+endif()
 configure_file("run.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/run @ONLY)
 configure_file("oscap_wrapper.in" ${CMAKE_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/oscap_wrapper @ONLY)
 file(

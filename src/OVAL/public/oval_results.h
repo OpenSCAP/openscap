@@ -140,7 +140,7 @@ OSCAP_API struct oval_results_model *oval_results_model_clone(struct oval_result
 /**
  * @memberof oval_results_model
  */
-OSCAP_API void oval_results_model_set_export_system_characteristics(struct oval_results_model *, bool export);
+OSCAP_API void oval_results_model_set_export_system_characteristics(struct oval_results_model *, bool);
 
 /**
  * @memberof oval_results_model

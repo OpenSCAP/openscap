@@ -26,6 +26,7 @@
 
 #include "probe-table.h"
 #include "oval_types.h"
+#include "debug_priv.h"
 
 #ifdef OPENSCAP_PROBE_INDEPENDENT_ENVIRONMENTVARIABLE
 #include "independent/environmentvariable_probe.h"
@@ -203,6 +204,11 @@
 #include "windows/wmi57_probe.h"
 #endif
 
+#ifdef OPENSCAP_PLUGINS_WINDOWS
+#include <windows.h>
+#include "../plugin/OVAL/probes/public/probe-plugin-api.h"
+#endif
+
 typedef struct probe_table_entry {
 	oval_subtype_t type;
 	probe_init_function_t probe_init_function;
@@ -347,10 +353,15 @@ static const probe_table_entry_t probe_table[] = {
 #endif
 	{OVAL_SUBTYPE_UNKNOWN, NULL, NULL, NULL, NULL}
 };
+static probe_table_entry_t* probe_table_mem = NULL;
+static probe_table_entry_t* probe_table_ptr = (probe_table_entry_t*)probe_table;
+static size_t probe_table_len = 0;
+static HINSTANCE* plugin_libs = NULL;
+static size_t plugin_libs_len = 0;
 
 static const probe_table_entry_t *probe_table_get(oval_subtype_t type)
 {
-	const probe_table_entry_t *entry = probe_table;
+	const probe_table_entry_t *entry = probe_table_ptr;
 	while (entry->probe_main_function != NULL && entry->type != type)
 	{
 		entry++;
@@ -384,7 +395,7 @@ probe_offline_mode_function_t probe_table_get_offline_mode_function(oval_subtype
 
 void probe_table_list(FILE *output)
 {
-	const probe_table_entry_t *entry = probe_table;
+	const probe_table_entry_t *entry = probe_table_ptr;
 	while (entry->type != OVAL_SUBTYPE_UNKNOWN)
 	{
 		oval_subtype_t type = entry->type;
@@ -399,7 +410,7 @@ void probe_table_list(FILE *output)
 int probe_table_size()
 {
 	int size = 0;
-	const probe_table_entry_t *entry = probe_table;
+	const probe_table_entry_t *entry = probe_table_ptr;
 	while (entry->type != OVAL_SUBTYPE_UNKNOWN) {
 		entry++;
 		size++;
@@ -418,6 +429,160 @@ oval_subtype_t probe_table_at_index(int idx)
 	if (idx < 0 || idx >= probe_table_size()) {
 		return OVAL_SUBTYPE_UNKNOWN;
 	}
-	const probe_table_entry_t entry = probe_table[idx];
+	const probe_table_entry_t entry = probe_table_ptr[idx];
 	return entry.type;
+}
+
+static void probe_table_load_plugin(const char* path)
+{
+	HINSTANCE hinstLib = NULL;
+	if (NULL != (hinstLib = LoadLibrary(TEXT(path))))
+	{
+		probe_plugin_get_oval_subtype_t probe_get_plugin_oval_subtype =
+			(probe_plugin_get_oval_subtype_t)GetProcAddress(hinstLib,
+			"probe_plugin_get_oval_subtype");
+		probe_plugin_get_init_function_t probe_plugin_get_init_function =
+			(probe_plugin_get_init_function_t)GetProcAddress(hinstLib,
+			"probe_plugin_get_init_function");
+		probe_plugin_get_main_function_t probe_plugin_get_main_function =
+			(probe_plugin_get_main_function_t)GetProcAddress(hinstLib,
+			"probe_plugin_get_main_function");
+		probe_plugin_get_fini_function_t probe_plugin_get_fini_function =
+			(probe_plugin_get_fini_function_t)GetProcAddress(hinstLib,
+			"probe_plugin_get_fini_function");
+		probe_plugin_get_offline_mode_function_t probe_plugin_get_offline_mode_function =
+			(probe_plugin_get_offline_mode_function_t)GetProcAddress(hinstLib,
+			"probe_plugin_get_offline_mode_function");
+
+		// If the function address is valid, call the function.
+		if (NULL != probe_get_plugin_oval_subtype)
+		{
+			// get plugin oval subtype
+			oval_subtype_t type = (probe_get_plugin_oval_subtype)();
+			if (OVAL_SUBTYPE_UNKNOWN != type)
+			{
+				// check if entry for subtype exists
+				probe_table_entry_t* entry = (probe_table_entry_t*)probe_table_get(type);
+				if (OVAL_SUBTYPE_UNKNOWN == entry->type)
+				{
+					// append subtype entry
+					probe_table_entry_t* probe_table_mem_tmp = probe_table_mem;
+					probe_table_mem = (probe_table_entry_t*)realloc(probe_table_mem_tmp, (probe_table_len + 1) * sizeof(probe_table_entry_t));
+					if (NULL == probe_table_mem) {
+						dE("Out of memory");
+						return;
+					}
+
+					// set prev last entry to new last entry (probe table must end with unknown/empty entry)
+					probe_table_mem[probe_table_len] = probe_table_mem[probe_table_len - 1];
+
+					// set prev last entry to subtype; function pointers set below
+					entry = &probe_table_mem[probe_table_len - 1];
+					entry->type = type;
+
+					// replace table pointer
+					probe_table_ptr = probe_table_mem;
+					probe_table_len++;
+				}
+
+				// (re)set function pointers
+				entry->probe_init_function = (probe_plugin_get_init_function)();
+				entry->probe_main_function = (probe_plugin_get_main_function)();
+				entry->probe_fini_function = (probe_plugin_get_fini_function)();
+				entry->probe_offline_mode_function = (probe_plugin_get_offline_mode_function)();
+			}
+		}
+
+		// add/append plugin lib entry
+		if (NULL == plugin_libs)
+		{
+			plugin_libs = (HINSTANCE*)calloc((plugin_libs_len + 1), sizeof(HINSTANCE));
+		}
+		else
+		{
+			HINSTANCE* plugin_libs_tmp = plugin_libs;
+			plugin_libs = (HINSTANCE*)realloc(plugin_libs_tmp, (plugin_libs_len + 1) * sizeof(HINSTANCE));
+		}
+		if (NULL == plugin_libs) {
+			dE("Out of memory");
+			return;
+		}
+		plugin_libs[plugin_libs_len++] = hinstLib;
+	}
+}
+
+static void probe_table_load_plugins()
+{
+	// get path to directory containing the plugins
+	const char* path_to_plugins = oscap_path_to_plugins();
+
+#ifdef OPENSCAP_PLUGINS_WINDOWS
+	WIN32_FIND_DATA fdFile;
+	HANDLE hFind = NULL;
+
+	char sPath[2048];
+
+	//Specify a file mask. *.* = We want everything!
+	sprintf(sPath, "%s\\*.*", path_to_plugins);
+
+	if ((hFind = FindFirstFile(sPath, &fdFile)) == INVALID_HANDLE_VALUE)
+	{
+		dE("Path not found: [%s]\n", path_to_plugins);
+		return;
+	}
+
+	do
+	{
+		//Find first file will always return "."
+		//    and ".." as the first two directories.
+		if (strcmp(fdFile.cFileName, ".") != 0 &&
+			strcmp(fdFile.cFileName, "..") != 0)
+		{
+			//Build up our file path using the passed in
+			//  [sDir] and the file/foldername we just found:
+			sprintf(sPath, "%s\\%s", path_to_plugins, fdFile.cFileName);
+
+			// only process files
+			if (fdFile.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+				continue;
+			}
+
+			probe_table_load_plugin(sPath);
+		}
+	} while (FindNextFile(hFind, &fdFile)); //Find the next file.
+
+	FindClose(hFind); //Always, Always, clean things up!
+#endif
+}
+
+void probe_table_plugins_init()
+{
+	// get length of probe table
+	probe_table_len = probe_table_len = sizeof(probe_table) / sizeof(probe_table_entry_t);;
+
+	// allocate probe table on the heap so that it can grow
+	probe_table_mem = (probe_table_entry_t*)calloc(probe_table_len, sizeof(probe_table_entry_t));
+	if (NULL == probe_table_mem) {
+		dE("Out of memory");
+		return;
+	}
+
+	// copy stack table to heap table
+	memcpy(probe_table_mem, probe_table, sizeof(probe_table));
+
+	// load plugins
+	probe_table_load_plugins();
+}
+
+void probe_table_plugins_cleanup()
+{
+#ifdef OPENSCAP_PLUGINS_WINDOWS
+	if (NULL != plugin_libs)
+	{
+		for (size_t i = 0; i < plugin_libs_len; i++) {
+			FreeLibrary(plugin_libs[i]);
+		}
+		free(plugin_libs);
+	}
+#endif
 }
