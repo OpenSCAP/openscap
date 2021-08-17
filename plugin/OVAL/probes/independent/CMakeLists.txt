@@ -1,0 +1,2 @@
+if(ENABLE_PLUGINS_INDEPENDENT)
+endif()
